@@ -14,6 +14,7 @@
 	}
 	&.isType, &.isRelation {
 		.titleWrap { align-items: center; }
+		.editableWrap.title { width: calc(100% - 32px); }
 		.editableWrap.title {
 			.editable { @include text-overflow-nw; }
 		}
@@ -36,9 +37,9 @@
 		.editable { z-index: 1; position: relative;  word-break: break-word; cursor: text; min-height: 32px; }
 	}
 	
-	.descr { @include text-paragraph; }
+	.descr { @include text-description; }
 
-	.sides { display: flex; align-items: flex-start; flex-direction: row; gap: 0px 32px; }
+	.sides { display: flex; align-items: flex-start; flex-direction: row; gap: 0px 32px; width: 100%; }
 	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
 	.side.right { text-align: right; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: flex-end; }
 	.side.right {

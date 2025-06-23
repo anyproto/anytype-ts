@@ -1,32 +1,54 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Relation } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
 
-const SYSTEM_DATE_RELATION_KEYS = [
-	'lastModifiedDate', 
-	'lastOpenedDate', 
-	'createdDate',
-	'addedDate',
-	'lastUsedDate',
-];
-
+/**
+ * Utility class for data manipulation, formatting, and application-level helpers.
+ * Provides methods for block styling, authentication, sorting, and more.
+ */
 class UtilData {
 
+	/**
+	 * Returns the CSS class for a text block style.
+	 * @param {I.TextStyle} v - The text style.
+	 * @returns {string} The CSS class.
+	 */
 	blockTextClass (v: I.TextStyle): string {
 		return `text${String(I.TextStyle[v] || 'Paragraph')}`;
 	};
 	
+	/**
+	 * Returns the CSS class for a div block style.
+	 * @param {I.DivStyle} v - The div style.
+	 * @returns {string} The CSS class.
+	 */
 	blockDivClass (v: I.DivStyle): string {
 		return `div${String(I.DivStyle[v])}`;
 	};
 
+	/**
+	 * Returns the CSS class for a layout block style.
+	 * @param {I.LayoutStyle} v - The layout style.
+	 * @returns {string} The CSS class.
+	 */
 	blockLayoutClass (v: I.LayoutStyle): string {
 		return `layout${String(I.LayoutStyle[v])}`;
 	};
 
+	/**
+	 * Returns the CSS class for an embed block style.
+	 * @param {I.EmbedProcessor} v - The embed processor.
+	 * @returns {string} The CSS class.
+	 */
 	blockEmbedClass (v: I.EmbedProcessor): string {
 		return `is${String(I.EmbedProcessor[v])}`;
 	};
 
+	/**
+	 * Returns the icon class for a given block type and style value.
+	 * @param {I.BlockType} type - The block type.
+	 * @param {number} v - The style value.
+	 * @returns {string} The icon class.
+	 */
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
 		switch (type) {
@@ -44,6 +66,11 @@ class UtilData {
 		return icon;
 	};
 
+	/**
+	 * Returns the CSS class for a block, based on its content and type.
+	 * @param {any} block - The block object.
+	 * @returns {string} The CSS class string.
+	 */
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, processor } = content;
@@ -78,6 +105,12 @@ class UtilData {
 		return c.join(' ');
 	};
 
+	/**
+	 * Returns the layout class for an object by id and layout type.
+	 * @param {string} id - The object id.
+	 * @param {I.ObjectLayout} layout - The layout type.
+	 * @returns {string} The layout class.
+	 */
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
@@ -87,16 +120,31 @@ class UtilData {
 		return c;
 	};
 
+	/**
+	 * Returns the class for a link card style.
+	 * @param {I.LinkCardStyle} v - The link card style.
+	 * @returns {string} The class name.
+	 */
 	linkCardClass (v: I.LinkCardStyle): string {
 		v = v || I.LinkCardStyle.Text;
 		return String(I.LinkCardStyle[v]).toLowerCase();
 	};
 
+	/**
+	 * Returns the class for a card size.
+	 * @param {I.CardSize} v - The card size.
+	 * @returns {string} The class name.
+	 */
 	cardSizeClass (v: I.CardSize) {
 		v = v || I.CardSize.Small;
 		return String(I.CardSize[v]).toLowerCase();
 	};
 
+	/**
+	 * Returns the class for a diff type.
+	 * @param {I.DiffType} v - The diff type.
+	 * @returns {string} The class name.
+	 */
 	diffClass (v: I.DiffType): string {
 		let c = '';
 		switch (v) {
@@ -108,6 +156,11 @@ class UtilData {
 		return c;
 	};
 
+	/**
+	 * Returns the class for a sync status object.
+	 * @param {I.SyncStatusObject} v - The sync status object.
+	 * @returns {string} The class name.
+	 */
 	syncStatusClass (v: I.SyncStatusObject): string {
 		const s = I.SyncStatusObject[v];
 		if ('undefined' == typeof(s)) {
@@ -116,16 +169,31 @@ class UtilData {
 		return String(s || '').toLowerCase();
 	};
 	
+	/**
+	 * Returns the icon class for horizontal alignment.
+	 * @param {I.BlockHAlign} v - The horizontal alignment.
+	 * @returns {string} The icon class.
+	 */
 	alignHIcon (v: I.BlockHAlign): string {
 		v = v || I.BlockHAlign.Left;
 		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
 	};
 
+	/**
+	 * Returns the icon class for vertical alignment.
+	 * @param {I.BlockVAlign} v - The vertical alignment.
+	 * @returns {string} The icon class.
+	 */
 	alignVIcon (v: I.BlockVAlign): string {
 		v = v || I.BlockVAlign.Top;
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 
+	/**
+	 * Returns the emoji size parameter for a given text style.
+	 * @param {I.TextStyle} t - The text style.
+	 * @returns {number} The emoji size.
+	 */
 	emojiParam (t: I.TextStyle) {
 		let s = 20;
 		switch (t) {
@@ -136,6 +204,10 @@ class UtilData {
 		return s;
 	};
 	
+	/**
+	 * Sets up application state with account info after login.
+	 * @param {I.AccountInfo} info - The account info object.
+	 */
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
 		S.Block.widgetsSet(info.widgetsId);
@@ -151,6 +223,11 @@ class UtilData {
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
+	/**
+	 * Handles authentication and routing after login.
+	 * @param {any} [param] - Optional parameters for authentication.
+	 * @param {() => void} [callBack] - Optional callback after authentication.
+	 */
 	onAuth (param?: any, callBack?: () => void) {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
@@ -158,8 +235,6 @@ class UtilData {
 		const { pin } = S.Common;
 		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const color = Storage.get('color');
-		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
 
@@ -180,7 +255,7 @@ class UtilData {
 					return;
 				};
 
-				this.createSpaceSubscriptions(() => {
+				U.Subscription.createSpace(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
@@ -190,18 +265,9 @@ class UtilData {
 						} else {
 							U.Space.openDashboard(routeParam);
 						};
-
-						S.Common.redirectSet('');
 					};
 
-					if (!color) {
-						Storage.set('color', 'orange');
-					};
-					if (!bgColor) {
-						Storage.set('bgColor', 'orange');
-					};
-
-					Storage.clearDeletedSpaces();
+					S.Common.redirectSet('');
 
 					if (callBack) {
 						callBack();
@@ -211,6 +277,10 @@ class UtilData {
 		});
 	};
 
+	/**
+	 * Handles one-time authentication tasks after login.
+	 * @param {boolean} noTierCache - Whether to skip tier cache.
+	 */
 	onAuthOnce (noTierCache: boolean) {
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
@@ -224,280 +294,83 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(noTierCache);
-		this.getMembershipStatus();
-		this.createGlobalSubscriptions();
+		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			for (const item of message.previews) {
+				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), item.state);
+			};
+		});
+
+		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
+		U.Subscription.createGlobal(() => Storage.clearDeletedSpaces());
 
 		analytics.event('OpenAccount');
 	};
 
+	/**
+	 * Handles authentication when no space is available.
+	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
+	 */
 	onAuthWithoutSpace (param?: Partial<I.RouteParam>) {
-		this.createGlobalSubscriptions(() => U.Space.openFirstSpaceOrVoid(null, param));
+		U.Subscription.createGlobal(() => U.Space.openFirstSpaceOrVoid(null, param));
 	};
 
-	createAllSubscriptions (callBack?: () => void) {
-		this.createGlobalSubscriptions(() => {
-			this.createSpaceSubscriptions(callBack);
-		});
-	};
+	/**
+	 * Creates a new session with the given phrase and key.
+	 * @param {string} phrase - The mnemonic phrase.
+	 * @param {string} key - The key.
+	 * @param {(message: any) => void} [callBack] - Optional callback after session creation.
+	 */
+	createSession (phrase: string, key: string, token: string, callBack?: (message: any) => void) {
+		this.closeSession(() => {
+			C.WalletCreateSession(phrase, key, token, (message: any) => {
+				if (!message.error.code) {
+					S.Auth.tokenSet(message.token);
+					S.Auth.appTokenSet(message.appToken);
 
-	createGlobalSubscriptions (callBack?: () => void) {
-		const { account } = S.Auth;
+					dispatcher.startStream();
+				};
 
-		if (!account) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
-		const { techSpaceId } = account.info;
-		const list: any[] = [
-			{
-				spaceId: techSpaceId,
-				subId: J.Constant.subId.profile,
-				keys: this.profileRelationKeys(),
-				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
-				],
-				noDeps: true,
-				ignoreHidden: false,
-			},
-			{
-				spaceId: techSpaceId,
-				subId: J.Constant.subId.space,
-				keys: this.spaceRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
-				],
-				sorts: [
-					{ relationKey: 'createdDate', type: I.SortType.Desc },
-				],
-				ignoreHidden: false,
-			},
-		];
-
-		this.createSubscriptions(list, () => {
-			this.createSubSpaceSubscriptions(null, callBack);
-		});
-	};
-
-	createSubSpaceSubscriptions (ids: string[], callBack?: () => void) {
-		const { account } = S.Auth;
-		const skipIds = U.Space.getSystemDashboardIds();
-
-		if (!account) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
-		let spaces = U.Space.getList();
-		if (ids && ids.length) {
-			spaces = spaces.filter(it => ids.includes(it.targetSpaceId));
-		};
-
-		if (!spaces.length) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
-		const list = [];
-
-		spaces.forEach(space => {
-			const ids = [
-				space.creator,
-				U.Space.getParticipantId(space.targetSpaceId, account.id),
-			];
-
-			if (!skipIds.includes(space.spaceDashboardId)) {
-				ids.push(space.spaceDashboardId);
-			};
-
-			list.push({
-				spaceId: space.targetSpaceId,
-				subId: U.Space.getSubSpaceSubId(space.targetSpaceId),
-				keys: this.participantRelationKeys(),
-				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: true,
-				ignoreArchived: true,
+				if (callBack) {
+					callBack(message);
+				};
 			});
 		});
-
-		this.createSubscriptions(list, callBack);
 	};
 
-	createSpaceSubscriptions (callBack?: () => void): void {
-		const list: any[] = [
-			{
-				subId: J.Constant.subId.deleted,
-				keys: [],
-				filters: [
-					{ relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
-				],
-				ignoreDeleted: false,
-				noDeps: true,
-			},
-			{
-				subId: J.Constant.subId.type,
-				keys: this.typeRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-				],
-				sorts: [
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-				ignoreArchived: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
-				}
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.typeStore,
-				keys: this.typeRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-				],
-				sorts: [
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-			},
-			{
-				subId: J.Constant.subId.relation,
-				keys: J.Relation.relation,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-				ignoreArchived: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
-				},
-			},
-			{
-				spaceId: J.Constant.storeSpaceId,
-				subId: J.Constant.subId.relationStore,
-				keys: J.Relation.relation,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-			},
-			{
-				subId: J.Constant.subId.option,
-				keys: J.Relation.option,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				noDeps: true,
-				ignoreDeleted: true,
-			},
-			{
-				subId: J.Constant.subId.participant,
-				keys: this.participantRelationKeys(),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				ignoreDeleted: true,
-				ignoreHidden: false,
-				noDeps: true,
-			},
-		];
+	/**
+	 * Closes the current session.
+	 * @param {() => void} [callBack] - Optional callback after session close.
+	 */
+	closeSession (callBack?: () => void) {
+		const { token } = S.Auth;
 
-		this.createSubscriptions(list, callBack);
-	};
-
-	createSubscriptions (list: I.SearchSubscribeParam[], callBack?: () => void) {
-		let cnt = 0;
-		const cb = (item: any, message: any) => {
-			if (item.onSubscribe) {
-				item.onSubscribe(message);
-			};
-
-			cnt++;
-
-			if ((cnt == list.length) && callBack) {
+		if (!token) {
+			if (callBack) {
 				callBack();
 			};
+			return;
 		};
 
-		for (const item of list) {
-			this.searchSubscribe(item, message => cb(item, message));
-		};
-	};
+		C.WalletCloseSession(token, () => {
+			S.Auth.tokenSet('');
 
-	destroySubscriptions (callBack?: () => void): void {
-		const ids = Object.values(J.Constant.subId);
-
-		C.ObjectSearchUnsubscribe(ids, callBack);
-		ids.forEach(id => Action.dbClearRoot(id));
-	};
-
-	profileRelationKeys () {
-		return J.Relation.default.concat('sharedSpacesLimit');
-	};
-
-	spaceRelationKeys () {
-		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant);
-	};
-
-	typeRelationKeys () {
-		return J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
-	};
-
-	participantRelationKeys () {
-		return J.Relation.default.concat(J.Relation.participant);
-	};
-
-	syncStatusRelationKeys () {
-		return J.Relation.default.concat(J.Relation.syncStatus);
-	};
-
-	chatRelationKeys () {
-		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels' ]);
-	};
-
-	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
-		C.WalletCreateSession(phrase, key, (message: any) => {
-
-			if (!message.error.code) {
-				S.Auth.tokenSet(message.token);
-				S.Auth.appTokenSet(message.appToken);
-				dispatcher.listenEvents();
-			};
+			dispatcher.stopStream();
 
 			if (callBack) {
-				callBack(message);
+				callBack();
 			};
 		});
 	};
 
+	/**
+	 * Sets the text and marks for a block, optionally updating the store.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} text - The text to set.
+	 * @param {I.Mark[]} marks - The marks to set.
+	 * @param {boolean} update - Whether to update the store.
+	 * @param {(message: any) => void} [callBack] - Optional callback after setting text.
+	 */
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
@@ -514,6 +387,15 @@ class UtilData {
 		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
+	/**
+	 * Inserts text into a block at the specified range.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} needle - The text to insert.
+	 * @param {number} from - The start index.
+	 * @param {number} to - The end index.
+	 * @param {(message: any) => void} [callBack] - Optional callback after insertion.
+	 */
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
@@ -527,6 +409,11 @@ class UtilData {
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
 	};
 
+	/**
+	 * Returns a list of object types available for new objects, with optional filters.
+	 * @param {any} [param] - Optional parameters for filtering.
+	 * @returns {any[]} The list of object types.
+	 */
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
 		const { space } = S.Common;
@@ -543,6 +430,9 @@ class UtilData {
 				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
 
+		items = S.Record.checkHiddenObjects(items);
+		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
+
 		if (limit) {
 			items = items.slice(0, limit);
 		};
@@ -556,9 +446,6 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		items = S.Record.checkHiddenObjects(items);
-
-		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 		return items;
 	};
 
@@ -572,7 +459,7 @@ class UtilData {
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 
-		this.search({
+		U.Subscription.search({
 			filters,
 			keys: [ 'id' ],
 			noDeps: true,
@@ -598,6 +485,7 @@ class UtilData {
 			layout: object.layout,
 			layoutAlign: type?.layoutAlign || I.BlockHAlign.Left,
 			layoutWidth: this.getLayoutWidth(rootId),
+			headerRelationsLayout: type?.headerRelationsLayout,
 		};
 
 		if (undefined !== object.layoutAlign) {
@@ -665,6 +553,12 @@ class UtilData {
 		return ret;
 	};
 
+	/**
+	 * Sorts two objects by their name property.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
 	sortByName (c1: any, c2: any) {
 		const n1 = String(c1.name || '').toLowerCase();
 		const n2 = String(c2.name || '').toLowerCase();
@@ -679,12 +573,25 @@ class UtilData {
 		return 0;
 	};
 
+	/**
+	 * Sorts two objects by their hidden status.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
 	sortByHidden (c1: any, c2: any) {
 		if (c1.isHidden && !c2.isHidden) return 1;
 		if (!c1.isHidden && c2.isHidden) return -1;
 		return 0;
 	};
 
+	/**
+	 * Sorts two objects by their pinned status and last used date.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @param {string[]} ids - The list of pinned IDs.
+	 * @returns {number} The sort order.
+	 */
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
@@ -698,6 +605,14 @@ class UtilData {
 		return this.sortByLastUsedDate(c1, c2);
 	};
 
+	/**
+	 * Sorts two objects by a numeric key.
+	 * @param {string} key - The key to sort by.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @param {I.SortType} dir - The sort direction.
+	 * @returns {number} The sort order.
+	 */
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
 		const k1 = Number(c1[key]) || 0;
 		const k2 = Number(c2[key]) || 0;
@@ -707,18 +622,44 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
+	/**
+	 * Sorts two objects by their weight property.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
 	sortByWeight (c1: any, c2: any) {
 		return this.sortByNumericKey('_sortWeight_', c1, c2, I.SortType.Desc);
 	};
 
+	/**
+	 * Sorts two objects by their format property.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
 	sortByFormat (c1: any, c2: any) {
 		return this.sortByNumericKey('format', c1, c2, I.SortType.Asc);
 	};
 
+	/**
+	 * Sorts two objects by their last used date.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
 	sortByLastUsedDate (c1: any, c2: any) {
 		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
 	};
 
+	/**
+	 * Checks for objects with a specific relation and type, limited by count.
+	 * @param {string} relationKey - The relation key to check.
+	 * @param {string} type - The object type.
+	 * @param {string[]} ids - The list of IDs to check.
+	 * @param {number} limit - The maximum number of results.
+	 * @param {(message: any) => void} [callBack] - Optional callback with the result message.
+	 */
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -728,7 +669,7 @@ class UtilData {
 			filters.push({ relationKey: relationKey, condition: I.FilterCondition.In, value: ids });
 		};
 
-		this.search({
+		U.Subscription.search({
 			filters,
 			limit,
 		}, (message: any) => {
@@ -742,6 +683,10 @@ class UtilData {
 		});
 	};
 
+	/**
+	 * Returns the default link settings for a block.
+	 * @returns {object} The default link settings.
+	 */
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
@@ -751,6 +696,12 @@ class UtilData {
 		};
 	};
 
+	/**
+	 * Checks and returns link settings for a given content and layout.
+	 * @param {I.ContentLink} content - The link content.
+	 * @param {I.ObjectLayout} layout - The object layout.
+	 * @returns {I.ContentLink} The checked link settings.
+	 */
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
@@ -774,245 +725,28 @@ class UtilData {
 		return content;
 	};
 
+	/**
+	 * Checks if a cover type is an image.
+	 * @param {I.CoverType} type - The cover type.
+	 * @returns {boolean} True if the cover is an image.
+	 */
 	coverIsImage (type: I.CoverType) {
 		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
-	searchDefaultFilters (param: any) {
-		const { config } = S.Common;
-		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
-		const filters = param.filters || [];
-		const skipLayouts = [ I.ObjectLayout.Chat ];
-
-		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
-		filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		} else {
-			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.None, value: null });
-		};
-
-		if (ignoreArchived) {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		} else {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.None, value: null });
-		};
-
-		return filters;
-	};
-
-	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
-		if (message.error.code) {
-			return;
-		};
-		if (message.counters) {
-			S.Record.metaSet(subId, '', { total: message.counters.total, keys });
-		};
-
-		const mapper = it => ({ id: it[idField], details: it });
-
-		let details = [];
-		if (message.dependencies && message.dependencies.length) {
-			details = details.concat(message.dependencies.map(mapper));
-		};
-		if (message.records && message.records.length) {
-			details = details.concat(message.records.map(mapper));
-		};
-
-		S.Detail.set(subId, details);
-		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
-	};
-
-	mapKeys (param: Partial<I.SearchSubscribeParam>) {
-		const keys: string[] = [ ...new Set(param.keys as string[]) ];
-
-		if (!keys.includes(param.idField)) {
-			keys.push(param.idField);
-		};
-
-		if (keys.includes('name')) {
-			keys.push('pluralName');
-		};
-
-		if (keys.includes('layout')) {
-			keys.push('resolvedLayout');
-		};
-
-		return keys;
-	};
-
-	searchSubscribe (param: Partial<I.SearchSubscribeParam>, callBack?: (message: any) => void) {
-		const { space } = S.Common;
-
-		param = Object.assign({
-			spaceId: space,
-			subId: '',
-			idField: 'id',
-			filters: [],
-			sorts: [],
-			keys: J.Relation.default,
-			sources: [],
-			offset: 0,
-			limit: 0,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-			ignoreArchived: true,
-			noDeps: false,
-			afterId: '',
-			beforeId: '',
-			collectionId: ''
-		}, param);
-
-		const { spaceId, subId, idField, sorts, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
-		const keys = this.mapKeys(param);
-		const filters = this.searchDefaultFilters(param);
-
-		if (!subId) {
-			console.error('[U.Data].searchSubscribe: subId is empty');
-
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'subId is empty' } });
-			};
-			return;
-		};
-
-		if (!spaceId) {
-			console.error('[U.Data].searchSubscribe: spaceId is empty');
-
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
-			return;
-		};
-
-		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
-			this.onSubscribe(subId, idField, keys, message);
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	subscribeIds (param: Partial<I.SearchIdsParam>, callBack?: (message: any) => void) {
-		const { space } = S.Common;
-
-		param = Object.assign({
-			spaceId: space,
-			subId: '',
-			ids: [],
-			keys: J.Relation.default,
-			noDeps: false,
-			idField: 'id',
-		}, param);
-
-		const { spaceId, subId, noDeps } = param;
-		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
-		const keys = this.mapKeys(param);
-
-		if (!subId) {
-			console.error('[U.Data].subscribeIds: subId is empty');
-
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'subId is empty' } });
-			};
-			return;
-		};
-
-		if (!spaceId) {
-			console.error('[U.Data].subscribeIds: spaceId is empty');
-
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
-			return;
-		};
-
-		if (!ids.length) {
-			console.error('[U.Data].subscribeIds: ids list is empty');
-
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'ids list is empty' } });
-			};
-			return;
-		};
-
-		C.ObjectSubscribeIds(spaceId, subId, ids, keys, noDeps, (message: any) => {
-			(message.records || []).sort((c1: any, c2: any) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-				if (i1 > i2) return 1; 
-				if (i1 < i2) return -1;
-				return 0;
-			});
-
-			this.onSubscribe(subId, 'id', keys, message);
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	search (param: Partial<I.SearchSubscribeParam> & { fullText?: string }, callBack?: (message: any) => void) {
-		const { space } = S.Common;
-
-		param = Object.assign({
-			spaceId: space,
-			idField: 'id',
-			fullText: '',
-			filters: [],
-			sorts: [],
-			keys: J.Relation.default,
-			offset: 0,
-			limit: 0,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-			ignoreArchived: true,
-			skipLayoutFormat: null,
-		}, param);
-
-		const { spaceId, sorts, offset, limit, skipLayoutFormat } = param;
-		const keys = this.mapKeys(param);
-		const filters = this.searchDefaultFilters(param);
-
-		if (!spaceId) {
-			console.error('[U.Data].search: spaceId is empty');
-
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
-			return;
-		};
-
-		C.ObjectSearch(spaceId, filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
-			if (message.records) {
-				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	sortMapper (it: any) {
-		if (undefined === it.includeTime) {
-			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
-		};
-		return it;
-	};
-
+	/**
+	 * Sets the window title based on the object name.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} objectId - The object ID.
+	 */
 	setWindowTitle (rootId: string, objectId: string) {
 		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
 	};
 
+	/**
+	 * Sets the window title text directly.
+	 * @param {string} name - The name to set as the window title.
+	 */
 	setWindowTitleText (name: string) {
 		const space = U.Space.getSpaceview();
 		const title = [];
@@ -1029,6 +763,10 @@ class UtilData {
 		document.title = title.join(' - ');
 	};
 
+	/**
+	 * Returns the default graph filters for object queries.
+	 * @returns {I.Filter[]} The array of graph filters.
+	 */
 	getGraphFilters () {
 		return [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -1041,6 +779,13 @@ class UtilData {
 		];
 	};
 
+	/**
+	 * Moves a list of block IDs to a new page of a given type.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string[]} ids - The block IDs to move.
+	 * @param {string} typeId - The type ID of the new page.
+	 * @param {string} route - The route to use after moving.
+	 */
 	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
 		const type = S.Record.getTypeById(typeId);
 		if (!type) {
@@ -1054,6 +799,10 @@ class UtilData {
 		});
 	};
 
+	/**
+	 * Gets the membership status for the current account.
+	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
+	 */
 	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		if (!this.isAnytypeNetwork()) {
 			return;
@@ -1076,7 +825,12 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers (noCache: boolean) {
+	/**
+	 * Gets the available membership tiers.
+	 * @param {boolean} noCache - Whether to skip cache.
+	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
+	 */
+	getMembershipTiers (noCache: boolean, callBack?: () => void) {
 		const { config, interfaceLang, isOnline } = S.Common;
 		const { testPayment } = config;
 
@@ -1091,25 +845,51 @@ class UtilData {
 
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			S.Common.membershipTiersListSet(tiers);
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
+	/**
+	 * Gets a membership tier by its ID.
+	 * @param {I.TierType} id - The tier ID.
+	 * @returns {I.MembershipTier} The membership tier object.
+	 */
 	getMembershipTier (id: I.TierType): I.MembershipTier {
 		return S.Common.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
+	/**
+	 * Checks if the current network is Anytype Network.
+	 * @returns {boolean} True if Anytype Network.
+	 */
 	isAnytypeNetwork (): boolean {
 		return Object.values(J.Constant.networkId).includes(S.Auth.account?.info?.networkId);
 	};
 
+	/**
+	 * Checks if the current network is a development network.
+	 * @returns {boolean} True if development network.
+	 */
 	isDevelopmentNetwork (): boolean {
 		return S.Auth.account?.info?.networkId == J.Constant.networkId.development;
 	};
 
+	/**
+	 * Checks if the current network is a local network.
+	 * @returns {boolean} True if local network.
+	 */
 	isLocalNetwork (): boolean {
 		return !S.Auth.account?.info?.networkId;
 	};
 
+	/**
+	 * Creates a new account, handling errors and callbacks.
+	 * @param {(text: string) => void} [onError] - Optional error callback.
+	 * @param {() => void} [callBack] - Optional callback after account creation.
+	 */
 	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
 		onError = onError || (() => {});
 
@@ -1121,48 +901,61 @@ class UtilData {
 
 		analytics.event('StartCreateAccount');
 
-		C.WalletCreate(dataPath, (message) => {
-			if (message.error.code) {
-				onError(message.error.description);
-				return;
-			};
-
-			phrase = message.mnemonic;
-
-			this.createSession(phrase, '', (message) => {
+		this.closeSession(() => {
+			C.WalletCreate(dataPath, (message) => {
 				if (message.error.code) {
 					onError(message.error.description);
 					return;
 				};
 
-				C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+				phrase = message.mnemonic;
+
+				this.createSession(phrase, '', '', (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;
 					};
 
-					S.Auth.accountSet(message.account);
-					S.Common.configSet(message.account.config, false);
-
-					this.onInfo(message.account.info);
-					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
-						if (message.startingId) {
-							S.Auth.startingId = message.startingId;
+					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+						if (message.error.code) {
+							onError(message.error.description);
+							return;
 						};
 
-						if (callBack) {
-							callBack();
-						};
+						S.Auth.accountSet(message.account);
+						S.Common.configSet(message.account.config, false);
+
+						this.onInfo(message.account.info);
+						Renderer.send('keytarSet', message.account.id, phrase);
+						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+							if (message.startingId) {
+								S.Auth.startingId = message.startingId;
+							};
+
+							const details = { 
+								name: translate('commonEntrySpace'), 
+								iconOption: U.Common.rand(1, J.Constant.count.icon),
+							};
+							
+							C.WorkspaceSetInfo(S.Common.space, details, callBack);
+						});
+
+						analytics.event('CreateAccount', { middleTime: message.middleTime });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Space });
 					});
-
-					analytics.event('CreateAccount', { middleTime: message.middleTime });
-					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 				});
 			});
 		});
 	};
 
+	/**
+	 * Groups records into date sections (e.g., today, yesterday, last week).
+	 * @param {any[]} records - The records to group.
+	 * @param {string} key - The key to group by.
+	 * @param {any} [sectionTemplate] - Optional section template.
+	 * @param {I.SortType} [dir] - Optional sort direction.
+	 * @returns {any[]} The grouped records.
+	 */
 	groupDateSections (records: any[], key: string, sectionTemplate?: any, dir?: I.SortType) {
 		const now = U.Date.now();
 		const { d, m, y } = U.Date.getCalendarDateParam(now);
@@ -1218,6 +1011,13 @@ class UtilData {
 		return ret;
 	};
 
+	/**
+	 * Returns the parameters for creating a link block based on layout and options.
+	 * @param {string} id - The target object ID.
+	 * @param {I.ObjectLayout} layout - The object layout.
+	 * @param {boolean} [allowBookmark] - Whether to allow bookmark layout.
+	 * @returns {object} The link block parameters.
+	 */
 	getLinkBlockParam (id: string, layout: I.ObjectLayout, allowBookmark?: boolean) {
 		if (U.Object.isInFileLayouts(layout)) {
 			return {
@@ -1247,6 +1047,11 @@ class UtilData {
 		};
 	};
 
+	/**
+	 * Returns the layout width for a given root object.
+	 * @param {string} rootId - The root object ID.
+	 * @returns {number} The layout width.
+	 */
 	getLayoutWidth (rootId: string): number {
 		const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
@@ -1256,6 +1061,11 @@ class UtilData {
 		return Number(ret) || 0;
 	};
 
+	/**
+	 * Sets the RTL (right-to-left) flag for a block if not already set.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	setRtl (rootId: string, blockId: string) {
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
@@ -1274,7 +1084,17 @@ class UtilData {
 		});
 	};
 
+	/**
+	 * Gets the list of conflicting relation IDs for a root object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {(ids: string[]) => void} callBack - Callback with the list of conflicting IDs.
+	 */
 	getConflictRelations (rootId: string, callBack: (ids: string[]) => void) {
+		if (!rootId) {
+			console.error('[U.Data].getConflictRelations: No rootId');
+			return;
+		};
+
 		C.ObjectTypeListConflictingRelations(rootId, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;

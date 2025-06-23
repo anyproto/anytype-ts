@@ -5,12 +5,12 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
+import CanvasWorkerBridge from 'Component/page/auth/animation/canvasWorkerBridge';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -118,35 +118,13 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
-let prev = '';
-
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
-		const { location } = this.props;
-		const oldParam = U.Router.getParam(prev);
-		const newParam = U.Router.getParam(location.pathname);
-		const noTransition = true; //(oldParam.page == newParam.page) && (oldParam.action == newParam.action);
-
-		let content = null;
-
-		if (noTransition) {
-			content = <Page {...this.props} isPopup={false} />;
-		} else {
-			content = (
-				<TransitionGroup component={null}>
-					<CSSTransition
-						key={location.key}
-						classNames="page-transition"
-						timeout={200}
-						mountOnEnter={true}
-						unmountOnExit={true}
-					>
-						<Page {...this.props} isPopup={false} />
-					</CSSTransition>
-				</TransitionGroup>
-			);
-		};
+		const { page, action } = (this.props.match?.params || {}) as any;
+		const noSidebar = 
+			[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
+			((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
 
 		return (
 			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
@@ -154,15 +132,11 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} />
-					{content}
+					{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} /> : ''}
+					<Page {...this.props} isPopup={false} />
 				</DragProvider>
 			</SelectionProvider>
 		);
-	};
-
-	componentDidMount (): void {
-		prev = this.props.location.pathname;
 	};
 
 };
@@ -230,6 +204,8 @@ class App extends React.Component<object, State> {
 								<Route path={path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
+
+						<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
 					</div>
 				</Provider>
 			</Router>
@@ -247,7 +223,6 @@ class App extends React.Component<object, State> {
 		U.Smile.init();
 
 		dispatcher.init(getGlobal('serverAddress'));
-		dispatcher.listenEvents();
 		keyboard.init();
 
 		this.registerIpcEvents();
@@ -272,8 +247,6 @@ class App extends React.Component<object, State> {
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
-		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-window', this.onWillCloseWindow);
@@ -310,7 +283,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, account, languages, isPinChecked, css } = data;
+		const { dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(this.node);
@@ -318,6 +291,8 @@ class App extends React.Component<object, State> {
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
+		const color = Storage.get('color');
+		const bgColor = Storage.get('bgColor');
 		const route = String(data.route || redirect || '');
 
 		S.Common.configSet(config, true);
@@ -325,6 +300,15 @@ class App extends React.Component<object, State> {
 		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
+
+		Action.checkDefaultSpellingLang();
+
+		if (!color) {
+			Storage.set('color', 'orange');
+		};
+		if (!bgColor) {
+			Storage.set('bgColor', 'orange');
+		};
 
 		analytics.init();
 
@@ -358,8 +342,15 @@ class App extends React.Component<object, State> {
 
 		if (accountId) {
 			if (isChild) {
-				Renderer.send('keytarGet', accountId).then((phrase: string) => {
-					U.Data.createSession(phrase, '', () => {
+				U.Data.createSession('', '', token, () => {
+					C.AccountSelect(accountId, '', 0, '', (message: any) => {
+						if (message.error.code) {
+							console.error('[App.onInit]:', message.error.description);
+							return;
+						};
+
+						const { account } = message;
+
 						if (!account) {
 							console.error('[App.onInit]: Account not found');
 							return;
@@ -377,7 +368,7 @@ class App extends React.Component<object, State> {
 						};
 
 						if (spaceId) {
-							U.Router.switchSpace(spaceId, '', false, routeParam);
+							U.Router.switchSpace(spaceId, '', false, routeParam, true);
 						} else {
 							U.Data.onAuthWithoutSpace(routeParam);
 						};
@@ -393,10 +384,7 @@ class App extends React.Component<object, State> {
 					};
 
 					e.preventDefault();
-					C.WalletCloseSession(S.Auth.token, () => {
-						S.Auth.tokenSet('');
-						window.close();
-					});
+					U.Data.closeSession(() => window.close());
 					return false;
 				});
 			} else {
@@ -587,7 +575,7 @@ class App extends React.Component<object, State> {
 
 		keyboard.disableContextOpen(true);
 
-		const { focused, range } = focus.state;
+		const { focused } = focus.state;
 		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const element = $(document.elementFromPoint(x, y));
@@ -617,10 +605,21 @@ class App extends React.Component<object, State> {
 									const value = String(obj.get(0).innerText || '');
 
 									S.Block.updateContent(rootId, focused, { text: value });
-									U.Data.blockInsertText(rootId, focused, item.id, range.from, range.to);
 
-									focus.set(focused, { from: range.from, to: range.from + item.id.length });
-									focus.apply();
+									// Find the first occurrence of the misspelled word in the value
+									const wordIndex = value.indexOf(misspelledWord);
+									if (wordIndex >= 0) {
+										U.Data.blockInsertText(
+											rootId,
+											focused,
+											item.id,
+											wordIndex,
+											wordIndex + misspelledWord.length
+										);
+
+										focus.set(focused, { from: wordIndex, to: wordIndex + item.id.length });
+										focus.apply();
+									};
 								} else 
 								if (isInput || isTextarea || isEditable) {
 									let value = '';

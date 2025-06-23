@@ -35,6 +35,8 @@ const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 		} else {
 			U.Router.go('/', routeParam);
 		};
+
+		S.Common.redirectSet('');
 	};
 
 	useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName, IconObject } from 'Component';
-import { I, S, C, U, Relation, translate, keyboard, analytics } from 'Lib';
+import { I, S, U, Relation, translate, keyboard, analytics } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -126,17 +126,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		};
 	};
 
-	const loadConflicts = () => {
-		if (isLoaded) {
-			return;
-		};
-
-		U.Data.getConflictRelations(rootId, ids => {
-			setIsLoaded(true);
-			setConflictIds(ids);
-		});
-	};
-
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
 		setActive(e.active);
@@ -161,6 +150,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
+		const element = $(nodeRef.current).find(`#item-${over.id}`);
+		const rect = element.length ? element.get(0).getBoundingClientRect() : null;
+		const pointerY = active.rect.current.translated?.top ?? 0;
+		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
 
 		let analyticsId = '';
 
@@ -170,7 +163,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			analyticsId = 'SameGroup';
         } else 
 		if ((from.relationKey && to.relationKey) || (from.id == I.SidebarRelationList.Local)) {
-			toItems.splice(newIndex, 0, active.id);
+			toItems.splice(newIndex + offset, 0, active.id);
 			onChange({
 				[from.relationKey]: fromItems.filter(id => id != active.id),
 				[to.relationKey]: toItems,
@@ -178,6 +171,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 			analyticsId = I.SidebarRelationList[to.id];
         };
+
+		if (from.id == I.SidebarRelationList.Local) {
+			analytics.stackAdd('AddConflictRelation', { count: 1 });
+		};
 
 		analytics.stackAdd('ReorderRelation', { id: analyticsId });
     };
@@ -217,6 +214,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 				rootId: object.id,
 				relationId: id,
 				readonly: !allowed,
+				noUnlink: list.id == I.SidebarRelationList.Local,
 				ref: 'type',
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					onChange({ [list.relationKey]: [ relation.id ].concat(ids) });
@@ -281,7 +279,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					<Label text={list.name} />
 					{list.description ? (
 						<Icon 
-							className="question withBackground"
+							className="question"
 							tooltipParam={{
 								text: list.description, 
 								className: 'relationGroupDescription',
@@ -334,7 +332,14 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	}));
 
 	useEffect(() => {
-		loadConflicts();
+		if (isLoaded || !object.id) {
+			return;
+		};
+
+		U.Data.getConflictRelations(object.id, ids => {
+			setIsLoaded(true);
+			setConflictIds(ids);
+		});
 	});
 
 	return (

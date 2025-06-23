@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar, Onboarding } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -194,6 +194,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			this.resize();
 
 			if (U.Object.isTypeLayout(object.layout)) {
+				window.setTimeout(() => Onboarding.start('typeResetLayout', isPopup), 50);
+
 				analytics.event('ScreenType', { objectType: object.id });
 			};
 		});

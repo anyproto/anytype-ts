@@ -87,11 +87,11 @@ class MenuContext extends React.Component<I.Menu> {
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
 		let archive = null;
 		let archiveCnt = 0;
-		let fav = null;
-		let favCnt = 0;
+		let pin = null;
+		let pinCnt = 0;
 
 		let allowedArchive = true;
-		let allowedFav = true;
+		let allowedPin = true;
 		let allowedCopy = true;
 		let allowedType = true;
 		let allowedLinkTo = data.allowedLinkTo;
@@ -109,38 +109,42 @@ class MenuContext extends React.Component<I.Menu> {
 				return;
 			};
 
-			if (object.isFavorite) favCnt++;
+			if (object.isFavorite) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
-				allowedFav = false;
+				allowedPin = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
 			};
-			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Type, I.RestrictionObject.Layout ])) {
 				allowedType = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
-			if (U.Object.isTypeOrRelationLayout(object.layout)) {
+			if (U.Object.isTypeLayout(object.layout)) {
+				allowedRelation = false;
+				allowedCopy	= false;
+			};
+			if (U.Object.isRelationLayout(object.layout)) {
 				allowedRelation = false;
 				allowedWidget = false;
 				allowedLinkTo = false;
 				allowedCopy	= false;
 				allowedCollection = false;
-				allowedFav = false;
+				allowedPin = false;
 			};
 		});
 
-		if (favCnt == length) {
-			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
+		if (pinCnt == length) {
+			pin = { id: 'unpin', name: translate('commonUnpin') };
 		} else {
-			fav = { id: 'fav', name: translate('commonAddToFavorites') };
+			pin = { id: 'pin', name: translate('commonPin') };
 		};
 
 		if (length > 1) {
@@ -152,7 +156,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (!canWrite) {
 			allowedArchive = false;
-			allowedFav = false;
+			allowedPin = false;
 			allowedCopy = false;
 			allowedType = false;
 			allowedLinkTo = false;
@@ -167,7 +171,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedLinkTo = false;
 			allowedUnlink = false;
 			allowedType = false;
-			allowedFav = false;
+			allowedPin = false;
 			allowedCollection = false;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
@@ -175,7 +179,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!allowedArchive)	 archive = null;
-		if (!allowedFav)		 fav = null;
+		if (!allowedPin)		 pin = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
 		if (!allowedLinkTo)		 linkTo = null;
@@ -188,7 +192,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		let sections = [
 			{ children: [ createWidget, open, changeType, relation, pageLink ] },
-			{ children: [ fav, linkTo, addCollection ] },
+			{ children: [ pin, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
 
@@ -258,6 +262,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'changeType': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
+					canAdd: true,
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
@@ -306,6 +311,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -317,7 +323,7 @@ class MenuContext extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
 								U.Object.openAuto(message.details);
 							});
@@ -417,12 +423,12 @@ class MenuContext extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'fav': {
+			case 'pin': {
 				Action.setIsFavorite(objectIds, true, route);
 				break;
 			};
 
-			case 'unfav': {
+			case 'unpin': {
 				Action.setIsFavorite(objectIds, false, route);
 				break;
 			};

@@ -4,24 +4,15 @@ import raf from 'raf';
 import { I, S, U, J, focus, Preview } from 'Lib';
 
 const AUTH_IDS = [ 'settings' ];
-const SHOW_DIMMER = [
-	'settings',
-	'confirm',
-	'migration',
-	'pin',
-	'preview',
-	'about',
-	'usecase',
-	'inviteRequest',
-	'inviteConfirm',
-	'usecase',
-	'membership',
-	'membershipFinalization',
-	'share',
-	'spaceCreate',
-	'logout',
-	'search',
-	'onboarding',
+const NO_DIMMER_IDS = [
+	'settingsOnboarding',
+	'shortcut',
+	'page',
+	'export',
+	'phrase',
+	'objectManager',
+	'relation',
+	'inviteQr',
 ];
 
 class PopupStore {
@@ -46,6 +37,11 @@ class PopupStore {
 		return this.popupList;
 	};
 
+	/**
+	 * Opens a popup with the given ID and parameters.
+	 * @param {string} id - The popup ID.
+	 * @param {I.PopupParam} param - The popup parameters.
+	 */
 	open (id: string, param: I.PopupParam) {
 		if (AUTH_IDS.includes(id) && !S.Auth.account) {
 			return;
@@ -76,10 +72,20 @@ class PopupStore {
 		Preview.previewHide(true);
 	};
 
+	/**
+	 * Gets a popup by ID.
+	 * @param {string} id - The popup ID.
+	 * @returns {I.Popup} The popup object.
+	 */
 	get (id: string): I.Popup {
 		return this.popupList.find(it => it.id == id);
 	};
 
+	/**
+	 * Updates a popup with the given ID and parameters.
+	 * @param {string} id - The popup ID.
+	 * @param {any} param - The popup parameters.
+	 */
 	update (id: string, param: any) {
 		const item = this.get(id);
 		if (!item) {
@@ -90,6 +96,11 @@ class PopupStore {
 		set(item, { param: Object.assign(item.param, param) });
 	};
 
+	/**
+	 * Updates the data of a popup with the given ID.
+	 * @param {string} id - The popup ID.
+	 * @param {any} data - The new data.
+	 */
 	updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
@@ -98,6 +109,12 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Checks if a popup is open.
+	 * @param {string} [id] - The popup ID.
+	 * @param {string[]} [filter] - Filter for popup IDs.
+	 * @returns {boolean} True if open, false otherwise.
+	 */
 	isOpen (id?: string, filter?: string[]): boolean {
 		if (!id) {
 			let length = 0;
@@ -111,6 +128,12 @@ class PopupStore {
 		return this.get(id) ? true : false;
 	};
 
+	/**
+	 * Checks if any popup in a list of IDs is open.
+	 * @private
+	 * @param {string[]} ids - The popup IDs.
+	 * @returns {boolean} True if any popup is open, false otherwise.
+	 */
 	isOpenList (ids: string[]) {
 		for (const id of ids) {
 			if (this.isOpen(id)) {
@@ -120,10 +143,21 @@ class PopupStore {
 		return false;
 	};
 
+	/**
+	 * Checks if a keyboard-related popup is open.
+	 * @private
+	 * @returns {boolean} True if a keyboard popup is open, false otherwise.
+	 */
 	isOpenKeyboard () {
 		return this.isOpenList([ 'search', 'template' ]);
 	};
 
+	/**
+	 * Closes a popup by ID.
+	 * @param {string} id - The popup ID.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 * @param {boolean} [force] - Whether to force close.
+	 */
 	close (id: string, callBack?: () => void, force?: boolean) {
 		const item = this.get(id);
 		if (!item) {
@@ -164,6 +198,11 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Closes all popups, optionally filtered by IDs.
+	 * @param {string[]} [ids] - Popup IDs to close.
+	 * @param {() => void} [callBack] - Optional callback after close.
+	 */
 	closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		const timeout = items.length ? J.Constant.delay.popup : 0;
@@ -176,19 +215,39 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Gets the popup items, optionally filtered by IDs.
+	 * @private
+	 * @param {string[]} [ids] - Popup IDs.
+	 * @returns {I.Popup[]} The popup items.
+	 */
 	getItems (ids?: string[]) {
 		return ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
 	};
 
+	/**
+	 * Gets the timeout value for popups.
+	 * @private
+	 * @returns {number} The timeout value.
+	 */
 	getTimeout () {
 		return this.getItems().length ? J.Constant.delay.popup : 0;
 	};
 
+	/**
+	 * Gets the last popup in the list.
+	 * @private
+	 * @returns {I.Popup|null} The last popup or null.
+	 */
 	getLast () {
 		const l = this.popupList.length;
 		return l ? this.popupList[l - 1] : null;
 	};
 
+	/**
+	 * Closes the last open popup.
+	 * @private
+	 */
 	closeLast () {
 		const last = this.getLast();
 		if (last) {
@@ -196,25 +255,30 @@ class PopupStore {
 		};
 	};
 
+	/**
+	 * Clears the popup close timeout.
+	 * @private
+	 */
 	clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};
 
-	showDimmerIds () {
-		return SHOW_DIMMER;
+	/**
+	 * Gets the list of popup IDs that do not require a dimmer.
+	 * @private
+	 * @returns {string[]} The list of popup IDs.
+	 */
+	noDimmerIds () {
+		return NO_DIMMER_IDS;
 	};
 
-	checkShowDimmer (list: I.Popup[]) {
-		let ret = false;
-		for (const item of list) {
-			if (SHOW_DIMMER.includes(item.id)) {
-				ret = true;
-				break;
-			};
-		};
-		return ret;
-	};
-
+	/**
+	 * Replaces one popup with another.
+	 * @private
+	 * @param {string} oldId - The old popup ID.
+	 * @param {string} newId - The new popup ID.
+	 * @param {I.PopupParam} param - The popup parameters.
+	 */
 	replace (oldId: string, newId: string, param: I.PopupParam) {
 		this.close(oldId, () => this.open(newId, param));
 	};

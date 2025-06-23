@@ -36,7 +36,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		const cn = [ 'viewContent', className ];
 
-		if (!relation || !relation.isInstalled) {
+		if (!relation) {
 			return (
 				<Empty
 					{...this.props}
@@ -84,17 +84,16 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	componentDidUpdate () {
 		this.resize();
 		U.Common.triggerResizeEditor(this.props.isPopup);
+
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
 	};
 
 	componentWillUnmount () {
-		const groups = this.getGroups(true);
-		const ids = [ this.getSubId('groups') ];
-
-		groups.forEach((it: any) => {
-			ids.push(this.getSubId(it.id));
-		});
-
-		C.ObjectSearchUnsubscribe(ids);
 		this.unbind();
 	};
 

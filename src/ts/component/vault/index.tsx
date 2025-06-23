@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S, C, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
 import VaultItem from './item';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
@@ -22,12 +22,25 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const top = useRef(0);
 	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
-	const isSubscribed = useRef(false);
 	const n = useRef(-1);
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const profile = U.Space.getProfile();
+	const itemsWithCounter = items.filter(it => {
+		if (!it.isButton) {
+			const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+			return counters.mentionCounter || counters.messageCounter;
+		};
+		return false;
+	}).sort((c1, c2) => U.Data.sortByNumericKey('lastMessageDate', c1, c2, I.SortType.Desc));
+
+	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
+	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
+	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
+	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
+	const canCreate = U.Space.canCreateSpace();
+
 	const cn = [ 'vault' ];
-	const counters = S.Chat.getTotalCounters();
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -67,13 +80,9 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			pressed.current.add(key);
 		};
 
-		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			pressed.current.add(key);
-		};
-
-		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
+		keyboard.shortcut('prevSpace, nextSpace', e, pressed => {
 			checkKeyUp.current = true;
-			onArrow(pressed.match('shift') ? -1 : 1);
+			onArrow(pressed == 'prevSpace' ? -1 : 1);
 
 			if (sidebar.isAnimating) {
 				return;
@@ -101,9 +110,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		pressed.current.delete(key);
 
 		if (
-			(pressed.current.has(Key.ctrl) || 
-			pressed.current.has(Key.tab) || 
-			pressed.current.has(Key.shift)) ||
+			(
+				pressed.current.has(Key.ctrl) || 
+				pressed.current.has(Key.tab)
+			) ||
 			!checkKeyUp.current
 		) {
 			return;
@@ -118,9 +128,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
-			if (item.targetSpaceId != S.Common.space) {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true });
-			};
+			onClick(e, item);
 		};
 
 		if (!sidebar.isAnimating) {
@@ -144,7 +152,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 		switch (item.id) {
 			case 'add': {
-				Action.createSpace(analytics.route.vault);
+				onAdd();
 				break;
 			};
 
@@ -163,10 +171,23 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			default: {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true });
+				if (item.isLocalOk && (item.targetSpaceId != S.Common.space)) {
+					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+				};
 				break;
 			};
 		};
+	};
+
+	const onAdd = () => {
+		const param = {
+			element: `#vault #item-add`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+		};
+
+		Action.spaceCreateMenu(param, analytics.route.vault);
 	};
 
 	const onArrow = (dir: number) => {
@@ -257,6 +278,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		keyboard.setDragging(false);
 
 		setDummy(dummy + 1);
+
+		analytics.event('ReorderSpace');
 	};
 
 	const onScroll = () => {
@@ -277,7 +300,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const element = node.find(`#item-${item.id}`);
 
 		Preview.tooltipShow({ 
-			text: U.Common.htmlSpecialChars(item.name), 
+			text: U.Common.htmlSpecialChars(item.tooltip || item.name), 
 			element, 
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
@@ -302,12 +325,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if (S.Auth.account && !isSubscribed.current) {
-			isSubscribed.current = true;
-			C.ChatSubscribeToMessagePreviews();
-		};
+		S.Chat.setBadge();
 
-		S.Chat.setBadge(counters);
 		$(nodeRef.current).find('#scroll').scrollTop(top.current);
 		setActive(S.Block.spaceview);
 	});
@@ -319,8 +338,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		setActive,
 		getNode: () => nodeRef.current,
 	}));
-
-	const itemSettings = { id: 'settings', name: translate('commonSettings'), isButton: true };	
 
 	return (
 		<div 
@@ -337,12 +354,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					onDragEnd={onSortEnd}
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
-					<SortableContext
-						items={items.map((item) => item.id)}
-						strategy={verticalListSortingStrategy}
-					>
 						<div id="scroll" className="side top" onScroll={onScroll}>
-							{items.map((item, i) => (
+							{itemsWithCounter.map((item, i) => (
 								<VaultItem 
 									key={`item-space-${item.id}`}
 									item={item}
@@ -352,11 +365,36 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
 								/>
 							))}
-						</div>
-					</SortableContext>
-				</DndContext>
 
+							{itemsWithCounter.length > 0 ? <div className="div" /> : ''}
+
+							<SortableContext
+								items={itemsWithoutCounter.map(item => item.id)}
+								strategy={verticalListSortingStrategy}
+							>
+								{itemsWithoutCounter.map((item, i) => (
+									<VaultItem 
+										key={`item-space-${item.id}`}
+										item={item}
+										onClick={e => onClick(e, item)}
+										onMouseEnter={e => onMouseEnter(e, item)}
+										onMouseLeave={() => Preview.tooltipHide()}
+										onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+									/>
+								))}
+							</SortableContext>
+						</div>
+				</DndContext>
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
+					{canCreate ? (
+						<VaultItem 
+							item={itemAdd}
+							onClick={e => onClick(e, itemAdd)}
+							onContextMenu={null}
+							onMouseEnter={e => onMouseEnter(e, itemAdd)}
+							onMouseLeave={() => Preview.tooltipHide()}
+						/>
+					) : ''}
 					<VaultItem 
 						item={itemSettings}
 						onClick={e => onClick(e, itemSettings)}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate, sidebar } from 'Lib';
 
 class MenuObject extends React.Component<I.Menu> {
 	
@@ -92,7 +92,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
-		const isTemplate = U.Object.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplateType(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
 		const isBookmark = U.Object.isBookmarkLayout(object.layout);
@@ -101,14 +101,14 @@ class MenuObject extends React.Component<I.Menu> {
 		const isInFileLayouts = U.Object.isInFileLayouts(object.layout);
 		const isInFileOrSystemLayouts = U.Object.isInFileOrSystemLayouts(object.layout);
 		const isTypeOrRelationLayout = U.Object.isTypeOrRelationLayout(object.layout);
+		const isType = U.Object.isTypeLayout(object.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		let archive = null;
 		let remove = null;
-		let fav = null;
+		let pin = null;
 		let pageLock = null;
-		let pageInstall = null;
 		let template = null;
 		let setDefaultTemplate = null;
 		let advancedOptions = [];
@@ -128,6 +128,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
+		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' }
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -138,9 +139,9 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
+			pin = { id: 'unpin', name: translate('commonUnpin') };
 		} else {
-			fav = { id: 'fav', name: translate('commonAddToFavorites') };
+			pin = { id: 'pin', name: translate('commonPin') };
 		};
 
 		if (block) {
@@ -149,10 +150,6 @@ class MenuObject extends React.Component<I.Menu> {
 			} else {
 				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: keyboard.getCaption('pageLock') };
 			};
-		};
-
-		if (isTypeOrRelationLayout && !object.isInstalled) {
-			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 
 		if (object.isArchived) {
@@ -175,15 +172,13 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !isFilePreview && !isInSetLayouts;
 		const allowedHistory = !object.isArchived && !isInFileOrSystemLayouts && !isParticipant && !isDate && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
+		const allowedPin = canWrite && !object.isArchived && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystemLayouts;
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived && !isTemplate;
 		const allowedPageLink = !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
 		const allowedReload = canWrite && object.source && isBookmark;
-		const allowedInstall = canWrite && !object.isInstalled && isTypeOrRelationLayout;
-		const allowedUninstall = canWrite && object.isInstalled && isTypeOrRelationLayout && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
@@ -191,6 +186,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedDownloadFile = isInFileLayouts;
 		const allowedOpenFile = isInFileLayouts;
 		const allowedOpenObject = isFilePreview;
+		const allowedEditType = isType;
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -203,8 +199,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedReload)			 pageReload = null;
 		if (!allowedSearch)			 search = null;
 		if (!allowedHistory)		 history = null;
-		if (!allowedFav)			 fav = null;
-		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
+		if (!allowedPin)			 pin = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
@@ -214,11 +209,13 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedDownloadFile)	 downloadFile = null;
 		if (!allowedOpenFile)		 openFile = null;
 		if (!allowedOpenObject)		 openObject = null;
+		if (!allowedEditType) 		 editType = null;
 
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
 			remove = null;
+			pin = null;
 		};
 
 		advancedOptions.push(pageDeeplink);
@@ -229,6 +226,9 @@ class MenuObject extends React.Component<I.Menu> {
 			advanced = null;
 		};
 
+		// Temporary hidden options
+		pin = null;
+
 		let sections = [];
 		if (hasShortMenu) {
 			if (!U.Object.isInSetLayouts(object.layout)) {
@@ -237,9 +237,9 @@ class MenuObject extends React.Component<I.Menu> {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ createWidget, fav, pageLock, history ] },
+				{ children: [ createWidget, pin, pageLock, history ] },
 				{ children: [ linkTo, addCollection, template, pageLink ] },
-				{ children: [ search, pageInstall, pageCopy, archive, remove ] },
+				{ children: [ search, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 				{ children: [ openFile, downloadFile ] },
 			]);
@@ -260,7 +260,7 @@ class MenuObject extends React.Component<I.Menu> {
 			} else {
 				sections = sections.concat([
 					{ children: [ openObject ] },
-					{ children: [ createWidget, fav, pageLock ] },
+					{ children: [ createWidget, pin, pageLock ] },
 					{ children: [ linkTo, addCollection, template, pageLink ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageReload ] },
@@ -272,6 +272,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		sections = sections.concat([ { children: [ advanced ] } ]);
+		sections = [ { children: [ editType ] } ].concat(sections);
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -350,6 +351,7 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
@@ -361,7 +363,7 @@ class MenuObject extends React.Component<I.Menu> {
 						name: translate('blockDataviewCreateNewCollection'),
 						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
 						onClick: (details: any) => {
-							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, [ rootId ]);
 								U.Object.openAuto(message.details);
 							});
@@ -512,13 +514,9 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'pageLock': {
-				keyboard.onLock(rootId, true, route);
-				break;
-			};
-
+			case 'pageLock':
 			case 'pageUnlock': {
-				keyboard.onLock(rootId, false, route);
+				keyboard.onLock(rootId, item.id == 'pageLock', route);
 				break;
 			};
 
@@ -534,25 +532,9 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'pageInstall': {
-				Action.install(object, false, (message: any) => {
-					U.Object.openAuto(message.details);
-				});
-				break;
-			};
-
-			case 'pageUninstall': {
-				Action.uninstall(object, false, '', () => onBack());
-				break;
-			};
-
-			case 'fav': {
-				Action.setIsFavorite([ rootId ], true, route);
-				break;
-			};
-
-			case 'unfav': {
-				Action.setIsFavorite([ rootId ], false, route);
+			case 'pin':
+			case 'unpin': {
+				Action.setIsFavorite([ rootId ], item.id == 'pin', route);
 				break;
 			};
 
@@ -592,6 +574,11 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'openAsObject': {
 				U.Object.openAuto(object);
+				break;
+			};
+
+			case 'editType': {
+				sidebar.rightPanelToggle(true, keyboard.isPopup(), 'type', { rootId })
 				break;
 			};
 		};

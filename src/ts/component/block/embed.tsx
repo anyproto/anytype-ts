@@ -113,7 +113,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				</div>
 			);
 		} else {
-			source = <Icon className="source withBackground" onMouseDown={this.onEdit} />;
+			source = <Icon className="source" onMouseDown={this.onEdit} />;
 			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -131,6 +131,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
+				{source}
+
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
@@ -140,7 +142,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					<div id="value" onMouseDown={this.onEdit} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
-					{source}
 					{resize}
 
 					<Error id="error" />
@@ -470,7 +471,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		this.range = this.getRange();
 
-		S.Common.filterSet(this.range.from, '');
+		if (this.range) {
+			S.Common.filterSet(this.range.from, '');
+		};
 		this.onLatexMenu(e, 'select', true);
 	};
 
@@ -483,10 +486,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const win = $(window);
 
 		const recalcRect = () => {
-			let rect = null;
-			if (element == 'input') {
-				rect = U.Common.getSelectionRect();
-			};
+			const rect = element == 'input' ? U.Common.getSelectionRect() : null;
 			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
 
@@ -545,7 +545,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
-		this.refEditable.setValue(value);
+		this.refEditable?.setValue(value);
 		this.placeholderCheck();
 
 		if (range) {
@@ -616,7 +616,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const sanitizeParam: any = { 
-						ADD_TAGS: [ 'iframe' ],
+						ADD_TAGS: [ 'iframe', 'div', 'a' ],
 						ADD_ATTR: [
 							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
 						],
@@ -631,7 +631,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						className: U.Data.blockEmbedClass(processor),
 						blockId: block.id,
 					};
-
 					// Fix Bilibili schemeless urls and autoplay
 					if (block.isEmbedBilibili()) {
 						if (text.match(/src="\/\/player[^"]+"/)) {
@@ -670,6 +669,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
+					if (block.isEmbedDrawio()) {
+						sanitizeParam.ADD_TAGS.push('svg', 'foreignObject', 'switch');
+
+						allowScript = !!text.match(/https:\/\/(?:viewer|embed|app)\.diagrams\.net\/\?[^"\s>]*/);
+					};
+
 					if (allowScript) {
 						sanitizeParam.FORCE_BODY = true;
 						sanitizeParam.ADD_TAGS.push('script');
@@ -678,7 +683,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = this.sanitize(text, allowScript);
+						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 
 					iw.postMessage(data, '*');
@@ -937,22 +942,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	sanitize (text: string, allowScript: boolean): string {
-		const param: any = { 
-			ADD_TAGS: [ 'iframe' ],
-			ADD_ATTR: [
-				'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
-			],
-		};
-
-		if (allowScript) {
-			param.FORCE_BODY = true;
-			param.ADD_TAGS.push('script');
-		};
-
-		return DOMPurify.sanitize(text, param);
 	};
 
 	resize () {

@@ -189,6 +189,8 @@
 					if (cachedHtml !== html) {
 						root.html(html);
 						cachedHtml = html;
+
+						renderLinks();
 					};
 				};
 
@@ -244,6 +246,8 @@
 							};
 
 							root.html(data.div);
+
+							renderLinks();
 							resize();
 						}
 					});
@@ -261,11 +265,19 @@
 						success: (data) => {
 							root.html(data);
 
-							root.find('a').off('click').on('click', function (e) {
-								e.preventDefault();
-								window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href'), blockId }, '*');
-							});
+							renderLinks();
 						}
+					});
+				};
+
+				function renderLinks () {
+					root.find('a').off('click').on('click', function (e) {
+						e.preventDefault();
+
+						const el = $(this);
+						const url = el.attr('href') || el.attr('xlink:href');
+
+						window.parent.postMessage({ type: 'openUrl', url, blockId }, '*');
 					});
 				};
 

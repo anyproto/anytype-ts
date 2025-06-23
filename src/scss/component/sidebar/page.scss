@@ -10,10 +10,12 @@
 
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
+
+		.icon.close { background-image: url('~img/icon/close.svg'); }
 	}
 
 	.body {
-		padding: 0px 12px 12px 12px; overflow: scroll; display: flex; flex-direction: column; gap: 12px 0px; overscroll-behavior: none; 
+		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow: scroll; overscroll-behavior: none; 
 		scrollbar-gutter: stable both-edges; flex-grow: 1;
 	}
 	.body {
@@ -35,7 +37,7 @@
 					.label { font-weight: 500; @include text-common; color: var(--color-text-secondary); display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 					
 					.label::before { 
-						content: ''; width: 20px; height: 20px; background-image: url('~img/icon/widget/collapse.svg'); transform: rotateZ(-90deg); 
+						content: ''; width: 20px; height: 20px; background-image: url('~img/icon/widget/collapse0.svg'); transform: rotateZ(-90deg);
 						transition: $transitionAllCommon;
 					}
 					&.isOpen {
@@ -124,4 +126,5 @@
 }
 
 @import "./page/type.scss";
-@import "./page/object.scss";
+@import "./page/object/relation.scss";
+@import "./page/object/tableOfContents.scss";

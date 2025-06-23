@@ -55,7 +55,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</span>
-					{canEdit ? <Icon className="delete withBackground" onClick={e => this.onRemove(e, item)} /> : ''}
+					{canEdit ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
 				</div>
 			);
 		});
@@ -190,7 +190,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	getItems () {
-		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, valueMapper, nameAdd, canEdit } = data;
@@ -202,20 +201,9 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = value.map(valueMapper);
 		};
 
-		value = value.filter(it => {
-			if (!it) {
-				return false;
-			};
-
-			if (it._empty_ || it.isArchived || it.isDeleted) {
-				return false;
-			};
-
-			return true;
-		});
-
+		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		value = S.Record.checkHiddenObjects(value);
-		
+
 		if (!value.length) {
 			value.push({ isEmpty: true });
 		};

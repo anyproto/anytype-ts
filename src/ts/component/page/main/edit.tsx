@@ -18,7 +18,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 		if (home && (rootId != home.id)) {
 			let key = '';
-			if (U.Object.isTemplate(object.type)) {
+			if (U.Object.isTemplateType(object.type)) {
 				key = 'template';
 			} else 
 			if (!S.Block.checkBlockTypeExists(rootId) && Onboarding.isCompleted('basics')) {
@@ -43,7 +43,8 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			<div id="bodyWrapper" className="wrapper">
 				<EditorPage 
-					key="editorPage" {...props} 
+					key="editorPage"
+					{...props} 
 					isPopup={isPopup} 
 					rootId={rootId} 
 					onOpen={onOpen} 

@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Frame, Title, Label, Button } from 'Component';
 import { I, C, S, U, Action, Survey, analytics, translate } from 'Lib';
-import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage } from './animation/constants';
 
 const DAYS = 30;
@@ -93,13 +92,13 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	useEffect(() => {
+		S.Common.getRef('mainAnimation')?.create();
+
 		window.setTimeout(() => Survey.check(I.SurveyType.Delete), S.Popup.getTimeout());
 	}, []);
 
 	return account ? (
 		<>
-			<CanvasWorkerBridge state={OnboardStage.Void} />
-			
 			<Frame>
 				{showPie ? (
 					<div className="animation pie">

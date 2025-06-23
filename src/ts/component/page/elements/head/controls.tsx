@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, S, U, J, focus, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, keyboard, analytics } from 'Lib';
 import ControlButtons from './controlButtons';
 
 interface Props extends I.PageComponent {
@@ -121,6 +121,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				onUpload (objectId: string) {
 					U.Object.setIcon(rootId, '', objectId, cb);
 				},
+				route: analytics.route.icon,
 			}
 		});
 	};

@@ -1,5 +1,8 @@
 import { I } from 'Lib';
 
+export interface BlockRef {
+};
+
 export interface PageInfo {
 	id: string;
 	snippet: string;
@@ -88,11 +91,11 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
-	renderMentions?(rootId: string, node: any, marks: I.Mark[], getValue: () => string): void;
-	renderObjects?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any): void;
-	renderLinks?(node: any, marks: I.Mark[], getValue: () => string, props: any): void;
-	renderEmoji?(node: any): void;
-	checkMarkOnBackspace?(value: string, range: I.TextRange, marks: I.Mark[]): { value: string, marks: I.Mark[], save: boolean };
+	renderMentions?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, param?: any): void;
+	renderObjects?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
+	renderLinks?(rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any): void;
+	renderEmoji?(node: any, param?: any): void;
+	checkMarkOnBackspace?(value: string, range: I.TextRange, marks: I.Mark[]): { value: string, marks: I.Mark[], range: I.TextRange, save: boolean };
 };
 
 export interface BlockStructure {
@@ -196,6 +199,7 @@ export interface Block {
 	isEmbedGithubGist?(): boolean;
 	isEmbedSketchfab?(): boolean;
 	isEmbedBilibili?(): boolean;
+	isEmbedDrawio?():boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

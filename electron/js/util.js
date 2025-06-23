@@ -49,7 +49,7 @@ class Util {
 	};
 
 	getRouteFromUrl (url) {
-		return url.replace(`${protocol}://`, '/');
+		return String(url || '').replace(`${protocol}://`, '/');
 	};
 
 	getTheme () {
@@ -95,7 +95,6 @@ class Util {
 	};
 
 	dataPath () {
-		const { channel } = ConfigManager.config;
 		const envPath = process.env.DATA_PATH;
 		const dataPath = [];
 

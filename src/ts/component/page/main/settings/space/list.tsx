@@ -78,7 +78,7 @@ const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList ext
 
 	onClick (space: any) {
 		if (space.isAccountActive) {
-			U.Router.switchSpace(space.targetSpaceId, '', true, {});
+			U.Router.switchSpace(space.targetSpaceId, '', true, {}, false);
 		};
 	};
 

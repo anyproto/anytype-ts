@@ -10,7 +10,12 @@ class UtilPrism {
 		this.aliasMap = this.getAliasMap();
 	};
 
-	private getDependencies (lang: string) {
+	/**
+	 * Returns an array of dependencies for a given Prism language, in load order.
+	 * @param {string} lang - The language key.
+	 * @returns {string[]} The array of dependencies.
+	 */
+	private getDependencies (lang: string): string[] {
 		const result = [];
 		const language = Components.languages[lang] || {};
 		// the type of `require`, `optional`, `alias` is one of `undefined`, `string[]` and `string`
@@ -24,7 +29,10 @@ class UtilPrism {
 		return result;
 	};
 
-	/** returns an array which is the correct order of loading all Prism components */
+	/**
+	 * Returns an array which is the correct order of loading all Prism components.
+	 * @returns {string[]} The ordered list of component keys.
+	 */
 	get components (): string[] {
 		const result = [];
 		for (const key in Components.languages) {
@@ -33,6 +41,10 @@ class UtilPrism {
 		return [ ...new Set(result) ];
 	};
 
+	/**
+	 * Returns a map of language keys to their display titles.
+	 * @returns {object} The map of language keys to titles.
+	 */
 	private getMap () {
 		const result = {};
 
@@ -52,6 +64,10 @@ class UtilPrism {
 		return result;
 	};
 
+	/**
+	 * Returns a map of display titles to arrays of language keys.
+	 * @returns {Map<string, string[]>} The value-key map.
+	 */
 	getValueKeyMap (): Map<string, string[]> {
 		const ret: Map<string, string[]> = new Map();
 		for (const [ key, value ] of Object.entries(this.map)) {
@@ -60,6 +76,10 @@ class UtilPrism {
 		return ret;
 	};
 
+	/**
+	 * Returns a map of language keys to their canonical alias.
+	 * @returns {object} The alias map.
+	 */
 	getAliasMap () {
 		const map = this.getValueKeyMap();
 		const result: { [ key: string ]: string } = {};
@@ -73,6 +93,10 @@ class UtilPrism {
 		return result;
 	};
 
+	/**
+	 * Returns an array of language titles and their canonical key.
+	 * @returns {{ id: string, name: string }[]} The array of language titles.
+	 */
 	getTitles () {
 		const map = this.getValueKeyMap();
 		const result: { id: string; name: string }[] = [];

@@ -13,15 +13,6 @@
 	}
 	.word:empty { margin: 0px; }
 
-	.bg { border-radius: 8px; filter: blur(10px); }
-	.bg-orange { background: var(--color-orange) !important; user-select: none !important; }
-	.bg-red { background: var(--color-red) !important; }
-	.bg-pink { background: var(--color-pink) !important; }
-	.bg-purple { background: var(--color-purple) !important; }
-	.bg-blue { background: var(--color-blue) !important; }
-	.bg-ice { background: var(--color-ice) !important; }
-	.bg-lime { background: var(--color-lime) !important; }
-
 	.placeholder { color: var(--color-text-tertiary); top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	#entry { 
 		display: inline; font-size: var(--font-size-header3); line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; user-select: text; 
@@ -30,15 +21,23 @@
 
 	.icon { 
 		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute;
-		right: -32px; top: 50%; margin: -10px 0px 0px 0px; cursor: default;
+		right: -32px; top: 50%; margin: -14px 0px 0px 0px; cursor: default;
 	}
-	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
-	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
-	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
-	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
+	.icon.show { background-image: url('~img/icon/keyphrase/hide0.svg'); }
+	.icon.show:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
 	.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); display: none; }
-}
-.phraseWrapper.isReadonly {
-	#entry { display: none; }
+
+	&.isHidden {
+		.word { border-radius: 8px; filter: blur(10px); background-color: var(--color-text-primary); }
+
+		.icon.show { background-image: url('~img/icon/keyphrase/see0.svg'); }
+		.icon.show:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
+	}
+
+	&.isReadonly {
+		#entry { display: none; }
+	}
+
+	&.hasError { background: #240e07; }
 }
 .phraseWrapper.hasError { background: #240e07; }

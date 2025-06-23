@@ -16,20 +16,14 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
+import ViewTimeline from './dataview/view/timeline';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-interface State {
-	loading: boolean;
-};
+const BlockDataview = observer(class BlockDataview extends React.Component<Props> {
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
-
-	state = {
-		loading: false,
-	};
 	node = null;
 	refView = null;
 	refControls = null;
@@ -95,7 +89,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	render () {
 		const { rootId, block, isPopup, isInline, readonly } = this.props;
-		const { loading } = this.state;
 		const views = S.Record.getViews(rootId, block.id);
 
 		if (!views.length) {
@@ -112,7 +105,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const cn = [ 'focusable', `c${block.id}` ];
 
-		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
+		const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 		const className = [ U.Common.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 		let ViewComponent: any = null;
@@ -146,6 +139,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			case I.ViewType.Graph:
 				ViewComponent = ViewGraph;
+				break;
+
+			case I.ViewType.Timeline:
+				ViewComponent = ViewTimeline;
 				break;
 		};
 
@@ -186,9 +183,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			canCellEdit: this.canCellEdit,
 		};
 
-		if (loading) {
-			body = null;
-		} else
 		if (isInline && !targetId) {
 			body = this.getEmpty('target');
 		} else
@@ -379,7 +373,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = viewId;
 
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline } = this.props;
 		const subId = this.getSubId();
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
@@ -388,10 +382,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
 			return;
-		};
-
-		if (clear) {
-			S.Record.recordsSet(subId, '', []);
 		};
 
 		S.Record.metaSet(subId, '', { offset, viewId });
@@ -403,17 +393,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewId = '';
 			};
 		} else 
-		if (view.type == I.ViewType.Calendar) {
+		if ([ I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type)) {
 			if (this.refView && this.refView.load) {
 				this.refView.load();
 			} else {
 				this.viewId = '';
 			};
 		} else {
-			if (clear) {
-				this.setState({ loading: true });
-			};
-
 			const filters = [];
 
 			if (this.searchIds) {
@@ -421,6 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			Dataview.getData({
+				isInline,
 				rootId, 
 				subId,
 				blockId: block.id, 
@@ -432,15 +419,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				sources,
 				filters,
 				collectionId: (isCollection ? this.getObjectId() : ''),
-			}, (message: any) => {
-				if (clear) {
-					this.setState({ loading: false });
-				};
-
-				if (callBack) {
-					callBack(message);
-				};
-			});
+			}, callBack);
 		};
 	};
 
@@ -458,8 +437,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getObjectId (): string {
-		const { rootId, block } = this.props;
-		return block.getTargetObjectId() || rootId;
+		const { rootId, block, isInline } = this.props;
+
+		let ret = block.getTargetObjectId();
+		if (!isInline && !ret) {
+			ret = rootId;
+		};
+
+		return ret;
 	};
 
 	getKeys (id: string): string[] {
@@ -476,6 +461,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if (view.groupRelationKey) {
 				keys.push(view.groupRelationKey);
 			};
+
+			if (view.endRelationKey) {
+				keys.push(view.endRelationKey);
+			};
 		};
 
 		return U.Common.arrayUnique(keys);
@@ -491,7 +480,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (type) {
 			default: {
-				limit = isInline ? pageLimit : 0;
+				limit = isInline ? pageLimit : 500;
 				break;
 			};
 
@@ -506,8 +495,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSubId (groupId?: string): string {
-		const { rootId, block, isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const { rootId, block } = this.props;
 
 		let ret = '';
 		if (groupId) {
@@ -515,7 +503,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			ret = S.Record.getSubId(rootId, block.id);
 		};
-		return ret + namespace;
+		return ret;
 	};
 
 	getRecords (groupId?: string): string[] {
@@ -678,7 +666,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -727,7 +715,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				U.Object.openConfig(object);
 			} else {
 				if (U.Object.isNoteLayout(object.layout)) {
-					this.onCellClick(e, 'name', object.id);
+					this.onCellClick(e, 'name', object.id, object);
 				} else {
 					window.setTimeout(() => {
 						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
@@ -781,9 +769,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const menuParam = this.getMenuParam(e, dir);
 
-		S.Menu.open('dataviewCreateBookmark', {
+		U.Menu.onBookmarkMenu({
 			...menuParam,
-			type: I.MenuType.Horizontal,
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			offsetX: dir < 0 ? -24 : 0,
@@ -798,6 +785,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				},
 			},
 			...param,
+		}, (bookmark) => {
+			if (this.isCollection()) {
+				C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
+			};
 		});
 	};
 
@@ -890,7 +881,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -948,7 +939,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
-					U.Object.openEvent(e, record);
+					U.Object.openPopup(record);
 				};
 			} else {
 				U.Object.openConfig(record);
@@ -980,13 +971,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onContext (e: any, id: string): void {
+	onContext (e: any, id: string, subId?: string): void {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (e.ctrlKey) {
+			return;
+		};
+
+		subId = subId || this.getSubId();
+
 		const { block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
-		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const view = this.getView();
 
@@ -1038,11 +1034,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, true, message => onSelect(message.details, true));
+				C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([
-				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Set, I.ObjectLayout.Type ] },
 				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
@@ -1065,13 +1061,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
 				};
 
-				if (isNew && this.refControls && this.refControls.refHead) {
-					const ref = this.refControls.refHead;
+				if (isNew) {
+					const ref = this.refControls?.getHeadRef();
 					const l = String(item.name || '').length;
 
-					ref.setValue(item.name);
-					ref.setRange({ from: l, to: l });
-					ref.setEditing(true);
+					if (ref) {
+						ref.setValue(item.name);
+						ref.setRange({ from: l, to: l });
+						ref.setEditing(true);
+					};
 				};
 
 				if (isInline) {
@@ -1099,6 +1097,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				filters,
 				addParam,
 				onSelect,
+				withPlural: true,
 			}
 		}, param || {}));
 	};
@@ -1250,6 +1249,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'source': {
+				cn.push('withHead');
+
 				emptyProps = {
 					title: translate('blockDataviewEmptySourceTitle'),
 					description: translate('blockDataviewEmptySourceDescription'),
@@ -1433,7 +1434,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.filter = v;
 
 			if (v) {
-				U.Data.search({
+				U.Subscription.search({
 					filters: [],
 					sorts: [],
 					fullText: v,
@@ -1507,9 +1508,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
 			};
 
-			if (this.refControls && this.refControls.resize) {
-				this.refControls.resize();
-			};
+			this.refControls?.resize();
 
 			if (this.refView && this.refView.resize) {
 				this.refView.resize();

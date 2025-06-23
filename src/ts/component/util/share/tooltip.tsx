@@ -1,31 +1,26 @@
 import React, { FC } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, translate, analytics } from 'Lib';
 
 interface Props {
-	route: string;
+	text: string;
+	onClick?: () => void;
 };
 
-const ShareTooltip: FC<Props> = observer(({ 
-	route = '',
+const ShareTooltip: FC<Props> = ({
+	text = '',
+	onClick,
 }) => {
-
-	const onClickHandler = () => {
-		S.Popup.open('share', {});
-		analytics.event('ClickShareApp', { route });
-	};
 
 	return (
 		<div
 			className="shareTooltip"
-			onClick={onClickHandler}
+			onClick={onClick}
 		>
 			<Icon className="smile" />
-			<Label text={translate('shareTooltipLabel')} />
+			<Label text={text} />
 		</div>
 	);
 
-});
+};
 
 export default ShareTooltip;

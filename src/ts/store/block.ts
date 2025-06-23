@@ -66,26 +66,51 @@ class BlockStore {
 		return String(this.workspaceId || '');
 	};
 
+	/**
+	 * Sets the profile ID.
+	 * @param {string} id - The profile ID.
+	 */
 	profileSet (id: string) {
 		this.profileId = String(id || '');
 	};
 
+	/**
+	 * Sets the widgets ID.
+	 * @param {string} id - The widgets ID.
+	 */
 	widgetsSet (id: string) {
 		this.widgetsId = String(id || '');
 	};
 
+	/**
+	 * Sets the root ID.
+	 * @param {string} id - The root ID.
+	 */
 	rootSet (id: string) {
 		this.rootId = String(id || '');
 	};
 
+	/**
+	 * Sets the spaceview ID.
+	 * @param {string} id - The spaceview ID.
+	 */
 	spaceviewSet (id: string) {
 		this.spaceviewId = String(id || '');
 	};
 
+	/**
+	 * Sets the workspace ID.
+	 * @param {string} id - The workspace ID.
+	 */
 	workspaceSet (id: string) {
 		this.workspaceId = String(id || '');
 	};
 	
+	/**
+	 * Sets the block map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {I.Block[]} blocks - The blocks to set.
+	 */
 	set (rootId: string, blocks: I.Block[]) {
 		const map: Map<string, I.Block> = new Map();
 		
@@ -96,6 +121,11 @@ class BlockStore {
 		this.blockMap.set(rootId, map);
 	};
 
+	/**
+	 * Adds a block to the block map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {I.Block} block - The block to add.
+	 */
 	add (rootId: string, block: I.Block) {
 		const map = this.blockMap.get(rootId);
 		if (map) {
@@ -103,6 +133,12 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Updates a block in the block map.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} param - The parameters to update.
+	 */
 	update (rootId: string, blockId: string, param: any) {
 		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
@@ -112,6 +148,12 @@ class BlockStore {
 		set(block, param);
 	};
 
+	/**
+	 * Updates the content of a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} content - The new content.
+	 */
 	updateContent (rootId: string, blockId: string, content: any) {
 		const block = this.getLeaf(rootId, blockId);
 		if (block) {
@@ -119,6 +161,10 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Clears all data for a root ID.
+	 * @param {string} rootId - The root ID.
+	 */
 	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
@@ -126,6 +172,9 @@ class BlockStore {
 		this.participantMap.delete(rootId);
 	};
 
+	/**
+	 * Clears all data in the store.
+	 */
 	clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
@@ -137,6 +186,11 @@ class BlockStore {
 		this.participantMap.clear();
 	};
 
+	/**
+	 * Sets the structure map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {any[]} list - The structure list.
+	 */
 	setStructure (rootId: string, list: any[]) {
 		const map: Map<string, I.BlockStructure> = new Map();
 
@@ -155,6 +209,12 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Updates the structure of a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string[]} childrenIds - The children IDs.
+	 */
 	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const element = this.getMapElement(rootId, blockId);
 		if (!element) {
@@ -165,6 +225,10 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Updates parent references in the structure map.
+	 * @param {string} rootId - The root ID.
+	 */
 	updateStructureParents (rootId: string) {
 		const map = this.getMap(rootId);
 
@@ -179,6 +243,11 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Deletes a block from the block and structure maps.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID to delete.
+	 */
 	delete (rootId: string, id: string) {
 		const blocks = this.getBlocks(rootId);
 		const map = this.getMap(rootId);
@@ -187,6 +256,11 @@ class BlockStore {
 		map.delete(id);
 	};
 
+	/**
+	 * Sets restrictions for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {any} restrictions - The restrictions object.
+	 */
 	restrictionsSet (rootId: string, restrictions: any) {
 		let map = this.restrictionMap.get(rootId);
 
@@ -203,6 +277,11 @@ class BlockStore {
 		this.restrictionMap.set(rootId, map);
 	};
 
+	/**
+	 * Sets participants for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {I.BlockParticipant[]} participants - The participants array.
+	 */
 	participantsSet (rootId: string, participants: I.BlockParticipant[]) {
 		let map = this.participantMap.get(rootId);
 
@@ -217,30 +296,65 @@ class BlockStore {
 		this.participantMap.set(rootId, map);
 	};
 
+	/**
+	 * Gets the structure map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @returns {Map<string, I.BlockStructure>} The structure map.
+	 */
 	getMap (rootId: string) {
 		return this.treeMap.get(rootId) || new Map();
 	};
 
+	/**
+	 * Gets a structure element by block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {I.BlockStructure|null} The structure element or null.
+	 */
 	getMapElement (rootId: string, blockId: string): I.BlockStructure {
 		const map = this.getMap(rootId);
 		return map ? map.get(blockId) : null;
 	};
 
+	/**
+	 * Gets the parent structure element for a block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.BlockStructure|null} The parent structure element or null.
+	 */
 	getParentMapElement (rootId: string, id: string): I.BlockStructure {
 		const element = this.getMapElement(rootId, id);
 		return element ? this.getMapElement(rootId, element.parentId) : null;
 	};
 
+	/**
+	 * Gets a block by ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.Block|null} The block or null.
+	 */
 	getLeaf (rootId: string, id: string): I.Block {
 		const map = this.blockMap.get(rootId);
 		return map ? map.get(id) : null;
 	};
 
+	/**
+	 * Gets the parent block for a block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.Block|null} The parent block or null.
+	 */
 	getParentLeaf (rootId: string, id: string): I.Block {
 		const element = this.getMapElement(rootId, id);
 		return element ? this.getLeaf(rootId, element.parentId) : null;
 	};
 
+	/**
+	 * Gets all blocks for a root ID, optionally filtered.
+	 * @param {string} rootId - The root ID.
+	 * @param {(it: any) => boolean} [filter] - Optional filter function.
+	 * @returns {I.Block[]} The blocks array.
+	 */
 	getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
 		const map = this.blockMap.get(rootId);
 		if (!map) {
@@ -262,7 +376,15 @@ class BlockStore {
 		});
 	};
 
-	// If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
+	/**
+	 * Gets the next block in a given direction, optionally using a check function.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The current block ID.
+	 * @param {number} dir - The direction (1 for next, -1 for previous).
+	 * @param {(item: I.Block) => any} [check] - Optional check function.
+	 * @param {any[]} [list] - Optional list of blocks.
+	 * @returns {any} The next block or null.
+	 */
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
 			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
@@ -283,11 +405,24 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Gets the first block in a direction that passes a check.
+	 * @param {string} rootId - The root ID.
+	 * @param {number} dir - The direction (1 for first, -1 for last).
+	 * @param {(item: I.Block) => any} check - The check function.
+	 * @returns {I.Block} The first block passing the check.
+	 */
 	getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
 		const list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(check);
 		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 
+	/**
+	 * Gets the highest parent block for a block ID.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {I.Block|null} The highest parent block or null.
+	 */
 	getHighestParent (rootId: string, blockId: string): I.Block {
 		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
@@ -303,6 +438,13 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Gets the next table row block in a direction.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} rowId - The row block ID.
+	 * @param {number} dir - The direction (1 for next, -1 for previous).
+	 * @returns {I.Block|null} The next table row block or null.
+	 */
 	getNextTableRow (rootId: string, rowId: string, dir: number): I.Block {
 		const rowContainer = this.getParentMapElement(rootId, rowId);
 		if (!rowContainer) {
@@ -322,7 +464,13 @@ class BlockStore {
 		return this.getLeaf(rootId, next);
 	};
 
-	// Check if blockId is inside parentId children recursively
+	/**
+	 * Checks if a block is a child of a parent block recursively.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} parentId - The parent block ID.
+	 * @param {string} blockId - The block ID to check.
+	 * @returns {boolean} True if blockId is a child of parentId, false otherwise.
+	 */
 	checkIsChild (rootId: string, parentId: string, blockId: string): boolean {
 		const element = this.getMapElement(rootId, parentId);
 
@@ -346,12 +494,21 @@ class BlockStore {
 		return ret;
 	};
 
-	// Check if blockId is inside table
+	/**
+	 * Checks if a block is inside a table row.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {boolean} True if inside a table row, false otherwise.
+	 */
 	checkIsInsideTable (rootId: string, blockId: string): boolean {
 		const parent = this.getParentLeaf(rootId, blockId);
 		return parent && parent.isTableRow();
 	};
 
+	/**
+	 * Updates the numbering for blocks in a tree.
+	 * @param {string} rootId - The root ID.
+	 */
 	updateNumbers (rootId: string) {
 		const root = this.wrapTree(rootId, rootId);
 		if (!root) {
@@ -361,6 +518,10 @@ class BlockStore {
 		this.updateNumbersTree([ root ]);
 	};
 
+	/**
+	 * Updates the numbering for a tree of blocks.
+	 * @param {any[]} tree - The tree of blocks.
+	 */
 	updateNumbersTree (tree: any[]) {
 		tree = (tree || []).filter(it => it);
 
@@ -406,6 +567,12 @@ class BlockStore {
 		cb(unwrap(tree));
 	};
 
+	/**
+	 * Gets the tree structure for a root ID and list of blocks.
+	 * @param {string} rootId - The root ID.
+	 * @param {any[]} list - The list of blocks.
+	 * @returns {any[]} The tree structure.
+	 */
 	getTree (rootId: string, list: any[]): any[] {
 		list = U.Common.objectCopy(list || []);
 		for (const item of list) {
@@ -414,6 +581,12 @@ class BlockStore {
 		return list;
 	};
 
+	/**
+	 * Wraps the tree structure for a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {any} The wrapped tree structure.
+	 */
 	wrapTree (rootId: string, blockId: string) {
 		const map = this.getMap(rootId);
 		const ret: any = {};
@@ -429,6 +602,11 @@ class BlockStore {
 		return ret[blockId];
 	};
 
+	/**
+	 * Unwraps a tree structure into a flat list of blocks.
+	 * @param {any[]} tree - The tree structure.
+	 * @returns {I.Block[]} The flat list of blocks.
+	 */
 	unwrapTree (tree: any[]): any[] {
 		tree = (tree || []).filter(it => it);
 
@@ -447,6 +625,12 @@ class BlockStore {
 		return ret;
 	};
 
+	/**
+	 * Gets table data for a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {object} The table data including childrenIds, columns, rows, etc.
+	 */
 	getTableData (rootId: string, blockId: string) {
 		const childrenIds = this.getChildrenIds(rootId, blockId);
 		const children = this.getChildren(rootId, blockId);
@@ -458,6 +642,12 @@ class BlockStore {
 		return { childrenIds, columnContainer, columns, rowContainer, rows };
 	};
 
+	/**
+	 * Gets restrictions for a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {any[]} The restrictions array.
+	 */
 	getRestrictions (rootId: string, blockId: string) {
 		const map = this.restrictionMap.get(rootId);
 		if (!map) {
@@ -467,15 +657,33 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
+	/**
+	 * Gets the participant IDs map for a root ID.
+	 * @param {string} rootId - The root ID.
+	 * @returns {Map<string, string>} The participant IDs map.
+	 */
 	getParticipantIds (rootId: string) {
 		return this.participantMap.get(rootId) || new Map();
 	};
 
+	/**
+	 * Gets the participant ID for a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @returns {string} The participant ID.
+	 */
 	getParticipantId (rootId: string, blockId: string): string {
 		const map = this.getParticipantIds(rootId);
 		return map ? String(map.get(blockId) || '') : '';
 	};
 
+	/**
+	 * Checks if a block has the required flags.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any[]} flags - The flags to check.
+	 * @returns {boolean} True if allowed, false otherwise.
+	 */
 	checkFlags (rootId: string, blockId: string, flags: any[]): boolean {
 		if (!rootId || !blockId) {
 			return false;
@@ -484,6 +692,13 @@ class BlockStore {
 		return this.isAllowed(this.getRestrictions(rootId, blockId), flags);
 	};
 
+	/**
+	 * Checks if the given restrictions and flags allow an action.
+	 * @param {any[]} restrictions - The restrictions array.
+	 * @param {any[]} flags - The flags to check.
+	 * @param {boolean} [noSpaceCheck] - Whether to skip the space check.
+	 * @returns {boolean} True if allowed, false otherwise.
+	 */
 	isAllowed (restrictions: any[], flags: any[], noSpaceCheck?: boolean): boolean {
 		if (!noSpaceCheck && !U.Space.canMyParticipantWrite()) {
 			return false;
@@ -500,6 +715,12 @@ class BlockStore {
 		return true;
 	};
 
+	/**
+	 * Toggles a block's toggled state in the UI and storage.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {boolean} v - The toggled value.
+	 */
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
 
@@ -510,6 +731,10 @@ class BlockStore {
 		element.find('.resizable').trigger('resizeInit');
 	};
 
+	/**
+	 * Updates the markup for all text blocks in a root.
+	 * @param {string} rootId - The root ID.
+	 */
 	updateMarkup (rootId: string) {
 		const blocks = this.getBlocks(rootId, it => it && it.isText());
 
@@ -571,6 +796,10 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Checks and updates the block type structure for a root.
+	 * @param {string} rootId - The root ID.
+	 */
 	checkBlockType (rootId: string) {
 		const { header, type } = J.Constant.blockId;
 		const element = this.getMapElement(rootId, header);
@@ -591,11 +820,22 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Checks if the block type exists in the header for a root.
+	 * @param {string} rootId - The root ID.
+	 * @returns {boolean} True if the block type exists, false otherwise.
+	 */
 	checkBlockTypeExists (rootId: string): boolean {
 		const header = this.getMapElement(rootId, J.Constant.blockId.header);
 		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
 	};
 
+	/**
+	 * Gets layout IDs for a list of block IDs.
+	 * @param {string} rootId - The root ID.
+	 * @param {string[]} ids - The block IDs.
+	 * @returns {string[]} The layout IDs.
+	 */
 	getLayoutIds (rootId: string, ids: string[]) {
 		if (!ids.length) {
 			return [];
@@ -621,14 +861,27 @@ class BlockStore {
 		return ret;
 	};
 
+	/**
+	 * Triggers an update event for widget views for a root.
+	 * @param {string} rootId - The root ID.
+	 */
 	updateWidgetViews (rootId: string) {
 		this.triggerWidgetEvent('updateWidgetViews', rootId);
 	};
 
+	/**
+	 * Triggers an update event for widget data for a root.
+	 * @param {string} rootId - The root ID.
+	 */
 	updateWidgetData (rootId: string) {
 		this.triggerWidgetEvent('updateWidgetData', rootId);
 	};
 
+	/**
+	 * Triggers a widget event for a root.
+	 * @param {string} code - The event code.
+	 * @param {string} rootId - The root ID.
+	 */
 	triggerWidgetEvent (code: string, rootId: string) {
 		const win = $(window);
 		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
@@ -641,6 +894,9 @@ class BlockStore {
 		});
 	};
 
+	/**
+	 * Closes recent widgets in the UI.
+	 */
 	closeRecentWidgets () {
 		const { recentEdit, recentOpen } = J.Constant.widgetId;
 		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.getTargetObjectId()));
@@ -654,6 +910,46 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Returns structure for Table of contents
+	 */
+	getTableOfContents (rootId: string) {
+		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
+		const list: any[] = [];
+
+		let hasH1 = false;
+		let hasH2 = false;
+
+		blocks.forEach((block: I.Block) => {
+			let depth = 0;
+
+			if (block.isTextHeader1()) {
+				depth = 0;
+				hasH1 = true;
+				hasH2 = false;
+			};
+
+			if (block.isTextHeader2()) {
+				hasH2 = true;
+				if (hasH1) depth++;
+			};
+
+			if (block.isTextHeader3()) {
+				if (hasH1) depth++;
+				if (hasH2) depth++;
+			};
+
+			list.push({ 
+				depth, 
+				id: block.id,
+				text: String(block.content.text || translate('defaultNamePage')),
+				block,
+			});
+		});
+
+		return list;
+	};
+
 };
 
- export const Block: BlockStore = new BlockStore();
+export const Block: BlockStore = new BlockStore();

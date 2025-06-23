@@ -23,11 +23,14 @@ import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
 import PopupMembership from './membership';
+import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
-import PopupSpaceCreate from './spaceCreate';
+import PopupSpaceCreate from './space/create';
+import PopupSpaceJoinByLink from './space/joinByLink';
 import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
+import PopupApiCreate from './api/create';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -71,11 +74,14 @@ class Popup extends React.Component<I.Popup> {
 			inviteConfirm:			 PopupInviteConfirm,
 			inviteQr:				 PopupInviteQr,
 			membership: 		 	 PopupMembership,
+			membershipActivation: 	 PopupMembershipActivation,
 			membershipFinalization:  PopupMembershipFinalization,
 			share:					 PopupShare,
 			spaceCreate:			 PopupSpaceCreate,
+			spaceJoinByLink:		 PopupSpaceJoinByLink,
 			logout: 				 PopupLogout,
 			onboarding:				 PopupOnboarding,
+			apiCreate:				 PopupApiCreate,
 		};
 		
 		const popupId = this.getId();
@@ -86,7 +92,7 @@ class Popup extends React.Component<I.Popup> {
 			cn.push(className);
 		};
 
-		if (S.Popup.showDimmerIds().includes(id)) {
+		if (!S.Popup.noDimmerIds().includes(id)) {
 			cn.push('showDimmer');
 		};
 		
@@ -191,7 +197,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (!S.Popup.showDimmerIds().includes(id)) {
+			if (S.Popup.noDimmerIds().includes(id)) {
 				sw = sidebar.getDummyWidth();
 			};
 
@@ -229,7 +235,8 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	storageSet (data: any) {
-		Storage.set(this.getId(), data);
+		const current = this.storageGet();
+		Storage.set(this.getId(), Object.assign(current, data));
 	};
 
 	getId (): string {

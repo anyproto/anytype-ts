@@ -77,6 +77,10 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onSortEnd = (result: any) => {
 		const { active, over } = result;
+		if (!active || !over) {
+			return;
+		};
+
 		const ids = items.map(it => it.id);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);

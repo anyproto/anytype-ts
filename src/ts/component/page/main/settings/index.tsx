@@ -9,6 +9,7 @@ import PageDelete from './delete';
 import PagePersonal from './personal';
 import PagePhrase from './phrase';
 import PageLanguage from './language';
+import PageApi from './api';
 
 import PageDataIndex from './data/index';
 import PageDataPublish from './data/publish';
@@ -22,6 +23,7 @@ import PageImportNotion from './import/notion';
 import PageImportNotionHelp from './import/notion/help';
 import PageImportNotionWarning from './import/notion/warning';
 import PageImportCsv from './import/csv';
+import PageImportObsidian from './import/obsidian';
 
 import PageExportIndex from './export/index';
 import PageExportProtobuf from './export/protobuf';
@@ -50,6 +52,7 @@ const Components: any = {
 	phrase:				 PagePhrase,
 	membership:			 PageMembership,
 	language:			 PageLanguage,
+	api:				 PageApi,
 
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
@@ -63,13 +66,14 @@ const Components: any = {
 	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
 	importCsv:			 PageImportCsv,
+	importObsidian:		 PageImportObsidian,
 
 	exportIndex:		 PageExportIndex,
 	exportProtobuf:		 PageExportProtobuf,
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
-	spaceIndexEmpty:			 PageSpaceIndex,
+	spaceIndexEmpty:	 PageSpaceIndex,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
@@ -81,7 +85,7 @@ const Components: any = {
 
 const SPACE_PAGES = [
 	'spaceIndex', 'spaceIndexEmpty', 'spaceStorageManager', 'spaceShare',
-	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
+	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
 ];
@@ -126,7 +130,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					ref={ref => this.ref = ref}
 					{...this.props}
 					getId={this.getId}
-					onPage={id => U.Object.openAuto({ id, layout: I.ObjectLayout.Settings })}
+					onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
 					onExport={this.onExport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}

@@ -27,7 +27,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	render () {
-		const { name, recommendedLayout, layoutAlign, layoutFormat } = this.object;
+		const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat, headerRelationsLayout } = this.object;
 		const viewType = this.getViewType();
 		const featured = this.getFeatured();
 		const withDescription = featured.map(it => it.relationKey).includes('description');
@@ -40,10 +40,11 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 		const cn = [
 			'layoutPreview',
-			`layoutAlign${I.BlockHAlign[layoutAlign]}`,
+			`align${layoutAlign}`,
 			`defaultView${I.ViewType[viewType]}`,
 			U.Data.layoutClass('', recommendedLayout),
 			U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
+			`featuredRelationLayout${I.FeaturedRelationLayout[headerRelationsLayout]}`,
 		];
 
 		if (isFile) {
@@ -69,19 +70,37 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						{!isNote ? (
 							<div className="titleWrapper">
 								{icon}
-								<Title text={name || translate('defaultNameType')} />
+								<Title text={name || translate('defaultNamePage')} />
 							</div>
 						) : ''}
 
 						{withDescription ? <Label text={'Description'} className="description" /> : ''}
 
 						<div className="featured">
-							{filtered.map((item, idx) => (
-								<div key={idx} className="featuredItem">
-									<Label text={item.name} />
-									<div className="bullet" />
-								</div>
-							))}
+							{filtered.map((item, idx) => {
+								if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
+									let content: any = null;
+									if (item.relationKey == 'type') {
+										content = name || translate('defaultNamePage');
+									} else {
+										content = this.insertEmtpyNodes('item', 1);
+									};
+
+									return (
+										<dl key={idx} className="featuredColumnItem">
+											<dt><Label text={item.name} /></dt>
+											<dd>{content}</dd>
+										</dl>
+									);
+								};
+
+								return (
+									<div key={idx} className="featuredItem">
+										<Label text={item.name} />
+										<div className="bullet" />
+									</div>
+								);
+							})}
 						</div>
 					</div>
 
@@ -121,7 +140,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	onClose () {
-		sidebar.rightPanelToggle(false, true, this.props.isPopup);
+		sidebar.rightPanelToggle(true, this.props.isPopup);
 	};
 
 	update (object: any) {

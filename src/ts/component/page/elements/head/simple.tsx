@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, Action, focus, keyboard, Relation, translate, analytics, sidebar, Dataview } from 'Lib';
+import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, sidebar } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -35,37 +35,50 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onTemplates = this.onTemplates.bind(this);
 	};
 
 	render (): any {
 		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
-		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'recommendedLayout', 'pluralName' ]);
+		const check = U.Data.checkDetails(rootId, '', []);
+		const object = S.Detail.get(rootId, rootId, [ 
+			'layout', 'spaceId', 'featuredRelations', 'recommendedLayout', 'pluralName', 'iconName', 'iconOption', 'iconEmoji', 'iconImage',
+			'done', 'fileExt', 'fileMimeType', 'relationFormat',
+		], true);
+
+		if (object._empty_) {
+			return null;
+		};
+
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
 		const isType = U.Object.isTypeLayout(check.layout);
-		const isDate = U.Object.isDateLayout(object.layout);
-		const isRelation = U.Object.isRelationLayout(object.layout);
+		const isDate = U.Object.isDateLayout(check.layout);
+		const isRelation = U.Object.isRelationLayout(check.layout);
 		const cn = [ 'headSimple', check.className ];
 		const canEditIcon = allowDetails && !isRelation && !isType;
 		const isOwner = U.Space.isMyOwner();
 		const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
-
-		if (!allowDetails) {
-			cn.push('isReadonly');
-		};
-
 		const placeholder = {
 			title: this.props.placeholder,
 			description: translate('commonDescription'),
 		};
 		const buttons = [];
+
+		let buttonLayout = null;
+		let buttonEdit = null;
+		let buttonTemplate = null;
+		let buttonCreate = null;
+		let descr = null;
+		let featured = null;
+
+		if (!allowDetails) {
+			cn.push('isReadonly');
+		};
 
 		const Editor = (item: any) => (
 			<Editable
@@ -84,13 +97,6 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);
-
-		let buttonLayout = null;
-		let buttonEdit = null;
-		let buttonCreate = null;
-		let buttonTemplate = null;
-		let descr = null;
-		let featured = null;
 
 		if (!isRelation && featuredRelations.includes('description')) {
 			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
@@ -113,58 +119,44 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		};
 
 		if (isTypeOrRelation) {
-			if (object.isInstalled) {
-				if (isType) {
-					const isTemplate = U.Object.isTemplate(object.id);
-					const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+			if (isType) {
+				const isTemplate = U.Object.isTemplateType(object.id);
+				const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 
-					if (isOwner && total) {
-						buttonLayout = (
-							<Button
-								id="button-layout"
-								color="blank"
-								className="c28 resetLayout"
-								onClick={this.onLayout}
-							/>
-						);
-					};
-
-					if (canShowTemplates) {
-						buttonTemplate = (
-							<Button 
-								id="button-template" 
-								text={translate('commonTemplates')} 
-								color="blank" 
-								className="c28" 
-								onClick={this.onTemplates} 
-							/>
-						);
-					};
-
-					if (allowDetails) {
-						buttonEdit = (
-							<Button 
-								id="button-edit" 
-								color="blank" 
-								className="c28" 
-								text={translate('commonEditType')} 
-								onClick={() => sidebar.rightPanelToggle(true, true, isPopup, 'type', { rootId })} 
-							/>
-						);
-					};
-				};
-				
-			} else {
-				const cn = [ 'c36' ];
-				const isInstalled = this.isInstalled();
-				const onClick = isInstalled ? null : this.onInstall;
-				const color = isInstalled ? 'blank' : 'black';
-
-				if (isInstalled) {
-					cn.push('disabled');
+				if (isOwner && total) {
+					buttonLayout = (
+						<Button
+							id="button-layout"
+							color="blank"
+							className="c28 resetLayout"
+							onClick={this.onLayout}
+						/>
+					);
 				};
 
-				buttonCreate = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
+				if (canShowTemplates) {
+					buttonTemplate = (
+						<Button 
+							id="button-template" 
+							text={translate('commonTemplates')} 
+							color="blank" 
+							className="c28" 
+							onClick={this.onTemplates} 
+						/>
+					);
+				};
+
+				if (allowDetails) {
+					buttonEdit = (
+						<Button 
+							id="button-edit" 
+							color="blank" 
+							className="c28" 
+							text={translate('commonEditType')} 
+							onClick={() => sidebar.rightPanelToggle(true, isPopup, 'type', { rootId })}
+						/>
+					);
+				};
 			};
 
 			if (!canWrite) {
@@ -235,7 +227,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		const isType = U.Object.isTypeLayout(object.layout);
 
 		if (isType) {
-			U.Data.searchSubscribe({
+			U.Subscription.subscribe({
 				subId: SUB_ID_CHECK,
 				filters: [
 					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id },
@@ -340,7 +332,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				text = '';
 			};
 
-			this.refEditable[item.blockId].setValue(text);
+			this.refEditable[item.blockId]?.setValue(text);
 			this.placeholderCheck(item.blockId);
 		};
 	};
@@ -349,13 +341,6 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		if (this.refEditable[id]) {
 			this.refEditable[id].placeholderCheck();
 		};
-	};
-
-	onInstall () {
-		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
-
-		Action.install(object, false, (message: any) => U.Object.openAuto(message.details));
 	};
 
 	onTemplates () {	
@@ -384,47 +369,35 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				},
 			}
 		});
+
+		analytics.event('ScreenTypeTemplateSelector');
 	};
 
 	onTemplateAdd () {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
+		const type = S.Detail.get(rootId, rootId);
 		const details: any = {
-			targetObjectType: object.id,
-			layout: object.recommendedLayout,
+			targetObjectType: type.id,
+			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, true, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
 
 			const object = message.details;
 
+			if (!type.defaultTemplateId) {
+				U.Object.setDefaultTemplateId(type.id, object.id);
+			};
+
+			if (!object.defaultTemplateId) {
+			};
+
 			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
 			U.Object.openConfig(object);
 		});
-	};
-
-	isInstalled () {
-		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId);
-
-		let sources: any[] = [];
-
-		switch (object.layout) {
-			case I.ObjectLayout.Type: {
-				sources = S.Record.getTypes();
-				break;
-			};
-
-			case I.ObjectLayout.Relation: {
-				sources = S.Record.getRelations();
-				break;
-			};
-		};
-
-		return sources.map(it => it.sourceObject).includes(rootId);
 	};
 
 	onCalendar = () => {

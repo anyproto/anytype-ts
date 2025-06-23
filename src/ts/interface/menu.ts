@@ -63,6 +63,7 @@ export interface Menu {
 	getId?(): string;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;
+	getMaxHeight?(isPopup: boolean): number;
 	position? (): void;
 	close? (callBack?: () => void): void;
 };
@@ -75,6 +76,8 @@ export interface MenuRef {
 	setIndex: (i: number) => void,
 	onClick?: (e: any, item: any) => void,
 	onOver?: (e: any, item: any) => void,
+	getData?: () => any,
+	getListRef?: () => any,
 };
 
 export interface MenuItem {
@@ -83,7 +86,7 @@ export interface MenuItem {
 	object?: any;
 	name?: any;
 	description?: string;
-	caption?: string;
+	caption?: any;
 	inner?: any;
 	color?: string;
 	arrow?: boolean;
@@ -105,6 +108,7 @@ export interface MenuItem {
 	withSelect?: boolean;
 	withMore?: boolean;
 	withPlural?: boolean;
+	withPronoun?: boolean;
 	subComponent?: string;
 	note?: string;
 	sortArrow?: I.SortType;

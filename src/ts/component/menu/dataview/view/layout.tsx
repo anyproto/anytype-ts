@@ -11,6 +11,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};
+	menuContext = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -197,12 +198,13 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, isInline } = data;
-		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
+		const { rootId, blockId, isInline } = data;
+		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, endRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
 		const isGallery = type == I.ViewType.Gallery;
 		const isBoard = type == I.ViewType.Board;
 		const isCalendar = type == I.ViewType.Calendar;
 		const isGraph = type == I.ViewType.Graph;
+		const isTimeline = type == I.ViewType.Timeline;
 		const coverOption = Relation.getCoverOptions(rootId, blockId).find(it => it.id == coverRelationKey);
 
 		let settings: any[] = [];
@@ -225,14 +227,29 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			]);
 		};
 
-		if (isBoard || isCalendar) {
+		if (isBoard || isCalendar || isTimeline) {
 			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
-			const name = isBoard ? translate('menuDataviewViewEditGroupBy') : translate('menuDataviewViewEditDate');
+
+			let name = '';
+			if (isBoard)	 name = translate('menuDataviewViewEditGroupBy');
+			if (isCalendar)	 name = translate('menuDataviewViewEditDate');
+			if (isTimeline)	 name = translate('menuDataviewViewEditStartDate');	
 
 			settings.push({ 
 				id: 'groupRelationKey', 
 				name, 
 				caption: (groupOption ? groupOption.name : translate('commonSelect')), 
+				arrow: true,
+			});
+		};
+
+		if (isTimeline) {
+			const endOption = Relation.getGroupOption(rootId, blockId, type, endRelationKey);
+
+			settings.push({
+				id: 'endRelationKey',
+				name: translate('menuDataviewViewEditEndDate'),
+				caption: (endOption ? endOption.name : translate('commonSelect')),
 				arrow: true,
 			});
 		};
@@ -291,13 +308,31 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 	};
 
+	getGroupOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const canWrite = U.Space.canMyParticipantWrite();
+		const { type } = this.param;
+
+		let options = Relation.getGroupOptions(rootId, blockId, type);
+
+		if (canWrite) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'addRelation', icon: 'plus', name: translate('commonAddRelation') },
+			]);
+		};
+
+		return options;
+	};
+
 	onOver (e: any, item: any) {
 		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, isInline } = data;
 		const isReadonly = this.isReadonly();
 		const { type, groupRelationKey } = this.param;
-		const view = data.view.get();
 
 		if (!item.arrow || isReadonly) {
 			S.Menu.closeAll(J.Menu.viewEdit);
@@ -305,6 +340,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		const element = `#${getId()} #item-${item.id}`;
+		const groupOptions = this.getGroupOptions();
 
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
@@ -312,15 +348,28 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: context => {
+				$(element).addClass('active');
+				this.menuContext = context;
+			},
+			onClose: () => {
+				$(element).removeClass('active');
+				this.menuContext = null;
+			},
 			rebind: this.rebind,
 			parentId: id,
 			data: {
 				value: this.param[item.id],
+				noClose: true,
 				onSelect: (e: any, el: any) => {
-					this.param[item.id] = el.id;
-					this.save();
+					if (el.id == 'addRelation') {
+						this.onAddRelation(item.id);
+					} else {
+						this.param[item.id] = el.id;
+						this.save();
+
+						this.menuContext.close();
+					};
 				},
 			}
 		};
@@ -339,8 +388,17 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'groupRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: Relation.getGroupOption(rootId, blockId, view.type, groupRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId, view.type),
+					value: Relation.getGroupOption(rootId, blockId, type, groupRelationKey)?.id,
+					options: groupOptions,
+				});
+				break;
+			};
+
+			case 'endRelationKey': {
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					value: Relation.getGroupOption(rootId, blockId, type, this.param.endRelationKey)?.id,
+					options: groupOptions,
 				});
 				break;
 			};
@@ -377,6 +435,52 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				S.Menu.open(menuId, menuParam);
 			});
 		};
+	};
+
+	onAddRelation (id: string) {
+		if (!this.menuContext) {
+			return;
+		};
+
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const object = S.Detail.get(rootId, rootId);
+		const { getId, getSize } = this.menuContext;
+		const { type } = this.param;
+		const types = Relation.getGroupTypes(type);
+
+		S.Menu.open('relationSuggest', { 
+			element: `#${getId()} #item-addRelation`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Top,
+			offsetY: 36,
+			noAnimation: true,
+			noFlipY: true,
+			data: {
+				...data,
+				menuIdEdit: 'dataviewRelationEdit',
+				filter: '',
+				ref: 'dataview',
+				types,
+				skipKeys: relations.map(it => it.relationKey),
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					const cb = (message: any) => {
+						this.param[id] = relation.relationKey;
+						this.save();
+						this.menuContext?.close();
+
+						if (onChange) {
+							onChange(message);
+						};
+					};
+
+					Dataview.addTypeOrDataviewRelation(rootId, blockId, relation, object, view, relations.length, cb);
+				},
+			}
+		});
 	};
 
 	onSwitch (e: any, key: string, v: boolean) {

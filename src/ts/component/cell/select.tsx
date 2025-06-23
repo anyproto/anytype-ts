@@ -165,7 +165,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const getItems = (): any[] => {
-		return relation && record ? Relation.getOptions(record[relation.relationKey]).filter(it => !it.isArchived && !it.isDeleted) : [];
+		return relation && record ? Relation.getOptions(record[relation.relationKey]).filter(it => !it.isArchived && !it.isDeleted && !it._empty_) : [];
 	};
 
 	const getItemIds = (): string[] => {

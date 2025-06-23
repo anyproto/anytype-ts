@@ -1,7 +1,12 @@
 @import "~scss/_mixins";
 
-.viewList, .viewGrid { display: flex; flex-direction: column; height: 100%; }
-.viewList, .viewGrid {
+.viewList, 
+.viewGrid, 
+.viewTimeline { display: flex; flex-direction: column; height: 100%; }
+
+.viewList, 
+.viewGrid, 
+.viewTimeline {
 	.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
 
 	.body { display: flex; flex-direction: column; }
@@ -83,7 +88,6 @@
 		.item {
 			.inner { gap: 0px 6px; padding: 0px 4px 0px 8px; }
 			.info { width: 100%; }
-			.iconObject { background: none; border-radius: 0px; }
 		}
 		.item.withIcon, .item.withIcon {
 			.info { width: calc(100% - 24px); }

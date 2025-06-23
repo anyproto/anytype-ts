@@ -31,8 +31,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { block, className } = this.props;
 		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
-		const data = this.getData();
-		const { m, y } = this.getDateParam(value);
+		const data = U.Date.getCalendarMonth(value);
+		const { m, y } = U.Date.getDateParam(value);
 		const days = U.Date.getWeekDays();
 		const months = U.Date.getMonths();
 		const years = U.Date.getYears(0, 3000);
@@ -134,32 +134,18 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	init () {
-		const { m, y } = this.getDateParam(this.state.value);
+		const { m, y } = U.Date.getDateParam(this.state.value);
 
 		this.refMonth?.setValue(m);
 		this.refYear?.setValue(y);
 	};
 
-	getDateParam (t: number) {
-		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
-		return { d, m, y };
-	};
-
-	getData () {
-		return U.Date.getCalendarMonth(this.state.value);
-	};
-
-	getSubId () {
-		const { rootId, block, isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
-
-		return S.Record.getSubId(rootId, block.id) + namespace;
-	};
-
 	load () {
-		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+		const { value } = this.state;
+		const { isCollection, getView, getKeys, getTarget, getSearchIds, getSubId } = this.props;
 		const object = getTarget();
 		const view = getView();
+
 		if (!view) {
 			return;
 		};
@@ -169,7 +155,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const data = this.getData();
+		const data = U.Date.getCalendarMonth(value);
 		if (!data.length) {
 			return;
 		};
@@ -183,7 +169,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
-		const subId = this.getSubId();
+		const subId = getSubId();
 
 		filters.push({ 
 			relationKey: relation.relationKey, 
@@ -205,10 +191,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId,
-			filters: filters.map(it => Dataview.filterMapper(view, it)),
-			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+			filters: filters.map(Dataview.filterMapper),
+			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			ignoreHidden: true,
@@ -218,7 +204,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	onArrow (dir: number) {
-		let { m, y } = this.getDateParam(this.state.value);
+		let { m, y } = U.Date.getDateParam(this.state.value);
 
 		m += dir;
 		if (m < 0) {
@@ -234,7 +220,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	onToday () {
-		const today = this.getDateParam(U.Date.now());
+		const today = U.Date.getDateParam(U.Date.now());
 
 		this.scroll = true;
 		this.setValue(U.Date.timestamp(today.y, today.m, today.d));
@@ -250,7 +236,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
-		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -289,10 +275,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getItems () {
-		const { getView } = this.props;
+		const { getView, getSubId } = this.props;
 		const view = getView();
 
-		return S.Record.getRecords(this.getSubId(), [ view.groupRelationKey ]).map(it => {
+		return S.Record.getRecords(getSubId(), [ view.groupRelationKey ]).map(it => {
 			it._date = U.Date.date('j-n-Y', it[view.groupRelationKey]);
 			return it;
 		});
@@ -309,7 +295,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 
-		wrap.css({ width: 0, height: 0, marginLeft: 0 });
+		wrap.css({ width: 0, marginLeft: 0 });
 
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();

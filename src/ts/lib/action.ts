@@ -4,6 +4,11 @@ const Diff = require('diff');
 
 class Action {
 
+	/**
+	 * Closes a page and clears related data and subscriptions.
+	 * @param {string} rootId - The root object ID.
+	 * @param {boolean} withCommand - Whether to send a close command to the backend.
+	 */
 	pageClose (rootId: string, withCommand: boolean) {
 		if (keyboard.isCloseDisabled) {
 			return;
@@ -17,33 +22,37 @@ class Action {
 			return;
 		};
 
-		const onClose = () => {
-			const blocks = S.Block.getBlocks(rootId, it => it.isDataview());
-			const object = S.Detail.get(rootId, rootId);
+		const blocks = S.Block.getBlocks(rootId);
+		const object = S.Detail.get(rootId, rootId);
 
-			for (const block of blocks) {
-				const subId = S.Record.getSubId(rootId, block.id);
-
-				this.dbClearBlock(rootId, block.id);
-
-				if (U.Object.isChatLayout(object.layout)) {
-					C.ChatUnsubscribe(object.chatId, subId);
-				};
-				S.Chat.clear(subId);
-			};
-
-			this.dbClearRoot(rootId);
-
-			S.Block.clear(rootId);
+		if (object.layout == I.ObjectLayout.Space) {
+			this.dbClearChat(object.chatId, J.Constant.blockId.chat);
 		};
 
-		onClose();
+		for (const block of blocks) {
+			if (block.isDataview()) {
+				this.dbClearBlock(rootId, block.id);
+			} else 
+			if (block.isChat()) {
+				this.dbClearBlock(object.chatId, block.id);
+				this.dbClearChat(object.chatId, block.id);
+			};
+		};
+
+		this.dbClearRoot(rootId);
+		S.Block.clear(rootId);
+
+		U.Subscription.destroyList([ rootId ]);
 
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
 		};
 	};
 
+	/**
+	 * Clears all data related to a root object.
+	 * @param {string} rootId - The root object ID.
+	 */
 	dbClearRoot (rootId: string) {
 		if (!rootId) {
 			return;
@@ -52,28 +61,63 @@ class Action {
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);
-
-		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
 
+	/**
+	 * Clears all data related to a block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 */
 	dbClearBlock (rootId: string, blockId: string) {
 		if (!rootId || !blockId) {
 			return;
 		};
 
 		const subId = S.Record.getSubId(rootId, blockId);
+		const groups = S.Record.getGroups(rootId, blockId);
 
 		S.Record.metaClear(subId, '');
 		S.Record.recordsClear(subId, '');
 		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
-		S.Record.groupsClear(rootId, blockId);
 
+		const groupIds = groups.map(it => it.id).concat('groups');
+		
+		groupIds.forEach(id => {
+			S.Record.recordsClear(S.Record.getGroupSubId(rootId, blockId, id), '');
+		});
+
+		S.Record.groupsClear(rootId, blockId);
 		S.Detail.clear(subId);
 
-		C.ObjectSearchUnsubscribe([ subId ]);
+		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
 	};
 
+	/**
+	 * Clears all data related to a chat block.
+	 * @param {string} chatId - The chat object ID.
+	 * @param {string} blockId - The block ID.
+	 */
+	dbClearChat (chatId: string, blockId: string) {	
+		if (!chatId || !blockId) {
+			return;
+		};
+
+		const subId = S.Record.getSubId(chatId, blockId);
+
+		C.ChatUnsubscribe(chatId, subId);
+		S.Chat.clear(subId);
+	};
+
+	/**
+	 * Uploads a file to a block.
+	 * @param {I.FileType} type - The file type.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {string} url - The file URL.
+	 * @param {string} path - The file path.
+	 * @param {function} [callBack] - Optional callback after upload.
+	 */
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
 		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
 			if (callBack) {
@@ -84,6 +128,15 @@ class Action {
 		});
 	};
 	
+	/**
+	 * Duplicates a list of blocks to a target context and position.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} targetContextId - The target context ID.
+	 * @param {string} blockId - The block ID to duplicate after.
+	 * @param {string[]} blockIds - The block IDs to duplicate.
+	 * @param {I.BlockPosition} position - The position to insert.
+	 * @param {function} [callBack] - Optional callback after duplication.
+	 */
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -101,6 +154,15 @@ class Action {
 		});
 	};
 
+	/**
+	 * Moves a list of blocks to a target context and position.
+	 * @param {string} contextId - The source context ID.
+	 * @param {string} targetContextId - The target context ID.
+	 * @param {string} targetId - The target block ID.
+	 * @param {string[]} blockIds - The block IDs to move.
+	 * @param {I.BlockPosition} position - The position to insert.
+	 * @param {function} [callBack] - Optional callback after move.
+	 */
 	move (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListMoveToExistingObject(contextId, targetContextId, targetId, blockIds, position, (message: any) => {
 			if (message.error.code) {
@@ -121,6 +183,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a list of blocks from a root object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID to focus after removal.
+	 * @param {string[]} blockIds - The block IDs to remove.
+	 */
 	remove (rootId: string, blockId: string, blockIds: string[]) {
 		const next = S.Block.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
@@ -139,6 +207,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Removes a widget block and updates storage.
+	 * @param {string} id - The widget block ID.
+	 * @param {any} target - The target parameter for analytics.
+	 */
 	removeWidget (id: string, target: any) {
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, id);
@@ -161,6 +234,11 @@ class Action {
 		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
 	};
 
+	/**
+	 * Focuses the end of a block for editing.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} id - The block ID to focus.
+	 */
 	focusToEnd (rootId: string, id: string) {
 		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
@@ -172,6 +250,10 @@ class Action {
 		focus.apply();
 	};
 
+	/**
+	 * Opens a URL, routing internally if possible.
+	 * @param {string} url - The URL to open.
+	 */
 	openUrl (url: string) {
 		if (!url) {
 			return;
@@ -221,18 +303,27 @@ class Action {
 		};
 	};
 
+	/**
+	 * Opens a file path using the system's default handler.
+	 * @param {string} path - The file path to open.
+	 */
 	openPath (path: string) {
 		if (path) {
 			Renderer.send('openPath', path);
 		};
 	};
 
+	/**
+	 * Opens a file by ID and route, downloading it if necessary.
+	 * @param {string} id - The file ID.
+	 * @param {string} route - The route context for analytics.
+	 */
 	openFile (id: string, route: string) {
 		if (!id) {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().downloadPath(), (message: any) => {
+		C.FileDownload(id, U.Common.getElectron().tmpPath(), (message: any) => {
 			if (message.path) {
 				this.openPath(message.path);
 				analytics.event('OpenMedia', { route });
@@ -240,6 +331,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Downloads a file by ID and route, optionally as an image.
+	 * @param {string} id - The file ID.
+	 * @param {string} route - The route context for analytics.
+	 * @param {boolean} isImage - Whether to treat the file as an image.
+	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
 		if (!id) {
 			return;
@@ -251,6 +348,11 @@ class Action {
 		analytics.event('DownloadMedia', { route });
 	};
 
+	/**
+	 * Opens a file dialog for selecting files.
+	 * @param {any} param - Dialog parameters.
+	 * @param {function} [callBack] - Optional callback with selected paths.
+	 */
 	openFileDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({
 			extensions: [],
@@ -281,6 +383,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a directory dialog for selecting folders.
+	 * @param {any} param - Dialog parameters.
+	 * @param {function} [callBack] - Optional callback with selected paths.
+	 */
 	openDirectoryDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({}, param);
 
@@ -299,106 +406,12 @@ class Action {
 		});
 	};
 
-	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
-		C.WorkspaceObjectAdd(S.Common.space, object.id, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const { details } = message;
-			const eventParam: any = { layout: object.layout };
-
-			let toast = '';
-			let subId = '';
-
-			switch (object.layout) {
-				case I.ObjectLayout.Type: {
-					toast = U.Common.sprintf(translate('toastObjectTypeAdded'), object.name);
-					subId = J.Constant.subId.type;
-
-					eventParam.objectType = object.id;
-					break;
-				};
-
-				case I.ObjectLayout.Relation: {
-					toast = U.Common.sprintf(translate('toastRelationAdded'), object.name);
-					subId = J.Constant.subId.relation;
-
-					eventParam.relationKey = object.relationKey;
-					break;
-				};
-			};
-
-			if (showToast) {
-				Preview.toastShow({ text: toast });
-			};
-
-			S.Detail.update(subId, { id: details.id, details }, false);
-			analytics.event('ObjectInstall', eventParam);
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	uninstall (object: any, showToast: boolean, route?: string, callBack?: (message: any) => void) {
-		const eventParam: any = { layout: object.layout };
-
-		if (route) {
-			eventParam.route = route;
-		};
-
-		let title = '';
-		let text = '';
-		let toast = '';
-		
-		switch (object.layout) {
-			case I.ObjectLayout.Type: {
-				title = U.Common.sprintf(translate('libActionUninstallTypeTitle'), object.name);
-				text = translate('libActionUninstallTypeText');
-				toast = U.Common.sprintf(translate('toastObjectTypeRemoved'), object.name);
-
-				eventParam.objectType = object.id;
-				break;
-			};
-
-			case I.ObjectLayout.Relation: {
-				title = U.Common.sprintf(translate('libActionUninstallRelationTitle'), object.name);
-				text = translate('libActionUninstallRelationText');
-				toast = U.Common.sprintf(translate('toastRelationRemoved'), object.name);
-
-				eventParam.relationKey = object.relationKey;
-				break;
-			};
-		};
-
-		S.Popup.open('confirm', {
-			data: {
-				title,
-				text,
-				textConfirm: translate('commonRemove'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.WorkspaceObjectListRemove([ object.id ], (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						if (callBack) {
-							callBack(message);
-						};
-
-						if (showToast) {
-							Preview.toastShow({ text: toast });
-						};
-						analytics.event('ObjectUninstall', eventParam);
-					});
-				},
-			},
-		});
-	};
-
+	/**
+	 * Deletes a list of objects by IDs, with confirmation and analytics.
+	 * @param {string[]} ids - The object IDs to delete.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after deletion.
+	 */
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
@@ -422,14 +435,23 @@ class Action {
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
+					Storage.deleteLastOpenedByObjectId(ids);
 					C.ObjectListDelete(ids); 
-					
+
+					const isPopup = keyboard.isPopup();
+					const match = keyboard.getMatch();
+
+					if (ids.includes(match.params.id)) {
+						if (isPopup) {
+							S.Popup.close('page');
+						} else {
+							U.Space.openDashboard();
+						};
+					};
+
 					if (callBack) {
 						callBack();
 					};
-
-					// Remove last opened objects in case any is deleted
-					Storage.deleteLastOpenedByObjectId(ids);
 
 					analytics.event('RemoveCompletely', { count, route });
 				},
@@ -442,6 +464,10 @@ class Action {
 		});
 	};
 
+	/**
+	 * Restores an account from a backup file, handling import and selection.
+	 * @param {function} onError - Callback for error handling, returns true to abort.
+	 */
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
@@ -488,6 +514,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Archives a list of objects by IDs.
+	 * @param {string[]} ids - The object IDs to archive.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after archiving.
+	 */
 	archive (ids: string[], route: string, callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
 			if (message.error.code) {
@@ -503,6 +535,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Restores objects from the archive (bin).
+	 * @param {string[]} ids - The object IDs to restore.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after restore.
+	 */
 	restore (ids: string[], route: string, callBack?: () => void) {
 		ids = ids || [];
 
@@ -519,6 +557,13 @@ class Action {
 		});
 	};
 
+	/**
+	 * Imports objects into the current space from selected files.
+	 * @param {I.ImportType} type - The import type.
+	 * @param {string[]} extensions - Allowed file extensions.
+	 * @param {any} [options] - Additional import options.
+	 * @param {function} [callBack] - Optional callback after import.
+	 */
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
 			properties: [ 'openFile', 'multiSelections' ],
@@ -554,6 +599,15 @@ class Action {
 		});
 	};
 
+	/**
+	 * Exports objects from the current space to a selected directory.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string[]} ids - The object IDs to export.
+	 * @param {I.ExportType} type - The export type.
+	 * @param {any} param - Export parameters.
+	 * @param {function} [onSelectPath] - Optional callback after path selection.
+	 * @param {function} [callBack] - Optional callback after export.
+	 */
 	export (spaceId: string, ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const { zip, nested, files, archived, json, route } = param;
 
@@ -577,6 +631,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Copies or cuts blocks to the clipboard.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string[]} ids - The block IDs to copy or cut.
+	 * @param {boolean} isCut - Whether to cut (true) or copy (false).
+	 */
 	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
 		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
@@ -647,38 +707,53 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
-	createSpace (route: string) {
+	/**
+	 * Creates a new space with the given UX type and route.
+	 * @param {I.SpaceUxType} uxType - The UX type for the new space.
+	 * @param {string} route - The route context for analytics.
+	 */
+	createSpace (uxType: I.SpaceUxType, route: string) {
 		if (!U.Space.canCreateSpace()) {
 			return;
 		};
 
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { route } });
+			S.Popup.open('spaceCreate', { data: { uxType, route } });
 		});
 	};
 
+	/**
+	 * Removes a space by ID, showing a confirmation dialog.
+	 * @param {string} id - The space ID.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after removal.
+	 */
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const space = U.Space.getSpaceviewBySpaceId(id);
 
-		if (!deleted) {
+		if (!space) {
 			return;
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = U.Common.shorten(deleted.name, 32);
+		const name = U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		const confirmMessage = isOwner ? space.name : '';
 
 		analytics.event(`Click${suffix}Space`, { route });
 
 		S.Popup.open('confirm', {
 			data: {
+				icon: 'confirm',
 				title,
 				text,
 				textConfirm: confirm,
+				colorConfirm: 'red',
+				confirmMessage,
 				onConfirm: () => {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
@@ -689,7 +764,7 @@ class Action {
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
-							analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
+							analytics.event(`${suffix}Space`, { type: space.spaceAccessType, route });
 						};
 					});
 				},
@@ -700,6 +775,14 @@ class Action {
 		});
 	};
 
+	/**
+	 * Approves a leave request for a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string[]} identities - The identities to approve.
+	 * @param {string} name - The name for the toast message.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after approval.
+	 */
 	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
 		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
 			if (!message.error.code) {
@@ -713,23 +796,34 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets the interface language and optionally the spelling language.
+	 * @param {string} id - The language ID.
+	 */
 	setInterfaceLang (id: string) {
-		const { config } = S.Common;
-		const { languages } = config;
-
 		Renderer.send('setInterfaceLang', id);
-
-		if (!Storage.get('setSpellingLang') && !languages.length) {
-			const check = J.Lang.interfaceToSpellingLangMap[id];
-			if (check) {
-				this.setSpellingLang([ check ]);
-				Storage.set('setSpellingLang', true);
-			};
-		};
-
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
+	/**
+	 * Checks and sets the default spelling language based on the interface language.
+	 */
+	checkDefaultSpellingLang () {
+		const { config } = S.Common;
+		const { languages, interfaceLang } = config;
+
+		if (!Storage.get('setSpellingLang') && !languages.length) {
+			const check = J.Lang.interfaceToSpellingLangMap[interfaceLang] || J.Constant.default.spellingLang;
+
+			this.setSpellingLang([ check ]);
+			Storage.set('setSpellingLang', true);
+		};
+	};
+
+	/**
+	 * Sets the spelling languages for the app.
+	 * @param {string[]} langs - The list of language codes.
+	 */
 	setSpellingLang (langs: string[]) {
 		langs = langs || [];
 
@@ -745,6 +839,12 @@ class Action {
 		});
 	};
 
+	/**
+	 * Imports a usecase into a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {I.Usecase} id - The usecase ID.
+	 * @param {function} [callBack] - Optional callback after import.
+	 */
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
 			S.Block.closeRecentWidgets();
@@ -755,6 +855,13 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets or unsets objects as favorites.
+	 * @param {string[]} objectIds - The object IDs to update.
+	 * @param {boolean} v - Whether to set as favorite.
+	 * @param {string} route - The route context for analytics.
+	 * @param {function} [callBack] - Optional callback after update.
+	 */
 	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
 		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
 			if (message.error.code) {
@@ -769,6 +876,14 @@ class Action {
 		});
 	};
 
+	/**
+	 * Creates a widget from an object and adds it to the widgets block.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} objectId - The object ID to create a widget from.
+	 * @param {string} targetId - The target block ID for insertion.
+	 * @param {I.BlockPosition} position - The position to insert the widget.
+	 * @param {string} [route] - The route context for analytics.
+	 */
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
@@ -803,6 +918,9 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a membership upgrade confirmation popup.
+	 */
 	membershipUpgrade () {
 		S.Popup.open('confirm', {
 			data: {
@@ -815,6 +933,11 @@ class Action {
 		});
 	};
 
+	/**
+	 * Opens a confirmation popup to revoke a space invite link.
+	 * @param {string} spaceId - The space ID.
+	 * @param {function} [callBack] - Optional callback after revocation.
+	 */
 	inviteRevoke (spaceId: string, callBack?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
@@ -845,6 +968,11 @@ class Action {
 		analytics.event('ScreenRevokeShareLink');
 	};
 
+	/**
+	 * Adds objects to a collection by target ID.
+	 * @param {string} targetId - The collection target ID.
+	 * @param {string[]} objectIds - The object IDs to add.
+	 */
 	addToCollection (targetId: string, objectIds: string[]) {
 		const collectionType = S.Record.getCollectionType();
 
@@ -858,12 +986,22 @@ class Action {
 		});
 	};
 
+	/**
+	 * Sets the application theme and notifies the renderer.
+	 * @param {string} id - The theme ID.
+	 */
 	themeSet (id: string) {
 		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
 	};
 
+	/**
+	 * Toggles a relation as featured for a given object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} relationKey - The relation key to toggle.
+	 * @returns {null|void} Returns null if the relation is not found.
+	 */
 	toggleFeatureRelation (rootId: string, relationKey: string) {
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = U.Common.objectCopy(object.featuredRelations || []);
@@ -880,6 +1018,92 @@ class Action {
 		};
 	};
 
+	spaceCreateMenu (param: I.MenuParam, route) {
+		const ids = [ 'space', 'join' ];
+
+		if (U.Object.isAllowedChat()) {
+			ids.unshift('chat');
+		};
+
+		const options = ids.map(id => {
+			const suffix = U.Common.toUpperCamelCase(id);
+
+			return {
+				id,
+				icon: id,
+				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
+				description: translate(`sidebarMenuSpaceCreateDescription${suffix}`),
+				withDescription: true,
+			};
+		});
+
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'chat': {
+							this.createSpace(I.SpaceUxType.Chat, route);
+							break;
+						};
+
+						case 'space': {
+							this.createSpace(I.SpaceUxType.Space, route);
+							break;
+						};
+
+						case 'join': {
+							S.Popup.closeAll(null, () => {
+								S.Popup.open('spaceJoinByLink', {});
+							});
+							break;
+						};
+					};
+
+					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+				},
+			}
+		});
+
+		analytics.event(`Screen${prefix}CreateMenu`);
+	};
+
+	checkDiskSpace (callBack?: () => void) {
+		Renderer.send('checkDiskSpace').then(diskSpace => {
+			const { free, size } = diskSpace;
+
+			if (free >= size * 0.9) {
+				S.Popup.open('confirm', {
+					onClose: callBack,
+					data: {
+						icon: 'warning',
+						title: translate('popupConfirmDiskSpaceTitle'),
+						text: translate('popupConfirmDiskSpaceText'),
+						textConfirm: translate('commonOkay'),
+						canCancel: false,
+					},
+				});
+			} else {
+				callBack();
+			};
+		});
+
+	};
 
 };
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { MenuItemVertical, Loader, ObjectName, EmptySearch } from 'Component';
+import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
 import { I, S, U, J, C, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -39,7 +39,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, pronounId } = data;
 		const { isLoading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
@@ -50,8 +50,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return null;
 			};			
 
-			const type = S.Record.getTypeById(item.type);
+			const type = item.type ? S.Record.getTypeById(item.type) : null;
 			const object = ![ 'add', 'selectDate' ].includes(item.id) ? item : null;
+			const withPronoun = pronounId && (pronounId == item.id);
 			const cn = [];
 
 			if (item.id == 'add') {
@@ -73,14 +74,15 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						id={item.id}
 						object={object}
 						icon={item.icon}
-						name={<ObjectName object={item} withPlural={true} />}
+						name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={type?.name}
+						caption={type ? <ObjectType object={type} /> : ''}
 						style={param.style}
 						isDiv={item.isDiv}
 						className={cn.join(' ')}
 						withPlural={true}
+						withPronoun={withPronoun}
 					/>
 				</CellMeasurer>
 			);
@@ -172,7 +174,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getFilter () {
-		return String(S.Common.filter.text || '').replace(/^@/, '');
+		return String(S.Common.filter.text || '').replace(/^[@\[]+/, '');
 	};
 
 	getSections () {
@@ -260,7 +262,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ isLoading: true });
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,

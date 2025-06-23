@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
+import { Icon, IconObject, Label } from 'Component';
 import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
@@ -12,28 +12,35 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		super(props);
 		
 		this.save = this.save.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 	};
 	
 	render () {
-		const { param, setHover } = this.props;
-		const { data } = param;
-		const { rootId, objectId } = data;
 		const items = this.getItems();
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		
 		const Item = (item: any) => {
-			const canDelete = item.id != 'type';
+			if (item.isSection) {
+				return <Label className="item isSection" text={item.text || ''} />;
+			};
+
+			const canDelete = ![ 'type', 'relation' ].includes(item.id);
+
+			let icon = null;
+			if (item.customIcon) {
+				icon = <div className="iconWrapper"><Icon className={item.customIcon} /></div>;
+			} else {
+				icon = <IconObject size={40} object={item} />;
+			};
+
 			return (
 				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={e => this.onOver(e, item)}>
-					<IconObject size={40} object={item} />
+					{icon}
 					<div className="txt" onClick={e => this.onClick(e, item)}>
 						<div className="name">{item.name}</div>
 						<div className="value">{item.value}</div>
 					</div>
 					<div className="buttons">
-						{canDelete ? <Icon className="delete withBackground" onClick={e => this.onRemove(e, item)} /> : ''}
+						{canDelete ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
 					</div>
 				</form>
 			);
@@ -52,22 +59,6 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						</div>
 					) : ''}
 				</div>
-				
-				{!types.length ? (
-					<div className="bottom">
-						<div className="line" />
-						<div 
-							id="item-add" 
-							className="item add" 
-							onClick={this.onAdd} 
-							onMouseEnter={() => setHover({ id: 'add' })} 
-							//onMouseLeave={() => setHover()}
-						>
-							<Icon className="plus" />
-							<div className="name">{translate('menuDataviewSourceAddRelation')}</div>
-						</div>
-					</div>
-				) : ''}
 			</div>
 		);
 	};
@@ -94,34 +85,6 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		$(window).off('keydown.menu');
 	};
 
-	onAdd (e: any) {
-		const { getId, getSize } = this.props;
-		const value = this.getValue();
-
-		S.Menu.open('searchObject', { 
-			element: `#${getId()} #item-add`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			className: 'single',
-			data: {
-				skipIds: value,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc }
-				],
-				onSelect: (item: any) => {
-					this.save([ item.id ]);
-
-					if (!value.length) {
-						analytics.event('SetSelectQuery', { type: 'relation' });
-					};
-				}
-			}
-		});
-	};
-
 	onRemove (e: any, item: any) {
 		if (item) {
 			this.save(this.getValueIds().filter(it => it != item.id));
@@ -138,25 +101,56 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { readonly } = data;
+		const value = this.getValue();
 
-		if ((item.itemId != 'type') || readonly) {
+		if ((![ 'type', 'relation' ].includes(item.itemId)) || readonly) {
 			return;
 		};
 
-		S.Menu.open('typeSuggest', {
+		const menuParam = {
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,
-			data: {
-				filter: '',
-				onClick: (item: any) => {
-					this.save([ item.id ]);
+			data: {},
+		};
 
-					analytics.event('SetSelectQuery', { type: 'type' });
-					close();
-				}
-			}
-		}); 
+		let menuId = '';
+
+		switch (item.itemId) {
+			case 'type': {
+				menuId = 'typeSuggest';
+				menuParam.data = {
+					canAdd: true,
+					onClick: (item: any) => {
+						this.save([ item.id ]);
+
+						analytics.event('SetSelectQuery', { type: 'type' });
+						close();
+					}
+				};
+				break;
+			};
+
+			case 'relation': {
+				menuId = 'relationSuggest';
+				menuParam.data = {
+					menuIdEdit: 'blockRelationEdit',
+					skipCreate: true,
+					addCommand: (rootId: string, blockId: string, relation: any) => {
+						this.save([ relation.id ]);
+
+						if (!value.length) {
+							analytics.event('SetSelectQuery', { type: 'relation' });
+						};
+
+						close();
+					}
+				};
+				break;
+			};
+		};
+
+		S.Menu.open(menuId, menuParam);
 	};
 
 	save (value: string[], callBack?: () => void) {
@@ -189,17 +183,33 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 
 	getItems () {
 		const value = this.getValue();
-		const items = [];
+
+		let items = [];
 
 		if (!value.length) {
-			items.push({
-				id: 'type',
-				itemId: 'type',
-				name: translate('commonObjectType'),
-				relationFormat: I.RelationType.Object,
-				layout: I.ObjectLayout.Relation,
-				value: translate('commonNone'),
-			});
+			items = [
+				{
+					isSection: true,
+					text: translate('menuDataviewSourceEmptySourceLabel'),
+				},
+				{
+					id: 'type',
+					itemId: 'type',
+					name: translate('commonObjectType'),
+					customIcon: 'puzzle',
+					relationFormat: I.RelationType.Object,
+					layout: I.ObjectLayout.Relation,
+					value: translate('commonNone'),
+				},
+				{
+					id: 'relation',
+					itemId: 'relation',
+					name: translate('blockNameRelation'),
+					relationFormat: I.RelationType.Relations,
+					layout: I.ObjectLayout.Relation,
+					value: translate('commonNone'),
+				},
+			];
 		} else {
 			value.forEach(it => {
 				if (U.Object.isTypeLayout(it.layout)) {
@@ -207,7 +217,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						...it,
 						itemId: 'type',
 						name: translate('commonObjectType'),
-						value: it.name,
+						value: U.Object.name(it),
 					});
 				} else {
 					items.push({ ...it, itemId: it.id, value: translate('commonAll') });

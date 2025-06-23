@@ -64,8 +64,8 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 	
 	if (isRow) {
 		ColResize = (item: any) => (
-			<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={e => onResizeStart(e, item.index)}>
-				<div className="inner">
+			<div className={[ 'colResize', 'c' + item.index ].join(' ')}>
+				<div className="inner" onMouseDown={e => onResizeStart(e, item.index)} onDragStart={e => e.stopPropagation()}>
 					<div className="line" />
 				</div>
 			</div>

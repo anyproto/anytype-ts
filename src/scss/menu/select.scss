@@ -75,6 +75,17 @@
 		.item.add { gap: 0px 12px; }
 	}
 
+	.menu.menuSelect.spaceCreate { width: var(--menu-width-set); }
+	.menu.menuSelect.spaceCreate {
+		.item {
+			.icon { width: 40px; height: 40px; }
+			.icon.chat { background-image: url('~img/icon/menu/spaceCreate/chat.svg'); }
+			.icon.space { background-image: url('~img/icon/menu/spaceCreate/space.svg'); }
+			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }
+			.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
+		}
+	}
+
 	/* Type layout conflict */
 	.menu.menuSelect.menuTypeLayout { width: var(--menu-width-icon); }
 
@@ -92,6 +103,14 @@
 			.icon.object { background-image: url('~img/icon/chat/attachment/object.svg'); }
 			.icon.media { background-image: url('~img/icon/chat/attachment/media.svg'); }
 			.icon.file { background-image: url('~img/icon/chat/attachment/file.svg'); }
+		}
+	}
+
+	/* Chat message */
+	.menu.menuSelect.chatMessage {
+		.item {
+			.icon.reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
+			.icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
 		}
 	}
 }

@@ -24,6 +24,13 @@ class DetailStore {
 		});
 	};
 
+	/**
+	 * Creates a detail list item with observables and intercepts.
+	 * @private
+	 * @param {string} k - The relation key.
+	 * @param {any} v - The value.
+	 * @returns {Detail} The created detail item.
+	 */
 	private createListItem (k: string, v: any): Detail {
 		const el = { relationKey: k, value: v, isDeleted: false };
 
@@ -38,7 +45,11 @@ class DetailStore {
 		return el;
 	}; 
 
-	/** Idempotent. adds details to the detail store. */
+	/**
+	 * Adds details to the detail store.
+	 * @param {string} rootId - The root ID.
+	 * @param {Item[]} items - The items to add.
+	 */
 	public set (rootId: string, items: Item[]) {
 		if (!rootId) {
 			console.log('[S.Detail].set: rootId is not defined');
@@ -60,7 +71,12 @@ class DetailStore {
 		this.map.set(rootId, map);
 	};
 
-	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
+	/**
+	 * Updates details in the detail store. If clear is set, map will delete details by item id.
+	 * @param {string} rootId - The root ID.
+	 * @param {Item} item - The item to update.
+	 * @param {boolean} clear - Whether to clear existing details.
+	 */
 	public update (rootId: string, item: Item, clear: boolean): void {
 		if (!rootId) {
 			console.log('[S.Detail].update: rootId is not defined');
@@ -122,17 +138,27 @@ class DetailStore {
 		};
 	};
 
-	/** Idempotent. Clears any data stored with rootId, if there happens to be any.  */
+	/**
+	 * Clears any data stored with rootId, if there happens to be any.
+	 * @param {string} rootId - The root ID.
+	 */
 	public clear (rootId: string): void {
 		this.map.delete(rootId);
 	};
 
-	/** Idempotent. Clears all of the data stored in DetailStore, if there happens to be any */
+	/**
+	 * Clears all of the data stored in DetailStore, if there happens to be any.
+	 */
 	public clearAll (): void {
 		this.map.clear();
 	};
 
-	/** Idempotent. Clears details by keys provided, if they exist. if no keys are provided, all details are cleared. */
+	/**
+	 * Clears details by keys provided, if they exist. If no keys are provided, all details are cleared.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The item ID.
+	 * @param {string[]} [keys] - The keys to clear.
+	 */
 	public delete (rootId: string, id: string, keys?: string[]): void {
 		const map = this.map.get(rootId);
 
@@ -147,29 +173,52 @@ class DetailStore {
 		};
 	};
 
-	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
+	/**
+	 * Gets the object. If no keys are provided, all properties are returned. If force keys is set, J.Relation.default are included.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The item ID.
+	 * @param {string[]} [withKeys] - Keys to include.
+	 * @param {boolean} [forceKeys] - Whether to force default keys.
+	 * @param {I.ObjectLayout[]} [skipLayoutFormat] - Layouts to skip formatting.
+	 * @returns {any} The object.
+	 */
 	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
-		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
-
-		list = list.filter(it => !it.isDeleted);
+		const keys = new Set<string>();
 
 		if (withKeys) {
+			for (const key of withKeys) {
+				keys.add(key);
+			};
+
+			if (!forceKeys) {
+				for (const key of J.Relation.default) {
+					keys.add(key);
+				};
+			};
+
 			if (keys.has('name')) {
 				keys.add('pluralName');
 			};
-
 			if (keys.has('layout')) {
 				keys.add('resolvedLayout');
 			};
-
-			list = list.filter(it => keys.has(it.relationKey));
 		};
+
+		list = list.filter(it => {
+			if (it.isDeleted) {
+				return false;
+			};
+			if (withKeys && !keys.has(it.relationKey)) {
+				return false;
+			};
+			return true;
+		});
 
 		for (let i = 0; i < list.length; i++) {
 			object[list[i].relationKey] = list[i].value;
@@ -178,12 +227,22 @@ class DetailStore {
 		return this.mapper(object, skipLayoutFormat);
 	};
 
+	/**
+	 * Gets the keys for an item.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The item ID.
+	 * @returns {string[]} The keys.
+	 */
 	public getKeys (rootId: string, id: string): string[] {
 		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
 	};
 
-	/** Mutates object provided and also returns a new object. Sets defaults.
-	 * This Function contains domain logic which should be encapsulated in a model */
+	/**
+	 * Mutates object provided and also returns a new object. Sets defaults.
+	 * @param {any} object - The object to map.
+	 * @param {I.ObjectLayout[]} [skipLayoutFormat] - Layouts to skip formatting.
+	 * @returns {any} The mapped object.
+	 */
 	public mapper (object: any, skipLayoutFormat?: I.ObjectLayout[]): any {
 		object = this.mapCommon(object || {});
 
@@ -201,6 +260,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps common properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with standardized properties.
+	 */
 	private mapCommon (object: any) {
 		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
@@ -231,6 +296,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps note-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with note-specific properties.
+	 */
 	private mapNote (object: any) {
 		object.coverType = I.CoverType.None;
 		object.coverId = '';
@@ -245,13 +316,18 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps type-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with type-specific properties.
+	 */
 	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
 		object.recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
 		object.recommendedFileRelations = Relation.getArrayValue(object.recommendedFileRelations);
-		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTypeId = Relation.getStringValue(object.defaultTypeId);
@@ -259,6 +335,11 @@ class DetailStore {
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 		object.pluralName = Relation.getStringValue(object.pluralName);
+		object.headerRelationsLayout = Number(object.headerRelationsLayout) || I.FeaturedRelationLayout.Inline;
+
+		if (object.name == translate('defaultNamePage')) {
+			object.name = '';
+		};
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
@@ -267,6 +348,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps relation-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with relation-specific properties.
+	 */
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
@@ -274,8 +361,8 @@ class DetailStore {
 		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
-		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
+		object.includeTime = Boolean(object.relationFormatIncludeTime) || false;
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedRelation');
@@ -289,6 +376,12 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps option-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object with option-specific properties.
+	 */
 	private mapOption (object: any) {
 		object.text = object.name;
 		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
@@ -298,11 +391,23 @@ class DetailStore {
 		return object;
 	};
 
+	/**
+	 * Maps set-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapSet (object: any) {
 		object.setOf = Relation.getArrayValue(object.setOf);
 		return object;
 	};
 
+	/**
+	 * Maps date-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapDate (object: any) {
 		object.timestamp = Number(object.timestamp) || 0;
 
@@ -316,6 +421,12 @@ class DetailStore {
 		return this.mapSet(object);
 	};
 
+	/**
+	 * Maps space view-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapSpaceView (object: any) {
 		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
@@ -345,15 +456,34 @@ class DetailStore {
 
 		// Local status
 		object.isLocalOk = [ I.SpaceStatus.Unknown, I.SpaceStatus.Ok ].includes(object.spaceLocalStatus);
+		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
+
+		// UX type
+		object.uxType = Number(object.spaceUxType);
+		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
+		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
+		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
 
 		return object;
 	};
 
+	/**
+	 * Maps file-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
 		return object;
 	};
 
+	/**
+	 * Maps participant-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
 	private mapParticipant (object) {
 		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;

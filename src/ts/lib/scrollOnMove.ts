@@ -13,12 +13,17 @@ class ScrollOnMove {
 	isPopup = false;
 	frame = 0;
 
+	/**
+	 * Handles mouse down event and sets up viewport/document dimensions.
+	 * @param {any} e - The mouse event.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
 	onMouseDown (e: any, isPopup: boolean) {
 		this.isPopup = isPopup;
 
 		if (isPopup) {
 			const container = $('#popupPage-innerWrap');
-			const content = container.find('.content');
+			const content = container.find('> .content');
 
 			this.viewportWidth = container.width();
 			this.viewportHeight = container.height();
@@ -48,6 +53,10 @@ class ScrollOnMove {
 		};
 	};
 
+	/**
+	 * Starts checking for window scroll based on mouse position.
+	 * @param {any} param - Scroll parameters.
+	 */
 	checkForWindowScroll (param: any) {
 		this.clear();
 		this.frame = raf(() => {
@@ -57,6 +66,11 @@ class ScrollOnMove {
 		});
 	};
 
+	/**
+	 * Adjusts window scroll if mouse is near the edge.
+	 * @param {any} param - Scroll parameters.
+	 * @returns {boolean} True if scroll was adjusted.
+	 */
 	adjustWindowScroll (param: any) {
 		const { 
 			viewportX, viewportY,
@@ -129,6 +143,11 @@ class ScrollOnMove {
 		};
 	};
 	
+	/**
+	 * Handles mouse move event and triggers auto-scroll if near edge.
+	 * @param {number} x - Mouse X position.
+	 * @param {number} y - Mouse Y position.
+	 */
 	onMouseMove (x: number, y: number) {
 		const edgeTop = BORDER;
 		const edgeLeft = BORDER;
@@ -159,10 +178,17 @@ class ScrollOnMove {
 		});
 	};
 	
+	/**
+	 * Handles mouse up event and clears any ongoing scroll.
+	 * @param {any} e - The mouse event.
+	 */
 	onMouseUp (e: any) {
 		this.clear();
 	};
 
+	/**
+	 * Clears any ongoing scroll animation frame.
+	 */
 	clear () {
 		if (this.frame) {
 			raf.cancel(this.frame);

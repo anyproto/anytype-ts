@@ -39,6 +39,7 @@
 		.icon.comment { background-image: url('~img/icon/menu/action/comment0.svg'); }
 		.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 		.icon.pin { background-image: url('~img/icon/menu/action/pin0.svg'); }
+		.icon.unpin { background-image: url('~img/icon/menu/action/unpin0.svg'); }
 		.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
 		.icon.removeWidget { background-image: url('~img/icon/menu/action/removeWidget0.svg'); }
 		.icon.more,
@@ -81,7 +82,6 @@
 		.icon.reset { background-image: url('~img/icon/menu/action/reset.svg'); }
 		.icon.hide { background-image: url('~img/icon/menu/relation/hide.svg'); }
 		.icon.browse { background-image: url('~img/icon/menu/action/browse0.svg'); }
-		.icon.install { background-image: url('~img/icon/menu/action/install0.svg'); }
 		.icon.unlink { background-image: url('~img/icon/menu/action/unlink0.svg'); }
 		.icon.store { background-image: url('~img/icon/menu/action/store0.svg'); }
 		.icon.pencil { background-image: url('~img/icon/menu/action/pencil0.svg'); }
@@ -92,6 +92,8 @@
 		.icon.time { background-image: url('~img/icon/menu/action/time0.svg'); }
 		.icon.collection { background-image: url('~img/icon/menu/action/collection0.svg'); }
 		.icon.import { background-image: url('~img/icon/menu/action/import0.svg'); }
+		.icon.editType { background-image: url('~img/icon/menu/action/editType0.svg'); }
+		.icon.openSidebar { background-image: url('~img/icon/menu/action/sidebar0.svg'); }
 
 		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
 		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }
@@ -134,6 +136,9 @@
 		.icon.checkbox { background-size: 18px; }
 		.icon.checkbox.c0 { background-image: url('~img/icon/menu/checkbox0.svg'); }
 		.icon.checkbox.c1 { background-image: url('~img/icon/menu/checkbox1.svg'); }
+
+		.icon.help-star { background-image: url('~img/icon/menu/help/star.svg'); }
+		.icon.help-keyboard { background-image: url('~img/icon/menu/help/keyboard.svg'); }
 
 		.icon.color { z-index: 1; }
 		.icon.color {

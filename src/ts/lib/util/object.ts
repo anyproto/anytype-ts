@@ -278,8 +278,8 @@ class UtilObject {
 		if (this.isInFileLayouts(layout)) {
 			name = U.File.name(object);
 		} else
-		if (withPlural && this.isTypeLayout(layout)) {
-			name = object.pluralName || object.name;
+		if (this.isTypeLayout(layout)) {
+			name = withPlural ? object.pluralName || object.name : object.name || object.pluralName;
 		} else {
 			name = object.name;
 		};
@@ -288,6 +288,9 @@ class UtilObject {
 	};
 
 	getById (id: string, param: Partial<I.SearchSubscribeParam>, callBack: (object: any) => void) {
+		param = param || {};
+		param.limit = 1;
+
 		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);
@@ -308,7 +311,7 @@ class UtilObject {
 			param.ignoreArchived = false;
 		};
 
-		U.Data.search(param, (message: any) => {
+		U.Subscription.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
 			};
@@ -359,9 +362,9 @@ class UtilObject {
 		return layout == I.ObjectLayout.Collection;
 	};
 
-	isTemplate (type: string): boolean {
-		const templateType = S.Record.getTemplateType();
-		return templateType ? type == templateType.id : false;
+	isTemplateType (id: string): boolean {
+		const type = S.Record.getTemplateType();
+		return type ? id == type.id : false;
 	};
 
 	isTypeLayout (layout: I.ObjectLayout): boolean {
@@ -513,9 +516,19 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
-	isAllowedChat () {
-		const { config, space } = S.Common;
-		return config.experimental || J.Constant.chatSpaceId.includes(space);
+	isAllowedChat (): boolean {
+		const electron = U.Common.getElectron();
+		const space = U.Space.getSpaceview();
+		const version = String(electron.version?.app || '');
+		const [ major, minor, patch ] = version.split('.');
+
+		return space.isShared && (!electron.isPackaged || patch.match(/alpha|beta/)) ? true : false;
+	};
+
+	isAllowedMultiChat (): boolean {
+		const space = U.Space.getSpaceview();
+
+		return space.targetSpaceId == 'bafyreigryvrmerbtfswwz5kav2uq5dlvx3hl45kxn4nflg7lz46lneqs7m.2nvj2qik6ctdy';
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
@@ -617,8 +630,6 @@ class UtilObject {
 		if (type) {
 			S.Block.update(id, id, { layout: type.recommendedLayout });
 		};
-
-		analytics.event('ResetToTypeDefault');
 	};
 
 	getTypeRelationListsKeys () {
@@ -689,7 +700,9 @@ class UtilObject {
 		});
 	};
 
-	copyLink (object: any, space: any, type: string, route: string) {
+	copyLink (object: any, space: any, type: string, route: string, add?: string) {
+		add = add || '';
+
 		const cb = (link: string) => {
 			U.Common.copyToast(translate('commonLink'), link);
 			analytics.event('CopyLink', { route });
@@ -707,6 +720,10 @@ class UtilObject {
 				link = `https://object.any.coop/${object.id}?spaceId=${space.targetSpaceId}`;
 				break;
 			};
+		};
+
+		if (add) {
+			link += add;
 		};
 		
 		if (space.isShared) {
@@ -735,14 +752,24 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
+		const newDetails: any = {
+			...this.getNewTypeDetails(),
+			...details,
+		};
+
+		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+	};
+
+	getNewTypeDetails (): any {
 		const type = S.Record.getTypeType();
 		const featured = [ 'type', 'tag', 'backlinks' ];
 		const recommended = [ 'createdDate', 'creator', 'links' ];
 		const hidden = [ 'lastModifiedDate', 'lastModifiedBy', 'lastOpenedDate' ];
 		const mapper = it => S.Record.getRelationByKey(it)?.id;
-		const newDetails: any = {
+
+		return {
 			isNew: true,
-			type: type.id,
+			type: type?.id,
 			layout: I.ObjectLayout.Type,
 			defaultTypeId: String(S.Record.getPageType()?.id) || '',
 			recommendedRelations: recommended.map(mapper).filter(it => it),
@@ -751,10 +778,7 @@ class UtilObject {
 			data: {
 				route: analytics.route.settingsSpace,
 			},
-			...details,
 		};
-
-		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
 	};
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {

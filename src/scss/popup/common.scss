@@ -3,7 +3,7 @@
 .popups {
 	.popup { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 101; }
 	.popup.show {
-		.innerWrap { opacity: 1; transform: scale3d(1,1,1); }
+		.innerWrap { opacity: 1; transform: none; }
 		.dimmer { opacity: 1; -webkit-app-region: no-drag; }
 	}
 	.popup.showDimmer {
@@ -15,7 +15,7 @@
 	.popup {
 		.innerWrap { 
 			position: absolute; left: 0px; top: 50%; z-index: 1; background: var(--color-bg-primary); border-radius: 12px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
-			opacity: 0; transform: scale3d(0.95,0.95,1); transition-duration: 0.15s; transition-property: transform, opacity; transition-timing-function: $easeInQuint;
+			opacity: 0; transform: scale(0.95,0.95); transition-duration: 0.15s; transition-property: transform, opacity; transition-timing-function: $easeInQuint;
 			overflow-x: hidden; overflow-y: auto; overscroll-behavior: none;
 		}
 
@@ -51,5 +51,7 @@ html.platformWindows {
 @import "./usecase";
 @import "./share";
 @import "./spaceCreate";
+@import "./spaceJoinByLink";
 @import "./logout";
 @import "./onboarding";
+@import "./apiCreate";

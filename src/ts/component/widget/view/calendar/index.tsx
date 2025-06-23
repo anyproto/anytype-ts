@@ -10,7 +10,7 @@ interface WidgetViewCalendarRefProps {
 const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.WidgetViewComponent>((props, ref: any) => {
 
 	const [ value, setValue ] = useState(U.Date.now());
-	const { rootId, block, canCreate, getView, reload, onCreate } = props;
+	const { rootId, block, canCreate, subId, getView, reload, onCreate } = props;
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
 	const view = getView();
@@ -44,8 +44,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 	};
 
 	const setSelectsValue = () => {
-		monthRef.current.setValue(m);
-		yearRef.current.setValue(y);
+		monthRef.current?.setValue(m);
+		yearRef.current?.setValue(y);
 	};
 
 	const onArrow = (dir: number) => {
@@ -131,7 +131,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 
 	const getDotMap = (relationKey: string): Map<string, boolean> => {
 		const data = U.Date.getCalendarMonth(value);
-		const items = S.Record.getRecords(S.Record.getSubId(rootId, J.Constant.blockId.dataview), [ relationKey ]);
+		const items = S.Record.getRecords(subId, [ relationKey ]);
 		const ret = new Map();
 
 		data.forEach(it => {
@@ -155,7 +155,6 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		getFilters,
 	}));
 
-	const today = getDateParam(U.Date.now());
 	const days = U.Date.getWeekDays();
 	const months = U.Date.getMonths();
 	const years = U.Date.getYears(0, 3000);

@@ -1,3 +1,9 @@
+/**
+ * Graph rendering worker for force-directed and clustered layouts using D3 and canvas.
+ * Handles simulation, drawing, and user interaction logic for graph visualization.
+ *
+ * @file dist/workers/graph.js
+ */
 importScripts(
 	'./lib/d3/d3-quadtree.min.js',
 	'./lib/d3/d3-zoom.min.js',
@@ -86,6 +92,9 @@ let isOver = '';
 let maxDegree = 0;
 let clusters = {};
 let selectBox = { x: 0, y: 0, width: 0, height: 0 };
+let borderRadius = 0;
+let lineWidth = 0;
+let lineWidth3 = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -93,6 +102,10 @@ addEventListener('message', ({ data }) => {
 	};
 });
 
+/**
+ * Initializes the graph worker with provided parameters and sets up the simulation.
+ * @param {Object} param - Initialization parameters including canvas, nodes, edges, settings, etc.
+ */
 init = (param) => {
 	data = param;
 	canvas = data.canvas;
@@ -106,6 +119,7 @@ init = (param) => {
 	resize(data);
 	initTheme(data.theme);
 	initFonts();
+	recalcConstants();
 
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg;
@@ -113,6 +127,7 @@ init = (param) => {
 	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
+	simulation.alphaDecay(0.05);
 
 	initForces();
 
@@ -128,6 +143,10 @@ init = (param) => {
 	send('onTransform', { ...transform });
 };
 
+/**
+ * Initializes theme-specific settings.
+ * @param {string} theme - The theme name (e.g., 'dark').
+ */
 initTheme = (theme) => {
 	switch (theme) {
 		case 'dark':
@@ -136,6 +155,9 @@ initTheme = (theme) => {
 	};
 };
 
+/**
+ * Loads and registers custom fonts for the graph.
+ */
 initFonts = () => {
 	if (!self.FontFace) {
 		return;
@@ -148,22 +170,28 @@ initFonts = () => {
 	fontFace.load().then(() => fontFamily = name);
 };
 
+/**
+ * Registers an image bitmap for a given source.
+ * @param {{src: string, bitmap: ImageBitmap}} param - Image source and bitmap.
+ */
 image = ({ src, bitmap }) => {
 	if (!images[src]) {
 		images[src] = bitmap;
 	};
 };
 
+/**
+ * Initializes D3 forces and clusters for the simulation.
+ */
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
-	const m = 10;
 	const maxRadius = 500;
 
 	updateOrphans();
 
 	nodes.forEach(d => {
-		if (!clusters[d.type]) {
-			clusters[d.type] = { id: d.type, radius: 0, x: 0, y: 0 };
+		if (d.typeKey && !clusters[d.typeKey]) {
+			clusters[d.typeKey] = { id: d.typeKey, radius: 0, x: 0, y: 0 };
 		};
 	});
 
@@ -210,16 +238,14 @@ initForces = () => {
 	redraw();
 };
 
+/**
+ * Updates the simulation forces and filters nodes/edges based on settings.
+ */
 updateForces = () => {
 	const old = getNodeMap();
-	
 	let types = [];
-	if (settings.link) {
-		types.push(EdgeType.Link);
-	};
-	if (settings.relation) {
-		types.push(EdgeType.Relation);
-	};
+	if (settings.link) types.push(EdgeType.Link);
+	if (settings.relation) types.push(EdgeType.Relation);
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
@@ -233,16 +259,16 @@ updateForces = () => {
 
 	// Filter links
 	if (!settings.link) {
-		edges = edges.filter(d => d.isDouble ? intersect(d.types, types) : d.type != EdgeType.Link);
-
+		const typesSet = new Set(types);
+		edges = edges.filter(d => d.isDouble ? d.types.some(t => typesSet.has(t)) : d.type != EdgeType.Link);
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
 	};
 
 	// Filter relations
 	if (!settings.relation) {
-		edges = edges.filter(d => d.isDouble ? intersect(d.types, types) : d.type != EdgeType.Relation);
-
+		const typesSet = new Set(types);
+		edges = edges.filter(d => d.isDouble ? d.types.some(t => typesSet.has(t)) : d.type != EdgeType.Relation);
 		const ids = nodeIdsFromEdges(edges);
 		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
 	};
@@ -250,8 +276,7 @@ updateForces = () => {
 	// Filter local only edges
 	if (settings.local) {
 		edges = filterEdgesByDepth([ rootId ], settings.depth || 1);
-
-		const ids = nodeIdsFromEdges(edges).add(rootId);
+		const ids = nodeIdsFromEdges(edges); ids.add(rootId);
 		nodes = nodes.filter(d => ids.has(d.id));
 	};
 
@@ -263,12 +288,13 @@ updateForces = () => {
 	// Cluster by object type
 	if (settings.cluster) {
 		simulation.force('cluster', d3.forceCluster()
-		.centers(d => clusters.find(c => c.id == d.type))
-		.strength(1)
-		.centerInertia(0.75));
-
-		simulation.
-		force('collide', d3.forceCollide(d => getRadius(d) * 2));
+			.centers(d => clusters.find(c => c.id == d.type))
+			.strength(1)
+			.centerInertia(0.75));
+		simulation.force('collide', d3.forceCollide(d => getRadius(d) * 2));
+	} else {
+		simulation.force('cluster', null);
+		simulation.force('collide', null);
 	};
 
 	let map = getNodeMap();
@@ -276,25 +302,22 @@ updateForces = () => {
 
 	// Shallow copy to disable mutations
 	nodes = nodes.map(d => {
-		let o = old.get(d.id);
-		if (!o) {
-			o = settings.local ? { x: width / 2, y: width / 2 } : {};
-		};
+		let o = old.get(d.id) || (settings.local ? { x: width / 2, y: width / 2 } : {});
 		return Object.assign(o, d);
 	});
 	edges = edges.map(d => Object.assign({}, d));
 
 	simulation.nodes(nodes);
 	simulation.force('link')
-	.id(d => d.id)
-	.links(edges);
+		.id(d => d.id)
+		.links(edges);
+
+	// Build edgeMap in a single pass over edges
+	const tmpEdgeMap = getEdgeMap();
 
 	edgeMap.clear();
 	nodes.forEach(d => {
-		const sources = edges.filter(it => it.target.id == d.id).map(it => it.source.id);
-		const targets = edges.filter(it => it.source.id == d.id).map(it => it.target.id);
-
-		edgeMap.set(d.id, [].concat(sources).concat(targets));
+		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
 
 	simulation.alpha(1).restart();
@@ -303,6 +326,10 @@ updateForces = () => {
 	redraw();
 };
 
+/**
+ * Updates settings and triggers force update or redraw if needed.
+ * @param {Object} param - Settings to update.
+ */
 updateSettings = (param) => {
 	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'depth', 'cluster', 'filterTypes' ];
 	
@@ -329,26 +356,83 @@ updateSettings = (param) => {
 	};
 };
 
+/**
+ * Updates theme colors and triggers redraw.
+ * @param {{theme: string, colors: Object}} param - Theme and color settings.
+ */
 updateTheme = ({ theme, colors }) => {
 	data.colors = colors;
 	initTheme(theme);
 	redraw();
 };
 
+/**
+ * Builds a map of edges grouped by their connected vertex IDs.
+ *
+ * Iterates over the global `edges` array and creates a `Map` where each key
+ * is a vertex ID (`source` or `target`), and the value is an array of edges
+ * connected to that vertex.
+ *
+ * @returns {Map<*, Object[]>} A map where each key is a vertex ID and each value is an array of edge objects.
+ */
+getEdgeMap = () => {
+	const map = new Map();
+
+	for (let i = 0; i < edges.length; i++) {
+		const e = edges[i];
+
+		if (!map.has(e.source)) {
+			map.set(e.source, []);
+		};
+		if (!map.has(e.target)) {
+			map.set(e.target, []);
+		};
+
+		map.get(e.source).push(e);
+		map.get(e.target).push(e);
+	};
+
+	return map;
+};
+
+/**
+ * Updates orphan status and degree counts for all nodes.
+ */
 updateOrphans = () => {
+	const edgeMap = getEdgeMap();
+
+	// Update nodes using the map
 	nodes = nodes.map(d => {
-		const edges = getEdgesByNodeId(d.id);
-		
+		const edges = edgeMap.get(d.id) || [];
+
 		d.isOrphan = !edges.length;
-		d.linkCnt = edges.filter(it => it.type == EdgeType.Link).length;
-		d.relationCnt = edges.filter(it => it.type == EdgeType.Relation).length;
+		d.linkCnt = 0;
+		d.relationCnt = 0;
+
+		for (let i = 0; i < edges.length; i++) {
+			const t = edges[i].type;
+
+			if (t == EdgeType.Link) {
+				d.linkCnt++;
+			};
+
+			if (t == EdgeType.Relation) {
+				d.relationCnt++;
+			};
+		};
 
 		return d;
 	});
 };
 
+/**
+ * Draws the entire graph (edges, nodes, selection box) for the current frame.
+ * @param {number} t - The current animation time.
+ */
 draw = (t) => {
 	const radius = 5.7 / transform.k;
+
+	recalcConstants();
 
 	time = t;
 	TWEEN.update();
@@ -360,7 +444,9 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		if (checkNodeInViewport(d.target) || checkNodeInViewport(d.source)) {
+			drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		};
 	});
 
 	nodes.forEach(d => {
@@ -376,6 +462,9 @@ draw = (t) => {
 	ctx.restore();
 };
 
+/**
+ * Requests a redraw on the next animation frame.
+ */
 redraw = () => {
 	cancelAnimationFrame(frame);
 	if (!paused) {
@@ -383,6 +472,14 @@ redraw = () => {
 	};
 };
 
+/**
+ * Draws a single edge, including optional arrowheads and labels.
+ * @param {Object} d - The edge object.
+ * @param {number} arrowWidth - Width of the arrowhead.
+ * @param {number} arrowHeight - Height of the arrowhead.
+ * @param {boolean} arrowStart - Whether to draw an arrow at the start.
+ * @param {boolean} arrowEnd - Whether to draw an arrow at the end.
+ */
 drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const x1 = d.source.x;
 	const y1 = d.source.y;
@@ -397,7 +494,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const cos2 = Math.cos(a2);
 	const sin2 = Math.sin(a2);
 	const mx = (x1 + x2) / 2;  
-    const my = (y1 + y2) / 2;
+	const my = (y1 + y2) / 2;
 	const sx1 = x1 + r1 * cos1;
 	const sy1 = y1 + r1 * sin1;
 	const sx2 = x2 + r2 * cos2;
@@ -405,7 +502,6 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const k = 5 / transform.k;
 	const io = (isOver == d.source.id) || (isOver == d.target.id);
 	const showName = io && d.name && settings.label;
-	const lineWidth = getLineWidth();
 
 	let colorLink = data.colors.link;
 	let colorArrow = data.colors.arrow;
@@ -441,10 +537,10 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, getBorderRadius());
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, borderRadius);
 
 		ctx.strokeStyle = colorLink;
-		ctx.lineWidth = lineWidth * 3;
+		ctx.lineWidth = lineWidth3;
 		ctx.fillStyle = data.colors.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -482,6 +578,10 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 };
 
+/**
+ * Draws a single node, including icon, selection, and label.
+ * @param {Object} d - The node object.
+ */
 drawNode = (d) => {
 	const radius = getRadius(d);
 	const img = images[d.src];
@@ -492,7 +592,7 @@ drawNode = (d) => {
 	let colorNode = data.colors.node;
 	let colorText = data.colors.text;
 	let colorLine = '';
-	let lineWidth = 0;
+	let lw = 0;
 
 	if (isHovering) {
 		ctx.globalAlpha = hoverAlpha;
@@ -510,7 +610,7 @@ drawNode = (d) => {
 
 	if (io || (root && (d.id == root.id))) {
 		colorNode = colorText = colorLine = data.colors.highlight;
-		lineWidth = getLineWidth() * 3;
+		lw = lineWidth3;
 		ctx.globalAlpha = 1;
 	};
 
@@ -519,19 +619,19 @@ drawNode = (d) => {
 	};
 
 	if (io || isSelected) {
-		lineWidth = getLineWidth() * 3;
+		lw = lineWidth3;
 	};
 
 	if (settings.icon && img && (transform.k >= transformThresholdHalf)) {
 		ctx.save();
 
-		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
+		if (lw) {
+			util.roundedRect(d.x - radius - lw * 2, d.y - radius - lw * 2, diameter + lw * 4, diameter + lw * 4, borderRadius);
 			ctx.fillStyle = data.colors.bg;
 			ctx.fill();
 
 			ctx.strokeStyle = colorLine;
-			ctx.lineWidth = lineWidth;
+			ctx.lineWidth = lw;
 			ctx.stroke();
 		};
 
@@ -547,7 +647,7 @@ drawNode = (d) => {
 			if (isLayoutHuman(d) || isLayoutParticipant(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, borderRadius);
 			};
 	
 			ctx.fillStyle = data.colors.bg;
@@ -595,6 +695,9 @@ drawNode = (d) => {
 	};
 };
 
+/**
+ * Draws the selection box for drag-to-select.
+ */
 drawSelectBox = () => {
 	const { x, y, width, height } = selectBox;
 
@@ -602,16 +705,36 @@ drawSelectBox = () => {
 	util.roundedRect(x, y, width, height, 1);
 
 	ctx.strokeStyle = data.colors.selected;
-	ctx.lineWidth = getLineWidth() * 3;
+	ctx.lineWidth = lineWidth3;
 	ctx.stroke();
 	ctx.restore();
 }
 
+/**
+ * Handles zoom events and updates the transform.
+ * @param {Object} data - Zoom event data.
+ */
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
+
+	util.clearCache('text');
+	recalcConstants();
 	redraw();
 };
 
+/**
+ * Recalculates constants to avoid recomputations with floats
+ */
+recalcConstants = () => {
+	borderRadius = getBorderRadius();
+	lineWidth = getLineWidth();
+	lineWidth3 = lineWidth * 3;
+};
+
+/**
+ * Handles the start of a drag-to-select operation.
+ * @param {Object} data - Drag start data.
+ */
 onDragToSelectStart = (data) => {
 	const { x, y } = data;
 
@@ -619,6 +742,10 @@ onDragToSelectStart = (data) => {
 	selectBox.y = transform.invertY(y);
 };
 
+/**
+ * Handles movement during drag-to-select.
+ * @param {Object} data - Drag move data.
+ */
 onDragToSelectMove = (data) => {
 	const x = transform.invertX(data.x);
 	const y = transform.invertY(data.y);
@@ -642,17 +769,28 @@ onDragToSelectMove = (data) => {
 	redraw();
 };
 
+/**
+ * Handles the end of a drag-to-select operation.
+ */
 onDragToSelectEnd = () => {
 	selectBox = { x: 0, y: 0, width: 0, height: 0 };
 	send('onTransform', { ...transform });
 };
 
+/**
+ * Handles the start of a drag event.
+ * @param {Object} param - Drag event data.
+ */
 onDragStart = ({ active }) => {
 	if (!active) {
 		restart(0.3);
 	};
 };
 
+/**
+ * Handles movement during a drag event.
+ * @param {Object} param - Drag move data.
+ */
 onDragMove = ({ subjectId, x, y }) => {
 	send('onDragMove');
 
@@ -673,17 +811,29 @@ onDragMove = ({ subjectId, x, y }) => {
 	redraw();
 };
 
+/**
+ * Handles the end of a drag event.
+ * @param {Object} param - Drag end data.
+ */
 onDragEnd = ({ active }) => {
 	if (!active) {
 		simulation.alphaTarget(0);
 	};
 };
 
+/**
+ * Handles click events on the canvas.
+ * @param {Object} param - Click event data.
+ */
 onClick = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	send('onClick', { node: d?.id });
 };
 
+/**
+ * Handles selection events, optionally selecting related nodes.
+ * @param {Object} param - Selection event data.
+ */
 onSelect = ({ x, y, selectRelated }) => {
   	const d = getNodeByCoords(x, y);
   	
@@ -698,6 +848,10 @@ onSelect = ({ x, y, selectRelated }) => {
 	};
 };
 
+/**
+ * Handles setting the root node by coordinates.
+ * @param {Object} param - Set root event data.
+ */
 onSetRootId = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
@@ -706,16 +860,28 @@ onSetRootId = ({ x, y }) => {
 	};
 };
 
+/**
+ * Sets the edge list and updates forces.
+ * @param {Object} param - Edge data.
+ */
 onSetEdges = (param) => {
 	data.edges = param.edges;
 	updateForces();
 };
 
+/**
+ * Sets the selected node IDs and redraws.
+ * @param {Object} param - Selection data.
+ */
 onSetSelected = ({ ids }) => {
 	selected = ids;
 	redraw();
 };
 
+/**
+ * Handles mouse move events, updating hover state and triggering redraws.
+ * @param {Object} param - Mouse move data.
+ */
 onMouseMove = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 
@@ -740,6 +906,10 @@ onMouseMove = ({ x, y }) => {
 	}, 200);
 };
 
+/**
+ * Handles context menu events on nodes or space.
+ * @param {Object} param - Context menu event data.
+ */
 onContextMenu = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 
@@ -754,6 +924,10 @@ onContextMenu = ({ x, y }) => {
 	redraw();
 };
 
+/**
+ * Adds a new node to the graph, optionally linking to a source node.
+ * @param {Object} param - Node addition data.
+ */
 onAddNode = ({ target, sourceId }) => {
 	const id = data.nodes.length;
 
@@ -788,6 +962,10 @@ onAddNode = ({ target, sourceId }) => {
 	updateForces();
 };
 
+/**
+ * Removes nodes and their edges from the graph.
+ * @param {Object} param - Node removal data.
+ */
 onRemoveNode = ({ ids }) => {
 	isHovering = false;
 
@@ -797,6 +975,10 @@ onRemoveNode = ({ ids }) => {
 	updateForces();
 };
 
+/**
+ * Sets the root node by ID and animates the view to center on it.
+ * @param {Object} param - Root node data.
+ */
 setRootId = (param) => {
 	rootId = param.rootId;
 	root = getNodeById(rootId);
@@ -825,10 +1007,18 @@ setRootId = (param) => {
 	};
 };
 
+/**
+ * Restarts the simulation with a new alpha target.
+ * @param {number} alpha - The alpha target for the simulation.
+ */
 restart = (alpha) => {
 	simulation.alphaTarget(alpha).restart();
 };
 
+/**
+ * Resizes the canvas and redraws the graph.
+ * @param {Object} data - Resize data.
+ */
 resize = (data) => {
 	width = data.width;
 	height = data.height;
@@ -843,10 +1033,20 @@ resize = (data) => {
 
 //------------------- Util -------------------
 
+/**
+ * Sends a message to the main thread.
+ * @param {string} id - Message type.
+ * @param {any} data - Message payload.
+ */
 const send = (id, data) => {
 	this.postMessage({ id, data });
 };
 
+/**
+ * Checks if a node is within the current viewport.
+ * @param {Object} d - The node object.
+ * @returns {boolean} True if the node is in the viewport.
+ */
 const checkNodeInViewport = (d) => {
 	const dr = d.radius * transform.k;
 	const distX = transform.x + d.x * transform.k - dr;
@@ -855,40 +1055,81 @@ const checkNodeInViewport = (d) => {
 	return (distX >= -dr * 2) && (distX <= width) && (distY >= -dr * 2) && (distY <= height);
 };
 
+/**
+ * Checks if a node uses the Human layout.
+ * @param {Object} d - The node object.
+ * @returns {boolean}
+ */
 const isLayoutHuman = (d) => {
 	return d.layout == Layout.Human;
 };
 
+/**
+ * Checks if a node uses the Participant layout.
+ * @param {Object} d - The node object.
+ * @returns {boolean}
+ */
 const isLayoutParticipant = (d) => {
 	return d.layout == Layout.Participant;
 };
 
+/**
+ * Checks if a node uses the Bookmark layout.
+ * @param {Object} d - The node object.
+ * @returns {boolean}
+ */
 const isLayoutBookmark = (d) => {
 	return d.layout == Layout.Bookmark;
 };
 
+/**
+ * Gets a node by its ID.
+ * @param {string|number} id - The node ID.
+ * @returns {Object|undefined} The node object or undefined.
+ */
 const getNodeById = (id) => {
 	return nodeMap.get(id) || nodes.find(d => d.id == id);
 };
 
+/**
+ * Gets a node by canvas coordinates.
+ * @param {number} x - The x coordinate.
+ * @param {number} y - The y coordinate.
+ * @returns {Object|undefined} The node object or undefined.
+ */
 const getNodeByCoords = (x, y) => {
 	return simulation.find(transform.invertX(x), transform.invertY(y), 10 / transform.k);
 };
 
+/**
+ * Gets all edges connected to a node by ID.
+ * @param {string|number} id - The node ID.
+ * @returns {Object[]} Array of edge objects.
+ */
 const getEdgesByNodeId = (id) => {
 	return edges.filter(d => (d.source == id) || (d.target == id));
 };
 
+/**
+ * Recursively filters edges by depth from a set of source node IDs.
+ * @param {Array<string|number>} sourceIds - Source node IDs.
+ * @param {number} depth - Depth to traverse.
+ * @returns {Object[]} Array of edge objects within the given depth.
+ */
 const filterEdgesByDepth = (sourceIds, depth) => {
 	if (!depth) {
 		return [];
 	};
 
-	const filtered = edges.filter(d => sourceIds.includes(d.source) || sourceIds.includes(d.target));
-	const nextIds = [].concat(filtered.map(d => d.source)).concat(filtered.map(d => d.target));
+	const sourceSet = new Set(sourceIds);
+	const filtered = edges.filter(d => sourceSet.has(d.source) || sourceSet.has(d.target));
+	const nextIds = [];
 
-	let ret = [].concat(filtered);
+	for (let i = 0; i < filtered.length; i++) {
+		nextIds.push(filtered[i].source, filtered[i].target);
+	};
 
+	let ret = filtered.slice();
 	if (nextIds.length && (depth > 1)) {
 		ret = ret.concat(filterEdgesByDepth(nextIds, depth - 1));
 	};
@@ -896,10 +1137,20 @@ const filterEdgesByDepth = (sourceIds, depth) => {
 	return ret;
 };
 
+/**
+ * Gets a set of node IDs from a list of edges.
+ * @param {Object[]} edges - Array of edge objects.
+ * @returns {Set<string|number>} Set of node IDs.
+ */
 const nodeIdsFromEdges = (edges) => {
 	return new Set([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
 };
 
+/**
+ * Calculates the display radius for a node based on settings and degree.
+ * @param {Object} d - The node object.
+ * @returns {number} The calculated radius.
+ */
 const getRadius = (d) => {
 	let k = 1;
 	if (settings.icon && images[d.src] && (transform.k >= transformThresholdHalf)) {
@@ -908,7 +1159,7 @@ const getRadius = (d) => {
 
 	let degree = 0;
 	if (settings.link) {
-		degree += d.linkCnt
+		degree += d.linkCnt;
 	};
 	if (settings.relation) {
 		degree += d.relationCnt;
@@ -926,26 +1177,54 @@ const getRadius = (d) => {
 	return d.radius / transform.k * k;
 };
 
+/**
+ * Gets the current font string for canvas text rendering.
+ * @returns {string} The font string.
+ */
 const getFont = () => {
 	return `${12 / transform.k}px ${fontFamily}`;
 };
 
+/**
+ * Builds a map of node IDs to node objects.
+ * @returns {Map<string|number, Object>} Node map.
+ */
 const getNodeMap = () => {
 	return new Map(nodes.map(d => [ d.id, d ]));
 };
 
+/**
+ * Calculates the center transform for a given x, y position.
+ * @param {number} x - The x coordinate.
+ * @param {number} y - The y coordinate.
+ * @returns {{x: number, y: number}} The center transform.
+ */
 const getCenter = (x, y) => {
 	return { x: width / 2 - x * transform.k, y: height / 2 - y * transform.k };
 };
 
+/**
+ * Gets the current line width for drawing edges.
+ * @returns {number} The line width.
+ */
 const getLineWidth = () => {
 	return 0.4 / transform.k;
 };
 
+/**
+ * Gets the current border radius for drawing rounded rectangles.
+ * @returns {number} The border radius.
+ */
 const getBorderRadius = () => {
 	return 3.33 / transform.k;
 };
 
+/**
+ * Checks if two arrays have any intersecting values.
+ * @param {Array} arr1 - First array.
+ * @param {Array} arr2 - Second array.
+ * @returns {boolean} True if there is any intersection.
+ */
 const intersect = (arr1, arr2) => {
 	const set2 = new Set(arr2);
 	return arr1.filter(item => set2.has(item)).length > 0;

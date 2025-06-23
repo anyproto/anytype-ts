@@ -118,26 +118,29 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
-				<Swiper
-					direction="horizontal"
-					slidesPerView="auto"
-					slidesPerGroupAuto={true}
-					spaceBetween={8}
-					onSwiper={swiper => this.swiper = swiper}
-					navigation={true}
-					mousewheel={true}
-					modules={[ Navigation, Mousewheel ]}
-				>
-					{categories.map((item: any, i: number) => (
-						<SwiperSlide key={item.id}>
-							<Category {...item} />
-							{item.id == 'made-by-any' ? <div className="div" /> : ''}
-						</SwiperSlide>
-					))}
-				</Swiper>
+				<div className="categories">
+					<Swiper
+						direction="horizontal"
+						slidesPerView="auto"
+						slidesPerGroupAuto={true}
+						spaceBetween={8}
+						onSwiper={swiper => this.swiper = swiper}
+						navigation={true}
+						mousewheel={true}
+						modules={[ Navigation, Mousewheel ]}
+					>
+						{categories.map((item: any, i: number) => (
+							<SwiperSlide key={item.id}>
+								<Category {...item} />
+								{item.id == 'made-by-any' ? <div className="div" /> : ''}
+							</SwiperSlide>
+						))}
+					</Swiper>
+				</div>
+
+				<Label className="banner" text={translate('popupUsecaseBanner')} onClick={() => U.Common.showWhatsNew()} />
 
 				<div className="mid">
-
 					<Title text={translate('popupUsecaseListTitle')} />
 					<Label text={translate('popupUsecaseListText')} />
 

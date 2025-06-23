@@ -12,11 +12,13 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	node = null;
 	refLayout = null;
 	refAlign = null;
+	refFeaturedView = null;
 	refWidth = null;
 
 	render () {
 		const { object, onChange, layoutOptions, readonly } = this.props;
 		const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
+		const featuredViewOptions = U.Menu.prepareForSelect(U.Menu.getFeaturedRelationLayout());
 		const snaps = [];
 
 		for (let i = 0; i <= 10; i ++) {
@@ -73,6 +75,29 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 
 				<div className="item">
 					<div className="name">
+						{translate('sidebarSectionFeaturedView')}
+					</div>
+
+					<div className="value">
+						<Select
+							ref={ref => this.refFeaturedView = ref}
+							id={`sidebar-featured-view-${object.id}`}
+							options={featuredViewOptions}
+							value={object.headerRelationsLayout}
+							arrowClassName="light"
+							onChange={id => onChange({ headerRelationsLayout: id })}
+							readonly={readonly}
+							menuParam={{
+								className: 'fixed',
+								classNameWrap: 'fromSidebar',
+								horizontal: I.MenuDirection.Right,
+							}}
+						/>
+					</div>
+				</div>
+
+				<div className="item">
+					<div className="name">
 						{translate('sidebarSectionLayoutWidth')}
 					</div>
 
@@ -104,9 +129,10 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 	setValue () {
 		const { object } = this.props;
 
-		this.refLayout.setValue(object.recommendedLayout);
-		this.refAlign.setValue(object.layoutAlign);
-		this.refWidth.setValue(object.layoutWidth);
+		this.refLayout?.setValue(object.recommendedLayout);
+		this.refAlign?.setValue(object.layoutAlign);
+		this.refFeaturedView?.setValue(object.headerRelationsLayout);
+		this.refWidth?.setValue(object.layoutWidth);
 	};
 
 	onWidthMove (v: number) {

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
+import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -11,15 +11,11 @@ interface State {
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
-const LIMIT_HEIGHT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
-	node = null;
 	cache: any = {};
-	items: any[] = [];
 	currentInfo = '';
 	state = { 
 		isLoading: false,
@@ -121,7 +117,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		return (
-			<div ref={ref => this.node = ref} className="syncMenuWrapper" onClick={this.onCloseInfo}>
+			<>
 				<div className="syncPanel">
 					<Title text={translate('menuSyncStatusTitle')} />
 
@@ -139,7 +135,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						<InfiniteLoader
 							rowCount={items.length}
 							isRowLoaded={({ index }) => !!items[index]}
-							threshold={LIMIT_HEIGHT}
+							threshold={20}
 							loadMoreRows={() => {}}
 						>
 							{({ onRowsRendered }) => (
@@ -162,32 +158,45 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						</InfiniteLoader>
 					</div>
 				) : ''}
-			</div>
+			</>
 		);
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.load();
+		this.rebind();
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
-		this.onCloseInfo();
+		this.unbind();
 
-		C.ObjectSearchUnsubscribe([ SUB_ID ]);
+		U.Subscription.destroyList([ SUB_ID ]);
+	};
+
+	rebind () {
+		const { getId } = this.props;
+
+		this.unbind();
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		$(`#${getId()}`).on('click', () => this.onCloseInfo());
+	};
+
+	unbind () {
+		const { getId } = this.props;
+
+		$(window).off('keydown.menu');
+		$(`#${getId()}`).off('click');
 	};
 
 	onContextMenu (e, item) {
 		e.stopPropagation();
 
-		const { param } = this.props;
+		const { getId, param } = this.props;
 		const { classNameWrap } = param;
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const element = $(e.currentTarget);
-		const node = $(this.node);
-		const itemElement = node.find(`#item-${item.id}`);
+		const itemElement = $(`#${getId()} #item-${item.id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
@@ -272,13 +281,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		this.setState({ isLoading: true });
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: SUB_ID,
 			filters,
 			sorts,
-			keys: U.Data.syncStatusRelationKeys(),
+			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
-			limit: 30,
+			limit: 11,
 		}, () => {
 			this.setState({ isLoading: false });
 
@@ -339,7 +348,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconNetwork (syncStatus) {
-		const { network, error, syncingCounter, status } = syncStatus;
+		const { network, syncingCounter, error, status } = syncStatus;
 		const buttons: any[] = [];
 
 		let id = '';
@@ -350,18 +359,26 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let isError = false;
 		let isSlow = false;
 
-		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(status)) {
-			isConnected = true;
-			className = 'connected';
-		} else
-		if (I.SyncStatusSpace.Upgrade == status) {
-			isConnected = true;
-			isSlow = true;
-			className = 'connectedSlow';
-		} else
-		if (I.SyncStatusSpace.Error == status) {
-			isError = true;
-			className = 'error';
+		switch (status) {
+			case I.SyncStatusSpace.Syncing:
+			case I.SyncStatusSpace.Synced: {
+				isConnected = true;
+				className = 'connected';
+				break;
+			};
+
+			case I.SyncStatusSpace.Upgrade: {
+				isConnected = true;
+				isSlow = true;
+				className = 'connectedSlow';
+				break;
+			};
+
+			case I.SyncStatusSpace.Error: {
+				isError = true;
+				className = 'error';
+				break;
+			};
 		};
 
 		switch (network) {
@@ -397,6 +414,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 				break;
 			};
+
 			case I.SyncStatusNetwork.SelfHost: {
 				id = 'self';
 				title = translate('menuSyncStatusInfoSelfTitle');
@@ -406,10 +424,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						message = translate('menuSyncStatusInfoSelfMessageSyncing');
 						break;
 					};
+
 					case I.SyncStatusSpace.Synced: {
 						message = translate('menuSyncStatusInfoSelfMessageSynced');
 						break;
 					};
+
 					case I.SyncStatusSpace.Error: {
 						message = translate('menuSyncStatusInfoSelfMessageError');
 						break;
@@ -418,6 +438,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 				break;
 			};
+
 			case I.SyncStatusNetwork.LocalOnly: {
 				id = 'localOnly';
 				title = translate('menuSyncStatusInfoLocalOnlyTitle');

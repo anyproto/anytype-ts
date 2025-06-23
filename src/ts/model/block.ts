@@ -124,7 +124,7 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
+		return !this.isPage() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
 	};
 
 	canBecomeWidget (): boolean {
@@ -335,6 +335,10 @@ class Block implements I.Block {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Sketchfab);
 	};
 
+	isEmbedDrawio (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Drawio);
+	};
+
 	isEmbedBilibili (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Bilibili);
 	};
@@ -417,7 +421,6 @@ class Block implements I.Block {
 
 			l = t.length;
 
-			// Last line break doesn't expand range.to
 			if (l && (t[l - 1] == '\n')) {
 				l--;
 			};

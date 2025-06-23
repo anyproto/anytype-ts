@@ -1,14 +1,14 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard, translate } from 'Lib';
 
 interface RouteParam {
 	page: string; 
 	action: string; 
 	id: string; 
-	spaceId: string; 
-	viewId: string; 
-	relationKey: string;
-	additional: { key: string, value: string }[];
+	spaceId?: string; 
+	viewId?: string; 
+	relationKey?: string;
+	additional?: { key: string, value: string }[];
 };
 
 class UtilRouter {
@@ -16,10 +16,19 @@ class UtilRouter {
 	history: any = null;
 	isOpening = false;
 
+	/**
+	 * Initializes the router with a history object.
+	 * @param {any} history - The history object to use for navigation.
+	 */
 	init (history: any) {
 		this.history = history;
 	};
 
+	/**
+	 * Parses a route path into its parameter object.
+	 * @param {string} path - The route path string.
+	 * @returns {RouteParam} The parsed route parameters.
+	 */
 	getParam (path: string): any {
 		const route = path.split('/');
 		if (!route.length) {
@@ -45,6 +54,11 @@ class UtilRouter {
 		return param;
 	};
 
+	/**
+	 * Builds a route string from route parameters.
+	 * @param {Partial<RouteParam>} param - The route parameters.
+	 * @returns {string} The route string.
+	 */
 	build (param: Partial<RouteParam>): string {
 		const { page, action } = param;
 		const id = String(param.id || '');
@@ -71,6 +85,11 @@ class UtilRouter {
 		return route.join('/');
 	};
 
+	/**
+	 * Navigates to a route with optional parameters and animation.
+	 * @param {string} route - The route string.
+	 * @param {Partial<I.RouteParam>} param - Additional navigation parameters.
+	 */
 	go (route: string, param: Partial<I.RouteParam>) {
 		if (!route) {
 			return;
@@ -89,10 +108,10 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
+		sidebar.rightPanelToggle(false, keyboard.isPopup());
 
-		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
-			this.switchSpace(routeParam.spaceId, route, false, param);
+		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
+			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};
 
@@ -153,7 +172,15 @@ class UtilRouter {
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
-	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any) {
+	/**
+	 * Switches to a different space, handling errors and fallbacks.
+	 * @param {string} id - The space ID to switch to.
+	 * @param {string} route - The route to navigate after switching.
+	 * @param {boolean} sendEvent - Whether to send analytics event.
+	 * @param {any} routeParam - Additional route parameters.
+	 * @param {boolean} useFallback - Whether to use fallback on error.
+	 */
+	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any, useFallback: boolean) {
 		if (this.isOpening) {
 			return;
 		};
@@ -163,28 +190,40 @@ class UtilRouter {
 			return;
 		};
 
-		const withChat = U.Object.isAllowedChat();
-
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		sidebar.rightPanelToggle(false, false, false);
+		sidebar.rightPanelToggle(false, false);
 
 		if (sendEvent) {
-			analytics.event('SwitchSpace');
+			const counters = S.Chat.getSpaceCounters(id);
+			const { mentionCounter, messageCounter} = counters;
+
+			analytics.event('SwitchSpace', { unreadMessageCount: messageCounter, hasMentions: !!mentionCounter });
 		};
 
 		this.isOpening = true;
 
-		C.WorkspaceOpen(id, withChat, (message: any) => {
+		C.WorkspaceOpen(id, (message: any) => {
 			this.isOpening = false;
 
 			if (message.error.code) {
-				const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
-
-				if (spaces.length) {
-					this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam);
+				if (!useFallback) {
+					S.Popup.open('confirm', {
+						data: {
+							icon: 'error',
+							title: translate('commonError'),
+							text: message.error.description,
+							canCancel: true,
+						},
+					});
 				} else {
-					U.Router.go('/main/void', routeParam);
+					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
+
+					if (spaces.length) {
+						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, useFallback);
+					} else {
+						U.Router.go('/main/void', routeParam);
+					};
 				};
 				return;
 			};
@@ -192,27 +231,31 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				delay: 300,
-				onFadeOut: () => {
-					S.Record.metaClear(J.Constant.subId.participant, '');
-					S.Record.recordsClear(J.Constant.subId.participant, '');
-
+				delay: 100,
+				onRouteChange: () => {
 					analytics.removeContext();
-					S.Block.clear(S.Block.widgets);
 					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route, routeParam });
-				}
+					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } });
+				},
 			});
 		});
 	};
 
+	/**
+	 * Gets the current route path as a string.
+	 * @returns {string} The current route path.
+	 */
 	getRoute () {
 		return String(this.history?.location?.pathname || '');
 	};
 
+	/**
+	 * Gets the spaceId from the current route or the default space.
+	 * @returns {string} The spaceId.
+	 */
 	getRouteSpaceId () {
 		const param = this.getParam(this.getRoute());
 		return param.spaceId || S.Common.space;

@@ -28,7 +28,7 @@ class WindowManager {
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
+				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
 			},
 		}, param);
 
@@ -77,7 +77,7 @@ class WindowManager {
 
 	createMain (options) {
 		const { isChild } = options;
-		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
+		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
 
 		let state = {};
 		let param = {
@@ -103,17 +103,18 @@ class WindowManager {
 		};
 
 		if (!isChild) {
-			state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
-			param = Object.assign(param, {
-				x: state.x,
-				y: state.y,
-				width: state.width,
-				height: state.height,
-			});
+			try {
+				state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+
+				param = Object.assign(param, {
+					x: state.x,
+					y: state.y,
+					width: state.width,
+					height: state.height,
+				});
+			} catch (e) {};
 		} else {
-			const { screen } = require('electron');
-			const primaryDisplay = screen.getPrimaryDisplay();
-			const { width, height } = primaryDisplay.workAreaSize;
+			const { width, height } = this.getScreenSize();
 
 			param = Object.assign(param, this.getWindowPosition(param, width, height));
 		};
@@ -138,9 +139,7 @@ class WindowManager {
 	};
 
 	createChallenge (options) {
-		const { screen } = require('electron');
-		const primaryDisplay = screen.getPrimaryDisplay();
-		const { width, height } = primaryDisplay.workAreaSize;
+		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isChallenge: true }, {
 			backgroundColor: '',
@@ -165,6 +164,21 @@ class WindowManager {
 
 		setTimeout(() => this.closeChallenge(options), 30000);
 		return win;
+	};
+
+	getScreenSize () {
+		const ret = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT };
+
+		try {
+			const { screen } = require('electron');
+			const primaryDisplay = screen.getPrimaryDisplay();
+			const { width, height } = primaryDisplay.workAreaSize;
+
+			ret.width = width;
+			ret.height = height;
+		} catch (e) {};
+
+		return ret;
 	};
 
 	closeChallenge (options) {

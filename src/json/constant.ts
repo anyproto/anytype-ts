@@ -4,7 +4,6 @@ export default {
 	googleMaps:			 'AIzaSyAgXu3wCb6mPJv4wNWKe2E3YycaYuqFm9o',
 	protocol:			 'anytype',
 	appName:			 'Anytype',
-	storeSpaceId:		 '_anytype_marketplace',
 	anytypeProfileId:	 '_anytype_profile',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
@@ -24,10 +23,6 @@ export default {
 		testing:		 'N4N1wDHFpFpovXBqdbq2TDXE9tXdXbtV1eTJFpKJW4YeaJqR'
 	},
 
-	chatSpaceId: [
-		'bafyreiezhzb4ggnhjwejmh67pd5grilk6jn3jt7y2rnfpbkjwekilreola.1t123w9f2lgn5',
-	],
-
 	platforms: {
 		win32:			 'Windows',
 		darwin:			 'Mac',
@@ -35,29 +30,41 @@ export default {
 	},
 
 	limit: {
-		menuRecords:	 100,
-		widgets:		 20,
-		notification:	 20,
-		space:			 50,
-		graphDepth:		 5,
-		cellEntry:		 320,
-		listObject:		 50,
+		menuRecords:	 	 			 100,
+		widgets:		 	 			 20,
+		notification:	 	 			 20,
+		graphDepth:		 	 			 5,
+		cellEntry:		 	 			 320,
+		listObject:		 	 			 50,
+
+		space: {
+			count:						 50,
+			name:						 50,
+			description:				 200,
+			nameThreshold:				 10,
+			descriptionThreshold:		 50,
+		},
 
 		chat: {
-			messages:		 50,
-			attachments:	 10,
-			files:			 10,
-			mentions:		 10,
-			text:			 2000,
-			reactions:		 {
-				self:		 3,
-				all:		 12,
+			messages:					 50,
+			attachments:				 10,
+			files:						 10,
+			mentions:					 10,
+			text:						 2000,
+			reactions: {
+				self:					 3,
+				all:					 12,
 			},
-		}
+		},
+
+		relation: {
+			option: 4,
+		},
 	},
 
 	default: {
 		interfaceLang:	 'en-US',
+		spellingLang:	 'en',
 		codeLang:		 'plain',
 		typeKey:		 'ot-page',
 		pinTime:		 600,
@@ -67,11 +74,12 @@ export default {
 		menu:			 150,
 		popup:			 150,
 		toast:			 2500,
-		route:			 250,
+		route:			 200,
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
 		sidebar:		 180,
+		highlight:  	 1000,
 	},
 
 	fileExtension: {
@@ -85,6 +93,7 @@ export default {
 			3:			 [ 'zip', 'pb', 'json' ],
 			4:			 [ 'zip', 'html', 'htm', 'mhtml' ],
 			5:			 [ 'zip', 'txt' ],
+			6:			 [ 'zip', 'csv' ],
 		},
 	},
 
@@ -111,7 +120,8 @@ export default {
 		subSpace:		 'subSpace',
 		allObject:		 'allObject',
 		library: 		 'library',
-		chatPreview:	 'lastMessage',
+		chatSpace:		 'lastMessage',
+		template:		 'template',
 	},
 
 	typeKey: {
@@ -159,6 +169,7 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		bin:			 'bin',
+		chat:			 'chat',
 	},
 
 	monthDays: {
@@ -175,5 +186,19 @@ export default {
 		11:				 30,
 		12:				 31
 	},
+
+	mcpConfig: `
+		{
+			"mcpServers": {
+				"anytype": {
+					"command": "npx",
+					"args": ["-y", "@anyproto/anytype-mcp"],
+					"env": {
+						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-05-20\\"}"
+					}
+				}
+			}
+		}
+	`,
 
 };

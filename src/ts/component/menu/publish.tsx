@@ -11,6 +11,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { rootId } = data;
 	const { isOnline } = S.Common;
 	const { membership } = S.Auth;
+	const tier = U.Data.getMembershipTier(membership.tier);
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
@@ -31,7 +32,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
 			onClick: () => {
-				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });
@@ -52,6 +53,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = (isUpdate?: boolean) => {
 		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
 
+
 		publishRef.current?.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
@@ -60,7 +62,8 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (message.error.code) {
 				if (message.error.code == J.Error.Code.Publish.PAGE_SIZE_EXCEEDED) {
 					const { membership } = S.Auth;
-					const limit = membership.isNone || membership.isExplorer ? 10 : 100;
+					const tier = U.Data.getMembershipTier(membership.tier);
+					const limit = !tier.price ? 10 : 100;
 
 					setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
 				} else {
@@ -120,7 +123,9 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (state) {
 				setStatus(state);
 				setSlug(state.uri);
-				inputRef.current.setValue(state.uri);
+
+				inputRef.current?.setValue(state.uri);
+				spaceInfoRef.current?.setValue(state.joinSpace);
 			};
 		});
 	};
@@ -139,11 +144,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUpgrade = () => {
-		U.Object.openAuto(
+		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
 			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
 		);
-		analytics.event('ClickUpgradePlanTooltip');
+		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 
 	const setSlugHander = v => setSlug(U.Common.slug(v));
@@ -214,12 +219,12 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						<Label text={translate('menuPublishLabelJoinSpace')} />
 					</div>
 					<div className="value">
-						<Switch ref={spaceInfoRef} value={true} onChange={(e, v) => onSpaceInfoSwitch(v)} />
+						<Switch ref={spaceInfoRef} value={false} onChange={(e, v) => onSpaceInfoSwitch(v)} />
 					</div>
 				</div>
 			) : ''}
 
-			{(membership.isNone || membership.isExplorer) ? (
+			{!tier?.price ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
 					<Button text={translate('menuPublishUpgrade')} onClick={onUpgrade} />

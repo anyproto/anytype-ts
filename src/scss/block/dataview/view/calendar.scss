@@ -2,9 +2,9 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewCalendar { position: relative; height: 100%; padding: 0px; }
+		.viewContent.viewCalendar { position: relative; padding: 0px; }
 		.viewContent.viewCalendar {
-			.table { display: flex; flex-flow: column; height: 100%; }
+			.table { display: flex; flex-flow: column; }
 			.table {
 				> .head, > .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
 				> .head { flex-shrink: 0; }
@@ -41,33 +41,38 @@
 				.number { color: var(--color-text-tertiary); }
 			}
 
-			.day {
-				.head { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
-				.head {
-					.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
+			.dropTarget { width: 100%; height: 100%; }
+			.dropTarget.targetBot { width: calc(100% - 8px); margin: 0px auto 0px auto; }
 
-					.number { @include text-paragraph; text-align: right; width: 100%; }
-					.number {
-						.inner { display: inline-block; }
-					}
-				}
+			.head { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
+			.head {
+				.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
 
-				.item { 
-					display: flex; flex-direction: row; align-items: center; gap: 0px 4px; @include text-small; @include text-overflow-nw; 
-					margin: 0px 0px 2px 0px; position: relative; padding: 0px 8px; border-radius: 4px;
+				.number { @include text-paragraph; text-align: right; width: 100%; }
+				.number {
+					.inner { display: inline-block; }
 				}
-				.item {
-					.iconObject { flex-shrink: 0; }
-					.name { @include text-overflow-nw; }
-				}
-				.item::before {
-					content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
-					pointer-events: none;
-				}
-				.item:hover::before { background: var(--color-shape-highlight-medium); }
-
-				.item.more { display: block; color: var(--color-text-secondary); }
 			}
+
+			.items { flex-grow: 1; }
+
+			.record { 
+				display: flex; flex-direction: row; align-items: center; gap: 0px 4px; @include text-small; margin: 0px 0px 2px 0px; 
+				position: relative; padding: 0px 4px; border-radius: 4px;
+			}
+			.record {
+				.dropTarget { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+
+				.iconObject { flex-shrink: 0; }
+				.name { @include text-overflow-nw; width: 100%; }
+			}
+			.record::before {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
+				pointer-events: none;
+			}
+			.record:hover::before { background: var(--color-shape-highlight-medium); }
+
+			.record.more { display: block; color: var(--color-text-secondary); }
 
 			.day:hover {
 				.head {

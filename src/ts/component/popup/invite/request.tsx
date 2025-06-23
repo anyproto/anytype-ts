@@ -34,7 +34,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 				<Title text={translate('popupInviteRequestTitle')} />
 				
 				<div className="iconWrapper">
-					<Icon />
+					<Icon className="join" />
 				</div>
 
 				<Label className="invitation" text={U.Common.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
@@ -54,8 +54,9 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { route } = data;
+		const space = U.Space.getSpaceview();
 
-		analytics.event('ScreenInviteRequest', { route });	
+		analytics.event('ScreenInviteRequest', { route, uxType: space.uxType });
 	};
 
 	onRequest () {
@@ -63,6 +64,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { account } = S.Auth;
 		const { data } = param;
 		const { invite, cid, key } = data;
+		const space = U.Space.getSpaceview();
 
 		if (!account || this.refButton.isLoading()) {
 			return;
@@ -80,7 +82,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 
 			close(() => {
 				U.Common.onInviteRequest();
-				analytics.event('ScreenRequestSent');
+				analytics.event('ScreenRequestSent', { uxType: space.uxType });
 			});
 		});
 	};

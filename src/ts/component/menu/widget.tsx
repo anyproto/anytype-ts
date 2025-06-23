@@ -162,9 +162,17 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
+		const targetId = this.target?.id;
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
 		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout);
 		const sections: any[] = [];
+		const space = U.Space.getSpaceview();
+
+		let canRemove = isEditing;
+
+		if (space.isChat && (targetId == J.Constant.widgetId.chat)) {
+			canRemove = false;
+		};
 
 		if (layoutOptions.length > 1) {
 			sections.push({
@@ -186,7 +194,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			});
 		};
 
-		if (isEditing) {
+		if (canRemove) {
 			const children: any[] = [ 
 				{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
 			];

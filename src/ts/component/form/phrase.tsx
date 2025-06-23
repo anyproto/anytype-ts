@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { J, S, keyboard, Storage } from 'Lib';
+import { J, S, keyboard, translate } from 'Lib';
 
 interface Props {
 	value?: string;
@@ -25,18 +25,6 @@ interface PhraseRefProps {
 	focus: () => void;
 };
 
-const COLORS = [
-	'pink',
-	/*
-	'orange',
-	'red',
-	'purple',
-	'blue',
-	'ice',
-	'lime',
-	*/
-];
-
 const Phrase = forwardRef<PhraseRefProps, Props>(({
 	value = '',
 	className = '',
@@ -45,7 +33,6 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	checkPin = false,
 	placeholder = '',
 	onKeyDown,
-	onChange,
 	onToggle,
 	onCopy,
 	onClick,
@@ -255,15 +242,9 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 			<div className="phraseInnerWrapper">
 				{!phrase.current.length ? <span className="word" /> : ''}
 				{phrase.current.map((item: string, i: number) => {
-					const color = COLORS[i % COLORS.length];
-					const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
 					const word = isHidden ? '•'.repeat(item.length) : item;
 
-					return (
-						<span className={[ 'word', cn ].join(' ')} key={i}>
-							{word}
-						</span>
-					);
+					return <span className="word" key={i}>{word}</span>;
 				})}
 				<span 
 					ref={entryRef}
@@ -282,8 +263,8 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 			</div>
 
 			{placeholder ? <div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div> : ''}
-			<Icon className={[ (isHidden ? 'see' : 'hide'), 'withBackground' ].join(' ')} onClick={onToggleHandler} />
-			<Icon className="copy withBackground" onClick={onCopy} />
+			<Icon className="show withBackground" tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
+			<Icon className="copy withBackground" tooltipParam={{ text: translate('commonShowKey') }} onClick={onCopy} />
 		</div>
 	);
 

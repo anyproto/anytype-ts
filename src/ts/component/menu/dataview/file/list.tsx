@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Loader, EmptySearch } from 'Component';
+import { Filter, MenuItemVertical, Loader, EmptySearch, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
 
 interface State {
@@ -69,10 +69,10 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					<MenuItemVertical 
 						{...item}
 						object={item}
-						name={item.name}
+						name={<ObjectName object={item} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={type?.name}
+						caption={<ObjectType object={type} />}
 						style={param.style}
 					/>
 				</CellMeasurer>
@@ -230,7 +230,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			this.setState({ isLoading: true });
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
 			fullText: filter,

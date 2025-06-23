@@ -57,7 +57,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 
 		switch (action) {
 			case 'spaceSwitch': {
-				U.Router.switchSpace(payload.spaceId, '', true, {});
+				U.Router.switchSpace(payload.spaceId, '', true, {}, false);
 				break;
 			};
 

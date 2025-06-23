@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, ObjectDescription, ObjectType, Icon } from 'Component';
+import { IconObject, ObjectName, ObjectDescription, ObjectType } from 'Component';
 import { I, U, S } from 'Lib';
 
 interface Props {

@@ -1,0 +1,15 @@
+@import "~scss/_mixins";
+
+.popups {
+	.popup.popupSpaceJoinByLink {
+		.innerWrap { width: 480px; padding: 10px 16px 16px 16px; text-align: center; }
+
+		.label { @include text-paragraph; font-weight: 600; margin: 0px 0px 26px 0px; }
+
+		.icon { width: 96px; height: 96px; background-size: 96px; margin: 0px 0px 18px 0px; background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
+
+		.input { margin: 0px 0px 12px 0px; height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+
+		.button { width: 100%; }
+	}
+}

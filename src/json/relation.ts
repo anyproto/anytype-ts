@@ -75,6 +75,7 @@ export default {
 		'relationReadonlyValue',
 		'relationDefaultValue',
 		'relationFormatObjectTypes',
+		'relationFormatIncludeTime',
 		'sourceObject',
 		'restrictions',
 	],
@@ -93,7 +94,8 @@ export default {
 		'type',
 		'layout',
 		'name',
-		'relationOptionColor'
+		'relationOptionColor',
+		'createdDate',
 	],
 
 	type: [
@@ -113,6 +115,7 @@ export default {
 		'iconName',
 		'iconOption',
 		'pluralName',
+		'headerRelationsLayout',
 	],
 
 	graph: [
@@ -157,7 +160,9 @@ export default {
 		'targetSpaceId',
 		'creator',
 		'createdDate',
+		'lastMessageDate',
 		'chatId',
+		'spaceUxType',
 	],
 
 	participant: [

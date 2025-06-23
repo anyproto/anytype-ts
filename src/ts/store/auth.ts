@@ -58,30 +58,59 @@ class AuthStore {
 		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	};
 
+	/**
+	 * Sets the authentication token.
+	 * @param {string} v - The token value.
+	 */
 	tokenSet (v: string) {
 		this.token = String(v || '');
+		Renderer.send('setToken', this.token);
 	};
 
+	/**
+	 * Sets the app token.
+	 * @param {string} v - The app token value.
+	 */
 	appTokenSet (v: string) {
 		this.appToken = String(v || '');
 	};
 
+	/**
+	 * Sets the network configuration.
+	 * @param {NetworkConfig} obj - The network configuration object.
+	 */
 	networkConfigSet (obj: NetworkConfig) {
 		Storage.set('networkConfig', obj);
 	};
 
+	/**
+	 * Sets the app key.
+	 * @param {string} v - The app key value.
+	 */
 	appKeySet (v: string) {
 		this.appKey = String(v || '');
 	};
 
+	/**
+	 * Sets the membership data.
+	 * @param {I.Membership} v - The membership data.
+	 */
 	membershipSet (v: I.Membership) {
 		this.membershipData = v;
 	};
 
+	/**
+	 * Updates the membership data.
+	 * @param {I.Membership} v - The membership data.
+	 */
 	membershipUpdate (v: I.Membership) {
 		set(this.membershipData, v);
 	};
 
+	/**
+	 * Updates the sync status for a space.
+	 * @param {I.SyncStatus} v - The sync status object.
+	 */
 	syncStatusUpdate (v: I.SyncStatus) {
 		let obj = this.syncStatusMap.get(v.id);
 
@@ -105,6 +134,10 @@ class AuthStore {
 		this.syncStatusMap.set(v.id, obj);
 	};
 
+	/**
+	 * Adds an account to the account list.
+	 * @param {any} account - The account object.
+	 */
 	accountAdd (account: any) {
 		account.info = account.info || {};
 		account.status = account.status || {};
@@ -113,10 +146,18 @@ class AuthStore {
 		this.accountList.push(new M.Account(account));
 	};
 
+	/**
+	 * Clears the account list.
+	 * @private
+	 */
 	accountListClear () {
 		this.accountList = [];
 	};
 
+	/**
+	 * Sets the current account.
+	 * @param {any} account - The account object.
+	 */
 	accountSet (account: any) {
 		account = account || {};
 		account.info = account.info || {};
@@ -131,16 +172,23 @@ class AuthStore {
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
-			Renderer.send('setAccount', this.accountItem);
 		};
 	};
 
+	/**
+	 * Sets the status of the current account.
+	 * @param {I.AccountStatus} status - The account status.
+	 */
 	accountSetStatus (status: I.AccountStatus) {
 		if (this.accountItem) {
 			set(this.accountItem.status, status);
 		};
 	};
 
+	/**
+	 * Checks if the current account is deleted.
+	 * @returns {boolean} True if deleted, false otherwise.
+	 */
 	accountIsDeleted (): boolean {
 		return this.accountItem && this.accountItem.status && [ 
 			I.AccountStatusType.StartedDeletion,
@@ -148,12 +196,21 @@ class AuthStore {
 		].includes(this.accountItem.status.type);
 	};
 
+	/**
+	 * Checks if the current account is pending deletion.
+	 * @returns {boolean} True if pending, false otherwise.
+	 */
 	accountIsPending (): boolean {
 		return this.accountItem && this.accountItem.status && [ 
 			I.AccountStatusType.PendingDeletion,
 		].includes(this.accountItem.status.type);
 	};
 
+	/**
+	 * Gets the default sync status object.
+	 * @private
+	 * @returns {I.SyncStatus} The default sync status.
+	 */
 	getDefaultSyncStatus (): I.SyncStatus {
 		return {
 			id: '',
@@ -166,10 +223,18 @@ class AuthStore {
 		};
 	};
 
+	/**
+	 * Gets the sync status for a space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {I.SyncStatus} The sync status.
+	 */
 	getSyncStatus (spaceId?: string): I.SyncStatus {
 		return this.syncStatusMap.get(spaceId || S.Common.space) || this.getDefaultSyncStatus();
 	};
 
+	/**
+	 * Clears all authentication and account data.
+	 */
 	clearAll () {
 		this.accountItem = null;
 
@@ -178,36 +243,42 @@ class AuthStore {
 		this.syncStatusMap.clear();
 	};
 
+	/**
+	 * Logs out the current account.
+	 * @param {boolean} mainWindow - Whether this is the main window.
+	 * @param {boolean} removeData - Whether to remove data.
+	 */
 	logout (mainWindow: boolean, removeData: boolean) {
-		const cb = () => {
-			C.WalletCloseSession(this.token, () => this.tokenSet(''));
-		};
+		U.Subscription.destroyAll(() => {
+			if (mainWindow) {
+				if (S.Auth.token) {
+					C.AccountStop(removeData, () => U.Data.closeSession());
+				};
+				Renderer.send('logout');
+			} else {
+				U.Data.closeSession();
+			};
 
-		if (mainWindow) {
-			C.AccountStop(removeData, () => cb());
-			Renderer.send('logout');
-		} else {
-			cb();
-		};
+			analytics.profile('', '');
+			analytics.removeContext();
 
-		analytics.profile('', '');
-		analytics.removeContext();
+			keyboard.setPinChecked(false);
 
-		keyboard.setPinChecked(false);
+			S.Common.spaceSet('');
 
-		S.Common.spaceSet('');
+			S.Block.clearAll();
+			S.Detail.clearAll();
+			S.Record.clearAll();
+			S.Menu.closeAllForced();
+			S.Notification.clear();
+			S.Chat.clearAll();
 
-		S.Block.clearAll();
-		S.Detail.clearAll();
-		S.Record.clearAll();
-		S.Menu.closeAllForced();
-		S.Notification.clear();
-		S.Chat.clearAll();
+			this.clearAll();
+			Storage.logout();
 
-		this.clearAll();
-		Storage.logout();
+		});
 	};
 
 };
 
- export const Auth: AuthStore = new AuthStore();
+export const Auth: AuthStore = new AuthStore();

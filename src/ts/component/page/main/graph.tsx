@@ -12,18 +12,20 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const headerRef = useRef(null);
 	const graphRef = useRef(null);
 	const rootIdRef = useRef('');
+	const key = J.Constant.graphId.global;
 
 	const unbind = () => {
-		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage`);
+		const events = [ 'keydown', 'updateGraphRoot', 'removeGraphNode', 'sidebarResize' ];
+		$(window).off(events.map(it => `${it}.${key}`).join(' '));
 	};
 
 	const rebind = () => {
 		const win = $(window);
 
 		unbind();
-		win.on(`keydown.graphPage`, e => onKeyDown(e));
-		win.on('updateGraphRoot.graphPage', (e: any, data: any) => initRootId(data.id));
-		win.on('sidebarResize.graphPage', () => resize());
+		win.on(`keydown.${key}`, e => onKeyDown(e));
+		win.on(`updateGraphRoot.${key}`, (e: any, data: any) => initRootId(data.id));
+		win.on(`sidebarResize.${key}`, () => resize());
 	};
 
 	const onKeyDown = (e: any) => {
@@ -33,7 +35,9 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const load = () => {
 		setLoading(true);
 
-		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
+		const settings = S.Common.getGraph(key);
+
+		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], settings.typeEdges, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -139,6 +143,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					rootId={rootId} 
 					data={data}
 					storageKey={J.Constant.graphId.global}
+					load={load}
 				/>
 			</div>
 

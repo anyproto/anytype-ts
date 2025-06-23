@@ -1,8 +1,10 @@
-.attachments { display: flex; gap: 8px; flex-wrap: wrap; max-width: 540px; }
-.attachments{
+.attachments { display: flex; gap: 4px; flex-wrap: wrap; max-width: 540px; }
+.attachments {
+	--width-attachment: calc(524px / 2);
+
 	.attachment {
 		position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
-		min-width: calc(532px / 2); width: calc(532px / 2); height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
+		min-width: var(--width-attachment); height: 72px; border-radius: 12px; display: flex; flex-direction: row; align-items: center;
 	}
 
 	.attachment {
@@ -27,13 +29,17 @@
 		.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
 	}
 
-	.attachment.isBookmark { min-width: unset; height: unset; }
+	.attachment.isBookmark { min-width: unset; height: unset; max-width: 360px; }
 	.attachment.isBookmark {
-		.inner { display: flex; flex-direction: column; padding: 16px; gap: 8px 0px; width: 100%; max-width: 360px; }
+		.inner { display: flex; flex-direction: column; padding: 16px; gap: 8px 0px; width: 100%; }
 		.inner {
 			.side.left { display: flex; flex-direction: column; gap: 4px 0px; width: 100%; }
 			.side.left {
 				.link { @include text-small; color: var(--color-text-secondary); display: flex; justify-content: flex-start; align-items: center; gap: 0px 6px; }
+				.link {
+					.iconObject { flex-shrink: 0; }
+					.source { flex-grow: 1; @include text-overflow-nw; }
+				}
 				.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; }
 				.descr { @include text-small; line-height: 16px; color: var(--color-text-primary); @include clamp3; }
 
@@ -50,17 +56,16 @@
 
 	.attachment.isImage { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isImage {
-		.image { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 8px; width: 100%; height: 100%; }
-		.loaderWrapper { width: 72px; height: 72px; }
+		.image, .loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
 	}
 
 	.attachment.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isVideo {
 		.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
-		video { width: 100%; display: block; object-fit: cover; }
+		video { width: 100%; height: 100%; display: block; object-fit: cover; }
 	}
 
-	.attachment.isAudio { min-width: unset; }
+	.attachment.isAudio { min-width: 360px; }
 	.attachment.isAudio {
 		.mediaAudio { padding: 12px 16px; border: unset; }
 		.mediaAudio {
@@ -73,13 +78,7 @@
 	}
 }
 
-.attachments.isSingle {
-	.attachment { width: 540px; }
-}
-
-.attachments.isSingle {
-	 .attachment.isBookmark { width: 360px; }
- }
+.attachments:not(.withLayout) { flex-direction: column; width: 100%; }
 
 /* Layouts */
 
@@ -87,11 +86,11 @@
 .attachments.withLayout {
 	.attachment { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; min-width: unset; }
 	.attachment.isImage {
-		.image { max-width: 100%; max-height: 360px; }
+		.image, .loaderWrapper { max-width: 100%; max-height: 360px; }
 	}
 }
 
-.attachments.layout-1 { max-width: 360px; max-height: 360px; }
+.attachments.layout-1 { max-width: 360px; }
 .attachments.layout-1 {
 	.attachment { max-width: 100%; max-height: 100%; aspect-ratio: unset; }
 	.attachment {

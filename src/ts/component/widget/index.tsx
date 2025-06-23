@@ -20,7 +20,9 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview } = props;
+	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
+	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -64,12 +66,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
+	const isChat = targetId == J.Constant.widgetId.chat;
 
-	let favCnt = 0;
+	let cnt = 0;
+	let showCnt = false;
 	let layout = block.content.layout;
 
 	if (isFavorite) {
-		favCnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
+		showCnt = cnt > limit;
+	};
+
+	if (isChat) {
+		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
+
+		cnt = counters.messageCounter;
+		showCnt = !!cnt;
 	};
 
 	if (object) {
@@ -127,6 +139,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		const node = $(nodeRef.current);
 		const route = param.route || analytics.route.widget;
 		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
@@ -135,6 +148,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		let typeKey = '';
 		let templateId = '';
 		let isCollection = false;
+		let type = null;
 
 		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = getRootId();
@@ -144,7 +158,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
-			const type = S.Record.getTypeById(typeId);
+			type = S.Record.getTypeById(typeId);
 
 			if (!type) {
 				return;
@@ -159,7 +173,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			switch (object.id) {
 				default:
 				case J.Constant.widgetId.favorite: {
-					const type = S.Record.getTypeById(S.Common.type);
+					type = S.Record.getTypeById(S.Common.type);
 
 					if (!type) {
 						return;
@@ -179,34 +193,51 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		if ((layout != I.WidgetLayout.Tree) && ![ J.Constant.typeKey.type ].includes(typeKey)) {
-			flags.push(I.ObjectFlag.DeleteEmpty);
-		};
-
-		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, true, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const newObject = message.details;
-
+		const cb = object => {
 			if (isFavorite) {
-				Action.setIsFavorite([ newObject.id ], true, route);
+				Action.setIsFavorite([ object.id ], true, route);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
+				C.ObjectCollectionAdd(object.id, [ object.id ]);
 			};
 
-			U.Object.openConfig(newObject);
-			analytics.createObject(newObject.type, newObject.layout, route, message.middleTime);
+			U.Object.openConfig(object);
+			analytics.createObject(object.type, object.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
-				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
+				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
 					if (!message.error.code) {
 						analytics.event('CreateLink');
 					};
 				});
+			};
+		};
+
+		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+			U.Menu.onBookmarkMenu({
+				element: `#widget-${block.id} .iconWrap.create`,
+				onOpen: () => node.addClass('active'),
+				onClose: () => node.removeClass('active'),
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				data: { details },
+			}, cb);
+			return;
+		};
+
+		if (typeKey == J.Constant.typeKey.type) {
+			U.Object.createType({}, false);
+			return;
+		};
+
+		if ((layout != I.WidgetLayout.Tree) && ![ J.Constant.typeKey.type ].includes(typeKey)) {
+			flags.push(I.ObjectFlag.DeleteEmpty);
+		};
+
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+			if (!message.error.code) {
+				cb(message.details);
 			};
 		});
 	};
@@ -223,13 +254,19 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
+		if (spaceview.isChat && isChat) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('widget', {
-			rect: { width: 0, height: 0, x: x + 4, y },
+			element: `#widget-${block.id} .iconWrap.more`,
+			rect: { width: 0, height: 0, x, y: y + 14 },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Center,
 			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
@@ -340,7 +377,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const space = U.Space.getSpaceview();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		let limit = getLimit(block.content);
@@ -375,7 +412,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			subId: subId.current,
 			filters,
 			sorts,
@@ -553,6 +590,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('withSelect');
 	};
 
+	if (canEdit) {
+		cn.push('isEditable');
+	};
+
 	let head = null;
 	let content = null;
 	let back = null;
@@ -579,9 +620,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	} else {
 		buttons = (
 			<div className="buttons">
-				<div className="iconWrap more" onClick={onOptions}>
-					<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
-				</div>
+				{spaceview.isChat && isChat ? '' : (
+					<div className="iconWrap more" onClick={onOptions}>
+						<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
+					</div>
+				)}
 				{canCreate ? (
 					<div className="iconWrap create" onClick={onCreateClick}>
 						<Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} />
@@ -608,6 +651,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			if (targetId == J.Constant.widgetId.allObject) {
 				sidebar.leftPanelSetState({ page: 'object' });
 			} else 
+			if (targetId == J.Constant.widgetId.chat) {
+				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+			} else
 			if (isSystemTarget) {
 				onSetPreview();
 			} else {
@@ -621,7 +667,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
-			icon = <IconObject object={object} size={18} iconSize={18} className="headerIcon" />;
+			icon = <IconObject object={object} size={20} iconSize={20} className="headerIcon" />;
 		};
 
 		head = (
@@ -633,7 +679,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							{collapse}
 							{icon}
 							<ObjectName object={object} withPlural={true} />
-							{favCnt > limit ? <span className="count">{favCnt}</span> : ''}
+							{showCnt ? <span className="count">{cnt}</span> : ''}
 						</div>
 					</div>
 					<div className="side right">{buttons}</div>
@@ -734,7 +780,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>
-			<Icon className="remove" inner={<div className="inner" />} onClick={onRemove} />
+			{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
 
 			{head}
 

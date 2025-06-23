@@ -22,11 +22,14 @@ const ChatMessageReply = observer(class ChatMessageReply extends React.Component
 		let icon: any = null;
 
 		if (attachment) {
-			const iconSize = iconLayouts.includes(attachment.layout) ? 32 : null;
-			icon = <IconObject className={iconSize ? 'noBg' : ''} object={attachment} size={32} iconSize={iconSize} />;
+			const iconSize = iconLayouts.includes(attachment.layout) ? 16 : null;
+
+			icon = <IconObject className={iconSize ? 'noBg' : ''} object={attachment} size={16} iconSize={iconSize} />;
+			cn.push('withAttachment');
 		} else
 		if (isMultiple) {
 			icon = <Icon className="isMultiple" />;
+			cn.push('withAttachment');
 		};
 
 		if (U.Common.checkRtl(text)) {
@@ -35,10 +38,12 @@ const ChatMessageReply = observer(class ChatMessageReply extends React.Component
 
 		return (
 			<div className={cn.join(' ')} onClick={onReplyClick}>
-				{icon}
-				<div className="textWrapper">
-					<ObjectName object={author} />
-					<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+				<ObjectName object={author} />
+				<div className="bubble">
+					{icon}
+					<div className="textWrapper">
+						<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+					</div>
 				</div>
 			</div>
 		);

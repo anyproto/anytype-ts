@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
+import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
@@ -30,11 +31,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
-		const { offset, total } = S.Record.getMeta(S.Record.getSubId(rootId, block.id), '');
+		const { offset, total } = S.Record.getMeta(getSubId(), '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
@@ -61,7 +62,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		} else {
 			content = (
 				<InfiniteLoader
-					loadMoreRows={() => {}}
+					loadMoreRows={this.loadMoreRows}
 					isRowLoaded={({ index }) => !!records[index]}
 					rowCount={total}
 					threshold={10}
@@ -159,6 +160,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.onScrollHorizontal();
 		this.onScrollVertical();
 
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Record) || [];
+
+		if (ids.length) {
+			selection?.renderSelection();
+		};
+
 		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
 
@@ -175,7 +183,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.unbind();
 
 		scroll.on('scroll', () => this.onScrollHorizontal());
-		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => this.onScrollVertical());
+		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => this.onScrollVertical()));
 	};
 
 	unbind () {
@@ -215,24 +223,37 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(this.node);
 		const rowHead = node.find('#rowHead');
+
 		if (!rowHead.length) {
 			return;
 		};
 
+		const container = U.Common.getScrollContainer(isPopup);
 		const scroll = node.find('#scroll');
-		const hh = J.Size.header;
-		const st = container.scrollTop();
 		const { left, top } = rowHead.offset();
-		const sl = scroll.scrollLeft();
+		const sy = container.scrollTop();
+		const sx = scroll.scrollLeft();
+		
+		let cy = 0;
+		let threshold = 0;
+		let x = 0;
+		let y = 0;
 
-		rowHead.removeClass('fixed');
-		node.find('#rowHeadClone').remove();
+		if (isPopup) {
+			return;
+		};
 
-		if (top - st <= hh) {
-			const clone = $('<div id="rowHeadClone"></div>');
+		cy = top - sy;
+		threshold = J.Size.header;
+		x = left + sx;
+		y = threshold;
+
+		let clone = node.find('#rowHeadClone');
+
+		if (!clone.length) {
+			clone = $('<div id="rowHeadClone"></div>');
 
 			node.append(clone);
 
@@ -250,15 +271,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			));
 
 			clone.find('.rowHead').attr({ id: '' });
-			clone.css({ 
-				left: left + sl, 
-				top: hh, 
-				width: rowHead.width(),
-				transform: `translate3d(${-sl}px,0px,0px)`
-			});
-
-			rowHead.addClass('fixed');
 		};
+
+		if (cy <= threshold) {
+			clone.css({ left: x, top: y, width: rowHead.outerWidth() + 2, transform: `translate3d(${-sx}px,0px,0px)`	});
+		} else {
+			clone.remove();
+		};
+
+		rowHead.toggleClass('fixed', cy <= threshold);
 	};
 
 	resizeColumns (relationKey: string, width: number) {
@@ -432,8 +453,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	loadMoreRows () {
-		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = S.Record.getSubId(rootId, block.id);
+		const { rootId, block, loadData, getView, getLimit, getSubId } = this.props;
+		const subId = getSubId();
 		const view = getView();
 		const limit = getLimit();
 
@@ -448,7 +469,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId } = this.props;
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
@@ -456,7 +477,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
-		const length = S.Record.getRecordIds(S.Record.getSubId(rootId, block.id), '').length;
+		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
 

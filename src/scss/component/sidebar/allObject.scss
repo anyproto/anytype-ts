@@ -12,8 +12,12 @@
 				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
 				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }
-				.icon.back { flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); }
+				.icon { width: 28px; height: 28px; background-size: 20px; }
+				.icon.back { flex-shrink: 0; background-image: url('~img/icon/widget/back0.svg'); }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
+				.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
+				.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 			}
 
 			.sides { display: flex; flex-direction: row; gap: 0px 8px; }
@@ -36,14 +40,14 @@
 				.swiper-button-prev, .swiper-button-next {
 					&::before { 
 						content: ''; width: 24px; height: 24px; display: block; position: absolute; left: 12px; top: 2px; z-index: 1;
-						background-image: url('~img/arrow/sidebarObjectTab.svg'); background-size: 20px; background-repeat: no-repeat; 
+						background-image: url('~img/arrow/sidebarObjectTab0.svg'); background-size: 20px; background-repeat: no-repeat;
 						border-radius: 6px; background-position: center;
 					}
 					&::after { 
 						content: ''; width: 100%; height: 100%; display: block; position: absolute; left: 0px; top: 0px; 
 						background-image: linear-gradient(90deg, rgba(255,255,255,0) 0px, var(--color-bg-primary) 16px, var(--color-bg-primary) 100%);
 					}
-					&:hover::before { background-color: var(--color-shape-highlight-medium); }
+					&:hover::before { background-image: url('~img/arrow/sidebarObjectTab1.svg'); }
 				}
 				.swiper-button-prev { left: -16px; transform: rotateZ(180deg); }
 				.swiper-button-next { right: -16px; }
@@ -63,9 +67,9 @@
 
 		> .body { flex-grow: 1; overflow: hidden; }
 		> .body {
-			.ReactVirtualized__List { padding: 0px 8px 8px 8px; overscroll-behavior: none; }
+			.ReactVirtualized__List { padding: 0px 8px 8px 8px; }
 
-			.emptySearch { height: auto; padding: 5px 0px 0px 0px; }
+			.emptySearch { height: auto; padding: 5px 16px 0px 16px; }
 			.emptySearch {
 				.txt { color: var(--color-text-secondary); }
 				.small { @include text-small; }

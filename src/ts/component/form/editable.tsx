@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { getRange, setRange } from 'selection-ranges';
 import { I, U, keyboard, Mark } from 'Lib';
+import raf from 'raf';
 
 interface Props {
 	id?: string;
@@ -22,7 +23,7 @@ interface Props {
 	onInput?: (e: any) => void;
 	onDragStart?: (e: any) => void;
 	onCompositionStart?: (e: any) => void;
-	onCompositionEnd?: (e: any) => void;
+	onCompositionEnd?: (e: any, value: string, range: I.TextRange) => void;
 };
 
 interface EditableRefProps {
@@ -30,6 +31,7 @@ interface EditableRefProps {
 	placeholderSet: (v: string) => void;
 	placeholderHide: () => void;
 	placeholderShow: () => void;
+	setFocus: () => void;
 	setValue: (html: string) => void;
 	getTextValue: () => string;
 	getHtmlValue: () => string;
@@ -67,6 +69,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const cnw = [ 'editableWrap', classNameWrap ];
 	const cne = [ 'editable', classNameEditor ];
 	const cnp = [ 'placeholder', classNamePlaceholder ];
+	const justEndedComposition = useRef(false);
 
 	const placeholderCheck = () => {
 		const text = getTextValue();
@@ -85,13 +88,28 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		$(placeholderRef.current).show();
 	};
 
+	const setFocus = () => {
+		const el = $(editableRef.current).get(0);
+		const l = getTextValue().length;
+
+		raf(() => {
+			el.focus({ preventScroll: true });
+			setRange(el, { start: l, end: l });
+		});
+	};
+
 	const setValue = (html: string) => {
-		$(editableRef.current).get(0).innerHTML = U.Common.sanitize(html);
+		$(editableRef.current).get(0).innerHTML = U.Common.sanitize(html, true);
 	};
 
 	const getTextValue = (): string => {
 		const obj = Mark.cleanHtml($(editableRef.current).html());
-		return String(obj.get(0).innerText || '');
+		
+		let t = String(obj.get(0).innerText || '');
+		if (t == '\n') {
+			t = '';
+		};
+		return t;
 	};
 
 	const getHtmlValue = (): string => {
@@ -123,6 +141,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const onInputHandler = (e: any) => {
+		// If composition just ended, skip this input event
+		if (justEndedComposition.current) {
+			justEndedComposition.current = false;
+			return;
+		};
+
 		placeholderCheck();
 
 		if (onInput) {
@@ -186,9 +210,10 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const onCompositionEndHandler = (e: any) => {
 		keyboard.setComposition(false);
+		justEndedComposition.current = true;
 
 		if (onCompositionEnd) {
-			onCompositionEnd(e);
+			onCompositionEnd(e, getTextValue(), getRangeHandler());
 		};
 	};
 
@@ -236,6 +261,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		placeholderSet,
 		placeholderHide,
 		placeholderShow,
+		setFocus,
 		setValue,
 		getTextValue,
 		getHtmlValue,

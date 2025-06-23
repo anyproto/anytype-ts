@@ -35,6 +35,9 @@ class Keyboard {
 	isShortcutEditing = false;
 	isRtl = false;
 	
+	/**
+	 * Initializes keyboard event listeners and shortcuts.
+	 */
 	init () {
 		this.unbind();
 		this.initShortcuts();
@@ -72,18 +75,31 @@ class Keyboard {
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 
+	/**
+	 * Initializes keyboard shortcuts from configuration.
+	 */
 	initShortcuts () {
 		this.shortcuts = J.Shortcut.getItems();
 	};
 	
+	/**
+	 * Unbinds all keyboard event listeners.
+	 */
 	unbind () {
 		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
 	};
 
+	/**
+	 * Handles scroll events to hide tooltips.
+	 */
 	onScroll () {
 		Preview.tooltipHide(false);
 	};
 
+	/**
+	 * Handles mouse down events for navigation and focus management.
+	 * @param {any} e - The mouse event.
+	 */
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
@@ -106,6 +122,10 @@ class Keyboard {
 		};
 	};
 
+	/**
+	 * Handles mouse move events for pin checking and mouse state.
+	 * @param {any} e - The mouse event.
+	 */
 	onMouseMove (e: any) {
 		this.initPinCheck();
 		this.disableMouse(false);
@@ -120,19 +140,33 @@ class Keyboard {
 		};
 	};
 	
+	/**
+	 * Handles key down events for shortcuts and navigation.
+	 * @param {any} e - The keyboard event.
+	 */
 	onKeyDown (e: any) {
 		const { theme, pin } = S.Common;
 		const isPopup = this.isPopup();
-		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
+		const rootId = this.getRootId();
+		const object = S.Detail.get(rootId, rootId);
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
+
 			sidebar.toggleOpenClose();
 		});
+
+		if (this.isMainEditor()) {
+			this.shortcut('tableOfContents', e, () => {
+				e.preventDefault();
+
+				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+			});
+		};
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
@@ -148,7 +182,7 @@ class Keyboard {
 				S.Menu.closeLast();
 			} else 
 			if (S.Common.getShowSidebarRight(isPopup)) {
-				sidebar.rightPanelToggle(false, true, isPopup);
+				sidebar.rightPanelToggle(true, isPopup);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -174,6 +208,7 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
+				sidebar.leftPanelSetState({ page: 'widget' });
 				U.Space.openDashboard();
 			};
 			
@@ -231,7 +266,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut('settings', e, () => {
-				U.Object.openAuto({ id: 'account', layout: I.ObjectLayout.Settings });
+				U.Object.openRoute({ id: 'account', layout: I.ObjectLayout.Settings });
 			});
 
 			// Relation panel
@@ -271,6 +306,29 @@ class Keyboard {
 				});
 			});
 
+			// Copy page link
+			this.shortcut('copyPageLink', e, () => {
+				e.preventDefault();
+
+				const space = U.Space.getSpaceview();
+
+				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+			});
+
+			// Settings
+			this.shortcut('settingsSpace', e, () => {
+				e.preventDefault();
+
+				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+			});
+
+			// Logout
+			this.shortcut('logout', e, () => {
+				e.preventDefault();
+
+				S.Popup.open('logout', {});
+			});
+
 			if (canWrite) {
 				// Create new page
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
@@ -280,15 +338,40 @@ class Keyboard {
 					});
 				};
 
+				// Create new widget
+				this.shortcut('createWidget', e, () => {
+					e.preventDefault();
+
+					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
+
+					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+				});
+
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
+
+				// Move to bin
+				this.shortcut('moveToBin', e, () => {
+					e.preventDefault();
+
+					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
+				});
+
+				// Add to favorites
+				this.shortcut('addFavorite', e, () => {
+					e.preventDefault();
+
+					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
+				});
 			};
 		};
 
 		this.initPinCheck();
 	};
 
-	// Check if smth is selected
+	/**
+	 * Checks the current selection and updates state.
+	 */
 	checkSelection () {
 		const range = U.Common.getSelectionRange();
 		const selection = S.Common.getRef('selectionProvider');
@@ -301,6 +384,13 @@ class Keyboard {
 		return false;
 	};
 
+	/**
+	 * Creates a new page with the given details, route, and flags.
+	 * @param {any} details - The page details.
+	 * @param {string} route - The route for the new page.
+	 * @param {I.ObjectFlag[]} flags - Flags for the new object.
+	 * @param {function} [callBack] - Optional callback after creation.
+	 */
 	pageCreate (details: any, route: string, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		if (!this.isMain()) {
 			return;
@@ -315,9 +405,16 @@ class Keyboard {
 		});
 	};
 
+	/**
+	 * Handles key up events.
+	 * @param {any} e - The keyboard event.
+	 */
 	onKeyUp (e: any) {
 	};
 
+	/**
+	 * Handles back navigation.
+	 */
 	onBack () {
 		const { account } = S.Auth;
 		const isPopup = this.isPopup();
@@ -337,8 +434,7 @@ class Keyboard {
 		} else {
 			const history = U.Router.history;
 			const current = U.Router.getParam(history.location.pathname);
-
-			let prev = history.entries[history.index - 1];
+			const prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
 				U.Space.openDashboard();
@@ -348,19 +444,27 @@ class Keyboard {
 			if (prev) {
 				const route = U.Router.getParam(prev.pathname);
 
+				let substitute = '';
+
+				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
+					substitute = history.entries[history.index - 2]?.pathname;
+				};
+
 				if ((route.page == 'main') && (route.action == 'history')) {
-					prev = history.entries[history.index - 3];
-					if (prev) {
-						U.Router.go(prev.pathname, {});
-					};
+					substitute = history.entries[history.index - 3]?.pathname;
+				};
+
+				if (substitute) {
+					U.Router.go(substitute, {});
 					return;
 				};
 
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
 					sidebar.leftPanelSetState({ page: 'widget' });
+					U.Space.openDashboard();
+				} else {
+					history.goBack();
 				};
-
-				history.goBack();
 			};
 		};
 
@@ -369,6 +473,9 @@ class Keyboard {
 		analytics.event('HistoryBack');
 	};
 
+	/**
+	 * Handles forward navigation.
+	 */
 	onForward () {
 		const isPopup = this.isPopup();
 
@@ -388,6 +495,10 @@ class Keyboard {
 		analytics.event('HistoryForward');
 	};
 
+	/**
+	 * Checks if back navigation is possible.
+	 * @returns {boolean} True if back is possible.
+	 */
 	checkBack (): boolean {
 		const { account } = S.Auth;
 		const isPopup = this.isPopup();
@@ -420,6 +531,10 @@ class Keyboard {
 		return true;
 	};
 
+	/**
+	 * Checks if forward navigation is possible.
+	 * @returns {boolean} True if forward is possible.
+	 */
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
 		const history = U.Router.history;
@@ -437,6 +552,11 @@ class Keyboard {
 		return ret;
 	};
 
+	/**
+	 * Handles global command events from the renderer.
+	 * @param {string} cmd - The command name.
+	 * @param {any} arg - The command argument.
+	 */
 	onCommand (cmd: string, arg: any) {
 		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || keyboard.isShortcutEditing) {
 			return;
@@ -447,6 +567,7 @@ class Keyboard {
 		const logPath = electron.logPath();
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
+		const canUndo = !this.isFocused && this.isMainEditor();
 
 		switch (cmd) {
 			case 'search': {
@@ -456,6 +577,7 @@ class Keyboard {
 
 			case 'shortcut': {
 				this.onShortcut();
+				analytics.event('MenuHelpShortcut', { route: analytics.route.shortcut });
 				break;
 			};
 
@@ -484,15 +606,19 @@ class Keyboard {
 			};
 
 			case 'undo': {
-				if (!this.isFocused) {
+				if (canUndo) {
 					this.onUndo(rootId, route);
+				} else {
+					document.execCommand('undo');
 				};
 				break;
 			};
 
 			case 'redo': {
-				if (!this.isFocused) {
+				if (canUndo) {
 					this.onRedo(rootId, route);
+				} else {
+					document.execCommand('redo');
 				};
 				break;
 			};
@@ -503,7 +629,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(route);
+				Action.createSpace(I.SpaceUxType.Space, route);
 				break;
 			};
 
@@ -568,7 +694,8 @@ class Keyboard {
 			};
 
 			case 'debugTree': {
-				C.DebugTree(rootId, logPath, false, (message: any) => {
+				const unanonymized = arg?.unanonymized || false;
+				C.DebugTree(rootId, logPath, unanonymized, (message: any) => {
 					if (!message.error.code) {
 						Action.openPath(logPath);
 					};
@@ -695,9 +822,17 @@ class Keyboard {
 				break;
 			};
 
+			case 'readAllMessages': {
+				C.ChatReadAll();
+				break;
+			};
+
 		};
 	};
 
+	/**
+	 * Handles contact URL action.
+	 */
 	onContactUrl () {
 		const { account } = S.Auth;
 		if (!account) {
@@ -719,6 +854,9 @@ class Keyboard {
 		});
 	};
 
+	/**
+	 * Handles membership upgrade action.
+	 */
 	onMembershipUpgrade () {
 		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
@@ -726,6 +864,9 @@ class Keyboard {
 		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
 	};
 
+	/**
+	 * Handles tech info action.
+	 */
 	onTechInfo () {
 		const { account } = S.Auth;
 
@@ -762,6 +903,12 @@ class Keyboard {
 		});
 	};
 
+	/**
+	 * Handles undo action.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} [route] - The route context.
+	 * @param {function} [callBack] - Optional callback after undo.
+	 */
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
 		const { account } = S.Auth;
 		if (!account) {
@@ -782,6 +929,12 @@ class Keyboard {
 		analytics.event('Undo', { route });
 	};
 
+	/**
+	 * Handles redo action.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} [route] - The route context.
+	 * @param {function} [callBack] - Optional callback after redo.
+	 */
 	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
 		const { account } = S.Auth;
 		if (!account) {
@@ -803,6 +956,11 @@ class Keyboard {
 		analytics.event('Redo', { route });
 	};
 
+	/**
+	 * Applies print styles to the document.
+	 * @param {string} className - The class name to apply.
+	 * @param {boolean} clearTheme - Whether to clear the theme.
+	 */
 	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
@@ -825,12 +983,19 @@ class Keyboard {
 		focus.clearRange(true);
 	};
 
+	/**
+	 * Removes print styles from the document.
+	 */
 	printRemove () {
 		$('html').removeClass('withPopup printMedia print save');
 		S.Common.setThemeClass();
 		$(window).trigger('resize');
 	};
 
+	/**
+	 * Handles print action for the current route.
+	 * @param {string} [route] - The route context.
+	 */
 	onPrint (route?: string) {
 		this.printApply('print', true);
 
@@ -840,6 +1005,9 @@ class Keyboard {
 		analytics.event('Print', { route });
 	};
 
+	/**
+	 * Saves the current page as HTML.
+	 */
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
@@ -848,6 +1016,10 @@ class Keyboard {
 		Renderer.send('winCommand', 'printHtml', { name: object.name });
 	};
 
+	/**
+	 * Prints the current page to PDF.
+	 * @param {any} options - Print options.
+	 */
 	onPrintToPDF (options: any) {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
@@ -861,6 +1033,11 @@ class Keyboard {
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
 	};
 
+	/**
+	 * Handles search menu action.
+	 * @param {string} value - The search value.
+	 * @param {string} [route] - The route context.
+	 */
 	onSearchMenu (value: string, route?: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
@@ -893,6 +1070,10 @@ class Keyboard {
 		});
 	};
 
+	/**
+	 * Handles search popup action.
+	 * @param {string} route - The route context.
+	 */
 	onSearchPopup (route: string) {
 		S.Popup.open('search', {
 			preventCloseByEscape: true,
@@ -900,6 +1081,9 @@ class Keyboard {
 		});
 	};
 
+	/**
+	 * Handles shortcut action.
+	 */
 	onShortcut () {
 		if (!S.Popup.isOpen('shortcut')) {
 			S.Popup.open('shortcut', { preventResize: true });
@@ -908,6 +1092,12 @@ class Keyboard {
 		};
 	};
 
+	/**
+	 * Handles lock action for a root object.
+	 * @param {string} rootId - The root object ID.
+	 * @param {boolean} v - Lock state.
+	 * @param {string} [route] - The route context.
+	 */
 	onLock (rootId: string, v: boolean, route?: string) {
 		const block = S.Block.getLeaf(rootId, rootId);
 		if (!block) {
@@ -924,6 +1114,9 @@ class Keyboard {
 		analytics.event((v ? 'LockPage' : 'UnlockPage'), { route });
 	};
 
+	/**
+	 * Toggles lock state for the current object.
+	 */
 	onToggleLock () {
 		const rootId = this.getRootId();
 		const root = S.Block.getLeaf(rootId, rootId);
@@ -933,6 +1126,9 @@ class Keyboard {
 		};
 	};
 
+	/**
+	 * Sets the window title based on the current context.
+	 */
 	setWindowTitle () {
 		const { pin } = S.Common;
 		if (pin && !this.isPinChecked) {
@@ -957,20 +1153,38 @@ class Keyboard {
 		};
 	};
 
+	/**
+	 * Returns true if the current context is a popup.
+	 * @returns {boolean}
+	 */
 	isPopup () {
 		return S.Popup.isOpen('page');
 	};
 
+	/**
+	 * Gets the root object ID for the current context.
+	 * @param {boolean} [isPopup] - Whether to get for popup context.
+	 * @returns {string} The root object ID.
+	 */
 	getRootId (isPopup?: boolean): string {
 		const match = this.getMatch(isPopup);
 		return match.params.objectId || match.params.id;
 	};
 
+	/**
+	 * Gets the match object for the popup context.
+	 * @returns {any} The match object.
+	 */
 	getPopupMatch () {
 		const popup = S.Popup.get('page');
 		return popup && popup?.param.data.matchPopup || {};
 	};
 
+	/**
+	 * Gets the match object for the current context.
+	 * @param {boolean} [isPopup] - Whether to get for popup context.
+	 * @returns {any} The match object.
+	 */
 	getMatch (isPopup?: boolean) {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
@@ -988,66 +1202,130 @@ class Keyboard {
 		return ret;
 	};
 
+	/**
+	 * Returns true if the current context is the main view.
+	 * @returns {boolean}
+	 */
 	isMain () {
 		return this.match?.params?.page == 'main';
 	};
 	
+	/**
+	 * Returns true if the current context is the main editor.
+	 * @returns {boolean}
+	 */
 	isMainEditor () {
 		return this.isMain() && (this.match?.params?.action == 'edit');
 	};
 
+	/**
+	 * Returns true if the current context is the main set view.
+	 * @returns {boolean}
+	 */
 	isMainSet () {
 		return this.isMain() && (this.match?.params?.action == 'set');
 	};
 
+	/**
+	 * Returns true if the current context is the main graph view.
+	 * @returns {boolean}
+	 */
 	isMainGraph () {
 		return this.isMain() && (this.match?.params?.action == 'graph');
 	};
 
+	/**
+	 * Returns true if the current context is the main chat view.
+	 * @returns {boolean}
+	 */
 	isMainChat () {
 		return this.isMain() && (this.match?.params?.action == 'chat');
 	};
 
+	/**
+	 * Returns true if the current context is the main index view.
+	 * @returns {boolean}
+	 */
 	isMainIndex () {
 		return this.isMain() && (this.match?.params?.action == 'index');
 	};
 
+	/**
+	 * Returns true if the current context is the main history view.
+	 * @returns {boolean}
+	 */
 	isMainHistory () {
 		return this.isMain() && (this.match?.params?.action == 'history');
 	};
 
+	/**
+	 * Returns true if the current context is the main void view.
+	 * @returns {boolean}
+	 */
 	isMainVoid () {
 		return this.isMain() && (this.match?.params?.action == 'void');
 	};
 
+	/**
+	 * Returns true if the current context is the main type view.
+	 * @returns {boolean}
+	 */
 	isMainType () {
 		return this.isMain() && (this.match?.params?.action == 'type');
 	};
 
+	/**
+	 * Returns true if the current context is the main settings view.
+	 * @returns {boolean}
+	 */
 	isMainSettings () {
 		return this.isMain() && (this.match?.params?.action == 'settings');
 	};
 
+	/**
+	 * Returns true if the current context is the auth view.
+	 * @returns {boolean}
+	 */
 	isAuth () {
 		return this.match?.params?.page == 'auth';
 	};
 
+	/**
+	 * Returns true if the current context is the auth pin check view.
+	 * @returns {boolean}
+	 */
 	isAuthPinCheck () {
 		return this.isAuth() && (this.match?.params?.action == 'pin-check');
 	};
 	
+	/**
+	 * Sets the focus state.
+	 * @param {boolean} v - The focus state.
+	 */
 	setFocus (v: boolean) {
 		this.isFocused = v;
 	};
 	
+	/**
+	 * Sets the resize state.
+	 * @param {boolean} v - The resize state.
+	 */
 	setResize (v: boolean) {
 		this.isResizing = v;
 	};
 	
+	/**
+	 * Sets the dragging state.
+	 * @param {boolean} v - The dragging state.
+	 */
 	setDragging (v: boolean) {
 		this.isDragging = v;
 	};
 
+	/**
+	 * Sets the pin checked state.
+	 * @param {boolean} v - The pin checked state.
+	 */
 	setPinChecked (v: boolean) {
 		v = Boolean(v);
 
@@ -1059,30 +1337,57 @@ class Keyboard {
 		Renderer.send('setPinChecked', v);
 	};
 
+	/**
+	 * Sets the match object.
+	 * @param {any} match - The match object.
+	 */
 	setMatch (match: any) {
 		this.match = U.Common.objectCopy(match);
 	};
 
+	/**
+	 * Sets the source object.
+	 * @param {any} source - The source object.
+	 */
 	setSource (source: any) {
 		this.source = U.Common.objectCopy(source);
 	};
 
+	/**
+	 * Sets the selection clear disabled state.
+	 * @param {boolean} v - The state value.
+	 */
 	setSelectionClearDisabled (v: boolean) {
 		this.isSelectionClearDisabled = v;
 	};
 
+	/**
+	 * Sets the composition state.
+	 * @param {boolean} v - The composition state.
+	 */
 	setComposition (v: boolean) {
 		this.isComposition = v;
 	};
 
+	/**
+	 * Sets the RTL (right-to-left) state.
+	 * @param {boolean} v - The RTL state.
+	 */
 	setRtl (v: boolean) {
 		this.isRtl = v;
 	};
 
+	/**
+	 * Sets the shortcut editing state.
+	 * @param {boolean} v - The shortcut editing state.
+	 */
 	setShortcutEditing (v: boolean) {
 		this.isShortcutEditing = v;
 	};
 
+	/**
+	 * Initializes pin check logic.
+	 */
 	initPinCheck () {
 		const { account } = S.Auth;
 
@@ -1113,6 +1418,9 @@ class Keyboard {
 		}, S.Common.pinTime);
 	};
 
+	/**
+	 * Restores the source object from backup.
+	 */
 	restoreSource () {
 		if (!this.source) {
 			return;
@@ -1129,58 +1437,98 @@ class Keyboard {
 		this.setSource(null);
 	};
 	
+	/**
+	 * Disables or enables mouse interactions.
+	 * @param {boolean} v - The state value.
+	 */
 	disableMouse (v: boolean) {
 		this.isMouseDisabled = v;
 	};
 
+	/**
+	 * Disables or enables navigation.
+	 * @param {boolean} v - The state value.
+	 */
 	disableNavigation (v: boolean) {
 		this.isNavigationDisabled = v;
 	};
 
-	// Flag to prevent blur events
+	/**
+	 * Disables or enables blur events.
+	 * @param {boolean} v - The state value.
+	 */
 	disableBlur (v: boolean) {
 		this.isBlurDisabled = v;
 	};
 
-	// Flag to prevent menuBlockContext from opening
+	/**
+	 * Disables or enables context menu.
+	 * @param {boolean} v - The state value.
+	 */
 	disableContext (v: boolean) {
 		this.isContextDisabled = v;
 	};
 
-	// Flag to prevent menuBlockContext from closing
+	/**
+	 * Disables or enables context close events.
+	 * @param {boolean} v - The state value.
+	 */
 	disableContextClose (v: boolean) {
 		this.isContextCloseDisabled = v;
 	};
 
-	// Flag to prevent menuBlockContext from opening
+	/**
+	 * Disables or enables context open events.
+	 * @param {boolean} v - The state value.
+	 */
 	disableContextOpen (v: boolean) {
 		this.isContextOpenDisabled = v;
 	};
 	
+	/**
+	 * Disables or enables preview events.
+	 * @param {boolean} v - The state value.
+	 */
 	disablePreview (v: boolean) {
 		this.isPreviewDisabled = v;
 	};
 
-	// Flag to prevent document from sending close, to prevent deletion of drafts
+	/**
+	 * Disables or enables close events.
+	 * @param {boolean} v - The state value.
+	 */
 	disableClose (v: boolean) {
 		this.isCloseDisabled = v;
 	};
 
-	// Flag to prevent common paste handling in editor
+	/**
+	 * Disables or enables paste events.
+	 * @param {boolean} v - The state value.
+	 */
 	disablePaste (v: boolean) {
 		this.isPasteDisabled = v;
 	};
 
-	// Flag to disable selection
+	/**
+	 * Disables or enables selection events.
+	 * @param {boolean} v - The state value.
+	 */
 	disableSelection (v: boolean) {
 		this.isSelectionDisabled = v;
 	};
 
-	// Flag to disable common drop
+	/**
+	 * Disables or enables common drop events.
+	 * @param {boolean} v - The state value.
+	 */
 	disableCommonDrop (v: boolean) {
 		this.isCommonDropDisabled = v;
 	};
 
+	/**
+	 * Gets the mark parameter for the current selection.
+	 * @returns {any} The mark parameter.
+	 */
 	getMarkParam () {
 		return [
 			{ key: 'textBold',		 type: I.MarkType.Bold,		 param: '' },
@@ -1194,29 +1542,63 @@ class Keyboard {
 		];
 	};
 	
-	isSpecial (e: any): boolean {
-		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));
+	/**
+	 * Returns true if the event is a special key event.
+	 * @param {any} e - The event object.
+	 * @returns {boolean}
+	 */
+	isSpecial(e: any): boolean {
+		const fk = Array.from({ length: 12 }, (_, i) => `F${i + 1}`);
+		const sk = new Set([
+			Key.escape, Key.backspace, Key.delete, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta,
+			Key.left, Key.up, Key.right, Key.down,
+			'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'CapsLock', 
+			'NumLock', 'ScrollLock', 'Pause', 'PrintScreen', 'ContextMenu', 'Dead',
+			...fk,
+		].map(it => it.toLowerCase()));
+		
+		return sk.has(this.eventKey(e));
 	};
 
+	/**
+	 * Returns true if the event is an arrow key event.
+	 * @param {any} e - The event object.
+	 * @returns {boolean}
+	 */
 	isArrow (e: any): boolean {
 		return [ Key.up, Key.down, Key.left, Key.right ].includes(this.eventKey(e));
 	};
 
+	/**
+	 * Returns true if the event includes a command key.
+	 * @param {any} e - The event object.
+	 * @returns {boolean}
+	 */
 	withCommand (e: any): boolean {
 		return e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
 	};
 
+	/**
+	 * Gets the event key from the event object.
+	 * @param {any} e - The event object.
+	 * @returns {string} The event key.
+	 */
 	eventKey (e: any) {
 		return e && e.key ? e.key.toLowerCase() : '';
 	};
 
+	/**
+	 * Gets the meta keys from the event object.
+	 * @param {any} e - The event object.
+	 * @returns {string[]} The meta keys.
+	 */
 	metaKeys (e: any): string[] {
 		const ret = [];
 		if (e.shiftKey) {
-			ret.push('shift');
+			ret.push(Key.shift);
 		};
 		if (e.altKey) {
-			ret.push('alt');
+			ret.push(Key.alt);
 		};
 		if (e.ctrlKey) {
 			ret.push('ctrl');
@@ -1224,20 +1606,25 @@ class Keyboard {
 		if (e.metaKey) {
 			ret.push('cmd');
 		};
+		// Add CapsLock as a modifier if active
+		if (e.getModifierState && e.getModifierState('CapsLock')) {
+			ret.push('capslock');
+		};
 		return ret;
 	};
 
+	/**
+	 * Handles a keyboard shortcut.
+	 * @param {string} s - The shortcut name.
+	 * @param {any} e - The event object.
+	 * @param {function} callBack - The callback to execute if shortcut matches.
+	 */
 	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
 		if (!e || !e.key || this.isShortcutEditing) {
 			return;
 		};
 
-		const string = this.shortcuts[s] ? (this.shortcuts[s].keys || []).join('+') : s;
-		if (!string) {
-			return;
-		};
-
-		const a = string.split(',').map(it => it.trim());
+		const a = s.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
 		const which = e.which;
 		const metaKeys = this.metaKeys(e);
@@ -1255,8 +1642,20 @@ class Keyboard {
 		};
 
 		for (const item of a) {
-			const keys = item.split('+').sort();
-			
+			let keys = [];
+
+			if (this.shortcuts[item]) {
+				keys = this.shortcuts[item].keys || [];
+			} else {
+				keys = item.split('+');
+			};
+
+			if (!keys.length) {
+				continue;
+			};
+
+			keys.sort();
+
 			for (const k of keys) {
 				if (which == J.Key[k]) {
 					pressed.push(k);
@@ -1266,11 +1665,10 @@ class Keyboard {
 				};
 			};
 
-			const ks = keys.join('+');
 			const check = U.Common.arrayUnique(pressed).sort().join('+');
 
-			if (check == ks) {
-				res = ks;
+			if (check == keys.join('+')) {
+				res = item;
 			};
 		};
 
@@ -1279,6 +1677,11 @@ class Keyboard {
 		};
 	};
 
+	/**
+	 * Gets the caption for a shortcut by ID.
+	 * @param {string} id - The shortcut ID.
+	 * @returns {string} The caption.
+	 */
 	getCaption (id: string) {
 		let ret = '';
 		if (this.shortcuts[id]) {
@@ -1287,14 +1690,20 @@ class Keyboard {
 		return ret;
 	};
 
+	/**
+	 * Gets the keys for a shortcut by ID.
+	 * @param {string} id - The shortcut ID.
+	 * @returns {string[]} The keys.
+	 */
 	getKeys (id: string) {
 		return this.shortcuts[id].keys || [];
 	};
 
-	getKeysString (id: string) {
-		return this.getKeys(id).join('+');
-	};
-
+	/**
+	 * Gets the symbols for a list of keys.
+	 * @param {string[]} keys - The list of keys.
+	 * @returns {string[]} The symbols.
+	 */
 	getSymbolsFromKeys (keys: string[]) {
 		const isMac = U.Common.isPlatformMac();
 
@@ -1302,49 +1711,68 @@ class Keyboard {
 			if (key === this.cmdKey()) {
 				return this.cmdSymbol();
 			};
-			if (key == 'shift') {
+			if (key == Key.shift) {
 				return this.shiftSymbol();
 			};
-			if (key == 'alt') {
+			if (key == Key.alt) {
 				return this.altSymbol();
 			};
 			if ((key == 'ctrl') && isMac) {
 				return '&#8963;';
 			};
-			if (key == 'enter') {
+			if (key == Key.enter) {
 				return '&#8629;';
 			};
-			if (key == 'delete') {
+			if (key == Key.delete) {
 				return 'Del';
 			};
-			if (key == 'arrowleft') {
+			if (key == Key.left) {
 				return '←';
 			};
-			if (key == 'arrowup') {
+			if (key == Key.up) {
 				return '↑';
 			};
-			if (key == 'arrowright') {
+			if (key == Key.right) {
 				return '→';
 			};
-			if (key == 'arrowdown') {
+			if (key == Key.down) {
 				return '↓';
+			};
+			if (key == 'comma') {
+				return ',';
 			};
 			return U.Common.ucFirst(key);
 		});
 	};
 
+	/**
+	 * Gets the command symbol for the current platform.
+	 * @returns {string} The command symbol.
+	 */
 	cmdSymbol () {
 		return U.Common.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};
 
+	/**
+	 * Gets the alt symbol for the current platform.
+	 * @returns {string} The alt symbol.
+	 */
 	altSymbol () {
 		return U.Common.isPlatformMac() ? '&#8997;' : 'Alt';
 	};
 
+	/**
+	 * Gets the shift symbol for the current platform.
+	 * @returns {string} The shift symbol.
+	 */
 	shiftSymbol () {
 		return '&#x21E7;';
 	};
 
+	/**
+	 * Gets the command key for the current platform.
+	 * @returns {string} The command key.
+	 */
 	cmdKey () {
 		return U.Common.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
@@ -1353,6 +1781,7 @@ class Keyboard {
 
 export enum Key {
 	backspace	 = 'backspace',
+	delete		 = 'delete',
 	tab			 = 'tab',
 	enter		 = 'enter',
 	shift		 = 'shift',

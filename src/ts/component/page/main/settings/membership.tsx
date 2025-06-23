@@ -14,12 +14,14 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 		this.onSwiper = this.onSwiper.bind(this);
 		this.onContact = this.onContact.bind(this);
+		this.onCode = this.onCode.bind(this);
 	};
 
 	render () {
 		const { membership } = S.Auth;
 		const { membershipTiers, interfaceLang } = S.Common;
-		const { tier, status } = membership;
+		const { status } = membership;
+		const tier = U.Data.getMembershipTier(membership.tier);
 		const length = membershipTiers.length;
 		const cnt = [];
 
@@ -33,23 +35,40 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
-		const SlideItem = (slide) => (
-			<div className={[ 'slide', `c${slide.id}` ].join(' ')}>
-				<div className="illustration" />
-				<div className="text">
-					<Title text={translate(`popupSettingsMembershipSlide${slide.id}Title`)} />
-					<Label text={translate(`popupSettingsMembershipSlide${slide.id}Text`)} />
+		const SlideItem = (slide) => {
+			const { id } = slide;
+			const title = translate(`popupSettingsMembershipSlide${id}Title`);
+
+			let text = translate(`popupSettingsMembershipSlide${id}Text`);
+			if (id == 2) {
+				text = U.Common.sprintf(text, J.Url.vision);
+			};
+
+			return (
+				<div className={[ 'slide', `c${id}` ].join(' ')}>
+					<div className="illustration" />
+					<div className="text">
+						<Title text={title} />
+						<Label text={text} />
+					</div>
 				</div>
-			</div>
-		);
+			);
+		};
 
 		const TierItem = (props: any) => {
 			const { item } = props;
 			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
+			const cn = [ 'tier', `c${item.id}`, item.color ];
+			const offer = isCurrent ? translate('popupSettingsMembershipCurrent') : item.offer;
+
+			if (isCurrent) {
+				cn.push('isCurrent');
+			};
 
 			let period = '';
 			let buttonText = translate('popupSettingsMembershipLearnMore');
+			let offerLabel = null;
 
 			if (isCurrent) {
 				if (membership.status == I.MembershipStatus.Pending) {
@@ -90,15 +109,19 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				};
 			};
 
+			if (offer) {
+				offerLabel = <div className="offerLabel">{offer}</div>;
+			};
+
 			return (
 				<div 
-					className={[ 'tier', `c${item.id}`, item.color, (isCurrent ? 'isCurrent' : '') ].join(' ')}
+					className={cn.join(' ')}
 					onClick={() => S.Popup.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
 						<div className="iconWrapper">
 							<Icon />
-							<div className="current">{translate('popupSettingsMembershipCurrent')}</div>
+							{offerLabel}
 						</div>
 
 						<Title text={item.name} />
@@ -121,7 +144,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 					text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
 				/>
 
-				{(membership.isNone || membership.isExplorer) ? (
+				{!tier?.price ? (
 					<>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
@@ -135,7 +158,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							mousewheel={true}
+							mousewheel={{ forceToAxis: true }}
 							navigation={true}
 							modules={[ Pagination, Autoplay, Mousewheel, Navigation ]}
 							centeredSlides={true}
@@ -156,11 +179,11 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 						className="tiersList"
 						spaceBetween={16}
 						slidesPerView={3}
+						mousewheel={{ forceToAxis: true }}
 						pagination={membershipTiers.length > 3 ? { clickable: true } : false}
-						modules={[ Pagination ]}
+						modules={[ Pagination, Mousewheel ]}
 						onSwiper={this.onSwiper}
 					>
-
 						{membershipTiers.map((item) => (
 							<SwiperSlide key={item.id}>
 								<TierItem item={item} />
@@ -168,6 +191,15 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 						))}
 					</Swiper>
 				</div>
+
+				{!tier?.price ? (
+					<div className="actionItems">
+						<div onClick={this.onCode} className="item redeemCode">
+							<Label text={translate('popupSettingsMembershipRedeemCode')} />
+							<Icon className="arrow" />
+						</div>
+					</div>
+				) : ''}
 
 				<div className="actionItems">
 					{links.map((item, i) => (
@@ -195,6 +227,10 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 	onContact () {
 		keyboard.onMembershipUpgrade();
 		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
+	};
+
+	onCode () {
+		S.Popup.open('membershipActivation', {});
 	};
 
 });

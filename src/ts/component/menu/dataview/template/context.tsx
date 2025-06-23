@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, analytics,keyboard, translate, Action, Preview } from 'Lib';
+import { I, C, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
 
 class MenuTemplateContext extends React.Component<I.Menu> {
 
@@ -64,7 +64,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { template, onSetDefault, onArchive, onDuplicate, route } = data;
+		const { template, onSetDefault, onArchive, onDuplicate, route, noToast } = data;
 
 		switch (item.id) {
 			case 'setDefault': {
@@ -72,7 +72,9 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 					onSetDefault(template.id);
 				};
 
-				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
+				if (!noToast) {
+					Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
+				};
 				analytics.event('ChangeDefaultTemplate', { route });
 				break;
 			};

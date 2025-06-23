@@ -15,18 +15,36 @@ class ExtensionStore {
 		});
 	};
 
+	/**
+	 * Gets the HTML value.
+	 * @private
+	 * @returns {string} The HTML value.
+	 */
 	get html (): string {
 		return String(this.htmlValue || '');
 	};
 
+	/**
+	 * Gets the tab URL value.
+	 * @private
+	 * @returns {string} The tab URL value.
+	 */
 	get tabUrl (): string {
 		return String(this.tabUrlValue || '');
 	};
 
+	/**
+	 * Sets the HTML value.
+	 * @param {string} v - The HTML value.
+	 */
 	setHtml (v: string) {
 		this.htmlValue = String(v || '');
 	};
 
+	/**
+	 * Sets the tab URL value.
+	 * @param {string} v - The tab URL value.
+	 */
 	setTabUrl (v: string) {
 		this.tabUrlValue = String(v || '');
 	};

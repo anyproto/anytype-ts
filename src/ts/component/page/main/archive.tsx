@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
@@ -53,6 +53,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		{ icon: 'restore', text: translate('commonRestore'), onClick: onRestore },
 		{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: onRemove }
 	];
+
+	useEffect(() => {
+		analytics.event('ScreenBin');
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		resize,

@@ -10,6 +10,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
+	includeTime: boolean = false;
 	ref = null;
 	
 	constructor (props: I.Menu) {
@@ -39,6 +40,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isType = U.Object.isTypeLayout(object.layout);
 		const isName = relation && (relation.relationKey == 'name');
 		const isDescription = relation && (relation.relationKey == 'description');
+		const isDate = Relation.isDate(this.format);
 
 		let canDuplicate = true;
 		let canDelete = !noDelete;
@@ -103,6 +105,23 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						onClick={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
+					/>
+				</div>
+			);
+		};
+
+		if (isDate && relation) {
+			opts = (
+				<div className="section">
+					<MenuItemVertical
+						id="includeTime"
+						icon="clock"
+						name={translate('commonIncludeTime')}
+						onMouseEnter={this.menuClose}
+						readonly={readonly}
+						withSwitch={true}
+						switchValue={this.includeTime}
+						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
 				</div>
 			);
@@ -179,6 +198,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (relation) {
 			this.format = relation.format;
 			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
+			this.includeTime = relation.includeTime;
 			this.forceUpdate();
 		};
 
@@ -325,7 +345,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onChangeTime (v: boolean) {
 		const relation = this.getRelation();
-		relation.includeTime = v;
+
+		this.includeTime = v;
+
+		if (relation && relation.id) {
+			this.save();
+		};
 	};
 
 	menuOpen (id: string, options: I.MenuParam) {
@@ -366,6 +391,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			name: relation.name, 
 			relationFormat: relation.format,
 			relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
+			relationFormatIncludeTime: this.includeTime,
 		});
 
 		close();
@@ -420,15 +446,15 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	save () {
 		const name = this.ref ? this.ref.getValue() : '';
-		if (!name) {
-			return;
-		};
-
 		const relation = this.getRelation();
 		const item: any = { 
-			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
+			relationFormatIncludeTime: this.includeTime,
+		};
+
+		if (name) {
+			item.name = name;
 		};
 
 		relation && relation.id ? this.update(item) : this.add(item);
@@ -462,7 +488,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	update (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationId, saveCommand } = data;
+		const { relationId, saveCommand } = data;
 		const details: any[] = [];
 		const object = {};
 
@@ -490,6 +516,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		} else 
 		if (addParam) {
 			ret = addParam;
+			ret.format = Number(ret.format) || I.RelationType.LongText;
 		};
 
 		return ret;
@@ -513,10 +540,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly } = data;
-		const relation = this.getRelation();
 		const isAllowed = this.isAllowed();
 
-		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
+		return readonly || !isAllowed || this.isReadonlyRelation();
+	};
+
+	isReadonlyRelation () {
+		const relation = this.getRelation();
+		return relation && relation.isReadonlyRelation;
 	};
 
 });

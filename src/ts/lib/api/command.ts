@@ -85,7 +85,7 @@ export const WalletConvert = (mnemonic: string, entropy: string, callBack?: (mes
 	dispatcher.request(WalletConvert.name, request, callBack);
 };
 
-export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
+export const WalletCreateSession = (mnemonic: string, appKey: string, token: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CreateSession.Request();
 
 	if (mnemonic) {
@@ -93,6 +93,9 @@ export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?:
 	} else 
 	if (appKey) {
 		request.setAppkey(appKey);
+	} else 
+	if (token) {
+		request.setToken(token);
 	};
 
 	dispatcher.request(WalletCreateSession.name, request, callBack);
@@ -108,21 +111,19 @@ export const WalletCloseSession = (token: string, callBack?: (message: any) => v
 
 // ---------------------- WORKSPACE ---------------------- //
 
-export const WorkspaceCreate = (details: any, usecase: I.Usecase, withChat: boolean, callBack?: (message: any) => void) => {
+export const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
 	request.setDetails(Encode.struct(details));
 	request.setUsecase(usecase as number);
-	request.setWithchat(withChat);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
 
-export const WorkspaceOpen = (spaceId: string, withChat: boolean, callBack?: (message: any) => void) => {
+export const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Open.Request();
 
 	request.setSpaceid(spaceId);
-	request.setWithchat(withChat);
 
 	dispatcher.request(WorkspaceOpen.name, request, callBack);
 };
@@ -257,6 +258,26 @@ export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callB
 	dispatcher.request(AccountLocalLinkSolveChallenge.name, request, callBack);
 };
 
+export const AccountLocalLinkListApps = (callBack?: (message: any) => void) => {
+	dispatcher.request(AccountLocalLinkListApps.name, new Empty(), callBack);
+};
+
+export const AccountLocalLinkCreateApp = (app: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.CreateApp.Request();
+
+	request.setApp(Mapper.To.AppInfo(app));
+
+	dispatcher.request(AccountLocalLinkCreateApp.name, request, callBack);
+};
+
+export const AccountLocalLinkRevokeApp = (hash: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.RevokeApp.Request();
+
+	request.setApphash(hash);
+
+	dispatcher.request(AccountLocalLinkRevokeApp.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 export const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -283,7 +304,6 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
-	request.setCreatetypewidgetifmissing(config.experimental);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -1184,6 +1204,11 @@ export const BlockDataviewSetSource = (contextId: string, blockId: string, sourc
 
 export const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
+	const target = block.content.targetBlockId;
+
+	if (!block.id && [ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target)) {
+		block.id = target;
+	};
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
@@ -1279,7 +1304,7 @@ export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message
 
 // ---------------------- OBJECT ---------------------- //
 
-export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, createWidget: boolean, callBack?: (message: any) => void) => {
+export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1287,7 +1312,6 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
-	request.setCreatetypewidgetifmissing(createWidget);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1583,9 +1607,16 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 		const op = new Rpc.Object.ListModifyDetailValues.Request.Operation();
 
 		op.setRelationkey(it.relationKey);
-		op.setAdd(Encode.value(it.add));
-		op.setSet(Encode.value(it.set));
-		op.setRemove(Encode.value(it.remove));
+
+		if (it.add) {
+			op.setAdd(Encode.value(it.add));
+		};
+		if (it.set || (it.set === null)) {
+			op.setSet(Encode.value(it.set));
+		};
+		if (it.remove) {
+			op.setRemove(Encode.value(it.remove));
+		};
 
 		return op;
 	}));
@@ -1726,7 +1757,7 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], callBack?: (message: any) => void) => {
+export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], typeEdges: boolean = true, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
 	const request = new Rpc.Object.Graph.Request();
@@ -1738,6 +1769,7 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
 	request.setKeysList(keys);
 	request.setCollectionid(collectionId);
 	request.setSetsourceList(sources);
+	request.setIncludetypeedges(typeEdges);
 
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
@@ -2107,12 +2139,35 @@ export const MembershipFinalize = (name: string, callBack?: (message: any) => vo
 	dispatcher.request(MembershipFinalize.name, request, callBack);
 };
 
+export const MembershipCodeGetInfo = (code: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.CodeGetInfo.Request();
+
+	request.setCode(code);
+
+	dispatcher.request(MembershipCodeGetInfo.name, request, callBack);
+};
+
+export const MembershipCodeRedeem = (code: string, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.CodeRedeem.Request();
+
+	request.setCode(code);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
+
+	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
-export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
+export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.InviteGenerate.Request();
 
 	request.setSpaceid(spaceId);
+
+	if (inviteType && permissions) {
+		request.setInvitetype(inviteType as number);
+		request.setPermissions(permissions as number);
+	};
 
 	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
 };
@@ -2277,7 +2332,6 @@ export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?
 	request.setMessageid(messageId);
 
 	dispatcher.request(ChatDeleteMessage.name, request, callBack);
-
 };
 
 export const ChatGetMessages = (objectId: string, beforeOrderId: string, afterOrderId: string, limit: number, includeBoundary: boolean, callBack?: (message: any) => void) => {
@@ -2313,6 +2367,12 @@ export const ChatUnreadMessages = (objectId: string, afterOrderId: string, callB
 	dispatcher.request(ChatUnreadMessages.name, request, callBack);
 };
 
+export const ChatReadAll = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ReadAll.Request();
+
+	dispatcher.request(ChatReadAll.name, request, callBack);
+};
+
 export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.SubscribeLastMessages.Request();
 
@@ -2323,8 +2383,12 @@ export const ChatSubscribeLastMessages = (objectId: string, limit: number, subId
 	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
 };
 
-export const ChatSubscribeToMessagePreviews = (callBack?: (message: any) => void) => {
-	dispatcher.request(ChatSubscribeToMessagePreviews.name, new Empty(), callBack);
+export const ChatSubscribeToMessagePreviews = (subId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.SubscribeToMessagePreviews.Request();
+
+	request.setSubid(subId);
+
+	dispatcher.request(ChatSubscribeToMessagePreviews.name, request, callBack);
 };
 
 export const ChatUnsubscribe = (objectId: string, subId: string, callBack?: (message: any) => void) => {

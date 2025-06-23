@@ -56,7 +56,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 			content = (
 				<div className="sides">
 					<div className="info">
-						{!allowedValue ? <Icon className="lock" /> : ''}
 						<div className="name">{relation.name}</div>
 					</div>
 					<div 

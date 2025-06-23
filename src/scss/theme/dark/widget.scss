@@ -1,8 +1,16 @@
 .widget {
-	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
-	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
-	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
+	.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
+	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse0.svg'); }
+	.icon.options { background-image: url('#{$themePath}/icon/widget/options0.svg'); }
 	.icon.plus { background-image: url('#{$themePath}/icon/widget/plus0.svg'); }
+
+	.iconWrap:hover,
+	.iconWrap.active {
+		.icon.back { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
+		.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse1.svg'); }
+		.icon.options { background-image: url('#{$themePath}/icon/widget/options1.svg'); }
+		.icon.plus { background-image: url('#{$themePath}/icon/widget/plus1.svg'); }
+	}
 
 	.icon.remove .inner { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 
@@ -19,7 +27,7 @@
 		.side.right {
 			.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
 
-			.icon.plus { background-image: url('#{$themePath}/icon/widget/button/plus.svg'); border-color: var(--color-shape-secondary); }
+			.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); border-color: var(--color-shape-secondary); }
 			.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 		}
 

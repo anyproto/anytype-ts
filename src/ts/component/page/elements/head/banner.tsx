@@ -64,6 +64,8 @@ const HeaderBanner: FC<Props> = ({
 				},
 			},
 		});
+
+		analytics.event('ScreenTemplateSelector');
 	};
 
 	let label = '';

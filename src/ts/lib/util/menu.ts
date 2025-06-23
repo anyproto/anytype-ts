@@ -5,6 +5,11 @@ import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Rel
 
 class UtilMenu {
 
+	/**
+	 * Maps a block item, adding translation and aliases.
+	 * @param {any} it - The block item.
+	 * @returns {any} The mapped block item.
+	 */
 	mapperBlock (it: any) {
 		it.isBlock = true;
 		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
@@ -27,6 +32,10 @@ class UtilMenu {
 		return it;
 	};
 	
+	/**
+	 * Returns the list of text block types.
+	 * @returns {any[]} The list of text block types.
+	 */
 	getBlockText () {
 		return [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
@@ -42,6 +51,10 @@ class UtilMenu {
 		});
 	};
 	
+	/**
+	 * Returns the list of list block types.
+	 * @returns {any[]} The list of list block types.
+	 */
 	getBlockList () {
 		return [
 			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo', 'checkbox' ] },
@@ -55,6 +68,10 @@ class UtilMenu {
 		});
 	};
 
+	/**
+	 * Returns the list of media block types.
+	 * @returns {any[]} The list of media block types.
+	 */
 	getBlockMedia () {
 		return [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
@@ -67,6 +84,10 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of embed block types.
+	 * @returns {any[]} The list of embed block types.
+	 */
 	getBlockEmbed () {
 		const { config } = S.Common;
 
@@ -91,6 +112,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
+			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
 		];
 
 		if (config.experimental) {
@@ -108,6 +130,10 @@ class UtilMenu {
 		});
 	};
 
+	/**
+	 * Returns the list of object block types.
+	 * @returns {any[]} The list of object block types.
+	 */
 	getBlockObject () {
 		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
@@ -127,7 +153,7 @@ class UtilMenu {
 				iconEmoji: type.iconEmoji, 
 				iconName: type.iconName,
 				iconOption: type.iconOption,
-				name: type.name || translate('defaultNamePage'), 
+				name: U.Object.name(type), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -137,6 +163,10 @@ class UtilMenu {
 		return ret.map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of other block types.
+	 * @returns {any[]} The list of other block types.
+	 */
 	getBlockOther () {
 		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
@@ -150,6 +180,10 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of page types for the turn menu.
+	 * @returns {any[]} The list of page types.
+	 */
 	getTurnPage () {
 		const ret = [];
 		const types = U.Data.getObjectTypesForNewObject(); 
@@ -171,6 +205,10 @@ class UtilMenu {
 		return ret;
 	};
 	
+	/**
+	 * Returns the list of div types for the turn menu.
+	 * @returns {any[]} The list of div types.
+	 */
 	getTurnDiv () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
@@ -178,6 +216,10 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
+	/**
+	 * Returns the list of file types for the turn menu.
+	 * @returns {any[]} The list of file types.
+	 */
 	getTurnFile () {
 		return [
 			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
@@ -185,13 +227,17 @@ class UtilMenu {
 		].map(this.mapperBlock);
 	};
 
-	// Action menu
+	/**
+	 * Returns the list of actions for the action menu.
+	 * @param {any} param - The action menu parameters.
+	 * @returns {any[]} The list of actions.
+	 */
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
+		const { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
+			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
@@ -221,6 +267,10 @@ class UtilMenu {
 
 		if (hasFile || hasBookmark || hasDataview) {
 			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
+		};
+
+		if (hasLink || hasFile || hasBookmark) {
+			items.push({ id: 'deleteObject', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralObject'))}` });
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
@@ -278,6 +328,16 @@ class UtilMenu {
 		});
 	};
 
+	getFeaturedRelationLayout () {
+		return [
+			{ id: I.FeaturedRelationLayout.Inline },
+			{ id: I.FeaturedRelationLayout.Column },
+		].map((it: any) => {
+			it.name = translate(`commonFeaturedRelationLayout${I.FeaturedRelationLayout[it.id]}`);
+			return it;
+		});
+	};
+
 	getLayoutIcon (layout: I.ObjectLayout) {
 		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
 	};
@@ -309,6 +369,8 @@ class UtilMenu {
 	};
 
 	getViews () {
+		const { config } = S.Common;
+
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
@@ -316,7 +378,8 @@ class UtilMenu {
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
 			{ id: I.ViewType.Graph },
-		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			config.experimental ? { id: I.ViewType.Timeline } : null,
+		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
@@ -417,7 +480,7 @@ class UtilMenu {
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
 		} else
-		if (id == J.Constant.widgetId.allObject) {
+		if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(id)) {
 			options = [ I.WidgetLayout.Link ];
 		};
 
@@ -579,7 +642,7 @@ class UtilMenu {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
 				};
 
-				U.Data.createSubSpaceSubscriptions([ space ], () => {
+				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
 						U.Space.openDashboard();
 					};
@@ -698,6 +761,7 @@ class UtilMenu {
 		r[I.ImportType.Text] = 'TXT';
 		r[I.ImportType.Protobuf] = 'Anytype';
 		r[I.ImportType.Csv] = 'CSV';
+		r[I.ImportType.Obsidian] = 'Obsidian';
 		return r;
 	};
 
@@ -705,11 +769,13 @@ class UtilMenu {
 		const names = this.getImportNames();
 
 		return ([
-			{ id: 'notion', format: I.ImportType.Notion },
+			{ id: 'obsidian', format: I.ImportType.Obsidian, isApp: true },
+			{ id: 'notion', format: I.ImportType.Notion, isApp: true },
+			{ id: 'protobuf', format: I.ImportType.Protobuf, isApp: true },
+
 			{ id: 'markdown', format: I.ImportType.Markdown },
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
-			{ id: 'protobuf', format: I.ImportType.Protobuf },
 			{ id: 'csv', format: I.ImportType.Csv },
 		] as any).map(it => {
 			it.name = names[it.format];
@@ -722,74 +788,87 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const isLocalNetwork = U.Data.isLocalNetwork();
 		const { isOnline } = S.Common;
+		const options: any[] = [];
 
-		let options: any[] = [];
+		let cid = '';
+		let key = '';
 
-		if (isOwner && space.isShared && !isLocalNetwork && isOnline) {
-			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
-		};
+		const cb = () => {
+			if (isOwner && space.isShared && !isLocalNetwork && isOnline && cid && key) {
+				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
+			};
 
-		if (space.isAccountRemoving) {
-			options = options.concat([
-				{ id: 'remove', color: 'red', name: translate('commonDelete') },
-			]);
-		} else 
-		if (space.isAccountJoining) {
-			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
-		} else {
-			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
-		};
+			if (space.isAccountRemoving) {
+				options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
+			} else 
+			if (space.isAccountJoining) {
+				options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
+			} else {
+				options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
+			};
 
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				onSelect: (e: any, element: any) => {
-					window.setTimeout(() => {
-						switch (element.id) {
-							case 'export': {
-								Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
-									zip: true, 
-									nested: true, 
-									files: true, 
-									archived: true, 
-									json: false, 
-									route: param.route,
-								});
-								break;
+			S.Menu.open('select', {
+				...param,
+				data: {
+					options,
+					onSelect: (e: any, element: any) => {
+						window.setTimeout(() => {
+							switch (element.id) {
+								case 'export': {
+									Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
+										zip: true, 
+										nested: true, 
+										files: true, 
+										archived: true, 
+										json: false, 
+										route: param.route,
+									});
+									break;
+								};
+
+								case 'remove': {
+									Action.removeSpace(targetSpaceId, param.route);
+									break;
+								};
+
+								case 'cancel': {
+									C.SpaceJoinCancel(targetSpaceId, (message: any) => {
+										if (message.error.code) {
+											window.setTimeout(() => {
+												S.Popup.open('confirm', { 
+													data: {
+														title: translate('commonError'),
+														text: message.error.description,
+													}
+												});
+											}, S.Popup.getTimeout());
+										};
+									});
+									break;
+								};
+
+								case 'revoke': {
+									Action.inviteRevoke(targetSpaceId);
+									break;
+								};
 							};
 
-							case 'remove': {
-								Action.removeSpace(targetSpaceId, param.route);
-								break;
-							};
-
-							case 'cancel': {
-								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
-									if (message.error.code) {
-										window.setTimeout(() => {
-											S.Popup.open('confirm', { 
-												data: {
-													title: translate('commonError'),
-													text: message.error.description,
-												}
-											});
-										}, S.Popup.getTimeout());
-									};
-								});
-								break;
-							};
-
-							case 'revoke': {
-								Action.inviteRevoke(targetSpaceId);
-								break;
-							};
-						};
-
-					}, S.Menu.getTimeout());
+						}, S.Menu.getTimeout());
+					},
 				},
-			},
-		});
+			});
+		};
+
+		if (space.isShared) {
+			U.Space.getInvite(S.Common.space, (newCid: string, newKey: string, inviteType: I.InviteType) => {
+				cid = newCid;
+				key = newKey;
+
+				cb();
+			});
+		} else {
+			cb();
+		};
 	};
 
 	inviteContext (param: any) {
@@ -840,10 +919,6 @@ class UtilMenu {
 
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
-		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonNewSpace'), isButton: true });
-		};
-
 		if (ids && (ids.length > 0)) {
 			items.sort((c1, c2) => {
 				const i1 = ids.indexOf(c1.id);
@@ -860,7 +935,8 @@ class UtilMenu {
 
 	getSystemWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-star' },
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
+			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: 'widget-chat' },
 			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
@@ -1140,7 +1216,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			U.Object.openAuto({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+			U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings });
 		};
 
 		const getClipboardData = async () => {
@@ -1189,11 +1265,11 @@ class UtilMenu {
 				if (url) {
 					const bookmark = S.Record.getBookmarkType();
 
-					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
+					C.ObjectCreateFromUrl(details, S.Common.space, bookmark?.uniqueKey, url, true, bookmark?.defaultTemplateId, (message: any) => {
 						cb(message.details, message.middleTime);
 					});
 				} else {
-					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, true, (message: any) => {
+					C.ObjectCreate(details, objectFlags, type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -1211,8 +1287,8 @@ class UtilMenu {
 			const { props } = context;
 			const { className, classNameWrap } = props.param;
 			const type = S.Record.getTypeById(item.id);
-			const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
-			const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const canDefault = !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
+			const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const route = '';
 
 			let options: any[] = [
@@ -1252,7 +1328,7 @@ class UtilMenu {
 
 							case 'remove': {
 								if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-									Action.uninstall(item, true, route);
+									Action.archive([ item.id ], route);
 								};
 								break;
 							};
@@ -1275,7 +1351,7 @@ class UtilMenu {
 
 			buttons.unshift({ 
 				id: 'add', icon: 'plus', onClick: () => {
-					U.Object.createType({ name: menuContext.ref?.filter }, keyboard.isPopup());
+					U.Object.createType({ name: menuContext.ref.getData().filter }, keyboard.isPopup());
 					menuContext.close();
 				}, 
 			});
@@ -1285,6 +1361,8 @@ class UtilMenu {
 				onOpen: context => menuContext = context,
 				data: {
 					noStore: true,
+					canAdd: true,
+					noClose: true,
 					onMore,
 					buttons,
 					filters: [
@@ -1292,26 +1370,54 @@ class UtilMenu {
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
-						C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, true, (message: any) => {
-							if (message.error.code || !message.details) {
-								return;
-							};
-
-							const object = message.details;
-
+						const cb = (object: any, time: number) => {
 							if (callBack) {
 								callBack(object);
 							};
 
 							analytics.event('SelectObjectType', { objectType: object.type });
-							analytics.createObject(object.type, object.layout, route, message.middleTime);
-						});
+							analytics.createObject(object.type, object.layout, route, time);
+
+							menuContext.close();
+						};
+
+						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
+							menuContext.close(() => {
+								this.onBookmarkMenu({
+									...param,
+									element: `#widget-space-arrow`,
+								}, object => cb(object, 0));
+							});
+						} else {
+							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
+								if (!message.error.code) {
+									cb(message.details, message.middleTime);
+								};
+							});
+						};
 					},
 				},
 			});
 		};
 
 		check();
+	};
+
+	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+		param = param || {};
+
+		const data = param.data || {};
+
+		delete(param.data);
+
+		S.Menu.open('dataviewCreateBookmark', {
+			horizontal: I.MenuDirection.Center,
+			data: {
+				onSubmit: callBack,
+				...data,
+			},
+			...param,
+		});
 	};
 
 };

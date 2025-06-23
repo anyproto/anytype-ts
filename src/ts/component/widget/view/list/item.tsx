@@ -97,8 +97,8 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				id={iconKey}
 				key={iconKey}
 				object={object} 
-				size={isCompact ? 18 : 48} 
-				iconSize={isCompact ? 18 : 28}
+				size={isCompact ? 20 : 48} 
+				iconSize={isCompact ? 20 : 28}
 				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 				menuParam={{ 
 					className: 'fixed',
@@ -125,7 +125,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			{icon}
 
 			<div className="info">
-				<ObjectName object={object} />
+				<ObjectName object={object} withPlural={true} />
 				{descr}
 			</div>
 

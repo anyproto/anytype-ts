@@ -1,46 +1,45 @@
-/* 
-NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
-*/
-
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { DOM_EVENTS, OnboardStage, statsVisible } from './constants';
-//import Stats from 'stats.js';
 
-type Props = {
+interface Props {
 	state: OnboardStage;
 };
 
-const CanvasWorkerBridge = (props: Props) => {
-	const canvasRef = React.useRef<HTMLCanvasElement>(null);
-	const worker = React.useRef<Worker | null>(null);
+interface RefProps {
+	create: () => void;
+	destroy: () => void;
+};
 
-	React.useEffect(() => {
-		// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
-		worker.current = new Worker('workers/onboard.js');
+const CanvasWorkerBridge = forwardRef<RefProps, Props>((props, ref) => {
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const worker = useRef<Worker | null>(null);
+	const [ isDestroyed, setIsDestroyed ] = useState(false);
 
+	useEffect(() => {
 		if (!canvasRef.current) {
 			return;
 		};
 
-		const canvas = canvasRef.current;
-		const offscreen = canvasRef.current.transferControlToOffscreen();
+		if (!worker.current) {
+			worker.current = new Worker('workers/onboard.js');
 
-		worker.current.postMessage(
-			{
+			const offscreen = canvasRef.current?.transferControlToOffscreen();
+
+			worker.current.postMessage({
 				type: 'init',
 				payload: {
 					props,
 					drawingSurface: offscreen,
-					width: canvas.clientWidth,
-					height: canvas.clientHeight,
-					pixelRatio: 1, //window.devicePixelRatio,
+					width: canvasRef.current.clientWidth,
+					height: canvasRef.current.clientHeight,
+					pixelRatio: 1,
 				},
 			},
-			[offscreen]
-		);
+			[ offscreen ]);
+		};
 
 		Object.values(DOM_EVENTS).forEach(([eventName, passive]) => {
-			canvas.addEventListener(
+			canvasRef.current.addEventListener(
 				eventName,
 				(event: any) => {
 					if (!worker.current) {
@@ -72,8 +71,8 @@ const CanvasWorkerBridge = (props: Props) => {
 			worker.current.postMessage({
 				type: 'resize',
 				payload: {
-					width: canvas.clientWidth,
-					height: canvas.clientHeight,
+					width: canvasRef.current.clientWidth,
+					height: canvasRef.current.clientHeight,
 					dpr: 1,
 				},
 			});
@@ -85,9 +84,9 @@ const CanvasWorkerBridge = (props: Props) => {
 			window.removeEventListener('resize', handleResize);
 			worker.current?.terminate();
 		};
-	}, []);
+	}, [ isDestroyed ]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!worker.current) {
 			return;
 		};
@@ -96,7 +95,7 @@ const CanvasWorkerBridge = (props: Props) => {
 	}, [ props ]);
 
 	/*
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!statsVisible) {
 			return;
 		};
@@ -111,7 +110,18 @@ const CanvasWorkerBridge = (props: Props) => {
 	}, []);
 	*/
 
-	return <canvas ref={canvasRef} />;
-};
+	useImperativeHandle(ref, () => ({
+		create: () => {
+			setIsDestroyed(false);
+		},
+
+		destroy: () => {
+			worker.current.terminate();
+			setIsDestroyed(true);
+		},
+	}));
+
+	return isDestroyed ? null : <canvas id="mainAnimation" ref={canvasRef} />;
+});
 
 export default CanvasWorkerBridge;

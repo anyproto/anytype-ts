@@ -1,5 +1,6 @@
 import React, { FC, useRef, useEffect } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, Label, Error } from 'Component';
 import { I, S, U, C, J, Storage, keyboard, translate } from 'Lib';
@@ -17,7 +18,9 @@ const Progress: FC = observer(() => {
 	const dy = useRef(0);
 	const width = useRef(0);
 	const height = useRef(0);
-	const resizeObserver = new ResizeObserver(() => resize());
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
 	const cn = [ 'progress' ];
 
 	const Item = (item: any) => {
@@ -123,10 +126,10 @@ const Progress: FC = observer(() => {
 
 		return () => {
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current);
+				resizeObserver.disconnect();
 			};
 		};
-	});
+	}, []);
 
 	useEffect(() => resize(), [ list.length ]);
 

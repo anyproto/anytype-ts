@@ -90,6 +90,7 @@ const SidebarSectionTypeLayoutFormatList = observer(class SidebarSectionTypeLayo
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
 			data: {
+				canAdd: true,
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },

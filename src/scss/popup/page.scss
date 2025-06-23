@@ -57,7 +57,7 @@
 		}
 
 		.pageMainChat {
-			.formWrapper.isFixed { padding-bottom: 16px; }
+			.formWrapper.isFixed { position: sticky; padding-bottom: 16px; margin-left: -352px; left: 50%; width: 736px; }
 		}
 
 	}	

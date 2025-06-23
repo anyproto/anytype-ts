@@ -1,8 +1,15 @@
 import { I, U, J, S, translate } from 'Lib';
 
+/**
+ * Utility class for date and time manipulation, formatting, and calculations.
+ * Provides methods for parsing, formatting, and working with dates and times.
+ */
 class UtilDate {
 
-	/** The current time in seconds, rounded down to the nearest second */
+	/**
+	 * Returns the current time as a Unix timestamp (seconds since epoch).
+	 * @returns {number} The current Unix timestamp.
+	 */
 	now (): number {
 		const date = new Date();
 		const timestamp = Math.floor(date.getTime() / 1000);
@@ -10,6 +17,16 @@ class UtilDate {
 		return timestamp;
 	};
 
+	/**
+	 * Returns a Unix timestamp for the given date and time components.
+	 * @param {number} [y] - Year.
+	 * @param {number} [m] - Month (1-12).
+	 * @param {number} [d] - Day of month.
+	 * @param {number} [h] - Hour.
+	 * @param {number} [i] - Minute.
+	 * @param {number} [s] - Second.
+	 * @returns {number} The Unix timestamp.
+	 */
 	timestamp (y?: number, m?: number, d?: number, h?: number, i?: number, s?: number): number {
 		y = Number(y) || 0;
 		m = (Number(m) || 0) - 1;
@@ -30,6 +47,10 @@ class UtilDate {
 		return Math.floor(t.getTime() / 1000);
 	};
 
+	/**
+	 * Returns the Unix timestamp for the start of today.
+	 * @returns {number} The Unix timestamp for today.
+	 */
 	today () {
 		const t = this.now();
 		const { d, m, y } = this.getCalendarDateParam(t);
@@ -37,6 +58,12 @@ class UtilDate {
 		return this.timestamp(y, m, d);
 	};
 
+	/**
+	 * Parses a date string into a Unix timestamp, using the specified format.
+	 * @param {string} value - The date string to parse.
+	 * @param {I.DateFormat} [format] - The date format.
+	 * @returns {number} The parsed Unix timestamp.
+	 */
 	parseDate (value: string, format?: I.DateFormat): number {
 		const [ date, time ] = String(value || '').split(' ');
 
@@ -87,6 +114,12 @@ class UtilDate {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
+	/**
+	 * Formats a Unix timestamp using the given format string.
+	 * @param {string} format - The format string.
+	 * @param {number} timestamp - The Unix timestamp.
+	 * @returns {string} The formatted date string.
+	 */
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 
@@ -181,6 +214,11 @@ class UtilDate {
 		});
 	};
 
+	/**
+	 * Returns the date format string for a given I.DateFormat value.
+	 * @param {I.DateFormat} v - The date format enum value.
+	 * @returns {string} The format string.
+	 */
 	dateFormat (v: I.DateFormat): string {
 		let f = '';
 		switch (v) {
@@ -198,10 +236,21 @@ class UtilDate {
 		return f;
 	};
 
+	/**
+	 * Formats a Unix timestamp using a predefined date format.
+	 * @param {I.DateFormat} f - The date format enum value.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {string} The formatted date string.
+	 */
 	dateWithFormat (f: I.DateFormat, t: number): string {
 		return this.date(this.dateFormat(f), t);
 	};
 
+	/**
+	 * Returns the time format string for a given I.TimeFormat value.
+	 * @param {I.TimeFormat} v - The time format enum value.
+	 * @returns {string} The format string.
+	 */
 	timeFormat (v: I.TimeFormat): string {
 		let f = '';
 		switch (v) {
@@ -212,10 +261,21 @@ class UtilDate {
 		return f;
 	};
 
+	/**
+	 * Formats a Unix timestamp using a predefined time format.
+	 * @param {I.TimeFormat} f - The time format enum value.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {string} The formatted time string.
+	 */
 	timeWithFormat (f: I.TimeFormat, t: number): string {
 		return this.date(this.timeFormat(f), t);
 	};
 
+	/**
+	 * Returns a human-readable string for a given day timestamp (e.g., Today, Tomorrow).
+	 * @param {any} t - The Unix timestamp.
+	 * @returns {string} The day string.
+	 */
 	dayString (t: any): string {
 		t = Number(t) || 0;
 
@@ -235,6 +295,11 @@ class UtilDate {
 		return ret;
 	};
 
+	/**
+	 * Returns a human-readable string for how long ago a timestamp was.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {string} The time ago string.
+	 */
 	timeAgo (t: number): string {
 		if (!t) {
 			return '';
@@ -268,6 +333,11 @@ class UtilDate {
 		return ret;
 	};
 
+	/**
+	 * Returns a human-readable duration string for a given number of seconds.
+	 * @param {number} t - The duration in seconds.
+	 * @returns {string} The duration string.
+	 */
 	duration (t: number): string {
 		if (!t) {
 			return '';
@@ -308,7 +378,12 @@ class UtilDate {
 		return ret;
 	};
 
-	/** Merges two unix timestamps, taking the hours/minutes/seconds from the first and the year/month/day from the second */
+	/**
+	 * Merges the time from one timestamp with the date from another.
+	 * @param {number} date - The date timestamp.
+	 * @param {number} time - The time timestamp.
+	 * @returns {number} The merged Unix timestamp.
+	 */
 	mergeTimeWithDate (date: number, time: number) {
 		const y = Number(this.date('Y', date));
 		const m = Number(this.date('n', date));
@@ -321,6 +396,11 @@ class UtilDate {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
+	/**
+	 * Returns the calendar date parameters (day, month, year) for a timestamp.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {{ d: number, m: number, y: number }} The date parameters.
+	 */
 	getCalendarDateParam (t: number) {
 		return {
 			d: Number(this.date('j', t)),
@@ -329,16 +409,33 @@ class UtilDate {
 		};
 	};
 
-	getCalendarMonth (value: number) {
-		const { firstDay } = S.Common;
-		const { m, y } = this.getCalendarDateParam(value);
-		const md = {...J.Constant.monthDays};
-		const today = this.today();
-		
+	/**
+	 * Returns the number of days in each month for a given year.
+	 * @param {number} y - The year.
+	 * @returns {object} The month days mapping.
+	 */
+	getMonthDays (y: number) {
+		const ret = {...J.Constant.monthDays};
+
 		// February
 		if (this.isLeapYear(y)) {
-			md[2] = 29;
+			ret[2] = 29;
 		};
+
+		return ret;
+	};
+
+	/**
+	 * Returns an array of day objects for the calendar month view.
+	 * @param {number} value - The timestamp for the month.
+	 * @param {boolean} [noOther] - Whether to exclude days from other months.
+	 * @returns {any[]} The array of day objects.
+	 */
+	getCalendarMonth (value: number, noOther?: boolean) {
+		const { firstDay } = S.Common;
+		const { m, y } = this.getCalendarDateParam(value);
+		const md = this.getMonthDays(y);
+		const today = this.today();
 		
 		let wdf = Number(this.date('N', this.timestamp(y, m, 1)));
 		let wdl = Number(this.date('N', this.timestamp(y, m, md[m])));
@@ -361,14 +458,21 @@ class UtilDate {
 		wdl = (wdl - firstDay + 7) % 7;
 
 		let days = [];
-		for (let i = 1; i <= wdf; ++i) {
-			days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
+
+		if (!noOther) {
+			for (let i = 1; i <= wdf; ++i) {
+				days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
+			};
 		};
+
 		for (let i = 1; i <= md[m]; ++i) {
-			days.push({ y: y, m: m, d: i });
+			days.push({ y, m, d: i });
 		};
-		for (let i = 1; i <= (6 - wdl); ++i) {
-			days.push({ d: i, m: nm, y: ny });
+
+		if (!noOther) {
+			for (let i = 1; i <= (6 - wdl); ++i) {
+				days.push({ d: i, m: nm, y: ny });
+			};
 		};
 
 		days = days.map(it => {
@@ -390,9 +494,8 @@ class UtilDate {
 	/**
 	 * Checks whether a given year is a leap year.
 	 * @remarks A given year is considered a leap year, if it's divisible by 4, but not divisible by 100, unless also divisible by 400.
-	 * 
-	 * @param year - the year to check.
-	 * @returns True, if the given year is considered a leap year.
+	 * @param {number} year - The year to check.
+	 * @returns {boolean} True if the given year is considered a leap year.
 	 */
 	isLeapYear (year: number): boolean {
 		if (year % 4 !== 0) {
@@ -407,6 +510,10 @@ class UtilDate {
 		return true;
 	};
 
+	/**
+	 * Returns an array of week day objects for the current locale.
+	 * @returns {{ id: number, name: string }[]} The week days.
+	 */
 	getWeekDays (): { id: number, name: string }[] {
 		const { firstDay } = S.Common;
 		const ret = [];
@@ -422,6 +529,10 @@ class UtilDate {
 		return ret;
 	};
 
+	/**
+	 * Returns an array of month objects for the current locale.
+	 * @returns {{ id: number, name: string }[]} The months.
+	 */
 	getMonths (): { id: number, name: string }[] {
 		const ret = [];
 		for (let i = 1; i <= 12; ++i) {
@@ -430,12 +541,28 @@ class UtilDate {
 		return ret;
 	};
 
+	/**
+	 * Returns an array of year objects for the given range.
+	 * @param {number} start - The start year.
+	 * @param {number} end - The end year.
+	 * @returns {{ id: number, name: string }[]} The years.
+	 */
 	getYears (start: number, end: number): { id: number, name: string }[] {
 		const ret = [];
 		for (let i = start; i <= end; ++i) {
 			ret.push({ id: i, name: i });
 		};
 		return ret;
+	};
+
+	/**
+	 * Returns the date parameters (day, month, year) for a timestamp.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {{ d: number, m: number, y: number }} The date parameters.
+	 */
+	getDateParam (t: number) {
+		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
+		return { d, m, y };
 	};
 
 };

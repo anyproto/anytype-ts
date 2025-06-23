@@ -11,12 +11,14 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { icon, identity, route, spaceId } = data;
 	const { membership } = S.Auth;
+	const tier = U.Data.getMembershipTier(membership.tier);
 	const readerLimt = useRef(0);
 	const writerLimit = useRef(0);
+	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
 
 	const onMembership = (type: string) => {
 		S.Popup.closeAll(null, () => {
-			U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
+			U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
 		});
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
@@ -31,7 +33,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
-			analytics.event('ApproveInviteRequest', { type: permissions });
+			analytics.event('ApproveInviteRequest', { type: permissions, uxType: space?.uxType });
 			setIsLoading(false);
 			close();
 		});
@@ -52,14 +54,12 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
-
 	const load = () => {
 		setIsLoading(true);
 
-		U.Data.search({
+		U.Subscription.search({
 			spaceId,
-			keys: U.Data.participantRelationKeys(),
+			keys: U.Subscription.participantRelationKeys(),
 			filters: [
 				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 			],
@@ -79,7 +79,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 	let buttons = [];
-	if (!readerLimt.current && membership.isExplorer) {
+	if (!readerLimt.current && !tier?.price) {
 		buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => onMembership('members') });
 	} else 
 	if (!writerLimit.current) {

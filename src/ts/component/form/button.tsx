@@ -59,7 +59,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		cn.push('active');
 	};
 
-	const MouseEnterHandler = (e: MouseEvent) => {
+	const mouseEnterHandler = (e: MouseEvent) => {
 		const { text = '', caption = '' } = tooltipParam;
 		const t = Preview.tooltipCaption(text, caption);
 
@@ -72,7 +72,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 	};
 
-	const MouseLeaveHandler = (e: MouseEvent) => {
+	const mouseLeaveHandler = (e: MouseEvent) => {
 		Preview.tooltipHide(false);
 
 		if (onMouseLeave) { 
@@ -86,7 +86,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		};
 	};
 
-	const MouseDownHandler = (e: MouseEvent) => {
+	const mouseDownHandler = (e: MouseEvent) => {
 		if (!$(nodeRef.current).hasClass('disabled') && onMouseDown) {
 			onMouseDown(e);
 		};
@@ -110,8 +110,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 					value={text}
 					className={cn.join(' ')}
 					onMouseDown={handleClick}
-					onMouseEnter={MouseEnterHandler}
-					onMouseLeave={MouseLeaveHandler}
+					onMouseEnter={mouseEnterHandler}
+					onMouseLeave={mouseLeaveHandler}
 					{...U.Common.dataProps(dataset)}
 				/>
 			);
@@ -125,9 +125,9 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 					id={id}
 					className={cn.join(' ')}
 					onClick={handleClick}
-					onMouseDown={MouseDownHandler}
-					onMouseEnter={MouseEnterHandler}
-					onMouseLeave={MouseLeaveHandler}
+					onMouseDown={mouseDownHandler}
+					onMouseEnter={mouseEnterHandler}
+					onMouseLeave={mouseLeaveHandler}
 					{...U.Common.dataProps(dataset)}
 				>
 					{isLoading && <Loader />}

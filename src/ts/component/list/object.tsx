@@ -45,6 +45,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	const { offset, total } = S.Record.getMeta(subId, '');
 	const { dateFormat } = S.Common;
 
+
 	const getColumns = (): Column[] => {
 		return ([ { relationKey: 'name', name: translate('commonName'), isObject: true } ] as any[]).concat(columns || []);
 	};
@@ -58,7 +59,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	};
 
 	const getData = (page: number, callBack?: (message: any) => void) => {
-		const limit = J.Constant.limit.listObject
+		const limit = J.Constant.limit.listObject;
 		const offset = (page - 1) * limit;
 		const fl = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
@@ -66,7 +67,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 
 		S.Record.metaSet(subId, '', { offset });
 
-		U.Data.searchSubscribe({
+		U.Subscription.subscribe({
 			spaceId,
 			subId,
 			sorts: [ { relationKey: sortId, type: sortType } ],
@@ -121,6 +122,12 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 
 	const columnList = getColumns();
 	const items = getItems();
+	const widths = [ 'minmax(0, 1fr)' ];
+	for (let i = 1; i < columnList.length; ++i) {
+		widths.push(`${60 / (columnList.length - 1)}%`);
+	};
+
+	const css = { gridTemplateColumns: widths.join(' ') };
 
 	let pager = null;
 	if (total && items.length) {
@@ -156,6 +163,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 				type={I.SelectType.Record} 
 				className={cn.join(' ')}
 				onContextMenu={e => onContext(e, item.id)}
+				style={css}
 			>
 				{columnList.map(column => {
 					const cn = [ 'cell', `c-${column.relationKey}` ];
@@ -226,26 +234,22 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		setSortId(columnList[0].relationKey);
 
 		return () => {
-			C.ObjectSearchUnsubscribe([ subId ]);
-		}
+			U.Subscription.destroyList([ subId ]);
+		};
 	}, []);
 
 	useEffect(() => getData(1), [ sortId, sortType ]);
 
 	useImperativeHandle(ref, () => ({
 		getData,
-	}));	
+	}));
 
 	return (
 		<div className="listObject">
 			<div className="table">
-				<div className="row isHead">
+				<div className="row isHead" style={css}>
 					{columnList.map(column => {
-						let arrow = null;
-
-						if (sortId == column.relationKey) {
-							arrow = <Icon className={`sortArrow c${sortType}`} />;
-						};
+						const arrow = sortId == column.relationKey ? <Icon className={`sortArrow c${sortType}`} /> : null;
 
 						return (
 							<div key={`head-${column.relationKey}`} className="cell isHead" onClick={() => onSort(column.relationKey)}>

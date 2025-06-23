@@ -2,9 +2,14 @@ import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {
 
-
-
+	/**
+	 * Returns the image source path for a graph node based on its layout and properties.
+	 * @param {any} d - The node data object.
+	 * @returns {string} The image source path.
+	 */
 	imageSrc (d: any) {
+		d = d || {};
+
 		let src = '';
 
 		switch (d.layout) {
@@ -69,8 +74,6 @@ class UtilGraph {
 						src = U.Smile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
-				} else {
-
 				};
 				break;
 			};

@@ -12,13 +12,12 @@ export default {
 		],
 
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
-			classNameWrap: 'fixed',
+			element: '#button-widget-help',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -27,13 +26,12 @@ export default {
 	emailCollection: () => ({
 		items: [ { noButton: true } ],
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
-			classNameWrap: 'fixed',
+			element: '#button-widget-help',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'invertedColor',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -51,13 +49,12 @@ export default {
 			},
 		],
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
-			classNameWrap: 'fixed',
+			element: '#button-widget-help',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -75,13 +72,12 @@ export default {
 			},
 		],
 		param: {
-			element: '#pageFlex.isFull #footer #button-help',
-			classNameWrap: 'fixed',
+			element: '#button-widget-help',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
-			noClose: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -91,11 +87,11 @@ export default {
 		showDimmer: true,
 		param: {
 			noArrow: true,
+			noClose: true,
 			horizontal: I.MenuDirection.Right,
 			stickToElementEdge: I.MenuDirection.Top,
 			width: 288,
 			offsetX: -312,
-			noClose: true,
 			highlightElements: [],
 			hiddenElements: [ 
 				'#widget-buttons', 
@@ -156,7 +152,6 @@ export default {
 				const $element = $('#containerSettings #item-membership');
 				return -$element.outerHeight();
 			},
-			noClose: true,
 		},
 		items: [
 			{
@@ -176,7 +171,6 @@ export default {
 		param: {
 			noArrow: true,
 			width: 288,
-			noClose: true,
 			highlightElements: [],
 			classNameWrap: 'fixed',
 		},
@@ -214,7 +208,6 @@ export default {
 		showDimmer: true,
 		param: {
 			noArrow: true,
-			noClose: true,
 		},
 		items: [
 			{
@@ -360,5 +353,49 @@ export default {
 			],
 		};
 	},
+
+	objectDescriptionButton: () => {
+		const controls = '#page.isFull .editorControls';
+		const btn = `${controls} #button-description`;
+
+		if (!$(btn).length) {
+			return;
+		};
+
+		return {
+			items: [
+				{
+					description: translate('onboardingMainObject'),
+					buttonText: translate('commonOk'),
+				}
+			],
+			param: {
+				element: btn,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Center,
+				passThrough: true,
+				offsetY: 16,
+				onOpen: () => $(controls).addClass('active'),
+				onClose: () => $(controls).removeClass('active'),
+			},
+		};
+	},
+
+	typeResetLayout: () => ({
+		items: [
+			{
+				description: translate('onboardingMainType'),
+				buttonText: translate('commonOk'),
+			}
+		],
+
+		param: {
+			element: '#pageFlex.isFull .headSimple .side.right',
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			offsetX: -304,
+			offsetY: 45,
+		},
+	}),
 
 };

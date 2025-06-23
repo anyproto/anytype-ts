@@ -165,7 +165,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			const w = Math.max(0, (e.pageX - this.ox));
 			const d = w - this.width;
 
-			if (d === 0) {
+			if (!d) {
 				return;
 			};
 
@@ -178,7 +178,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			};
 
 			if (d > 0) {
-				if ((w >= 0) && (w <= J.Size.sidebar.width.close)) {
+				if (sidebar.data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
 					sidebar.open(J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {
@@ -223,6 +223,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 			element: '#sidebarSync',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			subIds: J.Menu.syncStatus,
 			data: {
 				rootId: keyboard.getRootId(),
 			},

@@ -13,18 +13,11 @@ interface Props {
 	onPreview?: (data: any) => void;
 };
 
-interface State {
-	isLoaded: boolean;	
-};
-
-const ChatAttachment = observer(class ChatAttachment extends React.Component<Props, State> {
+const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
 
 	node = null;
 	src = '';
 	previewItem: any = null;
-	state = {
-		isLoaded: false,
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -174,7 +167,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				<div className="side left">
 					<div className="link">
 						<IconObject object={object} size={14} />
-						{U.Common.shortUrl(source)}
+						<div className="source">{U.Common.shortUrl(source)}</div>
 					</div>
 					<ObjectName object={object} />
 					<ObjectDescription object={object} />
@@ -191,7 +184,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderImage () {
 		const { object, scrollToBottom } = this.props;
-		const { isLoaded } = this.state;
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
@@ -205,13 +197,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 		};
 
-		if (!isLoaded) {
-			const img = new Image();
-			img.onload = () => this.setState({ isLoaded: true });
-			img.src = this.src;
-		};
-
-		return isLoaded ? (
+		return (
 			<img 
 				id="image" 
 				className="image" 
@@ -221,7 +207,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				onDragStart={e => e.preventDefault()} 
 				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 			/>
-		) : <Loader />;
+		);
 	};
 
 	renderVideo () {
@@ -244,14 +230,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		];
 
 		return <MediaAudio playlist={playlist} />;
-	};
-
-	componentDidUpdate (prevProps: Readonly<Props>, prevState: Readonly<State>): void {
-		const { scrollToBottom } = this.props;
-
-		if (!prevState.isLoaded && this.state.isLoaded && scrollToBottom) {
-			scrollToBottom();
-		};
 	};
 
 	onOpen () {

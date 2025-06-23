@@ -93,7 +93,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				id="pageFlex" 
 				className={[ 'pageFlex', (isPopup ? 'isPopup' : 'isFull') ].join(' ')}
 			>
-				<div id="sidebarDummyLeft" className="sidebarDummy" />
+				{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
 				<div id="page" className={`page ${this.getClass('page')}`}>
 					{Component ? (
 						<Component ref={ref => this.refChild = ref} {...this.props} />
@@ -201,7 +201,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };
@@ -210,7 +209,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
-		sidebar.rightPanelToggle(false, false, isPopup);
+		sidebar.rightPanelToggle(false, isPopup);
 
 		if (!Component) {
 			return;

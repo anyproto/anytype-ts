@@ -11,9 +11,41 @@
 		}
 	}
 
-	.section.typeRelation {
+	.section.typeRelation,
+	.section.typeTemplate {
 		.titleWrap { margin-top: 4px; padding-right: 12px; }
+	}
 
+	.section.typeTemplate { padding-bottom: 16px; }
+	.section.typeTemplate {
+		.titleWrap { margin-bottom: 12px; }
+
+		.emptySearch { @include text-small; text-align: left; }
+		.emptySearch {
+			.txt { line-height: 18px; }
+		}
+
+		.items { padding: 0px 16px; }
+
+		.previewObject { width: 100%; height: 97px; }
+		.previewObject {
+			.moreWrapper { width: 24px; height: 24px; }
+
+			&::before { 
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1; pointer-events: none; 
+				transition: background $transitionCommon;
+			}
+
+			&.isDefault {
+				.border { border-color: var(--color-system-accent-100); border-width: 2px; }
+			}
+			&:hover, &.active {
+				&::before { background: var(--color-shape-highlight-medium); }
+			}
+		}
+	}
+
+	.section.typeRelation {
 		.items { margin: 0px 0px 8px 0px; }
 		.items:last-child { margin: 0px; }
 

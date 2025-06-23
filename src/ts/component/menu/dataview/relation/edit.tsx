@@ -10,6 +10,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
+	includeTime: boolean = false;
 	ref = null;
 	
 	constructor (props: I.Menu) {
@@ -29,7 +30,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { readonly } = data;
 		const relation = this.getRelation();
-		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
@@ -81,11 +81,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<MenuItemVertical 
 						id="includeTime" 
 						icon="clock" 
-						name={translate('menuDataviewRelationEditIncludeTime')}
+						name={translate('commonIncludeTime')}
 						onMouseEnter={this.menuClose}
 						readonly={readonly}
 						withSwitch={true}
-						switchValue={viewRelation?.includeTime}
+						switchValue={this.includeTime}
 						onSwitch={(e: any, v: boolean) => this.onChangeTime(v)}
 					/>
 				</div>
@@ -165,11 +165,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (relation) {
 			this.format = relation.format;
 			this.objectTypes = Relation.getArrayValue(relation.objectTypes);
+			this.includeTime = relation.includeTime;
 			this.forceUpdate();
 		};
 
-		if (this.ref && filter) {
-			this.ref.setValue(filter);
+		if (filter) {
+			this.ref?.setValue(filter);
 		};
 
 		this.focus();
@@ -238,6 +239,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			unlinkText = translate('commonUnlinkFromType');
 		};
 
+		let canOpen = true;
 		let canDuplicate = true;
 		let canDelete = true;
 		let canUnlink = !noUnlink && !isName;
@@ -246,7 +248,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			canUnlink = false;
 		};
 
-		if (relation) {
+		if (relation && relation.id) {
 			const isAllowedRelation = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 
 			canDuplicate = canDuplicate && isAllowedRelation;
@@ -257,9 +259,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			} else {
 				canUnlink = canUnlink && isAllowedRelation;
 			};
+		} else {
+			canOpen = false;
 		};
 
-		if (!relation || readonly) {
+		if (!relation || !relation.id || readonly) {
 			canDuplicate = false;
 			canDelete = false;
 		};
@@ -267,7 +271,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let sections: any[] = [
 			{
 				children: [
-					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
+					canOpen ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
 					canUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonMoveToBin') } : null,
@@ -668,7 +672,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onChangeTime (v: boolean) {
-		this.saveViewRelation('includeTime', v);
+		const relation = this.getRelation();
+
+		this.includeTime = v;
+
+		if (relation && relation.id) {
+			this.save();
+		};
 	};
 
 	onSubmit (e: any) {
@@ -742,15 +752,15 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 	save () {
 		const name = this.ref ? this.ref.getValue() : '';
-		if (!name) {
-			return;
-		};
-
 		const relation = this.getRelation();
 		const item: any = { 
-			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
+			relationFormatIncludeTime: this.includeTime,
+		};
+
+		if (name) {
+			item.name = name;
 		};
 
 		relation && relation.id ? this.update(item) : this.add(item);
@@ -806,6 +816,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		} else 
 		if (addParam) {
 			ret = addParam;
+			ret.format = Number(ret.format) || I.RelationType.LongText;
 		};
 
 		return ret;

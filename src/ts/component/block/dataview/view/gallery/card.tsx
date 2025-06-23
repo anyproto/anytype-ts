@@ -44,8 +44,10 @@ const Card = observer(class Card extends React.Component<Props> {
 				<ObjectCover object={cover} />
 
 				<div className="inner">
-					{relations.map(relation => {
+					{relations.map((vr: any) => {
+						const relation = S.Record.getRelationByKey(vr.relationKey);
 						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+
 						return (
 							<Cell
 								elementId={id}
@@ -58,9 +60,8 @@ const Card = observer(class Card extends React.Component<Props> {
 								viewType={view.type}
 								idPrefix={idPrefix}
 								arrayLimit={2}
-								showTooltip={true}
+								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
 								onClick={e => this.onCellClick(e, relation)}
-								tooltipX={I.MenuDirection.Left}
 								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
 								withName={true}

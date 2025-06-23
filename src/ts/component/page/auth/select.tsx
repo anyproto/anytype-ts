@@ -13,16 +13,24 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onRegister = () => {
+		const { account } = S.Auth;
+		const cb = () => U.Router.go('/auth/onboard', {});
+
+		if (account) {
+			cb();
+			return;
+		};
+
 		registerRef.current.setLoading(true);
 
 		U.Data.accountCreate(error => {
 			registerRef.current.setLoading(false);
 			setError(error);
-		}, () => Animation.from(() => U.Router.go('/auth/onboard', {})));
+		}, () => Animation.from(cb));
 	};
 
 	useEffect(() => {
-		S.Auth.clearAll();
+		S.Common.getRef('mainAnimation')?.create();
 
 		Animation.to(() => {
 			U.Common.renderLinks($(nodeRef.current));
@@ -36,16 +44,15 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
 			
-			<div className="star animation" />
 			<Frame>
 				<div className="logo animation" />
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={translate('authSelectLogin')} color="blank" onClick={onLogin} />
+						<Button text={translate('authSelectLogin')} color="blank" className="c48" onClick={onLogin} />
 					</div>
 					<div className="animation">
-						<Button ref={registerRef} text={translate('authSelectSignup')} onClick={onRegister} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} className="c48" onClick={onRegister} />
 					</div>
 				</div>
 

@@ -12,6 +12,7 @@ interface Props {
 	rootId: string;
 	data: any;
 	storageKey: string;
+	load?: () => void;
 };
 
 interface GraphRefProps {
@@ -26,6 +27,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	rootId = '',
 	data = {},
 	storageKey = '',
+	load = () => {},
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -57,19 +59,21 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const win = $(window);
 
 		unbind();
-		win.on('updateGraphSettings.graph', () => updateSettings());
-		win.on('updateGraphRoot.graph', (e: any, data: any) => setRootId(data.id));
-		win.on('removeGraphNode.graph', (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
-		win.on(`keydown.graph`, e => onKeyDown(e));
+		win.on(`updateGraphSettings.${id}`, () => updateSettings());
+		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
+		win.on(`updateGraphData.${id}`, () => load());
+		win.on(`removeGraphNode.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
+		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'removeGraphNode', 'keydown' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'removeGraphNode', 'keydown' ];
 
-		$(window).off(events.map(it => `${it}.graph`).join(' '));
+		$(window).off(events.map(it => `${it}.${id}`).join(' '));
+		$(canvas.current).off('touchstart touchmove');
 	};
 
-	const getTouchDistance = (touches: { clientX: number, clientY: number }[]): number => {
+	const getTouchDistance = (touches: TouchList): number => {
 		const dx = touches[0].clientX - touches[1].clientX;
 		const dy = touches[0].clientY - touches[1].clientY;
 
@@ -82,6 +86,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const width = node.width();
 		const height = node.height();
 		const settings = S.Common.getGraph(storageKey);
+		const cnv = $(canvas.current);
 
 		images.current = {};
 		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ])
@@ -101,24 +106,29 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		let touchStartDist = null;
 		let touchStartZoom = null;
 
-		canvas.current.addEventListener('touchstart', e => {
-			if (e.touches.length != 2) {
+		cnv.off('touchstart touchmove');
+		cnv.on('touchstart', e => {
+			const t = e.originalEvent.touches;
+
+			if (t.length != 2) {
 				return;
 			};
 
 			e.preventDefault();
-			touchStartDist = getTouchDistance(e.touches);
+			touchStartDist = getTouchDistance(t);
 			touchStartZoom = d3.zoomTransform(canvas.current).k;
 		});
 
-		canvas.current.addEventListener('touchmove', e => {
+		cnv.on('touchmove', e => {
 			e.preventDefault();
 
-			if (!touchStartDist || (e.touches.length != 2)) {
+			const t = e.originalEvent.touches;
+
+			if (!touchStartDist || (t.length != 2)) {
 				return;
 			};
 
-			const newDist = getTouchDistance(e.touches);
+			const newDist = getTouchDistance(t);
 			const scaleChange = newDist / touchStartDist;
 			const newZoom = touchStartZoom * scaleChange;
 
@@ -184,11 +194,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const nodeMapper = (d: any) => {
 		d = d || {};
+
+		const type = S.Record.getTypeById(d.type);
+
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
+		d.typeKey = type?.uniqueKey || d.type;
 
 		// Clear icon props to fix image size
 		if (U.Object.isTaskLayout(d.layout)) {
@@ -204,14 +218,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					return;
 				};
 
-				createImageBitmap(img, { resizeWidth: 160, resizeQuality: 'high' }).then((res: any) => {
-					if (images.current[d.src]) {
-						return;
-					};
+				try {
+					createImageBitmap(img, { resizeWidth: 160, resizeHeight: 160, resizeQuality: 'high' }).then((res: any) => {
+						if (images.current[d.src]) {
+							return;
+						};
 
-					images.current[d.src] = true;
-					send('image', { src: d.src, bitmap: res });
-				});
+						images.current[d.src] = true;
+						send('image', { src: d.src, bitmap: res });
+					});
+				} catch (e) { /**/ };
 			};
 			img.crossOrigin = 'anonymous';
 			img.src = d.src;
@@ -321,8 +337,8 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			body.append(el);
 
 			const root = createRoot(el.get(0));
+			root.render(<PreviewDefault object={subject.current} position={position} className="previewGraph" noLoad={true} />);
 
-			root.render(<PreviewDefault object={subject.current} position={position} className="previewGraph" />);
 			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
 		} else {
 			position();
@@ -569,6 +585,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const onClickObject = (id: string) => {
 		setSelected([]);
+		onPreviewHide();
 		U.Object.openConfig(getNode(id));
 	};
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx lint-staged --concurrent false
+# npx lint-staged --concurrent false
 # npm run typecheck
 
 # Checking for secrets

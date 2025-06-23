@@ -76,8 +76,8 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 				id={iconKey}
 				key={iconKey}
 				object={object} 
-				size={18} 
-				iconSize={18}
+				size={20} 
+				iconSize={20}
 				canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 				menuParam={{ 
 					className: 'fixed',
@@ -90,7 +90,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let inner = (
 		<div className="inner" onMouseDown={onClick}>
 			{icon}
-			<ObjectName object={object} />
+			<ObjectName object={object} withPlural={true} />
 
 			<div className="buttons">
 				{more}

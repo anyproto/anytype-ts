@@ -4,6 +4,7 @@ import { J, U, S, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
+import PageObjectTableOfContents from './page/object/tableOfContents';
 
 interface Props {
 	isPopup?: boolean;
@@ -19,12 +20,14 @@ interface State {
 	details: any;
 	readonly: boolean;
 	noPreview: boolean;
+	blockId: string;
 	previous: State;
 };
 
 const Components = {
-	'type': PageType,
-	'object/relation': PageObjectRelation,
+	'type':						 PageType,
+	'object/relation':			 PageObjectRelation,
+	'object/tableOfContents':	 PageObjectTableOfContents,
 };
 
 
@@ -40,6 +43,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		readonly: false,
 		noPreview: false,
 		previous: null,
+		blockId: '',
 	});
 
 	const { page = '' } = state;

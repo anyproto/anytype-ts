@@ -179,7 +179,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const rect = getRect(x.current, y.current, e.pageX, e.pageY);
+		const { x: x1, y: y1 } = recalcCoords(e.pageX, e.pageY);
+		const rect = getRect(x.current, y.current, x1, y1);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
@@ -235,7 +236,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					$(window).trigger('selectionClear');
 				};
 			} else {
-				let needCheck = false;
+				const needCheck = e.ctrlKey || e.metaKey;
+
+				/*
 				if (e.ctrlKey || e.metaKey) {
 					for (const i in I.SelectType) {
 						const list = idsOnStart.current.get(I.SelectType[i]) || [];
@@ -243,6 +246,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 						needCheck = needCheck || Boolean(list.length);
 					};
 				};
+				*/
 
 				if (needCheck) {
 					checkNodes(e);
@@ -576,6 +580,10 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			for (const i in I.SelectType) {
 				const type = I.SelectType[i];
 				const list = get(type, true);
+
+				if (!list.length) {
+					continue;
+				};
 
 				for (const id of list) {
 					container.find(`#selectionTarget-${id}`).addClass('isSelectionSelected');

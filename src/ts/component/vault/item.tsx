@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject } from 'Component';
-import { S } from 'Lib';
+import { IconObject, Icon } from 'Component';
+import { J, S, I } from 'Lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -22,27 +22,41 @@ const VaultItem: FC<Props> = observer(({
 }) => {
 
 	const cn = [ 'item' ];
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
-	const counters = S.Chat.getSpaceCounters(item.targetSpaceId) || {};
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
+	const theme = S.Common.getThemeClass();
+
+	if (item.isLocalLoading) {
+		cn.push('loading');
 	};
 
 	let icon = null;
 	let cnt = null;
+	let disabled = false;
 
 	if (!item.isButton) {
-		icon = <IconObject object={item} size={36} iconSize={36} />;
+		icon = <IconObject object={item} size={36} iconSize={36} param={{ userIcon: J.Theme[theme].textInversion }} />;
 	} else {
 		cn.push(`isButton ${item.id}`);
 	};
 
-	if (counters.mentionCounter) {
-		cnt = '@';
-	} else 
-	if (counters.messageCounter) {
-		cnt = counters.messageCounter;
+	if (!item.isButton) {
+		const counters = S.Chat.getSpaceCounters(item.targetSpaceId);
+
+		if (counters.mentionCounter) {
+			cnt = <Icon className="mention" />;
+		} else 
+		if (counters.messageCounter) {
+			cnt = counters.messageCounter;
+		};
+	};
+
+	if (cnt) {
+		disabled = true;
+	};
+
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
 	};
 
 	return (

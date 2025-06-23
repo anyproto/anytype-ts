@@ -14,7 +14,7 @@
 		.block.blockMedia { max-height: unset; }
 	}
 
-	.blocks.horizontal { width: 704px; flex-direction: column; padding-bottom: 80px; }
+	.blocks.horizontal { max-width: 704px; width: calc(100% - 32px); flex-direction: column; padding-bottom: 80px; }
 	.blocks.horizontal {
 		> .side.left { text-align: center; }
 		> .side.right { padding-top: 32px; margin-top: 52px; border-top: 1px solid var(--color-shape-highlight-medium); }
@@ -24,7 +24,7 @@
 		> .side.right { padding-top: 0px; margin-top: 32px; border-top: 0px; }
 	}
 
-	.blocks.horizontal.withSidebar { width: 100%; padding: 16px 16px 80px 16px; }
+	.blocks.horizontal.withSidebar { max-width: 736px; width: 100%; padding: 16px 16px 80px 16px; }
 	.blocks.horizontal.withSidebar {
 		.inner { min-height: 0 !important; }
 		.block.blockMedia {

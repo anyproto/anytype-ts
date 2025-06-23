@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action } from 'Lib';
+import { I, S, U, J, translate, analytics, focus, Renderer, Relation, Action, Onboarding, keyboard } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -17,143 +17,68 @@ interface Props {
 	onUpload?: (type: I.CoverType, objectId: string) => void;
 };
 
-const ControlButtons = observer(class ControlButtons extends React.Component<Props> {
-	
-	node = null;
-	timeout = 0;
+interface ControlButtonsRef {
+	forceUpdate: () => void;
+};
 
-	constructor (props: Props) {
-		super(props);
+const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref) => {
 
-		this.onIcon = this.onIcon.bind(this);
-		this.onCover = this.onCover.bind(this);
-		this.onLayout = this.onLayout.bind(this);
-		this.onDescription = this.onDescription.bind(this);
+	const { rootId, readonly, onIcon, onLayout, onCoverOpen, onCoverClose, onEdit, onUploadStart, onUpload, onCoverSelect } = props;
+	const [ dummy, setDummy ] = useState(0);
+	const root = S.Block.getLeaf(rootId, rootId);
+	const isInSets = U.Object.isInSetLayouts(root?.layout);
+	const isTask = U.Object.isTaskLayout(root?.layout);
+	const isNote = U.Object.isNoteLayout(root?.layout);
+	const isBookmark = U.Object.isBookmarkLayout(root?.layout);
+	const isChat = U.Object.isChatLayout(root?.layout);
+	const isType = U.Object.isTypeLayout(root?.layout);
+	const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
+	const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
+	const hasConflict = U.Object.hasLayoutConflict(object);
+	const check = U.Data.checkDetails(rootId);
+	const nodeRef = useRef(null);
+	const timeout = useRef(0);
+
+	const rebind = () => {
+		unbind();
+		$(window).on('resize.controlButtons', () => resize());
 	};
 
-	render (): any {
-		const { rootId, readonly } = this.props;
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return null;
-		};
-
-		const check = U.Data.checkDetails(rootId);
-		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations', 'targetObjectType', 'layoutAlign' ]);
-		const checkType = S.Block.checkBlockTypeExists(rootId);
-		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const isInSets = U.Object.isInSetLayouts(root.layout);
-		const isTask = U.Object.isTaskLayout(root.layout);
-		const isNote = U.Object.isNoteLayout(root.layout);
-		const isBookmark = U.Object.isBookmarkLayout(root.layout);
-		const isChat = U.Object.isChatLayout(root.layout);
-		const isType = U.Object.isTypeLayout(root.layout);
-		const hasDescription = Relation.getArrayValue(object.featuredRelations).includes('description');
-		const hasConflict = U.Object.hasLayoutConflict(object);
-
-		let allowedLayout = !checkType && allowedDetails && !isChat && !isType;
-		let allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
-		let allowedCover = !checkType && allowedDetails && !isNote && !isType;
-		let allowedDescription = !checkType && allowedDetails && !isNote;
-
-		if (isInSets && !hasConflict) {
-			allowedLayout = false;
-		};
-
-		if (root.isLocked() || readonly) {
-			allowedIcon = false;
-			allowedLayout = false;
-			allowedCover = false;
-			allowedDescription = false;
-		};
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				className="controlButtons"
-			>
-				{allowedIcon ? (
-					<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
-						<Icon className="icon" />
-						<div className="txt">{translate(`editorControlIcon${Number(check.withIcon)}`)}</div>
-					</div>
-				) : ''}
-
-				{allowedCover ? (
-					<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
-						<Icon className="addCover" />
-						<div className="txt">{translate(`editorControlCover${Number(check.withCover)}`)}</div>
-					</div>
-				) : ''}
-
-				{allowedDescription ? (
-					<div id="button-description" className="btn white withIcon" onClick={this.onDescription}>
-						<Icon className="description" />
-						<div className="txt">{translate(`editorControlDescription${Number(hasDescription)}`)}</div>
-					</div>
-				) : ''}
-
-				{allowedLayout ? (
-					<div id="button-layout" className="btn white withIcon small" onClick={this.onLayout}>
-						<Icon className="layout" />
-						{hasConflict ? <div className="dot" /> : ''}
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.rebind();
-	};
-
-	componentWillUnmount (): void {
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-
-		$(window).on('resize.controlButtons', () => this.resize());
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off('resize.controlButtons');
 	};
 
-	onIcon (e: any) {
+	const onIconHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		focus.clear(true);
-		this.props.onIcon(e);
+		onIcon(e);
 	};
 
-	onLayout (e: any) {
+	const onLayoutHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		focus.clear(true);
-		this.props.onLayout(e);
+		onLayout(e);
 	};
 
-	onDescription (e: any) {
-		Action.toggleFeatureRelation(this.props.rootId, 'description');
+	const onDescriptionHandler = (e: any) => {
+		Action.toggleFeatureRelation(rootId, 'description');
 	};
 
-	onCover (e: any) {
+	const onCoverHandler = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, onCoverOpen, onCoverClose, onEdit } = this.props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const element = $(e.currentTarget);
 		const { coverType, coverId } = object;
 		const hasCover = coverType != I.CoverType.None;
 		
 		if (!hasCover) {
-			this.onChange(element);
+			onChange(element);
 			return;
 		};
 
@@ -176,8 +101,8 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			horizontal: I.MenuDirection.Center,
 			onOpen: onCoverOpen,
 			onClose: () => {
-				window.clearTimeout(this.timeout);
-				this.timeout = window.setTimeout(() => onCoverClose(), S.Menu.getTimeout());
+				window.clearTimeout(timeout.current);
+				timeout.current = window.setTimeout(() => onCoverClose(), S.Menu.getTimeout());
 			},
 			data: {
 				options: options,
@@ -185,8 +110,8 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 					switch (item.id) {
 						case 'change': {
 							window.setTimeout(() => {
-								window.clearTimeout(this.timeout);
-								this.onChange(element);
+								window.clearTimeout(timeout.current);
+								onChange(element);
 							}, S.Menu.getTimeout());
 							break;
 						};
@@ -209,19 +134,17 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 						};
 					};
-				}
-			}
+				},
+			},
 		});
 	};
 
-	onChange (element: any) {
-		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose, onCoverSelect } = this.props;
-
+	const onChange = (element: any) => {
 		S.Menu.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
-				window.clearTimeout(this.timeout);
+				window.clearTimeout(timeout.current);
 				onCoverOpen();
 			},
 			onClose: onCoverClose,
@@ -235,11 +158,96 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		});
 	};
 
-	resize () {
-		const { ww } = U.Common.getWindowDimensions();
-		$(this.node).toggleClass('small', ww <= 900);
+	const getAllowedButtons = (): { allowedIcon: boolean, allowedLayout: boolean, allowedCover: boolean, allowedDescription: boolean } => {
+		let allowedLayout = false;
+		let allowedIcon = false;
+		let allowedCover = false;
+		let allowedDescription = false;
+
+		if (!root) {
+			return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
+		};
+
+		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+
+		allowedLayout = !checkType && allowedDetails && !isChat && !isType;
+		allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
+		allowedCover = !checkType && allowedDetails && !isNote && !isType;
+		allowedDescription = !checkType && allowedDetails && !isNote;
+
+		if (isInSets && !hasConflict) {
+			allowedLayout = false;
+		};
+
+		if (root.isLocked() || readonly) {
+			allowedIcon = false;
+			allowedLayout = false;
+			allowedCover = false;
+			allowedDescription = false;
+		};
+
+		return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
 	};
-	
-});
+
+	const resize = () => {
+		const { ww } = U.Common.getWindowDimensions();
+		$(nodeRef.current).toggleClass('small', ww <= 900);
+	};
+
+	const { allowedIcon, allowedLayout, allowedCover, allowedDescription } = getAllowedButtons();
+
+	useEffect(() => {
+		if (allowedDescription) {
+			Onboarding.start('objectDescriptionButton', keyboard.isPopup());
+		};
+
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
+
+	return root ? (
+		<div 
+			ref={nodeRef}
+			className="controlButtons"
+		>
+			{allowedIcon ? (
+				<div id="button-icon" className="btn white withIcon" onClick={onIconHandler}>
+					<Icon className="icon" />
+					<div className="txt">{translate(`editorControlIcon${Number(check.withIcon)}`)}</div>
+				</div>
+			) : ''}
+
+			{allowedCover ? (
+				<div id="button-cover" className="btn white withIcon" onClick={onCoverHandler}>
+					<Icon className="addCover" />
+					<div className="txt">{translate(`editorControlCover${Number(check.withCover)}`)}</div>
+				</div>
+			) : ''}
+
+			{allowedDescription ? (
+				<div id="button-description" className="btn white withIcon" onClick={onDescriptionHandler}>
+					<Icon className="description" />
+					<div className="txt">{translate(`editorControlDescription${Number(hasDescription)}`)}</div>
+				</div>
+			) : ''}
+
+			{allowedLayout ? (
+				<div id="button-layout" className="btn white withIcon small" onClick={onLayoutHandler}>
+					<Icon className="layout" />
+					{hasConflict ? <div className="dot" /> : ''}
+				</div>
+			) : ''}
+		</div>
+	) : null;
+
+}));
 
 export default ControlButtons;

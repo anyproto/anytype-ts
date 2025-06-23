@@ -30,6 +30,7 @@ export enum ViewType {
 	Board			 = 3,
 	Calendar		 = 4,
 	Graph			 = 5,
+	Timeline		 = 6,
 };
 
 export enum SortType { 
@@ -173,7 +174,7 @@ export interface ViewComponent {
 	onFilterAdd?: (item: any, callBack?: () => void) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string, record?: any): void;
-	onContext?(e: any, id: string): void;
+	onContext?(e: any, id: string, subId?: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	onDragRecordStart?: (e: any, id?: string) => void;
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
@@ -206,6 +207,7 @@ export interface View {
 	type: ViewType;
 	coverRelationKey: string;
 	groupRelationKey: string;
+	endRelationKey: string;
 	groupBackgroundColors: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;

@@ -342,6 +342,7 @@ export const Mapper = {
 				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
+				endRelationKey: obj.getEndrelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),
@@ -354,7 +355,6 @@ export const Mapper = {
 				relationKey: obj.getKey(),
 				isVisible: obj.getIsvisible(),
 				width: obj.getWidth(),
-				includeTime: obj.getDateincludetime(),
 				formulaType: obj.getFormula(),
 				align: obj.getAlign(),
 			};
@@ -384,7 +384,6 @@ export const Mapper = {
 		HistoryVersion: (obj: Rpc.History.Version): I.HistoryVersion => {
 			return {
 				id: obj.getId(),
-				previousIds: obj.getPreviousidsList() || [],
 				authorId: obj.getAuthorid(),
 				groupId: obj.getGroupid(),
 				time: obj.getTime(),
@@ -600,7 +599,8 @@ export const Mapper = {
 				priceCents: obj.getPricestripeusdcents(),
 				colorStr: obj.getColorstr(),
 				features: obj.getFeaturesList(),
-				namesCount: obj.getAnynamescountincluded()
+				namesCount: obj.getAnynamescountincluded(),
+				offer: obj.getOffer(),
 			};
 		},
 
@@ -669,6 +669,16 @@ export const Mapper = {
 			};
 		},
 
+		ChatPreview: (obj: Rpc.Chat.SubscribeToMessagePreviews.Response.ChatPreview): any => {
+			return {
+				spaceId: obj.getSpaceid(),
+				chatId: obj.getChatobjectid(),
+				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
+				state: obj.hasState() ? Mapper.From.ChatState(obj.getState()) : null,
+				dependencies: (obj.getDependenciesList() || []).map(Decode.struct),
+			};
+		},
+
 		ChatStateUnreadMessages (obj: any): I.ChatStateCounter {
 			return {
 				orderId: obj.getOldestorderid(),
@@ -711,6 +721,19 @@ export const Mapper = {
 				timestamp: obj.getTimestamp(),
 				size: obj.getSize(),
 				details: Decode.struct(obj.getDetails()),
+				joinSpace: obj.getJoinspace(),
+			};
+		},
+
+		AppInfo: (obj: Model.Account.Auth.AppInfo): I.AppInfo => {
+			return {
+				hash: obj.getApphash(),
+				apiKey: obj.getAppkey(),
+				name: obj.getAppname(),
+				createdAt: obj.getCreatedat(),
+				expireAt: obj.getExpireat(),
+				scope: obj.getScope() as number,
+				isActive: obj.getIsactive(),
 			};
 		},
 
@@ -934,7 +957,6 @@ export const Mapper = {
 			item.setKey(obj.relationKey);
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
-			item.setDateincludetime(obj.includeTime);
 			item.setFormula(obj.formulaType);
 			item.setAlign(obj.align as number);
 
@@ -981,6 +1003,7 @@ export const Mapper = {
 			item.setType(obj.type as any);
 			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setGrouprelationkey(obj.groupRelationKey);
+			item.setEndrelationkey(obj.endRelationKey);
 			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize as any);
@@ -1102,6 +1125,15 @@ export const Mapper = {
 			});
 
 			return reactions;
+		},
+
+		AppInfo: (obj: any) => {
+			const item = new Model.Account.Auth.AppInfo();
+
+			item.setAppname(obj.name);
+			item.setScope(obj.scope as number);
+
+			return item;
 		},
 
 	},
@@ -1675,6 +1707,7 @@ export const Mapper = {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+				dependencies: obj.getDependenciesList().map(Decode.struct),
 				subIds: obj.getSubidsList(),
 			};
 		},

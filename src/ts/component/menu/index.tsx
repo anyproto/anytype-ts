@@ -3,12 +3,13 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage, sidebar } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
 import MenuParticipant from './participant';
 import MenuPublish from './publish';
+import MenuTableOfContents from './tableOfContents';
 
 import MenuSelect from './select';
 import MenuButton from './button';
@@ -92,6 +93,7 @@ const Components: any = {
 	onboarding:				 MenuOnboarding,
 	participant:			 MenuParticipant,
 	publish:				 MenuPublish,
+	tableOfContents:		 MenuTableOfContents,
 
 	select:					 MenuSelect,
 	button:					 MenuButton,
@@ -189,6 +191,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
 		this.getPosition = this.getPosition.bind(this);
+		this.getMaxHeight = this.getMaxHeight.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onDimmerClick = this.onDimmerClick.bind(this);
 	};
@@ -294,6 +297,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getId={this.getId} 
 							getSize={this.getSize}
 							getPosition={this.getPosition}
+							getMaxHeight={this.getMaxHeight}
 							position={this.position} 
 							close={this.close}
 							/>
@@ -467,16 +471,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return Number(window.AnytypeGlobalConfig?.menuBorderBottom) || J.Size.menuBorder;
 	};
 
-	getBorderLeft () {
-		return Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder;
+	getBorderLeft (isFixed) {
+		return (Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder) + (isFixed ? 0 : J.Size.vault.width);
 	};
 
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge } = param;
-		const borderLeft = this.getBorderLeft();
-		const borderTop = this.getBorderTop();
-		const borderBottom = this.getBorderBottom();
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -493,6 +494,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const arrow = menu.find('#arrowDirection');
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const winSize = U.Common.getWindowDimensions();
+			const borderLeft = this.getBorderLeft(isFixed);
+			const borderTop = this.getBorderTop();
+			const borderBottom = this.getBorderBottom();
 			const ww = winSize.ww;
 			const wh = winSize.wh + (!isFixed ? win.scrollTop() : 0);
 			const width = param.width ? param.width : menu.outerWidth();
@@ -900,8 +904,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			onArrow(1);
 		});
 
-		console.log(this.ref.onClick, shortcutSelect);
-
 		if (this.ref && this.ref.onClick) {	
 			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 				e.preventDefault();
@@ -977,8 +979,16 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			index = items.findIndex(it => it.id == item.id);
 		};
 
-		if (this.ref.refList && scroll) {
-			this.ref.refList.scrollToRow(Math.max(0, index));
+		let listRef = null;
+		if (this.ref.refList) {
+			listRef = this.ref.refList;
+		} else 
+		if (this.ref.getListRef) {
+			listRef = this.ref.getListRef();
+		};
+
+		if (listRef && scroll) {
+			listRef.scrollToRow(Math.max(0, index));
 		};
 
 		const next = items[index];
@@ -1053,7 +1063,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	storageSet (data: any) {
-		Storage.set(this.getId(), data);
+		const current = this.storageGet();
+		Storage.set(this.getId(), Object.assign(current, data));
 	};
 
 	getId (): string {
@@ -1110,6 +1121,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		return dir;
+	};
+
+	getMaxHeight (isPopup: boolean): number {
+		return U.Common.getScrollContainer(isPopup).height() - this.getBorderTop() - this.getBorderBottom();
 	};
 
 });

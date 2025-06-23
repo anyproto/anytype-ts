@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
 const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
 
@@ -37,16 +37,18 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 		};
 
 		submitRef.current?.setLoading(true);
-		
-		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
-			if (setErrorHandler(message.error.code, translate('pageAuthLoginInvalidPhrase'))) {
-				return;
-			};
 
-			S.Auth.accountListClear();
-			U.Data.createSession(phrase, '', () => {
-				C.AccountRecover(message => {
-					setErrorHandler(message.error.code, message.error.description);
+		U.Data.closeSession(() => {
+			C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
+				if (setErrorHandler(message.error.code, translate('pageAuthLoginInvalidPhrase'))) {
+					return;
+				};
+
+				S.Auth.accountListClear();
+				U.Data.createSession(phrase, '', '', () => {
+					C.AccountRecover(message => {
+						setErrorHandler(message.error.code, message.error.description);
+					});
 				});
 			});
 		});
@@ -76,10 +78,16 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			S.Common.configSet(message.account.config, false);
 
 			const spaceId = Storage.get('spaceId');
-			const routeParam = { replace: true };
+			const routeParam = { 
+				replace: true, 
+				onFadeIn: () => {
+					S.Common.getRef('mainAnimation')?.destroy();
+					Action.checkDiskSpace();
+				},
+			};
 
 			if (spaceId) {
-				U.Router.switchSpace(spaceId, '', false, routeParam);
+				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
 				Animation.from(() => {
 					U.Data.onAuthWithoutSpace(routeParam);
@@ -89,6 +97,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(true);
+
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -174,7 +183,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 					</div>
 					<div className="buttons">
 						<div className="animation">
-							<Button ref={submitRef} text={translate('authLoginSubmit')} onClick={onSubmit} />
+							<Button ref={submitRef} className="c48" text={translate('authLoginSubmit')} onClick={onSubmit} />
 						</div>
 
 						<div className="animation">

@@ -50,6 +50,18 @@ export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.S
 	};
 };
 
+export const AccountLocalLinkListApps = (response: Rpc.Account.LocalLink.ListApps.Response) => {
+	return {
+		list: (response.getAppList() || []).map(Mapper.From.AppInfo),
+	};
+};
+
+export const AccountLocalLinkCreateApp = (response: Rpc.Account.LocalLink.CreateApp.Response) => {
+	return {
+		key: response.getAppkey(),
+	};
+};
+
 export const AccountMigrate = (response: Rpc.Account.Migrate.Response) => {
 	return {
 		requiredSpace: response.getError().getRequiredspace()
@@ -253,21 +265,19 @@ export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) =
 	};
 };
 
+/*
 export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
-	const hashes: any = [];
-
-	let edges: any[] = (response.getEdgesList() || []).map(Mapper.From.GraphEdge);
-
-	// Deduplicate edges
-	edges = edges.filter(d => { 
-		const hash = [ d.source, d.target ].join('-');
-		if (hashes.includes(hash)) {
+	const hashes = new Set<string>();
+	const edges: any[] = (response.getEdgesList() || []).map(Mapper.From.GraphEdge).filter(d => {
+		if (d.source == d.target) {
 			return false;
 		};
 
-		hashes.push(hash);
-		return (d.source != d.target);
+		const hash = `${d.source}-${d.target}`;
+
+		hashes.add(hash);
+		return !hashes.has(hash);
 	});
 
 	// Find backlinks
@@ -279,6 +289,44 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 			edge.isDouble = true;
 			edge.types = [ edge.type, double.type ];
 			edges.splice(idx, 1);
+		};
+	};
+
+	return { edges, nodes };
+};
+*/
+
+export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
+	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
+	const edgesRaw = response.getEdgesList() || [];
+	const seen = new Set<string>();
+	const edgeMap = new Map<string, any>();
+	const edges: any[] = [];
+
+	for (let i = 0; i < edgesRaw.length; i++) {
+		const edge = Mapper.From.GraphEdge(edgesRaw[i]);
+
+		if (edge.source == edge.target) {
+			continue;
+		};
+
+		const key = `${edge.source}-${edge.target}`;
+		const reverseKey = `${edge.target}-${edge.source}`;
+
+		// Check if reverse already added
+		if (edgeMap.has(reverseKey)) {
+			const reverse = edgeMap.get(reverseKey);
+
+			reverse.isDouble = true;
+			reverse.types = [reverse.type, edge.type];
+			edgeMap.delete(reverseKey);
+			continue;
+		};
+
+		if (!seen.has(key)) {
+			seen.add(key);
+			edgeMap.set(key, edge);
+			edges.push(edge);
 		};
 	};
 
@@ -575,6 +623,12 @@ export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLin
 	};
 };
 
+export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Response) => {
+	return {
+		tier: response.getRequestedtier(),
+	};
+};
+
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),
@@ -586,6 +640,7 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 	return {
 		inviteCid: response.getInvitecid(),
 		inviteKey: response.getInvitefilekey(),
+		inviteType: response.getInvitetype(),
 	};
 };
 
@@ -594,6 +649,7 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 		spaceName: response.getSpacename(),
 		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
+		inviteType: response.getInvitetype(),
 	};
 };
 
@@ -626,6 +682,12 @@ export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessag
 export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
 	return {
 		messageId: response.getMessageid(),
+	};
+};
+
+export const ChatSubscribeToMessagePreviews = (response: Rpc.Chat.SubscribeToMessagePreviews.Response) => {
+	return {
+		previews: (response.getPreviewsList() || []).map(Mapper.From.ChatPreview),
 	};
 };
 

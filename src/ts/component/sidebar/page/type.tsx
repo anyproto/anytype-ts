@@ -48,7 +48,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 						<Button 
 							ref={ref => this.buttonSaveRef = ref} 
 							text={type ? translate('commonSave') : translate('commonApply')}
-							className="c28" 
+							className="c28 disabled"
 							onClick={this.onSave}
 						/>
 					</div>
@@ -91,7 +91,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	init () {
 		const type = this.getObject();
-		const sections = this.getSections();
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
@@ -105,12 +104,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
 		this.backup = U.Common.objectCopy(this.object);
 
-		sections.forEach(it => this.updateObject(it.id));
-
+		this.updateSections();
 		this.disableScroll(true);
-		if (!details.isNew) {
-			this.disableButton(true);
-		};
+		this.disableButton(true);
 	};
 
 	disableButton (v: boolean) {
@@ -138,19 +134,29 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	getSections () {
-		const type = S.Record.getTypeById(this.props.rootId);
-		const isFile = type ? U.Object.isInFileLayouts(type.recommendedLayout) : false;
+		const { rootId } = this.props;
+		const type = S.Record.getTypeById(rootId);
+		
+		let isFile = false;
+		let isTemplate = false;
+		let canShowTemplates = false;
+
+		if (type) {
+			isFile = U.Object.isInFileLayouts(type.recommendedLayout);
+			isTemplate = U.Object.isTemplateType(rootId);
+			canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(type.recommendedLayout) && !isTemplate;
+		};
 
 		return [
 			{ id: 'title', component: 'type/title' },
 			{ id: 'plural', component: 'type/title' },
 			!isFile ? { id: 'layout', component: 'type/layout' } : null,
+			canShowTemplates ? { id: 'template', component: 'type/template' } : null,
 			{ id: 'relation', component: 'type/relation' },
 		].filter(it => it);
 	};
 
 	onChange (update: any) {
-		const sections = this.getSections();
 		const skipFormat = [ 'defaultTypeId' ];
 
 		for (const relationKey in update) {
@@ -160,7 +166,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 			const relation = S.Record.getRelationByKey(relationKey);
 
-			update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+			if (relationKey == 'headerRelationsLayout') {
+				update[relationKey] = Number(update[relationKey]);
+			} else {
+				update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+			};
+
+			// update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
 		};
 
 		this.object = Object.assign(this.object, update);
@@ -168,16 +180,14 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		S.Detail.update(J.Constant.subId.type, { id: this.object.id, details: update }, false);
 
-		if (undefined !== update.recommendedLayout) {
+		if ((undefined !== update.recommendedLayout) && !U.Object.isTypeLayout(this.object.layout)) {
 			this.updateLayout(update.recommendedLayout);
 		};
 
-		sections.forEach(it => {
-			this.updateObject(it.id);
-			this.forceUpdate();
-		});
+		this.updateSections();
+		this.disableButton(!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName));
 
-		this.disableButton(!U.Common.objectLength(this.update));
+		C.BlockDataviewRelationSet(this.object.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(this.object.id)));
 
 		// analytics
 		let eventId = '';
@@ -208,7 +218,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const details: any = this.props.details || {};
 		const type = S.Record.getTypeType();
 
-		if (!U.Common.objectLength(this.update) && !details.isNew) {
+		if (!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
 			return;
 		};
 
@@ -232,14 +242,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 				};
 			};
 		} else {
-			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, true, (message) => {
+			C.ObjectCreate(this.object, [], '', type.uniqueKey, space, (message) => {
 				if (!message.error.code) {
 					const route = details.data && details.data.route ? details.data.route : '';
+					const format = I.LayoutFormat[this.object.layoutFormat];
 
 					U.Object.openRoute(message.details);
 					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
 
-					analytics.event('CreateObject', { objectType: '_objectType', route });
+					analytics.event('CreateObject', { objectType: J.Constant.typeKey.type, route, format });
 				};
 			});
 
@@ -273,11 +284,17 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	close () {
 		this.previewRef?.show(false);
-		sidebar.rightPanelToggle(false, true, this.props.isPopup);
+		sidebar.rightPanelToggle(true, this.props.isPopup);
 	};
 
-	updateObject (id: string) {
-		this.sectionRefs.get(id)?.setObject(this.object);
+	updateSections () {
+		const sections = this.getSections();
+
+		sections.forEach(it => {
+			this.sectionRefs.get(it.id)?.setObject(this.object);
+		});
+
+		this.forceUpdate();
 		this.previewRef?.update(this.object);
 	};
 

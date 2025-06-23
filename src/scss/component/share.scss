@@ -3,15 +3,15 @@
 .shareTooltip {
     display: flex; position: fixed; z-index: 20; right: 14px; bottom: 54px; width: var(--menu-width-value); height: 64px; border-radius: 8px; align-items: center; gap: 0px 12px;
     padding: 10px 12px 10px 16px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary);
-    background-image: linear-gradient(90deg, #FFD3D3 0%, #FFF4CC 20.71%, rgba(255, 244, 204, 0.00) 41.52%);
+    background-image: linear-gradient(90deg, #c5f3e5 0%, #f1ffc9 27.23%, #fff 54%);
 }
 .shareTooltip {
-    .icon.smile { width: 85px; height: 40px; background: url('~img/icon/share/smile.svg') }
-    .label { @include text-common; }
+    .icon.smile { width: 71px; height: 40px; background-image: url('~img/icon/share/smile.svg') }
+    .label { @include text-common; line-height: 20px; font-weight: 500; }
     .icon.close { background-color: var(--color-bg-primary); box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.20); background-image: url('~img/icon/notification/delete.svg'); background-size: 8px; }
 }
 
-.shareBanner { position: relative; border-radius: 12px; background: var(--color-bg-primary) linear-gradient(-90deg, #C5F3E5 0%, #F1FFC9 27.23%, rgba(255, 255, 255, 0.15) 54%); margin-top: 10px; }
+.shareBanner { position: relative; border-radius: 12px; background: var(--color-bg-primary) linear-gradient(-90deg, #c5f3e5 0%, #f1ffc9 27.23%, rgba(255, 255, 255, 0.15) 54%); margin-top: 10px; }
 .shareBanner {
     .bannerInner { position: relative; padding: 11.75px 100px 11.75px 16px; border-radius: 12px; overflow: hidden; }
     .label { @include text-common; max-width: 185px; }
@@ -19,7 +19,6 @@
     .icon.close { box-shadow: none; background-color: var(--color-shape-primary); background-image: url('~img/icon/widget/remove.svg'); z-index: 1; -webkit-app-region: no-drag; }
     .icon.close:hover  { background-color: var(--color-text-tertiary); }
 }
-.shareBanner.isOnboardingHidden { display: none; }
 
 .shareTooltip,
 .shareBanner {

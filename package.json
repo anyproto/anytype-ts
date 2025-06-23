@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.45.47-beta",
+	"version": "0.47.8-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -54,6 +54,7 @@
 		"@rspack/cli": "^1.1.0",
 		"@rspack/core": "^1.1.0",
 		"@rspack/plugin-react-refresh": "^1.0.0",
+		"@tomjs/electron-devtools-installer": "^3.0.1",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.14",
 		"@types/katex": "^0.14.0",
@@ -68,7 +69,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^34.1.1",
+		"electron": "^35.2.1",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -106,6 +107,7 @@
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
+		"check-disk-space": "^3.4.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
@@ -128,7 +130,7 @@
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
 		"js-htmlencode": "^0.3.0",
-		"katex": "^0.16.11",
+		"katex": "^0.16.22",
 		"keytar": "^7.7.0",
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
@@ -199,7 +201,8 @@
 			"dist/css/**/*",
 			"dist/js/**/*",
 			"electron/img/*",
-			"electron/js/preload.js",
+			"electron/img/icons/*",
+			"electron/js/preload.cjs",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
 			"node_modules/lodash.isequal",
@@ -227,6 +230,7 @@
 			"electron/json/*",
 			"electron/env.json",
 			"electron/img/*",
+			"electron/img/icons/*",
 			"build",
 			"!dist/*",
 			"dist/index.html",
@@ -308,6 +312,10 @@
 				"to": "node_modules/@electron"
 			},
 			{
+				"from": "node_modules/@tomjs",
+				"to": "node_modules/@tomjs"
+			},
+			{
 				"from": "node_modules/ajv",
 				"to": "node_modules/ajv"
 			},
@@ -334,6 +342,10 @@
 			{
 				"from": "node_modules/builder-util-runtime",
 				"to": "node_modules/builder-util-runtime"
+			},
+			{
+				"from": "node_modules/check-disk-space",
+				"to": "node_modules/check-disk-space"
 			},
 			{
 				"from": "node_modules/concat-map",
@@ -440,6 +452,10 @@
 				"to": "node_modules/if-async"
 			},
 			{
+				"from": "node_modules/immediate",
+				"to": "node_modules/immediate"
+			},
+			{
 				"from": "node_modules/imurmurhash",
 				"to": "node_modules/imurmurhash"
 			},
@@ -476,12 +492,20 @@
 				"to": "node_modules/jsonfile"
 			},
 			{
+				"from": "node_modules/jszip",
+				"to": "node_modules/jszip"
+			},
+			{
 				"from": "node_modules/keytar",
 				"to": "node_modules/keytar"
 			},
 			{
 				"from": "node_modules/lazy-val",
 				"to": "node_modules/lazy-val"
+			},
+			{
+				"from": "node_modules/lie",
+				"to": "node_modules/lie"
 			},
 			{
 				"from": "node_modules/locate-path",
@@ -552,6 +576,10 @@
 				"to": "node_modules/p-try"
 			},
 			{
+				"from": "node_modules/pako",
+				"to": "node_modules/pako"
+			},
+			{
 				"from": "node_modules/path-exists",
 				"to": "node_modules/path-exists"
 			},
@@ -562,6 +590,10 @@
 			{
 				"from": "node_modules/pkg-up",
 				"to": "node_modules/pkg-up"
+			},
+			{
+				"from": "node_modules/process-nextick-args",
+				"to": "node_modules/process-nextick-args"
 			},
 			{
 				"from": "node_modules/pupa",
@@ -580,6 +612,10 @@
 				"to": "node_modules/rimraf"
 			},
 			{
+				"from": "node_modules/safe-buffer",
+				"to": "node_modules/safe-buffer"
+			},
+			{
 				"from": "node_modules/sanitize-filename",
 				"to": "node_modules/sanitize-filename"
 			},
@@ -590,6 +626,10 @@
 			{
 				"from": "node_modules/semver",
 				"to": "node_modules/semver"
+			},
+			{
+				"from": "node_modules/setimmediate",
+				"to": "node_modules/setimmediate"
 			},
 			{
 				"from": "node_modules/signal-exit",
@@ -634,6 +674,10 @@
 			{
 				"from": "node_modules/unused-filename",
 				"to": "node_modules/unused-filename"
+			},
+			{
+				"from": "node_modules/util-deprecate",
+				"to": "node_modules/util-deprecate"
 			},
 			{
 				"from": "node_modules/wrappy",

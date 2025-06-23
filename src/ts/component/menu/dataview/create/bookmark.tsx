@@ -1,61 +1,39 @@
-import * as React from 'react';
-import { Input, Button, Loader } from 'Component';
-import { I, C, S, keyboard, translate, analytics } from 'Lib';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
+import { I, C, S, U, translate, analytics } from 'Lib';
 
-interface State { 
-	loading: boolean;
-};
+const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
-	
-	ref = null;
+	const { param, close } = props;
+	const inputRef = useRef(null);
+	const buttonRef = useRef(null);
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ preview, setPreview ] = useState(null);
+	const [ error, setError ] = useState('');
+	const [ withContent, setWithContent ] = useState(true);
+	const { data } = param;
+	const { value } = data;
+	const cn = [ 'form' ];
 
-	state = {
-		loading: false,
-	};
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onSubmit = this.onSubmit.bind(this);
-	};
-
-	render () {
-		const { loading } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-
-		return (
-			<form onSubmit={this.onSubmit} className="flex">
-				{loading ? <Loader /> : ''}
-
-				<Input ref={ref => this.ref = ref} value={value} placeholder={translate('defaultNameBookmark')} />
-
-				<div className="buttons">
-					<Button type="input" color="blank" text={translate('commonCreate')} onClick={this.onSubmit} />
-				</div>
-			</form>
-		);
-	};
-	
-	componentDidMount () {
-		if (this.ref) {
-			this.ref.focus(); 
-		};
+	if (preview) {
+		cn.push('withPreview');
 	};
 
-	componentWillUnmount () {
-		keyboard.setFocus(false);
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => {});
 	};
 
-	onSubmit (e: any) {
+	const unbind = () => {
+		$(window).off('keydown.menu');
+	};
+
+	const onSubmit = (e: any) => {
 		e.preventDefault();
 
-		const { close, param } = this.props;
 		const { data } = param;
 		const { onSubmit, route } = data;
-		const value = this.ref.getValue();
+		const value = inputRef.current.getValue();
 		const details = data.details || {};
 		const bookmark = S.Record.getBookmarkType();
 
@@ -63,10 +41,10 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		this.setState({ loading: true });
+		setIsLoading(true);
 
-		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
-			this.setState({ loading: false });
+		C.ObjectCreateFromUrl(details, S.Common.space, bookmark?.uniqueKey, value, withContent, bookmark?.defaultTemplateId, (message: any) => {
+			setIsLoading(false);
 
 			if (message.error.code) {
 				S.Popup.open('confirm', {
@@ -90,6 +68,86 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 		});
 	};
 
-};
+	const onChange = (e: any, v: string) => {
+		if (isLoading) {
+			return;
+		};
+
+		$(buttonRef.current.getNode()).toggleClass('hide', !v);
+
+		const url = U.Common.matchUrl(v);
+
+		if (url) {
+			if (preview && (url == preview.originalUrl)) {
+				return;
+			};
+
+			setIsLoading(true);
+
+			C.LinkPreview(url, (message: any) => {
+				setIsLoading(false);
+
+				if (message.error.code) {
+					setError(message.error.description);
+				} else {
+					setPreview({ ...message.previewLink, originalUrl: url });
+				};
+			});
+		} else {
+			setPreview(null);
+		};
+	};
+
+	useEffect(() => {
+		rebind();
+		$(buttonRef.current.getNode()).addClass('hide');
+
+		return () => unbind();
+	}, []);
+
+	return (
+		<form onSubmit={onSubmit} className={cn.join(' ')}>
+			{isLoading ? <Loader /> : ''}
+
+			<div className="inputWrap">
+				<Icon className="link" />
+				<Input 
+					ref={inputRef} 
+					value={value} 
+					placeholder={translate('commonPasteLink')} 
+					focusOnMount={true}
+					onKeyDown={onChange}
+					onKeyUp={onChange}
+				/>
+			</div>
+
+			<Error text={error} />
+
+			{preview ? (
+				<div className="previewWrap">
+					<div className="pic" style={{ backgroundImage: `url("${preview.imageUrl}")` }} />
+					<div className="info">
+						<div className="name">{preview.title}</div>
+						<div className="descr">{preview.description}</div>
+					</div>
+				</div>
+			) : ''}
+
+			<div className="bottom">
+				<div className="side left">
+					<Switch
+						value={withContent}
+						onChange={(e: any, v: boolean) => setWithContent(v)}
+					/>
+					<Label text={translate('menuDataviewBookmarkCreateContent')} />
+				</div>
+				<div className="side right">
+					<Button ref={buttonRef} type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />
+				</div>
+			</div>
+		</form>
+	);
+
+});
 
 export default MenuDataviewCreateBookmark;

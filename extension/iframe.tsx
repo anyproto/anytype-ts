@@ -104,9 +104,7 @@ class Iframe extends React.Component {
 				return;
 			};
 
-			U.Data.destroySubscriptions(() => {
-				C.WalletCloseSession(S.Auth.token, () => S.Auth.tokenSet(''));
-			});
+			U.Data.destroySubscriptions(() => U.Data.closeSession());
 		});
 	};
 

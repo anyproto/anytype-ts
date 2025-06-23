@@ -6,15 +6,18 @@ import { J, analytics, I, keyboard, translate } from 'Lib';
 const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends React.Component<I.SidebarSectionComponent> {
 	
 	refName = null;
+	range: I.TextRange = null;
 	timeout = 0;
 
 	constructor (props: I.SidebarSectionComponent) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 
     render () {
@@ -22,17 +25,19 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 		let icon = null;
 		let label = '';
+		let placeholder = '';
 
 		switch (id) {
 			case 'title': {
 				label = translate('sidebarTypeTitleLabelName');
+				placeholder = translate('sidebarTypeTitlePlaceholder');
 				icon = (
 					<IconObject 
 						id={`sidebar-icon-title-${object.id}`} 
 						object={object} 
 						size={24} 
 						canEdit={!readonly}
-						onIconSelect={this.onSelect}
+						onIconSelect={this.onIconSelect}
 						menuParam={{
 							horizontal: I.MenuDirection.Center,
 							className: 'fixed',
@@ -45,6 +50,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 			case 'plural': {
 				label = translate('sidebarTypeTitleLabelPlural');
+				placeholder = translate('sidebarTypeTitlePlaceholderPlural');
 				break;
 			};
 
@@ -59,10 +65,11 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 					<Editable
 						ref={ref => this.refName = ref}
 						readonly={readonly}
-						onBlur={this.onChange}
+						onBlur={this.onBlur}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
-						placeholder={translate('defaultNameType')} 
+						onSelect={this.onSelect}
+						placeholder={placeholder}
 					/>
 				</div>
 			</div>
@@ -97,20 +104,25 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 			text = '';
 		};
 
-		this.refName.setValue(text);
-		this.refName.placeholderCheck();
+		this.refName?.setValue(text);
+		this.refName?.placeholderCheck();
+
+		if (this.range) {
+			this.refName?.setRange(this.range);
+		};
 	};
 
-	onSelect (id: string, color: number) {
+	onIconSelect (id: string, color: number) {
 		this.props.onChange({ iconName: id, iconOption: color });
 
-		analytics.stackAdd('SetIcon', { objectType: '_objectType', color });
+		analytics.stackAdd('SetIcon', { objectType: J.Constant.typeKey.type, color });
 	};
 
 	onChange () {
-		const value = this.refName?.getTextValue().trim();
+		const value = this.getValue();
 
 		this.props.onChange({ [this.getRelationKey()]: value });
+		window.clearTimeout(this.timeout);
 	};
 
 	onKeyDown (e: any) {
@@ -120,10 +132,30 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		});
 	};
 
+	onSelect () {
+		this.range = this.refName.getRange();
+	};
+
+	onBlur () {
+		this.range = null;
+		this.onChange();
+	};
+
+	getValue () {
+		let t = String(this.refName?.getTextValue() || '');
+		if (t === '\n') {
+			t = '';
+		};
+		return t;
+	};
+
 	onKeyUp (e: any) {
-		const value = this.refName?.getTextValue().trim();
+		const value = this.getValue();
 
 		this.props.disableButton(!value);
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.onChange(), J.Constant.delay.keyboard);
 	};
 
 });

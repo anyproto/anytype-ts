@@ -1,15 +1,13 @@
 @import "~scss/_mixins";
 
-@keyframes objectSyncing {
-	//100% {transform: rotate(1turn)}
-}
-
 .menus {
 	.menu.menuSyncStatus { width: var(--menu-width-large); height: var(--menu-width-large); }
 	.menu.menuSyncStatus {
-		.content { padding: 0px; height: 100%; max-height: unset; }
-		.syncMenuWrapper { padding: 16px 0px 0px 0px; height: 100%; display: flex; flex-direction: column; }
-		.syncPanel { height: 28px; padding: 0px 16px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+		.content { 
+			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px; 
+			overflow: visible;
+		}
+		.syncPanel { height: 28px; padding: 0px 16px; display: flex; justify-content: space-between; align-items: center; }
 
 		.title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
 		.ReactVirtualized__List { padding: 8px; }
@@ -48,9 +46,9 @@
 			}
 		}
 
-		.items { height: 100%; padding: 0px; }
+		.items { height: 100%; }
 		.items {
-			.sectionName { padding: 4px 16px; }
+			.sectionName { padding: 4px 8px; }
 
 			.sides { display: flex; align-items: center; gap: 0px 6px; }
 			.sides {

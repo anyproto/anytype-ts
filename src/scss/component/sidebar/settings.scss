@@ -1,7 +1,4 @@
-> #containerSettings {
-    height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0;
-    background-color: var(--color-shape-tertiary);
-}
+> #containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 > #containerSettings {
     > .head {
         display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
@@ -13,13 +10,16 @@
         .list { display: flex; flex-direction: column; justify-content: space-between;  height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
         .list {
             > .head { 
-				display: flex; gap: 0px 4px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph; 
+				display: flex; gap: 0px 6px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph;
 				font-weight: 600; padding: 4px 16px 11px 8px; 
 			}
             > .head {
                 .icon { width: 24px !important; height: 24px !important; }
-                .icon.back { background-image: url('~img/icon/widget/back.svg'); flex-shrink: 0; }
+                .icon.back { background-image: url('~img/icon/widget/back0.svg'); flex-shrink: 0; }
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
+                .icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
+                .icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
                 .name, .title { @include text-overflow-nw; }
             }
@@ -38,11 +38,12 @@
 
             .items { display: flex; flex-direction: column; }
 
-            .item {
-                display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 3px 8px; border-radius: 8px;
-                transition: background-color $transitionCommon;
-            }
-            .item:hover, .item.hover, .item.active { background-color: var(--color-shape-highlight-medium); }
+            .item { display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 6px; padding: 3px 8px; }
+			.item::before {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
+				pointer-events: none; transition: background-color $transitionCommon; border-radius: 6px;
+			}
+			.item.hover::before, .item:hover::before, .item.active::before { background: var(--color-shape-highlight-medium); }
 
             .item {
 				.icon, .iconObject { flex-shrink: 0; }
@@ -57,7 +58,7 @@
 
             .item.isTypeOrRelation { padding-left: 26px; }
 
-            .item.itemAccount { padding: 8px; gap: 0px 12px; align-items: center; border-radius: 8px; }
+            .item.itemAccount { padding: 8px; gap: 0px 12px; align-items: center; }
             .item.itemAccount {
                 .iconObject { flex-shrink: 0; }
                 .name { display: flex; flex-direction: column; justify-content: center; }

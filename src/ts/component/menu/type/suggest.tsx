@@ -19,7 +19,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
 	const { data } = param;
-	const { noFilter, skipIds, onMore, onClick, noInstall } = data;
+	const { noFilter, skipIds, onMore, onClick, canAdd, noClose } = data;
 	const itemList = useRef([]);
 	const filter = String(data.filter || '');
 	const currentFilter = useRef('');
@@ -37,7 +37,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-
 	const getSections = () => {
 		const { filter } = data;
 		const pinned = Storage.getPinnedTypes();
@@ -53,7 +52,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: 'library', name: translate('commonMyTypes'), children: library },
 		];
 
-		if (canWrite && filter && !add) {
+		if (canWrite && filter && !add && canAdd) {
 			sections.push({ 
 				children: [ 
 					{ id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) },
@@ -146,10 +145,10 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemList.current = [];
 		};
 
-		U.Data.search({
+		U.Subscription.search({
 			filters,
 			sorts,
-			keys: U.Data.typeRelationKeys(),
+			keys: U.Subscription.typeRelationKeys(),
 			fullText: filter,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
@@ -189,18 +188,21 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.stopPropagation();
 
 		const cb = (item: any) => {
-			close();
+			if (!noClose) {
+				close();
+			};
 
 			if (onClick) {
 				onClick(S.Detail.mapper(item));
 			};
 		};
+
 		const setLast = item => U.Object.setLastUsedDate(item.id, U.Date.now());
 
 		if (item.id == 'add') {
 			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
-					U.Object.openAuto(message.details);
+					cb(message.details);
 					analytics.event('CreateType');
 				};
 			});
@@ -208,15 +210,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.onClick) {
 			item.onClick(e);
 		} else {
-			if (item.isInstalled || noInstall) {
-				cb(item);
-				setLast(item);
-			} else {
-				Action.install(item, true, message => {
-					cb(message.details);
-					setLast(message.details);
-				});
-			};
+			cb(item);
+			setLast(item);
 		};
 	};
 
@@ -234,8 +229,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				ret = true;
 			});
 		};
-
-		console.log(e, ret);
 
 		if (!ret) {
 			onKeyDown(e);
@@ -360,6 +353,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setIndex: (i: number) => n.current = i,
 		forceUpdate: () => setDummy(dummy + 1),
 		onClick: onClickHandler,
+		getData: () => data,
+		getListRef: () => listRef.current,
 	}), []);
 
 	return (

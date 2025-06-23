@@ -17,9 +17,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const alt = keyboard.altSymbol();
 	const buttons = [
 		{ id: 'search', name: translate('commonSearch') },
-		space.chatId || U.Object.isAllowedChat() ? { id: 'chat', name: translate('commonMainChat') } : null,
+		{ id: 'all', name: translate('commonAllContent') },
 		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-		//{ id: 'all', name: translate('commonAllContent') },
 	].filter(it => it);
 
 	if (isSpaceOwner && requestCnt) {
@@ -28,7 +27,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const onSettings = (e: MouseEvent) => {
 		e.stopPropagation();
-		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+		U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	const onCreate = (e: MouseEvent) => {
@@ -56,19 +55,14 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'member': {
-				U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
-				break;
-			};
-
 			case 'all': {
 				sidebar.leftPanelSetState({ page: 'object' });
 				break;
 			};
 
-			case 'chat': {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+			case 'member': {
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
 
@@ -95,8 +89,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<IconObject 
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-						size={18}
-						iconSize={18}
+						size={20}
+						iconSize={20}
 						menuParam={{ className: 'fixed' }}
 					/>
 					<div className="txt">

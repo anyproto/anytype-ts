@@ -36,7 +36,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
 		const now = U.Date.now();
 		const tomorrow = now + 86400;
-		const dayToday = U.Date.today();
 		const days = U.Date.getWeekDays();
 		const months = [];
 		const years = [];
@@ -104,10 +103,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 						if (item.isWeekend) {
 							cn.push('weekend');
 						};
-						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
+						if (!isEmpty && this.compare(todayParam, item)) {
 							cn.push('active');
 						};
-						if (selectedDate && (selectedDate.d == item.d) && (selectedDate.m == item.m) && (selectedDate.y == item.y)) {
+						if (selectedDate && this.compare(selectedDate, item)) {
 							cn.push('selected');
 						};
 
@@ -172,6 +171,16 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		this.forceUpdate();
 	};
 
+	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
+		const { m, y } = U.Date.getCalendarDateParam(value);
+
+		this.refMonth?.setValue(m);
+		this.refYear?.setValue(y);
+	};
+
 	componentWillUnmount () {
 		const { param } = this.props;
 		const { data } = param;
@@ -201,11 +210,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 			this.onArrow(pressed as ArrowDirection);
 		});
 
-		const { selectedDate } = this.state;
-
-		if (selectedDate) {
-			keyboard.shortcut('enter', e, () => this.onClick(e, selectedDate));
-		};
+		keyboard.shortcut('enter', e, () => this.onClick(e, this.state.selectedDate));
 	};
 
 	onArrow = (dir: ArrowDirection) => {
@@ -216,32 +221,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-		const currentMonth = U.Date.getCalendarDateParam(value).m;
+		const { m } = U.Date.getCalendarDateParam(value);
 
 		const { selectedDate } = this.state;
 		if (!selectedDate) {
 			return;
 		};
 
-		const newDateValue = U.Date.timestamp(selectedDate.y, selectedDate.m, selectedDate.d, 12) + daysDelta * 86400;
-		const newCalendarDate = U.Date.getCalendarDateParam(newDateValue);
+		const newValue = U.Date.timestamp(selectedDate.y, selectedDate.m, selectedDate.d, 12) + daysDelta * 86400;
+		const newDate = U.Date.getCalendarDateParam(newValue);
+		const hasAnotherMonth = newDate.m != m;
 
-		const hasAnotherMonth = newCalendarDate.m != currentMonth;
 		if (hasAnotherMonth) {
-			this.setValue(newDateValue, false, false);
+			this.setValue(newValue, false, false);
 		};
 
-		this.setState({ selectedDate: newCalendarDate });
-	};
-
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-		const { m, y } = U.Date.getCalendarDateParam(value);
-
-		this.refMonth.setValue(m);
-		this.refYear.setValue(y);
+		this.setState({ selectedDate: newDate });
 	};
 
 	initDotMap () {
@@ -265,10 +260,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	onClick = (e: any, item: any) => {
 		e.stopPropagation();
 
-		this.setOrOpenDate(item);
-	};
+		if (!item) {
+			return;
+		};
 
-	setOrOpenDate = (item: any) => {
 		const { param } = this.props;
 		const { data } = param;
 		const { canEdit, relationKey } = data;
@@ -349,6 +344,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		};
 
 		return U.Date.timestamp(nY, nM, 1);
+	};
+
+	compare = (a: any, b: any) => {
+		return a && b && (a.d == b.d) && (a.m == b.m) && (a.y == b.y);
 	};
 
 });

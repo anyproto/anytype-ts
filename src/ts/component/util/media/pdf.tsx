@@ -35,7 +35,9 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	const [ width, setWidth ] = useState(0);
 	const nodeRef = useRef(null);
 	const frame = useRef(0);
-	const resizeObserver = new ResizeObserver(() => resize());
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
 	const options = { 
 		isEvalSupported: false, 
 		cMapUrl: U.Common.fixAsarPath('./cmaps/'),
@@ -67,7 +69,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 			raf.cancel(frame.current);
 
 			if (nodeRef.current) {
-				resizeObserver.unobserve(nodeRef.current);
+				resizeObserver.disconnect();
 			};
 		};
 	});

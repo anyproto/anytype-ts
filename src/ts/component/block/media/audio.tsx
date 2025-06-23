@@ -157,9 +157,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 			e.preventDefault();
 			e.stopPropagation();
 
-			if (this.refPlayer) {
-				this.refPlayer.onPlay();
-			};
+			this.refPlayer?.onPlay();
 			ret = true;
 		});
 

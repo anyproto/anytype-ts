@@ -5,6 +5,7 @@ import { Loader, IconObject, Cover, Icon, ObjectName } from 'Component';
 import { I, C, S, U, J, Action, translate } from 'Lib';
 
 interface Props {
+	id?: string;
 	rootId: string;
 	size: I.PreviewSize;
 	className?: string;
@@ -18,8 +19,10 @@ interface Props {
 };
 
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
+const TRACE_ID = 'preview';
 
 const PreviewObject = observer(forwardRef<{}, Props>(({
+	id = '',
 	rootId = '',
 	size = I.PreviewSize.Small,
 	className = '',
@@ -34,7 +37,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 	const nodeRef = useRef(null);
 	const idRef = useRef('');
-	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 
 	let n = 0;
 	let c = 0;
@@ -298,19 +301,18 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const load = () => {
 		const contextId = getRootId();
 
-		if (isLoading || (idRef.current == rootId)) {
+		if (idRef.current == rootId) {
 			return;
 		};
 
 		idRef.current = rootId;
-		setIsLoading(true);
 
-		C.ObjectShow(rootId, 'preview', U.Router.getRouteSpaceId(), () => {
-			setIsLoading(false);
-
+		C.ObjectShow(rootId, TRACE_ID, U.Router.getRouteSpaceId(), () => {
 			if (setObject) {
 				setObject(S.Detail.get(contextId, rootId, []));
 			};
+
+			setDummy(dummy + 1);
 		});
 	};
 
@@ -326,7 +328,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	};
 
 	const getRootId = () => {
-		return [ rootId, 'preview' ].join('-');
+		return [ rootId, TRACE_ID ].join('-');
 	};
 
 	const update = () => {
@@ -339,10 +341,10 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const object = S.Detail.get(contextId, rootId);
 	const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
 	const childBlocks = S.Block.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
-	const isTask = U.Object.isTaskLayout(object.layout);
-	const isBookmark = U.Object.isBookmarkLayout(object.layou);
+	const isTask = U.Object.isTaskLayout(check.layout);
+	const isBookmark = U.Object.isBookmarkLayout(check.layou);
 	const cn = [ 'previewObject' , check.className, className ];
-	const withName = !U.Object.isNoteLayout(object.layout);
+	const withName = !U.Object.isNoteLayout(check.layout);
 	const withIcon = check.withIcon || isTask || isBookmark;
 
 	switch (size) {
@@ -376,6 +378,66 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		};
 	};
 
+	let content = null;
+	let heading = (
+		<>
+			{withIcon ? <IconObject size={iconSize} object={object} /> : ''}
+			{withName ? <ObjectName object={object} /> : ''}
+		</>
+	);
+
+	if (isTask || isBookmark) {
+		heading = (
+			<div className="flex">
+				{heading}
+			</div>
+		);
+	};
+
+	if (!object._empty_) {
+		content = (
+			<>
+				{object.templateIsBundled ? <Icon className="logo" tooltipParam={{ text: translate('previewObjectTemplateIsBundled') }} /> : ''}
+
+				{(coverType != I.CoverType.None) && coverId ? (
+					<Cover 
+						type={coverType} 
+						id={coverId} 
+						image={coverId} 
+						className={coverId} 
+						x={coverX} 
+						y={coverY} 
+						scale={coverScale} 
+						withScale={true} 
+					/>
+				) : ''}
+
+				<div className="heading">
+					{heading}
+					<div className="featured" />
+				</div>
+
+				<div className="blocks">
+					{childBlocks.map((child: any, i: number) => {
+						const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+						if (i == 0) {
+							cn.push('first');
+						};
+
+						if (i == childBlocks.length - 1) {
+							cn.push('last');
+						};
+
+						n++;
+						n = checkNumber(child, n);
+						return <Block key={child.id} className={cn.join(' ')} {...child} />;
+					})}
+				</div>
+			</>
+		);
+	};
+
 	useEffect(() => {
 		load();
 		rebind();
@@ -400,64 +462,24 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 	return (
 		<div
+			id={id}
 			ref={nodeRef}
 			className={cn.join(' ')}
 			onMouseEnter={onMouseEnterHandler}
 			onMouseLeave={onMouseLeaveHandler}
 		>
-			{isLoading ? <Loader /> : (
-				<>
-					{onMore ? (
-						<div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}>
-							<Icon />
-						</div>
-					) : ''}
+			{onMore ? (
+				<div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}>
+					<Icon />
+				</div>
+			) : ''}
 
-					<div onClick={onClick} onContextMenu={onContextMenu}>
-						<div className="scroller">
-							{object.templateIsBundled ? <Icon className="logo" tooltipParam={{ text: translate('previewObjectTemplateIsBundled') }} /> : ''}
-
-							{(coverType != I.CoverType.None) && coverId ? (
-								<Cover 
-									type={coverType} 
-									id={coverId} 
-									image={coverId} 
-									className={coverId} 
-									x={coverX} 
-									y={coverY} 
-									scale={coverScale} 
-									withScale={true} 
-								/>
-							) : ''}
-
-							<div className="heading">
-								{withIcon ? <IconObject size={iconSize} object={object} /> : ''}
-								{withName ? <ObjectName object={object} /> : ''}
-								<div className="featured" />
-							</div>
-
-							<div className="blocks">
-								{childBlocks.map((child: any, i: number) => {
-									const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
-
-									if (i == 0) {
-										cn.push('first');
-									};
-
-									if (i == childBlocks.length - 1) {
-										cn.push('last');
-									};
-
-									n++;
-									n = checkNumber(child, n);
-									return <Block key={child.id} className={cn.join(' ')} {...child} />;
-								})}
-							</div>
-						</div>
-						<div className="border" />
-					</div>
-				</>
-			)}
+			<div onClick={onClick} onContextMenu={onContextMenu}>
+				<div className="scroller">
+					{content}
+				</div>
+				<div className="border" />
+			</div>
 		</div>
 	);
 }));

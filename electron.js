@@ -13,6 +13,10 @@ const Store = require('electron-store');
 const suffix = app.isPackaged ? '' : 'dev';
 const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
 
+// gRPC DevTools extension ID
+const GRPC_DEVTOOLS_ID = 'fohdnlaeecihjiendkfhifhlgldpeopm';
+const { installExtension } = require('@tomjs/electron-devtools-installer');
+
 // Fix notifications app name
 if (is.windows) {
     app.setAppUserModelId(app.name);
@@ -30,6 +34,10 @@ const Util = require('./electron/js/util.js');
 const Cors = require('./electron/json/cors.json');
 const csp = [];
 
+let deeplinkingUrl = '';
+let waitLibraryPromise = null;
+let mainWindow = null;
+
 MenuManager.store = store;
 
 for (let i in Cors) {
@@ -42,6 +50,10 @@ app.removeAsDefaultProtocolClient(protocol);
 if (process.defaultApp) {
 	if (process.argv.length >= 2) {
 		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
+
+		if (!is.macos) {
+			deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
+		};
 	};
 } else {
 	app.setAsDefaultProtocolClient(protocol);
@@ -66,17 +78,13 @@ ipcMain.on('storeDelete', (e, key) => {
 	e.returnValue = store.delete(key);
 });
 
-let deeplinkingUrl = '';
-let waitLibraryPromise = null;
-let mainWindow = null;
-
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
 	Api.exit(mainWindow, '', false);
 	return;
 };
 
-if (app.isPackaged && !app.requestSingleInstanceLock()) {
+if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '' ,false);
 	return;
 };
@@ -159,7 +167,7 @@ function createWindow () {
 
 	installNativeMessagingHost();
 
-	ipcMain.removeHandler('Api');
+	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e, id, cmd, args) => {
 		const Api = require('./electron/js/api.js');
 		const win = BrowserWindow.fromId(id);
@@ -178,7 +186,7 @@ function createWindow () {
 	});
 };
 
-app.on('ready', () => {
+app.on('ready', async () => {
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
 			responseHeaders: {
@@ -187,6 +195,22 @@ app.on('ready', () => {
 			}
 		});
 	});
+
+	// Load gRPC DevTools extension in development mode
+	if (is.development) {
+		try {
+			// Install the extension using electron-devtools-installer
+			await installExtension(GRPC_DEVTOOLS_ID, {
+				loadExtensionOptions: {
+					allowFileAccess: true
+				}
+			});
+
+			console.log(`✅ gRPC DevTools extension installed`);
+		} catch (e) {
+			console.error('❌ Failed to install gRPC DevTools extension:', e.message);
+		};
+	};
 
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });
@@ -209,9 +233,16 @@ app.on('second-instance', (event, argv) => {
 	if (mainWindow.isMinimized()) {
 		mainWindow.restore();
 	};
+	if (!mainWindow.isVisible()) {
+		mainWindow.show();
+	};
 
-	mainWindow.show();
 	mainWindow.focus();
+
+	// Ensure focus is properly stolen on macOS
+	if (is.macos) {
+		app.focus({ steal: true });
+	};
 });
 
 app.on('before-quit', e => {
@@ -234,8 +265,23 @@ app.on('open-url', (e, url) => {
 
 	deeplinkingUrl = url;
 
-	if (mainWindow) {
-		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+	if (!mainWindow) {
+		return;
+	};
+
+	Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+
+	if (mainWindow.isMinimized()) {
+		mainWindow.restore();
+	};
+
+	if (!mainWindow.isVisible()) {
 		mainWindow.show();
+	};
+
+	mainWindow.focus();
+
+	if (is.macos) {
+		app.focus({ steal: true });
 	};
 });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
-import { I, S, U, translate, keyboard, Action } from 'Lib';
+import { I, S, U, J, translate, keyboard, Action } from 'Lib';
 
 interface State {
 	error: string;
@@ -25,17 +25,12 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 	render () {
 		this.init();
 
-		const { config } = S.Common;
 		const { error } = this.state;
 		const { delimiter, delimiters } = this.delimiterOptions();
-
 		const modeOptions: any[] = [ 
 			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
+			{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') }
 		];
-
-		if (config.experimental) {
-			modeOptions.unshift({ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') });
-		};
 
 		return (
 			<div>
@@ -108,7 +103,7 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 				</div>
 				
 				<div className="buttons">
-					<Button className="c36" text={translate('popupSettingsImportOk')} onClick={this.onImport} />
+					<Button className="c36" text={translate('popupSettingsImportData')} onClick={this.onImport} />
 				</div>
 
 				<Error text={error} />
@@ -145,8 +140,8 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 
 			const { delimiter, delimiters } = this.delimiterOptions();
 
-			this.refDelimiter.setOptions(delimiters);
-			this.refDelimiter.setValue(delimiter?.id);
+			this.refDelimiter?.setOptions(delimiters);
+			this.refDelimiter?.setValue(delimiter?.id);
 
 			S.Menu.close('select');
 		});
@@ -187,7 +182,7 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 	};
 
 	onImport () {
-		Action.import(I.ImportType.Csv, [ 'csv', 'zip' ], this.data, (message: any) => {
+		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], this.data, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
