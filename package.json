@@ -104,7 +104,6 @@
 		"@types/react-transition-group": "^4.4.12",
 		"@viz-js/viz": "^3.2.4",
 		"amplitude-js": "^5.11.0",
-		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
 		"check-disk-space": "^3.4.0",
 		"d3": "^7.0.1",

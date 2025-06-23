@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
@@ -14,7 +14,6 @@ const HEIGHT_DIV = 16;
 
 const MenuObjectValues = observer(class MenuObjectValues extends React.Component<I.Menu> {
 	
-	_isMounted = false;
 	node: any = null;
 	n = -1;
 	top = 0;
@@ -153,7 +152,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	componentDidMount () {
 		const items = this.getItems();
 
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 
@@ -175,7 +173,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 	};
 
