@@ -31,8 +31,8 @@ export default {
 		},
 
 		Publish: {
-			PAGE_SIZE_EXCEEDED: 	103,
-            URL_ALREADY_TAKEN:     409,
+			PAGE_SIZE_EXCEEDED:		 103,
+            URL_ALREADY_TAKEN:		 409,
 		},
 
 		SpaceInviteView: {
