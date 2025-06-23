@@ -425,6 +425,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			) : ''}
 		</div>
 	);
+
 }));
 
 export default MenuSort;
