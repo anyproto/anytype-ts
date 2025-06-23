@@ -500,7 +500,7 @@
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
 
-	"pageMainRelationPropertyType": "Property Type",
+	"pageMainRelationPropertyType": "Property format",
 
 	"pageMainMediaNotFound": "File not found",
 
@@ -1605,6 +1605,7 @@
 	"menuBlockStyleTurnFile": "Turn into file",
 
 	"menuDataviewOptionListCreate": "Create or select an option",
+	"menuDataviewOptionCreatePlaceholder": "New option",
 	"menuDataviewOptionEditPlaceholder": "Option name",
 	"menuDataviewOptionEditDelete": "Delete option",
 	"menuDataviewOptionEditCreate": "Create option",

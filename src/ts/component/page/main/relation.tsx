@@ -108,7 +108,7 @@ Name, Object type, Creation date, Value
 		};
 
 		if (options && canAdd && !isReadonlyRelation) {
-			const add = <Icon key="optionAdd" className="add withBackground" onClick={this.onOptionAdd} />;
+			const add = <Icon key="optionAdd" className="add" onClick={this.onOptionAdd} />;
 
 			if (withMore) {
 				options.unshift(add);
