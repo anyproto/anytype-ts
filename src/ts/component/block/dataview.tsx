@@ -930,8 +930,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!view.isGrid() && Relation.isUrl(relation.format)) {
-			Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
-			return;
+			// Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
+			// return;
 		};
 
 		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing()) {

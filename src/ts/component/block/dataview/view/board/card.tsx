@@ -60,7 +60,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								onClick={e => this.onCellClick(e, relation)}
 								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								withName={true}
-								inplaceEditing={true}
+								noInplace={true}
 							/>
 						);
 					})}

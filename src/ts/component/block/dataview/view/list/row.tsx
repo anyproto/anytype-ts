@@ -53,7 +53,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							arrayLimit={2}
 							iconSize={relation.relationKey == 'name' ? 24 : 18}
 							withName={true}
-							inplaceEditing={true}
+							noInplace={true}
 						/>
 					);
 				})}

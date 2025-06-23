@@ -65,7 +65,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
 								withName={true}
-								inplaceEditing={true}
+								noInplace={true}
 							/>
 						);
 					})}

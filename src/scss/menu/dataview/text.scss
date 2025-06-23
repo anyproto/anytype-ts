@@ -18,7 +18,7 @@
 		#placeholder { padding: 13px 14px; }
 	}
 
-	.menu.menuDataviewText.isInline {
+	.menu.menuDataviewText.isInline:not(.fromFeatured) {
 		#input, #placeholder { padding: 9px 14px; }
 	}
 
@@ -31,7 +31,7 @@
 	}
 
 	.menu.menuDataviewText.fromFeatured {
-		.content { padding: 8px 14px; }
+		.content { padding: 8px 14px; height: 100%; }
 	}
 
 	.menu.menuDataviewText.fromSidebar {

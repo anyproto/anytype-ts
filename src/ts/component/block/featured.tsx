@@ -132,7 +132,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										textLimit={150}
 										onMouseLeave={this.onMouseLeave}
 										withName={true}
-										inplaceEditing={true}
+										noInplace={true}
+										onCellChange={this.onCellChange}
 									/>
 									<div className="bullet" />
 								</span>
@@ -641,6 +642,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (ref) {
 			ref.onClick(e);
 		};
+	};
+
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
+		const relation = S.Record.getRelationByKey(relationKey);
+
+		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
+		analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
 	};
 
 	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
