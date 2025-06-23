@@ -58,6 +58,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					canEnterName = false;
 					break;
 				};
+
 				case I.PaymentMethod.Crypto: {
 					platformText = translate('popupMembershipPaidByCrypto');
 					withContactButton = true;
@@ -143,7 +144,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 							) : (
 								<>
 									<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-									<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+									{membership.status != I.MembershipStatus.Active ? (
+										<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+									) : ''}
 								</>
 							)}
 						</div>
