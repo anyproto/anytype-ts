@@ -638,7 +638,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onCellClick (e: any, id: string) {
 		const ref = this.cellRefs.get(id);
 
-		ref.onClick(e);
+		if (ref) {
+			ref.onClick(e);
+		};
 	};
 
 	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
