@@ -1,8 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
