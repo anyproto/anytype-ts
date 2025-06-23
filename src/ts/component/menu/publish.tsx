@@ -66,7 +66,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					const limit = !tier.price ? 10 : 100;
 
 					setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
-				} else {
+				} else if (message.error.code == J.Error.Code.Publish.URL_ALREADY_TAKEN) {
+                    setError(translate('errorPublishingCreate409'));
+                }
+                else {
 					setError(message.error.description);
 				}
 				return;
