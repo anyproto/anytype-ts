@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J } from 'Lib';
+import { I, S, U, J, sidebar } from 'Lib';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -13,7 +13,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const { rootId, isPopup } = props;
 	const nodeRef = useRef(null);
 	const tree = S.Block.getTableOfContents(rootId);
-	const max = tree.reduce((res, current) => Math.max(res, current.block.getLength()), 0);
+	const blockRef = useRef('');
 
 	const rebind = () => {
 		unbind();
@@ -28,12 +28,17 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		const node = $(nodeRef.current);
 
 		node.find('.item.active').removeClass('active');
+
 		if (id) {
 			node.find(`#item-${id}`).addClass('active');
+			blockRef.current = id;
+
+			S.Menu.updateData('tableOfContents', { blockId: id });
+			sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
 		};
 	};
 
-	const onClick = () => {
+	const onMouseEnter = () => {
 		const node = $(nodeRef.current);
 
 		S.Menu.open('tableOfContents', {
@@ -44,9 +49,11 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			offsetX: node.width() + 4,
 			noFlipX: true,
 			noFlipY: true,
+			isSub: true,
 			data: {
 				rootId,
 				isPopup,
+				blockId: blockRef.current,
 			}
 		});
 	};
@@ -85,18 +92,18 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		setBlock,
 	}));
 
-	if (!tree.length || !max) {
+	if (tree.length < 2) {
 		return null;
 	};
 
 	return (
-		<div ref={nodeRef} className="tableOfContents" onClick={onClick}>
+		<div ref={nodeRef} className="tableOfContents" onMouseEnter={onMouseEnter}>
 			{tree.map(item => (
 				<div 
 					id={`item-${item.id}`}
 					className="item" 
 					key={item.id} 
-					style={{ width: `${item.block.getLength() / max * 100}%` }}
+					style={{ width: `${100 / (item.depth + 1)}%` }}
 				/>
 			))}
 		</div>

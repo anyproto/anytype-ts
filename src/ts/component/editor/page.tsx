@@ -977,9 +977,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (!this.menuCheck()) {
 			// Expand selection
-			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-				this.onShiftArrowBlock(e, range, length, pressed);
-			});
+			if (!isInsideTable) {
+				keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+					this.onShiftArrowBlock(e, range, length, pressed);
+				});
+			};
 
 			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
 				if (block.isTextToggle()) {
@@ -1800,7 +1802,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const headers = S.Block.getBlocks(rootId, it => it.isTextHeader());
-		const ch = container.height();
+		const co = (isPopup ? container.offset().top : 0) + J.Size.header;
 
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
@@ -1815,13 +1817,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		for (let i = 0; i < headers.length; ++i) {
 			const block = headers[i];
 			const el = $(`#block-${block.id}`);
+
 			if (!el.length) {
 				continue;
 			};
 
-			const offset = el.offset().top + el.outerHeight();
+			const offset = el.offset().top - co;
+			const check = isPopup ? 0 : top;
 
-			if ((offset >= top) && (offset <= top + ch)) {
+			if (offset >= check) {
 				blockId = block.id;
 				break;
 			};

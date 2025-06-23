@@ -729,7 +729,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		messages.forEach((it: any) => {
 			const st = this.getMessageScrollOffset(it.id);
 
-			if ((st > min) && (st < max)) {
+			if ((st >= min) && (st <= max)) {
 				ret.push(it);
 			};
 		});

@@ -5,6 +5,7 @@ const path = require('path');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 const si = require('systeminformation');
+const checkDiskSpace = require('check-disk-space').default;
 
 const MenuManager = require('./menu.js');
 const ConfigManager = require('./config.js');
@@ -285,6 +286,10 @@ class Api {
 		win.focus();
 		win.setAlwaysOnTop(true);
 		win.setAlwaysOnTop(false);
+	};
+
+	async checkDiskSpace (win) {
+		return await checkDiskSpace(app.getPath('userData'));
 	};
 
 };

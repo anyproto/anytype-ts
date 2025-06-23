@@ -205,6 +205,7 @@ export interface SidebarPageComponent {
 	details?: any;
 	noPreview?: boolean;
 	previous?: any;
+	blockId?: string;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {

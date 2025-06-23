@@ -1,9 +1,10 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
-import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -19,7 +20,7 @@ interface Props extends I.WidgetViewComponent {
 
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, parent, block, style, isCompact, isEditing, index, isPreview, isSection, hideIcon, onContext } = props;
+	const { subId, id, parent, block, isCompact, isEditing, isPreview, isSection, hideIcon, onContext } = props;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
@@ -27,9 +28,16 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const canDrag = isPreview && (block.getTargetObjectId() == J.Constant.widgetId.favorite);
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !canDrag });
 	const hasMore = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
+	const moreRef = useRef(null);
 	const cn = [ 'item' ];
+	const style = {
+		...props.style,
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
 
 	if (canDrag) {
 		cn.push('canDrag');
@@ -39,7 +47,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isHidden');
 	};
 
-	const onClick = (e: React.MouseEvent) => {
+	const onClick = (e: MouseEvent) => {
 		if (e.button) {
 			return;
 		};
@@ -51,14 +59,13 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
 	};
 
-	const onContextHandler = (e: React.SyntheticEvent, withElement: boolean) => {
+	const onContextHandler = (e: SyntheticEvent, withElement: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const node = $(nodeRef.current);
-		const element = node.find('.icon.more');
 
-		onContext({ node, element, withElement, subId, objectId: id });
+		onContext({ node, element: $(moreRef.current), withElement, subId, objectId: id });
 	};
 
 	const resize = () => {
@@ -82,10 +89,6 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			</div>
 		);
 	};
-
-	const Handle = SortableHandle(() => (
-		<Icon className="dnd" />
-	));
 
 	let descr = null;
 	let more = null;
@@ -117,7 +120,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 	
 	let inner = (
@@ -138,7 +141,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (canDrag) {
 		inner = (
 			<>
-				<Handle />
+				<Icon className="dnd" />
 				{inner}
 			</>
 		);
@@ -159,24 +162,22 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	const content = (
+	return (
 		<div
-			ref={nodeRef}
 			className={cn.join(' ')}
 			key={object.id}
 			onContextMenu={e => onContextHandler(e, false)}
+			ref={ref => {
+				nodeRef.current = ref;
+				setNodeRef(ref);
+			}}
+			{...attributes}
+			{...listeners}
 			style={style}
 		>
 			{inner}
 		</div>
 	);
-
-	if (canDrag) {
-		const Element = SortableElement(() => content);
-		return <Element index={index} />;
-	} else {
-		return content;
-	};
 
 }));
 

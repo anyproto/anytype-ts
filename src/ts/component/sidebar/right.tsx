@@ -20,6 +20,7 @@ interface State {
 	details: any;
 	readonly: boolean;
 	noPreview: boolean;
+	blockId: string;
 	previous: State;
 };
 
@@ -42,6 +43,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		readonly: false,
 		noPreview: false,
 		previous: null,
+		blockId: '',
 	});
 
 	const { page = '' } = state;

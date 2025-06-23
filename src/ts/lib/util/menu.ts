@@ -233,7 +233,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of actions.
 	 */
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
+		const { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
@@ -1407,7 +1407,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
-			type: I.MenuType.Horizontal,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,

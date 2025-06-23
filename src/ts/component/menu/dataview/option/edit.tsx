@@ -14,22 +14,25 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
 		const sections = this.getSections();
 
-		const Color = (item: any) => (
-			<div
-				id={`item-${item.id}`}
-				className={[
-					'item',
-					'color',
-					`color-${item.className}`,
-					this.color == item.value ? 'selected' : ''
-				].join(' ')}
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)}
-			/>
-		);
+		const Color = (item: any) => {
+			const cn = [ 'item', 'color', `color-${item.className}` ];
+
+			if (this.color == item.value) {
+				cn.push('selected');
+			};
+
+			return (
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+				/>
+			);
+		};
 
 		const Section = (item: any) => (
 			<div className={[ 'section', (item.className ? item.className : '') ].join(' ')}>
@@ -56,11 +59,10 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			<div>
 				<Filter
 					ref={ref => this.refName = ref}
-					placeholder={translate('menuDataviewOptionEditPlaceholder')}
-					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'outlined textColor-' + this.color}
+					placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
+					className="outlined"
 					value={option.name}
-					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
+					onKeyUp={(e: any, v: string) => this.onKeyUp(e, v)}
 					onClear={() => this.onClear()}
 				/>
 
@@ -81,9 +83,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		this.forceUpdate();
 
 		if (isNew) {
-			window.setTimeout(() => {
-				$(`#${getId()} #item-create`).addClass('disabled');
-			}, J.Constant.delay.menu);
+			window.setTimeout(() => $(`#${getId()} #item-create`).addClass('disabled'), J.Constant.delay.menu);
 		};
 	};
 

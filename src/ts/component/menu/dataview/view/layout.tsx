@@ -470,7 +470,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 					const cb = (message: any) => {
 						this.param[id] = relation.relationKey;
 						this.save();
-						this.menuContext.close();
+						this.menuContext?.close();
 
 						if (onChange) {
 							onChange(message);

@@ -68,7 +68,20 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 						I.SurveyType.Pmf,
 					].forEach(it => Survey.check(it));
 
-					const cb = () => {
+					const cb1 = () => {
+						U.Data.getMembershipStatus(membership => {
+							if (membership.status == I.MembershipStatus.Finalization) {
+								S.Popup.open('membershipFinalization', { 
+									onClose: cb2,
+									data: { tier: membership.tier },
+								});
+							} else {
+								cb2();
+							};
+						});
+					};
+
+					const cb2 = () => {
 						if (!primitivesOnboarding) {
 							S.Popup.open('onboarding', {
 								onClose: () => {
@@ -82,16 +95,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 						};
 					};
 
-					U.Data.getMembershipStatus(membership => {
-						if (membership.status == I.MembershipStatus.Finalization) {
-							S.Popup.open('membershipFinalization', { 
-								onClose: cb,
-								data: { tier: membership.tier },
-							});
-						} else {
-							cb();
-						};
-					});
+					Action.checkDiskSpace(cb1);
 				},
 			};
 

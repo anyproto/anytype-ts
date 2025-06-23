@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
 const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
 
@@ -80,7 +80,10 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			const spaceId = Storage.get('spaceId');
 			const routeParam = { 
 				replace: true, 
-				onFadeIn: () => S.Common.getRef('mainAnimation')?.destroy(),
+				onFadeIn: () => {
+					S.Common.getRef('mainAnimation')?.destroy();
+					Action.checkDiskSpace();
+				},
 			};
 
 			if (spaceId) {

@@ -1208,7 +1208,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { rootId } = this.props;
 
-		Action.move(rootId, rootId, targetId, [ id ], position);
+		Action.move(rootId, rootId, targetId, [ id ], position, () => {
+			this.frameRemove([ I.BlockPosition.None ]);
+		});
 
 		$('body').removeClass('grab');
 		keyboard.disableSelection(false);

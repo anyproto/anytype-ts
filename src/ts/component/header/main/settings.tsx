@@ -8,17 +8,19 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const { account } = S.Auth;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
-	const anyName = Relation.getStringValue(participant?.globalName);
+	const globalName = Relation.getStringValue(participant?.globalName);
 
 	const onIdentity = () => {
-		if (!anyName) {
-			S.Menu.open('identity', {
-				element: '#settings-identity-badge',
-				horizontal: I.MenuDirection.Center,
-			});
-
-			analytics.event('ClickUpgradePlanTooltip', { type: 'identity' });
+		if (globalName) {
+			return;
 		};
+
+		S.Menu.open('identity', {
+			element: '#settings-identity-badge',
+			horizontal: I.MenuDirection.Center,
+		});
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'identity' });
 	};
 
 	const renderIdentity = () => {
@@ -32,8 +34,8 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 		return (
 			<div id="settings-identity-badge" className="identity" onClick={onIdentity}>
-				<Icon className={anyName ? 'anyName' : 'info'} />
-				<Label text={anyName ? anyName : U.Common.shortMask(account.id, 6)} />
+				<Icon className={globalName ? 'anyName' : 'info'} />
+				<Label text={globalName ? globalName : U.Common.shortMask(account.id, 6)} />
 			</div>
 		);
 	};

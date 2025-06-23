@@ -63,6 +63,7 @@ export interface Menu {
 	getId?(): string;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;
+	getMaxHeight?(isPopup: boolean): number;
 	position? (): void;
 	close? (callBack?: () => void): void;
 };

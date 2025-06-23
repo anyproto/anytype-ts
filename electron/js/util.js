@@ -95,7 +95,6 @@ class Util {
 	};
 
 	dataPath () {
-		const { channel } = ConfigManager.config;
 		const envPath = process.env.DATA_PATH;
 		const dataPath = [];
 

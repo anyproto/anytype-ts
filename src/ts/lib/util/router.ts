@@ -190,8 +190,6 @@ class UtilRouter {
 			return;
 		};
 
-		const withChat = U.Object.isAllowedChat();
-
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
 		sidebar.rightPanelToggle(false, false);
@@ -205,7 +203,7 @@ class UtilRouter {
 
 		this.isOpening = true;
 
-		C.WorkspaceOpen(id, withChat, (message: any) => {
+		C.WorkspaceOpen(id, (message: any) => {
 			this.isOpening = false;
 
 			if (message.error.code) {
