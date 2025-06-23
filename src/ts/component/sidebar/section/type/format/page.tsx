@@ -147,6 +147,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(class SidebarSectionTypeLayo
 		v = Number(v) || 0;
 		return Math.floor((1 + v) * 100).toString();
 	};
+
 });
 
 export default SidebarSectionTypeLayoutFormatPage;
