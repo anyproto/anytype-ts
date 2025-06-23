@@ -122,6 +122,7 @@
 	"commonExport": "Export",
 	"commonTurnIntoObject": "Turn into Object",
 	"commonUpdated": "Updated",
+	"commonCreated": "Created",
 	"commonUndo": "Undo",
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
