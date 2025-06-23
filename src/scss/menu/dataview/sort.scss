@@ -9,7 +9,7 @@
 
 		.item { padding: 4px 10px; white-space: nowrap; display: flex; align-items: center; }
 		.item {
-			.iconObject { margin-right: 10px; }
+			.iconObject { margin-right: 10px; background-color: var(--color-shape-highlight-medium); }
 			
 			.select { border: 0px; padding: 0px; display: block; padding-right: 20px; }
 			.select:hover, .select.isFocused { background: none; }
