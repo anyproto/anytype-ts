@@ -136,7 +136,6 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
 
-
 		S.Record.viewsSort(rootId, blockId, arrayMove(ids, oldIndex, newIndex));
 		C.BlockDataviewViewSetPosition(rootId, blockId, active.id, newIndex);
 		keyboard.disableSelection(false);
