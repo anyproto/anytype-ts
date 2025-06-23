@@ -9,7 +9,7 @@ const LIMIT = 20;
 
 const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setActive, close, onKeyDown, position, setHover } = props;
+	const { param, getId, setActive, close, onKeyDown, position, setHover, getMaxHeight } = props;
 	const { data } = param;
 	const { rootId, isPopup, blockId } = data;
 	const n = useRef(-1);
@@ -81,13 +81,13 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		/>
 	);
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT));
+		const offset = 58;
+		const height = Math.max(HEIGHT + offset, Math.min(getMaxHeight(isPopup), items.length * HEIGHT + offset));
 
 		obj.css({ height });
-		position();
 	};
 
 	const items = getItems();
@@ -97,7 +97,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		return () => unbind();
 	}, []);
 
-	useEffect(() => resize());
+	useEffect(() => beforePosition());
 
 	useEffect(() => {
 		setActive(items.find(it => it.id == blockId), true);
@@ -106,6 +106,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
