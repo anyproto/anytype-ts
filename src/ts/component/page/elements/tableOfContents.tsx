@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J } from 'Lib';
+import { I, S, U, J, sidebar } from 'Lib';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -28,11 +28,13 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		const node = $(nodeRef.current);
 
 		node.find('.item.active').removeClass('active');
+
 		if (id) {
 			node.find(`#item-${id}`).addClass('active');
 			blockRef.current = id;
 
 			S.Menu.updateData('tableOfContents', { blockId: id });
+			sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
 		};
 	};
 
