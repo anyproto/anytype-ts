@@ -1231,6 +1231,9 @@
 	"popupConfirmTypeLayoutResetTitle": "Reset layout for all objects?",
 	"popupConfirmTypeLayoutResetText": "This will reset layout type, alignment, and featured properties for all objects of this type. This action cannot be undone.<br/>Are you sure?",
 
+	"popupConfirmDiskSpaceTitle": "Make Space, Save Your Work",
+	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",

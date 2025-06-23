@@ -106,6 +106,7 @@
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
+		"check-disk-space": "^3.4.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
@@ -339,6 +340,10 @@
 			{
 				"from": "node_modules/builder-util-runtime",
 				"to": "node_modules/builder-util-runtime"
+			},
+			{
+				"from": "node_modules/check-disk-space",
+				"to": "node_modules/check-disk-space"
 			},
 			{
 				"from": "node_modules/concat-map",
