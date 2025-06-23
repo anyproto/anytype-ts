@@ -5,31 +5,35 @@ import { I, S, U } from 'Lib';
 
 const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
-	const { rootId, isPopup } = props;
+	const { rootId, isPopup, blockId } = props;
 	const [ dummy, setDummy ] = useState(0);
 
 	const forceUpdate = () => {
 		setDummy(dummy + 1);
 	};
 
-	const onMouseEnter = (e: any, item: any) => {
-	};
-
 	const onClick = (e: any, item: any) => {
 		U.Common.scrollToHeader(item.id, isPopup);
 	};
 
-	const Item = (item: any) => (
-		<div 
-			id={`item-${item.id}`}
-			className="item" 
-			onClick={e => onClick(e, item)}
-			onMouseEnter={e => onMouseEnter(e, item)}
-			style={{ paddingLeft: 8 + item.depth * 16 }}
-		>
-			<Label text={U.Common.getLatex(item.text)} />
-		</div>
-	);
+	const Item = (item: any) => {
+		const cn = [ 'item' ];
+
+		if (item.id == blockId) {
+			cn.push('active');
+		};
+
+		return (
+			<div 
+				id={`item-${item.id}`}
+				className={cn.join(' ')}
+				onClick={e => onClick(e, item)}
+				style={{ paddingLeft: 8 + item.depth * 16 }}
+			>
+				<Label text={U.Common.getLatex(item.text)} />
+			</div>
+		);
+	};
 
 	const getItems = () => {
 		return S.Block.getTableOfContents(rootId);

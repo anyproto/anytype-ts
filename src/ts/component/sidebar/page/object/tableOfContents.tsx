@@ -26,7 +26,6 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 					{...props}
 					id="tableOfContents"
 					component="object/tableOfContents"
-					rootId={rootId}
 					object={object}
 				/>
 			</div>
