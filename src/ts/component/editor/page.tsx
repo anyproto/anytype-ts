@@ -977,9 +977,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (!this.menuCheck()) {
 			// Expand selection
-			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-				this.onShiftArrowBlock(e, range, length, pressed);
-			});
+			if (!isInsideTable) {
+				keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+					this.onShiftArrowBlock(e, range, length, pressed);
+				});
+			};
 
 			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
 				if (block.isTextToggle()) {
