@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Input, Button, Loader, Icon, Error } from 'Component';
+import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -10,6 +10,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ preview, setPreview ] = useState(null);
 	const [ error, setError ] = useState('');
+	const [ withContent, setWithContent ] = useState(true);
 	const { data } = param;
 	const { value } = data;
 	const cn = [ 'form' ];
@@ -42,7 +43,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		setIsLoading(true);
 
-		C.ObjectCreateFromUrl(details, S.Common.space, bookmark?.uniqueKey, value, true, bookmark?.defaultTemplateId, (message: any) => {
+		C.ObjectCreateFromUrl(details, S.Common.space, bookmark?.uniqueKey, value, withContent, bookmark?.defaultTemplateId, (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {
@@ -110,7 +111,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 			<div className="inputWrap">
 				<Icon className="link" />
-
 				<Input 
 					ref={inputRef} 
 					value={value} 
@@ -119,10 +119,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					onKeyDown={onChange}
 					onKeyUp={onChange}
 				/>
-
-				<div className="buttons">
-					<Button ref={buttonRef} type="input" color="blank" text={translate('commonCreate')} onClick={onSubmit} />
-				</div>
 			</div>
 
 			<Error text={error} />
@@ -136,6 +132,19 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					</div>
 				</div>
 			) : ''}
+
+			<div className="bottom">
+				<div className="side left">
+					<Switch
+						value={withContent}
+						onChange={(e: any, v: boolean) => setWithContent(v)}
+					/>
+					<Label text={translate('menuDataviewBookmarkCreateContent')} />
+				</div>
+				<div className="side right">
+					<Button ref={buttonRef} type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />
+				</div>
+			</div>
 		</form>
 	);
 

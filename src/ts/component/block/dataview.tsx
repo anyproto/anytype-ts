@@ -769,9 +769,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const menuParam = this.getMenuParam(e, dir);
 
-		S.Menu.open('dataviewCreateBookmark', {
+		U.Menu.onBookmarkMenu({
 			...menuParam,
-			type: I.MenuType.Horizontal,
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			offsetX: dir < 0 ? -24 : 0,
@@ -786,6 +785,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				},
 			},
 			...param,
+		}, (bookmark) => {
+			if (this.isCollection()) {
+				C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
+			};
 		});
 	};
 

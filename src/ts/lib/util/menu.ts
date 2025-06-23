@@ -1407,7 +1407,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
-			type: I.MenuType.Horizontal,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,

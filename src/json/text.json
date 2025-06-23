@@ -1624,6 +1624,8 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
+	"menuDataviewBookmarkCreateContent": "Include page content",
+
 	"menuObjectContextNoAvailableActions": "No available actions",
 	"menuObjectContextUnlinkFromCollection": "Unlink from Collection",
 	"menuObjectContextTryAgain": "Please try again",
