@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -164,7 +164,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
-
 		analytics.event('ShowDataviewRelation', { type: v ? 'True' : 'False', relationKey: item.relationKey, format: relation.format, objectType: object.type });
 	};
 
@@ -324,7 +323,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
-										<VList
+										<List
 											ref={listRef}
 											width={width}
 											height={height}

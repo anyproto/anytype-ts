@@ -5,7 +5,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
 import { I, C, S, U, keyboard, Relation, analytics, translate, Dataview } from 'Lib';
 
@@ -283,7 +283,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 								{({ onRowsRendered }) => (
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
-											<VList
+											<List
 												ref={listRef}
 												width={width}
 												height={height}

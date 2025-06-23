@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { I, S, J, keyboard, Action } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
@@ -196,7 +196,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
-										<VList
+										<List
 											ref={listRef}
 											width={width}
 											height={height}

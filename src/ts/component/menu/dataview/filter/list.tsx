@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -290,7 +290,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 								{({ onRowsRendered }) => (
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
-											<VList
+											<List
 												ref={listRef}
 												width={width}
 												height={height}
