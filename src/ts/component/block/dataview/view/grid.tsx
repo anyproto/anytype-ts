@@ -438,10 +438,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onSortEnd (result: any) {
+		const { active, over } = result;
+
+		if (!active || !over) {
+			return;
+		};
+
 		const { rootId, block, getView, getVisibleRelations } = this.props;
-		const { oldIndex, newIndex } = result;
 		const view = getView();
 		const relations = getVisibleRelations();
+		const ids = relations.map(it => it.relationKey);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
 
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
@@ -451,7 +459,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	loadMoreRows () {
-		const { rootId, block, loadData, getView, getLimit, getSubId } = this.props;
+		const { loadData, getView, getLimit, getSubId } = this.props;
 		const subId = getSubId();
 		const view = getView();
 		const limit = getLimit();
