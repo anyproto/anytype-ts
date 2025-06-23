@@ -519,8 +519,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	setEditing (isEditing: boolean) {
-		console.trace();
-
 		this.setState({ isEditing });
 
 		if (!isEditing) {
