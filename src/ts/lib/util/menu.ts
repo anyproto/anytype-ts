@@ -269,10 +269,6 @@ class UtilMenu {
 			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
 		};
 
-		if (hasLink || hasFile || hasBookmark) {
-			items.push({ id: 'deleteObject', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralObject'))}` });
-		};
-
 		return items.map(it => ({ ...it, isAction: true }));
 	};
 
