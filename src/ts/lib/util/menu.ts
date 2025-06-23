@@ -233,7 +233,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of actions.
 	 */
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
+		const { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
@@ -267,6 +267,10 @@ class UtilMenu {
 
 		if (hasFile || hasBookmark || hasDataview) {
 			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
+		};
+
+		if (hasLink || hasFile || hasBookmark) {
+			items.push({ id: 'deleteObject', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralObject'))}` });
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
