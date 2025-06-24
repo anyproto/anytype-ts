@@ -55,7 +55,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const maxIcons = 5;
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
-			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
+			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
 		];

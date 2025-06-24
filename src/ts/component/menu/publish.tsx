@@ -153,7 +153,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onUpgrade = () => {
 		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
+			{ 
+				onRouteChange: () => { 
+					S.Popup.open('membership', { data: { tier: I.TierType.Builder }}); 
+				}
+			},
 		);
 		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
@@ -213,7 +217,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className="simple"
 					text={translate('commonCopy')}
 					onClick={() => {
-						U.Common.copyToast(translate('commonLink'), `https://${url}`)
+						U.Common.copyToast(translate('commonLink'), `https://${url}`);
 						analytics.event('ClickShareObjectCopyUrl', { objectType: object.type });
 					}} 
 				/>

@@ -128,7 +128,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
-		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' }
+		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -578,7 +578,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(true, keyboard.isPopup(), 'type', { rootId })
+				sidebar.rightPanelToggle(true, keyboard.isPopup(), 'type', { rootId });
 				break;
 			};
 		};

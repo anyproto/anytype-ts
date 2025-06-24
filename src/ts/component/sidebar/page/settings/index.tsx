@@ -48,8 +48,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			if (item.isSection) {
 				return <ItemSection {...item} />;
 			};
+
 			if (item.isDiv) {
-				return <div />
+				return <div />;
 			};
 
 			const cn = [ 'item' ];
@@ -315,4 +316,4 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 });
 
-export default SidebarSettingsIndex
+export default SidebarSettingsIndex;

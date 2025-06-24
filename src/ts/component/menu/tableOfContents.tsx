@@ -9,7 +9,7 @@ const LIMIT = 20;
 
 const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setActive, close, onKeyDown, position, setHover, getMaxHeight } = props;
+	const { param, getId, setActive, close, onKeyDown, setHover, getMaxHeight } = props;
 	const { data } = param;
 	const { rootId, isPopup, blockId } = data;
 	const n = useRef(-1);
@@ -33,7 +33,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	
 	const unbind = () => {
 		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('mouseleave')
+		$(`#${getId()}`).off('mouseleave');
 	};
 
 	const getItems = () => {

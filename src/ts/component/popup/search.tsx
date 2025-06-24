@@ -431,7 +431,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			e.preventDefault();
 
 			this.pageCreate(filter);
-		})
+		});
 	};
 
 	onArrow (dir: number) {
@@ -827,7 +827,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						this.pageCreate(filter)
+						this.pageCreate(filter);
 						break;
 					};
 

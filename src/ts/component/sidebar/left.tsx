@@ -8,7 +8,7 @@ import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 import SidebarWidget from './page/widget';
 import SidebarObject from './page/allObject';
 import SidebarSettingsIndex from './page/settings/index';
-import SidebarSettingsLibrary from './page/settings/library'
+import SidebarSettingsLibrary from './page/settings/library';
 
 interface State {
 	page: string;
@@ -102,7 +102,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 	init () {
 		const { showVault } = S.Common;
 		const node = $(this.node);
-		const vault = $(S.Common.getRef('vault').node);
+		const vault = S.Common.getRef('vault');
 
 		node.toggleClass('withVault', showVault);
 		vault.toggleClass('isHidden', !showVault);
