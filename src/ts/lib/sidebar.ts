@@ -530,8 +530,6 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	rightPanelSetState (isPopup: boolean, v: any) {
-		console.log('rightPanelSetState', v);
-		console.trace();
 		this.rightPanelRef(isPopup)?.setState(v);
 	};
 

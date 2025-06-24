@@ -174,6 +174,9 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const getItems = () => {
 		const view = getView();
+		if (!view) {
+			return [];
+		};
 
 		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => ({ 
 			...it,
@@ -290,7 +293,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems: () => items,
+		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
