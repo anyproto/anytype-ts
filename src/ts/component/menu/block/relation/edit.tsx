@@ -40,7 +40,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isType = U.Object.isTypeLayout(object.layout);
 		const isName = relation && (relation.relationKey == 'name');
 		const isDescription = relation && (relation.relationKey == 'description');
-		const isDate = this.format == I.RelationType.Date;
+		const isDate = Relation.isDate(this.format);
 
 		let canDuplicate = true;
 		let canDelete = !noDelete;
@@ -110,7 +110,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			);
 		};
 
-		if (isDate && !isReadonly) {
+		if (isDate && relation) {
 			opts = (
 				<div className="section">
 					<MenuItemVertical
@@ -391,6 +391,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			name: relation.name, 
 			relationFormat: relation.format,
 			relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
+			relationFormatIncludeTime: this.includeTime,
 		});
 
 		close();
@@ -445,16 +446,15 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	save () {
 		const name = this.ref ? this.ref.getValue() : '';
-		if (!name) {
-			return;
-		};
-
 		const relation = this.getRelation();
 		const item: any = { 
-			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
-			includeTime: this.includeTime,
+			relationFormatIncludeTime: this.includeTime,
+		};
+
+		if (name) {
+			item.name = name;
 		};
 
 		relation && relation.id ? this.update(item) : this.add(item);
@@ -488,7 +488,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	update (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationId, saveCommand } = data;
+		const { relationId, saveCommand } = data;
 		const details: any[] = [];
 		const object = {};
 
@@ -540,10 +540,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly } = data;
-		const relation = this.getRelation();
 		const isAllowed = this.isAllowed();
 
-		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
+		return readonly || !isAllowed || this.isReadonlyRelation();
+	};
+
+	isReadonlyRelation () {
+		const relation = this.getRelation();
+		return relation && relation.isReadonlyRelation;
 	};
 
 });

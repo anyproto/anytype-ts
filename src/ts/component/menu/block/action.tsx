@@ -211,9 +211,10 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				continue;
 			};
 
-			hasBookmark = hasBookmark && (block.isBookmark() ? checkFlag : false);
-			hasDataview = hasBookmark && (block.isDataview() ? checkFlag : false);
-			hasFile = hasFile && (block.isFile() ? checkFlag : false);
+			hasBookmark = hasBookmark && block.isBookmark() && checkFlag;
+			hasDataview = hasBookmark && block.isDataview() && checkFlag;
+			hasLink = hasLink && block.isLink() && checkFlag;
+			hasFile = hasFile && block.isFile() && checkFlag;
 			hasAlign = hasAlign && block.canHaveAlign();
 			hasColor = hasColor && block.canHaveColor();
 			hasBg = hasBg && block.canHaveBackground();
@@ -223,7 +224,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			hasTurnList = hasTurnList && block.canTurnList();
 			hasTurnFile = hasTurnFile && block.isFile();
 			hasText = hasText && block.isText();
-			hasLink = hasLink && block.isLink();
 			hasQuote = hasQuote && block.isTextQuote();
 
 			if (block.isTextTitle() || block.isTextDescription() || block.isFeatured())	{

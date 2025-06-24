@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics, Action } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
@@ -9,6 +9,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
+	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
@@ -19,6 +20,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isRelation && !isDeleted;
+	const showPin = canWrite && !isRelation;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 
@@ -28,7 +30,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	if (object.isArchived) {
 		bannerProps.type = I.BannerType.IsArchived;
 	} else
-	if (U.Object.isTemplate(object.type)) {
+	if (U.Object.isTemplateType(object.type)) {
 		bannerProps.type = I.BannerType.IsTemplate;
 	} else
 	if (allowedTemplateSelect && (templatesCnt > 1)) {
@@ -97,6 +99,10 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		analytics.event('ClickShareObject', { objectType: object.type });
 	};
 
+	const onPin = () => {
+		Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.header);
+	};
+
 	const updateTemplatesCnt = () => {
 		if (!allowedTemplateSelect) {
 			return;
@@ -147,6 +153,21 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className="relation withBackground"
 						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
+
+				{showPin ? (
+					<Icon 
+						id="button-header-pin" 
+						tooltipParam={{ 
+							text: object.isFavorite ? translate('commonRemovePinned') : translate('commonAddPinned'), 
+							caption: keyboard.getCaption('addFavorite'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+						className={[ (object.isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
+						onClick={onPin}
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 
@@ -156,6 +177,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
 						className="more withBackground"
 						onClick={onMore} 
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 			</div>

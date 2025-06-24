@@ -92,7 +92,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
-		const isTemplate = U.Object.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplateType(object.type);
 		const isDate = U.Object.isDateLayout(object.layout);
 		const isChat = U.Object.isChatLayout(object.layout);
 		const isBookmark = U.Object.isBookmarkLayout(object.layout);
@@ -215,6 +215,7 @@ class MenuObject extends React.Component<I.Menu> {
 			template = null;
 			setDefaultTemplate = null;
 			remove = null;
+			pin = null;
 		};
 
 		advancedOptions.push(pageDeeplink);
@@ -224,6 +225,9 @@ class MenuObject extends React.Component<I.Menu> {
 		} else {
 			advanced = null;
 		};
+
+		// Temporary hidden options
+		pin = null;
 
 		let sections = [];
 		if (hasShortMenu) {
@@ -574,7 +578,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(true, true, keyboard.isPopup(), 'type', { rootId })
+				sidebar.rightPanelToggle(true, keyboard.isPopup(), 'type', { rootId })
 				break;
 			};
 		};

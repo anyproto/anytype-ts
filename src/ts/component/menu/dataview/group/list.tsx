@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -18,7 +18,6 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { readonly, rootId, blockId, getView } = data;
 	const view = getView();
-	const items = Dataview.getGroups(rootId, blockId, view.id, true);
 	const block = S.Block.getLeaf(rootId, blockId);
 	const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	const cache = useRef({});
@@ -30,11 +29,9 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-	cache.current = new CellMeasurerCache({
-		fixedWidth: true,
-		defaultHeight: HEIGHT,
-		keyMapper: i => (items[i] || {}).id,
-	});
+	const getItems = () => {
+		return Dataview.getGroups(rootId, blockId, view.id, true);
+	};
 
 	const rebind = () => {
 		unbind();
@@ -47,6 +44,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		const items = getItems();
 		const item = items[n.current];
 
 		let ret = false;
@@ -77,10 +75,16 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onSortEnd = (result: any) => {
 		const { active, over } = result;
+		if (!active || !over) {
+			return;
+		};
+
+		const items = getItems();
 		const ids = items.map(it => it.id);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
 			
+		n.current = newIndex;
 		S.Record.groupsSet(rootId, blockId, arrayMove(items, oldIndex, newIndex));
 		save();
 
@@ -118,6 +122,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
@@ -197,8 +202,16 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 	
 	useEffect(() => {
+		const items = getItems();
+
 		rebind();
 		resize();
+
+		cache.current = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
 
 		return () => {
 			unbind();
@@ -220,10 +233,13 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems: () => items,
+		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
 	}), []);
+
+	const items = getItems();
 	
 	return (
 		<div className="wrap">
@@ -248,7 +264,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
-										<VList
+										<List
 											ref={listRef}
 											width={width}
 											height={height}

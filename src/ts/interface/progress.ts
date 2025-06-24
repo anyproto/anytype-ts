@@ -1,4 +1,5 @@
 export enum ProgressType {
+	None		 = '',
 	Drop		 = 'dropFiles',
 	Import		 = 'import',
 	Export		 = 'export',

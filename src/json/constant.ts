@@ -30,27 +30,30 @@ export default {
 	},
 
 	limit: {
-		menuRecords:	 	 			100,
-		widgets:		 	 			20,
-		notification:	 	 			20,
-		space:			 	 			50,
-		graphDepth:		 	 			5,
-		cellEntry:		 	 			320,
-		listObject:		 	 			50,
-		spaceName: 			 			50,
-		spaceDescription: 	 			200,
-		spaceNameThreshold:  			10,
-		spaceDescriptionThreshold: 		50,
+		menuRecords:	 	 			 100,
+		widgets:		 	 			 20,
+		notification:	 	 			 20,
+		graphDepth:		 	 			 5,
+		cellEntry:		 	 			 320,
+		listObject:		 	 			 50,
+
+		space: {
+			count:						 50,
+			name:						 50,
+			description:				 200,
+			nameThreshold:				 10,
+			descriptionThreshold:		 50,
+		},
 
 		chat: {
-			messages:		 50,
-			attachments:	 10,
-			files:			 10,
-			mentions:		 10,
-			text:			 2000,
-			reactions:		 {
-				self:		 3,
-				all:		 12,
+			messages:					 50,
+			attachments:				 10,
+			files:						 10,
+			mentions:					 10,
+			text:						 2000,
+			reactions: {
+				self:					 3,
+				all:					 12,
 			},
 		},
 
@@ -61,6 +64,7 @@ export default {
 
 	default: {
 		interfaceLang:	 'en-US',
+		spellingLang:	 'en',
 		codeLang:		 'plain',
 		typeKey:		 'ot-page',
 		pinTime:		 600,
@@ -89,6 +93,7 @@ export default {
 			3:			 [ 'zip', 'pb', 'json' ],
 			4:			 [ 'zip', 'html', 'htm', 'mhtml' ],
 			5:			 [ 'zip', 'txt' ],
+			6:			 [ 'zip', 'csv' ],
 		},
 	},
 
@@ -116,6 +121,7 @@ export default {
 		allObject:		 'allObject',
 		library: 		 'library',
 		chatSpace:		 'lastMessage',
+		template:		 'template',
 	},
 
 	typeKey: {

@@ -7,6 +7,7 @@ import { Icon, Loader, Deleted, DropTarget, EditorControls } from 'Component';
 import { I, C, S, U, J, Key, Preview, Mark, focus, keyboard, Storage, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
+import TableOfContents from 'Component/page/elements/tableOfContents';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -33,6 +34,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	width = 0;
 	refHeader: any = null;
 	refControls: any = null;
+	refToc: any = null;
 	buttonAdd = null;
 	blockFeatured = null;
 	container = null;
@@ -135,6 +137,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							getWrapperWidth={this.getWrapperWidth}
 						/>
 					</div>
+
+					<TableOfContents ref={ref => this.refToc = ref} {...this.props} />
 					
 					<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
 						<div id="blockLast" className="blockLast" onClick={this.onLastClick} />
@@ -147,7 +151,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	componentDidMount () {
 		this._isMounted = true;
 
-		this.resizePage();
 		this.rebind();
 		this.open();
 		this.initNodes();
@@ -159,7 +162,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const resizable = node.find('.resizable');
 		
 		this.open();
-		this.resizePage();
 		this.checkDeleted();
 		this.initNodes();
 		this.rebind();
@@ -408,6 +410,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			container.scrollTop(this.containerScrollTop);
 		});
+
+		this.resizePage();
+		this.onScroll();
 
 		win.on(`resize.${ns}`, () => this.resizePage());
 		container.on(`scroll.${ns}`, e => this.onScroll());
@@ -972,9 +977,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (!this.menuCheck()) {
 			// Expand selection
-			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-				this.onShiftArrowBlock(e, range, length, pressed);
-			});
+			if (!isInsideTable) {
+				keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+					this.onShiftArrowBlock(e, range, length, pressed);
+				});
+			};
 
 			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
 				if (block.isTextToggle()) {
@@ -1792,7 +1799,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onScroll () {
 		const { rootId, isPopup } = this.props;
 		const win = $(window);
-		const top = U.Common.getScrollContainer(isPopup).scrollTop();
+		const container = U.Common.getScrollContainer(isPopup);
+		const top = container.scrollTop();
+		const headers = S.Block.getBlocks(rootId, it => it.isTextHeader());
+		const co = (isPopup ? container.offset().top : 0) + J.Size.header;
 
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
@@ -1802,6 +1812,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			Storage.setScroll('editor', rootId, top, isPopup);
 		}, 50);
 
+		let blockId = '';
+
+		for (let i = 0; i < headers.length; ++i) {
+			const block = headers[i];
+			const el = $(`#block-${block.id}`);
+
+			if (!el.length) {
+				continue;
+			};
+
+			const offset = el.offset().top - co;
+			const check = isPopup ? 0 : top;
+
+			if (offset >= check) {
+				blockId = block.id;
+				break;
+			};
+		};
+
+		this.refToc?.setBlock(blockId);
 		Preview.previewHide(false);
 	};
 	
@@ -1906,7 +1936,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			let count = 0;
+			let count = 1;
 
 			if (message.isSameBlockCaret) {
 				id = focused;

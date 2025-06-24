@@ -96,6 +96,7 @@ export enum ImportType {
 	Html		 = 4,
 	Text		 = 5,
 	Csv			 = 6,
+	Obsidian	 = 7,
 };
 
 export enum ExportType {
@@ -204,6 +205,7 @@ export interface SidebarPageComponent {
 	details?: any;
 	noPreview?: boolean;
 	previous?: any;
+	blockId?: string;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {
@@ -301,6 +303,7 @@ export interface GraphSettings {
 	filter: string;
 	depth: number;
 	filterTypes: string[];
+	typeEdges: boolean;
 };
 
 export interface FocusState {

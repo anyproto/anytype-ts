@@ -5,6 +5,7 @@ import { Loader, IconObject, Cover, Icon, ObjectName } from 'Component';
 import { I, C, S, U, J, Action, translate } from 'Lib';
 
 interface Props {
+	id?: string;
 	rootId: string;
 	size: I.PreviewSize;
 	className?: string;
@@ -21,6 +22,7 @@ const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 const TRACE_ID = 'preview';
 
 const PreviewObject = observer(forwardRef<{}, Props>(({
+	id = '',
 	rootId = '',
 	size = I.PreviewSize.Small,
 	className = '',
@@ -460,6 +462,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 	return (
 		<div
+			id={id}
 			ref={nodeRef}
 			className={cn.join(' ')}
 			onMouseEnter={onMouseEnterHandler}

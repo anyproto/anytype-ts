@@ -7,7 +7,7 @@
 	> .head {
 		.name { 
 			@include text-overflow-nw; opacity: 0; transform: translate3d(0px,30px,0px); transition: all 0.2s $easeInQuint; 
-			max-width: calc(100% - 88px);
+			max-width: calc(100% - 88px); display: none;
 		}
 	}
 	> .head.show {
@@ -15,10 +15,16 @@
 	}
 
 	> .bottom { 
-		position: sticky; bottom: 0px; left: 0px; display: flex; align-items: center; background-color: var(--color-shape-tertiary); height: 48px;
-		flex-shrink: 0; gap: 0px 8px; z-index: 1; padding: 0px 8px;
+		position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; 
+		padding: 0px 8px;
 	}
 	> .bottom {
+		.grad { 
+			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none; 
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%);
+		}
+
+		.side { position: relative; z-index: 1; }
 		.side.left { flex-shrink: 0; }
 		.side.center { flex-grow: 1; text-align: center; gap: 0px 8px; display: flex; align-items: center; justify-content: center; }
 		.side.right { flex-shrink: 0; }
@@ -27,7 +33,7 @@
 		.icon.help { background-image: url('~img/icon/widget/button/help.svg'); }
 		.icon.plus { margin-right: 4px; width: 20px; height: 20px; background-image: url('~img/icon/plus/widgetBottom0.svg'); }
 
-		.button.simple { @include text-common; color: var(--color-text-secondary); font-weight: 400; }
+		.button.simple { @include text-common; color: var(--color-text-secondary); font-weight: 400; height: 28px; }
 		.button.simple:hover {
 			.icon.plus { background-image: url('~img/icon/plus/widgetBottom1.svg'); }
 		}
@@ -35,7 +41,7 @@
 	}
 
 	> .body {
-		padding: 0px 6px 0px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
+		padding: 0px 6px 68px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 		display: flex; flex-direction: column; gap: 12px 0px;
 	}
 	> .body {
@@ -49,11 +55,8 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .dropTarget.firstTarget, 
-		> .dropTarget.lastTarget 
-		{ position: relative; }
-
-		> .dropTarget.lastTarget { display: flex; flex-direction: column; gap: 12px 0px; }
+		> .dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); border-radius: 12px; }
+		> .dropTarget.lastTarget { position: relative; display: flex; flex-direction: column; gap: 12px 0px; }
 
 		> .dropTarget.firstTarget.isOver, 
 		> .dropTarget.lastTarget.isOver 
@@ -76,9 +79,7 @@
 	}
 
 	> .body.isEditing {
-		> .buttons { position: sticky; bottom: 0px; left: 0px; padding: 0px 16px; }
-		
-		.widget:not(.isEditable) { opacity: 0.5; }
+		.widget:not(.isEditable) { display: none; }
 		.widget:not(.isEditable) {
 			.dimmer { cursor: default; }
 		}

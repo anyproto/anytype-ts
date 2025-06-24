@@ -169,8 +169,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			this.forceUpdate();
 		};
 
-		if (this.ref && filter) {
-			this.ref.setValue(filter);
+		if (filter) {
+			this.ref?.setValue(filter);
 		};
 
 		this.focus();
@@ -752,16 +752,15 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 	save () {
 		const name = this.ref ? this.ref.getValue() : '';
-		if (!name) {
-			return;
-		};
-
 		const relation = this.getRelation();
 		const item: any = { 
-			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
-			includeTime: this.includeTime,
+			relationFormatIncludeTime: this.includeTime,
+		};
+
+		if (name) {
+			item.name = name;
 		};
 
 		relation && relation.id ? this.update(item) : this.add(item);

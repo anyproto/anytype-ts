@@ -160,6 +160,14 @@ class Keyboard {
 			sidebar.toggleOpenClose();
 		});
 
+		if (this.isMainEditor()) {
+			this.shortcut('tableOfContents', e, () => {
+				e.preventDefault();
+
+				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+			});
+		};
+
 		// Navigation
 		if (!this.isNavigationDisabled) {
 			this.shortcut('back', e, () => this.onBack());
@@ -174,7 +182,7 @@ class Keyboard {
 				S.Menu.closeLast();
 			} else 
 			if (S.Common.getShowSidebarRight(isPopup)) {
-				sidebar.rightPanelToggle(false, true, isPopup);
+				sidebar.rightPanelToggle(true, isPopup);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -426,8 +434,7 @@ class Keyboard {
 		} else {
 			const history = U.Router.history;
 			const current = U.Router.getParam(history.location.pathname);
-
-			let prev = history.entries[history.index - 1];
+			const prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
 				U.Space.openDashboard();
@@ -454,9 +461,10 @@ class Keyboard {
 
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
 					sidebar.leftPanelSetState({ page: 'widget' });
+					U.Space.openDashboard();
+				} else {
+					history.goBack();
 				};
-
-				history.goBack();
 			};
 		};
 
@@ -686,7 +694,8 @@ class Keyboard {
 			};
 
 			case 'debugTree': {
-				C.DebugTree(rootId, logPath, false, (message: any) => {
+				const unanonymized = arg?.unanonymized || false;
+				C.DebugTree(rootId, logPath, unanonymized, (message: any) => {
 					if (!message.error.code) {
 						Action.openPath(logPath);
 					};

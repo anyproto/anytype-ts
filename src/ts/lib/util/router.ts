@@ -108,7 +108,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelToggle(false, false, keyboard.isPopup());
+		sidebar.rightPanelToggle(false, keyboard.isPopup());
 
 		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route, false, param, false);
@@ -190,11 +190,9 @@ class UtilRouter {
 			return;
 		};
 
-		const withChat = U.Object.isAllowedChat();
-
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		sidebar.rightPanelToggle(false, false, false);
+		sidebar.rightPanelToggle(false, false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -205,7 +203,7 @@ class UtilRouter {
 
 		this.isOpening = true;
 
-		C.WorkspaceOpen(id, withChat, (message: any) => {
+		C.WorkspaceOpen(id, (message: any) => {
 			this.isOpening = false;
 
 			if (message.error.code) {

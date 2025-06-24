@@ -75,9 +75,9 @@ export default {
 		'relationReadonlyValue',
 		'relationDefaultValue',
 		'relationFormatObjectTypes',
+		'relationFormatIncludeTime',
 		'sourceObject',
 		'restrictions',
-		'includeTime',
 	],
 
 	cover: [
@@ -163,6 +163,7 @@ export default {
 		'lastMessageDate',
 		'chatId',
 		'spaceUxType',
+		'spacePushNotificationMode',
 	],
 
 	participant: [

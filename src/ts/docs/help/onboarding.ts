@@ -13,7 +13,7 @@ export default {
 
 		param: {
 			element: '#button-widget-help',
-			classNameWrap: 'fixed',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
@@ -27,7 +27,7 @@ export default {
 		items: [ { noButton: true } ],
 		param: {
 			element: '#button-widget-help',
-			classNameWrap: 'fixed',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'invertedColor',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
@@ -50,7 +50,7 @@ export default {
 		],
 		param: {
 			element: '#button-widget-help',
-			classNameWrap: 'fixed',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
@@ -73,7 +73,7 @@ export default {
 		],
 		param: {
 			element: '#button-widget-help',
-			classNameWrap: 'fixed',
+			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,

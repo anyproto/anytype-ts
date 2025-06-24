@@ -209,6 +209,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { param } = this.props;
 		const { data } = param;
+		const types = data.types || [];
 		const filter = String(data.filter || '');
 		const filters: any[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
@@ -218,6 +219,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		if (types.length) {
+			filters.push({ relationKey: 'relationFormat', condition: I.FilterCondition.In, value: types });
+		};
 
 		if (clear) {
 			this.setState({ isLoading: true });
@@ -269,11 +274,18 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => systemKeys.includes(it.relationKey));
-		const types = U.Menu.getRelationTypes().filter(it => it.name.match(reg)).map(it => ({ ...it, isType: true }));
+		const types = data.types || [];
+		const typesList = U.Menu.getRelationTypes().filter(it => {
+			if (types.length && !types.includes(Number(it.id))) {
+				return false;
+			};
+
+			return it.name.match(reg);
+		}).map(it => ({ ...it, isType: true }));
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
-			canWrite && !skipCreate ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: types } : null,
+			canWrite && !skipCreate ? { id: 'create', name: translate('menuRelationSuggestCreateNew'), children: typesList } : null,
 			{ id: 'library', name: translate('commonMyRelations'), children: library },
 			{ id: 'system', name: translate('commonSystemRelations'), children: system },
 		];

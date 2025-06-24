@@ -273,7 +273,11 @@
 				function renderLinks () {
 					root.find('a').off('click').on('click', function (e) {
 						e.preventDefault();
-						window.parent.postMessage({ type: 'openUrl', url: $(this).attr('href'), blockId }, '*');
+
+						const el = $(this);
+						const url = el.attr('href') || el.attr('xlink:href');
+
+						window.parent.postMessage({ type: 'openUrl', url, blockId }, '*');
 					});
 				};
 

@@ -1,4 +1,4 @@
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 
 class Dataview {
@@ -20,6 +20,14 @@ class Dataview {
 		const viewRelations = (view.relations || []).filter(it => it);
 
 		let relations = S.Record.getDataviewRelations(rootId, blockId);
+
+		if (!relations.find(it => it.relationKey == 'name')) {
+			const nr = S.Record.getRelationByKey('name');
+			if (nr) {
+				relations.unshift(nr);
+			};
+		};
+
 		relations = U.Common.objectCopy(relations).filter(it => it);
 
 		if (!config.debug.hiddenObject) {
@@ -135,12 +143,13 @@ class Dataview {
 			limit: 0,
 			sources: [],
 			clear: false,
+			isInline: false,
 			collectionId: '',
 			filters: [],
 			sorts: [],
 		}, param);
 
-		const { rootId, blockId, newViewId, keys, offset, limit, collectionId } = param;
+		const { rootId, blockId, newViewId, keys, offset, limit, collectionId, clear, isInline } = param;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
 		
@@ -161,6 +170,10 @@ class Dataview {
 			meta.viewId = newViewId;
 		};
 
+		if (!isInline && (viewChange || clear)) {
+			S.Record.recordsSet(subId, '', []);
+		};
+
 		S.Record.metaSet(subId, '', meta);
 
 		if (block) {
@@ -172,18 +185,26 @@ class Dataview {
 			};
 		};
 
-		U.Subscription.subscribe({
-			...param,
-			subId,
-			filters: filters.map(it => this.filterMapper(view, it)),
-			sorts: sorts.map(it => this.filterMapper(view, it)),
-			keys,
-			limit,
-			offset,
-			collectionId,
-			ignoreDeleted: true,
-			ignoreHidden: true,
-		}, callBack);
+		const cb = () => {
+			U.Subscription.subscribe({
+				...param,
+				subId,
+				filters: filters.map(this.filterMapper),
+				sorts: sorts.map(this.filterMapper),
+				keys,
+				limit,
+				offset,
+				collectionId,
+				ignoreDeleted: true,
+				ignoreHidden: true,
+			}, callBack);
+		};
+
+		if (clear) {
+			U.Subscription.destroyList([ subId ], false, cb);
+		} else {
+			cb();
+		};
 	};
 
 	/**
@@ -192,15 +213,12 @@ class Dataview {
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
-	filterMapper (view: any, it: any) {
+	filterMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
 		if (relation) {
 			it.format = relation.format;
-
-			if (relation.includeTime) {
-				it.includeTime = true;
-			};
+			it.includeTime = relation.includeTime;
 		};
 		return it;
 	};

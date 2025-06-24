@@ -2,8 +2,6 @@
 
 .widget.widgetSpace { padding: 8px; }
 .widget.widgetSpace {
-	.icon.remove { display: none !important; }
-
 	.body {
 		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px; position: relative; }
 		.sides {

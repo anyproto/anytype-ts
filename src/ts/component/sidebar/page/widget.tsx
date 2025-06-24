@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner } from 'Component';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
@@ -21,7 +21,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
-	isSubcribed = '';
+	timeout = 0;
 
 	constructor (props) {
 		super(props);
@@ -36,7 +36,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.onHelp = this.onHelp.bind(this);
-		this.onSettings = this.onSettings.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -45,7 +44,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { showVault } = S.Common;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
-		const canWrite = U.Space.canMyParticipantWrite();
 		const hasShareBanner = U.Space.hasShareBanner();
 		const buttons: I.ButtonComponent[] = [];
 
@@ -74,6 +72,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						isPreview={true}
 						setPreview={this.setPreview}
 						setEditing={this.setEditing}
+						canEdit={true}
+						canRemove={false}
 					/>
 				);
 			};
@@ -161,49 +161,62 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									onDragStart={this.onDragStart}
 									onDragOver={this.onDragOver}
 									isEditing={isEditing}
+									canEdit={false}
+									canRemove={false}
 								/>
 							</DropTarget>
 						</>
 					) : ''}
 
-					{blocks.map((block, i) => (
-						<Widget 
-							{...this.props}
-							key={`widget-${block.id}`}
-							block={block}
-							isEditing={isEditing}
-							className="isEditable"
-							onDragStart={this.onDragStart}
-							onDragOver={this.onDragOver}
-							setPreview={this.setPreview}
-							setEditing={this.setEditing}
-						/>
-					))}
+					{blocks.map((block, i) => {
+						const { widgets } = S.Block;
+						const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+						const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+						const targetId = child ? child.getTargetObjectId() : '';
+						const isChat = targetId == J.Constant.widgetId.chat;
+						const canEdit = !isChat || !space.isChat;
+
+						return (
+							<Widget
+								{...this.props}
+								key={`widget-${block.id}`}
+								block={block}
+								isEditing={canEdit ? isEditing : false}
+								canEdit={canEdit}
+								canRemove={canEdit}
+								onDragStart={this.onDragStart}
+								onDragOver={this.onDragOver}
+								setPreview={this.setPreview}
+								setEditing={this.setEditing}
+							/>
+						);
+					})}
 				</>
 			);
 
 			bottom = (
 				<div className="bottom">
+					<div className="grad" />
+
 					<div className="side left">
-						{isEditing ? (
-							<Button id="widget-list-add" color="simple" icon="plus" text={translate('menuWidgetAddWidget')} onClick={this.onAdd} />
-						) : (
-							<Icon className="settings withBackground" tooltipParam={{ text: translate('popupSettingsSpaceIndexTitle') }} onClick={this.onSettings} />
-						)}
+						<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
 					</div>
 
 					<div className="side center">
 						{!isEditing ? (
-							<Button text={translate('sidebarEdit')} color="simple" onClick={this.onEdit} />
-						) : ''}
+							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
+						) : (
+							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
+						)}
 					</div>
 
 					<div className="side right">
-						{isEditing ? (
-							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
-						) : (
-							<Icon id="button-widget-help" className="help withBackground" tooltipParam={{ text: translate('commonHelp') }} onClick={this.onHelp} />
-						)}
+						<Icon 
+							id="button-widget-help" 
+							className="help withBackground" 
+							tooltipParam={{ text: translate('commonHelp') }} 
+							onClick={this.onHelp} 
+						/>
 					</div>
 				</div>
 			);
@@ -216,6 +229,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				className="customScrollbar"
 			>
 				<div id="head" className="head">
+					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					<div className="name">{space.name}</div>
 				</div>
 				<div
@@ -243,14 +257,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			offsetY: () => -($('#notifications').height() + 78),
+			offsetY: -78,
 		});
-	};
-
-	onSettings (e: any) {
-		e.stopPropagation();
-		U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	onEdit (e: any): void {
@@ -330,7 +338,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
 					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
-						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplate(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
+						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplateType(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
@@ -478,13 +486,29 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
+		/*
 		const { showVault } = S.Common;
 		const node = $(this.node);
 		const head = node.find('#head');
-		const body = node.find('#body');
-		const top = body.scrollTop();
+		const top = node.find('#body').scrollTop();
+		const show = showVault && (top > 32);
+		const name = head.find('.name');
+		const progress = head.find('.progressText');
 
-		head.toggleClass('show', showVault && (top > 32));
+		if (show) {
+			name.show();
+			progress.hide();
+			this.timeout = window.setTimeout(() => head.addClass('show'), 15);
+		} else {
+			head.removeClass('show');
+
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => {
+				name.hide();
+				progress.show();
+			}, 200);
+		};
+		*/
 	};
 
 	onArchive (e: any) {
@@ -512,8 +536,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	setEditing (isEditing: boolean) {
-		console.trace();
-
 		this.setState({ isEditing });
 
 		if (!isEditing) {

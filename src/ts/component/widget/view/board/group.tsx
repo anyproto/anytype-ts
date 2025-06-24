@@ -42,8 +42,8 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(it => Dataview.filterMapper(view, it)),
-				sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+				filters: filters.map(Dataview.filterMapper),
+				sorts: sorts.map(Dataview.filterMapper),
 				keys: J.Relation.sidebar,
 				sources: object.setOf || [],
 				limit,

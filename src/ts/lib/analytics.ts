@@ -57,6 +57,7 @@ class Analytics {
 		navigation: 'Navigation',
 		object: 'Object',
 		library: 'Library',
+		header: 'Header',
 
 		screenDate: 'ScreenDate',
 		screenRelation: 'ScreenRelation',
@@ -530,6 +531,12 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeMessageNotificationState': {
+				data.type = Number(data.type) || 0;
+				data.type = I.NotificationMode[data.type];
+				break;
+			};
+
 			case 'ApproveInviteRequest':
 			case 'ChangeSpaceMemberPermissions': {
 				data.type = Number(data.type) || 0;
@@ -811,7 +818,7 @@ class Analytics {
 	 * @param {...any[]} args - Arguments to log.
 	 */
 	log (...args: any[]) {
-		if (!this.isAllowed()) {
+		if (!this.debug()) {
 			return;
 		};
 

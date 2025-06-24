@@ -6,7 +6,7 @@
 }
 
 .header {
-	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
+	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; }
 	.side.left { padding: 0px 16px; flex-shrink: 0; gap: 0px 8px; }
 	.side.center { flex-grow: 1; justify-content: center; max-width: 60%; }
 	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
@@ -61,6 +61,8 @@
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
+	.icon.pin { background-image: url('~img/icon/menu/action/pin0.svg'); }
+	.icon.unpin { background-image: url('~img/icon/menu/action/unpin0.svg'); }
 }
 .header.isSmall {
 	.path { visibility: hidden; overflow: hidden; width: 0px; }
@@ -88,6 +90,7 @@ body.isFullScreen {
 
 .header.authIndex { height: 52px; width: 100% !important; }
 .header.authIndex {
+	.side.left { padding: 0px; }
 	.logo { width: 70px; height: 18px; background: url('~img/logo/white.svg'); }
 }
 

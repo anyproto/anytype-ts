@@ -12,6 +12,7 @@ interface Props {
 	rootId: string;
 	data: any;
 	storageKey: string;
+	load?: () => void;
 };
 
 interface GraphRefProps {
@@ -26,6 +27,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	rootId = '',
 	data = {},
 	storageKey = '',
+	load = () => {},
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -59,12 +61,13 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		unbind();
 		win.on(`updateGraphSettings.${id}`, () => updateSettings());
 		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
+		win.on(`updateGraphData.${id}`, () => load());
 		win.on(`removeGraphNode.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'removeGraphNode', 'keydown' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'removeGraphNode', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.${id}`).join(' '));
 		$(canvas.current).off('touchstart touchmove');
@@ -191,11 +194,15 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const nodeMapper = (d: any) => {
 		d = d || {};
+
+		const type = S.Record.getTypeById(d.type);
+
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
+		d.typeKey = type?.uniqueKey || d.type;
 
 		// Clear icon props to fix image size
 		if (U.Object.isTaskLayout(d.layout)) {
@@ -211,14 +218,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					return;
 				};
 
-				createImageBitmap(img, { resizeWidth: 160, resizeQuality: 'high' }).then((res: any) => {
-					if (images.current[d.src]) {
-						return;
-					};
+				try {
+					createImageBitmap(img, { resizeWidth: 160, resizeHeight: 160, resizeQuality: 'high' }).then((res: any) => {
+						if (images.current[d.src]) {
+							return;
+						};
 
-					images.current[d.src] = true;
-					send('image', { src: d.src, bitmap: res });
-				});
+						images.current[d.src] = true;
+						send('image', { src: d.src, bitmap: res });
+					});
+				} catch (e) { /**/ };
 			};
 			img.crossOrigin = 'anonymous';
 			img.src = d.src;

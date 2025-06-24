@@ -123,20 +123,13 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					});
 				};
 
-				const details = { 
-					name: translate('commonEntrySpace'), 
-					iconOption: U.Common.rand(1, J.Constant.count.icon),
-				};
-
-				C.WorkspaceSetInfo(S.Common.space, details, () => {
-					if (name) {
-						nextRef.current?.setLoading(true);
-						U.Object.setName(S.Block.profile, name, cb);
-					} else {
-						cb();
-						analytics.event('ScreenOnboardingSkipName');
-					};	
-				});
+				if (name) {
+					nextRef.current?.setLoading(true);
+					U.Object.setName(S.Block.profile, name, cb);
+				} else {
+					cb();
+					analytics.event('ScreenOnboardingSkipName');
+				};	
 				break;
 			};
 
@@ -259,9 +252,14 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			);
 
 			buttons = (
-				<div className="animation">
-					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={onForward} />
-				</div>
+				<>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={onForward} />
+					</div>
+					<div className="animation">
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+					</div>
+				</>
 			);
 			break;
 		};

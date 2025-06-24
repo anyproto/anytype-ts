@@ -23,6 +23,7 @@ import PageImportNotion from './import/notion';
 import PageImportNotionHelp from './import/notion/help';
 import PageImportNotionWarning from './import/notion/warning';
 import PageImportCsv from './import/csv';
+import PageImportObsidian from './import/obsidian';
 
 import PageExportIndex from './export/index';
 import PageExportProtobuf from './export/protobuf';
@@ -65,6 +66,7 @@ const Components: any = {
 	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
 	importCsv:			 PageImportCsv,
+	importObsidian:		 PageImportObsidian,
 
 	exportIndex:		 PageExportIndex,
 	exportProtobuf:		 PageExportProtobuf,
@@ -83,7 +85,7 @@ const Components: any = {
 
 const SPACE_PAGES = [
 	'spaceIndex', 'spaceIndexEmpty', 'spaceStorageManager', 'spaceShare',
-	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 
+	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
 ];

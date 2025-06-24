@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React, { forwardRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
-import { SortableElement } from 'react-sortable-hoc';
-import { I, S, J, U, C, keyboard, Relation, Dataview } from 'Lib';
-import Handle from './handle';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { I, S, J, U, keyboard, Relation, Dataview } from 'Lib';
+import { IconObject, ObjectName } from 'Component';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -11,71 +12,44 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadCell = observer(class HeadCell extends React.Component<Props> {
+const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 
-	constructor (props: Props) {
-		super(props);
+	const { rootId, block, relationKey, onResizeStart, getView, readonly } = props;
+	const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+	const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: relationKey, disabled: !allowed });
+	const relation = S.Record.getRelationByKey(relationKey);
 
-		this.onEdit = this.onEdit.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
+	if (transform) {
+		transform.scaleX = 1;
+		transform.scaleY = 1;
 	};
 
-	render () {
-		const { rootId, block, relationKey, index, onResizeStart, getView, readonly } = this.props;
-		const relation = S.Record.getRelationByKey(relationKey);
-		
-		if (!relation) {
-			return null;
-		};
-
-		const view = getView();
-		const viewRelation = view?.getRelation(relationKey);
-		const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation.format), `align${viewRelation?.align}` ];
-
-		if (allowed) {
-			cn.push('canDrag');
-		};
-
-		const Cell = SortableElement((item: any) => (
-			<div 
-				id={Relation.cellId('head', relationKey, '')} 
-				className={cn.join(' ')}
-				onClick={this.onEdit}
-				onContextMenu={this.onEdit}
-				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
-			>
-				<div className="cellContent">
-					<Handle name={relation.name} format={relation.format} readonly={relation.isReadonlyValue} />
-					{allowed ? <div className="resize" onMouseDown={e => onResizeStart(e, relationKey)} /> : ''}
-				</div>
-			</div>
-		));
-
-		return <Cell index={index} disabled={!allowed} />;
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+	
+	const onMouseDown = () => {
+		$('.cell.isEditing').removeClass('isEditing');
+		S.Menu.closeAll();
 	};
 
-	onMouseEnter (): void {
-		const { block, relationKey } = this.props;
-
+	const onMouseEnter = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
 			$(`#block-${block.id} .cell-key-${relationKey}`).addClass('cellKeyHover');
 		};
 	};
 
-	onMouseLeave () {
+	const onMouseLeave = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
 			$('.cellKeyHover').removeClass('cellKeyHover');
 		};
 	};
 
-	onEdit (e: any) {
+	const onEdit = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, getView, relationKey } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
@@ -109,7 +83,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				className: isFixed ? 'fixed' : '',
 				subIds: J.Menu.relationEdit,
 				data: {
-					...this.props,
+					...props,
 					blockId: block.id,
 					relationId: relation.id,
 					extendedOptions: true,
@@ -122,6 +96,46 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		}, S.Menu.getTimeout());
 	};
 
-});
+	const view = getView();
+	const viewRelation = view?.getRelation(relationKey);
+	const cn = [ 'cellHead', `cell-key-${relationKey}`, Relation.className(relation?.format), `align${viewRelation?.align}` ];
+
+	if (allowed) {
+		cn.push('canDrag');
+	};
+
+	return (
+		<div 
+			id={Relation.cellId('head', relationKey, '')} 
+			className={cn.join(' ')}
+			onClick={onEdit}
+			onContextMenu={onEdit}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+			ref={setNodeRef}
+			style={style}
+		>
+			<div className="cellContent">
+				<div 
+					className="flex" 
+					onMouseDown={onMouseDown} 
+					{...attributes}
+					{...listeners}
+				>
+					<IconObject object={relation} tooltipParam={{ text: relation.name }} />
+					<ObjectName object={relation} />
+				</div>
+
+				{allowed ? (
+					<div 
+						className="resize"
+						onMouseDown={e => onResizeStart(e, relationKey)} 
+					/>
+				) : ''}
+			</div>
+		</div>
+	);
+
+}));
 
 export default HeadCell;

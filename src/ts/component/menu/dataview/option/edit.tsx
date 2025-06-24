@@ -14,22 +14,25 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
 		const sections = this.getSections();
 
-		const Color = (item: any) => (
-			<div
-				id={`item-${item.id}`}
-				className={[
-					'item',
-					'color',
-					`color-${item.className}`,
-					this.color == item.value ? 'selected' : ''
-				].join(' ')}
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)}
-			/>
-		);
+		const Color = (item: any) => {
+			const cn = [ 'item', 'color', `color-${item.className}` ];
+
+			if (this.color == item.value) {
+				cn.push('selected');
+			};
+
+			return (
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+				/>
+			);
+		};
 
 		const Section = (item: any) => (
 			<div className={[ 'section', (item.className ? item.className : '') ].join(' ')}>
@@ -56,11 +59,11 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			<div>
 				<Filter
 					ref={ref => this.refName = ref}
-					placeholder={translate('menuDataviewOptionEditPlaceholder')}
-					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'outlined textColor-' + this.color}
+					placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
+					className="outlined"
 					value={option.name}
-					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
+					onKeyUp={(e: any, v: string) => this.onKeyUp(e, v)}
+					onClear={() => this.onClear()}
 				/>
 
 				{sections.map((item: any, i: number) => (
@@ -71,17 +74,30 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
-		const { option } = data;
+		const { option, isNew } = data;
 
 		this.color = option.color;
 		this.rebind();
 		this.forceUpdate();
+
+		if (isNew) {
+			window.setTimeout(() => $(`#${getId()} #item-create`).addClass('disabled'), J.Constant.delay.menu);
+		};
 	};
 
 	componentDidUpdate () {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+		const v = this.refName?.getValue() || '';
+
 		this.props.setActive();
+
+		if (isNew && !v.length) {
+			$(`#${getId()} #item-create`).addClass('disabled');
+		};
 	};
 
 	componentWillUnmount () {
@@ -166,8 +182,16 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onKeyUp (e: any, v: string) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
+
+		if (isNew) {
+			$(`#${getId()} #item-create`).toggleClass('disabled', !v.length);
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -195,9 +219,20 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+		const { getId } = this.props;
+		const el = $(`#${getId()} #item-${item.id}`);
+
+		if (el.hasClass('disabled') || keyboard.isMouseDisabled) {
+			return;
 		};
+
+		this.props.setActive(item, false);
+	};
+
+	onClear () {
+		const { getId } = this.props;
+
+		$(`#${getId()} #item-create`).addClass('disabled');
 	};
 
 	remove () {

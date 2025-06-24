@@ -1,211 +1,47 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import { I, C, S, J, U, keyboard, Dataview, translate, analytics } from 'Lib';
 import { Icon, IconObject, Switch } from 'Component';
 
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(class MenuRelationList extends React.Component<I.Menu> {
-	
-	node: any = null;
-	n = -1;
-	top = 0;
-	cache: any = {};
-	refList: any = null;
+const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onAdd = this.onAdd.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onSwitch = this.onSwitch.bind(this);
-		this.onScroll = this.onScroll.bind(this);
+	const { param, getId, getSize, setHover, setActive, onKeyDown, position } = props;
+	const { data } = param;
+	const { rootId, blockId, readonly, getView } = data;
+	const nodeRef = useRef(null);
+	const listRef = useRef(null);
+	const topRef = useRef(0);
+	const n = useRef(-1);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
+
+	const rebind = () => {
+		unbind();
+
+		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	render () {
-		const { getId, setHover, param } = this.props;
-		const { data } = param;
-		const { getView } = data;
-		const isReadonly = this.isReadonly();
-		const items = this.getItems();
-		const view = getView();
-
-		items.map((it: any) => {
-			const { format, name } = it.relation;
-		});
-
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
-
-		const Item = SortableElement((item: any) => {
-			const isName = item.relationKey == 'name';
-			const canHide = !isReadonly && (!isName || (view.type == I.ViewType.Gallery));
-			const cn = [ 'item' ];
-			
-			if (item.relation.isHidden) {
-				cn.push('isHidden');
-			};
-			if (isReadonly) {
-				cn.push('isReadonly');
-			};
-
-			return (
-				<div 
-					id={'item-' + item.relationKey} 
-					className={cn.join(' ')} 
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					style={item.style}
-				>
-					{!isReadonly ? <Handle /> : ''}
-					<span className="clickable" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item.relation} />
-						<div className="name">{item.relation.name}</div>
-					</span>
-					{canHide ? (
-						<Switch 
-							value={item.isVisible} 
-							onChange={(e: any, v: boolean) => this.onSwitch(e, item, v)} 
-						/>
-					) : ''}
-				</div>
-			);
-		});
-		
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<Item key={item.id} {...item} index={param.index} style={param.style} />
-				</CellMeasurer>
-			);
-		};
-		
-		const List = SortableContainer((item: any) => (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => true}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<VList
-									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									onScroll={this.onScroll}
-									scrollToAlignment="center"
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			</div>
-		));
-		
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				<List 
-					axis="y" 
-					lockAxis="y"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortStart={this.onSortStart}
-					onSortEnd={this.onSortEnd}
-					useDragHandle={true}
-					helperClass="isDragging"
-					helperContainer={() => $(`#${getId()} .items`).get(0)}
-				/>
-
-				{!isReadonly ? (
-					<div className="bottom">
-						<div className="line" />
-						<div 
-							id="item-add" 
-							className="item add" 
-							onClick={this.onAdd} 
-							onMouseEnter={() => setHover({ id: 'add' })} 
-							onMouseLeave={() => setHover()}
-						>
-							<Icon className="plus" />
-							<div className="name">{translate('commonAddRelation')}</div>
-						</div>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-
-	componentDidMount() {
-		const items = this.getItems();
-
-		this.rebind();
-		this.resize();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
-	
-	componentDidUpdate () {
-		this.resize();
-		this.rebind();
-
-		this.props.setActive(null, true);
-		this.props.position();
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-		S.Menu.closeAll(J.Menu.cell);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	onKeyDown (e: any) {
-		const items = this.getItems();
-		const item = items[this.n];
+	const onKeyDownHandler = (e: any) => {
+		const items = getItems();
+		const item = items[n.current];
 
 		let ret = false;
 
@@ -213,20 +49,17 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			e.preventDefault();
 
 			if (item) {
-				this.onSwitch(e, item, !item.isVisible);
+				onSwitch(e, item, !item.isVisible);
 			};
 			ret = true;
 		});
 
-		if (ret) {
-			return;
+		if (!ret) {
+			onKeyDown(e);
 		};
-
-		this.props.onKeyDown(e);
 	};
 
-	onAdd (e: any) {
-		const { param, getId, getSize } = this.props;
+	const onAdd = (e: any) => {
 		const { data } = param;
 		const { rootId, blockId, getView, onAdd } = data;
 		const view = getView();
@@ -263,16 +96,13 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		});
 	};
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { readonly, rootId, getView } = data;
+	const onClick = (e: any, item: any) => {
 		const relation = S.Record.getRelationByKey(item.relationKey);
 		const object = S.Detail.get(rootId, rootId);
 		const isType = U.Object.isTypeLayout(object.layout);
@@ -301,46 +131,52 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		});
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
+	const onSortEnd = (result: any) => {
 		const view = getView();
-		const list = arrayMove(this.getItems(), oldIndex, newIndex).map(it => it && it.relationKey);
+		if (!view) {
+			return;
+		};
 
-		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list);
+		const { active, over } = result;
+		if (!active || !over) {
+			return;
+		};
+
+		const ids = items.map(it => it.relationKey);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
+		const list = arrayMove(getItems(), oldIndex, newIndex);
+
+		n.current = newIndex;
+		view.relations = list;
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it && it.relationKey));
 		keyboard.disableSelection(false);
 	};
 
-	onSwitch (e: any, item: any, v: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
+	const onSwitch = (e: any, item: any, v: boolean) => {
 		const view = getView();
 		const object = S.Detail.get(rootId, rootId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
-
 		analytics.event('ShowDataviewRelation', { type: v ? 'True' : 'False', relationKey: item.relationKey, format: relation.format, objectType: object.type });
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
+	const getItems = () => {
 		const view = getView();
+		if (!view) {
+			return [];
+		};
 
 		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => ({ 
 			...it,
@@ -349,26 +185,186 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		}));
 	};
 
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
+	const resize = () => {
 		const obj = $(`#${getId()} .content`);
-		const offset = !this.isReadonly() ? 62 : 16;
+		const offset = !isReadonly ? 62 : 16;
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
 	};
 
-	isReadonly () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, readonly } = data;
-		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const items = getItems();
+	const view = getView();
 
-		return readonly || !allowedView;
+	items.map((it: any) => {
+		const { format, name } = it.relation;
+	});
+
+	const Item = (item: any) => {
+		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: isReadonly });
+		const isName = item.relationKey == 'name';
+		const canHide = !isReadonly && (!isName || (view.type == I.ViewType.Gallery));
+		const cn = [ 'item' ];
+		const style = {
+			...item.style,
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+		
+		if (item.relation.isHidden) {
+			cn.push('isHidden');
+		};
+		if (isReadonly) {
+			cn.push('isReadonly');
+		};
+
+		return (
+			<div 
+				id={`item-${item.relationKey}`} 
+				className={cn.join(' ')} 
+				onMouseEnter={e => onMouseEnter(e, item)}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
+			>
+				{!isReadonly ? <Icon className="dnd" /> : ''}
+				<span className="clickable" onClick={e => onClick(e, item)}>
+					<IconObject object={item.relation} />
+					<div className="name">{item.relation.name}</div>
+				</span>
+				{canHide ? (
+					<Switch 
+						value={item.isVisible} 
+						onChange={(e: any, v: boolean) => onSwitch(e, item, v)} 
+					/>
+				) : ''}
+			</div>
+		);
 	};
 	
-});
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				<Item key={item.id} {...item} index={param.index} style={param.style} />
+			</CellMeasurer>
+		);
+	};
+	
+	useEffect(() => {
+		const items = getItems();
+
+		rebind();
+		resize();
+
+		cache.current = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+
+		return () => {
+			unbind();
+			S.Menu.closeAll(J.Menu.cell);
+		};
+
+	}, []);
+	
+	useEffect(() => {
+		resize();
+		rebind();
+		setActive(null, true);
+		position();
+
+		if (listRef.current && topRef.current) {
+			listRef.current.scrollToPosition(topRef.current);
+		};
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		getListRef: () => listRef.current,
+	}), []);
+	
+	return (
+		<div 
+			ref={nodeRef}
+			className="wrap"
+		>
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				onDragStart={onSortStart}
+				onDragEnd={onSortEnd}
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+			>
+				<SortableContext
+					items={items.map((item) => item.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => true}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={listRef}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={cache.current}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={onScroll}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				</SortableContext>
+			</DndContext>
+
+			{!isReadonly ? (
+				<div className="bottom">
+					<div className="line" />
+					<div 
+						id="item-add" 
+						className="item add" 
+						onClick={onAdd} 
+						onMouseEnter={() => setHover({ id: 'add' })} 
+						onMouseLeave={() => setHover()}
+					>
+						<Icon className="plus" />
+						<div className="name">{translate('commonAddRelation')}</div>
+					</div>
+				</div>
+			) : ''}
+		</div>
+	);
+
+}));
 
 export default MenuRelationList;

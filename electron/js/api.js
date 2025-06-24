@@ -5,6 +5,7 @@ const path = require('path');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 const si = require('systeminformation');
+const checkDiskSpace = require('check-disk-space').default;
 
 const MenuManager = require('./menu.js');
 const ConfigManager = require('./config.js');
@@ -17,7 +18,7 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
-	account = null;
+	token = '';
 	isPinChecked = false;
 
 	appOnLoad (win) {
@@ -34,10 +35,10 @@ class Api {
 			isDark: Util.isDarkTheme(),
 			isChild: win.isChild,
 			route: win.route,
-			account: this.account,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
+			token: this.token,
 		});
 		win.route = '';
 	};
@@ -60,8 +61,8 @@ class Api {
 		});
 	};
 
-	setAccount (win, account) {
-		this.account = account;
+	setToken (win, token) {
+		this.token = token;
 	};
 
 	setPinChecked (win, isPinChecked) {
@@ -253,7 +254,7 @@ class Api {
 			return { error: `Invalid file extension: ${path.extname(src)}. Required YAML` };
 		};
 
-		const dst = path.join(Util.defaultUserDataPath(), 'config.yaml');
+		const dst = path.join(Util.userPath(), 'config.yaml');
 		try {
 			fs.copyFileSync(src, dst);
 			return { path: dst };
@@ -285,6 +286,10 @@ class Api {
 		win.focus();
 		win.setAlwaysOnTop(true);
 		win.setAlwaysOnTop(false);
+	};
+
+	async checkDiskSpace (win) {
+		return await checkDiskSpace(app.getPath('userData'));
 	};
 
 };

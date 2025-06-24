@@ -26,12 +26,10 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				};
 
 				if (phrase) {
-					U.Data.createSession(phrase, '' ,(message: any) => {
-						if (setErrorHandler(message.error)) {
-							return;
+					U.Data.createSession(phrase, '', '', (message: any) => {
+						if (!setErrorHandler(message.error)) {
+							select(accountId, false);
 						};
-
-						select(accountId, false);
 					});
 				} else {
 					U.Router.go('/auth/select', { replace: true });
@@ -70,17 +68,34 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 						I.SurveyType.Pmf,
 					].forEach(it => Survey.check(it));
 
-					if (!primitivesOnboarding) {
-						S.Popup.open('onboarding', {
-							onClose: () => {
-								Storage.set('primitivesOnboarding', true);
-								window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
-							},
+					const cb1 = () => {
+						U.Data.getMembershipStatus(membership => {
+							if (membership.status == I.MembershipStatus.Finalization) {
+								S.Popup.open('membershipFinalization', { 
+									onClose: cb2,
+									data: { tier: membership.tier },
+								});
+							} else {
+								cb2();
+							};
 						});
-					} else
-					if (whatsNew) {
-						U.Common.showWhatsNew();
 					};
+
+					const cb2 = () => {
+						if (!primitivesOnboarding) {
+							S.Popup.open('onboarding', {
+								onClose: () => {
+									Storage.set('primitivesOnboarding', true);
+									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
+								},
+							});
+						} else
+						if (whatsNew) {
+							U.Common.showWhatsNew();
+						};
+					};
+
+					Action.checkDiskSpace(cb1);
 				},
 			};
 

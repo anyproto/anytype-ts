@@ -13,8 +13,9 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const tier = U.Data.getMembershipTier(membership.tier);
 
 	const init = () => {
-		const data = U.Common.searchParam(U.Router.history.location.search);
-	
+		const { location } = props;
+		const data = U.Common.searchParam(location.search);
+
 		let newTier = data.tier;
 
 		U.Data.getMembershipStatus((membership: I.Membership) => {
@@ -27,6 +28,9 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				replace: true,
 				animate: true,
 				onFadeIn: () => {
+					if (data.code) {
+						S.Popup.open('membershipActivation', { data });
+					} else
 					if (newTier && (newTier != I.TierType.None)) {
 						if (tier.price) {
 							newTier = tier.id;

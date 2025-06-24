@@ -801,20 +801,23 @@ class Action {
 	 * @param {string} id - The language ID.
 	 */
 	setInterfaceLang (id: string) {
-		const { config } = S.Common;
-		const { languages } = config;
-
 		Renderer.send('setInterfaceLang', id);
+		analytics.event('SwitchInterfaceLanguage', { type: id });
+	};
+
+	/**
+	 * Checks and sets the default spelling language based on the interface language.
+	 */
+	checkDefaultSpellingLang () {
+		const { config } = S.Common;
+		const { languages, interfaceLang } = config;
 
 		if (!Storage.get('setSpellingLang') && !languages.length) {
-			const check = J.Lang.interfaceToSpellingLangMap[id];
-			if (check) {
-				this.setSpellingLang([ check ]);
-				Storage.set('setSpellingLang', true);
-			};
-		};
+			const check = J.Lang.interfaceToSpellingLangMap[interfaceLang] || J.Constant.default.spellingLang;
 
-		analytics.event('SwitchInterfaceLanguage', { type: id });
+			this.setSpellingLang([ check ]);
+			Storage.set('setSpellingLang', true);
+		};
 	};
 
 	/**
@@ -1015,6 +1018,93 @@ class Action {
 		};
 	};
 
+	spaceCreateMenu (param: I.MenuParam, route) {
+		const ids = [ 'space', 'join' ];
+
+		if (U.Object.isAllowedChat()) {
+			ids.unshift('chat');
+		};
+
+		const options = ids.map(id => {
+			const suffix = U.Common.toUpperCamelCase(id);
+
+			return {
+				id,
+				icon: id,
+				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
+				description: translate(`sidebarMenuSpaceCreateDescription${suffix}`),
+				withDescription: true,
+			};
+		});
+
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'chat': {
+							this.createSpace(I.SpaceUxType.Chat, route);
+							break;
+						};
+
+						case 'space': {
+							this.createSpace(I.SpaceUxType.Space, route);
+							break;
+						};
+
+						case 'join': {
+							S.Popup.closeAll(null, () => {
+								S.Popup.open('spaceJoinByLink', {});
+							});
+							break;
+						};
+					};
+
+					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+				},
+			}
+		});
+
+		analytics.event(`Screen${prefix}CreateMenu`);
+	};
+
+	checkDiskSpace (callBack?: () => void) {
+		Renderer.send('checkDiskSpace').then(diskSpace => {
+			const { free, size } = diskSpace;
+
+			if (free >= size * 0.9) {
+				S.Popup.open('confirm', {
+					onClose: callBack,
+					data: {
+						icon: 'warning',
+						title: translate('popupConfirmDiskSpaceTitle'),
+						text: translate('popupConfirmDiskSpaceText'),
+						textConfirm: translate('commonOkay'),
+						canCancel: false,
+					},
+				});
+			} else 
+			if (callBack) {
+				callBack();
+			};
+		});
+
+	};
 
 };
 

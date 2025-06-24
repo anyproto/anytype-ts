@@ -64,6 +64,7 @@ class AuthStore {
 	 */
 	tokenSet (v: string) {
 		this.token = String(v || '');
+		Renderer.send('setToken', this.token);
 	};
 
 	/**
@@ -171,7 +172,6 @@ class AuthStore {
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
-			Renderer.send('setAccount', this.accountItem);
 		};
 	};
 

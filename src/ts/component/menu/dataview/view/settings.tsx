@@ -130,7 +130,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				break;
 			};
 		};
-		this.refName.setValue(n);
+
+		this.refName?.setValue(n);
 	};
 	
 	onKeyDown (e: any) {

@@ -243,7 +243,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { cellRef, canEdit, noSelect } = data;
 
-		if (!canEdit || noSelect) {
+		if (!canEdit) {
 			return;
 		};
 
@@ -255,11 +255,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		if (item.id == 'add') {
 			this.onOptionAdd();
-		} else
-		if (value.includes(item.id)) {
-			this.onValueRemove(item.id);
-		} else {
-			this.onValueAdd(item.id);
+		} else if (!noSelect) {
+			if (value.includes(item.id)) {
+				this.onValueRemove(item.id);
+			} else {
+				this.onValueAdd(item.id);
+			};
 		};
 
 		this.refFilter?.setValue('');
@@ -335,9 +336,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 				return;
 			};
 
-			if (this.refFilter) {
-				this.refFilter.setValue('');
-			};
+			this.refFilter?.setValue('');
 			this.onFilterChange('');
 			this.onValueAdd(message.objectId);
 
@@ -380,7 +379,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filterMapper, canEdit } = data;
+		const { canAdd, filterMapper, canEdit, noSelect } = data;
 		const relation = data.relation.get();
 		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
@@ -415,7 +414,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			if (canEdit && canAdd && !check.length) {
 				ret.unshift({ 
 					id: 'add', 
-					name: U.Common.sprintf(isSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+					name: U.Common.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
 				});
 			};
 		};

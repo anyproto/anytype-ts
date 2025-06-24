@@ -233,9 +233,16 @@ app.on('second-instance', (event, argv) => {
 	if (mainWindow.isMinimized()) {
 		mainWindow.restore();
 	};
+	if (!mainWindow.isVisible()) {
+		mainWindow.show();
+	};
 
-	mainWindow.show();
 	mainWindow.focus();
+
+	// Ensure focus is properly stolen on macOS
+	if (is.macos) {
+		app.focus({ steal: true });
+	};
 });
 
 app.on('before-quit', e => {
@@ -258,8 +265,23 @@ app.on('open-url', (e, url) => {
 
 	deeplinkingUrl = url;
 
-	if (mainWindow) {
-		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+	if (!mainWindow) {
+		return;
+	};
+
+	Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+
+	if (mainWindow.isMinimized()) {
+		mainWindow.restore();
+	};
+
+	if (!mainWindow.isVisible()) {
 		mainWindow.show();
+	};
+
+	mainWindow.focus();
+
+	if (is.macos) {
+		app.focus({ steal: true });
 	};
 });

@@ -1,204 +1,43 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
 import { I, C, S, U, keyboard, Relation, analytics, translate, Dataview } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu> {
-	
-	_isMounted = false;
-	node: any = null;
-	n = -1;
-	top = 0;
-	refList: any = null;
-	cache: any = {};
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-		this.onScroll = this.onScroll.bind(this);
+const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+
+	const { param, getId, setHover, onKeyDown, setActive, close, getSize, position } = props;
+	const { data } = param;
+	const { rootId, blockId, loadData, getView, getSources, isInline, getTarget, onViewSwitch, onViewCopy, onViewRemove, readonly } = data;
+	const nodeRef = useRef(null);
+	const listRef = useRef(null);
+	const topRef = useRef(0);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const n = useRef(-1);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
+
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	render () {
-		const { param, getId, setHover } = this.props;
-		const { data } = param;
-		const { loadData } = data;
-		const items = this.getItems();
-		const allowed = this.isAllowed();
-
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
-
-		const Item = SortableElement((item: any) => (
-			<div 
-				id={'item-' + item.id} 
-				className="item" 
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onOver(e, item)}
-				style={item.style}
-			>
-				{allowed ? <Handle /> : ''}
-				<div className="clickable" onClick={() => loadData(item.id, 0)}>
-					<div className="name">{item.name}</div>
-				</div>
-				<div className="buttons">
-					<Icon className="more withBackground" onClick={e => this.onViewContext(e, item)} />
-				</div>
-			</div>
-		));
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-
-			let content = null;
-			if (item.isSection) {
-				content = <div className="sectionName" style={param.style}>{item.name}</div>;
-			} else {
-				content = <Item key={item.id} {...item} index={param.index - 1} style={param.style} />;
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					{!items.length ? (
-						<div className="item empty">
-							<div className="inner">{translate('menuDataviewViewListNoViewsFound')}</div>
-						</div>
-					) : (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<VList
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
-											onScroll={this.onScroll}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					)}
-				</div>
-			);
-		});
-		
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				<List 
-					axis="y" 
-					transitionDuration={150}
-					distance={10}
-					useDragHandle={true}
-					onSortStart={this.onSortStart}
-					onSortEnd={this.onSortEnd}
-					helperClass="isDragging"
-					helperContainer={() => $(`#${getId()} .items`).get(0)}
-				/>
-
-				{allowed ? (
-					<div className="bottom">
-						<div className="line" />
-						<div 
-							id="item-add" 
-							className="item add" 
-							onClick={this.onAdd}
-							onMouseEnter={() => setHover({ id: 'add' })} 
-							onMouseLeave={() => setHover()}
-						>
-							<Icon className="plus" />
-							<div className="name">{translate('menuDataviewViewListAddView')}</div>
-						</div>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const items = this.getItems();
-
-		this._isMounted = true;
-		this.rebind();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		this.resize();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-
-		this.props.setActive(null, true);
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		S.Menu.closeAll([ 'select' ]);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
+	const getItems = () => {
 		const items: any[] = U.Common.objectCopy(S.Record.getViews(rootId, blockId)).map(it => ({ 
 			...it, name: it.name || translate('defaultNamePage'),
 		}));
@@ -207,21 +46,21 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		return items;
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 
-	onAdd () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView, getSources, isInline, getTarget, onViewSwitch } = data;
+	const onAdd = () => {
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const sources = getSources();
 		const filters: I.Filter[] = [];
 		const object = getTarget();
-
 		const newView = {
 			name: Dataview.defaultViewName(I.ViewType.Grid),
 			type: I.ViewType.Grid,
@@ -249,15 +88,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		});
 	};
 
-	onViewContext (e: any, view: any) {
+	const onViewContext = (e: any, view: any) => {
 		e.stopPropagation();
 
-		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
-		const { rootId, blockId, onViewCopy, onViewRemove } = data;
-		const element = `#${getId()} #item-${view.id}`;
-
-		const contextParam = {
+		U.Menu.viewContextMenu({
 			rootId,
 			blockId,
 			view,
@@ -265,19 +99,13 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			onRemove: onViewRemove,
 			close,
 			menuParam: {
-				element,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
+				element: `#${getId()} #item-${view.id} .more`,
+				horizontal: I.MenuDirection.Center,
 			}
-		};
-
-		U.Menu.viewContextMenu(contextParam);
+		});
 	};
 
-	onClick (e: any, item: any) {
-		const { close, param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, isInline, getTarget } = data;
+	const onClick = (e: any, item: any) => {
 		const subId = S.Record.getSubId(rootId, blockId);
 		const object = getTarget();
 
@@ -293,53 +121,208 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		close();
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const views = S.Record.getViews(rootId, blockId);
-		const view = views[oldIndex];
-		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
-
-		if (!view) {
+	const onSortEnd = (result: any) => {
+		const { active, over } = result;
+		if (!active || !over) {
 			return;
 		};
 
-		S.Record.viewsSort(rootId, blockId, ids);
-		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
+		const items = S.Record.getViews(rootId, blockId);
+		const ids = items.map(it => it.id);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
+
+		S.Record.viewsSort(rootId, blockId, arrayMove(ids, oldIndex, newIndex));
+		C.BlockDataviewViewSetPosition(rootId, blockId, active.id, newIndex);
 		keyboard.disableSelection(false);
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
+	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = this.isAllowed() ? 58 : 16;
+		const offset = isAllowed() ? 58 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
 	};
 
-	isAllowed () {	
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, readonly } = data;
-
+	const isAllowed = () => {	
 		return !readonly && S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 	};
 
-});
+	const items = getItems();
+	const allowed = isAllowed();
+
+	const Item = (item: any) => {
+		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !allowed });
+		const style = {
+			...item.style,
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+
+		return (
+			<div 
+				id={'item-' + item.id} 
+				className="item" 
+				onClick={e => onClick(e, item)}
+				onMouseEnter={e => onOver(e, item)}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
+			>
+				{allowed ? <Icon className="dnd" /> : ''}
+				<div className="clickable" onClick={() => loadData(item.id, 0)}>
+					<div className="name">{item.name}</div>
+				</div>
+				<div className="buttons">
+					<Icon className="more withBackground" onClick={e => onViewContext(e, item)} />
+				</div>
+			</div>
+		);
+	};
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+
+		let content = null;
+		if (item.isSection) {
+			content = <div className="sectionName" style={param.style}>{item.name}</div>;
+		} else {
+			content = <Item key={item.id} {...item} index={param.index - 1} style={param.style} />;
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	useEffect(() => {
+		const items = getItems();
+
+		cache.current = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+
+		resize();
+
+		return () => {
+			S.Menu.closeAll([ 'select' ]);
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+
+		if (listRef.current && topRef.current) {
+			listRef.current.scrollToPosition(topRef.current);
+		};
+
+		setActive(null, true);
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems: () => items,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
+	
+	return (
+		<div 
+			ref={nodeRef}
+			className="wrap"
+		>
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				onDragStart={onSortStart}
+				onDragEnd={onSortEnd}
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+			>
+				<SortableContext
+					items={items.map((item) => item.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					<div className="items">
+						{!items.length ? (
+							<div className="item empty">
+								<div className="inner">{translate('menuDataviewViewListNoViewsFound')}</div>
+							</div>
+						) : (
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={() => true}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={listRef}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={cache.current}
+												rowCount={items.length}
+												rowHeight={HEIGHT}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={LIMIT}
+												onScroll={onScroll}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						)}
+					</div>
+				</SortableContext>
+			</DndContext>
+
+			{allowed ? (
+				<div className="bottom">
+					<div className="line" />
+					<div 
+						id="item-add" 
+						className="item add" 
+						onClick={onAdd}
+						onMouseEnter={() => setHover({ id: 'add' })} 
+						onMouseLeave={() => setHover()}
+					>
+						<Icon className="plus" />
+						<div className="name">{translate('menuDataviewViewListAddView')}</div>
+					</div>
+				</div>
+			) : ''}
+		</div>
+	);
+
+}));
 
 export default MenuViewList;

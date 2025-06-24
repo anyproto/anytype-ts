@@ -150,17 +150,17 @@
 	}
 
 	.pageSettingsDataIndex {
-		.icon.drive { background-image: url('#{$themePath}/icon/settings/data/drive.svg'); }
-		.icon.sites { background-image: url('#{$themePath}/icon/settings/data/sites.svg'); }
-		.icon.location { background-image: url('#{$themePath}/icon/settings/data/location.svg'); }
+		.icon.drive { background-image: url('#{$themePath}/icon/settings/drive.svg'); }
+		.icon.sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
+		.icon.location { background-image: url('#{$themePath}/icon/settings/location.svg'); }
 	}
 
 	.pageSettingsSpaceIndex {
-		> .buttons {
+		.spaceButtons {
 			.btn {
-				.icon.invite { background: url('#{$themePath}/icon/settings/space/invite.svg'); }
-				.icon.qr { background: url('#{$themePath}/icon/settings/space/qr.svg'); }
-				.icon.more { background: url('#{$themePath}/icon/settings/space/more.svg'); }
+				.icon.invite { background: url('#{$themePath}/icon/settings/invite.svg'); }
+				.icon.qr { background: url('#{$themePath}/icon/settings/qr.svg'); }
+				.icon.more { background: url('#{$themePath}/icon/settings/more.svg'); }
 			}
 		}
 

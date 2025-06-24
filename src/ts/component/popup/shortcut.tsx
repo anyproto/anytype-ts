@@ -406,6 +406,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 								analytics.event(U.Common.toUpperCamelCase(`ScreenShortcut-${id}`));
 							}}
 						/>
+						<Label text={translate('popupShortcutDescription')} />
 					</div>
 					<div className="side right">
 						<Icon id="icon-more" className="more withBackground" onClick={onMenu} />

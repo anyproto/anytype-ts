@@ -201,7 +201,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const space = U.Space.getSpaceview();
 		const isEntrySpace = space.spaceAccessType == I.SpaceType.Personal;
 		const canWrite = U.Space.canMyParticipantWrite();
-		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
 		const importExport = [{
 			id: 'exportIndex', icon: 'export', name: translate('commonExport'),
 			subPages: [ 'exportProtobuf', 'exportMarkdown' ]

@@ -362,9 +362,9 @@ class UtilObject {
 		return layout == I.ObjectLayout.Collection;
 	};
 
-	isTemplate (type: string): boolean {
-		const templateType = S.Record.getTemplateType();
-		return templateType ? type == templateType.id : false;
+	isTemplateType (id: string): boolean {
+		const type = S.Record.getTemplateType();
+		return type ? id == type.id : false;
 	};
 
 	isTypeLayout (layout: I.ObjectLayout): boolean {
@@ -518,11 +518,17 @@ class UtilObject {
 
 	isAllowedChat (): boolean {
 		const electron = U.Common.getElectron();
-		const spaceview = U.Space.getSpaceview();
+		const space = U.Space.getSpaceview();
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
 
-		return spaceview.isShared && (!electron.isPackaged || patch.match(/alpha|beta/)) ? true : false;
+		return space.isShared && (!electron.isPackaged || patch.match(/alpha|beta/)) ? true : false;
+	};
+
+	isAllowedMultiChat (): boolean {
+		const space = U.Space.getSpaceview();
+
+		return space.targetSpaceId == 'bafyreigryvrmerbtfswwz5kav2uq5dlvx3hl45kxn4nflg7lz46lneqs7m.2nvj2qik6ctdy';
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
@@ -746,12 +752,22 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
+		const newDetails: any = {
+			...this.getNewTypeDetails(),
+			...details,
+		};
+
+		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+	};
+
+	getNewTypeDetails (): any {
 		const type = S.Record.getTypeType();
 		const featured = [ 'type', 'tag', 'backlinks' ];
 		const recommended = [ 'createdDate', 'creator', 'links' ];
 		const hidden = [ 'lastModifiedDate', 'lastModifiedBy', 'lastOpenedDate' ];
 		const mapper = it => S.Record.getRelationByKey(it)?.id;
-		const newDetails: any = {
+
+		return {
 			isNew: true,
 			type: type?.id,
 			layout: I.ObjectLayout.Type,
@@ -762,10 +778,7 @@ class UtilObject {
 			data: {
 				route: analytics.route.settingsSpace,
 			},
-			...details,
 		};
-
-		sidebar.rightPanelToggle(true, true, isPopup, 'type', { details: newDetails });
 	};
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {

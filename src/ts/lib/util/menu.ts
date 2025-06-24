@@ -233,11 +233,11 @@ class UtilMenu {
 	 * @returns {any[]} The list of actions.
 	 */
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
+		const { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: translate('commonMoveToBin'), caption: 'Del' },
+			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
@@ -757,6 +757,7 @@ class UtilMenu {
 		r[I.ImportType.Text] = 'TXT';
 		r[I.ImportType.Protobuf] = 'Anytype';
 		r[I.ImportType.Csv] = 'CSV';
+		r[I.ImportType.Obsidian] = 'Obsidian';
 		return r;
 	};
 
@@ -764,11 +765,13 @@ class UtilMenu {
 		const names = this.getImportNames();
 
 		return ([
-			{ id: 'notion', format: I.ImportType.Notion },
+			{ id: 'obsidian', format: I.ImportType.Obsidian, isApp: true },
+			{ id: 'notion', format: I.ImportType.Notion, isApp: true },
+			{ id: 'protobuf', format: I.ImportType.Protobuf, isApp: true },
+
 			{ id: 'markdown', format: I.ImportType.Markdown },
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
-			{ id: 'protobuf', format: I.ImportType.Protobuf },
 			{ id: 'csv', format: I.ImportType.Csv },
 		] as any).map(it => {
 			it.name = names[it.format];
@@ -789,6 +792,12 @@ class UtilMenu {
 		const cb = () => {
 			if (isOwner && space.isShared && !isLocalNetwork && isOnline && cid && key) {
 				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
+			};
+
+			if (space.notificationMode == I.NotificationMode.Nothing) {
+				options.push({ id: 'unmute', name: translate('commonUnmute') });
+			} else {
+				options.push({ id: 'mute', name: translate('commonMute') });
 			};
 
 			if (space.isAccountRemoving) {
@@ -842,6 +851,15 @@ class UtilMenu {
 
 								case 'revoke': {
 									Action.inviteRevoke(targetSpaceId);
+									break;
+								};
+
+								case 'mute':
+								case 'unmute': {
+									const mode = element.id == 'mute' ? I.NotificationMode.Nothing : I.NotificationMode.All;
+
+									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+									analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
 									break;
 								};
 							};
@@ -1258,7 +1276,7 @@ class UtilMenu {
 				if (url) {
 					const bookmark = S.Record.getBookmarkType();
 
-					C.ObjectCreateBookmark({ ...details, source: url }, S.Common.space, bookmark?.defaultTemplateId, (message: any) => {
+					C.ObjectCreateFromUrl(details, S.Common.space, bookmark?.uniqueKey, url, true, bookmark?.defaultTemplateId, (message: any) => {
 						cb(message.details, message.middleTime);
 					});
 				} else {
@@ -1404,7 +1422,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
-			type: I.MenuType.Horizontal,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,

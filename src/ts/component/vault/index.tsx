@@ -128,9 +128,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
-			if (item.targetSpaceId != S.Common.space) {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true }, false);
-			};
+			onClick(e, item);
 		};
 
 		if (!sidebar.isAnimating) {
@@ -173,56 +171,23 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			default: {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+				if (item.isLocalOk && (item.targetSpaceId != S.Common.space)) {
+					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+				};
 				break;
 			};
 		};
 	};
 
 	const onAdd = () => {
-		const suffix = (it) => U.Common.toUpperCamelCase(it);
-		const options = [ 'chat', 'space', 'join' ].map(it => ({
-			id: it,
-			icon: it,
-			name: translate(`sidebarMenuSpaceCreateTitle${suffix(it)}`),
-			description: translate(`sidebarMenuSpaceCreateDescription${suffix(it)}`),
-			withDescription: true,
-		}));
-
-		analytics.event('ScreenVaultCreateMenu');
-
-		S.Menu.open('select', {
+		const param = {
 			element: `#vault #item-add`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: 4,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'chat': {
-							Action.createSpace(I.SpaceUxType.Chat, analytics.route.vault);
-							break;
-						};
+		};
 
-						case 'space': {
-							Action.createSpace(I.SpaceUxType.Space, analytics.route.vault);
-							break;
-						};
-
-						case 'join': {
-							S.Popup.closeAll(null, () => {
-								S.Popup.open('spaceJoinByLink', {});
-							});
-							break;
-						};
-					};
-
-					analytics.event(`ClickVaultCreateMenu${U.Common.toUpperCamelCase(item.id)}`);
-				},
-			}
-		});
+		Action.spaceCreateMenu(param, analytics.route.vault);
 	};
 
 	const onArrow = (dir: number) => {

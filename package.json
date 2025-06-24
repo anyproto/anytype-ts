@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.46.36-alpha",
+	"version": "0.47.11-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -69,7 +69,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^36.4.0",
+		"electron": "^35.2.1",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -104,8 +104,8 @@
 		"@types/react-transition-group": "^4.4.12",
 		"@viz-js/viz": "^3.2.4",
 		"amplitude-js": "^5.11.0",
-		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
+		"check-disk-space": "^3.4.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
@@ -151,7 +151,6 @@
 		"react-minimal-pie-chart": "^8.3.0",
 		"react-pdf": "^6.2.2",
 		"react-router-dom": "^5.3.4",
-		"react-sortable-hoc": "^2.0.0",
 		"react-transition-group": "^4.4.5",
 		"react-virtualized": "^9.22.3",
 		"regedit": "^5.1.3",
@@ -309,6 +308,10 @@
 				"to": "node_modules/@electron"
 			},
 			{
+				"from": "node_modules/@tomjs",
+				"to": "node_modules/@tomjs"
+			},
+			{
 				"from": "node_modules/ajv",
 				"to": "node_modules/ajv"
 			},
@@ -335,6 +338,10 @@
 			{
 				"from": "node_modules/builder-util-runtime",
 				"to": "node_modules/builder-util-runtime"
+			},
+			{
+				"from": "node_modules/check-disk-space",
+				"to": "node_modules/check-disk-space"
 			},
 			{
 				"from": "node_modules/concat-map",
@@ -441,6 +448,10 @@
 				"to": "node_modules/if-async"
 			},
 			{
+				"from": "node_modules/immediate",
+				"to": "node_modules/immediate"
+			},
+			{
 				"from": "node_modules/imurmurhash",
 				"to": "node_modules/imurmurhash"
 			},
@@ -477,12 +488,20 @@
 				"to": "node_modules/jsonfile"
 			},
 			{
+				"from": "node_modules/jszip",
+				"to": "node_modules/jszip"
+			},
+			{
 				"from": "node_modules/keytar",
 				"to": "node_modules/keytar"
 			},
 			{
 				"from": "node_modules/lazy-val",
 				"to": "node_modules/lazy-val"
+			},
+			{
+				"from": "node_modules/lie",
+				"to": "node_modules/lie"
 			},
 			{
 				"from": "node_modules/locate-path",
@@ -553,6 +572,10 @@
 				"to": "node_modules/p-try"
 			},
 			{
+				"from": "node_modules/pako",
+				"to": "node_modules/pako"
+			},
+			{
 				"from": "node_modules/path-exists",
 				"to": "node_modules/path-exists"
 			},
@@ -563,6 +586,10 @@
 			{
 				"from": "node_modules/pkg-up",
 				"to": "node_modules/pkg-up"
+			},
+			{
+				"from": "node_modules/process-nextick-args",
+				"to": "node_modules/process-nextick-args"
 			},
 			{
 				"from": "node_modules/pupa",
@@ -581,6 +608,10 @@
 				"to": "node_modules/rimraf"
 			},
 			{
+				"from": "node_modules/safe-buffer",
+				"to": "node_modules/safe-buffer"
+			},
+			{
 				"from": "node_modules/sanitize-filename",
 				"to": "node_modules/sanitize-filename"
 			},
@@ -591,6 +622,10 @@
 			{
 				"from": "node_modules/semver",
 				"to": "node_modules/semver"
+			},
+			{
+				"from": "node_modules/setimmediate",
+				"to": "node_modules/setimmediate"
 			},
 			{
 				"from": "node_modules/signal-exit",
@@ -635,6 +670,10 @@
 			{
 				"from": "node_modules/unused-filename",
 				"to": "node_modules/unused-filename"
+			},
+			{
+				"from": "node_modules/util-deprecate",
+				"to": "node_modules/util-deprecate"
 			},
 			{
 				"from": "node_modules/wrappy",
