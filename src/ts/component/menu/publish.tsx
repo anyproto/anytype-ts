@@ -217,7 +217,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className="simple"
 					text={translate('commonCopy')}
 					onClick={() => {
-						U.Common.copyToast(translate('commonLink'), `https://${url}`)
+						U.Common.copyToast(translate('commonLink'), `https://${url}`);
 						analytics.event('ClickShareObjectCopyUrl', { objectType: object.type });
 					}} 
 				/>
