@@ -55,7 +55,7 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); border-radius: 12px; }
+		> .dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); }
 		> .dropTarget.lastTarget { position: relative; display: flex; flex-direction: column; gap: 12px 0px; }
 
 		> .dropTarget.firstTarget.isOver, 
