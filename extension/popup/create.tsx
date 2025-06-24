@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon, IconObject } from 'Component';
 import { I, C, S, U, J, Relation, keyboard, Storage } from 'Lib';

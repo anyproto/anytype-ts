@@ -2464,3 +2464,14 @@ export const PublishingGetStatus = (spaceId: string, objectId: string, callBack?
 
 	dispatcher.request(PublishingGetStatus.name, request, callBack);
 };
+
+// ---------------------- PUSH ---------------------- //
+
+export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.NotificationMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.SetSpaceMode.Request();
+
+	request.setSpaceid(spaceId);
+	request.setMode(mode as number);
+
+	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
+};

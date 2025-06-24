@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -14,6 +14,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const { data } = param;
 	const { value } = data;
 	const cn = [ 'form' ];
+	const timeout = useRef(0);
 
 	if (preview) {
 		cn.push('withPreview');
@@ -73,29 +74,39 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			return;
 		};
 
-		$(buttonRef.current.getNode()).toggleClass('hide', !v);
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
+			$(buttonRef.current.getNode()).toggleClass('hide', !v);
 
-		const url = U.Common.matchUrl(v);
-
-		if (url) {
-			if (preview && (url == preview.originalUrl)) {
-				return;
+			const scheme = U.Common.getScheme(v);
+			if (!scheme) {
+				v = `http://${v}`;
 			};
 
-			setIsLoading(true);
+			const url = U.Common.matchUrl(v);
 
-			C.LinkPreview(url, (message: any) => {
-				setIsLoading(false);
-
-				if (message.error.code) {
-					setError(message.error.description);
-				} else {
-					setPreview({ ...message.previewLink, originalUrl: url });
+			if (url) {
+				if (preview && (url == preview.originalUrl)) {
+					return;
 				};
-			});
-		} else {
-			setPreview(null);
-		};
+
+				setIsLoading(true);
+
+				C.LinkPreview(url, (message: any) => {
+					setIsLoading(false);
+
+					if (message.error.code) {
+						setError(translate('menuDataviewCreateBookmarkError'));
+					} else {
+						setPreview({ ...message.previewLink, originalUrl: url });
+						setError('');
+					};
+				});
+			} else {
+				setPreview(null);
+				setError('');
+			};
+		}, J.Constant.delay.keyboard);
 	};
 
 	useEffect(() => {
@@ -125,7 +136,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 			{preview ? (
 				<div className="previewWrap">
-					<div className="pic" style={{ backgroundImage: `url("${preview.imageUrl}")` }} />
+					{preview.imageUrl ?	<div className="pic" style={{ backgroundImage: `url("${preview.imageUrl}")` }} /> : ''}
 					<div className="info">
 						<div className="name">{preview.title}</div>
 						<div className="descr">{preview.description}</div>
@@ -139,7 +150,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 						value={withContent}
 						onChange={(e: any, v: boolean) => setWithContent(v)}
 					/>
-					<Label text={translate('menuDataviewBookmarkCreateContent')} />
+					<Label text={translate('menuDataviewCreateBookmarkContent')} />
 				</div>
 				<div className="side right">
 					<Button ref={buttonRef} type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />

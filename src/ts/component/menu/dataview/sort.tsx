@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -386,7 +386,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 								{({ onRowsRendered }) => (
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
-											<VList
+											<List
 												ref={listRef}
 												width={width}
 												height={height}
@@ -425,6 +425,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			) : ''}
 		</div>
 	);
+
 }));
 
 export default MenuSort;

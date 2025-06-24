@@ -269,10 +269,6 @@ class UtilMenu {
 			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
 		};
 
-		if (hasLink || hasFile || hasBookmark) {
-			items.push({ id: 'deleteObject', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralObject'))}` });
-		};
-
 		return items.map(it => ({ ...it, isAction: true }));
 	};
 
@@ -798,6 +794,12 @@ class UtilMenu {
 				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 			};
 
+			if (space.notificationMode == I.NotificationMode.Nothing) {
+				options.push({ id: 'unmute', name: translate('commonUnmute') });
+			} else {
+				options.push({ id: 'mute', name: translate('commonMute') });
+			};
+
 			if (space.isAccountRemoving) {
 				options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
 			} else 
@@ -849,6 +851,15 @@ class UtilMenu {
 
 								case 'revoke': {
 									Action.inviteRevoke(targetSpaceId);
+									break;
+								};
+
+								case 'mute':
+								case 'unmute': {
+									const mode = element.id == 'mute' ? I.NotificationMode.Nothing : I.NotificationMode.All;
+
+									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+									analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
 									break;
 								};
 							};

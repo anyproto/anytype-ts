@@ -113,7 +113,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				</div>
 			);
 		} else {
-			source = <Icon className="source withBackground" onMouseDown={this.onEdit} />;
+			source = <Icon className="source" onMouseDown={this.onEdit} />;
 			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -131,6 +131,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
+				{source}
+
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
@@ -140,7 +142,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					<div id="value" onMouseDown={this.onEdit} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
-					{source}
 					{resize}
 
 					<Error id="error" />

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';

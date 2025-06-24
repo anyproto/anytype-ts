@@ -1,7 +1,8 @@
-import * as React from 'react';
-import $ from 'jquery';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { SortableContainer } from 'react-sortable-hoc';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { I, S } from 'Lib';
 import { Icon } from 'Component';
 import Cell from './cell';
@@ -14,52 +15,53 @@ interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
-const HeadRow = observer(class HeadRow extends React.Component<Props> {
+const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
 
-	render () {
-		const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths, getVisibleRelations } = this.props;
-		const widths = getColumnWidths('', 0);
-		const relations = getVisibleRelations();
-		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
-		const allowed = S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
+	const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths, getVisibleRelations } = props;
+	const widths = getColumnWidths('', 0);
+	const relations = getVisibleRelations();
+	const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+	const allowed = S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
 
-		const Row = SortableContainer((item: any) => (
-			<div 
-				id="rowHead"
-				className="rowHead"
-				style={{ gridTemplateColumns: str }}
+	return (
+		<DndContext
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			onDragStart={onSortStart}
+			onDragEnd={onSortEnd}
+			modifiers={[ restrictToHorizontalAxis, restrictToFirstScrollableAncestor ]}
+		>
+			<SortableContext
+				items={relations.map(it => it.relationKey)}
+				strategy={horizontalListSortingStrategy}
 			>
-				{relations.map((relation: any, i: number) => (
-					<Cell 
-						key={`grid-head-${relation.relationKey}`} 
-						{...this.props}
-						{...relation}
-						index={i} 
-						onResizeStart={onResizeStart} 
-					/>
-				))}
-				<div className="cellHead last">
-					{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+				<div 
+					id="rowHead"
+					className="rowHead"
+					style={{ gridTemplateColumns: str }}
+				>
+					{relations.map((relation: any, i: number) => (
+						<Cell 
+							key={`grid-head-${relation.relationKey}`} 
+							{...props}
+							{...relation}
+							index={i} 
+							onResizeStart={onResizeStart} 
+						/>
+					))}
+
+					<div className="cellHead last">
+						{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+					</div>
 				</div>
-			</div>
-		));
+			</SortableContext>
+		</DndContext>
+	);
 
-		return (
-			<Row 
-				axis="x" 
-				lockAxis="x"
-				lockToContainerEdges={true}
-				transitionDuration={150}
-				distance={10}
-				useDragHandle={true}
-				onSortStart={onSortStart}
-				onSortEnd={onSortEnd}
-				helperClass="isDragging"
-				helperContainer={() => $(`#block-${block.id} .wrap`).get(0)}
-			/>
-		);
-	};
-
-});
+}));
 
 export default HeadRow;

@@ -7,7 +7,7 @@
 	> .head {
 		.name { 
 			@include text-overflow-nw; opacity: 0; transform: translate3d(0px,30px,0px); transition: all 0.2s $easeInQuint; 
-			max-width: calc(100% - 88px);
+			max-width: calc(100% - 88px); display: none;
 		}
 	}
 	> .head.show {
@@ -55,11 +55,8 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .dropTarget.firstTarget, 
-		> .dropTarget.lastTarget 
-		{ position: relative; }
-
-		> .dropTarget.lastTarget { display: flex; flex-direction: column; gap: 12px 0px; }
+		> .dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); border-radius: 12px; }
+		> .dropTarget.lastTarget { position: relative; display: flex; flex-direction: column; gap: 12px 0px; }
 
 		> .dropTarget.firstTarget.isOver, 
 		> .dropTarget.lastTarget.isOver 

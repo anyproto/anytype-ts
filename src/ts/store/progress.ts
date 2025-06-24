@@ -71,7 +71,7 @@ class ProgressStore {
 	 * @param {(it: I.Progress) => boolean} [filter] - Optional filter function.
 	 * @returns {I.Progress[]} The filtered progress items.
 	 */
-	getList (filter?: (it: I.Progress) => boolean) {
+	getList (filter?: (it: I.Progress) => boolean): I.Progress[] {
 		const { space } = S.Common;
 
 		return this.list.filter(it => {

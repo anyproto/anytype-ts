@@ -154,6 +154,7 @@
 	"commonOpenSpace": "Open Space",
 	"commonReset": "Reset",
 	"commonUpdate": "Update",
+	"commonUpdateNow": "Update Now",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
 	"commonVersionHistory": "Version History",
@@ -214,6 +215,8 @@
 	"commonRemovePinned": "Remove from Pinned",
 	"commonCreateSpace": "Create space",
 	"commonCreateChat": "Create chat",
+	"commonMute": "Mute",
+	"commonUnmute": "Unmute",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -381,6 +384,7 @@
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
+	"progressUpdateDownloading": "Downloading",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
@@ -885,7 +889,8 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
+	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
+	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
@@ -899,6 +904,8 @@
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
+	"popupSettingsSpaceIndexPushTitle": "Message notifications",
+	"popupSettingsSpaceIndexPushText": "You will receive notifications when you are mentioned only",
 
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -1627,7 +1634,8 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
-	"menuDataviewBookmarkCreateContent": "Include page content",
+	"menuDataviewCreateBookmarkContent": "Include page content",
+	"menuDataviewCreateBookmarkError": "Error parsing URL",
 
 	"menuObjectContextNoAvailableActions": "No available actions",
 	"menuObjectContextUnlinkFromCollection": "Unlink from Collection",
@@ -1819,7 +1827,6 @@
 	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
-	"menuPublishButtonUpdate": "Update",
 	"menuPublishButtonView": "View in Browser",
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
@@ -2412,6 +2419,7 @@
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
 	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
+	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
@@ -2562,6 +2570,10 @@
 
 	"apiScope0": "Webclipper",
 	"apiScope1": "API",
-	"apiScope2": "Full"
+	"apiScope2": "Full",
+
+	"notificationMode0": "Enable all",
+	"notificationMode1": "Mentions only",
+	"notificationMode2": "Disable all"
 
 }

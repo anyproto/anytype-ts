@@ -94,6 +94,7 @@ import MediaPdf from './util/media/pdf';
 import MediaMermaid from './util/media/mermaid';
 
 import ProgressBar from './util/progressBar';
+import ProgressText from './util/progressText';
 import ShareTooltip from './util/share/tooltip';
 import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
@@ -192,6 +193,7 @@ export {
 	MediaMermaid,
 
 	ProgressBar,
+	ProgressText,
 	ShareTooltip,
 	ShareBanner,
 	FooterAuthDisclaimer,

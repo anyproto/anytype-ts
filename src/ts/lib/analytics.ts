@@ -531,6 +531,12 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeMessageNotificationState': {
+				data.type = Number(data.type) || 0;
+				data.type = I.NotificationMode[data.type];
+				break;
+			};
+
 			case 'ApproveInviteRequest':
 			case 'ChangeSpaceMemberPermissions': {
 				data.type = Number(data.type) || 0;

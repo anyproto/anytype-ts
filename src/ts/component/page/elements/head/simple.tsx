@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
 import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, sidebar } from 'Lib';
@@ -15,6 +15,10 @@ interface Props {
 	getDotMap?: (start: number, end: number, callback: (res: Map<string, boolean>) => void) => void;
 };
 
+interface PropsRef {
+	forceUpdate: () => void;
+};
+
 const EDITORS = [ 
 	{ relationKey: 'name', blockId: 'title' }, 
 	{ relationKey: 'description', blockId: 'description' },
@@ -22,239 +26,41 @@ const EDITORS = [
 
 const SUB_ID_CHECK = 'headSimple-check';
 
-const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
-	
-	_isMounted = false;
-	refEditable: any = {};
-	node: any = null;
-	timeout = 0;
-	public static defaultProps = {
-		placeholder: '',
+const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
+
+	const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup, relationKey, getDotMap } = props;
+	const check = U.Data.checkDetails(rootId, '', []);
+	const object = S.Detail.get(rootId, rootId, [ 
+		'layout', 'spaceId', 'featuredRelations', 'recommendedLayout', 'pluralName', 'iconName', 'iconOption', 'iconEmoji', 'iconImage',
+		'done', 'fileExt', 'fileMimeType', 'relationFormat',
+	], true);
+	const [ dummy, setDummy ] = useState(0);
+	const nodeRef = useRef(null);
+	const editableRef = useRef({});
+	const timeout = useRef(0);
+	const featuredRelations = Relation.getArrayValue(object.featuredRelations);
+	const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+	const canWrite = U.Space.canMyParticipantWrite();
+	const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
+	const isType = U.Object.isTypeLayout(check.layout);
+	const isDate = U.Object.isDateLayout(check.layout);
+	const isRelation = U.Object.isRelationLayout(check.layout);
+	const cn = [ 'headSimple', check.className ];
+	const canEditIcon = allowDetails && !isRelation && !isType;
+	const isOwner = U.Space.isMyOwner();
+	const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
+	const placeholder = {
+		title: String(props.placeholder || ''),
+		description: translate('commonDescription'),
 	};
+	const buttons = [];
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onTemplates = this.onTemplates.bind(this);
-	};
-
-	render (): any {
-		const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup } = this.props;
-		const check = U.Data.checkDetails(rootId, '', []);
-		const object = S.Detail.get(rootId, rootId, [ 
-			'layout', 'spaceId', 'featuredRelations', 'recommendedLayout', 'pluralName', 'iconName', 'iconOption', 'iconEmoji', 'iconImage',
-			'done', 'fileExt', 'fileMimeType', 'relationFormat',
-		], true);
-
-		if (object._empty_) {
-			return null;
-		};
-
-		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const canWrite = U.Space.canMyParticipantWrite();
-		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(check.layout);
-		const isType = U.Object.isTypeLayout(check.layout);
-		const isDate = U.Object.isDateLayout(check.layout);
-		const isRelation = U.Object.isRelationLayout(check.layout);
-		const cn = [ 'headSimple', check.className ];
-		const canEditIcon = allowDetails && !isRelation && !isType;
-		const isOwner = U.Space.isMyOwner();
-		const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
-		const placeholder = {
-			title: this.props.placeholder,
-			description: translate('commonDescription'),
-		};
-		const buttons = [];
-
-		let buttonLayout = null;
-		let buttonEdit = null;
-		let buttonTemplate = null;
-		let buttonCreate = null;
-		let descr = null;
-		let featured = null;
-
-		if (!allowDetails) {
-			cn.push('isReadonly');
-		};
-
-		const Editor = (item: any) => (
-			<Editable
-				ref={ref => this.refEditable[item.id] = ref}
-				id={`editor-${item.id}`}
-				placeholder={placeholder[item.id]}
-				readonly={item.readonly}
-				classNameWrap={item.className}
-				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
-				classNamePlaceholder={'c' + item.id}
-				onFocus={e => this.onFocus(e, item)}
-				onBlur={e => this.onBlur(e, item)}
-				onKeyDown={e => this.onKeyDown(e, item)}
-				onKeyUp={() => this.onKeyUp()}
-				onSelect={e => this.onSelectText(e, item)}
-				onCompositionStart={this.onCompositionStart}
-			/>
-		);
-
-		if (!isRelation && featuredRelations.includes('description')) {
-			descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
-		};
-
-		if (!isDate && !isTypeOrRelation) {
-			featured = (
-				<Block 
-					{...this.props} 
-					key={blockFeatured.id} 
-					rootId={rootId} 
-					iconSize={20} 
-					block={blockFeatured} 
-					className="small" 
-					isSelectionDisabled={true}
-					readonly={!allowDetails}
-					isContextMenuDisabled={isContextMenuDisabled}
-				/>
-			);
-		};
-
-		if (isTypeOrRelation) {
-			if (isType) {
-				const isTemplate = U.Object.isTemplateType(object.id);
-				const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
-
-				if (isOwner && total) {
-					buttonLayout = (
-						<Button
-							id="button-layout"
-							color="blank"
-							className="c28 resetLayout"
-							onClick={this.onLayout}
-						/>
-					);
-				};
-
-				if (canShowTemplates) {
-					buttonTemplate = (
-						<Button 
-							id="button-template" 
-							text={translate('commonTemplates')} 
-							color="blank" 
-							className="c28" 
-							onClick={this.onTemplates} 
-						/>
-					);
-				};
-
-				if (allowDetails) {
-					buttonEdit = (
-						<Button 
-							id="button-edit" 
-							color="blank" 
-							className="c28" 
-							text={translate('commonEditType')} 
-							onClick={() => sidebar.rightPanelToggle(true, isPopup, 'type', { rootId })}
-						/>
-					);
-				};
-			};
-
-			if (!canWrite) {
-				buttonCreate = null;
-				buttonEdit = null;
-			};
-		};
-
-		if (isDate) {
-			buttonCreate = (
-				<>
-					<Icon className="arrow left withBackground" onClick={() => this.changeDate(-1)} />
-					<Icon className="arrow right withBackground" onClick={() => this.changeDate(1)}/>
-					<Icon id="calendar-icon" className="calendar withBackground" onClick={this.onCalendar} />
-				</>
-			);
-		};
-
-		if (buttonLayout) {
-			buttons.push(() => buttonLayout);
-		};
-		if (buttonTemplate) {
-			buttons.push(() => buttonTemplate);
-		};
-		if (buttonEdit) {
-			buttons.push(() => buttonEdit);
-		};
-		if (buttonCreate) {
-			buttons.push(() => buttonCreate);
-		};
-
-		return (
-			<div ref={node => this.node = node} className={cn.join(' ')}>
-				<div className="sides">
-					<div className="side left">
-						<div className="titleWrap">
-							{!noIcon && check.withIcon ? (
-								<IconObject 
-									id={'block-icon-' + rootId} 
-									size={32} 
-									iconSize={32}
-									object={object} 
-									canEdit={canEditIcon}
-								/>
-							) : ''}
-							<Editor className="title" id="title" readonly={isType || !allowDetails} />
-						</div>
-					</div>
-
-					{buttons.length ? (
-						<div className="side right">
-							{buttons.map((Component, i) => <Component key={i} />)}
-						</div>
-					) : ''}
-				</div>
-				{descr}
-				{featured}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.init();
-
-		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-		const isType = U.Object.isTypeLayout(object.layout);
-
-		if (isType) {
-			U.Subscription.subscribe({
-				subId: SUB_ID_CHECK,
-				filters: [
-					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id },
-				],
-				keys: [ 'id' ],
-				limit: 1,
-			});
-		};
-	};
-
-	componentDidUpdate () {
-		this.init();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		focus.clear(true);
-		window.clearTimeout(this.timeout);
-	};
-
-	init () {
+	const init = () => {
 		const { focused } = focus.state;
-		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, [ 'name' ], true);
 
-		this.setValue();
+		setValue();
 
 		if (!focused && !object._empty_ && (object.name == translate('defaultNamePage'))) {
 			focus.set('title', { from: 0, to: 0 });
@@ -263,58 +69,55 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		window.setTimeout(() => focus.apply(), 10);
 	};
 
-	onFocus (e: any, item: any) {
-		this.placeholderCheck(item.id);
+	const onFocus = (e: any, item: any) => {
+		editableRef.current[item.id]?.placeholderCheck();
 	};
 
-	onBlur (e: any, item: any) {
-		window.clearTimeout(this.timeout);
-		this.save();
+	const onBlur = (e: any, item: any) => {
+		window.clearTimeout(timeout.current);
+		save();
 	};
 
-	onKeyDown (e: any, item: any) {
+	const onKeyDown = (e: any, item: any) => {
 		if (item.id == 'title') {
 			keyboard.shortcut('enter', e, () => e.preventDefault());
 		};
 	};
 
-	onKeyUp () {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
+	const onKeyUp = () => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => save(), J.Constant.delay.keyboard);
 	};
 
-	onSelectText (e: any, item: any) {
-		focus.set(item.id, this.getRange(item.id));
+	const onSelectText = (e: any, item: any) => {
+		focus.set(item.id, getRange(item.id));
 	};
 
-	onCompositionStart (e: any) {
-		window.clearTimeout(this.timeout);
+	const onCompositionStart = (e: any) => {
+		window.clearTimeout(timeout.current);
 	};
 
-	save () {
-		const { rootId } = this.props;
-
+	const save = () => {
 		for (const item of EDITORS) {
-			U.Data.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
+			U.Data.blockSetText(rootId, item.blockId, getValue(item.blockId), [], true);
 		};
 	};
 
-	getRange (id: string): I.TextRange {
-		return this.refEditable[id]?.getRange();
+	const getRange = (id: string): I.TextRange => {
+		return editableRef.current[id]?.getRange();
 	};
 
-	getValue (id: string): string {
-		const value = String(this.refEditable[id]?.getTextValue() || '');
+	const getValue = (id: string): string => {
+		const value = String(editableRef.current[id]?.getTextValue() || '');
 		return U.Common.stripTags(value);
 	};
 
-	setValue () {
+	const setValue = () => {
 		const { dateFormat } = S.Common;
-		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, []);
 
 		for (const item of EDITORS) {
-			if (!this.refEditable[item.blockId]) {
+			if (!editableRef.current[item.blockId]) {
 				continue;
 			};
 
@@ -332,19 +135,12 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				text = '';
 			};
 
-			this.refEditable[item.blockId]?.setValue(text);
-			this.placeholderCheck(item.blockId);
+			editableRef.current[item.blockId].setValue(text);
+			editableRef.current[item.blockId].placeholderCheck();
 		};
 	};
 
-	placeholderCheck (id: string) {
-		if (this.refEditable[id]) {
-			this.refEditable[id].placeholderCheck();
-		};
-	};
-
-	onTemplates () {	
-		const { rootId } = this.props;
+	const onTemplates = () => {
 		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('dataviewTemplateList', {
@@ -362,7 +158,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				},
 				onSelect: item => {
 					if (item.id == J.Constant.templateId.new) {
-						this.onTemplateAdd();
+						onTemplateAdd();
 					} else {
 						U.Object.openPopup(item);
 					};
@@ -373,12 +169,11 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		analytics.event('ScreenTypeTemplateSelector');
 	};
 
-	onTemplateAdd () {
-		const { rootId } = this.props;
-		const type = S.Detail.get(rootId, rootId);
+	const onTemplateAdd = () => {
+		const object = S.Detail.get(rootId, rootId);
 		const details: any = {
-			targetObjectType: type.id,
-			layout: type.recommendedLayout,
+			targetObjectType: object.id,
+			layout: object.recommendedLayout,
 		};
 
 		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
@@ -386,13 +181,10 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 				return;
 			};
 
-			const object = message.details;
-
-			if (!type.defaultTemplateId) {
-				U.Object.setDefaultTemplateId(type.id, object.id);
-			};
+			const newObject = message.details;
 
 			if (!object.defaultTemplateId) {
+				U.Object.setDefaultTemplateId(object.id, newObject.id);
 			};
 
 			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
@@ -400,8 +192,7 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		});
 	};
 
-	onCalendar = () => {
-		const { rootId, getDotMap, relationKey } = this.props;
+	const onCalendar = () => {
 		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('calendar', {
@@ -420,17 +211,14 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		analytics.event('ClickDateCalendarView');
 	};
 
-	changeDate = (dir: number) => {
-		const { rootId, relationKey } = this.props;
+	const changeDate = (dir: number) => {
 		const object = S.Detail.get(rootId, rootId);
 
 		U.Object.openDateByTimestamp(relationKey, object.timestamp + dir * 86400);
 		analytics.event(dir > 0 ? 'ClickDateForward' : 'ClickDateBack');
 	};
 
-	onLayout = () => {
-		const { rootId } = this.props;
-
+	const onLayout = () => {
 		S.Menu.open('select', {
 			element: '.headSimple #button-layout',
 			horizontal: I.MenuDirection.Center,
@@ -465,6 +253,191 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 		});
 	};
 
-});
+	let buttonLayout = null;
+	let buttonEdit = null;
+	let buttonTemplate = null;
+	let buttonCreate = null;
+	let descr = null;
+	let featured = null;
+
+	if (!allowDetails) {
+		cn.push('isReadonly');
+	};
+
+	const Editor = (item: any) => (
+		<Editable
+			ref={ref => editableRef.current[item.id] = ref}
+			id={`editor-${item.id}`}
+			placeholder={placeholder[item.id]}
+			readonly={item.readonly}
+			classNameWrap={item.className}
+			classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
+			classNamePlaceholder={'c' + item.id}
+			onFocus={e => onFocus(e, item)}
+			onBlur={e => onBlur(e, item)}
+			onKeyDown={e => onKeyDown(e, item)}
+			onKeyUp={() => onKeyUp()}
+			onSelect={e => onSelectText(e, item)}
+			onCompositionStart={onCompositionStart}
+		/>
+	);
+
+	if (!isRelation && featuredRelations.includes('description')) {
+		descr = <Editor className="descr" id="description" readonly={!allowDetails} />;
+	};
+
+	if (!isDate && !isTypeOrRelation) {
+		featured = (
+			<Block 
+				{...props} 
+				key={blockFeatured.id} 
+				rootId={rootId} 
+				iconSize={20} 
+				block={blockFeatured} 
+				className="small" 
+				isSelectionDisabled={true}
+				readonly={!allowDetails}
+				isContextMenuDisabled={isContextMenuDisabled}
+			/>
+		);
+	};
+
+	if (isTypeOrRelation) {
+		if (isType) {
+			const isTemplate = U.Object.isTemplateType(object.id);
+			const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+
+			if (isOwner && total) {
+				buttonLayout = (
+					<Button
+						id="button-layout"
+						color="blank"
+						className="c28 resetLayout"
+						onClick={onLayout}
+					/>
+				);
+			};
+
+			if (canShowTemplates) {
+				buttonTemplate = (
+					<Button 
+						id="button-template" 
+						text={translate('commonTemplates')} 
+						color="blank" 
+						className="c28" 
+						onClick={onTemplates} 
+					/>
+				);
+			};
+
+			if (allowDetails) {
+				buttonEdit = (
+					<Button 
+						id="button-edit" 
+						color="blank" 
+						className="c28" 
+						text={translate('commonEditType')} 
+						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'type', { rootId })}
+					/>
+				);
+			};
+		};
+
+		if (!canWrite) {
+			buttonCreate = null;
+			buttonEdit = null;
+		};
+	};
+
+	if (isDate) {
+		buttonCreate = (
+			<>
+				<Icon className="arrow left withBackground" onClick={() => changeDate(-1)} />
+				<Icon className="arrow right withBackground" onClick={() => changeDate(1)}/>
+				<Icon id="calendar-icon" className="calendar withBackground" onClick={onCalendar} />
+			</>
+		);
+	};
+
+	if (buttonLayout) {
+		buttons.push(() => buttonLayout);
+	};
+	if (buttonTemplate) {
+		buttons.push(() => buttonTemplate);
+	};
+	if (buttonEdit) {
+		buttons.push(() => buttonEdit);
+	};
+	if (buttonCreate) {
+		buttons.push(() => buttonCreate);
+	};
+
+	useEffect(() => {
+		init();
+
+		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+		const isType = U.Object.isTypeLayout(object.layout);
+
+		if (isType) {
+			U.Subscription.subscribe({
+				subId: SUB_ID_CHECK,
+				filters: [
+					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id },
+				],
+				keys: [ 'id' ],
+				limit: 1,
+			});
+		};
+
+		return () => {
+			U.Subscription.destroyList([ SUB_ID_CHECK ]);
+			focus.clear(true);
+			window.clearTimeout(timeout.current);
+		};
+
+	}, []);
+
+	useEffect(() => {
+		init();
+	});
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
+
+	if (object._empty_) {
+		return null;
+	};
+
+	return (
+		<div ref={nodeRef} className={cn.join(' ')}>
+			<div className="sides">
+				<div className="side left">
+					<div className="titleWrap">
+						{!noIcon && check.withIcon ? (
+							<IconObject 
+								id={`block-icon-${rootId}`} 
+								size={32} 
+								iconSize={32}
+								object={object} 
+								canEdit={canEditIcon}
+							/>
+						) : ''}
+						<Editor className="title" id="title" readonly={isType || !allowDetails} />
+					</div>
+				</div>
+
+				{buttons.length ? (
+					<div className="side right">
+						{buttons.map((Component, i) => <Component key={i} />)}
+					</div>
+				) : ''}
+			</div>
+			{descr}
+			{featured}
+		</div>
+	);
+
+}));
 
 export default HeadSimple;

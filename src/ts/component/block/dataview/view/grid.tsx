@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
@@ -438,10 +438,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onSortEnd (result: any) {
+		const { active, over } = result;
+
+		if (!active || !over) {
+			return;
+		};
+
 		const { rootId, block, getView, getVisibleRelations } = this.props;
-		const { oldIndex, newIndex } = result;
 		const view = getView();
 		const relations = getVisibleRelations();
+		const ids = relations.map(it => it.relationKey);
+		const oldIndex = ids.indexOf(active.id);
+		const newIndex = ids.indexOf(over.id);
 
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
@@ -451,7 +459,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	loadMoreRows () {
-		const { rootId, block, loadData, getView, getLimit, getSubId } = this.props;
+		const { loadData, getView, getLimit, getSubId } = this.props;
 		const subId = getSubId();
 		const view = getView();
 		const limit = getLimit();

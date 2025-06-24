@@ -1,163 +1,54 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import $ from 'jquery';
-import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
 import { I, S, U, J, Relation, Renderer, keyboard, translate } from 'Lib';
 
 const MENU_ID = 'dataviewFileList';
 
-const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<I.Menu> {
+const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
+	const { id, param, position, getId, getSize, setHover } = props;
+	const { data, classNameWrap } = param;
+	const { canEdit, onChange, subId } = data;
+	const value = Relation.getArrayValue(data.value);
 
-	constructor (props: I.Menu) {
-		super(props);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
 
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-	};
-
-	render () {
-		const { param, position, getId, setHover } = this.props;
-		const { data } = param;
-		const { canEdit } = data;
-		const items = this.getItems();
-		
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
-
-		const File = (item: any) => (
-			<>
-				<IconObject object={item} />
-				<ObjectName object={item} />
-			</>
-		);
-
-		const Image = (item: any) => (
-			<img src={S.Common.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
-		);
-
-		const Item = SortableElement((item: any) => {
-			const cn = [ 'item' ];
-
-			let content = null;
-
-			switch (item.layout) {
-				default: {
-					cn.push('isFile');
-					content = <File {...item} />;
-					break;
-				};
-
-				case I.ObjectLayout.Image: {
-					cn.push('isImage');
-					content = <Image {...item} />;
-					break;
-				};
-			};
-
-			return (
-				<div id={`item-${item.id}`} className={cn.join(' ')}>
-					{canEdit ? <Handle /> : ''}
-					<div 
-						className="clickable" 
-						onClick={() => U.Object.openConfig(item)} 
-						onContextMenu={e => this.onMore(e, item)}
-					>
-						{content}
-					</div>
-					<div className="buttons">
-						<Icon className="more" onClick={e => this.onMore(e, item)} />
-					</div>
-				</div>
-			);
-		});
-
-		const List = SortableContainer(() => (
-			<div className="items">
-				{items.map((item: any, i: number) => <Item key={i} {...item} index={i} />)}
-			</div>
-		));
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				{items.length ? (
-					<List 
-						axis="y" 
-						lockAxis="y"
-						lockToContainerEdges={true}
-						transitionDuration={150}
-						distance={10}
-						onSortStart={this.onSortStart}
-						onSortEnd={this.onSortEnd}
-						useDragHandle={true}
-						helperClass="isDragging"
-						helperContainer={() => $(`#${getId()} .items`).get(0)}
-					/>
-				) : <EmptySearch />}
-
-				{canEdit ? (
-					<div className="bottom">
-						<div className="line" />
-						<MenuItemVertical 
-							id="add" 
-							icon="plus" 
-							name={translate('commonAdd')} 
-							onClick={this.onAdd}
-							onMouseEnter={() => setHover({ id: 'add' })}
-							onMouseLeave={() => setHover()}
-						/>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		S.Menu.closeAll([ 'dataviewFileList' ]);
-	};
-
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 	
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param, id } = this.props;
-		const { data } = param;
-		const value = arrayMove(Relation.getArrayValue(data.value), oldIndex, newIndex);
+	const onSortEnd = (result: any) => {
+		const { active, over } = result;
+		if (!active || !over) {
+			return;
+		};
 
-		S.Menu.updateData(id, { value });
-		this.save(value);
+		const oldIndex = value.indexOf(active.id);
+		const newIndex = value.indexOf(over.id);
+		const newValue = arrayMove(value, oldIndex, newIndex);
+
+		S.Menu.updateData(id, { value: newValue });
+		save(newValue);
 
 		keyboard.disableSelection(false);
 	};
 
-	onAdd (e: any) {
-		const { getId, getSize, param } = this.props;
-		const { data } = param;
-		const { classNameWrap } = param;
-
+	const onAdd = (e: any) => {
 		S.Menu.open('dataviewFileList', {
 			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
 			offsetY: () => -getSize().height,
-			classNameWrap: classNameWrap,
+			classNameWrap,
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
@@ -169,7 +60,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 				],
 				onChange: (value: string[], callBack?: () => void) => {
-					this.save(value);
+					save(value);
 
 					if (callBack) {
 						callBack();
@@ -179,25 +70,13 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		});
 	};
 	
-	add (objectId: string) {
-		const { param } = this.props;
-		const { data } = param;
-
-		this.save(Relation.getArrayValue(data.value).concat([ objectId ]));
-	};	
-
-	save (value: string[]) {
-		const { param, id } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-
-		onChange(U.Common.arrayUnique(value), () => S.Menu.updateData(id, { value }));
+	const save = (value: string[]) => {
+		if (onChange) {
+			onChange(U.Common.arrayUnique(value), () => S.Menu.updateData(id, { value }));
+		};
 	};
 
-	onMore (e: any, item: any) {
-		const { getId, param, id, position } = this.props;
-		const { data, classNameWrap } = param;
-		const { canEdit, onChange } = data;
+	const onMore = (e: any, item: any) => {
 		const itemEl = $(`#${getId()} #item-${item.id}`);
 		const element = `#${getId()} #item-${item.id} .icon.more`;
 		const isAllowed = canEdit && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
@@ -237,6 +116,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							U.Object.openConfig(item);
 							break;
 						};
+
 						case 'download': {
 							let url = '';
 							switch (item.layout) {
@@ -274,16 +154,123 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		});
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { subId } = data;
-
+	const getItems = () => {
 		return Relation.getArrayValue(data.value).
 			map(it => S.Detail.get(subId, it, [])).
 			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
+	
+	const File = (item: any) => (
+		<>
+			<IconObject object={item} />
+			<ObjectName object={item} />
+		</>
+	);
 
-});
+	const Image = (item: any) => (
+		<img src={S.Common.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
+	);
+
+	const Item = (item: any) => {
+		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !canEdit });
+
+		if (transform) {
+			transform.scaleX = 1;
+			transform.scaleY = 1;
+		};
+
+		const style = {
+			...item.style,
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+		const cn = [ 'item' ];
+
+		let content = null;
+
+		switch (item.layout) {
+			default: {
+				cn.push('isFile');
+				content = <File {...item} />;
+				break;
+			};
+
+			case I.ObjectLayout.Image: {
+				cn.push('isImage');
+				content = <Image {...item} />;
+				break;
+			};
+		};
+
+		return (
+			<div 
+				id={`item-${item.id}`} 
+				className={cn.join(' ')}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
+			>
+				{canEdit ? <Icon className="dnd" /> : ''}
+				<div 
+					className="clickable" 
+					onClick={() => U.Object.openConfig(item)} 
+					onContextMenu={e => onMore(e, item)}
+				>
+					{content}
+				</div>
+				<div className="buttons">
+					<Icon className="more" onClick={e => onMore(e, item)} />
+				</div>
+			</div>
+		);
+	};
+
+	const items = getItems();
+
+	useEffect(() => {
+		return () => {
+			S.Menu.closeAll([ 'dataviewFileList' ]);
+		};
+	}, []);
+
+	return (
+		<div className="wrap">
+			{items.length ? (
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					onDragStart={onSortStart}
+					onDragEnd={onSortEnd}
+					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+				>
+					<SortableContext
+						items={items.map((item) => item.id)}
+						strategy={verticalListSortingStrategy}
+					>
+						<div className="items">
+							{items.map((item: any, i: number) => <Item key={i} {...item} index={i} />)}
+						</div>
+					</SortableContext>
+				</DndContext>
+			) : <EmptySearch />}
+
+			{canEdit ? (
+				<div className="bottom">
+					<div className="line" />
+					<MenuItemVertical 
+						id="add" 
+						icon="plus" 
+						name={translate('commonAdd')} 
+						onClick={onAdd}
+						onMouseEnter={() => setHover({ id: 'add' })}
+						onMouseLeave={() => setHover()}
+					/>
+				</div>
+			) : ''}
+		</div>
+	);
+
+}));
 
 export default MenuDataviewFileValues;

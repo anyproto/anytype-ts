@@ -60,15 +60,22 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
-				if (message.error.code == J.Error.Code.Publish.PAGE_SIZE_EXCEEDED) {
-					const { membership } = S.Auth;
-					const tier = U.Data.getMembershipTier(membership.tier);
-					const limit = !tier.price ? 10 : 100;
+				switch (message.error.code) {
+					default: {
+						setError(message.error.description);
+						break;
+					};
 
-					setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
-				} else {
-					setError(message.error.description);
-				}
+					case J.Error.Code.Publish.PAGE_SIZE_EXCEEDED: {
+						const { membership } = S.Auth;
+						const tier = U.Data.getMembershipTier(membership.tier);
+						const limit = !tier.price ? 10 : 100;
+
+						setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
+						break;
+					};
+				};
+
 				return;
 			};
 
@@ -161,7 +168,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
-				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
+				{ text: translate('commonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
 			]);
 		};
 	};

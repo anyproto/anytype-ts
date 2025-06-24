@@ -47,7 +47,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	}; 
 
 	const focus = () => {
-		inputRefs.current[index.current].focus();
+		inputRefs.current[index.current]?.focus();
 	};
 
 	const onClick = () => {
