@@ -60,8 +60,8 @@ const PageMainSettingsPinIndex = observer(class PageMainSettingsPinIndex extends
 		const { onPage, setConfirmPin } = this.props;
 
 		setConfirmPin(() => { 
-			Storage.delete('pin');
-			onPage('pinIndex');
+			S.Common.pinRemove();
+			window.setTimeout(() => onPage('pinIndex'));
 		});
 
 		onPage('pinConfirm');
