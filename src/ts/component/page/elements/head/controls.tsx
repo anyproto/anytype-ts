@@ -133,7 +133,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-		buttonsRef.current.forceUpdate();
+		buttonsRef.current?.forceUpdate();
 	});
 
 	useImperativeHandle(ref, () => ({
