@@ -381,6 +381,7 @@
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
+	"progressUpdateDownloading": "Downloading",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",

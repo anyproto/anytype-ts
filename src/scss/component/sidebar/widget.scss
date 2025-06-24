@@ -7,7 +7,7 @@
 	> .head {
 		.name { 
 			@include text-overflow-nw; opacity: 0; transform: translate3d(0px,30px,0px); transition: all 0.2s $easeInQuint; 
-			max-width: calc(100% - 88px);
+			max-width: calc(100% - 88px); display: none;
 		}
 	}
 	> .head.show {
