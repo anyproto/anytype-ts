@@ -10,6 +10,7 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 
 	const forceUpdate = () => {
 		setDummy(dummy + 1);
+		console.log('forceUpdate');
 	};
 
 	const onClick = (e: any, item: any) => {
