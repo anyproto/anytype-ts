@@ -486,6 +486,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
+		/*
 		const { showVault } = S.Common;
 		const node = $(this.node);
 		const head = node.find('#head');
@@ -507,6 +508,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				progress.show();
 			}, 200);
 		};
+		*/
 	};
 
 	onArchive (e: any) {
