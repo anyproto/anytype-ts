@@ -380,6 +380,15 @@ class ChatStore {
 		Renderer.send('setBadge', String(t || ''));
 	};
 
+	/**
+	 * Checks if message has a mantion of given participant ID
+	 * @param {I.ChatMessage} message - The space ID.
+	 * @param {string} participantId - The participant ID.
+	 */
+	isMention (message: I.ChatMessage, participantId: string): boolean {
+		return !!message.content.marks.find(it => (it.type == I.MarkType.Mention) && (it.param == participantId));
+	};
+
 };
 
 export const Chat: ChatStore = new ChatStore();

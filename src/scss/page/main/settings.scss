@@ -181,15 +181,6 @@
             }
         }
 
-        .membersIcons { display: flex; align-items: center; justify-content: center; }
-        .membersIcons {
-            .iconObject { margin-left: -4px; box-shadow: 0 0 0 2px var(--color-bg-primary); }
-            .membersMore {
-                width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: -4px; box-shadow: 0 0 0 2px var(--color-bg-primary);
-                background: var(--color-shape-tertiary); color: var(--color-text-secondary); @include text-common; position: relative;
-            }
-        }
-
         .spaceButtons { display: flex; gap: 0px 8px; margin-bottom: 36px; }
         .spaceButtons {
             .btn {
@@ -231,6 +222,9 @@
 
                     > .item {
 						.icon { flex-shrink: 0; width: 20px; height: 20px; }
+						.icon.type { background-image: url('~img/icon/settings/type.svg'); }
+						.icon.home { background-image: url('~img/icon/settings/home.svg'); }
+						.icon.push { background-image: url('~img/icon/settings/push.svg'); }
 						.icon.widget { background-image: url('~img/icon/settings/widget.svg'); }
 						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
                         .icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }

@@ -215,6 +215,8 @@
 	"commonRemovePinned": "Remove from Pinned",
 	"commonCreateSpace": "Create space",
 	"commonCreateChat": "Create chat",
+	"commonMute": "Mute",
+	"commonUnmute": "Unmute",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -887,7 +889,8 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
+	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
+	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
@@ -901,6 +904,8 @@
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
+	"popupSettingsSpaceIndexPushTitle": "Message notifications",
+	"popupSettingsSpaceIndexPushText": "You will receive notifications when you are mentioned only",
 
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -2564,6 +2569,10 @@
 
 	"apiScope0": "Webclipper",
 	"apiScope1": "API",
-	"apiScope2": "Full"
+	"apiScope2": "Full",
+
+	"notificationMode0": "Enable all",
+	"notificationMode1": "Mentions only",
+	"notificationMode2": "Disable all"
 
 }
