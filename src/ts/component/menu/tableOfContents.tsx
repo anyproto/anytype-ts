@@ -31,7 +31,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 		const obj = $(`#${getId()}`);
 		obj.on('mouseenter', () => S.Common.clearTimeout('tableOfContents'));
-		obj.on('mouseleave', () => S.Common.setTimeout('tableOfContents', 50, () => close()));
+		obj.on('mouseleave', () => S.Common.setTimeout('tableOfContents', 100, () => close()));
 	};
 	
 	const unbind = () => {

@@ -61,9 +61,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	const onMouseLeave = () => {
-		S.Common.setTimeout('tableOfContents', 50, () => {
-			S.Menu.close('tableOfContents');
-		});
+		S.Common.setTimeout('tableOfContents', 100, () => S.Menu.close('tableOfContents'));
 	};
 
 	const resize = () => {
