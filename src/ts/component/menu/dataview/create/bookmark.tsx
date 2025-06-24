@@ -99,10 +99,12 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 						setError(translate('menuDataviewCreateBookmarkError'));
 					} else {
 						setPreview({ ...message.previewLink, originalUrl: url });
+						setError('');
 					};
 				});
 			} else {
 				setPreview(null);
+				setError('');
 			};
 		}, J.Constant.delay.keyboard);
 	};
