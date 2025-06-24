@@ -79,7 +79,7 @@
 	}
 
 	> .body.isEditing {
-		.widget:not(.isEditable) { opacity: 0.5; }
+		.widget:not(.isEditable) { display: none; }
 		.widget:not(.isEditable) {
 			.dimmer { cursor: default; }
 		}
