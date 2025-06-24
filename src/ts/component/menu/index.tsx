@@ -666,7 +666,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				//this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
+				this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
 			};
 
 			// Arrow positioning
