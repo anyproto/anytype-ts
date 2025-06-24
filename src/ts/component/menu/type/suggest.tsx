@@ -279,7 +279,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					id={`item-${item.id}`}
 					className="item add" 
 					onMouseEnter={e => onMouseEnter(e, item)} 
-					onClick={e => onClickHandler(e, item)} 
+					onClick={e => onClickHandler(e, item)}
 				>
 					<Icon className="plus" />
 					<div className="name">{addName}</div>
