@@ -54,11 +54,9 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			ret = true;
 		});
 
-		if (ret) {
-			return;
+		if (!ret) {
+			onKeyDown(e);
 		};
-
-		onKeyDown(e);
 	};
 
 	const onAdd = (e: any) => {
@@ -153,6 +151,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const newIndex = ids.indexOf(over.id);
 		const list = arrayMove(getItems(), oldIndex, newIndex);
 
+		n.current = newIndex;
 		view.relations = list;
 		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it && it.relationKey));
 		keyboard.disableSelection(false);
@@ -295,6 +294,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		getListRef: () => listRef.current,
 	}), []);
 	
 	return (
