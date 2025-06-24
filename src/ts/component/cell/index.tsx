@@ -34,25 +34,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const childRef = useRef<I.CellRef>(null);
 	const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 
-	const checkIcon = () => {
-		const node = $(nodeRef.current);
-		const icon = node.find('.iconObject');
-
-		node.removeClass('withIcon');
-
-		if (view && view.hideIcon) {
-			return;
-		};
-
-		if (!relation || !isName) {
-			return;
-		};
-
-		if (icon.length) {
-			node.addClass('withIcon');
-		};
-	};
-
 	const checkValue = (): boolean => {
 		if (noInplace && editModeOn) {
 			return true;
@@ -549,8 +530,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			CellComponent = CellText;
 			break;
 	};
-
-	useEffect(() => checkIcon());
 
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
