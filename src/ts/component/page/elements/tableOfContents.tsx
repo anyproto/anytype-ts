@@ -32,9 +32,12 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		if (id) {
 			node.find(`#item-${id}`).addClass('active');
 			blockRef.current = id;
-
 			S.Menu.updateData('tableOfContents', { blockId: id });
-			sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
+
+			const state = sidebar.rightPanelGetState(isPopup);
+			if (state.page == 'object/tableOfContents') {
+				sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
+			};
 		};
 	};
 

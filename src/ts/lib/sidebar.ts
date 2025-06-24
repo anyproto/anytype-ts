@@ -530,7 +530,17 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	rightPanelSetState (isPopup: boolean, v: any) {
+		console.log('rightPanelSetState', v);
+		console.trace();
 		this.rightPanelRef(isPopup)?.setState(v);
+	};
+
+	/**
+	 * Gets the state of the right panel for the given context.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	rightPanelGetState (isPopup: boolean) {
+		return this.rightPanelRef(isPopup)?.getState() || {};
 	};
 
 };
