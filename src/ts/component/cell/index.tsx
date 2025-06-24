@@ -15,6 +15,7 @@ interface Props extends I.Cell {
 	tooltipParam?: I.TooltipParam;
 	maxWidth?: number;
 	noInplace?: boolean;
+	editModeOn?: boolean;
 };
 
 const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
@@ -23,7 +24,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
 		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
-		noInplace,
+		noInplace, editModeOn,
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
@@ -34,7 +35,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 
 	const checkIcon = () => {
-		
 		const node = $(nodeRef.current);
 		const icon = node.find('.iconObject');
 
@@ -54,6 +54,9 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	};
 
 	const checkValue = (): boolean => {
+		if (noInplace && editModeOn) {
+			return true;
+		};
 		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
@@ -164,7 +167,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 2,
 			noAnimation: true,
-			passThrough: false,// !noInplace,
+			passThrough: !noInplace,
 			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
 			onOpen: () => setOn(),
@@ -499,6 +502,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		(canEdit ? 'canEdit' : ''), 
 		(relationKey == 'name' ? 'isName' : ''),
 		(!checkValue() ? 'isEmpty' : ''),
+		(editModeOn ? 'editModeOn' : ''),
 	];
 
 	let CellComponent: any = null;

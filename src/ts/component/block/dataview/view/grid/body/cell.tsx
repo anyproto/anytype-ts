@@ -15,7 +15,7 @@ interface Props {
 	getView?(): I.View;
 	getRecord?(id: string): any;
 	getIdPrefix?(): string;
-	onRef?(ref: any, id: string): void;
+	onRefCell?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
 	canCellEdit?(relation: any, recordId: any): boolean;
@@ -33,7 +33,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 
 	render () {
 		const { 
-			rootId, block, className, relationKey, readonly, recordId, getView, getRecord, onRef, onCellClick, onCellChange, 
+			rootId, block, className, relationKey, readonly, recordId, getView, getRecord, onRefCell, onCellClick, onCellChange,
 			getIdPrefix, canCellEdit,
 		} = this.props;
 		const record = getRecord(recordId);
@@ -80,7 +80,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 				<Cell 
 					ref={ref => { 
 						this.ref = ref;
-						onRef(ref, id); 
+						onRefCell(ref, id);
 					}} 
 					{...this.props}
 					getRecord={() => record}

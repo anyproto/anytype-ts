@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, DropTarget, SelectionTarget, ObjectCover } from 'Component';
+import { Cell, DropTarget, SelectionTarget, ObjectCover, Icon } from 'Component';
 import { I, S, U, Relation, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
@@ -11,6 +11,7 @@ interface Props extends I.ViewComponent {
 const Card = observer(class Card extends React.Component<Props> {
 
 	_isMounted = false;
+	isEditing = false;
 	node: any = null;
 
 	constructor (props: Props) {
@@ -21,7 +22,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject, onEditModeClick } = this.props;
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -43,6 +44,11 @@ const Card = observer(class Card extends React.Component<Props> {
 			<div className="cardContent">
 				<ObjectCover object={cover} />
 
+				<Icon
+					className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
+					onClick={e => onEditModeClick(e, recordId)}
+				/>
+
 				<div className="inner">
 					{relations.map((vr: any) => {
 						const relation = S.Record.getRelationByKey(vr.relationKey);
@@ -55,7 +61,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								{...this.props}
 								getRecord={() => record}
 								subId={subId}
-								ref={ref => onRef(ref, id)}
+								ref={ref => onRefCell(ref, id)}
 								relationKey={relation.relationKey}
 								viewType={view.type}
 								idPrefix={idPrefix}
@@ -66,6 +72,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								shortUrl={true}
 								withName={true}
 								noInplace={true}
+								editModeOn={this.isEditing}
 							/>
 						);
 					})}
@@ -170,7 +177,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || !canEdit) {
+		if (!relation || !canEdit || !this.isEditing) {
 			return;
 		};
 
@@ -178,6 +185,11 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id);
+	};
+
+	setIsEditing (v:boolean) {
+		this.isEditing = v;
+		this.forceUpdate();
 	};
 
 });

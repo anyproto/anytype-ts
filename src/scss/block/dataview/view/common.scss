@@ -123,6 +123,29 @@
 				}
 			}
 		}
+
+		.viewContent.viewList,
+		.viewContent.viewGallery,
+		.viewContent.viewBoard {
+			.icon.editMode {
+				display: none; position: absolute; z-index: 3; width: 28px; height: 28px; border-radius: 6px;
+				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
+				background: var(--color-bg-primary) url('~img/icon/menu/action/pencil0.svg') 50% 50% no-repeat;
+			}
+			.icon.editMode.enabled { background-color: var(--color-shape-highlight-medium); display: block; }
+		}
+
+		.viewContent.viewBoard,
+		.viewContent.viewGallery {
+			.icon.editMode { right: 12px; top: 12px; }
+			.card:hover {
+				.icon.editMode { display: block; }
+			}
+		}
+		.viewContent.viewList {
+			.icon.editMode { left: -48px; top: 50%; margin-top: -14px; }
+			.row:hover { display: block; }
+		}
 	}
 
 	.block.blockDataview.isInline {

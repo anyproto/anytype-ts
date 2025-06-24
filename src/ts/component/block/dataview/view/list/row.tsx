@@ -11,10 +11,11 @@ interface Props extends I.ViewComponent {
 const Row = observer(class Row extends React.Component<Props> {
 
 	_isMounted = false;
+	isEditing = false;
 	node: any = null;
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle, onEditModeClick } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -40,7 +41,7 @@ const Row = observer(class Row extends React.Component<Props> {
 						<Cell
 							key={'list-cell-' + relation.relationKey}
 							elementId={id}
-							ref={ref => onRef(ref, id)}
+							ref={ref => onRefCell(ref, id)}
 							{...this.props}
 							getRecord={() => record}
 							subId={subId}
@@ -95,6 +96,11 @@ const Row = observer(class Row extends React.Component<Props> {
 				onClick={e => this.onClick(e)}
 				onContextMenu={e => onContext(e, record.id)}
 			>
+				<Icon
+					className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
+					onClick={e => onEditModeClick(e, recordId)}
+				/>
+
 				{content}
 			</div>
 		);
@@ -142,7 +148,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || !canEdit) {
+		if (!relation || !canEdit || !this.isEditing) {
 			return;
 		};
 
@@ -150,6 +156,11 @@ const Row = observer(class Row extends React.Component<Props> {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id);
+	};
+
+	setIsEditing (v:boolean) {
+		this.isEditing = v;
+		this.forceUpdate();
 	};
 
 	resize () {

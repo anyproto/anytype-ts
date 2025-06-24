@@ -29,6 +29,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refControls = null;
 	refSelect = null;
 	refCells: Map<string, any> = new Map();
+	refRecords: Map<string, any> = new Map();
 
 	viewId = '';
 	creating = false;
@@ -39,6 +40,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	timeoutFilter = 0;
 	searchIds = null;
 	filter = '';
+	editingRecordId: string = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -85,6 +87,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.canCellEdit = this.canCellEdit.bind(this);
+
+		this.onEditModeClick = this.onEditModeClick.bind(this);
+		this.setRecordEditingOn = this.setRecordEditingOn.bind(this);
+		this.setRecordEditingOff = this.setRecordEditingOff.bind(this);
 	};
 
 	render () {
@@ -181,6 +187,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			getSearchIds: this.getSearchIds,
 			canCellEdit: this.canCellEdit,
+			onEditModeClick: this.onEditModeClick,
+			setRecordEditingOn: this.setRecordEditingOn,
+			setRecordEditingOff: this.setRecordEditingOff,
 		};
 
 		if (isInline && !targetId) {
@@ -194,7 +203,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<ViewComponent 
 						key={'view' + view.id}
 						ref={ref => this.refView = ref} 
-						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
+						onRefCell={(ref: any, id: string) => this.refCells.set(id, ref)}
+						onRefRecord={(ref: any, id: string) => this.refRecords.set(id, ref)}
 						{...this.props}
 						{...dataviewProps}
 						pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
@@ -907,6 +917,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (U.Object.isNoteLayout(record.layout) && (relation.relationKey == 'name')) {
 			return false;
 		};
+
 		return true;
 	};
 
@@ -929,9 +940,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if (!view.isGrid() && Relation.isUrl(relation.format)) {
-			// Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
-			// return;
+		if (!view.isGrid() && Relation.isUrl(relation.format) && (this.editingRecordId != recordId)) {
+			Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
+			return;
 		};
 
 		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing()) {
@@ -1454,6 +1465,51 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	setSelected (ids: string[]) {
 		this.refSelect?.setIds(ids);
+	};
+
+	onEditModeClick (e: any, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (this.editingRecordId == id) {
+			this.setRecordEditingOff(id);
+		} else {
+			this.setRecordEditingOn(id);
+		};
+	};
+
+	setRecordEditingOn (id: string) {
+		const cb = () => {
+			const ref = this.refRecords.get(id);
+			if (!ref || !ref.setIsEditing) {
+				return;
+			};
+
+			ref.setIsEditing(true);
+			this.editingRecordId = id;
+		};
+
+		if (this.editingRecordId) {
+			this.setRecordEditingOff(this.editingRecordId, cb);
+		} else {
+			cb();
+		};
+	};
+
+	setRecordEditingOff (id: string, cb?: () => void) {
+		const ref = this.refRecords.get(id);
+		if (!ref || !ref.setIsEditing) {
+			if (cb) {
+				cb();
+			};
+			return;
+		};
+
+		ref.setIsEditing(false);
+		this.editingRecordId = '';
+		if (cb) {
+			cb();
+		};
 	};
 
 	multiSelectAction (id: string) {
