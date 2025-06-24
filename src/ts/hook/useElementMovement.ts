@@ -64,7 +64,7 @@ class ElementMovementObserver {
 		this.movementObserver.disconnect();
 		this.resizeObserver.disconnect();
 
-		$(window).off('scroll.elementMovement')
+		$(window).off('scroll.elementMovement');
 	};
 };
 

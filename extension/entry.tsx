@@ -1,5 +1,3 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import { C, U, J, S } from 'Lib'; 

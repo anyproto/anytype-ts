@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
+import { createRoot } from 'react-dom/client';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -511,7 +512,9 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 			const createElement = () => {
 				el = $(`<div id="tooltipItem-${id}" class="tooltipItem" />`).appendTo(tooltipRef.current);
-				ReactDOM.render(<Tooltip {...object} />, el.get(0));
+
+				const root = createRoot(el.get(0));
+				root.render(<Tooltip {...object} />);
 
 				el.off('click').on('click', (e: any) => {
 					e.stopPropagation();
