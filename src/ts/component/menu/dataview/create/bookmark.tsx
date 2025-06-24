@@ -6,7 +6,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 	const { param, close } = props;
 	const inputRef = useRef(null);
-	const buttonRef = useRef(null);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ preview, setPreview ] = useState(null);
 	const [ error, setError ] = useState('');
@@ -76,8 +75,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
-			$(buttonRef.current.getNode()).toggleClass('hide', !v);
-
 			const scheme = U.Common.getScheme(v);
 			if (!scheme) {
 				v = `http://${v}`;
@@ -111,8 +108,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 	useEffect(() => {
 		rebind();
-		$(buttonRef.current.getNode()).addClass('hide');
-
 		return () => unbind();
 	}, []);
 
@@ -135,27 +130,29 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			<Error text={error} />
 
 			{preview ? (
-				<div className="previewWrap">
-					{preview.imageUrl ?	<div className="pic" style={{ backgroundImage: `url("${preview.imageUrl}")` }} /> : ''}
-					<div className="info">
-						<div className="name">{preview.title}</div>
-						<div className="descr">{preview.description}</div>
+				<>
+					<div className="previewWrap">
+						{preview.imageUrl ?	<div className="pic" style={{ backgroundImage: `url("${preview.imageUrl}")` }} /> : ''}
+						<div className="info">
+							<div className="name">{preview.title}</div>
+							<div className="descr">{preview.description}</div>
+						</div>
 					</div>
-				</div>
-			) : ''}
 
-			<div className="bottom">
-				<div className="side left">
-					<Switch
-						value={withContent}
-						onChange={(e: any, v: boolean) => setWithContent(v)}
-					/>
-					<Label text={translate('menuDataviewCreateBookmarkContent')} />
-				</div>
-				<div className="side right">
-					<Button ref={buttonRef} type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />
-				</div>
-			</div>
+					<div className="bottom">
+						<div className="side left">
+							<Switch
+								value={withContent}
+								onChange={(e: any, v: boolean) => setWithContent(v)}
+							/>
+							<Label text={translate('menuDataviewCreateBookmarkContent')} />
+						</div>
+						<div className="side right">
+							<Button type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />
+						</div>
+					</div>
+				</>
+			) : ''}
 		</form>
 	);
 
