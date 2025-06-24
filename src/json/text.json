@@ -1634,7 +1634,8 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
-	"menuDataviewBookmarkCreateContent": "Include page content",
+	"menuDataviewCreateBookmarkContent": "Include page content",
+	"menuDataviewCreateBookmarkError": "Error parsing URL",
 
 	"menuObjectContextNoAvailableActions": "No available actions",
 	"menuObjectContextUnlinkFromCollection": "Unlink from Collection",
