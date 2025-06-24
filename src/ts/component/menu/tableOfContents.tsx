@@ -33,7 +33,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	
 	const unbind = () => {
 		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('mouseleave')
+		$(`#${getId()}`).off('mouseleave');
 	};
 
 	const getItems = () => {
