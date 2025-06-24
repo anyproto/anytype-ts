@@ -24,7 +24,6 @@ const SUB_ID_CHECK = 'headSimple-check';
 
 const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	
-	_isMounted = false;
 	refEditable: any = {};
 	node: any = null;
 	timeout = 0;
@@ -219,7 +218,6 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.init();
 
 		const { rootId } = this.props;
@@ -243,8 +241,6 @@ const HeadSimple = observer(class HeadSimple extends React.Component<Props> {
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
-
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
 	};

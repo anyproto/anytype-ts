@@ -2412,6 +2412,7 @@
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
 	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
+	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 

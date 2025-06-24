@@ -7,7 +7,7 @@ interface State {
 	error: string;
 };
 
-const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
+const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup, State> {
 
 	config: any = {};
 	state = {

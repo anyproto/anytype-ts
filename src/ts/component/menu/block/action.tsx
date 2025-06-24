@@ -625,13 +625,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
-			case 'deleteObject': {
-				Action.delete([ targetObjectId ], '', () => {
-					C.BlockListDelete(rootId, [ block.id ]);
-				});
-				break;
-			};
-
 			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
 				break;

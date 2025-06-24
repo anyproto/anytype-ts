@@ -1,10 +1,11 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { I, S, J, keyboard, Action } from 'Lib';
-import { SortableContainer } from 'react-sortable-hoc';
-import arrayMove from 'array-move';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import WidgetListItem from './item';
 
 const LIMIT = 30;
@@ -21,6 +22,10 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 	const view = getView();
 	const { total } = S.Record.getMeta(subId, '');
 	const isCompact = [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
 
 	const initCache = () => {
 		const items = getItems();
@@ -37,17 +42,23 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 	};
 
 	const onSortEnd = (result: any) => {
-		const { oldIndex, newIndex } = result;
-		const { targetBlockId } = block.content;
-
 		keyboard.disableSelection(false);
 
-		if ((oldIndex == newIndex) || (targetBlockId != J.Constant.widgetId.favorite)) {
+		const { active, over } = result;
+		if (!active || !over) {
 			return;
 		};
 
-		const { root } = S.Block;
+		const targetId = block.getTargetObjectId();
+
+		if (targetId != J.Constant.widgetId.favorite) {
+			return;
+		};
+
 		const records = getRecordIds();
+		const oldIndex = records.indexOf(active.id);
+		const newIndex = records.indexOf(over.id);
+		const { root } = S.Block;
 		const children = S.Block.getChildren(root, root, it => it.isLink());
 		const ro = records[oldIndex];
 		const rn = records[newIndex];
@@ -163,50 +174,48 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 			</CellMeasurer>
 		);
 
-		const List = SortableContainer(() => (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={total}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => true}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<VList
-									ref={listRef}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={cache.current}
-									rowCount={length}
-									rowHeight={({ index }) => getRowHeight(items[index], index, isCompact)}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									scrollToAlignment="center"
-									onScroll={onScroll}
-								/>
-						)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			</div>
-		));
-
 		content = (
-			<List 
-				axis="y" 
-				lockAxis="y"
-				lockToContainerEdges={true}
-				transitionDuration={150}
-				distance={10}
-				onSortStart={onSortStart}
-				onSortEnd={onSortEnd}
-				useDragHandle={true}
-				helperClass="isDragging"
-				helperContainer={() => $(`#widget-${parent.id} .items`).get(0)}
-			/>
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				onDragStart={onSortStart}
+				onDragEnd={onSortEnd}
+				modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+			>
+				<SortableContext
+					items={items.map((item) => item.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					<div className="items">
+						<InfiniteLoader
+							rowCount={total}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => true}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={listRef}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={cache.current}
+											rowCount={length}
+											rowHeight={({ index }) => getRowHeight(items[index], index, isCompact)}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											scrollToAlignment="center"
+											onScroll={onScroll}
+										/>
+								)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				</SortableContext>
+			</DndContext>
 		);
 	} else {
 		content = (

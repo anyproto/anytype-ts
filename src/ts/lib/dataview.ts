@@ -1,4 +1,4 @@
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 
 class Dataview {

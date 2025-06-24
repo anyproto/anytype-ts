@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';

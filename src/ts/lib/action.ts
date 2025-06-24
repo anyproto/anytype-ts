@@ -1098,7 +1098,8 @@ class Action {
 						canCancel: false,
 					},
 				});
-			} else {
+			} else 
+			if (callBack) {
 				callBack();
 			};
 		});
