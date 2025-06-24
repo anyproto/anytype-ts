@@ -830,24 +830,34 @@ class CommonStore {
 	 * @returns {number} The timeout value.
 	 */
 	getTimeout (id: string): number {
+		console.log('getTimeout', this.timeoutMap.get(id), this.timeoutMap);
 		return Number(this.timeoutMap.get(id)) || 0;
 	};
 
 	/**
 	 * Sets a timeout for a given ID and function.
 	 * @param {string} id - The timeout ID.
-	 * @param {number} timeout - The timeout duration.
+	 * @param {number} delay - The timeout duration.
 	 * @param {() => void} func - The function to call after timeout.
 	 */
-	setTimeout (id: string, timeout: number, func: () => void) {
-		window.clearTimeout(this.getTimeout(id));
+	setTimeout (id: string, delay: number, func: () => void) {
+		this.clearTimeout(id);
 
 		const t = window.setTimeout(() => {
 			this.timeoutMap.delete(id);
 			func();
-		}, timeout);
+		}, delay);
 
 		this.timeoutMap.set(id, t);
+		return t;
+	};
+
+	/**
+	 * Clears a timeout with a given ID.
+	 * @param {string} id - The timeout ID.
+	 */
+	clearTimeout (id: string) {
+		window.clearTimeout(this.getTimeout(id));
 	};
 
 };

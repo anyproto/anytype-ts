@@ -633,13 +633,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				if (type == I.MenuType.Vertical) {
 					h = height;
 					top = y;
-					w = Math.abs(x - coords.x) - offset;
-					left = coords.x + offset;
 
-					if (flipX) {
-						w -= width;
-						left -= w + offset * 2;
+					if (flipX || I.MenuDirection.Right) {
+						left = x + width;
+						w = Math.abs(x + width - coords.x) - offset;
 						transform = 'scaleX(-1)';
+					} else {
+						left = coords.x + offset;
+						w = Math.abs(x - coords.x) - offset;
 					};
 
 					clipPath = `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`;
@@ -661,10 +662,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					clipPath,
 					transform,
 					position: (isFixed ? 'fixed' : 'absolute'),
+					zIndex: 100000,
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
+				//this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
 			};
 
 			// Arrow positioning

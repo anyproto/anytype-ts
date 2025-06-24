@@ -247,6 +247,7 @@ class MenuContext extends React.Component<I.Menu> {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
+			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			noAutoHover: true,

@@ -56,6 +56,14 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				blockId: blockRef.current,
 			}
 		});
+
+		S.Common.clearTimeout('tableOfContents');
+	};
+
+	const onMouseLeave = () => {
+		S.Common.setTimeout('tableOfContents', 50, () => {
+			S.Menu.close('tableOfContents');
+		});
 	};
 
 	const resize = () => {
@@ -97,7 +105,12 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	return (
-		<div ref={nodeRef} className="tableOfContents" onMouseEnter={onMouseEnter}>
+		<div 
+			ref={nodeRef} 
+			className="tableOfContents"
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+		>
 			{tree.map(item => (
 				<div 
 					id={`item-${item.id}`}
