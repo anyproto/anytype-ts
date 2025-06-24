@@ -77,11 +77,11 @@ module.exports = (env, argv) => {
 				progress: false,
 				overlay: {
 					runtimeErrors: (error) => {
-						if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
-							return false;
-						};
-				
-						return true;
+						const allowed = [
+							'ResizeObserver loop completed with undelivered notifications.',
+							'Worker was terminated',
+						];
+						return !allowed.includes(error.message);
 					  },
 				},
 			},
