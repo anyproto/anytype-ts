@@ -168,7 +168,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
-				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
+				{ text: translate('commonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
 			]);
 		};
 	};

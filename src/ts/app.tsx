@@ -406,7 +406,7 @@ const App: FC = () => {
 				icon: 'update',
 				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('commonUpdate'),
+				textConfirm: translate('commonUpdateNow'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
