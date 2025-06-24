@@ -236,6 +236,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		getListRef: () => listRef.current,
 	}), []);
 
 	const items = getItems();
