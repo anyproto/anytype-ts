@@ -171,7 +171,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			default: {
-				if (item.isLocalOk) {
+				if (!item.isLocalOk) {
 					break;
 				};
 
