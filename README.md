@@ -7,9 +7,7 @@
 [![Crowdin](https://badges.crowdin.net/anytype-desktop/localized.svg)](https://crowdin.com/project/anytype-desktop)
 [![License](https://img.shields.io/badge/license-ASAL-1.0-blue.svg)](LICENSE.md)
 
-<p align="center">
-  <a href="https://anytype.io"><img src="./docs/logo.svg" width="240" alt="Anytype logo"></a>
-</p>
+
 
 **Anytype** is a personal knowledge base—your digital brain—that lets you gather, connect and remix all kinds of information. Create pages, tasks, wikis, journals—even entire apps—and *define your own data model* while your data stays **offline‑first, private and encrypted** across devices.
 
