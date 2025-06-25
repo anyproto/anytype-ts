@@ -1,17 +1,27 @@
-import React, { forwardRef } from 'react';
-import { I } from 'Lib';
+import React, { forwardRef, useEffect, useRef } from 'react';
+import raf from 'raf';
+import { I, U } from 'Lib';
 
 interface Props {
 	id?: string;
 	type?: I.LoaderType;
 	className?: string;
+	fitToContainer?: boolean;
+	isPopup?: boolean;
 };
 
 const Loader = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	type = I.LoaderType.Dots,
 	className = '',
+	fitToContainer = false,
+	isPopup = false,
 }, ref) => {
+
+	const nodeRef = useRef(null);
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
 
 	let content = null;
 	switch (type) {
@@ -33,8 +43,31 @@ const Loader = forwardRef<HTMLDivElement, Props>(({
 		};
 	};
 
+	const resize = () => {
+		if (!fitToContainer) {
+			return;
+		};
+
+		const container = U.Common.getScrollContainer(isPopup);
+		$(nodeRef.current).css({ height: container.height() });
+	};
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			if (nodeRef.current) {
+				resizeObserver.disconnect();
+			};
+		};
+	}, []);
+
 	return (
-		<div id={id} className={[ 'loaderWrapper', className ].join(' ')}>
+		<div ref={nodeRef} id={id} className={[ 'loaderWrapper', className ].join(' ')}>
 			{content}
 		</div>
 	);

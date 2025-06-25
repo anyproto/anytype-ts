@@ -35,6 +35,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 	render () {
 		const { isLoading, isDeleted } = this.state;
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const check = U.Data.checkDetails(rootId, rootId, [ 'layout' ]);
 
@@ -43,7 +44,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			content = <Deleted {...this.props} />;
 		} else
 		if (isLoading) {
-			content = <Loader id="loader" />;
+			content = <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 		} else {
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
