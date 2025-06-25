@@ -77,7 +77,7 @@
 	}
 	.editableWrap.isRtl { text-align: right; }
 
-	.attachments { padding: 0px 8px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
+	.attachments { margin: 6px 0px 0px 0px; padding: 0px 8px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
 	.attachments {
 		.swiper { width: 100%; }
 		.swiper-slide { width: unset; }
@@ -102,7 +102,7 @@
 
 		.swiper-button-disabled { display: none; }
 
-		.attachment { margin-top: 6px; }
+		.attachment { max-width: 300px; }
 		.swiper-slide:last-child .attachment { margin-right: 6px; }
 	}
 

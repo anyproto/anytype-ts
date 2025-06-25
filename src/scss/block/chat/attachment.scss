@@ -141,3 +141,10 @@
 	.attachment { @include cnt-4; }
 	.attachment:nth-child(-n + 6) { @include cnt-3; }
 }
+
+.attachments.layout-5,
+.attachments.layout-6,
+.attachments.layout-7,
+.attachments.layout-8,
+.attachments.layout-9,
+.attachments.layout-10 { width: 532px; }
