@@ -2,17 +2,30 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewList { padding: 14px 0px 80px 14px; }
+		.viewContent.viewList { padding: 14px 0px 80px 10px; }
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
-		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
+		    .row { height: 100%; width: 100%; padding-top: 2px; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: var(--color-text-secondary); }
 			.row.isEditing {
 				.cellContent:not(.isName) { display: none; }
 			}
 
-			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
+			.row:hover {
+				> .selectionTarget,
+				> .dropTarget,
+				.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+			}
+
+			.row.add { height: 28px; padding-top: 0px; margin-top: 2px; }
+			.row.add {
+				.cell.add { padding: 0px; height: 28px; }
+				.btn { height: 100%; width: 100%; padding-top: 4px; padding-left: 4px; }
+			}
+
+			.selectionTarget,
+			.dropTarget { height: 28px; padding: 2px 0px 2px 4px; }
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
@@ -31,10 +44,10 @@
 				.name { @include text-overflow-nw; max-width: 200px; }
 			}
 
-            .cellContent.isName { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; color: var(--color-text-primary); gap: 0px 4px; }
+            .cellContent.isName { @include text-common; display: inline-flex; flex-direction: row; align-items: center; color: var(--color-text-primary); gap: 0px 6px; }
 			.cellContent.isName {
 				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
-				.input.name { padding: 0; @include text-paragraph; }
+				.input.name { padding: 0; @include text-common; }
 			}
 
 			.cellContent.c-select, 
@@ -85,9 +98,9 @@
 
 		.viewContent.viewList.isCollection { padding-left: 0px; }
 		.viewContent.viewList.isCollection {
-			.row { padding-left: 20px; }
+			.row { padding-left: 12px; }
 			.row {
-				.icon.drag { top: 6px; margin: 0px; }
+				.icon.drag { top: 10px; left: 0px; margin: 0px; }
 			}
 			.row:hover {
 				.icon.drag { opacity: 1; }
@@ -99,13 +112,17 @@
 			}
 			.dropTarget.isOver.top::before { top: -6px; }
 			.dropTarget.isOver.bottom::before { bottom: 4px; }
+
+			.dropTarget {
+				.selectionTarget { padding: 0px; border-radius: 0px; }
+			}
 		}
     }
 
 	.block.blockDataview.isInline {
 		.viewContent.viewList { padding: 9px 0px 0px 0px; }
 		.viewContent.viewList {
-			.row { padding-left: 0px !important; height: 34px !important; }
+			.row { padding-left: 0px !important; height: 32px !important; }
 		}
 	}
 }

@@ -52,7 +52,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							isInline={true}
 							tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
 							arrayLimit={2}
-							iconSize={relation.relationKey == 'name' ? 24 : 18}
+							iconSize={relation.relationKey == 'name' ? 20 : 18}
 							withName={true}
 							noInplace={true}
 						/>
