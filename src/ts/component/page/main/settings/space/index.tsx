@@ -238,7 +238,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 										</div>
 
 										<div className="side right">
-											<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+											<div id="empty-dashboard-select" className={[ 'select', (space.isChat ? 'isReadonly' : '') ].join(' ')} onClick={this.onDashboard}>
 												<div className="item">
 													<div className="name">{home ? home.name : translate('commonSelect')}</div>
 												</div>
@@ -349,7 +349,11 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onDashboard () {
-		U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+		const space = U.Space.getSpaceview();
+
+		if (!space.isChat) {
+			U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+		};
 	};
 
 	onType (e: any) {
