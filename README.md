@@ -13,7 +13,6 @@
 
 Anytype is a **personal knowledge base**—your digital brain—that lets you gather, connect and remix any kind of information. Create pages, tasks, wikis, journaling systems, entire applications and *define your own data model* while your data stays **offline‑first, private and encrypted** on your devices.
 
----
 
 ## ✨ Key Features
 
@@ -35,13 +34,11 @@ Anytype is a **personal knowledge base**—your digital brain—that lets you ga
 - [Community & Support](#-community--support)
 - [License](#-license)
 
----
 
 ## 🚀 Quick Start
 
 Just want to use Anytype? Grab the latest binary from the [releases page](https://github.com/anyproto/anytype-ts/releases) or head to **[download.anytype.io](https://download.anytype.io)**, install it and log in with your *Any‑ID*.
 
----
 
 ## 🛠 Prerequisites
 
@@ -57,7 +54,6 @@ Additionally you need:
 - **Node.js ≥ 20** & npm ≥ 10 *(or pnpm ≥ 9)*
 - **Go ≥ 1.22** (to build [anytype‑heart](https://github.com/anyproto/anytype-heart))
 
----
 
 ## 🏗 Building from Source
 
@@ -87,7 +83,6 @@ $ npm run dist:mac      # dist:win or dist:linux
 | `ELECTRON_SKIP_NOTARIZE` | Skip macOS / Windows signing & notarization |
 | `ELECTRON_SKIP_SENTRY`   | Do **not** upload sourcemaps to Sentry |
 
----
 
 ## 🧑‍💻 Development Workflow
 
@@ -107,7 +102,6 @@ Optional environment variables:
 | `SERVER_PORT` | Local gRPC port of *anytype‑heart* |
 | `ANYPROF` | Expose Go `pprof` on `http://localhost:<port>/debug/pprof` |
 
----
 
 ## 🌍 Localisation
 
@@ -117,7 +111,6 @@ Translations are managed on [Crowdin](https://crowdin.com/project/anytype). To p
 npm run update:locale
 ```
 
----
 
 ## 🤝 Contributing
 
@@ -125,7 +118,6 @@ We love contributions! Please read our [Contributing Guide](CONTRIBUTING.md) and
 
 For security issues **do not open public issues** – email **security@anytype.io** instead and see our [Security Guide](SECURITY.md).
 
----
 
 ## 💬 Community & Support
 
@@ -134,13 +126,11 @@ For security issues **do not open public issues** – email **security@anytype.i
 - **Docs** – <https://doc.anytype.io>
 - **Blog** – <https://blog.anytype.io>
 
----
 
 ## 📝 License
 
 This repository is distributed under the **Any Source Available License 1.0** – see [`LICENSE.md`](LICENSE.md) for the full text.
 
----
 
 > Made with ❤️ by **Any**, a Swiss association.
 
