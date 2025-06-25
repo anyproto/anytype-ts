@@ -253,11 +253,8 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 */
 	clear (subId: string) {
-		const param = this.getSubParam(subId);
-
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
-		this.stateMap.get(param.spaceId)?.delete(param.chatId);
 	};
 
 	/**

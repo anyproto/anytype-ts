@@ -533,6 +533,14 @@ class Sidebar {
 		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
+	/**
+	 * Gets the state of the right panel for the given context.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	rightPanelGetState (isPopup: boolean) {
+		return this.rightPanelRef(isPopup)?.getState() || {};
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();

@@ -40,11 +40,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	refCounter = null;
 	refDummy = null;
 	isLoading = [];
+	isSending = false;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
 	editingId: string = '';
-	swiper = null;
 	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
@@ -76,7 +76,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
-		this.onSwiper = this.onSwiper.bind(this);
 		this.onNavigationClick = this.onNavigationClick.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
@@ -184,7 +183,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							<Swiper
 								slidesPerView={'auto'}
 								spaceBetween={8}
-								onSwiper={swiper => this.swiper = swiper}
 								navigation={true}
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
@@ -708,7 +706,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onSend () {
-		if (!this.canSend() || S.Menu.isOpen('blockMention')){
+		if (this.isSending || !this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
 
@@ -725,12 +723,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		loader.addClass('active');
+		this.isSending = true;
 
 		const clear = () => {
-			this.onEditClear();
+			this.onEditClear(() => this.isSending = false);
 			this.onReplyClear();
 			this.clearCounter();
 			this.checkSpeedLimit();
+
 			loader.removeClass('active');
 		};
 		
@@ -751,10 +751,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					});
 				};
 			} else {
+				// Marks should be adjusted to remove leading new lines
+
+				const parsed = this.getMarksFromHtml();
+				const text = this.trim(parsed.text);
+				const match = parsed.text.match(/^\r?\n+/);
+				const diff = match ? match[0].length : 0;
+				const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
-						...this.getMarksFromHtml(),
+						marks,
+						text,
 						style: I.TextStyle.Paragraph,
 					},
 					attachments,
@@ -845,14 +853,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		analytics.event('ClickMessageMenuEdit');
 	};
 
-	onEditClear () {
+	onEditClear (callBack?: () => void) {
 		this.editingId = '';
 		this.marks = [];
 		this.updateMarkup('', { from: 0, to: 0 });
-		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 		this.clearCounter();
 		this.checkSendButton();
 		this.refButtons.setButtons();
+
+		this.setState({ attachments: [] }, () => {
+			this.refEditable.setRange(this.range);
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onReply (message: I.ChatMessage) {
@@ -922,7 +937,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	trim (value: string): string {
-		return String(value || '').replace(/^(\r?\n)/gm, '').replace(/(\r?\n)$/gm, '');
+		return String(value || '').replace(/^(\r?\n+)/g, '').replace(/(\r?\n+)$/g, '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
@@ -933,10 +948,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
 
 		analytics.event('DetachItemChat');
-	};
-
-	onSwiper (swiper) {
-		this.swiper = swiper;
 	};
 
 	onNavigationClick (type: I.ChatReadType) {
@@ -966,7 +977,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				break;
 			};
 		};
-
 	};
 
 	updateButtons () {
