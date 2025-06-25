@@ -175,10 +175,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					break;
 				};
 
-				if (item.targetSpaceId == S.Block.spaceview) {
+				if (item.targetSpaceId != S.Common.space) {
 					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
 				} else {
 					U.Space.openDashboard();
+					sidebar.leftPanelSetState({ page: 'widget' });
 				};
 				break;
 			};
