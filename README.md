@@ -1,10 +1,15 @@
 # Anytype Desktop
 
+> **Local‑first, peer‑to‑peer & end‑to‑end‑encrypted knowledge OS for macOS, Windows&nbsp;&amp;&nbsp;Linux.**
+
 [![Latest release](https://img.shields.io/github/v/release/anyproto/anytype-ts?label=download)](https://github.com/anyproto/anytype-ts/releases)
 [![Build](https://img.shields.io/github/actions/workflow/status/anyproto/anytype-ts/ci.yml?label=CI)](https://github.com/anyproto/anytype-ts/actions)
 [![Crowdin](https://badges.crowdin.net/e/1ecaaee720d0b123268584461f4cf6dc/localized.svg)](https://crowdin.com/project/anytype)
 [![License](https://img.shields.io/badge/license-ASAL‑1.0‑blue.svg)](LICENSE.md)
 
+<p align="center">
+  <a href="https://anytype.io"><img src="./docs/logo.svg" alt="Anytype logo" width="240"></a>
+</p>
 
 Anytype is a **personal knowledge base**—your digital brain—that lets you gather, connect and remix any kind of information. Create pages, tasks, wikis, journaling systems, entire applications and *define your own data model* while your data stays **offline‑first, private and encrypted** on your devices.
 
@@ -117,9 +122,11 @@ For security issues **do not open public issues** – email **security@anytype.i
 ## 💬 Community & Support
 
 - **Forum** – <https://community.anytype.io>
+- **Discord** – join the *Anytype Contributors* server
 - **Docs** – <https://doc.anytype.io>
 - **Blog** – <https://blog.anytype.io>
 
+---
 
 ## 📝 License
 
