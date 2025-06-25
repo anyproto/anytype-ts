@@ -31,7 +31,7 @@ export default () => {
 		text(''),
 
 		h2(`Markdown Export: Properties and Types`),
-		text('Exporting your data to Markdown now includes properties and types. This ensures your backups are more complete and your information remains organized, without losing important context. It’s a reliable way to keep your data portable and under your control.'),
+		text(`Exporting your data to Markdown now includes properties and types. This ensures your ${hl('.md')} backups are more complete and your information remains organized, without losing important context. It’s a reliable way to keep your data portable and under your control.`),
 		text(''),
 
 		h2(`Markdown Import: Smoother Transitions`),
