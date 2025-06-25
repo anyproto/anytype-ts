@@ -255,7 +255,6 @@ class ChatStore {
 	clear (subId: string) {
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
-		//this.stateMap.get(param.spaceId)?.delete(param.chatId);
 	};
 
 	/**
