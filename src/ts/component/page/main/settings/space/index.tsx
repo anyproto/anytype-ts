@@ -165,110 +165,108 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{canWrite ? (
-						<>
-							<div className="section sectionSpaceManager">
-								<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-								<div className="sectionContent">
+					<div className="section sectionSpaceManager">
+						<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+						<div className="sectionContent">
 
+							<div className="item">
+								<div className="sides">
+									<Icon className="push" />
+
+									<div className="side left">
+										<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+										<Label text={translate('popupSettingsSpaceIndexPushText')} />
+									</div>
+
+									<div className="side right">
+										<Select
+											id="linkStyle"
+											value={String(space.notificationMode)}
+											options={spaceModes}
+											onChange={v => {
+												C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+												analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+											}}
+											arrowClassName="black"
+											menuParam={{ horizontal: I.MenuDirection.Right }}
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{canWrite ? (
+						<div className="section sectionSpaceManager">
+							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
+							<div className="sectionContent">
+
+								{isOwner ? (
 									<div className="item">
 										<div className="sides">
-											<Icon className="push" />
+											<Icon className="widget" />
 
 											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexPushText')} />
+												<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
+												<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
 											</div>
 
 											<div className="side right">
-												<Select
-													id="linkStyle"
-													value={String(space.notificationMode)}
-													options={spaceModes}
-													onChange={v => {
-														C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-														analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+												<Switch
+													value={!widgets.autoWidgetDisabled}
+													className="big"
+													onChange={(e: any, v: boolean) => {
+														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
+
+														analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
 													}}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
 												/>
 											</div>
 										</div>
 									</div>
-								</div>
-							</div>
+								) : ''}
 
-							<div className="section sectionSpaceManager">
-								<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
-								<div className="sectionContent">
+								<div className="item">
+									<div className="sides">
+										<Icon className="home" />
 
-									{isOwner ? (
-										<div className="item">
-											<div className="sides">
-												<Icon className="widget" />
-
-												<div className="side left">
-													<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
-													<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
-												</div>
-
-												<div className="side right">
-													<Switch
-														value={!widgets.autoWidgetDisabled}
-														className="big"
-														onChange={(e: any, v: boolean) => {
-															C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
-
-															analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
-														}}
-													/>
-												</div>
-											</div>
+										<div className="side left">
+											<Title text={translate('commonHomepage')} />
+											<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
 										</div>
-									) : ''}
 
-									<div className="item">
-										<div className="sides">
-											<Icon className="home" />
-
-											<div className="side left">
-												<Title text={translate('commonHomepage')} />
-												<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
-											</div>
-
-											<div className="side right">
-												<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
-													<div className="item">
-														<div className="name">{home ? home.name : translate('commonSelect')}</div>
-													</div>
-													<Icon className="arrow black" />
+										<div className="side right">
+											<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+												<div className="item">
+													<div className="name">{home ? home.name : translate('commonSelect')}</div>
 												</div>
+												<Icon className="arrow black" />
 											</div>
 										</div>
 									</div>
+								</div>
 
-									<div className="item">
-										<div className="sides">
-											<Icon className="type" />
+								<div className="item">
+									<div className="sides">
+										<Icon className="type" />
 
-											<div className="side left">
-												<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
-												<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
-											</div>
+										<div className="side left">
+											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
+											<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
+										</div>
 
-											<div className="side right">
-												<div id="defaultType" className="select" onClick={this.onType}>
-													<div className="item">
-														<div className="name">{type?.name || translate('commonSelect')}</div>
-													</div>
-													<Icon className="arrow black" />
+										<div className="side right">
+											<div id="defaultType" className="select" onClick={this.onType}>
+												<div className="item">
+													<div className="name">{type?.name || translate('commonSelect')}</div>
 												</div>
+												<Icon className="arrow black" />
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</>
+						</div>
 					) : (
 						<div className="membersList section">
 							<Label className="sub" text={translate(`pageSettingsSpaceIndexSpaceMembers`)} />
