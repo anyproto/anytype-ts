@@ -62,6 +62,9 @@
 				padding: 16px; width: 28%; min-height: 90px; display: flex; justify-content: center; align-items: center; position: relative;
 				overflow: hidden; aspect-ratio: 7 / 3; max-height: 122px;
 			}
+			.side.right {
+				.img { border-radius: 4px; }
+			}
 		}
 	}
 
