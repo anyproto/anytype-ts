@@ -168,7 +168,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 							if (!message.error.code) {
 								cb(message.objectId, true);
 
-								analytics.event('CreateSpace', { middleTime: message.middleTime, route: analytics.route.gallery, uxType: I.SpaceUxType.Space });
+								analytics.event('CreateSpace', { middleTime: message.middleTime, route: analytics.route.gallery });
 							} else {
 								this.setState({ isLoading: false, error: message.error.description });
 							};

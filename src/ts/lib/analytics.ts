@@ -270,7 +270,19 @@ class Analytics {
 		if (space) {
 			param.spaceType = Number(space.spaceAccessType) || 0;
 			param.spaceType = I.SpaceType[param.spaceType];
+
+			let uxType = I.SpaceUxType.Space;
+			if (undefined !== data.uxType) {
+				uxType = data.uxType;
+			};
+			if (undefined !== space.uxType) {
+				uxType = space.uxType;
+			};
+			if (undefined !== uxType) {
+				param.uxType = I.SpaceUxType[Number(uxType) || 0];
+			};
 		};
+
 		if (participant) {
 			param.permissions = Number(participant.permissions) || 0;
 			param.permissions = I.ParticipantPermissions[param.permissions];
@@ -602,10 +614,6 @@ class Analytics {
 
 		if (undefined !== converted.align) {
 			converted.align = I.BlockHAlign[converted.align];
-		};
-
-		if (undefined !== converted.uxType) {
-			converted.uxType = I.SpaceUxType[converted.uxType];
 		};
 
 		if (undefined !== converted.usecase) {
