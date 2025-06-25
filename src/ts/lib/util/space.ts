@@ -68,7 +68,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Graph) {
 			ret = this.getGraph();
 		} else
-		if (space.isChat || (id == I.HomePredefinedId.Chat)) {
+		if (id == I.HomePredefinedId.Chat) {
 			ret = this.getChat();
 		} else
 		if (id == I.HomePredefinedId.Last) {
