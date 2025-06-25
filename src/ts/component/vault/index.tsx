@@ -171,8 +171,14 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			default: {
-				if (item.isLocalOk && (item.targetSpaceId != S.Common.space)) {
+				if (item.isLocalOk) {
+					break;
+				};
+
+				if (item.targetSpaceId == S.Block.spaceview) {
 					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+				} else {
+					U.Space.openDashboard();
 				};
 				break;
 			};
