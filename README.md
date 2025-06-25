@@ -117,7 +117,6 @@ For security issues **do not open public issues** – email **security@anytype.i
 ## 💬 Community & Support
 
 - **Forum** – <https://community.anytype.io>
-- **Discord** – join the *Anytype Contributors* server
 - **Docs** – <https://doc.anytype.io>
 - **Blog** – <https://blog.anytype.io>
 
