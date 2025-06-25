@@ -46,15 +46,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const cnBubble = [ 'bubble' ];
 		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 		const controls = [];
+		const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 
 		let userpicNode = null;
 		let authorNode = null;
-		let text = content.text.replace(/^\r?\n/g, '').replace(/\r?\n$/g, '');
-
-		const diff = text.length - content.text.length;
-		const marks = Mark.adjust(content.marks, 0, diff);
-
-		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, marks)));
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {
