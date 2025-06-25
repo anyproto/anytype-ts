@@ -278,6 +278,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		renderEmoji(er, { iconSize: 16 });
 
 		this.checkLinesLimit();
+		this.resize();
 	};
 
 	onExpand () {
@@ -448,6 +449,16 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		node.addClass('highlight');
 		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
+	};
+
+	resize () {
+		const { subId, id } = this.props;
+		const message = S.Chat.getMessage(subId, id);
+		const node = $(this.node);
+		const bubble = node.find('.bubbleInner .bubble');
+		const width = bubble.outerWidth();
+
+		console.log('WIDTH', width, U.Common.shorten(message.content.text));
 	};
 
 });

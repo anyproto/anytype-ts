@@ -1087,7 +1087,7 @@ class Action {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
 			const { free, size } = diskSpace;
 
-			if (free >= size * 0.9) {
+			if (free <= size * 0.1) {
 				S.Popup.open('confirm', {
 					onClose: callBack,
 					data: {
