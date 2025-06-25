@@ -76,7 +76,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const { isLoading, isDeleted } = this.state;
 		const root = S.Block.getLeaf(rootId, rootId);
 
@@ -85,7 +85,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isLoading) {
-			return <Loader id="loader" />;
+			return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 		};
 
 		if (!root) {
