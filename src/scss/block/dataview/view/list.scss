@@ -113,9 +113,19 @@
     }
 
 	.block.blockDataview.isInline {
+		.content { margin-left: -4px; }
 		.viewContent.viewList { padding: 9px 0px 0px 0px; }
 		.viewContent.viewList {
-			.row { padding-left: 0px !important; height: 32px !important; }
+			.row { padding: 2px 0px 0px 4px; height: 28px !important; margin: 2px 0px; }
+			.row:hover { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+
+			.row.add { padding-top: 0px; }
+			.row.add {
+				.btn { padding: 4px 0px 0px 0px; }
+			}
+			.row.add:hover {
+				.cell.add { background-color: transparent; }
+			}
 		}
 	}
 }
