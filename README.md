@@ -109,7 +109,7 @@ npm run update:locale
 
 We ♥ contributors! Please read our [Contributing Guide](https://github.com/anyproto/.github/blob/main/docs/CONTRIBUTING.md) and follow the [Code of Conduct](https://github.com/anyproto/.github/blob/main/docs/CODE_OF_CONDUCT.md).
 
-> **Security issues?** Don’t open public issues—email **security@anytype.io** and see our [Security Guide](docs/SECURITY.md).
+> **Security issues?** Don’t open public issues—email **security@anytype.io** and see our [Security Guide](https://github.com/anyproto/anytype-ts?tab=security-ov-file).
 
 
 ## 💬 Community & Support
