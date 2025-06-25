@@ -599,7 +599,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
-				const sandbox = [ 'allow-scripts', 'allow-same-origin' ];
+				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
@@ -607,10 +607,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				if (U.Embed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
-				};
-
-				if (U.Embed.allowPopup(processor)) {
-					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {

@@ -1103,7 +1103,6 @@ class Action {
 				callBack();
 			};
 		});
-
 	};
 
 };

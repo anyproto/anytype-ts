@@ -449,11 +449,6 @@ class UtilEmbed {
 		].includes(p);
 	};
 
-	// Allow to use popup mode in iframe sandbox
-	allowPopup (p: I.EmbedProcessor) {
-		return [ I.EmbedProcessor.Bilibili ].includes(p);
-	};
-
 	// Allow block resizing
 	allowBlockResize (p: I.EmbedProcessor) {
 		return ![ 
