@@ -123,13 +123,6 @@ For security issues **do not open public issues** – email **security@anytype.i
 
 ## 📝 License
 
-This repository is distributed under the **Any Source Available License 1.0** – see [`LICENSE.md`](LICENSE.md) for the full text.
-
-
-> Made with ❤️ by **Any**, a Swiss association.
-
-
----
 Made by Any — a Swiss association 🇨🇭
 
 Licensed under [Any Source Available License 1.0](./LICENSE.md).
