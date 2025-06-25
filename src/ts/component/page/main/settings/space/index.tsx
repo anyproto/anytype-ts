@@ -165,36 +165,38 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					<div className="section sectionSpaceManager">
-						<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-						<div className="sectionContent">
+					{!space.isPersonal ? (
+						<div className="section sectionSpaceManager">
+							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+							<div className="sectionContent">
 
-							<div className="item">
-								<div className="sides">
-									<Icon className="push" />
+								<div className="item">
+									<div className="sides">
+										<Icon className="push" />
 
-									<div className="side left">
-										<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-										<Label text={translate('popupSettingsSpaceIndexPushText')} />
-									</div>
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexPushText')} />
+										</div>
 
-									<div className="side right">
-										<Select
-											id="linkStyle"
-											value={String(space.notificationMode)}
-											options={spaceModes}
-											onChange={v => {
-												C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-												analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-											}}
-											arrowClassName="black"
-											menuParam={{ horizontal: I.MenuDirection.Right }}
-										/>
+										<div className="side right">
+											<Select
+												id="linkStyle"
+												value={String(space.notificationMode)}
+												options={spaceModes}
+												onChange={v => {
+													C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+													analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+												}}
+												arrowClassName="black"
+												menuParam={{ horizontal: I.MenuDirection.Right }}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					) : ''}
 
 					{canWrite ? (
 						<div className="section sectionSpaceManager">
@@ -513,7 +515,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	getButtons () {
 		const { cid, key } = this.state;
 		const space = U.Space.getSpaceview();
-		const isDisabled = space.spaceAccessType == I.SpaceType.Personal;
+		const isDisabled = space.isPersonal;
 		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
 		return [
