@@ -229,6 +229,11 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	let value = getItems();
 	let content = null;
 
+	console.log('RELATION KEY: ', relation.relationKey)
+	console.log('VALUE: ', value)
+	console.log('SIZE: ', size)
+	console.log('ICON SIZE: ', iconSize)
+
 	if (isEditing) {
 		content = (
 			<div id="value" onClick={focus}>

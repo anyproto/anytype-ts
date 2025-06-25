@@ -36,6 +36,7 @@ const Row = observer(class Row extends React.Component<Props> {
 				{relations.map((vr: any, i: number) => {
 					const relation = S.Record.getRelationByKey(vr.relationKey);
 					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+					const iconSize = relation.relationKey == 'name' ? 20 : 14;
 
 					return (
 						<Cell
@@ -52,7 +53,8 @@ const Row = observer(class Row extends React.Component<Props> {
 							isInline={true}
 							tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
 							arrayLimit={2}
-							iconSize={relation.relationKey == 'name' ? 20 : 18}
+							iconSize={iconSize}
+							size={iconSize}
 							withName={true}
 							noInplace={true}
 						/>

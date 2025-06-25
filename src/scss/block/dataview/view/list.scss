@@ -29,16 +29,9 @@
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
-				cursor: default !important; color: var(--color-text-secondary);
+				cursor: default !important; color: var(--color-text-secondary); margin-right: 12px;
 			}
 			.cellContent:last-child { margin: 0px; }
-			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
-
-			.cellContent::before { 
-				content: ""; width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); display: inline-block; 
-				vertical-align: middle; margin: 0px 6px; 
-			}
-			.cellContent.first::before { display: none; }
 
 			.cellContent {
 				.name { @include text-overflow-nw; max-width: 200px; }
