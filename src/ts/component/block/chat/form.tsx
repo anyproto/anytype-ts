@@ -40,6 +40,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	refCounter = null;
 	refDummy = null;
 	isLoading = [];
+	isSending = false;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
@@ -708,7 +709,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onSend () {
-		if (!this.canSend() || S.Menu.isOpen('blockMention')){
+		if (this.isSending || !this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
 
@@ -725,12 +726,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		loader.addClass('active');
+		this.isSending = true;
 
 		const clear = () => {
-			this.onEditClear();
+			this.onEditClear(() => this.isSending = false);
 			this.onReplyClear();
 			this.clearCounter();
 			this.checkSpeedLimit();
+
 			loader.removeClass('active');
 		};
 		
@@ -845,14 +848,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		analytics.event('ClickMessageMenuEdit');
 	};
 
-	onEditClear () {
+	onEditClear (callBack?: () => void) {
 		this.editingId = '';
 		this.marks = [];
 		this.updateMarkup('', { from: 0, to: 0 });
-		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 		this.clearCounter();
 		this.checkSendButton();
 		this.refButtons.setButtons();
+
+		this.setState({ attachments: [] }, () => {
+			this.refEditable.setRange(this.range);
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onReply (message: I.ChatMessage) {
