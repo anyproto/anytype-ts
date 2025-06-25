@@ -452,13 +452,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	resize () {
-		const { subId, id } = this.props;
-		const message = S.Chat.getMessage(subId, id);
 		const node = $(this.node);
 		const bubble = node.find('.bubbleInner .bubble');
 		const width = bubble.outerWidth();
 
-		console.log('WIDTH', width, U.Common.shorten(message.content.text));
+		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
 	};
 
 });
