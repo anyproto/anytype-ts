@@ -618,7 +618,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					const sanitizeParam: any = { 
 						ADD_TAGS: [ 'iframe', 'div', 'a' ],
 						ADD_ATTR: [
-							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy', 'src',
 						],
 					};
 
@@ -683,6 +683,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
+						text = text.replace(/\r?\n/g, '');
+						text = text.replace(/<iframe([^>]*)>.*?<\/iframe>/gi, '<iframe$1></iframe>');
+
 						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 
