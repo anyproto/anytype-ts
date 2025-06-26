@@ -4,12 +4,19 @@
 	.block.blockDataview {
 		.viewContent.viewList { padding: 14px 0px 80px 10px; }
 		.viewContent.viewList {
-			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
 
 		    .row { height: 100%; width: 100%; padding-top: 2px; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: var(--color-text-secondary); }
 			.row.isEditing {
 				.cellContent:not(.isName) { display: none; }
+			}
+
+			.sides { display: flex; align-items: center; justify-content: space-between; gap: 0px 16px; }
+			.sides {
+				.side.right {
+					.cellContent:first-child::before { display: none; }
+				}
 			}
 
 			.row:hover {
@@ -29,12 +36,12 @@
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
-				cursor: default !important; color: var(--color-text-secondary); margin-right: 12px;
+				cursor: default !important; color: var(--color-text-secondary); margin-left: 12px;
 			}
-			.cellContent:last-child { margin: 0px; }
+			.cellContent:first-child { margin: 0px; }
 
 			.cellContent {
-				.name { @include text-overflow-nw; max-width: 200px; }
+				.name { @include text-overflow-nw; max-width: 300px; }
 			}
 
             .cellContent.isName { @include text-common; display: inline-flex; flex-direction: row; align-items: center; color: var(--color-text-primary); gap: 0px 6px; }
@@ -53,7 +60,7 @@
 			.cellContent.c-file {
 				.wrap { display: inline-block; line-height: 24px; vertical-align: top; }
 				.over { display: inline-block; line-height: 24px; vertical-align: top; overflow: visible; }
-				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 100px; vertical-align: top; @include text-small; }
+				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 300px; vertical-align: top; @include text-small; }
 				.more { margin-top: 3px; vertical-align: top; }
 				.element { margin-top: 2px; }
 				.tagItem { margin-top: 3px; }
@@ -85,6 +92,8 @@
 				.icon.checkbox { width: 20px; height: 20px; }
 			}
 			.cellContent.c-checkbox.canEdit { cursor: default !important; }
+
+			.cellContent.isEmpty:not(.editModeOn) { display: none; }
 
 			.loadMore { margin-top: 2px; }
         }

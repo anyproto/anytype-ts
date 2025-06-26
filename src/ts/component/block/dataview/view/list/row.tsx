@@ -13,15 +13,28 @@ const Row = observer(class Row extends React.Component<Props> {
 	_isMounted = false;
 	isEditing = false;
 	node: any = null;
+	refNames: any[] = [];
 
 	render () {
 		const { rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle, onEditModeClick } = this.props;
 		const view = getView();
-		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = S.Record.getSubId(rootId, block.id);
 		const record = getRecord(recordId);
 		const cn = [ 'row' ];
+
+		const relations = view.getVisibleRelations();
+		const nameIndex = relations.findIndex(it => it.relationKey == 'name');
+		const left = [];
+		const right = [];
+
+		relations.forEach((el, idx) => {
+			if (idx <= nameIndex) {
+				left.push(el);
+			} else {
+				right.push(el);
+			};
+		});
 
 		// Subscriptions
 		const { hideIcon } = view;
@@ -31,36 +44,41 @@ const Row = observer(class Row extends React.Component<Props> {
 			cn.push('isDone');
 		};
 
-		let content = (
-			<>
-				{relations.map((vr: any, i: number) => {
-					const relation = S.Record.getRelationByKey(vr.relationKey);
-					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
-					const iconSize = relation.relationKey == 'name' ? 20 : 14;
+		const mapper = (vr: any, i: number) => {
+			const relation = S.Record.getRelationByKey(vr.relationKey);
+			const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 
-					return (
-						<Cell
-							key={'list-cell-' + relation.relationKey}
-							elementId={id}
-							ref={ref => onRefCell(ref, id)}
-							{...this.props}
-							getRecord={() => record}
-							subId={subId}
-							relationKey={relation.relationKey}
-							viewType={I.ViewType.List}
-							idPrefix={idPrefix}
-							onClick={e => this.onCellClick(e, relation)}
-							isInline={true}
-							tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
-							arrayLimit={2}
-							iconSize={iconSize}
-							size={iconSize}
-							withName={true}
-							noInplace={true}
-						/>
-					);
-				})}
-			</>
+			return (
+				<Cell
+					key={'list-cell-' + relation.relationKey}
+					elementId={id}
+					ref={ref => onRefCell(ref, id)}
+					{...this.props}
+					getRecord={() => record}
+					subId={subId}
+					relationKey={relation.relationKey}
+					viewType={I.ViewType.List}
+					idPrefix={idPrefix}
+					onClick={e => this.onCellClick(e, relation)}
+					isInline={true}
+					tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
+					arrayLimit={2}
+					iconSize={relation.relationKey == 'name' ? 24 : 18}
+					withName={true}
+				/>
+			);
+		};
+
+		let content = (
+			<div className="sides">
+				<div className="side left">
+					{left.map(mapper)}
+				</div>
+				<div className="side right">
+					{right.map(mapper)}
+				</div>
+				{/*{relations.map(mapper)}*/}
+			</div>
 		);
 
 		if (!isInline) {
