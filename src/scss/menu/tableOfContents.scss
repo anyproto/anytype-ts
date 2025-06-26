@@ -8,7 +8,7 @@
 		.items { flex-grow: 1; }
 		.ReactVirtualized__List { padding: 8px; }
 
-		.item { padding-right: 8px; border-radius: 6px; }
+		.item { padding-left: 8px; padding-right: 8px; border-radius: 6px; }
 		.item {
 			.name { width: 100%; }
 			.label { @include text-overflow-nw; }
