@@ -16,6 +16,12 @@
 			&.active::before { background: var(--color-shape-highlight-medium) !important; }
 		}
 
+		#item-sidebar { @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+		#item-sidebar {
+			.icon { margin: 0px; }
+			.clickable { flex-direction: row-reverse; }
+		}
+
 		.bottom { flex-shrink: 0; padding: 0px 8px; }
 		.bottom {
 			.line { margin: 0px 16px 8px 16px; }
