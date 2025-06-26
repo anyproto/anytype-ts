@@ -12,9 +12,10 @@
 				.cellContent:not(.isName) { display: none; }
 			}
 
-			.sides { display: flex; align-items: center; justify-content: space-between; gap: 0px 16px; }
+			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
 			.sides {
-				.side.right { padding-right: 12px; }
+				.side { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+				.side.right { justify-content: flex-end; flex-grow: 1; overflow: hidden; }
 			}
 
 			.row:hover {
@@ -34,7 +35,7 @@
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
-				cursor: default !important; color: var(--color-text-secondary); margin-left: 12px;
+				cursor: default !important; color: var(--color-text-secondary);
 			}
 
 			.cellContent:first-child { margin: 0px; }
