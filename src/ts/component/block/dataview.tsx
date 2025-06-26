@@ -1493,7 +1493,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 
 			if (ref) {
-				console.log('HERE')
 				nameRef.onClick(e);
 			};
 		};
