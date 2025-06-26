@@ -366,6 +366,9 @@ class Relation {
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
+				if ((relation.relationKey == 'addedDate') && (value === 0)) {
+					value = null;
+				};
 				if (value !== null) {
 					value = parseFloat(String(value || '0'));
 				};

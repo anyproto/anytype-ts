@@ -77,6 +77,7 @@ if (!isPackaged) {
 			Decode,
 			translate,
 			sidebar,
+			Action,
 		},
 	};
 };

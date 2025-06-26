@@ -211,6 +211,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const newIndex = ids.indexOf(over.id);
 		const object = getTarget();
 
+		n.current = newIndex;
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.id));
 
@@ -349,10 +350,11 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems: () => items,
+		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		getListRef: () => listRef.current,
 	}), []);
 	
 	return (

@@ -36,6 +36,7 @@
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
 				cursor: default !important; color: var(--color-text-secondary); margin-left: 12px;
 			}
+
 			.cellContent:first-child { margin: 0px; }
 
 			.cellContent {
@@ -65,6 +66,7 @@
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
 			}
 			.cellContent.c-file {
+				.element { margin-top: 4px; }
 				.iconObject { margin: 0px; }
 				.name { display: none; }
 			}

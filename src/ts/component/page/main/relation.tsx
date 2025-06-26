@@ -33,12 +33,13 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	render () {
 		const { isLoading, isDeleted } = this.state;
+		const { isPopup } = this.props;
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		} else
 		if (isLoading) {
-			return <Loader id="loader" />;
+			return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 		};
 
 		const rootId = this.getRootId();
@@ -47,10 +48,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const canWrite = U.Space.canMyParticipantWrite();
 		const subIdObject = S.Record.getSubId(rootId, 'object');
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
-
-		/*
-Name, Object type, Creation date, Value
-		*/
 
 		const columnsObject: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isCell: true },

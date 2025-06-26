@@ -5,9 +5,9 @@ const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const { app, dialog, shell } = require('electron');
 const Util = require('./util.js');
+const winShutdownStdinMessage = 'shutdown\n';
 
 let maxStdErrChunksBuffer = 10;
-const winShutdownStdinMessage = 'shutdown\n';
 
 class Server {
 
