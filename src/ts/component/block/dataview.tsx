@@ -1474,19 +1474,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (this.editingRecordId == id) {
 			this.setRecordEditingOff(id);
 		} else {
-			this.setRecordEditingOn(id);
+			this.setRecordEditingOn(e, id);
 		};
 	};
 
-	setRecordEditingOn (id: string) {
+	setRecordEditingOn (e: any, id: string) {
 		const cb = () => {
 			const ref = this.refRecords.get(id);
 			if (!ref || !ref.setIsEditing) {
 				return;
 			};
 
+			const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
+			const nameRef = this.refCells.get(nameId);
+
 			ref.setIsEditing(true);
 			this.editingRecordId = id;
+
+
+			if (ref) {
+				console.log('HERE')
+				nameRef.onClick(e);
+			};
 		};
 
 		if (this.editingRecordId) {
