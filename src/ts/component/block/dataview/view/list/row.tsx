@@ -65,6 +65,7 @@ const Row = observer(class Row extends React.Component<Props> {
 					arrayLimit={2}
 					iconSize={relation.relationKey == 'name' ? 24 : 18}
 					withName={true}
+					noInplace={true}
 				/>
 			);
 		};
@@ -168,7 +169,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || !canEdit || !this.isEditing) {
+		if (!relation || !canEdit) {
 			return;
 		};
 
