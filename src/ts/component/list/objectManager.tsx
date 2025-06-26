@@ -33,6 +33,28 @@ interface ObjectManagerRefProps {
 	selectionClear(): void;
 };
 
+const Buttons = observer(forwardRef<{}, { buttons: any[] }>(({
+	buttons = [],
+}, ref) => {
+
+	const Button = (item: any) => (
+		<div className="element" onClick={item.onClick}>
+			<Icon className={item.icon} />
+			<div className="name">{item.text}</div>
+		</div>
+	);
+
+	return (
+		<>
+			{buttons.map((item: any, i: number) => (
+				<Button key={i} {...item} />
+			))}
+		</>
+	);
+
+}));
+
+
 const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
@@ -303,9 +325,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		<div className="controlsWrapper">
 			<div className={cnControls.join(' ')}>
 				<div className="side left">
-					{buttonsList.map((item: any, i: number) => (
-						<Button key={i} {...item} />
-					))}
+					<Buttons buttons={buttonsList} />
 				</div>
 				<div className="side right">
 					<Icon className="search" onClick={onFilterShow} />
