@@ -16,7 +16,10 @@ const Row = observer(class Row extends React.Component<Props> {
 	refNames: any[] = [];
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle, onEditModeClick } = this.props;
+		const {
+			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline, isCollection,
+			onDragRecordStart, onSelectToggle, onEditModeClick,
+		} = this.props;
 		const view = getView();
 		const idPrefix = getIdPrefix();
 		const subId = S.Record.getSubId(rootId, block.id);
@@ -50,25 +53,28 @@ const Row = observer(class Row extends React.Component<Props> {
 			const isName = relation.relationKey == 'name';
 
 			return (
-				<Cell
-					key={'list-cell-' + relation.relationKey}
-					elementId={id}
-					ref={ref => onRefCell(ref, id)}
-					{...this.props}
-					getRecord={() => record}
-					subId={subId}
-					relationKey={relation.relationKey}
-					viewType={I.ViewType.List}
-					idPrefix={idPrefix}
-					onClick={e => this.onCellClick(e, relation)}
-					isInline={true}
-					tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
-					arrayLimit={2}
-					iconSize={isName ? 24 : 18}
-					withName={true}
-					noInplace={!isName}
-					editModeOn={this.isEditing}
-				/>
+				<>
+					<Cell
+						key={'list-cell-' + relation.relationKey}
+						elementId={id}
+						ref={ref => onRefCell(ref, id)}
+						{...this.props}
+						getRecord={() => record}
+						subId={subId}
+						relationKey={relation.relationKey}
+						viewType={I.ViewType.List}
+						idPrefix={idPrefix}
+						onClick={e => this.onCellClick(e, relation)}
+						isInline={true}
+						tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
+						arrayLimit={2}
+						iconSize={isName ? 24 : 18}
+						withName={true}
+						noInplace={!isName}
+						editModeOn={this.isEditing}
+					/>
+					{isName ? <Icon className="edit" onClick={e => onEditModeClick(e, recordId)} /> : ''}
+				</>
 			);
 		};
 
@@ -119,11 +125,6 @@ const Row = observer(class Row extends React.Component<Props> {
 				onClick={e => this.onClick(e)}
 				onContextMenu={e => onContext(e, record.id)}
 			>
-				<Icon
-					className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
-					onClick={e => onEditModeClick(e, recordId)}
-				/>
-
 				{content}
 			</div>
 		);
