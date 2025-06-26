@@ -45,7 +45,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				<ObjectCover object={cover} />
 
 				<Icon
-					className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
+					className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
 					onClick={e => onEditModeClick(e, recordId)}
 				/>
 
@@ -177,7 +177,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || !canEdit || !this.isEditing) {
+		if (!relation || !canEdit) {
 			return;
 		};
 

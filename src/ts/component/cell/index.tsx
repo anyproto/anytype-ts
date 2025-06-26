@@ -24,7 +24,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
 		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
-		noInplace, editModeOn,
+		noInplace, editModeOn, viewType,
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
@@ -52,6 +52,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const canEdit = canCellEdit(relation, record);
 		const placeholder = getPlaceholder(relation, record);
 		const check = checkValue();
+		const isGrid = viewType == I.ViewType.Grid;
 
 		if (!canEdit) {
 			if (check && (relation.format != I.RelationType.Checkbox)) {
@@ -145,7 +146,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		let ret = false;
 		let param: I.MenuParam = { 
 			element,
-			horizontal: I.MenuDirection.Center,
+			horizontal: isGrid ? I.MenuDirection.Center : I.MenuDirection.Left,
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: !noInplace,
@@ -193,9 +194,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			case I.RelationType.File: {
-				param = Object.assign(param, {
-					width,
-				});
+				if (!noInplace) {
+					param = Object.assign(param, { width });
+				};
+
 				param.data = Object.assign(param.data, {
 					value: value || [],
 				});
@@ -206,10 +208,13 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.Select: 
 			case I.RelationType.MultiSelect: {
-				param = Object.assign(param, {
-					width,
-					commonFilter: !noInplace,
-				});
+				if (!noInplace) {
+					param = Object.assign(param, {
+						width,
+						commonFilter: true,
+					});
+				};
+
 				param.data = Object.assign(param.data, {
 					canAdd: true,
 					filter: '',
@@ -225,10 +230,13 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 					
 			case I.RelationType.Object: {
-				param = Object.assign(param, {
-					width,
-					commonFilter: !noInplace,
-				});
+				if (!noInplace) {
+					param = Object.assign(param, {
+						width,
+						commonFilter: true,
+					});
+				};
+
 				param.data = Object.assign(param.data, {
 					canAdd: true,
 					filter: '',
