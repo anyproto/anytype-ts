@@ -76,7 +76,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			checkKeyUp.current = true;
 			pressed.current.add(key);
 		};
 
@@ -104,10 +103,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const onKeyUp = (e: any) => {
 		const key: any = String(e.key || '').toLowerCase();
 		if (!key) {
-			return;
-		};
-
-		if (![ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			return;
 		};
 
