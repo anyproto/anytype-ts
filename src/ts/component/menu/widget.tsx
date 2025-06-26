@@ -6,7 +6,6 @@ import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
-	_isMounted = false;
 	node: any = null;
 	n = -1;
 	target = null;
@@ -112,7 +111,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, blockId);
 
-		this._isMounted = true;
 		this.checkButton();
 		this.rebind();
 		this.getTargetId();
@@ -131,7 +129,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { data } = param;
 		const { blockId } = data;
 
-		this._isMounted = false;
 		this.unbind();
 
 		S.Menu.closeAll(J.Menu.widget);

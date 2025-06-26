@@ -14,7 +14,6 @@ const LIMIT_HEIGHT = 6;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Menu> {
 
-	_isMounted = false;	
 	filter = '';
 	index: any = null;
 	cache: any = {};
@@ -153,7 +152,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -189,7 +187,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 	};
 

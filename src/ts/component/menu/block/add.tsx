@@ -13,7 +13,6 @@ const LIMIT = 10;
 
 const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
 	
-	_isMounted = false;
 	emptyLength = 0;
 	timeout = 0;
 	cache: any = {};
@@ -188,7 +187,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { getId } = this.props;
 		const items = this.getItems();
 		
-		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
 		this.resize();
@@ -235,7 +233,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		S.Menu.closeAll(J.Menu.add);
 	};
 

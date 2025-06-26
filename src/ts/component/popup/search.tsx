@@ -17,7 +17,6 @@ const LIMIT_HEIGHT = 15;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
-	_isMounted = false;
 	node: any = null;
 	state = {
 		isLoading: false,
@@ -313,7 +312,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.reload();
 		};
 
-		this._isMounted = true;
 		this.initCache();
 		this.rebind();
 
@@ -341,7 +339,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		U.Subscription.destroyList([ J.Constant.subId.search ]);
@@ -349,14 +346,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.search', e => this.onKeyDown(e));
+		$(window).on('keydown.search', e => this.onKeyDown(e));
 	};
 
 	unbind () {

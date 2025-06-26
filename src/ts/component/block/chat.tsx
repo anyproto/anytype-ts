@@ -11,7 +11,6 @@ const GROUP_TIME = 300;
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent> {
 
-	_isMounted = false;
 	node = null;
 	refList = null;
 	refForm = null;
@@ -140,7 +139,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 
 		const { isPopup } = this.props;
@@ -171,7 +169,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		window.clearTimeout(this.timeoutInterface);
