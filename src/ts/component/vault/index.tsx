@@ -102,8 +102,12 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onKeyUp = (e: any) => {
-		const key = String(e.key || '').toLowerCase();
+		const key: any = String(e.key || '').toLowerCase();
 		if (!key) {
+			return;
+		};
+
+		if (![ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			return;
 		};
 
