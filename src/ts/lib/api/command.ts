@@ -1484,7 +1484,8 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 			break;
 		};
 
-		case I.ImportType.Markdown: {
+		case I.ImportType.Markdown:
+		case I.ImportType.Obsidian: {
 			params = new Rpc.Object.Import.Request.MarkdownParams();
 			params.setPathList(options.paths);
 
@@ -1528,14 +1529,6 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 			params.setImporttype(options.importType);
 
 			request.setPbparams(params);
-			break;
-		};
-
-		case I.ImportType.Obsidian: {
-			params = new Rpc.Object.Import.Request.MarkdownParams();
-			params.setPathList(options.paths);
-
-			request.setMarkdownparams(params);
 			break;
 		};
 
