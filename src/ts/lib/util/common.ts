@@ -1604,8 +1604,18 @@ class UtilCommon {
 			const m2 = String(m[2] || '');
 			const m3 = String(m[3] || '');
 
+			console.log('M0', m0);
+			console.log('M1', m1);
+			console.log('M2', m2);
+			console.log('M3', m3);
+
 			// Skip inline code marks
 			if (regCode.test(m1) || regCode.test(m3)) {
+				return;
+			};
+
+			// Skip first space
+			if (/^\s/.test(m2)) {
 				return;
 			};
 
