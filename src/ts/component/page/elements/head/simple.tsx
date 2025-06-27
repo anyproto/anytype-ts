@@ -306,6 +306,7 @@ const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
 		if (isType) {
 			const isTemplate = U.Object.isTemplateType(object.id);
 			const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
+			const allowEdit = allowDetails && !isTemplate && !U.Object.isParticipantLayout(object.recommendedLayout);
 
 			if (isOwner && total) {
 				buttonLayout = (
@@ -330,7 +331,7 @@ const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
 				);
 			};
 
-			if (allowDetails) {
+			if (allowEdit) {
 				buttonEdit = (
 					<Button 
 						id="button-edit" 
