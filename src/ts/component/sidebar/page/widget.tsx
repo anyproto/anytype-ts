@@ -486,29 +486,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
-		/*
-		const { showVault } = S.Common;
 		const node = $(this.node);
-		const head = node.find('#head');
 		const top = node.find('#body').scrollTop();
-		const show = showVault && (top > 32);
-		const name = head.find('.name');
-		const progress = head.find('.progressText');
 
-		if (show) {
-			name.show();
-			progress.hide();
-			this.timeout = window.setTimeout(() => head.addClass('show'), 15);
-		} else {
-			head.removeClass('show');
-
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => {
-				name.hide();
-				progress.show();
-			}, 200);
-		};
-		*/
+		node.find('.dropTarget.firstTarget').toggleClass('isScrolled', top > 0);
 	};
 
 	onArchive (e: any) {
