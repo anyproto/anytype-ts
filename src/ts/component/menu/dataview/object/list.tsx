@@ -24,7 +24,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		isLoading: false,
 	};
 
-	_isMounted = false;	
 	filter = '';
 	cache: any = {};
 	offset = 0;
@@ -155,7 +154,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.focus();
@@ -192,10 +190,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		setActive(items[this.n], false);
 	};
 	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	focus () {
 		window.setTimeout(() => { 
 			if (this.refFilter) {

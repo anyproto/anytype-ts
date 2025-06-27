@@ -8,12 +8,18 @@
 		.items { flex-grow: 1; }
 		.ReactVirtualized__List { padding: 8px; }
 
-		.item { padding-right: 8px; border-radius: 6px; }
+		.item { padding-left: 8px; padding-right: 8px; border-radius: 6px; }
 		.item {
 			.name { width: 100%; }
 			.label { @include text-overflow-nw; }
 
 			&.active::before { background: var(--color-shape-highlight-medium) !important; }
+		}
+
+		#item-sidebar { @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+		#item-sidebar {
+			.icon { margin: 0px; }
+			.clickable { flex-direction: row-reverse; }
 		}
 
 		.bottom { flex-shrink: 0; padding: 0px 8px; }

@@ -15,7 +15,6 @@ const SOURCE_LIMIT = 1;
 
 const BlockFeatured = observer(class BlockFeatured extends React.Component<Props> {
 
-	_isMounted = false;
 	cellRefs: Map<string, any> = new Map();
 	menuContext: any = null;
 	setId = '';
@@ -147,7 +146,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	componentDidMount () {
 		const { isInsidePreview } = this.props;
-		this._isMounted = true;
 
 		if (!isInsidePreview) {
 			window.setTimeout(() => {
@@ -161,10 +159,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	componentDidUpdate (): void {
 		this.init();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 
 	init () {

@@ -19,7 +19,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		isLoading: false,
 	};
 
-	_isMounted = false;	
 	filter = '';
 	index: any = null;
 	cache: any = {};
@@ -130,7 +129,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -159,10 +157,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		this.resize();
 	};
 	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));

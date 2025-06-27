@@ -20,7 +20,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		isLoading: false,
 	};
 
-	_isMounted = false;	
 	filter = '';
 	cache: any = {};
 	offset = 0;
@@ -143,7 +142,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -176,7 +174,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		window.clearTimeout(this.timeoutFilter);
 		this.unbind();
 	};

@@ -13,7 +13,6 @@ const MAX_HEIGHT = 396;
 
 const PageMainMedia = observer(class PageMainMedia extends React.Component<I.PageComponent, State> {
 
-	_isMounted = false;
 	node = null;
 	refHeader = null;
 	refHead = null;
@@ -186,7 +185,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.open();
 		this.resize();
 	};
@@ -198,7 +196,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.close();
 	};
 

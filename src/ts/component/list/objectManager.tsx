@@ -33,6 +33,38 @@ interface ObjectManagerRefProps {
 	selectionClear(): void;
 };
 
+const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
+	buttons: initialButtons = [],
+}, ref) => {
+
+	const [ buttons, setButtons ] = useState(initialButtons);
+
+	useEffect(() => {
+		setButtons(initialButtons);
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		setButtons,
+	}));
+
+	const Button = (item: any) => (
+		<div className="element" onClick={item.onClick}>
+			<Icon className={item.icon} />
+			<div className="name">{item.text}</div>
+		</div>
+	);
+
+	return (
+		<>
+			{buttons.map((item: any, i: number) => (
+				<Button key={i} {...item} />
+			))}
+		</>
+	);
+
+}));
+
+
 const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
@@ -58,6 +90,8 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const filterWrapperRef = useRef(null);
 	const filterRef = useRef(null);
 	const listRef = useRef(null);
+	const controlsRef = useRef(null);
+	const buttonsRef = useRef(null);
 	const checkboxRef = useRef(new Map());
 	const timeout = useRef(0);
 	const top = useRef(0);
@@ -132,6 +166,9 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		checkboxRef.current.forEach((item, id) => {
 			item?.setValue(ids.includes(id));
 		});
+
+		$(controlsRef.current).toggleClass('withSelected', ids.length > 0);
+		buttonsRef.current?.setButtons(getButtons());
 	};
 
 	const onSelectAll = () => {
@@ -208,27 +245,29 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		return String(filterRef.current?.getValue() || '');
 	};
 
+	const getButtons = () => {
+		if (isReadonly) {
+			return [];
+		};
+
+		let buttonsList: I.ButtonComponent[] = [];
+
+		if (selected.current.length) {
+			buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
+			buttonsList = buttonsList.concat(buttons);
+		} else {
+			buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
+		};
+
+		return buttonsList;
+	};
+
 	const items = getItems();
 	const cnControls = [ 'controls' ];
 	const filter = getFilterValue();
 
 	if (filter) {
 		cnControls.push('withFilter');
-	};
-
-	let buttonsList: I.ButtonComponent[] = [];
-
-	if (selected.current.length) {
-		cnControls.push('withSelected');
-
-		buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
-		buttonsList = buttonsList.concat(buttons);
-	} else {
-		buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
-	};
-
-	if (isReadonly) {
-		buttonsList = [];
 	};
 
 	const Info = (item: any) => {
@@ -249,13 +288,6 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 		return itemInfo;
 	};
-
-	const Button = (item: any) => (
-		<div className="element" onClick={item.onClick}>
-			<Icon className={item.icon} />
-			<div className="name">{item.text}</div>
-		</div>
-	);
 
 	const Item = (item: any) => (
 		<div className="item">
@@ -301,11 +333,9 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 	let controls = (
 		<div className="controlsWrapper">
-			<div className={cnControls.join(' ')}>
+			<div ref={controlsRef} className={cnControls.join(' ')}>
 				<div className="side left">
-					{buttonsList.map((item: any, i: number) => (
-						<Button key={i} {...item} />
-					))}
+					<Buttons ref={buttonsRef} buttons={getButtons()} />
 				</div>
 				<div className="side right">
 					<Icon className="search" onClick={onFilterShow} />
