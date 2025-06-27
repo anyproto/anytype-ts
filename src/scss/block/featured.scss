@@ -63,6 +63,12 @@
 				.iconObject { flex-shrink: 0; margin: 0px 6px 0px 0px !important; }
 			}
 
+			.cellContent.c-select, 
+			.cellContent.c-object, 
+			.cellContent.c-file {
+				.over { align-items: center; }
+			}
+
 			.cellContent.c-checkbox { display: inline-flex; flex-direction: row; align-items: center; height: 28px; gap: 0px 4px; }
 
 			.cellContent.c-longText {
