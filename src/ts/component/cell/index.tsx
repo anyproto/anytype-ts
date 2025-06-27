@@ -99,6 +99,13 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			if (noInplace) {
 				return;
 			};
+
+			const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
+
+			if (relation.relationKey == 'name') {
+				cellContent.css({ height: cellContent.outerHeight() });
+			};
+
 			cell.addClass('isEditing');
 
 			if (cellPosition) {

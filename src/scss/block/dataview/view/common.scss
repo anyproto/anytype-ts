@@ -90,6 +90,7 @@
 					.over { display: flex; height: 20px; }
 				}
 
+				.cellContent.isEditing.isName { align-items: flex-start; }
 				.cellContent.isEditing.isName {
 					.iconObject { position: relative; }
 					.input.name { text-indent: 0px; padding: 0px; height: unset; }
