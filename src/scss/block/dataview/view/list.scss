@@ -8,13 +8,23 @@
 
 		    .row { height: 100%; width: 100%; padding-top: 2px; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: var(--color-text-secondary); }
-			.row.isEditing {
-				.cellContent:not(.isName) { display: none; }
+
+			.row:not(.editModeOn) {
+				.cellWrapper.isEmpty { display: none; }
 			}
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
 			.sides {
 				.side { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+				.side.left { width: 40%; flex-shrink: 0; }
+				.side.left {
+					.cellWrapper { width: 100%; }
+				}
+				.side.left.s50 { width: 50%; }
+				.side.left.s50 {
+					.cellWrapper { width: 60%; }
+				}
+
 				.side.right { overflow: hidden; }
 			}
 
@@ -33,9 +43,19 @@
 			.selectionTarget,
 			.dropTarget { height: 28px; padding: 2px 0px 2px 4px; }
 
+			.cellWrapper,
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
 				cursor: default !important; color: var(--color-text-secondary);
+			}
+
+			.cellWrapper.isName { display: flex; gap: 0px 6px; }
+			.cellWrapper.isName {
+				.cellContent { max-width: calc(100% - 26px); flex-shrink: 1; }
+				.cellContent {
+					.name { width: unset; max-width: 100%; }
+				}
+				.icon.editMode { flex-shrink: 0; }
 			}
 
 			.cellContent:first-child { margin: 0px; }

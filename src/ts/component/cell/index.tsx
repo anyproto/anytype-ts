@@ -149,7 +149,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			horizontal: isGrid ? I.MenuDirection.Center : I.MenuDirection.Left,
 			offsetY: 2,
 			noAnimation: true,
-			passThrough: !noInplace,
+			passThrough: true,
 			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
 			onOpen: () => setOn(),
@@ -543,6 +543,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		onClick: onClickHandler,
 		isEditing: () => childRef.current.isEditing(),
 		canEdit: () => canCellEdit(relation, record),
+		onBlur: () => {
+			if (childRef.current.onBlur) {
+				childRef.current.onBlur();
+			};
+		},
 	}));
 
 	return (

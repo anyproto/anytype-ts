@@ -935,17 +935,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
 		const ref = this.refCells.get(id);
 		const view = this.getView();
+		const isRecordEditing = (this.editingRecordId == recordId)
 
 		if (!relation || !ref || !record) {
 			return;
 		};
 
-		if (!view.isGrid() && Relation.isUrl(relation.format) && (this.editingRecordId != recordId)) {
+		if (!view.isGrid() && Relation.isUrl(relation.format) && !isRecordEditing) {
 			Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
 			return;
 		};
 
-		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing()) {
+		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing() &&  !isRecordEditing) {
 			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {
@@ -1479,44 +1480,46 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	setRecordEditingOn (e: any, id: string) {
-		const cb = () => {
-			const ref = this.refRecords.get(id);
-			if (!ref || !ref.setIsEditing) {
-				return;
-			};
-
-			const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
-			const nameRef = this.refCells.get(nameId);
-
-			ref.setIsEditing(true);
-			this.editingRecordId = id;
-
-
-			if (ref) {
-				nameRef.onClick(e);
-			};
-		};
-
-		if (this.editingRecordId) {
-			this.setRecordEditingOff(this.editingRecordId, cb);
-		} else {
-			cb();
-		};
-	};
-
-	setRecordEditingOff (id: string, cb?: () => void) {
 		const ref = this.refRecords.get(id);
 		if (!ref || !ref.setIsEditing) {
-			if (cb) {
-				cb();
-			};
 			return;
 		};
 
+		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
+		const nameRef = this.refCells.get(nameId);
+
+		ref.setIsEditing(true);
+		this.editingRecordId = id;
+
+		if (nameRef) {
+			nameRef.onClick(e);
+		};
+
+		$(window).on(`mousedown.record-${id}`, (e: any) => {
+			if ($(e.target).parents(`#record-${id}`).length > 0) {
+				return;
+			};
+			this.setRecordEditingOff(id);
+		});
+	};
+
+	setRecordEditingOff (id: string) {
+		const ref = this.refRecords.get(id);
+
+		$(window).off(`mousedown.record-${id}`);
+
+		if (!ref || !ref.setIsEditing) {
+			return;
+		};
+
+		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
+		const nameRef = this.refCells.get(nameId);
+
 		ref.setIsEditing(false);
 		this.editingRecordId = '';
-		if (cb) {
-			cb();
+
+		if (nameRef) {
+			nameRef.onBlur();
 		};
 	};
 

@@ -13,7 +13,6 @@ const Row = observer(class Row extends React.Component<Props> {
 	_isMounted = false;
 	isEditing = false;
 	node: any = null;
-	refNames: any[] = [];
 
 	render () {
 		const {
@@ -47,15 +46,30 @@ const Row = observer(class Row extends React.Component<Props> {
 			cn.push('isDone');
 		};
 
+		if (this.isEditing) {
+			cn.push('editModeOn');
+		};
+
 		const mapper = (vr: any, i: number) => {
 			const relation = S.Record.getRelationByKey(vr.relationKey);
 			const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 			const isName = relation.relationKey == 'name';
+			const ccn = ['cellWrapper'];
+
+			if (isName) {
+				ccn.push('isName');
+			} else {
+				if (!Relation.checkRelationValue(relation, record[relation.relationKey])) {
+					ccn.push('isEmpty');
+				};
+			};
 
 			return (
-				<>
+				<div
+					className={ccn.join(' ')}
+					key={'list-cell-' + relation.relationKey}
+				>
 					<Cell
-						key={'list-cell-' + relation.relationKey}
 						elementId={id}
 						ref={ref => onRefCell(ref, id)}
 						{...this.props}
@@ -80,19 +94,18 @@ const Row = observer(class Row extends React.Component<Props> {
 							onClick={e => onEditModeClick(e, recordId)}
 						/>
 					) : ''}
-				</>
+				</div>
 			);
 		};
 
 		let content = (
 			<div className="sides">
-				<div className="side left">
+				<div className={[ 'side', 'left', left.length > 1 ? 's50' : '' ].join(' ')}>
 					{left.map(mapper)}
 				</div>
 				<div className="side right">
 					{right.map(mapper)}
 				</div>
-				{/*{relations.map(mapper)}*/}
 			</div>
 		);
 

@@ -191,7 +191,7 @@ export interface ViewComponent {
 	canCellEdit?(relation: any, record: any): boolean;
 	onEditModeClick?(e: any, id: string): void;
 	setRecordEditingOn?(e: any, id: string): void;
-	setRecordEditingOff?(id: string, callBack?: () => void): void;
+	setRecordEditingOff?(id: string): void;
 };
 
 export interface ViewEmpty {
