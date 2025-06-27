@@ -1484,14 +1484,17 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 			params = new Rpc.Object.Import.Request.MarkdownParams();
 			params.setPathList(options.paths);
 			params.setCreatedirectorypages(true);
+
 			request.setMarkdownparams(params);
 			break;
-		}
+		};
+
 		case I.ImportType.Obsidian: {
 			params = new Rpc.Object.Import.Request.MarkdownParams();
 			params.setPathList(options.paths);
 			params.setCreatedirectorypages(true);
 			params.setIncludepropertiesasblock(true);
+
 			request.setMarkdownparams(params);
 			break;
 		};
