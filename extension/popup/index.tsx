@@ -1,53 +1,19 @@
-import * as React from 'react';
+import { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
 import { I, C, S, U, J, Storage } from 'Lib';
 import Util from '../lib/util';
 
-interface State {
-	error: string;
-};
+const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-const Index = observer(class Index extends React.Component<I.PageComponent, State> {
+	const interval = useRef<any>(0);
+	const [ error, setError ] = useState('');
 
-	state = {
-		error: '',
-	};
-	interval: any = 0;
-
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onOpen = this.onOpen.bind(this);
-		this.onDownload = this.onDownload.bind(this);
-	};
-
-	render () {
-		const { error } = this.state;
-
-		return (
-			<div className="page pageIndex">
-				<Label text="To save in Anytype you need to Pair with the app" />
-
-				<div className="buttonsWrapper">
-					<Button color="pink" className="c32" text="Pair with app" onClick={this.onOpen} />
-					<Button color="blank" className="c32" text="Download app" onClick={this.onDownload} />
-				</div>
-
-				<Error text={error} />
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		this.checkPorts();
-	};
-
-	checkPorts (onError?: () => void): void {
+	const checkPorts = (onError?: () => void): void => {
 		Util.sendMessage({ type: 'getPorts' }, response => {
 			Util.sendMessage({ type: 'checkPorts' }, response => {
 				if (!response.ports || !response.ports.length) {
-					this.setState({ error: 'Automatic pairing failed, please open the app' });
+					setError('Automatic pairing failed, please open the app');
 
 					if (onError) {
 						onError();
@@ -56,14 +22,14 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				};
 
 				Util.init(response.ports[0], response.ports[1]);
-				this.login();
+				login();
 
-				clearInterval(this.interval);
+				clearInterval(interval.current);
 			});
 		});
 	};
 
-	login () {
+	const login = () => {
 		const appKey = Storage.get('appKey');
 
 		if (appKey) {
@@ -76,7 +42,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				U.Router.go('/create', {});
 			}, () => {
 				Storage.delete('appKey');
-				this.login();
+				login();
 			});
 		} else {
 			/* @ts-ignore */
@@ -85,7 +51,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 
 			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
 				if (message.error.code) {
-					this.setState({ error: message.error.description });
+					setError(message.error.description);
 					return;
 				};
 
@@ -101,36 +67,51 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		};
 	};
 
-	onOpen () {
+	const onOpen = () => {
 		const { serverPort, gatewayPort } = S.Extension;
 
 		if (serverPort && gatewayPort) {
-			this.login();
+			login();
 			return;
 		};
 
 		let cnt = 0;
 
 		Util.sendMessage({ type: 'launchApp' }, response => {
-			this.interval = setInterval(() => {
-				this.checkPorts(() => {
+			interval.current = setInterval(() => {
+				checkPorts(() => {
 					cnt++;
 
 					if (cnt >= 30) {
-						this.setState({ error: 'App open failed' });
-
-						clearInterval(this.interval);
+						setError('App open failed');
+						clearInterval(interval.current);
 					};
 				});
 			}, 1000);
 		});
 	};
 
-	onDownload () {
+	const onDownload = () => {
 		window.open(J.Url.download);
 	};
 
+	useEffect(() => {
+		checkPorts();
+	}, []);
 
-});
+	return (
+		<div className="page pageIndex">
+			<Label text="To save in Anytype you need to Pair with the app" />
+
+			<div className="buttonsWrapper">
+				<Button color="pink" className="c32" text="Pair with app" onClick={onOpen} />
+				<Button color="blank" className="c32" text="Download app" onClick={onDownload} />
+			</div>
+
+			<Error text={error} />
+		</div>
+	);
+
+}));
 
 export default Index;
