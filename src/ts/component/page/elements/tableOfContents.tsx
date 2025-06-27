@@ -49,10 +49,10 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			element: node,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
-			offsetX: node.width() + 4,
 			noFlipX: true,
 			noFlipY: true,
 			isSub: true,
+			noAnimation: false,
 			data: {
 				rootId,
 				isPopup,

@@ -20,7 +20,7 @@
 	.menu { 
 		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: var(--color-bg-primary); opacity: 0; transform: scale3d(0.95,0.95,1);
-		transition: opacity 0.15s $easeInQuint, transform 0.15s $easeInQuint;
+		transition-duration: 0.15s; transition-timing-function: $easeInQuint; transition-property: opacity, transform;
 	}
 	.menu.fixed { position: fixed; }
 	.menu * { user-select: none; }
