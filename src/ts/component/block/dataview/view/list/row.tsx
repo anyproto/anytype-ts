@@ -73,7 +73,13 @@ const Row = observer(class Row extends React.Component<Props> {
 						noInplace={!isName}
 						editModeOn={this.isEditing}
 					/>
-					{isName ? <Icon className="edit" onClick={e => onEditModeClick(e, recordId)} /> : ''}
+
+					{isName ? (
+						<Icon
+							className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
+							onClick={e => onEditModeClick(e, recordId)}
+						/>
+					) : ''}
 				</>
 			);
 		};

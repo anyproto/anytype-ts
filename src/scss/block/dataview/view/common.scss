@@ -118,13 +118,24 @@
 			}
 		}
 
-		.viewContent.viewList,
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { display: none;  background: url('~img/icon/dataview/button/edit0.svg') 50% 50% no-repeat; }
+			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
+			.icon.editMode.enabled { display: none !important; }
+
+			.card:hover,
+			.row:hover {
+				.icon.editMode { display: block; }
+			}
+		}
+
 		.viewContent.viewGallery,
 		.viewContent.viewBoard {
 			.icon.editMode {
-				display: none; position: absolute; z-index: 3; width: 28px; height: 28px; border-radius: 6px;
+				position: absolute; z-index: 3; width: 28px; height: 28px; border-radius: 6px;
 				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
-				background: var(--color-bg-primary) url('~img/icon/menu/action/pencil0.svg') 50% 50% no-repeat;
 			}
 			.icon.editMode.enabled { background-color: var(--color-shape-highlight-medium); display: block; }
 		}
@@ -137,8 +148,7 @@
 			}
 		}
 		.viewContent.viewList {
-			.icon.editMode { left: -48px; top: 50%; margin-top: -14px; }
-			.row:hover { display: block; }
+			.icon.editMode { width: 20px; height: 20px; }
 		}
 	}
 
