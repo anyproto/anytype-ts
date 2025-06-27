@@ -1061,11 +1061,11 @@
 	"popupSettingsImportObsidianDescription": "Import your Obsidian files with 3 simple steps",
 	"popupSettingsImportObsidianHowTo": "How to import from Obsidian",
 	"popupSettingsImportObsidianList11": "Locate your Obsidian Vault",
-	"popupSettingsImportObsidianList12": "Go to Settings → Vault, then click the folder icon to open your vault location",
+	"popupSettingsImportObsidianList12": "<ul><li>Open the Vault switcher (shown at launch or via File → Open Vault).</li><li>Right-click the vault you want to export and choose “Reveal in system explorer”.</li></ul>",
 	"popupSettingsImportObsidianList21": "Click Import Files and select your entire Vault folder (or a subfolder) with .md files",
-	"popupSettingsImportObsidianList22": "Anytype will process your files and automatically create objects for each Markdown file.",
+	"popupSettingsImportObsidianList22": "<ul><li>On some platforms (like Linux and Windows), folder selection may not be supported. In that case, compress the folder into a .zip archive and import the archive instead.</li><li>Anytype will process your files and automatically create objects for each Markdown file.</li></ul>",
 	"popupSettingsImportObsidianList31": "Content mapping",
-	"popupSettingsImportObsidianList32": "<ul><li>[[Internal Links]] → become linked objects in Anytype, so the connections between your notes are preserved.</li><li>#tags → become values in the Tag property. You can use them to filter, group or search across objects.</li><li>Frontmatter (the --- metadata at the top) → becomes object properties.</li></ul>",
+	"popupSettingsImportObsidianList32": "<ul><li>[[Internal Links]] → become linked objects in Anytype, so the connections between your notes are preserved.</li><li>Frontmatter (the --- metadata at the top) → becomes object properties.</li></ul>",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
