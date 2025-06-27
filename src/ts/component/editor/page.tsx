@@ -2477,7 +2477,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		} else {
 			const size = mw * 0.6;
 
-			mw -= 96;
+			mw -= 128;
 			w = (mw - size) * w;
 			width = Math.max(size, Math.min(mw, size + w));
 		};

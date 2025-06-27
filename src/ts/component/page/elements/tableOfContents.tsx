@@ -53,6 +53,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			noFlipY: true,
 			isSub: true,
 			noAnimation: false,
+			offsetX: 16,
 			data: {
 				rootId,
 				isPopup,
@@ -78,7 +79,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			const width = container.width();
 			const o = isPopup && container.length ? container.offset().left : 0;
 
-			node.css({ left: o + width - node.width() - 22 });
+			node.css({ left: o + width - node.outerWidth() - 6 });
 		});
 	};
 
@@ -112,14 +113,16 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
-			{tree.map(item => (
-				<div 
-					id={`item-${item.id}`}
-					className="item" 
-					key={item.id} 
-					style={{ width: `${100 / (item.depth + 1)}%` }}
-				/>
-			))}
+			<div className="inner">
+				{tree.map(item => (
+					<div 
+						id={`item-${item.id}`}
+						className="item" 
+						key={item.id} 
+						style={{ width: `${100 / (item.depth + 1)}%` }}
+					/>
+				))}
+			</div>
 		</div>
 	);
 
