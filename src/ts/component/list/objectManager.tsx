@@ -33,6 +33,38 @@ interface ObjectManagerRefProps {
 	selectionClear(): void;
 };
 
+const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
+	buttons: initialButtons = [],
+}, ref) => {
+
+	const [ buttons, setButtons ] = useState(initialButtons);
+
+	useEffect(() => {
+		setButtons(initialButtons);
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		setButtons,
+	}));
+
+	const Button = (item: any) => (
+		<div className="element" onClick={item.onClick}>
+			<Icon className={item.icon} />
+			<div className="name">{item.text}</div>
+		</div>
+	);
+
+	return (
+		<>
+			{buttons.map((item: any, i: number) => (
+				<Button key={i} {...item} />
+			))}
+		</>
+	);
+
+}));
+
+
 const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
@@ -58,12 +90,15 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const filterWrapperRef = useRef(null);
 	const filterRef = useRef(null);
 	const listRef = useRef(null);
+	const controlsRef = useRef(null);
+	const buttonsRef = useRef(null);
 	const checkboxRef = useRef(new Map());
 	const timeout = useRef(0);
 	const top = useRef(0);
+	const selected = useRef<string[]>([]);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: rowHeight || 64 }));
-	const [ selected, setSelected ] = useState<string[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
 	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
@@ -86,7 +121,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const onClick = (e: React.MouseEvent, item: any) => {
 		e.stopPropagation();
 
-		let ids = selected;
+		let ids = selected.current;
 
 		if (e.shiftKey) {
 			const idx = recordIds.findIndex(id => id == item.id);
@@ -108,7 +143,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	};
 
 	const getSelectedIndexes = () => {
-		const indexes = selected.map(id => recordIds.findIndex(it => it == id));
+		const indexes = selected.current.map(id => recordIds.findIndex(it => it == id));
 		return indexes.filter(idx => idx >= 0);
 	};
 
@@ -122,15 +157,23 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			end = recordIds.length;
 		};
 
-		setSelection(selected.concat(recordIds.slice(start, end)));
+		setSelection(selected.current.concat(recordIds.slice(start, end)));
 	};
 
 	const setSelection = (ids: string[]) => {
-		setSelected(U.Common.arrayUnique(ids));
+		selected.current = U.Common.arrayUnique(ids);
+
+		checkboxRef.current.forEach((item, id) => {
+			item?.setValue(ids.includes(id));
+		});
+
+		$(controlsRef.current).toggleClass('withSelected', ids.length > 0);
+		buttonsRef.current?.setButtons(getButtons());
 	};
 
 	const onSelectAll = () => {
-		selected.length ? selectionClear() : selectionAll();
+		selected.current.length ? selectionClear() : selectionAll();
+		setDummy(dummy + 1);
 	};
 
 	const selectionAll = () => {
@@ -202,27 +245,29 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		return String(filterRef.current?.getValue() || '');
 	};
 
+	const getButtons = () => {
+		if (isReadonly) {
+			return [];
+		};
+
+		let buttonsList: I.ButtonComponent[] = [];
+
+		if (selected.current.length) {
+			buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
+			buttonsList = buttonsList.concat(buttons);
+		} else {
+			buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
+		};
+
+		return buttonsList;
+	};
+
 	const items = getItems();
 	const cnControls = [ 'controls' ];
 	const filter = getFilterValue();
 
 	if (filter) {
 		cnControls.push('withFilter');
-	};
-
-	let buttonsList: I.ButtonComponent[] = [];
-
-	if (selected.length) {
-		cnControls.push('withSelected');
-
-		buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: onSelectAll });
-		buttonsList = buttonsList.concat(buttons);
-	} else {
-		buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: onSelectAll });
-	};
-
-	if (isReadonly) {
-		buttonsList = [];
 	};
 
 	const Info = (item: any) => {
@@ -244,19 +289,12 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		return itemInfo;
 	};
 
-	const Button = (item: any) => (
-		<div className="element" onClick={item.onClick}>
-			<Icon className={item.icon} />
-			<div className="name">{item.text}</div>
-		</div>
-	);
-
 	const Item = (item: any) => (
 		<div className="item">
 			{isReadonly ? '' : (
 				<Checkbox
 					ref={ref => checkboxRef.current.set(item.id, ref)}
-					value={selected.includes(item.id)}
+					value={selected.current.includes(item.id)}
 					onChange={e => onClick(e, item)}
 				/>
 			)}
@@ -295,11 +333,9 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 	let controls = (
 		<div className="controlsWrapper">
-			<div className={cnControls.join(' ')}>
+			<div ref={controlsRef} className={cnControls.join(' ')}>
 				<div className="side left">
-					{buttonsList.map((item: any, i: number) => (
-						<Button key={i} {...item} />
-					))}
+					<Buttons ref={buttonsRef} buttons={getButtons()} />
 				</div>
 				<div className="side right">
 					<Icon className="search" onClick={onFilterShow} />
@@ -414,7 +450,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		records.forEach(id => {
 			const check = checkboxRef.current.get(id);
 			if (check) {
-				check.setValue(selected.includes(id));
+				check.setValue(selected.current.includes(id));
 			};
 		});
 
@@ -422,15 +458,17 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			resize();
 		};
 
-		listRef.current?.recomputeRowHeights();
+		if (listRef.current) {
+			listRef.current.recomputeRowHeights();
 
-		if (top.current) {
-			listRef.current?.scrollToPosition(top.current);
+			if (top.current) {
+				listRef.current.scrollToPosition(top.current);
+			};
 		};
 	});
 
 	useImperativeHandle(ref, () => ({
-		getSelected: () => selected,
+		getSelected: () => selected.current,
 		setSelection,
 		setSelectedRange,
 		selectionClear,

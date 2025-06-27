@@ -33,12 +33,13 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	render () {
 		const { isLoading, isDeleted } = this.state;
+		const { isPopup } = this.props;
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		} else
 		if (isLoading) {
-			return <Loader id="loader" />;
+			return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 		};
 
 		const rootId = this.getRootId();
@@ -47,12 +48,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const canWrite = U.Space.canMyParticipantWrite();
 		const subIdObject = S.Record.getSubId(rootId, 'object');
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
+
 		const columnsObject: any[] = [
+			{ relationKey: 'type', name: translate('commonObjectType'), isCell: true },
 			{ 
-				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
+				relationKey: 'createdDate', name: translate('commonCreated'),
 				mapper: v => U.Date.dateWithFormat(S.Common.dateFormat, v),
 			},
-			{ relationKey: object.relationKey, name: object.name, isCell: true }
+			{ relationKey: object.relationKey, name: translate('commonValue'), isCell: true },
 		];
 
 		const { output, more, label, canAdd } = this.getOptionsData();
@@ -102,7 +105,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		if (options && canAdd && !isReadonlyRelation) {
-			const add = <Icon key="optionAdd" className="add withBackground" onClick={this.onOptionAdd} />;
+			const add = <Icon key="optionAdd" className="add" onClick={this.onOptionAdd} />;
 
 			if (withMore) {
 				options.unshift(add);

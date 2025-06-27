@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, S, U, J, Relation } from 'Lib';
+import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -163,6 +163,15 @@ class Analytics {
 		this.removeContext();
 		this.setVersion();
 
+		if (U.Common.isPlatformLinux()) {
+			Renderer.send('linuxDistro').then((data: any) => {
+				this.setProperty({ 
+					linuxDistroName: data.os,
+					linuxDistroVersion: data.release,
+				});
+			});
+		};
+
 		this.log('[Analytics].init');
 	};
 
@@ -270,7 +279,19 @@ class Analytics {
 		if (space) {
 			param.spaceType = Number(space.spaceAccessType) || 0;
 			param.spaceType = I.SpaceType[param.spaceType];
+
+			let uxType = I.SpaceUxType.Space;
+			if (undefined !== data.uxType) {
+				uxType = data.uxType;
+			};
+			if (undefined !== space.uxType) {
+				uxType = space.uxType;
+			};
+			if (undefined !== uxType) {
+				param.uxType = I.SpaceUxType[Number(uxType) || 0];
+			};
 		};
+
 		if (participant) {
 			param.permissions = Number(participant.permissions) || 0;
 			param.permissions = I.ParticipantPermissions[param.permissions];
@@ -531,6 +552,12 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeMessageNotificationState': {
+				data.type = Number(data.type) || 0;
+				data.type = I.NotificationMode[data.type];
+				break;
+			};
+
 			case 'ApproveInviteRequest':
 			case 'ChangeSpaceMemberPermissions': {
 				data.type = Number(data.type) || 0;
@@ -596,10 +623,6 @@ class Analytics {
 
 		if (undefined !== converted.align) {
 			converted.align = I.BlockHAlign[converted.align];
-		};
-
-		if (undefined !== converted.uxType) {
-			converted.uxType = I.SpaceUxType[converted.uxType];
 		};
 
 		if (undefined !== converted.usecase) {

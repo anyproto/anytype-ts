@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';

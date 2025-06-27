@@ -1,130 +1,126 @@
-[![Anytype Logo](https://github.com/anyproto/anytype-ts/blob/main/electron/img/icons/64x64.png)](https://anytype.io)
-# Anytype
-Official Anytype client for MacOS, Linux, and Windows.
+# Anytype Desktop
 
-Anytype is a personal knowledge base, a digital brain that allows you to quickly capture, describe, and connect information. You can use Anytype to create books, tasks, notes, ideas, documents, tools and organize them any way you want.
+> **Local‑first, peer‑to‑peer & end‑to‑end‑encrypted knowledge OS for macOS, Windows & Linux.**
 
-## Links
+[![Latest release](https://img.shields.io/github/v/release/anyproto/anytype-ts?label=Download)](https://github.com/anyproto/anytype-ts/releases)
+[![Build Status](https://github.com/anyproto/anytype-ts/actions/workflows/desktop.yml/badge.svg?branch=main)](https://github.com/anyproto/anytype-ts/actions/workflows/desktop.yml)
+[![Crowdin](https://badges.crowdin.net/anytype-desktop/localized.svg)](https://crowdin.com/project/anytype-desktop)
+[![License](https://img.shields.io/badge/license-ASAL-1.0-blue.svg)](LICENSE.md)
 
-* 🌐 [Website](https://anytype.io)
-* 📝 [Blog](https://blog.anytype.io)
-* 📑 [Documentation](https://doc.anytype.io)
-* 💼 [Technical information](https://tech.anytype.io)
-* 👋 [Community forum](https://community.anytype.io)
-* 💾 [Downloads](https://download.anytype.io)
-* ▶️ [Google Play](https://play.google.com/store/apps/details?id=io.anytype.app)
-* 🍏 [App Store](https://apps.apple.com/us/app/anytype-private-notes/id6449487029)
+Anytype is a **personal knowledge base**—your digital brain—that lets you gather, connect and remix all kinds of information. Create pages, tasks, wikis, journals—even entire apps—and *define your own data model* while your data stays **offline‑first, private and encrypted** across devices.
 
-## Building the source
 
-### Dependencies
+## ✨ Key Features
 
-[Debian-based](https://packages.debian.org/bookworm/libsecret-1-dev) (Ubuntu / Pop! OS / Mint / ... ):
+- **Offline‑first, local storage** with optional peer‑to‑peer sync.
+- **Zero‑knowledge encryption** powered by *any‑sync*.
+- **Composable blocks**: text, databases, kanban, calendar & custom Types.
+- **Cross‑platform desktop client** built with Electron + TypeScript.
+- **Extensible** through a gRPC API and AI "Agents" (see [`AGENTS.md`](./AGENTS.md)).
+- **Open code** under the Any Source Available License 1.0.
 
-```
-apt install libsecret-1-dev
-apt install jq
-```
+## 📚 Table of Contents
 
-[Fedora](https://packages.fedoraproject.org/pkgs/libsecret/libsecret):
+- [Quick Start](#-quick-start)
+- [Prerequisites](#-prerequisites)
+- [Building from Source](#-building-from-source)
+- [Development Workflow](#-development-workflow)
+- [Localisation](#-localisation)
+- [Contributing](#-contributing)
+- [Community & Support](#-community--support)
+- [License](#-license)
 
-```
-dnf install libsecret
-dnf install jq
-```
 
-[Arch-based](https://archlinux.org/packages/core/x86_64/libsecret) (Manjaro / EndeavourOS / ... ):
+## 🚀 Quick Start
 
-```
-pacman -S libsecret
-pacman -S jq
-```
+Just want to try it? Grab the latest installer from the [releases page](https://github.com/anyproto/anytype-ts/releases) or head to **[download.anytype.io](https://download.anytype.io)** and log in with your *Any‑ID*.
 
-[Alpine](https://pkgs.alpinelinux.org/packages?name=libsecret) (usually for docker-related stuff):
 
-```
-apk add libsecret
-apk add jq
-```
+## 🛠 Prerequisites
 
-### Installation
+| Platform          | System packages                            |
+|-------------------|--------------------------------------------|
+| **Debian/Ubuntu** | `sudo apt install libsecret-1-dev jq`      |
+| **Fedora**        | `sudo dnf install libsecret jq`            |
+| **Arch Linux**    | `sudo pacman -S libsecret jq`              |
+| **Alpine**        | `apk add libsecret jq`                     |
 
-```shell
-git clone https://github.com/anyproto/anytype-ts
+Also install:
+
+- **Node.js ≥ 20** & npm ≥ 10 *(or pnpm ≥ 9)*
+- **Go ≥ 1.22** (to build [anytype‑heart](https://github.com/anyproto/anytype-heart))
+
+
+## 🏗 Building from Source
+
+```bash
+# 1 – Clone & install JS deps
+git clone https://github.com/anyproto/anytype-ts.git
 cd anytype-ts
-npm install -D
-```
+npm ci               # or: pnpm i --frozen-lockfile
 
-Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) to ensure proper work of pre-commit hooks.
+# 2 – Fetch / build middleware & protobuf bindings
+./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
 
-### Install middleware library and protobuf bindings
-Fetch the latest binary from the [github releases](https://github.com/anyproto/anytype-heart/releases).
+# 3 – Build the core engine (outside this repo)
+git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
+make build && cd ..
 
-**Warning** When building client from source be aware that middleware version in latest release may diverge from current client version, so it is highly recommended to [build middleware from source](https://github.com/anyproto/anytype-heart/blob/main/docs/Build.md) as well.
-
-```shell
-./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd> # arm/amd only for macos/ubuntu
-```
-
-After `./update.sh` downloaded the binary or after compiling it from source, you need to move `anytypeHelper` into the `dist` Folder.
-
-| OS CPU Type        | move command                        |
-|--------------------|-------------------------------------|
-| Windows            | *already copied to the dist folder* |
-| MacOS <arm \| amd> | `mv darwin-*/anytypeHelper dist/`   |
-| Linux <arm \| amd> | `mv linux-*/anytypeHelper dist/`    |
-
-### Building
-
-Build [`anytype-heart`](https://github.com/anyproto/anytype-heart) first.
-
-```shell
+# 4 – Build the Electron desktop app
 npm run update:locale
-npm run dist:(mac|win|linux)
+npm run dist:mac      # or dist:win / dist:linux
 ```
 
-Options (these options allow building locally and bypass CI-only hooks):
-- `ELECTRON_SKIP_NOTARIZE=1` — skip MacOS|Windows notarization and signature process
-- `ELECTRON_SKIP_SENTRY=1` - skip source map upload to Sentry
+### Environment flags
 
-## Running
+| Variable                 | Effect                                           |
+|--------------------------|--------------------------------------------------|
+| `ELECTRON_SKIP_NOTARIZE` | Skip macOS / Windows signing & notarizing         |
+| `ELECTRON_SKIP_SENTRY`   | Don’t upload sourcemaps to Sentry                 |
 
-Before running Anytype locally, you need to build [`anytype-heart`](https://github.com/anyproto/anytype-heart).
 
-**Info**: If you want to switch directory where Anytype stores data for now it is available by adding --user-data-dir="<path>" flag to launch command (i.e. --user-data-dir="D:\Anytype").
+## 🧑‍💻 Development Workflow
 
-### MacOS, Linux
-```shell
-SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev
+Run the helper (from *anytype‑heart*) and launch the client with hot‑reload:
+
+```bash
+anytypeHelper &       # or ./bin/anytypeHelper
+npm run start:dev     # Windows: npm run start:dev-win
 ```
 
-### Windows
-```shell
-SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev-win
+Optional env vars:
+
+| Name         | Purpose                                  |
+|--------------|-------------------------------------------|
+| `SERVER_PORT`| Local gRPC port of *anytype‑heart*        |
+| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`   |
+
+
+## 🌍 Localisation
+
+Translations live on [Crowdin](https://crowdin.com/project/anytype-desktop). Pull the latest locale files with:
+
+```bash
+npm run update:locale
 ```
 
-Options:
-- `SERVER_PORT` — NPM variable, local server port
-- `ANYPROF` — Go variable, profiler port, access `http://localhost:<PORT>/debug/pprof/profile?seconds=30` for profiling
 
-## Localisation
+## 🤝 Contributing
 
-Project localisation is managed via [Crowdin](https://crowdin.com/project/anytype-desktop)
+We ♥ contributors! Please read our [Contributing Guide](https://github.com/anyproto/.github/blob/main/docs/CONTRIBUTING.md) and follow the [Code of Conduct](https://github.com/anyproto/.github/blob/main/docs/CODE_OF_CONDUCT.md).
 
-`npm run update:locale` - Update localisation files
+> **Security issues?** Don’t open public issues—email **security@anytype.io** and see our [Security Guide](https://github.com/anyproto/anytype-ts?tab=security-ov-file).
 
-## Contribution
-Thank you for your desire to develop Anytype together!
 
-❤️ This project and everyone involved in it is governed by the [Code of Conduct](https://github.com/anyproto/.github/blob/main/docs/CODE_OF_CONDUCT.md).
+## 💬 Community & Support
 
-🧑‍💻 Check out our [contributing guide](https://github.com/anyproto/.github/blob/main/docs/CONTRIBUTING.md) to learn about asking questions, creating issues, or submitting pull requests.
+- **Forum** – <https://community.anytype.io>
+- **Docs** – <https://doc.anytype.io>
+- **Blog** – <https://blog.anytype.io>
 
-🫢 For security findings, please email [security@anytype.io](mailto:security@anytype.io) and refer to our [security guide](https://github.com/anyproto/.github/blob/main/docs/SECURITY.md) for more information.
 
-🤝 Follow us on [Github](https://github.com/anyproto) and join the [Contributors Community](https://github.com/orgs/anyproto/discussions).
+## 📝 License
 
----
-Made by Any — a Swiss association 🇨🇭
+Made by **Any** — a Swiss association 🇨🇭
 
-Licensed under [Any Source Available License 1.0](./LICENSE.md).
+Licensed under the **Any Source Available License 1.0**.

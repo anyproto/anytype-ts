@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, useEffect } from 'react';
 import * as hs from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
@@ -27,38 +27,20 @@ const Components = {
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 
-class RoutePage extends React.Component<RouteComponentProps> {
+const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	render () {
-		const { match } = this.props;
-		const params = match.params as any;
-		const page = params.page || 'index';
-		const Component = Components[page];
+	const { match } = props;
+	const params = match.params as any;
+	const page = params.page || 'index';
+	const Component = Components[page];
 
-		return Component ? <Component /> : null;
-	};
+	return Component ? <Component /> : null;
 
 };
 
-class Auth extends React.Component {
+const Auth: FC = () => {
 
-	render () {
-		return (
-			<Router history={history}>
-				<Provider {...S}>
-					<div>
-						<Switch>
-							{Routes.map((item: any, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={RoutePage} />
-							))}
-						</Switch>
-					</div>
-				</Provider>
-			</Router>
-		);
-	};
-
-	componentDidMount () {
+	useEffect(() => {
 		U.Router.init(history);
 
 		/* @ts-ignore */
@@ -75,7 +57,21 @@ class Auth extends React.Component {
 			};
 			return true;
 		});
-	};
+	}, []);
+
+	return (
+		<Router history={history}>
+			<Provider {...S}>
+				<div>
+					<Switch>
+						{Routes.map((item: any, i: number) => (
+							<Route path={item.path} exact={true} key={i} component={RoutePage} />
+						))}
+					</Switch>
+				</div>
+			</Provider>
+		</Router>
+	);
 
 };
 

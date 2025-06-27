@@ -171,8 +171,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			} else {
 				update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
 			};
-
-			// update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
 		};
 
 		this.object = Object.assign(this.object, update);
@@ -284,7 +282,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	close () {
 		this.previewRef?.show(false);
-		sidebar.rightPanelToggle(false, true, this.props.isPopup);
+		sidebar.rightPanelToggle(true, this.props.isPopup);
 	};
 
 	updateSections () {

@@ -34,11 +34,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	render () {
 		const { isLoading } = this.state;
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		return (
 			<div ref={node => this.node = node}>
-				{isLoading ? <Loader id="loader" /> : ''}
+				{isLoading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
 
 				<div id="body" className="flex">
 					<HistoryLeft 

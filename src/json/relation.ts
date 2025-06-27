@@ -163,6 +163,7 @@ export default {
 		'lastMessageDate',
 		'chatId',
 		'spaceUxType',
+		'spacePushNotificationMode',
 	],
 
 	participant: [

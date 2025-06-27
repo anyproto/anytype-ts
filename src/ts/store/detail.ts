@@ -438,6 +438,7 @@ class DetailStore {
 		object.chatId = Relation.getStringValue(object.chatId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
+		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;
@@ -459,10 +460,13 @@ class DetailStore {
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
 		// UX type
-		object.uxType = Number(object.spaceUxType);
+		object.uxType = object.uxType || object.spaceUxType;
 		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
 		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
+
+		delete(object.spacePushNotificationMode);
+		delete(object.spaceUxType);
 
 		return object;
 	};

@@ -1,4 +1,4 @@
-.attachments { display: flex; gap: 4px; flex-wrap: wrap; max-width: 540px; }
+.attachments { display: flex; gap: 4px; flex-wrap: wrap; }
 .attachments {
 	--width-attachment: calc(524px / 2);
 
@@ -50,6 +50,20 @@
 			.side.right { position: relative; display: flex; align-items: center; border-radius: 4px; overflow: hidden; }
 			.side.right {
 				.img { object-fit: cover; width: 100%; height: 100%; aspect-ratio: 40/21; }
+			}
+		}
+
+		&.isWide { max-width: unset; }
+		&.isWide {
+			.inner { flex-direction: row; padding: 0px; align-items: stretch; }
+
+			.side.left { flex-grow: 1; padding: 16px 0px 16px 16px; justify-content: center; }
+			.side.right {
+				padding: 16px; width: 28%; min-height: 90px; display: flex; justify-content: center; align-items: center; position: relative;
+				overflow: hidden; aspect-ratio: 7 / 3; max-height: 122px;
+			}
+			.side.right {
+				.img { border-radius: 4px; }
 			}
 		}
 	}
@@ -130,3 +144,9 @@
 	.attachment { @include cnt-4; }
 	.attachment:nth-child(-n + 6) { @include cnt-3; }
 }
+.attachments.layout-5,
+.attachments.layout-6,
+.attachments.layout-7,
+.attachments.layout-8,
+.attachments.layout-9,
+.attachments.layout-10 { width: 540px; }

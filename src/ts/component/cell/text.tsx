@@ -151,8 +151,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		return getView().getRelation(relation.relationKey) || {};
 	};
 
-	const viewRelation = getViewRelation();
-
 	let Name = null;
 	let EditorComponent = null;
 	let val = record[relation.relationKey];

@@ -137,7 +137,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					layout={I.ObjectLayout.Navigation}
 				/>
 
-				{loading ? <Loader id="loader" /> : ''}
+				{loading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
+
 				<div key="sides" className="sides">
 					<div id={'panel-' + Panel.Left} className="items left">
 						<div className="sideName">{translate('popupNavigationLinkTo')}</div>

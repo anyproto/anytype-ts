@@ -910,6 +910,52 @@ class BlockStore {
 		};
 	};
 
+	/**
+	 * Returns structure for Table of contents
+	 */
+	getTableOfContents (rootId: string, withTitle?: boolean) {
+		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => {
+			if (withTitle && it.isTextTitle()) {
+				return true;
+			};
+
+			return it.isTextHeader();
+		});
+		const list: any[] = [];
+
+		let hasH1 = false;
+		let hasH2 = false;
+
+		blocks.forEach((block: I.Block) => {
+			let depth = 0;
+
+			if (block.isTextHeader1()) {
+				depth = 0;
+				hasH1 = true;
+				hasH2 = false;
+			};
+
+			if (block.isTextHeader2()) {
+				hasH2 = true;
+				if (hasH1) depth++;
+			};
+
+			if (block.isTextHeader3()) {
+				if (hasH1) depth++;
+				if (hasH2) depth++;
+			};
+
+			list.push({ 
+				depth, 
+				id: block.id,
+				text: String(block.content.text || translate('defaultNamePage')),
+				block,
+			});
+		});
+
+		return list;
+	};
+
 };
 
 export const Block: BlockStore = new BlockStore();

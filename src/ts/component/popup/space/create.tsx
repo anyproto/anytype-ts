@@ -72,7 +72,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		setIsLoading(true);
 
-		const withChat = isChatSpace ? true : U.Object.isAllowedChat();
 		const details = {
 			name,
 			iconOption,
@@ -82,7 +81,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
 
-		C.WorkspaceCreate(details, I.Usecase.Empty, withChat, (message: any) => {
+		C.WorkspaceCreate(details, I.Usecase.Empty, (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {

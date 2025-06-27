@@ -21,6 +21,7 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
+		const Api = require('./api.js');
 		const { showMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
@@ -64,6 +65,11 @@ class WindowManager {
 		});
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
+
+		win.webContents.setWindowOpenHandler(({ url }) => {
+			Api.openUrl(win, url);
+			return { action: 'deny' };
+		});
 
 		win.webContents.on('context-menu', (e, param) => {
 			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);

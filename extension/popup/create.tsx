@@ -1,211 +1,40 @@
-import * as React from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon, IconObject } from 'Component';
 import { I, C, S, U, J, Relation, keyboard, Storage } from 'Lib';
 import Util from '../lib/util';
 
-interface State {
-	error: string;
-	isLoading: boolean;
-	withContent: boolean;
-	collection: any;
-};
+const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-const MAX_LENGTH = 320;
-
-const Create = observer(class Create extends React.Component<I.PageComponent, State> {
-
-	details: any = {
+	const nodeRef = useRef<any>(null);
+	const nameRef = useRef<Input>(null);
+	const descriptionRef = useRef<Input>(null);
+	const entryRef = useRef<any>(null);
+	const spaceRef = useRef<Select>(null);
+	const typeRef = useRef<Select>(null);
+	const isCreatingRef = useRef(false);
+	const urlRef = useRef('');
+	const detailsRef = useRef({
 		type: '',
+		collection: '',
 		tag: [],
-	};
+	});
 
-	node: any = null;
-	refName: any = null;
-	refDescription: any = null;
-	refSpace: any = null;
-	refType: any = null;
-	refCollection: any = null;
-	refComment: any = null;
-	isCreating = false;
-	url = '';
+	const [ error, setError ] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ withContent, setWithContent ] = useState(Boolean(Storage.get('withContent')));
+	const [ collection, setCollection ] = useState<any>(null);
+	const [ dummy, setDummy ] = useState(0);
+	const { space } = S.Common;
 
-	state = {
-		error: '',
-		isLoading: false,
-		withContent: true,
-		collection: null,
-	};
+	const initSpace = () => {
+		const spaces = getSpaces();
 
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onSpaceChange = this.onSpaceChange.bind(this);
-		this.onTypeChange = this.onTypeChange.bind(this);
-		this.onKeyPress = this.onKeyPress.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onInput = this.onInput.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onDragEnd = this.onDragEnd.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
-		this.onCollection = this.onCollection.bind(this);
-		this.focus = this.focus.bind(this);
-	};
-
-	render () {
-		const { error, isLoading, withContent } = this.state;
-		const { space } = S.Common;
-		const tags = this.getTagsValue();
-		const collection = this.state.collection as any;
-
-		return (
-			<div 
-				ref={ref => this.node = ref} 
-				className="page pageCreate"
-			>
-				{isLoading ? <Loader type={I.LoaderType.Loader} /> : ''}
-
-				<form onSubmit={this.onSubmit}>
-					<div className="rows">
-						<div className="row">
-							<Label text="Title" />
-							<Input ref={ref => this.refName = ref} />
-						</div>
-
-						<div className="row">
-							<Label text="Description" />
-							<Input ref={ref => this.refDescription = ref} />
-						</div>
-
-						<div className="row">
-							<Label text="Space" />
-							<Select 
-								id="select-space" 
-								ref={ref => this.refSpace = ref}
-								value="" 
-								options={[]}
-								onChange={this.onSpaceChange}
-								menuParam={{
-									horizontal: I.MenuDirection.Center,
-									data: { maxHeight: 180 }
-								}}
-							/>
-						</div>
-
-						<div className="row">
-							<Label text="Save as" />
-							<Select 
-								id="select-type" 
-								ref={ref => this.refType = ref}
-								readonly={!space}
-								value="" 
-								options={[]}
-								onChange={this.onTypeChange}
-								menuParam={{
-									horizontal: I.MenuDirection.Center,
-									data: { maxHeight: 180 }
-								}}
-							/>
-						</div>
-
-						<div className="row withContent" onClick={this.onCheckbox}>
-							<Icon className={[ 'checkbox', (withContent ? 'active' : '') ].join(' ')} />
-							<Label text="Add page content" />
-						</div>
-
-						<div className="row">
-							<Label text="Link to Collection" />
-							<div id="select-collection" className="select" onMouseDown={this.onCollection}>
-								<div className="item">
-									{collection ? <IconObject object={collection} iconSize={16} /> : ''}
-									<div className="name">{collection ? collection.name : 'Select Object'}</div>
-								</div>
-								<Icon className="arrow light" />
-							</div>
-						</div>
-
-						<div className="row">
-							<Label text="Tag" />
-
-							<div id="select-tag" className="box cell isEditing c-select" onClick={this.focus}>
-								<div className="value cellContent c-select">
-									<span id="list">
-										<DragBox onDragEnd={this.onDragEnd}>
-											{tags.map((item: any, i: number) => (
-												<span 
-													key={i}
-													id={`item-${item.id}`}
-													className="itemWrap isDraggable"
-													draggable={true}
-													{...U.Common.dataProps({ id: item.id, index: i })}
-												>
-													<Tag 
-														key={item.id}
-														text={item.name}
-														color={item.color}
-														canEdit={true} 
-														className={Relation.selectClassName(I.RelationType.MultiSelect)}
-														onRemove={() => this.onValueRemove(item.id)}
-													/>
-												</span>
-											))}
-										</DragBox>
-									</span>
-									
-									<span className="entryWrap">
-										<span 
-											id="entry" 
-											contentEditable={true}
-											suppressContentEditableWarning={true} 
-											onFocus={this.onFocus}
-											onInput={this.onInput}
-											onKeyDown={this.onKeyDown}
-											onKeyUp={this.onKeyUp}
-										>
-											{'\n'}
-										</span>
-										<div id="placeholder" className="placeholder">Type...</div>
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="buttonsWrapper">
-						<Button color="pink" className="c32" text="Save" type="input" subType="submit" onClick={this.onSubmit} />
-					</div>
-
-					<Error text={error} />
-				</form>
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		U.Subscription.createAll(() => {
-			this.initSpace();
-			this.initName();
-			this.initType();
-			this.initCollection();
-			this.setState({ withContent: Boolean(Storage.get('withContent')) });
-		});
-	};
-
-	componentDidUpdate(): void {
-		this.initType();
-		this.initCollection();
-		this.placeholderCheck();
-	};
-
-	initSpace () {
-		const spaces = this.getSpaces();
-
-		if (!this.refSpace || !spaces.length) {
+		if (!spaces.length) {
 			return;
 		};
 
@@ -215,78 +44,76 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			spaceId = spaces[0].id;
 		};
 
-		this.refSpace.setOptions(spaces);
-		this.refSpace.setValue(spaceId);
-		this.onSpaceChange(spaceId);
+		spaceRef.current?.setOptions(spaces);
+		spaceRef.current?.setValue(spaceId);
+
+		onSpaceChange(spaceId);
 	};
 
-	initType () {
-		const options = this.getTypes().map(it => ({ ...it, id: it.uniqueKey }));
+	const initType = () => {
+		const options = getTypes().map(it => ({ ...it, id: it.uniqueKey }));
 
-		if (!this.refType || !options.length) {
+		if (!options.length) {
 			return;
 		};
 
-		this.details.type = this.details.type || J.Constant.typeKey.bookmark;
-		this.refType.setOptions(options);
-		this.refType.setValue(this.details.type);
+		detailsRef.current.type = detailsRef.current.type ||  J.Constant.typeKey.bookmark;
+
+		typeRef.current?.setOptions(options);
+		typeRef.current?.setValue(detailsRef.current.type);
 	};
 
-	initCollection () {
-		const { collection } = this.details;
+	const initCollection = () => {
+		const { collection } = detailsRef.current;
 		if (!collection) {
 			return;
 		};
 
-		U.Object.getById(collection, {}, object => this.setState({ collection: object }));
+		U.Object.getById(collection, {}, object => setCollection(object));
 	};
 
-	initName () {
-		if (!this.refName) {
-			return;
-		};
-
+	const initName = () => {
 		Util.getCurrentTab(tab => {
 			if (!tab) {
 				return;
 			};
 
-			this.refName.setValue(tab.title);
-			this.refName.focus();
+			nameRef.current?.setValue(tab.title);
+			nameRef.current?.focus();
 
-			this.url = tab.url;
+			urlRef.current = tab.url;
 		});
 	};
 
-	getObjects (subId: string) {
+	const getObjects = (subId: string) => {
 		return S.Record.getRecords(subId);
 	};
 
-	getSpaces () {
+	const getSpaces = () => {
 		return U.Space.getList()
 			.filter(it => it && U.Space.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it }));
 	};
 
-	getTypes () {
+	const getTypes = () => {
 		const layouts = U.Object.getPageLayouts();
-		return this.getObjects(J.Constant.subId.type).
+		return getObjects(J.Constant.subId.type).
 			map(Util.optionMapper).
-			filter(this.filter).
+			filter(filter).
 			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == S.Common.space) && (it.uniqueKey != J.Constant.typeKey.template)).
 			sort(U.Data.sortByName);
 	};
 
-	filter (it: any) {
+	const filter = (it: any) => {
 		return it && !it.isHidden && !it.isArchived && !it.isDeleted;
 	};
 
-	onTypeChange (id: string): void {
-		this.details.type = id;
-		this.forceUpdate();
+	const onTypeChange = (id: string): void => {
+		detailsRef.current.type = id;
+		setDummy(dummy + 1);
 	};
 
-	onCollection (): void {
+	const onCollection = (): void => {
 		const collectionType = S.Record.getCollectionType();
 
 		S.Menu.open('searchObject', {
@@ -299,7 +126,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 					{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 				],
 				onSelect: (el: any) => {
-					this.setState({ collection: el });
+					setCollection(el);
 				},
 				canAdd: true,
 				addParam: {
@@ -308,11 +135,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 					onClick: (details: any) => {
 						C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 							if (message.error.code) {
-								this.setState({ error: message.error.description });
+								setError(message.error.description);
 								return;
 							};
 
-							this.setState({ collection: message.details });
+							setCollection(message.details);
 						});
 					},
 				},
@@ -320,52 +147,48 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		});
 	};
 
-	onSpaceChange (id: string): void {
+	const onSpaceChange = (id: string): void => {
 		S.Common.spaceSet(id);
-		U.Subscription.createAll(() => this.forceUpdate());
+		U.Subscription.createAll(() => setDummy(dummy + 1));
 
 		Storage.set('lastSpaceId', id);
 	};
 
-	getTagsValue () {
+	const getTagsValue = () => {
 		return S.Record.getRecordIds(J.Constant.subId.option, '').
-			filter(id => this.details.tag.includes(id)).
+			filter(id => (detailsRef.current.tag as string[]).includes(id)).
 			map(id => S.Detail.get(J.Constant.subId.option, id)).
 			filter(it => it && !it._empty_);
 	};
 
-	clear () {
-		const node = $(this.node);
-		node.find('#entry').text(' ');
-
-		this.focus();
+	const clear = () => {
+		$(entryRef.current).text(' ');
+		focus();
 	};
 
-	focus () {
-		const node = $(this.node);
-		const entry = node.find('#entry');
+	const focus = () => {
+		const entry = $(entryRef.current);
 		
 		if (entry.length) {
 			window.setTimeout(() => {
 				entry.focus();
 				setRange(entry.get(0), { start: 0, end: 0 });
 
-				this.scrollToBottom();
+				scrollToBottom();
 			});
 		};
 	};
 
-	onValueRemove (id: string) {
-		this.setValue(this.details.tag.filter(it => it != id));
+	const onValueRemove = (id: string) => {
+		setValue(detailsRef.current.tag.filter(it => it != id));
 	};
 
-	onDragEnd (oldIndex: number, newIndex: number) {
-		this.setValue(arrayMove(this.details.tag, oldIndex, newIndex));
+	const onDragEnd = (oldIndex: number, newIndex: number) => {
+		setValue(arrayMove(detailsRef.current.tag, oldIndex, newIndex));
 	};
 
-	onKeyDown (e: any) {
-		const node = $(this.node);
-		const entry = node.find('#entry');
+	const onKeyDown = (e: any) => {
+		const entry = $(entryRef.current);
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			e.stopPropagation();
@@ -377,36 +200,27 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			e.preventDefault();
 			
-			this.details.tag.pop();
-			this.setValue(this.details.tag);
+			detailsRef.current.tag.pop();
+			setValue(detailsRef.current.tag);
 		});
 
-		this.placeholderCheck();
-		this.scrollToBottom();
+		placeholderCheck();
+		scrollToBottom();
 	};
 
-	onKeyPress (e: any) {
-		const node = $(this.node);
-		const entry = node.find('#entry');
+	const onKeyUp = (e: any) => {
+		S.Menu.updateData('dataviewOptionList', { filter: getValue() });
 
-		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
-			e.preventDefault();
-		};
+		placeholderCheck();
+		resize();
+		scrollToBottom();
 	};
 
-	onKeyUp (e: any) {
-		S.Menu.updateData('dataviewOptionList', { filter: this.getValue() });
-
-		this.placeholderCheck();
-		this.resize();
-		this.scrollToBottom();
+	const onInput = () => {
+		placeholderCheck();
 	};
 
-	onInput () {
-		this.placeholderCheck();
-	};
-
-	onFocus () {
+	const onFocus = () => {
 		const relation = S.Record.getRelationByKey('tag');
 		const element = '#select-tag';
 
@@ -422,37 +236,35 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				canAdd: true,
 				canEdit: true,
 				filter: '',
-				value: this.details.tag,
+				value: detailsRef.current.tag,
 				maxCount: relation.maxCount,
 				noFilter: true,
 				relation: observable.box(relation),
 				maxHeight: 120,
 				onChange: (value: string[]) => {
-					this.setValue(value);
+					setValue(value);
 				}
 			}
 		});
 	};
 
-	placeholderCheck () {
-		const node = $(this.node);
-		const value = this.getValue();
+	const placeholderCheck = () => {
+		const node = $(nodeRef.current);
+		const value = getValue();
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
-		const length = this.details.tag.length;
+		const length = detailsRef.current.tag.length;
 
 		length ? list.show() : list.hide();
 		value || length ? placeholder.hide() : placeholder.show();
 	};
 
-	getValue (): string {
-		const node = $(this.node);
-		const entry = node.find('#entry');
-
+	const getValue = (): string => {
+		const entry = $(entryRef.current);
 		return entry.length ? String(entry.text() || '').trim() : '';
 	};
 
-	setValue (value: string[]) {
+	const setValue = (value: string[]) => {
 		const relation = S.Record.getRelationByKey('tag');
 		
 		value = U.Common.arrayUnique(value);
@@ -462,38 +274,38 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			value = value.slice(length - relation.maxCount, length);
 		};
 
-		this.details.tag = value;
-		this.clear();
-		this.forceUpdate();
+		detailsRef.current.tag = value;
+		clear();
+		setDummy(dummy + 1);
 	};
 
-	onSubmit (e: any) {
+	const onSubmit = (e: any) => {
 		e.preventDefault();
 
-		if (this.isCreating) {
+		if (isCreatingRef.current) {
 			return;
 		};
 
-		const { withContent } = this.state;
-		const collection = this.state.collection as any;
+		isCreatingRef.current = true;
+		setIsLoading(true);
+		setError('');
 
-		this.isCreating = true;
-		this.setState({ isLoading: true, error: '' });
-
-		const details = Object.assign({ 
-			name: this.refName?.getValue(), 
-			description: this.refDescription?.getValue(),
+		const details: any = Object.assign({ 
+			name: nameRef.current?.getValue(), 
+			description: descriptionRef.current?.getValue(),
 			origin: I.ObjectOrigin.Webclipper,
-		}, this.details);
+		}, detailsRef.current);
 		const type = S.Record.getTypeByKey(details.type);
 
 		delete(details.type);
 
-		C.ObjectCreateFromUrl(details, S.Common.space, type?.uniqueKey, this.url, withContent, type?.defaultTemplateId, (message: any) => {
-			this.setState({ isLoading: false });
+		C.ObjectCreateFromUrl(details, S.Common.space, type?.uniqueKey, urlRef.current, withContent, type?.defaultTemplateId, (message: any) => {
+			isCreatingRef.current = false;
+
+			setIsLoading(false);
 
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				setError(message.error.description);
 				return;
 			};
 
@@ -501,35 +313,171 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			if (collection) {
 				C.ObjectCollectionAdd(collection.id, [ object.id ], () => {
-					this.setState({ collection: null });
+					setCollection(null);
 				});
 			};
 
 			S.Extension.createdObject = object;
 			U.Router.go('/success', {});
-
-			this.isCreating = false;
 		});
 	};
 
-	onCheckbox () {
-		const { withContent } = this.state;
-
+	const onCheckbox = () => {
 		Storage.set('withContent', !withContent);
-		this.setState({ withContent: !withContent });
+		setWithContent(!withContent);
 	};
 
-	scrollToBottom () {
-		const node = $(this.node);
+	const scrollToBottom = () => {
+		const node = $(nodeRef.current as any);
 		const content: any = node.find('.cellContent');
 
 		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
 	};
 
-	resize () {
+	const resize = () => {
 		$(window).trigger('resize.menuDataviewOptionList');
 	};
 
-});
+	const tags = getTagsValue();
+
+	useEffect(() => {
+		U.Subscription.createAll(() => {
+			initSpace();
+			initName();
+			initType();
+			initCollection();
+		});
+	}, []);
+
+	useEffect(() => {
+		initType();
+		initCollection();
+		placeholderCheck();
+	});
+
+	return (
+		<div 
+			ref={nodeRef} 
+			className="page pageCreate"
+		>
+			{isLoading ? <Loader type={I.LoaderType.Loader} /> : ''}
+
+			<form onSubmit={onSubmit}>
+				<div className="rows">
+					<div className="row">
+						<Label text="Title" />
+						<Input ref={nameRef} />
+					</div>
+
+					<div className="row">
+						<Label text="Description" />
+						<Input ref={descriptionRef} />
+					</div>
+
+					<div className="row">
+						<Label text="Space" />
+						<Select 
+							id="select-space" 
+							ref={spaceRef}
+							value="" 
+							options={[]}
+							onChange={onSpaceChange}
+							menuParam={{
+								horizontal: I.MenuDirection.Center,
+								data: { maxHeight: 180 }
+							}}
+						/>
+					</div>
+
+					<div className="row">
+						<Label text="Save as" />
+						<Select 
+							id="select-type" 
+							ref={typeRef}
+							readonly={!space}
+							value="" 
+							options={[]}
+							onChange={onTypeChange}
+							menuParam={{
+								horizontal: I.MenuDirection.Center,
+								data: { maxHeight: 180 }
+							}}
+						/>
+					</div>
+
+					<div className="row withContent" onClick={onCheckbox}>
+						<Icon className={[ 'checkbox', (withContent ? 'active' : '') ].join(' ')} />
+						<Label text="Add page content" />
+					</div>
+
+					<div className="row">
+						<Label text="Link to Collection" />
+						<div id="select-collection" className="select" onMouseDown={onCollection}>
+							<div className="item">
+								{collection ? <IconObject object={collection} iconSize={16} /> : ''}
+								<div className="name">{collection ? collection.name : 'Select Object'}</div>
+							</div>
+							<Icon className="arrow light" />
+						</div>
+					</div>
+
+					<div className="row">
+						<Label text="Tag" />
+
+						<div id="select-tag" className="box cell isEditing c-select" onClick={focus}>
+							<div className="value cellContent c-select">
+								<span id="list">
+									<DragBox onDragEnd={onDragEnd}>
+										{tags.map((item: any, i: number) => (
+											<span 
+												key={i}
+												id={`item-${item.id}`}
+												className="itemWrap isDraggable"
+												draggable={true}
+												{...U.Common.dataProps({ id: item.id, index: i })}
+											>
+												<Tag 
+													key={item.id}
+													text={item.name}
+													color={item.color}
+													canEdit={true} 
+													className={Relation.selectClassName(I.RelationType.MultiSelect)}
+													onRemove={() => onValueRemove(item.id)}
+												/>
+											</span>
+										))}
+									</DragBox>
+								</span>
+								
+								<span className="entryWrap">
+									<span 
+										id="entry" 
+										ref={entryRef}
+										contentEditable={true}
+										suppressContentEditableWarning={true} 
+										onFocus={onFocus}
+										onInput={onInput}
+										onKeyDown={onKeyDown}
+										onKeyUp={onKeyUp}
+									>
+										{'\n'}
+									</span>
+									<div id="placeholder" className="placeholder">Type...</div>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div className="buttonsWrapper">
+					<Button color="pink" className="c32" text="Save" type="input" subType="submit" onClick={onSubmit} />
+				</div>
+
+				<Error text={error} />
+			</form>
+		</div>
+	);
+
+}));
 
 export default Create;

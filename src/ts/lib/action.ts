@@ -1083,6 +1083,28 @@ class Action {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
+	checkDiskSpace (callBack?: () => void) {
+		Renderer.send('checkDiskSpace').then(diskSpace => {
+			const { free } = diskSpace;
+
+			if (free <= 1024 * 1024 * 1024) { // less than 1GB
+				S.Popup.open('confirm', {
+					onClose: callBack,
+					data: {
+						icon: 'warning',
+						title: translate('popupConfirmDiskSpaceTitle'),
+						text: translate('popupConfirmDiskSpaceText'),
+						textConfirm: translate('commonOkay'),
+						canCancel: false,
+					},
+				});
+			} else 
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
 };
 
 export default new Action();

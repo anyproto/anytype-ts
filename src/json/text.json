@@ -122,6 +122,7 @@
 	"commonExport": "Export",
 	"commonTurnIntoObject": "Turn into Object",
 	"commonUpdated": "Updated",
+	"commonCreated": "Created",
 	"commonUndo": "Undo",
 	"commonRedo": "Redo",
 	"commonBlank": "Blank",
@@ -153,6 +154,7 @@
 	"commonOpenSpace": "Open Space",
 	"commonReset": "Reset",
 	"commonUpdate": "Update",
+	"commonUpdateNow": "Update Now",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
 	"commonVersionHistory": "Version History",
@@ -213,6 +215,8 @@
 	"commonRemovePinned": "Remove from Pinned",
 	"commonCreateSpace": "Create space",
 	"commonCreateChat": "Create chat",
+	"commonMute": "Mute",
+	"commonUnmute": "Unmute",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -380,6 +384,7 @@
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
+	"progressUpdateDownloading": "Downloading",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
@@ -499,7 +504,7 @@
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
 
-	"pageMainRelationPropertyType": "Property Type",
+	"pageMainRelationPropertyType": "Property format",
 
 	"pageMainMediaNotFound": "File not found",
 
@@ -884,7 +889,8 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
+	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
+	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
@@ -898,6 +904,8 @@
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
+	"popupSettingsSpaceIndexPushTitle": "Message notifications",
+	"popupSettingsSpaceIndexPushText": "You will receive notifications when you are mentioned only",
 
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -1229,6 +1237,9 @@
 
 	"popupConfirmTypeLayoutResetTitle": "Reset layout for all objects?",
 	"popupConfirmTypeLayoutResetText": "This will reset layout type, alignment, and featured properties for all objects of this type. This action cannot be undone.<br/>Are you sure?",
+
+	"popupConfirmDiskSpaceTitle": "Make Space, Save Your Work",
+	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1604,6 +1615,7 @@
 	"menuBlockStyleTurnFile": "Turn into file",
 
 	"menuDataviewOptionListCreate": "Create or select an option",
+	"menuDataviewOptionCreatePlaceholder": "New option",
 	"menuDataviewOptionEditPlaceholder": "Option name",
 	"menuDataviewOptionEditDelete": "Delete option",
 	"menuDataviewOptionEditCreate": "Create option",
@@ -1621,6 +1633,9 @@
 	"menuDataviewUrlActionGo8": "Mail to",
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
+
+	"menuDataviewCreateBookmarkContent": "Include page content",
+	"menuDataviewCreateBookmarkError": "Error parsing URL",
 
 	"menuObjectContextNoAvailableActions": "No available actions",
 	"menuObjectContextUnlinkFromCollection": "Unlink from Collection",
@@ -1812,7 +1827,6 @@
 	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
-	"menuPublishButtonUpdate": "Update",
 	"menuPublishButtonView": "View in Browser",
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
@@ -2057,6 +2071,9 @@
 	"sidebarSectionLayoutWidth": "Layout width",
 	"sidebarSectionLayoutDefaultView": "Default view",
 	"sidebarSectionLayoutDefaultType": "Default Object Type",
+
+	"sidebarOpen": "Open in Sidebar",
+	"sidebarToc": "Table of Contents",
 
 	"sidebarTypeRelation": "Properties",
 	"sidebarTypeRelationHeader": "Header",
@@ -2402,6 +2419,7 @@
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
 	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
+	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
@@ -2552,6 +2570,10 @@
 
 	"apiScope0": "Webclipper",
 	"apiScope1": "API",
-	"apiScope2": "Full"
+	"apiScope2": "Full",
+
+	"notificationMode0": "Enable all",
+	"notificationMode1": "Mentions only",
+	"notificationMode2": "Disable all"
 
 }

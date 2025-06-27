@@ -159,17 +159,16 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 				noVirtualisation: true, 
 				onSelect: (e: any, item: any) => {
 					const isNew = item.id == 'add';
-					const withChat = U.Object.isAllowedChat();
 
 					this.setState({ isLoading: true });
 					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing', route });
 
 					if (isNew) {
-						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, J.Constant.count.icon) }, I.Usecase.None, withChat, (message: any) => {
+						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, J.Constant.count.icon) }, I.Usecase.None, (message: any) => {
 							if (!message.error.code) {
 								cb(message.objectId, true);
 
-								analytics.event('CreateSpace', { middleTime: message.middleTime, route: analytics.route.gallery, uxType: I.SpaceUxType.Space });
+								analytics.event('CreateSpace', { middleTime: message.middleTime, route: analytics.route.gallery });
 							} else {
 								this.setState({ isLoading: false, error: message.error.description });
 							};

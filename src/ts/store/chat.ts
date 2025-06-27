@@ -253,11 +253,8 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 */
 	clear (subId: string) {
-		const param = this.getSubParam(subId);
-
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
-		this.stateMap.get(param.spaceId)?.delete(param.chatId);
 	};
 
 	/**
@@ -378,6 +375,15 @@ class ChatStore {
 		};
 
 		Renderer.send('setBadge', String(t || ''));
+	};
+
+	/**
+	 * Checks if message has a mantion of given participant ID
+	 * @param {I.ChatMessage} message - The space ID.
+	 * @param {string} participantId - The participant ID.
+	 */
+	isMention (message: I.ChatMessage, participantId: string): boolean {
+		return !!message.content.marks.find(it => (it.type == I.MarkType.Mention) && (it.param == participantId));
 	};
 
 };

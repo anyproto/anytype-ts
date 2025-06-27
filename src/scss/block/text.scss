@@ -115,10 +115,7 @@
 			> .wrapContent {
 				> .selectionTarget {
 					> .dropTarget {
-						> .flex { justify-content: flex-end; }
-						> .flex {
-							> .editableWrap { flex: unset; flex-grow: 0; width: auto; }
-						}
+						> .flex { justify-content: flex-end; flex-direction: row-reverse; }
 					}
 				}
 			}

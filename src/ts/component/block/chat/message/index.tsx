@@ -46,15 +46,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const cnBubble = [ 'bubble' ];
 		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 		const controls = [];
+		const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 
 		let userpicNode = null;
 		let authorNode = null;
-		let text = content.text.replace(/^\r?\n/g, '').replace(/\r?\n$/g, '');
-
-		const diff = text.length - content.text.length;
-		const marks = Mark.adjust(content.marks, 0, diff);
-
-		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, marks)));
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {
@@ -278,6 +273,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		renderEmoji(er, { iconSize: 16 });
 
 		this.checkLinesLimit();
+		this.resize();
 	};
 
 	onExpand () {
@@ -318,13 +314,16 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const node = $(this.node);
 		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
 
+		let menuContext = null;
+
 		S.Menu.open('smile', { 
 			element: node.find('#reaction-add'),
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
-			onOpen: () => {
+			onOpen: context => {
 				node.addClass('hover');
 				container.addClass('over');
+				menuContext = context;
 			},
 			onClose: () => {
 				node.removeClass('hover');
@@ -334,7 +333,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				noHead: true,
 				noUpload: true,
 				value: '',
-				onSelect: icon => this.onReactionSelect(icon),
+				onSelect: icon => {
+					this.onReactionSelect(icon);
+					menuContext.close();
+				},
 				route: analytics.route.reaction,
 			}
 		});
@@ -347,11 +349,15 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { rootId, id, subId } = this.props;
 		const message = S.Chat.getMessage(subId, id);
 		const { reactions } = message;
-		const event = reactions.find(it => (it.icon == icon) && it.authors.includes(account.id)) ? 'RemoveReaction' : 'AddReaction';
+		const limit = J.Constant.limit.chat.reactions;
+		const self = reactions.filter(it => it.authors.includes(account.id));
+
+		if ((self.length >= limit.self) || (reactions.length >= limit.all)) {
+			return;
+		};
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
-
-		analytics.event(event);
+		analytics.event(self.find(it => it.icon == icon) ? 'RemoveReaction' : 'AddReaction');
 	};
 
 	onAttachmentRemove (attachmentId: string) {
@@ -438,6 +444,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		node.addClass('highlight');
 		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
+	};
+
+	resize () {
+		const node = $(this.node);
+		const bubble = node.find('.bubbleInner .bubble');
+		const width = bubble.outerWidth();
+
+		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
 	};
 
 });

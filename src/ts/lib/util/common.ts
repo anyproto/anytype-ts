@@ -1609,6 +1609,11 @@ class UtilCommon {
 				return;
 			};
 
+			// Skip first or last space
+			if (/^\s/.test(m2) || /\s$/.test(m2)) {
+				return;
+			};
+
 			// Skip Brazilian Real
 			if (!/^\\/.test(m2) && (/R$/.test(m1) || /R$/.test(m2))) {
 				return;
@@ -1767,6 +1772,24 @@ class UtilCommon {
 	showWhatsNew () {
 		S.Popup.open('help', { data: { document: 'whatsNew' } });
 		Storage.set('whatsNew', false);
+	};
+
+	/**
+	 * Scrolls to header in Table of contents
+	 */
+	scrollToHeader (id: string, isPopup: boolean) {
+		const node = $(`.focusable.c${id}`);
+
+		if (!node.length) {
+			return;
+		};
+
+		const container = this.getScrollContainer(isPopup);
+		const no = node.offset().top;
+		const st = container.scrollTop();
+		const y = Math.max(J.Size.header + 20, (isPopup ? (no - container.offset().top + st) : no) - J.Size.header - 20);
+
+		container.scrollTop(y);
 	};
 
 };

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
@@ -11,91 +11,26 @@ interface Props extends I.PageComponent {
 	onLayoutSelect?: (layout: I.ObjectLayout) => void;
 };
 
-interface State {
-	loading: boolean;
+interface RefProps {
+	forceUpdate: () => void;
 };
 
-const Controls = observer(class Controls extends React.Component<Props, State> {
+const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
+
+	const { rootId, readonly, resize, onLayoutSelect } = props;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
+	const object = S.Detail.get(rootId, rootId, J.Relation.cover);
+	const cn = [ 'editorControls', 'editorControlElements' ];
+	const nodeRef = useRef(null);
+	const buttonsRef = useRef(null);
 	
-	_isMounted = false;
-	node: any = null;
-	refButtons = null;
-	state = {
-		loading: false,
+	if (isLoading) {
+		cn.push('active');
 	};
 
-	constructor (props: Props) {
-		super(props);
-		
-		this.onIcon = this.onIcon.bind(this);
-		this.onCoverOpen = this.onCoverOpen.bind(this);
-		this.onCoverClose = this.onCoverClose.bind(this);
-		this.onCoverSelect = this.onCoverSelect.bind(this);
-		this.onLayout = this.onLayout.bind(this);
-		
-		this.onDragOver = this.onDragOver.bind(this);
-		this.onDragLeave = this.onDragLeave.bind(this);
-		this.onDrop = this.onDrop.bind(this);
-		this.onUploadStart = this.onUploadStart.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-	};
-
-	render (): any {
-		const { rootId, readonly } = this.props;
-		const { loading } = this.state;
-		const object = S.Detail.get(rootId, rootId, J.Relation.cover);
-		const cn = [ 'editorControls', 'editorControlElements' ];
-		
-		if ((object.coverType != I.CoverType.None) && object.coverId) {
-			return null;
-		};
-
-		if (loading) {
-			cn.push('active');
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={`editor-controls-${rootId}`}
-				className={cn.join(' ')}
-				onDragOver={this.onDragOver} 
-				onDragLeave={this.onDragLeave} 
-				onDrop={this.onDrop}
-			>
-				{loading ? <Loader /> : ''}
-				<ControlButtons 
-					ref={ref => this.refButtons = ref}
-					rootId={rootId} 
-					readonly={readonly}
-					onIcon={this.onIcon} 
-					onCoverOpen={this.onCoverOpen}
-					onCoverClose={this.onCoverClose}
-					onCoverSelect={this.onCoverSelect}
-					onLayout={this.onLayout}
-					onUploadStart={this.onUploadStart}
-					onUpload={this.onUpload}
-				/>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentDidUpdate () {
-		this.props.resize();
-		this.refButtons?.forceUpdate();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
-	onIcon (e: any) {
-		const { rootId } = this.props;
-		const node = $(this.node);
+	const onIcon = (e: any) => {
+		const node = $(nodeRef.current);
 		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
 		const isType = U.Object.isTypeLayout(object.layout);
@@ -126,27 +61,20 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 	
-	onCoverOpen () {
-		if (this._isMounted) {
-			$(this.node).addClass('hover');
-		};
+	const onCoverOpen = () => {
+		$(nodeRef.current).addClass('hover');
 	};
 
-	onCoverClose () {
-		if (this._isMounted) {
-			$(this.node).removeClass('hover');
-		};
+	const onCoverClose = () => {
+		$(nodeRef.current).removeClass('hover');
 	};
 
-	onCoverSelect (item: any) {
-		const { rootId } = this.props;
-
+	const onCoverSelect = (item: any) => {
 		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
-	onLayout () {
-		const { rootId, onLayoutSelect } = this.props;
-		const node = $(this.node);
+	const onLayout = () => {
+		const node = $(nodeRef.current);
 		
 		S.Menu.open('blockLayout', { 
 			element: '.editorControls #button-layout',
@@ -160,55 +88,88 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 
-	onDragOver (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
-			return;
+	const onDragOver = (e: any) => {
+		if (U.File.checkDropFiles(e)) {
+			$(nodeRef.current).addClass('isDraggingOver');
 		};
-
-		const node = $(this.node);
-		node.addClass('isDraggingOver');
 	};
 	
-	onDragLeave (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
-			return;
+	const onDragLeave = (e: any) => {
+		if (U.File.checkDropFiles(e)) {
+			$(nodeRef.current).removeClass('isDraggingOver');
 		};
-		
-		const node = $(this.node);
-		node.removeClass('isDraggingOver');
 	};
 	
-	onDrop (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+	const onDrop = (e: any) => {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
-		this.onUploadStart();
+		setIsLoading(true);
 		
 		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
-			this.setState({ loading: false });
+			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
-				this.onUpload(I.CoverType.Upload, message.objectId);
+				onUpload(I.CoverType.Upload, message.objectId);
 			};
 		});
 	};
 
-	onUploadStart () {
-		this.setState({ loading: true });
+	const onUploadStart = () => {
+		setIsLoading(true);
 	};
 	
-	onUpload (type: I.CoverType, objectId: string) {
-		U.Object.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
+	const onUpload = (type: I.CoverType, objectId: string) => {
+		U.Object.setCover(rootId, type, objectId, 0, -0.25, 0, () => setIsLoading(false));
 	};
 
-});
+	useEffect(() => {
+		resize();
+		buttonsRef.current?.forceUpdate();
+	});
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
+
+	if ((object.coverType != I.CoverType.None) && object.coverId) {
+		return null;
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			id={`editor-controls-${rootId}`}
+			className={cn.join(' ')}
+			onDragOver={onDragOver} 
+			onDragLeave={onDragLeave} 
+			onDrop={onDrop}
+		>
+			{isLoading ? <Loader /> : ''}
+
+			<ControlButtons 
+				ref={buttonsRef}
+				rootId={rootId} 
+				readonly={readonly}
+				onIcon={onIcon} 
+				onCoverOpen={onCoverOpen}
+				onCoverClose={onCoverClose}
+				onCoverSelect={onCoverSelect}
+				onLayout={onLayout}
+				onUploadStart={onUploadStart}
+				onUpload={onUpload}
+			/>
+		</div>
+	);
+
+}));
 
 export default Controls;

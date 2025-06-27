@@ -40,11 +40,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	refCounter = null;
 	refDummy = null;
 	isLoading = [];
+	isSending = false;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
 	editingId: string = '';
-	swiper = null;
 	speedLimit = { last: 0, counter: 0 };
 	state = {
 		attachments: [],
@@ -76,7 +76,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
-		this.onSwiper = this.onSwiper.bind(this);
 		this.onNavigationClick = this.onNavigationClick.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
@@ -184,7 +183,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							<Swiper
 								slidesPerView={'auto'}
 								spaceBetween={8}
-								onSwiper={swiper => this.swiper = swiper}
 								navigation={true}
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
@@ -517,6 +515,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		let value = U.Common.stringInsert(current, text, from, to);
 
+		this.marks = Mark.adjust(this.marks, from, text.length);
+
 		if (value.length >= limit) {
 			const excess = value.length - limit;
 			const keep = text.length - excess;
@@ -549,11 +549,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		for (const url of urls) {
 			const { from, to, isLocal, value } = url;
-			const param = isLocal ? `file://${value}` : value;
+			if (isLocal) {
+				continue;
+			};
 
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-			this.addBookmark(param, true);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: value });
+			this.addBookmark(value, true);
 		};
 
 		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });
@@ -640,17 +642,46 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.addAttachments([ item ]);
 		};
 
-		this.isLoading.push(url);
+		const scheme = U.Common.getScheme(url);
+		const isInside = scheme == J.Constant.protocol;
 
-		C.LinkPreview(url, (message: any) => {
-			this.isLoading = this.isLoading.filter(it => it != url);
+		if (isInside) {
+			const route = '/' + url.split('://')[1];
+			const search = url.split('?')[1];
 
-			if (message.error.code) {
-				add({ title: url, url });
+			let target = '';
+			let spaceId = '';
+
+			if (search) {
+				const searchParam = U.Common.searchParam(search);
+
+				target = searchParam.objectId;
+				spaceId = searchParam.spaceId;
 			} else {
-				add({ ...message.previewLink, url });
+				const routeParam = U.Router.getParam(route);
+
+				target = routeParam.id;
+				spaceId = routeParam.spaceId;
 			};
-		});
+
+			U.Object.getById(target, { spaceId }, object => {
+				if (object) {
+					this.addAttachments([ object ]);
+				};
+			});
+		} else {
+			this.isLoading.push(url);
+
+			C.LinkPreview(url, (message: any) => {
+				this.isLoading = this.isLoading.filter(it => it != url);
+
+				if (message.error.code) {
+					add({ title: url, url });
+				} else {
+					add({ ...message.previewLink, url });
+				};
+			});
+		};
 	};
 
 	removeBookmarks () {
@@ -675,7 +706,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onSend () {
-		if (!this.canSend() || S.Menu.isOpen('blockMention')){
+		if (this.isSending || !this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
 
@@ -692,12 +723,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		loader.addClass('active');
+		this.isSending = true;
 
 		const clear = () => {
-			this.onEditClear();
+			this.onEditClear(() => this.isSending = false);
 			this.onReplyClear();
 			this.clearCounter();
 			this.checkSpeedLimit();
+
 			loader.removeClass('active');
 		};
 		
@@ -718,10 +751,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					});
 				};
 			} else {
+				// Marks should be adjusted to remove leading new lines
+
+				const parsed = this.getMarksFromHtml();
+				const text = this.trim(parsed.text);
+				const match = parsed.text.match(/^\r?\n+/);
+				const diff = match ? match[0].length : 0;
+				const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
-						...this.getMarksFromHtml(),
+						marks,
+						text,
 						style: I.TextStyle.Paragraph,
 					},
 					attachments,
@@ -812,13 +853,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		analytics.event('ClickMessageMenuEdit');
 	};
 
-	onEditClear () {
+	onEditClear (callBack?: () => void) {
 		this.editingId = '';
 		this.marks = [];
 		this.updateMarkup('', { from: 0, to: 0 });
-		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 		this.clearCounter();
+		this.checkSendButton();
 		this.refButtons.setButtons();
+
+		this.setState({ attachments: [] }, () => {
+			this.refEditable.setRange(this.range);
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onReply (message: I.ChatMessage) {
@@ -864,6 +913,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						analytics.event('DeleteMessage');
 					});
 				},
+				onCancel: () => {
+					if (this.editingId == id) {
+						this.onEditClear();
+					};
+				},
 			}
 		});
 
@@ -883,7 +937,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	trim (value: string): string {
-		return String(value || '').replace(/^(\r?\n)/gm, '').replace(/(\r?\n)$/gm, '');
+		return String(value || '').replace(/^(\r?\n+)/g, '').replace(/(\r?\n+)$/g, '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
@@ -894,10 +948,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
 
 		analytics.event('DetachItemChat');
-	};
-
-	onSwiper (swiper) {
-		this.swiper = swiper;
 	};
 
 	onNavigationClick (type: I.ChatReadType) {
@@ -927,7 +977,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				break;
 			};
 		};
-
 	};
 
 	updateButtons () {

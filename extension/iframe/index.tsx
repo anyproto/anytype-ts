@@ -1,25 +1,13 @@
-import * as React from 'react';
+import { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { I, Storage } from 'Lib';
 import Util from '../lib/util';
 
-const Index = observer(class Index extends React.Component<I.PageComponent> {
+const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	render () {
-		return (
-			<div className="page pageIndex" />
-		);
-	};
-
-	componentDidMount(): void {
-		this.getPorts();
-	};
-
-	getPorts (onError?: () => void): void {
+	const getPorts = (onError?: () => void): void => {
 		Util.sendMessage({ type: 'checkPorts' }, response => {
 			if (!response.ports || !response.ports.length) {
-				this.setState({ error: 'Automatic pairing failed, please open the app' });
-
 				if (onError) {
 					onError();
 				};
@@ -27,11 +15,11 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 			};
 
 			Util.init(response.ports[0], response.ports[1]);
-			this.login();
+			login();
 		});
 	};
 
-	login () {
+	const login = () => {
 		const appKey = Storage.get('appKey');
 
 		if (appKey) {
@@ -41,6 +29,14 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 		};
 	};
 
-});
+	useEffect(() => {
+		getPorts();
+	}, []);
+
+	return (
+		<div className="page pageIndex" />
+	);
+
+}));
 
 export default Index;

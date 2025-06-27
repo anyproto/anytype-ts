@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
@@ -146,11 +146,13 @@ class Dispatcher {
 			const type = Mapper.Event.Type(message.getValueCase());
 			const { spaceId, data } = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
-			const needLog = this.checkLog(type) && !skipDebug;
 
 			if (!mapped) {
 				continue;
 			};
+
+			const needLog = this.checkLog(type) && !skipDebug;
+			const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -967,6 +969,17 @@ class Dispatcher {
 					const message = new M.ChatMessage(mapped.message);
 					const author = S.Detail.mapper(dependencies.find(it => it.identity == message.creator));
 
+					let showNotification = false;
+
+					if (space) {
+						if (space.notificationMode == I.NotificationMode.All) {
+							showNotification = true;
+						} else
+						if (space.notificationMode == I.NotificationMode.Mentions) {
+							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
+						};
+					};
+
 					mapped.subIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
 
@@ -978,7 +991,7 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
+					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
 							const { space } = S.Common;
 							const open = () => {

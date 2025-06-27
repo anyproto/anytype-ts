@@ -99,7 +99,7 @@
     .layoutPreview.align2 {
         .layoutHeader { text-align: right; }
         .featured { justify-content: flex-end; }
-		.titleWrapper { justify-content: flex-end; }
+		.titleWrapper { justify-content: flex-start; flex-direction: row-reverse; }
     }
 
     .layoutPreview.layoutFormatPage {

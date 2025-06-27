@@ -76,7 +76,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			checkKeyUp.current = true;
 			pressed.current.add(key);
 		};
 
@@ -102,7 +101,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onKeyUp = (e: any) => {
-		const key = String(e.key || '').toLowerCase();
+		const key: any = String(e.key || '').toLowerCase();
 		if (!key) {
 			return;
 		};
@@ -128,9 +127,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
-			if (item.targetSpaceId != S.Common.space) {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { animate: true }, false);
-			};
+			onClick(e, item);
 		};
 
 		if (!sidebar.isAnimating) {
@@ -173,7 +170,16 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			default: {
-				U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+				if (!item.isLocalOk) {
+					break;
+				};
+
+				if (item.targetSpaceId != S.Common.space) {
+					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+				} else {
+					U.Space.openDashboard();
+					sidebar.leftPanelSetState({ page: 'widget' });
+				};
 				break;
 			};
 		};

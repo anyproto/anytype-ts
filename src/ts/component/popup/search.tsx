@@ -17,7 +17,6 @@ const LIMIT_HEIGHT = 15;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
-	_isMounted = false;
 	node: any = null;
 	state = {
 		isLoading: false,
@@ -313,7 +312,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.reload();
 		};
 
-		this._isMounted = true;
 		this.initCache();
 		this.rebind();
 
@@ -341,7 +339,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		U.Subscription.destroyList([ J.Constant.subId.search ]);
@@ -349,14 +346,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.search', e => this.onKeyDown(e));
+		$(window).on('keydown.search', e => this.onKeyDown(e));
 	};
 
 	unbind () {
@@ -575,7 +566,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	load (clear: boolean, callBack?: () => void) {
-		const { space } = S.Common;
+		const { space, config } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.filter;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
@@ -588,6 +579,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		].map(U.Subscription.sortMapper);
+
+		if (!config.debug.hiddenObject) {
+			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+		};
 
 		let limit = J.Constant.limit.menuRecords;
 

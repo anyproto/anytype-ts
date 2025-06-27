@@ -1,9 +1,5 @@
 @import "~scss/_mixins";
 
-@keyframes objectSyncing {
-	//100% {transform: rotate(1turn)}
-}
-
 .menus {
 	.menu.menuSyncStatus { width: var(--menu-width-large); height: var(--menu-width-large); }
 	.menu.menuSyncStatus {

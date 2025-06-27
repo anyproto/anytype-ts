@@ -366,6 +366,9 @@ class Relation {
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
+				if ((relation.relationKey == 'addedDate') && (value === 0)) {
+					value = null;
+				};
 				if (value !== null) {
 					value = parseFloat(String(value || '0'));
 				};
@@ -546,32 +549,40 @@ class Relation {
 	};
 
 	/**
+	 * Gets group types for a view type.
+	 * @param {I.ViewType} type - The view type.
+	 * @returns {RelationType[]} The relation types.
+	 */
+	public getGroupTypes (type: I.ViewType): I.RelationType[] {
+		let types = [];
+
+		switch (type) {
+			case I.ViewType.Board: {
+				types = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Checkbox ];
+				break;
+			};
+
+			case I.ViewType.Calendar:
+			case I.ViewType.Timeline: {
+				types = [ I.RelationType.Date ];
+				break;
+			};
+		};
+
+		return types;
+	};
+
+	/**
 	 * Gets group options for a dataview.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} blockId - The block ID.
 	 * @param {I.ViewType} type - The view type.
 	 * @returns {any[]} The group options.
 	 */
-	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType) {
-		let formats = [];
-
-		switch (type) {
-			case I.ViewType.Board: {
-				formats = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Checkbox ];
-				break;
-			};
-
-			case I.ViewType.Calendar:
-			case I.ViewType.Timeline: {
-				formats = [ I.RelationType.Date ];
-				break;
-			};
-		};
+	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType): any[] {
+		const types = this.getGroupTypes(type);
+		const options: any[] = S.Record.getDataviewRelations(rootId, blockId).filter(it => types.includes(it.format) && !it.isHidden);
 		
-		let options: any[] = S.Record.getDataviewRelations(rootId, blockId).filter((it: any) => {
-			return formats.includes(it.format) && !it.isHidden;
-		});
-
 		options.sort((c1: any, c2: any) => {
 			const f1 = c1.format;
 			const f2 = c2.format;
@@ -587,13 +598,11 @@ class Relation {
 			return 0;
 		});
 
-		options = options.map(it => ({
+		return options.map(it => ({
 			id: it.relationKey, 
 			icon: 'relation ' + this.className(it.format),
 			name: it.name, 
 		}));
-
-		return options;
 	};
 
 	/**

@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.widget.widgetSpace { padding: 8px; }
+.widget.widgetSpace { padding: 8px; z-index: 1; }
 .widget.widgetSpace {
 	.body {
 		.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 4px 8px; position: relative; }
@@ -70,13 +70,13 @@
 				}
 			}
 		}
-	}
 
-	.body.withCnt {
-		.buttons {
-			.side.left { width: calc(100% - 30px); }
-			.side.right {
-				.cnt { display: block; }
+		&.withCnt {
+			.buttons {
+				.side.left { width: calc(100% - 30px); }
+				.side.right {
+					.cnt { display: block; }
+				}
 			}
 		}
 	}

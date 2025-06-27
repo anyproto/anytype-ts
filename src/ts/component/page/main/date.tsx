@@ -56,8 +56,8 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 			};
 
 			sidebar.rightPanelSetState(isPopup, { rootId });
-			headerRef.current.forceUpdate();
-			headRef.current.forceUpdate();
+			headerRef.current?.forceUpdate();
+			headRef.current?.forceUpdate();
 
 			loadCategory();
 		});
@@ -184,7 +184,7 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	let inner = null;
 
 	if (isLoading || object._empty_) {
-		inner = <Loader id="loader" />;
+		inner = <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 	} else
 	if (!relations.length || !relation) {
 		inner = (

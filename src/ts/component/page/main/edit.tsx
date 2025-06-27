@@ -43,7 +43,8 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			<div id="bodyWrapper" className="wrapper">
 				<EditorPage 
-					key="editorPage" {...props} 
+					key="editorPage"
+					{...props} 
 					isPopup={isPopup} 
 					rootId={rootId} 
 					onOpen={onOpen} 

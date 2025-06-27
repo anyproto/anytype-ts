@@ -4,6 +4,7 @@ import { J, U, S, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
+import PageObjectTableOfContents from './page/object/tableOfContents';
 
 interface Props {
 	isPopup?: boolean;
@@ -11,6 +12,7 @@ interface Props {
 
 interface SidebarRightRefProps {
 	setState: (state: State) => void;
+	getState: () => State;
 };
 
 interface State {
@@ -19,14 +21,15 @@ interface State {
 	details: any;
 	readonly: boolean;
 	noPreview: boolean;
+	blockId: string;
 	previous: State;
 };
 
 const Components = {
-	'type': PageType,
-	'object/relation': PageObjectRelation,
+	'type':						 PageType,
+	'object/relation':			 PageObjectRelation,
+	'object/tableOfContents':	 PageObjectTableOfContents,
 };
-
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
@@ -40,6 +43,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		readonly: false,
 		noPreview: false,
 		previous: null,
+		blockId: '',
 	});
 
 	const { page = '' } = state;
@@ -57,6 +61,9 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	});
 
 	useImperativeHandle(ref, () => ({
+		getState: () => {
+			return U.Common.objectCopy(state);
+		},
 		setState: (newState: State) => {
 			if (newState.page !== state.page) {
 				delete(state.previous);

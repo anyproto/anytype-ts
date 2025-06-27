@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
@@ -77,6 +77,7 @@ if (!isPackaged) {
 			Decode,
 			translate,
 			sidebar,
+			Action,
 		},
 	};
 };
@@ -118,105 +119,34 @@ Sentry.setContext('info', {
 	isPackaged: isPackaged,
 });
 
-class RoutePage extends React.Component<RouteComponentProps> {
+const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	render () {
-		const { page, action } = (this.props.match?.params || {}) as any;
-		const noSidebar = 
-			[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
-			((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
+	const { page, action } = (props.match?.params || {}) as any;
+	const noSidebar = 
+		[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
+		((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
 
-		return (
-			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
-				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
-					<ListPopup key="listPopup" {...this.props} />
-					<ListMenu key="listMenu" {...this.props} />
+	return (
+		<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
+			<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
+				<ListPopup key="listPopup" {...props} />
+				<ListMenu key="listMenu" {...props} />
 
-					{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...this.props} /> : ''}
-					<Page {...this.props} isPopup={false} />
-				</DragProvider>
-			</SelectionProvider>
-		);
-	};
+				{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...props} /> : ''}
+				<Page {...props} isPopup={false} />
+			</DragProvider>
+		</SelectionProvider>
+	);
 
 };
 
-class App extends React.Component<object, State> {
+const App: FC = () => {
 
-	state = {
-		isLoading: true
-	};
-	node: any = null;
-	timeoutMaximize = 0;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const nodeRef = useRef(null);
+	const drag = U.Common.isPlatformMac() ? <div id="drag" /> : '';
 
-	constructor (props: any) {
-		super(props);
-
-		this.onInit = this.onInit.bind(this);
-		this.onPopup = this.onPopup.bind(this);
-		this.onUpdateCheck = this.onUpdateCheck.bind(this);
-		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
-		this.onUpdateAvailable = this.onUpdateAvailable.bind(this);
-		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
-		this.onUpdateProgress = this.onUpdateProgress.bind(this);
-		this.onUpdateError = this.onUpdateError.bind(this);
-		this.onSpellcheck = this.onSpellcheck.bind(this);
-	};
-
-	render () {
-		const { isLoading } = this.state;
-		const platform = U.Common.getPlatform();
-
-		let drag = null;
-		if (platform == I.Platform.Mac) {
-			drag = <div id="drag" />;
-		};
-		
-		return (
-			<Router history={history}>
-				<Provider {...S}>
-					<div ref={node => this.node = node}>
-						{isLoading ? (
-							<div id="root-loader" className="loaderWrapper">
-								<div className="inner">
-									<div className="logo anim from" />
-									<div className="version anim from">{electron.version.app}</div>
-								</div>
-							</div>
-						) : ''}
-
-						{drag}
-						<div id="floaterContainer" />
-						<div id="tooltipContainer" />
-
-						<div id="globalFade">
-							<Loader id="loader" />
-						</div>
-
-						<PreviewIndex />
-						<Progress />
-						<Toast />
-						<ListNotification key="listNotification" />
-						<Vault ref={ref => S.Common.refSet('vault', ref)} />
-
-						<Switch>
-							{J.Route.map((path: string, i: number) => (
-								<Route path={path} exact={true} key={i} component={RoutePage} />
-							))}
-						</Switch>
-
-						<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
-					</div>
-				</Provider>
-			</Router>
-		);
-	};
-
-	componentDidMount () {
-		this.init();
-	};
-
-	init () {
+	const init = () => {
 		const { version, arch, getGlobal } = electron;
 
 		U.Router.init(history);
@@ -225,35 +155,34 @@ class App extends React.Component<object, State> {
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 
-		this.registerIpcEvents();
+		registerIpcEvents();
 		Renderer.send('appOnLoad');
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
-	registerIpcEvents () {
-		Renderer.on('init', this.onInit);
-		Renderer.on('route', (e: any, route: string) => this.onRoute(route));
-		Renderer.on('popup', this.onPopup);
-		Renderer.on('checking-for-update', this.onUpdateCheck);
-		Renderer.on('update-available', this.onUpdateAvailable);
-		Renderer.on('update-confirm', this.onUpdateConfirm);
-		Renderer.on('update-not-available', this.onUpdateUnavailable);
+	const registerIpcEvents = () => {
+		Renderer.on('init', onInit);
+		Renderer.on('route', (e: any, route: string) => onRoute(route));
+		Renderer.on('popup', onPopup);
+		Renderer.on('checking-for-update', onUpdateCheck);
+		Renderer.on('update-available', onUpdateAvailable);
+		Renderer.on('update-confirm', onUpdateConfirm);
+		Renderer.on('update-not-available', onUpdateUnavailable);
 		Renderer.on('update-downloaded', () => S.Progress.delete('update'));
-		Renderer.on('update-error', this.onUpdateError);
-		Renderer.on('download-progress', this.onUpdateProgress);
-		Renderer.on('spellcheck', this.onSpellcheck);
+		Renderer.on('update-error', onUpdateError);
+		Renderer.on('download-progress', onUpdateProgress);
+		Renderer.on('spellcheck', onSpellcheck);
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
-		Renderer.on('will-close-window', this.onWillCloseWindow);
+		Renderer.on('will-close-window', onWillCloseWindow);
 
 		Renderer.on('shutdownStart', () => {
-			this.setState({ isLoading: true });
-
+			setIsLoading(true);
 			Storage.delete('menuSearchText');
 		});
 
@@ -282,11 +211,11 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onInit (e: any, data: any) {
+	const onInit = (e: any, data: any) => {
 		const { dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
@@ -397,11 +326,11 @@ class App extends React.Component<object, State> {
 		};
 	};
 
-	onWillCloseWindow (e: any, windowId: string) {
+	const onWillCloseWindow = (e: any, windowId: string) => {
 		Storage.deleteLastOpenedByWindowId([ windowId ]);
 	};
 
-	onPopup (e: any, id: string, param: any, close?: boolean) {
+	const onPopup = (e: any, id: string, param: any, close?: boolean) => {
 		if (J.Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
 			return;
 		};
@@ -417,13 +346,13 @@ class App extends React.Component<object, State> {
 		window.setTimeout(() => S.Popup.open(id, param), S.Popup.getTimeout());
 	};
 
-	onUpdateCheck (e: any, auto: boolean) {
+	const onUpdateCheck = (e: any, auto: boolean) => {
 		if (!auto) {
 			S.Progress.add({ id: I.ProgressType.UpdateCheck, type: I.ProgressType.UpdateCheck, current: 0, total: 1 });
 		};
 	};
 
-	onUpdateConfirm (e: any, auto: boolean, info: any) {
+	const onUpdateConfirm = (e: any, auto: boolean, info: any) => {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
@@ -448,7 +377,7 @@ class App extends React.Component<object, State> {
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateConfirm');
-					this.checkUpdateVersion(version);
+					checkUpdateVersion(version);
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
@@ -457,7 +386,7 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onUpdateAvailable (e: any, auto: boolean, info: any) {
+	const onUpdateAvailable = (e: any, auto: boolean, info: any) => {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
@@ -478,11 +407,11 @@ class App extends React.Component<object, State> {
 				icon: 'update',
 				title: title.join(' - '),
 				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('commonUpdate'),
+				textConfirm: translate('commonUpdateNow'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
-					this.checkUpdateVersion(version);
+					checkUpdateVersion(version);
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
@@ -491,7 +420,7 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onUpdateUnavailable (e: any, auto: boolean) {
+	const onUpdateUnavailable = (e: any, auto: boolean) => {
 		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
@@ -510,7 +439,7 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onUpdateError (e: any, err: string, auto: boolean) {
+	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
 		S.Progress.delete(I.ProgressType.UpdateCheck);
 
@@ -535,7 +464,7 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onUpdateProgress (e: any, progress: any) {
+	const onUpdateProgress = (e: any, progress: any) => {
 		S.Progress.update({ 
 			id: I.ProgressType.Update,
 			type: I.ProgressType.Update,
@@ -544,7 +473,7 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	checkUpdateVersion (v: string) {
+	const checkUpdateVersion = (v: string) => {
 		if (!Storage.get('primitivesOnboarding')) {
 			return;
 		};
@@ -560,7 +489,7 @@ class App extends React.Component<object, State> {
 		};
 	};
 
-	onRoute (route: string) {
+	const onRoute = (route: string) => {
 		if (keyboard.isMain()) {
 			U.Router.go(route, {});
 		} else {
@@ -568,7 +497,7 @@ class App extends React.Component<object, State> {
 		};
 	};
 
-	onSpellcheck (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {
+	const onSpellcheck = (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) => {
 		if (!misspelledWord) {
 			return;
 		};
@@ -657,6 +586,47 @@ class App extends React.Component<object, State> {
 			}
 		});
 	};
+
+	useEffect(() => init(), []);
+	
+	return (
+		<Router history={history}>
+			<Provider {...S}>
+				<div ref={nodeRef}>
+					{isLoading ? (
+						<div id="root-loader" className="loaderWrapper">
+							<div className="inner">
+								<div className="logo anim from" />
+								<div className="version anim from">{electron.version.app}</div>
+							</div>
+						</div>
+					) : ''}
+
+					{drag}
+					<div id="floaterContainer" />
+					<div id="tooltipContainer" />
+
+					<div id="globalFade">
+						<Loader id="loader" />
+					</div>
+
+					<PreviewIndex />
+					<Progress />
+					<Toast />
+					<ListNotification key="listNotification" />
+					<Vault ref={ref => S.Common.refSet('vault', ref)} />
+
+					<Switch>
+						{J.Route.map((path: string, i: number) => (
+							<Route path={path} exact={true} key={i} component={RoutePage} />
+						))}
+					</Switch>
+
+					<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
+				</div>
+			</Provider>
+		</Router>
+	);
 
 };
 

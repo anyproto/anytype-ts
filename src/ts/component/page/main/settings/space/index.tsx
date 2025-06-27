@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Input, IconObject, Error, ObjectName, Button, Switch, Editable } from 'Component';
+import { Icon, Title, Label, Select, IconObject, Error, ObjectName, Button, Switch, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 interface State {
@@ -52,7 +52,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const isOwner = U.Space.isMyOwner();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
-		const maxIcons = 5;
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
@@ -60,6 +59,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
+		const spaceModes = [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+			{ id: I.NotificationMode.Nothing },
+		].map((it: any) => {
+			it.name = translate(`notificationMode${it.id}`);
+			return it;
+		});
 
 		if (isEditing) {
 			cnh.push('isEditing');
@@ -84,23 +91,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					<div className="side right">
 						<Label text={translate(`participantPermissions${item.permissions}`)} />
 					</div>
-				</div>
-			);
-		};
-
-		let membersIcons = null;
-		if (canWrite) {
-			membersIcons = (
-				<div className="membersIcons">
-					{members.map((el, idx) => {
-						if (idx < maxIcons) {
-							return <IconObject key={idx} size={36} object={el} />;
-						};
-						return null;
-					})}
-					{members.length > maxIcons ? (
-						<div className="membersMore">+{members.length - maxIcons}</div>
-					) : ''}
 				</div>
 			);
 		};
@@ -154,8 +144,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					) : ''}
 				</div>
 
-				{/*{membersIcons}*/}
-
 				<div className="spaceButtons">
 					{buttons.map((el, idx) => {
 						const cn = [ 'btn' ];
@@ -176,6 +164,39 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 				<div className="sections">
 					<Error text={error} />
+
+					{!space.isPersonal ? (
+						<div className="section sectionSpaceManager">
+							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+							<div className="sectionContent">
+
+								<div className="item">
+									<div className="sides">
+										<Icon className="push" />
+
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexPushText')} />
+										</div>
+
+										<div className="side right">
+											<Select
+												id="linkStyle"
+												value={String(space.notificationMode)}
+												options={spaceModes}
+												onChange={v => {
+													C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+													analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+												}}
+												arrowClassName="black"
+												menuParam={{ horizontal: I.MenuDirection.Right }}
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					) : ''}
 
 					{canWrite ? (
 						<div className="section sectionSpaceManager">
@@ -209,13 +230,15 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 								<div className="item">
 									<div className="sides">
+										<Icon className="home" />
+
 										<div className="side left">
 											<Title text={translate('commonHomepage')} />
 											<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
 										</div>
 
 										<div className="side right">
-											<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+											<div id="empty-dashboard-select" className={[ 'select', (space.isChat ? 'isReadonly' : '') ].join(' ')} onClick={this.onDashboard}>
 												<div className="item">
 													<div className="name">{home ? home.name : translate('commonSelect')}</div>
 												</div>
@@ -227,6 +250,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 								<div className="item">
 									<div className="sides">
+										<Icon className="type" />
+
 										<div className="side left">
 											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
 											<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
@@ -242,7 +267,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 										</div>
 									</div>
 								</div>
-
 							</div>
 						</div>
 					) : (
@@ -325,7 +349,11 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onDashboard () {
-		U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+		const space = U.Space.getSpaceview();
+
+		if (!space.isChat) {
+			U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+		};
 	};
 
 	onType (e: any) {
@@ -491,7 +519,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	getButtons () {
 		const { cid, key } = this.state;
 		const space = U.Space.getSpaceview();
-		const isDisabled = space.spaceAccessType == I.SpaceType.Personal;
+		const isDisabled = space.isPersonal;
 		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
 		return [

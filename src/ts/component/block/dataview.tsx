@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action } from 'Lib';
@@ -769,9 +769,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const menuParam = this.getMenuParam(e, dir);
 
-		S.Menu.open('dataviewCreateBookmark', {
+		U.Menu.onBookmarkMenu({
 			...menuParam,
-			type: I.MenuType.Horizontal,
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			offsetX: dir < 0 ? -24 : 0,
@@ -786,6 +785,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				},
 			},
 			...param,
+		}, (bookmark) => {
+			if (this.isCollection()) {
+				C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
+			};
 		});
 	};
 
@@ -1058,8 +1061,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
 				};
 
-				if (isNew && this.refControls && this.refControls.refHead) {
-					const ref = this.refControls.refHead;
+				if (isNew) {
+					const ref = this.refControls?.getHeadRef();
 					const l = String(item.name || '').length;
 
 					if (ref) {
@@ -1505,9 +1508,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
 			};
 
-			if (this.refControls && this.refControls.resize) {
-				this.refControls.resize();
-			};
+			this.refControls?.resize();
 
 			if (this.refView && this.refView.resize) {
 				this.refView.resize();

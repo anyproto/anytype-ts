@@ -20,7 +20,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
 	};
 
-	_isMounted = false;
 	node: any = null;
 	refLang: any = null;
 	refEditable: any = null;
@@ -215,8 +214,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
-
 		const { block } = this.props;
 		const { content } = block;
 		const { marks, text } = content;
@@ -250,10 +247,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	setValue (v: string, restoreRange?: I.TextRange) {
 		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
 		const fields = block.fields || {};
@@ -314,10 +307,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	renderLatex () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { block } = this.props;
 		const ref = this.refEditable;
 

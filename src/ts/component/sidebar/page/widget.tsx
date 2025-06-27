@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner } from 'Component';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
@@ -21,7 +21,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
-	isSubcribed = '';
+	timeout = 0;
 
 	constructor (props) {
 		super(props);
@@ -229,6 +229,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				className="customScrollbar"
 			>
 				<div id="head" className="head">
+					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					<div className="name">{space.name}</div>
 				</div>
 				<div
@@ -485,13 +486,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
-		const { showVault } = S.Common;
 		const node = $(this.node);
-		const head = node.find('#head');
-		const body = node.find('#body');
-		const top = body.scrollTop();
+		const top = node.find('#body').scrollTop();
 
-		head.toggleClass('show', showVault && (top > 32));
+		node.find('.dropTarget.firstTarget').toggleClass('isScrolled', top > 0);
 	};
 
 	onArchive (e: any) {
@@ -519,8 +517,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	setEditing (isEditing: boolean) {
-		console.trace();
-
 		this.setState({ isEditing });
 
 		if (!isEditing) {

@@ -1,9 +1,11 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import $ from 'jquery';
-import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, S, U, keyboard, Relation, translate } from 'Lib';
 
@@ -12,188 +14,32 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuObjectValues = observer(class MenuObjectValues extends React.Component<I.Menu> {
-	
-	_isMounted = false;
-	node: any = null;
-	n = -1;
-	top = 0;
-	cache: any = {};
-	refList: any = null;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onAdd = this.onAdd.bind(this);
+const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+
+	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
+	const { data, className, classNameWrap } = param;
+	const { rootId, valueMapper, nameAdd, canEdit, onChange } = data;
+	const listRef = useRef(null);
+	const topRef = useRef(0);
+	const n = useRef(-1);
+	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
+
+	const rebind = () => {
+		unbind();
+
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	render () {
-		const { getId, param } = this.props;
-		const { data } = param;
-		const { canEdit } = data;
-		const items = this.getItems();
-
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
-
-		const Item = SortableElement((item: any) => {
-			const cn = [ 'item', 'withCaption', (item.isHidden ? 'isHidden' : '') ];
-			return (
-				<div 
-					id={'item-' + item.id} 
-					className={cn.join(' ')} 
-					onMouseEnter={e => this.onOver(e, item)}
-					style={item.style}
-				>
-					{canEdit ? <Handle /> : ''}
-					<span className="clickable" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item} />
-						<ObjectName object={item} />
-					</span>
-					{canEdit ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
-				</div>
-			);
-		});
-
-		const ItemAdd = (item: any) => (
-			<div 
-				id="item-add" 
-				className="item add" 
-				onMouseEnter={e => this.onOver(e, item)} 
-				onClick={e => this.onClick(e, item)}
-				style={item.style}
-			>
-				<Icon className="plus" />
-				<div className="name">{item.name}</div>
-			</div>
-		);
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-
-			let content = null;
-			if (item.isDiv) {
-				content = (
-					<div className="separator" style={param.style}>
-						<div className="inner" />
-					</div>
-				);
-			} else
-			if (item.isEmpty) {
-				content = <EmptySearch style={param.style} text={translate('menuDataviewObjectValuesEmptySearch')} />;
-			} else
-			if (item.id == 'add') {
-				content = <ItemAdd key={item.id} {...item} index={param.index} disabled={true} style={param.style} />;
-			} else {
-				content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		const List = SortableContainer(() => (
-			<InfiniteLoader
-				rowCount={items.length}
-				loadMoreRows={() => {}}
-				isRowLoaded={() => true}
-				threshold={LIMIT}
-			>
-				{({ onRowsRendered }) => (
-					<AutoSizer className="scrollArea">
-						{({ width, height }) => (
-							<VList
-								ref={ref => this.refList = ref}
-								width={width}
-								height={height}
-								deferredMeasurmentCache={this.cache}
-								rowCount={items.length}
-								rowHeight={({ index }) => this.getRowHeight(items[index])}
-								rowRenderer={rowRenderer}
-								onRowsRendered={onRowsRendered}
-								overscanRowCount={LIMIT}
-								onScroll={this.onScroll}
-								scrollToAlignment="center"
-							/>
-						)}
-					</AutoSizer>
-				)}
-			</InfiniteLoader>
-		));
-		
-		return (
-			<List 
-				ref={node => this.node = node}
-				axis="y" 
-				transitionDuration={150}
-				distance={10}
-				useDragHandle={true}
-				onSortStart={this.onSortStart}
-				onSortEnd={this.onSortEnd}
-				helperClass="isDragging"
-				helperContainer={() => $(`#${getId()} .content`).get(0)}
-			/>
-		);
-	};
-	
-	componentDidMount () {
-		const items = this.getItems();
-
-		this._isMounted = true;
-		this.rebind();
-		this.resize();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
-
-	componentDidUpdate () {
-		this.resize();
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
-
-		this.props.setActive(null, true);
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, valueMapper, nameAdd, canEdit } = data;
-
+	const getItems = () => {
 		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => S.Detail.get(rootId, it, []));
 		
@@ -218,23 +64,21 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		return value;
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (item.id == 'add') {
-			this.onAdd();
+			onAdd();
 		} else {
 			U.Object.openEvent(e, item);
 		};
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 
-	onAdd () {
-		const { id, param, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
+	const onAdd = () => {
 		const { width } = getSize();
 
 		S.Menu.open('dataviewObjectList', {
@@ -246,7 +90,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			noAnimation: true,
 			className,
 			classNameWrap,
-			rebind: this.rebind,
+			rebind: rebind,
 			parentId: id,
 			data: {
 				...data,
@@ -255,10 +99,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		});
 	};
 
-	onRemove (e: any, item: any) {
-		const { param, id } = this.props;
-		const { data } = param;
-		const { onChange } = data;
+	const onRemove = (e: any, item: any) => {
 		const relation = data.relation.get();
 		
 		let value = Relation.getArrayValue(data.value);
@@ -268,7 +109,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = Relation.formatValue(relation, value, true);
 		};
 
-		this.n = -1;
+		n.current = -1;
 
 		onChange(value, () => {
 			S.Menu.updateData(id, { value });
@@ -276,49 +117,216 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		});
 	};
 
-	onSortStart () {
+	const onSortStart = () => {
 		keyboard.disableSelection(true);
 	};
 	
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param, id } = this.props;
-		const { data } = param;
-		const { onChange } = data;
+	const onSortEnd = (result: any) => {
+		keyboard.disableSelection(false);
+
 		const relation = data.relation.get();
+		if (!relation) {
+			return;
+		};
+
+		const { active, over } = result;
+		if (!active || !over) {
+			return;
+		};
 
 		let value = Relation.getArrayValue(data.value);
+
+		const oldIndex = value.indexOf(active.id);
+		const newIndex = value.indexOf(over.id);
+
 		value = arrayMove(value, oldIndex, newIndex);
 		value = Relation.formatValue(relation, value, true);
 
 		onChange(value, () => S.Menu.updateData(id, { value }));
-		keyboard.disableSelection(false);
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	getRowHeight (item: any) {
+	const getRowHeight = (item: any) => {
 		let h = HEIGHT_ITEM;
 		if (item.isEmpty) h = HEIGHT_EMPTY;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
 
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
+	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
+		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 
 		obj.css({ height });
 		position();
 	};
 
-});
+	const items = getItems();
+
+	const Item = (item: any) => {
+		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !canEdit });
+		const cn = [ 'item', 'withCaption' ];
+		const style = {
+			...item.style,
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+
+		if (item.isHidden) {
+			cn.push('isHidden');
+		};
+
+		return (
+			<div 
+				id={'item-' + item.id} 
+				className={cn.join(' ')} 
+				onMouseEnter={e => onOver(e, item)}
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				style={style}
+			>
+				{canEdit ? <Icon className="dnd" /> : ''}
+				<span className="clickable" onClick={e => onClick(e, item)}>
+					<IconObject object={item} />
+					<ObjectName object={item} />
+				</span>
+				{canEdit ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+			</div>
+		);
+	};
+
+	const ItemAdd = (item: any) => (
+		<div 
+			id="item-add" 
+			className="item add" 
+			onMouseEnter={e => onOver(e, item)} 
+			onClick={e => onClick(e, item)}
+			style={item.style}
+		>
+			<Icon className="plus" />
+			<div className="name">{item.name}</div>
+		</div>
+	);
+
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+
+		let content = null;
+		if (item.isDiv) {
+			content = (
+				<div className="separator" style={param.style}>
+					<div className="inner" />
+				</div>
+			);
+		} else
+		if (item.isEmpty) {
+			content = <EmptySearch style={param.style} text={translate('menuDataviewObjectValuesEmptySearch')} />;
+		} else
+		if (item.id == 'add') {
+			content = <ItemAdd key={item.id} {...item} index={param.index} disabled={true} style={param.style} />;
+		} else {
+			content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	useEffect(() => {
+		const items = getItems();
+
+		rebind();
+		resize();
+
+		cache.current = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_ITEM,
+			keyMapper: i => (items[i] || {}).id,
+		});
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+
+		if (listRef.current && topRef.current) {
+			listRef.current.scrollToPosition(topRef.current);
+		};
+
+		setActive(null, true);
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems: () => items,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
+
+	return (
+		<DndContext
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			onDragStart={onSortStart}
+			onDragEnd={onSortEnd}
+			modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+		>
+			<SortableContext
+				items={items.map((item) => item.id)}
+				strategy={verticalListSortingStrategy}
+			>
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => true}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={listRef}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={cache.current}
+									rowCount={items.length}
+									rowHeight={({ index }) => getRowHeight(items[index])}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									onScroll={onScroll}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</SortableContext>
+		</DndContext>
+	);
+
+}));
 
 export default MenuObjectValues;
