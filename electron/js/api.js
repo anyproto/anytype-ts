@@ -292,6 +292,14 @@ class Api {
 		return await checkDiskSpace(app.getPath('userData'));
 	};
 
+	async linuxDistro (win) {
+		const load = require('linux-distro');
+		return await load().catch(err => {
+			Util.log('error', `[Api].linuxDistro: ${err.message}`);
+			return { name: 'Unknown', version: 'Unknown' };
+		});
+	};
+
 };
 
 module.exports = new Api();

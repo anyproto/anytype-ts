@@ -131,6 +131,7 @@
 		"katex": "^0.16.22",
 		"keytar": "^7.7.0",
 		"lazy-val": "^1.0.4",
+		"linux-distro": "^4.0.1",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
 		"mermaid": "^11.4.1",

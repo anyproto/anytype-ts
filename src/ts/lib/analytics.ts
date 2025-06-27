@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, S, U, J, Relation } from 'Lib';
+import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -162,6 +162,15 @@ class Analytics {
 		this.setProperty(props);
 		this.removeContext();
 		this.setVersion();
+
+		if (U.Common.isPlatformLinux()) {
+			Renderer.send('linuxDistro').then((data: any) => {
+				this.setProperty({ 
+					linuxDistroName: data.os,
+					linuxDistroVersion: data.release,
+				});
+			});
+		};
 
 		this.log('[Analytics].init');
 	};
