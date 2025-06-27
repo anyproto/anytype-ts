@@ -186,7 +186,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedDownloadFile = isInFileLayouts;
 		const allowedOpenFile = isInFileLayouts;
 		const allowedOpenObject = isFilePreview;
-		const allowedEditType = isType;
+		const allowedEditType = isType && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
 
 		if (!allowedPageLink) {
 			pageLink = null;
