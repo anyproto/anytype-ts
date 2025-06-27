@@ -12,7 +12,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 	const { rootId, isPopup } = props;
 	const nodeRef = useRef(null);
-	const tree = S.Block.getTableOfContents(rootId);
+	const tree = S.Block.getTableOfContents(rootId, true);
 	const blockRef = useRef('');
 
 	const rebind = () => {

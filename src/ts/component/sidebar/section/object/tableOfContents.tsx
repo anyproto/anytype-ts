@@ -36,7 +36,7 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 	};
 
 	const getItems = () => {
-		return S.Block.getTableOfContents(rootId);
+		return S.Block.getTableOfContents(rootId, true);
 	};
 
 	useImperativeHandle(ref, () => ({

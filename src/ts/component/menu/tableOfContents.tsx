@@ -40,7 +40,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	};
 
 	const getItems = () => {
-		return S.Block.getTableOfContents(rootId);
+		return S.Block.getTableOfContents(rootId, true);
 	};
 
 	const onMouseEnter = (e: any, item: any) => {

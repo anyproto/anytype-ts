@@ -1802,7 +1802,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
-		const headers = S.Block.getBlocks(rootId, it => it.isTextHeader());
+		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
 		const length = headers.length;
 		const co = isPopup ? container.offset().top : 0;
 		const ch = container.height() - J.Size.header;

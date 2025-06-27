@@ -913,8 +913,14 @@ class BlockStore {
 	/**
 	 * Returns structure for Table of contents
 	 */
-	getTableOfContents (rootId: string) {
-		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
+	getTableOfContents (rootId: string, withTitle?: boolean) {
+		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => {
+			if (withTitle && it.isTextTitle()) {
+				return true;
+			};
+
+			return it.isTextHeader();
+		});
 		const list: any[] = [];
 
 		let hasH1 = false;
