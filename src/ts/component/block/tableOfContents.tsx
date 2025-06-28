@@ -31,7 +31,7 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 	const Item = (item: any) => (
 		<div 
 			className="item" 
-			onClick={e => onClick(e, item.id)}
+			onClick={e => onClick(e, item)}
 			style={{ paddingLeft: item.depth * 24 }}
 		>
 			<Label text={U.Common.getLatex(item.text)} />
