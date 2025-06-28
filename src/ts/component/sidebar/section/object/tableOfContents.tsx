@@ -13,7 +13,7 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 	};
 
 	const onClick = (e: any, item: any) => {
-		U.Common.scrollToHeader(item.id, isPopup);
+		U.Common.scrollToHeader(item, isPopup);
 	};
 
 	const Item = (item: any) => {

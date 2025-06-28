@@ -1777,14 +1777,20 @@ class UtilCommon {
 	/**
 	 * Scrolls to header in Table of contents
 	 */
-	scrollToHeader (id: string, isPopup: boolean) {
-		const node = $(`.focusable.c${id}`);
+	scrollToHeader (item: any, isPopup: boolean) {
+		const node = $(`.focusable.c${item.id}`);
 
 		if (!node.length) {
 			return;
 		};
 
 		const container = this.getScrollContainer(isPopup);
+
+		if (item.block && item.block.isTextTitle()) {
+			container.scrollTop(0);
+			return;
+		};
+
 		const no = node.offset().top;
 		const st = container.scrollTop();
 		const y = Math.max(J.Size.header + 20, (isPopup ? (no - container.offset().top + st) : no) - J.Size.header - 20);
