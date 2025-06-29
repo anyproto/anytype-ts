@@ -33,7 +33,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords } = this.props;
+		const { rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords, onRefRecord } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = getSubId();
@@ -82,7 +82,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				return <CardAdd key={`gallery-card-${view.id + id}`} />;
 			} else {
 				return (
-					<Card 
+					<Card
+						ref={ref => onRefRecord(ref, id)}
 						key={`gallery-card-${view.id + id}`}
 						{...this.props} 
 						getCoverObject={this.getCoverObject}

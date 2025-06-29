@@ -6,7 +6,7 @@ import { Icon, LoadMore } from 'Component';
 import { I, S, U, translate } from 'Lib';
 import Row from './list/row';
 
-const HEIGHT = 34;
+const HEIGHT = 32;
 
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
@@ -20,7 +20,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
+		const { rootId, block, className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmpty, getRecords, onRefRecord } = this.props;
 		const view = getView();
 		const records = getRecords();
 		const subId = getSubId();
@@ -41,9 +41,10 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 				<div>
 					{records.map((id: string, index: number) => (
 						<Row
+							ref={ref => onRefRecord(ref, id)}
 							key={'grid-row-' + view.id + index}
 							{...this.props}
-							recordId={records[index]}
+							recordId={id}
 							readonly={!isAllowedObject}
 						/>
 					))}
@@ -73,7 +74,8 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 											onRowsRendered={onRowsRendered}
 											rowRenderer={({ key, index, style }) => (
 												<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
-													<Row 
+													<Row
+														ref={ref => onRefRecord(ref, records[index])}
 														{...this.props} 
 														recordId={records[index]}
 														recordIdx={index}

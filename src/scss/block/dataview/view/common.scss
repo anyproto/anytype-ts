@@ -70,13 +70,7 @@
 
 				.cellContent.isName { @include text-paragraph; color: var(--color-text-primary); display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
-
 					.name, .emptyText { @include text-common; line-height: 20px; font-weight: 500; vertical-align: top; white-space: normal; @include clamp2; }
-				}
-
-				.cellContent.isName.withIcon {
-					.name, .emptyText { text-indent: 24px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }
@@ -96,6 +90,7 @@
 					.over { display: flex; height: 20px; }
 				}
 
+				.cellContent.isEditing.isName { align-items: flex-start; }
 				.cellContent.isEditing.isName {
 					.iconObject { position: relative; }
 					.input.name { text-indent: 0px; padding: 0px; height: unset; }
@@ -122,6 +117,39 @@
 					}
 				}
 			}
+		}
+
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { display: none;  background: url('~img/icon/dataview/button/edit0.svg') 50% 50% no-repeat; }
+			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
+			.icon.editMode.enabled { display: none !important; }
+
+			.card:hover,
+			.row:hover {
+				.icon.editMode { display: inline-block; }
+			}
+		}
+
+		.viewContent.viewGallery,
+		.viewContent.viewBoard {
+			.icon.editMode {
+				position: absolute; z-index: 3; width: 28px; height: 28px; border-radius: 6px;
+				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
+			}
+			.icon.editMode.enabled { background-color: var(--color-shape-highlight-medium); display: block; }
+		}
+
+		.viewContent.viewBoard,
+		.viewContent.viewGallery {
+			.icon.editMode { right: 12px; top: 12px; }
+			.card:hover {
+				.icon.editMode { display: block; }
+			}
+		}
+		.viewContent.viewList {
+			.icon.editMode { width: 20px; height: 20px; }
 		}
 	}
 

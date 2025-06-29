@@ -33,7 +33,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn, getTarget } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn, getTarget, onRefRecord } = this.props;
 		const view = getView();
 		const { coverRelationKey, hideIcon } = view;
 		const target = getTarget();
@@ -105,6 +105,7 @@ const Column = observer(class Column extends React.Component<Props> {
 					<div className="bg">
 						{items.map((item: any, i: number) => (
 							<Card
+								ref={ref => onRefRecord(ref, item.id)}
 								key={[ 'board', view.id, id, item.id ].join('-')}
 								{...this.props}
 								id={item.id}

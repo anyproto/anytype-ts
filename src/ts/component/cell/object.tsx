@@ -324,6 +324,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	useEffect(() => {
 		const cell = $(`#${id}`);
+		const value = getItems();
 
 		if (isEditing) {
 			cell.addClass('isEditing');
@@ -334,6 +335,8 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		} else {
 			cell.removeClass('isEditing');
 		};
+
+		cell.toggleClass('isEmpty', !value.length);
 	});
 
 	useImperativeHandle(ref, () => ({

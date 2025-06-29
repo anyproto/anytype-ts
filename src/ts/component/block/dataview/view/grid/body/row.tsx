@@ -7,7 +7,7 @@ import Cell from './cell';
 interface Props extends I.ViewComponent {
 	style?: any;
 	cellPosition?: (cellId: string) => void;
-	onRef?(ref: any, id: string): void;
+	onRefCell?(ref: any, id: string): void;
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 

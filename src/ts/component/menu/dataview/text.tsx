@@ -104,7 +104,12 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { cellId } = data;
+		const { cellId, noResize } = data;
+
+		if (noResize) {
+			return;
+		};
+
 		const win = $(window);
 		const obj = $(`#${getId()}`);
 		const input = obj.find('#input');

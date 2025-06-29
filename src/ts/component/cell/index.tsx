@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -14,6 +14,8 @@ interface Props extends I.Cell {
 	elementId?: string;
 	tooltipParam?: I.TooltipParam;
 	maxWidth?: number;
+	noInplace?: boolean;
+	editModeOn?: boolean;
 };
 
 const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
@@ -22,6 +24,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
 		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
+		noInplace, editModeOn, viewType,
 	} = props;
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
@@ -29,28 +32,12 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const isName = relationKey == 'name';
 	const nodeRef = useRef(null);
 	const childRef = useRef<I.CellRef>(null);
-
-	const checkIcon = () => {
-		
-		const node = $(nodeRef.current);
-		const icon = node.find('.iconObject');
-
-		node.removeClass('withIcon');
-
-		if (view && view.hideIcon) {
-			return;
-		};
-
-		if (!relation || !isName) {
-			return;
-		};
-
-		if (icon.length) {
-			node.addClass('withIcon');
-		};
-	};
+	const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 
 	const checkValue = (): boolean => {
+		if (noInplace && editModeOn) {
+			return true;
+		};
 		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
@@ -65,6 +52,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const canEdit = canCellEdit(relation, record);
 		const placeholder = getPlaceholder(relation, record);
 		const check = checkValue();
+		const isGrid = viewType == I.ViewType.Grid;
 
 		if (!canEdit) {
 			if (check && (relation.format != I.RelationType.Checkbox)) {
@@ -83,7 +71,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const { config } = S.Common;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
@@ -96,6 +83,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			className.push('isInline');
 		};
 
+		if (noInplace) {
+			className.push('fromFeatured');
+		};
+
 		let width = Math.max(J.Size.dataview.cell.edit, cell.outerWidth());
 		let closeIfOpen = true;
 		let menuId = '';
@@ -105,6 +96,16 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const setOn = () => {
+			if (noInplace) {
+				return;
+			};
+
+			const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
+
+			if (relation.relationKey == 'name') {
+				cellContent.css({ height: cellContent.outerHeight() });
+			};
+
 			cell.addClass('isEditing');
 
 			if (cellPosition) {
@@ -147,10 +148,12 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			S.Common.cellId = '';
 		};
 
+		const element = cell.hasClass('cellContent') ? `#${cellId}` : `#${cellId} .cellContent`;
+
 		let ret = false;
 		let param: I.MenuParam = { 
-			element: `#${cellId} .cellContent`,
-			horizontal: I.MenuDirection.Center,
+			element,
+			horizontal: isGrid ? I.MenuDirection.Center : I.MenuDirection.Left,
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
@@ -180,6 +183,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			},
 		};
 
+		if (noInplace) {
+			param.title = relation.name;
+		};
+
 		switch (relation.format) {
 
 			case I.RelationType.Date: {
@@ -194,9 +201,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			case I.RelationType.File: {
-				param = Object.assign(param, {
-					width,
-				});
+				if (!noInplace) {
+					param = Object.assign(param, { width });
+				};
+
 				param.data = Object.assign(param.data, {
 					value: value || [],
 				});
@@ -207,16 +215,19 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 			case I.RelationType.Select: 
 			case I.RelationType.MultiSelect: {
-				param = Object.assign(param, {
-					width,
-					commonFilter: true,
-				});
+				if (!noInplace) {
+					param = Object.assign(param, {
+						width,
+						commonFilter: true,
+					});
+				};
+
 				param.data = Object.assign(param.data, {
 					canAdd: true,
 					filter: '',
 					value: value || [],
 					maxCount: relation.maxCount,
-					noFilter: true,
+					noFilter: !noInplace,
 				});
 
 				menuId = 'dataviewOptionList';
@@ -226,39 +237,56 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 					
 			case I.RelationType.Object: {
-				param = Object.assign(param, {
-					width,
-					commonFilter: true,
-				});
+				if (!noInplace) {
+					param = Object.assign(param, {
+						width,
+						commonFilter: true,
+					});
+				};
+
 				param.data = Object.assign(param.data, {
 					canAdd: true,
 					filter: '',
-					value: value || [],
+					value: Relation.getArrayValue(record[relationKey]),
 					types: relation.objectTypes,
 					maxCount: relation.maxCount,
-					noFilter: true,
+					noFilter: !noInplace,
 				});
 
 				menuId = 'dataviewObjectList';
+
+				if (noInplace) {
+					menuId = 'dataviewObjectValues';
+					param.subIds = [ 'dataviewObjectList' ];
+				};
 				
 				closeIfOpen = false;
 				break;
 			};
 
 			case I.RelationType.LongText: {
-				const wh = win.height();
-				const hh = J.Size.header;
-				const height = Math.min(wh - hh - 20, cell.outerHeight());
+				if (!noInplace) {
+					const wh = win.height();
+					const hh = J.Size.header;
+					const height = Math.min(wh - hh - 20, cell.outerHeight());
 
-				param = Object.assign(param, {
-					noFlipX: true,
-					noFlipY: true,
-					element: cell,
-					horizontal: I.MenuDirection.Left,
-					offsetY: -height,
-					width,
-					height: height,
-				});
+					param = Object.assign(param, {
+						noFlipX: true,
+						noFlipY: true,
+						horizontal: I.MenuDirection.Left,
+						element: cell,
+						offsetY: -height,
+						width,
+						height: height,
+					});
+				} else {
+					param = Object.assign(param, {
+						width: 288,
+					});
+					param.data = Object.assign(param.data, {
+						noResize: true,
+					});
+				};
 
 				menuId = 'dataviewText';
 				closeIfOpen = false;
@@ -268,8 +296,21 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
+				if (noInplace) {
+					param = Object.assign(param, {
+						width: 288,
+					});
+					param.data = Object.assign(param.data, {
+						noResize: true,
+					});
+					menuId = 'dataviewText';
+					closeIfOpen = false;
+
+					break;
+				};
+
 				param = Object.assign(param, {
-					commonFilter: true,
+					commonFilter: !noInplace,
 					width,
 				});
 
@@ -294,7 +335,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
-					noFilter: true,
+					noFilter: !noInplace,
 					options,
 					onSelect: (event: any, item: any) => {
 						const value = childRef.current.getValue();
@@ -457,6 +498,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		(canEdit ? 'canEdit' : ''), 
 		(relationKey == 'name' ? 'isName' : ''),
 		(!checkValue() ? 'isEmpty' : ''),
+		(editModeOn ? 'editModeOn' : ''),
 	];
 
 	let CellComponent: any = null;
@@ -504,12 +546,15 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			break;
 	};
 
-	useEffect(() => checkIcon());
-
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
 		isEditing: () => childRef.current.isEditing(),
 		canEdit: () => canCellEdit(relation, record),
+		onBlur: () => {
+			if (childRef.current.onBlur) {
+				childRef.current.onBlur();
+			};
+		},
 	}));
 
 	return (
