@@ -1573,7 +1573,7 @@ class UtilCommon {
 		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const code = Mark.getTag(I.MarkType.Code);
-		const regCode = new RegExp(`^${code}|${code}$`, 'i');
+		const regCode = new RegExp(`^${code}>|</${code}$`, 'i');
 		const match = html.matchAll(reg);
 		const render = (s: string) => {
 			s = this.fromHtmlSpecialChars(s);
@@ -1606,6 +1606,7 @@ class UtilCommon {
 
 			// Skip inline code marks
 			if (regCode.test(m1) || regCode.test(m3)) {
+				console.log('RETURN 1');
 				return;
 			};
 
