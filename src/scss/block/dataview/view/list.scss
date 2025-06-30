@@ -2,39 +2,89 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewList { padding: 14px 0px 80px 14px; }
-		.viewContent.viewList {
-			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
+		.dataviewControls.viewList::after { left: 16px; width: calc(100% - 16px); }
 
-		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
+		.viewContent.viewList { padding: 8px 0px 80px 10px; }
+		.viewContent.viewList {
+			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
+
+		    .row { height: 100%; width: 100%; padding-top: 2px; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: var(--color-text-secondary); }
-			.row.isEditing {
-				.cellContent:not(.isName) { display: none; }
+
+			.row:not(.editModeOn) {
+				.cellWrapper.isEmpty { margin: 0px !important; }
+				.cellWrapper.isEmpty {
+					.cellContent:not(.withMenu) { display: none; }
+				}
 			}
 
-			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
+			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
+			.sides {
+				.side { display: flex; flex-direction: row; align-items: center; }
+				.side.left { width: 40%; flex-shrink: 0; }
+				.side.left {
+					.cellWrapper { margin-right: 4px; }
+					.cellWrapper.isName { width: 100%; }
+				}
+				.side.left.s50 { width: 50%; }
+				.side.left.s50 {
+					.cellWrapper.isName { width: 60%; }
+				}
 
+				.side.right { overflow: hidden; }
+				.side.right {
+					.cellWrapper { margin-left: 4px; }
+				}
+			}
+
+			.row:hover,
+			.row.hover{
+				> .selectionTarget,
+				> .dropTarget,
+				.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+			}
+
+			.row.add { height: 28px; padding-top: 0px; margin-top: 2px; }
+			.row.add {
+				.cell.add { padding: 0px; height: 28px; }
+				.btn { height: 100%; width: 100%; padding-top: 4px; padding-left: 4px; }
+			}
+
+			.selectionTarget,
+			.dropTarget { height: 28px; padding: 2px 0px 2px 4px; }
+
+			.cellWrapper,
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
 				cursor: default !important; color: var(--color-text-secondary);
 			}
-			.cellContent:last-child { margin: 0px; }
-			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
 
-			.cellContent::before { 
-				content: ""; width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); display: inline-block; 
-				vertical-align: middle; margin: 0px 6px; 
+
+			.cellWrapper.isName { display: flex; gap: 0px 6px; }
+			.cellWrapper.isName {
+				.cellContent { max-width: calc(100% - 26px); flex-shrink: 1; }
+				.cellContent {
+					.name { width: unset; max-width: 100%; }
+				}
+				.icon.editMode { flex-shrink: 0; }
 			}
-			.cellContent.first::before { display: none; }
+
+			.cellWrapper:not(.isName) {
+				.cellContent { padding-left: 4px; padding-right: 4px; border-radius: 6px; }
+				.cellContent.hover,
+				.cellContent:hover { background-color: var(--color-shape-highlight-medium); }
+			}
+
+			.cellContent:first-child { margin: 0px; }
 
 			.cellContent {
-				.name { @include text-overflow-nw; max-width: 200px; }
+				.name { @include text-overflow-nw; max-width: 300px; }
 			}
 
-            .cellContent.isName { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; color: var(--color-text-primary); gap: 0px 4px; }
+            .cellContent.isName { @include text-common; display: inline-flex; flex-direction: row; align-items: center; color: var(--color-text-primary); gap: 0px 6px; }
 			.cellContent.isName {
 				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
-				.input.name { padding: 0; @include text-paragraph; }
+				.input.name { padding: 0; @include text-common; }
 			}
 
 			.cellContent.c-select, 
@@ -47,12 +97,13 @@
 			.cellContent.c-file {
 				.wrap { display: inline-block; line-height: 24px; vertical-align: top; }
 				.over { display: inline-block; line-height: 24px; vertical-align: top; overflow: visible; }
-				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 100px; vertical-align: top; @include text-small; }
+				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 300px; vertical-align: top; @include text-small; }
 				.more { margin-top: 3px; vertical-align: top; }
 				.element { margin-top: 2px; }
 				.tagItem { margin-top: 3px; }
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
 			}
+
 			.cellContent.c-file {
 				.iconObject { margin: 0px; }
 				.name { display: none; }
@@ -80,14 +131,16 @@
 			}
 			.cellContent.c-checkbox.canEdit { cursor: default !important; }
 
+			.cellContent.isEmpty:not(.editModeOn, .withMenu) { display: none; }
+
 			.loadMore { margin-top: 2px; }
         }
 
 		.viewContent.viewList.isCollection { padding-left: 0px; }
 		.viewContent.viewList.isCollection {
-			.row { padding-left: 20px; }
+			.row { padding-left: 12px; }
 			.row {
-				.icon.drag { top: 6px; margin: 0px; }
+				.icon.drag { top: 10px; left: 0px; margin: 0px; }
 			}
 			.row:hover {
 				.icon.drag { opacity: 1; }
@@ -99,13 +152,27 @@
 			}
 			.dropTarget.isOver.top::before { top: -6px; }
 			.dropTarget.isOver.bottom::before { bottom: 4px; }
+
+			.dropTarget {
+				.selectionTarget { padding: 0px; border-radius: 0px; }
+			}
 		}
     }
 
 	.block.blockDataview.isInline {
+		.content { margin-left: -4px; }
 		.viewContent.viewList { padding: 9px 0px 0px 0px; }
 		.viewContent.viewList {
-			.row { padding-left: 0px !important; height: 34px !important; }
+			.row { padding: 2px 0px 0px 4px; height: 28px !important; margin: 2px 0px; }
+			.row:hover { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+
+			.row.add { padding-top: 0px; }
+			.row.add {
+				.btn { padding: 4px 0px 0px 0px; }
+			}
+			.row.add:hover {
+				.cell.add { background-color: transparent; }
+			}
 		}
 	}
 }

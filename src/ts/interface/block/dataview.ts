@@ -154,7 +154,8 @@ export interface ViewComponent {
 	recordIdx?: number;
 	getRecord?(id: string): any;
 	getRecords?(): string[];
-	onRef?(ref: any, id: string): void;
+	onRefRecord?(ref: any, id: string): void;
+	onRefCell?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getCoverObject?(id: string): any;
 	getView?(): View;
@@ -188,6 +189,9 @@ export interface ViewComponent {
 	onViewSettings?(): void;
 	getSearchIds?(): string[];
 	canCellEdit?(relation: any, record: any): boolean;
+	onEditModeClick?(e: any, id: string): void;
+	setRecordEditingOn?(e: any, id: string): void;
+	setRecordEditingOff?(id: string): void;
 };
 
 export interface ViewEmpty {

@@ -1,7 +1,12 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewFileList, .menu.menuDataviewFileValues {
+	.menu.menuDataviewFileList, 
+	.menu.menuDataviewFileValues {
+		width: var(--menu-width-value);
+	}
+	.menu.menuDataviewFileList, 
+	.menu.menuDataviewFileValues {
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 
 		.emptySearch { padding: 8px 0px; }
@@ -11,7 +16,6 @@
 		}
 	}
 
-	.menu.menuDataviewFileList { width: var(--menu-width-value); }
 	.menu.menuDataviewFileList {
 		.content { padding-top: 12px; padding-bottom: 0px; transition: none; }
 

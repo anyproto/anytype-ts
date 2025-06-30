@@ -48,6 +48,10 @@
 	.more { display: inline-block; vertical-align: middle; @include text-small; color: var(--color-text-secondary); }
 }
 
+.cellContent.editModeOn {
+	.empty { display: inline-block; }
+}
+
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
 	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
@@ -171,7 +175,7 @@
 .cellContent.c-email, 
 .cellContent.c-phone 
 {
-	.name { text-decoration: none; transition: $transitionAllCommon; width: auto; @include text-overflow-nw; width: 100%; }
+	.name { text-decoration: none; transition: $transitionAllCommon; @include text-overflow-nw; width: 100%; }
 }
 
 .cellContent.canEdit.c-url, 
@@ -180,3 +184,4 @@
 {
 	.name { width: 100%; }
 }
+

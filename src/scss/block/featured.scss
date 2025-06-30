@@ -60,6 +60,10 @@
 			}
 
 			.cellContent.c-object {
+				.over {
+					display: inline-flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0px 6px; vertical-align: middle;
+					margin-top: -2px;
+				}
 				.iconObject { flex-shrink: 0; margin: 0px 6px 0px 0px !important; }
 			}
 

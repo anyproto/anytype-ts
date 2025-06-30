@@ -18,7 +18,7 @@
 		#placeholder { padding: 13px 14px; }
 	}
 
-	.menu.menuDataviewText.isInline {
+	.menu.menuDataviewText.isInline:not(.fromFeatured) {
 		#input, #placeholder { padding: 9px 14px; }
 	}
 

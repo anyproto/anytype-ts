@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, keyboard } from 'Lib';
-import { Cell, SelectionTarget, ObjectCover } from 'Component';
+import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -12,10 +12,11 @@ interface Props extends I.ViewComponent {
 const Card = observer(class Card extends React.Component<Props> {
 
 	_isMounted = false;
+	isEditing = false;
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, getCoverObject } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRefCell, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, getCoverObject, onEditModeClick } = this.props;
 		const view = getView();
 		const { coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -41,6 +42,8 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+						const isName = relation.relationKey == 'name';
+						const iconSize = relation.relationKey == 'name' ? 20 : 16;
 
 						return (
 							<Cell
@@ -51,15 +54,18 @@ const Card = observer(class Card extends React.Component<Props> {
 								recordId={record.id}
 								groupId={groupId}
 								subId={subId}
-								ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
+								ref={ref => onRefCell(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
 								relationKey={relation.relationKey}
 								viewType={view.type}
 								idPrefix={idPrefix}
 								arrayLimit={2}
 								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
 								onClick={e => this.onCellClick(e, relation)}
-								iconSize={relation.relationKey == 'name' ? 20 : 18}
+								iconSize={iconSize}
+								size={iconSize}
 								withName={true}
+								noInplace={!isName}
+								editModeOn={this.isEditing}
 							/>
 						);
 					})}
@@ -86,6 +92,11 @@ const Card = observer(class Card extends React.Component<Props> {
 				onContextMenu={e => onContext(e, record.id, subId)}
 				{...U.Common.dataProps({ id: record.id })}
 			>
+				<Icon
+					className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
+					onClick={e => onEditModeClick(e, record.id)}
+				/>
+
 				{content}
 			</div>
 		);
@@ -129,12 +140,13 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { id, rootId, block, groupId, onCellClick } = this.props;
+		const { id, rootId, block, groupId, onCellClick, canCellEdit } = this.props;
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
+		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || !canEdit) {
 			return;
 		};
 
@@ -142,6 +154,11 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id, record);
+	};
+
+	setIsEditing (v:boolean) {
+		this.isEditing = v;
+		this.forceUpdate();
 	};
 
 	resize () {
