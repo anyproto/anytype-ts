@@ -98,7 +98,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					Action.checkDiskSpace(cb1);
 				},
 			};
-
+		
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
@@ -141,20 +141,26 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	let title = '';
 	let label = '';
 	let buttonText = translate('commonBack');
-	let buttonClick = onCancel;
+	let more = null;
+	let icon = null;
 
 	if (error.code) {
 		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
 			title = translate('pageAuthSetupImportTitle');
 			label = translate('pageAuthSetupImportText');
-			buttonText = translate('pageAuthSetupImportBackup');
-			buttonClick = onBackup;
+			buttonText = translate('pageAuthSetupTryAgain');
+			more = (
+				<div className="animation">
+					<Button text={translate('pageAuthSetupImportBackup')} color="simple" onClick={onBackup} />
+				</div>
+			);
+			icon = <Icon className="warning animation" />;
+
 			cn.push('fromBackup');
 		} else {
 			title = translate('commonError');
 			label = error.description;
 			buttonText = translate('commonBack');
-			buttonClick = onCancel;
 		};
 	} else {
 		title = translate('pageAuthSetupEntering');
@@ -186,14 +192,16 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			<Frame>
 				{back}
 
+				{icon}
 				{title ? <Title className={cn.join(' ')} text={title} /> : ''}
 				{label ? <Label className={cn.join(' ')} text={label} /> : ''}
 				{loader}
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={buttonText} className="c28" onClick={buttonClick} />
+						<Button text={buttonText} onClick={onCancel} />
 					</div>
+					{more}
 				</div>
 			</Frame>
 

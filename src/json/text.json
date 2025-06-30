@@ -532,10 +532,11 @@
 	"pageAuthOnboardPersonalSpace": "Entry Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
-	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
-	"pageAuthSetupImportText": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
+	"pageAuthSetupImportTitle": "We couldn’t recover your vault.",
+	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEntering": "Entering your Vault...",
+	"pageAuthSetupTryAgain": "Try again",
+	"pageAuthSetupEntering": "Entering your Vault",
 
 	"pageAuthMigrateInitTitle": "New Version Update",
 	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
