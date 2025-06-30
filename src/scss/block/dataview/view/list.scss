@@ -12,6 +12,7 @@
 			.row.isDone * { color: var(--color-text-secondary); }
 
 			.row:not(.editModeOn) {
+				.cellWrapper.isEmpty { margin: 0px !important; }
 				.cellWrapper.isEmpty {
 					.cellContent:not(.withMenu) { display: none; }
 				}
@@ -19,9 +20,10 @@
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
 			.sides {
-				.side { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+				.side { display: flex; flex-direction: row; align-items: center; }
 				.side.left { width: 40%; flex-shrink: 0; }
 				.side.left {
+					.cellWrapper { margin-right: 4px; }
 					.cellWrapper.isName { width: 100%; }
 				}
 				.side.left.s50 { width: 50%; }
@@ -30,6 +32,9 @@
 				}
 
 				.side.right { overflow: hidden; }
+				.side.right {
+					.cellWrapper { margin-left: 4px; }
+				}
 			}
 
 			.row:hover,
