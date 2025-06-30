@@ -55,6 +55,7 @@ const Row = observer(class Row extends React.Component<Props> {
 			const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 			const isName = relation.relationKey == 'name';
 			const ccn = ['cellWrapper'];
+			const iconSize = relation.relationKey == 'name' ? 20 : 16;
 
 			if (isName) {
 				ccn.push('isName');
@@ -82,7 +83,8 @@ const Row = observer(class Row extends React.Component<Props> {
 						isInline={true}
 						tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left, offsetX: 14 }}
 						arrayLimit={2}
-						iconSize={isName ? 24 : 18}
+						iconSize={iconSize}
+						size={iconSize}
 						withName={true}
 						noInplace={!isName}
 						editModeOn={this.isEditing}

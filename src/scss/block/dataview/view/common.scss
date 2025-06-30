@@ -22,7 +22,12 @@
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cardContent > .inner { padding: 16px; }
+				.cardContent > .inner { padding: 16px; display: flex; flex-direction: column; align-items: flex-start; }
+				.cardContent > .inner {
+					.cellContent:not(.isName) { width: unset; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; }
+					.cellContent:not(.isName):hover,
+					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
+				}
 
 				.cover { 
 					position: relative; aspect-ratio: 16/9; background-position: top center; display: flex; align-items: center;
@@ -59,7 +64,7 @@
 					}
 				}
 
-				.cellContent { margin-bottom: 4px; @include text-small; color: var(--color-text-secondary); }
+				.cellContent { margin-bottom: 1px; @include text-small; color: var(--color-text-secondary); }
 				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }

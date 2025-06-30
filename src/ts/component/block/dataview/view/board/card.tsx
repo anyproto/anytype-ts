@@ -43,6 +43,7 @@ const Card = observer(class Card extends React.Component<Props> {
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 						const isName = relation.relationKey == 'name';
+						const iconSize = relation.relationKey == 'name' ? 20 : 16;
 
 						return (
 							<Cell
@@ -60,7 +61,8 @@ const Card = observer(class Card extends React.Component<Props> {
 								arrayLimit={2}
 								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
 								onClick={e => this.onCellClick(e, relation)}
-								iconSize={isName ? 20 : 18}
+								iconSize={iconSize}
+								size={iconSize}
 								withName={true}
 								noInplace={!isName}
 								editModeOn={this.isEditing}

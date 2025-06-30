@@ -17,20 +17,21 @@
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
 			.sides {
-				.side { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+				.side { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 				.side.left { width: 40%; flex-shrink: 0; }
 				.side.left {
-					.cellWrapper { width: 100%; }
+					.cellWrapper.isName { width: 100%; }
 				}
 				.side.left.s50 { width: 50%; }
 				.side.left.s50 {
-					.cellWrapper { width: 60%; }
+					.cellWrapper.isName { width: 60%; }
 				}
 
 				.side.right { overflow: hidden; }
 			}
 
-			.row:hover {
+			.row:hover,
+			.row.hover{
 				> .selectionTarget,
 				> .dropTarget,
 				.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
@@ -51,6 +52,7 @@
 				cursor: default !important; color: var(--color-text-secondary);
 			}
 
+
 			.cellWrapper.isName { display: flex; gap: 0px 6px; }
 			.cellWrapper.isName {
 				.cellContent { max-width: calc(100% - 26px); flex-shrink: 1; }
@@ -59,6 +61,10 @@
 				}
 				.icon.editMode { flex-shrink: 0; }
 			}
+
+			.cellWrapper:not(.isName) { padding-left: 4px; padding-right: 4px; border-radius: 6px; }
+			.cellWrapper:not(.isName):hover,
+			.cellWrapper:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
 
 			.cellContent:first-child { margin: 0px; }
 
