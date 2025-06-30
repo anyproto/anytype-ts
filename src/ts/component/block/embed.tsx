@@ -616,6 +616,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						ADD_ATTR: [
 							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy', 'src',
 						],
+						ALLOWED_URI_REGEXP: /^(?:(?:ftp|https?|mailto|tel|callto|sms|cid|xmpp|xxx|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 					};
 
 					const data: any = { 
