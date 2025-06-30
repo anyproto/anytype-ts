@@ -131,7 +131,7 @@
 			}
 			.cellContent.c-checkbox.canEdit { cursor: default !important; }
 
-			.cellContent.isEmpty:not(.editModeOn) { display: none; }
+			.cellContent.isEmpty:not(.editModeOn, .withMenu) { display: none; }
 
 			.loadMore { margin-top: 2px; }
         }
