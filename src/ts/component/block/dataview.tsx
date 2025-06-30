@@ -1504,6 +1504,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 		win.on(`keydown.record-${id}`, (e) => {
 			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id));
+			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id));
 		});
 	};
 
