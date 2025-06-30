@@ -2,7 +2,9 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewList { padding: 14px 0px 80px 10px; }
+		.dataviewControls.viewList::after { left: 16px; width: calc(100% - 16px); }
+
+		.viewContent.viewList { padding: 8px 0px 80px 10px; }
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
 
