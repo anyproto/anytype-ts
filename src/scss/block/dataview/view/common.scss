@@ -22,7 +22,12 @@
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cardContent > .inner { padding: 16px; }
+				.cardContent > .inner { padding: 16px; display: flex; flex-direction: column; align-items: flex-start; }
+				.cardContent > .inner {
+					.cellContent:not(.isName) { width: unset; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; }
+					.cellContent:not(.isName):hover,
+					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
+				}
 
 				.cover { 
 					position: relative; aspect-ratio: 16/9; background-position: top center; display: flex; align-items: center;
@@ -59,9 +64,11 @@
 					}
 				}
 
-				.cellContent { margin-bottom: 4px; @include text-small; color: var(--color-text-secondary); }
+				.cellContent { margin-bottom: 1px; @include text-small; color: var(--color-text-secondary); }
 				.cellContent.canEdit { cursor: default; }
-				.cellContent:empty, .cellContent.isEmpty { display: none; }
+				.cellContent:empty,
+				.cellContent.isEmpty:not(.editModeOn, .withMenu) { display: none; }
+
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: var(--color-text-primary); }
 				.cellContent {
@@ -70,13 +77,7 @@
 
 				.cellContent.isName { @include text-paragraph; color: var(--color-text-primary); display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
-
 					.name, .emptyText { @include text-common; line-height: 20px; font-weight: 500; vertical-align: top; white-space: normal; @include clamp2; }
-				}
-
-				.cellContent.isName.withIcon {
-					.name, .emptyText { text-indent: 24px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }
@@ -96,6 +97,7 @@
 					.over { display: flex; height: 20px; }
 				}
 
+				.cellContent.isEditing.isName { align-items: flex-start; }
 				.cellContent.isEditing.isName {
 					.iconObject { position: relative; }
 					.input.name { text-indent: 0px; padding: 0px; height: unset; }
@@ -121,6 +123,35 @@
 						video { object-fit: contain; }
 					}
 				}
+			}
+		}
+
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { display: none;  background: url('~img/icon/dataview/button/edit0.svg') 50% 50% no-repeat; }
+			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
+			.icon.editMode.enabled { display: none !important; }
+		}
+
+		.viewContent.viewGallery,
+		.viewContent.viewBoard {
+			.icon.editMode {
+				position: absolute; z-index: 3; width: 24px; height: 24px; right: 8px; top: 8px; border-radius: 4px;
+				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium); border: 1px solid var(--color-shape-secondary);
+			}
+			.icon.editMode:hover { background-color: var(--color-shape-tertiary); }
+
+			.card:hover {
+				.icon.editMode { display: block; }
+			}
+		}
+
+		.viewContent.viewList {
+			.icon.editMode { width: 20px; height: 20px; }
+
+			.row:hover {
+				.icon.editMode { display: inline-block; }
 			}
 		}
 	}
