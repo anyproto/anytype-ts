@@ -728,12 +728,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					this.onCellClick(e, 'name', object.id, object);
 				} else {
 					window.setTimeout(() => {
-						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-						const ref = this.refCells.get(id);
-
-						if (ref) {
-							ref.onClick(e);
-						};
+						this.setRecordEditingOn(e, object.id);
 					}, 15);
 				};
 
