@@ -347,7 +347,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					if (system.length) {
 						system = system.filter(it => it.id != J.Constant.widgetId.allObject);
 
-						if (!space.chatId && !U.Object.isAllowedChat()) {
+						if (!space.chatId && !U.Object.isAllowedChat(true)) {
 							system = system.filter(it => it.id != J.Constant.widgetId.chat);
 						};
 
