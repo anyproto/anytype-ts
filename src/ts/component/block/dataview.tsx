@@ -1497,7 +1497,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		win.on(`mousedown.record-${id}`, (e: any) => {
-			if ($(e.target).parents(`#record-${id}`).length > 0) {
+			if ($(e.target).parents(`#record-${id}, .menu`).length > 0) {
 				return;
 			};
 			this.setRecordEditingOff(id);

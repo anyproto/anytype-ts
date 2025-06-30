@@ -33,9 +33,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef<I.CellRef>(null);
 	const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
+	const withMenu = useRef(false);
 
 	const checkValue = (): boolean => {
-		if (noInplace && editModeOn) {
+		if ((noInplace && editModeOn) || withMenu.current) {
 			return true;
 		};
 		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
@@ -159,8 +160,14 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			passThrough: true,
 			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
-			onOpen: () => setOn(),
-			onClose: () => setOff(),
+			onOpen: () => {
+				$(element).addClass('withMenu');
+				setOn();
+			},
+			onClose: () => {
+				$(element).removeClass('withMenu');
+				setOff();
+			},
 			data: { 
 				cellId,
 				cellRef: childRef.current,
@@ -403,6 +410,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				const isOpen = S.Menu.isOpen(menuId);
 
 				S.Menu.open(menuId, param);
+				withMenu.current = true;
 
 				// If menu was already open OnOpen callback won't be called
 				if (isOpen) {
@@ -418,6 +426,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			if (closeIfOpen) {
 				setOff();
 				S.Menu.closeAll(J.Menu.cell);
+				withMenu.current = false
 			};
 		} else {
 			setOn();
@@ -499,6 +508,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		(relationKey == 'name' ? 'isName' : ''),
 		(!checkValue() ? 'isEmpty' : ''),
 		(editModeOn ? 'editModeOn' : ''),
+		(withMenu.current ? 'withMenu' : ''),
 	];
 
 	let CellComponent: any = null;

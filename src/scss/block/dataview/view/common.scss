@@ -66,7 +66,9 @@
 
 				.cellContent { margin-bottom: 1px; @include text-small; color: var(--color-text-secondary); }
 				.cellContent.canEdit { cursor: default; }
-				.cellContent:empty, .cellContent.isEmpty { display: none; }
+				.cellContent:empty,
+				.cellContent.isEmpty:not(.editModeOn, .withMenu) { display: none; }
+
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: var(--color-text-primary); }
 				.cellContent {

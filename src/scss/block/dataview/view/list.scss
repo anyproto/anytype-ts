@@ -12,7 +12,9 @@
 			.row.isDone * { color: var(--color-text-secondary); }
 
 			.row:not(.editModeOn) {
-				.cellWrapper.isEmpty { display: none; }
+				.cellWrapper.isEmpty {
+					.cellContent:not(.withMenu) { display: none; }
+				}
 			}
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
@@ -62,9 +64,11 @@
 				.icon.editMode { flex-shrink: 0; }
 			}
 
-			.cellWrapper:not(.isName) { padding-left: 4px; padding-right: 4px; border-radius: 6px; }
-			.cellWrapper:not(.isName):hover,
-			.cellWrapper:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
+			.cellWrapper:not(.isName) {
+				.cellContent { padding-left: 4px; padding-right: 4px; border-radius: 6px; }
+				.cellContent.hover,
+				.cellContent:hover { background-color: var(--color-shape-highlight-medium); }
+			}
 
 			.cellContent:first-child { margin: 0px; }
 
