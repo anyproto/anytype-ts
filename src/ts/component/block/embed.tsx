@@ -667,7 +667,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					if (block.isEmbedDrawio()) {
-						sanitizeParam.ADD_TAGS.push('svg', 'foreignObject', 'switch');
+						sanitizeParam.ADD_TAGS.push('svg', 'foreignObject', 'switch', 'g', 'text');
 
 						allowScript = !!text.match(/https:\/\/(?:viewer|embed|app)\.diagrams\.net\/\?[^"\s>]*/);
 					};
@@ -683,7 +683,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						text = text.replace(/\r?\n/g, '');
 						text = text.replace(/<iframe([^>]*)>.*?<\/iframe>/gi, '<iframe$1></iframe>');
 
+
+						console.log('TEXT', text);
 						data.html = DOMPurify.sanitize(text, sanitizeParam);
+
+						console.log('HTML', data.html);
 					};
 
 					iw.postMessage(data, '*');
