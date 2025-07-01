@@ -31,7 +31,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.loadMoreCards = this.loadMoreCards.bind(this);
 		this.getCoverObject = this.getCoverObject.bind(this);
 		this.onEditModeClick = this.onEditModeClick.bind(this);
-		this.checkHeights = this.checkHeights.bind(this);
+		this.updateRowHeight = this.updateRowHeight.bind(this);
 	};
 
 	render () {
@@ -345,10 +345,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		e.stopPropagation();
 
 		this.props.onEditModeClick(e, id, index);
-		this.checkHeights(index);
+		this.updateRowHeight(index);
 	};
 
-	checkHeights (index) {
+	updateRowHeight (index) {
 		this.setColumnCount();
 		this.cache.clearAll();
 		this.refList?.recomputeRowHeights(index);

@@ -1525,8 +1525,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			nameRef.onBlur();
 		};
 
-		if (this.refView && this.refView.checkHeights) {
-			this.refView.checkHeights(index);
+		if (this.refView && this.refView.updateRowHeight) {
+			this.refView.updateRowHeight(index);
 		};
 	};
 
