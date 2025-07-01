@@ -27,6 +27,7 @@
 					.cellContent:not(.isName) { width: unset; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; }
 					.cellContent:not(.isName):hover,
 					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
+                    .cellContent.c-longText { height: unset; min-height: 24px; }
 				}
 
 				.cover { 
