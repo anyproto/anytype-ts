@@ -794,7 +794,7 @@ class UtilMenu {
 				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 			};
 
-			if (space.notificationMode == I.NotificationMode.Nothing) {
+			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
 				options.push({ id: 'unmute', name: translate('commonUnmute') });
 			} else {
 				options.push({ id: 'mute', name: translate('commonMute') });

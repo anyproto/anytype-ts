@@ -16,6 +16,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	node: any = null;
 	refName: any = null;
 	refDescription: any = null;
+	refMode = null;
 	canSave: boolean = true;
 
 	state = {
@@ -182,6 +183,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 										<div className="side right">
 											<Select
 												id="linkStyle"
+												ref={ref => this.refMode = ref}
 												value={String(space.notificationMode)}
 												options={spaceModes}
 												onChange={v => {
@@ -335,6 +337,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				keyboard.shortcut('escape', e, () => this.onCancel());
 			});
 		};
+
+		this.refMode?.setValue(String(space.notificationMode));
 	};
 
 	setInvite (cid: string, key: string) {
