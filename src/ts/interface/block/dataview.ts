@@ -189,9 +189,9 @@ export interface ViewComponent {
 	onViewSettings?(): void;
 	getSearchIds?(): string[];
 	canCellEdit?(relation: any, record: any): boolean;
-	onEditModeClick?(e: any, id: string): void;
-	setRecordEditingOn?(e: any, id: string): void;
-	setRecordEditingOff?(id: string): void;
+	onEditModeClick?(e: any, id: string, index?: number): void;
+	setRecordEditingOn?(e: any, id: string, index?: number): void;
+	setRecordEditingOff?(id: string, index?: number): void;
 };
 
 export interface ViewEmpty {
