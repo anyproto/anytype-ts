@@ -30,6 +30,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
 		this.getCoverObject = this.getCoverObject.bind(this);
+		this.onEditModeClick = this.onEditModeClick.bind(this);
 	};
 
 	render () {
@@ -73,25 +74,22 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			};
 		};
 
-		const CardAdd = () => (
-			<div className="card add" onClick={e => onRecordAdd(e, 1)} />
-		);
-
-		const row = (id: string) => {
+		const cardItem = (index: number, id: string) => {
 			if (id == 'add-record') {
-				return <CardAdd key={`gallery-card-${view.id + id}`} />;
-			} else {
-				return (
-					<Card
-						ref={ref => onRefRecord(ref, id)}
-						key={`gallery-card-${view.id + id}`}
-						{...this.props} 
-						getCoverObject={this.getCoverObject}
-						recordId={id}
-						recordIdx={records.indexOf(id)}
-					/>
-				);
+				return <div className="card add" onClick={e => onRecordAdd(e, 1)} />;
 			};
+
+			return (
+				<Card
+					ref={ref => onRefRecord(ref, id)}
+					key={`gallery-card-${view.id + id}`}
+					{...this.props} 
+					getCoverObject={this.getCoverObject}
+					recordId={id}
+					recordIdx={records.indexOf(id)}
+					onEditModeClick={e => this.onEditModeClick(e, index, id)}
+				/>
+			);
 		};
 
 		const rowRenderer = (param: any) => {
@@ -108,7 +106,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				>
 					{({ measure }) => (
 						<div key={`gallery-row-${view.id + param.index}`} className="row" style={style}>
-							{item.children.map(id => row(id))}
+							{item.children.map(id => cardItem(param.index, id))}
 						</div>
 					)}
 				</CellMeasurer>
@@ -121,7 +119,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			const records = this.getRecords();
 			content = (
 				<>
-					{records.map(id => row(id))}
+					{records.map((id: string, index: number) => cardItem(index, id))}
 				</>
 			);
 		} else {
@@ -333,6 +331,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const record = S.Detail.get(subId, id, getKeys(view.id));
 
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
+	};
+
+	onEditModeClick (e: any, index: number, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.props.onEditModeClick(e, id);
+		this.setColumnCount();
+		this.cache.clearAll();
+		this.refList?.recomputeRowHeights(index);
 	};
 
 });

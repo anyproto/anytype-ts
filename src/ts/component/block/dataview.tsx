@@ -1482,7 +1482,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
 		const nameRef = this.refCells.get(nameId);
-		const win = $(window)
+		const win = $(window);
 
 		ref.setIsEditing(true);
 		this.editingRecordId = id;
@@ -1495,8 +1495,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if ($(e.target).parents(`#record-${id}, .menu`).length > 0) {
 				return;
 			};
+
 			this.setRecordEditingOff(id);
 		});
+
 		win.on(`keydown.record-${id}`, (e) => {
 			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id));
 			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id));
@@ -1505,9 +1507,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	setRecordEditingOff (id: string) {
 		const ref = this.refRecords.get(id);
+		const win = $(window);
 
-		$(window).off(`mousedown.record-${id}`);
-		$(window).off(`keydown.record-${id}`);
+		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
 		if (!ref || !ref.setIsEditing) {
 			return;
