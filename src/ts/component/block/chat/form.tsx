@@ -735,10 +735,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 		
 		const callBack = () => {
+			// Marks should be adjusted to remove leading new lines
+
+			const parsed = this.getMarksFromHtml();
+			const text = this.trim(parsed.text);
+			const match = parsed.text.match(/^\r?\n+/);
+			const diff = match ? match[0].length : 0;
+			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
+
 			if (this.editingId) {
 				const message = S.Chat.getMessage(subId, this.editingId);
 				if (message) {
-					const { marks, text } = this.getMarksFromHtml();
 					const update = U.Common.objectCopy(message);
 
 					update.attachments = attachments;
@@ -751,13 +758,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					});
 				};
 			} else {
-				// Marks should be adjusted to remove leading new lines
-
-				const parsed = this.getMarksFromHtml();
-				const text = this.trim(parsed.text);
-				const match = parsed.text.match(/^\r?\n+/);
-				const diff = match ? match[0].length : 0;
-				const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
