@@ -399,3 +399,9 @@ export interface AppInfo {
 	scope: LocalApiScope;
 	isActive: boolean;
 };
+
+export enum ImageSize {
+	Small		 = 100,
+	Medium		 = 320,
+	Large		 = 1920,
+};

@@ -175,7 +175,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 				{picture ? (
 					<div className="side right">
-						<img src={S.Common.imageUrl(picture, 500)} className="img" />
+						<img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" />
 					</div>
 				) : ''}
 			</div>
@@ -187,13 +187,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
-				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
+				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
 					this.src = image;
 					$(this.node).find('#image').attr({ 'src': image });
 				});
 				this.src = './img/space.svg';
 			} else {
-				this.src = S.Common.imageUrl(object.id, J.Size.image);
+				this.src = S.Common.imageUrl(object.id, I.ImageSize.Large);
 			};
 		};
 
@@ -315,7 +315,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		switch (object.layout) {
 			case I.ObjectLayout.Image: {
 				ret.type = I.FileType.Image;
-				ret.src = this.src || S.Common.imageUrl(object.id, J.Size.image);
+				ret.src = this.src || S.Common.imageUrl(object.id, I.ImageSize.Large);
 				break;
 			};
 

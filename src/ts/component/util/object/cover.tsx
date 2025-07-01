@@ -36,7 +36,7 @@ const ObjectCover: FC<Props> = ({
 			switch (layout) {
 				case I.ObjectLayout.Image: {
 					cn.push('coverImage');
-					content = <img src={S.Common.imageUrl(id, 600)} onDragStart={e => e.preventDefault()} />;
+					content = <img src={S.Common.imageUrl(id, I.ImageSize.Large)} onDragStart={e => e.preventDefault()} />;
 					break;
 				};
 

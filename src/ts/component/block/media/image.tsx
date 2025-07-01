@@ -116,7 +116,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			let src = '';
 			switch (object.layout) {
 				case I.ObjectLayout.Image: {
-					src = S.Common.imageUrl(target, J.Size.image);
+					src = S.Common.imageUrl(target, I.ImageSize.Large);
 					break;
 				};
 
@@ -195,7 +195,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					<div ref={wrapRef} className="wrap" style={css}>
 						<img 
 							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, J.Size.image)} 
+							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
 							onDragStart={e => e.preventDefault()} 
 							onClick={handleClick} 
 							onLoad={handleLoad} 

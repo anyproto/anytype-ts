@@ -38,7 +38,7 @@ class UtilGraph {
 
 			case I.ObjectLayout.Image: {
 				if (d.id) {
-					src = S.Common.imageUrl(d.id, 100);
+					src = S.Common.imageUrl(d.id, I.ImageSize.Small);
 				} else {
 					src = U.File.iconPath(d);
 				};
@@ -48,7 +48,7 @@ class UtilGraph {
 			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Participant: {
 				if (d.iconImage) {
-					src = S.Common.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, I.ImageSize.Small);
 				};
 				break;
 			};
@@ -59,7 +59,7 @@ class UtilGraph {
 
 			case I.ObjectLayout.Type: {
 				if (d.iconImage) {
-					src = S.Common.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, I.ImageSize.Small);
 				} else
 				if (d.iconName) {
 					src = U.Common.updateSvg(require(`img/icon/type/default/${d.iconName}.svg`), { 
@@ -80,14 +80,14 @@ class UtilGraph {
 
 			case I.ObjectLayout.Bookmark: {
 				if (d.iconImage) {
-					src = S.Common.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, I.ImageSize.Small);
 				};
 				break;
 			};
 				
 			default: {
 				if (d.iconImage) {
-					src = S.Common.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, I.ImageSize.Small);
 				} else
 				if (d.iconEmoji) {
 					const code = U.Smile.getCode(d.iconEmoji);

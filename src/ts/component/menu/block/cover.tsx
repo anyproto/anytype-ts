@@ -243,7 +243,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						this.items.push({
 							id: item.id,
 							type: I.CoverType.Upload,
-							src: S.Common.imageUrl(item.id, 150),
+							src: S.Common.imageUrl(item.id, I.ImageSize.Medium),
 							artist: item.name,
 							coverY: -0.25,
 						});

@@ -126,7 +126,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 								};
 
 								case I.ObjectLayout.Image: {
-									url = S.Common.imageUrl(item.id, J.Size.image);
+									url = S.Common.imageUrl(item.id, I.ImageSize.Large);
 									break;
 								};
 							};
@@ -168,7 +168,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	);
 
 	const Image = (item: any) => (
-		<img src={S.Common.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
+		<img src={S.Common.imageUrl(item.id, I.ImageSize.Medium)} className="img" onLoad={() => position()} />
 	);
 
 	const Item = (item: any) => {

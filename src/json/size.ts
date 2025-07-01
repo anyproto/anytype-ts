@@ -2,10 +2,6 @@ export default {
 	editor: 704,
 	blockMenu: 48,
 	lastBlock: 80,
-	iconPage: 256,
-	image: 1920,
-	cover: 1920,
-	coverPadding: 356,
 	menuBorder: 10,
 	header: 52,
 

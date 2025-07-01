@@ -355,7 +355,26 @@ class CommonStore {
 	 * @returns {string} The image URL.
 	 */
 	imageUrl (id: string, width: number) {
-		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
+		width = Number(width) || 0;
+
+		console.log('W1', width);
+
+		if (!width) {
+			width = I.ImageSize.Large;
+		} else 
+		if (width <= I.ImageSize.Small) {
+			width = I.ImageSize.Small;
+		} else
+		if ((width > I.ImageSize.Small) && (width <= I.ImageSize.Medium)) {
+			width = I.ImageSize.Medium;
+		} else 
+		if (width > I.ImageSize.Medium) {
+			width = I.ImageSize.Large;
+		};
+
+		console.log('W2', width);
+
+		return id ? [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${width}` : '';
 	};
 
 	/**
