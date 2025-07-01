@@ -856,7 +856,7 @@ class UtilMenu {
 
 								case 'mute':
 								case 'unmute': {
-									const mode = element.id == 'mute' ? I.NotificationMode.Nothing : I.NotificationMode.All;
+									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
 
 									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
 									analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
