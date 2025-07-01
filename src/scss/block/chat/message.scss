@@ -171,11 +171,6 @@
 		.author { display: flex; }
 	}
 
-	&.isFirst, &.withText {
-		.attachments { padding: 8px 4px 4px 4px;  }
-		.attachments.withLayout { padding: 4px 4px 8px 4px; }
-	}
-
 	&:not(.withText) {
 		.bubbleInner {
 			.bubble {
