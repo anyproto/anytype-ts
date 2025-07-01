@@ -1606,7 +1606,6 @@ class UtilCommon {
 
 			// Skip inline code marks
 			if (regCode.test(m1) || regCode.test(m3)) {
-				console.log('RETURN 1');
 				return;
 			};
 

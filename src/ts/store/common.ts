@@ -357,8 +357,6 @@ class CommonStore {
 	imageUrl (id: string, width: number) {
 		width = Number(width) || 0;
 
-		console.log('W1', width);
-
 		if (!width) {
 			width = I.ImageSize.Large;
 		} else 
@@ -371,8 +369,6 @@ class CommonStore {
 		if (width > I.ImageSize.Medium) {
 			width = I.ImageSize.Large;
 		};
-
-		console.log('W2', width);
 
 		return id ? [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${width}` : '';
 	};

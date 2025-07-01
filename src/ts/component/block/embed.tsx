@@ -683,11 +683,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						text = text.replace(/\r?\n/g, '');
 						text = text.replace(/<iframe([^>]*)>.*?<\/iframe>/gi, '<iframe$1></iframe>');
 
-
-						console.log('TEXT', text);
 						data.html = DOMPurify.sanitize(text, sanitizeParam);
-
-						console.log('HTML', data.html);
 					};
 
 					iw.postMessage(data, '*');
