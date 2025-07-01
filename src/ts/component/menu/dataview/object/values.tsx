@@ -18,7 +18,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
 	const { data, className, classNameWrap } = param;
-	const { rootId, valueMapper, nameAdd, canEdit, onChange } = data;
+	const { rootId, subId, valueMapper, nameAdd, canEdit, onChange } = data;
 	const listRef = useRef(null);
 	const topRef = useRef(0);
 	const n = useRef(-1);
@@ -41,7 +41,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const getItems = () => {
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => S.Detail.get(rootId, it, []));
+		value = value.map(it => S.Detail.get(subId, it, []));
 		
 		if (valueMapper) {
 			value = value.map(valueMapper);
