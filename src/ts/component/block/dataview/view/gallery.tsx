@@ -30,7 +30,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
 		this.getCoverObject = this.getCoverObject.bind(this);
-		this.onEditModeClick = this.onEditModeClick.bind(this);
 		this.updateRowHeight = this.updateRowHeight.bind(this);
 	};
 
@@ -94,7 +93,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					getCoverObject={this.getCoverObject}
 					recordId={id}
 					recordIdx={records.indexOf(id)}
-					onEditModeClick={e => this.onEditModeClick(e, id, index)}
+					rowIndex={index}
 				/>
 			);
 		};
@@ -338,14 +337,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const record = S.Detail.get(subId, id, getKeys(view.id));
 
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
-	};
-
-	onEditModeClick (e: any, id: string, index: number) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		this.props.onEditModeClick(e, id, index);
-		this.updateRowHeight(index);
 	};
 
 	updateRowHeight (index) {

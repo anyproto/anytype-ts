@@ -1463,18 +1463,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.refSelect?.setIds(ids);
 	};
 
-	onEditModeClick (e: any, id: string, index?: number) {
+	onEditModeClick (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (this.editingRecordId == id) {
-			this.setRecordEditingOff(id, index);
+			this.setRecordEditingOff(id);
 		} else {
-			this.setRecordEditingOn(e, id, index);
+			this.setRecordEditingOn(e, id);
 		};
 	};
 
-	setRecordEditingOn (e: any, id: string, index?: number) {
+	setRecordEditingOn (e: any, id: string) {
 		const ref = this.refRecords.get(id);
 		if (!ref || !ref.setIsEditing) {
 			return;
@@ -1496,16 +1496,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
-			this.setRecordEditingOff(id, index);
+			this.setRecordEditingOff(id);
 		});
 
 		win.on(`keydown.record-${id}`, (e) => {
-			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id, index));
-			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id, index));
+			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id));
+			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id));
 		});
+
+		this.editModeCheckRowHeight(id);
 	};
 
-	setRecordEditingOff (id: string, index?: number) {
+	setRecordEditingOff (id: string) {
 		const ref = this.refRecords.get(id);
 		const win = $(window);
 
@@ -1525,8 +1527,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			nameRef.onBlur();
 		};
 
-		if ((index || (index == 0)) && this.refView && this.refView.updateRowHeight) {
-			this.refView.updateRowHeight(index);
+		this.editModeCheckRowHeight(id);
+	};
+
+	editModeCheckRowHeight (id) {
+		const ref = this.refRecords.get(id);
+
+		if (ref && (ref.rowIndex || (ref.rowIndex == 0)) && this.refView && this.refView.updateRowHeight) {
+			this.refView.updateRowHeight(ref.rowIndex);
 		};
 	};
 
