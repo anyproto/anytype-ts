@@ -339,7 +339,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
-	updateRowHeight (index) {
+	updateRowHeight (index: number) {
 		this.setColumnCount();
 		this.cache.clearAll();
 		this.refList?.recomputeRowHeights(index);

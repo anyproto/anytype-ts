@@ -1530,7 +1530,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.editModeCheckRowHeight(id);
 	};
 
-	editModeCheckRowHeight (id) {
+	editModeCheckRowHeight (id: string) {
 		const ref = this.refRecords.get(id);
 
 		if (ref && (ref.rowIndex || (ref.rowIndex == 0)) && this.refView && this.refView.updateRowHeight) {
