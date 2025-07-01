@@ -165,6 +165,10 @@ class Analytics {
 
 		if (U.Common.isPlatformLinux()) {
 			Renderer.send('linuxDistro').then((data: any) => {
+				if (!data) {
+					return;
+				};
+
 				this.setProperty({ 
 					linuxDistroName: data.os,
 					linuxDistroVersion: data.release,

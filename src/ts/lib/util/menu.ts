@@ -926,15 +926,26 @@ class UtilMenu {
 		};
 
 		const ids = Storage.get('spaceOrder') || [];
-		const items = U.Common.objectCopy(U.Space.getList());
-
-		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
+		const items = U.Common.objectCopy(U.Space.getList()).
+			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
+			map(it => {
+				it.counter = 0;
+				if (!it.isButton) {
+					const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+					it.counter = counters.mentionCounter || counters.messageCounter;
+				};
+				return it;
+			});
 
 		if (ids && (ids.length > 0)) {
 			items.sort((c1, c2) => {
 				const i1 = ids.indexOf(c1.id);
 				const i2 = ids.indexOf(c2.id);
 
+				if (c1.counter && !c2.counter) return -1;
+				if (!c1.counter && c2.counter) return 1;
+				if (c1.lastMessageDate > c2.lastMessageDate) return -1;
+				if (c1.lastMessageDate < c2.lastMessageDate) return 1;
 				if (i1 > i2) return 1;
 				if (i1 < i2) return -1;
 				return 0;

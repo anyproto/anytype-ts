@@ -26,16 +26,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
 	const profile = U.Space.getProfile();
-	const itemsWithCounter = items.filter(it => {
-		if (!it.isButton) {
-			const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-			return counters.mentionCounter || counters.messageCounter;
-		};
-		return false;
-	}).sort((c1, c2) => U.Data.sortByNumericKey('lastMessageDate', c1, c2, I.SortType.Desc));
-
-	const itemsWithCounterIds = itemsWithCounter.map(it => it.id);
-	const itemsWithoutCounter = items.filter(it => !itemsWithCounterIds.includes(it.id));
+	const itemsWithCounter = items.filter(it => !!it.counter);
+	const itemsWithoutCounter = items.filter(it => !it.counter);
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
 	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();

@@ -76,7 +76,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		const cardItem = (index: number, id: string) => {
 			if (id == 'add-record') {
-				return <div className="card add" onClick={e => onRecordAdd(e, 1)} />;
+				return (
+					<div 
+						key={`gallery-card-${view.id + id}`} 
+						className="card add" 
+						onClick={e => onRecordAdd(e, 1)} 
+					/>
+				);
 			};
 
 			return (

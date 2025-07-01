@@ -1085,6 +1085,13 @@ class Action {
 
 	checkDiskSpace (callBack?: () => void) {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
+			if (!diskSpace) {
+				if (callBack) {
+					callBack();
+				};
+				return;
+			};
+
 			const { free } = diskSpace;
 
 			if (free <= 1024 * 1024 * 1024) { // less than 1GB
