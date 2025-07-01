@@ -3,7 +3,7 @@
 > **Local‑first, peer‑to‑peer & end‑to‑end‑encrypted knowledge OS for macOS, Windows & Linux.**
 
 [![Latest release](https://img.shields.io/github/v/release/anyproto/anytype-ts?label=Download)](https://github.com/anyproto/anytype-ts/releases)
-[![Build Status](https://github.com/anyproto/anytype-ts/actions/workflows/desktop.yml/badge.svg?branch=main)](https://github.com/anyproto/anytype-ts/actions/workflows/desktop.yml)
+[![Build Status](https://github.com/anyproto/anytype-ts/actions/workflows/build.yml/badge.svg?branch=main&event=release)](https://github.com/anyproto/anytype-ts/actions/workflows/build.yml)
 [![Crowdin](https://badges.crowdin.net/anytype-desktop/localized.svg)](https://crowdin.com/project/anytype-desktop)
 [![License](https://img.shields.io/badge/license-ASAL-1.0-blue.svg)](LICENSE.md)
 
