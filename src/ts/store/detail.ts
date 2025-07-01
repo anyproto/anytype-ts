@@ -465,6 +465,9 @@ class DetailStore {
 		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
 
+		// Chat
+		object.isMuted = [ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(object.notificationMode);
+
 		delete(object.spacePushNotificationMode);
 		delete(object.spaceUxType);
 

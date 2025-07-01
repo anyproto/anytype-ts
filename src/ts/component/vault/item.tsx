@@ -25,7 +25,11 @@ const VaultItem: FC<Props> = observer(({
 	const theme = S.Common.getThemeClass();
 
 	if (item.isLocalLoading) {
-		cn.push('loading');
+		cn.push('isLoading');
+	};
+
+	if (item.isMuted) {
+		cn.push('isMuted');
 	};
 
 	let icon = null;
