@@ -28,7 +28,7 @@
 				}
 				.side.left.s50 { width: 50%; }
 				.side.left.s50 {
-					.cellWrapper.isName { width: 60%; }
+					.cellWrapper.isName { min-width: 60%; }
 				}
 
 				.side.right { overflow: hidden; }
@@ -42,6 +42,19 @@
 				> .selectionTarget,
 				> .dropTarget,
 				.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+
+				.cellWrapper.isName {
+					.cellContent { max-width: calc(100% - 26px); }
+				}
+				.sides {
+					.side.left.s50 {
+						.cellWrapper.isName {
+							.cellContent { max-width: calc(100% - 46px); }
+						}
+					}
+				}
+
+				.icon.editMode { opacity: 1; }
 			}
 
 			.row.add { height: 28px; padding-top: 0px; margin-top: 2px; }
@@ -62,11 +75,12 @@
 
 			.cellWrapper.isName { display: flex; gap: 0px 6px; }
 			.cellWrapper.isName {
-				.cellContent { max-width: calc(100% - 26px); flex-shrink: 1; }
+				.cellContent { max-width: calc(100% - 16px); flex-shrink: 1; }
+				.cellContent.isEditing { width: 100%; max-width: unset; flex-grow: 1; }
 				.cellContent {
 					.name { width: unset; max-width: 100%; }
 				}
-				.icon.editMode { flex-shrink: 0; }
+				.icon.editMode { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; opacity: 0; }
 			}
 
 			.cellWrapper:not(.isName) {
@@ -84,7 +98,7 @@
             .cellContent.isName { @include text-common; display: inline-flex; flex-direction: row; align-items: center; color: var(--color-text-primary); gap: 0px 6px; }
 			.cellContent.isName {
 				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
-				.input.name { padding: 0; @include text-common; }
+				.input.name { padding: 0; @include text-common; width: 100% !important; }
 			}
 
 			.cellContent.c-select, 

@@ -128,18 +128,7 @@
 					}
 				}
 			}
-		}
 
-		.viewContent.viewGallery,
-		.viewContent.viewBoard,
-		.viewContent.viewList {
-			.icon.editMode { display: none;  background: url('~img/icon/dataview/button/edit0.svg') 50% 50% no-repeat; }
-			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
-			.icon.editMode.enabled { display: none !important; }
-		}
-
-		.viewContent.viewGallery,
-		.viewContent.viewBoard {
 			.icon.editMode {
 				position: absolute; z-index: 3; width: 24px; height: 24px; right: 8px; top: 8px; border-radius: 4px;
 				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium); border: 1px solid var(--color-shape-secondary);
@@ -151,12 +140,12 @@
 			}
 		}
 
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
 		.viewContent.viewList {
-			.icon.editMode { width: 20px; height: 20px; }
-
-			.row:hover {
-				.icon.editMode { display: inline-block; }
-			}
+			.icon.editMode { display: none;  background: url('~img/icon/dataview/button/edit0.svg') 50% 50% no-repeat; }
+			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
+			.icon.editMode.enabled { display: none !important; }
 		}
 	}
 
