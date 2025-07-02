@@ -18,7 +18,15 @@
 			}
 		}
 
-		.viewContent.viewGallery, 
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { display: none; background-image: url('~img/icon/dataview/button/edit0.svg'); background-position: 50% 50%; background-repeat: no-repeat; }
+			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
+			.icon.editMode.enabled { display: none !important; }
+		}
+
+		.viewContent.viewGallery,
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
@@ -30,10 +38,10 @@
 					}
 					.cellContent:not(.isName):hover,
 					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
-                    .cellContent.c-longText { height: unset; min-height: 24px; }
+					.cellContent.c-longText { height: unset; min-height: 24px; }
 				}
 
-				.cover { 
+				.cover {
 					position: relative; aspect-ratio: 16/9; background-position: top center; display: flex; align-items: center;
 					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
 				}
@@ -51,7 +59,7 @@
 						.controlsWrapper {
 							.name { display: none; }
 
-							.controls {				
+							.controls {
 								#volume { right: 16px; }
 							}
 						}
@@ -59,10 +67,10 @@
 				}
 				.cover.canEdit {
 					.inner { background: none; }
-					.inner {  
+					.inner {
 						.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/gallery-cover0.svg'); margin: -2px 6px 0px 0px; }
-						.add { 
-							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px; 
+						.add {
+							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px;
 							top: 50%; margin-top: -10px;
 						}
 					}
@@ -90,13 +98,13 @@
 					.over { height: 18px; }
 				}
 
-				.cellContent.c-url, 
-				.cellContent.c-phone, 
+				.cellContent.c-url,
+				.cellContent.c-phone,
 				.cellContent.c-email {
 					.name { width: auto; max-width: 100%; }
 				}
 
-				.cellContent.c-object, 
+				.cellContent.c-object,
 				.cellContent.c-file {
 					.over { display: flex; height: 20px; }
 				}
@@ -107,8 +115,8 @@
 					.input.name { text-indent: 0px; padding: 0px; height: unset; }
 				}
 			}
-			.card::after { 
-				content: ''; position: absolute; left: 0px; top: 0px; border-radius: 8px; width: 100%; height: 100%; 
+			.card::after {
+				content: ''; position: absolute; left: 0px; top: 0px; border-radius: 8px; width: 100%; height: 100%;
 				background: rgba(0,0,0,0.03); transition: $transitionAllCommon; pointer-events: none; opacity: 0; z-index: 1;
 			}
 
@@ -132,20 +140,13 @@
 			.icon.editMode {
 				position: absolute; z-index: 3; width: 24px; height: 24px; right: 8px; top: 8px; border-radius: 4px;
 				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium); border: 1px solid var(--color-shape-secondary);
+				background-color: var(--color-bg-primary);
 			}
 			.icon.editMode:hover { background-color: var(--color-shape-tertiary); }
 
 			.card:hover {
 				.icon.editMode { display: block; }
 			}
-		}
-
-		.viewContent.viewGallery,
-		.viewContent.viewBoard,
-		.viewContent.viewList {
-			.icon.editMode { display: none;  background: url('~img/icon/dataview/button/edit0.svg') 50% 50% no-repeat; }
-			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
-			.icon.editMode.enabled { display: none !important; }
 		}
 	}
 

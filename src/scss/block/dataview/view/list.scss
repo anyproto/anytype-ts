@@ -44,12 +44,12 @@
 				.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
 
 				.cellWrapper.isName {
-					.cellContent { max-width: calc(100% - 26px); }
+					.cellContent:not(.isEditing) { max-width: calc(100% - 26px); }
 				}
 				.sides {
 					.side.left.s50 {
 						.cellWrapper.isName {
-							.cellContent { max-width: calc(100% - 46px); }
+							.cellContent:not(.isEditing) { max-width: calc(100% - 46px); }
 						}
 					}
 				}
