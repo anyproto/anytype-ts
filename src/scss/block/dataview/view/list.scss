@@ -54,7 +54,9 @@
 					}
 				}
 
-				.icon.editMode { opacity: 1; }
+				.cellWrapper.isName {
+					.icon.editMode { opacity: 1; }
+				}
 			}
 
 			.row.add { height: 28px; padding-top: 0px; margin-top: 2px; }
