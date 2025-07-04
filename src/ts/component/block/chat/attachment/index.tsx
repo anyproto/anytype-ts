@@ -32,6 +32,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	render () {
 		const { object, showAsFile, bookmarkAsDefault } = this.props;
+		const { syncStatus, syncError } = object;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment' ];
 
