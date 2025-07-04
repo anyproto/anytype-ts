@@ -13,6 +13,20 @@ export enum AttachmentType {
 	Link		 = 2,
 };
 
+export enum AttachmentSyncStatus {
+	Synced  	= 0,
+	Syncing 	= 1,
+	Error 		= 2,
+	Queued 		= 3,
+};
+
+export enum AttachmentSyncError {
+	None  					= 0,
+	IncompatibleVersion 	= 2,
+	NetworkError 			= 3,
+	Oversized 				= 4,
+};
+
 export interface ChatStateCounter {
 	orderId: string;
 	counter: number;
