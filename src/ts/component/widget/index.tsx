@@ -69,19 +69,17 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isChat = targetId == J.Constant.widgetId.chat;
 
 	let cnt = 0;
-	let showCnt = false;
+	let leftCnt = false;
 	let layout = block.content.layout;
+	let counters = { messageCounter: 0, mentionCounter: 0 };
 
 	if (isFavorite) {
 		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
-		showCnt = cnt > limit;
+		leftCnt = cnt > limit;
 	};
 
 	if (isChat) {
-		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
-
-		cnt = counters.messageCounter;
-		showCnt = !!cnt;
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
 
 	if (object) {
@@ -680,10 +678,19 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							{collapse}
 							{icon}
 							<ObjectName object={object} withPlural={true} />
-							{showCnt ? <span className="count">{cnt}</span> : ''}
+							{leftCnt ? <span className="count">{cnt}</span> : ''}
 						</div>
 					</div>
-					<div className="side right">{buttons}</div>
+					<div className="side right">
+						{counters.messageCounter || counters.mentionCounter ? (
+							<div className="counters">
+								{counters.mentionCounter ? <Icon className="count mention" /> : ''}
+								{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
+							</div>
+						) : ''}
+
+						{buttons}
+					</div>
 				</div>
 			</div>
 		);
