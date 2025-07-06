@@ -265,7 +265,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (!readonly && storage) {
 			const text = String(storage.text || '');
 			const marks = storage.marks || [];
-			const attachments = storage.attachments || [];
+			const attachments = (storage.attachments || []).filter(it => !it.isTmp);
 			const length = text.length;
 
 			this.marks = marks;
