@@ -217,6 +217,7 @@
 	"commonCreateChat": "Create chat",
 	"commonMute": "Mute",
 	"commonUnmute": "Unmute",
+	"commonDropFiles": "Drag and drop your files here",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

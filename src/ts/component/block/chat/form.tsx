@@ -44,6 +44,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
+	timeoutDrag = 0;
 	editingId: string = '';
 	speedLimit = { last: 0, counter: 0 };
 	state = {
@@ -231,13 +232,24 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					ref={ref => this.node = ref}
 					id="formWrapper" 
 					className="formWrapper"
+					onDragOver={this.onDragOver}
+					onDragLeave={this.onDragLeave}
 				>
+					<div className="dragOverlay">
+						<div className="inner">
+							<Icon />
+							<Label text={translate('commonDropFiles')} />
+						</div>
+					</div>
+
 					<div className="navigation">
 						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
 					{form}
+
+					<div className="bottom" />
 				</div>
 			</>
 		);
@@ -569,6 +581,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		window.clearTimeout(this.timeoutDrag);
 		$(this.node).addClass('isDraggingOver');
 	};
 	
@@ -576,12 +589,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		$(this.node).removeClass('isDraggingOver');
+		window.clearTimeout(this.timeoutDrag);
+		this.timeoutDrag = window.setTimeout(() => {
+			if (this._isMounted) {
+				$(this.node).removeClass('isDraggingOver');
+			};
+		}, 100);
 	};
 	
 	onDrop (e: any) {
 		if (!this.canDrop(e)) {
-			$(this.node).removeClass('isDraggingOver');
+			this.onDragLeave(e);
 			return;
 		};
 
