@@ -153,6 +153,7 @@ class Keyboard {
 		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
+		const space = U.Space.getSpaceview();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -309,10 +310,13 @@ class Keyboard {
 			// Copy page link
 			this.shortcut('copyPageLink', e, () => {
 				e.preventDefault();
-
-				const space = U.Space.getSpaceview();
-
 				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+			});
+
+			// Copy deep link
+			this.shortcut('copyDeepLink', e, () => {
+				e.preventDefault();
+				U.Object.copyLink(object, space, 'deeplink', analytics.route.shortcut);
 			});
 
 			// Settings
