@@ -12,6 +12,7 @@ interface ChatState {
 	mentionOrderId: string;
 	mentionCounter: number;
 	lastStateId: string;
+	order: number;
 };
 
 class ChatStore {
@@ -150,13 +151,14 @@ class ChatStore {
 	 * @returns {ChatState} The created chat state object.
 	 */
 	private createState (state: I.ChatState): ChatState {
-		const { messages, mentions, lastStateId } = state;
+		const { messages, mentions, lastStateId, order } = state;
 		const el = {
 			messageOrderId: messages.orderId,
 			messageCounter: messages.counter,
 			mentionOrderId: mentions.orderId,
 			mentionCounter: mentions.counter,
 			lastStateId,
+			order,
 		};
 
 		makeObservable(el, {
@@ -165,6 +167,7 @@ class ChatStore {
 			mentionOrderId: observable,
 			mentionCounter: observable,
 			lastStateId: observable,
+			order: observable,
 		});
 
 		intercept(el as any, (change: any) => {
@@ -213,8 +216,13 @@ class ChatStore {
 		};
 
 		const current = spaceMap.get(param.chatId);
+
 		if (current) {
-			const { messages, mentions, lastStateId } = state;
+			const { messages, mentions, lastStateId, order } = state;
+
+			if (order < current.order) {
+				return; // Ignore outdated state
+			};
 
 			set(current, {
 				messageOrderId: messages.orderId,
@@ -222,6 +230,7 @@ class ChatStore {
 				mentionOrderId: mentions.orderId,
 				mentionCounter: mentions.counter,
 				lastStateId,
+				order,
 			});
 		} else {
 			spaceMap.set(param.chatId, this.createState(state));
@@ -243,6 +252,7 @@ class ChatStore {
 			mentionOrderId: '',
 			mentionCounter: 0,
 			lastStateId: '',
+			order: 0,
 		};
 
 		return Object.assign(ret, this.stateMap.get(param.spaceId)?.get(param.chatId) || {});
