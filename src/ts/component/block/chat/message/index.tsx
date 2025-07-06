@@ -81,7 +81,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		if (isNew && !isSelf) {
 			cn.push('isNew');
 		};
-		if (content.text) {
+		if (text) {
 			cn.push('withText');
 		};
 		if (this.isExpanded) {

@@ -100,7 +100,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		if (this.editingId) {
 			title = translate('blockChatEditing');
-			onClear = this.onEditClear;
+			onClear = () => this.onEditClear();
 		} else
 		if (replyingId) {
 			const message = S.Chat.getMessage(subId, replyingId);
