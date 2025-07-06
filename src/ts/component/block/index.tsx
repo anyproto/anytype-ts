@@ -72,7 +72,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, blockContextParam, onMouseEnter, onMouseLeave } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave } = this.props;
 		
 		if (!block) {
 			return null;
@@ -85,8 +85,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		let hAlign = null;
-		if (blockContextParam && (block.isTextTitle() || block.isTextDescription() || block.isFeatured())) {
-			hAlign = blockContextParam.hAlign;
+		if (contextParam && (block.isTextTitle() || block.isTextDescription() || block.isFeatured())) {
+			hAlign = contextParam.hAlign;
 		} else {
 			hAlign = block.hAlign;
 		};

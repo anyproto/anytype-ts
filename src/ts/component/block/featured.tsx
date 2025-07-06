@@ -59,19 +59,22 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{headerRelationsLayout == I.FeaturedRelationLayout.Column ? (
 					<div className="listColumn">
 						{items.map((relation: any) => {
+							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 							const value = object[relation.relationKey];
 							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
 
 							return (
-								<Block
-									{...this.props}
-									key={relation.id}
-									rootId={rootId}
-									block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
-									readonly={!canEdit}
-									isSelectionDisabled={true}
-									isContextMenuDisabled={true}
-								/>
+								<span id={id} key={relation.id}>
+									<Block
+										{...this.props}
+										rootId={rootId}
+										block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
+										readonly={!canEdit}
+										isSelectionDisabled={true}
+										isContextMenuDisabled={true}
+										passParam={{ onCellClick: this.onType }}
+									/>
+								</span>
 							);
 						})}
 					</div>
