@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, DragEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -12,6 +12,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const headerRef = useRef(null);
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
+	const chatRef = useRef<any>(null);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -63,6 +64,18 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		const object = S.Detail.get(rootId, rootId, []);
 
 		return !U.Space.canMyParticipantWrite() || object.isArchived || root?.isLocked();
+	};
+
+	const onDragOver = (e: DragEvent) => {
+		chatRef.current?.ref?.onDragOver(e);
+	};
+	
+	const onDragLeave = (e: DragEvent) => {
+		chatRef.current?.ref?.onDragLeave(e);
+	};
+	
+	const onDrop = (e: React.DragEvent) => {
+		chatRef.current?.ref?.onDrop(e);
 	};
 
 	const resize = () => {
@@ -121,6 +134,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			<div ref={blocksRef} className="blocks">
 				<Block
 					{...props}
+					ref={chatRef}
 					key={J.Constant.blockId.chat}
 					rootId={rootId}
 					iconSize={20}
@@ -138,7 +152,12 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		content = <Deleted {...props} />;
 	} else {
 		content = (
-			<div ref={nodeRef}>
+			<div 
+				ref={nodeRef}
+				onDragOver={onDragOver} 
+				onDragLeave={onDragLeave} 
+				onDrop={onDrop}
+			>
 				<Header 
 					{...props} 
 					component="mainChat" 
