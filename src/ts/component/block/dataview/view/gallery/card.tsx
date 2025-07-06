@@ -5,6 +5,7 @@ import { Cell, DropTarget, SelectionTarget, ObjectCover, Icon } from 'Component'
 import { I, S, U, Relation, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
+	rowIndex: number;
 	style?: any;
 };
 
@@ -13,6 +14,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	_isMounted = false;
 	isEditing = false;
 	node: any = null;
+	rowIndex: number = this.props.rowIndex;
 
 	constructor (props: Props) {
 		super(props);
