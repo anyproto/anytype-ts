@@ -123,7 +123,6 @@ class UtilSmile {
 	 */
 	getCode (icon: string) {
 		icon = icon.trim();
-		icon = icon.replace(/^[\uFE00-\uFE0F]+/g, '');
 
 		if (!icon) {
 			return '';
@@ -132,6 +131,8 @@ class UtilSmile {
 		if (this.cache[icon]) {
 			return this.cache[icon];
 		};
+
+		icon = icon.replace(/^[\uFE00-\uFE0F]+/g, '');
 
 		const cp = [];
 		for (let i = 0; i < icon.length; ++i) {
