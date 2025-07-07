@@ -22,11 +22,25 @@
 		.descr {
 			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
 		}
+
+		.icon.syncStatus { display: none; position: absolute; left: 50%; top: 50%; }
+
+		&.isSyncing {
+			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear; }
+		}
+		&.isError {
+			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/error.svg'); }
+		}
 	}
 
 	.attachment.isFile {
+		.iconWrapper { width: 48px; height: 48px; position: relative; }
 		.iconObject { background-color: unset; }
 		.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
+
+		.iconWrapper {
+			.icon.syncStatus { width: 28px; height: 28px; background-size: 28px; margin: -14px 0px 0px -14px; }
+		}
 	}
 
 	.attachment.isBookmark { min-width: unset; height: unset; max-width: 360px; }
@@ -70,13 +84,20 @@
 
 	.attachment.isImage { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isImage {
-		.image, .loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
+		.imgWrapper { position: relative; }
+
+		.image,
+		.loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
+
+		.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
 	}
 
 	.attachment.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isVideo {
 		.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
 		video { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+		.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
 	}
 
 	.attachment.isAudio { min-width: 360px; }

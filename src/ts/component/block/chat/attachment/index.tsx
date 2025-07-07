@@ -140,7 +140,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		return (
 			<div className="clickable" onClick={this.onOpen}>
-				<IconObject object={object} size={48} iconSize={iconSize} />
+				<div className="iconWrapper">
+					<IconObject object={object} size={48} iconSize={iconSize} />
+					<Icon className="syncStatus" />
+				</div>
 
 				<div className="info">
 					<ObjectName object={object} />
@@ -199,15 +202,18 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 
 		return (
-			<img 
-				id="image" 
-				className="image" 
-				src={this.src}
-				onClick={this.onPreview}
-				onLoad={scrollToBottom}
-				onDragStart={e => e.preventDefault()} 
-				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
-			/>
+			<div className="imgWrapper" onClick={this.onPreview}>
+				<img
+					id="image"
+					className="image"
+					src={this.src}
+					onLoad={scrollToBottom}
+					onDragStart={e => e.preventDefault()}
+					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
+				/>
+
+				<Icon className="syncStatus" />
+			</div>
 		);
 	};
 

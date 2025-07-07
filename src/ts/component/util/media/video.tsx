@@ -85,6 +85,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 			<video ref={videoRef} className="media" controls={false} preload="auto" src={src} />
 
 			<div className="controls">
+				<Icon className="syncStatus" />
 				<Icon className="play" onClick={onPlayClick} />
 			</div>
 		</div>
