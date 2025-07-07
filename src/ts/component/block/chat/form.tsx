@@ -966,7 +966,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.getTextValue();
 		const attachments = (this.state.attachments || []).filter(it => it.id != id);
 
-		if (this.editingId && !attachments.length) {
+		if (this.editingId && !value && !attachments.length) {
 			this.onDelete(this.editingId);
 		} else {
 			this.setState({ attachments });
