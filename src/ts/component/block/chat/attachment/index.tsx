@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
-import { I, U, S, J, Action, analytics, keyboard } from 'Lib';
+import { I, U, S, J, Action, analytics, keyboard, translate } from 'Lib';
 
 interface Props {
 	object: any;
@@ -27,12 +27,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		this.onOpenBookmark = this.onOpenBookmark.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSyncStatusClick = this.onSyncStatusClick.bind(this);
 		this.getPreviewItem = this.getPreviewItem.bind(this);
 	};
 
 	render () {
 		const { object, showAsFile, bookmarkAsDefault } = this.props;
-		const { syncStatus, syncError } = object;
+		const { syncStatus } = object;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 
@@ -142,7 +143,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<div className="clickable" onClick={this.onOpen}>
 				<div className="iconWrapper">
 					<IconObject object={object} size={48} iconSize={iconSize} />
-					<Icon className="syncStatus" />
+					<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
 				</div>
 
 				<div className="info">
@@ -212,7 +213,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 				/>
 
-				<Icon className="syncStatus" />
+				<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
 			</div>
 		);
 	};
@@ -225,7 +226,8 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<MediaVideo 
 				src={src} 
 				onClick={this.onPreview}
-				canPlay={false} 
+				canPlay={false}
+				onSyncStatusClick={this.onSyncStatusClick}
 			/>
 		);
 	};
@@ -313,6 +315,45 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		e.stopPropagation();
 		onRemove(object.id);
+	};
+
+	onSyncStatusClick (e: any) {
+		const { object } = this.props;
+		const { syncError } = object;
+
+		if (syncError == I.SyncStatusError.None) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		let textConfirm = '';
+		let colorConfirm = '';
+
+		if (syncError == I.SyncStatusError.IncompatibleVersion) {
+			textConfirm = translate('popupConfirmButtonUpdateApp');
+			colorConfirm = 'black';
+		} else {
+			textConfirm = translate('popupConfirmButtonGotIt');
+			colorConfirm = 'blank';
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'warning',
+				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
+				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
+				textConfirm,
+				colorConfirm,
+				canCancel: false,
+				onConfirm: () => {
+					if (syncError == I.SyncStatusError.IncompatibleVersion) {
+						//
+					};
+				}
+			}
+		});
 	};
 
 	getPreviewItem () {
