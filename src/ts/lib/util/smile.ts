@@ -123,6 +123,7 @@ class UtilSmile {
 	 */
 	getCode (icon: string) {
 		icon = icon.trim();
+		icon = icon.replace(/^[\uFE00-\uFE0F]+/g, '');
 
 		if (!icon) {
 			return '';
