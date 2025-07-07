@@ -144,6 +144,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	// Subscribe to changes to child nodes for a given node Id and its links
 	const subscribeToChildNodes = (nodeId: string, links: string[]): void => {
+		links = filterDeletedLinks(links);
+
 		if (!links.length) {
 			return;
 		};
