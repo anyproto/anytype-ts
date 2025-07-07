@@ -1186,14 +1186,17 @@ class Dispatcher {
 
 		const records = S.Record.getRecordIds(sid, '');
 
-		let newIndex = afterId ? records.indexOf(afterId) : 0;
+		let newIndex = records.indexOf(afterId);
 		let oldIndex = records.indexOf(id);
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
 		};
 
-		if ((oldIndex >= 0) && (newIndex < oldIndex)) {
+		if (!afterId) {
+			newIndex = 0;
+		} else
+		if ((newIndex >= 0) && (newIndex < oldIndex)) {
 			newIndex++;
 		};
 
