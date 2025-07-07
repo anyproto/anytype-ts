@@ -349,7 +349,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				canCancel: false,
 				onConfirm: () => {
 					if (syncError == I.SyncStatusError.IncompatibleVersion) {
-						//
+						// open another popup? start download immediately?
+					};
+					if (syncError == I.SyncStatusError.Oversized) {
+						// delete? 
 					};
 				}
 			}
