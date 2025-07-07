@@ -1193,7 +1193,7 @@ class Dispatcher {
 			return;
 		};
 
-		if (newIndex && (newIndex < oldIndex)) {
+		if ((oldIndex >= 0) && (newIndex < oldIndex)) {
 			newIndex++;
 		};
 
