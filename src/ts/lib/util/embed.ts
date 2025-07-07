@@ -469,7 +469,6 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
-			I.EmbedProcessor.Drawio,
 		].includes(p);
 	};
 
