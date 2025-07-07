@@ -26,8 +26,6 @@ export default {
 		'createdDate',
 		'timestamp',
 		'resolvedLayout',
-		'syncStatus',
-		'syncError',
 	],
 
 	sidebar: [
