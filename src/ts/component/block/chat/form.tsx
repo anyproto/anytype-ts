@@ -963,9 +963,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onAttachmentRemove (id: string) {
-		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+		const value = this.getTextValue();
+		const attachments = (this.state.attachments || []).filter(it => it.id != id);
 
-		analytics.event('DetachItemChat');
+		if (this.editingId && !attachments.length) {
+			this.onDelete(this.editingId);
+		} else {
+			this.setState({ attachments });
+			analytics.event('DetachItemChat');
+		};
 	};
 
 	onNavigationClick (type: I.ChatReadType) {
