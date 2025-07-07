@@ -339,6 +339,7 @@ class MenuObject extends React.Component<I.Menu> {
 					onSelect: () => close(),
 					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
+					canAdd: true,
 				});
 				break;
 			};
