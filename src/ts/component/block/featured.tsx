@@ -62,6 +62,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 							const value = object[relation.relationKey];
 							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
+							const passParam: any = {};
+
+							if (relation.relationKey == 'type') {
+								passParam.onCellClick = this.onType;
+							};
 
 							return (
 								<span id={id} key={relation.id}>
@@ -72,7 +77,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										readonly={!canEdit}
 										isSelectionDisabled={true}
 										isContextMenuDisabled={true}
-										passParam={{ onCellClick: this.onType }}
+										passParam={passParam}
 									/>
 								</span>
 							);
