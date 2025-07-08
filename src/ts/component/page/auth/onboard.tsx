@@ -240,13 +240,15 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		};
 
 		case Stage.Name: {
+			const profile = U.Space.getProfile();
+
 			content = (
 				<div className="inputWrapper animation">
 					<Input
 						key="name"
 						ref={nameRef}
 						focusOnMount={true}
-						placeholder={translate('authOnboardNamePlaceholder')}
+						placeholder={profile?.name || translate('authOnboardNamePlaceholder')}
 						maxLength={255}
 					/>
 				</div>
