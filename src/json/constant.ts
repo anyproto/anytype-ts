@@ -43,6 +43,7 @@ export default {
 			description:				 200,
 			nameThreshold:				 10,
 			descriptionThreshold:		 50,
+			pin:						 6, 
 		},
 
 		chat: {

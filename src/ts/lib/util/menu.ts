@@ -790,9 +790,12 @@ class UtilMenu {
 		let key = '';
 
 		const cb = () => {
+			const pinned = this.getVaultItems().filter(it => it.isPinned);
+
 			if (space.spaceOrder) {
 				options.push({ id: 'unpin', name: translate('commonUnpin') });
-			} else {
+			} else 
+			if (pinned.length < J.Constant.limit.space.pin) {
 				options.push({ id: 'pin', name: translate('commonPin') });
 			};
 
