@@ -975,15 +975,7 @@ class UtilMenu {
 			return 0;
 		});
 
-		console.log(JSON.stringify(items.map(it => 
-			`
-			${it.name} 
-			isPinned: ${it.isPinned} 
-			sortOrder: ${it.spaceOrder} 
-			lastMessageDate: ${it.lastMessageDate ? U.Date.date('d.m.Y H:i:s', it.lastMessageDate) : ''} 
-			createdDate: ${it.createdDate ? U.Date.date('d.m.Y H:i:s', it.createdDate) : ''}
-			`
-		), null, 2));
+		console.log(JSON.stringify(items.map(it => `${it.name} isPinned: ${it.isPinned} sortOrder: ${it.spaceOrder} lastMessageDate: ${it.lastMessageDate ? U.Date.date('d.m.Y H:i:s', it.lastMessageDate) : ''} createdDate: ${it.createdDate ? U.Date.date('d.m.Y H:i:s', it.createdDate) : ''}`), null, 2));
 
 		return items;
 	};
