@@ -152,7 +152,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderBookmark () {
 		const { object } = this.props;
 		const { picture, source } = object;
-		const cn = [ 'inner', 'isVertical' ];
+		const cn = [ 'inner' ];
 
 		if (picture) {
 			cn.push('withImage');
