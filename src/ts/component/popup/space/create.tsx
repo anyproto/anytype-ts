@@ -97,10 +97,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					return;
 				};
 
-				const ids = [ message.objectId ].concat(U.Menu.getVaultItems().map(it => it.id));
-
-				Storage.set('spaceOrder', ids);
-
 				U.Router.switchSpace(message.objectId, '', true, { 
 					onRouteChange: () => {
 						U.Space.initSpaceState();

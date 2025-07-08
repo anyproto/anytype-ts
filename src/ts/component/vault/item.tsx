@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon } from 'Component';
-import { J, S, I } from 'Lib';
+import { J, S } from 'Lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -34,7 +34,6 @@ const VaultItem: FC<Props> = observer(({
 
 	let icon = null;
 	let cnt = null;
-	let disabled = false;
 
 	if (!item.isButton) {
 		icon = <IconObject object={item} size={36} iconSize={36} param={{ userIcon: J.Theme[theme].textInversion }} />;
@@ -53,11 +52,7 @@ const VaultItem: FC<Props> = observer(({
 		};
 	};
 
-	if (cnt) {
-		disabled = true;
-	};
-
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled });
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !item.isPinned });
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,

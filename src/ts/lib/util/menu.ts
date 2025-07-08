@@ -790,6 +790,12 @@ class UtilMenu {
 		let key = '';
 
 		const cb = () => {
+			if (space.spaceOrder) {
+				options.push({ id: 'unpin', name: translate('commonUnpin') });
+			} else {
+				options.push({ id: 'pin', name: translate('commonPin') });
+			};
+
 			if (isOwner && space.isShared && !isLocalNetwork && isOnline && cid && key) {
 				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 			};
@@ -862,6 +868,19 @@ class UtilMenu {
 									analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
 									break;
 								};
+
+								case 'pin': {
+									const ids = [ space.id ].concat(this.getVaultItems().filter(it => !it.isButton).map(it => it.id));
+
+									C.SpaceSetOrder(space.id, ids);
+									break;
+								};
+
+								case 'unpin': {
+									C.SpaceUnsetOrder(space.id);
+									break;
+								};
+
 							};
 
 						}, S.Menu.getTimeout());
@@ -925,32 +944,38 @@ class UtilMenu {
 			return [];
 		};
 
-		const ids = Storage.get('spaceOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList()).
 			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
 			map(it => {
 				it.counter = 0;
+				it.lastMessageDate = 0;
+
 				if (!it.isButton) {
 					const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+
 					it.counter = counters.mentionCounter || counters.messageCounter;
+					it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
+					it.isPinned = !!it.spaceOrder;
 				};
 				return it;
 			});
 
-		if (ids && (ids.length > 0)) {
-			items.sort((c1, c2) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
+		items.sort((c1, c2) => {
+			if (c1.isPinned && !c2.isPinned) return -1;
+			if (!c1.isPinned && c2.isPinned) return 1;
 
-				if (c1.counter && !c2.counter) return -1;
-				if (!c1.counter && c2.counter) return 1;
-				if (c1.lastMessageDate > c2.lastMessageDate) return -1;
-				if (c1.lastMessageDate < c2.lastMessageDate) return 1;
-				if (i1 > i2) return 1;
-				if (i1 < i2) return -1;
-				return 0;
-			});
-		};
+			if (c1.spaceOrder > c2.spaceOrder) return 1;
+			if (c1.spaceOrder < c2.spaceOrder) return -1;
+
+			if (c1.lastMessageDate > c2.lastMessageDate) return -1;
+			if (c1.lastMessageDate < c2.lastMessageDate) return 1;
+
+			if (c1.creationDate > c2.creationDate) return -1;
+			if (c1.creationDate < c2.creationDate) return 1;
+			return 0;
+		});
+
+		console.log(JSON.stringify(items.map(it => `${it.name} isPinned: ${it.isPinned} sortOrder: ${it.spaceOrder} lastMessageDate: ${it.lastMessageDate ? U.Date.date('d.m.Y H:i:s', it.lastMessageDate) : ''} createdDate: ${it.createdDate ? U.Date.date('d.m.Y H:i:s', it.createdDate) : ''}`), null, 2));
 
 		return items;
 	};

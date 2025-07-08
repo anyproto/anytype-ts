@@ -65,7 +65,7 @@ class Server {
 					
 					if (chunk.length > 8000) {
 						// in case we've got a crash lets change the max buffer to collect the whole stack trace
-						maxStdErrChunksBuffer = 1024; // 1024x8192 = 8 Mb max
+						maxStdErrChunksBuffer = 2048; // 2048x8192 = 16 Mb max
 					};
 					
 					if (!this.lastErrors) {
