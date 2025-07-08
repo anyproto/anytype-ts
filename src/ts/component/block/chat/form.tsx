@@ -905,11 +905,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onReply (message: I.ChatMessage) {
+		const { readonly } = this.props;
+		if (readonly) {
+			return;
+		};
+
 		const text = this.getTextValue();
 		const length = text.length;
 
 		this.range = { from: length, to: length };
-		this.refEditable.setRange(this.range);
+		this.refEditable?.setRange(this.range);
 		this.setState({ replyingId: message.id });
 
 		analytics.event('ClickMessageMenuReply');
