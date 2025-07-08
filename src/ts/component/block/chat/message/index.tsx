@@ -163,6 +163,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				id={`item-${id}`}
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
+				onDoubleClick={onReplyEdit}
 			>
 				{isNew ? (
 					<div className="newMessages">
