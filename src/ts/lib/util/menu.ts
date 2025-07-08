@@ -961,6 +961,9 @@ class UtilMenu {
 			});
 
 		items.sort((c1, c2) => {
+			if (c1.isButton && !c2.isButton) return 1;
+			if (!c1.isButton && c2.isButton) return -1;
+
 			if (c1.isPinned && !c2.isPinned) return -1;
 			if (!c1.isPinned && c2.isPinned) return 1;
 
@@ -974,8 +977,6 @@ class UtilMenu {
 			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
-		console.log(JSON.stringify(items.map(it => `${it.name} isPinned: ${it.isPinned} sortOrder: ${it.spaceOrder} lastMessageDate: ${it.lastMessageDate ? U.Date.date('d.m.Y H:i:s', it.lastMessageDate) : ''} createdDate: ${it.createdDate ? U.Date.date('d.m.Y H:i:s', it.createdDate) : ''}`), null, 2));
 
 		return items;
 	};

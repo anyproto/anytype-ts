@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S, C, Key, keyboard, translate, analytics, Preview, sidebar, Action } from 'Lib';
+import { I, U, S, C, J, Key, keyboard, translate, analytics, Preview, sidebar, Action } from 'Lib';
 import VaultItem from './item';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
@@ -272,11 +272,13 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			return;
 		};
 
-		const ids = U.Menu.getVaultItems().filter(it => !it.isButton && it.isPinned).map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
+		const oldIndex = items.findIndex(it => it.id == active.id);
+		const newIndex = items.findIndex(it => it.id == over.id);
+		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		C.SpaceSetOrder(active.id, arrayMove(ids, oldIndex, newIndex));
+		C.SpaceSetOrder(active.id, newItems.filter(it => it.isPinned).map(it => it.id));
+
 		analytics.event('ReorderSpace');
 	};
 
