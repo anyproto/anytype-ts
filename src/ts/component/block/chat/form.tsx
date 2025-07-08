@@ -355,7 +355,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onKeyDownInput (e: any) {
-		const { checkMarkOnBackspace } = this.props;
+		const { account } = S.Auth;
+		const { checkMarkOnBackspace, getMessages } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
 
@@ -364,6 +365,20 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
 			e.preventDefault();
 			this.onSend();
+		});
+
+		keyboard.shortcut('arrowup', e, () => {
+			if (this.range.to) {
+				return;
+			};
+
+			e.preventDefault();
+
+			const list = getMessages().filter(it => it.creator == account.id);
+
+			if (list.length) {
+				this.onEdit(list[list.length - 1]);
+			};
 		});
 
 		keyboard.shortcut('backspace', e, () => {
