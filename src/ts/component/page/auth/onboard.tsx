@@ -219,6 +219,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					isHidden={!phraseVisible}
 					onCopy={onCopy}
 					onClick={onCopy}
+					tooltipCopy={translate('pageAuthOnboardCopyKey')}
 				/>
 			);
 

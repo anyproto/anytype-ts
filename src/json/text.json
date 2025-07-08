@@ -530,8 +530,7 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
-	"pageAuthOnboardPersonalSpace": "Entry Space",
-	"pageAuthOnboardMoreInfo": "More info",
+	"pageAuthOnboardCopyKey": "Copy Key",
 
 	"pageAuthSetupImportTitle": "We couldn’t recover your vault.",
 	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",

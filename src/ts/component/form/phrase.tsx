@@ -11,6 +11,7 @@ interface Props {
 	isHidden?: boolean;
 	checkPin?: boolean;
 	placeholder?: string;
+	tooltipCopy?: string;
 	onKeyDown?: (e: React.KeyboardEvent) => void;
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
@@ -32,6 +33,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	isHidden: initialHidden = false,
 	checkPin = false,
 	placeholder = '',
+	tooltipCopy = translate('commonShowKey'),
 	onKeyDown,
 	onToggle,
 	onCopy,
@@ -264,7 +266,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 
 			{placeholder ? <div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div> : ''}
 			<Icon className="show withBackground" tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
-			<Icon className="copy withBackground" tooltipParam={{ text: translate('commonShowKey') }} onClick={onCopy} />
+			<Icon className="copy withBackground" tooltipParam={{ text: tooltipCopy }} onClick={onCopy} />
 		</div>
 	);
 

@@ -72,8 +72,7 @@ html.bodyIndex, html.bodyAuth {
 
 
 	.tooltip:not(.menuNote) {
-		min-width: 224px; padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
-		white-space: normal;
+		padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
 	}
 	.tooltip:not(.menuNote) {
 		.txt { line-height: 22px; }
