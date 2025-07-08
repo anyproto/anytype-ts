@@ -163,6 +163,7 @@ export default {
 		'chatId',
 		'spaceUxType',
 		'spacePushNotificationMode',
+		'spaceOrder',
 	],
 
 	participant: [

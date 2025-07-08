@@ -34,7 +34,7 @@ const VaultItem: FC<Props> = observer(({
 
 	let icon = null;
 	let cnt = null;
-	let disabled = false;
+	let disabled = !item.isPinned;
 
 	if (!item.isButton) {
 		icon = <IconObject object={item} size={36} iconSize={36} param={{ userIcon: J.Theme[theme].textInversion }} />;
