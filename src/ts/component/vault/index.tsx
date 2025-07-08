@@ -23,8 +23,9 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
-	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const pinned = items.filter(it => it.isPinned);
+	const unpinned = items.filter(it => !it.isPinned);
 	const profile = U.Space.getProfile();
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
 	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
@@ -353,10 +354,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				>
 						<div id="scroll" className="side top" onScroll={onScroll}>
 							<SortableContext
-								items={items.map(item => item.id)}
+								items={pinned.map(item => item.id)}
 								strategy={verticalListSortingStrategy}
 							>
-								{items.map((item, i) => (
+								{pinned.map((item, i) => (
 									<VaultItem 
 										key={`item-space-${item.id}`}
 										item={item}
@@ -367,6 +368,19 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 									/>
 								))}
 							</SortableContext>
+
+							{pinned.length && unpinned.length ? <div className="div" /> : ''}
+
+							{unpinned.map((item, i) => (
+								<VaultItem 
+									key={`item-space-${item.id}`}
+									item={item}
+									onClick={e => onClick(e, item)}
+									onMouseEnter={e => onMouseEnter(e, item)}
+									onMouseLeave={() => Preview.tooltipHide()}
+									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+								/>
+							))}
 						</div>
 				</DndContext>
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
