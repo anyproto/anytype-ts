@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
-import { I, U, S, J, Action, analytics, keyboard, translate } from 'Lib';
+import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
 
 interface Props {
 	object: any;
@@ -349,10 +349,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				canCancel: false,
 				onConfirm: () => {
 					if (syncError == I.SyncStatusError.IncompatibleVersion) {
-						// open another popup? start download immediately?
+						window.setTimeout(() => {
+							Renderer.send('updateCheck');
+						}, J.Constant.delay.popup);
 					};
 					if (syncError == I.SyncStatusError.Oversized) {
-						// delete? 
+						// delete?
 					};
 				}
 			}
