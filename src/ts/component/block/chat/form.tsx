@@ -44,6 +44,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
+	timeoutDrag = 0;
 	editingId: string = '';
 	speedLimit = { last: 0, counter: 0 };
 	state = {
@@ -100,7 +101,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		if (this.editingId) {
 			title = translate('blockChatEditing');
-			onClear = this.onEditClear;
+			onClear = () => this.onEditClear();
 		} else
 		if (replyingId) {
 			const message = S.Chat.getMessage(subId, replyingId);
@@ -231,13 +232,24 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					ref={ref => this.node = ref}
 					id="formWrapper" 
 					className="formWrapper"
+					onDragOver={this.onDragOver}
+					onDragLeave={this.onDragLeave}
 				>
+					<div className="dragOverlay">
+						<div className="inner">
+							<Icon />
+							<Label text={translate('commonDropFiles')} />
+						</div>
+					</div>
+
 					<div className="navigation">
 						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
 					</div>
 
 					{form}
+
+					<div className="bottom" />
 				</div>
 			</>
 		);
@@ -253,7 +265,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (!readonly && storage) {
 			const text = String(storage.text || '');
 			const marks = storage.marks || [];
-			const attachments = storage.attachments || [];
+			const attachments = (storage.attachments || []).filter(it => !it.isTmp);
 			const length = text.length;
 
 			this.marks = marks;
@@ -343,15 +355,31 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onKeyDownInput (e: any) {
-		const { checkMarkOnBackspace } = this.props;
+		const { account } = S.Auth;
+		const { checkMarkOnBackspace, getMessages } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
+		const { attachments } = this.state;
 
 		let value = this.refEditable.getTextValue();
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
 			e.preventDefault();
 			this.onSend();
+		});
+
+		keyboard.shortcut('arrowup', e, () => {
+			if (!value && !this.range.to && !attachments.length && !this.editingId) {
+				return;
+			};
+
+			e.preventDefault();
+
+			const list = getMessages().filter(it => it.creator == account.id);
+
+			if (list.length) {
+				this.onEdit(list[list.length - 1]);
+			};
 		});
 
 		keyboard.shortcut('backspace', e, () => {
@@ -569,6 +597,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		window.clearTimeout(this.timeoutDrag);
 		$(this.node).addClass('isDraggingOver');
 	};
 	
@@ -576,12 +605,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		$(this.node).removeClass('isDraggingOver');
+		window.clearTimeout(this.timeoutDrag);
+		this.timeoutDrag = window.setTimeout(() => {
+			if (this._isMounted) {
+				$(this.node).removeClass('isDraggingOver');
+			};
+		}, 100);
 	};
 	
 	onDrop (e: any) {
 		if (!this.canDrop(e)) {
-			$(this.node).removeClass('isDraggingOver');
+			this.onDragLeave(e);
 			return;
 		};
 
@@ -945,9 +979,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onAttachmentRemove (id: string) {
-		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+		const value = this.getTextValue();
+		const attachments = (this.state.attachments || []).filter(it => it.id != id);
 
-		analytics.event('DetachItemChat');
+		if (this.editingId && !value && !attachments.length) {
+			this.onDelete(this.editingId);
+		} else {
+			this.setState({ attachments });
+			analytics.event('DetachItemChat');
+		};
 	};
 
 	onNavigationClick (type: I.ChatReadType) {

@@ -13,6 +13,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onImageSelect = this.onImageSelect.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -38,6 +39,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 						size={24} 
 						canEdit={!readonly}
 						onIconSelect={this.onIconSelect}
+						onUpload={this.onImageSelect}
 						menuParam={{
 							horizontal: I.MenuDirection.Center,
 							className: 'fixed',
@@ -113,9 +115,13 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onIconSelect (id: string, color: number) {
-		this.props.onChange({ iconName: id, iconOption: color });
+		this.props.onChange({ iconName: id, iconOption: color, iconImage: '' });
 
 		analytics.stackAdd('SetIcon', { objectType: J.Constant.typeKey.type, color });
+	};
+
+	onImageSelect (id: string) {
+		this.props.onChange({ iconName: '', iconOption: 0, iconImage: id });
 	};
 
 	onChange () {

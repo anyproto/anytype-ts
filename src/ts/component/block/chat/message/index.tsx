@@ -81,7 +81,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		if (isNew && !isSelf) {
 			cn.push('isNew');
 		};
-		if (content.text) {
+		if (text) {
 			cn.push('withText');
 		};
 		if (this.isExpanded) {
@@ -163,6 +163,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				id={`item-${id}`}
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
+				onDoubleClick={onReplyEdit}
 			>
 				{isNew ? (
 					<div className="newMessages">

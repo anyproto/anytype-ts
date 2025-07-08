@@ -69,19 +69,17 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isChat = targetId == J.Constant.widgetId.chat;
 
 	let cnt = 0;
-	let showCnt = false;
+	let leftCnt = false;
 	let layout = block.content.layout;
+	let counters = { messageCounter: 0, mentionCounter: 0 };
 
 	if (isFavorite) {
 		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
-		showCnt = cnt > limit;
+		leftCnt = cnt > limit;
 	};
 
 	if (isChat) {
-		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
-
-		cnt = counters.messageCounter;
-		showCnt = !!cnt;
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
 
 	if (object) {
@@ -193,20 +191,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const cb = object => {
+		const cb = newObject => {
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, route);
+				Action.setIsFavorite([ newObject.id ], true, route);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ object.id ]);
+				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openConfig(object);
-			analytics.createObject(object.type, object.layout, route, 0);
+			U.Object.openConfig(newObject);
+			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
-				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
+				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
 					if (!message.error.code) {
 						analytics.event('CreateLink');
 					};
@@ -680,10 +678,19 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							{collapse}
 							{icon}
 							<ObjectName object={object} withPlural={true} />
-							{showCnt ? <span className="count">{cnt}</span> : ''}
+							{leftCnt ? <span className="count">{cnt}</span> : ''}
 						</div>
 					</div>
-					<div className="side right">{buttons}</div>
+					<div className="side right">
+						{counters.messageCounter || counters.mentionCounter ? (
+							<div className="counters">
+								{counters.mentionCounter ? <Icon className="count mention" /> : ''}
+								{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
+							</div>
+						) : ''}
+
+						{buttons}
+					</div>
 				</div>
 			</div>
 		);

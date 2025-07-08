@@ -666,6 +666,7 @@ export const Mapper = {
 				messages: Mapper.From.ChatStateUnreadMessages(obj.getMessages()),
 				mentions: Mapper.From.ChatStateUnreadMessages(obj.getMentions()),
 				lastStateId: obj.getLaststateid(),
+				order: obj.getOrder(),
 			};
 		},
 

@@ -59,19 +59,27 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{headerRelationsLayout == I.FeaturedRelationLayout.Column ? (
 					<div className="listColumn">
 						{items.map((relation: any) => {
+							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 							const value = object[relation.relationKey];
 							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
+							const passParam: any = {};
+
+							if (relation.relationKey == 'type') {
+								passParam.onCellClick = this.onType;
+							};
 
 							return (
-								<Block
-									{...this.props}
-									key={relation.id}
-									rootId={rootId}
-									block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
-									readonly={!canEdit}
-									isSelectionDisabled={true}
-									isContextMenuDisabled={true}
-								/>
+								<span id={id} key={relation.id}>
+									<Block
+										{...this.props}
+										rootId={rootId}
+										block={new M.Block({ id: relation.id, type: I.BlockType.Relation, content: { key: relation.relationKey } })}
+										readonly={!canEdit}
+										isSelectionDisabled={true}
+										isContextMenuDisabled={true}
+										passParam={passParam}
+									/>
+								</span>
 							);
 						})}
 					</div>
@@ -179,6 +187,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId } = this.props;
 		const object = this.getObject();
 		const type = S.Detail.get(rootId, object.type, []);
+		const id = Relation.cellId(PREFIX, 'type', object.id);
 		const name = (
 			<div className="name">
 				<ObjectType object={type} />
@@ -188,16 +197,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let ret = null;
 		if (U.Object.isTemplateType(object.type)) {
 			ret = (
-				<span className="cell" key="type">
+				<span id={id} className="cell" key="type">
 					<div className="cellContent type disabled">{name}</div>
 					<div className="bullet" />
 				</span>
 			);
 		} else {
 			ret = (
-				<span className="cell canEdit" key="type">
+				<span id={id} className="cell canEdit" key="type">
 					<div
-						id={Relation.cellId(PREFIX, 'type', object.id)}
+						id={id}
 						className="cellContent type"
 						onClick={this.onType}
 						onMouseEnter={e => this.onMouseEnter(e, 'type')}
@@ -424,6 +433,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const typeIsDeleted = type._empty_ || type.isDeleted || type.isArchived;
 		const options: any[] = [];
+		const check = U.Data.checkDetails(rootId, rootId, []);
+		const { headerRelationsLayout } = check;
 
 		if (!typeIsDeleted) {
 			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
@@ -439,8 +450,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 
+		const element = [ `#block-${block.id}`, `#${Relation.cellId(PREFIX, 'type', rootId)}` ];
+
+		if (headerRelationsLayout == I.FeaturedRelationLayout.Column) {
+			element.push('.cell');
+		};
+
 		S.Menu.open('select', {
-			element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
+			element: element.join(' '),
 			offsetY: 4,
 			subIds: J.Menu.featuredType,
 			onOpen: context => this.menuContext = context,

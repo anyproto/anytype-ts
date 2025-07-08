@@ -22,6 +22,7 @@ export interface ChatState {
 	messages: ChatStateCounter;
 	mentions: ChatStateCounter;
 	lastStateId: string;
+	order: number;
 };
 
 export enum ChatReadType {

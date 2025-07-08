@@ -132,6 +132,8 @@ class UtilSmile {
 			return this.cache[icon];
 		};
 
+		icon = icon.replace(/^[\uFE00-\uFE0F]+/g, '');
+
 		const cp = [];
 		for (let i = 0; i < icon.length; ++i) {
 			cp.push(icon.charCodeAt(i));

@@ -1226,8 +1226,6 @@ class UtilMenu {
 		details = details || {};
 		flags = flags || {};
 
-		let menuContext = null;
-
 		const objectFlags: I.ObjectFlag[] = [];
 
 		if (flags.selectTemplate) {
@@ -1367,6 +1365,8 @@ class UtilMenu {
 		].filter(it => it);
 
 		const check = async () => {
+			let menuContext = null;
+
 			const items = await getClipboardData();
 
 			if (items.length) {
@@ -1402,16 +1402,19 @@ class UtilMenu {
 							analytics.event('SelectObjectType', { objectType: object.type });
 							analytics.createObject(object.type, object.layout, route, time);
 
-							menuContext.close();
+							menuContext?.close();
 						};
 
 						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-							menuContext.close(() => {
+							menuContext?.close();
+
+							window.setTimeout(() => {
 								this.onBookmarkMenu({
 									...param,
 									element: `#widget-space-arrow`,
+									data: { details },
 								}, object => cb(object, 0));
-							});
+							}, S.Menu.getTimeout());
 						} else {
 							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
 								if (!message.error.code) {

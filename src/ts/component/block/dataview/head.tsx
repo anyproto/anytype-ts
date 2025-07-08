@@ -25,8 +25,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onIconSelect = this.onIconSelect.bind(this);
-		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onTitle = this.onTitle.bind(this);
 		this.onTitleOver = this.onTitleOver.bind(this);
 		this.onTitleSelect = this.onTitleSelect.bind(this);
@@ -352,14 +350,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		C.ObjectListSetDetails([ targetId ], [ { key, value } ]);
 
 		this.ref?.placeholderCheck();
-	};
-
-	onIconSelect (icon: string) {
-		U.Object.setIcon(this.props.block.getTargetObjectId(), icon, '');
-	};
-
-	onIconUpload (objectId: string) {
-		U.Object.setIcon(this.props.block.getTargetObjectId(), '', objectId);
 	};
 
 	setRange (range: I.TextRange) {

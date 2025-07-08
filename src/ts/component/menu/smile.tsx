@@ -814,6 +814,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 					break;
 				};
 			};
+
 			close();
 		});
 
@@ -843,6 +844,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 				case Tab.Library: {
 					this.onObjectSelect(this.active.id);
+					close();
 					break;
 				};
 			};
@@ -1047,6 +1049,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			case Tab.Library: {
 				this.onObjectSelect(item.id);
+				close();
 				break;
 			};
 		};

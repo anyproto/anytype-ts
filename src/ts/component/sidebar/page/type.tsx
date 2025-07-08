@@ -157,19 +157,24 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onChange (update: any) {
-		const skipFormat = [ 'defaultTypeId' ];
+		const skipFormat = [ 'defaultTypeId', 'iconImage' ];
 
 		for (const relationKey in update) {
 			if (skipFormat.includes(relationKey)) {
 				continue;
 			};
 
-			const relation = S.Record.getRelationByKey(relationKey);
+			switch (relationKey) {
+				case 'headerRelationsLayout': {
+					update[relationKey] = Number(update[relationKey]);
+					break;
+				};
 
-			if (relationKey == 'headerRelationsLayout') {
-				update[relationKey] = Number(update[relationKey]);
-			} else {
-				update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+				default: {
+					const relation = S.Record.getRelationByKey(relationKey);
+					update[relationKey] = Relation.formatValue(relation, update[relationKey], true);
+					break;
+				};
 			};
 		};
 

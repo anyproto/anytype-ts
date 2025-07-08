@@ -107,7 +107,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 				readonly={readonly}
 				index={0}
 				block={header}
-				blockContextParam={{ hAlign: check.layoutAlign }}
+				contextParam={{ hAlign: check.layoutAlign }}
 				onKeyDown={onKeyDown}
 				onKeyUp={onKeyUp}  
 				onMenuAdd={onMenuAdd}
