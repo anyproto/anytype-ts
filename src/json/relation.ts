@@ -160,7 +160,6 @@ export default {
 		'targetSpaceId',
 		'creator',
 		'createdDate',
-		'lastMessageDate',
 		'chatId',
 		'spaceUxType',
 		'spacePushNotificationMode',

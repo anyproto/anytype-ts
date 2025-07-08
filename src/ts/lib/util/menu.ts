@@ -930,27 +930,27 @@ class UtilMenu {
 			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
 			map(it => {
 				it.counter = 0;
+				it.lastMessageDate = 0;
+
 				if (!it.isButton) {
 					const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+
 					it.counter = counters.mentionCounter || counters.messageCounter;
+					it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
 				};
 				return it;
 			});
 
-		if (ids && (ids.length > 0)) {
-			items.sort((c1, c2) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
+		items.sort((c1, c2) => {
+			const i1 = ids.indexOf(c1.id);
+			const i2 = ids.indexOf(c2.id);
 
-				if (c1.counter && !c2.counter) return -1;
-				if (!c1.counter && c2.counter) return 1;
-				if (c1.lastMessageDate > c2.lastMessageDate) return -1;
-				if (c1.lastMessageDate < c2.lastMessageDate) return 1;
-				if (i1 > i2) return 1;
-				if (i1 < i2) return -1;
-				return 0;
-			});
-		};
+			if (c1.lastMessageDate > c2.lastMessageDate) return -1;
+			if (c1.lastMessageDate < c2.lastMessageDate) return 1;
+			if (i1 > i2) return 1;
+			if (i1 < i2) return -1;
+			return 0;
+		});
 
 		return items;
 	};

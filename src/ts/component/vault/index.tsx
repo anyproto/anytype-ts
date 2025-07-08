@@ -26,8 +26,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
 	const profile = U.Space.getProfile();
-	const itemsWithCounter = items.filter(it => !!it.counter);
-	const itemsWithoutCounter = items.filter(it => !it.counter);
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
 	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();
@@ -265,18 +263,20 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onSortEnd = (result: any) => {
+		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
+
 		const { active, over } = result;
+		if (!active || !over || (active.id == over.id)) {
+			return;
+		};
+
 		const ids = U.Menu.getVaultItems().map(it => it.id);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
 
 		Storage.set('spaceOrder', arrayMove(ids, oldIndex, newIndex));
-
-		keyboard.disableSelection(false);
-		keyboard.setDragging(false);
-
 		setDummy(dummy + 1);
-
 		analytics.event('ReorderSpace');
 	};
 
@@ -353,24 +353,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
 						<div id="scroll" className="side top" onScroll={onScroll}>
-							{itemsWithCounter.map((item, i) => (
-								<VaultItem 
-									key={`item-space-${item.id}`}
-									item={item}
-									onClick={e => onClick(e, item)}
-									onMouseEnter={e => onMouseEnter(e, item)}
-									onMouseLeave={() => Preview.tooltipHide()}
-									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
-								/>
-							))}
-
-							{itemsWithCounter.length > 0 ? <div className="div" /> : ''}
-
 							<SortableContext
-								items={itemsWithoutCounter.map(item => item.id)}
+								items={items.map(item => item.id)}
 								strategy={verticalListSortingStrategy}
 							>
-								{itemsWithoutCounter.map((item, i) => (
+								{items.map((item, i) => (
 									<VaultItem 
 										key={`item-space-${item.id}`}
 										item={item}
