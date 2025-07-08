@@ -16,7 +16,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRefCell, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, getCoverObject, onEditModeClick } = this.props;
+		const {
+			rootId, block, groupId, id, getView, onContext, onRefCell, onDragStartCard, getIdPrefix, isInline,
+			getVisibleRelations, getCoverObject, onEditModeClick, canCellEdit
+		} = this.props;
 		const view = getView();
 		const { coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -26,6 +29,8 @@ const Card = observer(class Card extends React.Component<Props> {
 		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout) ];
 		const { done } = record;
 		const cover = getCoverObject(id);
+		const relationName: any = S.Record.getRelationByKey('name') || {};
+		const canEdit = canCellEdit(relationName, record);
 
 		if (coverFit) {
 			cn.push('coverFit');
@@ -92,10 +97,12 @@ const Card = observer(class Card extends React.Component<Props> {
 				onContextMenu={e => onContext(e, record.id, subId)}
 				{...U.Common.dataProps({ id: record.id })}
 			>
-				<Icon
-					className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
-					onClick={e => onEditModeClick(e, record.id)}
-				/>
+				{canEdit ? (
+					<Icon
+						className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
+						onClick={e => onEditModeClick(e, record.id)}
+					/>
+				) : ''}
 
 				{content}
 			</div>

@@ -17,7 +17,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	render () {
 		const {
 			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline, isCollection,
-			onDragRecordStart, onSelectToggle, onEditModeClick,
+			onDragRecordStart, onSelectToggle, onEditModeClick, canCellEdit,
 		} = this.props;
 		const view = getView();
 		const idPrefix = getIdPrefix();
@@ -56,6 +56,7 @@ const Row = observer(class Row extends React.Component<Props> {
 			const isName = relation.relationKey == 'name';
 			const ccn = ['cellWrapper'];
 			const iconSize = relation.relationKey == 'name' ? 20 : 16;
+			const canEdit = canCellEdit(relation, record);
 
 			if (isName) {
 				ccn.push('isName');
@@ -90,7 +91,7 @@ const Row = observer(class Row extends React.Component<Props> {
 						editModeOn={this.isEditing}
 					/>
 
-					{isName ? (
+					{isName && canEdit ? (
 						<Icon
 							className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
 							onClick={e => onEditModeClick(e, recordId)}

@@ -75,7 +75,7 @@
 			}
 
 
-			.cellWrapper.isName { display: flex; gap: 0px 6px; }
+			.cellWrapper.isName { display: flex; gap: 0px 6px; align-items: center; }
 			.cellWrapper.isName {
 				.cellContent { max-width: calc(100% - 16px); flex-shrink: 1; }
 				.cellContent.isEditing { width: 100%; max-width: unset; flex-grow: 1; }
