@@ -191,20 +191,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const cb = object => {
+		const cb = newObject => {
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, route);
+				Action.setIsFavorite([ newObject.id ], true, route);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ object.id ]);
+				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openConfig(object);
-			analytics.createObject(object.type, object.layout, route, 0);
+			U.Object.openConfig(newObject);
+			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
-				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
+				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
 					if (!message.error.code) {
 						analytics.event('CreateLink');
 					};
