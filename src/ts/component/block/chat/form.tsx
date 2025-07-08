@@ -359,6 +359,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { checkMarkOnBackspace, getMessages } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
+		const { attachments } = this.state;
 
 		let value = this.refEditable.getTextValue();
 
@@ -368,7 +369,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 
 		keyboard.shortcut('arrowup', e, () => {
-			if (this.range.to) {
+			if (!value && !this.range.to && !attachments.length && !this.editingId) {
 				return;
 			};
 
