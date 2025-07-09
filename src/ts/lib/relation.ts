@@ -412,7 +412,7 @@ class Relation {
 		let ret = false;
 		switch (relation.format) {
 			default: {
-				ret = value ? true : false;
+				ret = !!value;
 				break;
 			};
 
@@ -422,7 +422,7 @@ class Relation {
 			};
 
 			case I.RelationType.Select: {
-				ret = !!value[0];
+				ret = Array.isArray(value) ? !!value[0] : !!value.length;
 				break;
 			};
 
