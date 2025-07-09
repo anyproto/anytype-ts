@@ -936,12 +936,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
+		if (relationKey == 'name' && (relation.isReadonlyValue || record.isReadonly)) {
+			U.Object.openConfig(record);
+			return;
+		};
+
 		if (!view.isGrid() && Relation.isUrl(relation.format) && !isRecordEditing) {
 			Action.openUrl(Relation.checkUrlScheme(relation.format, record[relationKey]));
 			return;
 		};
 
-		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing() &&  !isRecordEditing) {
+		if ((relationKey == 'name') && ref.isEditing && !ref.isEditing() && !isRecordEditing) {
 			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {

@@ -189,12 +189,11 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId, getRecord, canCellEdit } = this.props;
+		const { onCellClick, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
-		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || !canEdit) {
+		if (!relation) {
 			return;
 		};
 
