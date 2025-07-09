@@ -77,9 +77,11 @@
 	}
 
 	&.withButtons {
-		.head {
-			.counters { display: none; }
-			.buttons { display: flex; }
+		&.active, &:hover {
+			.head {
+				.counters { display: none; }
+				.buttons { display: flex; }
+			}
 		}
 	}
 

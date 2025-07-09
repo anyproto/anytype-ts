@@ -596,7 +596,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let head = null;
 	let content = null;
 	let back = null;
-	let buttons = null;
+	let buttons = [];
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
@@ -618,20 +618,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		isDraggable = false;
 	} else {
-		buttons = (
-			<div className="buttons">
-				{spaceview.isChat && isChat ? '' : (
-					<div className="iconWrap more" onClick={onOptions}>
-						<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
-					</div>
-				)}
-				{canCreate ? (
-					<div className="iconWrap create" onClick={onCreateClick}>
-						<Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} />
-					</div>
-				) : ''}
-			</div>
-		);
+		if (!(spaceview.isChat && isChat)) {
+			buttons.push({ id: 'more', icon: 'options', tooltip: translate('widgetOptions'), onClick: onOptions });
+		};
+
+		if (canCreate) {
+			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
+		};
 
 		collapse = (
 			<div className="iconWrap collapse">
@@ -640,7 +633,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	if (buttons) {
+	if (buttons.length) {
 		cn.push('withButtons');
 	};
 
@@ -693,7 +686,15 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						) : ''}
 
-						{buttons}
+						{buttons.length ? (
+							<div className="buttons">
+								{buttons.map(item => (
+									<div key={item.id} className={[ 'iconWrap', item.id ].join(' ')} onClick={item.onClick}>
+										<Icon className={item.icon} tooltipParam={{ text: item.tooltip }} />
+									</div>
+								))}
+							</div>
+						) : ''}
 					</div>
 				</div>
 			</div>
