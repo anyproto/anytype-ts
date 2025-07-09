@@ -601,6 +601,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let targetBot = null;
 	let isDraggable = canWrite;
 	let collapse = null;
+	let icon = null;
 
 	if (isPreview) {
 		back = (
@@ -639,6 +640,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
+	if (buttons) {
+		cn.push('withButtons');
+	};
+
 	if (hasChild) {
 		const onClickHandler = (e: any) => {
 			e.preventDefault();
@@ -662,7 +667,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
 		};
 
-		let icon = null;
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
