@@ -417,6 +417,8 @@
             .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
             .icon.active { background-color: var(--color-shape-highlight-medium); }
         }
+
+        .emptyState { border-bottom: 1px solid var(--color-shape-secondary); }
     }
 
 	> .pageSettingsApi {
