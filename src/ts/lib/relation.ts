@@ -421,12 +421,16 @@ class Relation {
 				break;
 			};
 
-			case I.RelationType.Select:
+			case I.RelationType.Select: {
+				ret = !!value[0];
+				break;
+			};
+
 			case I.RelationType.File:
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				ret = value.length ? true : false;
+				ret = !!value.length;
 				break;
 			};
 		};
