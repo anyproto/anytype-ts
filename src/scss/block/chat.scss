@@ -13,13 +13,6 @@
 			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
 		}
 
-		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
-		.emptyState {
-			.icon { width: 56px; height: 56px; background: url('~img/icon/chat/emptyState.svg'); }
-			.label { @include text-common; font-weight: 400; color: var(--color-text-secondary); }
-			.button { margin-top: 4px; }
-		}
-
 		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section {

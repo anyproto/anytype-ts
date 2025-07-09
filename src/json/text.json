@@ -218,6 +218,7 @@
 	"commonMute": "Mute",
 	"commonUnmute": "Unmute",
 	"commonDropFiles": "Drag and drop your files here",
+	"commonObjectEmpty": "It's empty here.",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -834,6 +835,8 @@
 	"popupSettingsApiCopyMcp": "Copy MCP Config",
 	"popupSettingsApiMcpConfig": "MCP Config",
 
+	"popupSettingsApiEmpty": "You haven’t created any API keys yet",
+
 	"popupApiCreateTitle": "Create new API key",
 	"popupApiCreateSuccess": "API key successfully created",
 	"popupApiCreatePlaceholder": "Key name",
@@ -870,6 +873,7 @@
 
 	"popupSettingsDataManagementDataPublishTitle": "My Sites",
 	"popupSettingsDataManagementDataPublishDate": "Published date",
+	"popupSettingsDataManagementDataPublishEmpty": "You haven’t published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Describe your space",
@@ -2050,7 +2054,6 @@
 	"sidebarObjectSort": "Sort",
 	"sidebarObjectOrphan": "Only unlinked",
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
-	"sidebarObjectEmpty": "It's empty here.",
 	"sidebarObjectEmptyCreate": "It's empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
 	"sidebarObjectSortCreated": "Date created",

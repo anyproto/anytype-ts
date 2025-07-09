@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Label, Icon, Button } from 'Component';
+import { Label, Icon, Button, EmptyState } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
@@ -105,11 +105,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			>
 				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
 					{!messages.length ? (
-						<div className="emptyState">
-							<Icon />
-							<Label text={translate('blockChatEmpty')} />
-							{space.isChat ? <Button onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} color="blank" className="c28" text={translate('blockChatEmptyShareInviteLink')} /> : ''}
-						</div>
+						<EmptyState
+							text={translate('blockChatEmpty')}
+							buttonText={space.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
+							onButton={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
+						/>
 					) : (
 						<div className="scroll">
 							{sections.map(section => <Section {...section} key={section.createdAt} />)}
