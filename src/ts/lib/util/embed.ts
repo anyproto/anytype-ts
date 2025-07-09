@@ -14,6 +14,7 @@ DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
 DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
+DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com']
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -45,6 +46,26 @@ class UtilEmbed {
 		} catch (e) {};
 		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
 	};
+
+	/**
+	 * Returns the HTML for embedding a Spotify audio.
+	 * @param {string} content - The Spotify URL. https://open.spotify.com/track/6MXXY2eiWkpDCezVCc0cMH?si=ed861531d74b4d1c
+	 * @returns {string} The HTML iframe string.  https://open.spotify.com/embed/track/0mEdbdeRFQwBhN4xfyIeUM?utm_source=generator
+	 */
+	getSpotifyHtml (content: string): string {
+		let url = '';
+
+		try {
+			const a = new URL(content);
+			a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
+			a.searchParams.set('utm_source', 'generator');
+
+			url = a.toString();
+		} catch (e) {}
+		return `<iframe style="border-radius:12px" src="${content}" ${IFRAME_PARAM} width="50%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+	 };
+
+	
 
 	/**
 	 * Returns the HTML for embedding a Vimeo video.
@@ -324,7 +345,7 @@ class UtilEmbed {
 				} catch (e) { /**/ };
 				break;
 			};
-
+			
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
 				if (!a.length) {
@@ -418,7 +439,8 @@ class UtilEmbed {
 		return [ 
 			I.EmbedProcessor.Youtube, 
 			I.EmbedProcessor.Vimeo,
-			I.EmbedProcessor.Bilibili
+			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Spotify
 		].includes(p);
 	};
 
@@ -438,6 +460,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Sketchfab,
 			I.EmbedProcessor.Drawio,
+			I.EmbedProcessor.Spotify,
 			I.EmbedProcessor.Image,
 		].includes(p);
 	};
