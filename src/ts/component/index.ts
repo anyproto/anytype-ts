@@ -44,6 +44,7 @@ import Deleted from './util/deleted';
 import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
+import EmptyState from './util/emptyState';
 
 import Input from './form/input';
 import InputWithFile from './form/inputWithFile';
@@ -154,6 +155,7 @@ export {
 	TabSwitch,
 
 	EmptySearch,
+	EmptyState,
 	Popup,
 	Frame,
 	Cover,

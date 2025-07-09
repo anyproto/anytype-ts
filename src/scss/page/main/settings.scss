@@ -426,12 +426,16 @@
 		.items {
             .row { grid-template-columns: minmax(0, 1fr) 100px 100px 100px 28px; }
 		}
+
+        .emptyState { border-bottom: 1px solid var(--color-shape-secondary); }
 	}
 
     > .pageSettingsDataPublish {
         .items {
             .col.colObject { gap: 0px 8px; }
         }
+
+        .emptyState { border-bottom: 1px solid var(--color-shape-secondary); }
     }
 
     > .pageSettingsSpaceStorageManager { padding-bottom: 0px; }
