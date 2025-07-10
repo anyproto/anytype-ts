@@ -725,7 +725,9 @@
 			]
 		},
 		"win": {
-			"sign": "./electron/hook/sign.js",
+			"signtoolOptions": {
+				"sign": "./electron/hook/sign.js"
+			},
 			"target": "nsis",
 			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
