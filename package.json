@@ -758,8 +758,7 @@
 			},
 			"synopsis": "Anytype – Project Management and Knowledge Organization",
 			"mimeTypes": [],
-			"executableName": "anytype",
-			"startupWMClass": "anytype"
+			"executableName": "anytype"
 		},
 		"rpm": {
 			"fpm": [
