@@ -357,10 +357,10 @@ class CommonStore {
 	imageUrl (id: string, width: number) {
 		width = Number(width) || 0;
 
-		if (!width) {
-			width = I.ImageSize.Large;
-		} else 
-		if (width <= I.ImageSize.Small) {
+		if (width === 0) {
+			width = 10000000;
+		} else
+		if ((width > 0) && (width <= I.ImageSize.Small)) {
 			width = I.ImageSize.Small;
 		} else
 		if ((width > I.ImageSize.Small) && (width <= I.ImageSize.Medium)) {
