@@ -14,8 +14,10 @@ interface Props {
 	textEmpty?: string;
 	filters?: I.Filter[];
 	sorts?: I.Sort[];
+	keys?: string[];
 	rowHeight?: number;
 	sources?: string[];
+	segments?: any[];
 	collectionId?: string;
 	isReadonly?: boolean;
 	ignoreArchived?: boolean;
@@ -74,8 +76,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	textEmpty = '',
 	filters = [],
 	sorts = [],
+	keys = [],
 	rowHeight = 0,
 	sources = [],
+	segments = [],
 	collectionId = '',
 	isReadonly = false,
 	ignoreArchived = true,
@@ -102,6 +106,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
 	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
+
+
+
+	console.log('RECORDS: ', records)
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
@@ -203,6 +211,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		U.Subscription.subscribe({
 			subId,
 			sorts,
+			keys,
 			filters: fl,
 			ignoreArchived,
 			ignoreHidden,
@@ -239,6 +248,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		};
 
 		return ret.filter(it => it.children.length > 0);
+	};
+
+	const getSections = () => {
+
 	};
 
 	const getFilterValue = () => {

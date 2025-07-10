@@ -219,6 +219,8 @@
 	"commonUnmute": "Unmute",
 	"commonDropFiles": "Drag and drop your files here",
 	"commonObjectEmpty": "It's empty here.",
+	"commonSynced": "Synced",
+	"commonNotSynced": "Not synced",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -898,6 +900,7 @@
 	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
+	"popupSettingsSpaceIndexStorageIsFullText": "Some files couldn't be synced because your storage is full. Upgrade your plan or remove files to free up space.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
 	"popupSettingsSpaceIndexImport": "Import to Space",
@@ -1816,7 +1819,6 @@
 	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
-	"menuSyncStatusInfoSelfMessageSynced": "Synced",
 	"menuSyncStatusInfoSelfMessageSyncing": "Syncing...",
 	"menuSyncStatusInfoSelfMessageError": "Error",
 	"menuSyncStatusInfoLocalOnlyTitle": "Local Only",
