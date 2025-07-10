@@ -754,11 +754,12 @@
 				}
 			],
 			"desktop": {
-				"Name": "Anytype",
-				"Categories": "Utility;Office;Calendar;ProjectManagement;",
-				"Keywords": "project management;",
-				"StartupWMClass": "anytype"
-			}
+				"entry": "anytype.desktop"
+			},
+			"synopsis": "Anytype – Project Management and Knowledge Organization",
+			"mimeTypes": [],
+			"executableName": "anytype",
+			"startupWMClass": "anytype"
 		},
 		"rpm": {
 			"fpm": [
