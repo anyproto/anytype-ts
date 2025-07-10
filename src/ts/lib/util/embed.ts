@@ -48,26 +48,6 @@ class UtilEmbed {
 	};
 
 	/**
-	 * Returns the HTML for embedding a Spotify audio.
-	 * @param {string} content - The Spotify URL. https://open.spotify.com/track/6MXXY2eiWkpDCezVCc0cMH?si=ed861531d74b4d1c
-	 * @returns {string} The HTML iframe string.  https://open.spotify.com/embed/track/0mEdbdeRFQwBhN4xfyIeUM?utm_source=generator
-	 */
-	getSpotifyHtml (content: string): string {
-		let url = '';
-
-		try {
-			const a = new URL(content);
-			a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
-			a.searchParams.set('utm_source', 'generator');
-
-			url = a.toString();
-		} catch (e) {}
-		return `<iframe style="border-radius:12px" src="${content}" ${IFRAME_PARAM} width="50%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
-	 };
-
-	
-
-	/**
 	 * Returns the HTML for embedding a Vimeo video.
 	 * @param {string} content - The Vimeo URL.
 	 * @returns {string} The HTML iframe string.
@@ -168,6 +148,22 @@ class UtilEmbed {
 	getDrawioHtml (content: string): string {
 		return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
+
+	/**
+	 * Returns the HTML for embedding a Spotify audio. https://open.spotify.com/album/3VsZ5nZGgyH30IDaCP4GeQ?si=r3n8Z5TSTwOVIiRGXB-BTQ       valid album url : https://open.spotify.com/embed/album/3VsZ5nZGgyH30IDaCP4GeQ?si=r3n8Z5TSTwOVIiRGXB-BTQ&utm_source=generator
+	 * @param {string} content - The Spotify URL. https://open.spotify.com/track/6MXXY2eiWkpDCezVCc0cMH?si=ed861531d74b4d1c
+	 * @returns {string} The HTML iframe string.  https://open.spotify.com/embed/track/0mEdbdeRFQwBhN4xfyIeUM?utm_source=generator
+	 */
+	getSpotifyHtml (content: string): string {
+		// let url = '';
+		console.log(content);
+		if(content.includes("album") || content.includes("playlist")) {
+			// return `<iframe style="border-radius:12px" src="${content}" ${IFRAME_PARAM} width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+			return `<iframe style="border-radius:12px" src="${content}" ${IFRAME_PARAM} width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+		}
+
+		return `<iframe style="border-radius:12px" src="${content}" ${IFRAME_PARAM} width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+	 };
 
 	/**
 	 * Returns the HTML for embedding an image.
@@ -345,6 +341,18 @@ class UtilEmbed {
 				} catch (e) { /**/ };
 				break;
 			};
+
+			case I.EmbedProcessor.Spotify: {
+				try {
+					const a = new URL(url);
+					a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
+					a.searchParams.set('utm_source', 'generator');
+					// console.log(content);
+					// console.log(url);
+					url = a.toString();
+				} catch (e) { /**/ }
+				break;
+			}
 			
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
