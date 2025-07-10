@@ -981,6 +981,10 @@ class Dispatcher {
 					};
 
 					mapped.subIds.forEach(subId => {
+						if (subId == J.Constant.subId.chatSpace) {
+							subId = S.Chat.getSubId(spaceId, rootId);
+						};
+
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
