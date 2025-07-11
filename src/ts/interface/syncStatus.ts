@@ -24,6 +24,7 @@ export enum SyncStatusError {
 	StorageLimitExceed 		 = 1,
 	IncompatibleVersion		 = 2,
 	NetworkError 			 = 3,
+	Oversized 				 = 4,
 };
 
 export interface SyncStatus {

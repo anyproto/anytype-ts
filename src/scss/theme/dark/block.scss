@@ -224,6 +224,17 @@
 			.reactions {
 				.reactionAdd { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
 			}
+
+			.attachments {
+				.attachment {
+					&.isSyncing {
+						.icon.syncStatus { background-image: url('#{$themePath}/icon/chat/syncStatus/syncing.svg'); }
+					}
+					&.isError {
+						.icon.syncStatus { background-image: url('#{$themePath}/icon/chat/syncStatus/error.svg'); }
+					}
+				}
+			}
 		}
 
 		.formWrapper {
