@@ -400,7 +400,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			if (!isSelected1 && isSelected2) return 1;
 
 			return 0;
-		});
+		}).sort(U.Data.sortByName);
 
 		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
