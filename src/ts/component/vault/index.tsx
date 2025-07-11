@@ -278,7 +278,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
 		C.SpaceSetOrder(active.id, newItems.filter(it => it.isPinned).map(it => it.id));
-
 		analytics.event('ReorderSpace');
 	};
 

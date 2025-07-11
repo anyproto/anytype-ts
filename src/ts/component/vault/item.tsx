@@ -23,6 +23,11 @@ const VaultItem: FC<Props> = observer(({
 
 	const cn = [ 'item' ];
 	const theme = S.Common.getThemeClass();
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
 
 	if (item.isLocalLoading) {
 		cn.push('isLoading');
@@ -30,6 +35,10 @@ const VaultItem: FC<Props> = observer(({
 
 	if (item.isMuted) {
 		cn.push('isMuted');
+	};
+
+	if (isDragging) {
+		cn.push('isDragging');
 	};
 
 	let icon = null;
@@ -50,12 +59,6 @@ const VaultItem: FC<Props> = observer(({
 		if (counters.messageCounter) {
 			cnt = counters.messageCounter;
 		};
-	};
-
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled: !item.isPinned });
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
 	};
 
 	return (
