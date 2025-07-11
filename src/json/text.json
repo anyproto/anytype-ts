@@ -1246,6 +1246,16 @@
 	"popupConfirmDiskSpaceTitle": "Make Space, Save Your Work",
 	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
 
+	"popupConfirmAttachmentSyncError2Title": "Incompatible Version",
+	"popupConfirmAttachmentSyncError2Text": "This version doesn’t support sending files or images. Update the app to share media in chats.",
+	"popupConfirmAttachmentSyncError3Title": "Network Error",
+	"popupConfirmAttachmentSyncError3Text": "We couldn’t connect right now. This may be due to no internet or a temporary sync issue. We’ll keep trying in the background.",
+	"popupConfirmAttachmentSyncError4Title": "File is too big for this space",
+	"popupConfirmAttachmentSyncError4Text": "...",
+
+	"popupConfirmButtonUpdateApp": "Update app",
+	"popupConfirmButtonGotIt": "Got it",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",

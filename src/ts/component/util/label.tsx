@@ -1,12 +1,13 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, MouseEvent, useEffect, useRef } from 'react';
 import $ from 'jquery';
-import { I, U } from 'Lib';
+import { I, Preview, U } from 'Lib';
 
 interface Props {
 	id?: string;
 	text: string;
 	color?: string;
 	className?: string;
+	tooltipParam?: Partial<I.TooltipParam>;
 	dataset?: any;
 	onMouseEnter?: (e: any) => void;
 	onMouseLeave?: (e: any) => void;
@@ -19,6 +20,7 @@ const Label: FC<Props> = ({
 	text = '',
 	color = '',
 	className = '',
+  	tooltipParam = {},
 	dataset = {},
 	onClick,
 	onMouseDown,
@@ -41,6 +43,27 @@ const Label: FC<Props> = ({
 		cn.push(`textColor textColor-${color}`);
 	};
 
+	const mouseEnterHandler = (e: MouseEvent) => {
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
+
+		if (t) {
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+		};
+
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+	};
+
+	const mouseLeaveHandler = (e: MouseEvent) => {
+		Preview.tooltipHide(false);
+
+		if (onMouseLeave) {
+			onMouseLeave(e);
+		};
+	};
+
 	useEffect(() => {
 		if (nodeRef.current) {
 			U.Common.renderLinks($(nodeRef.current));
@@ -55,8 +78,8 @@ const Label: FC<Props> = ({
 			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
+			onMouseEnter={mouseEnterHandler}
+			onMouseLeave={mouseLeaveHandler}
 			{...U.Common.dataProps(dataProps)}
 		/>
 	);

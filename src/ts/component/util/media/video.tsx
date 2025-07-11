@@ -10,6 +10,7 @@ interface Props {
 	onPause?(): void;
 	onClick?(e: any): void;
 	onLoad?(): void;
+	onSyncStatusClick?(e: any): void;
 };
 
 const MediaVideo = forwardRef<HTMLDivElement, Props>(({
@@ -19,6 +20,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 	onPause = () => {},
 	onClick = () => {},
 	onLoad = () => {},
+  	onSyncStatusClick = () => {},
 }, ref: any) => {
 
 	const nodeRef = useRef(null);
@@ -85,6 +87,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 			<video ref={videoRef} className="media" controls={false} preload="auto" src={src} />
 
 			<div className="controls">
+				<Icon className="syncStatus" onClick={onSyncStatusClick} />
 				<Icon className="play" onClick={onPlayClick} />
 			</div>
 		</div>

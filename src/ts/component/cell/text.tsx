@@ -216,7 +216,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					id="input" 
 					{...item} 
 					placeholder={placeholder}
-					onKeyUp={onKeyUp} 
+					onKeyUp={onKeyUp}
 				/>
 			);
 		};
