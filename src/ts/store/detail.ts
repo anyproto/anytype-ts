@@ -439,6 +439,7 @@ class DetailStore {
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
 		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
+		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;

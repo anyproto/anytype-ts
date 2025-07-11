@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
+import { I, U, S, C, J, Key, keyboard, translate, analytics, Preview, sidebar, Action } from 'Lib';
 import VaultItem from './item';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
@@ -23,11 +23,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
-	const [ dummy, setDummy ] = useState(0);
 	const items = U.Menu.getVaultItems();
+	const pinned = items.filter(it => it.isPinned);
+	const unpinned = items.filter(it => !it.isPinned);
 	const profile = U.Space.getProfile();
-	const itemsWithCounter = items.filter(it => !!it.counter);
-	const itemsWithoutCounter = items.filter(it => !it.counter);
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
 	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();
@@ -265,18 +264,20 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onSortEnd = (result: any) => {
-		const { active, over } = result;
-		const ids = U.Menu.getVaultItems().map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
-
-		Storage.set('spaceOrder', arrayMove(ids, oldIndex, newIndex));
-
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
 
-		setDummy(dummy + 1);
+		const { active, over } = result;
+		if (!active || !over || (active.id == over.id)) {
+			return;
+		};
 
+		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
+		const oldIndex = items.findIndex(it => it.id == active.id);
+		const newIndex = items.findIndex(it => it.id == over.id);
+		const newItems = arrayMove(items, oldIndex, newIndex);
+
+		C.SpaceSetOrder(active.id, newItems.filter(it => it.isPinned).map(it => it.id));
 		analytics.event('ReorderSpace');
 	};
 
@@ -353,24 +354,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
 						<div id="scroll" className="side top" onScroll={onScroll}>
-							{itemsWithCounter.map((item, i) => (
-								<VaultItem 
-									key={`item-space-${item.id}`}
-									item={item}
-									onClick={e => onClick(e, item)}
-									onMouseEnter={e => onMouseEnter(e, item)}
-									onMouseLeave={() => Preview.tooltipHide()}
-									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
-								/>
-							))}
-
-							{itemsWithCounter.length > 0 ? <div className="div" /> : ''}
-
 							<SortableContext
-								items={itemsWithoutCounter.map(item => item.id)}
+								items={pinned.map(item => item.id)}
 								strategy={verticalListSortingStrategy}
 							>
-								{itemsWithoutCounter.map((item, i) => (
+								{pinned.map((item, i) => (
 									<VaultItem 
 										key={`item-space-${item.id}`}
 										item={item}
@@ -381,6 +369,19 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 									/>
 								))}
 							</SortableContext>
+
+							{pinned.length && unpinned.length ? <div className="div" /> : ''}
+
+							{unpinned.map((item, i) => (
+								<VaultItem 
+									key={`item-space-${item.id}`}
+									item={item}
+									onClick={e => onClick(e, item)}
+									onMouseEnter={e => onMouseEnter(e, item)}
+									onMouseLeave={() => Preview.tooltipHide()}
+									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+								/>
+							))}
 						</div>
 				</DndContext>
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>

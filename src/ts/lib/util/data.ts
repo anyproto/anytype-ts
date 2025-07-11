@@ -296,7 +296,10 @@ class UtilData {
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
 			for (const item of message.previews) {
-				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), item.state);
+				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), { 
+					...item.state, 
+					lastMessageDate: Number(item.message?.createdAt || 0),
+				});
 			};
 		});
 

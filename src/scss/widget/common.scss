@@ -72,6 +72,19 @@
 		}
 	}
 
+	&.active, &:hover {
+		.head { padding-right: 8px; }
+	}
+
+	&.withButtons {
+		&.active, &:hover {
+			.head {
+				.counters { display: none; }
+				.buttons { display: flex; }
+			}
+		}
+	}
+
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
@@ -112,14 +125,6 @@
 	}
 	.item.isSection::before,
 	.item.isSection .inner::before { display: none !important; }
-}
-
-.widget.active, .widget:hover {
-	.head { padding-right: 8px; }
-	.head {
-		.counters { display: none; }
-		.buttons { display: flex; }
-	}
 }
 
 .widget.isPreview {

@@ -24,7 +24,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject, onEditModeClick } = this.props;
+		const {
+			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection,
+			getCoverObject, onEditModeClick, canCellEdit,
+		} = this.props;
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -33,6 +36,8 @@ const Card = observer(class Card extends React.Component<Props> {
 		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout), U.Data.cardSizeClass(cardSize) ];
 		const subId = S.Record.getSubId(rootId, block.id);
 		const cover = getCoverObject(recordId);
+		const relationName: any = S.Record.getRelationByKey('name') || {};
+		const canEdit = canCellEdit(relationName, record);
 
 		if (coverFit) {
 			cn.push('coverFit');
@@ -46,10 +51,12 @@ const Card = observer(class Card extends React.Component<Props> {
 			<div className="cardContent">
 				<ObjectCover object={cover} />
 
-				<Icon
-					className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
-					onClick={e => onEditModeClick(e, recordId)}
-				/>
+				{canEdit ? (
+					<Icon
+						className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
+						onClick={e => onEditModeClick(e, recordId)}
+					/>
+				) : ''}
 
 				<div className="inner">
 					{relations.map((vr: any) => {
@@ -177,12 +184,11 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId, getRecord, canCellEdit } = this.props;
+		const { onCellClick, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
-		const canEdit = canCellEdit(relation, record);
 
-		if (!relation || !canEdit) {
+		if (!relation) {
 			return;
 		};
 
