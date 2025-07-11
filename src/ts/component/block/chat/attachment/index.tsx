@@ -93,6 +93,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 
 			case I.ObjectLayout.Bookmark: {
+				cn.push('isBookmark');
 				content = bookmarkAsDefault ? this.renderDefault() : this.renderBookmark();
 				break;
 			};
