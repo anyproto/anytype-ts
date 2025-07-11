@@ -799,7 +799,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ret = true;
 		});
 
-		if (!ret && ids.length && !keyboard.isSpecial(e)) {
+		if (!ret && ids.length && !keyboard.isSpecial(e) && !readonly) {
 			const param = {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
