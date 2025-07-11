@@ -116,6 +116,13 @@
         }
 		*/
 
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
+			.icon.editMode:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
+		}
+
         .viewContent.viewBoard {
             .cardContent { background: var(--color-bg-secondary); }
 			.card.add { background: var(--color-bg-secondary); }
