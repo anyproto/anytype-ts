@@ -123,7 +123,8 @@ export enum EdgeType {
 export enum Usecase {
 	None		 = 0,
 	GetStarted	 = 1,
-	Empty		 = 2,
+	DataSpace	 = 2,
+	ChatSpace	 = 5,
 };
 
 export enum HomePredefinedId {

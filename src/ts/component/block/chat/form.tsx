@@ -369,7 +369,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 
 		keyboard.shortcut('arrowup', e, () => {
-			if (!value && !this.range.to && !attachments.length && !this.editingId) {
+			if (this.range.to || value || attachments.length || this.editingId) {
 				return;
 			};
 
