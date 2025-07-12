@@ -340,8 +340,6 @@ class UtilEmbed {
 					const a = new URL(url);
 					a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
 					a.searchParams.set('utm_source', 'generator');
-					// console.log(content);
-					// console.log(url);
 					url = a.toString();
 				} catch (e) { /**/ }
 				break;
