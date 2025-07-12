@@ -155,7 +155,7 @@ class UtilEmbed {
 	 * @returns {string} The HTML iframe string.
 	 */
 	getSpotifyHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+		return `<iframe src="${content}" ${IFRAME_PARAM} allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" loading="lazy"></iframe>`;
 	 };
 
 	/**
