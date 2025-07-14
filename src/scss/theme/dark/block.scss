@@ -166,6 +166,7 @@
 		.preview.isSketchfab { background-image: url('#{$themePath}/icon/block/embed/sketchfab.svg'); }
 		.preview.isDrawio { background-image: url('#{$themePath}/icon/block/embed/drawio.svg'); }
 		.preview.isImage { background-image: url('#{$themePath}/icon/block/embed/image.svg'); }
+		.preview.isSpotify { background-image: url('#{$themePath}/icon/block/embed/spotify.svg'); }
 	}
 	.block.blockEmbed:not(.isLatex) {
 		#value svg { background: none; }
