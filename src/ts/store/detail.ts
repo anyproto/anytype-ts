@@ -487,6 +487,22 @@ class DetailStore {
 	};
 
 	/**
+	 * Maps bookmark-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
+	private mapBookmark (object) {
+		object.source = Relation.getStringValue(object.source);
+
+		if (object.source && (object.name == translate('defaultNamePage'))) {
+			object.name = U.Common.shortUrl(object.source);
+		};
+
+		return object;
+	};
+
+	/**
 	 * Maps participant-specific properties for an object.
 	 * @private
 	 * @param {any} object - The object to map.
