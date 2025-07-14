@@ -781,9 +781,6 @@ class UtilMenu {
 
 	spaceContext (space: any, param: any) {
 		const { targetSpaceId } = space;
-		const isOwner = U.Space.isMyOwner(targetSpaceId);
-		const isLocalNetwork = U.Data.isLocalNetwork();
-		const { isOnline } = S.Common;
 		const options: any[] = [];
 
 		let cid = '';
@@ -799,24 +796,15 @@ class UtilMenu {
 				options.push({ id: 'pin', name: translate('commonPin') });
 			};
 
-			if (isOwner && space.isShared && !isLocalNetwork && isOnline && cid && key) {
-				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
+			if (space.chatId) {
+				if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+					options.push({ id: 'unmute', name: translate('commonUnmute') });
+				} else {
+					options.push({ id: 'mute', name: translate('commonMute') });
+				};
 			};
 
-			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-				options.push({ id: 'unmute', name: translate('commonUnmute') });
-			} else {
-				options.push({ id: 'mute', name: translate('commonMute') });
-			};
-
-			if (space.isAccountRemoving) {
-				options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
-			} else 
-			if (space.isAccountJoining) {
-				options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
-			} else {
-				options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
-			};
+			options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 
 			S.Menu.open('select', {
 				...param,
@@ -825,44 +813,6 @@ class UtilMenu {
 					onSelect: (e: any, element: any) => {
 						window.setTimeout(() => {
 							switch (element.id) {
-								case 'export': {
-									Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
-										zip: true, 
-										nested: true, 
-										files: true, 
-										archived: true, 
-										json: false, 
-										route: param.route,
-									});
-									break;
-								};
-
-								case 'remove': {
-									Action.removeSpace(targetSpaceId, param.route);
-									break;
-								};
-
-								case 'cancel': {
-									C.SpaceJoinCancel(targetSpaceId, (message: any) => {
-										if (message.error.code) {
-											window.setTimeout(() => {
-												S.Popup.open('confirm', { 
-													data: {
-														title: translate('commonError'),
-														text: message.error.description,
-													}
-												});
-											}, S.Popup.getTimeout());
-										};
-									});
-									break;
-								};
-
-								case 'revoke': {
-									Action.inviteRevoke(targetSpaceId);
-									break;
-								};
-
 								case 'mute':
 								case 'unmute': {
 									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
@@ -881,6 +831,16 @@ class UtilMenu {
 
 								case 'unpin': {
 									C.SpaceUnsetOrder(space.id);
+									break;
+								};
+
+								case 'settings': {
+									const routeParam = { 
+										replace: true, 
+										onRouteChange: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
+									};
+			
+									U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
 									break;
 								};
 
