@@ -69,6 +69,7 @@
 		"https://*.youtube.com",
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
+		"https://encore.scdn.co/",
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
 		"https://mirostatic.com",
