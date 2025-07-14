@@ -343,7 +343,7 @@ class UtilEmbed {
 					url = a.toString();
 				} catch (e) { /**/ }
 				break;
-			}
+			};
 			
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
@@ -439,7 +439,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Youtube, 
 			I.EmbedProcessor.Vimeo,
 			I.EmbedProcessor.Bilibili,
-			I.EmbedProcessor.Spotify
+			I.EmbedProcessor.Spotify,
 		].includes(p);
 	};
 
