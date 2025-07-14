@@ -193,7 +193,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.unbind();
 
 		win.on(`messageAdd.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
-		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
+		win.on(`messageUpdate.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
 		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));

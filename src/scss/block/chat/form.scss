@@ -116,7 +116,7 @@
 
 		.swiper-button-disabled { display: none; }
 
-		.attachment { max-width: 300px; }
+		.attachment { max-width: 300px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05); }
 		.swiper-slide:last-child .attachment { margin-right: 6px; }
 	}
 

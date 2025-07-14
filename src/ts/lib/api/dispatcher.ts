@@ -1019,7 +1019,7 @@ class Dispatcher {
 				case 'ChatUpdate': {
 					mapped.subIds.forEach(subId => S.Chat.update(subId, mapped.message));
 
-					$(window).trigger('messageUpdate', [ mapped.message ]);
+					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
 					break;
 				};
 
