@@ -14,7 +14,7 @@ DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
 DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
-DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com']
+DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -156,7 +156,7 @@ class UtilEmbed {
 	 */
 	getSpotifyHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM} allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" loading="lazy"></iframe>`;
-	 };
+	};
 
 	/**
 	 * Returns the HTML for embedding an image.
@@ -341,7 +341,7 @@ class UtilEmbed {
 					a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
 					a.searchParams.set('utm_source', 'generator');
 					url = a.toString();
-				} catch (e) { /**/ }
+				} catch (e) { /**/ };
 				break;
 			};
 			
