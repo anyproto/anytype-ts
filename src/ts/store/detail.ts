@@ -495,7 +495,7 @@ class DetailStore {
 	private mapBookmark (object) {
 		object.source = Relation.getStringValue(object.source);
 
-		if (object.source && (object.name == translate('defaultNamePage'))) {
+		if (object.source && (!object.name || (object.name == translate('defaultNamePage')))) {
 			object.name = U.Common.shortUrl(object.source);
 		};
 
