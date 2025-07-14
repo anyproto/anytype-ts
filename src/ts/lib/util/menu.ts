@@ -113,6 +113,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
+			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 		];
 
 		if (config.experimental) {
