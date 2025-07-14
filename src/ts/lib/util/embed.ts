@@ -491,6 +491,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
+			I.EmbedProcessor.Spotify,
 		].includes(p);
 	};
 
@@ -534,6 +535,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Drawio,
+			I.EmbedProcessor.Spotify,
 		].includes(p);
 	};
 
