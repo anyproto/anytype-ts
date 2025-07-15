@@ -932,6 +932,9 @@ class UtilMenu {
 			if (c1.isPinned && !c2.isPinned) return -1;
 			if (!c1.isPinned && c2.isPinned) return 1;
 
+			if (c1.tmpOrder > c2.tmpOrder) return 1;
+			if (c1.tmpOrder < c2.tmpOrder) return -1;
+
 			if (c1.spaceOrder > c2.spaceOrder) return 1;
 			if (c1.spaceOrder < c2.spaceOrder) return -1;
 

@@ -8,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const iconCache: Map<string, string> = new Map();
 
 class UtilCommon {
@@ -1829,6 +1830,30 @@ class UtilCommon {
 		const y = Math.max(J.Size.header + 20, (isPopup ? (no - container.offset().top + st) : no) - J.Size.header - 20);
 
 		container.scrollTop(y);
+	};
+
+	/**
+	 * Lexicographically increments a string using a defined alphabet.
+	 * @param {string} s - The string to convert.
+	 * @returns {string} The incremented string.
+	 */
+	lexString (s: string): string {
+		const chars = String(s || '').split('');
+
+		let i = chars.length - 1;
+		while (i >= 0) {
+			const idx = ALPHABET.indexOf(chars[i]);
+
+			if (idx < ALPHABET.length - 1) {
+				chars[i] = ALPHABET[idx + 1];
+				return chars.join('');
+			} else {
+				chars[i] = ALPHABET[0];
+				i--;
+			};
+		};
+
+		return ALPHABET[0] + chars.join('');
 	};
 
 };

@@ -277,6 +277,13 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
 
+		let s = '';
+		newItems.forEach((it, i) => {
+			s = U.Common.lexString(s);
+			console.log(it.name, it.id, s);
+			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
+		});
+
 		C.SpaceSetOrder(active.id, newItems.map(it => it.id));
 		analytics.event('ReorderSpace');
 	};
