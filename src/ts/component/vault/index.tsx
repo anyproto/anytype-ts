@@ -280,7 +280,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		let s = '';
 		newItems.forEach((it, i) => {
 			s = U.Common.lexString(s);
-			console.log(it.name, it.id, s);
 			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
 		});
 
