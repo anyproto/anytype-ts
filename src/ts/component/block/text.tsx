@@ -246,7 +246,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			onUpdate();
 		};
 	};
-	
+
 	setValue (v: string, restoreRange?: I.TextRange) {
 		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
 		const fields = block.fields || {};
