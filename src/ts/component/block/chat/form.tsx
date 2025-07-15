@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -356,7 +356,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onKeyDownInput (e: any) {
 		const { account } = S.Auth;
-		const { checkMarkOnBackspace, getMessages } = this.props;
+		const { checkMarkOnBackspace, getMessages, scrollToBottom } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
 		const { attachments } = this.state;
@@ -396,6 +396,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			const l = value.length;
 			this.updateMarkup(value, { from: l, to: l });
+			scrollToBottom();
 		});
 
 		keyboard.shortcut('chatObject', e, () => {
@@ -534,29 +535,71 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { from, to } = this.range;
 		const limit = J.Constant.limit.chat.text;
 		const current = this.getTextValue();
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
 		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
-		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
-		let value = U.Common.stringInsert(current, text, from, to);
+		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
+		const html = String(clipboard.getData('text/html') || '');
+		const text = String(clipboard.getData('text/plain') || '');
 
-		this.marks = Mark.adjust(this.marks, from, text.length);
+		let newText = '';
+		let newMarks: I.Mark[] = [];
 
-		if (value.length >= limit) {
-			const excess = value.length - limit;
-			const keep = text.length - excess;
+		const parseBlocks = (blocks: I.Block[]) => {
+			blocks.forEach((block: I.Block) => {
+				const text = block.getText();
+			
+				let marks = block.content.marks || [];
+				if (block.isTextHeader()) {
+					marks.push({ type: I.MarkType.Bold, range: { from: 0, to: text.length } });
+				};
+				marks = Mark.adjust(marks, 0, newText.length);
 
-			text = text.substring(0, keep);
-			value = U.Common.stringInsert(current, text, from, to);
+				newText += text + '\n';
+				newMarks = newMarks.concat(marks);
+			});
 		};
 
-		const rt = to + text.length;
+		const parseText = () => {
+			if (!newText) {
+				return;
+			};
 
-		this.range = { from: rt, to: rt };
-		this.updateMarkup(value, this.range);
+			if (newText.length >= limit) {
+				newText = newText.substring(0, limit);
+			};
+
+			newText = U.Common.stringInsert(current, newText, from, to);
+			this.marks = Mark.adjust(this.marks, from, newText.length);
+			this.marks = this.marks.concat(newMarks);
+
+			const rt = to + newText.length;
+			this.range = { from: rt, to: rt };
+			this.updateMarkup(newText, this.range);
+		};
+
+		if (json && json.blocks && json.blocks.length) {
+			parseBlocks(json.blocks.map(it => new M.Block(it)));
+			newMarks = Mark.adjust(newMarks, 0, current.length);
+			parseText();
+		} else 
+		if (html) {
+			C.BlockPreview(html, '', (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				parseBlocks(message.blocks.map(it => new M.Block(it)));
+				parseText();
+			});
+		} else 
+		if (text) {
+			newText = U.Common.normalizeLineEndings(text);
+			parseText();
+		};
 
 		if (list.length) {
 			U.Common.saveClipboardFiles(list, {}, data => this.addAttachments(data.files));
@@ -581,8 +624,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			if (isLocal) {
 				continue;
 			};
-
-			console.log(U.Common.urlFix(value));
 
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
 			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: U.Common.urlFix(value) });
@@ -1168,11 +1209,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
+						if (S.Menu.isAnimating('blockMention')) {
+							return;
+						};
+
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
 						value = U.Common.stringInsert(value, text, from, from);
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
+						this.marks = Mark.adjust(this.marks, to, text.length);
 						this.updateMarkup(value, { from: to, to });
 
 						analytics.event('Mention');
@@ -1245,7 +1291,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.updateMarkup(text, this.range);
 		};
 		const getValue = () => value;
-
 		const param = { onChange, subId };
 
 		renderMentions(rootId, node, this.marks, getValue, param);

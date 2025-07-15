@@ -432,7 +432,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			updateDetails: true,
 		}, () => {
 			this.forceUpdate();
-			this.refForm?.forceUpdate();
+			//this.refForm?.forceUpdate();
 
 			if (callBack) {
 				callBack();

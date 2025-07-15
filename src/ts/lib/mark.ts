@@ -280,7 +280,7 @@ class Mark {
 	 * @param {I.Mark[]} marks - The list of marks.
 	 * @returns {string} The HTML string.
 	 */
-	toHtml (text: string, marks: I.Mark[]) {
+	toHtml (text: string, marks: I.Mark[]): string {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 
