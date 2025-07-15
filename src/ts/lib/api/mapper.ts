@@ -1228,6 +1228,7 @@ export const Mapper = {
 			if (v == V.CHATSTATEUPDATE)			 	 t = 'ChatStateUpdate';
 			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
 			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
+			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
 
 			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
 
@@ -1757,6 +1758,14 @@ export const Mapper = {
 			return {
 				ids: obj.getIdsList(),
 				isRead: obj.getIsread(),
+				subIds: obj.getSubidsList(),
+			};
+		},
+
+		ChatUpdateMessageSyncStatus: (obj: Events.Event.Chat.UpdateMessageSyncStatus) => {
+			return {
+				ids: obj.getIdsList(),
+				isSynced: obj.getIssynced(),
 				subIds: obj.getSubidsList(),
 			};
 		},

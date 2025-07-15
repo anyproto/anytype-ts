@@ -132,6 +132,16 @@ class ChatStore {
 	};
 
 	/**
+	 * Sets the synced status for messages by IDs.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string[]} ids - The message IDs.
+	 * @param {boolean} value - The read mention status value.
+	 */
+	setSyncStatus (subId: string, ids: string[], value: boolean) {
+		(ids || []).forEach(id => this.update(subId, { id, isSynced: value }));
+	};
+
+	/**
 	 * Creates a chat state object with observables and intercepts.
 	 * @private
 	 * @param {I.ChatState} state - The chat state input.

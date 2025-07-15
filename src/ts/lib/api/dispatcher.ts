@@ -1046,6 +1046,11 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdateMessageSyncStatus': {
+					mapped.subIds.forEach(subId => S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced));
+					break;
+				};
+
 				case 'ChatDelete': {
 					mapped.subIds.forEach(subId => S.Chat.delete(subId, mapped.id));
 					break;
