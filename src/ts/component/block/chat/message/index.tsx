@@ -32,7 +32,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(subId, id);
-		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention } = message;
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention, isSynced } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = this.getAttachments();
 		const hasReactions = reactions.length;
@@ -50,6 +50,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		let userpicNode = null;
 		let authorNode = null;
+		let statusIcon = <Icon className="status syncing" />;
+
+		if (isSynced) {
+			statusIcon = null;
+		};
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {
@@ -191,7 +196,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 											className="text"
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
-										<div className="time">{editedLabel} {U.Date.date('H:i', createdAt)}</div>
+										<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
 
 										<div className="expand" onClick={this.onExpand}>
 											{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}

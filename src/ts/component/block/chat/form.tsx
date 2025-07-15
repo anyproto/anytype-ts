@@ -582,8 +582,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				continue;
 			};
 
+			console.log(U.Common.urlFix(value));
+
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: value });
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: U.Common.urlFix(value) });
 			
 			if (isUrl) {
 				this.addBookmark(value, true);
