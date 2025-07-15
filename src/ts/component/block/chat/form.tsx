@@ -1232,12 +1232,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
+						this.marks = marks;
 						value = U.Common.stringInsert(value, text, from, from);
-						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
-						this.marks = Mark.adjust(this.marks, to, text.length);
 						this.updateMarkup(value, { from: to, to });
-
 						analytics.event('Mention');
 					},
 				},
