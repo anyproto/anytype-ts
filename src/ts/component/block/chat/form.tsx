@@ -550,11 +550,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let newMarks: I.Mark[] = [];
 
 		const parseBlocks = (blocks: I.Block[]) => {
-			let targetIds = [];
+			const targetIds = [];
 
 			blocks.forEach((block: I.Block) => {
-				console.log(block);
-
 				if (block.isText()) {
 					const text = block.getText();
 			
