@@ -664,8 +664,9 @@ class UtilCommon {
 			} else 
 			if (this.matchPhone(url)) {
 				url = `tel:${url}`;
-			} else {
-				url = `http://${url}`;
+			} else 
+			if (this.matchPath(url)) {
+				url = `file://${url}`;
 			};
 		};
 
@@ -1061,14 +1062,15 @@ class UtilCommon {
 		for (const word of words) {
 			const isUrl = !!this.matchUrl(word);
 			const isEmail = !!this.matchEmail(word);
-			const isLocal = !!this.matchLocalPath(word);
+			const isLocal = !!this.matchPath(word);
 			const isPhone = !!this.matchPhone(word);
+			const embedProcessor = U.Embed.getProcessorByUrl(word);
 
 			if (isUrl || isLocal || isEmail || isPhone) {
 				const from = text.substring(offset).indexOf(word) + offset;
 
 				offset = from + word.length;
-				urls.push({ value: word, from, to: offset, isLocal, isUrl, isEmail, isPhone });
+				urls.push({ value: word, from, to: offset, isLocal, isUrl, isEmail, isPhone, embedProcessor });
 			};
 		};
 
@@ -1114,7 +1116,7 @@ class UtilCommon {
 	 * @param {string} s - The string to match.
 	 * @returns {string} The matched path or empty string.
 	 */
-	matchLocalPath (s: string): string {
+	matchPath (s: string): string {
 		s = String(s || '');
 
 		const rw = new RegExp(/^(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);

@@ -236,7 +236,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const isLocal = filter.match(/^file:/) || U.Common.matchLocalPath(filter);
+		const isLocal = filter.match(/^file:/) || U.Common.matchPath(filter);
 		const isUrl = U.Common.matchUrl(filter) || U.Common.matchDomain(filter);
 		const items = [].concat(this.items);
 		const sections: any[] = [];

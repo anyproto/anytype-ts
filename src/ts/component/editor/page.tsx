@@ -1913,16 +1913,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 
 		if (!data.html) {
-			let url = U.Common.matchUrl(data.text);
-			let isLocal = false;
+			const urls = U.Common.getUrlsFromText(data.text);
 
-			if (!url) {
-				url = U.Common.matchLocalPath(data.text);
-				isLocal = true;
-			};
-
-			if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
-				this.onPasteUrl(url, isLocal);
+			if (block && urls.length && !block.isTextTitle() && !block.isTextDescription()) {
+				this.onPasteUrl(urls[0]);
 				return;
 			};
 		};
@@ -1978,7 +1972,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	onPasteUrl (url: string, isLocal: boolean) {
+	onPasteUrl (item: any) {
+		const { isLocal } = item;
+		const url = item.value;
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
@@ -2040,8 +2036,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 					switch (item.id) {
 						case 'link': {
-							const param = isLocal ? `file://${url}` : url;
-
 							if (currentFrom == currentTo) {
 								value = U.Common.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								to = currentFrom + url.length;
@@ -2050,7 +2044,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							};
 
 							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
-							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
