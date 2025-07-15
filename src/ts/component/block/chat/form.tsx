@@ -576,14 +576,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.removeBookmarks();
 
 		for (const url of urls) {
-			const { from, to, isLocal, value } = url;
+			const { from, to, isLocal, isUrl, value } = url;
+
 			if (isLocal) {
 				continue;
 			};
 
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
 			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: value });
-			this.addBookmark(value, true);
+			
+			if (isUrl) {
+				this.addBookmark(value, true);
+			};
 		};
 
 		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });

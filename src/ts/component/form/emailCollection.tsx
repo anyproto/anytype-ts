@@ -71,7 +71,7 @@ const EmailCollection: FC<Props> = ({
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
 			const value = emailRef.current?.getValue();
-			const isValid = U.Common.checkEmail(value);
+			const isValid = !!U.Common.matchEmail(value);
 
 			if (value && !isValid) {
 				setStatusAndText('error', translate('errorIncorrectEmail'));

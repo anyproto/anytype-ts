@@ -185,7 +185,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
-		const isValid = U.Common.checkEmail(v);
+		const isValid = U.Common.matchEmail(v);
 
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
 	};

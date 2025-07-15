@@ -659,7 +659,14 @@ class UtilCommon {
 
 		const scheme = this.getScheme(url);
 		if (!scheme) {
-			url = `http://${url}`;
+			if (this.matchEmail(url)) {
+				url = `mailto:${url}`;
+			} else 
+			if (this.matchPhone(url)) {
+				url = `tel:${url}`;
+			} else {
+				url = `http://${url}`;
+			};
 		};
 
 		return url;
@@ -683,19 +690,6 @@ class UtilCommon {
 		});
 	};
 	
-	/**
-	 * Checks if a string is a valid email address.
-	 * @param {string} v - The string to check.
-	 * @returns {boolean} True if valid email, false otherwise.
-	 */
-	checkEmail (v: string) {
-		v = String(v || '');
-
-		const uc = '\\P{Script_Extensions=Latin}';
-		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu');
-		return reg.test(v);
-	};
-
 	/**
 	 * Gets the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.
@@ -1065,11 +1059,16 @@ class UtilCommon {
 		let offset = 0;
 
 		for (const word of words) {
-			if (this.matchUrl(word) || this.matchLocalPath(word)) {
+			const isUrl = !!this.matchUrl(word);
+			const isEmail = !!this.matchEmail(word);
+			const isLocal = !!this.matchLocalPath(word);
+			const isPhone = !!this.matchPhone(word);
+
+			if (isUrl || isLocal || isEmail || isPhone) {
 				const from = text.substring(offset).indexOf(word) + offset;
 
 				offset = from + word.length;
-				urls.push({ value: word, from, to: offset, isLocal: !!this.matchLocalPath(word) });
+				urls.push({ value: word, from, to: offset, isLocal, isUrl, isEmail, isPhone });
 			};
 		};
 
@@ -1083,6 +1082,20 @@ class UtilCommon {
 	 */
 	matchUrl (s: string): string {
 		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?\s?$/gi);
+		return String(((m && m.length) ? m[0] : '') || '').trim();
+	};
+
+	/**
+	 * Matches a string as a a valid email address.
+	 * @param {string} v - The string to check.
+	 * @returns {string} The matched email or empty string.
+	 */
+	matchEmail (v: string) {
+		v = String(v || '');
+
+		const uc = '\\P{Script_Extensions=Latin}';
+		const m = v.match(new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu'));
+
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
@@ -1112,6 +1125,24 @@ class UtilCommon {
 			m = s.match(ru);
 		};
 
+		return String(((m && m.length) ? m[0] : '') || '').trim();
+	};
+
+	/**
+	 * Matches a string as a valid phone number.
+	 * Supports international and local formats with optional separators.
+	 * @param {string} s - The string to match.
+	 * @returns {string} The matched phone number or empty string.
+	 */
+	matchPhone (s: string): string {
+		s = String(s || '');
+
+		const re = new RegExp(
+			// Matches optional +country code, spaces/dashes/parentheses, and digit groups
+			/^(\+?\d{1,3}[\s-]?)?(\(?\d{1,4}\)?[\s-]?)?[\d\s()-]{5,}$/u
+		);
+
+		const m = s.match(re);
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 

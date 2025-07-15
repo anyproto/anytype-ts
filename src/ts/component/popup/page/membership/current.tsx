@@ -241,7 +241,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			const value = this.refEmail?.getValue();
-			const isValid = U.Common.checkEmail(value);
+			const isValid = U.Common.matchEmail(value);
 
 			if (value && !isValid) {
 				this.setStatus('error', translate('errorIncorrectEmail'));
