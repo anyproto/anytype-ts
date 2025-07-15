@@ -713,9 +713,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			C.LinkPreview(url, (message: any) => {
 				this.isLoading = this.isLoading.filter(it => it != url);
 
-				if (message.error.code) {
-					add({ title: url, url });
-				} else {
+				if (!message.error.code) {
 					add({ ...message.previewLink, url });
 				};
 			});
