@@ -58,3 +58,7 @@ markupsearch { background: yellow !important; color: var(--color-text-primary) !
 markupsearch.active { background: orange !important; }
 
 markuplatex { user-select: all !important; }
+
+markupbold, markupitalic, markupstrike, markupunderline, markuphighlight, markupsearch {
+	user-select: text !important;
+}

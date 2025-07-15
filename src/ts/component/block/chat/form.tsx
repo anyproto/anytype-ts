@@ -543,7 +543,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
 		const html = String(clipboard.getData('text/html') || '');
-		const text = String(clipboard.getData('text/plain') || '');
+		const text = U.Common.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		let newText = '';
 		let newMarks: I.Mark[] = [];
@@ -588,16 +588,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		} else 
 		if (html) {
 			C.BlockPreview(html, '', (message: any) => {
-				if (message.error.code) {
-					return;
+				if (message.error.code || !message.blocks || !message.blocks.length) {
+					newText = text;
+				} else {
+					parseBlocks(message.blocks.map(it => new M.Block(it)));
 				};
-
-				parseBlocks(message.blocks.map(it => new M.Block(it)));
 				parseText();
 			});
 		} else 
 		if (text) {
-			newText = U.Common.normalizeLineEndings(text);
+			newText = text;
 			parseText();
 		};
 
