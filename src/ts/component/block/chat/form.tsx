@@ -532,6 +532,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onPaste (e: any) {
 		e.preventDefault();
 
+		const { space } = S.Common;
 		const { from, to } = this.range;
 		const limit = J.Constant.limit.chat.text;
 		const current = this.getTextValue();
@@ -549,18 +550,34 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		let newMarks: I.Mark[] = [];
 
 		const parseBlocks = (blocks: I.Block[]) => {
-			blocks.forEach((block: I.Block) => {
-				const text = block.getText();
-			
-				let marks = block.content.marks || [];
-				if (block.isTextHeader()) {
-					marks.push({ type: I.MarkType.Bold, range: { from: 0, to: text.length } });
-				};
-				marks = Mark.adjust(marks, 0, newText.length);
+			let targetIds = [];
 
-				newText += text + '\n';
-				newMarks = newMarks.concat(marks);
+			blocks.forEach((block: I.Block) => {
+				console.log(block);
+
+				if (block.isText()) {
+					const text = block.getText();
+			
+					let marks = block.content.marks || [];
+					if (block.isTextHeader()) {
+						marks.push({ type: I.MarkType.Bold, range: { from: 0, to: text.length } });
+					};
+					marks = Mark.adjust(marks, 0, newText.length);
+
+					newText += text + '\n';
+					newMarks = newMarks.concat(marks);
+				} else {
+					const targetId = block.getTargetObjectId();
+
+					if (targetId) {
+						targetIds.push(targetId);
+					};
+				};
 			});
+
+			if (targetIds.length) {
+				U.Object.getByIds(targetIds, { spaceId: space }, this.addAttachments);
+			};
 		};
 
 		const parseText = () => {
