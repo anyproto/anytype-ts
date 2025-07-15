@@ -653,6 +653,12 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 	};
 };
 
+export const SpaceSetOrder = (response: Rpc.Space.SetOrder.Response) => {
+	return {
+		spaceOrder: response.getSpacevieworderList(),
+	};
+};
+
 export const DeviceList = (response: Rpc.Device.List.Response) => {
 	return {
 		devices: (response.getDevicesList() || []).map(it => Mapper.From.DeviceInfo(it))

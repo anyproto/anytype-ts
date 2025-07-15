@@ -275,9 +275,18 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
-		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
+		const newIds = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned).map(it => it.id);
 
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id));
+		C.SpaceSetOrder(active.id, newIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			newIds.forEach((id, i) => {
+				S.Detail.update(J.Constant.subId.space, { id: id, details: { spaceOrder: message.spaceOrder[i] } }, false);
+			});
+		});
+
 		analytics.event('ReorderSpace');
 	};
 
