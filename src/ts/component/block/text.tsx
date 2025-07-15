@@ -872,6 +872,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					skipIds: [ rootId ],
 					canAdd: true,
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
+						if (S.Menu.isAnimating('blockMention')) {
+							return;
+						};
+
 						value = U.Common.stringInsert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
