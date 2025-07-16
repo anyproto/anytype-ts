@@ -268,7 +268,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.refLang?.setValue(lang);
 		} else 
 		if (!keyboard.isComposition) {
-			const parsed = Mark.fromUnicode(html, this.marks);
+			const parsed = Mark.fromUnicode(html, this.marks, false);
 
 			html = parsed.text;
 			this.marks = parsed.marks;

@@ -463,7 +463,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let adjustMarks = false;
 
-		if (value !== parsed.text) {
+		if ((value !== parsed.text) || parsed.updatedValue) {
 			this.updateValue(parsed.text);
 		};
 
@@ -1045,7 +1045,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		return String(value || '').replace(/^(\r?\n+)/g, '').replace(/(\r?\n+)$/g, '');
 	};
 	
-	getMarksFromHtml (): { marks: I.Mark[], text: string } {
+	getMarksFromHtml (): I.FromHtmlResult {
 		return Mark.fromHtml(this.getHtmlValue(), []);
 	};
 
