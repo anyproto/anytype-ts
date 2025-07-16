@@ -827,7 +827,7 @@ class Mark {
 			I.MarkType.Search, 
 			I.MarkType.Change, 
 			I.MarkType.Highlight, 
-			//I.MarkType.Code,
+			I.MarkType.Code,
 		].includes(t);
 	};
 
