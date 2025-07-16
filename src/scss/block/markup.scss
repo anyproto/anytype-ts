@@ -9,6 +9,7 @@ smile .loaderWrapper { display: inline-block; }
 .markuplink { color: inherit; text-decoration: none; }
 
 markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
+markupcode::after { content: ''; display: inline; width: 0.5em; height: 0.5em; vertical-align: middle; }
 
 markupemoji { display: inline; user-select: all; }
 markupemoji * { user-select: all; }
