@@ -319,7 +319,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const node = $(this.node);
 		const button = node.find('#send');
 
-		this.canSend() ? button.show() : button.hide();
+		this.canSend() || this.isSending ? button.show() : button.hide();
 	};
 
 	onSelect () {
@@ -807,6 +807,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { rootId, subId, scrollToBottom, scrollToMessage } = this.props;
 		const { replyingId } = this.state;
 		const node = $(this.node);
+		const send = node.find('#send');
 		const loader = node.find('#form-loader');
 		const list = this.state.attachments || [];
 		const files = list.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
@@ -816,15 +817,20 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const bookmark = S.Record.getBookmarkType();
 		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
+		send.addClass('isLoading');
 		loader.addClass('active');
 		this.isSending = true;
 
 		const clear = () => {
-			this.onEditClear(() => this.isSending = false);
+			this.onEditClear(() => {
+				this.isSending = false;
+				this.checkSendButton();
+			});
 			this.onReplyClear();
 			this.clearCounter();
 			this.checkSpeedLimit();
 
+			send.removeClass('isLoading');
 			loader.removeClass('active');
 		};
 		

@@ -260,6 +260,7 @@
 
 		.form {
 			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
+			.icon.send.isLoading { background: url('#{$themePath}/icon/chat/buttons/loader.svg'); }
 
 			.attachments {
 				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
