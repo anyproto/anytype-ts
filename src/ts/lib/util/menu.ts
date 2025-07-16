@@ -1366,6 +1366,10 @@ class UtilMenu {
 				id: 'add', icon: 'plus', onClick: () => {
 					U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
 					this.menuContext?.close();
+
+					if (param.data.onAdd) {
+						param.data.onAdd();
+					};
 				}, 
 			});
 

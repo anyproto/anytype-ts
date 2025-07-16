@@ -367,7 +367,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
 						isSub: true,
-						onClose: () => menuContext?.close(),
+						data: {
+							onAdd: () => menuContext?.close(),
+						},
 					}, { name: context.filter }, {}, analytics.route.addWidget, object => {
 						onSelect(object, true);
 						menuContext?.close();
