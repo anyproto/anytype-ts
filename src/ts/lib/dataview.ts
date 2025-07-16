@@ -221,24 +221,27 @@ class Dataview {
 	filterMapper (it: any, param?: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
-		if (relation) {
-			it.format = relation.format;
-			it.includeTime = relation.includeTime;
+		if (!relation) {
+			return it;
+		};
 
-			if (it.valueTemplate != I.FilterValueTemplate.None) {
-				const valueTemplate = this.valueTemplateMapper(it.valueTemplate, param);
+		it.format = relation.format;
+		it.includeTime = relation.includeTime;
 
-				it.value = Relation.formatValue(relation, it.value, false);
-				if (Array.isArray(it.value)) {
-					it.value = it.value.concat(valueTemplate);
-				} else {
-					const v = [ valueTemplate ];
-					if (it.value) {
-						v.push(it.value);
-					};
+		if (it.valueTemplate && (it.valueTemplate != I.FilterValueTemplate.None)) {
+			const valueTemplate = this.valueTemplateMapper(it.valueTemplate, param);
+
+			it.value = Relation.formatValue(relation, it.value, false);
+			if (Array.isArray(it.value)) {
+				it.value = it.value.concat(valueTemplate);
+			} else {
+				const v = [ valueTemplate ];
+				if (it.value) {
+					v.push(it.value);
 				};
 			};
 		};
+
 		return it;
 	};
 
