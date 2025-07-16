@@ -447,6 +447,10 @@ html.themeDark {
 		.icon.close { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 	}
 
+	.emptyState {
+		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
+	}
+
 	@import "./menu";
 	@import "./popup";
 	@import "./page";

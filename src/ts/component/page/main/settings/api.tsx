@@ -58,23 +58,25 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 					{list.length ? <Button className="c28" text={translate('popupSettingsApiCreate')} onClick={this.onAdd} /> : ''}
 				</div>
 
-				<div className="items">
-					<div className="row isHead">
-						<div className="col colSpace">{translate('commonName')}</div>
-						<div className="col">{translate('popupSettingsApiKey')}</div>
-						<div className="col">{translate('popupSettingsApiCreated')}</div>
-						<div className="col">{translate('popupSettingsApiScope')}</div>
-						<div className="col colMore" />
+				{list.length ? (
+					<div className="items">
+						<div className="row isHead">
+							<div className="col colSpace">{translate('commonName')}</div>
+							<div className="col">{translate('popupSettingsApiKey')}</div>
+							<div className="col">{translate('popupSettingsApiCreated')}</div>
+							<div className="col">{translate('popupSettingsApiScope')}</div>
+							<div className="col colMore" />
+						</div>
+						{list.map((item: any, i: number) => <Row key={i} {...item} />)}
 					</div>
-					{list.length ? list.map((item: any, i: number) => <Row key={i} {...item} />) : (
-						<EmptyState
-							text={translate('popupSettingsApiEmpty')}
-							buttonText={translate('popupSettingsApiCreate')}
-							buttonColor="black"
-							onButton={this.onAdd}
-						/>
-					)}
-				</div>
+				) : (
+					<EmptyState
+						text={translate('popupSettingsApiEmpty')}
+						buttonText={translate('popupSettingsApiCreate')}
+						buttonColor="black"
+						onButton={this.onAdd}
+					/>
+				)}
 			</>
 		);
 	};
