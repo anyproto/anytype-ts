@@ -52,7 +52,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		let authorNode = null;
 		let statusIcon = <Icon className="status syncing" />;
 
-		if (isSynced) {
+		if (isSynced || !isSelf) {
 			statusIcon = null;
 		};
 
