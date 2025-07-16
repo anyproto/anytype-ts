@@ -138,7 +138,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, isCollection, value, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
+		const { id, rootId, block, isCollection, value, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
 		if (!view) {
@@ -176,8 +176,8 @@ const Column = observer(class Column extends React.Component<Props> {
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(Dataview.filterMapper),
-				sorts: sorts.map(Dataview.filterMapper),
+				filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => Dataview.sortMapper(it)),
 				keys: getKeys(view.id),
 				sources: object.setOf || [],
 				limit,

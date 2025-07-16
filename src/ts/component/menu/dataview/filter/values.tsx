@@ -58,6 +58,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
 			{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 		];
+		const templateOptions: any[] = [
+			{ id: I.FilterValueTemplate.None },
+			{ id: I.FilterValueTemplate.User },
+			{ id: I.FilterValueTemplate.Participant },
+			{ id: I.FilterValueTemplate.Object },
+		].map((it: any) => {
+			it.name = translate(`filterValueTemplate${it.id}`);
+			return it;
+		});
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
 		const items = this.getItems();
@@ -160,6 +169,23 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				value = (
 					<>
+						<div 
+							id="item-value" 
+							className="item" 
+							onMouseEnter={this.onValueHover}
+						>
+							<Select 
+								id={[ 'filter', 'template', item.id ].join('-')} 
+								ref={ref => this.refSelect = ref}
+								className="templateValue" 
+								arrowClassName="light"
+								options={U.Menu.prepareForSelect(templateOptions)} 
+								value={item.valueTemplate}
+								onChange={v => this.onChange('valueTemplate', Boolean(Number(v)), true)} 
+								menuParam={selectParam}
+								readonly={isReadonly}
+							/>
+						</div>
 						{!isReadonly ? <ItemAdd onClick={e => this.onObject(e, item)} /> : ''}
 						{list.map((item: any, i: number) => <Item key={i} {...item} />)}
 					</>

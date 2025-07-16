@@ -10,6 +10,7 @@ class Filter implements I.Filter {
 	quickOption: I.FilterQuickOption = I.FilterQuickOption.ExactDate;
 	value: any = {};
 	nestedFilters: I.Filter[] = [];
+	valueTemplate?: I.FilterValueTemplate = I.FilterValueTemplate.None;
 
 	constructor (props: I.Filter) {
 
@@ -18,6 +19,7 @@ class Filter implements I.Filter {
 		this.operator = Number(props.operator) || I.FilterOperator.None;
 		this.condition = Number(props.condition) || I.FilterCondition.None;
 		this.quickOption = Number(props.quickOption) || I.FilterQuickOption.ExactDate;
+		this.valueTemplate = Number(props.valueTemplate) || I.FilterValueTemplate.None;
 		this.value = props.value;
 		this.nestedFilters = (Array.isArray(props.nestedFilters) ? props.nestedFilters : []).map((filter: I.Filter) => new Filter(filter));
 
@@ -28,6 +30,7 @@ class Filter implements I.Filter {
 			value: observable,
 			quickOption: observable,
 			nestedFilters: observable,
+			valueTemplate: observable,
 		});
 
 		intercept(this as any, change => U.Common.intercept(this, change));

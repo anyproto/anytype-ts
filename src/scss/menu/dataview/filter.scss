@@ -74,10 +74,12 @@
 		.select:hover, .select.isFocused { background: none; }
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
-		}
-		.select.checkboxValue {
-			.item { @include text-common; }
-			.icon.arrow { right: -8px !important; }
+
+			&.checkboxValue,
+			&.templateValue {
+				.item { @include text-common; }
+				.icon.arrow { right: -8px !important; }
+			}
 		}
 
 		.item { display: flex; gap: 0px 6px; }

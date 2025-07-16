@@ -193,8 +193,8 @@ class Dataview {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(this.filterMapper),
-				sorts: sorts.map(this.filterMapper),
+				filters: filters.map(it => this.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => this.sortMapper(it)),
 				keys,
 				limit,
 				offset,
@@ -212,12 +212,34 @@ class Dataview {
 	};
 
 	/**
-	 * Maps a filter or sort object for a dataview subscription.
+	 * Maps a filter object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
+	 * @param {any} it - The filter or sort object.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {any} The mapped object.
+	 */
+	filterMapper (it: any, param?: any) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+
+		if (relation) {
+			it.format = relation.format;
+			it.includeTime = relation.includeTime;
+
+			if (it.valueTemplate) {
+				it.value = Relation.formatValue(relation, it.value, false);
+				it.value = it.value.concat(this.valueTemplateMapper(it.valueTemplate, param));
+			};
+		};
+		return it;
+	};
+
+	/**
+	 * Maps a sort object for a dataview subscription.
 	 * @param {any} view - The dataview view object.
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
-	filterMapper (it: any) {
+	sortMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
 		if (relation) {
@@ -225,6 +247,39 @@ class Dataview {
 			it.includeTime = relation.includeTime;
 		};
 		return it;
+	};
+
+	/**
+	 * Maps a filter value template to a value.
+	 */
+	valueTemplateMapper (v: I.FilterValueTemplate, param: any): string {
+		param = param || {};
+
+		const { rootId } = param;
+		const { account } = S.Auth;
+		const { space } = S.Common;
+
+		let r = '';
+		
+		switch (v) {
+			case I.FilterValueTemplate.User: {
+				r = account.id;
+				break;
+			};
+
+			case I.FilterValueTemplate.Participant: {
+				r = U.Space.getParticipantId(space, account.id);
+				break;
+			};
+
+			case I.FilterValueTemplate.Object: {
+				r = rootId;
+				break;
+			};
+
+		};
+
+		return r;
 	};
 
 	/**

@@ -2588,6 +2588,11 @@
 
 	"notificationMode0": "Enable all",
 	"notificationMode1": "Mentions only",
-	"notificationMode2": "Disable all"
+	"notificationMode2": "Disable all",
+
+	"filterValueTemplate0": "Value template",
+	"filterValueTemplate1": "Current User",
+	"filterValueTemplate2": "Current Object",
+	"filterValueTemplate3": "Space Member"
 
 }

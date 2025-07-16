@@ -368,6 +368,7 @@ export const Mapper = {
 				condition: obj.getCondition() as number,
 				quickOption: obj.getQuickoption() as number,
 				value: obj.hasValue() ? Decode.value(obj.getValue()) : null,
+				valueTemplate: I.FilterValueTemplate.Participant,
 			};
 		},
 
