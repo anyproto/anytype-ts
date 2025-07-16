@@ -723,6 +723,9 @@ class BlockStore {
 	 */
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
+		if (!element.length) {
+			return;
+		};
 
 		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);

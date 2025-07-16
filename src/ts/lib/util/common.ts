@@ -1810,8 +1810,12 @@ class UtilCommon {
 
 	/**
 	 * Scrolls to header in Table of contents
+	 * @param {string} rootId - The root ID of the page.
+	 * @param {any} item - The item to scroll to.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {void}
 	 */
-	scrollToHeader (item: any, isPopup: boolean) {
+	scrollToHeader (rootId: string, item: any, isPopup: boolean) {
 		const node = $(`.focusable.c${item.id}`);
 
 		if (!node.length) {
@@ -1823,6 +1827,15 @@ class UtilCommon {
 		if (item.block && item.block.isTextTitle()) {
 			container.scrollTop(0);
 			return;
+		};
+
+		const toggles = node.parents(`.block.${U.Data.blockTextClass(I.TextStyle.Toggle)}`);
+
+		if (toggles.length) {
+			const toggle = $(toggles.get(0));
+			if (!toggle.hasClass('isToggled')) {
+				S.Block.toggle(rootId, toggle.attr('data-id'), true);
+			};
 		};
 
 		const no = node.offset().top;
