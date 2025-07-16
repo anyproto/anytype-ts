@@ -225,9 +225,18 @@ class Dataview {
 			it.format = relation.format;
 			it.includeTime = relation.includeTime;
 
-			if (it.valueTemplate) {
+			if (it.valueTemplate != I.FilterValueTemplate.None) {
+				const valueTemplate = this.valueTemplateMapper(it.valueTemplate, param);
+
 				it.value = Relation.formatValue(relation, it.value, false);
-				it.value = it.value.concat(this.valueTemplateMapper(it.valueTemplate, param));
+				if (Array.isArray(it.value)) {
+					it.value = it.value.concat(valueTemplate);
+				} else {
+					const v = [ valueTemplate ];
+					if (it.value) {
+						v.push(it.value);
+					};
+				};
 			};
 		};
 		return it;
