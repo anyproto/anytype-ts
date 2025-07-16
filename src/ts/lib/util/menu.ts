@@ -1,9 +1,11 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Storage, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
 
 class UtilMenu {
+
+	menuContext = null;
 
 	/**
 	 * Maps a block item, adding translation and aliases.
@@ -647,15 +649,13 @@ class UtilMenu {
 			});
 		};
 
-		let menuContext = null;
-
 		analytics.event('ClickChangeSpaceDashboard');
 
 		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			subIds,
-			onOpen: context => menuContext = context,
+			onOpen: context => this.setContext(context),
 			onClose: () => S.Menu.closeAll(subIds),
 			data: {
 				options: [
@@ -665,7 +665,7 @@ class UtilMenu {
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
 				].filter(it => it),
 				onOver: (e: any, item: any) => {
-					if (!menuContext) {
+					if (!this.menuContext) {
 						return;
 					};
 
@@ -677,8 +677,8 @@ class UtilMenu {
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
 							S.Menu.open('searchObject', {
-								element: `#${menuContext.getId()} #item-${item.id}`,
-								offsetX: menuContext.getSize().width,
+								element: `#${this.menuContext.getId()} #item-${item.id}`,
+								offsetX: this.menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
 								data: {
@@ -689,7 +689,7 @@ class UtilMenu {
 									canAdd: true,
 									onSelect: el => {
 										onSelect(el, true);
-										menuContext.close();
+										this.menuContext?.close();
 
 										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
 									},
@@ -966,11 +966,9 @@ class UtilMenu {
 		const { rootId, blockId, getView, onSelect } = param;
 		const options = Relation.getFilterOptions(rootId, blockId, getView());
 
-		let menuContext = null;
-
 		const callBack = (item: any) => {
 			onSelect(item);
-			menuContext?.close();
+			this.menuContext?.close();
 		};
 
 		if (S.Menu.isOpen('select')) {
@@ -978,7 +976,7 @@ class UtilMenu {
 		};
 
 		const onOpen = context => {
-			menuContext = context;
+			this.setContext(context);
 
 			if (menuParam.onOpen) {
 				menuParam.onOpen(context);
@@ -1002,7 +1000,7 @@ class UtilMenu {
 				withAdd: true,
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
-						this.sortOrFilterRelationAdd(menuContext, param, relation => callBack(relation));
+						this.sortOrFilterRelationAdd(this.menuContext, param, relation => callBack(relation));
 					} else {
 						callBack(item);
 					};
@@ -1354,14 +1352,11 @@ class UtilMenu {
 			});
 		};
 
-		const buttons: any[] = [
-			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
-		].filter(it => it);
-
 		const check = async () => {
-			let menuContext = null;
-
 			const items = await getClipboardData();
+			const buttons: any[] = [
+				flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
+			].filter(it => it);
 
 			if (items.length) {
 				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
@@ -1369,14 +1364,20 @@ class UtilMenu {
 
 			buttons.unshift({ 
 				id: 'add', icon: 'plus', onClick: () => {
-					U.Object.createType({ name: menuContext.ref.getData().filter }, keyboard.isPopup());
-					menuContext.close();
+					U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
+					this.menuContext?.close();
 				}, 
 			});
 
 			S.Menu.open('typeSuggest', {
 				...param,
-				onOpen: context => menuContext = context,
+				onOpen: context => {
+					this.setContext(context);
+
+					if (param.onOpen) {
+						param.onOpen(context);
+					};
+				},
 				data: {
 					noStore: true,
 					canAdd: true,
@@ -1396,11 +1397,11 @@ class UtilMenu {
 							analytics.event('SelectObjectType', { objectType: object.type });
 							analytics.createObject(object.type, object.layout, route, time);
 
-							menuContext?.close();
+							this.menuContext?.close();
 						};
 
 						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-							menuContext?.close();
+							this.menuContext?.close();
 
 							window.setTimeout(() => {
 								this.onBookmarkMenu({
@@ -1439,6 +1440,10 @@ class UtilMenu {
 			},
 			...param,
 		});
+	};
+
+	setContext (context: any) {
+		this.menuContext = context;
 	};
 
 };
