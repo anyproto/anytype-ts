@@ -58,6 +58,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 			const type = item.type ? S.Record.getTypeById(item.type) : null;
 
+			console.log(item);
+
 			let content = null;
 			if (item.isDiv) {
 				content = (
@@ -68,19 +70,12 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			} else
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
-			} else
-			if (item.id == 'add') {
-				content = (
-					<div id="item-add" className="item add" onMouseEnter={e => this.onOver(e, item)} onClick={e => this.onClick(e, item)} style={param.style}>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
 			} else {
 				content = (
 					<MenuItemVertical 
 						id={item.id}
-						object={item}
+						object={item.isSystem ? null : item}
+						icon={item.icon}
 						name={<ObjectName object={item} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
@@ -323,7 +318,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: U.Common.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter) });
+			ret.push({ id: 'add', icon: 'plus', name: U.Common.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter), isSystem: true });
 		};
 
 		return ret;

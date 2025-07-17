@@ -733,7 +733,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					canAdd: true,
 					canEdit: true,
 					dataChange: (context: any, items: any) => {
-						return Relation.filterTemplateOptions().concat({ isDiv: true }).concat(items);
+						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
+
+						if (items.length) {
+							templates.push({ isDiv: true });
+						};						
+
+						return templates.concat(items);
 					},
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
