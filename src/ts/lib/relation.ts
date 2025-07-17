@@ -339,6 +339,29 @@ class Relation {
 		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
 	};
 
+	public filterTemplateOptions () {
+		const ret = [];
+		for (const i in I.FilterValueTemplate) {
+			const id = Number(i);
+
+			if (isNaN(id) || (id == I.FilterValueTemplate.None)) {
+				continue;
+			};
+
+			ret.push({ 
+				id: U.Common.sprintf(`_filter_template_%d_`, i), 
+				name: translate(`filterTemplate${i}`),
+				icon: `filterTemplate${i}`,
+				templateType: id as I.FilterValueTemplate,
+			});
+		};
+		return ret;
+	};
+
+	public getFilterTemplateOption (id: string): { id: string, name: string, icon: string, templateType: I.FilterValueTemplate } {
+		return this.filterTemplateOptions().find(it => it.id == id);
+	};
+
 	/**
 	 * Formats a value for a relation, converting to the correct type.
 	 * @param {any} relation - The relation object.

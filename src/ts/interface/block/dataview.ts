@@ -136,7 +136,6 @@ export interface Filter {
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
 	nestedFilters?: Filter[];
-	valueTemplate?: FilterValueTemplate;
 };
 
 export interface ViewRelation {

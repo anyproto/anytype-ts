@@ -228,19 +228,19 @@ class Dataview {
 		it.format = relation.format;
 		it.includeTime = relation.includeTime;
 
-		if (it.valueTemplate && (it.valueTemplate != I.FilterValueTemplate.None)) {
-			const valueTemplate = this.valueTemplateMapper(it.valueTemplate, param);
-
+		if (Relation.isArrayType(relation.format)) {
 			it.value = Relation.formatValue(relation, it.value, false);
+
+			console.log(it.value);
+
 			if (Array.isArray(it.value)) {
-				it.value = it.value.concat(valueTemplate);
+				it.value = it.value.map(it => this.valueTemplateMapper(it, param));
 			} else {
-				const v = [ valueTemplate ];
-				if (it.value) {
-					v.push(it.value);
-				};
+				it.value = this.valueTemplateMapper(it.value, param);
 			};
 		};
+
+		console.log(it);
 
 		return it;
 	};
@@ -263,17 +263,30 @@ class Dataview {
 
 	/**
 	 * Maps a filter value template to a value.
+	 * @param {string} value - The filter value.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {string} The mapped value.
 	 */
-	valueTemplateMapper (v: I.FilterValueTemplate, param: any): string {
+	valueTemplateMapper (value: string, param?: any): string {
 		param = param || {};
 
 		const { rootId } = param;
 		const { account } = S.Auth;
 		const { space } = S.Common;
+		const option = Relation.getFilterTemplateOption(value);
+
+		if (!option) {
+			return value;
+		};
 
 		let r = '';
-		
-		switch (v) {
+
+		switch (option.templateType) {
+			default: {
+				r = value;
+				break;
+			};
+
 			case I.FilterValueTemplate.User: {
 				r = account.id;
 				break;
@@ -288,7 +301,6 @@ class Dataview {
 				r = rootId;
 				break;
 			};
-
 		};
 
 		return r;

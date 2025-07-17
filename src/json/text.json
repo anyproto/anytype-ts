@@ -2593,9 +2593,9 @@
 	"notificationMode1": "Mentions only",
 	"notificationMode2": "Disable all",
 
-	"filterValueTemplate0": "Value template",
-	"filterValueTemplate1": "Current User",
-	"filterValueTemplate2": "Current Object",
-	"filterValueTemplate3": "Space Member"
+	"filterTemplate0": "Value template",
+	"filterTemplate1": "Current User",
+	"filterTemplate2": "Current Object",
+	"filterTemplate3": "Space Member"
 
 }

@@ -56,8 +56,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return null;
 			};
 
-			const type = S.Record.getTypeById(item.type);
-			const name = <ObjectName object={item} />;
+			const type = item.type ? S.Record.getTypeById(item.type) : null;
 
 			let content = null;
 			if (item.isDiv) {
@@ -85,7 +84,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						name={<ObjectName object={item} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={<ObjectType object={type} />}
+						caption={type ? <ObjectType object={type} /> : ''}
 						style={param.style}
 					/>
 				);
@@ -302,14 +301,20 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, canEdit, nameCreate } = data;
+		const { canAdd, canEdit, nameCreate, dataChange } = data;
 		const value = Relation.getArrayValue(data.value);
 		const typeNames = this.getTypeNames();
 
 		let ret = U.Common.objectCopy(this.items);
+
+		if (dataChange) {
+			ret = dataChange(this, ret);
+		};
+
 		if (canEdit) {
 			ret = ret.filter(it => !value.includes(it.id));
 		};
+
 		if (typeNames) {
 			ret.unshift({ isSection: true, name: typeNames });
 		};

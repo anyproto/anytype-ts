@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
-import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
+import { Select, Tag, Icon, IconObject, Input, MenuItemVertical, ObjectName } from 'Component';
 
 const TIMEOUT = 1000;
 
@@ -58,15 +58,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
 			{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 		];
-		const templateOptions: any[] = [
-			{ id: I.FilterValueTemplate.None },
-			{ id: I.FilterValueTemplate.User },
-			{ id: I.FilterValueTemplate.Participant },
-			{ id: I.FilterValueTemplate.Object },
-		].map((it: any) => {
-			it.name = translate(`filterValueTemplate${it.id}`);
-			return it;
-		});
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
 		const items = this.getItems();
@@ -144,6 +135,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				Item = (element: any) => {	
 					const type = S.Record.getTypeById(element.type);
 
+					let icon = null;
+					if (element.icon) {
+						icon = <Icon className={element.icon} />;
+					} else {
+						icon = <IconObject object={element} />;
+					};
+
 					return (
 						<div 
 							id={`item-object-${element.id}`} 
@@ -151,8 +149,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							onMouseEnter={() => setHover({ id: `object-${element.id}` })}
 						>
 							<div className="clickable" onClick={e => this.onObject(e, item)}>
-								<IconObject object={element} />
-								<div className="name">{element.name}</div>
+								{icon}
+								<ObjectName object={element} />
 							</div>
 							<div className="caption">
 								{type?.name}
@@ -164,28 +162,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => S.Detail.get(subId, it, []));
+				list = Relation.getArrayValue(item.value).map(it => {
+					return Relation.getFilterTemplateOption(it) || S.Detail.get(subId, it, []);
+				});
 				list = list.filter(it => !it._empty_);
 
 				value = (
 					<>
-						<div 
-							id="item-value" 
-							className="item" 
-							onMouseEnter={this.onValueHover}
-						>
-							<Select 
-								id={[ 'filter', 'template', item.id ].join('-')} 
-								ref={ref => this.refSelect = ref}
-								className="templateValue" 
-								arrowClassName="light"
-								options={U.Menu.prepareForSelect(templateOptions)} 
-								value={item.valueTemplate}
-								onChange={v => this.onChange('valueTemplate', Boolean(Number(v)), true)} 
-								menuParam={selectParam}
-								readonly={isReadonly}
-							/>
-						</div>
 						{!isReadonly ? <ItemAdd onClick={e => this.onObject(e, item)} /> : ''}
 						{list.map((item: any, i: number) => <Item key={i} {...item} />)}
 					</>
@@ -749,6 +732,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					relation: observable.box(relation),
 					canAdd: true,
 					canEdit: true,
+					dataChange: (context: any, items: any) => {
+						return Relation.filterTemplateOptions().concat({ isDiv: true }).concat(items);
+					},
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
 
