@@ -1168,19 +1168,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		selection?.clear();
 
+		let records = this.getRecords();
+		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
+			ids = ids.reverse();
+		};
+
+		ids.forEach(id => {
+			const oldIndex = records.indexOf(id);
+			const targetIndex = records.indexOf(targetId);
+
+			records = arrayMove(records, oldIndex, targetIndex);
+		});
+
 		const cb = () => {
-			let records = this.getRecords();
-			if (records.indexOf(targetId) > records.indexOf(ids[0])) {
-				ids = ids.reverse();
-			};
-
-			ids.forEach(id => {
-				const oldIndex = records.indexOf(id);
-				const targetIndex = records.indexOf(targetId);
-
-				records = arrayMove(records, oldIndex, targetIndex);
-			});
-
 			S.Record.recordsSet(subId, '', records);
 			this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
 		};
@@ -1191,7 +1191,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					title: translate('popupConfirmSortRemoveTitle'),
 					textConfirm: translate('commonRemove'),
 					onConfirm: () => {
-						C.BlockDataviewSortRemove(rootId, block.id, view.id, view.sorts.map(it => it.id), cb);
+						cb();
+						C.BlockDataviewSortRemove(rootId, block.id, view.id, view.sorts.map(it => it.id));
 					},
 				},
 			});

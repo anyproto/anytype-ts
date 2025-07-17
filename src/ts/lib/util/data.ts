@@ -927,8 +927,10 @@ class UtilData {
 
 						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
+						U.Subscription.createGlobal();
 
 						this.onInfo(message.account.info);
+
 						Renderer.send('keytarSet', message.account.id, phrase);
 						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
