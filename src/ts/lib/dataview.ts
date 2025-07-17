@@ -231,16 +231,12 @@ class Dataview {
 		if (Relation.isArrayType(relation.format)) {
 			it.value = Relation.formatValue(relation, it.value, false);
 
-			console.log(it.value);
-
 			if (Array.isArray(it.value)) {
 				it.value = it.value.map(it => this.valueTemplateMapper(it, param));
 			} else {
 				it.value = this.valueTemplateMapper(it.value, param);
 			};
 		};
-
-		console.log(it);
 
 		return it;
 	};
