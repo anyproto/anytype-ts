@@ -456,8 +456,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.getTextValue();
 		const parsed = this.getMarksFromHtml();
 		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
+		const twoSymbolBefore = this.range ? value[this.range.from - 2] : '';
 		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@');
+		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || (twoSymbolBefore == ' '));
 
 		this.marks = parsed.marks;
 
@@ -515,6 +516,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (adjustMarks) {
 			this.updateMarkup(value, { from: to, to });
 		};
+
+		keyboard.shortcut('space', e, () => {
+			this.checkUrls();
+		});
 
 		this.checkSendButton();
 		this.updateButtons();
