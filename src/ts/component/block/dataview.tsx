@@ -1182,7 +1182,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const cb = () => {
 			S.Record.recordsSet(subId, '', records);
-			this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+			this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));
 		};
 
 		if (view.sorts.length) {
@@ -1191,8 +1191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					title: translate('popupConfirmSortRemoveTitle'),
 					textConfirm: translate('commonRemove'),
 					onConfirm: () => {
-						cb();
-						C.BlockDataviewSortRemove(rootId, block.id, view.id, view.sorts.map(it => it.id));
+						C.BlockDataviewSortRemove(rootId, block.id, view.id, view.sorts.map(it => it.id), cb);
 					},
 				},
 			});
