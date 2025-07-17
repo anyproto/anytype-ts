@@ -418,7 +418,7 @@
             .icon.active { background-color: var(--color-shape-highlight-medium); }
         }
 
-        .emptyState { border-bottom: 1px solid var(--color-shape-secondary); }
+        .emptyState { border-style: solid; border-color: var(--color-shape-secondary); border-top-width: 1px; border-bottom-width: 1px; }
     }
 
 	> .pageSettingsApi {

@@ -1,5 +1,7 @@
 .message { @include text-common; position: relative; }
 .message {
+	* { user-select: text !important; }
+
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 

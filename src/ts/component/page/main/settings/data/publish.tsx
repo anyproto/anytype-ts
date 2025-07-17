@@ -39,15 +39,19 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 			<>
 				<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
 
-				<div className="items">
-					<div className="row isHead">
-						<div className="col colSpace">{translate('commonObject')}</div>
-						<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
-						<div className="col">{translate('commonSize')}</div>
-						<div className="col colMore" />
+				{list.length ? (
+					<div className="items">
+						<div className="row isHead">
+							<div className="col colSpace">{translate('commonObject')}</div>
+							<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
+							<div className="col">{translate('commonSize')}</div>
+							<div className="col colMore" />
+						</div>
+						{list.map((item: any, i: number) => <Row key={i} {...item} />)}
 					</div>
-					{list.length ? list.map((item: any, i: number) => <Row key={i} {...item} />) : <EmptyState text={translate('popupSettingsDataManagementDataPublishEmpty')} />}
-				</div>
+				) : (
+					<EmptyState text={translate('popupSettingsDataManagementDataPublishEmpty')} />
+				)}
 			</>
 		);
 	};

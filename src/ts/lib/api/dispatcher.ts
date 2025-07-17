@@ -1031,8 +1031,6 @@ class Dispatcher {
 
 						S.Chat.setState(subId, mapped.state);
 					});
-
-					$(window).trigger('chatStateUpdate');
 					break;
 				};
 

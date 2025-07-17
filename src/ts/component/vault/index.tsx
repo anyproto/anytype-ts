@@ -4,7 +4,7 @@ import { I, U, S, C, J, Key, keyboard, translate, analytics, Preview, sidebar, A
 import VaultItem from './item';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor, restrictToParentElement } from '@dnd-kit/modifiers';
 
 interface VaultRefProps {
 	toggleClass: (name: string, value: boolean) => void;
@@ -287,6 +287,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		analytics.event('ReorderSpace');
 	};
 
+	const onSortCancel = () => {
+		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
+	};
+
 	const onScroll = () => {
 		const node = $(nodeRef.current);
 		const scroll = node.find('#scroll');
@@ -352,33 +357,20 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		>
 			<div className="head" />
 			<div className="body">
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragStart={onSortStart}
-					onDragEnd={onSortEnd}
-					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-				>
-						<div id="scroll" className="side top" onScroll={onScroll}>
-							<SortableContext
-								items={pinned.map(item => item.id)}
-								strategy={verticalListSortingStrategy}
-							>
-								{pinned.map((item, i) => (
-									<VaultItem 
-										key={`item-space-${item.id}`}
-										item={item}
-										onClick={e => onClick(e, item)}
-										onMouseEnter={e => onMouseEnter(e, item)}
-										onMouseLeave={() => Preview.tooltipHide()}
-										onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
-									/>
-								))}
-							</SortableContext>
-
-							{pinned.length && unpinned.length ? <div className="div" /> : ''}
-
-							{unpinned.map((item, i) => (
+				<div id="scroll" className="side top" onScroll={onScroll}>
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragStart={onSortStart}
+						onDragEnd={onSortEnd}
+						onDragCancel={onSortCancel}
+						modifiers={[ restrictToVerticalAxis, restrictToParentElement ]}
+					>
+						<SortableContext
+							items={pinned.map(item => item.id)}
+							strategy={verticalListSortingStrategy}
+						>
+							{pinned.map((item, i) => (
 								<VaultItem 
 									key={`item-space-${item.id}`}
 									item={item}
@@ -388,8 +380,23 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 									onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
 								/>
 							))}
-						</div>
-				</DndContext>
+						</SortableContext>
+					</DndContext>
+
+					{pinned.length && unpinned.length ? <div className="div" /> : ''}
+
+					{unpinned.map((item, i) => (
+						<VaultItem 
+							key={`item-space-${item.id}`}
+							item={item}
+							onClick={e => onClick(e, item)}
+							onMouseEnter={e => onMouseEnter(e, item)}
+							onMouseLeave={() => Preview.tooltipHide()}
+							onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+						/>
+					))}
+				</div>
+
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>
 					{canCreate ? (
 						<VaultItem 

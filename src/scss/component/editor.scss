@@ -27,7 +27,7 @@
 		
 		.blockLast { margin-left: -50px; }
 
-		.tableOfContents { position: fixed; top: 50%; transform: translate3d(0px, -50%, 0px); padding: 16px; }
+		.tableOfContents { position: fixed; top: 50%; transform: translate3d(0px, -50%, 0px); padding: 16px; z-index: 10; }
 		.tableOfContents {
 			.inner { width: 16px; display: flex; flex-direction: column; gap: 8px 0px; align-items: flex-end; }
 

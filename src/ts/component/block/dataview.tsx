@@ -727,9 +727,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				if (U.Object.isNoteLayout(object.layout)) {
 					this.onCellClick(e, 'name', object.id, object);
 				} else {
-					window.setTimeout(() => {
-						this.setRecordEditingOn(e, object.id);
-					}, 15);
+					window.setTimeout(() => this.setRecordEditingOn(e, object.id), 15);
 				};
 
 				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
@@ -1159,6 +1157,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
+		const { rootId, block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const subId = this.getSubId();
 		const view = this.getView();
@@ -1181,8 +1180,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
-		S.Record.recordsSet(subId, '', records);
-		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+		const cb = () => {
+			S.Record.recordsSet(subId, '', records);
+			this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+		};
+
+		if (view.sorts.length) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmSortRemoveTitle'),
+					textConfirm: translate('commonRemove'),
+					onConfirm: () => {
+						cb();
+						C.BlockDataviewSortRemove(rootId, block.id, view.id, view.sorts.map(it => it.id));
+					},
+				},
+			});
+		} else {
+			cb();
+		};
 	};
 
 	onSortAdd (item: any, callBack?: () => void) {
@@ -1481,16 +1497,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	setRecordEditingOn (e: any, id: string) {
 		const ref = this.refRecords.get(id);
-		if (!ref || !ref.setIsEditing) {
-			return;
-		};
-
 		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
 		const nameRef = this.refCells.get(nameId);
 		const win = $(window);
 
-		ref.setIsEditing(true);
-		this.editingRecordId = id;
+		if (ref && ref.setIsEditing) {
+			ref.setIsEditing(true);
+			this.editingRecordId = id;
+		};
 
 		if (nameRef) {
 			nameRef.onClick(e);
@@ -1518,15 +1532,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
-		if (!ref || !ref.setIsEditing) {
-			return;
-		};
-
 		const nameId = Relation.cellId(this.getIdPrefix(), 'name', id);
 		const nameRef = this.refCells.get(nameId);
 
-		ref.setIsEditing(false);
-		this.editingRecordId = '';
+		if (ref && ref.setIsEditing) {
+			ref.setIsEditing(false);
+			this.editingRecordId = '';
+		};
 
 		if (nameRef) {
 			nameRef.onBlur();

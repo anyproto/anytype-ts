@@ -49,14 +49,11 @@ export default {
 			},
 		],
 		param: {
-			element: '#button-widget-help',
+			element: '#block-type',
 			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
 			noArrow: true,
 			passThrough: true,
-			offsetY: -4,
 		},
 	}),
 

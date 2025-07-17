@@ -542,7 +542,7 @@ class RecordStore {
 	 * @returns {any[]} The relation keys.
 	 */
 	getDataviewRelationKeys (rootId: string, blockId: string): any[] {
-		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
+		return [ 'name' ].concat((this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey)).filter(it => it);
 	};
 
 	/**
@@ -553,7 +553,7 @@ class RecordStore {
 	 * @returns {any[]} The dataview relations.
 	 */
 	getDataviewRelations (rootId: string, blockId: string): any[] {
-		return [ 'name' ].concat(this.getDataviewRelationKeys(rootId, blockId)).map(it => this.getRelationByKey(it)).filter(it => it);
+		return this.getDataviewRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
 	/**
