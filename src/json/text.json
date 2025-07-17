@@ -1256,6 +1256,8 @@
 	"popupConfirmButtonUpdateApp": "Update app",
 	"popupConfirmButtonGotIt": "Got it",
 
+	"popupConfirmSortRemoveTitle": "Would you like to remove sorting?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
