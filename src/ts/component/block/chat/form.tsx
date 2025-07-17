@@ -517,9 +517,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.updateMarkup(value, { from: to, to });
 		};
 
+		/*
 		keyboard.shortcut('space', e, () => {
 			this.checkUrls();
 		});
+		*/
 
 		this.checkSendButton();
 		this.updateButtons();
