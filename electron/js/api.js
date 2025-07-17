@@ -5,6 +5,7 @@ const path = require('path');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 const si = require('systeminformation');
+const { exec, execFile } = require('child_process');
 const checkDiskSpace = require('check-disk-space').default;
 
 const MenuManager = require('./menu.js');
@@ -156,7 +157,27 @@ class Api {
 	};
 
 	openPath (win, path) {
-		shell.openPath(path);
+		if (is.macos) {
+			execFile('open', [ path ], (err) => {
+				if (err) {
+					console.error('[Api].openPath error:', err);
+				};
+			});
+		} else 
+		if (is.windows) {
+			exec(`start "" "${path}"`, { shell: 'cmd.exe' }, (err) => {
+				if (err) {
+					console.error('[Api].openPath error:', err);
+				};
+			});
+		} else 
+		if (is.linux) {
+			execFile('xdg-open', [ path ], (err) => {
+				if (err) {
+					console.error('[Api].openPath error:', err);
+				};
+			});
+		};
 	};
 
 	shutdown (win, relaunch) {

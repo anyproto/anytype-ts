@@ -1061,7 +1061,7 @@ class UtilCommon {
 		let offset = 0;
 
 		for (const word of words) {
-			const isUrl = !!this.matchUrl(word);
+			const isUrl = !!this.matchUrl(word) || !!this.matchDomain(word);
 			const isEmail = !!this.matchEmail(word);
 			const isLocal = !!this.matchPath(word);
 			const isPhone = !!this.matchPhone(word);
@@ -1120,8 +1120,8 @@ class UtilCommon {
 	matchPath (s: string): string {
 		s = String(s || '');
 
-		const rw = new RegExp(/^(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
-		const ru = new RegExp(/^(\/[\p{L}\p{N}\s\._-]+)+\/?$/u);
+		const rw = new RegExp(/^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
+		const ru = new RegExp(/^(file:\/\/)?(\/[\p{L}\p{N}\s\._-]+)+\/?$/u);
 
 		let m = s.match(rw);
 		if (!m) {
