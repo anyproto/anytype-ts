@@ -156,25 +156,32 @@ class Api {
 		shell.openExternal(url);
 	};
 
-	openPath (win, path) {
+	openPath (win, fp) {
+		if (!fp || !fs.existsSync(fp)) {
+			Util.log('error', '[Api].openPath: Invalid path:', fp);
+			return;
+		};
+
+		fp = path.normalize(fp);
+
 		if (is.macos) {
-			execFile('open', [ path ], (err) => {
+			execFile('open', [ fp ], (err) => {
 				if (err) {
-					console.error('[Api].openPath error:', err);
+					Util.log('error', '[Api].openPath error:', err);
 				};
 			});
 		} else 
 		if (is.windows) {
-			exec(`start "" "${path}"`, { shell: 'cmd.exe' }, (err) => {
+			exec(`start "" "${fp}"`, { shell: 'cmd.exe' }, (err) => {
 				if (err) {
-					console.error('[Api].openPath error:', err);
+					Util.log('error', '[Api].openPath error:', err);
 				};
 			});
 		} else 
 		if (is.linux) {
-			execFile('xdg-open', [ path ], (err) => {
+			execFile('xdg-open', [ fp ], (err) => {
 				if (err) {
-					console.error('[Api].openPath error:', err);
+					Util.log('error', '[Api].openPath error:', err);
 				};
 			});
 		};
