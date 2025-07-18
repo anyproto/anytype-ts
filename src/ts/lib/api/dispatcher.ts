@@ -996,7 +996,10 @@ class Dispatcher {
 					});
 
 					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
+						U.Common.notification({ 
+							title: space.name, 
+							text: `${author?.name}: ${message.content.text}`,
+						}, () => {
 							const { space } = S.Common;
 							const open = () => {
 								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
