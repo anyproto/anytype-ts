@@ -177,7 +177,8 @@ export default {
 	syncStatus: [
 		'syncStatus',
 		'syncDate',
-		'syncError'
+		'syncError',
+		'fileSyncStatus'
 	],
 
 	pageCover: 'pageCover',

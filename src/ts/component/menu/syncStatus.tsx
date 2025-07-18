@@ -426,7 +426,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					};
 
 					case I.SyncStatusSpace.Synced: {
-						message = translate('menuSyncStatusInfoSelfMessageSynced');
+						message = translate('commonSynced');
 						break;
 					};
 
