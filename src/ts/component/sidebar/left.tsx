@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, Sync } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
+import { Icon, Sync, Banner } from 'Component';
+import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
 
 import SidebarWidget from './page/widget';
 import SidebarObject from './page/allObject';
@@ -51,7 +51,7 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 	};
 
 	render() {
-		const { showVault } = S.Common;
+		const { showVault, updateVersion } = S.Common;
 		const page = this.state.page || 'widget';
 		const Component = Components[page];
 
@@ -77,6 +77,23 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
+
+					{updateVersion ? (
+						<Banner 
+							id="update" 
+							text={U.Common.sprintf(translate('commonNewVersion'), `<span class="hl">${updateVersion}</span>`)} 
+							button={translate('commonUpdateNow')} 
+							onClick={() => {
+								Renderer.send('updateDownload');
+								S.Common.updateVersionSet('');
+								U.Common.checkUpdateVersion(updateVersion);
+							}}
+							onClose={() => {
+								S.Common.updateVersionSet('');
+								Renderer.send('updateCancel');
+							}}
+						/>
+					) : ''}
 				</div>
 			</>
 		);

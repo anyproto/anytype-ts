@@ -42,6 +42,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public showVaultValue = null;
+	public updateVersionValue = '';
 	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
 	public hideSidebarValue = null;
 	public pinValue = null;
@@ -114,6 +115,7 @@ class CommonStore {
 			timeFormatValue: observable,
 			pinValue: observable,
 			firstDayValue: observable,
+			updateVersionValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -329,6 +331,10 @@ class CommonStore {
 		};
 
 		return Number(this.firstDayValue) || 1;
+	};
+
+	get updateVersion (): string {
+		return String(this.updateVersionValue || '');
 	};
 
 	/**
@@ -560,6 +566,14 @@ class CommonStore {
 
 		$('body').toggleClass('isFullScreen', v);
 		$(window).trigger('resize');
+	};
+
+	/**
+	 * Sets the update version value.
+	 * @param {string} v - The update version value.
+	 */
+	updateVersionSet (v: string) {
+		this.updateVersionValue = String(v || '');
 	};
 
 	/**

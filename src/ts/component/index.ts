@@ -32,6 +32,7 @@ import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
 
 import Notification from './notification';
+import Banner from './util/banner';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -163,6 +164,7 @@ export {
 	Label,
 	Error,
 	Notification,
+	Banner,
 
 	Icon,
 	IconObject,
