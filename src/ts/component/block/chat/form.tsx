@@ -300,7 +300,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'resize' ];
+		const events = [ 'resize', 'sidebarResize' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -312,7 +312,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
-		win.on(`resize.${ns}`, () => this.resize());
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 	};
 
 	checkSendButton () {
