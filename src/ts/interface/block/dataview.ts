@@ -86,6 +86,13 @@ export enum FilterQuickOption {
 	NumberOfDaysNow	 = 11,
 };
 
+export enum FilterValueTemplate {
+	None			 = 0,
+	User			 = 1,
+	Object			 = 2,
+	Participant		 = 3,
+};
+
 export enum FormulaType {
 	None				 = 0,
 	Count				 = 1,

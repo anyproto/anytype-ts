@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { I, S, U, Relation, translate } from 'Lib';
-import { Icon, Tag, IconObject } from 'Component';
+import { Icon, Tag, IconObject, ObjectName } from 'Component';
 
 interface Props extends I.Filter {
 	id: string;
@@ -112,17 +112,25 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.RelationType.File:
 		case I.RelationType.Object: {
 			Item = (item: any) => {
+				let icon = null;
+				if (item.icon) {
+					icon = <Icon className={item.icon} />;
+				} else {
+					icon = <IconObject object={item} />;
+				};
 				return (
 					<div className="element">
 						<div className="flex">
-							<IconObject object={item} />
-							<div className="name">{item.name}</div>
+							{icon}
+							<ObjectName object={item} />
 						</div>
 					</div>
 				);
 			};
 
-			list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
+			list = Relation.getArrayValue(value).map(it => {
+				return Relation.getFilterTemplateOption(it) || S.Detail.get(subId, it, []);
+			});
 			list = list.filter(it => !it._empty_);
 
 			v = (
