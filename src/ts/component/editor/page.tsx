@@ -1844,7 +1844,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const root = S.Block.getLeaf(rootId, rootId);
-		const { focused } = focus.state;
+		const { focused, range } = focus.state;
 
 		if (!root || (readonly && isCut)) {
 			return;
@@ -1862,6 +1862,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ids = [ focused ];
 		} else {
 			ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
+		};
+
+		if (isCut && (ids.length == 1) && (ids[0] == focused)) {
+			this.focus(focused, range.from, range.from, false);
 		};
 
 		Action.copyBlocks(rootId, ids, isCut);
