@@ -805,7 +805,9 @@ class UtilMenu {
 				};
 			};
 
-			options.push({ isDiv: true });
+			if (options.length) {
+				options.push({ isDiv: true });
+			};
 			options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 
 			S.Menu.open('select', {

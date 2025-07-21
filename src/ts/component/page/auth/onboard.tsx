@@ -96,7 +96,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
-	const onForward = () => {
+	const onForward = (skipName?: boolean) => {
 		if (!canMoveForward()) {
 			return;
 		};
@@ -123,7 +123,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 					});
 				};
 
-				if (name) {
+				if (!skipName && name) {
 					nextRef.current?.setLoading(true);
 					U.Object.setName(S.Block.profile, name, cb);
 				} else {
@@ -231,7 +231,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 					{!phraseVisible ? (
 						<div className="animation">
-							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
 						</div>
 					) : ''}
 				</>
@@ -257,10 +257,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={onForward} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward(true)} />
 					</div>
 				</>
 			);
@@ -286,10 +286,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={onForward} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
 					</div>
 				</>
 			);
