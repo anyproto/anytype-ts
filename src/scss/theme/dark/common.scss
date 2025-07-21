@@ -434,6 +434,11 @@ html.themeDark {
 		}
 	}
 
+	.banner { color: var(--color-text-inversion); }
+	.banner {
+		.button.simple { color: var(--color-text-inversion); }
+	}
+
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
