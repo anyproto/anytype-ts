@@ -229,6 +229,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			const update = [];
 
 			for (const key in this.update) {
+				if ([ 'layoutFormat', 'isNew', 'data' ].includes(key)) {
+					continue;
+				};
+
 				const value = Relation.formatValue(S.Record.getRelationByKey(key), this.update[key], true);
 				update.push({ key, value });
 			};
