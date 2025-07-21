@@ -219,7 +219,7 @@
 	"commonUnmute": "Unmute",
 	"commonDropFiles": "Drag and drop your files here",
 	"commonObjectEmpty": "It's empty here.",
-	"commonNewVersion": "Version %s is out now",
+	"commonNewVersion": "Version <span class='hl'>%s</span> is out now",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

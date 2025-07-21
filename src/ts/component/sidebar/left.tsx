@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -10,10 +10,6 @@ import SidebarObject from './page/allObject';
 import SidebarSettingsIndex from './page/settings/index';
 import SidebarSettingsLibrary from './page/settings/library'
 
-interface State {
-	page: string;
-};
-
 const Components = {
 	object: SidebarObject,
 	widget: SidebarWidget,
@@ -23,164 +19,72 @@ const Components = {
 	relations: SidebarSettingsLibrary,
 };
 
-const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State> {
-	
-	private _isMounted = false;
-	node = null;
-	ox = 0;
-	oy = 0;
-	sx = 0;
-	frame = 0;
-	width = 0;
-	movedX = false;
-	refChild = null;
+interface SidebarLeftRefProps {
+	setPage: (page: string) => void;
+	getChild: () => any;
+	getNode: () => HTMLElement | null;
+};
 
-	state = {
-		page: 'widget',
-	};
+const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
-	constructor (props) {
-		super(props);
+	const nodeRef = useRef(null);
+	const childRef = useRef(null);
+	const ox = useRef(0);
+	const oy = useRef(0);
+	const sx = useRef(0);
+	const frame = useRef(0);
+	const width = useRef(0);
+	const movedX = useRef(false);
+	const [ page, setPage ] = useState('widget');
+	const { showVault, updateVersion } = S.Common;
+	const Component = Components[page];
 
-		this.onResizeStart = this.onResizeStart.bind(this);
-		this.onResizeMove = this.onResizeMove.bind(this);
-		this.onResizeEnd = this.onResizeEnd.bind(this);
-		this.onHandleClick = this.onHandleClick.bind(this);
-		this.onToggleClick = this.onToggleClick.bind(this);
-		this.onToggleContext = this.onToggleContext.bind(this);
-	};
-
-	render() {
-		const { showVault, updateVersion } = S.Common;
-		const page = this.state.page || 'widget';
-		const Component = Components[page];
-
-		return (
-			<>
-				<Icon 
-					id="sidebarToggle"
-					className="withBackground"
-					tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
-					onClick={this.onToggleClick}
-					onContextMenu={this.onToggleContext}
-				/>
-
-				<Sync id="sidebarSync" onClick={this.onSync} />
-
-				<div 
-					ref={node => this.node = node}
-					id="sidebarLeft" 
-					className="sidebar left" 
-				>
-					<Component ref={ref => this.refChild = ref} {...this.props} page={page} />
-
-					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-						<div className="resize-handle" onClick={this.onHandleClick} />
-					</div>
-
-					{updateVersion ? (
-						<Banner 
-							id="update" 
-							text={U.Common.sprintf(translate('commonNewVersion'), `<span class="hl">${updateVersion}</span>`)} 
-							button={translate('commonUpdateNow')} 
-							onClick={() => {
-								Renderer.send('updateDownload');
-								S.Common.updateVersionSet('');
-								U.Common.checkUpdateVersion(updateVersion);
-							}}
-							onClose={() => {
-								S.Common.updateVersionSet('');
-								Renderer.send('updateCancel');
-							}}
-						/>
-					) : ''}
-				</div>
-			</>
-		);
-	};
-
-	componentDidMount (): void {
-		this._isMounted = true;
-		this.init();
-
-		sidebar.init();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
-	};
-
-	componentWillUnmount (): void {
-		this._isMounted = false;
-
-		Preview.tooltipHide(true);
-	};
-
-	init () {
-		const { showVault } = S.Common;
-		const node = $(this.node);
+	const init = () => {
+		const node = $(nodeRef.current);
 		const vault = $(S.Common.getRef('vault').node);
 
 		node.toggleClass('withVault', showVault);
 		vault.toggleClass('isHidden', !showVault);
 	};
 
-	setActive (id: string): void {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-
-		node.find('.item.hover').removeClass('hover');
-
-		if (id) {
-			node.find(`.item.c${id}`).addClass('hover');
-		};
-	};
-
-	onResizeStart (e: React.MouseEvent) {
+	const onResizeStart = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const win = $(window);
 		const body = $('body');
 		const { left, top } = node.offset();
 
-		this.ox = left;
-		this.oy = top;
-		this.sx = e.pageX;
+		ox.current = left;
+		oy.current = top;
+		sx.current = e.pageX;
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
 		body.addClass('colResize');
 
 		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
-		win.on('mousemove.sidebar', e => this.onResizeMove(e));
-		win.on('mouseup.sidebar blur.sidebar', e => this.onResizeEnd());
+		win.on('mousemove.sidebar', e => onResizeMove(e));
+		win.on('mouseup.sidebar blur.sidebar', e => onResizeEnd());
 	};
 
-	onResizeMove (e: any) {
-		if (this.frame) {
-			raf.cancel(this.frame);
+	const onResizeMove = (e: any) => {
+		if (frame.current) {
+			raf.cancel(frame.current);
 		};
 
-		this.frame = raf(() => {
+		frame.current = raf(() => {
 			if (sidebar.isAnimating) {
 				return;
 			};
 
-			if (Math.abs(this.sx - e.pageX) >= 10) {
-				this.movedX = true;
+			if (Math.abs(sx.current - e.pageX) >= 10) {
+				movedX.current = true;
 			};
 
-			const w = Math.max(0, (e.pageX - this.ox));
-			const d = w - this.width;
+			const w = Math.max(0, (e.pageX - ox.current));
+			const d = w - width.current;
 
 			if (!d) {
 				return;
@@ -203,39 +107,40 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 				};
 			};
 
-			this.width = w;
-			if (this.refChild.resize) {
-				this.refChild.resize();
+			width.current = w;
+
+			if (childRef.current.resize) {
+				childRef.current.resize();
 			};
 		});
 	};
 
-	onResizeEnd () {
+	const onResizeEnd = () => {
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
-		raf.cancel(this.frame);
+		raf.cancel(frame.current);
 
 		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
-		window.setTimeout(() => this.movedX = false, 15);
+		window.setTimeout(() => movedX.current = false, 15);
 	};
 
-	onHandleClick () {
-		if (!this.movedX) {
-			this.onToggleClick();
+	const onHandleClick = () => {
+		if (!movedX.current) {
+			onToggleClick();
 		};
 	};
 
-	onToggleClick () {
+	const onToggleClick = () => {
 		sidebar.toggleOpenClose();
 	};
 
-	onToggleContext () {
+	const onToggleContext = () => {
 		U.Menu.sidebarContext('#sidebarToggle');
 	};
 
-	onSync = () => {
+	const onSync = () => {
 		S.Menu.closeAllForced(null, () => S.Menu.open('syncStatus', {
 			element: '#sidebarSync',
 			className: 'fixed',
@@ -247,6 +152,78 @@ const SidebarLeft = observer(class SidebarLeft extends React.Component<{}, State
 		}));
 	};
 
-});
+	useEffect(() => {
+		init();
+		sidebar.init();
+
+		return () => {
+			Preview.tooltipHide(true);
+		};
+	}, []);
+
+	useEffect(() => {
+		init();
+	});
+
+	useImperativeHandle(ref, () => ({
+		getNode: () => {
+			return nodeRef.current;
+		},
+
+		setPage: (page: string) => {
+			if (Components[page]) {
+				setPage(page);
+			};
+		},
+
+		getChild: () => {
+			return childRef.current;
+		},
+	}));
+
+	return (
+		<>
+			<Icon 
+				id="sidebarToggle"
+				className="withBackground"
+				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
+				onClick={onToggleClick}
+				onContextMenu={onToggleContext}
+			/>
+
+			<Sync id="sidebarSync" onClick={onSync} />
+
+			<div 
+				ref={nodeRef}
+				id="sidebarLeft" 
+				className="sidebar left" 
+			>
+				<Component ref={childRef} {...props} page={page} />
+
+				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
+					<div className="resize-handle" onClick={onHandleClick} />
+				</div>
+
+				{updateVersion ? (
+					<Banner 
+						id="update" 
+						text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)} 
+						button={translate('commonUpdateNow')} 
+						onClick={() => {
+							Renderer.send('updateDownload');
+							S.Common.updateVersionSet('');
+							U.Common.checkUpdateVersion(updateVersion);
+						}}
+						onClose={() => {
+							S.Common.updateVersionSet('');
+							Renderer.send('updateCancel');
+						}}
+					/>
+				) : ''}
+			</div>
+		</>
+	);
+
+}));
 
 export default SidebarLeft;

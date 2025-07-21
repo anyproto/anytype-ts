@@ -64,9 +64,8 @@ class Sidebar {
 	 */
 	initObjects () {
 		const isPopup = keyboard.isPopup();
-		const vault = S.Common.getRef('vault');
 
-		this.objLeft = $('#sidebarLeft');
+		this.objLeft = $(S.Common.getRef('sidebarLeft')?.getNode());
 		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
 		this.page = U.Common.getPageContainer(isPopup);
 		this.header = this.page.find('#header');
@@ -76,10 +75,7 @@ class Sidebar {
 		this.dummyLeft = $('#sidebarDummyLeft');
 		this.toggleButton = $('#sidebarToggle');
 		this.syncButton = $('#sidebarSync');
-
-		if (vault) {
-			this.vault = $(vault.getNode());
-		};
+		this.vault = $(S.Common.getRef('vault')?.getNode());
 	};
 
 	/**
@@ -521,7 +517,7 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	leftPanelSetState (v: any) {
-		S.Common.getRef('sidebarLeft')?.setState(v);
+		S.Common.getRef('sidebarLeft')?.setPage(v.page);
 	};
 
 	/**
