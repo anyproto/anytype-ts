@@ -1869,6 +1869,28 @@ class UtilCommon {
 		return ALPHABET[0] + chars.join('');
 	};
 
+	/**
+	 * Checks if the current app version is different from the provided version.
+	 * If different, sets a flag in storage to show the "What's New" popup.
+	 * @param {string} v - The version to check against.
+	 */
+	checkUpdateVersion (v: string) {
+		if (!Storage.get('primitivesOnboarding')) {
+			return;
+		};
+
+		v = String(v || '');
+
+		const electron = this.getElectron();
+		const update = v.split('.');
+		const current = String(electron.version.app || '').split('.');
+
+		if ((update[0] != current[0]) || (update[1] != current[1])) {
+			Storage.set('whatsNew', true);
+			Storage.setHighlight('whatsNew', true);
+		};
+	};
+
 };
 
 export default new UtilCommon();
