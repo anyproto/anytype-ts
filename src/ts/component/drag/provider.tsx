@@ -268,6 +268,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
 
+		const win = $(window);
 		const { rootId, dropType, withAlt } = data;
 		const ids = data.ids || [];
 		const contextId = rootId;
@@ -286,7 +287,10 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				};
 
 				selection?.renderSelection();
-				raf(() => $('.resizable').trigger('resizeInit'));
+				raf(() => {
+					win.trigger('resize');
+					$('.resizable').trigger('resizeInit');
+				});
 			};
 
 			if (withAlt) {

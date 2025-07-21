@@ -35,7 +35,7 @@ const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props
 	};
 
 	const onWidthMove = (v: number) => {
-		$(percentRef.current).find('#percent').text(`${getPercent(v)}%`);
+		$(percentRef.current).text(`${getPercent(v)}%`);
 	};
 
 	const onWidthEnd = (v: number) => {
