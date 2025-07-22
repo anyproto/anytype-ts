@@ -474,7 +474,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		e.dataTransfer.setData('text', blockId);
 
 		win.off('dragend.widget').on('dragend.widget', () => {
-			this.clear();
+			this.onDragEnd();
 			win.off('dragend.widget');
 		});
 
@@ -534,6 +534,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
+		this.onDragEnd();
+	};
+
+	onDragEnd () {
 		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
