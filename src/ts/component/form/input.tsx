@@ -52,6 +52,7 @@ export interface InputRef {
 	setRange: (range: I.TextRange) => void;
 	getRange: () => I.TextRange;
 	getSelectionRect: () => DOMRect | null;
+	getNode: () => HTMLInputElement | null;
 };
 
 const Input = forwardRef<InputRef, Props>(({
@@ -118,20 +119,20 @@ const Input = forwardRef<InputRef, Props>(({
 		handleEvent(onChange, e);
 	};
 
-	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) {
-			return;
-		};
-
-		handleEvent(onKeyUp, e);
-	};
-
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
 		if ($(inputRef.current).hasClass('disabled')) {
 			return;
 		};
 
 		handleEvent(onKeyDown, e);
+	};
+
+	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+		if ($(inputRef.current).hasClass('disabled')) {
+			return;
+		};
+
+		handleEvent(onKeyUp, e);
 	};
 
 	const handleInput = (e: FormEvent<HTMLInputElement>) => {
@@ -291,6 +292,7 @@ const Input = forwardRef<InputRef, Props>(({
 			});
 		},
 		getRange: (): I.TextRange | null => rangeRef.current,
+		getNode: () => inputRef.current,
 	}));
 
 	return (
