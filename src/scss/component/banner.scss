@@ -8,7 +8,7 @@
 	.inner { display: flex; flex-direction: column; gap: 2px 0; align-items: flex-start; }
 	.hl { display: inline-block; padding: 0px 4px; background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
 
-	.button.simple { color: var(--color-text-primary); }
+	.button.simple { color: var(--color-text-primary); font-weight: 600; }
 	.button.simple {
 		.txt { line-height: var(--line-height-common); }
 	}
