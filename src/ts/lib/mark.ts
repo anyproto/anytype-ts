@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U, J } from 'Lib';
+import { I, U } from 'Lib';
 
 const Tags = {};
 for (const i in I.MarkType) {
@@ -687,12 +687,18 @@ class Mark {
 	 * @returns {string} The attribute string.
 	 */
 	paramToAttr (type: I.MarkType, param: string): string {
-		let attr = '';
-		
 		if (!param) {
-			return attr;
+			return '';
 		};
 		
+		param = String(param || '');
+		param = param.replace(/\r?\n/g, '');
+		param = param.replace(/</g, '&lt;');
+		param = param.replace(/>/g, '&gt;');
+		param = param.replace(/"/g, '&quot;');
+		param = param.replace(/```/g, '');
+
+		let attr = '';
 		switch (type) {
 			case I.MarkType.Link: {
 				attr = `href="${U.Common.urlFix(param)}" class="markuplink"`;

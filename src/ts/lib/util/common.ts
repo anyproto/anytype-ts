@@ -658,7 +658,13 @@ class UtilCommon {
 			return '';
 		};
 
+		// Sanity check: reject massive or clearly invalid strings
+		if (!url || (url.length > 2048) || !/[.@:/\\]/.test(url)) {
+			return '';
+		};
+
 		const scheme = this.getScheme(url);
+
 		if (!scheme) {
 			if (this.matchEmail(url)) {
 				url = `mailto:${url}`;
