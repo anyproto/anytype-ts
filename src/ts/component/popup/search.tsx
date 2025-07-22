@@ -422,7 +422,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			e.preventDefault();
 
 			this.pageCreate(filter);
-		})
+		});
+
+		keyboard.shortcut('search', e, () => close());
 	};
 
 	onArrow (dir: number) {

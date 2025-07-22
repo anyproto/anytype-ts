@@ -1079,10 +1079,14 @@ class Keyboard {
 	 * @param {string} route - The route context.
 	 */
 	onSearchPopup (route: string) {
-		S.Popup.open('search', {
-			preventCloseByEscape: true,
-			data: { isPopup: this.isPopup(), route },
-		});
+		if (S.Popup.isOpen('search')) {
+			S.Popup.close('search');
+		} else {
+			S.Popup.open('search', {
+				preventCloseByEscape: true,
+				data: { isPopup: this.isPopup(), route },
+			});
+		};
 	};
 
 	/**
