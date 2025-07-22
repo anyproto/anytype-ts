@@ -2042,12 +2042,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						case 'link': {
 							if (currentFrom == currentTo) {
 								value = U.Common.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+
 								to = currentFrom + url.length;
 							} else {
 								to = currentTo;
 							};
-
-							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+							
 							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
