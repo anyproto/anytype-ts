@@ -789,7 +789,6 @@ class UtilMenu {
 
 		const cb = () => {
 			const pinned = this.getVaultItems().filter(it => it.isPinned);
-
 			if (space.spaceOrder) {
 				options.push({ id: 'unpin', name: translate('commonUnpin') });
 			} else 
@@ -827,9 +826,7 @@ class UtilMenu {
 								};
 
 								case 'pin': {
-									const ids = [ space.id ].concat(this.getVaultItems().filter(it => !it.isButton).map(it => it.id));
-
-									C.SpaceSetOrder(space.id, ids);
+									C.SpaceSetOrder(space.id, [ space.id ]);
 									break;
 								};
 
