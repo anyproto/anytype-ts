@@ -463,6 +463,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		clone.append(obj.find('.head').clone());
 		node.append(clone);
 		selection?.clear();
+		$('body').addClass('isDragging');
 
 		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
@@ -544,6 +545,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		this.isDragging = false;
 		this.clear();
+
+		$('body').removeClass('isDragging');
 	};
 
 	onScroll () {
