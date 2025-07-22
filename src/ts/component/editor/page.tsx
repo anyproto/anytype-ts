@@ -2011,6 +2011,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
+		S.Common.clearTimeout('blockContext');
+
 		const menuParam = { 
 			component: 'select',
 			element: `#block-${focused}`,

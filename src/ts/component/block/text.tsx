@@ -23,7 +23,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	node: any = null;
 	refLang: any = null;
 	refEditable: any = null;
-	timeoutContext = 0;
 	timeoutClick = 0;
 	timeoutFilter = 0;
 	marks: I.Mark[] = [];
@@ -244,6 +243,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (onUpdate) {
 			onUpdate();
+		};
+	};
+
+	componentWillUnmount(): void {
+		S.Common.clearTimeout('blockContext');
+		window.clearTimeout(this.timeoutFilter);
+		window.clearTimeout(this.timeoutClick);
+
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
 	};
 
@@ -1113,10 +1122,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		keyboard.setFocus(true);
-		window.clearTimeout(this.timeoutContext);
 		S.Menu.closeAll([ 'blockAdd', 'blockMention' ]);
 
-		this.timeoutContext = window.setTimeout(() => {
+		S.Common.setTimeout('blockContext', 150, () => {
 			const onChange = (marks: I.Mark[]) => {
 				this.setValue(value);
 				this.marks = marks;
@@ -1173,7 +1181,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					});
 				}, S.Menu.getTimeout());
 			});
-		}, 150);
+		});
 	};
 	
 	onMouseDown (e: any) {
