@@ -1194,10 +1194,10 @@ class Dispatcher {
 			return;
 		};
 
-		const records = S.Record.getRecordIds(sid, '');
-
+		let records = S.Record.getRecordIds(sid, '');
 		let newIndex = records.indexOf(afterId);
-		let oldIndex = records.indexOf(id);
+
+		const oldIndex = records.indexOf(id);
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
@@ -1211,13 +1211,12 @@ class Dispatcher {
 		};
 
 		if (oldIndex < 0) {
-			records.push(id);
-			oldIndex = records.indexOf(id);
-		};
-
+			records.splice(newIndex + 1, 0, id);
+		} else
 		if (oldIndex !== newIndex) {
-			S.Record.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+			records = arrayMove(records, oldIndex, newIndex);
 		};
+		S.Record.recordsSet(sid, '', records);
 	};
 
 	sort (c1: any, c2: any) {
