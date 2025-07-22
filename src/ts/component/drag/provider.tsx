@@ -208,6 +208,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		win.on('drag.drag', e => onDrag(e));
 		win.on('dragend.drag', e => onDragEnd(e));
+		win.on('dragleave.drag', e => onDragEnd(e));
 
 		container.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
 		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
