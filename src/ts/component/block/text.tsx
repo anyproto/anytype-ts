@@ -281,6 +281,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			html = parsed.text;
 			this.marks = parsed.marks;
+
 			html = Mark.toHtml(html, this.marks);
 		} else {
 			html = Mark.toHtml(html, this.marks);
