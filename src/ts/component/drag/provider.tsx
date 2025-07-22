@@ -31,6 +31,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	const objects = useRef(null);
 	const objectData = useRef(new Map());
 	const origin = useRef(null);
+	const dragActive = useRef(false);
+	const timeoutDragOver = useRef(0);
 
 	const initData = () => {
 		if (isInitialised.current) {
@@ -208,7 +210,6 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		win.on('drag.drag', e => onDrag(e));
 		win.on('dragend.drag', e => onDragEnd(e));
-		win.on('dragleave.drag', e => onDragEnd(e));
 
 		container.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
 		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
@@ -232,6 +233,17 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
+
+		if (!dragActive.current) {
+			dragActive.current = true;
+		};
+
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+			};
+		}, 100);
 	};
 
 	const onDrag = (e: any) => {
