@@ -1216,6 +1216,7 @@ class Dispatcher {
 		if (oldIndex !== newIndex) {
 			records = arrayMove(records, oldIndex, newIndex);
 		};
+
 		S.Record.recordsSet(sid, '', records);
 	};
 

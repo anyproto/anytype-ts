@@ -1919,7 +1919,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!data.html) {
 			const urls = U.Common.getUrlsFromText(data.text);
 
-			if (block && urls.length && !block.isTextTitle() && !block.isTextDescription()) {
+			if (urls.length && (urls[0] == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
 				this.onPasteUrl(urls[0]);
 				return;
 			};
