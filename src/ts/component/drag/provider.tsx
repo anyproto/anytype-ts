@@ -215,7 +215,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
 
 		$('.colResize.active').removeClass('active');
-		scrollOnMove.onMouseDown(e, isPopup);
+		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
 
 		if (dropType == I.DropType.Block) {
 			selection?.set(I.SelectType.Block, ids);
