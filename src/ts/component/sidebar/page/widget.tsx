@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -29,6 +29,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onEdit = this.onEdit.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
+		this.onDrag = this.onDrag.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onArchive = this.onArchive.bind(this);
 		this.onAdd = this.onAdd.bind(this);
@@ -140,7 +141,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			};
 
 			content = (
-				<>
+				<div className="content">
 					{space && !space._empty_ ? (
 						<>
 							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
@@ -160,6 +161,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									disableContextMenu={true} 
 									onDragStart={this.onDragStart}
 									onDragOver={this.onDragOver}
+									onDrag={this.onDrag}
 									isEditing={isEditing}
 									canEdit={false}
 									canRemove={false}
@@ -186,12 +188,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								canRemove={canEdit}
 								onDragStart={this.onDragStart}
 								onDragOver={this.onDragOver}
+								onDrag={this.onDrag}
 								setPreview={this.setPreview}
 								setEditing={this.setEditing}
 							/>
 						);
 					})}
-				</>
+				</div>
 			);
 
 			bottom = (
@@ -473,7 +476,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		win.off('dragend.widget').on('dragend.widget', () => {
 			this.clear();
 			win.off('dragend.widget');
+			obj.off('drag');
 		});
+
+		console.log('onDragStart', blockId);
+		scrollOnMove.onMouseDown(e, { isWindow: false, container: node.find('#body') });
+	};
+
+	onDrag (e: React.DragEvent, blockId: string): void {
+		const node = $(this.node);
+		const body = node.find('#body');
+		const obj = node.find(`#widget-${blockId}`);
+
+		console.log('onDrag', blockId);
+
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);	
 	};
 
 	onDragOver (e: React.DragEvent, blockId: string) {
