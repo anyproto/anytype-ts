@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -238,6 +238,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			dragActive.current = true;
 		};
 
+		window.clearTimeout(timeoutDragOver.current);
 		timeoutDragOver.current = window.setTimeout(() => {
 			if (dragActive.current) {
 				dragActive.current = false;
@@ -273,6 +274,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		$('.isDragging').removeClass('isDragging');
 		scrollOnMove.onMouseUp(e);
+
+		window.clearTimeout(timeoutDragOver.current);
 	};
 
 	const onDrop = (e: any, targetType: string, targetId: string, position: I.BlockPosition) => {
@@ -797,6 +800,12 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	const unbind = () => {
 		$(window).off('drag.drag dragend.drag');
 	};
+
+	useEffect(() => {
+		return () => {
+			window.clearTimeout(timeoutDragOver.current);
+		};
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		onDragStart,
