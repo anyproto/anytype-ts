@@ -21,6 +21,7 @@ const Components = {
 
 interface SidebarLeftRefProps {
 	setPage: (page: string) => void;
+	getPage: () => string;
 	getChild: () => any;
 	getNode: () => HTMLElement | null;
 };
@@ -174,6 +175,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			if (Components[page]) {
 				setPage(page);
 			};
+		},
+
+		getPage: () => {
+			return page;
 		},
 
 		getChild: () => {

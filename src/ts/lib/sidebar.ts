@@ -521,6 +521,21 @@ class Sidebar {
 	};
 
 	/**
+	 * Gets the state of the left panel.
+	 * @returns {any} The state of the left panel.
+	 */
+	leftPanelGetState () {
+		const panel = S.Common.getRef('sidebarLeft');
+		const ret: any = {};
+
+		if (panel) {
+			ret.page = panel.getPage();
+		};
+
+		return ret;
+	};
+
+	/**
 	 * Sets the state of the right panel for the given context.
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 * @param {any} v - The state to set.
