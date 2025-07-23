@@ -1211,7 +1211,7 @@ class Dispatcher {
 		};
 
 		if (oldIndex < 0) {
-			records.splice(newIndex + 1, 0, id);
+			records.splice(afterId ? newIndex + 1 : 0, 0, id);
 		} else
 		if (oldIndex !== newIndex) {
 			records = arrayMove(records, oldIndex, newIndex);
