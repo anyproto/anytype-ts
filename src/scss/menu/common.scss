@@ -181,7 +181,7 @@
 				flex-shrink: 0; line-height: 20px; max-width: 30%;
 			}
 
-			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }
+			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; flex-shrink: 0; }
 		}
 
 		.item.withCaption.withArrow {
