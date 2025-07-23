@@ -15,6 +15,34 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const keyRef = useRef('');
 	const [ error, setError ] = useState('');
 
+	const onError = (code: number) => {
+		const errorCodes = Object.values(J.Error.Code.SpaceInviteView);
+
+		let icon = '';
+		let title = '';
+		let text = '';
+
+		if (errorCodes.includes(code)) {
+			icon = code == J.Error.Code.SpaceInviteView.INVITE_NOT_FOUND ? 'noaccess' : 'error';
+			title = translate(`popupConfirmInviteError${code}Title`);
+			text = translate(`popupConfirmInviteError${code}Text`);
+		} else {
+			icon = 'error';
+			title = translate('popupInviteRequestTitle');
+			text = translate('popupConfirmInviteError');
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				icon,
+				title,
+				text,
+				textConfirm: translate('commonOkay'),
+				canCancel: false,
+			},
+		});
+	};
+
 	const init = () => {
 		const { cid, key, route } = U.Common.searchParam(location.search);
 
@@ -47,32 +75,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
-						const errorCodes = Object.values(J.Error.Code.SpaceInviteView);
-						const code = message.error.code;
-
-						let icon = '';
-						let title = '';
-						let text = '';
-
-						if (errorCodes.includes(code)) {
-							icon = code == J.Error.Code.SpaceInviteView.INVITE_NOT_FOUND ? 'noaccess' : 'error';
-							title = translate(`popupConfirmInviteError${code}Title`);
-							text = translate(`popupConfirmInviteError${code}Text`);
-						} else {
-							icon = 'error';
-							title = translate('popupInviteRequestTitle');
-							text = translate('popupConfirmInviteError');
-						};
-
-						S.Popup.open('confirm', {
-							data: {
-								icon,
-								title,
-								text,
-								textConfirm: translate('commonOkay'),
-								canCancel: false,
-							},
-						});
+						onError(message.error.code);
 					} else 
 					if (space) {
 						if (space.isAccountJoining) {
@@ -106,9 +109,11 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 									text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
 									textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
 									onConfirm: () => {
-										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key, () => {
+										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key, (message) => {
 											if (message.error.code) {
-												setError(message.error.description);
+												window.setTimeout(() => {
+													onError(message.error.code);
+												}, J.Constant.delay.popup);
 											} else {
 												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
 											};

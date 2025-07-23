@@ -1198,6 +1198,8 @@
 	"popupConfirmInviteError101Text": "The link you are using does not seem to work. Please ask the owner to share a new one with you.",
 	"popupConfirmInviteError103Title": "Oops!",
 	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
+	"popupConfirmInviteError106Title": "This Space is full.",
+	"popupConfirmInviteError106Text": "The owner needs to increase the number of available editor seats or give you another link with view-only permissions.",
 
 	"popupConfirmJoinSpaceTitle": "Join %s",
 	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
