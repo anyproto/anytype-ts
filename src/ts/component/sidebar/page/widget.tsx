@@ -261,6 +261,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
 			offsetY: -78,
+			subIds: J.Menu.help,
 		});
 	};
 

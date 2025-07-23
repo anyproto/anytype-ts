@@ -71,4 +71,5 @@ export default {
 	dataviewNew: [ 'searchObject', 'typeSuggest', 'dataviewTemplateList' ],
 	graphSettings: [ 'select' ],
 	syncStatus: [ 'syncStatusInfo' ],
+	help: [ 'select' ],
 };
