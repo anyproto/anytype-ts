@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -36,9 +36,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
+		const { error } = S.Auth.getSyncStatus();
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
+		const notSyncedCount = this.getNotSyncedItemsCount();
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -128,6 +130,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 				{!isLoading && !items.length ? (
 					<EmptySearch text={emptyText} />
+				) : ''}
+
+				{notSyncedCount && (error == I.SyncStatusError.StorageLimitExceed) ? (
+					<div className="incentiveBanner">
+						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
+						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCount, U.Common.plural(notSyncedCount, translate('pluralLCFile')))} />
+						<div className="buttons">
+							<Button onClick={() => this.onIncentiveButtonClick('storage')} className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="blank" />
+							<Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} />
+						</div>
+					</div>
 				) : ''}
 
 				{this.cache && items.length ? (
@@ -266,6 +279,20 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
+	onIncentiveButtonClick (id: string) {
+		switch (id) {
+			case 'storage': {
+				U.Object.openAuto({ id: 'spaceStorageManager', layout: I.ObjectLayout.Settings });
+				break;
+			};
+
+			case 'upgrade': {
+				U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
+				break;
+			};
+		};
+	};
+
 	load () {
 		if (U.Data.isLocalNetwork()) {
 			return;
@@ -275,6 +302,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
+			{ relationKey: 'fileSyncStatus', type: I.SortType.Custom, customOrder: [ I.FileSyncStatus.NotSynced, I.FileSyncStatus.Synced ] },
 			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc, includeTime: true },
 		];
@@ -304,6 +332,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		});
 
 		return U.Data.groupDateSections(records, 'syncDate');
+	};
+
+	getNotSyncedItemsCount () {
+		const records = S.Record.getRecords(SUB_ID).filter(it => it.fileSyncStatus == I.FileSyncStatus.NotSynced);
+
+		return records.length;
 	};
 
 	getIcons () {

@@ -26,7 +26,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
-		let segments = null;
 		let label = U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit));
 
 		const progressSegments = (spaces || []).map(space => {
@@ -45,12 +44,8 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgrade')} onClick={this.onUpgrade} />;
+			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={this.onUpgrade} />;
 			label = translate('popupSettingsSpaceIndexStorageIsFullText');
-			segments = [
-				{ label: translate('commonNotSynced'), filter: (it) => it.fileSyncStatus == I.FileSyncStatus.NotSynced },
-				{ label: translate('commonSynced'), filter: (it) => it.fileSyncStatus == I.FileSyncStatus.Synced },
-			];
 		};
 
 		const buttons: I.ButtonComponent[] = [
@@ -86,7 +81,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 							info={I.ObjectManagerItemInfo.FileSize}
 							iconSize={18}
 							sorts={sorts}
-							segments={segments}
 							keys={U.Subscription.syncStatusRelationKeys()}
 							filters={filters}
 							ignoreHidden={false}
