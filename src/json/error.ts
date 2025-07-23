@@ -38,7 +38,6 @@ export default {
 		SpaceInviteView: {
 			INVITE_NOT_FOUND: 		101,
 			SPACE_IS_DELETED:		103,
-			SPACE_LIMIT_REACHED:	106,
 		},
 
 		SpaceJoin: {
