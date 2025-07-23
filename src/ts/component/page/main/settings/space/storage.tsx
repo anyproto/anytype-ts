@@ -8,7 +8,10 @@ const STORAGE_FULL = 0.7;
 const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
 
 	node = null;
-	refManager = null;
+	refManagers = {
+		synced: null,
+		notSynced: null,
+	};
 
 	constructor (props: I.PageSettingsComponent) {
 		super(props);
@@ -20,6 +23,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 	render () {
 		const { spaceStorage } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
+		const { error } = S.Auth.getSyncStatus();
 		const spaces = U.Space.getList();
 		const usageCn = [ 'item' ];
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -48,15 +52,39 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 			label = translate('popupSettingsSpaceIndexStorageIsFullText');
 		};
 
-		const buttons: I.ButtonComponent[] = [
-			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
-		];
-		const filters: I.Filter[] = [
-			{ relationKey: 'fileSyncStatus', condition: I.FilterCondition.In, value: [ I.FileSyncStatus.Synced, I.FileSyncStatus.NotSynced ] },
-		];
-		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
-		];
+		const Manager = (item: any) => {
+			const { refId } = item;
+			const buttons: I.ButtonComponent[] = [
+				{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: () => this.onRemove(refId) }
+			];
+			const filters: I.Filter[] = [
+				{ relationKey: 'fileSyncStatus', condition: I.FilterCondition.In, value: item.filters },
+			];
+			const sorts: I.Sort[] = [
+				{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
+			];
+
+			return (
+				<div className="fileManagerWrapper">
+					<Title className="sub" text={item.title} />
+
+					<ListObjectManager
+						ref={ref => this.refManagers[refId] = ref}
+						subId={item.subId}
+						rowLength={2}
+						buttons={buttons}
+						info={I.ObjectManagerItemInfo.FileSize}
+						iconSize={18}
+						sorts={sorts}
+						keys={U.Subscription.syncStatusRelationKeys()}
+						filters={filters}
+						ignoreHidden={false}
+						ignoreArchived={false}
+						textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
+					/>
+				</div>
+			);
+		};
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
@@ -69,25 +97,22 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 					<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
 				</div>
 
-				{canWrite ? (
-					<div className="fileManagerWrapper">
-						<Title className="sub" text={translate('pageSettingsSpaceCleanupSpaceFiles')} />
+				{error == I.SyncStatusError.StorageLimitExceed && canWrite ? (
+					<Manager
+						refId={'notSynced'}
+						subId={J.Constant.subId.fileManager.notSynced}
+						title={translate('pageSettingsSpaceNotSyncedFiles')}
+						filters={[ I.FileSyncStatus.NotSynced ]}
+					/>
+				) : ''}
 
-						<ListObjectManager
-							ref={ref => this.refManager = ref}
-							subId={J.Constant.subId.fileManager}
-							rowLength={2}
-							buttons={buttons}
-							info={I.ObjectManagerItemInfo.FileSize}
-							iconSize={18}
-							sorts={sorts}
-							keys={U.Subscription.syncStatusRelationKeys()}
-							filters={filters}
-							ignoreHidden={false}
-							ignoreArchived={false}
-							textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
-						/>
-					</div>
+				{canWrite ? (
+					<Manager
+						refId={'synced'}
+						subId={J.Constant.subId.fileManager.synced}
+						title={translate('pageSettingsSpaceSyncedFiles')}
+						filters={[ I.FileSyncStatus.Synced ]}
+					/>
 				) : ''}
 			</div>
 		);
@@ -95,6 +120,10 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 	componentDidMount () {
 		analytics.event('ScreenSettingsSpaceStorageManager');
+	};
+
+	componentWillUnmount () {
+		U.Subscription.destroyList([ J.Constant.subId.fileManager.synced, J.Constant.subId.fileManager.notSynced ]);
 	};
 
 	onUpgrade () {
@@ -109,8 +138,10 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};
 
-	onRemove () {
-		Action.delete(this.refManager.getSelected(), analytics.route.settings, () => this.refManager?.selectionClear());
+	onRemove (refId: string) {
+		const ref = this.refManagers[refId];
+
+		Action.delete(ref.getSelected(), analytics.route.settings, () => ref?.selectionClear());
 	};
 
 	resize () {

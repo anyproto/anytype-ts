@@ -116,13 +116,16 @@ export default {
 		archive:		 'archive',
 		sidebar:		 'sidebar',
 		space:			 'space',
-		fileManager:	 'fileManager',
 		participant:	 'participant',
 		subSpace:		 'subSpace',
 		allObject:		 'allObject',
 		library: 		 'library',
 		chatSpace:		 'lastMessage',
 		template:		 'template',
+		fileManager: {
+			synced: 	 'fileManagerSynced',
+			notSynced: 	 'fileManagerNotSynced',
+		},
 	},
 
 	typeKey: {

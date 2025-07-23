@@ -575,7 +575,8 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
-	"pageSettingsSpaceCleanupSpaceFiles": "Clean up space files",
+	"pageSettingsSpaceSyncedFiles": "Synced files",
+	"pageSettingsSpaceNotSyncedFiles": "Not synced files",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
