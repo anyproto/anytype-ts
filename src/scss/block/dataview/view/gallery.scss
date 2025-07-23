@@ -42,6 +42,8 @@
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}
+
+			.cellContent.c-name.editModeOn { width: 100%; }
 		}
 	}
 
