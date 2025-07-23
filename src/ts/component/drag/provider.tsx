@@ -348,6 +348,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				};
 
 				const target = S.Block.getLeaf(targetContextId, targetId);
+
+				if (ids.includes(targetId)) {
+					console.log('[DragProvider].onDrop ids includes targetId');
+					return;
+				};
 				
 				if (target) {
 					isToggle = target.isTextToggle();
