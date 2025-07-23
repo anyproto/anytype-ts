@@ -48,10 +48,11 @@ export default {
 	y:			 89,
 	z:			 90,
 	cmd:		 91,
+	plus:		 187,
 	comma:		 188,
 	minus:		 189,
 	dot:		 190,
 	slash:		 191,
 	'/':		 191,
-	dead:		 192
+	dead:		 192,
 };

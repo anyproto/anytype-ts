@@ -42,6 +42,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public showVaultValue = null;
+	public updateVersionValue = '';
 	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
 	public hideSidebarValue = null;
 	public pinValue = null;
@@ -114,6 +115,7 @@ class CommonStore {
 			timeFormatValue: observable,
 			pinValue: observable,
 			firstDayValue: observable,
+			updateVersionValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -331,6 +333,10 @@ class CommonStore {
 		return Number(this.firstDayValue) || 1;
 	};
 
+	get updateVersion (): string {
+		return String(this.updateVersionValue || '');
+	};
+
 	/**
 	 * Sets the gateway URL.
 	 * @param {string} v - The gateway URL.
@@ -357,10 +363,10 @@ class CommonStore {
 	imageUrl (id: string, width: number) {
 		width = Number(width) || 0;
 
-		if (!width) {
-			width = I.ImageSize.Large;
-		} else 
-		if (width <= I.ImageSize.Small) {
+		if (width === 0) {
+			width = 10000000;
+		} else
+		if ((width > 0) && (width <= I.ImageSize.Small)) {
 			width = I.ImageSize.Small;
 		} else
 		if ((width > I.ImageSize.Small) && (width <= I.ImageSize.Medium)) {
@@ -560,6 +566,14 @@ class CommonStore {
 
 		$('body').toggleClass('isFullScreen', v);
 		$(window).trigger('resize');
+	};
+
+	/**
+	 * Sets the update version value.
+	 * @param {string} v - The update version value.
+	 */
+	updateVersionSet (v: string) {
+		this.updateVersionValue = String(v || '');
 	};
 
 	/**

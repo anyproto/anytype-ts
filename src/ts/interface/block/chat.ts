@@ -56,6 +56,7 @@ export interface ChatMessage {
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
 	reactions: any;
+	isSynced: boolean;
 
 	// Internal
 	isFirst: boolean;

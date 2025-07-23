@@ -10,19 +10,21 @@ class ScrollOnMove {
 	viewportHeight = 0;
 	documentWidth = 0;
 	documentHeight = 0;
-	isPopup = false;
+	param: any = {};
 	frame = 0;
 
 	/**
 	 * Handles mouse down event and sets up viewport/document dimensions.
 	 * @param {any} e - The mouse event.
-	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @param {Object} param - Parameters for the scroll.
 	 */
-	onMouseDown (e: any, isPopup: boolean) {
-		this.isPopup = isPopup;
+	onMouseDown (e: any, param: { isWindow?: boolean, container?: JQuery }) {
+		param = param || {};
+		this.param = param;
 
-		if (isPopup) {
-			const container = $('#popupPage-innerWrap');
+		const { isWindow, container } = param;
+
+		if (!isWindow) {
 			const content = container.find('> .content');
 
 			this.viewportWidth = container.width();
@@ -77,21 +79,18 @@ class ScrollOnMove {
 			isInLeftEdge, isInRightEdge, isInTopEdge, isInBottomEdge, 
 			edgeLeft, edgeRight, edgeTop, edgeBottom, 
 		} = param;
+		const { isWindow, container } = this.param;
 
 		const maxScrollX = this.documentWidth - this.viewportWidth; 
 		const maxScrollY = this.documentHeight - this.viewportHeight;
 
 		let currentScrollX = 0;
 		let currentScrollY = 0;
-		let container;
 
-		if (this.isPopup) {
-			container = $('#popupPage-innerWrap');
+		if (!isWindow) {
 			currentScrollX = container.scrollLeft();
 			currentScrollY = container.scrollTop();
-			container = container.get(0);
 		} else {
-			container = window;
 			currentScrollX = window.pageXOffset;
 			currentScrollY = window.pageYOffset;
 		};
@@ -134,8 +133,9 @@ class ScrollOnMove {
 			(nextScrollX !== currentScrollX) ||
 			(nextScrollY !== currentScrollY)
 		) {
-			if (container) {
-				container.scrollTo(nextScrollX, nextScrollY);
+			if (container.length) {
+				container.scrollLeft(nextScrollX);
+				container.scrollTop(nextScrollY);
 			};
 			return true;
 		} else {

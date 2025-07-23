@@ -309,7 +309,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		const { space } = S.Common;
-		const { id, param, getId } = this.props;
+		const { id, param, getId, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		const { from } = S.Common.filter;
@@ -327,10 +327,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 
 			onChange(object, name + ' ', marks, from, to + 1);
+			close();
+
 			analytics.event('ChangeTextStyle', { type: I.MarkType.Mention, count: 1, objectType: object.type });
 		};
-
-		let close = true;
 
 		if (item.id == 'add') {
 			const name = this.getFilter();
@@ -340,8 +340,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 		} else 
 		if (item.id == 'selectDate') {
-			close = false;
-
 			S.Menu.open('calendar', {
 				element: `#${getId()} #item-${item.id}`,
 				horizontal: I.MenuDirection.Center,
@@ -356,7 +354,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						C.ObjectDateByTimestamp(space, value, (message: any) => {
 							if (!message.error.code) {
 								cb(message.details);
-								this.props.close();
 							};
 						});
 					},
@@ -365,10 +362,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		} else {
 			cb(item);
-		};
-
-		if (close) {
-			this.props.close();
 		};
 	};
 

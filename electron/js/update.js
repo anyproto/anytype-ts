@@ -37,7 +37,6 @@ class UpdateManager {
 		});
 
 		autoUpdater.on('update-available', (info) => {
-			this.isUpdating = true;
 			this.clearTimeout();
 
 			Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
@@ -49,15 +48,11 @@ class UpdateManager {
 		});
 
 		autoUpdater.on('update-not-available', (info) => {
-			this.isUpdating = false;
-
 			Util.log('info', 'Update not available: ' + JSON.stringify(info, null, 3));
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 		
 		autoUpdater.on('error', (err) => { 
-			this.isUpdating = false;
-
 			Util.log('Error: ' + err);
 			Util.send(this.win, 'update-error', err, this.autoUpdate);
 		});

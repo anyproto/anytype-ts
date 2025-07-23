@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Icon, DragHorizontal, DragVertical, Floater } from 'Component';
+import { Icon, DragHorizontal, DragVertical, Floater, Label } from 'Component';
 import { U } from 'Lib';
 
 interface PlaylistItem {
@@ -212,7 +212,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			<audio ref={audioRef} preload="auto" src={src} />
 
 			<div className="controlsWrapper">
-				<div className="name">{name}</div>
+				<Label text={name} tooltipParam={{ text: name }} className="name" />
 
 				<div className="controls">
 					<Icon 

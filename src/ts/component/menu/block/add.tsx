@@ -695,8 +695,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								element.find(`.focusable`).trigger('edit');
 							};
 
+							// Auto-open BlockDataview source menu
 							if (param.type == I.BlockType.Dataview) {
 								win.trigger(`setDataviewSource.${newBlockId}`);
+							};
+
+							// Auto-open BlockFile upload dialog
+							if (param.type == I.BlockType.File) {
+								element.find(`.fileWrap`).trigger('mousedown');
 							};
 						}, S.Menu.getTimeout());
 					});

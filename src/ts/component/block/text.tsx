@@ -23,7 +23,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	node: any = null;
 	refLang: any = null;
 	refEditable: any = null;
-	timeoutContext = 0;
 	timeoutClick = 0;
 	timeoutFilter = 0;
 	marks: I.Mark[] = [];
@@ -246,7 +245,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			onUpdate();
 		};
 	};
-	
+
+	componentWillUnmount(): void {
+		S.Common.clearTimeout('blockContext');
+		window.clearTimeout(this.timeoutFilter);
+		window.clearTimeout(this.timeoutClick);
+
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+	};
+
 	setValue (v: string, restoreRange?: I.TextRange) {
 		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
 		const fields = block.fields || {};
@@ -268,10 +277,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.refLang?.setValue(lang);
 		} else 
 		if (!keyboard.isComposition) {
-			const parsed = Mark.fromUnicode(html, this.marks);
+			const parsed = Mark.fromUnicode(html, this.marks, false);
 
 			html = parsed.text;
 			this.marks = parsed.marks;
+
 			html = Mark.toHtml(html, this.marks);
 		} else {
 			html = Mark.toHtml(html, this.marks);
@@ -872,6 +882,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					skipIds: [ rootId ],
 					canAdd: true,
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
+						if (S.Menu.isAnimating('blockMention')) {
+							return;
+						};
+
 						value = U.Common.stringInsert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
@@ -1109,10 +1123,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		keyboard.setFocus(true);
-		window.clearTimeout(this.timeoutContext);
 		S.Menu.closeAll([ 'blockAdd', 'blockMention' ]);
 
-		this.timeoutContext = window.setTimeout(() => {
+		S.Common.setTimeout('blockContext', 150, () => {
 			const onChange = (marks: I.Mark[]) => {
 				this.setValue(value);
 				this.marks = marks;
@@ -1169,7 +1182,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					});
 				}, S.Menu.getTimeout());
 			});
-		}, 150);
+		});
 	};
 	
 	onMouseDown (e: any) {

@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -300,7 +300,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'resize' ];
+		const events = [ 'resize', 'sidebarResize' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -312,14 +312,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
-		win.on(`resize.${ns}`, () => this.resize());
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 	};
 
 	checkSendButton () {
 		const node = $(this.node);
 		const button = node.find('#send');
 
-		this.canSend() ? button.show() : button.hide();
+		this.canSend() || this.isSending ? button.show() : button.hide();
 	};
 
 	onSelect () {
@@ -356,7 +356,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onKeyDownInput (e: any) {
 		const { account } = S.Auth;
-		const { checkMarkOnBackspace, getMessages } = this.props;
+		const { checkMarkOnBackspace, getMessages, scrollToBottom } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
 		const { attachments } = this.state;
@@ -369,7 +369,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 
 		keyboard.shortcut('arrowup', e, () => {
-			if (!value && !this.range.to && !attachments.length && !this.editingId) {
+			if (this.range.to || value || attachments.length || this.editingId) {
 				return;
 			};
 
@@ -396,6 +396,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			const l = value.length;
 			this.updateMarkup(value, { from: l, to: l });
+			scrollToBottom();
 		});
 
 		keyboard.shortcut('chatObject', e, () => {
@@ -455,14 +456,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.getTextValue();
 		const parsed = this.getMarksFromHtml();
 		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
+		const twoSymbolBefore = this.range ? value[this.range.from - 2] : '';
 		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@');
+		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || (twoSymbolBefore == ' '));
 
 		this.marks = parsed.marks;
 
 		let adjustMarks = false;
 
-		if (value !== parsed.text) {
+		if ((value !== parsed.text) || parsed.updatedValue) {
 			this.updateValue(parsed.text);
 		};
 
@@ -515,6 +517,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.updateMarkup(value, { from: to, to });
 		};
 
+		/*
+		keyboard.shortcut('space', e, () => {
+			this.checkUrls();
+		});
+		*/
+
 		this.checkSendButton();
 		this.updateButtons();
 		this.removeBookmarks();
@@ -531,32 +539,89 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onPaste (e: any) {
 		e.preventDefault();
 
+		const { space } = S.Common;
 		const { from, to } = this.range;
 		const limit = J.Constant.limit.chat.text;
 		const current = this.getTextValue();
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
 		const electron = U.Common.getElectron();
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
-		let text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
-		let value = U.Common.stringInsert(current, text, from, to);
+		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
+		const html = String(clipboard.getData('text/html') || '');
+		const text = U.Common.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
-		this.marks = Mark.adjust(this.marks, from, text.length);
+		let newText = '';
+		let newMarks: I.Mark[] = [];
 
-		if (value.length >= limit) {
-			const excess = value.length - limit;
-			const keep = text.length - excess;
+		const parseBlocks = (blocks: I.Block[]) => {
+			const targetIds = [];
 
-			text = text.substring(0, keep);
-			value = U.Common.stringInsert(current, text, from, to);
+			blocks.forEach((block: I.Block) => {
+				if (block.isText()) {
+					const text = block.getText();
+			
+					let marks = block.content.marks || [];
+					if (block.isTextHeader()) {
+						marks.push({ type: I.MarkType.Bold, range: { from: 0, to: text.length } });
+					};
+					marks = Mark.adjust(marks, 0, newText.length);
+
+					newText += text + '\n';
+					newMarks = newMarks.concat(marks);
+				} else {
+					const targetId = block.getTargetObjectId();
+
+					if (targetId) {
+						targetIds.push(targetId);
+					};
+				};
+			});
+
+			if (targetIds.length) {
+				U.Object.getByIds(targetIds, { spaceId: space }, this.addAttachments);
+			};
 		};
 
-		const rt = to + text.length;
+		const parseText = () => {
+			if (!newText) {
+				return;
+			};
 
-		this.range = { from: rt, to: rt };
-		this.updateMarkup(value, this.range);
+			if (newText.length >= limit) {
+				newText = newText.substring(0, limit);
+			};
+
+			newText = U.Common.stringInsert(current, newText, from, to);
+			this.marks = Mark.adjust(this.marks, from, newText.length);
+			this.marks = this.marks.concat(newMarks);
+
+			const rt = to + newText.length;
+			this.range = { from: rt, to: rt };
+			this.updateMarkup(newText, this.range);
+		};
+
+		if (json && json.blocks && json.blocks.length) {
+			parseBlocks(json.blocks.map(it => new M.Block(it)));
+			newMarks = Mark.adjust(newMarks, 0, current.length);
+			parseText();
+		} else 
+		if (html) {
+			C.BlockPreview(html, '', (message: any) => {
+				if (message.error.code || !message.blocks || !message.blocks.length) {
+					newText = text;
+				} else {
+					parseBlocks(message.blocks.map(it => new M.Block(it)));
+				};
+				parseText();
+			});
+		} else 
+		if (text) {
+			newText = text;
+			parseText();
+		};
 
 		if (list.length) {
 			U.Common.saveClipboardFiles(list, {}, data => this.addAttachments(data.files));
@@ -576,14 +641,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.removeBookmarks();
 
 		for (const url of urls) {
-			const { from, to, isLocal, value } = url;
+			const { from, to, isLocal, isUrl, value } = url;
+
 			if (isLocal) {
 				continue;
 			};
 
 			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: value });
-			this.addBookmark(value, true);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: U.Common.urlFix(value) });
+			
+			if (isUrl) {
+				this.addBookmark(value, true);
+			};
 		};
 
 		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });
@@ -709,9 +778,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			C.LinkPreview(url, (message: any) => {
 				this.isLoading = this.isLoading.filter(it => it != url);
 
-				if (message.error.code) {
-					add({ title: url, url });
-				} else {
+				if (!message.error.code) {
 					add({ ...message.previewLink, url });
 				};
 			});
@@ -747,6 +814,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { rootId, subId, scrollToBottom, scrollToMessage } = this.props;
 		const { replyingId } = this.state;
 		const node = $(this.node);
+		const send = node.find('#send');
 		const loader = node.find('#form-loader');
 		const list = this.state.attachments || [];
 		const files = list.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
@@ -756,15 +824,20 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const bookmark = S.Record.getBookmarkType();
 		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
+		send.addClass('isLoading');
 		loader.addClass('active');
 		this.isSending = true;
 
 		const clear = () => {
-			this.onEditClear(() => this.isSending = false);
+			this.onEditClear(() => {
+				this.isSending = false;
+				this.checkSendButton();
+			});
 			this.onReplyClear();
 			this.clearCounter();
 			this.checkSpeedLimit();
 
+			send.removeClass('isLoading');
 			loader.removeClass('active');
 		};
 		
@@ -979,7 +1052,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		return String(value || '').replace(/^(\r?\n+)/g, '').replace(/(\r?\n+)$/g, '');
 	};
 	
-	getMarksFromHtml (): { marks: I.Mark[], text: string } {
+	getMarksFromHtml (): I.FromHtmlResult {
 		return Mark.fromHtml(this.getHtmlValue(), []);
 	};
 
@@ -1164,13 +1237,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
+						if (S.Menu.isAnimating('blockMention')) {
+							return;
+						};
+
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
+						this.marks = marks;
 						value = U.Common.stringInsert(value, text, from, from);
-						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.updateMarkup(value, { from: to, to });
-
 						analytics.event('Mention');
 					},
 				},
@@ -1241,7 +1317,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.updateMarkup(text, this.range);
 		};
 		const getValue = () => value;
-
 		const param = { onChange, subId };
 
 		renderMentions(rootId, node, this.marks, getValue, param);

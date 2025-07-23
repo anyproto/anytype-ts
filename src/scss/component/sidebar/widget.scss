@@ -42,9 +42,10 @@
 
 	> .body {
 		padding: 0px 6px 68px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
-		display: flex; flex-direction: column; gap: 12px 0px;
 	}
 	> .body {
+		> .content { display: flex; flex-direction: column; gap: 12px 0px; }
+
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }
 			100% { transform: rotate(0.5deg); }

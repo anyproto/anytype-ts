@@ -981,6 +981,10 @@ class Dispatcher {
 					};
 
 					mapped.subIds.forEach(subId => {
+						if (subId == J.Constant.subId.chatSpace) {
+							subId = S.Chat.getSubId(spaceId, rootId);
+						};
+
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
@@ -992,7 +996,10 @@ class Dispatcher {
 					});
 
 					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
+						U.Common.notification({ 
+							title: space.name, 
+							text: `${author?.name}: ${message.content.text}`,
+						}, () => {
 							const { space } = S.Common;
 							const open = () => {
 								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
@@ -1015,7 +1022,7 @@ class Dispatcher {
 				case 'ChatUpdate': {
 					mapped.subIds.forEach(subId => S.Chat.update(subId, mapped.message));
 
-					$(window).trigger('messageUpdate', [ mapped.message ]);
+					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
 					break;
 				};
 
@@ -1027,8 +1034,6 @@ class Dispatcher {
 
 						S.Chat.setState(subId, mapped.state);
 					});
-
-					$(window).trigger('chatStateUpdate');
 					break;
 				};
 
@@ -1039,6 +1044,11 @@ class Dispatcher {
 
 				case 'ChatUpdateMentionReadStatus': {
 					mapped.subIds.forEach(subId => S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead));
+					break;
+				};
+
+				case 'ChatUpdateMessageSyncStatus': {
+					mapped.subIds.forEach(subId => S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced));
 					break;
 				};
 
@@ -1184,10 +1194,10 @@ class Dispatcher {
 			return;
 		};
 
-		const records = S.Record.getRecordIds(sid, '');
-
+		let records = S.Record.getRecordIds(sid, '');
 		let newIndex = records.indexOf(afterId);
-		let oldIndex = records.indexOf(id);
+
+		const oldIndex = records.indexOf(id);
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
@@ -1201,13 +1211,13 @@ class Dispatcher {
 		};
 
 		if (oldIndex < 0) {
-			records.push(id);
-			oldIndex = records.indexOf(id);
+			records.splice(afterId ? newIndex + 1 : 0, 0, id);
+		} else
+		if (oldIndex !== newIndex) {
+			records = arrayMove(records, oldIndex, newIndex);
 		};
 
-		if (oldIndex !== newIndex) {
-			S.Record.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
-		};
+		S.Record.recordsSet(sid, '', records);
 	};
 
 	sort (c1: any, c2: any) {

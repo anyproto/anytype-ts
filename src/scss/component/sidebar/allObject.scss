@@ -11,7 +11,7 @@
 				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 
-				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }
+				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; @include text-overflow-nw; }
 				.icon { width: 28px; height: 28px; background-size: 20px; }
 				.icon.back { flex-shrink: 0; background-image: url('~img/icon/widget/back0.svg'); }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }

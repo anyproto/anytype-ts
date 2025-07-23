@@ -672,7 +672,7 @@ class UtilSubscription {
 	 * @returns {string[]} The list of relation keys.
 	 */
 	chatRelationKeys () {
-		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels' ]);
+		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels', 'syncStatus', 'syncError' ]);
 	};
 
 };

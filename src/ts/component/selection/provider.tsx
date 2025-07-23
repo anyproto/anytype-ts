@@ -144,7 +144,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			};
 		};
 		
-		scrollOnMove.onMouseDown(e, isPopup);
+		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
 		unbindMouse();
 
 		win.on(`mousemove.selection`, e => onMouseMove(e));

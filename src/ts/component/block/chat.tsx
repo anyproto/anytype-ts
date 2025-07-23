@@ -178,7 +178,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'chatStateUpdate' ];
+		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -193,7 +193,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.unbind();
 
 		win.on(`messageAdd.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
-		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
+		win.on(`messageUpdate.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
 		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
@@ -413,7 +413,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		return S.Record.getSubId(this.getRootId(), this.props.block.id);
+		const windowId = U.Common.getCurrentElectronWindowId();
+
+		return [ S.Record.getSubId(this.getRootId(), this.props.block.id), windowId ].join('-');
 	};
 
 	loadDeps (ids: string[], callBack?: () => void) {
@@ -432,7 +434,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			updateDetails: true,
 		}, () => {
 			this.forceUpdate();
-			this.refForm?.forceUpdate();
+			//this.refForm?.forceUpdate();
 
 			if (callBack) {
 				callBack();

@@ -54,6 +54,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const placeholder = getPlaceholder(relation, record);
 		const check = checkValue();
 		const isGrid = viewType == I.ViewType.Grid;
+		const isName = relationKey == 'name';
 
 		if (!canEdit) {
 			if (check && (relation.format != I.RelationType.Checkbox)) {
@@ -75,6 +76,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
+		const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
 
 		if (menuClassName) {
 			className.push(menuClassName);
@@ -101,9 +103,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				return;
 			};
 
-			const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
-
-			if (relation.relationKey == 'name') {
+			if (isName) {
 				cellContent.css({ height: cellContent.outerHeight() });
 			};
 
@@ -143,6 +143,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				if (childRef.current.setEditing) {
 					childRef.current.setEditing(false);
 				};
+			};
+
+			if (isName) {
+				cellContent.css({ height: '' });
 			};
 
 			$(`#${cellId}`).removeClass('isEditing');

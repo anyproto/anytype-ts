@@ -164,6 +164,7 @@ export default {
 		'spaceUxType',
 		'spacePushNotificationMode',
 		'spaceOrder',
+		'tmpOrder',
 	],
 
 	participant: [

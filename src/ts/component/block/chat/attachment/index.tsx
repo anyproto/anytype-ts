@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
-import { I, U, S, J, Action, analytics, keyboard } from 'Lib';
+import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
 
 interface Props {
 	object: any;
@@ -27,13 +27,15 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		this.onOpenBookmark = this.onOpenBookmark.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSyncStatusClick = this.onSyncStatusClick.bind(this);
 		this.getPreviewItem = this.getPreviewItem.bind(this);
 	};
 
 	render () {
 		const { object, showAsFile, bookmarkAsDefault } = this.props;
+		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 		const mime = String(object.mime || '');
-		const cn = [ 'attachment' ];
+		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 
 		let content = null;
 
@@ -91,6 +93,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 
 			case I.ObjectLayout.Bookmark: {
+				cn.push('isBookmark');
 				content = bookmarkAsDefault ? this.renderDefault() : this.renderBookmark();
 				break;
 			};
@@ -139,7 +142,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		return (
 			<div className="clickable" onClick={this.onOpen}>
-				<IconObject object={object} size={48} iconSize={iconSize} />
+				<div className="iconWrapper">
+					<IconObject object={object} size={48} iconSize={iconSize} />
+					<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+				</div>
 
 				<div className="info">
 					<ObjectName object={object} />
@@ -198,15 +204,18 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 
 		return (
-			<img 
-				id="image" 
-				className="image" 
-				src={this.src}
-				onClick={this.onPreview}
-				onLoad={scrollToBottom}
-				onDragStart={e => e.preventDefault()} 
-				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
-			/>
+			<div className="imgWrapper" onClick={this.onPreview}>
+				<img
+					id="image"
+					className="image"
+					src={this.src}
+					onLoad={scrollToBottom}
+					onDragStart={e => e.preventDefault()}
+					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
+				/>
+
+				<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+			</div>
 		);
 	};
 
@@ -218,7 +227,8 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<MediaVideo 
 				src={src} 
 				onClick={this.onPreview}
-				canPlay={false} 
+				canPlay={false}
+				onSyncStatusClick={this.onSyncStatusClick}
 			/>
 		);
 	};
@@ -306,6 +316,50 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		e.stopPropagation();
 		onRemove(object.id);
+	};
+
+	onSyncStatusClick (e: any) {
+		const { object } = this.props;
+		const { syncError } = object;
+
+		if (syncError == I.SyncStatusError.None) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		let textConfirm = '';
+		let colorConfirm = '';
+
+		if (syncError == I.SyncStatusError.IncompatibleVersion) {
+			textConfirm = translate('popupConfirmButtonUpdateApp');
+			colorConfirm = 'black';
+		} else {
+			textConfirm = translate('popupConfirmButtonGotIt');
+			colorConfirm = 'blank';
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'warning',
+				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
+				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
+				textConfirm,
+				colorConfirm,
+				canCancel: false,
+				onConfirm: () => {
+					if (syncError == I.SyncStatusError.IncompatibleVersion) {
+						window.setTimeout(() => {
+							Renderer.send('updateCheck');
+						}, J.Constant.delay.popup);
+					};
+					if (syncError == I.SyncStatusError.Oversized) {
+						// delete?
+					};
+				}
+			}
+		});
 	};
 
 	getPreviewItem () {

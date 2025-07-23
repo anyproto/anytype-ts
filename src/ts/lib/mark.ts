@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U, J } from 'Lib';
+import { I, U } from 'Lib';
 
 const Tags = {};
 for (const i in I.MarkType) {
@@ -280,7 +280,7 @@ class Mark {
 	 * @param {I.Mark[]} marks - The list of marks.
 	 * @returns {string} The HTML string.
 	 */
-	toHtml (text: string, marks: I.Mark[]) {
+	toHtml (text: string, marks: I.Mark[]): string {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 
@@ -416,16 +416,7 @@ class Mark {
 
 		obj.find('font').each((i: number, item: any) => {
 			item = $(item);
-
-			const html = item.find('span').html();
-			const face = String(item.attr('face') || '').toLowerCase();
-
-			if (face == J.Constant.fontCode) {
-				const tag = this.getTag(I.MarkType.Code);
-				item.replaceWith(`<${tag}>${html}</${tag}>`);
-			} else {
-				item.html(html);
-			};
+			item.replaceWith(item.find('span').html());
 		});
 
 		obj.find(this.getTag(I.MarkType.Emoji)).removeAttr('class').html(' ');
@@ -436,18 +427,16 @@ class Mark {
 	 * Parses HTML into marks and text, handling restrictions.
 	 * @param {string} html - The HTML string.
 	 * @param {I.MarkType[]} restricted - Restricted mark types.
-	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
+	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
-	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
+	fromHtml (html: string, restricted: I.MarkType[]): I.FromHtmlResult {
 		const tags = this.getTags();
 		const rh = new RegExp(`<(\/)?(${Object.values(tags).join('|')})(?:([^>]*)>|>)`, 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
 
-		html = obj.html();
-
-		let text = html;
+		let text = obj.html();
 
 		text = text.replace(/data-range="[^"]+"/g, '');
 		text = text.replace(/contenteditable="[^"]+"/g, '');
@@ -472,8 +461,8 @@ class Mark {
 		// Fix html special symbols
 		text = U.Common.fromHtmlSpecialChars(text);
 
-		html = text;
-		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
+		const newHtml = text;
+		newHtml.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
@@ -511,8 +500,8 @@ class Mark {
 			return '';
 		});
 
-		const parsed = this.fromUnicode(text, marks);
-		return this.fromMarkdown(parsed.text, parsed.marks, restricted, parsed.adjustMarks);
+		const parsed = this.fromUnicode(text, marks, text !== html);
+		return this.fromMarkdown(parsed.text, parsed.marks, restricted, parsed.adjustMarks, parsed.updatedValue);
 	};
 
 	/**
@@ -521,9 +510,10 @@ class Mark {
 	 * @param {I.Mark[]} marks - The list of marks.
 	 * @param {I.MarkType[]} restricted - Restricted mark types.
 	 * @param {boolean} adjustMarks - Whether to adjust marks.
-	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
+	 * @param {boolean} updatedValue - Whether the value has been updated.
+	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
-	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
+	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
 		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
 		const reg2 = /^[`\*_\[~]+/;
 		const test = reg1.test(html);
@@ -531,7 +521,7 @@ class Mark {
 		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
 
 		if (!test) {
-			return { marks, text: html, adjustMarks };
+			return { marks, text: html, adjustMarks, updatedValue };
 		};
 
 		let text = html;
@@ -645,23 +635,23 @@ class Mark {
 		});
 
 		marks = this.checkRanges(text, marks);
-		return { marks, text, adjustMarks };
+		return { marks, text, adjustMarks, updatedValue: updatedValue || (text !== html)};
 	};
 
 	/**
 	 * Parses unicode patterns into marks and text.
 	 * @param {string} html - The HTML string.
 	 * @param {I.Mark[]} marks - The list of marks.
-	 * @returns {{ marks: I.Mark[], text: string, adjustMarks: boolean }} The parsed result.
+	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
-	fromUnicode (html: string, marks: I.Mark[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
+	fromUnicode (html: string, marks: I.Mark[], updatedValue: boolean): I.FromHtmlResult {
 		const keys = Object.keys(Patterns).map(it => U.Common.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!test) {
-			return { marks, text: html, adjustMarks: false };
+			return { marks, text: html, adjustMarks: false, updatedValue };
 		};
 
 		const checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
@@ -687,7 +677,7 @@ class Mark {
 			return '';
 		});
 
-		return { marks, text, adjustMarks };
+		return { marks, text, adjustMarks, updatedValue: updatedValue || (text !== html) };
 	};
 	
 	/**
@@ -697,12 +687,18 @@ class Mark {
 	 * @returns {string} The attribute string.
 	 */
 	paramToAttr (type: I.MarkType, param: string): string {
-		let attr = '';
-		
 		if (!param) {
-			return attr;
+			return '';
 		};
 		
+		param = String(param || '');
+		param = param.replace(/\r?\n/g, '');
+		param = param.replace(/</g, '&lt;');
+		param = param.replace(/>/g, '&gt;');
+		param = param.replace(/"/g, '&quot;');
+		param = param.replace(/```/g, '');
+
+		let attr = '';
 		switch (type) {
 			case I.MarkType.Link: {
 				attr = `href="${U.Common.urlFix(param)}" class="markuplink"`;

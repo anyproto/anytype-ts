@@ -1954,6 +1954,7 @@ export const ObjectListExport = (spaceId: string, path: string, objectIds: strin
 	request.setIncludefiles(includeFiles);
 	request.setIncludearchived(includeArchived);
 	request.setIsjson(isJson);
+	request.setMdincludepropertiesandschema(true);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);
 };

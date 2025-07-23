@@ -57,8 +57,11 @@
 	overflow: hidden; 
 }
 .form {
-	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 10; }
+	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; }
 	#form-loader.active { display: block; }
+	#form-loader {
+		.dots { display: none; }
+	}
 
 	.head { 
 		padding: 12px 12px 12px 16px; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: space-between; 
@@ -116,7 +119,7 @@
 
 		.swiper-button-disabled { display: none; }
 
-		.attachment { max-width: 300px; }
+		.attachment { max-width: 300px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05); }
 		.swiper-slide:last-child .attachment { margin-right: 6px; }
 	}
 
@@ -171,6 +174,7 @@
 	.charCounter.show { display: block; }
 
 	.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
+	.icon.send.isLoading { background: url('~img/icon/chat/buttons/loader.svg'); animation: rotate 1.2s infinite linear; animation-delay: 0.3s; }
 }
 
 .formWrapper {

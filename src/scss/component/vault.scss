@@ -56,6 +56,8 @@
 			.cnt { background-color: var(--color-text-secondary); }
 		}
 
+		&.isDragging { z-index: 1; }
+
 		&.isLoading {
 			.iconWrap { background-color: var(--color-shape-highlight-medium); }
 			.iconWrap {
@@ -69,7 +71,7 @@
 
 			&:before {
 				content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
-				width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear
+				width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;
 			}
 		}
 

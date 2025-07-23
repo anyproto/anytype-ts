@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -31,6 +31,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	const objects = useRef(null);
 	const objectData = useRef(new Map());
 	const origin = useRef(null);
+	const dragActive = useRef(false);
+	const timeoutDragOver = useRef(0);
 
 	const initData = () => {
 		if (isInitialised.current) {
@@ -177,7 +179,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		const win = $(window);
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
-		const sidebar = $('#sidebarLeft');
+		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const layer = $('#dragLayer');
 		const body = $('body');
 		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
@@ -213,7 +215,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
 
 		$('.colResize.active').removeClass('active');
-		scrollOnMove.onMouseDown(e, isPopup);
+		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
 
 		if (dropType == I.DropType.Block) {
 			selection?.set(I.SelectType.Block, ids);
@@ -231,6 +233,18 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
+
+		if (!dragActive.current) {
+			dragActive.current = true;
+		};
+
+		window.clearTimeout(timeoutDragOver.current);
+		timeoutDragOver.current = window.setTimeout(() => {
+			if (dragActive.current) {
+				dragActive.current = false;
+				clearStyle();
+			};
+		}, 100);
 	};
 
 	const onDrag = (e: any) => {
@@ -241,7 +255,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
-		const sidebar = $('#sidebarLeft');
+		const sidebar = $(S.Common.getRef('sidebarLeft')?.getNode());
 		const body = $('body');
 
 		layerRef.current.hide();
@@ -260,6 +274,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		$('.isDragging').removeClass('isDragging');
 		scrollOnMove.onMouseUp(e);
+
+		window.clearTimeout(timeoutDragOver.current);
 	};
 
 	const onDrop = (e: any, targetType: string, targetId: string, position: I.BlockPosition) => {
@@ -268,6 +284,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) {};
 
+		const win = $(window);
 		const { rootId, dropType, withAlt } = data;
 		const ids = data.ids || [];
 		const contextId = rootId;
@@ -286,7 +303,10 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				};
 
 				selection?.renderSelection();
-				raf(() => $('.resizable').trigger('resizeInit'));
+				raf(() => {
+					win.trigger('resize');
+					$('.resizable').trigger('resizeInit');
+				});
 			};
 
 			if (withAlt) {
@@ -328,6 +348,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				};
 
 				const target = S.Block.getLeaf(targetContextId, targetId);
+
+				if (ids.includes(targetId)) {
+					console.log('[DragProvider].onDrop ids includes targetId');
+					return;
+				};
 				
 				if (target) {
 					isToggle = target.isTextToggle();
@@ -780,6 +805,12 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	const unbind = () => {
 		$(window).off('drag.drag dragend.drag');
 	};
+
+	useEffect(() => {
+		return () => {
+			window.clearTimeout(timeoutDragOver.current);
+		};
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		onDragStart,
