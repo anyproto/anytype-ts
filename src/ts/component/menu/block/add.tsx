@@ -761,10 +761,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	scrollToRow (items: any[], index: number) {
+		if (!this.refList || !items.length) {
+			return;
+		};
+
 		const listHeight = this.refList.props.height;
 		const itemHeight = this.getRowHeight(items[index], index);
 
-		let offset = 16;
+		let offset = 0;
 		let total = 0;
 
 		for (let i = 0; i < items.length; ++i) {
