@@ -388,7 +388,6 @@
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
 	"progressUpdateDownloading": "Downloading",
-	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
 
@@ -1158,9 +1157,6 @@
 	"popupConfirmConfirmationText": "Input this text to confirm:",
 	"popupConfirmConfirmationTextError": "Text does not match",
 
-	"popupConfirmUpdatePromptTitle": "Update available",
-	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
-	"popupConfirmUpdatePromptRestartOk": "Restart and update",
 	"popupConfirmUpdatePromptCancel": "Later",
 	"popupConfirmUpdateDoneTitle": "You are up-to-date",
 	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
