@@ -1353,13 +1353,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (type == I.MarkType.Link) {
 			S.Menu.close('blockContext', () => {
+				let filter = '';
+				let newType = null;
+
+				if (mark) {
+					filter = mark.param;
+					newType = mark.type;
+				} else {
+					filter = block.getText().substring(range.from, range.to);
+				};
+
 				S.Menu.open('blockLink', {
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
 					data: {
-						filter: mark ? mark.param : '',
-						type: mark ? mark.type : null,
+						rootId,
+						blockId: block.id,
+						blockIds: [ block.id ],
+						filter,
+						type: newType,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							cb();

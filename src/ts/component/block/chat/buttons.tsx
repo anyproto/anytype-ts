@@ -204,8 +204,6 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	getTextButtons () {
 		const { getMarksAndRange } = this.props;
 		const { marks, range } = getMarksAndRange();
-		const cmd = keyboard.cmdSymbol();
-		const shift = keyboard.shiftSymbol();
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
