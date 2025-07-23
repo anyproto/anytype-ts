@@ -99,6 +99,10 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				};
 			};
 
+			if (item.alert) {
+				caption = <div className="caption alert">!</div>;
+			};
+
 			return (
 				<div
 					id={`item-${item.id}`}
@@ -198,6 +202,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	getSpaceSettings () {
+		const { error } = S.Auth.getSyncStatus();
 		const space = U.Space.getSpaceview();
 		const isEntrySpace = space.spaceAccessType == I.SpaceType.Personal;
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -220,7 +225,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					isEntrySpace ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
-					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage') },
+					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: error == I.SyncStatusError.StorageLimitExceed },
 					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				].filter(it => it),
 			},
