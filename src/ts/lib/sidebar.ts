@@ -195,7 +195,7 @@ class Sidebar {
 	onMouseMove (): void {
 		const { showVault, hideSidebar } = S.Common;
 
-		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging) {
+		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging || keyboard.isResizing) {
 			return;
 		};
 
