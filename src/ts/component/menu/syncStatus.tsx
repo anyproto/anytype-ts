@@ -17,9 +17,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	cache: any = {};
 	currentInfo = '';
+	refList: any = null;
 	state = { 
 		isLoading: false,
 	};
+	n = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -142,6 +144,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -287,7 +290,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			sorts,
 			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
-			limit: 11,
+			limit: 50,
 		}, () => {
 			this.setState({ isLoading: false });
 
@@ -453,6 +456,36 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getRowHeight (item: any) {
 		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
+	scrollToRow (items: any[], index: number) {
+		if (!this.refList || !items.length) {
+			return;
+		};
+
+		const listHeight = this.refList.props.height;
+		const itemHeight = this.getRowHeight(items[index]);
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < items.length; ++i) {
+			const h = this.getRowHeight(items[i]);
+
+			if (i < index) {
+				offset += h;
+			};
+			total += h;
+		};
+
+		if (offset + itemHeight < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - itemHeight / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		this.refList.scrollToPosition(offset);
 	};
 
 });

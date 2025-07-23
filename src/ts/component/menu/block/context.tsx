@@ -299,9 +299,19 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					noFlipY: true,
 				});
 
+				let filter = '';
+				let newType = null;
+
+				if (mark) {
+					filter = mark.param;
+					newType = mark.type;
+				} else {
+					filter = block.getText().substring(from, to);
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
-					filter: mark ? mark.param : '',
-					type: mark ? mark.type : null,
+					filter,
+					type: newType,
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
 						marks = Mark.toggleLink({ type: newType, param, range: { from, to } }, marks);

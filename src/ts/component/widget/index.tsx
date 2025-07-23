@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -14,15 +14,16 @@ interface Props extends I.WidgetComponent {
 	icon?: string;
 	disableContextMenu?: boolean;
 	className?: string;
-	onDragStart?: (e: React.MouseEvent, blockId: string) => void;
-	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
+	onDragStart?: (e: MouseEvent, blockId: string) => void;
+	onDragOver?: (e: MouseEvent, blockId: string) => void;
+	onDrag?: (e: MouseEvent, blockId: string) => void;
 };
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview, canEdit, canRemove } = props;
+	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, onDrag, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -466,7 +467,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		analytics.event(event, data);
 	};
 
-	const onDragEnd = () => {
+	const onDragEnd = (e: any) => {
+		scrollOnMove.onMouseUp(e);
+
 		analytics.event('ReorderWidget', {
 			layout,
 			params: { target: object }
@@ -788,8 +791,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			id={`widget-${block.id}`}
 			className={cn.join(' ')}
 			draggable={isDraggable}
-			onDragStart={e => onDragStart(e, block.id)}
+			onDragStart={e => onDragStart ? onDragStart(e, block.id) : null}
 			onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
+			onDrag={e => onDrag ? onDrag(e, block.id) : null}
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>

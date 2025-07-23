@@ -413,7 +413,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		return S.Record.getSubId(this.getRootId(), this.props.block.id);
+		const windowId = U.Common.getCurrentElectronWindowId();
+
+		return [ S.Record.getSubId(this.getRootId(), this.props.block.id), windowId ].join('-');
 	};
 
 	loadDeps (ids: string[], callBack?: () => void) {

@@ -69,9 +69,9 @@ html.themeDark {
 
 	/* System */
 
-	--color-system-accent-125: #ffc83c;
-	--color-system-accent-50: #9f6b00;
-	--color-system-accent-25: #694500;
+	--color-system-accent-125: #105aef;
+	--color-system-accent-50: #224c9e;
+	--color-system-accent-25: #18346e;
 	--color-system-selection: rgba(24, 163, 241, 0.3);
 
 	/* Common */
@@ -433,6 +433,8 @@ html.themeDark {
 			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
+
+	.banner { background-image: unset; border: 1px solid var(--color-shape-highlight-dark); }
 
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }

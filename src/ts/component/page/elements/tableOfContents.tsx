@@ -42,6 +42,10 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	const onMouseEnter = () => {
+		if (S.Menu.isAnimating('tableOfContents')) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 
 		S.Menu.open('tableOfContents', {

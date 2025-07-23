@@ -1353,13 +1353,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (type == I.MarkType.Link) {
 			S.Menu.close('blockContext', () => {
+				let filter = '';
+				let newType = null;
+
+				if (mark) {
+					filter = mark.param;
+					newType = mark.type;
+				} else {
+					filter = block.getText().substring(range.from, range.to);
+				};
+
 				S.Menu.open('blockLink', {
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
 					data: {
-						filter: mark ? mark.param : '',
-						type: mark ? mark.type : null,
+						rootId,
+						blockId: block.id,
+						blockIds: [ block.id ],
+						filter,
+						type: newType,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							cb();
@@ -1844,7 +1857,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const root = S.Block.getLeaf(rootId, rootId);
-		const { focused } = focus.state;
+		const { focused, range } = focus.state;
 
 		if (!root || (readonly && isCut)) {
 			return;
@@ -1862,6 +1875,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ids = [ focused ];
 		} else {
 			ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
+		};
+
+		if (isCut && (ids.length == 1) && (ids[0] == focused)) {
+			this.focus(focused, range.from, range.from, false);
 		};
 
 		Action.copyBlocks(rootId, ids, isCut);
@@ -1915,7 +1932,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!data.html) {
 			const urls = U.Common.getUrlsFromText(data.text);
 
-			if (block && urls.length && !block.isTextTitle() && !block.isTextDescription()) {
+			if (urls.length && (urls[0] == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
 				this.onPasteUrl(urls[0]);
 				return;
 			};
@@ -2007,6 +2024,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
+		S.Common.clearTimeout('blockContext');
+
 		const menuParam = { 
 			component: 'select',
 			element: `#block-${focused}`,
@@ -2038,12 +2057,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						case 'link': {
 							if (currentFrom == currentTo) {
 								value = U.Common.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+
 								to = currentFrom + url.length;
 							} else {
 								to = currentTo;
 							};
-
-							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+							
 							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {

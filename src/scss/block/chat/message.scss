@@ -45,7 +45,7 @@
 		.text { user-select: text !important; display: inline; }
 		.time { 
 			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; 
-			display: flex; align-items: center; gap: 0px 2px;
+			display: flex; align-items: center; gap: 0px 4px;
 		}
 
 		.attachments { padding: 4px; }
