@@ -497,11 +497,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const borderLeft = this.getBorderLeft(isFixed);
 			const borderTop = this.getBorderTop();
 			const borderBottom = this.getBorderBottom();
+			const scrollTop = win.scrollTop();
 			const ww = winSize.ww;
-			const wh = winSize.wh + (!isFixed ? win.scrollTop() : 0);
+			const wh = winSize.wh + (!isFixed ? scrollTop : 0);
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
-			const scrollTop = win.scrollTop();
 
 			let offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			let offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
@@ -989,6 +989,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			listRef = this.ref.getListRef();
 		};
 
+		if (this.ref.scrollToRow) {
+			this.ref.scrollToRow(items, Math.max(0, index));
+		} else
 		if (listRef && scroll) {
 			listRef.scrollToRow(Math.max(0, index));
 		};
