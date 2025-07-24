@@ -78,6 +78,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			iconOption,
 			spaceUxType: uxType,
 			spaceAccessType: I.SpaceType.Private,
+			spaceDashboardId: I.HomePredefinedId.Last,
 		};
 
 		if (isChatSpace) {
