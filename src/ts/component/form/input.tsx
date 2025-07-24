@@ -330,6 +330,10 @@ const Input = forwardRef<InputRef, Props>(({
 			min={min}
 			max={max}
 			step={step}
+			onDragStart={e => {
+				e.preventDefault();
+				e.stopPropagation();
+			}}
 		/>
 	);
 });
