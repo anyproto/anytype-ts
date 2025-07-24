@@ -24,7 +24,7 @@ class UtilCommon {
 	 * Gets the current Electron window ID as a string.
 	 * @returns {string} The current window ID or '0' if not available.
 	 */
-	getCurrentElectronWindowId (): string {
+	getWindowId (): string {
 		const electron = this.getElectron();
 
 		if (!electron) {
