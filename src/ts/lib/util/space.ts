@@ -420,7 +420,7 @@ class UtilSpace {
 	 * @returns {string} The publish URL.
 	 */
 	getPublishUrl (slug: string): string {
-		return [ this.getPublishDomain(), slug ].join('/');
+		return [ 'https://', this.getPublishDomain(), slug ].join('/');
 	};
 
 };
