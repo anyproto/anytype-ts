@@ -413,9 +413,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		const windowId = U.Common.getWindowId();
-
-		return [ S.Record.getSubId(this.getRootId(), this.props.block.id), windowId ].join('-');
+		return [ '', S.Common.space, `${this.getRootId()}:${this.props.block.id}`, U.Common.getWindowId() ].join('-');
 	};
 
 	loadDeps (ids: string[], callBack?: () => void) {

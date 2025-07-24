@@ -181,13 +181,14 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @returns {{ prefix: string; spaceId: string; chatId: string; isSpace: boolean; }} The parsed parameters.
 	 */
-	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; isSpace: boolean; } {
+	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; windowId: string } {
 		const [ prefix, spaceId, chatId, windowId ] = subId.split('-');
 
 		if (prefix == J.Constant.subId.chatSpace) {
-			return { prefix, spaceId, chatId, isSpace: true };
+			return { prefix, spaceId, chatId, windowId };
 		} else {
-			return { prefix: '', spaceId: S.Common.space, chatId: prefix, isSpace: false };
+			const [ rootId, blockId ] = chatId.split(':');
+			return { prefix: '', spaceId, chatId: rootId, windowId };
 		};
 	};
 
@@ -198,8 +199,7 @@ class ChatStore {
 	 * @returns {string} The subscription ID.
 	 */
 	getSubId (spaceId: string, chatId: string): string {
-		const windowId = U.Common.getWindowId();
-		return [ J.Constant.subId.chatSpace, spaceId, chatId, windowId ].join('-');
+		return [ J.Constant.subId.chatSpace, spaceId, chatId, U.Common.getWindowId() ].join('-');
 	};
 
 	/**
