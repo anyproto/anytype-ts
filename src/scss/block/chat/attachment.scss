@@ -25,7 +25,8 @@
 
 		.icon.syncStatus { display: none; position: absolute; left: 50%; top: 50%; }
 
-		&.isSyncing {
+		&.isSyncing, 
+		&.isQueued {
 			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear; }
 		}
 		&.isError {
