@@ -23,17 +23,17 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 		let text = '';
 
 		if (errorCodes.includes(code)) {
-			icon = 'error';
 			title = translate(`popupConfirm${request}Error${code}Title`);
 			text = translate(`popupConfirm${request}Error${code}Text`);
 		} else {
-			icon = 'error';
 			title = translate('popupInviteRequestTitle');
 			text = translate('popupConfirmInviteError');
 		};
 
 		if ((request == 'SpaceInviteView') && (code == J.Error.Code.SpaceInviteView.INVITE_NOT_FOUND)) {
-			icon = 'noaccess';
+			icon = 'noAccess';
+		} else {
+			icon = 'error';
 		};
 
 		S.Popup.open('confirm', {
