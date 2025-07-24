@@ -989,11 +989,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			listRef = this.ref.getListRef();
 		};
 
-		if (this.ref.scrollToRow) {
-			this.ref.scrollToRow(items, Math.max(0, index));
-		} else
-		if (listRef && scroll) {
-			listRef.scrollToRow(Math.max(0, index));
+		if (scroll) {
+			if (this.ref.scrollToRow) {
+				this.ref.scrollToRow(items, Math.max(0, index));
+			} else
+			if (listRef) {
+				listRef.scrollToRow(Math.max(0, index));
+			};
 		};
 
 		const next = items[index];
