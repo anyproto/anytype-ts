@@ -73,11 +73,15 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		setIsLoading(true);
 
-		const details = {
+		const details: any = {
 			name,
 			iconOption,
 			spaceUxType: uxType,
 			spaceAccessType: I.SpaceType.Private,
+		};
+
+		if (isChatSpace) {
+			details.spaceDashboardId = I.HomePredefinedId.Chat;
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
