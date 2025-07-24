@@ -29,10 +29,6 @@ const history = memoryHistory();
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
-interface State {
-	isLoading: boolean;
-};
-
 declare global {
 	interface Window {
 		isExtension: boolean;
@@ -166,11 +162,8 @@ const App: FC = () => {
 		Renderer.on('init', onInit);
 		Renderer.on('route', (e: any, route: string) => onRoute(route));
 		Renderer.on('popup', onPopup);
-		Renderer.on('checking-for-update', onUpdateCheck);
-		Renderer.on('update-available', onUpdateAvailable);
-		Renderer.on('update-confirm', onUpdateConfirm);
 		Renderer.on('update-not-available', onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => S.Progress.delete('update'));
+		Renderer.on('update-downloaded', onUpdateDownloaded);
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-progress', onUpdateProgress);
 		Renderer.on('spellcheck', onSpellcheck);
@@ -346,56 +339,12 @@ const App: FC = () => {
 		window.setTimeout(() => S.Popup.open(id, param), S.Popup.getTimeout());
 	};
 
-	const onUpdateCheck = (e: any, auto: boolean) => {
-		if (!auto) {
-			S.Progress.add({ id: I.ProgressType.UpdateCheck, type: I.ProgressType.UpdateCheck, current: 0, total: 1 });
-		};
-	};
-
-	const onUpdateConfirm = (e: any, auto: boolean, info: any) => {
-		S.Progress.delete(I.ProgressType.UpdateCheck);
-
-		if (auto) {
-			return;
-		};
-
-		console.log('[App.onUpdateConfirm]', info);
-
-		const title = [ translate('popupConfirmUpdatePromptTitle') ];
-		const version = info?.releaseName;
-
-		if (version) {
-			title.push(version);
-		};
-
-		S.Popup.open('confirm', {
-			data: {
-				icon: 'update',
-				title: title.join(' - '),
-				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
-				textCancel: translate('popupConfirmUpdatePromptCancel'),
-				onConfirm: () => {
-					Renderer.send('updateConfirm');
-					U.Common.checkUpdateVersion(version);
-				},
-				onCancel: () => {
-					Renderer.send('updateCancel');
-				},
-			},
-		});
-	};
-
-	const onUpdateAvailable = (e: any, auto: boolean, info: any) => {
-		console.log('[App.onUpdateAvailable]', info);
-
-		S.Progress.delete(I.ProgressType.UpdateCheck);
+	const onUpdateDownloaded = (e: any, info: any) => {
+		console.log('[App.onUpdateDownloaded]', info);
 		S.Common.updateVersionSet(info?.version);
 	};
 
 	const onUpdateUnavailable = (e: any, auto: boolean) => {
-		S.Progress.delete(I.ProgressType.UpdateCheck);
-
 		if (auto) {
 			return;
 		};
@@ -414,7 +363,6 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
-		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;

@@ -6,7 +6,6 @@ export enum ProgressType {
 	Save		 = 'saveFile',
 	Migrate		 = 'migration',
 	Update		 = 'update',
-	UpdateCheck	 = 'updateCheck',
 };
 
 export enum ProgressState {
