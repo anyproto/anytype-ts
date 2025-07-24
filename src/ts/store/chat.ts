@@ -215,10 +215,6 @@ class ChatStore {
 		if (current) {
 			const { messages, mentions, lastStateId, order } = state;
 
-			console.log('ChatStore.setState', subId);
-			console.log(JSON.stringify(current, null, 2));
-			console.log(JSON.stringify(state, null, 2));
-
 			if (order < current.order) {
 				return; // Ignore outdated state
 			};
