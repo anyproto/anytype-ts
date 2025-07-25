@@ -136,7 +136,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{platformText ? (
 						<div className="platformLabel">
 							<Label className="paidOnOtherPlatform" text={platformText} />
-							{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
+							{withContactButton ? <Button onClick={() => Action.membershipUpgradeViaEmail()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
 						</div>
 					) : (
 						<div className="buttons">

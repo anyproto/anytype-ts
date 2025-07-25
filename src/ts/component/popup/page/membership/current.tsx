@@ -165,7 +165,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			onChangeEmail();
 		} else {
 			if (membership.paymentMethod == I.PaymentMethod.Crypto) {
-				Action.membershipUpgrade();
+				Action.membershipUpgradeViaEmail();
 			} else {
 				C.MembershipGetPortalLinkUrl((message: any) => {
 					if (message.url) {

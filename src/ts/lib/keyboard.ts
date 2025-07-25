@@ -867,7 +867,7 @@ class Keyboard {
 	/**
 	 * Handles membership upgrade action.
 	 */
-	onMembershipUpgrade () {
+	onMembershipUpgradeViaEmail () {
 		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 
