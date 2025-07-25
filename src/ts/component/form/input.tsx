@@ -39,6 +39,7 @@ interface Props {
 	onBlur?(e: any, value: string): void;
 	onSelect?(e: any, value: string): void;
 	onClick?(e: any): void;
+	onUnmount?(): void;
 };
 
 export interface InputRef {
@@ -89,6 +90,7 @@ const Input = forwardRef<InputRef, Props>(({
 	onFocus,
 	onBlur,
 	onSelect,
+	onUnmount,
 }, ref) => {
 
 	const [ value, setValue ] = useState(initialValue);
@@ -192,7 +194,6 @@ const Input = forwardRef<InputRef, Props>(({
 	const handleCompositionEnd = (e) => {
 		keyboard.setComposition(false);
 		onCompositionEnd?.();
-
 		handleChange(e);
 	};
 
@@ -248,6 +249,12 @@ const Input = forwardRef<InputRef, Props>(({
 		clone.remove();
 		return rect;
 	};
+
+	useEffect(() => {
+		return () => {
+			onUnmount?.();
+		};
+	}, []);
 
 	useEffect(() => {
 		if (maskOptions && inputRef.current) {

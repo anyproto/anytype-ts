@@ -110,6 +110,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	const onBlur = (e: any) => {
 		const record = getRecord(recordId);
 
+		console.log('onBlur', recordId, relation.relationKey, record);
+
 		if (!inputRef.current || keyboard.isBlurDisabled || !record) {
 			return;
 		};
@@ -127,6 +129,12 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				setEditingHandler(false);
 			};
 		});
+	};
+
+	const onUnmount = () => {
+		if (isEditing && (record[relation.relationKey] !== value.current)) {
+			save(value.current);
+		};
 	};
 
 	const setValue = (v: any) => {
@@ -202,6 +210,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 			EditorComponent = (item: any) => (
 				<Input 
+					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef} 
 					id="input" 
 					{...item} 
@@ -212,12 +221,13 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 						alias: 'datetime',
 					}} 
 					placeholder={ph.join(' ')} 
-					onKeyUp={onKeyUpDate} 
+					onKeyUp={onKeyUpDate}
 				/>
 			);
 		} else {
 			EditorComponent = (item: any) => (
 				<Input 
+					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef} 
 					id="input" 
 					{...item} 
@@ -236,6 +246,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				onSelect={onSelect}
 				onPaste={onPaste}
 				onCut={onPaste}
+				onUnmount={onUnmount}
 			/>
 		);
 	} else {
