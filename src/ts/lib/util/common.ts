@@ -1897,6 +1897,20 @@ class UtilCommon {
 		};
 	};
 
+	checkCanMembershipUpgrade (): boolean {
+		const { membership } = S.Auth;
+		const canUpgradeTiers = [
+			I.TierType.None,
+			I.TierType.Explorer,
+			I.TierType.Builder,
+			I.TierType.Pioneer,
+			I.TierType.Starter,
+			I.TierType.NewExplorer,
+		];
+
+		return canUpgradeTiers.includes(membership.tier);
+	};
+
 };
 
 export default new UtilCommon();
