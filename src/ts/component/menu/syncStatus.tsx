@@ -12,6 +12,7 @@ interface State {
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
 const SUB_ID = 'syncStatusObjectsList';
+const LIMIT = 12;
 
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
@@ -168,6 +169,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	componentDidMount () {
 		this.load();
 		this.rebind();
+		this.resize();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();	
 	};
 
 	componentWillUnmount () {
@@ -290,7 +296,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			sorts,
 			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
-			limit: 50,
+			limit: 10,
 		}, () => {
 			this.setState({ isLoading: false });
 
@@ -456,6 +462,22 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getRowHeight (item: any) {
 		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems().slice(0, LIMIT);
+		const obj = $(`#${getId()} .content`);
+
+		let height = 44;
+		if (!items.length) {
+			height = 160;
+		} else {
+			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+		};
+
+		obj.css({ height });
+		position();
 	};
 
 	scrollToRow (items: any[], index: number) {

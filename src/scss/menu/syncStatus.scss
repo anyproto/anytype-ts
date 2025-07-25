@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSyncStatus { width: var(--menu-width-large); height: var(--menu-width-large); }
+	.menu.menuSyncStatus { width: var(--menu-width-large); }
 	.menu.menuSyncStatus {
 		.content { 
 			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px; 
