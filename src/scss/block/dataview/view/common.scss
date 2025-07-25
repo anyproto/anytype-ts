@@ -137,12 +137,8 @@
 				}
 			}
 
-			.icon.editMode {
-				position: absolute; z-index: 3; width: 24px; height: 24px; right: 8px; top: 8px; border-radius: 4px;
-				box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium); border: 1px solid var(--color-shape-secondary);
-				background-color: var(--color-bg-primary);
-			}
-			.icon.editMode:hover { background-color: var(--color-shape-tertiary); }
+			.icon.editMode { position: absolute; z-index: 3; width: 28px; height: 28px; right: 8px; top: 8px; border-radius: 4px; background-color: var(--color-bg-primary); background-size: 20px; }
+			.icon.editMode:hover { background-color: var(--color-bg-primary); }
 
 			.card:hover {
 				.icon.editMode { display: block; }
