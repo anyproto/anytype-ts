@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
-import { I, J, translate, Action, analytics, U, S, keyboard } from 'Lib';
+import { I, J, translate, Action, analytics, U, S } from 'Lib';
 
 const STORAGE_FULL = 0.7;
 

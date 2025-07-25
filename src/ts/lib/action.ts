@@ -929,7 +929,13 @@ class Action {
 
 		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: isBuilder ? I.TierType.CoCreator : I.TierType.Builder } }) } },
+			{
+				onRouteChange: () => {
+					S.Popup.open('membership', {
+						data: { tier: isBuilder ? I.TierType.CoCreator : I.TierType.Builder }
+					});
+				}
+			},
 		);
 	};
 
