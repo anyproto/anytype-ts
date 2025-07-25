@@ -31,11 +31,6 @@
 					.cellWrapper.isName { min-width: 60%; }
 				}
 
-				.side.right { overflow: hidden; }
-				.side.right {
-					.cellWrapper { margin-left: 4px; }
-				}
-
 				> .cellWrapper { flex-grow: 0; }
 			}
 
