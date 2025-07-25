@@ -104,7 +104,7 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const focus = () => {
-		inputRef.current?.focus({ preventScroll: true });
+		inputRef.current?.focus();
 	};
 
 	const handleEvent = (
