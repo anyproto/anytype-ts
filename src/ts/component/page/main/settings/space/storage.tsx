@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
-import { I, J, translate, Action, analytics, U, S } from 'Lib';
+import { I, J, translate, Action, analytics, U, S, keyboard } from 'Lib';
 
 const STORAGE_FULL = 0.7;
 
@@ -95,13 +95,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 	};
 
 	onUpgrade () {
-		const { membership } = S.Auth;
-
-		if (membership.tier >= I.TierType.CoCreator) {
-			Action.membershipUpgrade();
-		} else {
-			this.props.onPage('membership');
-		};
+		Action.membershipUpgrade();
 
 		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};
