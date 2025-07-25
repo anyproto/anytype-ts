@@ -321,13 +321,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	onUpgrade (type: string) {
-		const { membership } = S.Auth;
-
-		if (membership.tier >= I.TierType.Builder) {
-			Action.membershipUpgrade();
-		} else {
-			this.props.onPage('membership');
-		};
+		Action.membershipUpgrade();
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
 	};
