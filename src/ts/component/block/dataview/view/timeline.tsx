@@ -154,6 +154,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const width = Math.floor(el.outerWidth());
 		const body = $('body');
 		const sl = node.scrollLeft();
+		const duration = getDuration(item);
 
 		unbind();
 		keyboard.setResize(true);
@@ -219,6 +220,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					end += d * DAY;
 				};
 
+				if (duration + d < 1) {
+					return;
+				};
+
 				el.css(css);
 				setHover(start, end);
 			};
@@ -282,7 +287,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const param = U.Date.getDateParam(Number(item[endKey]) || 0);
 		const end = U.Date.timestamp(param.y, param.m, param.d, 23, 59, 59);
 
-		return end - start;
+		return Math.ceil((end - start) / DAY);
 	};
 
 	const rowRenderer = (param: any) => {
@@ -304,7 +309,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
-		const width = Math.max(1, Math.ceil(duration / DAY)) * WIDTH;
+		const width = Math.max(1, duration) * WIDTH;
 		const left = idx * WIDTH;
 
 		return (
