@@ -956,6 +956,15 @@ class BlockStore {
 			});
 		});
 
+		if (withTitle) {
+			list.map((it: any) => {
+				if (!it.block.isTextTitle()) {
+					it.depth++;
+				};
+				return it;
+			});
+		};
+
 		return list;
 	};
 
