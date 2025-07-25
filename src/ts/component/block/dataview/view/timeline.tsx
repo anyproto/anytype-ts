@@ -279,7 +279,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const getDuration = (item: any): number => {
 		const start = Number(item[startKey]) || 0;
-		const end = Number(item[endKey]) || 0;
+		const param = U.Date.getDateParam(Number(item[endKey]) || 0);
+		const end = U.Date.timestamp(param.y, param.m, param.d, 23, 59, 59);
 
 		return end - start;
 	};
