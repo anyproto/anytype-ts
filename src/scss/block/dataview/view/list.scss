@@ -12,16 +12,16 @@
 			.row.isDone * { color: var(--color-text-secondary); }
 
 			.row:not(.editModeOn) {
-				.cellWrapper.isEmpty { margin: 0px !important; }
+				.cellWrapper.isEmpty { margin: 0px !important; display: none; }
 				.cellWrapper.isEmpty {
 					.cellContent:not(.withMenu) { display: none; }
 				}
 			}
 
-			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 16px; padding-right: 12px; }
+			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; padding-right: 12px; }
 			.sides {
 				.side { display: flex; flex-direction: row; align-items: center; }
-				.side.left { width: 40%; flex-shrink: 0; }
+				.side.left { flex: 1 1 auto; min-width: 40%; }
 				.side.left {
 					.cellWrapper { margin-right: 4px; }
 					.cellWrapper.isName { width: 100%; }
@@ -35,6 +35,8 @@
 				.side.right {
 					.cellWrapper { margin-left: 4px; }
 				}
+
+				> .cellWrapper { flex-grow: 0; }
 			}
 
 			.row:hover,
@@ -104,9 +106,7 @@
 			}
 
 			.cellContent.c-select, 
-			.cellContent.c-object { 	
-				line-height: 24px; vertical-align: middle;
-			}
+			.cellContent.c-object { line-height: 24px; }
 
 			.cellContent.c-select, 
 			.cellContent.c-object, 

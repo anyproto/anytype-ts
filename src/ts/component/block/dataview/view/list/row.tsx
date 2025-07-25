@@ -106,9 +106,7 @@ const Row = observer(class Row extends React.Component<Props> {
 				<div className={[ 'side', 'left', left.length > 1 ? 's50' : '' ].join(' ')}>
 					{left.map(mapper)}
 				</div>
-				<div className="side right">
-					{right.map(mapper)}
-				</div>
+				{right.map(mapper)}
 			</div>
 		);
 
