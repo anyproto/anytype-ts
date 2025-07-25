@@ -36,10 +36,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
 	const dateParam = U.Date.getDateParam(value);
-
 	const canEditStart = !readonly && !startRelation?.isReadonlyValue;
 	const canEditEnd = !readonly && !endRelation?.isReadonlyValue;
 	const months = [];
+
+	const getItems = () => {
+		return getRecords().map(id => S.Detail.get(subId, id))
+	};
 
 	const rebind = () => {
 		unbind();
@@ -378,8 +381,9 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
+		const items = getItems();
 		const body = $(bodyRef.current);
-		const items = $(itemsRef.current);
+		const list = $(itemsRef.current);
 		const tooltips = $(tooltipRef.current);
 		const scrollContainer = U.Common.getScrollContainer(isPopup);
 		const pageContainer = U.Common.getPageContainer(isPopup);
@@ -398,7 +402,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const width = node.width();
 
-		items.css({ height: Math.max(20, items.length) * HEIGHT });
+		list.css({ height: Math.max(20, items.length) * HEIGHT });
 		tooltips.css({ transform: `translate3d(${left}px, ${top}px, 0)`, width });
 	};
 
@@ -541,7 +545,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		});
 	};
 
-	const items = getRecords().map(id => S.Detail.get(subId, id));
+	const items = getItems();
 
 	useEffect(() => {
 		scrollTo(U.Date.now(), false);
