@@ -296,7 +296,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			sorts,
 			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
-			limit: 10,
+			limit: 50,
 		}, () => {
 			this.setState({ isLoading: false });
 
