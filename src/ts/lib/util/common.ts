@@ -1905,6 +1905,8 @@ class UtilCommon {
 			I.TierType.Builder,
 			I.TierType.Pioneer,
 			I.TierType.Starter,
+			I.TierType.AnyPioneer,
+			I.TierType.NewExplorer,
 		];
 
 		return canUpgradeTiers.includes(membership.tier);

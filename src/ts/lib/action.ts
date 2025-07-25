@@ -919,13 +919,13 @@ class Action {
 	};
 
 	membershipUpgrade () {
-		const { membership } = S.Auth;
-		const isBuilder = membership.tier == I.TierType.Builder;
-
 		if (!U.Common.checkCanMembershipUpgrade()) {
 			this.membershipUpgradeViaEmail();
 			return;
 		};
+
+		const { membership } = S.Auth;
+		const isBuilder = membership.tier == I.TierType.Builder;
 
 		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
