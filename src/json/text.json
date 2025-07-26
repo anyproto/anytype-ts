@@ -2176,7 +2176,7 @@
 	"onboardingSourceDeleted1Description": "Some Objects in this Query use Types or Properties that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
 	"onboardingInlineSet1Title": "This is Inline Query",
-	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
+	"onboardingInlineSet1Description": "Congratulations! You can embed a Query or Collection and modify it using Filters and Views without altering the original instance.",
 	"onboardingInlineSet2Title": "Views",
 	"onboardingInlineSet2Description": "Adjust rules and views to suit the current context.",
 
