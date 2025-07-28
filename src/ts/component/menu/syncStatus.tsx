@@ -296,7 +296,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 
 			case 'upgrade': {
-				U.Object.openAuto({ id: 'membership', layout: I.ObjectLayout.Settings });
+				Action.membershipUpgrade();
 				break;
 			};
 		};
