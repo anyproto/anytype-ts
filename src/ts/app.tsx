@@ -342,6 +342,7 @@ const App: FC = () => {
 	const onUpdateDownloaded = (e: any, info: any) => {
 		console.log('[App.onUpdateDownloaded]', info);
 		S.Common.updateVersionSet(info?.version);
+		S.Progress.delete(I.ProgressType.Update);
 	};
 
 	const onUpdateUnavailable = (e: any, auto: boolean) => {
