@@ -103,7 +103,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				return;
 			};
 
-			if (isName) {
+			if (!isGrid && isName) {
 				cellContent.css({ height: cellContent.outerHeight() });
 			};
 
@@ -145,7 +145,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				};
 			};
 
-			if (isName) {
+			if (!isGrid && isName) {
 				cellContent.css({ height: '' });
 			};
 
@@ -288,7 +288,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						element: cell,
 						offsetY: -height,
 						width,
-						height: height,
+						height,
 					});
 				} else {
 					param = Object.assign(param, {

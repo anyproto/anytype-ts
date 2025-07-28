@@ -760,6 +760,36 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		return h;
 	};
 
+	scrollToRow (items: any[], index: number) {
+		if (!this.refList || !items.length) {
+			return;
+		};
+
+		const listHeight = this.refList.props.height;
+		const itemHeight = this.getRowHeight(items[index], index);
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < items.length; ++i) {
+			const h = this.getRowHeight(items[i], i);
+
+			if (i < index) {
+				offset += h;
+			};
+			total += h;
+		};
+
+		if (offset + itemHeight < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - itemHeight / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		this.refList.scrollToPosition(offset);
+	};
+
 });
 
 export default MenuBlockAdd;

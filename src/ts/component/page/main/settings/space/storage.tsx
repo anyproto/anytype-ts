@@ -127,13 +127,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 	};
 
 	onUpgrade () {
-		const { membership } = S.Auth;
-
-		if (membership.tier >= I.TierType.CoCreator) {
-			Action.membershipUpgrade();
-		} else {
-			this.props.onPage('membership');
-		};
+		Action.membershipUpgrade();
 
 		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};

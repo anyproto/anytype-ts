@@ -195,7 +195,7 @@ class Sidebar {
 	onMouseMove (): void {
 		const { showVault, hideSidebar } = S.Common;
 
-		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging) {
+		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging || keyboard.isResizing) {
 			return;
 		};
 
@@ -518,6 +518,21 @@ class Sidebar {
 	 */
 	leftPanelSetState (v: any) {
 		S.Common.getRef('sidebarLeft')?.setPage(v.page);
+	};
+
+	/**
+	 * Gets the state of the left panel.
+	 * @returns {any} The state of the left panel.
+	 */
+	leftPanelGetState () {
+		const panel = S.Common.getRef('sidebarLeft');
+		const ret: any = {};
+
+		if (panel) {
+			ret.page = panel.getPage();
+		};
+
+		return ret;
 	};
 
 	/**

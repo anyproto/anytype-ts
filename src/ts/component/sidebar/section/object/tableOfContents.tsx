@@ -28,7 +28,7 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 				id={`item-${item.id}`}
 				className={cn.join(' ')}
 				onClick={e => onClick(e, item)}
-				style={{ paddingLeft: 8 + item.depth * 16 }}
+				style={{ paddingLeft: 8 + item.depth * 12 }}
 			>
 				<Label text={U.Common.getLatex(item.text)} />
 			</div>

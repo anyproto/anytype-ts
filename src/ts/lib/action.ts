@@ -918,16 +918,37 @@ class Action {
 		});
 	};
 
+	membershipUpgrade () {
+		if (!U.Common.checkCanMembershipUpgrade()) {
+			this.membershipUpgradeViaEmail();
+			return;
+		};
+
+		const { membership } = S.Auth;
+		const isBuilder = membership.tier == I.TierType.Builder;
+
+		U.Object.openRoute(
+			{ id: 'membership', layout: I.ObjectLayout.Settings },
+			{
+				onRouteChange: () => {
+					S.Popup.open('membership', {
+						data: { tier: isBuilder ? I.TierType.CoCreator : I.TierType.Builder }
+					});
+				}
+			},
+		);
+	};
+
 	/**
 	 * Opens a membership upgrade confirmation popup.
 	 */
-	membershipUpgrade () {
+	membershipUpgradeViaEmail () {
 		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
 				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgrade(),
+				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
 				canCancel: false
 			}
 		});

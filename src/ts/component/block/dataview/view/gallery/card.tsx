@@ -152,6 +152,11 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onDragStart (e: any) {
+		if (keyboard.isFocused || this.isEditing) {
+			e.preventDefault();
+			return;
+		};
+
 		const { isCollection, recordId, getRecord, onDragRecordStart } = this.props;
 		const record = getRecord(recordId);
 

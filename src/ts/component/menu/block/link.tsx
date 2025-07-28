@@ -236,7 +236,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const urls = U.Common.getUrlsFromText(filter);
+		const encoded = filter.replace(/\s/g, '%20');
+		const urls = U.Common.getUrlsFromText(encoded);
 		const items = [].concat(this.items);
 		const sections: any[] = [];
 

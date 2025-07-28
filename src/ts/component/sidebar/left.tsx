@@ -21,6 +21,7 @@ const Components = {
 
 interface SidebarLeftRefProps {
 	setPage: (page: string) => void;
+	getPage: () => string;
 	getChild: () => any;
 	getNode: () => HTMLElement | null;
 };
@@ -176,6 +177,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			};
 		},
 
+		getPage: () => {
+			return page;
+		},
+
 		getChild: () => {
 			return childRef.current;
 		},
@@ -210,7 +215,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 						text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)} 
 						button={translate('commonUpdateNow')} 
 						onClick={() => {
-							Renderer.send('updateDownload');
+							Renderer.send('updateConfirm');
 							S.Common.updateVersionSet('');
 							U.Common.checkUpdateVersion(updateVersion);
 						}}

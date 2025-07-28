@@ -463,8 +463,14 @@ class Keyboard {
 					return;
 				};
 
+				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
+					const state = sidebar.leftPanelGetState();
+					if (![ 'object', 'widget' ].includes(state.page)) {
+						sidebar.leftPanelSetState({ page: 'widget' });
+					};
+				};
+
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
-					sidebar.leftPanelSetState({ page: 'widget' });
 					U.Space.openDashboard();
 				} else {
 					history.goBack();
@@ -861,7 +867,7 @@ class Keyboard {
 	/**
 	 * Handles membership upgrade action.
 	 */
-	onMembershipUpgrade () {
+	onMembershipUpgradeViaEmail () {
 		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 

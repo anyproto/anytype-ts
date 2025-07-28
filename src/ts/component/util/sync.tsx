@@ -16,7 +16,7 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 }, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
-	const syncStatus = S.Auth.getSyncStatus();
+	const syncStatus = S.Auth.getSyncStatus(S.Common.space);
 	const isDevelopment = U.Data.isDevelopmentNetwork();
 	const cn = [ 'sync', className ];
 

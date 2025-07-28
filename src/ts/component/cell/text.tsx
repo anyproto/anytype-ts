@@ -129,6 +129,12 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		});
 	};
 
+	const onUnmount = () => {
+		if (isEditing && (record[relation.relationKey] !== value.current)) {
+			save(value.current);
+		};
+	};
+
 	const setValue = (v: any) => {
 		value.current = v;
 	};
@@ -202,6 +208,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 			EditorComponent = (item: any) => (
 				<Input 
+					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef} 
 					id="input" 
 					{...item} 
@@ -212,12 +219,13 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 						alias: 'datetime',
 					}} 
 					placeholder={ph.join(' ')} 
-					onKeyUp={onKeyUpDate} 
+					onKeyUp={onKeyUpDate}
 				/>
 			);
 		} else {
 			EditorComponent = (item: any) => (
 				<Input 
+					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef} 
 					id="input" 
 					{...item} 
@@ -236,6 +244,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				onSelect={onSelect}
 				onPaste={onPaste}
 				onCut={onPaste}
+				onUnmount={onUnmount}
 			/>
 		);
 	} else {
@@ -348,13 +357,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				val = val !== null ? String(val) : null;
 			};
 
-			if (inputRef.current) {
-				inputRef.current.setValue(val);
+			if (inputRef.current?.setRange) {
+				const length = String(val || '').length;
 
-				if (inputRef.current.setRange) {
-					const length = String(val || '').length;
-					inputRef.current.setRange(range.current || { from: length, to: length });
-				};
+				inputRef.current.setRange(range.current || { from: length, to: length }, false);
 			};
 
 			if (cellPosition) {
