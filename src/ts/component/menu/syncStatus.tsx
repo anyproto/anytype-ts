@@ -316,7 +316,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIcons () {
-		const syncStatus = S.Auth.getSyncStatus();
+		const syncStatus = S.Auth.getSyncStatus(S.Common.space);
 		const iconNetwork = this.getIconNetwork(syncStatus);
 		const iconP2P = this.getIconP2P(syncStatus);
 
