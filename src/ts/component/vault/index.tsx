@@ -177,14 +177,13 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onAdd = () => {
-		const param = {
+		Action.spaceCreateMenu({
 			element: `#vault #item-add`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
-			offsetY: 4,
-		};
-
-		Action.spaceCreateMenu(param, analytics.route.vault);
+			vertical: I.MenuDirection.Center,
+			offsetX: 54,
+		}, analytics.route.vault);
 	};
 
 	const onArrow = (dir: number) => {
