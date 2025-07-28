@@ -186,7 +186,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const offset = !isReadonly ? 62 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

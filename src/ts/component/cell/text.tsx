@@ -357,13 +357,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				val = val !== null ? String(val) : null;
 			};
 
-			if (inputRef.current) {
-				inputRef.current.setValue(val);
+			if (inputRef.current?.setRange) {
+				const length = String(val || '').length;
 
-				if (inputRef.current.setRange) {
-					const length = String(val || '').length;
-					inputRef.current.setRange(range.current || { from: length, to: length });
-				};
+				inputRef.current.setRange(range.current || { from: length, to: length }, false);
 			};
 
 			if (cellPosition) {

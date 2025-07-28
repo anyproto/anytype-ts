@@ -83,7 +83,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 				getRecord={() => record}
 				subId={subId}
 				relationKey={relationKey}
-				viewType={I.ViewType.List}
+				viewType={I.ViewType.Grid}
 				idPrefix={idPrefix}
 				onCellChange={onCellChange}
 				maxWidth={J.Size.dataview.cell.edit}
