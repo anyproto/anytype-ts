@@ -297,6 +297,9 @@ class Relation {
 					I.FilterQuickOption.LastMonth,
 					I.FilterQuickOption.CurrentMonth,
 					I.FilterQuickOption.NextMonth,
+					I.FilterQuickOption.LastYear,
+					I.FilterQuickOption.CurrentYear,
+					I.FilterQuickOption.NextYear,
 				];
 
 				switch (condition) {

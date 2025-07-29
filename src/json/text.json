@@ -2055,6 +2055,9 @@
 	"quickOption9": "Next month",
 	"quickOption10": "Number of days ago",
 	"quickOption11": "Number of days from now",
+	"quickOption12": "Last year",
+	"quickOption13": "Current year",
+	"quickOption14": "Next year",
 
 	"sidebarMenuAll": "Spaces & widgets",
 	"sidebarMenuSidebar": "Only widgets",
