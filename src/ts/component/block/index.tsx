@@ -592,6 +592,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
+			classNameWrap: 'fromBlock',
 			noFlipX: true,
 			subIds: J.Menu.action,
 			onClose: () => {
