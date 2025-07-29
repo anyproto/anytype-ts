@@ -68,7 +68,7 @@
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
-			.editableWrap.isEmpty { min-width: 90px; }
+			.editableWrap.isEmpty { min-width: 120px; }
 			.editableWrap {
 				.editable { height: 100%; }
 			}
