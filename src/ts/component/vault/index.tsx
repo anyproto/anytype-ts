@@ -65,6 +65,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
 		const { showVault } = S.Common;
+		const items = getSpaceItems();
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -89,6 +90,14 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				sidebar.open(width);
 			};
 		});
+
+		for (let i = 0; i < 10; i++) {
+			keyboard.shortcut(`space${i}`, e, () => {
+				if (items[i]) {
+					onClick(e, items[i]);
+				};
+			});
+		};
 	};
 
 	const onKeyUp = (e: any) => {
