@@ -1183,8 +1183,12 @@ class Dispatcher {
 		};
 
 		if (undefined !== details.setOf) {
-			S.Block.updateWidgetData(rootId);
-			$(window).trigger(`updateDataviewData`);
+			const object = S.Detail.get(rootId, rootId, [ 'name', 'setOf', 'layout' ], true);
+
+			if (U.Object.isSetLayout(object.layout) || U.Object.isCollectionLayout(object.layout)) {
+				S.Block.updateWidgetData(rootId);
+				$(window).trigger(`updateDataviewData`);
+			};
 		};
 	};
 
