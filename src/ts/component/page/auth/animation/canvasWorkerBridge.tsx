@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import raf from 'raf';
 import { DOM_EVENTS, OnboardStage, statsVisible } from './constants';
 
 interface Props {
@@ -20,7 +21,11 @@ const CanvasWorkerBridge = forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		if (!worker.current) {
+		raf(() => {
+			if (worker.current) {
+				return;
+			};
+
 			worker.current = new Worker('workers/onboard.js');
 
 			const offscreen = canvasRef.current?.transferControlToOffscreen();
@@ -36,7 +41,7 @@ const CanvasWorkerBridge = forwardRef<RefProps, Props>((props, ref) => {
 				},
 			},
 			[ offscreen ]);
-		};
+		});
 
 		Object.values(DOM_EVENTS).forEach(([eventName, passive]) => {
 			canvasRef.current.addEventListener(
