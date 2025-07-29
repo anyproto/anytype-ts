@@ -1040,12 +1040,7 @@ class Action {
 	};
 
 	spaceCreateMenu (param: I.MenuParam, route) {
-		const ids = [ 'space', 'join' ];
-
-		if (U.Object.isAllowedChat()) {
-			ids.unshift('chat');
-		};
-
+		const ids = [ 'chat', 'space', 'join' ];
 		const options = ids.map(id => {
 			const suffix = U.Common.toUpperCamelCase(id);
 
