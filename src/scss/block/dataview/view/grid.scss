@@ -107,6 +107,9 @@
 			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 			.row:hover { background-color: var(--color-shape-highlight-light); }
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
 			.row.add { margin-top: -2px; }
 
 			.row > .selectionTarget,
@@ -193,10 +196,6 @@
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing.isName { 
 				.cellContent { padding-left: 20px !important; }
-			}
-
-			.row:hover {
-				.icon.drag { opacity: 1; }
 			}
 
 			.dropTarget.isOver { box-shadow: 0px 0px; }

@@ -189,7 +189,7 @@
 		.viewContent {
 			.icon.drag { 
 				z-index: 1; width: 7px; height: 12px; background-image: url('~img/icon/dataview/dnd.svg'); cursor: grab;
-				position: absolute; top: 50%; margin: -6px 0px 0px 0px; left: 4px; opacity: 0; transition: opacity $transitionCommon;
+				position: absolute; top: 50%; margin: -6px 0px 0px 0px; left: 4px; transition: opacity $transitionCommon; opacity: 0;
 			}
 		}
 
