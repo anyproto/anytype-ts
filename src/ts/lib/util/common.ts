@@ -659,22 +659,23 @@ class UtilCommon {
 		};
 
 		// Sanity check: reject massive or clearly invalid strings
-		if (!url || (url.length > 2048) || !/[.@:/\\]/.test(url)) {
+		if (!url || (url.length > 2048)) {
 			return '';
 		};
 
 		const scheme = this.getScheme(url);
+		if (scheme) {
+			return url;
+		};
 
-		if (!scheme) {
-			if (this.matchEmail(url)) {
-				url = `mailto:${url}`;
-			} else 
-			if (this.matchPhone(url)) {
-				url = `tel:${url}`;
-			} else 
-			if (this.matchPath(url)) {
-				url = `file://${url}`;
-			};
+		if (this.matchEmail(url)) {
+			url = `mailto:${url}`;
+		} else 
+		if (this.matchPhone(url)) {
+			url = `tel:${url}`;
+		} else 
+		if (this.matchPath(url)) {
+			url = `file://${url}`;
 		};
 
 		return url;
