@@ -35,6 +35,7 @@ export interface SyncStatus {
 	p2p: P2PStatus;
 	syncingCounter: number;
 	devicesCounter: number;
+	notSyncedCounter: number;
 };
 
 export enum P2PStatus {

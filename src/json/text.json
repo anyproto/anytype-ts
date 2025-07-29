@@ -219,7 +219,10 @@
 	"commonUnmute": "Unmute",
 	"commonDropFiles": "Drag and drop your files here",
 	"commonObjectEmpty": "It's empty here.",
+	"commonSynced": "Synced",
+	"commonNotSynced": "Not synced",
 	"commonNewVersion": "Version <span class='hl'>%s</span> is out now",
+	"commonUpgrade": "✦ Upgrade",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -245,6 +248,7 @@
 	"pluralVideo": "Video|Videos",
 	"pluralAudio": "Audio|Audios",
 	"pluralFile": "File|Files",
+	"pluralLCFile": "file|files",
 	"pluralPdf": "Pdf|Pdfs",
 	"pluralBookmark": "Bookmark|Bookmarks",
 	"pluralAttachment": "Attachment|Attachments",
@@ -570,7 +574,8 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
-	"pageSettingsSpaceCleanupSpaceFiles": "Clean up space files",
+	"pageSettingsSpaceSyncedFiles": "Synced files",
+	"pageSettingsSpaceNotSyncedFiles": "Not synced files",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
@@ -896,8 +901,8 @@
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
-	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
+	"popupSettingsSpaceIndexStorageIsFullText": "Some files couldn't be synced because your storage is full. Upgrade your plan or remove files to free up space.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
 	"popupSettingsSpaceIndexImport": "Import to Space",
@@ -1828,7 +1833,6 @@
 	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
-	"menuSyncStatusInfoSelfMessageSynced": "Synced",
 	"menuSyncStatusInfoSelfMessageSyncing": "Syncing...",
 	"menuSyncStatusInfoSelfMessageError": "Error",
 	"menuSyncStatusInfoLocalOnlyTitle": "Local Only",
@@ -1838,6 +1842,10 @@
 
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
+
+	"menuSyncStatusIncentiveBannerTitle": "Files not synced",
+	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn’t be synced because you’re run out of space. Please upgrade or clean up your storage.",
+	"menuSyncStatusIncentiveBannerReviewFiles": "Review Files",
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties. Default limit is 10MB per object for free plans and 100MB for paid plans.",
@@ -1849,7 +1857,6 @@
 	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
 	"menuPublishBecomeMemberText": "Become a member to get a domain and increase publishing limits",
-	"menuPublishUpgrade": "✦ Upgrade",
 
 	"previewEdit": "Edit Link",
 

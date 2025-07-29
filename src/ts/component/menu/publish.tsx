@@ -150,14 +150,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUpgrade = () => {
-		U.Object.openRoute(
-			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder }}) } },
-		);
+		Action.membershipUpgrade();
 		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 
-	const setSlugHander = v => setSlug(U.Common.slug(v));
+	const setSlugHandler = v => setSlug(U.Common.slug(v));
 
 	let buttons = [];
 
@@ -173,7 +170,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	useEffect(() => {
-		setSlugHander(object.name);
+		setSlugHandler(object.name);
 
 		if (isOnline) {
 			loadStatus();
@@ -202,7 +199,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
                 ref={inputRef}
                 value={slug}
                 focusOnMount={true} 
-				onChange={(e, v) => setSlugHander(v)}
+				onChange={(e, v) => setSlugHandler(v)}
 				maxLength={300}
 			/>
 			<div className="urlWrapper">
@@ -233,7 +230,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{!tier?.namesCount ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
-					<Button text={translate('menuPublishUpgrade')} onClick={onUpgrade} />
+					<Button text={translate('commonUpgrade')} onClick={onUpgrade} />
 				</div>
 			) : ''}
 
