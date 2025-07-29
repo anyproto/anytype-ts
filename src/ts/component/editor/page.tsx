@@ -651,13 +651,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			// Mark-up
 
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
-					param = item.param;
-
 					ret = true;
 				});
 			};
@@ -665,23 +662,51 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (!readonly && (type !== null)) {
 				e.preventDefault();
 
+				const cb = (type: I.MarkType, param: string) => {
+					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
+						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
+					});
+				};
+
 				if (type == I.MarkType.Link) {
 					S.Menu.open('blockLink', {
 						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
 						data: {
 							filter: '',
-							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockTextListSetMark(rootId, idsWithChildren, { type: newType, param, range: { from: 0, to: 0 } }, () => {
-									analytics.event('ChangeTextStyle', { type: newType, count: idsWithChildren.length });
-								});
-							},
+							onChange: cb,
 						},
 					});
-				} else {
-					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
-						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
+				} else 
+				if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {
+					let menuId = '';
+					switch (type) {
+						case I.MarkType.Color: {
+							menuId = 'blockColor';
+							break;
+						};
+
+						case I.MarkType.BgColor: {
+							menuId = 'blockBackground';
+							break;
+						};
+					};
+
+					S.Menu.open(menuId, {
+						element: `#block-${ids[0]}`,
+						horizontal: I.MenuDirection.Center,
+						data: {
+							blockId: ids[0],
+							blockIds: ids,
+							rootId,
+							value: '',
+							onChange: (param: string) => {
+								cb(type, param);
+							},
+						}
 					});
+				} else {
+					cb(type, '');
 				};
 			};
 		};
@@ -944,17 +969,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Mark-up
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, (pressed: string) => {
 					type = item.type;
-					param = item.param;
 				});
 			};
 
 			if (type !== null) {
-				this.onMarkBlock(e, type, text, marks, param, range);
+				this.onMarkBlock(e, type, text, marks, '', range);
 			};
 		};
 
@@ -1377,6 +1400,38 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							cb();
 						}
+					}
+				});
+			});
+		} else 
+		if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {
+			let menuId = '';
+			switch (type) {
+				case I.MarkType.Color: {
+					menuId = 'blockColor';
+					break;
+				};
+
+				case I.MarkType.BgColor: {
+					menuId = 'blockBackground';
+					break;
+				};
+			};
+
+			S.Menu.close('blockContext', () => {
+				S.Menu.open(menuId, {
+					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+					horizontal: I.MenuDirection.Center,
+					offsetY: 4,
+					data: {
+						rootId,
+						blockId: block.id,
+						blockIds: [ block.id ],
+						value: (mark ? mark.param : ''),
+						onChange: (param: string) => {
+							marks = Mark.toggle(marks, { type, param, range });
+							cb();
+						},
 					}
 				});
 			});
