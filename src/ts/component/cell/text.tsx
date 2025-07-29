@@ -19,6 +19,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	const isDate = relation.format == I.RelationType.Date;
 	const isNumber = relation.format == I.RelationType.Number;
 	const isUrl = relation.format == I.RelationType.Url;
+	const isEmail = relation.format == I.RelationType.Email;
+	const isPhone = relation.format == I.RelationType.Phone;
 	const view = getView ? getView() : null;
 	const range = useRef(null);
 	const value = useRef(null);
@@ -37,21 +39,25 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	};
 
 	const onPaste = (e: any, v: any) => {
-		if (relation.format == I.RelationType.Date) {
+		if (isDate) {
 			v = fixDateValue(v);
 		};
 
 		range.current = inputRef.current.getRange();
 		setValue(v);
 		save(v);
+
+		if (isDate && !relation.includeTime) {
+			S.Menu.close('calendar');
+		};
 	};
 
 	const onKeyUp = (e: any, v: string) => {
-		if (relation.format == I.RelationType.LongText) {
+		if (isLongText) {
 			return;
 		};
 
-		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].includes(relation.format)) {
+		if (isUrl || isEmail || isPhone) {
 			S.Menu.updateData('select', { disabled: !v });
 		};
 
@@ -123,6 +129,12 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		});
 	};
 
+	const onUnmount = () => {
+		if (isEditing && (record[relation.relationKey] !== value.current)) {
+			save(value.current);
+		};
+	};
+
 	const setValue = (v: any) => {
 		value.current = v;
 	};
@@ -141,14 +153,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		};
 
 		return v ? v : null;
-	};
-
-	const getViewRelation = (): any => {
-		if (!relation || !getView) {
-			return {};
-		};
-
-		return getView().getRelation(relation.relationKey) || {};
 	};
 
 	let Name = null;
@@ -204,6 +208,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 			EditorComponent = (item: any) => (
 				<Input 
+					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef} 
 					id="input" 
 					{...item} 
@@ -214,17 +219,18 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 						alias: 'datetime',
 					}} 
 					placeholder={ph.join(' ')} 
-					onKeyUp={onKeyUpDate} 
+					onKeyUp={onKeyUpDate}
 				/>
 			);
 		} else {
 			EditorComponent = (item: any) => (
 				<Input 
+					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef} 
 					id="input" 
 					{...item} 
 					placeholder={placeholder}
-					onKeyUp={onKeyUp} 
+					onKeyUp={onKeyUp}
 				/>
 			);
 		};
@@ -238,6 +244,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				onSelect={onSelect}
 				onPaste={onPaste}
 				onCut={onPaste}
+				onUnmount={onUnmount}
 			/>
 		);
 	} else {
@@ -330,7 +337,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					val = '';
 				};
 			} else
-			if (relation.format == I.RelationType.Date) {
+			if (isDate) {
 				const format = [];
 
 				switch (dateFormat) {
@@ -345,18 +352,15 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 				val = val !== null ? U.Date.date(format.join(' ').trim(), val) : '';
 			} else
-			if (relation.format == I.RelationType.Number) {
+			if (isNumber) {
 				val = Relation.formatValue(relation, val, true);
 				val = val !== null ? String(val) : null;
 			};
 
-			if (inputRef.current) {
-				inputRef.current.setValue(val);
+			if (inputRef.current?.setRange) {
+				const length = String(val || '').length;
 
-				if (inputRef.current.setRange) {
-					const length = String(val || '').length;
-					inputRef.current.setRange(range.current || { from: length, to: length });
-				};
+				inputRef.current.setRange(range.current || { from: length, to: length }, false);
 			};
 
 			if (cellPosition) {

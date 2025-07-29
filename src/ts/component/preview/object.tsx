@@ -179,7 +179,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 							css.width = (fields.width * 100) + '%';
 						};
 
-						inner = <img className="media" src={S.Common.imageUrl(targetObjectId, J.Size.image)} style={css} />;
+						inner = <img className="media" src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} style={css} />;
 						break;
 					};
 
@@ -230,7 +230,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 								<div className="line even" />
 							</div>
 						</div>
-						<div className="side right" style={{ backgroundImage: `url("${S.Common.imageUrl(content.imageHash, 170)}")` }} />
+						<div className="side right" style={{ backgroundImage: `url("${S.Common.imageUrl(content.imageHash, I.ImageSize.Medium)}")` }} />
 					</div>
 				);
 				break;

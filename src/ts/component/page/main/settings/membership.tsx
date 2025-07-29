@@ -225,7 +225,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 	};
 
 	onContact () {
-		keyboard.onMembershipUpgrade();
+		keyboard.onMembershipUpgradeViaEmail();
 		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
 	};
 

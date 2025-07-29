@@ -32,7 +32,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(subId, id);
-		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention } = message;
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention, isSynced } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = this.getAttachments();
 		const hasReactions = reactions.length;
@@ -46,15 +46,15 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		const cnBubble = [ 'bubble' ];
 		const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 		const controls = [];
+		const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 
 		let userpicNode = null;
 		let authorNode = null;
-		let text = content.text.replace(/^\r?\n/g, '').replace(/\r?\n$/g, '');
+		let statusIcon = <Icon className="status syncing" />;
 
-		const diff = text.length - content.text.length;
-		const marks = Mark.adjust(content.marks, 0, diff);
-
-		text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(text, marks)));
+		if (isSynced || !isSelf) {
+			statusIcon = null;
+		};
 
 		if (!readonly) {
 			if (!hasReactions && canAddReaction) {
@@ -168,6 +168,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 				id={`item-${id}`}
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
+				onDoubleClick={onReplyEdit}
 			>
 				{isNew ? (
 					<div className="newMessages">
@@ -195,7 +196,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 											className="text"
 											dangerouslySetInnerHTML={{ __html: text }}
 										/>
-										<div className="time">{editedLabel} {U.Date.date('H:i', createdAt)}</div>
+										<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
 
 										<div className="expand" onClick={this.onExpand}>
 											{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
@@ -278,6 +279,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		renderEmoji(er, { iconSize: 16 });
 
 		this.checkLinesLimit();
+		this.resize();
 	};
 
 	onExpand () {
@@ -448,6 +450,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 		node.addClass('highlight');
 		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
+	};
+
+	resize () {
+		const node = $(this.node);
+		const bubble = node.find('.bubbleInner .bubble');
+		const width = bubble.outerWidth();
+
+		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
 	};
 
 });

@@ -516,13 +516,17 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
-	isAllowedChat (): boolean {
+	isAllowedChat (withSpace?: boolean): boolean {
 		const electron = U.Common.getElectron();
 		const space = U.Space.getSpaceview();
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
 
-		return space.isShared && (!electron.isPackaged || patch.match(/alpha|beta/)) ? true : false;
+		if (withSpace && !space.isShared) {
+			return false;
+		};
+
+		return !electron.isPackaged || patch.match(/alpha|beta/) ? true : false;
 	};
 
 	isAllowedMultiChat (): boolean {

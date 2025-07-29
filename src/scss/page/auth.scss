@@ -72,8 +72,7 @@ html.bodyIndex, html.bodyAuth {
 
 
 	.tooltip:not(.menuNote) {
-		min-width: 224px; padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
-		white-space: normal;
+		padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
 	}
 	.tooltip:not(.menuNote) {
 		.txt { line-height: 22px; }
@@ -222,7 +221,9 @@ html.bodyAuthDeleted {
 	.wrapper { transition: opacity 0.5s ease-in-out; }
 	.frame { width: 480px; }
 	.title.fromBackup { margin: 0px 0px 12px 0px; }
-	.buttons { margin: 24px 0px 0px 0px; }
+	.buttons { margin: 24px 0px 0px 0px; gap: 14px; }
+	.button.simple { font-weight: 400; }
+	.icon.warning { width: 56px; height: 56px; background-image: url('~img/icon/popup/confirm/warning-grey.svg'); margin: 0px 0px 20px 0px; }
 }
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {

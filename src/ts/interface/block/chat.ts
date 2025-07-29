@@ -22,6 +22,23 @@ export interface ChatState {
 	messages: ChatStateCounter;
 	mentions: ChatStateCounter;
 	lastStateId: string;
+	lastMessageDate: number;
+	order: number;
+};
+
+export interface ChatStoreState {
+	messageOrderId: string;
+	messageCounter: number;
+	mentionOrderId: string;
+	mentionCounter: number;
+	lastStateId: string;
+	order: number;
+	lastMessageDate: number;
+};
+
+export interface ChatCounter {
+	mentionCounter: number; 
+	messageCounter: number;
 };
 
 export enum ChatReadType {
@@ -39,6 +56,7 @@ export interface ChatMessage {
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
 	reactions: any;
+	isSynced: boolean;
 
 	// Internal
 	isFirst: boolean;

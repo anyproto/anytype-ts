@@ -69,9 +69,9 @@ html.themeDark {
 
 	/* System */
 
-	--color-system-accent-125: #ffc83c;
-	--color-system-accent-50: #9f6b00;
-	--color-system-accent-25: #694500;
+	--color-system-accent-125: #105aef;
+	--color-system-accent-50: #224c9e;
+	--color-system-accent-25: #18346e;
 	--color-system-selection: rgba(24, 163, 241, 0.3);
 
 	/* Common */
@@ -121,7 +121,8 @@ html.themeDark {
 
 	.icon.widget-star { background-image: url('#{$themePath}/icon/widget/system/star.svg'); }
 	.icon.widget-pin { background-image: url('#{$themePath}/icon/widget/system/pin.svg'); }
-	.icon.widget-chat { background-image: url('#{$themePath}/icon/widget/system/chat.svg'); }
+	.icon.widget-chat0 { background-image: url('#{$themePath}/icon/widget/system/chat0.svg'); }
+	.icon.widget-chat1 { background-image: url('#{$themePath}/icon/widget/system/chat1.svg'); }
 	.icon.widget-pencil { background-image: url('#{$themePath}/icon/widget/system/pencil.svg'); }
 	.icon.widget-eye { background-image: url('#{$themePath}/icon/widget/system/eye.svg'); }
 	.icon.widget-bin { background-image: url('#{$themePath}/icon/widget/system/bin.svg'); }
@@ -433,6 +434,8 @@ html.themeDark {
 		}
 	}
 
+	.banner { background-image: unset; border: 1px solid var(--color-shape-highlight-dark); }
+
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
@@ -444,6 +447,10 @@ html.themeDark {
 	.shareBanner {
 		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
 		.icon.close { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
+	}
+
+	.emptyState {
+		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
 	}
 
 	@import "./menu";

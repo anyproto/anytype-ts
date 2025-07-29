@@ -723,6 +723,9 @@ class BlockStore {
 	 */
 	toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
+		if (!element.length) {
+			return;
+		};
 
 		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
@@ -913,8 +916,14 @@ class BlockStore {
 	/**
 	 * Returns structure for Table of contents
 	 */
-	getTableOfContents (rootId: string) {
-		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
+	getTableOfContents (rootId: string, withTitle?: boolean) {
+		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => {
+			if (withTitle && it.isTextTitle()) {
+				return true;
+			};
+
+			return it.isTextHeader();
+		});
 		const list: any[] = [];
 
 		let hasH1 = false;
@@ -946,6 +955,15 @@ class BlockStore {
 				block,
 			});
 		});
+
+		if (withTitle) {
+			list.map((it: any) => {
+				if (!it.block.isTextTitle()) {
+					it.depth++;
+				};
+				return it;
+			});
+		};
 
 		return list;
 	};

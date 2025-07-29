@@ -5,6 +5,7 @@ const path = require('path');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 const si = require('systeminformation');
+const { exec, execFile } = require('child_process');
 const checkDiskSpace = require('check-disk-space').default;
 
 const MenuManager = require('./menu.js');
@@ -155,8 +156,35 @@ class Api {
 		shell.openExternal(url);
 	};
 
-	openPath (win, path) {
-		shell.openPath(path);
+	openPath (win, fp) {
+		if (!fp || !fs.existsSync(fp)) {
+			Util.log('error', '[Api].openPath: Invalid path:', fp);
+			return;
+		};
+
+		fp = path.normalize(fp);
+
+		if (is.macos) {
+			execFile('open', [ fp ], (err) => {
+				if (err) {
+					Util.log('error', '[Api].openPath error:', err);
+				};
+			});
+		} else 
+		if (is.windows) {
+			exec(`start "" "${fp}"`, { shell: 'cmd.exe' }, (err) => {
+				if (err) {
+					Util.log('error', '[Api].openPath error:', err);
+				};
+			});
+		} else 
+		if (is.linux) {
+			execFile('xdg-open', [ fp ], (err) => {
+				if (err) {
+					Util.log('error', '[Api].openPath error:', err);
+				};
+			});
+		};
 	};
 
 	shutdown (win, relaunch) {
@@ -290,6 +318,14 @@ class Api {
 
 	async checkDiskSpace (win) {
 		return await checkDiskSpace(app.getPath('userData'));
+	};
+
+	async linuxDistro (win) {
+		const load = require('linux-distro');
+		return await load().catch(err => {
+			Util.log('error', `[Api].linuxDistro: ${err.message}`);
+			return { name: 'Unknown', version: 'Unknown' };
+		});
 	};
 
 };

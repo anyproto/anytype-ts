@@ -164,6 +164,13 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 	};
 
 	onCellClick (e: any) {
+		const { block, passParam } = this.props;
+
+		if (passParam && passParam.onCellClick) {
+			passParam.onCellClick(e);
+			return;
+		};
+
 		if (this.refCell) {
 			this.refCell.onClick(e);
 		};

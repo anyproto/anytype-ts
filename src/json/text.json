@@ -154,6 +154,7 @@
 	"commonOpenSpace": "Open Space",
 	"commonReset": "Reset",
 	"commonUpdate": "Update",
+	"commonUpdateNow": "Update Now",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
 	"commonVersionHistory": "Version History",
@@ -214,6 +215,11 @@
 	"commonRemovePinned": "Remove from Pinned",
 	"commonCreateSpace": "Create space",
 	"commonCreateChat": "Create chat",
+	"commonMute": "Mute",
+	"commonUnmute": "Unmute",
+	"commonDropFiles": "Drag and drop your files here",
+	"commonObjectEmpty": "It's empty here.",
+	"commonNewVersion": "Version <span class='hl'>%s</span> is out now",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -381,7 +387,7 @@
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
-	"progressUpdateCheck": "Checking for update...",
+	"progressUpdateDownloading": "Downloading",
 
 	"spellcheckAdd": "Add to dictionary",
 
@@ -525,13 +531,13 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
-	"pageAuthOnboardPersonalSpace": "Entry Space",
-	"pageAuthOnboardMoreInfo": "More info",
+	"pageAuthOnboardCopyKey": "Copy Key",
 
-	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
-	"pageAuthSetupImportText": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
+	"pageAuthSetupImportTitle": "We couldn’t recover your vault.",
+	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEntering": "Entering your Vault...",
+	"pageAuthSetupTryAgain": "Try again",
+	"pageAuthSetupEntering": "Entering your Vault",
 
 	"pageAuthMigrateInitTitle": "New Version Update",
 	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
@@ -829,6 +835,8 @@
 	"popupSettingsApiCopyMcp": "Copy MCP Config",
 	"popupSettingsApiMcpConfig": "MCP Config",
 
+	"popupSettingsApiEmpty": "You haven’t created any API keys yet",
+
 	"popupApiCreateTitle": "Create new API key",
 	"popupApiCreateSuccess": "API key successfully created",
 	"popupApiCreatePlaceholder": "Key name",
@@ -865,6 +873,7 @@
 
 	"popupSettingsDataManagementDataPublishTitle": "My Sites",
 	"popupSettingsDataManagementDataPublishDate": "Published date",
+	"popupSettingsDataManagementDataPublishEmpty": "You haven’t published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Describe your space",
@@ -885,7 +894,8 @@
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
-	"popupSettingsSpaceIndexManageSpaceTitle": "General Settings",
+	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
+	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
 	"popupSettingsSpaceIndexRemoteStorageUpgrade": "✦ Upgrade",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
@@ -899,6 +909,8 @@
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
+	"popupSettingsSpaceIndexPushTitle": "Message notifications",
+	"popupSettingsSpaceIndexPushText": "You will receive notifications when you are mentioned only",
 
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -1054,11 +1066,11 @@
 	"popupSettingsImportObsidianDescription": "Import your Obsidian files with 3 simple steps",
 	"popupSettingsImportObsidianHowTo": "How to import from Obsidian",
 	"popupSettingsImportObsidianList11": "Locate your Obsidian Vault",
-	"popupSettingsImportObsidianList12": "Go to Settings → Vault, then click the folder icon to open your vault location",
+	"popupSettingsImportObsidianList12": "<ul><li>Open the Vault switcher (shown at launch or via File → Open Vault).</li><li>Right-click the vault you want to export and choose “Reveal in system explorer”.</li></ul>",
 	"popupSettingsImportObsidianList21": "Click Import Files and select your entire Vault folder (or a subfolder) with .md files",
-	"popupSettingsImportObsidianList22": "Anytype will process your files and automatically create objects for each Markdown file.",
+	"popupSettingsImportObsidianList22": "<ul><li>On some platforms (like Linux and Windows), folder selection may not be supported. In that case, compress the folder into a .zip archive and import the archive instead.</li><li>Anytype will process your files and automatically create objects for each Markdown file.</li></ul>",
 	"popupSettingsImportObsidianList31": "Content mapping",
-	"popupSettingsImportObsidianList32": "<ul><li>[[Internal Links]] → become linked objects in Anytype, so the connections between your notes are preserved.</li><li>#tags → become values in the Tag property. You can use them to filter, group or search across objects.</li><li>Frontmatter (the --- metadata at the top) → becomes object properties.</li></ul>",
+	"popupSettingsImportObsidianList32": "<ul><li>[[Internal Links]] → become linked objects in Anytype, so the connections between your notes are preserved.</li><li>Frontmatter (the --- metadata at the top) → becomes object properties.</li></ul>",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
@@ -1145,9 +1157,6 @@
 	"popupConfirmConfirmationText": "Input this text to confirm:",
 	"popupConfirmConfirmationTextError": "Text does not match",
 
-	"popupConfirmUpdatePromptTitle": "Update available",
-	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
-	"popupConfirmUpdatePromptRestartOk": "Restart and update",
 	"popupConfirmUpdatePromptCancel": "Later",
 	"popupConfirmUpdateDoneTitle": "You are up-to-date",
 	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
@@ -1181,10 +1190,13 @@
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
-	"popupConfirmInviteError101Title": "No Access to This Space",
-	"popupConfirmInviteError101Text": "The link you are using does not seem to work. Please ask the owner to share a new one with you.",
-	"popupConfirmInviteError103Title": "Oops!",
-	"popupConfirmInviteError103Text": "The space you try to access has been deleted",
+	"popupConfirmSpaceInviteViewError101Title": "No Access to This Space",
+	"popupConfirmSpaceInviteViewError101Text": "The link you are using does not seem to work. Please ask the owner to share a new one with you.",
+	"popupConfirmSpaceInviteViewError103Title": "Oops!",
+	"popupConfirmSpaceInviteViewError103Text": "The space you try to access has been deleted",
+
+	"popupConfirmSpaceJoinError106Title": "This Space is full.",
+	"popupConfirmSpaceJoinError106Text": "The owner needs to increase the number of available editor seats or give you another link with view-only permissions.",
 
 	"popupConfirmJoinSpaceTitle": "Join %s",
 	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
@@ -1233,6 +1245,18 @@
 
 	"popupConfirmDiskSpaceTitle": "Make Space, Save Your Work",
 	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
+
+	"popupConfirmAttachmentSyncError2Title": "Incompatible Version",
+	"popupConfirmAttachmentSyncError2Text": "This version doesn’t support sending files or images. Update the app to share media in chats.",
+	"popupConfirmAttachmentSyncError3Title": "Network Error",
+	"popupConfirmAttachmentSyncError3Text": "We couldn’t connect right now. This may be due to no internet or a temporary sync issue. We’ll keep trying in the background.",
+	"popupConfirmAttachmentSyncError4Title": "File is too big for this space",
+	"popupConfirmAttachmentSyncError4Text": "...",
+
+	"popupConfirmButtonUpdateApp": "Update app",
+	"popupConfirmButtonGotIt": "Got it",
+
+	"popupConfirmSortRemoveTitle": "Would you like to remove sorting?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1627,7 +1651,8 @@
 	"menuDataviewUrlActionGo9": "Call to",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
-	"menuDataviewBookmarkCreateContent": "Include page content",
+	"menuDataviewCreateBookmarkContent": "Include page content",
+	"menuDataviewCreateBookmarkError": "Error parsing URL",
 
 	"menuObjectContextNoAvailableActions": "No available actions",
 	"menuObjectContextUnlinkFromCollection": "Unlink from Collection",
@@ -1819,7 +1844,6 @@
 	"menuPublishLabelJoinSpace": "Join Space Button",
 	"menuPublishButtonPublish": "Publish",
 	"menuPublishButtonUnpublish": "Unpublish",
-	"menuPublishButtonUpdate": "Update",
 	"menuPublishButtonView": "View in Browser",
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
@@ -1915,6 +1939,7 @@
 	"layout8": "Image",
 	"layout9": "Note",
 	"layout11": "Bookmark",
+	"layout19": "Space Member",
 	"layout20": "Database",
 
 	"defaultNamePage": "Untitled",
@@ -2042,7 +2067,6 @@
 	"sidebarObjectSort": "Sort",
 	"sidebarObjectOrphan": "Only unlinked",
 	"sidebarObjectOrphanLabel": "Unlinked objects that do not have a direct link or backlink with other objects in the graph.",
-	"sidebarObjectEmpty": "It's empty here.",
 	"sidebarObjectEmptyCreate": "It's empty here.<br/><span class='small'>Create your first objects to get started.</span>",
 
 	"sidebarObjectSortCreated": "Date created",
@@ -2152,7 +2176,7 @@
 	"onboardingSourceDeleted1Description": "Some Objects in this Query use Types or Properties that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
 	"onboardingInlineSet1Title": "This is Inline Query",
-	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
+	"onboardingInlineSet1Description": "Congratulations! You can embed a Query or Collection and modify it using Filters and Views without altering the original instance.",
 	"onboardingInlineSet2Title": "Views",
 	"onboardingInlineSet2Description": "Adjust rules and views to suit the current context.",
 
@@ -2563,6 +2587,10 @@
 
 	"apiScope0": "Webclipper",
 	"apiScope1": "API",
-	"apiScope2": "Full"
+	"apiScope2": "Full",
+
+	"notificationMode0": "Enable all",
+	"notificationMode1": "Mentions only",
+	"notificationMode2": "Disable all"
 
 }

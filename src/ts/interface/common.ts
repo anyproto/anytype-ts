@@ -123,7 +123,8 @@ export enum EdgeType {
 export enum Usecase {
 	None		 = 0,
 	GetStarted	 = 1,
-	Empty		 = 2,
+	DataSpace	 = 2,
+	ChatSpace	 = 5,
 };
 
 export enum HomePredefinedId {
@@ -398,4 +399,10 @@ export interface AppInfo {
 	expireAt: number;
 	scope: LocalApiScope;
 	isActive: boolean;
+};
+
+export enum ImageSize {
+	Small		 = 100,
+	Medium		 = 320,
+	Large		 = 1920,
 };

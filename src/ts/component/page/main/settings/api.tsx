@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Icon, Button } from 'Component';
+import { Title, Icon, Button, EmptyState } from 'Component';
 import { I, S, U, C, J, translate, Preview } from 'Lib';
 
 interface State {
@@ -55,19 +55,28 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 			<>
 				<div className="titleWrapper">
 					<Title text={translate('popupSettingsApiTitle')} />
-					<Button className="c28" text={translate('popupSettingsApiCreate')} onClick={this.onAdd} />
+					{list.length ? <Button className="c28" text={translate('popupSettingsApiCreate')} onClick={this.onAdd} /> : ''}
 				</div>
 
-				<div className="items">
-					<div className="row isHead">
-						<div className="col colSpace">{translate('commonName')}</div>
-						<div className="col">{translate('popupSettingsApiKey')}</div>
-						<div className="col">{translate('popupSettingsApiCreated')}</div>
-						<div className="col">{translate('popupSettingsApiScope')}</div>
-						<div className="col colMore" />
+				{list.length ? (
+					<div className="items">
+						<div className="row isHead">
+							<div className="col colSpace">{translate('commonName')}</div>
+							<div className="col">{translate('popupSettingsApiKey')}</div>
+							<div className="col">{translate('popupSettingsApiCreated')}</div>
+							<div className="col">{translate('popupSettingsApiScope')}</div>
+							<div className="col colMore" />
+						</div>
+						{list.map((item: any, i: number) => <Row key={i} {...item} />)}
 					</div>
-					{list.map((item: any, i: number) => <Row key={i} {...item} />)}
-				</div>
+				) : (
+					<EmptyState
+						text={translate('popupSettingsApiEmpty')}
+						buttonText={translate('popupSettingsApiCreate')}
+						buttonColor="black"
+						onButton={this.onAdd}
+					/>
+				)}
 			</>
 		);
 	};

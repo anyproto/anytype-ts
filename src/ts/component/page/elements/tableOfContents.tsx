@@ -12,7 +12,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 	const { rootId, isPopup } = props;
 	const nodeRef = useRef(null);
-	const tree = S.Block.getTableOfContents(rootId);
+	const tree = S.Block.getTableOfContents(rootId, true);
 	const blockRef = useRef('');
 
 	const rebind = () => {
@@ -32,13 +32,20 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		if (id) {
 			node.find(`#item-${id}`).addClass('active');
 			blockRef.current = id;
-
 			S.Menu.updateData('tableOfContents', { blockId: id });
-			sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
+
+			const state = sidebar.rightPanelGetState(isPopup);
+			if (state.page == 'object/tableOfContents') {
+				sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
+			};
 		};
 	};
 
 	const onMouseEnter = () => {
+		if (S.Menu.isAnimating('tableOfContents')) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 
 		S.Menu.open('tableOfContents', {
@@ -46,16 +53,23 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			element: node,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
-			offsetX: node.width() + 4,
 			noFlipX: true,
 			noFlipY: true,
 			isSub: true,
+			noAnimation: false,
+			offsetX: 16,
 			data: {
 				rootId,
 				isPopup,
 				blockId: blockRef.current,
 			}
 		});
+
+		S.Common.clearTimeout('tableOfContents');
+	};
+
+	const onMouseLeave = () => {
+		S.Common.setTimeout('tableOfContents', 100, () => S.Menu.close('tableOfContents'));
 	};
 
 	const resize = () => {
@@ -69,7 +83,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			const width = container.width();
 			const o = isPopup && container.length ? container.offset().left : 0;
 
-			node.css({ left: o + width - node.width() - 22 });
+			node.css({ left: o + width - node.outerWidth() - 6 });
 		});
 	};
 
@@ -97,15 +111,22 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	return (
-		<div ref={nodeRef} className="tableOfContents" onMouseEnter={onMouseEnter}>
-			{tree.map(item => (
-				<div 
-					id={`item-${item.id}`}
-					className="item" 
-					key={item.id} 
-					style={{ width: `${100 / (item.depth + 1)}%` }}
-				/>
-			))}
+		<div 
+			ref={nodeRef} 
+			className="tableOfContents"
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+		>
+			<div className="inner">
+				{tree.map(item => (
+					<div 
+						id={`item-${item.id}`}
+						className="item" 
+						key={item.id} 
+						style={{ width: `${100 / (item.depth + 1)}%` }}
+					/>
+				))}
+			</div>
 		</div>
 	);
 

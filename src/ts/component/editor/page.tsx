@@ -31,6 +31,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	winScrollTop = 0;
 	containerScrollTop = 0;
 	uiHidden = false;
+	tocBlockId = '';
 	width = 0;
 	refHeader: any = null;
 	refControls: any = null;
@@ -75,7 +76,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const { isLoading, isDeleted } = this.state;
 		const root = S.Block.getLeaf(rootId, rootId);
 
@@ -84,7 +85,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isLoading) {
-			return <Loader id="loader" />;
+			return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 		};
 
 		if (!root) {
@@ -415,7 +416,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.onScroll();
 
 		win.on(`resize.${ns}`, () => this.resizePage());
-		container.on(`scroll.${ns}`, e => this.onScroll());
+		container.on(`scroll.${ns}`, () => this.onScroll());
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
@@ -798,7 +799,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ret = true;
 		});
 
-		if (!ret && ids.length && !keyboard.isSpecial(e)) {
+		if (!ret && ids.length && !keyboard.isSpecial(e) && !readonly) {
 			const param = {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
@@ -1352,13 +1353,26 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (type == I.MarkType.Link) {
 			S.Menu.close('blockContext', () => {
+				let filter = '';
+				let newType = null;
+
+				if (mark) {
+					filter = mark.param;
+					newType = mark.type;
+				} else {
+					filter = block.getText().substring(range.from, range.to);
+				};
+
 				S.Menu.open('blockLink', {
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
 					data: {
-						filter: mark ? mark.param : '',
-						type: mark ? mark.type : null,
+						rootId,
+						blockId: block.id,
+						blockIds: [ block.id ],
+						filter,
+						type: newType,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							cb();
@@ -1801,8 +1815,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
-		const headers = S.Block.getBlocks(rootId, it => it.isTextHeader());
-		const co = (isPopup ? container.offset().top : 0) + J.Size.header;
+		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
+		const length = headers.length;
+		const co = isPopup ? container.offset().top : 0;
+		const ch = container.height() - J.Size.header;
 
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
@@ -1812,26 +1828,27 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			Storage.setScroll('editor', rootId, top, isPopup);
 		}, 50);
 
-		let blockId = '';
+		if (length) {
+			for (let i = 0; i < length; ++i) {
+				const block = headers[i];
+				const el = $(`#block-${block.id}`);
 
-		for (let i = 0; i < headers.length; ++i) {
-			const block = headers[i];
-			const el = $(`#block-${block.id}`);
+				if (!el.length) {
+					continue;
+				};
 
-			if (!el.length) {
-				continue;
-			};
+				const t = el.offset().top - co;
+				const h = el.outerHeight();
+				const check = isPopup ? 0 : top;
 
-			const offset = el.offset().top - co;
-			const check = isPopup ? 0 : top;
-
-			if (offset >= check) {
-				blockId = block.id;
-				break;
+				if ((t >= check) && (t + h <= check + ch)) {
+					this.tocBlockId = block.id;
+					break;
+				};
 			};
 		};
 
-		this.refToc?.setBlock(blockId);
+		this.refToc?.setBlock(this.tocBlockId);
 		Preview.previewHide(false);
 	};
 	
@@ -1840,7 +1857,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const root = S.Block.getLeaf(rootId, rootId);
-		const { focused } = focus.state;
+		const { focused, range } = focus.state;
 
 		if (!root || (readonly && isCut)) {
 			return;
@@ -1858,6 +1875,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ids = [ focused ];
 		} else {
 			ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
+		};
+
+		if (isCut && (ids.length == 1) && (ids[0] == focused)) {
+			this.focus(focused, range.from, range.from, false);
 		};
 
 		Action.copyBlocks(rootId, ids, isCut);
@@ -1909,16 +1930,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 
 		if (!data.html) {
-			let url = U.Common.matchUrl(data.text);
-			let isLocal = false;
+			const urls = U.Common.getUrlsFromText(data.text);
 
-			if (!url) {
-				url = U.Common.matchLocalPath(data.text);
-				isLocal = true;
-			};
+			console.log(urls, data.text);
 
-			if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
-				this.onPasteUrl(url, isLocal);
+			if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
+				this.onPasteUrl(urls[0]);
 				return;
 			};
 		};
@@ -1974,7 +1991,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	onPasteUrl (url: string, isLocal: boolean) {
+	onPasteUrl (item: any) {
+		const { isLocal } = item;
+		const url = item.value;
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
@@ -2007,6 +2026,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
+		S.Common.clearTimeout('blockContext');
+
 		const menuParam = { 
 			component: 'select',
 			element: `#block-${focused}`,
@@ -2036,17 +2057,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 					switch (item.id) {
 						case 'link': {
-							const param = isLocal ? `file://${url}` : url;
-
 							if (currentFrom == currentTo) {
 								value = U.Common.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+
 								to = currentFrom + url.length;
 							} else {
 								to = currentTo;
 							};
-
-							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
-							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
+							
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
@@ -2473,7 +2493,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		} else {
 			const size = mw * 0.6;
 
-			mw -= 96;
+			mw -= 128;
 			w = (mw - size) * w;
 			width = Math.max(size, Math.min(mw, size + w));
 		};

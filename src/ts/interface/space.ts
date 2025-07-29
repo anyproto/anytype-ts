@@ -19,9 +19,10 @@ export enum SpaceType {
 };
 
 export enum SpaceUxType {
-	Chat 					 = 0,
+	None 					 = 0,
 	Space 					 = 1,
 	Stream					 = 2,
+	Chat 					 = 3,
 };
 
 export enum ParticipantPermissions {
@@ -44,4 +45,10 @@ export enum InviteType {
 	WithApprove 			 = 0,
 	Guest 					 = 1,
 	WithoutApprove 			 = 2,
+};
+
+export enum NotificationMode {
+	All						 = 0,
+	Mentions				 = 1,
+	Nothing					 = 2,
 };

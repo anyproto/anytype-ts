@@ -346,7 +346,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
-			el.src = S.Common.imageUrl(coverId, J.Size.cover);
+			el.src = S.Common.imageUrl(coverId, I.ImageSize.Large);
 		};
 	};
 	

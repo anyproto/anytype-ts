@@ -301,7 +301,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseLeave={() => this.onMouseLeave()} 
 						onMouseDown={e => this.onMouseDown(e, item)}
 					>
-						<div className="img" style={{ backgroundImage: `url("${S.Common.imageUrl(item.id, 72)}")` }} />
+						<div className="img" style={{ backgroundImage: `url("${S.Common.imageUrl(item.id, I.ImageSize.Small)}")` }} />
 						<div className="name">{item.name}</div>
 					</div>
 				);
@@ -814,6 +814,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 					break;
 				};
 			};
+
 			close();
 		});
 
@@ -843,6 +844,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 				case Tab.Library: {
 					this.onObjectSelect(this.active.id);
+					close();
 					break;
 				};
 			};
@@ -1047,6 +1049,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			case Tab.Library: {
 				this.onObjectSelect(item.id);
+				close();
 				break;
 			};
 		};

@@ -18,13 +18,30 @@
 			}
 		}
 
-		.viewContent.viewGallery, 
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { display: none; background-image: url('~img/icon/dataview/button/edit0.svg'); background-position: 50% 50%; background-repeat: no-repeat; }
+			.icon.editMode:hover { background: url('~img/icon/dataview/button/edit1.svg') 50% 50% no-repeat; }
+			.icon.editMode.enabled { display: none !important; }
+		}
+
+		.viewContent.viewGallery,
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cardContent > .inner { padding: 16px; }
+				.cardContent > .inner { padding: 16px; display: flex; flex-direction: column; align-items: flex-start; }
+				.cardContent > .inner {
+					.cellContent:not(.isName) { width: unset; max-width: 100%; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; }
+					.cellContent:not(.isName) {
+						.empty { @include text-overflow-nw; width: 100%; }
+					}
+					.cellContent:not(.isName):hover,
+					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
+					.cellContent.c-longText { height: unset; min-height: 24px; }
+				}
 
-				.cover { 
+				.cover {
 					position: relative; aspect-ratio: 16/9; background-position: top center; display: flex; align-items: center;
 					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
 				}
@@ -42,7 +59,7 @@
 						.controlsWrapper {
 							.name { display: none; }
 
-							.controls {				
+							.controls {
 								#volume { right: 16px; }
 							}
 						}
@@ -50,18 +67,20 @@
 				}
 				.cover.canEdit {
 					.inner { background: none; }
-					.inner {  
+					.inner {
 						.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/gallery-cover0.svg'); margin: -2px 6px 0px 0px; }
-						.add { 
-							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px; 
+						.add {
+							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px;
 							top: 50%; margin-top: -10px;
 						}
 					}
 				}
 
-				.cellContent { margin-bottom: 4px; @include text-small; color: var(--color-text-secondary); }
+				.cellContent { margin-bottom: 1px; @include text-small; color: var(--color-text-secondary); }
 				.cellContent.canEdit { cursor: default; }
-				.cellContent:empty, .cellContent.isEmpty { display: none; }
+				.cellContent:empty,
+				.cellContent.isEmpty:not(.editModeOn, .withMenu) { display: none; }
+
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: var(--color-text-primary); }
 				.cellContent {
@@ -70,13 +89,7 @@
 
 				.cellContent.isName { @include text-paragraph; color: var(--color-text-primary); display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
-
 					.name, .emptyText { @include text-common; line-height: 20px; font-weight: 500; vertical-align: top; white-space: normal; @include clamp2; }
-				}
-
-				.cellContent.isName.withIcon {
-					.name, .emptyText { text-indent: 24px; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }
@@ -85,24 +98,25 @@
 					.over { height: 18px; }
 				}
 
-				.cellContent.c-url, 
-				.cellContent.c-phone, 
+				.cellContent.c-url,
+				.cellContent.c-phone,
 				.cellContent.c-email {
 					.name { width: auto; max-width: 100%; }
 				}
 
-				.cellContent.c-object, 
+				.cellContent.c-object,
 				.cellContent.c-file {
 					.over { display: flex; height: 20px; }
 				}
 
+				.cellContent.isEditing.isName { align-items: flex-start; }
 				.cellContent.isEditing.isName {
 					.iconObject { position: relative; }
 					.input.name { text-indent: 0px; padding: 0px; height: unset; }
 				}
 			}
-			.card::after { 
-				content: ''; position: absolute; left: 0px; top: 0px; border-radius: 8px; width: 100%; height: 100%; 
+			.card::after {
+				content: ''; position: absolute; left: 0px; top: 0px; border-radius: 8px; width: 100%; height: 100%;
 				background: rgba(0,0,0,0.03); transition: $transitionAllCommon; pointer-events: none; opacity: 0; z-index: 1;
 			}
 
@@ -122,6 +136,13 @@
 					}
 				}
 			}
+
+			.icon.editMode { position: absolute; z-index: 3; width: 28px; height: 28px; right: 8px; top: 8px; border-radius: 4px; background-color: var(--color-bg-primary); background-size: 20px; }
+			.icon.editMode:hover { background-color: var(--color-bg-primary); }
+
+			.card:hover {
+				.icon.editMode { display: block; }
+			}
 		}
 	}
 
@@ -130,6 +151,9 @@
 		.viewContent.viewBoard {
 			.cellContent.isName {
 				.name { @include clamp2; }
+			}
+			.cellContent:not(.isName) {
+				.name { @include text-overflow-nw; width: 100%; }
 			}
 		}
 	}

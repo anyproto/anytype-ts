@@ -25,19 +25,22 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 	const rebind = () => {
 		unbind();
+
 		$(window).on('keydown.menu', e => onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 
-		$(`#${getId()}`).on('mouseleave', () => close());
+		const obj = $(`#${getId()}`);
+		obj.on('mouseenter', () => S.Common.clearTimeout('tableOfContents'));
+		obj.on('mouseleave', () => S.Common.setTimeout('tableOfContents', 100, () => close()));
 	};
 	
 	const unbind = () => {
 		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('mouseleave');
+		$(`#${getId()}`).off('mouseenter mouseleave');
 	};
 
 	const getItems = () => {
-		return S.Block.getTableOfContents(rootId);
+		return S.Block.getTableOfContents(rootId, true);
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
@@ -51,7 +54,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId, blockId });
 			close();
 		} else {
-			U.Common.scrollToHeader(item.id, isPopup);
+			U.Common.scrollToHeader(rootId, item, isPopup);
 		};
 	};
 
@@ -77,7 +80,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			name={<Label text={U.Common.getLatex(item.text)} />}
 			onClick={e => onClick(e, item)}
 			onMouseEnter={e => onMouseEnter(e, item)}
-			style={{ ...item.style, paddingLeft: 8 + item.depth * 16 }}
+			style={{ ...item.style, paddingLeft: 8 + item.depth * 12 }}
 		/>
 	);
 

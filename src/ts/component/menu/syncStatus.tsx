@@ -12,14 +12,17 @@ interface State {
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
 const SUB_ID = 'syncStatusObjectsList';
+const LIMIT = 12;
 
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
 	cache: any = {};
 	currentInfo = '';
+	refList: any = null;
 	state = { 
 		isLoading: false,
 	};
+	n = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -142,6 +145,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -165,6 +169,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	componentDidMount () {
 		this.load();
 		this.rebind();
+		this.resize();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();	
 	};
 
 	componentWillUnmount () {
@@ -287,7 +296,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			sorts,
 			keys: U.Subscription.syncStatusRelationKeys(),
 			offset: 0,
-			limit: 11,
+			limit: 50,
 		}, () => {
 			this.setState({ isLoading: false });
 
@@ -307,7 +316,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIcons () {
-		const syncStatus = S.Auth.getSyncStatus();
+		const syncStatus = S.Auth.getSyncStatus(S.Common.space);
 		const iconNetwork = this.getIconNetwork(syncStatus);
 		const iconP2P = this.getIconP2P(syncStatus);
 
@@ -453,6 +462,52 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getRowHeight (item: any) {
 		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems().slice(0, LIMIT);
+		const obj = $(`#${getId()} .content`);
+
+		let height = 44;
+		if (!items.length) {
+			height = 160;
+		} else {
+			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+		};
+
+		obj.css({ height });
+		position();
+	};
+
+	scrollToRow (items: any[], index: number) {
+		if (!this.refList || !items.length) {
+			return;
+		};
+
+		const listHeight = this.refList.props.height;
+		const itemHeight = this.getRowHeight(items[index]);
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < items.length; ++i) {
+			const h = this.getRowHeight(items[i]);
+
+			if (i < index) {
+				offset += h;
+			};
+			total += h;
+		};
+
+		if (offset + itemHeight < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - itemHeight / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		this.refList.scrollToPosition(offset);
 	};
 
 });

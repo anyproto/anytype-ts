@@ -47,7 +47,7 @@ class MenuManager {
 
 		const ret = [];
 		for (const key of keys) {
-			if (key == 'ctrl') {
+			if ((key == 'ctrl') || (key == 'cmd')) {
 				ret.push('CmdOrCtrl');
 			} else
 			if (key == 'shift') {
@@ -55,6 +55,9 @@ class MenuManager {
 			} else
 			if (key == 'alt') {
 				ret.push('Alt');
+			} else 
+			if (key == '+') {
+				ret.push('Plus');
 			} else {
 				ret.push(key.toUpperCase());
 			};

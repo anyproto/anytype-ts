@@ -25,6 +25,25 @@ export default () => {
 		{ type: I.BlockType.IconPage, icon: '👋' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 
+		title(`Desktop 0.47.4 Released!`),
+		text(''),
+		text('At Anytype, we’re committed to true user ownership of data. As a local first software, your information stays with you, independent and accessible for the long term. We want to bring our community a strong sense of reassurance, which is why we’ve made our Markdown support more robust: so your notes and ideas can go wherever you need, now and far into the future.'),
+		text(''),
+
+		h2(`Markdown Export: Properties and Types`),
+		text(`Exporting your data to Markdown now includes properties and types. This ensures your ${hl('.md')} backups are more complete and your information remains organized, without losing important context. Since Markdown is the most widely supported format across software, it’s a reliable way to keep your data portable and under your control.`),
+		text(''),
+
+		h2(`Markdown Import: Smoother Transitions`),
+		text('Markdown import also supports properties and types, improving the way you bring your data back into Anytype. This update includes support for <b>importing properties from Obsidian</b> and simplifies moving your notes and projects from applications like Evernote, Bear and others, with less need for manual setup.'),
+		text(''),
+		text('This is a new iteration and it’s not the last. Your feedback guides us, please let us know what works and what’s missing. More improvements are on the way!'),
+
+		text(''),
+
+		div(),
+		// --------------------------------------------//
+
 		title(`Desktop 0.47.0 Released!`),
 		text(''),
 		text('This update brings a range of improvements across the app, from visual refinements to quality of life updates, all designed to make your experience smoother and more consistent. In the meantime, we’re continuing our ongoing work to support data ownership, easier backups and long-term resilience.'),

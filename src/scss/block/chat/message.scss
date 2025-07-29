@@ -1,5 +1,7 @@
 .message { @include text-common; position: relative; }
 .message {
+	* { user-select: text !important; }
+
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
@@ -30,6 +32,10 @@
 		}
 	}
 
+	.icon.status { width: 12px; height: 12px; }
+	.icon.status.syncing { background-image: url('~img/icon/chat/messageStatus/syncing.svg'); }
+	.icon.status.error { background-image: url('~img/icon/chat/messageStatus/error.svg'); }
+
 	.bubble { 
 		border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column;
 		transition: background-color $easeInQuint 0.2s; 
@@ -37,7 +43,10 @@
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 8px 12px; }
 		.text { user-select: text !important; display: inline; }
-		.time { @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; }
+		.time { 
+			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; 
+			display: flex; align-items: center; gap: 0px 4px;
+		}
 
 		.attachments { padding: 4px; }
 	}
@@ -81,7 +90,10 @@
 	}
 	.author * { user-select: text !important; }
 
-	.expand { display: none; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
+	.expand { 
+		display: none; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; 
+		white-space: nowrap;
+	}
 	.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
 
 	.sub { @include text-small; color: var(--color-text-secondary); display: none; }
@@ -128,7 +140,6 @@
 
 	&.withAttachment {
 		.bubbleInner {
-			.bubble { max-width: 368px; }
 			.bubble {
 				.textWrapper { padding: 8px 12px 0px; }
 			}
@@ -139,7 +150,7 @@
 		.bubbleInner {
 			.bubble { flex-direction: column-reverse; }
 			.bubble {
-				.textWrapper { padding: 0px 12px 8px; }
+				.textWrapper { padding: 0px 12px 8px; max-width: 532px; }
 			}
 		}
 	}
@@ -169,17 +180,10 @@
 		.author { display: flex; }
 	}
 
-	&.isFirst, &.withText {
-		.attachments { padding: 8px 4px 4px 4px;  }
-		.attachments.withLayout { padding: 4px 4px 8px 4px; }
-	}
-
 	&:not(.withText) {
 		.bubbleInner {
-			.bubble { padding: 4px; }
 			.bubble {
 				.textWrapper { display: none; }
-				.attachments { padding: 0px;}
 			}
 		}
 	}

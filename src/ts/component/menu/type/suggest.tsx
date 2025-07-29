@@ -172,7 +172,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onMouseEnter = (e: any, item: any) => {
 		e.persist();
 
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !keyboard.isDragging) {
 			setActive(item, false);
 		};
 	};
@@ -254,8 +254,18 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 	};
 
+	const onSortStart = () => {
+		keyboard.setDragging(true);
+	};
+
 	const onSortEnd = (result: any) => {
+		keyboard.setDragging(false);
+
 		const { active, over } = result;
+		if (!active || !over || (active.id == over.id)) {
+			return;
+		};
+
 		const ids = items.map(it => it.id);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
@@ -374,6 +384,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}
+					onDragStart={onSortStart}
 					onDragEnd={onSortEnd}
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>

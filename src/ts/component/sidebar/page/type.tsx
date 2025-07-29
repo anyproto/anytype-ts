@@ -157,22 +157,25 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	onChange (update: any) {
-		const skipFormat = [ 'defaultTypeId' ];
+		const skipFormat = [ 'defaultTypeId', 'iconImage' ];
 
 		for (const relationKey in update) {
 			if (skipFormat.includes(relationKey)) {
 				continue;
 			};
 
-			const relation = S.Record.getRelationByKey(relationKey);
+			switch (relationKey) {
+				case 'headerRelationsLayout': {
+					update[relationKey] = Number(update[relationKey]);
+					break;
+				};
 
-			if (relationKey == 'headerRelationsLayout') {
-				update[relationKey] = Number(update[relationKey]);
-			} else {
-				update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
+				default: {
+					const relation = S.Record.getRelationByKey(relationKey);
+					update[relationKey] = Relation.formatValue(relation, update[relationKey], true);
+					break;
+				};
 			};
-
-			// update[relationKey] = Relation.formatValue(relation, update[relationKey], false);
 		};
 
 		this.object = Object.assign(this.object, update);
@@ -226,6 +229,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			const update = [];
 
 			for (const key in this.update) {
+				if ([ 'layoutFormat', 'isNew', 'data' ].includes(key)) {
+					continue;
+				};
+
 				const value = Relation.formatValue(S.Record.getRelationByKey(key), this.update[key], true);
 				update.push({ key, value });
 			};
@@ -248,7 +255,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					const format = I.LayoutFormat[this.object.layoutFormat];
 
 					U.Object.openRoute(message.details);
-					S.Common.getRef('sidebarLeft')?.refChild?.refFilter?.setValue('');
+					S.Common.getRef('sidebarLeft')?.getChild()?.refFilter?.setValue('');
 
 					analytics.event('CreateObject', { objectType: J.Constant.typeKey.type, route, format });
 				};

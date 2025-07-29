@@ -1,10 +1,10 @@
-.attachments { display: flex; gap: 4px; flex-wrap: wrap; max-width: 540px; }
+.attachments { display: flex; gap: 4px; flex-wrap: wrap; }
 .attachments {
 	--width-attachment: calc(524px / 2);
 
 	.attachment {
-		position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
-		min-width: var(--width-attachment); height: 72px; border-radius: 12px; display: flex; flex-direction: row; align-items: center;
+		position: relative; background: var(--color-bg-primary); min-width: var(--width-attachment); height: 72px; border-radius: 12px; 
+		display: flex; flex-direction: row; align-items: center;
 	}
 
 	.attachment {
@@ -22,11 +22,26 @@
 		.descr {
 			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
 		}
+
+		.icon.syncStatus { display: none; position: absolute; left: 50%; top: 50%; }
+
+		&.isSyncing, 
+		&.isQueued {
+			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear; }
+		}
+		&.isError {
+			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/error.svg'); }
+		}
 	}
 
 	.attachment.isFile {
+		.iconWrapper { width: 48px; height: 48px; position: relative; }
 		.iconObject { background-color: unset; }
 		.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
+
+		.iconWrapper {
+			.icon.syncStatus { width: 28px; height: 28px; background-size: 28px; margin: -14px 0px 0px -14px; }
+		}
 	}
 
 	.attachment.isBookmark { min-width: unset; height: unset; max-width: 360px; }
@@ -52,23 +67,52 @@
 				.img { object-fit: cover; width: 100%; height: 100%; aspect-ratio: 40/21; }
 			}
 		}
+
+		&.isWide { max-width: unset; }
+		&.isWide {
+			.inner { flex-direction: row; padding: 0px; align-items: stretch; }
+
+			.side.left { flex-grow: 1; padding: 16px 0px 16px 16px; justify-content: center; }
+			.side.right {
+				padding: 16px; width: 28%; min-height: 90px; display: flex; justify-content: center; align-items: center; position: relative;
+				overflow: hidden; aspect-ratio: 7 / 3; max-height: 122px;
+			}
+			.side.right {
+				.img { border-radius: 4px; }
+			}
+		}
 	}
 
 	.attachment.isImage { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isImage {
-		.image, .loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
+		.imgWrapper { position: relative; }
+
+		.image,
+		.loaderWrapper { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 12px; width: 100%; height: 100%; }
+
+		.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
 	}
 
 	.attachment.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isVideo {
 		.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
-		video { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+		video { width: 100%; height: 100%; display: block; object-fit: cover; aspect-ratio: 16/9; }
+
+		.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
+
+		&.isError {
+			.icon.syncStatus { z-index: 2; }
+		}
 	}
 
 	.attachment.isAudio { min-width: 360px; }
 	.attachment.isAudio {
 		.mediaAudio { padding: 12px 16px; border: unset; }
 		.mediaAudio {
+			.controlsWrapper {
+				.name { display: block; }
+			}
 			#volume { bottom: 40px; right: 16px; }
 		}
 	}
@@ -95,10 +139,13 @@
 	.attachment { max-width: 100%; max-height: 100%; aspect-ratio: unset; }
 	.attachment {
 		&.isVideo { height: 224px; }
-
-		.image { aspect-ratio: unset; }
 	}
 }
+
+.attachments.withLayout:not(.layout-1) {
+	.image { aspect-ratio: 1 !important; }
+}
+
 .attachments.layout-2 { gap: 4px; }
 .attachments.layout-2 {
 	.attachment { @include cnt-2; }
@@ -130,3 +177,10 @@
 	.attachment { @include cnt-4; }
 	.attachment:nth-child(-n + 6) { @include cnt-3; }
 }
+
+.attachments.layout-5,
+.attachments.layout-6,
+.attachments.layout-7,
+.attachments.layout-8,
+.attachments.layout-9,
+.attachments.layout-10 { width: 532px; }

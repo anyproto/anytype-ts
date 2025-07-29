@@ -1,8 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -21,7 +21,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
-	isSubcribed = '';
+	timeout = 0;
 
 	constructor (props) {
 		super(props);
@@ -29,6 +29,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onEdit = this.onEdit.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
+		this.onDrag = this.onDrag.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onArchive = this.onArchive.bind(this);
 		this.onAdd = this.onAdd.bind(this);
@@ -140,7 +141,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			};
 
 			content = (
-				<>
+				<div className="content">
 					{space && !space._empty_ ? (
 						<>
 							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
@@ -160,6 +161,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									disableContextMenu={true} 
 									onDragStart={this.onDragStart}
 									onDragOver={this.onDragOver}
+									onDrag={this.onDrag}
 									isEditing={isEditing}
 									canEdit={false}
 									canRemove={false}
@@ -186,12 +188,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								canRemove={canEdit}
 								onDragStart={this.onDragStart}
 								onDragOver={this.onDragOver}
+								onDrag={this.onDrag}
 								setPreview={this.setPreview}
 								setEditing={this.setEditing}
 							/>
 						);
 					})}
-				</>
+				</div>
 			);
 
 			bottom = (
@@ -229,6 +232,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				className="customScrollbar"
 			>
 				<div id="head" className="head">
+					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					<div className="name">{space.name}</div>
 				</div>
 				<div
@@ -257,6 +261,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
 			offsetY: -78,
+			subIds: J.Menu.help,
 		});
 	};
 
@@ -317,6 +322,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			});					
 		};
 
+		let menuContext = null;
+
 		S.Menu.open('searchObjectWidgetAdd', {
 			component: 'searchObject',
 			element: '#widget-list-add',
@@ -326,6 +333,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			horizontal: I.MenuDirection.Center,
 			vertical: position,
 			subIds: J.Menu.widgetAdd,
+			onOpen: context => menuContext = context,
 			data: {
 				route: analytics.route.addWidget,
 				withPlural: true,
@@ -333,11 +341,56 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
+				canAdd: true,
+				addParam: {
+					name: translate('commonCreateNewObject'),
+					nameWithFilter: translate('commonCreateObjectWithName'),
+					arrow: true,
+					onClick: (details: any) => {
+						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
+
+						if (!types.length) {
+							return;
+						};
+
+						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
+							onSelect(message.details, true);
+						});
+					},
+				},
+				onOver: (e, context: any, item: any) => {
+					if (!item.isAdd) {
+						S.Menu.closeAll(J.Menu.widgetAdd);
+						return;
+					};
+
+					U.Menu.typeSuggest({ 
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+						offsetX: menuContext.getSize().width,
+						vertical: I.MenuDirection.Center,
+						isSub: true,
+						data: {
+							onAdd: () => menuContext?.close(),
+						},
+					}, { name: context.filter }, {}, analytics.route.addWidget, object => {
+						onSelect(object, true);
+						menuContext?.close();
+					});
+				},
 				dataChange: (context: any, items: any[]) => {
 					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
 					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
 					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
-						filter(it => !targets.includes(it.id) && !skipLayouts.includes(it.recommendedLayout) && !U.Object.isTemplateType(it.id) && (it.name.match(reg) || it.pluralName.match(reg))).
+						filter(it => {
+							const name = String(it.name || it.pluralName || '');
+
+							return !targets.includes(it.id) && 
+								!skipLayouts.includes(it.recommendedLayout) && 
+								!U.Object.isTemplateType(it.id) && 
+								name.match(reg);
+						}).
 						map(it => ({ ...it, caption: '' }));
 					const lists = [];
 
@@ -346,7 +399,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					if (system.length) {
 						system = system.filter(it => it.id != J.Constant.widgetId.allObject);
 
-						if (!space.chatId && !U.Object.isAllowedChat()) {
+						if (!space.chatId && !U.Object.isAllowedChat(true)) {
 							system = system.filter(it => it.id != J.Constant.widgetId.chat);
 						};
 
@@ -411,6 +464,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		clone.append(obj.find('.head').clone());
 		node.append(clone);
 		selection?.clear();
+		$('body').addClass('isDragging');
 
 		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
@@ -422,9 +476,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		e.dataTransfer.setData('text', blockId);
 
 		win.off('dragend.widget').on('dragend.widget', () => {
-			this.clear();
+			this.onDragEnd();
 			win.off('dragend.widget');
 		});
+
+		scrollOnMove.onMouseDown(e, { isWindow: false, container: node.find('#body') });
+	};
+
+	onDrag (e: React.DragEvent, blockId: string): void {
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);	
 	};
 
 	onDragOver (e: React.DragEvent, blockId: string) {
@@ -476,22 +536,25 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
+		this.onDragEnd();
+	};
+
+	onDragEnd () {
 		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
 
 		this.isDragging = false;
 		this.clear();
+
+		$('body').removeClass('isDragging');
 	};
 
 	onScroll () {
-		const { showVault } = S.Common;
 		const node = $(this.node);
-		const head = node.find('#head');
-		const body = node.find('#body');
-		const top = body.scrollTop();
+		const top = node.find('#body').scrollTop();
 
-		head.toggleClass('show', showVault && (top > 32));
+		node.find('.dropTarget.firstTarget').toggleClass('isScrolled', top > 0);
 	};
 
 	onArchive (e: any) {

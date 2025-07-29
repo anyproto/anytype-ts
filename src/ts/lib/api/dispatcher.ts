@@ -146,11 +146,13 @@ class Dispatcher {
 			const type = Mapper.Event.Type(message.getValueCase());
 			const { spaceId, data } = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
-			const needLog = this.checkLog(type) && !skipDebug;
 
 			if (!mapped) {
 				continue;
 			};
+
+			const needLog = this.checkLog(type) && !skipDebug;
+			const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -967,7 +969,22 @@ class Dispatcher {
 					const message = new M.ChatMessage(mapped.message);
 					const author = S.Detail.mapper(dependencies.find(it => it.identity == message.creator));
 
+					let showNotification = false;
+
+					if (space) {
+						if (space.notificationMode == I.NotificationMode.All) {
+							showNotification = true;
+						} else
+						if (space.notificationMode == I.NotificationMode.Mentions) {
+							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
+						};
+					};
+
 					mapped.subIds.forEach(subId => {
+						if (subId == J.Constant.subId.chatSpace) {
+							subId = S.Chat.getSubId(spaceId, rootId);
+						};
+
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
@@ -978,8 +995,11 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
+					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
+						U.Common.notification({ 
+							title: space.name, 
+							text: `${author?.name}: ${message.content.text}`,
+						}, () => {
 							const { space } = S.Common;
 							const open = () => {
 								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
@@ -1002,7 +1022,7 @@ class Dispatcher {
 				case 'ChatUpdate': {
 					mapped.subIds.forEach(subId => S.Chat.update(subId, mapped.message));
 
-					$(window).trigger('messageUpdate', [ mapped.message ]);
+					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
 					break;
 				};
 
@@ -1014,8 +1034,6 @@ class Dispatcher {
 
 						S.Chat.setState(subId, mapped.state);
 					});
-
-					$(window).trigger('chatStateUpdate');
 					break;
 				};
 
@@ -1026,6 +1044,11 @@ class Dispatcher {
 
 				case 'ChatUpdateMentionReadStatus': {
 					mapped.subIds.forEach(subId => S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead));
+					break;
+				};
+
+				case 'ChatUpdateMessageSyncStatus': {
+					mapped.subIds.forEach(subId => S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced));
 					break;
 				};
 
@@ -1171,27 +1194,30 @@ class Dispatcher {
 			return;
 		};
 
-		const records = S.Record.getRecordIds(sid, '');
+		let records = S.Record.getRecordIds(sid, '');
+		let newIndex = records.indexOf(afterId);
 
-		let newIndex = afterId ? records.indexOf(afterId) : 0;
-		let oldIndex = records.indexOf(id);
+		const oldIndex = records.indexOf(id);
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
 		};
 
-		if (newIndex && (newIndex < oldIndex)) {
+		if (!afterId) {
+			newIndex = 0;
+		} else
+		if ((newIndex >= 0) && (newIndex < oldIndex)) {
 			newIndex++;
 		};
 
 		if (oldIndex < 0) {
-			records.push(id);
-			oldIndex = records.indexOf(id);
+			records.splice(afterId ? newIndex + 1 : 0, 0, id);
+		} else
+		if (oldIndex !== newIndex) {
+			records = arrayMove(records, oldIndex, newIndex);
 		};
 
-		if (oldIndex !== newIndex) {
-			S.Record.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
-		};
+		S.Record.recordsSet(sid, '', records);
 	};
 
 	sort (c1: any, c2: any) {

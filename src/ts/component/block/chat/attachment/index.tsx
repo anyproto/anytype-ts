@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
-import { I, U, S, J, Action, analytics, keyboard } from 'Lib';
+import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
 
 interface Props {
 	object: any;
@@ -27,13 +27,15 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		this.onOpenBookmark = this.onOpenBookmark.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSyncStatusClick = this.onSyncStatusClick.bind(this);
 		this.getPreviewItem = this.getPreviewItem.bind(this);
 	};
 
 	render () {
 		const { object, showAsFile, bookmarkAsDefault } = this.props;
+		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 		const mime = String(object.mime || '');
-		const cn = [ 'attachment' ];
+		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 
 		let content = null;
 
@@ -91,6 +93,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 
 			case I.ObjectLayout.Bookmark: {
+				cn.push('isBookmark');
 				content = bookmarkAsDefault ? this.renderDefault() : this.renderBookmark();
 				break;
 			};
@@ -139,7 +142,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		return (
 			<div className="clickable" onClick={this.onOpen}>
-				<IconObject object={object} size={48} iconSize={iconSize} />
+				<div className="iconWrapper">
+					<IconObject object={object} size={48} iconSize={iconSize} />
+					<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+				</div>
 
 				<div className="info">
 					<ObjectName object={object} />
@@ -152,7 +158,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderBookmark () {
 		const { object } = this.props;
 		const { picture, source } = object;
-		const cn = [ 'inner', 'isVertical' ];
+		const cn = [ 'inner' ];
 
 		if (picture) {
 			cn.push('withImage');
@@ -175,7 +181,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 				{picture ? (
 					<div className="side right">
-						<img src={S.Common.imageUrl(picture, 500)} className="img" />
+						<img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" />
 					</div>
 				) : ''}
 			</div>
@@ -187,26 +193,29 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
-				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
+				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
 					this.src = image;
 					$(this.node).find('#image').attr({ 'src': image });
 				});
 				this.src = './img/space.svg';
 			} else {
-				this.src = S.Common.imageUrl(object.id, J.Size.image);
+				this.src = S.Common.imageUrl(object.id, I.ImageSize.Large);
 			};
 		};
 
 		return (
-			<img 
-				id="image" 
-				className="image" 
-				src={this.src}
-				onClick={this.onPreview}
-				onLoad={scrollToBottom}
-				onDragStart={e => e.preventDefault()} 
-				style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
-			/>
+			<div className="imgWrapper" onClick={this.onPreview}>
+				<img
+					id="image"
+					className="image"
+					src={this.src}
+					onLoad={scrollToBottom}
+					onDragStart={e => e.preventDefault()}
+					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
+				/>
+
+				<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+			</div>
 		);
 	};
 
@@ -218,7 +227,8 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<MediaVideo 
 				src={src} 
 				onClick={this.onPreview}
-				canPlay={false} 
+				canPlay={false}
+				onSyncStatusClick={this.onSyncStatusClick}
 			/>
 		);
 	};
@@ -308,6 +318,50 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		onRemove(object.id);
 	};
 
+	onSyncStatusClick (e: any) {
+		const { object } = this.props;
+		const { syncError } = object;
+
+		if (syncError == I.SyncStatusError.None) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		let textConfirm = '';
+		let colorConfirm = '';
+
+		if (syncError == I.SyncStatusError.IncompatibleVersion) {
+			textConfirm = translate('popupConfirmButtonUpdateApp');
+			colorConfirm = 'black';
+		} else {
+			textConfirm = translate('popupConfirmButtonGotIt');
+			colorConfirm = 'blank';
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'warning',
+				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
+				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
+				textConfirm,
+				colorConfirm,
+				canCancel: false,
+				onConfirm: () => {
+					if (syncError == I.SyncStatusError.IncompatibleVersion) {
+						window.setTimeout(() => {
+							Renderer.send('updateCheck');
+						}, J.Constant.delay.popup);
+					};
+					if (syncError == I.SyncStatusError.Oversized) {
+						// delete?
+					};
+				}
+			}
+		});
+	};
+
 	getPreviewItem () {
 		const { object } = this.props;
 		const ret: any = { object };
@@ -315,7 +369,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		switch (object.layout) {
 			case I.ObjectLayout.Image: {
 				ret.type = I.FileType.Image;
-				ret.src = this.src || S.Common.imageUrl(object.id, J.Size.image);
+				ret.src = this.src || S.Common.imageUrl(object.id, I.ImageSize.Large);
 				break;
 			};
 

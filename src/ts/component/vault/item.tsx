@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon } from 'Component';
-import { J, S, I } from 'Lib';
+import { J, S } from 'Lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -23,14 +23,26 @@ const VaultItem: FC<Props> = observer(({
 
 	const cn = [ 'item' ];
 	const theme = S.Common.getThemeClass();
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
 
 	if (item.isLocalLoading) {
-		cn.push('loading');
+		cn.push('isLoading');
+	};
+
+	if (item.isMuted) {
+		cn.push('isMuted');
+	};
+
+	if (isDragging) {
+		cn.push('isDragging');
 	};
 
 	let icon = null;
 	let cnt = null;
-	let disabled = false;
 
 	if (!item.isButton) {
 		icon = <IconObject object={item} size={36} iconSize={36} param={{ userIcon: J.Theme[theme].textInversion }} />;
@@ -47,16 +59,6 @@ const VaultItem: FC<Props> = observer(({
 		if (counters.messageCounter) {
 			cnt = counters.messageCounter;
 		};
-	};
-
-	if (cnt) {
-		disabled = true;
-	};
-
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id, disabled });
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
 	};
 
 	return (

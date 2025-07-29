@@ -39,6 +39,7 @@ const InputWithFile: FC<Props> = ({
 	const [ size, setSize ] = useState(Size.Full);
 	const nodeRef = useRef(null);
 	const urlRef = useRef(null);
+	const fileWrapRef = useRef(null);
 	const timeout = useRef(0);
 	const cn = [ 'inputWithFile', 'resizable' ];
 	const or = ` ${translate('commonOr')} `;
@@ -74,15 +75,21 @@ const InputWithFile: FC<Props> = ({
 	};
 
 	const rebind = () => {
+		unbind();
+
 		if (canResize) {
-			$(nodeRef.current).off('resizeMove').on('resizeMove', () => resize());
+			$(nodeRef.current).on('resizeMove', () => resize());
 		};
+
+		$(fileWrapRef.current).on('mousedown', e => onClickFile(e));
 	};
 	
 	const unbind = () => {
 		if (canResize) {
 			$(nodeRef.current).off('resizeMove');
 		};
+
+		$(fileWrapRef.current).off('mousedown');
 	};
 	
 	const resize = () => {
@@ -225,7 +232,7 @@ const InputWithFile: FC<Props> = ({
 				</form>
 
 				{withFile ? (
-					<span className="fileWrap" onMouseDown={onClickFile}>
+					<span ref={fileWrapRef} className="fileWrap">
 						{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
 						<span className="border">{textFile}</span>
 					</span>

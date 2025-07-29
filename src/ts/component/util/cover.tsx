@@ -35,7 +35,7 @@ const Cover: FC<Props> = ({
 	const style: any = {};
 	
 	if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
-		style.backgroundImage = `url("${S.Common.imageUrl(image, J.Size.cover)}")`;
+		style.backgroundImage = `url("${S.Common.imageUrl(image, I.ImageSize.Large)}")`;
 	};
 
 	if (src) {

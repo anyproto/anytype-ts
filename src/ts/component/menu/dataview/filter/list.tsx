@@ -142,7 +142,8 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const ids = items.map(it => it.id);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
-		
+
+		n.current = newIndex;
 		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
 		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => loadData(view.id, 0));
 
@@ -185,7 +186,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const offset = !isReadonly ? 62 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 
@@ -253,10 +254,11 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
-		getItems: () => items,
+		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		getListRef: () => listRef.current,
 	}), []);
 	
 	return (

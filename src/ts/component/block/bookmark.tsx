@@ -97,7 +97,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 						>
 							<div className={cnl.join(' ')}>
 								<div className="link">
-									{iconImage ? <img src={S.Common.imageUrl(iconImage, 16)} className="fav" /> : ''}
+									{iconImage ? <img src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} className="fav" /> : ''}
 									{U.Common.shortUrl(url)}
 								</div>
 								<ObjectName object={object} />
@@ -106,7 +106,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 								{archive}
 							</div>
 							<div className="side right">
-								{picture ? <img src={S.Common.imageUrl(picture, 500)} className="img" /> : ''}
+								{picture ? <img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" /> : ''}
 							</div>
 						</a>
 					);

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -14,15 +14,16 @@ interface Props extends I.WidgetComponent {
 	icon?: string;
 	disableContextMenu?: boolean;
 	className?: string;
-	onDragStart?: (e: React.MouseEvent, blockId: string) => void;
-	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
+	onDragStart?: (e: MouseEvent, blockId: string) => void;
+	onDragOver?: (e: MouseEvent, blockId: string) => void;
+	onDrag?: (e: MouseEvent, blockId: string) => void;
 };
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, setPreview, canEdit, canRemove } = props;
+	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, onDrag, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -69,19 +70,17 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isChat = targetId == J.Constant.widgetId.chat;
 
 	let cnt = 0;
-	let showCnt = false;
+	let leftCnt = false;
 	let layout = block.content.layout;
+	let counters = { messageCounter: 0, mentionCounter: 0 };
 
 	if (isFavorite) {
 		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
-		showCnt = cnt > limit;
+		leftCnt = cnt > limit;
 	};
 
 	if (isChat) {
-		const counters = S.Chat.getChatCounters(space, spaceview.chatId);
-
-		cnt = counters.messageCounter;
-		showCnt = !!cnt;
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
 
 	if (object) {
@@ -193,20 +192,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const cb = object => {
+		const cb = newObject => {
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, route);
+				Action.setIsFavorite([ newObject.id ], true, route);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ object.id ]);
+				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openConfig(object);
-			analytics.createObject(object.type, object.layout, route, 0);
+			U.Object.openConfig(newObject);
+			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
 			if (layout == I.WidgetLayout.Tree) {
-				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(object.id, object.layout, true), (message: any) => {
+				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
 					if (!message.error.code) {
 						analytics.event('CreateLink');
 					};
@@ -468,7 +467,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		analytics.event(event, data);
 	};
 
-	const onDragEnd = () => {
+	const onDragEnd = (e: any) => {
+		scrollOnMove.onMouseUp(e);
+
 		analytics.event('ReorderWidget', {
 			layout,
 			params: { target: object }
@@ -597,11 +598,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let head = null;
 	let content = null;
 	let back = null;
-	let buttons = null;
+	let buttons = [];
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
 	let collapse = null;
+	let icon = null;
 
 	if (isPreview) {
 		back = (
@@ -618,26 +620,23 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		isDraggable = false;
 	} else {
-		buttons = (
-			<div className="buttons">
-				{spaceview.isChat && isChat ? '' : (
-					<div className="iconWrap more" onClick={onOptions}>
-						<Icon className="options" tooltipParam={{ text: translate('widgetOptions') }} />
-					</div>
-				)}
-				{canCreate ? (
-					<div className="iconWrap create" onClick={onCreateClick}>
-						<Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} />
-					</div>
-				) : ''}
-			</div>
-		);
+		if (!(spaceview.isChat && isChat)) {
+			buttons.push({ id: 'more', icon: 'options', tooltip: translate('widgetOptions'), onClick: onOptions });
+		};
+
+		if (canCreate) {
+			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
+		};
 
 		collapse = (
 			<div className="iconWrap collapse">
 				<Icon className="collapse" onClick={onToggle} />
 			</div>
 		);
+	};
+
+	if (buttons.length) {
+		cn.push('withButtons');
 	};
 
 	if (hasChild) {
@@ -663,7 +662,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
 		};
 
-		let icon = null;
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
@@ -679,10 +677,27 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							{collapse}
 							{icon}
 							<ObjectName object={object} withPlural={true} />
-							{showCnt ? <span className="count">{cnt}</span> : ''}
+							{leftCnt ? <span className="count">{cnt}</span> : ''}
 						</div>
 					</div>
-					<div className="side right">{buttons}</div>
+					<div className="side right">
+						{counters.messageCounter || counters.mentionCounter ? (
+							<div className="counters">
+								{counters.mentionCounter ? <Icon className="count mention" /> : ''}
+								{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
+							</div>
+						) : ''}
+
+						{buttons.length ? (
+							<div className="buttons">
+								{buttons.map(item => (
+									<div key={item.id} className={[ 'iconWrap', item.id ].join(' ')} onClick={item.onClick}>
+										<Icon className={item.icon} tooltipParam={{ text: item.tooltip }} />
+									</div>
+								))}
+							</div>
+						) : ''}
+					</div>
 				</div>
 			</div>
 		);
@@ -775,8 +790,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			id={`widget-${block.id}`}
 			className={cn.join(' ')}
 			draggable={isDraggable}
-			onDragStart={e => onDragStart(e, block.id)}
+			onDragStart={e => onDragStart ? onDragStart(e, block.id) : null}
 			onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
+			onDrag={e => onDrag ? onDrag(e, block.id) : null}
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>

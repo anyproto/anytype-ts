@@ -63,6 +63,7 @@
 					Graphviz:		 20,
 					Sketchfab:		 21,
 					Image:			 22,
+					Spotify:		 23,
 				};
 
 				const win = $(window);
@@ -83,6 +84,7 @@
 				let height = 0;
 				let blockId = '';
 				let player;
+				let html = '';
 
 				win.off('message resize');
 
@@ -92,8 +94,9 @@
 						return;
 					};
 
-					let { html, js, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
+					let { js, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
 
+					html = String(oe.data.html || '');
 					libs = oe.data.libs || [];
 					blockId = oe.data.blockId;
 					processor = oe.data.processor;
@@ -220,14 +223,17 @@
 				};
 
 				function getParam () {
-					const a = location.search.replace(/^\?/, '').split('&');
-					const param = {};
+					const p = {};
+					try {
+						const u = new URL(location.href);
 
-					a.forEach((s) => {
-						const kv = s.split('=');
-						param[kv[0]] = kv[1];
-					});
-					return param;
+						if (u.searchParams) {
+							u.searchParams.forEach((v, k) => p[k] = v);
+						};
+					} catch (e) {
+						console.error(e);
+					};
+					return p;
 				};
 
 				function loadGithubGist (html) {

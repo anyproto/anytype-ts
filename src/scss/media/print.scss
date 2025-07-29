@@ -21,7 +21,8 @@ html.printMedia {
 	.focusable.isFocused::before,
 	#vault,
 	#sidebarToggle,
-	#sidebarSync
+	#sidebarSync,
+	.tableOfContents
 	{ display: none !important; }
 
 	#pageFlex.isFull {

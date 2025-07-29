@@ -7,14 +7,14 @@ import Cell from './cell';
 interface Props extends I.ViewComponent {
 	style?: any;
 	cellPosition?: (cellId: string) => void;
-	onRef?(ref: any, id: string): void;
+	onRefCell?(ref: any, id: string): void;
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, style, recordId, readonly, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, style, recordId, readonly, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
 		const relations = getVisibleRelations();
 		const widths = getColumnWidths('', 0);
 		const record = getRecord(recordId);

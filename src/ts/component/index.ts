@@ -32,6 +32,7 @@ import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
 
 import Notification from './notification';
+import Banner from './util/banner';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -44,6 +45,7 @@ import Deleted from './util/deleted';
 import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
+import EmptyState from './util/emptyState';
 
 import Input from './form/input';
 import InputWithFile from './form/inputWithFile';
@@ -94,6 +96,7 @@ import MediaPdf from './util/media/pdf';
 import MediaMermaid from './util/media/mermaid';
 
 import ProgressBar from './util/progressBar';
+import ProgressText from './util/progressText';
 import ShareTooltip from './util/share/tooltip';
 import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
@@ -153,6 +156,7 @@ export {
 	TabSwitch,
 
 	EmptySearch,
+	EmptyState,
 	Popup,
 	Frame,
 	Cover,
@@ -160,6 +164,7 @@ export {
 	Label,
 	Error,
 	Notification,
+	Banner,
 
 	Icon,
 	IconObject,
@@ -192,6 +197,7 @@ export {
 	MediaMermaid,
 
 	ProgressBar,
+	ProgressText,
 	ShareTooltip,
 	ShareBanner,
 	FooterAuthDisclaimer,

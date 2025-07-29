@@ -1,7 +1,4 @@
-.formWrapper.isFixed { 
-	padding: 0px 16px 16px 16px; position: fixed; z-index: 11; bottom: 0px; background: var(--color-bg-primary);
-}
-
+.formWrapper.isFixed { padding: 0px 16px; position: fixed; z-index: 11; bottom: 0px; }
 .formWrapper {
 	.navigation { 
 		position: absolute; right: 0px; bottom: calc(100% + 8px); display: flex; flex-direction: column; align-items: flex-end; 
@@ -36,6 +33,23 @@
 			.bg { transform: scale(0.95); }
 		}
 	}
+
+	.bottom { width: 100%; height: 16px; background-color: var(--color-bg-primary); }
+
+	.dragOverlay { 
+		pointer-events: none; background-color: var(--color-bg-primary); flex-grow: 1; z-index: 10;
+		display: flex; flex-direction: column; align-items: center; justify-content: center; display: none;
+	}
+	.dragOverlay {
+		.inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px 0px; }
+		.icon { width: 58px; height: 58px; background-image: url('~img/icon/chat/dragState.svg'); }
+		.label { @include text-header3; font-weight: 700; color: var(--color-text-tertiary); }
+	}
+
+	&.isDraggingOver { height: 100%; display: flex; flex-direction: column; }
+	&.isDraggingOver {
+		.dragOverlay { display: flex; }
+	}
 }
 
 .form { 
@@ -43,8 +57,11 @@
 	overflow: hidden; 
 }
 .form {
-	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 10; }
+	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; }
 	#form-loader.active { display: block; }
+	#form-loader {
+		.dots { display: none; }
+	}
 
 	.head { 
 		padding: 12px 12px 12px 16px; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: space-between; 
@@ -77,9 +94,9 @@
 	}
 	.editableWrap.isRtl { text-align: right; }
 
-	.attachments { padding: 0px 8px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
+	.attachments { margin: 6px 0px 0px 0px; padding: 0px 8px; max-height: 360px; overflow: visible; max-width: unset; }
 	.attachments {
-		.swiper { width: 100%; }
+		.swiper { width: 100%; overflow: visible; }
 		.swiper-slide { width: unset; }
 		.swiper-button-prev,
 		.swiper-button-next { position: absolute; z-index: 2; width: 70px; height: 100%; top: 0px; }
@@ -102,7 +119,7 @@
 
 		.swiper-button-disabled { display: none; }
 
-		.attachment { margin-top: 6px; }
+		.attachment { max-width: 300px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05); }
 		.swiper-slide:last-child .attachment { margin-right: 6px; }
 	}
 
@@ -157,6 +174,7 @@
 	.charCounter.show { display: block; }
 
 	.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
+	.icon.send.isLoading { background: url('~img/icon/chat/buttons/loader.svg'); animation: rotate 1.2s infinite linear; animation-delay: 0.3s; }
 }
 
 .formWrapper {

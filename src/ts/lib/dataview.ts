@@ -170,6 +170,10 @@ class Dataview {
 			meta.viewId = newViewId;
 		};
 
+		if (!sorts.length) {
+			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
+		};
+
 		if (!isInline && (viewChange || clear)) {
 			S.Record.recordsSet(subId, '', []);
 		};

@@ -27,7 +27,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const isOpen = Storage.checkToggle(subKey, treeKey);
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, type, restrictions, done, layout } = object;
-	const cn = [ 'item', `c${id}` ];
+	const cn = [ 'item', `c${id}`, `depth${depth}` ];
 	const rootId = keyboard.getRootId();
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);

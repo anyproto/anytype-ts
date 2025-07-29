@@ -14,7 +14,6 @@ const LIMIT_HEIGHT = 6;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Menu> {
 
-	_isMounted = false;	
 	filter = '';
 	index: any = null;
 	cache: any = {};
@@ -153,7 +152,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -189,7 +187,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 	};
 
@@ -239,13 +236,13 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const isLocal = filter.match(/^file:/) || U.Common.matchLocalPath(filter);
-		const isUrl = U.Common.matchUrl(filter) || U.Common.matchDomain(filter);
+		const encoded = filter.replace(/\s/g, '%20');
+		const urls = U.Common.getUrlsFromText(encoded);
 		const items = [].concat(this.items);
 		const sections: any[] = [];
 
-		if (isLocal || isUrl) {
-			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', isLocal });
+		if (urls.length) {
+			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', url: urls[0] });
 		};
 
 		if (items.length) {
@@ -353,14 +350,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { filter, onChange } = data;
 
 		if (item.itemId == 'link') {
-			let url = filter;
-
-			if (item.isLocal && url && !url.match(/^file:/)) {
-				url = `file://${url}`;
-			};
-
-			if (onChange) {
-				onChange(I.MarkType.Link, url);
+			if (item.url && onChange) {
+				onChange(I.MarkType.Link, item.url.value);
 			};
 		} else
 		if (item.itemId == 'add') {

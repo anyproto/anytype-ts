@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, useEffect } from 'react';
 import * as hs from 'history';
 import $ from 'jquery';
 import { Router, Route, Switch } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { S, C, U } from 'Lib'; 
+import { S, U } from 'Lib'; 
 
 import Index from './iframe/index';
 import Create from './iframe/create';
@@ -29,46 +29,26 @@ const Components = {
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 
-class RoutePage extends React.Component<RouteComponentProps> {
-	
-	render () {
-		const { match } = this.props;
-		const params = match.params as any;
-		const page = params.page || 'index';
-		const Component = Components[page];
+const RoutePage: FC<RouteComponentProps> = (props) => {
 
-		return (
-			<>
-				<ListMenu key="listMenu" {...this.props} />
+	const { match } = props;
+	const params = match.params as any;
+	const page = params.page || 'index';
+	const Component = Components[page];
 
-				{Component ? <Component /> : null}
-			</>
-		);
-	};
+	return (
+		<>
+			<ListMenu key="listMenu" {...props} />
+
+			{Component ? <Component /> : null}
+		</>
+	);
 
 };
 
-class Iframe extends React.Component {
+const Iframe: FC = () => {
 
-	node: any = null;
-
-	render () {
-		return (
-			<Router history={history}>
-				<Provider {...S}>
-					<div ref={node => this.node = node}>
-						<Switch>
-							{Routes.map((item: any, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={RoutePage} />
-							))}
-						</Switch>
-					</div>
-				</Provider>
-			</Router>
-		);
-	};
-
-	componentDidMount () {
+	useEffect(() => {
 		U.Router.init(history);
 		U.Smile.init();
 
@@ -106,7 +86,21 @@ class Iframe extends React.Component {
 
 			U.Data.destroySubscriptions(() => U.Data.closeSession());
 		});
-	};
+	}, []);
+
+	return (
+		<Router history={history}>
+			<Provider {...S}>
+				<div>
+					<Switch>
+						{Routes.map((item: any, i: number) => (
+							<Route path={item.path} exact={true} key={i} component={RoutePage} />
+						))}
+					</Switch>
+				</div>
+			</Provider>
+		</Router>
+	);
 
 };
 

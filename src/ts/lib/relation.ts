@@ -366,6 +366,9 @@ class Relation {
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
+				if ((relation.relationKey == 'addedDate') && (value === 0)) {
+					value = null;
+				};
 				if (value !== null) {
 					value = parseFloat(String(value || '0'));
 				};
@@ -409,7 +412,7 @@ class Relation {
 		let ret = false;
 		switch (relation.format) {
 			default: {
-				ret = value ? true : false;
+				ret = !!value;
 				break;
 			};
 
@@ -418,12 +421,16 @@ class Relation {
 				break;
 			};
 
-			case I.RelationType.Select:
+			case I.RelationType.Select: {
+				ret = Array.isArray(value) ? !!value[0] : !!value.length;
+				break;
+			};
+
 			case I.RelationType.File:
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				ret = value.length ? true : false;
+				ret = !!value.length;
 				break;
 			};
 		};

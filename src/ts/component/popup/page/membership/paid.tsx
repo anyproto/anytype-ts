@@ -45,6 +45,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { period, periodType } = tierItem;
 		const { membership } = S.Auth;
 		const { name, nameType, paymentMethod } = membership;
+		const canPayCrypto = (membership.status != I.MembershipStatus.Active) || membership.isStarter;
 
 		let platformText = '';
 		let withContactButton = false;
@@ -135,7 +136,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{platformText ? (
 						<div className="platformLabel">
 							<Label className="paidOnOtherPlatform" text={platformText} />
-							{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
+							{withContactButton ? <Button onClick={() => Action.membershipUpgradeViaEmail()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
 						</div>
 					) : (
 						<div className="buttons">
@@ -144,7 +145,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 							) : (
 								<>
 									<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-									{membership.status != I.MembershipStatus.Active ? (
+									{canPayCrypto ? (
 										<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 									) : ''}
 								</>

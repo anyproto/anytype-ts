@@ -1,21 +1,15 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { I } from 'Lib';
 
-interface State {
-	error: string;
-};
+const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-const Success = observer(class Success extends React.Component<I.PageComponent, State> {
+	return (
+		<div className="page pageSuccess">
+			<div className="title">Successfully authorized!</div>
+		</div>
+	);
 
-	render () {
-		return (
-			<div className="page pageSuccess">
-				<div className="title">Successfully authorized!</div>
-			</div>
-		);
-	};
-
-});
+}));
 
 export default Success;

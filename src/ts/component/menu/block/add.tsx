@@ -13,7 +13,6 @@ const LIMIT = 10;
 
 const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
 	
-	_isMounted = false;
 	emptyLength = 0;
 	timeout = 0;
 	cache: any = {};
@@ -188,7 +187,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { getId } = this.props;
 		const items = this.getItems();
 		
-		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
 		this.resize();
@@ -235,7 +233,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		S.Menu.closeAll(J.Menu.add);
 	};
 
@@ -698,8 +695,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								element.find(`.focusable`).trigger('edit');
 							};
 
+							// Auto-open BlockDataview source menu
 							if (param.type == I.BlockType.Dataview) {
 								win.trigger(`setDataviewSource.${newBlockId}`);
+							};
+
+							// Auto-open BlockFile upload dialog
+							if (param.type == I.BlockType.File) {
+								element.find(`.fileWrap`).trigger('mousedown');
 							};
 						}, S.Menu.getTimeout());
 					});
@@ -755,6 +758,36 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		else if (item.isSection && (index > 0)) h = HEIGHT_SECTION;
 		else if (item.isBlock) h = HEIGHT_DESCRIPTION;
 		return h;
+	};
+
+	scrollToRow (items: any[], index: number) {
+		if (!this.refList || !items.length) {
+			return;
+		};
+
+		const listHeight = this.refList.props.height;
+		const itemHeight = this.getRowHeight(items[index], index);
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < items.length; ++i) {
+			const h = this.getRowHeight(items[i], i);
+
+			if (i < index) {
+				offset += h;
+			};
+			total += h;
+		};
+
+		if (offset + itemHeight < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - itemHeight / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		this.refList.scrollToPosition(offset);
 	};
 
 });

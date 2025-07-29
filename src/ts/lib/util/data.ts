@@ -296,7 +296,10 @@ class UtilData {
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
 			for (const item of message.previews) {
-				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), item.state);
+				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), { 
+					...item.state, 
+					lastMessageDate: Number(item.message?.createdAt || 0),
+				});
 			};
 		});
 
@@ -924,8 +927,10 @@ class UtilData {
 
 						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
+						U.Subscription.createGlobal();
 
 						this.onInfo(message.account.info);
+
 						Renderer.send('keytarSet', message.account.id, phrase);
 						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
@@ -941,7 +946,7 @@ class UtilData {
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
-						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Space });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 					});
 				});
 			});

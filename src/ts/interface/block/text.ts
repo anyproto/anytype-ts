@@ -66,6 +66,13 @@ export interface Mark {
 	param?: string;
 };
 
+export interface FromHtmlResult { 
+	marks: I.Mark[];
+	text: string;
+	adjustMarks: boolean;
+	updatedValue: boolean;
+};
+
 export interface ContentText {
 	text: string;
 	style: TextStyle;

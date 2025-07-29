@@ -8,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const iconCache: Map<string, string> = new Map();
 
 class UtilCommon {
@@ -23,7 +24,7 @@ class UtilCommon {
 	 * Gets the current Electron window ID as a string.
 	 * @returns {string} The current window ID or '0' if not available.
 	 */
-	getCurrentElectronWindowId (): string {
+	getWindowId (): string {
 		const electron = this.getElectron();
 
 		if (!electron) {
@@ -657,9 +658,23 @@ class UtilCommon {
 			return '';
 		};
 
+		// Sanity check: reject massive or clearly invalid strings
+		if (!url || (url.length > 2048) || !/[.@:/\\]/.test(url)) {
+			return '';
+		};
+
 		const scheme = this.getScheme(url);
+
 		if (!scheme) {
-			url = `http://${url}`;
+			if (this.matchEmail(url)) {
+				url = `mailto:${url}`;
+			} else 
+			if (this.matchPhone(url)) {
+				url = `tel:${url}`;
+			} else 
+			if (this.matchPath(url)) {
+				url = `file://${url}`;
+			};
 		};
 
 		return url;
@@ -683,19 +698,6 @@ class UtilCommon {
 		});
 	};
 	
-	/**
-	 * Checks if a string is a valid email address.
-	 * @param {string} v - The string to check.
-	 * @returns {boolean} True if valid email, false otherwise.
-	 */
-	checkEmail (v: string) {
-		v = String(v || '');
-
-		const uc = '\\P{Script_Extensions=Latin}';
-		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu');
-		return reg.test(v);
-	};
-
 	/**
 	 * Gets the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.
@@ -1065,11 +1067,17 @@ class UtilCommon {
 		let offset = 0;
 
 		for (const word of words) {
-			if (this.matchUrl(word) || this.matchLocalPath(word)) {
+			const isUrl = !!this.matchUrl(word) || !!this.matchDomain(word);
+			const isEmail = !!this.matchEmail(word);
+			const isLocal = !!this.matchPath(word);
+			const isPhone = !!this.matchPhone(word);
+			const embedProcessor = U.Embed.getProcessorByUrl(word);
+
+			if (isUrl || isLocal || isEmail || isPhone) {
 				const from = text.substring(offset).indexOf(word) + offset;
 
 				offset = from + word.length;
-				urls.push({ value: word, from, to: offset, isLocal: !!this.matchLocalPath(word) });
+				urls.push({ value: word, from, to: offset, isLocal, isUrl, isEmail, isPhone, embedProcessor });
 			};
 		};
 
@@ -1083,6 +1091,20 @@ class UtilCommon {
 	 */
 	matchUrl (s: string): string {
 		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?\s?$/gi);
+		return String(((m && m.length) ? m[0] : '') || '').trim();
+	};
+
+	/**
+	 * Matches a string as a a valid email address.
+	 * @param {string} v - The string to check.
+	 * @returns {string} The matched email or empty string.
+	 */
+	matchEmail (v: string) {
+		v = String(v || '');
+
+		const uc = '\\P{Script_Extensions=Latin}';
+		const m = v.match(new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu'));
+
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
@@ -1101,17 +1123,35 @@ class UtilCommon {
 	 * @param {string} s - The string to match.
 	 * @returns {string} The matched path or empty string.
 	 */
-	matchLocalPath (s: string): string {
+	matchPath (s: string): string {
 		s = String(s || '');
 
-		const rw = new RegExp(/^(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
-		const ru = new RegExp(/^(\/[\p{L}\p{N}\s\._-]+)+\/?$/u);
+		const rw = new RegExp(/^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
+		const ru = new RegExp(/^(file:\/\/)?(\/[\p{L}\p{N}\s\._%-]+)+\/?$/u);
 
 		let m = s.match(rw);
 		if (!m) {
 			m = s.match(ru);
 		};
 
+		return String(((m && m.length) ? m[0] : '') || '').trim();
+	};
+
+	/**
+	 * Matches a string as a valid phone number.
+	 * Supports international and local formats with optional separators.
+	 * @param {string} s - The string to match.
+	 * @returns {string} The matched phone number or empty string.
+	 */
+	matchPhone (s: string): string {
+		s = String(s || '');
+
+		const re = new RegExp(
+			// Matches optional +country code, spaces/dashes/parentheses, and digit groups
+			/^(\+?\d{1,3}[\s-]?)?(\(?\d{1,4}\)?[\s-]?)?[\d\s()-]{5,}$/u
+		);
+
+		const m = s.match(re);
 		return String(((m && m.length) ? m[0] : '') || '').trim();
 	};
 
@@ -1573,7 +1613,7 @@ class UtilCommon {
 		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const code = Mark.getTag(I.MarkType.Code);
-		const regCode = new RegExp(`^${code}|${code}$`, 'i');
+		const regCode = new RegExp(`^${code}>|</${code}$`, 'i');
 		const match = html.matchAll(reg);
 		const render = (s: string) => {
 			s = this.fromHtmlSpecialChars(s);
@@ -1606,6 +1646,11 @@ class UtilCommon {
 
 			// Skip inline code marks
 			if (regCode.test(m1) || regCode.test(m3)) {
+				return;
+			};
+
+			// Skip first or last space
+			if (/^\s/.test(m2) || /\s$/.test(m2)) {
 				return;
 			};
 
@@ -1771,20 +1816,97 @@ class UtilCommon {
 
 	/**
 	 * Scrolls to header in Table of contents
+	 * @param {string} rootId - The root ID of the page.
+	 * @param {any} item - The item to scroll to.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {void}
 	 */
-	scrollToHeader (id: string, isPopup: boolean) {
-		const node = $(`.focusable.c${id}`);
+	scrollToHeader (rootId: string, item: any, isPopup: boolean) {
+		const node = $(`.focusable.c${item.id}`);
 
 		if (!node.length) {
 			return;
 		};
 
 		const container = this.getScrollContainer(isPopup);
+
+		if (item.block && item.block.isTextTitle()) {
+			container.scrollTop(0);
+			return;
+		};
+
+		const toggles = node.parents(`.block.${U.Data.blockTextClass(I.TextStyle.Toggle)}`);
+
+		if (toggles.length) {
+			const toggle = $(toggles.get(0));
+			if (!toggle.hasClass('isToggled')) {
+				S.Block.toggle(rootId, toggle.attr('data-id'), true);
+			};
+		};
+
 		const no = node.offset().top;
 		const st = container.scrollTop();
 		const y = Math.max(J.Size.header + 20, (isPopup ? (no - container.offset().top + st) : no) - J.Size.header - 20);
 
 		container.scrollTop(y);
+	};
+
+	/**
+	 * Lexicographically increments a string using a defined alphabet.
+	 * @param {string} s - The string to convert.
+	 * @returns {string} The incremented string.
+	 */
+	lexString (s: string): string {
+		const chars = String(s || '').split('');
+
+		let i = chars.length - 1;
+		while (i >= 0) {
+			const idx = ALPHABET.indexOf(chars[i]);
+
+			if (idx < ALPHABET.length - 1) {
+				chars[i] = ALPHABET[idx + 1];
+				return chars.join('');
+			} else {
+				chars[i] = ALPHABET[0];
+				i--;
+			};
+		};
+
+		return ALPHABET[0] + chars.join('');
+	};
+
+	/**
+	 * Checks if the current app version is different from the provided version.
+	 * If different, sets a flag in storage to show the "What's New" popup.
+	 * @param {string} v - The version to check against.
+	 */
+	checkUpdateVersion (v: string) {
+		if (!Storage.get('primitivesOnboarding')) {
+			return;
+		};
+
+		v = String(v || '');
+
+		const electron = this.getElectron();
+		const update = v.split('.');
+		const current = String(electron.version.app || '').split('.');
+
+		if ((update[0] != current[0]) || (update[1] != current[1])) {
+			Storage.set('whatsNew', true);
+			Storage.setHighlight('whatsNew', true);
+		};
+	};
+
+	checkCanMembershipUpgrade (): boolean {
+		const { membership } = S.Auth;
+		const canUpgradeTiers = [
+			I.TierType.None,
+			I.TierType.Explorer,
+			I.TierType.Starter,
+			I.TierType.Pioneer,
+		];
+
+		return canUpgradeTiers.includes(membership.tier);
 	};
 
 };

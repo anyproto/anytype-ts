@@ -14,7 +14,6 @@ const LIMIT = 10;
 
 const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
-	_isMounted = false;	
 	n = -1;
 	cache: any = null;
 	filter = '';
@@ -172,7 +171,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 		
-		this._isMounted = true;
 		if (!noKeys) {
 			this.rebind();
 		};
@@ -226,7 +224,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 	};
 	

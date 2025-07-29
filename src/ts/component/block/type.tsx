@@ -6,7 +6,6 @@ import { I, C, S, U, J, Onboarding, focus, keyboard, analytics, history as histo
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
-	_isMounted = false;
 	node: any = null;
 	n = 0;
 	isFocused = false;
@@ -62,13 +61,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	componentDidMount () {
 		const { isPopup } = this.props;
-		this._isMounted = true;
 
 		Onboarding.start('objectCreationStart', isPopup);
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 
 	getItems () {

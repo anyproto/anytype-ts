@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, IconObject, ObjectName, Icon } from 'Component';
+import { Title, IconObject, ObjectName, Icon, EmptyState } from 'Component';
 import { I, S, U, C, translate, Action, analytics } from 'Lib';
 
 interface State {
@@ -39,15 +39,19 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 			<>
 				<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
 
-				<div className="items">
-					<div className="row isHead">
-						<div className="col colSpace">{translate('commonObject')}</div>
-						<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
-						<div className="col">{translate('commonSize')}</div>
-						<div className="col colMore" />
+				{list.length ? (
+					<div className="items">
+						<div className="row isHead">
+							<div className="col colSpace">{translate('commonObject')}</div>
+							<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
+							<div className="col">{translate('commonSize')}</div>
+							<div className="col colMore" />
+						</div>
+						{list.map((item: any, i: number) => <Row key={i} {...item} />)}
 					</div>
-					{list.map((item: any, i: number) => <Row key={i} {...item} />)}
-				</div>
+				) : (
+					<EmptyState text={translate('popupSettingsDataManagementDataPublishEmpty')} />
+				)}
 			</>
 		);
 	};

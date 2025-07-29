@@ -24,14 +24,14 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	const onClick = (e: any, id: string) => {
-		U.Common.scrollToHeader(id, isPopup);
+	const onClick = (e: any, item: any) => {
+		U.Common.scrollToHeader(rootId, item, isPopup);
 	};
 
 	const Item = (item: any) => (
 		<div 
 			className="item" 
-			onClick={e => onClick(e, item.id)}
+			onClick={e => onClick(e, item)}
 			style={{ paddingLeft: item.depth * 24 }}
 		>
 			<Label text={U.Common.getLatex(item.text)} />

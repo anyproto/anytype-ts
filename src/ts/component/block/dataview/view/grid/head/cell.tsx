@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, relationKey, onResizeStart, getView, readonly } = props;
 	const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
@@ -113,23 +113,29 @@ const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 			ref={setNodeRef}
-			{...attributes}
-			{...listeners}
 			style={style}
 		>
 			<div className="cellContent">
 				<div 
 					className="flex" 
 					onMouseDown={onMouseDown} 
+					{...attributes}
+					{...listeners}
 				>
 					<IconObject object={relation} tooltipParam={{ text: relation.name }} />
 					<ObjectName object={relation} />
 				</div>
-				{allowed ? <div className="resize" onMouseDown={e => onResizeStart(e, relationKey)} /> : ''}
+
+				{allowed ? (
+					<div 
+						className="resize"
+						onMouseDown={e => onResizeStart(e, relationKey)} 
+					/>
+				) : ''}
 			</div>
 		</div>
 	);
 
 }));
 
-export default HeadRow;
+export default HeadCell;

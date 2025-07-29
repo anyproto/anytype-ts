@@ -219,7 +219,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				};
 
 				try {
-					createImageBitmap(img, { resizeWidth: 160, resizeHeight: 160, resizeQuality: 'high' }).then((res: any) => {
+					createImageBitmap(img, { resizeWidth: I.ImageSize.Small, resizeQuality: 'high' }).then((res: any) => {
 						if (images.current[d.src]) {
 							return;
 						};

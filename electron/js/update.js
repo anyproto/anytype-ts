@@ -33,31 +33,21 @@ class UpdateManager {
 
 		autoUpdater.on('checking-for-update', () => {
 			Util.log('info', 'Checking for update');
-			Util.send(this.win, 'checking-for-update', this.autoUpdate);
 		});
 
 		autoUpdater.on('update-available', (info) => {
-			this.isUpdating = true;
 			this.clearTimeout();
 
 			Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
-			Util.send(this.win, 'update-available', this.autoUpdate, info);
-
-			if (this.autoUpdate) {
-				this.download();
-			};
+			this.download();
 		});
 
 		autoUpdater.on('update-not-available', (info) => {
-			this.isUpdating = false;
-
 			Util.log('info', 'Update not available: ' + JSON.stringify(info, null, 3));
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 		
 		autoUpdater.on('error', (err) => { 
-			this.isUpdating = false;
-
 			Util.log('Error: ' + err);
 			Util.send(this.win, 'update-error', err, this.autoUpdate);
 		});
@@ -77,18 +67,10 @@ class UpdateManager {
 		});
 
 		autoUpdater.on('update-downloaded', info => {
-			const Api = require('./api.js');
-
 			this.isUpdating = false;
 
 			Util.log('info', 'Update downloaded: ' + JSON.stringify(info, null, 3));
-			Util.send(this.win, 'update-downloaded');
-
-			if (!this.autoUpdate) {
-				Api.exit(this.win, '', true);
-			} else {
-				Util.send(this.win, 'update-confirm', this.autoUpdate, info);
-			};
+			Util.send(this.win, 'update-downloaded', info);
 		});
 	};
 

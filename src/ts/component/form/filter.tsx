@@ -56,7 +56,6 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 }, ref) => {
 	const nodeRef = useRef(null);
 	const inputRef = useRef(null);
-	const placeholderRef = useRef(null);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isActive, setIsActive ] = useState(false);
 	const cn = [ 'filter', className ];
@@ -137,8 +136,6 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 			return;
 		};
 
-		resize();
-
 		if (onChange) {
 			onChange(v);
 		};
@@ -151,6 +148,10 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		};
 
 		buttonCheck();
+
+		keyboard.shortcut('arrowup, arrowdown', e, () => {
+			e.preventDefault();
+		});
 
 		if (onKeyDown) {
 			onKeyDown(e, v);
@@ -172,7 +173,6 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 
 	const buttonCheck = () => {
 		$(nodeRef.current).toggleClass('active', Boolean(getValue()));
-		placeholderCheck();
 	};
 
 	const getValue = () => {
@@ -187,30 +187,12 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		inputRef.current.setRange(range);
 	};
 
-	const placeholderCheck = () => {
-		getValue() ? placeholderHide() : placeholderShow();	
-	};
-
 	const placeholderSet = (v: string) => {
-		$(placeholderRef.current).text(v);
+		$(inputRef.current.getNode()).attr('placeholder', v);
 	};
 	
-	const placeholderHide = () => {
-		$(placeholderRef.current).hide();
-	};
-
-	const placeholderShow = () => {
-		$(placeholderRef.current).show();
-	};
-
-	const resize = () => {
-		const ref = $(placeholderRef.current);
-		ref.css({ lineHeight: ref.height() + 'px' });
-	};
-
 	const init = () => {
 		buttonCheck();
-		resize();
 	};
 
 	useEffect(() => init());
@@ -255,11 +237,8 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 						onKeyDown={onKeyDownHandler}
 						onKeyUp={onKeyUpHandler}
 						onSelect={onSelectHandler}
-						onInput={() => placeholderCheck()}
-						onCompositionStart={() => placeholderCheck()}
-						onCompositionEnd={() => placeholderCheck()}
+						placeholder={placeholder}
 					/>
-					<div ref={placeholderRef} className="placeholder">{placeholder}</div>
 				</div>
 
 				<Icon className="clear" onClick={onClearHandler} />

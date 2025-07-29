@@ -14,7 +14,6 @@ const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.Menu> {
 
-	_isMounted = false;
 	emptyLength = 0;
 	refList: any = null;
 	cache: any = {};
@@ -130,7 +129,6 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { isTemplate } = data;
 		const items = this.getItems(true);
 
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 
@@ -168,10 +166,6 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		this.onOver(null, items[this.n]);
 
 		S.Menu.close('previewLatex');
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 
 	rebind () {

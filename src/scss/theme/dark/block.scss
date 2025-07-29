@@ -116,6 +116,13 @@
         }
 		*/
 
+		.viewContent.viewGallery,
+		.viewContent.viewBoard,
+		.viewContent.viewList {
+			.icon.editMode { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
+			.icon.editMode:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
+		}
+
         .viewContent.viewBoard {
             .cardContent { background: var(--color-bg-secondary); }
 			.card.add { background: var(--color-bg-secondary); }
@@ -159,6 +166,7 @@
 		.preview.isSketchfab { background-image: url('#{$themePath}/icon/block/embed/sketchfab.svg'); }
 		.preview.isDrawio { background-image: url('#{$themePath}/icon/block/embed/drawio.svg'); }
 		.preview.isImage { background-image: url('#{$themePath}/icon/block/embed/image.svg'); }
+		.preview.isSpotify { background-image: url('#{$themePath}/icon/block/embed/spotify.svg'); }
 	}
 	.block.blockEmbed:not(.isLatex) {
 		#value svg { background: none; }
@@ -224,12 +232,15 @@
 			.reactions {
 				.reactionAdd { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
 			}
-		}
 
-		.formWrapper {
-			.navigation {
-				.btn {
-					.icon { background-image: url('#{$themePath}/arrow/chat.svg');}
+			.attachments {
+				.attachment {
+					&.isSyncing {
+						.icon.syncStatus { background-image: url('#{$themePath}/icon/chat/syncStatus/syncing.svg'); }
+					}
+					&.isError {
+						.icon.syncStatus { background-image: url('#{$themePath}/icon/chat/syncStatus/error.svg'); }
+					}
 				}
 			}
 		}
@@ -241,10 +252,15 @@
 					.icon.mention { background-image: url('#{$themePath}/icon/chat/navigation/mention.svg'); }
 				}
 			}
+
+			.dragOverlay {
+				.icon { background-image: url('#{$themePath}/icon/chat/dragState.svg'); }
+			}
 		}
 
 		.form {
 			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
+			.icon.send.isLoading { background: url('#{$themePath}/icon/chat/buttons/loader.svg'); }
 
 			.attachments {
 				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }

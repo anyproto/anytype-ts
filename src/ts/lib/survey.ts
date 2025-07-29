@@ -114,14 +114,14 @@ class Survey {
 		const week = 86400 * 7;
 		const month = 86400 * 30;
 		const registerTime = timeRegister <= time - week;
-		const cancelTime = obj.cancel && registerTime && (lastTime <= time - (month * 2));
+		const cancelTime = obj.cancel && registerTime && (lastTime <= time - month);
 
 		if (obj.complete) {
 			return;
 		};
 
-		// Show this survey to 5% of users
-		if (!this.checkRandSeed(5)) {
+		// Show this survey to 7% of users
+		if (!this.checkRandSeed(7)) {
 			Storage.setSurvey(type, { time });
 			return;
 		};

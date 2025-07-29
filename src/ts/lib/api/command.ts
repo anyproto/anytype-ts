@@ -164,6 +164,23 @@ export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) =
 	dispatcher.request(SpaceDelete.name, request, callBack);
 };
 
+export const SpaceSetOrder = (id: string, spaceViewOrder: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.SetOrder.Request();
+
+	request.setSpaceviewid(id);
+	request.setSpacevieworderList(spaceViewOrder);
+
+	dispatcher.request(SpaceSetOrder.name, request, callBack);
+};
+
+export const SpaceUnsetOrder = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.UnsetOrder.Request();
+
+	request.setSpaceviewid(id);
+
+	dispatcher.request(SpaceUnsetOrder.name, request, callBack);
+};
+
 // ---------------------- ACCOUNT ---------------------- //
 
 export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
@@ -1414,7 +1431,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 		const object = S.Detail.get(objectId, objectId, []);
 
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-			Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
+			Storage.setLastOpened(U.Common.getWindowId(), { id: object.id, layout: object.layout });
 		};
 
 		if (callBack) {
@@ -1483,6 +1500,17 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 		case I.ImportType.Markdown: {
 			params = new Rpc.Object.Import.Request.MarkdownParams();
 			params.setPathList(options.paths);
+			params.setCreatedirectorypages(true);
+
+			request.setMarkdownparams(params);
+			break;
+		};
+
+		case I.ImportType.Obsidian: {
+			params = new Rpc.Object.Import.Request.MarkdownParams();
+			params.setPathList(options.paths);
+			params.setCreatedirectorypages(true);
+			params.setIncludepropertiesasblock(true);
 
 			request.setMarkdownparams(params);
 			break;
@@ -1926,6 +1954,7 @@ export const ObjectListExport = (spaceId: string, path: string, objectIds: strin
 	request.setIncludefiles(includeFiles);
 	request.setIncludearchived(includeArchived);
 	request.setIsjson(isJson);
+	request.setMdincludepropertiesandschema(true);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);
 };
@@ -2463,4 +2492,15 @@ export const PublishingGetStatus = (spaceId: string, objectId: string, callBack?
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(PublishingGetStatus.name, request, callBack);
+};
+
+// ---------------------- PUSH ---------------------- //
+
+export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.NotificationMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.SetSpaceMode.Request();
+
+	request.setSpaceid(spaceId);
+	request.setMode(mode as number);
+
+	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
 };

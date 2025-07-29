@@ -438,6 +438,9 @@ class DetailStore {
 		object.chatId = Relation.getStringValue(object.chatId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
+		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
+		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
+		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;
@@ -459,10 +462,16 @@ class DetailStore {
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
 		// UX type
-		object.uxType = Number(object.spaceUxType);
+		object.uxType = object.uxType || object.spaceUxType;
 		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
 		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
+
+		// Chat
+		object.isMuted = [ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(object.notificationMode);
+
+		delete(object.spacePushNotificationMode);
+		delete(object.spaceUxType);
 
 		return object;
 	};
@@ -475,6 +484,22 @@ class DetailStore {
 	 */
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		return object;
+	};
+
+	/**
+	 * Maps bookmark-specific properties for an object.
+	 * @private
+	 * @param {any} object - The object to map.
+	 * @returns {any} The mapped object.
+	 */
+	private mapBookmark (object) {
+		object.source = Relation.getStringValue(object.source);
+
+		if (object.source && (!object.name || (object.name == translate('defaultNamePage')))) {
+			object.name = U.Common.shortUrl(object.source);
+		};
+
 		return object;
 	};
 

@@ -9,6 +9,7 @@ smile .loaderWrapper { display: inline-block; }
 .markuplink { color: inherit; text-decoration: none; }
 
 markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
+markupcode::after { content: ''; display: inline; width: 0.5em; height: 0.5em; vertical-align: middle; }
 
 markupemoji { display: inline; user-select: all; }
 markupemoji * { user-select: all; }
@@ -18,6 +19,7 @@ markupemoji {
 
 .markuplink, markupobject { 
 	position: relative; color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; cursor: default; 
+	user-select: text !important;
 }
 .markuplink.disabled, markupobject.disabled { border-width: 0px; }
 
@@ -57,3 +59,7 @@ markupsearch { background: yellow !important; color: var(--color-text-primary) !
 markupsearch.active { background: orange !important; }
 
 markuplatex { user-select: all !important; }
+
+markupbold, markupitalic, markupstrike, markupunderline, markuphighlight, markupsearch {
+	user-select: text !important;
+}

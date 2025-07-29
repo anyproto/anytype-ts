@@ -42,6 +42,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public showVaultValue = null;
+	public updateVersionValue = '';
 	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
 	public hideSidebarValue = null;
 	public pinValue = null;
@@ -114,6 +115,7 @@ class CommonStore {
 			timeFormatValue: observable,
 			pinValue: observable,
 			firstDayValue: observable,
+			updateVersionValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -204,18 +206,19 @@ class CommonStore {
 	};
 
 	get pin (): string {
-		if (this.pinValue === null) {
-			this.pinValue = Storage.get('pin');
+		let ret = this.pinValue;
+		if (ret === null) {
+			ret = Storage.get('pin');
 		};
-
-		return String(this.pinValue || '');
+		return String(ret || '');
 	};
 
 	get pinTime (): number {
-		if (this.pinTimeId === null) {
-			this.pinTimeId = Storage.get('pinTime');
+		let ret = this.pinTimeId;
+		if (ret === null) {
+			ret = Storage.get('pinTime');
 		};
-		return (Number(this.pinTimeId) || J.Constant.default.pinTime) * 1000;
+		return (Number(ret) || J.Constant.default.pinTime) * 1000;
 	};
 
 	get emailConfirmationTime (): number {
@@ -330,6 +333,10 @@ class CommonStore {
 		return Number(this.firstDayValue) || 1;
 	};
 
+	get updateVersion (): string {
+		return String(this.updateVersionValue || '');
+	};
+
 	/**
 	 * Sets the gateway URL.
 	 * @param {string} v - The gateway URL.
@@ -340,7 +347,6 @@ class CommonStore {
 
 	/**
 	 * Gets the file URL for a given file ID.
-	 * @private
 	 * @param {string} id - The file ID.
 	 * @returns {string} The file URL.
 	 */
@@ -350,13 +356,27 @@ class CommonStore {
 
 	/**
 	 * Gets the image URL for a given image ID and width.
-	 * @private
 	 * @param {string} id - The image ID.
 	 * @param {number} width - The image width.
 	 * @returns {string} The image URL.
 	 */
 	imageUrl (id: string, width: number) {
-		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
+		width = Number(width) || 0;
+
+		if (width === 0) {
+			width = 10000000;
+		} else
+		if ((width > 0) && (width <= I.ImageSize.Small)) {
+			width = I.ImageSize.Small;
+		} else
+		if ((width > I.ImageSize.Small) && (width <= I.ImageSize.Medium)) {
+			width = I.ImageSize.Medium;
+		} else 
+		if (width > I.ImageSize.Medium) {
+			width = I.ImageSize.Large;
+		};
+
+		return id ? [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${width}` : '';
 	};
 
 	/**
@@ -405,7 +425,6 @@ class CommonStore {
 
 	/**
 	 * Sets the toast object, resolving object references if needed.
-	 * @private
 	 * @param {I.Toast} toast - The toast object.
 	 */
 	toastSet (toast: I.Toast) {
@@ -437,7 +456,6 @@ class CommonStore {
 
 	/**
 	 * Sets the current space ID.
-	 * @private
 	 * @param {string} id - The space ID.
 	 */
 	spaceSet (id: string) {
@@ -446,7 +464,6 @@ class CommonStore {
 
 	/**
 	 * Clears the preview object.
-	 * @private
 	 */
 	previewClear () {
 		this.previewObj = { type: I.PreviewType.None, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
@@ -454,7 +471,6 @@ class CommonStore {
 
 	/**
 	 * Clears the toast object.
-	 * @private
 	 */
 	toastClear () {
 		this.toastObj = null;
@@ -462,7 +478,6 @@ class CommonStore {
 
 	/**
 	 * Sets the default type.
-	 * @private
 	 * @param {string} v - The type value.
 	 */
 	typeSet (v: string) {
@@ -473,7 +488,6 @@ class CommonStore {
 
 	/**
 	 * Sets the pin time value.
-	 * @private
 	 * @param {string} v - The pin time value.
 	 */
 	pinTimeSet (v: string) {
@@ -484,7 +498,6 @@ class CommonStore {
 
 	/**
 	 * Sets the pin value.
-	 * @private
 	 * @param {string} v - The pin value.
 	 */
 	pinSet (v: string) {
@@ -493,8 +506,15 @@ class CommonStore {
 	};
 
 	/**
+	 * Removes the pin value.
+	 */
+	pinRemove () {
+		this.pinValue = null;
+		Storage.delete('pin');
+	};
+
+	/**
 	 * Sets the email confirmation time.
-	 * @private
 	 * @param {number} t - The time value.
 	 */
 	emailConfirmationTimeSet (t: number) {
@@ -546,6 +566,14 @@ class CommonStore {
 
 		$('body').toggleClass('isFullScreen', v);
 		$(window).trigger('resize');
+	};
+
+	/**
+	 * Sets the update version value.
+	 * @param {string} v - The update version value.
+	 */
+	updateVersionSet (v: string) {
+		this.updateVersionValue = String(v || '');
 	};
 
 	/**
@@ -625,7 +653,6 @@ class CommonStore {
 
 	/**
 	 * Gets the current theme class string.
-	 * @private
 	 * @returns {string} The theme class.
 	 */
 	getThemeClass () {
@@ -642,7 +669,6 @@ class CommonStore {
 
 	/**
 	 * Sets the theme class on the document.
-	 * @private
 	 */
 	setThemeClass () {
 		const head = $('head');
@@ -659,7 +685,6 @@ class CommonStore {
 
 	/**
 	 * Gets the theme path string.
-	 * @private
 	 * @returns {string} The theme path.
 	 */
 	getThemePath () {
@@ -836,18 +861,27 @@ class CommonStore {
 	/**
 	 * Sets a timeout for a given ID and function.
 	 * @param {string} id - The timeout ID.
-	 * @param {number} timeout - The timeout duration.
+	 * @param {number} delay - The timeout duration.
 	 * @param {() => void} func - The function to call after timeout.
 	 */
-	setTimeout (id: string, timeout: number, func: () => void) {
-		window.clearTimeout(this.getTimeout(id));
+	setTimeout (id: string, delay: number, func: () => void) {
+		this.clearTimeout(id);
 
 		const t = window.setTimeout(() => {
 			this.timeoutMap.delete(id);
 			func();
-		}, timeout);
+		}, delay);
 
 		this.timeoutMap.set(id, t);
+		return t;
+	};
+
+	/**
+	 * Clears a timeout with a given ID.
+	 * @param {string} id - The timeout ID.
+	 */
+	clearTimeout (id: string) {
+		window.clearTimeout(this.getTimeout(id));
 	};
 
 };

@@ -1,9 +1,11 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Storage, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
 
 class UtilMenu {
+
+	menuContext = null;
 
 	/**
 	 * Maps a block item, adding translation and aliases.
@@ -113,6 +115,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
+			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 		];
 
 		if (config.experimental) {
@@ -646,25 +649,23 @@ class UtilMenu {
 			});
 		};
 
-		let menuContext = null;
-
 		analytics.event('ClickChangeSpaceDashboard');
 
 		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			subIds,
-			onOpen: context => menuContext = context,
+			onOpen: context => this.setContext(context),
 			onClose: () => S.Menu.closeAll(subIds),
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-					(U.Object.isAllowedChat() ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
+					(U.Object.isAllowedChat(true) ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
 					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
 					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
 				].filter(it => it),
 				onOver: (e: any, item: any) => {
-					if (!menuContext) {
+					if (!this.menuContext) {
 						return;
 					};
 
@@ -676,8 +677,8 @@ class UtilMenu {
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
 							S.Menu.open('searchObject', {
-								element: `#${menuContext.getId()} #item-${item.id}`,
-								offsetX: menuContext.getSize().width,
+								element: `#${this.menuContext.getId()} #item-${item.id}`,
+								offsetX: this.menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
 								data: {
@@ -688,7 +689,7 @@ class UtilMenu {
 									canAdd: true,
 									onSelect: el => {
 										onSelect(el, true);
-										menuContext.close();
+										this.menuContext?.close();
 
 										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
 									},
@@ -781,27 +782,32 @@ class UtilMenu {
 
 	spaceContext (space: any, param: any) {
 		const { targetSpaceId } = space;
-		const isOwner = U.Space.isMyOwner(targetSpaceId);
-		const isLocalNetwork = U.Data.isLocalNetwork();
-		const { isOnline } = S.Common;
 		const options: any[] = [];
 
 		let cid = '';
 		let key = '';
 
 		const cb = () => {
-			if (isOwner && space.isShared && !isLocalNetwork && isOnline && cid && key) {
-				options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
+			const pinned = this.getVaultItems().filter(it => it.isPinned);
+			if (space.spaceOrder) {
+				options.push({ id: 'unpin', name: translate('commonUnpin') });
+			} else 
+			if (pinned.length < J.Constant.limit.space.pin) {
+				options.push({ id: 'pin', name: translate('commonPin') });
 			};
 
-			if (space.isAccountRemoving) {
-				options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
-			} else 
-			if (space.isAccountJoining) {
-				options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
-			} else {
-				options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
+			if (space.chatId) {
+				if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+					options.push({ id: 'unmute', name: translate('commonUnmute') });
+				} else {
+					options.push({ id: 'mute', name: translate('commonMute') });
+				};
 			};
+
+			if (options.length) {
+				options.push({ isDiv: true });
+			};
+			options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 
 			S.Menu.open('select', {
 				...param,
@@ -810,43 +816,35 @@ class UtilMenu {
 					onSelect: (e: any, element: any) => {
 						window.setTimeout(() => {
 							switch (element.id) {
-								case 'export': {
-									Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
-										zip: true, 
-										nested: true, 
-										files: true, 
-										archived: true, 
-										json: false, 
-										route: param.route,
-									});
+								case 'mute':
+								case 'unmute': {
+									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
+
+									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+									analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
 									break;
 								};
 
-								case 'remove': {
-									Action.removeSpace(targetSpaceId, param.route);
+								case 'pin': {
+									C.SpaceSetOrder(space.id, [ space.id ]);
 									break;
 								};
 
-								case 'cancel': {
-									C.SpaceJoinCancel(targetSpaceId, (message: any) => {
-										if (message.error.code) {
-											window.setTimeout(() => {
-												S.Popup.open('confirm', { 
-													data: {
-														title: translate('commonError'),
-														text: message.error.description,
-													}
-												});
-											}, S.Popup.getTimeout());
-										};
-									});
+								case 'unpin': {
+									C.SpaceUnsetOrder(space.id);
 									break;
 								};
 
-								case 'revoke': {
-									Action.inviteRevoke(targetSpaceId);
+								case 'settings': {
+									const routeParam = { 
+										replace: true, 
+										onRouteChange: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
+									};
+			
+									U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
 									break;
 								};
+
 							};
 
 						}, S.Menu.getTimeout());
@@ -910,29 +908,55 @@ class UtilMenu {
 			return [];
 		};
 
-		const ids = Storage.get('spaceOrder') || [];
-		const items = U.Common.objectCopy(U.Space.getList());
+		const items = U.Common.objectCopy(U.Space.getList()).
+			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
+			map(it => {
+				it.counter = 0;
+				it.lastMessageDate = 0;
 
-		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
+				if (!it.isButton) {
+					const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 
-		if (ids && (ids.length > 0)) {
-			items.sort((c1, c2) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-
-				if (i1 > i2) return 1;
-				if (i1 < i2) return -1;
-				return 0;
+					it.counter = counters.mentionCounter || counters.messageCounter;
+					it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
+					it.isPinned = !!it.spaceOrder;
+				};
+				return it;
 			});
-		};
+
+		items.sort((c1, c2) => {
+			if (c1.isButton && !c2.isButton) return 1;
+			if (!c1.isButton && c2.isButton) return -1;
+
+			if (c1.isPinned && !c2.isPinned) return -1;
+			if (!c1.isPinned && c2.isPinned) return 1;
+
+			if (c1.tmpOrder > c2.tmpOrder) return 1;
+			if (c1.tmpOrder < c2.tmpOrder) return -1;
+
+			if (c1.spaceOrder > c2.spaceOrder) return 1;
+			if (c1.spaceOrder < c2.spaceOrder) return -1;
+
+			if (c1.lastMessageDate > c2.lastMessageDate) return -1;
+			if (c1.lastMessageDate < c2.lastMessageDate) return 1;
+
+			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
+			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
+
+			if (c1.creationDate > c2.creationDate) return -1;
+			if (c1.creationDate < c2.creationDate) return 1;
+			return 0;
+		});
 
 		return items;
 	};
 
 	getSystemWidgets () {
+		const space = U.Space.getSpaceview();
+
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: 'widget-chat' },
+			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}` },
 			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
@@ -944,11 +968,9 @@ class UtilMenu {
 		const { rootId, blockId, getView, onSelect } = param;
 		const options = Relation.getFilterOptions(rootId, blockId, getView());
 
-		let menuContext = null;
-
 		const callBack = (item: any) => {
 			onSelect(item);
-			menuContext?.close();
+			this.menuContext?.close();
 		};
 
 		if (S.Menu.isOpen('select')) {
@@ -956,7 +978,7 @@ class UtilMenu {
 		};
 
 		const onOpen = context => {
-			menuContext = context;
+			this.setContext(context);
 
 			if (menuParam.onOpen) {
 				menuParam.onOpen(context);
@@ -980,7 +1002,7 @@ class UtilMenu {
 				withAdd: true,
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
-						this.sortOrFilterRelationAdd(menuContext, param, relation => callBack(relation));
+						this.sortOrFilterRelationAdd(this.menuContext, param, relation => callBack(relation));
 					} else {
 						callBack(item);
 					};
@@ -1198,8 +1220,6 @@ class UtilMenu {
 		details = details || {};
 		flags = flags || {};
 
-		let menuContext = null;
-
 		const objectFlags: I.ObjectFlag[] = [];
 
 		if (flags.selectTemplate) {
@@ -1334,12 +1354,11 @@ class UtilMenu {
 			});
 		};
 
-		const buttons: any[] = [
-			flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
-		].filter(it => it);
-
 		const check = async () => {
 			const items = await getClipboardData();
+			const buttons: any[] = [
+				flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
+			].filter(it => it);
 
 			if (items.length) {
 				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
@@ -1347,14 +1366,24 @@ class UtilMenu {
 
 			buttons.unshift({ 
 				id: 'add', icon: 'plus', onClick: () => {
-					U.Object.createType({ name: menuContext.ref.getData().filter }, keyboard.isPopup());
-					menuContext.close();
+					U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
+					this.menuContext?.close();
+
+					if (param.data.onAdd) {
+						param.data.onAdd();
+					};
 				}, 
 			});
 
 			S.Menu.open('typeSuggest', {
 				...param,
-				onOpen: context => menuContext = context,
+				onOpen: context => {
+					this.setContext(context);
+
+					if (param.onOpen) {
+						param.onOpen(context);
+					};
+				},
 				data: {
 					noStore: true,
 					canAdd: true,
@@ -1374,16 +1403,19 @@ class UtilMenu {
 							analytics.event('SelectObjectType', { objectType: object.type });
 							analytics.createObject(object.type, object.layout, route, time);
 
-							menuContext.close();
+							this.menuContext?.close();
 						};
 
 						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-							menuContext.close(() => {
+							this.menuContext?.close();
+
+							window.setTimeout(() => {
 								this.onBookmarkMenu({
 									...param,
 									element: `#widget-space-arrow`,
+									data: { details },
 								}, object => cb(object, 0));
-							});
+							}, S.Menu.getTimeout());
 						} else {
 							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
 								if (!message.error.code) {
@@ -1414,6 +1446,10 @@ class UtilMenu {
 			},
 			...param,
 		});
+	};
+
+	setContext (context: any) {
+		this.menuContext = context;
 	};
 
 };

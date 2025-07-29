@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Label, Icon, Button } from 'Component';
+import { Label, Icon, Button, EmptyState } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
@@ -11,7 +11,6 @@ const GROUP_TIME = 300;
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent> {
 
-	_isMounted = false;
 	node = null;
 	refList = null;
 	refForm = null;
@@ -106,11 +105,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			>
 				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
 					{!messages.length ? (
-						<div className="emptyState">
-							<Icon />
-							<Label text={translate('blockChatEmpty')} />
-							{space.isChat ? <Button onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} color="blank" className="c28" text={translate('blockChatEmptyShareInviteLink')} /> : ''}
-						</div>
+						<EmptyState
+							text={translate('blockChatEmpty')}
+							buttonText={space.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
+							onButton={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
+						/>
 					) : (
 						<div className="scroll">
 							{sections.map(section => <Section {...section} key={section.createdAt} />)}
@@ -140,7 +139,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 
 		const { isPopup } = this.props;
@@ -171,7 +169,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		window.clearTimeout(this.timeoutInterface);
@@ -181,7 +178,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'chatStateUpdate' ];
+		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -196,7 +193,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.unbind();
 
 		win.on(`messageAdd.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
-		win.on(`messageUpdate.${ns}`, () => this.scrollToBottomCheck());
+		win.on(`messageUpdate.${ns}`, (e, message, subIds) => this.onMessageAdd(message, subIds));
 		win.on(`reactionUpdate.${ns}`, () => this.scrollToBottomCheck());
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
@@ -388,7 +385,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let marks = [];
 
 		if (this.refForm) {
-			attachments = attachments.concat((this.refForm.state.attachments || []).map(it => it.id));
+			attachments = attachments.concat((this.refForm.state.attachments || []).filter(it => !it.isTmp).map(it => it.id));
 			marks = marks.concat(this.refForm.marks || []);
 
 			const replyingId = this.refForm.getReplyingId();
@@ -416,7 +413,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		return S.Record.getSubId(this.getRootId(), this.props.block.id);
+		return [ '', S.Common.space, `${this.getRootId()}:${this.props.block.id}`, U.Common.getWindowId() ].join('-');
 	};
 
 	loadDeps (ids: string[], callBack?: () => void) {
@@ -435,7 +432,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			updateDetails: true,
 		}, () => {
 			this.forceUpdate();
-			this.refForm?.forceUpdate();
+			//this.refForm?.forceUpdate();
 
 			if (callBack) {
 				callBack();

@@ -39,6 +39,7 @@ interface Props {
 	onBlur?(e: any, value: string): void;
 	onSelect?(e: any, value: string): void;
 	onClick?(e: any): void;
+	onUnmount?(): void;
 };
 
 export interface InputRef {
@@ -46,12 +47,13 @@ export interface InputRef {
 	getValue: () => string;
 	setType: (v: string) => void;
 	setError: (v: boolean) => void;
-	focus: () => void;
+	focus: (preventScroll?: boolean) => void;
 	blur: () => void;
 	select: () => void;
-	setRange: (range: I.TextRange) => void;
+	setRange: (range: I.TextRange, preventScroll?: boolean) => void;
 	getRange: () => I.TextRange;
 	getSelectionRect: () => DOMRect | null;
+	getNode: () => HTMLInputElement | null;
 };
 
 const Input = forwardRef<InputRef, Props>(({
@@ -88,6 +90,7 @@ const Input = forwardRef<InputRef, Props>(({
 	onFocus,
 	onBlur,
 	onSelect,
+	onUnmount,
 }, ref) => {
 
 	const [ value, setValue ] = useState(initialValue);
@@ -102,8 +105,10 @@ const Input = forwardRef<InputRef, Props>(({
 		cn.push('isReadonly');
 	};
 
-	const focus = () => {
-		inputRef.current?.focus({ preventScroll: true });
+	const focus = (preventScroll?: boolean) => {
+		const v = (undefined !== preventScroll) ? preventScroll : true;
+
+		inputRef.current?.focus({ preventScroll: v });
 	};
 
 	const handleEvent = (
@@ -118,20 +123,20 @@ const Input = forwardRef<InputRef, Props>(({
 		handleEvent(onChange, e);
 	};
 
-	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) {
-			return;
-		};
-
-		handleEvent(onKeyUp, e);
-	};
-
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
 		if ($(inputRef.current).hasClass('disabled')) {
 			return;
 		};
 
 		handleEvent(onKeyDown, e);
+	};
+
+	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+		if ($(inputRef.current).hasClass('disabled')) {
+			return;
+		};
+
+		handleEvent(onKeyUp, e);
 	};
 
 	const handleInput = (e: FormEvent<HTMLInputElement>) => {
@@ -191,7 +196,6 @@ const Input = forwardRef<InputRef, Props>(({
 	const handleCompositionEnd = (e) => {
 		keyboard.setComposition(false);
 		onCompositionEnd?.();
-
 		handleChange(e);
 	};
 
@@ -249,6 +253,12 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	useEffect(() => {
+		return () => {
+			onUnmount?.();
+		};
+	}, []);
+
+	useEffect(() => {
 		if (maskOptions && inputRef.current) {
 			new Inputmask(maskOptions.mask, maskOptions).mask($(inputRef.current).get(0));
 		};
@@ -275,7 +285,7 @@ const Input = forwardRef<InputRef, Props>(({
 	}, [ value ]);
 
 	useImperativeHandle(ref, () => ({
-		focus,
+		focus: (preventScroll?: boolean) => focus(preventScroll),
 		blur: () => inputRef.current?.blur(),
 		select: () => inputRef.current?.select(),
 		setValue: (v: string) => setValue(String(v || '')),
@@ -284,13 +294,14 @@ const Input = forwardRef<InputRef, Props>(({
 		setError: (hasError: boolean) => $(inputRef.current).toggleClass('withError', hasError),
 		getSelectionRect,
 		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
-		setRange: (range: I.TextRange) => {
+		setRange: (range: I.TextRange, preventScroll?: boolean) => {
 			callWithTimeout(() => {
-				focus();
+				focus(preventScroll);
 				inputRef.current?.setSelectionRange(range.from, range.to);
 			});
 		},
 		getRange: (): I.TextRange | null => rangeRef.current,
+		getNode: () => inputRef.current,
 	}));
 
 	return (
@@ -328,6 +339,10 @@ const Input = forwardRef<InputRef, Props>(({
 			min={min}
 			max={max}
 			step={step}
+			onDragStart={e => {
+				e.preventDefault();
+				e.stopPropagation();
+			}}
 		/>
 	);
 });

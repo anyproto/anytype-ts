@@ -1,0 +1,7 @@
+@import "~scss/_mixins";
+
+.emptyState { display: flex; padding: 64px 0px; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
+.emptyState {
+	.icon { width: 56px; height: 56px; background: url('~img/icon/chat/emptyState.svg'); margin: 0px 0px 16px 0px; }
+	.label { @include text-common; font-weight: 400; color: var(--color-text-secondary); margin: 0px 0px 12px 0px; }
+}

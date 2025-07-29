@@ -29,10 +29,6 @@ const history = memoryHistory();
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
-interface State {
-	isLoading: boolean;
-};
-
 declare global {
 	interface Window {
 		isExtension: boolean;
@@ -77,6 +73,7 @@ if (!isPackaged) {
 			Decode,
 			translate,
 			sidebar,
+			Action,
 		},
 	};
 };
@@ -165,11 +162,8 @@ const App: FC = () => {
 		Renderer.on('init', onInit);
 		Renderer.on('route', (e: any, route: string) => onRoute(route));
 		Renderer.on('popup', onPopup);
-		Renderer.on('checking-for-update', onUpdateCheck);
-		Renderer.on('update-available', onUpdateAvailable);
-		Renderer.on('update-confirm', onUpdateConfirm);
 		Renderer.on('update-not-available', onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => S.Progress.delete('update'));
+		Renderer.on('update-downloaded', onUpdateDownloaded);
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-progress', onUpdateProgress);
 		Renderer.on('spellcheck', onSpellcheck);
@@ -345,83 +339,13 @@ const App: FC = () => {
 		window.setTimeout(() => S.Popup.open(id, param), S.Popup.getTimeout());
 	};
 
-	const onUpdateCheck = (e: any, auto: boolean) => {
-		if (!auto) {
-			S.Progress.add({ id: I.ProgressType.UpdateCheck, type: I.ProgressType.UpdateCheck, current: 0, total: 1 });
-		};
-	};
-
-	const onUpdateConfirm = (e: any, auto: boolean, info: any) => {
-		S.Progress.delete(I.ProgressType.UpdateCheck);
-
-		if (auto) {
-			return;
-		};
-
-		console.log('[App.onUpdateConfirm]', info);
-
-		const title = [ translate('popupConfirmUpdatePromptTitle') ];
-		const version = info?.releaseName;
-
-		if (version) {
-			title.push(version);
-		};
-
-		S.Popup.open('confirm', {
-			data: {
-				icon: 'update',
-				title: title.join(' - '),
-				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
-				textCancel: translate('popupConfirmUpdatePromptCancel'),
-				onConfirm: () => {
-					Renderer.send('updateConfirm');
-					checkUpdateVersion(version);
-				},
-				onCancel: () => {
-					Renderer.send('updateCancel');
-				},
-			},
-		});
-	};
-
-	const onUpdateAvailable = (e: any, auto: boolean, info: any) => {
-		S.Progress.delete(I.ProgressType.UpdateCheck);
-
-		if (auto) {
-			return;
-		};
-
-		console.log('[App.onUpdateAvailable]', info);
-
-		const title = [ translate('popupConfirmUpdatePromptTitle') ];
-		const version = info?.version;
-
-		if (version) {
-			title.push(version);
-		};
-
-		S.Popup.open('confirm', {
-			data: {
-				icon: 'update',
-				title: title.join(' - '),
-				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('commonUpdate'),
-				textCancel: translate('popupConfirmUpdatePromptCancel'),
-				onConfirm: () => {
-					Renderer.send('updateDownload');
-					checkUpdateVersion(version);
-				},
-				onCancel: () => {
-					Renderer.send('updateCancel');
-				},
-			},
-		});
+	const onUpdateDownloaded = (e: any, info: any) => {
+		console.log('[App.onUpdateDownloaded]', info);
+		S.Common.updateVersionSet(info?.version);
+		S.Progress.delete(I.ProgressType.Update);
 	};
 
 	const onUpdateUnavailable = (e: any, auto: boolean) => {
-		S.Progress.delete(I.ProgressType.UpdateCheck);
-
 		if (auto) {
 			return;
 		};
@@ -440,7 +364,6 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
-		S.Progress.delete(I.ProgressType.UpdateCheck);
 
 		if (auto) {
 			return;
@@ -470,22 +393,6 @@ const App: FC = () => {
 			current: progress.transferred, 
 			total: progress.total,
 		});
-	};
-
-	const checkUpdateVersion = (v: string) => {
-		if (!Storage.get('primitivesOnboarding')) {
-			return;
-		};
-
-		v = String(v || '');
-
-		const update = v.split('.');
-		const current = String(electron.version.app || '').split('.');
-
-		if ((update[0] != current[0]) || (update[1] != current[1])) {
-			Storage.set('whatsNew', true);
-			Storage.setHighlight('whatsNew', true);
-		};
 	};
 
 	const onRoute = (route: string) => {

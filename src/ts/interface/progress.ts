@@ -1,11 +1,11 @@
 export enum ProgressType {
+	None		 = '',
 	Drop		 = 'dropFiles',
 	Import		 = 'import',
 	Export		 = 'export',
 	Save		 = 'saveFile',
 	Migrate		 = 'migration',
 	Update		 = 'update',
-	UpdateCheck	 = 'updateCheck',
 };
 
 export enum ProgressState {

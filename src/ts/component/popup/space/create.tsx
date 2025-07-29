@@ -65,6 +65,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		const { onCreate, route } = data;
 		const name = checkName(nameRef.current.getTextValue());
 		const isChatSpace = uxType == I.SpaceUxType.Chat;
+		const usecase = isChatSpace ? I.Usecase.ChatSpace : I.Usecase.DataSpace;
 
 		if (isLoading || !canSave) {
 			return;
@@ -72,16 +73,21 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 		setIsLoading(true);
 
-		const details = {
+		const details: any = {
 			name,
 			iconOption,
 			spaceUxType: uxType,
 			spaceAccessType: I.SpaceType.Private,
+			spaceDashboardId: I.HomePredefinedId.Last,
+		};
+
+		if (isChatSpace) {
+			details.spaceDashboardId = I.HomePredefinedId.Chat;
 		};
 
 		analytics.event(withImport ? 'ClickCreateSpaceImport' : 'ClickCreateSpaceEmpty');
 
-		C.WorkspaceCreate(details, I.Usecase.Empty, (message: any) => {
+		C.WorkspaceCreate(details, usecase, (message: any) => {
 			setIsLoading(false);
 
 			if (message.error.code) {
@@ -96,10 +102,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					setError(message.error.description);
 					return;
 				};
-
-				const ids = [ message.objectId ].concat(U.Menu.getVaultItems().map(it => it.id));
-
-				Storage.set('spaceOrder', ids);
 
 				U.Router.switchSpace(message.objectId, '', true, { 
 					onRouteChange: () => {
@@ -134,8 +136,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					} 
 				}, false);
 
-				analytics.event('CreateSpace', { usecase: I.Usecase.Empty, middleTime: message.middleTime, route, uxType });
-				analytics.event('SelectUsecase', { type: I.Usecase.Empty });
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, uxType });
+				analytics.event('SelectUsecase', { type: usecase });
 			});
 		});
 	};

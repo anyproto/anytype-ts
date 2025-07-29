@@ -199,7 +199,7 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 
 		forceUpdate: () => {
 			if (childRef.current && childRef.current.forceUpdate) {
-				childRef.current.forceUpdate();
+				childRef.current?.forceUpdate();
 			};
 		},
 	}));

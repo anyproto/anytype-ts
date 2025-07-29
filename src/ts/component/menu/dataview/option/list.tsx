@@ -10,7 +10,6 @@ const LIMIT = 40;
 
 const MenuOptionList = observer(class MenuOptionList extends React.Component<I.Menu> {
 	
-	_isMounted = false;
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
@@ -162,7 +161,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	componentDidMount () {
 		const items = this.getItems();
 
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 
@@ -190,7 +188,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 	};
 
@@ -403,7 +400,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			if (!isSelected1 && isSelected2) return 1;
 
 			return 0;
-		});
+		}).sort(U.Data.sortByName);
 
 		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');

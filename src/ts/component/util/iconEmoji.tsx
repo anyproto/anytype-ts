@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { S, U, J } from 'Lib';
+import { S, U, I } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -48,7 +48,7 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 	if (objectId) {
 		element = (
 			<img 
-				src={S.Common.imageUrl(objectId, J.Size.iconPage)}
+				src={S.Common.imageUrl(objectId, I.ImageSize.Medium)}
 				className={[ 'iconImage', 'c' + size ].join(' ')}
 				onDragStart={e => e.preventDefault()}
 			/>

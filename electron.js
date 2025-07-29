@@ -45,6 +45,7 @@ for (let i in Cors) {
 };
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
+app.commandLine.appendSwitch('gtk-version', '3');
 app.removeAsDefaultProtocolClient(protocol);
 
 if (process.defaultApp) {

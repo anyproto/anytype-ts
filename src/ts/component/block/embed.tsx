@@ -599,7 +599,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
-				const sandbox = [ 'allow-scripts', 'allow-same-origin' ];
+				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
@@ -609,17 +609,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					sandbox.push('allow-presentation');
 				};
 
-				if (U.Embed.allowPopup(processor)) {
-					sandbox.push('allow-popups');
-				};
-
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const sanitizeParam: any = { 
 						ADD_TAGS: [ 'iframe', 'div', 'a' ],
 						ADD_ATTR: [
-							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy', 'src',
 						],
+						ALLOWED_URI_REGEXP: /^(?:(?:ftp|https?|mailto|tel|callto|sms|cid|xmpp|xxx|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 					};
 
 					const data: any = { 
@@ -670,7 +667,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					if (block.isEmbedDrawio()) {
-						sanitizeParam.ADD_TAGS.push('svg', 'foreignObject', 'switch');
+						sanitizeParam.ADD_TAGS.push('svg', 'foreignObject', 'switch', 'g', 'text');
 
 						allowScript = !!text.match(/https:\/\/(?:viewer|embed|app)\.diagrams\.net\/\?[^"\s>]*/);
 					};
@@ -683,6 +680,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
+						text = text.replace(/\r?\n/g, '');
+						text = text.replace(/<iframe([^>]*)>.*?<\/iframe>/gi, '<iframe$1></iframe>');
+
 						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 

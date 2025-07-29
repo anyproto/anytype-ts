@@ -14,6 +14,7 @@ DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
 DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
+DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -146,6 +147,15 @@ class UtilEmbed {
 	 */
 	getDrawioHtml (content: string): string {
 		return content.match(/^<svg/) ? content : `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	};
+
+	/**
+	 * Returns the HTML for embedding a Spotify audio.
+	 * @param {string} content - The Spotify URL.
+	 * @returns {string} The HTML iframe string.
+	 */
+	getSpotifyHtml (content: string): string {
+		return `<iframe src="${content}" ${IFRAME_PARAM} allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" loading="lazy"></iframe>`;
 	};
 
 	/**
@@ -325,6 +335,16 @@ class UtilEmbed {
 				break;
 			};
 
+			case I.EmbedProcessor.Spotify: {
+				try {
+					const a = new URL(url);
+					a.pathname = a.pathname.replace(/^\/(track|album|playlist)/, '/embed/$1');
+					a.searchParams.set('utm_source', 'generator');
+					url = a.toString();
+				} catch (e) { /**/ };
+				break;
+			};
+			
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
 				if (!a.length) {
@@ -418,7 +438,8 @@ class UtilEmbed {
 		return [ 
 			I.EmbedProcessor.Youtube, 
 			I.EmbedProcessor.Vimeo,
-			I.EmbedProcessor.Bilibili
+			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Spotify,
 		].includes(p);
 	};
 
@@ -438,6 +459,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Sketchfab,
 			I.EmbedProcessor.Drawio,
+			I.EmbedProcessor.Spotify,
 			I.EmbedProcessor.Image,
 		].includes(p);
 	};
@@ -447,11 +469,6 @@ class UtilEmbed {
 		return [ 
 			I.EmbedProcessor.Chart,
 		].includes(p);
-	};
-
-	// Allow to use popup mode in iframe sandbox
-	allowPopup (p: I.EmbedProcessor) {
-		return [ I.EmbedProcessor.Bilibili ].includes(p);
 	};
 
 	// Allow block resizing
@@ -474,7 +491,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
-			I.EmbedProcessor.Drawio,
+			I.EmbedProcessor.Spotify,
 		].includes(p);
 	};
 
@@ -518,6 +535,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Drawio,
+			I.EmbedProcessor.Spotify,
 		].includes(p);
 	};
 

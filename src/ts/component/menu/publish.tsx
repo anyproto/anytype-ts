@@ -53,7 +53,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPublish = (isUpdate?: boolean) => {
 		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
 
-
 		publishRef.current?.setLoading(true);
 
 		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
@@ -172,7 +171,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('menuPublishButtonUnpublish'), color: 'blank', ref: unpublishRef, onClick: onUnpublish },
-				{ text: translate('menuPublishButtonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
+				{ text: translate('commonUpdate'), ref: publishRef, onClick: () => onPublish(true) },
 			]);
 		};
 	};
@@ -217,7 +216,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className="simple"
 					text={translate('commonCopy')}
 					onClick={() => {
-						U.Common.copyToast(translate('commonLink'), `https://${url}`);
+						U.Common.copyToast(translate('commonLink'), url);
 						analytics.event('ClickShareObjectCopyUrl', { objectType: object.type });
 					}} 
 				/>
@@ -235,7 +234,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			) : ''}
 
-			{!tier?.price ? (
+			{!tier?.namesCount ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
 					<Button text={translate('menuPublishUpgrade')} onClick={onUpgrade} />

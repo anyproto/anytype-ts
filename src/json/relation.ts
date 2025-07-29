@@ -160,9 +160,12 @@ export default {
 		'targetSpaceId',
 		'creator',
 		'createdDate',
-		'lastMessageDate',
 		'chatId',
 		'spaceUxType',
+		'spacePushNotificationMode',
+		'spaceOrder',
+		'tmpOrder',
+		'spaceJoinDate',
 	],
 
 	participant: [

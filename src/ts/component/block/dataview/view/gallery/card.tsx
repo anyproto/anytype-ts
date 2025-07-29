@@ -1,17 +1,20 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, DropTarget, SelectionTarget, ObjectCover } from 'Component';
+import { Cell, DropTarget, SelectionTarget, ObjectCover, Icon } from 'Component';
 import { I, S, U, Relation, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
+	rowIndex: number;
 	style?: any;
 };
 
 const Card = observer(class Card extends React.Component<Props> {
 
 	_isMounted = false;
+	isEditing = false;
 	node: any = null;
+	rowIndex: number = this.props.rowIndex;
 
 	constructor (props: Props) {
 		super(props);
@@ -21,7 +24,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject } = this.props;
+		const {
+			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection,
+			getCoverObject, onEditModeClick, canCellEdit,
+		} = this.props;
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -30,6 +36,8 @@ const Card = observer(class Card extends React.Component<Props> {
 		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout), U.Data.cardSizeClass(cardSize) ];
 		const subId = S.Record.getSubId(rootId, block.id);
 		const cover = getCoverObject(recordId);
+		const relationName: any = S.Record.getRelationByKey('name') || {};
+		const canEdit = canCellEdit(relationName, record);
 
 		if (coverFit) {
 			cn.push('coverFit');
@@ -43,10 +51,19 @@ const Card = observer(class Card extends React.Component<Props> {
 			<div className="cardContent">
 				<ObjectCover object={cover} />
 
+				{canEdit ? (
+					<Icon
+						className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
+						onClick={e => onEditModeClick(e, recordId)}
+					/>
+				) : ''}
+
 				<div className="inner">
 					{relations.map((vr: any) => {
 						const relation = S.Record.getRelationByKey(vr.relationKey);
 						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+						const isName = relation.relationKey == 'name';
+						const iconSize = relation.relationKey == 'name' ? 20 : 16;
 
 						return (
 							<Cell
@@ -55,16 +72,19 @@ const Card = observer(class Card extends React.Component<Props> {
 								{...this.props}
 								getRecord={() => record}
 								subId={subId}
-								ref={ref => onRef(ref, id)}
+								ref={ref => onRefCell(ref, id)}
 								relationKey={relation.relationKey}
 								viewType={view.type}
 								idPrefix={idPrefix}
 								arrayLimit={2}
 								tooltipParam={{ text: relation.name, typeX: I.MenuDirection.Left }}
 								onClick={e => this.onCellClick(e, relation)}
-								iconSize={relation.relationKey == 'name' ? 20 : 18}
+								iconSize={iconSize}
+								size={iconSize}
 								shortUrl={true}
 								withName={true}
+								noInplace={!isName}
+								editModeOn={this.isEditing}
 							/>
 						);
 					})}
@@ -132,6 +152,11 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onDragStart (e: any) {
+		if (keyboard.isFocused || this.isEditing) {
+			e.preventDefault();
+			return;
+		};
+
 		const { isCollection, recordId, getRecord, onDragRecordStart } = this.props;
 		const record = getRecord(recordId);
 
@@ -168,7 +193,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = getRecord(recordId);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 
-		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation) {
 			return;
 		};
 
@@ -176,6 +201,11 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id);
+	};
+
+	setIsEditing (v:boolean) {
+		this.isEditing = v;
+		this.forceUpdate();
 	};
 
 });

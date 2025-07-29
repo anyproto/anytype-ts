@@ -321,19 +321,13 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	onUpgrade (type: string) {
-		const { membership } = S.Auth;
-
-		if (membership.tier >= I.TierType.Builder) {
-			Action.membershipUpgrade();
-		} else {
-			this.props.onPage('membership');
-		};
+		Action.membershipUpgrade();
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
 	};
 
 	getParticipantList () {
-		const records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
+		const records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
 
 		return records.sort((c1, c2) => {
 			const isRequest1 = c1.isJoining || c1.isRemoving;

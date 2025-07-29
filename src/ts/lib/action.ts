@@ -342,7 +342,7 @@ class Action {
 			return;
 		};
 		
-		const url = isImage ? S.Common.imageUrl(id, 1000000) : S.Common.fileUrl(id);
+		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
 
 		Renderer.send('download', url, { saveAs: true });
 		analytics.event('DownloadMedia', { route });
@@ -918,16 +918,37 @@ class Action {
 		});
 	};
 
+	membershipUpgrade () {
+		if (!U.Common.checkCanMembershipUpgrade()) {
+			this.membershipUpgradeViaEmail();
+			return;
+		};
+
+		const { membership } = S.Auth;
+		const isBuilder = membership.tier == I.TierType.Builder;
+
+		U.Object.openRoute(
+			{ id: 'membership', layout: I.ObjectLayout.Settings },
+			{
+				onRouteChange: () => {
+					S.Popup.open('membership', {
+						data: { tier: isBuilder ? I.TierType.CoCreator : I.TierType.Builder }
+					});
+				}
+			},
+		);
+	};
+
 	/**
 	 * Opens a membership upgrade confirmation popup.
 	 */
-	membershipUpgrade () {
+	membershipUpgradeViaEmail () {
 		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
 				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgrade(),
+				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
 				canCancel: false
 			}
 		});
@@ -1085,9 +1106,16 @@ class Action {
 
 	checkDiskSpace (callBack?: () => void) {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
-			const { free, size } = diskSpace;
+			if (!diskSpace) {
+				if (callBack) {
+					callBack();
+				};
+				return;
+			};
 
-			if (free >= size * 0.9) {
+			const { free } = diskSpace;
+
+			if (free <= 1024 * 1024 * 1024) { // less than 1GB
 				S.Popup.open('confirm', {
 					onClose: callBack,
 					data: {
@@ -1103,7 +1131,6 @@ class Action {
 				callBack();
 			};
 		});
-
 	};
 
 };

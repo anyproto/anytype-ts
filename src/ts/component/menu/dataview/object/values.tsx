@@ -18,7 +18,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
 	const { data, className, classNameWrap } = param;
-	const { rootId, valueMapper, nameAdd, canEdit, onChange } = data;
+	const { subId, valueMapper, nameAdd, canEdit, onChange } = data;
 	const listRef = useRef(null);
 	const topRef = useRef(0);
 	const n = useRef(-1);
@@ -41,7 +41,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const getItems = () => {
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => S.Detail.get(rootId, it, []));
+		value = value.map(it => S.Detail.get(subId, it, []));
 		
 		if (valueMapper) {
 			value = value.map(valueMapper);
@@ -164,6 +164,8 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const offset = 16;
 		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 
+		listRef.current?.recomputeRowHeights(0);
+
 		obj.css({ height });
 		position();
 	};
@@ -228,7 +230,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			);
 		} else
 		if (item.isEmpty) {
-			content = <EmptySearch style={param.style} text={translate('menuDataviewObjectValuesEmptySearch')} />;
+			content = <EmptySearch key={item.id} style={param.style} text={translate('menuDataviewObjectValuesEmptySearch')} />;
 		} else
 		if (item.id == 'add') {
 			content = <ItemAdd key={item.id} {...item} index={param.index} disabled={true} style={param.style} />;

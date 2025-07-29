@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.47.10-alpha",
+	"version": "0.47.49-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -69,7 +69,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^35.2.1",
+		"electron": "^37.2.2",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -132,6 +132,7 @@
 		"katex": "^0.16.22",
 		"keytar": "^7.7.0",
 		"lazy-val": "^1.0.4",
+		"linux-distro": "^4.0.1",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
 		"mermaid": "^11.4.1",
@@ -358,6 +359,10 @@
 				"to": "node_modules/core-util-is"
 			},
 			{
+				"from": "node_modules/cross-spawn-async",
+				"to": "node_modules/cross-spawn-async"
+			},
+			{
 				"from": "node_modules/debounce-fn",
 				"to": "node_modules/debounce-fn"
 			},
@@ -406,6 +411,10 @@
 				"to": "node_modules/env-paths"
 			},
 			{
+				"from": "node_modules/execa",
+				"to": "node_modules/execa"
+			},
+			{
 				"from": "node_modules/ext-list",
 				"to": "node_modules/ext-list"
 			},
@@ -432,6 +441,10 @@
 			{
 				"from": "node_modules/fs.realpath",
 				"to": "node_modules/fs.realpath"
+			},
+			{
+				"from": "node_modules/getos",
+				"to": "node_modules/getos"
 			},
 			{
 				"from": "node_modules/glob",
@@ -478,6 +491,10 @@
 				"to": "node_modules/isarray"
 			},
 			{
+				"from": "node_modules/isexe",
+				"to": "node_modules/isexe"
+			},
+			{
 				"from": "node_modules/js-yaml",
 				"to": "node_modules/js-yaml"
 			},
@@ -506,6 +523,10 @@
 				"to": "node_modules/lie"
 			},
 			{
+				"from": "node_modules/linux-distro",
+				"to": "node_modules/linux-distro"
+			},
+			{
 				"from": "node_modules/locate-path",
 				"to": "node_modules/locate-path"
 			},
@@ -524,6 +545,10 @@
 			{
 				"from": "node_modules/lodash.isequal",
 				"to": "node_modules/lodash.isequal"
+			},
+			{
+				"from": "node_modules/lru-cache",
+				"to": "node_modules/lru-cache"
 			},
 			{
 				"from": "node_modules/mime-db",
@@ -552,6 +577,14 @@
 			{
 				"from": "node_modules/new-github-issue-url",
 				"to": "node_modules/new-github-issue-url"
+			},
+			{
+				"from": "node_modules/npm-run-path",
+				"to": "node_modules/npm-run-path"
+			},
+			{
+				"from": "node_modules/object-assign",
+				"to": "node_modules/object-assign"
 			},
 			{
 				"from": "node_modules/once",
@@ -586,12 +619,24 @@
 				"to": "node_modules/path-is-absolute"
 			},
 			{
+				"from": "node_modules/path-key",
+				"to": "node_modules/path-key"
+			},
+			{
+				"from": "node_modules/pify",
+				"to": "node_modules/pify"
+			},
+			{
 				"from": "node_modules/pkg-up",
 				"to": "node_modules/pkg-up"
 			},
 			{
 				"from": "node_modules/process-nextick-args",
 				"to": "node_modules/process-nextick-args"
+			},
+			{
+				"from": "node_modules/pseudomap",
+				"to": "node_modules/pseudomap"
 			},
 			{
 				"from": "node_modules/pupa",
@@ -650,6 +695,10 @@
 				"to": "node_modules/string_decoder"
 			},
 			{
+				"from": "node_modules/strip-eof",
+				"to": "node_modules/strip-eof"
+			},
+			{
 				"from": "node_modules/supports-color",
 				"to": "node_modules/supports-color"
 			},
@@ -678,6 +727,10 @@
 				"to": "node_modules/util-deprecate"
 			},
 			{
+				"from": "node_modules/which",
+				"to": "node_modules/which"
+			},
+			{
 				"from": "node_modules/wrappy",
 				"to": "node_modules/wrappy"
 			},
@@ -688,6 +741,10 @@
 			{
 				"from": "node_modules/xtend",
 				"to": "node_modules/xtend"
+			},
+			{
+				"from": "node_modules/yallist",
+				"to": "node_modules/yallist"
 			}
 		],
 		"dmg": {

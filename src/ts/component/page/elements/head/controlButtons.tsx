@@ -124,7 +124,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 						};
 
 						case 'download': {
-							Renderer.send('download', S.Common.imageUrl(coverId, 1000000), { saveAs: true });
+							Renderer.send('download', S.Common.imageUrl(coverId, 0), { saveAs: true });
 							break;
 						};
 
