@@ -32,7 +32,7 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { relationKey, rootId, block, getView } = this.props;
+		const { relationKey, getView } = this.props;
 		const { result } = this.state;
 		const relation = S.Record.getRelationByKey(relationKey);
 
@@ -84,8 +84,8 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 	};
 
 	getSubId (): string {
-		const { rootId, block, isInline } = this.props;
-		return isInline ? [ rootId, block.id, 'total' ].join('-') : S.Record.getSubId(rootId, block.id);
+		const { rootId, block } = this.props;
+		return [ rootId, block.id, 'total' ].join('-');
 	};
 
 	calculate () {
