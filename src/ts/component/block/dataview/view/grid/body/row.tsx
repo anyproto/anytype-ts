@@ -61,7 +61,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			);
 		};
 
-		if (isCollection && !isInline) {
+		if (!isInline) {
 			content = (
 				<>
 					{!readonly ? (

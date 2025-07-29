@@ -112,14 +112,6 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<SelectionTarget id={record.id} type={I.SelectType.Record}>
-					{content}
-				</SelectionTarget>
-			);
-		};
-
-		if (isCollection && !isInline) {
-			content = (
 				<>
 					<Icon
 						className="drag"
@@ -130,7 +122,9 @@ const Row = observer(class Row extends React.Component<Props> {
 						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-						{content}
+						<SelectionTarget id={record.id} type={I.SelectType.Record}>
+							{content}
+						</SelectionTarget>
 					</DropTarget>
 				</>
 			);

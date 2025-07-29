@@ -94,18 +94,12 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<SelectionTarget id={record.id} type={I.SelectType.Record}>
-					{content}
-				</SelectionTarget>
-			);
-
-			if (isCollection) {
-				content = (
-					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					<SelectionTarget id={record.id} type={I.SelectType.Record}>
 						{content}
-					</DropTarget>
-				);
-			};
+					</SelectionTarget>
+				</DropTarget>
+			);
 		};
 
 		return (
