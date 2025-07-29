@@ -100,7 +100,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 				{notSyncedCounter && canWrite ? (
 					<Manager
 						refId={'notSynced'}
-						subId={J.Constant.subId.fileManager.notSynced}
+						subId={J.Constant.subId.fileManagerNotSynced}
 						title={translate('pageSettingsSpaceNotSyncedFiles')}
 						filters={[ I.FileSyncStatus.NotSynced ]}
 					/>
@@ -109,7 +109,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 				{canWrite ? (
 					<Manager
 						refId={'synced'}
-						subId={J.Constant.subId.fileManager.synced}
+						subId={J.Constant.subId.fileManagerSynced}
 						title={translate('pageSettingsSpaceSyncedFiles')}
 						filters={[ I.FileSyncStatus.Synced ]}
 					/>
@@ -123,7 +123,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 	};
 
 	componentWillUnmount () {
-		U.Subscription.destroyList([ J.Constant.subId.fileManager.synced, J.Constant.subId.fileManager.notSynced ]);
+		U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 	};
 
 	onUpgrade () {
