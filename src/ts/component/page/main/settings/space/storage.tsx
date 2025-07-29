@@ -23,7 +23,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 	render () {
 		const { spaceStorage } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
-		const { error } = S.Auth.getSyncStatus();
+		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const spaces = U.Space.getList();
 		const usageCn = [ 'item' ];
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -97,7 +97,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 					<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
 				</div>
 
-				{error == I.SyncStatusError.StorageLimitExceed && canWrite ? (
+				{notSyncedCounter && canWrite ? (
 					<Manager
 						refId={'notSynced'}
 						subId={J.Constant.subId.fileManager.notSynced}

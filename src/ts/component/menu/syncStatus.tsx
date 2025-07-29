@@ -39,11 +39,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
-		const { error } = S.Auth.getSyncStatus();
+		const { notSyncedCounter } = S.Auth.getSyncStatus();
+		const isOwner = U.Space.isMyOwner();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
-		const notSyncedCount = this.getNotSyncedItemsCount();
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -135,13 +136,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					<EmptySearch text={emptyText} />
 				) : ''}
 
-				{notSyncedCount && (error == I.SyncStatusError.StorageLimitExceed) ? (
+				{notSyncedCounter && canWrite ? (
 					<div className="incentiveBanner">
 						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
-						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCount, U.Common.plural(notSyncedCount, translate('pluralLCFile')))} />
+						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
 						<div className="buttons">
 							<Button onClick={() => this.onIncentiveButtonClick('storage')} className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="blank" />
-							<Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} />
+							{isOwner ? <Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} /> : ''}
 						</div>
 					</div>
 				) : ''}
@@ -341,12 +342,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		});
 
 		return U.Data.groupDateSections(records, 'syncDate');
-	};
-
-	getNotSyncedItemsCount () {
-		const records = S.Record.getRecords(SUB_ID).filter(it => it.fileSyncStatus == I.FileSyncStatus.NotSynced);
-
-		return records.length;
 	};
 
 	getIcons () {
