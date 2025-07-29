@@ -165,6 +165,7 @@ export default {
 		'spacePushNotificationMode',
 		'spaceOrder',
 		'tmpOrder',
+		'spaceJoinDate',
 	],
 
 	participant: [

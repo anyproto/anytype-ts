@@ -49,7 +49,7 @@ const FootRow = observer(class FootRow extends React.Component<Props> {
 		const relations = getVisibleRelations();
 		const check = relations.filter(it => it.formulaType != I.FormulaType.None);
 
-		if (!isInline || !check.length) {
+		if (!check.length) {
 			return;
 		};
 

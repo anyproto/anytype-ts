@@ -440,6 +440,7 @@ class DetailStore {
 		object.iconOption = Number(object.iconOption) || 1;
 		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
 		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
+		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;

@@ -15,7 +15,7 @@
 #sidebarToggle.sidebarAnimation, #sidebarSync.sidebarAnimation { transition: left $transitionSidebarTime linear; }
 #sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
 
-.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
+.sidebar { position: fixed; z-index: 24; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.isClosed { left: 0px !important; overflow: hidden; }
 
@@ -29,14 +29,14 @@
 .sidebar.withPreview { z-index: 31; }
 
 .sidebar.right {
-	@import "./sidebar/preview";
+	@import "./preview";
 }
 
 .sidebar {
-	@import "./sidebar/widget";
-	@import "./sidebar/allObject";
-	@import "./sidebar/page";
-	@import "./sidebar/settings";
+	@import "./widget";
+	@import "./allObject";
+	@import "./page";
+	@import "./settings";
 	
 	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
 	.resize-h {
