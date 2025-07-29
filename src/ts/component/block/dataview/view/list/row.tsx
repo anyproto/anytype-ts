@@ -16,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 	render () {
 		const {
-			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline, isCollection,
+			rootId, block, recordId, readonly, getRecord, getView, onRefCell, style, onContext, getIdPrefix, isInline,
 			onDragRecordStart, onSelectToggle, onEditModeClick, canCellEdit,
 		} = this.props;
 		const view = getView();
@@ -113,14 +113,16 @@ const Row = observer(class Row extends React.Component<Props> {
 		if (!isInline) {
 			content = (
 				<>
-					<Icon
-						className="drag"
-						draggable={true}
-						onClick={e => onSelectToggle(e, record.id)}
-						onDragStart={e => onDragRecordStart(e, record.id)}
-						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
-						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-					/>
+					{!readonly ? (
+						<Icon
+							className="drag"
+							draggable={true}
+							onClick={e => onSelectToggle(e, record.id)}
+							onDragStart={e => onDragRecordStart(e, record.id)}
+							onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+							onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
+						/>
+					) : ''}
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						<SelectionTarget id={record.id} type={I.SelectType.Record}>
 							{content}
