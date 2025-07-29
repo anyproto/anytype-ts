@@ -17,7 +17,6 @@
 @import "./loader";
 @import "./pager";
 @import "./selection";
-@import "./sidebar";
 @import "./vault";
 @import "./sync";
 @import "./tag";
@@ -32,6 +31,7 @@
 @import "./cell";
 @import "./banner";
 
+@import "./sidebar/common";
 @import "./preview/common";
 @import "./media/common";
 
