@@ -1103,6 +1103,10 @@ class UtilCommon {
 	matchEmail (v: string) {
 		v = String(v || '');
 
+		if (!/@/.test(v) || (v.length < 5)) {
+			return '';
+		};
+
 		const uc = '\\P{Script_Extensions=Latin}';
 		const m = v.match(new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu'));
 
