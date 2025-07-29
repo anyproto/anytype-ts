@@ -1932,8 +1932,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!data.html) {
 			const urls = U.Common.getUrlsFromText(data.text);
 
-			console.log(urls, data.text);
-
 			if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
 				this.onPasteUrl(urls[0]);
 				return;
