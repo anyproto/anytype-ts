@@ -13,8 +13,11 @@ const Components: any = {
 const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { param, getId } = props;
+	const { data } = param;
+	const page = data.page || 'list';
 	const nodeRef = useRef(null);
 	const componentRef = useRef(null);
+
 	const onPage = (page: string, data?: any): void => {
 		const obj = $(`#${getId()}-innerWrap`);
 
@@ -42,18 +45,14 @@ const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const { data } = param;
-		const { page } = data;
-
-		onPage(page || 'list');
+		onPage(page);
 	}, []);
 
-	const { data } = param;
-	const page = data.page || 'list';
-
 	let content = null;
+
 	if (Components[page]) {
 		const Component = Components[page];
+
 		content = (
 			<Component 
 				ref={componentRef}

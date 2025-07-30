@@ -9,13 +9,12 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	const { networkConfig } = S.Auth;
 	const { mode, path } = networkConfig;
 	const userPath = U.Common.getElectron().userPath();
-
-	const [config, setConfig] = useState({
+	const [ config, setConfig ] = useState({
 		userPath,
 		mode,
 		path: path || '',
 	});
-	const [error, setError] = useState('');
+	const [ error, setError ] = useState('');
 	const refMode = useRef(null);
 
 	const getNetworkModes = () => {
@@ -37,7 +36,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	};
 
 	const onChange = (key: string, value: any) => {
-		setConfig(prev => ({ ...prev, [key]: value }));
+		setConfig(prev => ({ ...prev, [ key ]: value }));
 	};
 
 	const onUpload = () => {

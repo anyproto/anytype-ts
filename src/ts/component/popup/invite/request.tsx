@@ -6,14 +6,18 @@ import { observer } from 'mobx-react';
 const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
-	const [error, setError] = useState('');
+	const { data } = param;
+	const { route } = data;
+	const [ error, setError ] = useState('');
+	const invite = data.invite || {};
 	const refButton = useRef(null);
+	const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+	const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
 	const onRequest = () => {
 		const { account } = S.Auth;
 		const { data } = param;
 		const { invite, cid, key } = data;
-		const space = U.Space.getSpaceview();
 
 		if (!account || refButton.current?.isLoading()) {
 			return;
@@ -37,17 +41,8 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const { data } = param;
-		const { route } = data;
-		const space = U.Space.getSpaceview();
-
 		analytics.event('ScreenInviteRequest', { route });
 	}, []);
-
-	const { data } = param;
-	const { invite } = data;
-	const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
-	const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
 	return (
 		<>

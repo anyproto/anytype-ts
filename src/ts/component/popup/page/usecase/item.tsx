@@ -9,20 +9,18 @@ import { observer } from 'mobx-react';
 const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { getAuthor, onAuthor, onPage, getId, close, param } = props;
+	const { data } = param;
 	const nodeRef = useRef(null);
 	const swiperRef = useRef(null);
 	const refButton = useRef(null);
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ error, setError ] = useState('');
+	const route = String(data.route || '');
+	const object = data.object || {};
+	const author = getAuthor(object.author);
+	const screenshots = object.screenshots || [];
+	const categories = (object.categories || []).slice(0, 10);
 	
-	const getObject = (): any => {
-		return param.data.object || {};
-	};
-
-	const getRoute = (): string => {
-		return String(param.data.route || '');
-	};
-
 	const onSwiper = (swiper) => {
 		swiperRef.current = swiper;
 		checkArrows();
@@ -31,7 +29,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	const onArrow = (dir: number) => {
 		if (swiperRef.current) {
 			dir < 0 ? swiperRef.current.slidePrev() : swiperRef.current.slideNext();
-		}
+		};
 	};
 
 	const checkArrows = () => {
@@ -66,9 +64,6 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	};
 
 	const onMenu = () => {
-		const object = getObject();
-		const route = getRoute();
-
 		const cb = (spaceId: string, isNew: boolean) => {
 			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, (message: any) => {
 				if (!message.error.code) {
@@ -114,14 +109,8 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	};
 
 	useEffect(() => {
-		const object = getObject();
-		analytics.event('ScreenGalleryInstall', { name: object.name, route: getRoute() });
+		analytics.event('ScreenGalleryInstall', { name: object.name, route });
 	}, []);
-
-	const object = getObject();
-	const author = getAuthor(object.author);
-	const screenshots = object.screenshots || [];
-	const categories = (object.categories || []).slice(0, 10);
 
 	return (
 		<div ref={nodeRef}>

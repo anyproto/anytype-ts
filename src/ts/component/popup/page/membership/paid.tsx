@@ -2,22 +2,21 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button, FooterAuthDisclaimer } from 'Component';
 import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
-import { MembershipCodeRedeem } from 'Lib/api/command';
 
 const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param } = props;
-	const [status, setStatus] = useState('');
-	const [statusText, setStatusText] = useState('');
+	const [ status, setStatus ] = useState('');
+	const [ statusText, setStatusText ] = useState('');
 
-	const refName = useRef(null);
-	const refButtonCard = useRef(null);
-	const refButtonCrypto = useRef(null);
-	const refButtonActivate = useRef(null);
+	const nameRef = useRef(null);
+	const buttonCardRef = useRef(null);
+	const buttonCryptoRef = useRef(null);
+	const buttonActivateRef = useRef(null);
 	const timeoutRef = useRef(null);
 
 	const getName = () => {
-		return refName.current?.getValue().trim() || '';
+		return nameRef.current?.getValue().trim() || '';
 	};
 
 	const getGlobalName = () => {
@@ -25,9 +24,9 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	};
 
 	const disableButtons = (v: boolean) => {
-		refButtonCard.current?.setDisabled(v);
-		refButtonCrypto.current?.setDisabled(v);
-		refButtonActivate.current?.setDisabled(v);
+		buttonCardRef.current?.setDisabled(v);
+		buttonCryptoRef.current?.setDisabled(v);
+		buttonActivateRef.current?.setDisabled(v);
 	};
 
 	const setOk = (t: string) => {
@@ -122,7 +121,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		const globalName = getGlobalName();
 		const tierItem = U.Data.getMembershipTier(tier);
 		const name = globalName || !tierItem.namesCount ? '' : getName();
-		const refButton = method == I.PaymentMethod.Stripe ? refButtonCard.current : refButtonCrypto.current;
+		const refButton = method == I.PaymentMethod.Stripe ? buttonCardRef.current : buttonCryptoRef.current;
 		const cb = () => {
 			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
 				refButton?.setLoading(false);
@@ -148,10 +147,10 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		const { data } = param;
 		const { code } = data;
 
-		refButtonActivate.current?.setLoading(true);
+		buttonActivateRef.current?.setLoading(true);
 
 		C.MembershipCodeRedeem(code, getName(), (message) => {
-			refButtonActivate.current?.setLoading(false);
+			buttonActivateRef.current?.setLoading(false);
 
 			if (message.error.code) {
 				setError(message.error.description);
@@ -265,7 +264,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 						<div className="inputWrapper">
 							<Input
-								ref={refName}
+								ref={nameRef}
 								value={name}
 								onKeyUp={onKeyUp}
 								readonly={!canEnterName}
@@ -292,12 +291,12 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 				) : (
 					<div className="buttons">
 						{code ? (
-							<Button onClick={() => onRedeemCode()} ref={refButtonActivate} className="c36" text={translate('popupMembershipActivate')} />
+							<Button onClick={() => onRedeemCode()} ref={buttonActivateRef} className="c36" text={translate('popupMembershipActivate')} />
 						) : (
 							<>
-								<Button onClick={() => onPay(I.PaymentMethod.Stripe)} ref={refButtonCard} className="c36" text={translate('popupMembershipPayByCard')} />
+								<Button onClick={() => onPay(I.PaymentMethod.Stripe)} ref={buttonCardRef} className="c36" text={translate('popupMembershipPayByCard')} />
 								{canPayCrypto ? (
-									<Button onClick={() => onPay(I.PaymentMethod.Crypto)} ref={refButtonCrypto} className="c36" text={translate('popupMembershipPayByCrypto')} />
+									<Button onClick={() => onPay(I.PaymentMethod.Crypto)} ref={buttonCryptoRef} className="c36" text={translate('popupMembershipPayByCrypto')} />
 								) : ''}
 							</>
 						)}

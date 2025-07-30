@@ -6,17 +6,12 @@ import { I, C, S, U, J, translate } from 'Lib';
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param } = props;
-	const [status, setStatus] = useState('');
-	const [statusText, setStatusText] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
-
-	const refName = useRef(null);
-	const refButton = useRef(null);
+	const [ status, setStatus ] = useState('');
+	const [ statusText, setStatusText ] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const nameRef = useRef(null);
+	const buttonRef = useRef(null);
 	const timeoutRef = useRef(null);
-
-	const getName = () => {
-		return String(S.Auth.membership?.name || '');
-	};
 
 	const setOk = (t: string) => {
 		setStatus(I.InterfaceStatus.Ok);
@@ -31,9 +26,9 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	const onKeyUp = () => {
 		const { data } = param;
 		const { tier } = data;
-		const name = refName.current?.getValue() || '';
+		const name = nameRef.current?.getValue() || '';
 
-		refButton.current?.setDisabled(true);
+		buttonRef.current?.setDisabled(true);
 		setStatusText('');
 		setStatus('');
 
@@ -64,7 +59,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 					if (error) {
 						setError(error);
 					} else {
-						refButton.current?.setDisabled(false);
+						buttonRef.current?.setDisabled(false);
 						setOk(translate('popupMembershipStatusNameAvailable'));
 					};
 				});
@@ -73,10 +68,10 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	};
 
 	const onConfirm = () => {
-		const name = refName.current?.getValue() || '';
+		const name = nameRef.current?.getValue() || '';
 
 		setIsLoading(true);
-		refButton.current?.setDisabled(true);
+		buttonRef.current?.setDisabled(true);
 
 		C.MembershipFinalize(name, (message) => {
 			if (message.error.code) {
@@ -98,9 +93,8 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	};
 
 	useEffect(() => {
-		const name = getName();
-		if (!name) {
-			refButton.current?.setDisabled(true);
+		if (!S.Auth.membership?.name) {
+			buttonRef.current?.setDisabled(true);
 		};
 	}, []);
 
@@ -117,8 +111,8 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	const { name, nameType } = membership;
 	
 	let labelText = translate('popupMembershipPaidTextUnlimited');
-
 	let periodLabel = translate('pluralYear');
+
 	if (periodType) {
 		switch (periodType) {
 			case I.MembershipTierDataPeriodType.PeriodTypeDays: {
@@ -151,7 +145,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 			<div className="inputWrapper">
 				<Input
-					ref={refName}
+					ref={nameRef}
 					value={name}
 					onKeyUp={onKeyUp}
 					readonly={!!name}
@@ -162,7 +156,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 			</div>
 
 			<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-			<Button ref={refButton} onClick={onConfirm} text={translate('commonConfirm')} />
+			<Button ref={buttonRef} onClick={onConfirm} text={translate('commonConfirm')} />
 			{isLoading ? <Loader /> : ''}
 		</div>
 	);

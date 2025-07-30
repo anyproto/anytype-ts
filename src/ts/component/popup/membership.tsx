@@ -11,19 +11,7 @@ import PageSuccess from './page/membership/success';
 const PopupMembership = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param } = props;
-	const [isEditing, setIsEditing] = useState(false);
-
-	const onChangeEmail = () => {
-		setIsEditing(true);
-	};
-
-	useEffect(() => {
-		const { data } = param;
-		const { tier } = data;
-
-		analytics.event('ScreenMembership', { params: { tier } });
-	}, []);
-
+	const [ isEditing, setIsEditing ] = useState(false);
 	const { membership } = S.Auth;
 	const { data } = param;
 	const { tier, success } = data;
@@ -36,13 +24,17 @@ const PopupMembership = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		content = <PageSuccess {...props} />;
 	} else
 	if (!isEditing && (membership.tier == tier)) {
-		content = <PageCurrent {...props} onChangeEmail={onChangeEmail} />;
+		content = <PageCurrent {...props} onChangeEmail={() => setIsEditing(true)} />;
 	} else
 	if (!tierItem.price) {
 		content = <PageFree {...props} />;
 	} else {
 		content = <PagePaid {...props} />;
 	};
+
+	useEffect(() => {
+		analytics.event('ScreenMembership', { params: { tier } });
+	}, []);
 
 	return (
 		<div className={cn.join(' ')}>

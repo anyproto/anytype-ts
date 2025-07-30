@@ -1,34 +1,26 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button } from 'Component';
 import { I, U, translate } from 'Lib';
 
 const PopupMembershipPageSuccess = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { param, position } = props;
+	const { param } = props;
 	const { data } = param;
 	const { tier, emailVerified, onContinue } = data;
 	const tierItem = U.Data.getMembershipTier(tier);
 
-	useEffect(() => {
-		window.setTimeout(() => {
-			position();
-		}, 5);
-	}, []);
-
 	let title = '';
 	let text = '';
 
-	if (emailVerified) {
-		title = translate('popupMembershipSuccessVerificationTitle');
-		text = translate('popupMembershipSuccessVerificationText');
-	} else {
-		title = U.Common.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name);
-		text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
-	};
-
-	if (!tierItem) {
-		return null;
+	if (tierItem) {
+		if (emailVerified) {
+			title = translate('popupMembershipSuccessVerificationTitle');
+			text = translate('popupMembershipSuccessVerificationText');
+		} else {
+			title = U.Common.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name);
+			text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
+		};
 	};
 
 	return (

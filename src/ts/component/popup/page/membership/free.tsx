@@ -5,16 +5,16 @@ import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const [verificationStep, setVerificationStep] = useState(1);
-	const [countdown, setCountdown] = useState(60);
-	const [hasCountdown, setHasCountdown] = useState(false);
-	const [status, setStatus] = useState('');
-	const [statusText, setStatusText] = useState('');
+	const [ verificationStep, setVerificationStep ] = useState(1);
+	const [ countdown, setCountdown ] = useState(60);
+	const [ hasCountdown, setHasCountdown ] = useState(false);
+	const [ status, setStatus ] = useState('');
+	const [ statusText, setStatusText ] = useState('');
 
-	const refCheckbox = useRef(null);
-	const refEmail = useRef(null);
-	const refButton = useRef(null);
-	const refCode = useRef(null);
+	const checkboxRef = useRef(null);
+	const emailRef = useRef(null);
+	const buttonRef = useRef(null);
+	const codeRef = useRef(null);
 
 	const intervalRef = useRef(null);
 	const timeoutRef = useRef(null);
@@ -33,10 +33,10 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	};
 
 	const onCheck = () => {
-		if (!refCheckbox.current?.getValue()) {
+		if (!checkboxRef.current?.getValue()) {
 			analytics.event('ClickMembership', { type: 'GetUpdates', params: { tier: I.TierType.Explorer } });
 		};
-		refCheckbox.current?.toggle();
+		checkboxRef.current?.toggle();
 	};
 
 	const onResetCode = () => {
@@ -54,18 +54,18 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	const onVerifyEmail = (e: any) => {
 		e.preventDefault();
 
-		if (!refButton.current || !refEmail.current) {
+		if (!buttonRef.current || !emailRef.current) {
 			return;
 		};
 
-		if (refButton.current.isDisabled()) {
+		if (buttonRef.current.isDisabled()) {
 			return;
 		};
 
-		refButton.current.setLoading(true);
+		buttonRef.current.setLoading(true);
 
-		C.MembershipGetVerificationEmail(refEmail.current.getValue(), refCheckbox.current?.getValue(), false, false, (message) => {
-			refButton.current.setLoading(false);
+		C.MembershipGetVerificationEmail(emailRef.current.getValue(), checkboxRef.current?.getValue(), false, false, (message) => {
+			buttonRef.current.setLoading(false);
 
 			if (message.error.code) {
 				setStatusFunc('error', message.error.description);
@@ -80,12 +80,12 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	};
 
 	const onConfirmEmailCode = () => {
-		const code = refCode.current?.getValue();
+		const code = codeRef.current?.getValue();
 
 		C.MembershipVerifyEmailCode(code, (message) => {
 			if (message.error.code) {
 				setStatusFunc('error', message.error.description);
-				refCode.current?.reset();
+				codeRef.current?.reset();
 				return;
 			};
 
@@ -104,14 +104,14 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 		window.clearTimeout(timeoutRef.current);
 		timeoutRef.current = window.setTimeout(() => {
-			const value = refEmail.current?.getValue();
+			const value = emailRef.current?.getValue();
 			const isValid = U.Common.matchEmail(value);
 
 			if (value && !isValid) {
 				setStatusFunc('error', translate('errorIncorrectEmail'));
 			};
 
-			refButton.current?.setDisabled(!isValid);
+			buttonRef.current?.setDisabled(!isValid);
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -136,6 +136,7 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 		setCountdown(seconds);
 		setHasCountdown(true);
+
 		intervalRef.current = window.setInterval(() => {
 			setCountdown(prev => {
 				const newCountdown = prev - 1;
@@ -151,7 +152,7 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	};
 
 	useEffect(() => {
-		refButton.current?.setDisabled(true);
+		buttonRef.current?.setDisabled(true);
 		checkCountdown();
 
 		return () => {
@@ -170,21 +171,22 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 					<Label text={translate(`popupMembershipFreeText`)} />
 
 					<div className="inputWrapper">
-						<Input ref={refEmail} onKeyUp={validateEmail} placeholder={translate(`commonEmail`)} />
+						<Input ref={emailRef} onKeyUp={validateEmail} placeholder={translate(`commonEmail`)} />
 					</div>
 
 					<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 					<div className="check" onClick={onCheck}>
-						<Checkbox ref={refCheckbox} value={false} /> {translate('popupMembershipFreeCheckboxText')}
+						<Checkbox ref={checkboxRef} value={false} /> {translate('popupMembershipFreeCheckboxText')}
 					</div>
 
-					<Button ref={refButton} onClick={onVerifyEmail} className="c36" text={translate('commonSubmit')} />
+					<Button ref={buttonRef} onClick={onVerifyEmail} className="c36" text={translate('commonSubmit')} />
 					{hasCountdown ? <Button onClick={onResetCode} className="c36" text={translate('popupMembershipFreeEnterCode')} /> : ''}
 				</form>
 			);
 			break;
 		};
+
 		case 2: {
 			content = (
 				<>
@@ -192,7 +194,7 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 					<Title className="step2" text={translate(`popupMembershipFreeTitleStep2`)} />
 
 					<Pin
-						ref={refCode}
+						ref={codeRef}
 						pinLength={4}
 						isVisible={true}
 						onSuccess={onConfirmEmailCode}
