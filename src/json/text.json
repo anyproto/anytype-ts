@@ -916,6 +916,7 @@
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 	"popupSettingsSpaceIndexPushTitle": "Message notifications",
 	"popupSettingsSpaceIndexPushText": "You will receive notifications when you are mentioned only",
+	"popupSettingsSpaceIndexUxTypeTitle": "Space UX Type",
 
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -2602,6 +2603,11 @@
 
 	"notificationMode0": "Enable all",
 	"notificationMode1": "Mentions only",
-	"notificationMode2": "Disable all"
+	"notificationMode2": "Disable all",
+
+	"spaceUxType0": "None",
+	"spaceUxType1": "Space",
+	"spaceUxType2": "Stream",
+	"spaceUxType3": "Chat"
 
 }
