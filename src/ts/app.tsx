@@ -213,8 +213,6 @@ const App: FC = () => {
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
-		const color = Storage.get('color');
-		const bgColor = Storage.get('bgColor');
 		const route = String(data.route || redirect || '');
 
 		S.Common.configSet(config, true);
@@ -224,13 +222,6 @@ const App: FC = () => {
 		S.Common.dataPathSet(dataPath);
 
 		Action.checkDefaultSpellingLang();
-
-		if (!color) {
-			Storage.set('color', 'orange');
-		};
-		if (!bgColor) {
-			Storage.set('bgColor', 'orange');
-		};
 
 		analytics.init();
 
