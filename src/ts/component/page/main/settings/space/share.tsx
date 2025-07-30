@@ -6,6 +6,7 @@ import { I, C, S, U, translate, Preview, Action, analytics, sidebar, keyboard, }
 import Members from './share/members';
 
 interface State {
+	isLoading: boolean;
 	error: string;
 	cid: string;
 	key: string;
@@ -20,6 +21,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	refCopy: any = null;
 
 	state = {
+		isLoading: false,
 		error: '',
 		cid: '',
 		key: '',
@@ -36,7 +38,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	render () {
-		const { error, cid, key, type } = this.state;
+		const { isLoading, error, cid, key, type } = this.state;
 		const { icon, name, description } = this.getOptionById(type);
 		const hasLink = cid && key;
 
@@ -50,7 +52,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 
 					<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', U.Space.isMyOwner() ? 'canEdit' : '' ].join(' ')} onClick={this.onInviteMenu}>
-						<Icon className={icon} />
+						<Icon className={isLoading ? 'loading' : icon} />
 						<div className="info">
 							<Title text={name} />
 							<Label text={description} />
@@ -64,7 +66,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 									<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
 									<Icon id="button-more-link" className="more withBackground" onClick={this.onMoreLink} />
 								</div>
-								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopy')} />
 							</div>
 						</>
 					) : ''}
@@ -160,6 +162,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
+					let created = false;
 					let inviteType = I.InviteType.WithoutApprove;
 					let permissions = I.ParticipantPermissions.Reader;
 
@@ -169,6 +172,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 						});
 						return;
 					};
+
+					this.setState({ isLoading: true });
 
 					const callBack = () => {
 						switch (Number(item.id)) {
@@ -184,12 +189,14 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 						};
 
 						C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
+							this.setState({ isLoading: false });
+
 							if (this.setError(message.error)) {
 								return;
 							};
 
 							this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
-							Preview.toastShow({ text: translate('toastInviteGenerate') });
+							Preview.toastShow({ text: created ? translate('toastInviteGenerate') : translate('toastInviteUpdate') });
 
 							if (!space.isShared) {
 								analytics.event('ShareSpace');
@@ -198,6 +205,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 					};
 
 					if (!space.isShared) {
+						created = true;
+
 						C.SpaceMakeShareable(S.Common.space, (message: any) => {
 							if (this.setError(message.error)) {
 								return;

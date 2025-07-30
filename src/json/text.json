@@ -1889,6 +1889,7 @@
 	"toastApproveLeaveRequest": "You approved %s request",
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
+	"toastInviteUpdate": "Invite link has been updated",
 	"toastInviteRevoke": "Invite link has been deleted",
 	"toastImportStart": "Import process has started and may take some time",
 
