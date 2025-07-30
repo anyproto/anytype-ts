@@ -68,7 +68,6 @@ const getSections = () => {
 						{ id: 'bin', name: translate('popupShortcutNavigationBasics11'), keys: [ cmdKey, 'alt', 'b' ] },
 						{ id: 'nextSpace', name: translate('popupShortcutMainBasics20'), keys: [ 'ctrl', 'tab' ] },
 						{ id: 'prevSpace', name: translate('popupShortcutMainBasics23'), keys: [ 'ctrl', 'shift', 'tab' ] },
-						{ id: 'space0', name: U.Common.sprintf(translate('popupShortcutMainBasics27'), 0), keys: [ cmdKey, '0' ] },
 						{ id: 'space1', name: U.Common.sprintf(translate('popupShortcutMainBasics27'), 1), keys: [ cmdKey, '1' ] },
 						{ id: 'space2', name: U.Common.sprintf(translate('popupShortcutMainBasics27'), 2), keys: [ cmdKey, '2' ] },
 						{ id: 'space3', name: U.Common.sprintf(translate('popupShortcutMainBasics27'), 3), keys: [ cmdKey, '3' ] },

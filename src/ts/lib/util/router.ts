@@ -205,9 +205,9 @@ class UtilRouter {
 		this.isOpening = true;
 
 		C.WorkspaceOpen(id, (message: any) => {
-			this.isOpening = false;
-
 			if (message.error.code) {
+				this.isOpening = false;
+
 				if (!useFallback) {
 					S.Popup.open('confirm', {
 						data: {
@@ -239,7 +239,9 @@ class UtilRouter {
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } });
+					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+						this.isOpening = false;
+					});
 				},
 			});
 		});

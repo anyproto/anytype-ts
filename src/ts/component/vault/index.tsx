@@ -91,10 +91,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 		});
 
-		for (let i = 0; i < 10; i++) {
+		for (let i = 1; i <= 9; i++) {
+			const id = Number(i) - 1;
 			keyboard.shortcut(`space${i}`, e, () => {
-				if (items[i]) {
-					onClick(e, items[i]);
+				if (items[id]) {
+					onClick(e, items[id]);
 				};
 			});
 		};
