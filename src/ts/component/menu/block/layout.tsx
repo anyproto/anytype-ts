@@ -1,74 +1,27 @@
 import * as React from 'react';
+import { forwardRef, useImperativeHandle, useRef, useEffect, useCallback } from 'react';
+import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
-class MenuBlockLayout extends React.Component<I.Menu> {
+const MenuBlockLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	n = -1;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onResize = this.onResize.bind(this);
-	};
+	const { param, onKeyDown, setActive, close, getId, getSize } = props;
+	const { data } = param;
+	const n = useRef(-1);
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-		const sections = this.getSections();
-
-		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
-							icon={action.icon || action.id}
-							checkbox={action.id == value}
-							onMouseEnter={e => this.onMouseEnter(e, action)} 
-							onClick={e => this.onClick(e, action)} 
-						/>
-					))}
-				</div>
-			</div>
-		);
-		
-		return (
-			<div>
-				{sections.map((item: any, i: number) => (
-					<Section key={i} index={i} {...item} />
-				))}
-			</div>
-		);
-	};
+	const rebind = useCallback(() => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
+	}, [ onKeyDown, setActive ]);
 	
-	componentDidMount () {
-		this.rebind();
-	};
-
-	componentWillUnmount (): void {
-		S.Menu.closeAll(J.Menu.layout);
-	};
-	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = useCallback(() => {
 		$(window).off('keydown.menu');
-	};
+	}, []);
 
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
+	const getSections = useCallback(() => {
 		const { rootId } = data;
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = S.Detail.get(rootId, rootId);
@@ -99,10 +52,10 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		});
 
 		return sections;
-	};
+	}, [ data ]);
 	
-	getItems () {
-		const sections = this.getSections();
+	const getItems = useCallback(() => {
+		const sections = getSections();
 		
 		let items: any[] = [];
 		for (const section of sections) {
@@ -110,40 +63,39 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		};
 		
 		return items;
-	};
+	}, [ getSections ]);
 
-	onMouseEnter (e: any, item: any) {
+	const onMouseEnter = useCallback((e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-			this.onOver(e, item);
+			setActive(item, false);
+			onOver(e, item);
 		};
-	};
+	}, [ setActive ]);
 	
-	onOver (e: any, item: any) {
+	const onOver = useCallback((e: any, item: any) => {
 		if (!item.arrow) {
 			S.Menu.closeAll(J.Menu.layout);
 			return;
 		};
 
-		const { id, param, getId, getSize, close } = this.props;
+		const id = getId();
 
 		if (S.Menu.isAnimating(id)) {
 			return;
 		};
 
-		const { data } = param;
 		const { rootId } = data;
 		const object = S.Detail.get(rootId, rootId);
 
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
+			element: `#${id} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			className: param.className,
 			classNameWrap: param.classNameWrap,
-			rebind: this.rebind,
+			rebind: rebind,
 			parentId: id,
 			data: {
 				rootId: rootId,
@@ -174,18 +126,16 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
-	};
+	}, [ data, getId, getSize, param, rebind, close ]);
 	
-	onClick (e: any, item: any) {
-		const { close, param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-
+	const onClick = useCallback((e: any, item: any) => {
 		if (item.arrow) {
 			return;
 		};
 
 		close();
+
+		const { rootId } = data;
 
 		switch (item.id) {
 			case 'reset': {
@@ -195,13 +145,13 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			};
 
 			case 'resize': {
-				this.onResize(e);
+				onResize(e);
 				break;
 			};
 		};
-	};
+	}, [ close, data ]);
 
-	onResize (e: any) {
+	const onResize = useCallback((e: any) => {
 		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
 		const wrapper = $('#editorWrapper');
 
@@ -215,8 +165,57 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		});
 
 		analytics.event('SetLayoutWidth');
-	};
+	}, []);
+
+	useEffect(() => {
+		rebind();
+		
+		return () => {
+			S.Menu.closeAll(J.Menu.layout);
+			unbind();
+		};
+	}, [ rebind, unbind ]);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getSections,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), [ rebind, unbind, getSections, getItems, onClick, onOver ]);
+
+	const { value } = data;
+	const sections = getSections();
+
+	const Section = (item: any) => (
+		<div id={'section-' + item.id} className="section">
+			{item.name ? <div className="name">{item.name}</div> : ''}
+			<div className="items">
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical 
+						key={i} 
+						{...action} 
+						icon={action.icon || action.id}
+						checkbox={action.id == value}
+						onMouseEnter={e => onMouseEnter(e, action)} 
+						onClick={e => onClick(e, action)} 
+					/>
+				))}
+			</div>
+		</div>
+	);
 	
-};
+	return (
+		<div>
+			{sections.map((item: any, i: number) => (
+				<Section key={i} index={i} {...item} />
+			))}
+		</div>
+	);
+
+}));
 
 export default MenuBlockLayout;

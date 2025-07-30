@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { forwardRef, useImperativeHandle, useRef, useEffect, useCallback, useState } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
@@ -11,199 +12,79 @@ enum Tab {
 	Upload	 = 3,
 };
 
-interface State {
-	filter: string;
-	isLoading: boolean;
-};
-
 const LIMIT = 36;
 
-const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
+const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
-	state = {
-		filter: '',
-		isLoading: false,
-	};
-	items: any[] = [];
-	filter = '';
-	refFilter: any = null;
-	timeout = 0;
-	tab: Tab = Tab.Gallery;
+	const { param, close } = props;
+	const { data } = param;
 
-	constructor (props: I.Menu) {
-		super(props);
+	const _isMounted = useRef(false);
+	const node = useRef<any>(null);
+	const [ filter, setFilter ] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const items = useRef<any[]>([]);
+	const filterText = useRef('');
+	const refFilter = useRef<any>(null);
+	const timeout = useRef(0);
+	const [ tab, setTabState ] = useState<Tab>(Tab.Gallery);
 
-		this.onUpload = this.onUpload.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onDragOver = this.onDragOver.bind(this);
-		this.onDragLeave = this.onDragLeave.bind(this);
-		this.onDrop = this.onDrop.bind(this);
-	};
-
-	render () {
-		const { filter, isLoading } = this.state;
-		const tabs: any[] = [
-			{ id: Tab.Gallery, name: translate('menuBlockCoverGallery') },
-			{ id: Tab.Unsplash, name: translate('menuBlockCoverUnsplash') },
-			{ id: Tab.Library, name: translate('menuBlockCoverLibrary') },
-			{ id: Tab.Upload, name: translate('menuBlockCoverUpload') },
-		].filter(it => it);
-		const sections = this.getSections();
-
-		const Item = (item: any) => (
-			<div className="item" onClick={e => this.onSelect(e, item)}>
-				<Cover preview={true} {...item} />
-				{item.artist ? <div className="name">{item.artist}</div> : ''}
-			</div>
-		);
-
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="items">
-					{item.children.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
-			</div>
-		);
-
-		let content = null;
-		let filterElement = null;
-
-		if ([ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
-			filterElement = (
-				<Filter 
-					ref={ref => this.refFilter = ref}
-					className="outlined"
-					value={filter}
-					onChange={this.onFilterChange} 
-				/>
-			);
-		};
-
-		switch (this.tab) {
-			case Tab.Gallery:
-			case Tab.Unsplash:
-			case Tab.Library: {
-				content = (
-					<>
-						{sections.length ? (
-							<div className="sections">
-								{sections.map((section: any, i: number) => (
-									<Section key={i} {...section} />
-								))}
-							</div>
-						) : <EmptySearch text={filter ? U.Common.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
-					</>
-				);
-				break;
-			};
-
-			case Tab.Upload: {
-				content = (
-					<div 
-						className="dropzone" 
-						onDragOver={this.onDragOver} 
-						onDragLeave={this.onDragLeave} 
-						onDrop={this.onDrop}
-						onClick={this.onUpload}
-					>
-						<Icon className="coverUpload" />
-						<Label text={translate('menuBlockCoverChoose')} />
-					</div>
-				);
-				break;
-			};
-		};
-
-		if (isLoading) {
-			content = <Loader />;
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				<div className="head">
-					{tabs.map((item: any, i: number) => (
-						<div 
-							key={item.id} 
-							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
-							onClick={() => this.setTab(item.id)}
-						>
-							{item.name}
-						</div>
-					))}
-				</div>
-
-				<div className={[ 'body', Tab[this.tab].toLowerCase() ].join(' ')}>
-					{filterElement}
-					{content}
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-		this.load();
-		this.rebind();
-
-		keyboard.disablePaste(true);
-	};
-
-	componentDidUpdate () {
-		const { filter } = this.state;
-		
-		if (this.filter != filter) {
-			this.filter = filter;
-			this.load();
-		};
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-
-		keyboard.disablePaste(false);
-	};
-
-	unbind () {
+	const unbind = useCallback(() => {
 		$(window).off('paste.menuBlockCover');
-	};
+	}, []);
 
-	rebind () {
-		this.unbind();
-		$(window).on('paste.menuBlockCover', e => this.onPaste(e));
-	};
+	const onPaste = useCallback((e: any) => {
+		const { rootId } = data;
+		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
-	load () {
-		const { filter } = this.state;
-
-		this.items = [];
-
-		if (![ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
-			this.setState({ isLoading: false });
+		if (!files.length) {
 			return;
 		};
 
-		switch (this.tab) {
+		setIsLoading(true);
+
+		U.Common.saveClipboardFiles(files, {}, (data: any) => {
+			if (!data.files.length) {
+				setIsLoading(false);
+				return;
+			};
+
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
+				if (!message.error.code) {
+					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
+				};
+
+				setIsLoading(false);
+				close();
+			});
+		});
+	}, [ data, close ]);
+
+	const rebind = useCallback(() => {
+		unbind();
+		$(window).on('paste.menuBlockCover', e => onPaste(e));
+	}, [ unbind, onPaste ]);
+
+	const load = useCallback(() => {
+		items.current = [];
+
+		if (![ Tab.Unsplash, Tab.Library ].includes(tab)) {
+			setIsLoading(false);
+			return;
+		};
+
+		switch (tab) {
 			case Tab.Unsplash: {
-				this.setState({ isLoading: true });
+				setIsLoading(true);
 
 				C.UnsplashSearch(filter, LIMIT, (message: any) => {
 					if (message.error.code) {
-						this.setState({ isLoading: false });
+						setIsLoading(false);
 						return;
 					};
 
 					message.pictures.forEach((item: any) => {
-						this.items.push({
+						items.current.push({
 							id: item.id,
 							type: I.CoverType.Source,
 							src: item.url,
@@ -211,7 +92,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						});
 					});
 
-					this.setState({ isLoading: false });
+					setIsLoading(false);
 				});
 				break;
 			};
@@ -225,7 +106,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
-				this.setState({ isLoading: true });
+				setIsLoading(true);
 
 				U.Subscription.search({
 					filters,
@@ -233,14 +114,14 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					fullText: filter,
 					limit: 1000,
 				}, (message: any) => {
-					this.setState({ isLoading: false });
+					setIsLoading(false);
 
 					if (message.error.code) {
 						return;
 					};
 
 					message.records.forEach((item: any) => {
-						this.items.push({
+						items.current.push({
 							id: item.id,
 							type: I.CoverType.Upload,
 							src: S.Common.imageUrl(item.id, I.ImageSize.Medium),
@@ -248,23 +129,40 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 							coverY: -0.25,
 						});
 					});
-
-					this.forceUpdate();
 				});
 				break;
 			};
 		};
-	};
+	}, [ filter, tab ]);
 
-	setTab (tab: Tab) {
-		this.tab = tab;
-		this.forceUpdate();
-		this.load();
-	};
+	const setTab = useCallback((newTab: Tab) => {
+		setTabState(newTab);
+		load();
+	}, [ load ]);
 
-	onUpload (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
+	const getSections = useCallback(() => {
+		let sections: any[] = [];
+		switch (tab) {
+			case Tab.Gallery: {
+				sections = sections.concat([
+					{ name: translate('menuBlockCoverGradients'), children: U.Menu.getCoverGradients() },
+					{ name: translate('menuBlockCoverSolidColors'), children: U.Menu.getCoverColors() },
+				]);
+				break;
+			};
+
+			case Tab.Library:
+			case Tab.Unsplash: {
+				if (items.current.length) {
+					sections.push({ children: items.current });
+				};
+				break;
+			};
+		};
+		return sections;
+	}, [ tab ]);
+
+	const onUpload = useCallback((e: any) => {
 		const { onUpload, onUploadStart } = data;
 
 		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
@@ -286,11 +184,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				analytics.event('SetCover', { type: I.CoverType.Upload });
 			});
 		});
-	};
+	}, [ data, close ]);
 
-	onSelect (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
+	const onSelect = useCallback((e: any, item: any) => {
 		const { rootId, onSelect, onUpload, onUploadStart } = data;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
@@ -316,76 +212,52 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		};
 
 		analytics.event('SetCover', { type: item.type, id: item.id });
-	};
+	}, [ data, close ]);
 
-	onFilterChange (v: string) {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.setState({ filter: v }), J.Constant.delay.keyboard);
-	};
+	const onFilterChange = useCallback((v: string) => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => setFilter(v), J.Constant.delay.keyboard);
+	}, []);
 
-	getSections () {
-		let sections: any[] = [];
-		switch (this.tab) {
-			case Tab.Gallery: {
-				sections = sections.concat([
-					{ name: translate('menuBlockCoverGradients'), children: U.Menu.getCoverGradients() },
-					{ name: translate('menuBlockCoverSolidColors'), children: U.Menu.getCoverColors() },
-				]);
-				break;
-			};
-
-			case Tab.Library:
-			case Tab.Unsplash: {
-				if (this.items.length) {
-					sections.push({ children: this.items });
-				};
-				break;
-			};
-		};
-		return sections;
-	};
-
-	onDragOver (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+	const onDragOver = useCallback((e: any) => {
+		if (!_isMounted.current || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
+		const nodeEl = $(node.current);
+		const zone = nodeEl.find('.dropzone');
 
 		zone.addClass('isDraggingOver');
-	};
+	}, []);
 	
-	onDragLeave (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+	const onDragLeave = useCallback((e: any) => {
+		if (!_isMounted.current || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
+		const nodeEl = $(node.current);
+		const zone = nodeEl.find('.dropzone');
 
 		zone.removeClass('isDraggingOver');
-	};
+	}, []);
 	
-	onDrop (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+	const onDrop = useCallback((e: any) => {
+		if (!_isMounted.current || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
-		const { param, close } = this.props;
-		const { data } = param;
 		const { rootId } = data;
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
+		const nodeEl = $(node.current);
+		const zone = nodeEl.find('.dropzone');
 		
 		zone.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
-		this.setState({ isLoading: true });
+		setIsLoading(true);
 		
 		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
-			this.setState({ isLoading: false });
+			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
@@ -394,37 +266,150 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		
 			close();
 		});
+	}, [ data, close ]);
+
+	useEffect(() => {
+		_isMounted.current = true;
+		load();
+		rebind();
+
+		keyboard.disablePaste(true);
+
+		return () => {
+			_isMounted.current = false;
+			unbind();
+			keyboard.disablePaste(false);
+		};
+	}, [ load, rebind, unbind ]);
+
+	useEffect(() => {
+		if (filterText.current != filter) {
+			filterText.current = filter;
+			load();
+		};
+	}, [ filter, load ]);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		load,
+		setTab,
+		getSections,
+		getItems: () => items.current,
+		getIndex: () => -1, // Not used in this component
+		setIndex: (i: number) => {}, // Not used in this component
+		onUpload,
+		onSelect,
+		onFilterChange,
+		onDragOver,
+		onDragLeave,
+		onDrop,
+		onPaste,
+	}), [ rebind, unbind, load, setTab, getSections, onUpload, onSelect, onFilterChange, onDragOver, onDragLeave, onDrop, onPaste ]);
+
+	const tabs: any[] = [
+		{ id: Tab.Gallery, name: translate('menuBlockCoverGallery') },
+		{ id: Tab.Unsplash, name: translate('menuBlockCoverUnsplash') },
+		{ id: Tab.Library, name: translate('menuBlockCoverLibrary') },
+		{ id: Tab.Upload, name: translate('menuBlockCoverUpload') },
+	].filter(it => it);
+	const sections = getSections();
+
+	const Item = (item: any) => (
+		<div className="item" onClick={e => onSelect(e, item)}>
+			<Cover preview={true} {...item} />
+			{item.artist ? <div className="name">{item.artist}</div> : ''}
+		</div>
+	);
+
+	const Section = (item: any) => (
+		<div className="section">
+			<div className="name">{item.name}</div>
+			<div className="items">
+				{item.children.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
+			</div>
+		</div>
+	);
+
+	let content = null;
+	let filterElement = null;
+
+	if ([ Tab.Unsplash, Tab.Library ].includes(tab)) {
+		filterElement = (
+			<Filter 
+				ref={ref => refFilter.current = ref}
+				className="outlined"
+				value={filter}
+				onChange={onFilterChange} 
+			/>
+		);
 	};
 
-	onPaste (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
-
-		if (!files.length) {
-			return;
+	switch (tab) {
+		case Tab.Gallery:
+		case Tab.Unsplash:
+		case Tab.Library: {
+			content = (
+				<>
+					{sections.length ? (
+						<div className="sections">
+							{sections.map((section: any, i: number) => (
+								<Section key={i} {...section} />
+							))}
+						</div>
+					) : <EmptySearch text={filter ? U.Common.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
+				</>
+			);
+			break;
 		};
 
-		this.setState({ isLoading: true });
-
-		U.Common.saveClipboardFiles(files, {}, (data: any) => {
-			if (!data.files.length) {
-				this.setState({ isLoading: false });
-				return;
-			};
-
-			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
-				if (!message.error.code) {
-					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
-				};
-
-				this.setState({ isLoading: false });
-				close();
-			});
-		});
+		case Tab.Upload: {
+			content = (
+				<div 
+					className="dropzone" 
+					onDragOver={onDragOver} 
+					onDragLeave={onDragLeave} 
+					onDrop={onDrop}
+					onClick={onUpload}
+				>
+					<Icon className="coverUpload" />
+					<Label text={translate('menuBlockCoverChoose')} />
+				</div>
+			);
+			break;
+		};
 	};
 
-});
+	if (isLoading) {
+		content = <Loader />;
+	};
+
+	return (
+		<div 
+			ref={node}
+			className="wrap"
+		>
+			<div className="head">
+				{tabs.map((item: any, i: number) => (
+					<div 
+						key={item.id} 
+						className={[ 'btn', (item.id == tab ? 'active' : '') ].join(' ')}
+						onClick={() => setTab(item.id)}
+					>
+						{item.name}
+					</div>
+				))}
+			</div>
+
+			<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+				{filterElement}
+				{content}
+			</div>
+		</div>
+	);
+
+}));
 
 export default MenuBlockCover;

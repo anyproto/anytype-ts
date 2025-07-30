@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { forwardRef, useImperativeHandle, useRef, useEffect, useCallback, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -12,229 +13,30 @@ const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
-const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.Menu> {
+const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	emptyLength = 0;
-	refList: any = null;
-	cache: any = {};
-	n = -1;
-	filter = '';
+	const { param, onKeyDown, setActive, close, getId, getSize, position } = props;
+	const { data } = param;
+	const { isTemplate } = data;
 
-	constructor (props: I.Menu) {
-		super(props);
+	const emptyLength = useRef(0);
+	const refList = useRef<any>(null);
+	const cache = useRef<any>(null);
+	const n = useRef(-1);
+	const filterPrevious = useRef('');
 
-		this.rebind = this.rebind.bind(this);
-	};
-
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isTemplate } = data;
-		const { filter } = S.Common;
-		const items = this.getItems(true);
-
-		if (!this.cache) {
-			return null;
-		};
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-
-			let content = null;
-			if (item.isSection) {
-				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
-			} else {
-				const name = String(item.name || '').replace(/\\\\/g, '\\');
-
-				const math = katex.renderToString(item.comment || item.symbol, {
-					displayMode: true,
-					throwOnError: false,
-					output: 'html',
-					fleqn: false,
-					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-				});
-
-				content = (
-					<div
-						id={'item-' + item.id}
-						className="item"
-						style={param.style}
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onClick={e => this.onClick(e, item)}
-					>
-						{isTemplate ? (
-							<div className="inner">
-								<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
-							</div>
-						) : (
-							<div className="name">{name}</div>
-						)}
-					</div>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div className="items">
-				{items.length ? (
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => true}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={({ index }) => this.getRowHeight(items[index])}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				) : (
-					<div className="item empty">
-						No options available
-					</div>
-				)}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isTemplate } = data;
-		const items = this.getItems(true);
-
-		this.rebind();
-		this.resize();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: (isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL),
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		this.forceUpdate();
-	};
-
-	componentDidUpdate () {
-		const { filter } = S.Common;
-		const items = this.getItems(false);
-
-		if (filter.text != this.filter) {
-			this.n = 0;
-			this.filter = filter.text;
-		};
-
-		if (!items.length && !this.emptyLength) {
-			this.emptyLength = filter.text.length;
-		};
-
-		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
-			this.props.close();
-			return;
-		};
-
-		this.resize();
-		this.rebind();
-		this.props.position();
-		this.props.setActive();
-		this.onOver(null, items[this.n]);
-
-		S.Menu.close('previewLatex');
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-
-	unbind () {
+	const rebind = useCallback(() => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
+	}, [ onKeyDown, setActive ]);
+	
+	const unbind = useCallback(() => {
 		$(window).off('keydown.menu');
-	};
+	}, []);
 
-	onOver (e: any, item: any) {
-		if (!item) {
-			return;
-		};
-
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const { isTemplate } = data;
-
-		if (isTemplate) {
-			return;
-		};
-
-		S.Menu.open('previewLatex', {
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: getSize().width - (isTemplate ? 14 : 0),
-			vertical: I.MenuDirection.Center,
-			isSub: true,
-			data: {
-				text: item.comment || item.symbol,
-				example: item.comment ? true : false,
-			}
-		});
-	};
-
-	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item);
-			this.onOver(e, item);
-		};
-	};
-
-	onClick (e: any, item: any) {
-		e.stopPropagation();
-
-		const { filter } = S.Common;
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onSelect, isTemplate } = data;
-
-		let from = filter.from;
-		let to = filter.from;
-
-		if (!isTemplate) {
-			from--;
-			to += filter.text.length;
-		};
-
-		onSelect(from, to, item);
-		close();
-	};
-
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isTemplate } = data;
-		const filter = U.Common.regexEscape(S.Common.filter.text);
+	const getSections = useCallback(() => {
+		const filterText = U.Common.regexEscape(S.Common.filter.text);
 
 		let sections = U.Menu.sectionsMap(J.Latex);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
@@ -248,17 +50,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			return it;
 		});
 
-		if (filter) {
-			sections = U.Menu.sectionsFilter(sections, filter);
+		if (filterText) {
+			sections = U.Menu.sectionsFilter(sections, filterText);
 
-			const regS = new RegExp('/^' + filter + '/', 'gi');
+			const regS = new RegExp('/^' + filterText + '/', 'gi');
 
 			sections = sections.map((s: any) => {
 				s._sortWeight_ = 0;
 				s.children = s.children.map((c: any) => {
-					const n = c.name.replace(/\\/g, '');
+					const n = c.name.replace(/\\\\/g, '');
 					let w = 0;
-					if (n === filter) {
+					if (n === filterText) {
 						w = 10000;
 					} else
 					if (n.match(regS)) {
@@ -275,10 +77,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		};
 
 		return sections;
-	};
+	}, [ isTemplate ]);
 
-	getItems (withSections: boolean) {
-		const sections = this.getSections();
+	const getItems = useCallback((withSections: boolean) => {
+		const sections = getSections();
 
 		let items: any[] = [];
 		for (const section of sections) {
@@ -289,24 +91,63 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		};
 
 		return items;
-	};
+	}, [ getSections ]);
 
-	getRowHeight (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { isTemplate } = data;
-
+	const getRowHeight = useCallback((item: any) => {
 		if (item.isSection) {
 			return HEIGHT_SECTION;
 		};
 		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
-	};
+	}, [ isTemplate ]);
 
-	resize () {
-		const { param, getId, position } = this.props;
-		const { data } = param;
-		const { isTemplate } = data;
-		const items = this.getItems(true);
+	const onOver = useCallback((e: any, item: any) => {
+		if (!item) {
+			return;
+		};
+
+		if (isTemplate) {
+			return;
+		};
+
+		S.Menu.open('previewLatex', {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width - (isTemplate ? 14 : 0),
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				text: item.comment || item.symbol,
+				example: item.comment ? true : false,
+			}
+		});
+	}, [ getId, getSize, isTemplate ]);
+
+	const onMouseEnter = useCallback((e: any, item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item);
+			onOver(e, item);
+		};
+	}, [ setActive, onOver ]);
+
+	const onClick = useCallback((e: any, item: any) => {
+		e.stopPropagation();
+
+		const { filter } = S.Common;
+		const { onSelect } = data;
+
+		let from = filter.from;
+		let to = filter.from;
+
+		if (!isTemplate) {
+			from--;
+			to += filter.text.length;
+		};
+
+		onSelect(from, to, item);
+		close();
+	}, [ data, close, isTemplate ]);
+
+	const resize = useCallback(() => {
+		const items = getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
 		const ih = isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
@@ -314,7 +155,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		let height = offset;
 
 		for (const item of items) {
-			height += this.getRowHeight(item);
+			height += getRowHeight(item);
 		};
 
 		height = Math.max(ih + offset, Math.min(ih * 10, height));
@@ -325,8 +166,155 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		obj.css({ height: height });
 		position();
+	}, [ getId, position, isTemplate, getItems, getRowHeight ]);
+
+	useEffect(() => {
+		const items = getItems(true);
+
+		rebind();
+		resize();
+
+		cache.current = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: (isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL),
+			keyMapper: i => (items[i] || {}).id,
+		});
+
+		return () => unbind();
+	}, [ rebind, unbind, resize, getItems, isTemplate ]);
+
+	useEffect(() => {
+		const { filter } = S.Common;
+		const items = getItems(false);
+
+		if (filter.text != filterPrevious.current) {
+			n.current = 0;
+			filterPrevious.current = filter.text;
+		};
+
+		if (!items.length && !emptyLength.current) {
+			emptyLength.current = filter.text.length;
+		};
+
+		if ((filter.text.length - emptyLength.current > 3) && !items.length) {
+			close();
+			return;
+		};
+
+		resize();
+		rebind();
+		position();
+		setActive();
+		onOver(null, items[n.current]);
+
+		S.Menu.close('previewLatex');
+	}, [ S.Common.filter.text, close, resize, rebind, position, setActive, onOver, getItems ]);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getSections,
+		getItems: () => getItems(false),
+		getRowHeight,
+		resize,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), [ rebind, unbind, getSections, getItems, getRowHeight, resize, onClick, onOver ]);
+
+	const { filter } = S.Common;
+	const items = getItems(true);
+
+	if (!cache.current) {
+		return null;
 	};
 
-});
+	const rowRenderer = (param: any) => {
+		const item: any = items[param.index];
+
+		let content = null;
+		if (item.isSection) {
+			content = (<div className="sectionName" style={param.style}>{item.name}</div>);
+		} else {
+			const name = String(item.name || '').replace(/\\\\/g, '\\');
+
+			const math = katex.renderToString(item.comment || item.symbol, {
+				displayMode: true,
+				throwOnError: false,
+				output: 'html',
+				fleqn: false,
+				trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+			});
+
+			content = (
+				<div
+					id={'item-' + item.id}
+					className="item"
+					style={param.style}
+					onMouseEnter={e => onMouseEnter(e, item)}
+					onClick={e => onClick(e, item)}
+				>
+					{isTemplate ? (
+						<div className="inner">
+							<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
+						</div>
+					) : (
+						<div className="name">{name}</div>
+					)}
+				</div>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	return (
+		<div className="items">
+			{items.length ? (
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => true}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={ref => refList.current = ref}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={cache.current}
+									rowCount={items.length}
+									rowHeight={({ index }) => getRowHeight(items[index])}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={10}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			) : (
+				<div className="item empty">
+					No options available
+				</div>
+			)}
+		</div>
+	);
+
+}));
 
 export default MenuBlockLatex;
