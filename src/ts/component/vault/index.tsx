@@ -317,9 +317,13 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const tooltipShow = (item: any, delay: number) => {
 		const node = $(nodeRef.current);
 		const element = node.find(`#item-${item.id}`);
+		const items = getSpaceItems();
+		const idx = items.findIndex(it => it.id == item.id) + 1;
+		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
+		const text = Preview.tooltipCaption(U.Common.htmlSpecialChars(item.tooltip || item.name), caption);
 
 		Preview.tooltipShow({ 
-			text: U.Common.htmlSpecialChars(item.tooltip || item.name), 
+			text, 
 			element, 
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
