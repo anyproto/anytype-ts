@@ -487,7 +487,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			} else {
 				switch (item.id) {
 					case 'add': {
-						pageCreate(filter)
+						pageCreate(filter);
 						break;
 					};
 
