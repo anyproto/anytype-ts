@@ -502,6 +502,34 @@
             .label { margin-bottom: 8px; }
             .label { @include text-common; color: var(--color-text-secondary); }
 
+            .linkTypeWrapper {
+                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: 100%;
+                padding: 0px 8px; margin-bottom: 16px; gap: 0px 12px; border-radius: 12px;
+            }
+            .linkTypeWrapper:hover,
+            .linkTypeWrapper.hover { background-color: var(--color-shape-highlight-medium); }
+            .linkTypeWrapper {
+                .icon {
+                    width: 40px; height: 40px; border-radius: 50%; background-size: 20px;
+                    background-position: 50% 50%; background-color: var(--color-shape-highlight-medium);
+                }
+                .icon.editor { background-image: url('~img/icon/menu/inviteLink/editor.svg'); }
+                .icon.viewer { background-image: url('~img/icon/menu/inviteLink/viewer.svg'); }
+                .icon.manual { background-image: url('~img/icon/menu/inviteLink/manual.svg'); }
+                .icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
+
+                .info {
+                    .title { @include text-common; font-weight: 500; margin: 0px; }
+                    .label { @include text-small; color: var(--color-text-secondary); margin: 0px; }
+                }
+            }
+            .linkTypeWrapper.canEdit {
+                .info {
+                    .title { display: flex; align-items: center; }
+                    .title:after { content: ''; width: 20px; height: 20px; display: inline-block; background: url('~img/arrow/select/dark.svg'); }
+                }
+            }
+
             .inviteLinkWrapper { display: flex; align-items: center; height: 40px; margin-bottom: 12px; gap: 0px 8px; }
             .inviteLinkWrapper {
                 .inputWrapper {

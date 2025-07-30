@@ -942,28 +942,31 @@
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
-	"popupSettingsSpaceShareTitle": "Sharing",
+	"popupSettingsSpaceShareTitle": "Members",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
-	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space.",
-	"popupSettingsSpaceShareInviteLinkDisabled": "Invitations are disabled by the space owner. In order to have an ability to invite people. please ask space owner to generate an invite link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
+	"popupSettingsSpaceShareMenuInviteNoneTitle": "Invite link is disabled",
+	"popupSettingsSpaceShareMenuInviteNoneDescription": "Only invited members can join this space",
+	"popupSettingsSpaceShareMenuInviteEditorTitle": "Anyone with the link can join as editor",
+	"popupSettingsSpaceShareMenuInviteEditorDescription": "Can edit content and write in chat",
+	"popupSettingsSpaceShareMenuInviteViewerTitle": "Anyone with the link can join as viewer",
+	"popupSettingsSpaceShareMenuInviteViewerDescription": "Can view content and read chat",
+	"popupSettingsSpaceShareMenuInviteManualTitle": "Approve manually",
+	"popupSettingsSpaceShareMenuInviteManualDescription": "Requests must be approved by the owner",
+
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
-	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
-
-	"popupSettingsSpaceShareLinkWithApproveLabel": "This link requires manual approve from space owner. Once they request to join, you can set their access rights.",
-	"popupSettingsSpaceShareLinkWithoutApproveLabel": "This link doesn't require manual approve from space owner.",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -1170,10 +1173,6 @@
 	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
 	"popupConfirmObjectOpenErrorButton": "Collect debug info",
 
-	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
-	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
-	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
-
 	"popupConfirmMemberRemoveTitle": "Remove member",
 	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
 
@@ -1182,9 +1181,6 @@
 	"popupConfirmRevokeLinkTitle": "Delete sharing link",
 	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can generate a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Delete link",
-
-	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
-	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",

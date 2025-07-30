@@ -391,9 +391,9 @@ class UtilSpace {
 	 * @param {string} id - The invite ID.
 	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.
 	 */
-	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType) => void) {
+	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void) {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
-			callBack(message.inviteCid, message.inviteKey, message.inviteType);
+			callBack(message.inviteCid, message.inviteKey, message.inviteType, message.permissions);
 		});
 	};
 
