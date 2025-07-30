@@ -1375,8 +1375,8 @@
 	"popupShortcutMainTextStyle4": "Strikethrough",
 	"popupShortcutMainTextStyle5": "Add a link",
 	"popupShortcutMainTextStyle6": "Convert to inline code",
-	"popupShortcutMainTextStyle7": "Apply previously selected font color",
-	"popupShortcutMainTextStyle8": "Apply previously selected highlight",
+	"popupShortcutMainTextStyle7": "Select font color",
+	"popupShortcutMainTextStyle8": "Select highlight",
 
 	"popupShortcutMainStructuring1": "New text block",
 	"popupShortcutMainStructuring2": "Line break",
