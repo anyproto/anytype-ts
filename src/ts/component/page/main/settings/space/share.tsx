@@ -1,8 +1,7 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, Error, Loader } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics, sidebar, keyboard, } from 'Lib';
+import { Title, Label, Icon, Input, Button, Error } from 'Component';
+import { I, C, S, U, translate, Preview, Action, analytics } from 'Lib';
 import Members from './share/members';
 
 interface State {
