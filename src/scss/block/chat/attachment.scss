@@ -25,7 +25,8 @@
 
 		.icon.syncStatus { display: none; position: absolute; left: 50%; top: 50%; }
 
-		&.isSyncing {
+		&.isSyncing, 
+		&.isQueued {
 			.icon.syncStatus { display: block; background-image: url('~img/icon/chat/syncStatus/syncing.svg'); animation: rotate 1.2s infinite linear; }
 		}
 		&.isError {
@@ -138,10 +139,13 @@
 	.attachment { max-width: 100%; max-height: 100%; aspect-ratio: unset; }
 	.attachment {
 		&.isVideo { height: 224px; }
-
-		.image { aspect-ratio: unset; }
 	}
 }
+
+.attachments.withLayout:not(.layout-1) {
+	.image { aspect-ratio: 1 !important; }
+}
+
 .attachments.layout-2 { gap: 4px; }
 .attachments.layout-2 {
 	.attachment { @include cnt-2; }

@@ -119,7 +119,7 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpenedByWindowId(U.Common.getCurrentElectronWindowId());
+		let home = Storage.getLastOpenedByWindowId(U.Common.getWindowId());
 
 		// Invalid data protection
 		if (!home || !home.id) {
@@ -420,7 +420,7 @@ class UtilSpace {
 	 * @returns {string} The publish URL.
 	 */
 	getPublishUrl (slug: string): string {
-		return [ this.getPublishDomain(), slug ].join('/');
+		return [ 'https://', this.getPublishDomain(), slug ].join('/');
 	};
 
 };

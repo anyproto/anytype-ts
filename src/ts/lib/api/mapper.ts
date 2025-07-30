@@ -1686,7 +1686,8 @@ export const Mapper = {
 				error: obj.getError(),
 				network: obj.getNetwork(),
 				status: obj.getStatus(),
-				syncingCounter: obj.getSyncingobjectscounter()
+				syncingCounter: obj.getSyncingobjectscounter(),
+				notSyncedCounter: obj.getNotsyncedfilescounter()
 			};
 		},
 

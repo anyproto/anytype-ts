@@ -270,20 +270,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Only apply unicode replacements if not composing IME
 		if (block.isTextCode()) {
-			const lang = U.Prism.aliasMap[fields.lang] || 'plain';fields.lang;
+			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
 			const grammar = Prism.languages[lang] || {};
 
 			html = Prism.highlight(html, grammar, lang);
 			this.refLang?.setValue(lang);
-		} else 
-		if (!keyboard.isComposition) {
-			const parsed = Mark.fromUnicode(html, this.marks, false);
-
-			html = parsed.text;
-			this.marks = parsed.marks;
-
-			html = Mark.toHtml(html, this.marks);
 		} else {
+			if (!keyboard.isComposition) {
+				const parsed = Mark.fromUnicode(html, this.marks, false);
+
+				html = parsed.text;
+				this.marks = parsed.marks;
+			};
+
 			html = Mark.toHtml(html, this.marks);
 		};
 

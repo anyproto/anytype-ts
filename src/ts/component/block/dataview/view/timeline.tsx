@@ -36,10 +36,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const startRelation = S.Record.getRelationByKey(startKey);
 	const endRelation = S.Record.getRelationByKey(endKey);
 	const dateParam = U.Date.getDateParam(value);
-
 	const canEditStart = !readonly && !startRelation?.isReadonlyValue;
 	const canEditEnd = !readonly && !endRelation?.isReadonlyValue;
 	const months = [];
+
+	const getItems = () => {
+		return getRecords().map(id => S.Detail.get(subId, id))
+	};
 
 	const rebind = () => {
 		unbind();
@@ -151,6 +154,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const width = Math.floor(el.outerWidth());
 		const body = $('body');
 		const sl = node.scrollLeft();
+		const duration = getDuration(item);
 
 		unbind();
 		keyboard.setResize(true);
@@ -216,6 +220,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 					end += d * DAY;
 				};
 
+				if (duration + d < 1) {
+					return;
+				};
+
 				el.css(css);
 				setHover(start, end);
 			};
@@ -276,9 +284,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const getDuration = (item: any): number => {
 		const start = Number(item[startKey]) || 0;
-		const end = Number(item[endKey]) || 0;
+		const param = U.Date.getDateParam(Number(item[endKey]) || 0);
+		const end = U.Date.timestamp(param.y, param.m, param.d, 23, 59, 59);
 
-		return end - start;
+		return Math.ceil((end - start) / DAY);
 	};
 
 	const rowRenderer = (param: any) => {
@@ -300,7 +309,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		};
 
 		const icon = hideIcon ? null : <IconObject object={item} size={18} />;
-		const width = Math.max(1, Math.ceil(duration / DAY)) * WIDTH;
+		const width = Math.max(1, duration) * WIDTH;
 		const left = idx * WIDTH;
 
 		return (
@@ -378,8 +387,9 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			return;
 		};
 
+		const items = getItems();
 		const body = $(bodyRef.current);
-		const items = $(itemsRef.current);
+		const list = $(itemsRef.current);
 		const tooltips = $(tooltipRef.current);
 		const scrollContainer = U.Common.getScrollContainer(isPopup);
 		const pageContainer = U.Common.getPageContainer(isPopup);
@@ -398,7 +408,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const width = node.width();
 
-		items.css({ height: Math.max(20, items.length) * HEIGHT });
+		list.css({ height: Math.max(20, items.length) * HEIGHT });
 		tooltips.css({ transform: `translate3d(${left}px, ${top}px, 0)`, width });
 	};
 
@@ -541,7 +551,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		});
 	};
 
-	const items = getRecords().map(id => S.Detail.get(subId, id));
+	const items = getItems();
 
 	useEffect(() => {
 		scrollTo(U.Date.now(), false);

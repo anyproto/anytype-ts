@@ -6,6 +6,7 @@
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
 	.menuWrap.fromOnboarding { z-index: 1001; }
+	.menuWrap.fromBlock { z-index: 25; }
 
 	.menuWrap.fixed { position: fixed; }
 	.menuWrap.fixed {

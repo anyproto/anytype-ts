@@ -118,8 +118,6 @@ class Dataview {
 					keys = arrayMove(keys, oldIndex, index);
 				};
 
-				console.log(rel, JSON.stringify(keys, null, 3));
-
 				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 			} else {
 				if (callBack) {

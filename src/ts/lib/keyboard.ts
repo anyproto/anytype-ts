@@ -867,7 +867,7 @@ class Keyboard {
 	/**
 	 * Handles membership upgrade action.
 	 */
-	onMembershipUpgrade () {
+	onMembershipUpgradeViaEmail () {
 		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 
@@ -1541,7 +1541,7 @@ class Keyboard {
 
 	/**
 	 * Gets the mark parameter for the current selection.
-	 * @returns {any} The mark parameter.
+	 * @returns {{ key: string; type: I.MarkType; param: string; }[]} The mark parameter.
 	 */
 	getMarkParam () {
 		return [
@@ -1551,8 +1551,8 @@ class Keyboard {
 			{ key: 'textStrike',	 type: I.MarkType.Strike,	 param: '' },
 			{ key: 'textLink',		 type: I.MarkType.Link,		 param: '' },
 			{ key: 'textCode',		 type: I.MarkType.Code,		 param: '' },
-			{ key: 'textColor',		 type: I.MarkType.Color,	 param: Storage.get('color') },
-			{ key: 'textBackground', type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
+			{ key: 'textColor',		 type: I.MarkType.Color,	 param: '' },
+			{ key: 'textBackground', type: I.MarkType.BgColor,	 param: '' },
 		];
 	};
 	

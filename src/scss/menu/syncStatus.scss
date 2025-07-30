@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSyncStatus { width: var(--menu-width-large); height: var(--menu-width-large); }
+	.menu.menuSyncStatus { width: var(--menu-width-large); }
 	.menu.menuSyncStatus {
 		.content { 
 			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px; 
@@ -43,6 +43,14 @@
 
 			.iconWrapper:hover {
 				.iconBg { opacity: 0.5; }
+			}
+		}
+
+		.incentiveBanner { margin: 10px 16px 0px 16px; padding: 12px 16px 16px 16px; border-radius: 8px; background: linear-gradient(180deg, #FEE7E0 30%, #FFF6F3 100%); }
+		.incentiveBanner {
+			.buttons { padding-top: 12px; display: flex; gap: 8px; }
+			.buttons {
+				.button { width: 50%; }
 			}
 		}
 

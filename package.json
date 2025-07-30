@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.47.45-alpha",
+	"version": "0.47.50-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -116,7 +116,7 @@
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^5.2.0",
 		"electron-store": "^8.2.0",
-		"electron-updater": "^6.2.1",
+		"electron-updater": "^6.6.2",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",

@@ -92,7 +92,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				id={`record-${record.id}`}
 				className={cn.join(' ')} 
 				draggable={true}
-				onDragStart={e => onDragStartCard(e, groupId, record)}
+				onDragStart={this.onDragStartCard}
 				onClick={e => this.onClick(e)}
 				onContextMenu={e => onContext(e, record.id, subId)}
 				{...U.Common.dataProps({ id: record.id })}
@@ -160,6 +160,20 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id, record);
+	};
+
+	onDragStartCard = (e: any) => {
+		if (keyboard.isFocused || this.isEditing) {
+			e.preventDefault();
+			return;
+		};
+
+		const { groupId, id, onDragStartCard, getRecord } = this.props;
+		const record = getRecord(id);
+
+		if (onDragStartCard) {
+			onDragStartCard(e, groupId, record);
+		};
 	};
 
 	setIsEditing (v:boolean) {

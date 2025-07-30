@@ -24,7 +24,7 @@ class UtilCommon {
 	 * Gets the current Electron window ID as a string.
 	 * @returns {string} The current window ID or '0' if not available.
 	 */
-	getCurrentElectronWindowId (): string {
+	getWindowId (): string {
 		const electron = this.getElectron();
 
 		if (!electron) {
@@ -659,22 +659,23 @@ class UtilCommon {
 		};
 
 		// Sanity check: reject massive or clearly invalid strings
-		if (!url || (url.length > 2048) || !/[.@:/\\]/.test(url)) {
+		if (!url || (url.length > 2048)) {
 			return '';
 		};
 
 		const scheme = this.getScheme(url);
+		if (scheme) {
+			return url;
+		};
 
-		if (!scheme) {
-			if (this.matchEmail(url)) {
-				url = `mailto:${url}`;
-			} else 
-			if (this.matchPhone(url)) {
-				url = `tel:${url}`;
-			} else 
-			if (this.matchPath(url)) {
-				url = `file://${url}`;
-			};
+		if (this.matchEmail(url)) {
+			url = `mailto:${url}`;
+		} else 
+		if (this.matchPhone(url)) {
+			url = `tel:${url}`;
+		} else 
+		if (this.matchPath(url)) {
+			url = `file://${url}`;
 		};
 
 		return url;
@@ -1102,6 +1103,10 @@ class UtilCommon {
 	matchEmail (v: string) {
 		v = String(v || '');
 
+		if (!/@/.test(v) || (v.length < 5)) {
+			return '';
+		};
+
 		const uc = '\\P{Script_Extensions=Latin}';
 		const m = v.match(new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu'));
 
@@ -1127,7 +1132,7 @@ class UtilCommon {
 		s = String(s || '');
 
 		const rw = new RegExp(/^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
-		const ru = new RegExp(/^(file:\/\/)?(\/[\p{L}\p{N}\s\._-]+)+\/?$/u);
+		const ru = new RegExp(/^(file:\/\/)?(\/[\p{L}\p{N}\s\._%-]+)+\/?$/u);
 
 		let m = s.match(rw);
 		if (!m) {
@@ -1895,6 +1900,18 @@ class UtilCommon {
 			Storage.set('whatsNew', true);
 			Storage.setHighlight('whatsNew', true);
 		};
+	};
+
+	checkCanMembershipUpgrade (): boolean {
+		const { membership } = S.Auth;
+		const canUpgradeTiers = [
+			I.TierType.None,
+			I.TierType.Explorer,
+			I.TierType.Starter,
+			I.TierType.Pioneer,
+		];
+
+		return canUpgradeTiers.includes(membership.tier);
 	};
 
 };

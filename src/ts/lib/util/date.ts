@@ -558,11 +558,11 @@ class UtilDate {
 	/**
 	 * Returns the date parameters (day, month, year) for a timestamp.
 	 * @param {number} t - The Unix timestamp.
-	 * @returns {{ d: number, m: number, y: number }} The date parameters.
+	 * @returns {{ d: number, m: number, y: number, h: number, i: number, s: number }} The date parameters.
 	 */
 	getDateParam (t: number) {
-		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
-		return { d, m, y };
+		const [ d, m, y, h, i, s ] = U.Date.date('j,n,Y,H,i,s', t).split(',').map(it => Number(it));
+		return { d, m, y, h, i, s };
 	};
 
 };

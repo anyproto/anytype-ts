@@ -8,7 +8,7 @@ const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref)
 	const { show } = S.Progress;
 	const theme = S.Common.getThemeClass();
 	const skipState = [ I.ProgressState.Done, I.ProgressState.Canceled ];
-	const skipType = [ I.ProgressType.Migrate, I.ProgressType.Update, I.ProgressType.UpdateCheck ];
+	const skipType = [ I.ProgressType.Migrate, I.ProgressType.Update ];
 	const list = S.Progress.getList(it => !skipType.includes(it.type) && !skipState.includes(it.state));
 	const percent = S.Progress.getPercent(list);
 	const color = J.Theme[theme].progress;

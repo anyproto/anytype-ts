@@ -65,6 +65,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
 		const { showVault } = S.Common;
+		const items = getSpaceItems();
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -89,6 +90,15 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				sidebar.open(width);
 			};
 		});
+
+		for (let i = 1; i <= 9; i++) {
+			const id = Number(i) - 1;
+			keyboard.shortcut(`space${i}`, e, () => {
+				if (items[id]) {
+					onClick(e, items[id]);
+				};
+			});
+		};
 	};
 
 	const onKeyUp = (e: any) => {
@@ -177,14 +187,13 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	};
 
 	const onAdd = () => {
-		const param = {
+		Action.spaceCreateMenu({
 			element: `#vault #item-add`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
-			offsetY: 4,
-		};
-
-		Action.spaceCreateMenu(param, analytics.route.vault);
+			vertical: I.MenuDirection.Center,
+			offsetX: 54,
+		}, analytics.route.vault);
 	};
 
 	const onArrow = (dir: number) => {

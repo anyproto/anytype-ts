@@ -432,17 +432,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		// Mark-up
 		if (range && range.to && (range.from != range.to)) {
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
-				keyboard.shortcut(item.key, e, () => {
-					type = item.type;
-					param = item.param;
-				});
+				keyboard.shortcut(item.key, e, () => type = item.type);
 			};
 
 			if (type !== null) {
-				this.refButtons.onTextButton(e, type, param);
+				this.refButtons.onTextButton(e, type, '');
 			};
 		};
 	};
@@ -518,9 +514,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		/*
-		keyboard.shortcut('space', e, () => {
-			this.checkUrls();
-		});
+		keyboard.shortcut('space', e, () => this.checkUrls());
 		*/
 
 		this.checkSendButton();
@@ -644,6 +638,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			const { from, to, isLocal, isUrl, value } = url;
 
 			if (isLocal) {
+				continue;
+			};
+
+			if (Mark.getInRange(this.marks, I.MarkType.Link, { from, to })) {
 				continue;
 			};
 

@@ -360,6 +360,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
 		const objectIds = this.getObjectIds();
+		const space = U.Space.getSpaceview();
 		const win = $(window);
 		const length = objectIds.length;
 		const first = length == 1 ? this.getObject(subId, getObject, objectIds[0]) : null;
@@ -404,12 +405,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				if (!first) {
-					break;
-				};
-
-				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(first)}` });
-				analytics.event('CopyLink', { route });
+				U.Object.copyLink(first, space, 'web', route);
 				break;
 			};
 

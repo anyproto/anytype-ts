@@ -705,6 +705,10 @@ class UtilObject {
 	};
 
 	copyLink (object: any, space: any, type: string, route: string, add?: string) {
+		if (!object || !space) {
+			return;
+		};
+
 		add = add || '';
 
 		const cb = (link: string) => {

@@ -783,86 +783,71 @@ class UtilMenu {
 	spaceContext (space: any, param: any) {
 		const { targetSpaceId } = space;
 		const options: any[] = [];
+		const pinned = this.getVaultItems().filter(it => it.isPinned);
 
-		let cid = '';
-		let key = '';
+		if (space.spaceOrder) {
+			options.push({ id: 'unpin', name: translate('commonUnpin') });
+		} else 
+		if (pinned.length < J.Constant.limit.space.pin) {
+			options.push({ id: 'pin', name: translate('commonPin') });
+		};
 
-		const cb = () => {
-			const pinned = this.getVaultItems().filter(it => it.isPinned);
-			if (space.spaceOrder) {
-				options.push({ id: 'unpin', name: translate('commonUnpin') });
-			} else 
-			if (pinned.length < J.Constant.limit.space.pin) {
-				options.push({ id: 'pin', name: translate('commonPin') });
+		if (space.chatId) {
+			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+				options.push({ id: 'unmute', name: translate('commonUnmute') });
+			} else {
+				options.push({ id: 'mute', name: translate('commonMute') });
 			};
+		};
 
-			if (space.chatId) {
-				if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-					options.push({ id: 'unmute', name: translate('commonUnmute') });
-				} else {
-					options.push({ id: 'mute', name: translate('commonMute') });
-				};
-			};
+		if (options.length) {
+			options.push({ isDiv: true });
+		};
 
-			if (options.length) {
-				options.push({ isDiv: true });
-			};
-			options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 
-			S.Menu.open('select', {
-				...param,
-				data: {
-					options,
-					onSelect: (e: any, element: any) => {
-						window.setTimeout(() => {
-							switch (element.id) {
-								case 'mute':
-								case 'unmute': {
-									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				onSelect: (e: any, element: any) => {
+					window.setTimeout(() => {
+						switch (element.id) {
+							case 'mute':
+							case 'unmute': {
+								const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
 
-									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-									analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
-									break;
-								};
-
-								case 'pin': {
-									C.SpaceSetOrder(space.id, [ space.id ]);
-									break;
-								};
-
-								case 'unpin': {
-									C.SpaceUnsetOrder(space.id);
-									break;
-								};
-
-								case 'settings': {
-									const routeParam = { 
-										replace: true, 
-										onRouteChange: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
-									};
-			
-									U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
-									break;
-								};
-
+								C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+								analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
+								break;
 							};
 
-						}, S.Menu.getTimeout());
-					},
+							case 'pin': {
+								C.SpaceSetOrder(space.id, [ space.id ]);
+								break;
+							};
+
+							case 'unpin': {
+								C.SpaceUnsetOrder(space.id);
+								break;
+							};
+
+							case 'settings': {
+								const routeParam = { 
+									replace: true, 
+									onRouteChange: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
+								};
+		
+								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+								break;
+							};
+
+						};
+
+					}, S.Menu.getTimeout());
 				},
-			});
-		};
-
-		if (space.isShared) {
-			U.Space.getInvite(S.Common.space, (newCid: string, newKey: string, inviteType: I.InviteType) => {
-				cid = newCid;
-				key = newKey;
-
-				cb();
-			});
-		} else {
-			cb();
-		};
+			},
+		});
 	};
 
 	inviteContext (param: any) {
@@ -936,6 +921,9 @@ class UtilMenu {
 
 			if (c1.spaceOrder > c2.spaceOrder) return 1;
 			if (c1.spaceOrder < c2.spaceOrder) return -1;
+
+			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
+			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
 
 			if (c1.lastMessageDate > c2.lastMessageDate) return -1;
 			if (c1.lastMessageDate < c2.lastMessageDate) return 1;

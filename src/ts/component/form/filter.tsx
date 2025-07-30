@@ -149,6 +149,10 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 
 		buttonCheck();
 
+		keyboard.shortcut('arrowup, arrowdown', e, () => {
+			e.preventDefault();
+		});
+
 		if (onKeyDown) {
 			onKeyDown(e, v);
 		};

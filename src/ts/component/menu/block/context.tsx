@@ -142,20 +142,39 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	};
 
 	componentDidMount () {
+		this.rebind();
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();
+		S.Menu.closeAll(J.Menu.context.concat('selectContext'));
+	};
+
+	rebind () {
 		const { getId } = this.props;
+		const win = $(window);
 		const obj = $(`#${getId()}`);
 
-		obj.off('click mousedown').on('click mousedown', (e: any) => {
+		this.unbind();
+
+		obj.on('click mousedown', (e: any) => {
 			const target = $(e.target);
 			if (!target.hasClass('icon') && !target.hasClass('inner')) {
 				e.preventDefault();
 				e.stopPropagation();
 			};
 		});
+
+		win.on('keydown.menu', e => this.onKeyDown(e));
 	};
 
-	componentWillUnmount(): void {
-		S.Menu.closeAll(J.Menu.context.concat('selectContext'));
+	unbind () {
+		$(`#${this.props.getId()}`).off('click mousedown');
+		$(window).off('keydown.menu');
+	};
+
+	onKeyDown = (e: any) => {
+		keyboard.shortcut('shift', e, () => this.props.close());
 	};
 
 	onMark (e: any, type: any) {
