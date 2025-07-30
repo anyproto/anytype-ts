@@ -419,6 +419,8 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	onContext (item: any) {
 		const { x, y } = keyboard.mouse.page;
 		const menuParam = {
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			element: `#sidebarLeft #containerSettings #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {},

@@ -124,6 +124,7 @@ class AuthStore {
 				p2p: observable,
 				syncingCounter: observable,
 				devicesCounter: observable,
+				notSyncedCounter: observable,
 			});
 
 			intercept(obj as any, change => U.Common.intercept(obj, change));
@@ -220,6 +221,7 @@ class AuthStore {
 			p2p: I.P2PStatus.NotConnected,
 			syncingCounter: 0,
 			devicesCounter: 0,
+			notSyncedCounter: 0,
 		};
 	};
 

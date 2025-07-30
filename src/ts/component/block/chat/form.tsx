@@ -518,9 +518,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		/*
-		keyboard.shortcut('space', e, () => {
-			this.checkUrls();
-		});
+		keyboard.shortcut('space', e, () => this.checkUrls());
 		*/
 
 		this.checkSendButton();
@@ -644,6 +642,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			const { from, to, isLocal, isUrl, value } = url;
 
 			if (isLocal) {
+				continue;
+			};
+
+			if (Mark.getInRange(this.marks, I.MarkType.Link, { from, to })) {
 				continue;
 			};
 

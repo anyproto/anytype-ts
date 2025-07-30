@@ -31,7 +31,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	winScrollTop = 0;
 	containerScrollTop = 0;
 	uiHidden = false;
-	tocBlockId = '';
 	width = 0;
 	refHeader: any = null;
 	refControls: any = null;
@@ -54,6 +53,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	frameMove = 0;
 	frameResize = 0;
+	frameScroll = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -185,6 +185,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.close();
 
 		focus.clear(false);
+
+		raf.cancel(this.frameMove);
+		raf.cancel(this.frameResize);
+		raf.cancel(this.frameScroll);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
@@ -1828,28 +1832,47 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			Storage.setScroll('editor', rootId, top, isPopup);
 		}, 50);
 
-		if (length) {
-			for (let i = 0; i < length; ++i) {
-				const block = headers[i];
-				const el = $(`#block-${block.id}`);
+		raf.cancel(this.frameScroll);
+		this.frameScroll = raf(() => this.updateToc());
 
-				if (!el.length) {
-					continue;
-				};
+		Preview.previewHide(false);
+	};
 
-				const t = el.offset().top - co;
-				const h = el.outerHeight();
-				const check = isPopup ? 0 : top;
+	updateToc () {
+		const { rootId, isPopup } = this.props;
+		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
+		const length = headers.length;
 
-				if ((t >= check) && (t + h <= check + ch)) {
-					this.tocBlockId = block.id;
-					break;
-				};
+		if (!length) {
+			return;
+		};
+
+		const container = U.Common.getScrollContainer(isPopup);
+		const top = container.scrollTop();
+		const co = isPopup ? container.offset().top : 0;
+		const ch = container.height() - J.Size.header;
+
+		let blockId = '';
+
+		for (let i = 0; i < length; ++i) {
+			const block = headers[i];
+			const el = $(`#block-${block.id}`);
+
+			if (!el.length) {
+				continue;
+			};
+
+			const t = el.offset().top - co;
+			const h = el.outerHeight();
+			const check = isPopup ? 0 : top;
+
+			if ((t >= check) && (t + h <= check + ch)) {
+				blockId = block.id;
+				break;
 			};
 		};
 
-		this.refToc?.setBlock(this.tocBlockId);
-		Preview.previewHide(false);
+		this.refToc?.setBlock(blockId);
 	};
 	
 	onCopy (e: any, isCut: boolean) {
