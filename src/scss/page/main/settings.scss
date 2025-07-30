@@ -504,7 +504,7 @@
 
             .linkTypeWrapper {
                 display: flex; justify-content: flex-start; align-items: center; height: 64px; width: 100%;
-                padding: 0px 8px; margin-bottom: 16px; gap: 0px 12px; border-radius: 12px;
+                padding: 0px 8px; margin: 0px 0px 16px 0px; gap: 0px 12px; border-radius: 12px;
             }
             .linkTypeWrapper:hover,
             .linkTypeWrapper.hover { background-color: var(--color-shape-highlight-medium); }
@@ -533,11 +533,12 @@
                     .title { @include text-common; font-weight: 500; margin: 0px; }
                     .label { @include text-small; color: var(--color-text-secondary); margin: 0px; }
                 }
-            }
-            .linkTypeWrapper.canEdit {
-                .info {
-                    .title { display: flex; align-items: center; }
-                    .title:after { content: ''; width: 20px; height: 20px; display: inline-block; background: url('~img/arrow/select/dark.svg'); }
+
+                &.canEdit {
+                    .info {
+                        .title { display: flex; align-items: center; }
+                        .title:after { content: ''; width: 20px; height: 20px; display: inline-block; background: url('~img/arrow/select/dark.svg'); }
+                    }
                 }
             }
 
