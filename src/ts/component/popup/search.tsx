@@ -20,9 +20,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const [ backlink, setBacklink ] = useState(null);
 
 	const nodeRef = useRef(null);
-	const refFilter = useRef(null);
-	const refList = useRef(null);
-	const refRows = useRef([]);
+	const filterInputRef = useRef(null);
+	const listRef = useRef(null);
+	const rowsRef = useRef([]);
 	const timeoutRef = useRef(0);
 	const delayRef = useRef(0);
 	const cacheRef = useRef({});
@@ -30,7 +30,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const nRef = useRef(0);
 	const topRef = useRef(0);
 	const offsetRef = useRef(0);
-	const filterRef = useRef('');
+	const filterValueRef = useRef('');
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
 	const initCache = useCallback(() => {
 		const items = getItems();
@@ -112,7 +112,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	}, [backlink]);
 
 	const onArrow = useCallback((dir: number) => {
-		if (!refList.current) {
+		if (!listRef.current) {
 			return;
 		};
 
@@ -135,7 +135,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		refList.current.scrollToRow(Math.max(0, nRef.current));
+		listRef.current.scrollToRow(Math.max(0, nRef.current));
 		setActive(item);
 	}, []);
 
@@ -160,19 +160,19 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onFilterChange = useCallback((v: string) => {
 		window.clearTimeout(timeoutRef.current);
 
-		if (filterRef.current == v) {
+		if (filterValueRef.current == v) {
 			return;
 		};
 
 		timeoutRef.current = window.setTimeout(() => {
 			storageSet({ filter: v });
 
-			if (filterRef.current != v) {
+			if (filterValueRef.current != v) {
 				analytics.event('SearchInput', { route });
 			};
 
-			filterRef.current = v;
-			rangeRef.current = refFilter.current?.getRange();
+			filterValueRef.current = v;
+			rangeRef.current = filterInputRef.current?.getRange();
 			reload();
 
 			if (!delayRef.current) {
@@ -182,7 +182,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	}, []);
 
 	const onFilterSelect = useCallback((e: any) => {
-		rangeRef.current = refFilter.current.getRange();
+		rangeRef.current = filterInputRef.current.getRange();
 	}, []);
 
 	const onFilterClear = useCallback(() => {
@@ -222,7 +222,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	}, []);
 
 	const resetSearch = useCallback(() => {
-		refFilter.current?.setValue('');
+		filterInputRef.current?.setValue('');
 		reload();
 	}, []);
 
@@ -241,7 +241,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const load = useCallback((clear: boolean, callBack?: () => void) => {
 		const { space, config } = S.Common;
-		const filter = filterRef.current;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
 		const filters: any[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
@@ -260,7 +259,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let limit = J.Constant.limit.menuRecords;
 
-		if (!filter && clear && !backlink) {
+		if (!filterValueRef.current && clear && !backlink) {
 			limit = 8;
 		};
 
@@ -272,7 +271,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filter, offsetRef.current, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			if (message.error.code) {
 				setIsLoading(false);
 				return;
@@ -536,7 +535,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	}, []);
 
 	const getFilter = useCallback(() => {
-		return refFilter.current ? refFilter.current.getValue() : '';
+		return String(filterInputRef.current.getValue() || '');
 	}, []);
 
 	useEffect(() => {
@@ -545,13 +544,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const filter = String(storage.filter || '');
 
 		const setFilter = () => {
-			if (!refFilter.current) {
+			if (!filterInputRef.current) {
 				return;
 			};
 
 			rangeRef.current = { from: 0, to: filter.length };
-			refFilter.current.setValue(filter);
-			refFilter.current.setRange(rangeRef.current);
+			filterInputRef.current.setValue(filter);
+			filterInputRef.current.setRange(rangeRef.current);
 			reload();
 		};
 
@@ -581,9 +580,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		initCache();
 		setActive(items[nRef.current]);
 
-		if (refList.current) {
-			refList.current.recomputeRowHeights(0);
-			refList.current.scrollToPosition(topRef.current);
+		if (listRef.current) {
+			listRef.current.recomputeRowHeights(0);
+			listRef.current.scrollToPosition(topRef.current);
 		};
 	});
 
@@ -726,7 +725,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		return (
 			<div
-				ref={node => refRows.current[item.index] = node}
+				ref={node => rowsRef.current[item.index] = node}
 				id={`item-${item.id}`} 
 				className={cn.join(' ')}
 				onMouseOver={e => onOver(e, item)} 
@@ -780,8 +779,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="head">
 				<Filter 
 					icon="search"
-					value={filterRef.current}
-					ref={refFilter} 
+					value={filterValueRef.current}
+					ref={filterInputRef} 
 					placeholder={translate('popupSearchPlaceholder')}
 					onSelect={onFilterSelect}
 					onChange={v => onFilterChange(v)}
@@ -791,7 +790,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 
 			{!items.length && !isLoading ? (
-				<EmptySearch filter={filterRef.current} />
+				<EmptySearch filter={filterValueRef.current} />
 			) : ''}
 			
 			{cacheRef.current && items.length && !isLoading ? (
@@ -806,7 +805,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={refList}
+										ref={listRef}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={cacheRef.current}

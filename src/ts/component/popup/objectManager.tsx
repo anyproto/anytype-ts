@@ -9,7 +9,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { collectionId, type } = data;
 	const subId = [ getId(), 'data' ].join('-');
-	const refManager = useRef(null);
+	const managerRef = useRef(null);
 
 	const rebind = () => {
 		unbind();
@@ -32,7 +32,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
-				C.ObjectListSetIsFavorite(refManager.current?.getSelected(), true);
+				C.ObjectListSetIsFavorite(managerRef.current?.getSelected(), true);
 				break;
 			};
 		};
@@ -44,7 +44,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
 				if (message.records && message.records.length) {
-					refManager.current?.setSelection(message.records.filter(it => it.isFavorite).map(it => it.id));
+					managerRef.current?.setSelection(message.records.filter(it => it.isFavorite).map(it => it.id));
 				};
 				break;
 			};
@@ -77,7 +77,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<Title text={title} />
 
 			<ListObjectManager
-				ref={refManager}
+				ref={managerRef}
 				subId={subId}
 				rowLength={2}
 				ignoreArchived={false}

@@ -16,9 +16,9 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 
-	const refEmail = useRef(null);
-	const refCode = useRef(null);
-	const refButton = useRef(null);
+	const emailRef = useRef(null);
+	const codeRef = useRef(null);
+	const buttonRef = useRef(null);
 
 	const intervalRef = useRef(0);
 	const timeoutRef = useRef(0);
@@ -58,18 +58,18 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 	const onVerifyEmail = (e: any) => {
 		e.preventDefault();
 
-		if (!refButton.current || !refEmail.current) {
+		if (!buttonRef.current || !emailRef.current) {
 			return;
 		};
 
-		if (refButton.current.isDisabled()) {
+		if (buttonRef.current.isDisabled()) {
 			return;
 		};
 
-		refButton.current.setLoading(true);
+		buttonRef.current.setLoading(true);
 
-		C.MembershipGetVerificationEmail(refEmail.current.getValue(), true, false, false, (message) => {
-			refButton.current.setLoading(false);
+		C.MembershipGetVerificationEmail(emailRef.current.getValue(), true, false, false, (message) => {
+			buttonRef.current.setLoading(false);
 
 			if (message.error.code) {
 				setStatusFunc('error', message.error.description);
@@ -84,10 +84,10 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 	};
 
 	const onConfirmEmailCode = () => {
-		C.MembershipVerifyEmailCode(refCode.current?.getValue(), (message) => {
+		C.MembershipVerifyEmailCode(codeRef.current?.getValue(), (message) => {
 			if (message.error.code) {
 				setStatusFunc('error', message.error.description);
-				refCode.current?.reset();
+				codeRef.current?.reset();
 				return;
 			};
 
@@ -108,14 +108,14 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 
 		window.clearTimeout(timeoutRef.current);
 		timeoutRef.current = window.setTimeout(() => {
-			const value = refEmail.current?.getValue();
+			const value = emailRef.current?.getValue();
 			const isValid = U.Common.matchEmail(value);
 
 			if (value && !isValid) {
 				setStatusFunc('error', translate('errorIncorrectEmail'));
 			};
 
-			refButton.current?.setDisabled(!isValid);
+			buttonRef.current?.setDisabled(!isValid);
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -154,7 +154,7 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 	};
 
 	useEffect(() => {
-		refButton.current?.setDisabled(true);
+		buttonRef.current?.setDisabled(true);
 		checkCountdown();
 
 		return () => {
@@ -193,12 +193,12 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 							<Label text={translate(`popupMembershipCurrentEmailText`)} />
 
 							<div className="inputWrapper">
-								<Input ref={refEmail} onKeyUp={validateEmail} placeholder={translate(`commonEmail`)} />
+								<Input ref={emailRef} onKeyUp={validateEmail} placeholder={translate(`commonEmail`)} />
 							</div>
 
 							<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
-							<Button ref={refButton} onClick={onVerifyEmail} className="c36" text={translate('commonSubmit')} />
+							<Button ref={buttonRef} onClick={onVerifyEmail} className="c36" text={translate('commonSubmit')} />
 						</form>
 					);
 					break;
@@ -210,7 +210,7 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 							<Title text={translate(`popupMembershipFreeTitleStep2`)} />
 
 							<Pin
-								ref={refCode}
+								ref={codeRef}
 								pinLength={4}
 								isVisible={true}
 								onSuccess={onConfirmEmailCode}

@@ -17,7 +17,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const [ error, setError ] = useState('');
 
-	const refCheckbox = useRef(null);
+	const checkboxRef = useRef(null);
 	const cellRefs = useRef(new Map());
 	const initialRef = useRef({});
 	const detailsRef = useRef({});
@@ -25,17 +25,15 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const getRelationKeys = useCallback((): string[] => {
 		return U.Common.arrayUnique(param.data.relationKeys || J.Relation.default);
-	}, [param.data.relationKeys]);
+	}, [ param.data.relationKeys ]);
 
 	const getRelations = useCallback((): any[] => {
-		const { config } = S.Common;
-
 		let ret = getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
 		ret = S.Record.checkHiddenObjects(ret);
 		ret = ret.filter(it => it && !it.isReadonlyValue);
 		ret = ret.sort(U.Data.sortByName);
 		return ret;
-	}, [getRelationKeys]);
+	}, [ getRelationKeys ]);
 
 	const getObjectIds = useCallback(() => {
 		return param.data.objectIds || [];
@@ -43,7 +41,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const getObjects = useCallback(() => {
 		return S.Record.getRecords(SUB_ID_OBJECT, getRelationKeys());
-	}, [getRelationKeys]);
+	}, [ getRelationKeys ]);
 
 	const loadDeps = useCallback((callBack?: () => void) => {
 		const cb = callBack || (() => {});
@@ -117,7 +115,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		initialRef.current = U.Common.objectCopy(detailsRef.current);
-	}, [getRelations, getObjects]);
+	}, [ getRelations, getObjects ]);
 
 	const loadObjects = useCallback((callBack?: () => void) => {
 		const { relationKeys } = data;
@@ -162,7 +160,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				callBack();
 			};
 		});
-	}, [data, getObjectIds, getRelationKeys, getObjects, param.data]);
+	}, [ data, getObjectIds, getRelationKeys, getObjects, param.data ]);
 
 	const onCellChange = useCallback((id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
 		const relation = S.Record.getRelationByKey(relationKey);
@@ -176,7 +174,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (callBack) {
 			callBack({ error: { code: 0 } });
 		};
-	}, [loadDeps]);
+	}, [ loadDeps ]);
 
 	const onCellClick = useCallback((e: any, id: string) => {
 		cellRefs.current.get(id).onClick(e);
@@ -190,37 +188,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		Dataview.relationAdd(targetId, blockId, relationKey, view.relations.length, view, callBack);
-	}, [data]);
-
-	const onAdd = useCallback(() => {
-		const element = `#${getId()} #item-add`;
-
-		S.Menu.open('relationSuggest', { 
-			element,
-			offsetX: J.Size.blockMenu,
-			horizontal: I.MenuDirection.Right,
-			vertical: I.MenuDirection.Center,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
-			data: {
-				menuIdEdit: 'blockRelationEdit',
-				skipKeys: getRelationKeys(),
-				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					detailsRef.current[relation.relationKey] = Relation.formatValue(relation, null, true);
-					param.data.relationKeys = getRelationKeys().concat([ relation.relationKey ]);
-
-					addRelationKeysRef.current.push(relation.relationKey);
-					loadObjects();
-
-					S.Menu.close('relationSuggest');
-				},
-			}
-		});
-	}, [getId, getRelationKeys, param.data, loadObjects]);
-
-	const onCheckbox = useCallback(() => {
-		refCheckbox.current.toggle();
-	}, []);
+	}, [ data ]);
 
 	const save = useCallback(() => {
 		const objectIds = getObjectIds();
@@ -288,7 +256,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			S.Menu.closeAll(J.Menu.cell);
 			U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 		};
-	}, [loadObjects, initValues]);
+	}, [ loadObjects, initValues ]);
 
 	useEffect(() => {
 		const id = S.Common.cellId;		
