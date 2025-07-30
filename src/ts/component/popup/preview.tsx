@@ -19,9 +19,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { gallery } = data;
 	const initial = data.initialIdx || 0;
-
 	const [ current, setCurrent ] = useState(null);
-
 	const swiperRef = useRef(null);
 	const thumbsRef = useRef(null);
 	const galleryMapRef = useRef(new Map());
@@ -111,7 +109,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		obj.isLoaded = true;
 		galleryMapRef.current.set(idx, obj);
-	}, [getId]);
+	}, [ getId ]);
 
 	const getMaxWidthHeight = useCallback(() => {
 		const { ww, wh } = U.Common.getWindowDimensions();
@@ -136,7 +134,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		wrap.css({ width: w, height: h });
-	}, [getId, getMaxWidthHeight]);
+	}, [ getId, getMaxWidthHeight ]);
 
 	const resize = useCallback((idx: number) => {
 		const node = $(`#${getId()}-innerWrap`);
@@ -204,7 +202,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				break;
 			};
 		};
-	}, [getId, resizeMedia, onError]);
+	}, [ getId, resizeMedia, onError ]);
 
 	const reload = useCallback(() => {
 		gallery.forEach((el, idx) => {
@@ -215,20 +213,17 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 			resize(idx);
 		});
-	}, [gallery, resize]);
+	}, [ gallery, resize ]);
 
 	useEffect(() => {
 		reload();
 		rebind();
 		setCurrentItem();
 
-		// swiper need to catch up with thumbs in case of no objects
-		window.setTimeout(() => {}, 100);
-
 		return () => {
 			unbind();
 		};
-	}, [reload, rebind, setCurrentItem, unbind]);
+	}, [ reload, rebind, setCurrentItem, unbind ]);
 
 	const getContent = (item: any, idx: number, isThumb?: boolean) => {
 		const { src, type, object } = item;
@@ -289,6 +284,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					mousewheel={true}
 					thumbs={{ swiper: thumbsRef.current }}
 					navigation={true}
+					loop={true}
 					modules={[ Mousewheel, Keyboard, Thumbs, Navigation ]}
 					onTransitionEnd={data => setCurrentItem(data.activeIndex)}
 				>

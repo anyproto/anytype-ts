@@ -12,7 +12,6 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 	const { onChangeEmail, position } = props;
 	const [ verificationStep, setVerificationStep ] = useState(1);
 	const [ countdown, setCountdown ] = useState(60);
-	const [ hasCountdown, setHasCountdown ] = useState(false);
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 

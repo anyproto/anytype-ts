@@ -12,13 +12,12 @@ const LIMIT = 2;
 const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { getAuthor, onAuthor, position, onPage } = props;
-
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ category, setCategory ] = useState(null);
 
 	const nodeRef = useRef(null);
-	const refList = useRef(null);
-	const refFilter = useRef(null);
+	const listRef = useRef(null);
+	const filterRef = useRef(null);
 	const swiperRef = useRef(null);
 	const cacheRef = useRef(new CellMeasurerCache({
 		defaultHeight: HEIGHT,
@@ -26,22 +25,23 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	}));
 	const timeoutResizeRef = useRef(0);
 	const timeoutFilterRef = useRef(0);
+
 	const reset = useCallback(() => {
 		cacheRef.current.clearAll();
 
-		if (refList.current) {
-			refList.current.recomputeRowHeights(0);
+		if (listRef.current) {
+			listRef.current.recomputeRowHeights(0);
 		};
 	}, []);
 
 	const onClick = useCallback((e: any, item: any) => {
 		onPage('item', { object: item });
-	}, [onPage]);
+	}, [ onPage ]);
 
 	const onCategory = useCallback((item: any) => {
 		setCategory(item.id == category?.id ? null : item);
 		analytics.event('ClickGalleryTab', { type: item.id });
-	}, [category]);
+	}, [ category]);
 
 	const onFilterChange = useCallback((v: string) => {
 		window.clearTimeout(timeoutFilterRef.current);
@@ -71,7 +71,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 
 	const getItems = useCallback(() => {
 		const ret: any[] = [];
-		const filter = refFilter.current ? refFilter.current.getValue() : '';
+		const filter = String(filterRef.current?.getValue() || '');
 		
 		let items = S.Common.gallery.list || [];
 		if (category) {
@@ -135,7 +135,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 
 	const categories = getCategories();
 	const items = getItems();
-	const filter = refFilter.current ? refFilter.current.getValue() : '';
+	const filter = filterRef.current ? filterRef.current.getValue() : '';
 
 	if (isLoading) {
 		return <Loader id="loader" />;
@@ -234,7 +234,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				<Label text={translate('popupUsecaseListText')} />
 
 				<Filter 
-					ref={refFilter}
+					ref={filterRef}
 					id="store-filter"
 					icon="search"
 					placeholder={translate('commonSearchPlaceholder')}
@@ -252,7 +252,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 							<AutoSizer disableHeight={true} className="scrollArea" onResize={onResize}>
 								{({ width }) => (
 									<List
-										ref={refList}
+										ref={listRef}
 										autoHeight={true}
 										height={Number(height) || 0}
 										width={Number(width) || 0}

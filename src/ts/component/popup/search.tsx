@@ -15,10 +15,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
 	const { route } = data;
-
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ backlink, setBacklink ] = useState(null);
-
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -32,6 +30,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const offsetRef = useRef(0);
 	const filterValueRef = useRef('');
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
+
 	const initCache = useCallback(() => {
 		const items = getItems();
 
@@ -109,7 +108,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('search', e, () => close());
-	}, [backlink]);
+	}, [ backlink ]);
 
 	const onArrow = useCallback((dir: number) => {
 		if (!listRef.current) {
@@ -305,7 +304,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				if (callBack) callBack();
 			};
 		});
-	}, [backlink]);
+	}, [ backlink ]);
 
 	const getItems = useCallback(() => {
 		const filter = getFilter();
@@ -428,7 +427,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			it.shortcut = it.shortcut || [];
 			return it;
 		});
-	}, [backlink]);
+	}, [ backlink ]);
 
 	const pageCreate = useCallback((name: string) => {
 		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
@@ -535,7 +534,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	}, []);
 
 	const getFilter = useCallback(() => {
-		return String(filterInputRef.current.getValue() || '');
+		return String(filterInputRef.current?.getValue() || '');
 	}, []);
 
 	useEffect(() => {
