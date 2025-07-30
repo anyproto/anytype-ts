@@ -2,7 +2,7 @@
 .formWrapper {
 	.navigation { 
 		position: absolute; right: 0px; bottom: calc(100% + 8px); display: flex; flex-direction: column; align-items: flex-end; 
-		justify-content: flex-end; gap: 16px 0px; 
+		justify-content: flex-end; gap: 16px 0px; padding: 0px 16px;
 	}
 	.navigation {
 		.btn { position: relative; width: 36px; height: 36px; display: none; align-items: center; justify-content: center; }

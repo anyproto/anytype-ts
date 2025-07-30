@@ -1,119 +1,45 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
 import { I, C, S, U, J, translate, analytics } from 'Lib';
 
-interface State {
-	verificationStep: number;
-	countdown: number;
-	hasCountdown: boolean;
-	status: string;
-	statusText: string;
-};
+const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends React.Component<I.Popup, State> {
+	const [ verificationStep, setVerificationStep ] = useState(1);
+	const [ countdown, setCountdown ] = useState(60);
+	const [ hasCountdown, setHasCountdown ] = useState(false);
+	const [ status, setStatus ] = useState('');
+	const [ statusText, setStatusText ] = useState('');
 
-	state = {
-		verificationStep: 1,
-		countdown: 60,
-		hasCountdown: false,
-		status: '',
-		statusText: '',
+	const checkboxRef = useRef(null);
+	const emailRef = useRef(null);
+	const buttonRef = useRef(null);
+	const codeRef = useRef(null);
+
+	const intervalRef = useRef(null);
+	const timeoutRef = useRef(null);
+
+	const setStatusFunc = (statusVal: string, statusTextVal: string) => {
+		setStatus(statusVal);
+		setStatusText(statusTextVal);
+
+		window.clearTimeout(timeoutRef.current);
+		timeoutRef.current = window.setTimeout(() => clearStatusFunc(), 4000);
 	};
 
-	refCheckbox = null;
-	refEmail = null;
-	refButton = null;
-	refCode = null;
-
-	interval = null;
-	timeout = null;
-
-	constructor (props: I.Popup) {
-		super(props);
-
-		this.onCheck = this.onCheck.bind(this);
-		this.onVerifyEmail = this.onVerifyEmail.bind(this);
-		this.onConfirmEmailCode = this.onConfirmEmailCode.bind(this);
-		this.onResend = this.onResend.bind(this);
-		this.validateEmail = this.validateEmail.bind(this);
-		this.onResetCode = this.onResetCode.bind(this);
+	const clearStatusFunc = () => {
+		setStatus('');
+		setStatusText('');
 	};
 
-	render () {
-		const { verificationStep, countdown, hasCountdown, status, statusText } = this.state;
-
-		let content: any = null;
-
-		switch (verificationStep) {
-			case 1: {
-				content = (
-					<form onSubmit={this.onVerifyEmail}>
-						<Title text={translate(`popupMembershipFreeTitleStep1`)} />
-						<Label text={translate(`popupMembershipFreeText`)} />
-
-						<div className="inputWrapper">
-							<Input ref={ref => this.refEmail = ref} onKeyUp={this.validateEmail} placeholder={translate(`commonEmail`)} />
-						</div>
-
-						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-
-						<div className="check" onClick={this.onCheck}>
-							<Checkbox ref={ref => this.refCheckbox = ref} value={false} /> {translate('popupMembershipFreeCheckboxText')}
-						</div>
-
-						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
-						{hasCountdown ? <Button onClick={this.onResetCode} className="c36" text={translate('popupMembershipFreeEnterCode')} /> : ''}
-					</form>
-				);
-				break;
-			};
-			case 2: {
-				content = (
-					<>
-						<div onClick={() => this.setState({ verificationStep: 1 })} className="back"><Icon />{translate('commonBack')}</div>
-						<Title className="step2" text={translate(`popupMembershipFreeTitleStep2`)} />
-
-						<Pin
-							ref={ref => this.refCode = ref}
-							pinLength={4}
-							isVisible={true}
-							onSuccess={this.onConfirmEmailCode}
-						/>
-
-						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-
-						<div onClick={this.onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
-							{translate('popupMembershipResend')}
-							{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
-						</div>
-					</>
-				);
-				break;
-			};
-		};
-
-		return content;
-	};
-
-	componentDidMount () {
-		this.refButton?.setDisabled(true);
-		this.checkCountdown();
-	};
-
-	componentWillUnmount () {
-		window.clearInterval(this.interval);
-		window.clearTimeout(this.timeout);
-	};
-
-	onCheck () {
-		if (!this.refCheckbox.getValue()) {
+	const onCheck = () => {
+		if (!checkboxRef.current?.getValue()) {
 			analytics.event('ClickMembership', { type: 'GetUpdates', params: { tier: I.TierType.Explorer } });
 		};
-		this.refCheckbox.toggle();
+		checkboxRef.current?.toggle();
 	};
 
-	onResetCode () {
+	const onResetCode = () => {
 		const { emailConfirmationTime } = S.Common;
 		if (!emailConfirmationTime) {
 			return;
@@ -121,45 +47,45 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		const now = U.Date.now();
 
-		this.setState({ verificationStep: 2 });
-		this.startCountdown(60 - (now - emailConfirmationTime));
+		setVerificationStep(2);
+		startCountdown(60 - (now - emailConfirmationTime));
 	};
 
-	onVerifyEmail (e: any) {
+	const onVerifyEmail = (e: any) => {
 		e.preventDefault();
 
-		if (!this.refButton || !this.refEmail) {
+		if (!buttonRef.current || !emailRef.current) {
 			return;
 		};
 
-		if (this.refButton.isDisabled()) {
+		if (buttonRef.current.isDisabled()) {
 			return;
 		};
 
-		this.refButton.setLoading(true);
+		buttonRef.current.setLoading(true);
 
-		C.MembershipGetVerificationEmail(this.refEmail.getValue(), this.refCheckbox?.getValue(), false, false, (message) => {
-			this.refButton.setLoading(false);
+		C.MembershipGetVerificationEmail(emailRef.current.getValue(), checkboxRef.current?.getValue(), false, false, (message) => {
+			buttonRef.current.setLoading(false);
 
 			if (message.error.code) {
-				this.setStatus('error', message.error.description);
+				setStatusFunc('error', message.error.description);
 				return;
 			};
 
-			this.setState({ verificationStep: 2 });
-			this.startCountdown(60);
+			setVerificationStep(2);
+			startCountdown(60);
 
 			analytics.event('ClickMembership', { type: 'Submit', params: { tier: I.TierType.Explorer } });
 		});
 	};
 
-	onConfirmEmailCode () {
-		const code = this.refCode.getValue();
+	const onConfirmEmailCode = () => {
+		const code = codeRef.current?.getValue();
 
 		C.MembershipVerifyEmailCode(code, (message) => {
 			if (message.error.code) {
-				this.setStatus('error', message.error.description);
-				this.refCode.reset();
+				setStatusFunc('error', message.error.description);
+				codeRef.current?.reset();
 				return;
 			};
 
@@ -167,74 +93,127 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		});
 	};
 
-	onResend (e: any) {
-		if (!this.state.countdown) {
-			this.onVerifyEmail(e);
+	const onResend = (e: any) => {
+		if (!countdown) {
+			onVerifyEmail(e);
 		};
 	};
 
-	setStatus (status: string, statusText: string) {
-		this.setState({ status, statusText });
+	const validateEmail = () => {
+		clearStatusFunc();
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.clearStatus(), 4000);
-	};
-
-	clearStatus () {
-		this.setState({ status: '', statusText: '' });
-	};
-
-	validateEmail () {
-		this.clearStatus();
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			const value = this.refEmail?.getValue();
+		window.clearTimeout(timeoutRef.current);
+		timeoutRef.current = window.setTimeout(() => {
+			const value = emailRef.current?.getValue();
 			const isValid = U.Common.matchEmail(value);
 
 			if (value && !isValid) {
-				this.setStatus('error', translate('errorIncorrectEmail'));
+				setStatusFunc('error', translate('errorIncorrectEmail'));
 			};
 
-			this.refButton?.setDisabled(!isValid);
+			buttonRef.current?.setDisabled(!isValid);
 		}, J.Constant.delay.keyboard);
 	};
 
-	checkCountdown () {
+	const checkCountdown = () => {
 		const { emailConfirmationTime } = S.Common;
 		if (!emailConfirmationTime) {
 			return;
 		};
 
 		const now = U.Date.now();
-		const hasCountdown = now - emailConfirmationTime < 60;
+		const hasCountdownVal = now - emailConfirmationTime < 60;
 
-		this.setState({ hasCountdown });
+		setHasCountdown(hasCountdownVal);
 	};
 
-	startCountdown (seconds) {
+	const startCountdown = (seconds) => {
 		const { emailConfirmationTime } = S.Common;
 
 		if (!emailConfirmationTime) {
 			S.Common.emailConfirmationTimeSet(U.Date.now());
 		};
 
-		this.setState({ countdown: seconds, hasCountdown: true });
-		this.interval = window.setInterval(() => {
-			let { countdown } = this.state;
+		setCountdown(seconds);
+		setHasCountdown(true);
 
-			countdown--;
-			this.setState({ countdown });
-
-			if (!countdown) {
-				S.Common.emailConfirmationTimeSet(0);
-				this.setState({ hasCountdown: false });
-				window.clearInterval(this.interval);
-				this.interval = null;
-			};
+		intervalRef.current = window.setInterval(() => {
+			setCountdown(prev => {
+				const newCountdown = prev - 1;
+				if (!newCountdown) {
+					S.Common.emailConfirmationTimeSet(0);
+					setHasCountdown(false);
+					window.clearInterval(intervalRef.current);
+					intervalRef.current = null;
+				}
+				return newCountdown;
+			});
 		}, 1000);
 	};
 
-});
+	useEffect(() => {
+		buttonRef.current?.setDisabled(true);
+		checkCountdown();
+
+		return () => {
+			window.clearInterval(intervalRef.current);
+			window.clearTimeout(timeoutRef.current);
+		};
+	}, []);
+
+	let content: any = null;
+
+	switch (verificationStep) {
+		case 1: {
+			content = (
+				<form onSubmit={onVerifyEmail}>
+					<Title text={translate(`popupMembershipFreeTitleStep1`)} />
+					<Label text={translate(`popupMembershipFreeText`)} />
+
+					<div className="inputWrapper">
+						<Input ref={emailRef} onKeyUp={validateEmail} placeholder={translate(`commonEmail`)} />
+					</div>
+
+					<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+
+					<div className="check" onClick={onCheck}>
+						<Checkbox ref={checkboxRef} value={false} /> {translate('popupMembershipFreeCheckboxText')}
+					</div>
+
+					<Button ref={buttonRef} onClick={onVerifyEmail} className="c36" text={translate('commonSubmit')} />
+					{hasCountdown ? <Button onClick={onResetCode} className="c36" text={translate('popupMembershipFreeEnterCode')} /> : ''}
+				</form>
+			);
+			break;
+		};
+
+		case 2: {
+			content = (
+				<>
+					<div onClick={() => setVerificationStep(1)} className="back"><Icon />{translate('commonBack')}</div>
+					<Title className="step2" text={translate(`popupMembershipFreeTitleStep2`)} />
+
+					<Pin
+						ref={codeRef}
+						pinLength={4}
+						isVisible={true}
+						onSuccess={onConfirmEmailCode}
+					/>
+
+					<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+
+					<div onClick={onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
+						{translate('popupMembershipResend')}
+						{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+					</div>
+				</>
+			);
+			break;
+		};
+	};
+
+	return content;
+
+}));
 
 export default PopupMembershipPageFree;
