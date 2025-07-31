@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
 import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
@@ -11,116 +11,155 @@ interface Props {
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
-};
+}
 
-const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
+const ChatAttachment = observer((props: Props) => {
+	const nodeRef = useRef<HTMLDivElement>(null);
+	const [ src, setSrc ] = useState('');
+	const previewItemRef = useRef<any>(null);
 
-	node = null;
-	src = '';
-	previewItem: any = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onOpen = this.onOpen.bind(this);
-		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onOpenBookmark = this.onOpenBookmark.bind(this);
-		this.onPreview = this.onPreview.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-		this.onSyncStatusClick = this.onSyncStatusClick.bind(this);
-		this.getPreviewItem = this.getPreviewItem.bind(this);
-	};
-
-	render () {
-		const { object, showAsFile, bookmarkAsDefault } = this.props;
-		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
-		const mime = String(object.mime || '');
-		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
-
-		let content = null;
-
-		if (U.Object.isInFileLayouts(object.layout)) {
-			cn.push('isFile');
-		};
+	const onOpen = () => {
+		const { object } = props;
 
 		switch (object.layout) {
-			case I.ObjectLayout.File: {
-				if (showAsFile) {
-					break;
-				};
-
-				if (mime && object.file) {
-					const [ t1, t2 ] = mime.split('/');
-
-					switch (t1) {
-						case 'image': {
-							if (!J.Constant.fileExtension.image.includes(t2)) {
-								break;
-							};
-
-							cn.push('isImage');
-							content = this.renderImage();
-							break;
-						};
-					};
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Image:
-				if (showAsFile) {
-					break;
-				};
-
-				cn.push('isImage');
-				content = this.renderImage();
-				break;
-
-			case I.ObjectLayout.Video: {
-				if (showAsFile) {
-					break;
-				};
-
-				cn.push('isVideo');
-				content = this.renderVideo();
-				break;
-			};
-
-			case I.ObjectLayout.Audio: {
-				cn.push('isAudio');
-				content = this.renderAudio();
-				break;
-			};
-
 			case I.ObjectLayout.Bookmark: {
-				cn.push('isBookmark');
-				content = bookmarkAsDefault ? this.renderDefault() : this.renderBookmark();
+				onOpenBookmark();
 				break;
-			};
-		};
+			}
 
-		if (!content) {
-			content = this.renderDefault();
-		};
+			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Image: {
+				onPreview();
+				break;
+			}
 
-		if (cn.length == 1) {
-			cn.push(U.Data.layoutClass(object.id, object.layout));
-		};
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Pdf:
+			case I.ObjectLayout.Audio: {
+				Action.openFile(object.id, analytics.route.chat);
+				break;
+			}
 
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-				onContextMenu={this.onContextMenu}
-			>
-				{content}
-				<Icon className="remove" onClick={this.onRemove} />
-			</div>
-		);
+			default: {
+				if (!object.isTmp) {
+					U.Object.openPopup(object);
+				}
+				break;
+			}
+		}
 	};
 
-	renderDefault () {
-		const { object } = this.props;
+	const onContextMenu = (e: any) => {
+		e.stopPropagation();
+
+		const { object, subId } = props;
+		
+		if (object.isTmp) {
+			return;
+		}
+
+		S.Menu.open('objectContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds: [ object.id ],
+				subId,
+				allowedLinkTo: true,
+				allowedOpen: true,
+			}
+		});
+	};
+
+	const onOpenBookmark = () => {
+		Action.openUrl(props.object.source);
+	};
+
+	const onPreview = () => {
+		const { onPreview } = props;
+		const item = getPreviewItem();
+
+		if (onPreview) {
+			onPreview(item);
+		} else {
+			S.Popup.open('preview', { data: { gallery: [ item ] } });
+		}
+	};
+
+	const onRemove = (e: any) => {
+		const { object, onRemove } = props;
+
+		e.stopPropagation();
+		onRemove(object.id);
+	};
+
+	const onSyncStatusClick = (e: any) => {
+		const { object } = props;
+		const { syncError } = object;
+
+		if (syncError == I.SyncStatusError.None) {
+			return;
+		}
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		let textConfirm = '';
+		let colorConfirm = '';
+
+		if (syncError == I.SyncStatusError.IncompatibleVersion) {
+			textConfirm = translate('popupConfirmButtonUpdateApp');
+			colorConfirm = 'black';
+		} else {
+			textConfirm = translate('popupConfirmButtonGotIt');
+			colorConfirm = 'blank';
+		}
+
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'warning',
+				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
+				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
+				textConfirm,
+				colorConfirm,
+				canCancel: false,
+				onConfirm: () => {
+					if (syncError == I.SyncStatusError.IncompatibleVersion) {
+						window.setTimeout(() => {
+							Renderer.send('updateCheck');
+						}, J.Constant.delay.popup);
+					}
+					if (syncError == I.SyncStatusError.Oversized) {
+						// delete?
+					}
+				}
+			}
+		});
+	};
+
+	const getPreviewItem = () => {
+		const { object } = props;
+		const ret: any = { object };
+
+		switch (object.layout) {
+			case I.ObjectLayout.Image: {
+				ret.type = I.FileType.Image;
+				ret.src = src || S.Common.imageUrl(object.id, I.ImageSize.Large);
+				break;
+			}
+
+			case I.ObjectLayout.Video: {
+				ret.type = I.FileType.Video;
+				ret.src = S.Common.fileUrl(object.id);
+				break;
+			}
+		}
+		return ret;
+	};
+
+	const renderDefault = () => {
+		const { object } = props;
 		const isFile = U.Object.isInFileLayouts(object.layout);
 		const type = S.Record.getTypeById(object.type);
 
@@ -138,13 +177,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			);
 		} else {
 			description = <ObjectDescription object={object} />;
-		};
+		}
 
 		return (
-			<div className="clickable" onClick={this.onOpen}>
+			<div className="clickable" onClick={onOpen}>
 				<div className="iconWrapper">
 					<IconObject object={object} size={48} iconSize={iconSize} />
-					<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+					<Icon onClick={onSyncStatusClick} className="syncStatus" />
 				</div>
 
 				<div className="info">
@@ -155,19 +194,19 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		);
 	};
 
-	renderBookmark () {
-		const { object } = this.props;
+	const renderBookmark = () => {
+		const { object } = props;
 		const { picture, source } = object;
 		const cn = [ 'inner' ];
 
 		if (picture) {
 			cn.push('withImage');
-		};
+		}
 
 		return (
 			<div
 				className={cn.join(' ')}
-				onClick={this.onOpenBookmark}
+				onClick={onOpenBookmark}
 				{...U.Common.dataProps({ href: source })}
 			>
 				<div className="side left">
@@ -188,53 +227,53 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		);
 	};
 
-	renderImage () {
-		const { object, scrollToBottom } = this.props;
+	const renderImage = () => {
+		const { object, scrollToBottom } = props;
 
-		if (!this.src) {
+		if (!src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
-					this.src = image;
-					$(this.node).find('#image').attr({ 'src': image });
+					setSrc(image);
+					$(nodeRef.current).find('#image').attr({ 'src': image });
 				});
-				this.src = './img/space.svg';
+				setSrc('./img/space.svg');
 			} else {
-				this.src = S.Common.imageUrl(object.id, I.ImageSize.Large);
-			};
-		};
+				setSrc(S.Common.imageUrl(object.id, I.ImageSize.Large));
+			}
+		}
 
 		return (
-			<div className="imgWrapper" onClick={this.onPreview}>
+			<div className="imgWrapper" onClick={onPreview}>
 				<img
 					id="image"
 					className="image"
-					src={this.src}
+					src={src}
 					onLoad={scrollToBottom}
 					onDragStart={e => e.preventDefault()}
 					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 				/>
 
-				<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+				<Icon onClick={onSyncStatusClick} className="syncStatus" />
 			</div>
 		);
 	};
 
-	renderVideo () {
-		const { object } = this.props;
+	const renderVideo = () => {
+		const { object } = props;
 		const src = S.Common.fileUrl(object.id);
 
 		return (
 			<MediaVideo 
 				src={src} 
-				onClick={this.onPreview}
+				onClick={onPreview}
 				canPlay={false}
-				onSyncStatusClick={this.onSyncStatusClick}
+				onSyncStatusClick={onSyncStatusClick}
 			/>
 		);
 	};
 
-	renderAudio () {
-		const { object } = this.props;
+	const renderAudio = () => {
+		const { object } = props;
 		const playlist = [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
@@ -242,147 +281,91 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		return <MediaAudio playlist={playlist} />;
 	};
 
-	onOpen () {
-		const { object } = this.props;
+	const { object, showAsFile, bookmarkAsDefault } = props;
+	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
+	const mime = String(object.mime || '');
+	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
 
-		switch (object.layout) {
-			case I.ObjectLayout.Bookmark: {
-				this.onOpenBookmark();
+	let content = null;
+
+	if (U.Object.isInFileLayouts(object.layout)) {
+		cn.push('isFile');
+	}
+
+	switch (object.layout) {
+		case I.ObjectLayout.File: {
+			if (showAsFile) {
 				break;
-			};
-
-			case I.ObjectLayout.Video:
-			case I.ObjectLayout.Image: {
-				this.onPreview();
-				break;
-			};
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Pdf:
-			case I.ObjectLayout.Audio: {
-				Action.openFile(object.id, analytics.route.chat);
-				break;
-			};
-
-			default: {
-				if (!object.isTmp) {
-					U.Object.openPopup(object);
-				};
-				break;
-			};
-		};
-	};
-
-	onContextMenu (e: any) {
-		e.stopPropagation();
-
-		const { object, subId } = this.props;
-		
-		if (object.isTmp) {
-			return;
-		};
-
-		S.Menu.open('objectContext', {
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
-			data: {
-				objectIds: [ object.id ],
-				subId,
-				allowedLinkTo: true,
-				allowedOpen: true,
 			}
-		});
-	};
 
-	onOpenBookmark () {
-		Action.openUrl(this.props.object.source);
-	};
+			if (mime && object.file) {
+				const [ t1, t2 ] = mime.split('/');
 
-	onPreview () {
-		const { onPreview } = this.props;
-		const item = this.getPreviewItem();
+				switch (t1) {
+					case 'image': {
+						if (!J.Constant.fileExtension.image.includes(t2)) {
+							break;
+						}
 
-		if (onPreview) {
-			onPreview(item);
-		} else {
-			S.Popup.open('preview', { data: { gallery: [ item ] } });
-		};
-	};
-
-	onRemove (e: any) {
-		const { object, onRemove } = this.props;
-
-		e.stopPropagation();
-		onRemove(object.id);
-	};
-
-	onSyncStatusClick (e: any) {
-		const { object } = this.props;
-		const { syncError } = object;
-
-		if (syncError == I.SyncStatusError.None) {
-			return;
-		};
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		let textConfirm = '';
-		let colorConfirm = '';
-
-		if (syncError == I.SyncStatusError.IncompatibleVersion) {
-			textConfirm = translate('popupConfirmButtonUpdateApp');
-			colorConfirm = 'black';
-		} else {
-			textConfirm = translate('popupConfirmButtonGotIt');
-			colorConfirm = 'blank';
-		};
-
-		S.Popup.open('confirm', {
-			data: {
-				icon: 'warning',
-				title: translate(`popupConfirmAttachmentSyncError${syncError}Title`),
-				text: translate(`popupConfirmAttachmentSyncError${syncError}Text`),
-				textConfirm,
-				colorConfirm,
-				canCancel: false,
-				onConfirm: () => {
-					if (syncError == I.SyncStatusError.IncompatibleVersion) {
-						window.setTimeout(() => {
-							Renderer.send('updateCheck');
-						}, J.Constant.delay.popup);
-					};
-					if (syncError == I.SyncStatusError.Oversized) {
-						// delete?
-					};
+						cn.push('isImage');
+						content = renderImage();
+						break;
+					}
 				}
 			}
-		});
-	};
+			break;
+		}
 
-	getPreviewItem () {
-		const { object } = this.props;
-		const ret: any = { object };
-
-		switch (object.layout) {
-			case I.ObjectLayout.Image: {
-				ret.type = I.FileType.Image;
-				ret.src = this.src || S.Common.imageUrl(object.id, I.ImageSize.Large);
+		case I.ObjectLayout.Image:
+			if (showAsFile) {
 				break;
-			};
+			}
 
-			case I.ObjectLayout.Video: {
-				ret.type = I.FileType.Video;
-				ret.src = S.Common.fileUrl(object.id);
+			cn.push('isImage');
+			content = renderImage();
+			break;
+
+		case I.ObjectLayout.Video: {
+			if (showAsFile) {
 				break;
-			};
+			}
 
-		};
-		return ret;
-	};
+			cn.push('isVideo');
+			content = renderVideo();
+			break;
+		}
 
+		case I.ObjectLayout.Audio: {
+			cn.push('isAudio');
+			content = renderAudio();
+			break;
+		}
+
+		case I.ObjectLayout.Bookmark: {
+			cn.push('isBookmark');
+			content = bookmarkAsDefault ? renderDefault() : renderBookmark();
+			break;
+		}
+	}
+
+	if (!content) {
+		content = renderDefault();
+	}
+
+	if (cn.length == 1) {
+		cn.push(U.Data.layoutClass(object.id, object.layout));
+	}
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')}
+			onContextMenu={onContextMenu}
+		>
+			{content}
+			<Icon className="remove" onClick={onRemove} />
+		</div>
+	);
 });
 
 export default ChatAttachment;

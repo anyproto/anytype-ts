@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, analytics, I, J, keyboard, Mark, S, translate, U } from 'Lib';
@@ -17,81 +17,25 @@ interface Props extends I.BlockComponent {
 	getObjectFromPath: (path: string) => void;
 	addAttachments: (attachments: any[], callBack?: () => void) => void;
 	removeBookmark: (url: string) => void;
-};
+}
 
-interface State {
-	buttons: any[];
-};
+const ChatButtons = observer(forwardRef((props: Props, ref) => {
+	const [ buttons, setButtons ] = useState<any[]>([]);
 
-const ChatButtons = observer(class ChatButtons extends React.Component<Props, State> {
+	const onButton = (e: React.MouseEvent, item: any) => {
+		const { hasSelection } = props;
 
-	state = {
-		buttons: [],
+		hasSelection() ? onTextButton(e, item.type, '') : onChatButton(e, item.type);
 	};
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onButton = this.onButton.bind(this);
-		this.onTextButton = this.onTextButton.bind(this);
-		this.onChatButton = this.onChatButton.bind(this);
-		this.onAttachment = this.onAttachment.bind(this);
-	};
-
-	render () {
-		const { block } = this.props;
-		const { buttons } = this.state;
-
-		return (
-			<div className="buttons">
-				{buttons.map((item: any, i: number) => {
-					const cn = [ item.icon, 'withBackground' ];
-
-					if (item.isActive) {
-						cn.push('isActive');
-					};
-
-					return (
-						<Icon 
-							id={`button-${block.id}-${item.type}`} 
-							key={i} 
-							className={cn.join(' ')} 
-							inner={item.inner}
-							onMouseDown={e => this.onButton(e, item)}
-							tooltipParam={{
-								text: item.name,
-								caption: item.caption,
-								typeY: I.MenuDirection.Top,
-							}}
-						/>
-					);
-				})}
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		this.setButtons();
-	};
-
-	setButtons () {
-		this.setState({ buttons: this.getButtons() });
-	};
-
-	onButton (e: React.MouseEvent, item: any) {
-		const { hasSelection } = this.props;
-
-		hasSelection() ? this.onTextButton(e, item.type, '') : this.onChatButton(e, item.type);
-	};
-
-	onChatButton (e: React.MouseEvent, type: I.ChatButton) {
-		const { block, caretMenuParam, onMention, onChatButtonSelect } = this.props;
+	const onChatButton = (e: React.MouseEvent, type: I.ChatButton) => {
+		const { block, caretMenuParam, onMention, onChatButtonSelect } = props;
 
 		switch (type) {
 			case I.ChatButton.Object: {
-				this.onAttachment();
+				onAttachment();
 				break;
-			};
+			}
 
 			case I.ChatButton.Emoji: {
 				S.Menu.open('smile', {
@@ -106,17 +50,17 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					}
 				});
 				break;
-			};
+			}
 
 			case I.ChatButton.Mention: {
 				onMention();
 				break;
-			};
-		};
+			}
+		}
 	};
 
-	onTextButton (e: React.MouseEvent, type: I.MarkType, param: string) {
-		const { rootId, block, onTextButtonToggle, getMarksAndRange, removeBookmark } = this.props;
+	const onTextButton = (e: React.MouseEvent, type: I.MarkType, param: string) => {
+		const { rootId, block, onTextButtonToggle, getMarksAndRange, removeBookmark } = props;
 		const { marks, range } = getMarksAndRange();
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
@@ -141,7 +85,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			default: {
 				onTextButtonToggle(type, '');
 				break;
-			};
+			}
 
 			case I.MarkType.Link: {
 				menuId = 'blockLink';
@@ -155,7 +99,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					onClear: before => removeBookmark(before),
 				});
 				break;
-			};
+			}
 
 			case I.MarkType.BgColor:
 			case I.MarkType.Color: {
@@ -163,35 +107,35 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					case I.MarkType.Color: {
 						menuId = 'blockColor';
 						break;
-					};
+					}
 
 					case I.MarkType.BgColor: {
 						menuId = 'blockBackground';
 						break;
-					};
-				};
+					}
+				}
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: param || mark?.param,
 					onChange: param => onTextButtonToggle(type, param),
 				});
 				break;
-			};
-		};
+			}
+		}
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
 			S.Menu.closeAll(J.Menu.context, () => {
 				S.Menu.open(menuId, menuParam);
 			});
-		};
+		}
 	};
 
-	getButtons () {
-		const { hasSelection } = this.props;
-		return hasSelection() ? this.getTextButtons() : this.getChatButtons();
+	const getButtons = () => {
+		const { hasSelection } = props;
+		return hasSelection() ? getTextButtons() : getChatButtons();
 	};
 
-	getChatButtons () {
+	const getChatButtons = () => {
 		const cmd = keyboard.cmdSymbol();
 
 		return [
@@ -201,8 +145,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		];
 	};
 
-	getTextButtons () {
-		const { getMarksAndRange } = this.props;
+	const getTextButtons = () => {
+		const { getMarksAndRange } = props;
 		const { marks, range } = getMarksAndRange();
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
@@ -230,13 +174,13 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				it.isActive = !!(inRange && inRange.param);
 			} else {
 				it.isActive = !!Mark.getInRange(marks, it.type, range);
-			};
+			}
 			return it;
 		});
 	};
 
-	onAttachment (menu?: string) {
-		const { blockId, attachments, onMenuClose, onChatButtonSelect, addAttachments, getObjectFromPath } = this.props;
+	const onAttachment = (menu?: string) => {
+		const { blockId, attachments, onMenuClose, onChatButtonSelect, addAttachments, getObjectFromPath } = props;
 
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
@@ -251,7 +195,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					addAttachments(paths.map(path => getObjectFromPath(path)));
 
 					analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
-				};
+				}
 			});
 
 			analytics.event('ClickChatAttach', { type: 'Upload' });
@@ -264,7 +208,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			if (menu == 'upload') {
 				upload();
 				return;
-			};
+			}
 
 			const analyticsMenuName = U.Common.toUpperCamelCase(menu);
 
@@ -299,7 +243,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 						onClick: upload
 					},
 				});
-			};
+			}
 
 			analytics.event('ClickScreenChatAttach', { type: analyticsMenuName });
 		} else {
@@ -309,12 +253,12 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				noVirtualisation: true,
 				noScroll: true,
 				onSelect: (e: React.MouseEvent, option: any) => {
-					this.onAttachment(option.id);
+					onAttachment(option.id);
 				}
 			};
 
 			analytics.event('ScreenChatAttach');
-		};
+		}
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open(menuId, {
@@ -327,12 +271,50 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				onClose: () => {
 					if (menu) {
 						onMenuClose();
-					};
+					}
 				},
 				data,
 			});
 		});
 	};
-});
+
+	useImperativeHandle(ref, () => ({
+		onChatButton,
+		setButtons: () => setButtons(getButtons())
+	}));
+
+	useEffect(() => {
+		setButtons(getButtons());
+	}, []);
+
+	const { block } = props;
+
+	return (
+		<div className="buttons">
+			{buttons.map((item: any, i: number) => {
+				const cn = [ item.icon, 'withBackground' ];
+
+				if (item.isActive) {
+					cn.push('isActive');
+				}
+
+				return (
+					<Icon 
+						id={`button-${block.id}-${item.type}`} 
+						key={i} 
+						className={cn.join(' ')} 
+						inner={item.inner}
+						onMouseDown={e => onButton(e, item)}
+						tooltipParam={{
+							text: item.name,
+							caption: item.caption,
+							typeY: I.MenuDirection.Top,
+						}}
+					/>
+				);
+			})}
+		</div>
+	);
+}));
 
 export default ChatButtons;
