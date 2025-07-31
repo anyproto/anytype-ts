@@ -7,6 +7,7 @@ interface Props {
 	object: any;
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
+	isDownload?: boolean;
 	subId?: string;
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
@@ -32,7 +33,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	render () {
-		const { object, showAsFile, bookmarkAsDefault } = this.props;
+		const { object, showAsFile, bookmarkAsDefault, isDownload } = this.props;
 		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -41,6 +42,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		if (U.Object.isInFileLayouts(object.layout)) {
 			cn.push('isFile');
+		};
+
+		if (isDownload) {
+			cn.push('isDownload');
 		};
 
 		switch (object.layout) {
@@ -190,6 +195,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderImage () {
 		const { object, scrollToBottom } = this.props;
+		const status = object.syncStatus ? object.syncStatus : I.SyncStatusObject.Syncing
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
@@ -243,7 +249,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	onOpen () {
-		const { object } = this.props;
+		const { object, isDownload } = this.props;
+		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
+
+		if (isDownload && syncStatus != I.SyncStatusObject.Synced) {
+			return;
+		};
 
 		switch (object.layout) {
 			case I.ObjectLayout.Bookmark: {

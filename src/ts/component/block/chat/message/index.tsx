@@ -216,6 +216,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 													onPreview={(preview) => this.onPreview(preview)}
 													showAsFile={!attachmentsLayout}
 													bookmarkAsDefault={attachments.length > 1}
+													isDownload={!isSelf}
 												/>
 											))}
 										</div>
