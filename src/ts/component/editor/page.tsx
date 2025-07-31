@@ -1874,10 +1874,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
-		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
-		const length = headers.length;
-		const co = isPopup ? container.offset().top : 0;
-		const ch = container.height() - J.Size.header;
 
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
@@ -1903,7 +1899,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.scrollTop();
 		const co = isPopup ? container.offset().top : 0;
 		const ch = container.height() - J.Size.header;
 
@@ -1919,7 +1914,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			const t = el.offset().top - co;
 			const h = el.outerHeight();
-			const check = isPopup ? 0 : top;
+			const check = isPopup ? 0 : this.containerScrollTop;
 
 			if ((t >= check) && (t + h <= check + ch)) {
 				blockId = block.id;
