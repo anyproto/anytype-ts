@@ -2,11 +2,11 @@
 
 .menus {
 	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 23; }
+	.menuWrap.fromBlock { z-index: 25; }
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
 	.menuWrap.fromOnboarding { z-index: 1001; }
-	.menuWrap.fromBlock { z-index: 25; }
 
 	.menuWrap.fixed { position: fixed; }
 	.menuWrap.fixed {
