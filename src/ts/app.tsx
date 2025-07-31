@@ -205,7 +205,7 @@ const App: FC = () => {
 	};
 
 	const onInit = (e: any, data: any) => {
-		const { dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -220,6 +220,7 @@ const App: FC = () => {
 		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
+		S.Common.windowIdSet(id);
 
 		Action.checkDefaultSpellingLang();
 

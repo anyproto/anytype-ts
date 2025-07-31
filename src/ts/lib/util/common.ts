@@ -21,20 +21,6 @@ class UtilCommon {
 	};
 
 	/**
-	 * Gets the current Electron window ID as a string.
-	 * @returns {string} The current window ID or '0' if not available.
-	 */
-	getWindowId (): string {
-		const electron = this.getElectron();
-
-		if (!electron) {
-			return '0';
-		};
-
-		return String(electron.currentWindow().windowId || '');
-	};
-
-	/**
 	 * Returns the global configuration object from the window.
 	 */
 	getGlobalConfig () {
