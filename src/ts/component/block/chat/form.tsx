@@ -91,7 +91,7 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 		keyboard.shortcut('arrowup', e, () => {
 			if (rangeRef.current.to || value || attachments.length || editingIdRef.current) {
 				return;
-			}
+			};
 
 			e.preventDefault();
 
@@ -99,7 +99,7 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 
 			if (list.length) {
 				onEdit(list[list.length - 1]);
-			}
+			};
 		});
 
 		keyboard.shortcut('backspace', e, () => {
@@ -107,7 +107,7 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 
 			if (!parsed.save) {
 				return;
-			}
+			};
 
 			e.preventDefault();
 
@@ -123,21 +123,21 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
 				refButtonsRef.current.onChatButton(e, I.ChatButton.Object);
-			}
+			};
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
 				refButtonsRef.current.onChatButton(e, I.ChatButton.Emoji);
-			}
+			};
 		});
 
 		keyboard.shortcut('chatMention', e, () => {
 			if (!S.Menu.isOpen('mention')) {
 				e.preventDefault();
 				refButtonsRef.current.onChatButton(e, I.ChatButton.Mention);
-			}
+			};
 		});
 
 		if (editingIdRef.current) {
@@ -147,7 +147,7 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 				rangeRef.current = { from: 0, to: 0 };
 				updateValue('');
 			});
-		}
+		};
 
 		// Mark-up
 		if (range && range.to && (range.from != range.to)) {
@@ -155,12 +155,12 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 
 			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, () => type = item.type);
-			}
+			};
 
 			if (type !== null) {
 				refButtonsRef.current.onTextButton(e, type, '');
-			}
-		}
+			};
+		};
 	};
 
 	const onKeyUpInput = (e: any) => {
@@ -181,31 +181,31 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 
 		if ((value !== parsed.text) || parsed.updatedValue) {
 			updateValue(parsed.text);
-		}
+		};
 
 		if (canOpenMenuMention) {
 			onMention(true);
-		}
+		};
 
 		if (menuOpenMention) {
 			window.clearTimeout(timeoutFilterRef.current);
 			timeoutFilterRef.current = window.setTimeout(() => {
 				if (!rangeRef.current) {
 					return;
-				}
+				};
 
 				const d = rangeRef.current.from - filter.from;
 
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
 					S.Common.filterSetText(part);
-				}
+				};
 			}, 30);
 
 			keyboard.shortcut('backspace', e, () => {
 				if (!value.match('@')) {
 					S.Menu.close('blockMention');
-				}
+				};
 			});
 
 			return;
@@ -226,11 +226,11 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 
 		if (!value && !attachments.length && editingIdRef.current) {
 			onDelete(editingIdRef.current);
-		}
+		};
 
 		if (adjustMarks) {
 			updateMarkup(value, { from: to, to });
-		}
+		};
 
 		checkSendButton();
 		updateButtons();

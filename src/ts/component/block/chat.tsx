@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Label, Icon, Button, EmptyState } from 'Component';
+import { Label, EmptyState } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Message from './chat/message';
@@ -10,14 +10,17 @@ import Form from './chat/form';
 const GROUP_TIME = 300;
 
 const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, ref) => {
+
+	const { config, showRelativeDates, dateFormat, space } = S.Common;
+	const { isPopup, block, readonly } = props;
 	const nodeRef = useRef<HTMLDivElement>(null);
-	const refListRef = useRef<HTMLDivElement>(null);
-	const refFormRef = useRef<any>(null);
+	const listRef = useRef<HTMLDivElement>(null);
+	const formRef = useRef<any>(null);
 	const isLoadedRef = useRef(false);
 	const isLoadingRef = useRef(false);
 	const isBottomRef = useRef(false);
 	const isAutoLoadDisabledRef = useRef(false);
-	const messageRefsRef = useRef<any>({});
+	const messageRefs = useRef<any>({});
 	const timeoutInterfaceRef = useRef(0);
 	const timeoutScrollRef = useRef(0);
 	const timeoutScrollStopRef = useRef(0);
@@ -28,6 +31,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	const getRootId = () => {
 		const { rootId } = props;
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
 		return object.chatId;
 	};
 
@@ -35,18 +39,20 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		return [ '', S.Common.space, `${getRootId()}:${props.block.id}`, U.Common.getWindowId() ].join('-');
 	};
 
+	const rootId = getRootId();
+	const subId = getSubId();
+
 	const getMessages = () => {
 		return S.Chat.getList(getSubId());
 	};
 
 	const hasScroll = () => {
-		const { isPopup } = props;
 		const container = U.Common.getScrollContainer(isPopup);
 
 		if (isPopup && container.length) {
 			const el = container.get(0);
 			return el.scrollHeight > el.clientHeight;
-		}
+		};
 
 		return document.documentElement.scrollHeight > window.innerHeight;
 	};
@@ -63,7 +69,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 				sections.push({ createdAt: item.createdAt, key, isSection: true, list: [ item ] });
 			} else {
 				section.list.push(item);
-			}
+			};
 		});
 
 		// Message groups by author/time
@@ -82,8 +88,8 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 
 					if (prev) {
 						prev.isLast = true;
-					}
-				}
+					};
+				};
 			}
 
 			section.list[0].isFirst = true;
@@ -100,20 +106,18 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	};
 
 	const getMessageMenuOptions = (message, noControls) => {
-		const { config } = S.Common;
-
 		let options: any[] = [];
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
-		}
+		};
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
 				{ id: 'edit', icon: 'pencil', name: translate('commonEdit') },
 				{ id: 'delete', icon: 'remove', name: translate('commonDelete') },
 			]);
-		}
+		};
 
 		if (!noControls) {
 			options = ([
@@ -121,7 +125,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 				{ id: 'reply', icon: 'reply', name: translate('blockChatReply') },
 				options.length ? { isDiv: true } : null,
 			].filter(it => it)).concat(options);
-		}
+		};
 
 		if (config.experimental) {
 			options = options.concat([
@@ -129,7 +133,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
 				{ id: 'unread', name: translate('blockChatMarkAsUnread') },
 			]);
-		}
+		};
 
 		return options;
 	};
@@ -137,7 +141,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	const setIsBottom = (v: boolean) => {
 		isBottomRef.current = v;
 
-		const node = $(refFormRef.current?.node);
+		const node = $(formRef.current?.node);
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
@@ -151,18 +155,16 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		const messages = getMessages();
 		const target = messages.find(it => orderId ? it.orderId == orderId : it.id == id);
 
-		if (!target) {
-			return;
-		}
-
-		messageRefsRef.current[target.id]?.highlight();
+		if (target) {
+			messageRefs.current[target.id]?.highlight();
+		};
 	};
 
 	const scrollToBottomCheck = () => {
 		if (isBottomRef.current) {
 			window.clearTimeout(timeoutScrollRef.current);
 			timeoutScrollRef.current = window.setTimeout(() => scrollToBottom(false), 50);
-		}
+		};
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
@@ -170,9 +172,8 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			readScrolledMessages();
 			setIsBottom(true);
 			return;
-		}
+		};
 
-		const { isPopup } = props;
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(nodeRef.current);
 		const wrapper = node.find('#scrollWrapper');
@@ -192,7 +193,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		} else {
 			container.scrollTop(y);
 			cb();
-		}
+		};
 	};
 
 	const readScrolledMessages = () => {
@@ -203,10 +204,9 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	};
 
 	const getMessagesInViewport = () => {
-		const { isPopup } = props;
 		const messages = getMessages();
 		const container = U.Common.getScrollContainer(isPopup);
-		const formHeight = refFormRef.current ? $(refFormRef.current.node).outerHeight() : 120;
+		const formHeight = formRef.current ? $(formRef.current.node).outerHeight() : 120;
 		const ch = isPopup ? container.outerHeight() : $(window).height();
 		const min = container.scrollTop();
 		const max = min + ch - formHeight;
@@ -217,17 +217,17 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 
 			if ((st >= min) && (st <= max)) {
 				ret.push(it);
-			}
+			};
 		});
 
 		return ret;
 	};
 
 	const getMessageScrollOffset = (id: string): number => {
-		const ref = messageRefsRef.current[id];
+		const ref = messageRefs.current[id];
 		if (!ref) {
 			return 0;
-		}
+		};
 
 		const node = $(ref.node);
 		return node.length ? node.offset().top + node.outerHeight() : 0;
@@ -236,14 +236,13 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	const scrollToMessage = (id: string, animate?: boolean, highlight?: boolean) => {
 		if (!id) {
 			return;
-		}
+		};
 
 		if (!hasScroll()) {
 			readScrolledMessages();
 			return;
-		}
+		};
 
-		const { isPopup } = props;
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = getMessageScrollOffset(id);
 		const y = Math.max(0, top - container.height() / 2 - J.Size.header);
@@ -257,7 +256,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 
 			if (highlight) {
 				highlightMessage(id);
-			}
+			};
 		};
 
 		if (animate) {
@@ -274,11 +273,9 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			return;
 		}
 
-		const subId = getSubId();
 		const ids: string[] = [ ...scrolledItemsRef.current ] as string[];
 		const first = S.Chat.getMessage(subId, ids[0]);
 		const last = S.Chat.getMessage(subId, ids[ids.length - 1]);
-		const rootId = getRootId();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 		const isFocused = U.Common.getElectron().isFocused();
@@ -317,11 +314,11 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		let attachments = [];
 		let marks = [];
 
-		if (refFormRef.current) {
-			attachments = attachments.concat((refFormRef.current.state.attachments || []).filter(it => !it.isTmp).map(it => it.id));
-			marks = marks.concat(refFormRef.current.marks || []);
+		if (formRef.current) {
+			attachments = attachments.concat((formRef.current.state.attachments || []).filter(it => !it.isTmp).map(it => it.id));
+			marks = marks.concat(formRef.current.marks || []);
 
-			const replyingId = refFormRef.current.getReplyingId();
+			const replyingId = formRef.current.getReplyingId();
 
 			if (replyingId) {
 				const message = S.Chat.getMessage(subId, replyingId);
@@ -370,9 +367,6 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			return;
 		};
 
-		const rootId = getRootId();
-		const subId = getSubId();
-
 		C.ChatGetMessagesByIds(rootId, ids, (message: any) => {
 			if (!message.error.code) {
 				message.messages.forEach(it => S.Chat.setReply(subId, it));
@@ -385,17 +379,14 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	};
 
 	const loadMessages = (dir: number, clear: boolean, callBack?: () => void) => {
-		const rootId = getRootId();
-		const subId = getSubId();
-
 		if (!rootId || isLoadingRef.current) {
 			return;
-		}
+		};
 
 		if (!clear && (dir > 0) && isLoadedRef.current) {
 			setIsBottom(true);
 			return;
-		}
+		};
 
 		isLoadingRef.current = true;
 
@@ -413,7 +404,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			if (!list.length) {
 				isLoadingRef.current = false;
 				return;
-			}
+			};
 
 			const first = list[0];
 			const before = dir < 0 ? list[0].orderId : '';
@@ -422,7 +413,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			if (!before && !after) {
 				isLoadingRef.current = false;
 				return;
-			}
+			};
 
 			C.ChatGetMessages(rootId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
 				isLoadingRef.current = false;
@@ -448,7 +439,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 					}
 				} else {
 					setIsBottom(false);
-				}
+				};
 
 				loadDepsAndReplies(messages, () => {
 					if (messages.length) {
@@ -456,24 +447,21 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 
 						if (first && (dir < 0)) {
 							scrollToMessage(first.id);
-						}
-					}
+						};
+					};
 
 					if (callBack) {
 						callBack();
-					}
+					};
 				});
 			});
 		}
 	};
 
 	const subscribeMessages = (clear: boolean, callBack?: () => void) => {
-		const rootId = getRootId();
-		const subId = getSubId();
-
 		if (!rootId) {
 			return;
-		}
+		};
 
 		C.ChatSubscribeLastMessages(rootId, J.Constant.limit.chat.messages, subId, (message: any) => {
 			if (message.error.code) {
@@ -481,29 +469,27 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 					callBack();
 				}
 				return;
-			}
+			};
 
 			if (message.state) {
 				S.Chat.setState(subId, message.state);
-			}
+			};
 
 			const messages = message.messages || [];
 
 			loadDepsAndReplies(messages, () => {
 				if (messages.length && clear) {
 					S.Chat.set(subId, messages);
-				}
+				};
 
 				if (callBack) {
 					callBack();
-				}
+				};
 			});
 		});
 	};
 
 	const loadMessagesByOrderId = (orderId: string, callBack?: () => void) => {
-		const rootId = getRootId();
-		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
 		let list = [];
@@ -511,19 +497,19 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		C.ChatGetMessages(rootId, orderId, '', limit, true, (message: any) => {
 			if (!message.error.code && message.messages.length) {
 				list = list.concat(message.messages);
-			}
+			};
 
 			C.ChatGetMessages(rootId, '', orderId, limit, false, (message: any) => {
 				if (!message.error.code && message.messages.length) {
 					list = list.concat(message.messages);
-				}
+				};
 
 				loadDepsAndReplies(list, () => {
 					S.Chat.set(subId, list);
 
 					if (callBack) {
 						callBack();
-					}
+					};
 				});
 			});
 		});
@@ -546,11 +532,11 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		if (content.text) {
 			text = U.Common.sanitize(Mark.toHtml(content.text, content.marks));
 			text = text.replace(/\n\r?/g, ' ');
-		}
+		};
 
 		if (!l) {
 			return { title, text };
-		}
+		};
 
 		const first = attachments[0];
 
@@ -574,7 +560,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		if (!text) {
 			text = attachmentText;
 			attachment = first;
-		}
+		};
 
 		return { title, text, attachment, isMultiple };
 	};
@@ -584,14 +570,11 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	};
 
 	const onContextMenu = (e: React.MouseEvent, item: any, onMore?: boolean) => {
-		const { readonly } = props;
 		if (readonly) {
 			return;
-		}
+		};
 
 		const { rootId } = props;
-		const { space } = S.Common;
-		const { isPopup, block } = props;
 		const message = `#block-${block.id} #item-${item.id}`;
 		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
 		const object = S.Detail.get(rootId, rootId, []);
@@ -613,42 +596,42 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'reaction': {
-							messageRefsRef.current[item.id].onReactionAdd();
+							messageRefs.current[item.id].onReactionAdd();
 							break;
-						}
+						};
 
 						case 'copy': {
 							U.Common.clipboardCopy({ text: item.content.text });
 							analytics.event('ClickMessageMenuCopy');
 							break;
-						}
+						};
 
 						case 'link': {
 							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
 							analytics.event('ClickMessageMenuLink');
 							break;
-						}
+						};
 
 						case 'reply': {
-							refFormRef.current.onReply(item);
+							formRef.current.onReply(item);
 							break;
-						}
+						};
 
 						case 'edit': {
-							refFormRef.current.onEdit(item);
+							formRef.current.onEdit(item);
 							break;
-						}
+						};
 
 						case 'delete': {
-							refFormRef.current.onDelete(item.id);
+							formRef.current.onDelete(item.id);
 							break;
-						}
+						};
 
 						case 'unread': {
 							C.ChatUnreadMessages(rootId, item.orderId);
 							break;
-						}
-					}
+						};
+					};
 				},
 			},
 		};
@@ -657,13 +640,13 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			menuParam.element = `${message} .icon.more`;
 		} else {
 			menuParam.recalcRect = () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 });
-		}
+		};
 
 		S.Menu.open('select', menuParam);
 	};
 
 	const onReplyEdit = (e: React.MouseEvent, message: any) => {
-		refFormRef.current.onReply(message);
+		formRef.current.onReply(message);
 		scrollToBottomCheck();
 	};
 
@@ -671,8 +654,6 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		isLoadedRef.current = false;
 		setIsBottom(false);
 
-		const rootId = getRootId();
-		const subId = getSubId();
 		const message = S.Chat.getMessage(subId, item.replyToMessageId);
 
 		analytics.event('ClickScrollToReply');
@@ -680,7 +661,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		if (message) {
 			scrollToMessage(message.id, true, true);
 			return;
-		}
+		};
 
 		C.ChatGetMessagesByIds(rootId, [ item.replyToMessageId ], (message: any) => {
 			if (message.error.code || !message.messages.length) {
@@ -698,9 +679,6 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 	};
 
 	const onScroll = (e: any) => {
-		const rootId = getRootId();
-		const { isPopup } = props;
-		const subId = getSubId();
 		const node = $(nodeRef.current);
 		const scrollWrapper = node.find('#scrollWrapper');
 		const formWrapper = node.find('#formWrapper');
@@ -766,39 +744,37 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		const subId = getSubId();
+
 		if (subIds.includes(subId)) {
 			loadDepsAndReplies([ message ], () => scrollToBottomCheck());
-		}
+		};
 	};
 
 	const onDragOver = (e: React.DragEvent) => {
-		refFormRef.current?.onDragOver(e);
+		formRef.current?.onDragOver(e);
 	};
 
 	const onDragLeave = (e: React.DragEvent) => {
-		refFormRef.current?.onDragLeave(e);
+		formRef.current?.onDragLeave(e);
 	};
 
 	const onDrop = (e: React.DragEvent) => {
-		refFormRef.current?.onDrop(e);
+		formRef.current?.onDrop(e);
 	};
 
 	const loadState = (callBack?: () => void) => {
-		const rootId = getRootId();
-		const subId = getSubId();
-
 		if (!rootId) {
 			return;
-		}
+		};
 
 		C.ChatSubscribeLastMessages(rootId, 0, subId, (message: any) => {
 			if (message.state) {
 				S.Chat.setState(subId, message.state);
-			}
+			};
 
 			if (callBack) {
 				callBack();
-			}
+			};
 		});
 	};
 
@@ -863,14 +839,10 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		};
 	}, []);
 
-	const { showRelativeDates, dateFormat } = S.Common;
-	const { block } = props;
-	const rootId = getRootId();
 	const messages = getMessages();
 	const sections = getSections();
-	const subId = getSubId();
 	const hasScrollValue = hasScroll();
-	const space = U.Space.getSpaceview();
+	const spaceview = U.Space.getSpaceview();
 
 	const Section = (item: any) => {
 		const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
@@ -887,7 +859,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 
 					return (
 						<Message
-							ref={ref => messageRefsRef.current[item.id] = ref}
+							ref={ref => messageRefs.current[item.id] = ref}
 							key={item.id}
 							{...props}
 							id={item.id}
@@ -917,11 +889,11 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			onDragLeave={onDragLeave} 
 			onDrop={onDrop}
 		>
-			<div id="scrollWrapper" ref={refListRef} className="scrollWrapper">
+			<div id="scrollWrapper" ref={listRef} className="scrollWrapper">
 				{!messages.length ? (
 					<EmptyState
 						text={translate('blockChatEmpty')}
-						buttonText={space.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
+						buttonText={spaceview.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
 						onButton={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
 					/>
 				) : (
@@ -932,7 +904,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			</div>
 
 			<Form 
-				ref={refFormRef}
+				ref={formRef}
 				{...props}
 				rootId={rootId}
 				blockId={block.id}

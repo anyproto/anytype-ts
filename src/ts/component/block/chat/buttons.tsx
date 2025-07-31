@@ -20,17 +20,15 @@ interface Props extends I.BlockComponent {
 }
 
 const ChatButtons = observer(forwardRef((props: Props, ref) => {
+
+	const { hasSelection, block, caretMenuParam, onMention, onChatButtonSelect } = props;
 	const [ buttons, setButtons ] = useState<any[]>([]);
 
 	const onButton = (e: React.MouseEvent, item: any) => {
-		const { hasSelection } = props;
-
 		hasSelection() ? onTextButton(e, item.type, '') : onChatButton(e, item.type);
 	};
 
 	const onChatButton = (e: React.MouseEvent, type: I.ChatButton) => {
-		const { block, caretMenuParam, onMention, onChatButtonSelect } = props;
-
 		switch (type) {
 			case I.ChatButton.Object: {
 				onAttachment();
@@ -240,10 +238,10 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 					addParam: {
 						name: translate('commonUpload'),
 						icon: 'upload',
-						onClick: upload
+						onClick: upload,
 					},
 				});
-			}
+			};
 
 			analytics.event('ClickScreenChatAttach', { type: analyticsMenuName });
 		} else {
@@ -254,7 +252,7 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 				noScroll: true,
 				onSelect: (e: React.MouseEvent, option: any) => {
 					onAttachment(option.id);
-				}
+				},
 			};
 
 			analytics.event('ScreenChatAttach');
@@ -271,7 +269,7 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 				onClose: () => {
 					if (menu) {
 						onMenuClose();
-					}
+					};
 				},
 				data,
 			});
@@ -287,8 +285,6 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 		setButtons(getButtons());
 	}, []);
 
-	const { block } = props;
-
 	return (
 		<div className="buttons">
 			{buttons.map((item: any, i: number) => {
@@ -296,7 +292,7 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 
 				if (item.isActive) {
 					cn.push('isActive');
-				}
+				};
 
 				return (
 					<Icon 
