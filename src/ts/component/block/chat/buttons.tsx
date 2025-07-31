@@ -35,7 +35,7 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 			case I.ChatButton.Object: {
 				onAttachment();
 				break;
-			}
+			};
 
 			case I.ChatButton.Emoji: {
 				S.Menu.open('smile', {
@@ -50,13 +50,13 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 					}
 				});
 				break;
-			}
+			};
 
 			case I.ChatButton.Mention: {
 				onMention();
 				break;
-			}
-		}
+			};
+		};
 	};
 
 	const onTextButton = (e: React.MouseEvent, type: I.MarkType, param: string) => {
@@ -85,7 +85,7 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 			default: {
 				onTextButtonToggle(type, '');
 				break;
-			}
+			};
 
 			case I.MarkType.Link: {
 				menuId = 'blockLink';
@@ -99,7 +99,7 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 					onClear: before => removeBookmark(before),
 				});
 				break;
-			}
+			};
 
 			case I.MarkType.BgColor:
 			case I.MarkType.Color: {
@@ -107,21 +107,21 @@ const ChatButtons = observer(forwardRef((props: Props, ref) => {
 					case I.MarkType.Color: {
 						menuId = 'blockColor';
 						break;
-					}
+					};
 
 					case I.MarkType.BgColor: {
 						menuId = 'blockBackground';
 						break;
-					}
-				}
+					};
+				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: param || mark?.param,
 					onChange: param => onTextButtonToggle(type, param),
 				});
 				break;
-			}
-		}
+			};
+		};
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
 			S.Menu.closeAll(J.Menu.context, () => {

@@ -433,9 +433,10 @@ const ChatForm = observer(forwardRef<any, Props>((props, ref) => {
 		}
 
 		setAttachments(list.concat(attachments));
+
 		if (callBack) {
 			callBack();
-		}
+		};
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {

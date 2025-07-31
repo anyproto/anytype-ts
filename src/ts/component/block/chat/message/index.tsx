@@ -258,32 +258,32 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 	if (hasAttachments == 1) {
 		ca.push('isSingle');
-	}
+	};
 
 	if (isSelf) {
 		cn.push('isSelf');
-	}
+	};
 	if (isFirst) {
 		cn.push('isFirst');
-	}
+	};
 	if (isLast) {
 		cn.push('isLast');
-	}
+	};
 	if (isNew && !isSelf) {
 		cn.push('isNew');
-	}
+	};
 	if (text) {
 		cn.push('withText');
-	}
+	};
 	if (isExpanded) {
 		cn.push('isExpanded');
-	}
+	};
 	if (U.Common.checkRtl(text)) {
 		ct.push('isRtl');
-	}
+	};
 	if (!isReadMessage || !isReadMention) {
 		ct.push('isUnread');
-	}
+	};
 
 	// Subscriptions
 	for (const mark of content.marks) {
@@ -301,10 +301,10 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 		if (isMe) {
 			cn.push('isMe');
-		}
+		};
 		if (length > 1) {
 			cn.push('isMulti');
-		}
+		};
 
 		return (
 			<div 
@@ -345,8 +345,8 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 		if (attachmentsLayout) {
 			cn.push('withMedia');
 			cn.push(`mediaLayout-${attachments.length}`)
-		}
-	}
+		};
+	};
 
 	return (
 		<div

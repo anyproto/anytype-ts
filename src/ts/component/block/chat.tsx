@@ -287,11 +287,11 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			if (first && last) {
 				C.ChatReadMessages(rootId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
 				C.ChatReadMessages(rootId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
-			}
+			};
 
 			S.Chat.setReadMessageStatus(subId, ids, true);
 			S.Chat.setReadMentionStatus(subId, ids, true);
-		}
+		};
 
 		scrolledItemsRef.current.clear();
 	};
@@ -301,7 +301,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 			loadDeps(getDepsIds(list), () => {
 				if (callBack) {
 					callBack();
-				}
+				};
 			});
 		});
 	};
@@ -345,9 +345,9 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		if (!ids.length) {
 			if (callBack) {
 				callBack();
-			}
+			};
 			return;
-		}
+		};
 
 		U.Subscription.subscribeIds({
 			subId: getSubId(),
@@ -358,7 +358,7 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		}, () => {
 			if (callBack) {
 				callBack();
-			}
+			};
 		});
 	};
 
@@ -366,9 +366,9 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		if (!ids.length) {
 			if (callBack) {
 				callBack();
-			}
+			};
 			return;
-		}
+		};
 
 		const rootId = getRootId();
 		const subId = getSubId();
@@ -376,11 +376,11 @@ const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, 
 		C.ChatGetMessagesByIds(rootId, ids, (message: any) => {
 			if (!message.error.code) {
 				message.messages.forEach(it => S.Chat.setReply(subId, it));
-			}
+			};
 
 			if (callBack) {
 				callBack();
-			}
+			};
 		});
 	};
 
