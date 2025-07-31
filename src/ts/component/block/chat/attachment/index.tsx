@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
 import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
@@ -13,7 +13,7 @@ interface Props {
 	onPreview?: (data: any) => void;
 }
 
-const ChatAttachment = observer((props: Props) => {
+const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const [ src, setSrc ] = useState('');
 	const previewItemRef = useRef<any>(null);
@@ -366,6 +366,6 @@ const ChatAttachment = observer((props: Props) => {
 			<Icon className="remove" onClick={onRemove} />
 		</div>
 	);
-});
+}));
 
 export default ChatAttachment;

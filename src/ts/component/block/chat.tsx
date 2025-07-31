@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Icon, Button, EmptyState } from 'Component';
@@ -9,7 +9,7 @@ import Form from './chat/form';
 
 const GROUP_TIME = 300;
 
-const BlockChat = observer((props: I.BlockComponent) => {
+const BlockChat = observer(forwardRef<HTMLDivElement, I.BlockComponent>((props, ref) => {
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const refListRef = useRef<HTMLDivElement>(null);
 	const refFormRef = useRef<any>(null);
@@ -951,6 +951,6 @@ const BlockChat = observer((props: I.BlockComponent) => {
 		</div>
 	);
 
-});
+}));
 
 export default BlockChat;

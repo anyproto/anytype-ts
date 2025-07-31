@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U } from 'Lib';
 
-const ChatMessageReply = observer((props: I.ChatMessageComponent) => {
+const ChatMessageReply = observer(forwardRef<HTMLDivElement, I.ChatMessageComponent>((props, ref) => {
 	const { space } = S.Common;
 	const { id, subId, getReplyContent, onReplyClick } = props;
 	const message = S.Chat.getReply(subId, id);
@@ -45,6 +45,6 @@ const ChatMessageReply = observer((props: I.ChatMessageComponent) => {
 			</div>
 		</div>
 	);
-});
+}));
 
 export default ChatMessageReply;

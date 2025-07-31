@@ -9,7 +9,7 @@ import Reply from './reply';
 
 const LINES_LIMIT = 10;
 
-const ChatMessage = observer(forwardRef((props: I.ChatMessageComponent, ref) => {
+const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref) => {
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const refTextRef = useRef<HTMLDivElement>(null);
 	const attachmentRefsRef = useRef<any>({});
