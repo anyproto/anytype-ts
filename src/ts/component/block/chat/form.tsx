@@ -24,6 +24,7 @@ interface Props extends I.BlockComponent {
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
 	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
+	isEmpty?: boolean;
 };
 
 interface State {
@@ -87,7 +88,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { subId, readonly, getReplyContent } = this.props;
+		const { subId, readonly, getReplyContent, isEmpty } = this.props;
 		const { attachments, replyingId } = this.state;
 		const value = this.getTextValue();
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
@@ -242,10 +243,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
-					</div>
+					{!isEmpty ? (
+						<div className="navigation">
+							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
+						</div>
+					) : ''}
 
 					{form}
 
