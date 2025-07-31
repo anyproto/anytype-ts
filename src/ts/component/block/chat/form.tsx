@@ -1261,6 +1261,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const rect = U.Common.getSelectionRect();
 
 		return {
+			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
