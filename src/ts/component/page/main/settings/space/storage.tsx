@@ -57,9 +57,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 			const buttons: I.ButtonComponent[] = [
 				{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: () => this.onRemove(refId) }
 			];
-			const filters: I.Filter[] = [
-				{ relationKey: 'fileSyncStatus', condition: I.FilterCondition.In, value: item.filters },
-			];
 			const sorts: I.Sort[] = [
 				{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
 			];
@@ -77,7 +74,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 						iconSize={18}
 						sorts={sorts}
 						keys={U.Subscription.syncStatusRelationKeys()}
-						filters={filters}
 						ignoreHidden={false}
 						ignoreArchived={false}
 						textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
