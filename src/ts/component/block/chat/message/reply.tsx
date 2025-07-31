@@ -4,6 +4,7 @@ import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U } from 'Lib';
 
 const ChatMessageReply = observer(forwardRef<HTMLDivElement, I.ChatMessageComponent>((props, ref) => {
+
 	const { space } = S.Common;
 	const { id, subId, getReplyContent, onReplyClick } = props;
 	const message = S.Chat.getReply(subId, id);
@@ -28,11 +29,11 @@ const ChatMessageReply = observer(forwardRef<HTMLDivElement, I.ChatMessageCompon
 	if (isMultiple) {
 		icon = <Icon className="isMultiple" />;
 		cn.push('withAttachment');
-	}
+	};
 
 	if (U.Common.checkRtl(text)) {
 		cn.push('isRtl');
-	}
+	};
 
 	return (
 		<div className={cn.join(' ')} onClick={onReplyClick}>
@@ -45,6 +46,7 @@ const ChatMessageReply = observer(forwardRef<HTMLDivElement, I.ChatMessageCompon
 			</div>
 		</div>
 	);
+
 }));
 
 export default ChatMessageReply;

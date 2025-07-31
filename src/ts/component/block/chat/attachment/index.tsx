@@ -1,6 +1,6 @@
 import React, { useRef, useState, forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
 
 interface Props {
@@ -14,49 +14,46 @@ interface Props {
 }
 
 const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
+
+	const { object, subId, showAsFile, bookmarkAsDefault, onPreview, scrollToBottom, onRemove } = props;
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const [ src, setSrc ] = useState('');
-	const previewItemRef = useRef<any>(null);
 
 	const onOpen = () => {
-		const { object } = props;
-
 		switch (object.layout) {
 			case I.ObjectLayout.Bookmark: {
 				onOpenBookmark();
 				break;
-			}
+			};
 
 			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Image: {
-				onPreview();
+				onPreview(object);
 				break;
-			}
+			};
 
 			case I.ObjectLayout.File:
 			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.Audio: {
 				Action.openFile(object.id, analytics.route.chat);
 				break;
-			}
+			};
 
 			default: {
 				if (!object.isTmp) {
 					U.Object.openPopup(object);
-				}
+				};
 				break;
-			}
-		}
+			};
+		};
 	};
 
 	const onContextMenu = (e: any) => {
 		e.stopPropagation();
 
-		const { object, subId } = props;
-		
 		if (object.isTmp) {
 			return;
-		}
+		};
 
 		S.Menu.open('objectContext', {
 			recalcRect: () => { 
@@ -68,7 +65,7 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 				subId,
 				allowedLinkTo: true,
 				allowedOpen: true,
-			}
+			},
 		});
 	};
 
@@ -76,31 +73,27 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 		Action.openUrl(props.object.source);
 	};
 
-	const onPreview = () => {
-		const { onPreview } = props;
+	const onPreviewHandler = () => {
 		const item = getPreviewItem();
 
 		if (onPreview) {
 			onPreview(item);
 		} else {
 			S.Popup.open('preview', { data: { gallery: [ item ] } });
-		}
+		};
 	};
 
-	const onRemove = (e: any) => {
-		const { object, onRemove } = props;
-
+	const onRemoveHandler = (e: any) => {
 		e.stopPropagation();
 		onRemove(object.id);
 	};
 
 	const onSyncStatusClick = (e: any) => {
-		const { object } = props;
 		const { syncError } = object;
 
 		if (syncError == I.SyncStatusError.None) {
 			return;
-		}
+		};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -114,7 +107,7 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 		} else {
 			textConfirm = translate('popupConfirmButtonGotIt');
 			colorConfirm = 'blank';
-		}
+		};
 
 		S.Popup.open('confirm', {
 			data: {
@@ -129,17 +122,17 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 						window.setTimeout(() => {
 							Renderer.send('updateCheck');
 						}, J.Constant.delay.popup);
-					}
+					};
+
 					if (syncError == I.SyncStatusError.Oversized) {
 						// delete?
-					}
-				}
-			}
+					};
+				},
+			},
 		});
 	};
 
 	const getPreviewItem = () => {
-		const { object } = props;
 		const ret: any = { object };
 
 		switch (object.layout) {
@@ -147,19 +140,19 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 				ret.type = I.FileType.Image;
 				ret.src = src || S.Common.imageUrl(object.id, I.ImageSize.Large);
 				break;
-			}
+			};
 
 			case I.ObjectLayout.Video: {
 				ret.type = I.FileType.Video;
 				ret.src = S.Common.fileUrl(object.id);
 				break;
-			}
-		}
+			};
+		};
+
 		return ret;
 	};
 
 	const renderDefault = () => {
-		const { object } = props;
 		const isFile = U.Object.isInFileLayouts(object.layout);
 		const type = S.Record.getTypeById(object.type);
 
@@ -177,7 +170,7 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 			);
 		} else {
 			description = <ObjectDescription object={object} />;
-		}
+		};
 
 		return (
 			<div className="clickable" onClick={onOpen}>
@@ -195,13 +188,12 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 	};
 
 	const renderBookmark = () => {
-		const { object } = props;
 		const { picture, source } = object;
 		const cn = [ 'inner' ];
 
 		if (picture) {
 			cn.push('withImage');
-		}
+		};
 
 		return (
 			<div
@@ -228,8 +220,6 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 	};
 
 	const renderImage = () => {
-		const { object, scrollToBottom } = props;
-
 		if (!src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
@@ -239,11 +229,11 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 				setSrc('./img/space.svg');
 			} else {
 				setSrc(S.Common.imageUrl(object.id, I.ImageSize.Large));
-			}
-		}
+			};
+		};
 
 		return (
-			<div className="imgWrapper" onClick={onPreview}>
+			<div className="imgWrapper" onClick={onPreviewHandler}>
 				<img
 					id="image"
 					className="image"
@@ -259,7 +249,6 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 	};
 
 	const renderVideo = () => {
-		const { object } = props;
 		const src = S.Common.fileUrl(object.id);
 
 		return (
@@ -273,7 +262,6 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 	};
 
 	const renderAudio = () => {
-		const { object } = props;
 		const playlist = [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
@@ -281,7 +269,6 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 		return <MediaAudio playlist={playlist} />;
 	};
 
-	const { object, showAsFile, bookmarkAsDefault } = props;
 	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -290,71 +277,74 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 
 	if (U.Object.isInFileLayouts(object.layout)) {
 		cn.push('isFile');
-	}
+	};
 
 	switch (object.layout) {
 		case I.ObjectLayout.File: {
 			if (showAsFile) {
 				break;
-			}
+			};
 
-			if (mime && object.file) {
-				const [ t1, t2 ] = mime.split('/');
+			if (!mime || !object.file) {
+				break;
+			};
 
-				switch (t1) {
-					case 'image': {
-						if (!J.Constant.fileExtension.image.includes(t2)) {
-							break;
-						}
+			const [ t1, t2 ] = mime.split('/');
 
-						cn.push('isImage');
-						content = renderImage();
+			switch (t1) {
+				case 'image': {
+					if (!J.Constant.fileExtension.image.includes(t2)) {
 						break;
-					}
-				}
-			}
-			break;
-		}
+					};
 
-		case I.ObjectLayout.Image:
+					cn.push('isImage');
+					content = renderImage();
+					break;
+				};
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Image: {
 			if (showAsFile) {
 				break;
-			}
+			};
 
 			cn.push('isImage');
 			content = renderImage();
 			break;
+		};
 
 		case I.ObjectLayout.Video: {
 			if (showAsFile) {
 				break;
-			}
+			};
 
 			cn.push('isVideo');
 			content = renderVideo();
 			break;
-		}
+		};
 
 		case I.ObjectLayout.Audio: {
 			cn.push('isAudio');
 			content = renderAudio();
 			break;
-		}
+		};
 
 		case I.ObjectLayout.Bookmark: {
 			cn.push('isBookmark');
 			content = bookmarkAsDefault ? renderDefault() : renderBookmark();
 			break;
-		}
-	}
+		};
+	};
 
 	if (!content) {
 		content = renderDefault();
-	}
+	};
 
 	if (cn.length == 1) {
 		cn.push(U.Data.layoutClass(object.id, object.layout));
-	}
+	};
 
 	return (
 		<div 
@@ -363,9 +353,10 @@ const ChatAttachment = observer(forwardRef<HTMLDivElement, Props>((props, ref) =
 			onContextMenu={onContextMenu}
 		>
 			{content}
-			<Icon className="remove" onClick={onRemove} />
+			<Icon className="remove" onClick={onRemoveHandler} />
 		</div>
 	);
+
 }));
 
 export default ChatAttachment;

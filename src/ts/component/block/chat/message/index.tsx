@@ -10,9 +10,15 @@ import Reply from './reply';
 const LINES_LIMIT = 10;
 
 const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref) => {
+
+	const { account } = S.Auth;
+	const { space } = S.Common;
+	const { 
+		rootId, id, subId, isNew, readonly, hasMore, isPopup, renderLinks, renderMentions, renderObjects, renderEmoji, scrollToBottom, onContextMenu, 
+		onMore, onReplyEdit,
+	} = props;
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const refTextRef = useRef<HTMLDivElement>(null);
-	const attachmentRefsRef = useRef<any>({});
 	const [ isExpanded, setIsExpanded ] = useState(false);
 
 	const onExpand = () => {
@@ -36,7 +42,6 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 	};
 
 	const onReactionAdd = () => {
-		const { isPopup } = props;
 		const node = $(nodeRef.current);
 		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
 
@@ -64,7 +69,7 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 					menuContext.close();
 				},
 				route: analytics.route.reaction,
-			}
+			},
 		});
 
 		analytics.event('ClickMessageMenuReaction');
@@ -72,7 +77,6 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 	const onReactionSelect = (icon: string) => {
 		const { account } = S.Auth;
-		const { rootId, id, subId } = props;
 		const message = S.Chat.getMessage(subId, id);
 		const { reactions } = message;
 		const limit = J.Constant.limit.chat.reactions;
@@ -80,7 +84,7 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 		if ((self.length >= limit.self) || (reactions.length >= limit.all)) {
 			return;
-		}
+		};
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
 		analytics.event(self.find(it => it.icon == icon) ? 'RemoveReaction' : 'AddReaction');
@@ -95,14 +99,12 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 	};
 
 	const update = (param: Partial<I.ChatMessage>) => {
-		const { rootId, id, subId } = props;
 		const message = Object.assign(S.Chat.getMessage(subId, id), param);
 
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
 	const getAttachments = (): any[] => {
-		const { subId, id } = props;
 		const message = S.Chat.getMessage(subId, id);
 
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
@@ -122,18 +124,16 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 				if (Math.max(widthInPixels, heightInPixels) < 100) {
 					return '';
-				}
-			}
+				};
+			};
 
 			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
-		}
+		};
 
 		return c.join(' ');
 	};
 
 	const canAddReaction = (): boolean => {
-		const { account } = S.Auth;
-		const { id, subId } = props;
 		const message = S.Chat.getMessage(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
@@ -143,7 +143,7 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 		reactions.forEach(it => {
 			if (it.authors.includes(account.id)) {
 				cntSelf++;
-			}
+			};
 		});
 
 		return (cntSelf < self) && (reactions.length < all);
@@ -165,7 +165,7 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 		if (canExpand) {
 			node.addClass('canExpand');
-		}
+		};
 	};
 
 	const resize = () => {
@@ -177,7 +177,6 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 	};
 
 	const init = () => {
-		const { rootId, id, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = props;
 		const message = S.Chat.getMessage(subId, id);
 		const { creator, content } = message;
 		const { marks, text } = content;
@@ -214,9 +213,6 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 		init();
 	}, [ props.id ]);
 
-	const { rootId, id, isNew, readonly, subId, hasMore, scrollToBottom, onContextMenu, onMore, onReplyEdit } = props;
-	const { space } = S.Common;
-	const { account } = S.Auth;
 	const message = S.Chat.getMessage(subId, id);
 	const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention, isSynced } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
@@ -240,21 +236,21 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 
 	if (isSynced || !isSelf) {
 		statusIcon = null;
-	}
+	};
 
 	if (!readonly) {
 		if (!hasReactions && canAddReactionValue) {
 			controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
-		}
+		};
 
 		//if (!isSelf) {
 			controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
-		//}
+		//};
 
 		if (hasMore) {
 			controls.push({ className: 'more', onClick: onMore });
-		}
-	}
+		};
+	};
 
 	if (hasAttachments == 1) {
 		ca.push('isSingle');
@@ -289,8 +285,8 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 	for (const mark of content.marks) {
 		if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 			const object = S.Detail.get(rootId, mark.param, []);
-		}
-	}
+		};
+	};
 
 	const Reaction = (item: any) => {
 		const authors = item.authors || [];
@@ -337,7 +333,7 @@ const ChatMessage = observer(forwardRef<any, I.ChatMessageComponent>((props, ref
 				<ObjectName object={author} />
 			</div>
 		);
-	}
+	};
 
 	if (hasAttachments) {
 		cn.push('withAttachment');
