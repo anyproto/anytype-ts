@@ -195,7 +195,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderImage () {
 		const { object, scrollToBottom } = this.props;
-		const status = object.syncStatus ? object.syncStatus : I.SyncStatusObject.Syncing
+		const status = object.syncStatus ? object.syncStatus : I.SyncStatusObject.Syncing;
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
@@ -252,7 +252,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object, isDownload } = this.props;
 		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 
-		if (isDownload && syncStatus != I.SyncStatusObject.Synced) {
+		if (isDownload && (syncStatus != I.SyncStatusObject.Synced)) {
 			return;
 		};
 
