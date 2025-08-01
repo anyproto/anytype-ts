@@ -28,14 +28,12 @@
         pkg-config
         jq
         nodejs_22
-        electron
 
         # keytar build fails on npm install because python312 has distutils removed
         python311
 
         # electron binary launch deps.
         # see also https://nix.dev/guides/faq#how-to-run-non-nix-executables
-        stdenv.cc.cc.lib
         glib
         nss
         nspr
@@ -61,6 +59,11 @@
         alsa-lib
         libGL
         gdk-pixbuf
+
+        # electron runtime deps
+        mesa
+        libgbm
+        stdenv.cc.cc.lib
       ];
       XDG_ICONS_PATH = "${pkgs.hicolor-icon-theme}/share:${pkgs.adwaita-icon-theme}/share";
     in {
