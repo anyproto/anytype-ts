@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -31,7 +31,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const filterValueRef = useRef('');
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
 
-	const initCache = useCallback(() => {
+	const initCache = () => {
 		const items = getItems();
 
 		cacheRef.current = new CellMeasurerCache({
@@ -39,24 +39,24 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			defaultHeight: HEIGHT_SECTION,
 			keyMapper: i => (items[i] || {}).id,
 		});
-	}, []);
+	};
 
-	const onScroll = useCallback(({ scrollTop }) => {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
 			topRef.current = scrollTop;
 		};
-	}, []);
+	};
 
-	const rebind = useCallback(() => {
+	const rebind = () => {
 		unbind();
 		$(window).on('keydown.search', e => onKeyDown(e));
-	}, []);
+	};
 
-	const unbind = useCallback(() => {
+	const unbind = () => {
 		$(window).off('keydown.search');
-	}, []);
+	};
 
-	const onKeyDown = useCallback((e: any) => {
+	const onKeyDown = (e: any) => {
 		e.stopPropagation();
 
 		if (keyboard.isComposition) {
@@ -108,9 +108,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('search', e, () => close());
-	}, [ backlink ]);
+	};
 
-	const onArrow = useCallback((dir: number) => {
+	const onArrow = (dir: number) => {
 		if (!listRef.current) {
 			return;
 		};
@@ -136,9 +136,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		listRef.current.scrollToRow(Math.max(0, nRef.current));
 		setActive(item);
-	}, []);
+	};
 
-	const setActive = useCallback((item: any) => {
+	const setActive = (item: any) => {
 		if (!item) {
 			return;
 		};
@@ -149,14 +149,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		unsetActive();
 
 		node.find(`#item-${item.id}`).addClass('active');
-	}, []);
+	};
 
-	const unsetActive = useCallback(() => {
-		const node = $(nodeRef.current);
-		node.find('.item.active').removeClass('active');
-	}, []);
+	const unsetActive = () => {
+		$(nodeRef.current).find('.item.active').removeClass('active');
+	};
 
-	const onFilterChange = useCallback((v: string) => {
+	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeoutRef.current);
 
 		if (filterValueRef.current == v) {
@@ -178,26 +177,26 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				delayRef.current = J.Constant.delay.keyboard;
 			};
 		}, delayRef.current);
-	}, []);
+	};
 
-	const onFilterSelect = useCallback((e: any) => {
+	const onFilterSelect = (e: any) => {
 		rangeRef.current = filterInputRef.current.getRange();
-	}, []);
+	};
 
-	const onFilterClear = useCallback(() => {
+	const onFilterClear = () => {
 		storageSet({ filter: '' });
 		analytics.event('SearchInput', { route });
-	}, []);
+	};
 
-	const onBacklink = useCallback((e: React.MouseEvent, item: any) => {
+	const onBacklink = (e: React.MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		storageSet({ backlink: item.id });
 		setBacklinkState(item, 'Empty');
-	}, []);
+	};
 
-	const setBacklinkState = useCallback((item: any, type: string, callBack?: () => void) => {
+	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
 		setBacklink(item);
 		resetSearch();
 		analytics.event('SearchBacklink', { route, type });
@@ -205,27 +204,27 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (callBack) {
 			callBack();
 		};
-	}, []);
+	};
 
-	const onClearSearch = useCallback(() => {
+	const onClearSearch = () => {
 		storageSet({ backlink: '' });
 		setBacklink(null);
 		resetSearch();
-	}, []);
+	};
 
-	const loadMoreRows = useCallback(({ startIndex, stopIndex }) => {
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
 			offsetRef.current += J.Constant.limit.menuRecords;
 			load(false, () => resolve(null));
 		});
-	}, []);
+	};
 
-	const resetSearch = useCallback(() => {
+	const resetSearch = () => {
 		filterInputRef.current?.setValue('');
 		reload();
-	}, []);
+	};
 
-	const reload = useCallback(() => {
+	const reload = () => {
 		nRef.current = 0;
 		offsetRef.current = 0;
 		topRef.current = 0;
@@ -236,9 +235,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				window.setTimeout(() => setActive(items[0]));
 			};
 		});
-	}, []);
+	};
 
-	const load = useCallback((clear: boolean, callBack?: () => void) => {
+	const load = (clear: boolean, callBack?: () => void) => {
 		const { space, config } = S.Common;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
 		const filters: any[] = [
@@ -306,9 +305,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				if (callBack) callBack();
 			};
 		});
-	}, [ backlink ]);
+	};
 
-	const getItems = useCallback(() => {
+	const getItems = () => {
 		const filter = getFilter();
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -429,20 +428,20 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			it.shortcut = it.shortcut || [];
 			return it;
 		});
-	}, [ backlink ]);
+	};
 
-	const pageCreate = useCallback((name: string) => {
+	const pageCreate = (name: string) => {
 		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-	}, []);
+	};
 
-	const onOver = useCallback((e: any, item: any) => {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			nRef.current = item.index;
 			setActive(item);
 		};
-	}, []);
+	};
 
-	const onClick = useCallback((e: any, item: any) => {
+	const onClick = (e: any, item: any) => {
 		if (!item) {
 			return;
 		};
@@ -501,9 +500,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		analytics.event('SearchResult', { route, index: item.index + 1, length: filter.length });
-	}, []);
+	};
 
-	const onContext = useCallback((e: any, item: any) => {
+	const onContext = (e: any, item: any) => {
 		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${item.id}`,
 			recalcRect: () => { 
@@ -519,9 +518,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				objectIds: [ item.id ],
 			},
 		});
-	}, []);
+	};
 
-	const getRowHeight = useCallback((item: any, index: number) => {
+	const getRowHeight = (item: any, index: number) => {
 		let h = HEIGHT_ITEM;
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
@@ -533,11 +532,11 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			h = Math.max((cacheRef.current as any).rowHeight({ index }), h);
 		};
 		return h;
-	}, []);
+	};
 
-	const getFilter = useCallback(() => {
+	const getFilter = () => {
 		return String(filterInputRef.current?.getValue() || '');
-	}, []);
+	};
 
 	useEffect(() => {
 		const storage = storageGet();
@@ -826,6 +825,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			) : ''}
 		</div>
 	);
+
 }));
 
 export default PopupSearch;
