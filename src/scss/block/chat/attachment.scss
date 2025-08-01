@@ -93,6 +93,14 @@
 		.icon.syncStatus { width: 72px; height: 72px; margin: -36px 0px 0px -36px; }
 	}
 
+	.attachment.isImage.withBlur {
+		.imgWrapper { min-width: 100px; min-height: 100px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+		.imgWrapper {
+			.blur { width: 100%; height: 100%; position: absolute; z-index: 0; left: 0px; top: 0px; background-size: cover; -webkit-filter: blur(5px); }
+			.image { width: unset; height: unset; border-radius: 0px; position: relative; z-index: 1; }
+		}
+	}
+
 	.attachment.isVideo { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
 	.attachment.isVideo {
 		.mediaVideo { border-radius: inherit; overflow: hidden; width: 100%; height: 100%; }
