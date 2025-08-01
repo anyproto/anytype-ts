@@ -12,6 +12,7 @@ interface Props {
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
+	updateAttachments?: () => void;
 };
 
 const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
@@ -249,7 +250,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	onOpen () {
-		const { object, isDownload } = this.props;
+		const { object, isDownload, updateAttachments } = this.props;
 		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 
 		if (isDownload && (syncStatus != I.SyncStatusObject.Synced)) {
@@ -277,7 +278,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 			default: {
 				if (!object.isTmp) {
-					U.Object.openPopup(object);
+					U.Object.openPopup(object, {
+						onClose: () => {
+							if (updateAttachments) {
+								updateAttachments();
+							};
+						},
+					});
 				};
 				break;
 			};

@@ -85,6 +85,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.removeBookmark = this.removeBookmark.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
 		this.getObjectFromPath = this.getObjectFromPath.bind(this);
+		this.updateAttachments = this.updateAttachments.bind(this);
 	};
 
 	render () {
@@ -195,6 +196,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 											object={item}
 											onRemove={this.onAttachmentRemove}
 											bookmarkAsDefault={true}
+											updateAttachments={this.updateAttachments}
 										/>
 									</SwiperSlide>
 								))}
@@ -1257,6 +1259,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onMenuClose () {
 		this.refEditable.setRange(this.range);
+	};
+
+	updateAttachments () {
+		const { attachments } = this.state;
+
+		U.Object.getByIds(attachments.map(it => it.id), {}, (objects: any[]) => {
+			this.setAttachments(objects.filter(it => it));
+		});
 	};
 
 	caretMenuParam () {

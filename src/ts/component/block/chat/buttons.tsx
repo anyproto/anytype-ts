@@ -270,6 +270,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 			menuId = 'searchObject';
 			data = {
+				canAdd: true,
 				skipIds: attachments.map(it => it.id),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
