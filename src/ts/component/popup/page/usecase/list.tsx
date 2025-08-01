@@ -75,8 +75,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		const ret: any[] = [];
 		const filter = String(filterRef.current?.getValue() || '');
 
-		console.log('getItems', { filter, category });
-		
 		let items = S.Common.gallery.list || [];
 		if (category) {
 			items = items.filter(it => category.list.includes(it.name));

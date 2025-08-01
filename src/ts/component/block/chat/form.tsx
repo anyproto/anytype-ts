@@ -463,8 +463,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let adjustMarks = false;
 
-		if ((value !== parsed.text) || parsed.updatedValue) {
-			this.updateValue(parsed.text);
+		if (value !== parsed.text) {
+			this.updateMarkup(parsed.text, { from: to, to });
 		};
 
 		if (canOpenMenuMention) {
@@ -1315,7 +1315,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.refEditable.getTextValue();
 		const onChange = (text: string, marks: I.Mark[]) => {
 			this.marks = marks;
-			this.updateValue(text);
 			this.updateMarkup(text, this.range);
 		};
 		const getValue = () => value;
