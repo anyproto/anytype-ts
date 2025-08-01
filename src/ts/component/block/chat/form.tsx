@@ -1263,9 +1263,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	updateAttachments () {
 		const { attachments } = this.state;
+		const ids = attachments.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
 
-		U.Object.getByIds(attachments.map(it => it.id), {}, (objects: any[]) => {
-			this.setAttachments(objects.filter(it => it));
+		U.Object.getByIds(ids, {}, (objects: any[]) => {
+			objects.forEach(item => {	
+				const idx = attachments.findIndex(it => it.id == item.id);
+
+				if (idx >= 0) {
+					attachments[idx] = item;
+				};
+			});
+
+			this.setAttachments(attachments);
 		});
 	};
 
