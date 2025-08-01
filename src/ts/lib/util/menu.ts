@@ -851,17 +851,10 @@ class UtilMenu {
 	};
 
 	inviteContext (param: any) {
-		const { isOnline } = S.Common;
-		const { containerId, cid, key, onInviteRevoke } = param || {};
-		const isOwner = U.Space.isMyOwner();
-		const isLocalNetwork = U.Data.isLocalNetwork();
+		const { containerId, cid, key } = param || {};
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
-
-		if (isOnline && isOwner && !isLocalNetwork) {
-			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
-		};
 
 		S.Menu.open('select', {
 			element: `#${containerId} #button-more-link`,
@@ -873,12 +866,6 @@ class UtilMenu {
 						case 'qr': {
 							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-							break;
-						};
-
-						case 'revoke': {
-							Action.inviteRevoke(S.Common.space, onInviteRevoke);
-							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;
 						};
 					};

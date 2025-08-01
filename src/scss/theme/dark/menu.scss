@@ -327,4 +327,15 @@
 			.icon.join { background-image: url('#{$themePath}/icon/menu/spaceCreate/join.svg'); }
 		}
 	}
+
+	/* Invite Link */
+
+	.menu.menuSelect.inviteLinkType {
+		.item {
+			.icon.editor { background-image: url('#{$themePath}/icon/menu/inviteLink/editor.svg'); }
+			.icon.viewer { background-image: url('#{$themePath}/icon/menu/inviteLink/viewer.svg'); }
+			.icon.manual { background-image: url('#{$themePath}/icon/menu/inviteLink/manual.svg'); }
+			.icon.none { background-image: url('#{$themePath}/icon/menu/inviteLink/none.svg'); }
+		}
+	}
 }

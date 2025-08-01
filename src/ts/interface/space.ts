@@ -47,6 +47,13 @@ export enum InviteType {
 	WithoutApprove 			 = 2,
 };
 
+export enum InviteLinkType {
+	None 					 = 0,
+	Editor 					 = 1,
+	Viewer 					 = 2,
+	Manual 					 = 3,
+};
+
 export enum NotificationMode {
 	All						 = 0,
 	Mentions				 = 1,
