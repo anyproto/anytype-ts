@@ -555,9 +555,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		initCache();
-		rebind();
-
 		focus.clear(true);
+		window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
 		if (storageBacklink) {
 			U.Object.getById(storageBacklink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
