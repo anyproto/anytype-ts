@@ -922,11 +922,11 @@ class UtilMenu {
 			if (c1.spaceOrder > c2.spaceOrder) return 1;
 			if (c1.spaceOrder < c2.spaceOrder) return -1;
 
-			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
-			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
+			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
+			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
 
-			if (c1.lastMessageDate > c2.lastMessageDate) return -1;
-			if (c1.lastMessageDate < c2.lastMessageDate) return 1;
+			if (d1 > d2) return -1;
+			if (d1 < d2) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;
