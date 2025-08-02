@@ -599,18 +599,21 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
-			const length = key.length;
-			const cut = value.slice(range.from, range.to);
-			const closing = twinePairs[key] || key;
+			if ((key == '`') && !block.isTextCode()) {
+				this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
+			} else {
+				const length = key.length;
+				const cut = value.slice(range.from, range.to);
+				const closing = twinePairs[key] || key;
 
-			value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+				value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+				this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+			};
 
-			this.marks = Mark.adjust(this.marks, range.from, length + closing.length);
+			this.setValue(value);
 
-			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + length, to: range.to + length });
-				focus.apply();
-			});
+			focus.set(block.id, { from: range.from + length, to: range.to + length });
+			focus.apply();
 
 			ret = true;
 		};
