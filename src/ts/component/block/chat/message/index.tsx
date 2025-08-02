@@ -158,7 +158,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 
 			if (attachmentsLayout) {
 				cn.push('withMedia');
-				cn.push(`mediaLayout-${attachments.length}`)
+				cn.push(`mediaLayout-${attachments.length}`);
 			};
 		};
 

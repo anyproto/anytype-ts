@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import raf from 'raf';
 import { DOM_EVENTS, OnboardStage, statsVisible } from './constants';
 
 interface Props {
@@ -16,31 +17,34 @@ const CanvasWorkerBridge = forwardRef<RefProps, Props>((props, ref) => {
 	const [ isDestroyed, setIsDestroyed ] = useState(false);
 
 	useEffect(() => {
-		worker.current = new Worker('workers/onboard.js');
-
 		if (!canvasRef.current) {
 			return;
 		};
 
-		const canvas = canvasRef.current;
-		const offscreen = canvasRef.current.transferControlToOffscreen();
+		raf(() => {
+			if (worker.current) {
+				return;
+			};
 
-		worker.current.postMessage(
-			{
+			worker.current = new Worker('workers/onboard.js');
+
+			const offscreen = canvasRef.current?.transferControlToOffscreen();
+
+			worker.current.postMessage({
 				type: 'init',
 				payload: {
 					props,
 					drawingSurface: offscreen,
-					width: canvas.clientWidth,
-					height: canvas.clientHeight,
+					width: canvasRef.current.clientWidth,
+					height: canvasRef.current.clientHeight,
 					pixelRatio: 1,
 				},
 			},
-			[ offscreen ]
-		);
+			[ offscreen ]);
+		});
 
 		Object.values(DOM_EVENTS).forEach(([eventName, passive]) => {
-			canvas.addEventListener(
+			canvasRef.current.addEventListener(
 				eventName,
 				(event: any) => {
 					if (!worker.current) {
@@ -72,8 +76,8 @@ const CanvasWorkerBridge = forwardRef<RefProps, Props>((props, ref) => {
 			worker.current.postMessage({
 				type: 'resize',
 				payload: {
-					width: canvas.clientWidth,
-					height: canvas.clientHeight,
+					width: canvasRef.current.clientWidth,
+					height: canvasRef.current.clientHeight,
 					dpr: 1,
 				},
 			});
