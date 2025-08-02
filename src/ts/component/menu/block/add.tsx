@@ -707,10 +707,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 							// Auto-focus bookmark input field
 							if (param.type == I.BlockType.Bookmark) {
-								const urlToggle = element.find('.urlToggle');
-								if (urlToggle.length) {
-									urlToggle.trigger('click');
-								}
+								element.find('.urlToggle').trigger('click');
 							};
 						}, S.Menu.getTimeout());
 					});
