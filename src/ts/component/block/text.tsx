@@ -51,6 +51,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
+		this.onBeforeInput = this.onBeforeInput.bind(this);
 	};
 
 	render () {
@@ -207,6 +208,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onInput={this.onInput}
 					onDragStart={e => e.preventDefault()}
 					onCompositionEnd={this.onCompositionEnd}
+					onBeforeInput={this.onBeforeInput}
 				/>
 			</div>
 		);
@@ -1252,6 +1254,24 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const r = range !== undefined ? range : this.getRange();
 
 		this.setValue(v, r);
+	};
+
+	onBeforeInput = (e: any) => {
+		const range = this.getRange();
+
+		let html = this.refEditable ? this.refEditable.getHtmlValue() : '';
+
+		if (!/<(font|span)/.test(html)) {
+			return;
+		};
+
+		requestAnimationFrame(() => {
+			html = html.replace(/<\/?font[^>]*>/g, '');
+			html = html.replace(/<span[^>]*>(.*?)<\/span>/g, '$1')
+
+			this.refEditable.setValue(html);
+			this.refEditable.setRange(range);
+		});
 	};
 	
 });
