@@ -208,4 +208,16 @@
 			.bubble { background-color: var(--color-bg-ice) !important;}
 		}
 	}
+
+	&.attachmentsLayout1 {
+		.bubble { max-width: 360px; }
+	}
+
+	&.withText {
+		.attachments.isSingle {
+			.attachment.isImage.withBlur {
+				.imgWrapper { width: 352px; }
+			}
+		}
+	}
 }

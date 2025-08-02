@@ -70,6 +70,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 			};
 		};
 
+		if (hasAttachments) {
+			cn.push(`attachmentsLayout${hasAttachments}`);
+		};
+
 		if (hasAttachments == 1) {
 			ca.push('isSingle');
 		};
