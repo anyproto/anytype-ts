@@ -16,6 +16,7 @@ interface Props extends I.BlockComponent {
 	onMention: () => void;
 	getObjectFromPath: (path: string) => void;
 	addAttachments: (attachments: any[], callBack?: () => void) => void;
+	updateAttachments?: () => void;
 	removeBookmark: (url: string) => void;
 };
 
@@ -236,7 +237,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onAttachment (menu?: string) {
-		const { blockId, attachments, onMenuClose, onChatButtonSelect, addAttachments, getObjectFromPath } = this.props;
+		const { blockId, attachments, onMenuClose, onChatButtonSelect, addAttachments, getObjectFromPath, updateAttachments } = this.props;
 
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
@@ -275,8 +276,18 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
-				onSelect: (item: any) => {
+				onSelect: (item: any, isNew: boolean) => {
 					onChatButtonSelect(I.ChatButton.Object, item);
+
+					if (isNew) {
+						U.Object.openPopup(item, {
+							onClose: () => {
+								if (updateAttachments) {
+									updateAttachments();
+								};
+							}
+						});
+					};
 
 					analytics.event('AttachItemChat', { type: analyticsMenuName, count: 1 });
 				},

@@ -219,6 +219,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						addAttachments={this.addAttachments}
 						onMenuClose={this.onMenuClose}
 						removeBookmark={this.removeBookmark}
+						updateAttachments={this.updateAttachments}
 					/>
 
 					<div ref={ref => this.refCounter = ref} className="charCounter" />
