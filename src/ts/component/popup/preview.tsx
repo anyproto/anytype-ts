@@ -54,17 +54,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		keyboard.shortcut('escape', e, () => close());
 	};
 
-	const onExpand = (e: any) => {
-		e.stopPropagation();
-		e.preventDefault();
-
-		S.Popup.closeAll(null, () => {
-			if (current) {
-				U.Object.openAuto(current);
-			};
-		});
-	};
-	
 	const onMore = (e: any) => {
 		e.stopPropagation();
 		e.preventDefault();
@@ -223,10 +212,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return () => {
 			unbind();
 		};
-	}, [ reload, rebind, setCurrentItem, unbind ]);
+	}, []);
 
 	const getContent = (item: any, idx: number, isThumb?: boolean) => {
-		const { src, type, object } = item;
+		const { src, type } = item;
 		const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
 		const loader = !isThumb ? <Loader className="loader" /> : '';
 		const cn = [ 'previewItem' ];
@@ -284,7 +273,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					mousewheel={true}
 					thumbs={{ swiper: thumbsRef.current }}
 					navigation={true}
-					loop={true}
+					loop={false}
 					modules={[ Mousewheel, Keyboard, Thumbs, Navigation ]}
 					onTransitionEnd={data => setCurrentItem(data.activeIndex)}
 				>
