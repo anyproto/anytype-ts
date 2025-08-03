@@ -347,17 +347,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onBlurInput () {
-		const { rootId } = this.props;
-		const { attachments } = this.state;
-
 		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
-
-		Storage.setChat(rootId, {
-			text: this.getTextValue(),
-			marks: this.marks,
-			attachments,
-		});
+		this.saveState(this.state.attachments);
 	};
 
 	onKeyDownInput (e: any) {
@@ -1276,6 +1268,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			});
 
 			this.setAttachments(attachments);
+			this.saveState(attachments);
 		});
 	};
 
@@ -1421,6 +1414,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	getReplyingId () {
 		return this.state.replyingId;
+	};
+
+	saveState (attachments?: any[]) {
+		const { rootId } = this.props;
+
+		Storage.setChat(rootId, {
+			text: this.getTextValue(),
+			marks: this.marks,
+			attachments,
+		});
 	};
 
 	resize () {
