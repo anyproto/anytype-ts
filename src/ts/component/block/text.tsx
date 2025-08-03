@@ -1268,9 +1268,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		requestAnimationFrame(() => {
+		raf(() => {
 			html = html.replace(/<\/?font[^>]*>/g, '');
-			html = html.replace(/<span[^>]*>(.*?)<\/span>/g, '$1')
+			html = html.replace(/<span[^>]*>(.*?)<\/span>/g, '$1');
 
 			this.refEditable.setValue(html);
 			this.refEditable.setRange(range);
