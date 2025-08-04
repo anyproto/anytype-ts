@@ -275,7 +275,23 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				break;
 			};
 
-			case I.RelationType.Number:
+			case I.RelationType.Number: {
+				if (!noInplace) {
+					break;
+				};
+
+				param = Object.assign(param, {
+					width: 288,
+				});
+				param.data = Object.assign(param.data, {
+					noResize: true,
+				});
+
+				menuId = 'dataviewText';
+				closeIfOpen = false;
+				break;
+			};
+			
 			case I.RelationType.LongText: {
 				if (!noInplace) {
 					const wh = win.height();
