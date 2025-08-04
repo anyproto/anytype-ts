@@ -17,54 +17,56 @@
         inherit system;
         config = { allowUnfree = true; };
       };
-      deps = [
-        pkgs.appimage-run
+      deps = with pkgs; [
+        appimage-run
         # commit hook
-        pkgs.husky
+        husky
+        gitleaks
         # build deps
-        pkgs.libxcrypt
-        pkgs.libsecret
-        pkgs.pkg-config
-        pkgs.jq
-        pkgs.nodejs_22
+        libxcrypt
+        libsecret
+        pkg-config
+        jq
+        nodejs_22
 
         # keytar build fails on npm install because python312 has distutils removed
-        pkgs.python311
+        python311
 
         # electron binary launch deps.
         # see also https://nix.dev/guides/faq#how-to-run-non-nix-executables
-        pkgs.glib
-        pkgs.nss
-        pkgs.nspr
-        pkgs.dbus
-        pkgs.atk
-        pkgs.cups
-        pkgs.libdrm
-        pkgs.gtk3
-        pkgs.adwaita-icon-theme
-        pkgs.pango
-        pkgs.cairo
-        pkgs.xorg.libX11
-        pkgs.xorg.libX11
-        pkgs.xorg.libXcomposite
-        pkgs.xorg.libXdamage
-        pkgs.xorg.libXext
-        pkgs.xorg.libXfixes
-        pkgs.xorg.libXrandr
-        pkgs.mesa
-        pkgs.expat
-        pkgs.libxkbcommon
-        pkgs.xorg.libxcb
-        pkgs.alsa-lib
-        pkgs.libGL
-        pkgs.gdk-pixbuf
+        glib
+        nss
+        nspr
+        dbus
+        atk
+        cups
+        libdrm
+        gtk3
+        adwaita-icon-theme
+        pango
+        cairo
+        xorg.libX11
+        xorg.libX11
+        xorg.libXcomposite
+        xorg.libXdamage
+        xorg.libXext
+        xorg.libXfixes
+        xorg.libXrandr
+        mesa
+        expat
+        libxkbcommon
+        xorg.libxcb
+        alsa-lib
+        libGL
+        gdk-pixbuf
+        libgbm
       ];
       XDG_ICONS_PATH = "${pkgs.hicolor-icon-theme}/share:${pkgs.adwaita-icon-theme}/share";
     in {
       devShell = pkgs.mkShell {
         name = "anytype-ts-dev";
-        SERVER_PORT = 9090;
-        ANY_SYNC_NETWORK = "/home/zarkone/anytype/local-network-config.yml";
+        SERVER_PORT = 8080;
+        # ANY_SYNC_NETWORK = "/home/zarkone/anytype/local-network-config.yml";
         LD_LIBRARY_PATH = "${pkgs.lib.strings.makeLibraryPath deps}";
         nativeBuildInputs = deps;
         shellHook = ''

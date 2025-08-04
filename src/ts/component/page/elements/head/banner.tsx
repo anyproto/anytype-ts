@@ -33,6 +33,7 @@ const HeaderBanner: FC<Props> = ({
 		let menuContext = null;
 
 		S.Menu.open('dataviewTemplateList', {
+			classNameWrap: 'fromBlock',
 			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,

@@ -141,6 +141,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										withName={true}
 										noInplace={true}
 										onCellChange={this.onCellChange}
+										menuClassNameWrap="fromBlock"
 									/>
 									<div className="bullet" />
 								</span>
@@ -458,6 +459,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		S.Menu.open('select', {
 			element: element.join(' '),
+			classNameWrap: 'fromBlock',
 			offsetY: 4,
 			subIds: J.Menu.featuredType,
 			onOpen: context => this.menuContext = context,
@@ -484,6 +486,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const menuParam = {
 			menuId: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
+			classNameWrap: 'fromBlock',
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
@@ -636,6 +639,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
+				classNameWrap: 'fromBlock',
 				noFlipX: true,
 				offsetY: 4,
 				data: {
@@ -730,6 +734,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			S.Menu.open('select', {
 				element: elementId,
 				className: 'featuredLinks',
+				classNameWrap: 'fromBlock',
 				title: relation.name,
 				width: 360,
 				offsetY: 4,

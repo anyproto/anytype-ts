@@ -111,10 +111,9 @@ class Survey {
 		const obj = Storage.getSurvey(type);
 		const timeRegister = this.getTimeRegister();
 		const lastTime = Number(obj.time) || 0;
-		const week = 86400 * 7;
 		const month = 86400 * 30;
-		const registerTime = timeRegister <= time - week;
-		const cancelTime = obj.cancel && registerTime && (lastTime <= time - month);
+		const registerTime = timeRegister <= time - month;
+		const cancelTime = obj.cancel && registerTime && (lastTime <= time - month * 2);
 
 		if (obj.complete) {
 			return;

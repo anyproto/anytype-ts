@@ -704,6 +704,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							if (param.type == I.BlockType.File) {
 								element.find(`.fileWrap`).trigger('mousedown');
 							};
+
+							// Auto-focus bookmark input field
+							if (param.type == I.BlockType.Bookmark) {
+								element.find('.urlToggle').trigger('click');
+							};
 						}, S.Menu.getTimeout());
 					});
 				};

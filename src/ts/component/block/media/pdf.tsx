@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
@@ -8,9 +8,9 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	
 	const [pages, setPages] = useState(0);
 	const [page, setPage] = useState(1);
-	const isMountedRef = useRef(false);
 	const nodeRef = useRef<any>(null);
-	const refMediaRef = useRef<any>(null);
+	const wrapRef = useRef<any>(null);
+	const mediaRef = useRef<any>(null);
 	const heightRef = useRef(0);
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
@@ -28,7 +28,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		css.minHeight = heightRef.current;
 	};
 
-	const getWidth = useCallback((checkMax: boolean, v: number): number => {
+	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
 		const el = $(`#selectionTarget-${id}`);
 
@@ -40,75 +40,63 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	}, [ fields.width, id ]);
+	};
 
-	const onKeyDownHandler = useCallback((e: any) => {
+	const onKeyDownHandler = (e: any) => {
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
 		};
-	}, [ onKeyDown, props ]);
+	};
 	
-	const onKeyUpHandler = useCallback((e: any) => {
+	const onKeyUpHandler = (e: any) => {
 		if (onKeyUp) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
 		};
-	}, [ onKeyUp, props ]);
+	};
 
-	const onFocus = useCallback(() => {
+	const onFocus = () => {
 		focus.set(block.id, { from: 0, to: 0 });
-	}, [ block.id ]);
+	};
 	
-	const onChangeUrl = useCallback((e: any, url: string) => {
+	const onChangeUrl = (e: any, url: string) => {
 		Action.upload(I.FileType.Pdf, rootId, id, url, '');
-	}, [ rootId, id ]);
+	};
 	
-	const onChangeFile = useCallback((e: any, path: string) => {
+	const onChangeFile = (e: any, path: string) => {
 		Action.upload(I.FileType.Pdf, rootId, id, '', path);
-	}, [ rootId, id ]);
+	};
 
-	const onDocumentLoad = useCallback((result: any) => {
+	const onDocumentLoad = (result: any) => {
 		setPages(result.numPages);
-	}, []);
+	};
 
-	const onPageRender = useCallback(() => {
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
+	const onPageRender = () => {
+		heightRef.current = $(wrapRef.current).outerHeight();
+	};
 
-		heightRef.current = wrap.outerHeight();
-	}, []);
-
-	const onOpenFile = useCallback(() => {
+	const onOpenFile = () => {
 		Action.openFile(block.getTargetObjectId(), analytics.route.block);
-	}, [ block ]);
+	};
 
-	const onOpenObject = useCallback((e: any) => {
+	const onOpenObject = (e: any) => {
 		if (!keyboard.withCommand(e)) {
 			U.Object.openConfig({ id: block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
-	}, [ block ]);
+	};
 
-	const onResizeInit = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
+	const onResizeInit = () => {
+		const wrap = $(wrapRef.current);
 		
 		if (wrap.length) {
 			wrap.css({ width: (getWidth(true, 0) * 100) + '%' });
 		};
 
-		refMediaRef.current?.resize();
-	}, [ getWidth ]);
+		mediaRef.current?.resize();
+	};
 
-	const onResizeStart = useCallback((e: any, checkMax: boolean) => {
+	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		if (!isMountedRef.current) {
-			return;
-		};
 		
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
@@ -123,18 +111,13 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		keyboard.disableSelection(true);
 		win.on('mousemove.media', e => onResizeMove(e, checkMax));
 		win.on('mouseup.media', e => onResizeEnd(e, checkMax));
-	}, [ block.id ]);
+	};
 	
-	const onResizeMove = useCallback((e: any, checkMax: boolean) => {
+	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		if (!isMountedRef.current) {
-			return;
-		};
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
+		const wrap = $(wrapRef.current);
 		
 		if (!wrap.length) {
 			return;
@@ -144,16 +127,11 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		const w = getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		wrap.css({ width: (w * 100) + '%' });
-		refMediaRef.current?.resize();
-	}, [ getWidth ]);
+		mediaRef.current?.resize();
+	};
 	
-	const onResizeEnd = useCallback((e: any, checkMax: boolean) => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
+	const onResizeEnd = (e: any, checkMax: boolean) => {
+		const wrap = $(wrapRef.current);
 		
 		if (!wrap.length) {
 			return;
@@ -174,13 +152,9 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, width: w } },
 		]);
-	}, [ rootId, id, block.id, fields, getWidth ]);
+	};
 
-	const rebind = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
+	const rebind = () => {
 		const node = $(nodeRef.current);
 		
 		unbind();
@@ -188,26 +162,20 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		node.on('resizeMove', (e: any, oe: any) => onResizeMove(oe, true));
 		node.on('resizeEnd', (e: any, oe: any) => onResizeEnd(oe, true));
 		node.on('resizeInit', (e: any, oe: any) => onResizeInit());
-	}, [ onResizeStart, onResizeMove, onResizeEnd, onResizeInit ]);
+	};
 
-	const unbind = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
+	const unbind = () => {
 		const node = $(nodeRef.current);
 		const video = node.find('video');
 		
 		node.off('resizeInit resizeStart resizeMove resizeEnd');
 		video.off('canplay');
-	}, []);
+	};
 
 	useEffect(() => {
-		isMountedRef.current = true;
 		rebind();
 
 		return () => {
-			isMountedRef.current = false;
 			unbind();
 		};
 	}, [ rebind, unbind ]);
@@ -270,7 +238,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 				};
 
 				element = (
-					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
+					<div ref={wrapRef} className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={onOpenObject}>
 							<ObjectName object={object} />
 							<span className="size">{U.File.size(object.sizeInBytes)}</span>
@@ -278,7 +246,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 						<MediaPdf 
 							id={`pdf-block-${id}`}
-							ref={refMediaRef}
+							ref={mediaRef}
 							src={S.Common.fileUrl(targetObjectId)}
 							page={page}
 							onDocumentLoad={onDocumentLoad}

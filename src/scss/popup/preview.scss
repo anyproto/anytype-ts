@@ -42,9 +42,12 @@ $gallerySlidesH: calc(100vh - $galleryHeaderH - $galleryFooterH);
 				.mediaContainer { position: relative; z-index: 2; }
 
 				.swiper-button-prev,
-				.swiper-button-next { position: absolute; z-index: 3; top: 50%; margin-top: -20px; width: 40px; height: 40px; background: url('~img/arrow/gallery.svg'); }
-				.swiper-button-prev { left: 16px; transform: rotateZ(180deg); }
-				.swiper-button-next { right: 16px; }
+				.swiper-button-next { 
+					position: absolute; z-index: 3; top: 0px; width: 72px; height: 100%; background-image: url('~img/arrow/gallery.svg'); 
+					background-size: 40px; background-repeat: no-repeat; background-position: center;
+				}
+				.swiper-button-prev { left: 0px; transform: rotateZ(180deg); }
+				.swiper-button-next { right: 0px; }
 				.swiper-button-disabled { display: none; }
 			}
 

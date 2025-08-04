@@ -2001,16 +2001,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
+		const urls = U.Common.getUrlsFromText(data.text);
 
-		if (!data.html) {
-			const urls = U.Common.getUrlsFromText(data.text);
-
-			console.log(urls, data.text);
-
-			if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
-				this.onPasteUrl(urls[0]);
-				return;
-			};
+		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
+			this.onPasteUrl(urls[0]);
+			return;
 		};
 
 		let id = '';

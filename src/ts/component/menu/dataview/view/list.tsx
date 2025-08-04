@@ -14,7 +14,7 @@ const LIMIT = 20;
 
 const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setHover, onKeyDown, setActive, close, getSize, position } = props;
+	const { param, getId, setHover, onKeyDown, setActive, close, position } = props;
 	const { data } = param;
 	const { rootId, blockId, loadData, getView, getSources, isInline, getTarget, onViewSwitch, onViewCopy, onViewRemove, readonly } = data;
 	const nodeRef = useRef(null);

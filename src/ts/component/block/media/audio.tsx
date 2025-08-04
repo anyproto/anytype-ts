@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio, Icon } from 'Component';
@@ -6,7 +6,6 @@ import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
 
 const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
-	const isMountedRef = useRef(false);
 	const nodeRef = useRef<any>(null);
 	const refPlayerRef = useRef<any>(null);
 
@@ -16,27 +15,23 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
 	const { name } = object;
 
-	const getPlaylist = useCallback(() => {
+	const getPlaylist = () => {
 		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
 
 		return [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
-	}, [ rootId, targetObjectId ]);
+	};
 
-	const onPlay = useCallback(() => {
-		if (isMountedRef.current) {
-			$(nodeRef.current).addClass('isPlaying');
-		};
-	}, []);
+	const onPlay = () => {
+		$(nodeRef.current).addClass('isPlaying');
+	};
 
-	const onPause = useCallback(() => {
-		if (isMountedRef.current) {
-			$(nodeRef.current).removeClass('isPlaying');
-		};
-	}, []);
+	const onPause = () => {
+		$(nodeRef.current).removeClass('isPlaying');
+	};
 
-	const onKeyDownHandler = useCallback((e: any) => {
+	const onKeyDownHandler = (e: any) => {
 		let ret = false;
 
 		keyboard.shortcut('space', e, (pressed: string) => {
@@ -54,50 +49,40 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
 		};
-	}, [ onKeyDown, props ]);
+	};
 	
-	const onKeyUpHandler = useCallback((e: any) => {
+	const onKeyUpHandler = (e: any) => {
 		if (onKeyUp) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
 		};
-	}, [ onKeyUp, props ]);
+	};
 
-	const onFocus = useCallback(() => {
+	const onFocus = () => {
 		focus.set(block.id, { from: 0, to: 0 });
-	}, [ block.id ]);
+	};
 
-	const onChangeUrl = useCallback((e: any, url: string) => {
+	const onChangeUrl = (e: any, url: string) => {
 		Action.upload(I.FileType.Audio, rootId, block.id, url, '');
-	}, [ rootId, block.id ]);
+	};
 	
-	const onChangeFile = useCallback((e: any, path: string) => {
+	const onChangeFile = (e: any, path: string) => {
 		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
-	}, [ rootId, block.id ]);
+	};
 
-	const rebind = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
-		};
-
+	const rebind = () => {
 		$(nodeRef.current).on('resize', () => {
-			if (refPlayerRef.current) {
-				refPlayerRef.current.resize();
-			};
+			refPlayerRef.current?.resize();
 		});
-	}, []);
+	};
 
-	const unbind = useCallback(() => {
-		if (isMountedRef.current) {
-			$(nodeRef.current).off('resize');
-		};
-	}, []);
+	const unbind = () => {
+		$(nodeRef.current).off('resize');
+	};
 
 	useEffect(() => {
-		isMountedRef.current = true;
 		rebind();
 
 		return () => {
-			isMountedRef.current = false;
 			unbind();
 		};
 	}, [ rebind, unbind ]);
