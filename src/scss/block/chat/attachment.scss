@@ -23,7 +23,7 @@
 			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
 		}
 
-		.icon.syncStatus { display: none; position: absolute; left: 50%; top: 50%; }
+		.icon.syncStatus { display: none; position: absolute; z-index: 2; left: 50%; top: 50%; }
 
 		&.isSyncing, 
 		&.isQueued {
