@@ -40,26 +40,42 @@ export default () => {
 		bullet(`<b>Properties now appear on the right-hand side</b>, making them easier to scan.`),
 		bullet(`<b>In-place editing</b> lets you click a property to edit it on the go, speeding up multi-object workflows.`),
 		bullet(`<b>Visual refinements</b> bring a cleaner, more consistent layout.`),
-		// img(`48/1.png`, 'c70'),
-		// img(`48/2.png`, 'c70'),
+		video('48/1.mp4', 'c70'),
 		text(``),
+
+		h3('Table of Contents Enhancements'),
+		text(`A new ToC menu on the right side of the Editor makes it easier to navigate and manage long pages. For a steady overview while editing, you can also open it in the sidebar.`),
+		video('48/2.mp4', 'c70'),
+		text(''),
 
 		h2(`Quality of Life Improvements`),
 		text(''),
 
-		text('<b>Table of Contents Enhancements</b>'),
-		text(`We’ve polished the Table of Contents experience and added the ability to open it in the sidebar. This gives you a more stable outline while editing long pages.`),
-		// img(`48/3.png`, 'c70'),
-		text(''),
-
 		text('<b>Add Properties in Kanban and Calendar Views</b>'),
-		text(`A new option in the Layout menu lets you quickly add properties to objects when working in Kanban and Calendar Views.`),
-		// img(`48/4.png`, 'c70'),
+		text(`You can now quickly add a new property directly from the Layout menu when configuring "Group by" in Kanban or "Date Property" in Calendar view.`),
+		img(`48/1.png`, 'c70'),
 		text(''),
 
 		text('<b>Quick Filters for Year Ranges</b>'),
-		text(`We’ve added shortcuts to filter by This Year, Last Year, and Next Year in date-based filters, saving you from manually setting ranges.`),
-		// img(`48/5.png`, 'c70'),
+		text(`You can now easily filter by This Year, Last Year or Next Year when using date-based filters – no need to manually set the range.`),
+		img(`48/2.png`, 'c70'),
+		text(''),
+
+		text('<b>Bookmark Preview Before Creation</b>'),
+		text(`When adding a bookmark, you’ll now see a preview of the link and have the option to include page content. This helps ensure you’re saving what you expect.`),
+		img(`48/3.png`, 'c70'),
+		text(''),
+
+		text('<b>Auto-Filled Link Input with Selected Text</b>'),
+		text(`When you create a link with text selected, the selected text now pre-fills the input field, making link creation much faster.`),
+		text(`Thanks to @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408/4', 'sturdily')} & @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408', 'C.c')}!`),
+		img(`48/4.png`, 'c50'),
+		text(''),
+
+		text('<b>Spotify Embeds</b>'),
+		text(`You can now embed a fully playable Spotify player in your pages using the new embed block.`),
+		text(`Thanks for the contribution, @${link('https://github.com/anyproto/anytype-ts/pull/1530', 'phil-gru')}!`),
+		img(`48/5.png`, 'c50'),
 		text(''),
 
 		text('<b>Sticky Space Widget During Scroll</b>'),
@@ -67,20 +83,8 @@ export default () => {
 		text(`Thank you for the suggestion @${link('https://community.anytype.io/t/make-the-space-widget-fixed/26539', 'VisualNotes')}!`),
 		text(''),
 
-		text('<b>Bookmark Preview Before Creation</b>'),
-		text(`When adding a bookmark, you’ll now see a preview of the link and have the option to include page content. This helps ensure you’re saving what you expect.`),
-		// img(`48/6.png`, 'c70'),
-		text(''),
-
 		text('<b>Create Objects and Widgets from Search</b>'),
 		text(`From the Add Widget search, you can now create a new object with your search query and instantly make a widget for it.`),
-		// img(`48/7.png`, 'c70'),
-		text(''),
-
-		text('<b>Spotify Embeds</b>'),
-		text(`You can now embed a fully playable Spotify player in your pages using the new embed block.`),
-		text(`Thanks for the contribution, @${link('https://github.com/anyproto/anytype-ts/pull/1530', 'phil-gru')}!`),
-		// img(`48/8.png`, 'c70'),
 		text(''),
 
 		text('<b>Pin Spaces in the Vault</b>'),
@@ -94,11 +98,6 @@ export default () => {
 		text('<b>Keyboard Shortcuts for Text Color & Highlight</b>'),
 		text(`Cycle through color and highlight options using new shortcuts: ${hl('⌘ + ⇧ + C')} for text color and ${hl('⌘ + ⇧ + H')} for highlight (reassignable in settings).`),
 		text(`Thanks to @${link('https://community.anytype.io/t/27783', 'LarsB24')}!`),
-		text(''),
-
-		text('<b>Auto-Filled Link Input with Selected Text</b>'),
-		text(`When you create a link with text selected, the selected text now pre-fills the input field, making link creation much faster.`),
-		text(`Thanks to @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408/4', 'sturdily')} & @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408', 'C.c')}!`),
 		text(''),
 
 		text('<b>Improved Sorting on Manual Reordering in Collections</b>'),
