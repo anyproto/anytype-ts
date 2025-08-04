@@ -1819,6 +1819,7 @@ export const ObjectToCollection = (contextId: string, callBack?: (message: any) 
 	dispatcher.request(ObjectToCollection.name, request, callBack);
 };
 
+/*
 export const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToBookmark.Request();
 
@@ -1827,6 +1828,7 @@ export const ObjectToBookmark = (contextId: string, url: string, callBack?: (mes
 
 	dispatcher.request(ObjectToBookmark.name, request, callBack);
 };
+*/
 
 export const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Duplicate.Request();

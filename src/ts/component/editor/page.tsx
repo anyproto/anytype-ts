@@ -2144,12 +2144,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'object': {
+							/*
 							C.ObjectToBookmark(rootId, url, (message: any) => {
 								if (!message.error.code) {
 									U.Object.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 									analytics.createObject(J.Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, analytics.route.bookmark, message.middleTime);
 								};
 							});
+							*/
 							break;
 						};
 
