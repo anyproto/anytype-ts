@@ -2074,18 +2074,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
-		const first = S.Block.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		//const first = S.Block.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
+		//const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
+		//const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 		const length = block.getLength();
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 		const processor = U.Embed.getProcessorByUrl(url);
-		const canObject = isEmpty && !isInsideTable && !isLocal;
+		//const canObject = isEmpty && !isInsideTable && !isLocal;
 		const canBlock = !isInsideTable && !isLocal;
 
 		const options: any[] = [
 			{ id: 'link', name: translate('editorPagePasteLink') },
-			canObject ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
+			//canObject ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
 			canBlock ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
 		].filter(it => it);
