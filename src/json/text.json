@@ -949,8 +949,8 @@
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
-	"popupSettingsSpaceShareMenuInviteNoneTitle": "Link disabled",
-	"popupSettingsSpaceShareMenuInviteNoneDescription": "Only invited members have access",
+	"popupSettingsSpaceShareMenuInviteNoneTitle": "Disable invite link",
+	"popupSettingsSpaceShareMenuInviteNoneDescription": "New members won't be able to join the space",
 	"popupSettingsSpaceShareMenuInviteEditorTitle": "Editor access",
 	"popupSettingsSpaceShareMenuInviteEditorDescription": "People with link can edit and write in chat",
 	"popupSettingsSpaceShareMenuInviteViewerTitle": "Viewer access",
@@ -962,7 +962,6 @@
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
-	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
@@ -1180,7 +1179,7 @@
 
 	"popupConfirmRevokeLinkTitle": "Delete sharing link",
 	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can generate a new link anytime.",
-	"popupConfirmRevokeLinkConfirm": "Delete link",
+	"popupConfirmRevokeLinkConfirm": "Disable link",
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
