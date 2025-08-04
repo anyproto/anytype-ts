@@ -182,7 +182,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		e.stopPropagation();
 
 		const { param, close, getId, getSize } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { blockId, blockIds, rootId, onChange, range } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 
@@ -202,7 +202,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		let menuId = '';
 		let menuParam: any = {
 			element: `#${getId()} #button-${blockId}-${type}`,
-			className: 'fromContext',
+			className: [ className, 'fromContext' ].join(' '),
+			classNameWrap,
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
