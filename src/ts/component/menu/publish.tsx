@@ -9,7 +9,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId } = data;
-	const { isOnline } = S.Common;
+	const { isOnline, config } = S.Common;
 	const { membership } = S.Auth;
 	const tier = U.Data.getMembershipTier(membership.tier);
 	const inputRef = useRef(null);
@@ -56,7 +56,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		publishRef.current?.setLoading(true);
 
-		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), enableMultipublishRef.current?.getValue(), (message: any) => {
+		let enableMultipublish = false;
+		if (config.experimental) {
+			enableMultipublish = enableMultipublishRef.current?.getValue()
+		}
+		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), enableMultipublish, (message: any) => {
 			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
@@ -227,15 +231,16 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					</div>
 				</div>
 			) : ''}
-			<div className="flex">
-				<div className="side left">
-					<Label text={translate('menuPublishLabelEnableMultipublish')} />
+			{config.experimental ? (
+				<div className="flex">
+					<div className="side left">
+						<Label text={translate('menuPublishLabelEnableMultipublish')} />
+					</div>
+					<div className="value">
+						<Switch ref={enableMultipublishRef} value={false} />
+					</div>
 				</div>
-				<div className="value">
-					<Switch ref={enableMultipublishRef} value={false} />
-				</div>
-			</div>
-
+			) : ''}
 			{!tier?.namesCount ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
