@@ -962,10 +962,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.updateMarkup('', { from: 0, to: 0 });
 		this.clearCounter();
 		this.checkSendButton();
-		this.refButtons.setButtons();
+		this.refButtons?.setButtons();
 
 		this.setState({ attachments: [] }, () => {
-			this.refEditable.setRange(this.range);
+			this.refEditable?.setRange(this.range);
 
 			if (callBack) {
 				callBack();
