@@ -198,9 +198,9 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 														onChange={v => {
 															v = Number(v);
 
-															const details: any = { spaceUxType: v };
-															if (v == I.SpaceUxType.Chat) {
-																details.dashboardId = I.HomePredefinedId.Chat;
+															const details: any = { 
+																spaceUxType: v,
+																spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
 															};
 
 															C.WorkspaceSetInfo(S.Common.space, details);
