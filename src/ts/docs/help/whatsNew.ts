@@ -73,7 +73,7 @@ export default () => {
 		text(''),
 
 		text('<b>Create Objects and Widgets from Search</b>'),
-		text(`From the Add Widget search, you can now create a brand-new object with your search query and instantly make a widget for it.`),
+		text(`From the Add Widget search, you can now create a new object with your search query and instantly make a widget for it.`),
 		// img(`48/7.png`, 'c70'),
 		text(''),
 
@@ -83,12 +83,12 @@ export default () => {
 		// img(`48/8.png`, 'c70'),
 		text(''),
 
-		text('<b>Pinning Spaces in the Vault</b>'),
+		text('<b>Pin Spaces in the Vault</b>'),
 		text(`You can now pin your most important Spaces to the top of the Vault. Reorder them with drag-and-drop, and toggle pinning on/off as needed.`),
 		text(''),
 
 		text('<b>Jump to a Space Shortcut</b>'),
-		text(`Quickly switch between your first 9 Spaces using  (or Ctrl on Windows/Linux).`),
+		text(`Quickly switch between your first 9 Spaces using ${hl('⌘ + 1–9')} (or Ctrl on Windows/Linux).`),
 		text(''),
 
 		text('<b>Keyboard Shortcuts for Text Color & Highlight</b>'),
@@ -97,7 +97,7 @@ export default () => {
 		text(''),
 
 		text('<b>Auto-Filled Link Input with Selected Text</b>'),
-		text(`When you create a link (${hl('Ctrl/Cmd + Shift + L')}) with text selected, the selected text now pre-fills the input field, making link creation much faster.`),
+		text(`When you create a link with text selected, the selected text now pre-fills the input field, making link creation much faster.`),
 		text(`Thanks to @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408/4', 'sturdily')} & @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408', 'C.c')}!`),
 		text(''),
 
