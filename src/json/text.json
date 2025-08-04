@@ -1846,7 +1846,7 @@
 	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"menuSyncStatusIncentiveBannerTitle": "Files not synced",
-	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn’t be synced because you’re run out of space. Please upgrade or clean up your storage.",
+	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn’t be synced because you’re run out of storage. Please upgrade or clean up your storage.",
 	"menuSyncStatusIncentiveBannerReviewFiles": "Review Files",
 
 	"menuPublishTitle": "Publish to web",
