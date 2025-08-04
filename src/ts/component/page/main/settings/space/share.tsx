@@ -188,8 +188,15 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 								return;
 							};
 
+							let toast = '';
+							if (created) {
+								toast = translate('toastInviteGenerate');
+							} else {
+								toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
+							};
+
 							this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
-							Preview.toastShow({ text: created ? translate('toastInviteGenerate') : translate('toastInviteUpdate') });
+							Preview.toastShow({ text: toast });
 
 							if (!space.isShared) {
 								analytics.event('ShareSpace');
