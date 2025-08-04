@@ -16,6 +16,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
 	const spaceInfoRef = useRef(null);
+	const enableMultipublishRef = useRef(null);
 	const space = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
 	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
@@ -55,7 +56,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		publishRef.current?.setLoading(true);
 
-		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
+		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), enableMultipublishRef.current?.getValue(), (message: any) => {
 			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
@@ -226,6 +227,14 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					</div>
 				</div>
 			) : ''}
+			<div className="flex">
+				<div className="side left">
+					<Label text={translate('menuPublishLabelEnableMultipublish')} />
+				</div>
+				<div className="value">
+					<Switch ref={enableMultipublishRef} value={false} />
+				</div>
+			</div>
 
 			{!tier?.namesCount ? (
 				<div className="incentiveBanner">
