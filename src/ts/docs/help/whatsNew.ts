@@ -84,7 +84,7 @@ export default () => {
 		text(''),
 
 		text('<b>Pin Spaces in the Vault</b>'),
-		text(`You can now pin your most important Spaces to the top of the Vault. Reorder them with drag-and-drop, and toggle pinning on/off as needed.`),
+		text(`Keep your most important Spaces at the top of the Vault for quicker navigation. Right-click the icon of a Space to open the pin/unpin option, and drag to reorder them as needed.`),
 		text(''),
 
 		text('<b>Jump to a Space Shortcut</b>'),
@@ -106,7 +106,7 @@ export default () => {
 		text(''),
 
 		text('<b>Default Sorting by Creation Date</b>'),
-		text(`When no sort is applied in a View, new objects are now automatically sorted by their creation date in ascending order.`),
+		text(`When no sort is applied in a View, new objects are now automatically sorted by their creation date in descending order.`),
 		text(''),
 
 		text('<b>Updated Accent Colors</b>'),
@@ -133,7 +133,7 @@ export default () => {
 		text(''),
 
 		text('<b>Updated Figma Embed Interface</b>'),
-		text(`We’ve repositioned the Edit button in Figma embed blocks so it no longer overlaps with the Fullscreen button, making controls easier to access.`),
+		text(`We’ve repositioned the Edit button in Figma embed blocks so it no longer overlaps with the Fullscreen button.`),
 		text(`Thanks to ${link('https://community.anytype.io/t/embed-edit-button-overlaps-with-embed-fullscreen-button/26390', '@Obe and @Felipe')}!`),
 		text(''),
 
