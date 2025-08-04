@@ -853,7 +853,7 @@ class UtilMenu {
 	inviteContext (param: any) {
 		const { containerId, cid, key } = param || {};
 		const options: any[] = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+			{ id: 'qr', name: translate('popupSettingsSpaceShareQRCode') },
 		];
 
 		S.Menu.open('select', {
@@ -866,6 +866,7 @@ class UtilMenu {
 						case 'qr': {
 							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+							analytics.event('ScreenQr', { route: analytics.route.inviteLink });
 							break;
 						};
 					};

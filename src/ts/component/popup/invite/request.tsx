@@ -41,7 +41,7 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		analytics.event('ScreenInviteRequest', { route });
+		analytics.event('ScreenInviteRequest', { route, type: I.InviteType[invite?.inviteType || I.InviteType.WithoutApprove] });
 	}, []);
 
 	return (

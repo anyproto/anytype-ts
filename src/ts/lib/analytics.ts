@@ -79,6 +79,7 @@ class Analytics {
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
 
+		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
 
 		addWidgetMain: 'Main',

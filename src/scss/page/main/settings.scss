@@ -507,8 +507,8 @@
                 display: flex; justify-content: flex-start; align-items: center; height: 64px; width: 100%;
                 padding: 0px 8px; margin: 0px 0px 16px 0px; gap: 0px 12px; border-radius: 12px;
             }
-            .linkTypeWrapper:hover,
-            .linkTypeWrapper.hover { background-color: var(--color-shape-highlight-medium); }
+            .linkTypeWrapper.canEdit:hover,
+            .linkTypeWrapper.canEdit.hover { background-color: var(--color-shape-highlight-medium); }
             .linkTypeWrapper {
                 .icon {
                     width: 40px; height: 40px; border-radius: 50%; background-size: 20px;

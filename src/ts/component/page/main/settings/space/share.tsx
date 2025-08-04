@@ -201,6 +201,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 							if (!space.isShared) {
 								analytics.event('ShareSpace');
 							};
+
+							analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType[Number(item.id)]});
 						});
 					};
 
@@ -220,6 +222,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				},
 			}
 		});
+
+		analytics.event('ScreenShareMenu');
 	};
 
 	getOptionById (id) {
