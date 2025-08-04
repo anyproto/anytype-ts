@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
 import { I, J, translate, Action, analytics, U, S } from 'Lib';
 
-const STORAGE_FULL = 0.7;
+const STORAGE_FULL = 0.95;
 
 const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
 
