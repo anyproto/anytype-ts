@@ -64,8 +64,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 								break;
 							};
 
+							let withBlur = false;
+
 							cn.push('isImage');
-							content = this.renderImage();
+							if (object.widthInPixels < 360) {
+								withBlur = true;
+								cn.push('withBlur');
+							};
+							content = this.renderImage(withBlur);
 							break;
 						};
 					};
@@ -78,8 +84,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					break;
 				};
 
+				let withBlur = false;
+
 				cn.push('isImage');
-				content = this.renderImage();
+				if (object.widthInPixels < 360) {
+					withBlur = true;
+					cn.push('withBlur');
+				};
+				content = this.renderImage(withBlur);
 				break;
 
 			case I.ObjectLayout.Video: {
@@ -194,9 +206,8 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		);
 	};
 
-	renderImage () {
+	renderImage (withBlur?: boolean) {
 		const { object, scrollToBottom } = this.props;
-		const status = object.syncStatus ? object.syncStatus : I.SyncStatusObject.Syncing;
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
@@ -210,8 +221,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 		};
 
+		let blur: any = null;
+		if (withBlur) {
+			blur = <div className="blur" style={{ backgroundImage: `url(${this.src})` }} />;
+		};
+
 		return (
 			<div className="imgWrapper" onClick={this.onPreview}>
+				{blur}
 				<img
 					id="image"
 					className="image"
