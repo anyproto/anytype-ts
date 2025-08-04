@@ -31,6 +31,7 @@ class Api {
 		};
 
 		Util.send(win, 'init', {
+			id: win.id,
 			dataPath: Util.dataPath(),
 			config: ConfigManager.config,
 			isDark: Util.isDarkTheme(),

@@ -592,6 +592,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const hoverArea = node.find('.hoverArea');
 
 		const menuParam: any = {
+			classNameWrap: 'fromBlock',
 			onOpen: (context: any) => {
 				this.menuContext = context;
 				hoverArea.addClass('active');
@@ -814,6 +815,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Menu.open('dataviewNew', {
 			...menuParam,
+			classNameWrap: 'fromBlock',
 			offsetY: 10,
 			noAnimation: true,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
@@ -1098,6 +1100,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		S.Menu.open('searchObject', Object.assign({
 			element: $(element),
 			className: 'single',
+			classNameWrap: 'fromBlock',
 			data: {
 				rootId,
 				blockId: block.id,
@@ -1119,6 +1122,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
+				classNameWrap: 'fromBlock',
 				element,
 				horizontal: I.MenuDirection.Center,
 				onOpen: () => element.addClass('active'), 

@@ -135,6 +135,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		const param: any = {
 			...toggleParam,
+			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,

@@ -457,7 +457,8 @@
             }
         }
 
-		.fileManagerWrapper { flex-grow: 1; display: flex; flex-direction: column; }
+		.fileManagerWrapper { flex-grow: 1; display: flex; flex-direction: column; margin-bottom: 24px; }
+        .fileManagerWrapper:last-child { margin-bottom: 0px; }
 		.fileManagerWrapper {
 			.title { flex-shrink: 0; }
 

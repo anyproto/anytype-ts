@@ -24,6 +24,7 @@ interface Props {
 	onDragStart?: (e: any) => void;
 	onCompositionStart?: (e: any) => void;
 	onCompositionEnd?: (e: any, value: string, range: I.TextRange) => void;
+	onBeforeInput?: (e: any) => void;
 };
 
 interface EditableRefProps {
@@ -61,6 +62,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	onBlur,
 	onCompositionStart,
 	onCompositionEnd,
+	onBeforeInput,
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -252,6 +254,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 				onDragStart={onDragStart}
 				onCompositionStart={onCompositionStartHandler}
 				onCompositionEnd={onCompositionEndHandler}
+				onBeforeInput={onBeforeInput}
 			/>
 		);
 	};

@@ -392,6 +392,12 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeSpaceUxType': {
+				data.type = Number(data.type) || 0;
+				data.type = I.SpaceUxType[data.type];
+				break;
+			};
+
 			case 'SetCover':
 			case 'SettingsWallpaperSet': {
 				data.type = Number(data.type) || 0;

@@ -7,10 +7,12 @@ interface Props {
 	object: any;
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
+	isDownload?: boolean;
 	subId?: string;
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
+	updateAttachments?: () => void;
 };
 
 const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
@@ -32,7 +34,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	render () {
-		const { object, showAsFile, bookmarkAsDefault } = this.props;
+		const { object, showAsFile, bookmarkAsDefault, isDownload } = this.props;
 		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -41,6 +43,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		if (U.Object.isInFileLayouts(object.layout)) {
 			cn.push('isFile');
+		};
+
+		if (isDownload) {
+			cn.push('isDownload');
 		};
 
 		switch (object.layout) {
@@ -58,8 +64,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 								break;
 							};
 
+							let withBlur = false;
+
 							cn.push('isImage');
-							content = this.renderImage();
+							if (object.widthInPixels < 360) {
+								withBlur = true;
+								cn.push('withBlur');
+							};
+							content = this.renderImage(withBlur);
 							break;
 						};
 					};
@@ -72,8 +84,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					break;
 				};
 
+				let withBlur = false;
+
 				cn.push('isImage');
-				content = this.renderImage();
+				if (object.widthInPixels < 360) {
+					withBlur = true;
+					cn.push('withBlur');
+				};
+				content = this.renderImage(withBlur);
 				break;
 
 			case I.ObjectLayout.Video: {
@@ -188,7 +206,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		);
 	};
 
-	renderImage () {
+	renderImage (withBlur?: boolean) {
 		const { object, scrollToBottom } = this.props;
 
 		if (!this.src) {
@@ -203,8 +221,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 		};
 
+		let blur: any = null;
+		if (withBlur) {
+			blur = <div className="blur" style={{ backgroundImage: `url(${this.src})` }} />;
+		};
+
 		return (
 			<div className="imgWrapper" onClick={this.onPreview}>
+				{blur}
 				<img
 					id="image"
 					className="image"
@@ -243,7 +267,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	onOpen () {
-		const { object } = this.props;
+		const { object, isDownload, updateAttachments } = this.props;
+		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
+
+		if (isDownload && (syncStatus != I.SyncStatusObject.Synced)) {
+			return;
+		};
 
 		switch (object.layout) {
 			case I.ObjectLayout.Bookmark: {
@@ -266,7 +295,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 			default: {
 				if (!object.isTmp) {
-					U.Object.openPopup(object);
+					U.Object.openPopup(object, {
+						onClose: () => {
+							if (updateAttachments) {
+								updateAttachments();
+							};
+						},
+					});
 				};
 				break;
 			};

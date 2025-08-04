@@ -284,7 +284,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 								text: list.description, 
 								className: 'relationGroupDescription',
 								typeX: I.MenuDirection.Center, 
-								typeY: I.MenuDirection.Bottom, 
+								typeY: I.MenuDirection.Top, 
 								offsetX: -8, 
 								delay: 0,
 							}}

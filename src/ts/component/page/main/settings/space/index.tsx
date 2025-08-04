@@ -17,6 +17,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	refName: any = null;
 	refDescription: any = null;
 	refMode = null;
+	refUxType = null;
 	canSave: boolean = true;
 
 	state = {
@@ -44,6 +45,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	render () {
 		const { error, isEditing } = this.state;
+		const { config } = S.Common;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
@@ -66,6 +68,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ id: I.NotificationMode.Nothing },
 		].map((it: any) => {
 			it.name = translate(`notificationMode${it.id}`);
+			return it;
+		});
+
+		const spaceUxTypes = [
+			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
+		].map((it: any) => {
+			it.name = translate(`spaceUxType${it.id}`);
 			return it;
 		});
 
@@ -164,38 +174,78 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{!space.isPersonal ? (
-						<div className="section sectionSpaceManager">
-							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-							<div className="sectionContent">
+					{space.isShared ? (
+						<>
+							{config.experimental ? (
+								<div className="section sectionSpaceManager">
+									<Label className="sub" text={translate(`electronMenuDebug`)} />
+									<div className="sectionContent">
 
-								<div className="item">
-									<div className="sides">
-										<Icon className="push" />
+										<div className="item">
+											<div className="sides">
+												<div className="side left">
+													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+												</div>
 
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexPushText')} />
+												<div className="side right">
+													<Select
+														id="linkStyle"
+														ref={ref => this.refUxType = ref}
+														value={String(space.uxType)}
+														options={spaceUxTypes}
+														onChange={v => {
+															v = Number(v);
+
+															const details: any = { 
+																spaceUxType: v,
+																spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+															};
+
+															C.WorkspaceSetInfo(S.Common.space, details);
+															analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+														}}
+														arrowClassName="black"
+														menuParam={{ horizontal: I.MenuDirection.Right }}
+													/>
+												</div>
+											</div>
 										</div>
+									</div>
+								</div>
+							) : ''}
 
-										<div className="side right">
-											<Select
-												id="linkStyle"
-												ref={ref => this.refMode = ref}
-												value={String(space.notificationMode)}
-												options={spaceModes}
-												onChange={v => {
-													C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-													analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-												}}
-												arrowClassName="black"
-												menuParam={{ horizontal: I.MenuDirection.Right }}
-											/>
+							<div className="section sectionSpaceManager">
+								<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+								<div className="sectionContent">
+
+									<div className="item">
+										<div className="sides">
+											<Icon className="push" />
+
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+												<Label text={translate('popupSettingsSpaceIndexPushText')} />
+											</div>
+
+											<div className="side right">
+												<Select
+													id="linkStyle"
+													ref={ref => this.refMode = ref}
+													value={String(space.notificationMode)}
+													options={spaceModes}
+													onChange={v => {
+														C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+														analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+													}}
+													arrowClassName="black"
+													menuParam={{ horizontal: I.MenuDirection.Right }}
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</>
 					) : ''}
 
 					{canWrite ? (

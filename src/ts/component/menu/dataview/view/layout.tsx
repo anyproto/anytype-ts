@@ -329,7 +329,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 	onOver (e: any, item: any) {
 		const { id, param, getId, getSize } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, isInline } = data;
 		const isReadonly = this.isReadonly();
 		const { type, groupRelationKey } = this.param;
@@ -344,6 +344,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
+			className, 
+			classNameWrap,
 			element,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -443,7 +445,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		const { param } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
@@ -453,6 +455,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const types = Relation.getGroupTypes(type);
 
 		S.Menu.open('relationSuggest', { 
+			className, 
+			classNameWrap,
 			element: `#${getId()} #item-addRelation`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Top,

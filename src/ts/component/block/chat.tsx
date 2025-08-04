@@ -57,6 +57,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const hasScroll = this.hasScroll();
 		const space = U.Space.getSpaceview();
+		const isEmpty = !messages.length;
 
 		const Section = (item: any) => {
 			const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
@@ -104,7 +105,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				onDrop={this.onDrop}
 			>
 				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
-					{!messages.length ? (
+					{isEmpty ? (
 						<EmptyState
 							text={translate('blockChatEmpty')}
 							buttonText={space.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
@@ -133,6 +134,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					getReplyContent={this.getReplyContent}
 					highlightMessage={this.highlightMessage}
 					loadDepsAndReplies={this.loadDepsAndReplies}
+					isEmpty={isEmpty}
 				/>
 			</div>
 		);
@@ -413,7 +415,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		return [ '', S.Common.space, `${this.getRootId()}:${this.props.block.id}`, U.Common.getWindowId() ].join('-');
+		return [ '', S.Common.space, `${this.getRootId()}:${this.props.block.id}`, S.Common.windowId ].join('-');
 	};
 
 	loadDeps (ids: string[], callBack?: () => void) {

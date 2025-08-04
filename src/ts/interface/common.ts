@@ -247,12 +247,6 @@ export enum SliceOperation {
 	Replace			 = 4,
 };
 
-export enum FileSyncStatus {
-	Unknown			 = 0,
-	Synced			 = 1,
-	NotSynced		 = 2,
-};
-
 export enum ObjectContainerType {
 	Object			 = 'object',
 	List			 = 'list',

@@ -31,7 +31,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	winScrollTop = 0;
 	containerScrollTop = 0;
 	uiHidden = false;
-	tocBlockId = '';
 	width = 0;
 	refHeader: any = null;
 	refControls: any = null;
@@ -54,6 +53,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	frameMove = 0;
 	frameResize = 0;
+	frameScroll = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -185,6 +185,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.close();
 
 		focus.clear(false);
+
+		raf.cancel(this.frameMove);
+		raf.cancel(this.frameResize);
+		raf.cancel(this.frameScroll);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
@@ -651,13 +655,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			// Mark-up
 
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
-					param = item.param;
-
 					ret = true;
 				});
 			};
@@ -665,23 +666,51 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (!readonly && (type !== null)) {
 				e.preventDefault();
 
+				const cb = (type: I.MarkType, param: string) => {
+					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
+						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
+					});
+				};
+
 				if (type == I.MarkType.Link) {
 					S.Menu.open('blockLink', {
 						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
 						data: {
 							filter: '',
-							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockTextListSetMark(rootId, idsWithChildren, { type: newType, param, range: { from: 0, to: 0 } }, () => {
-									analytics.event('ChangeTextStyle', { type: newType, count: idsWithChildren.length });
-								});
-							},
+							onChange: cb,
 						},
 					});
-				} else {
-					C.BlockTextListSetMark(rootId, idsWithChildren, { type, param, range: { from: 0, to: 0 } }, () => {
-						analytics.event('ChangeTextStyle', { type, count: idsWithChildren.length });
+				} else 
+				if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {
+					let menuId = '';
+					switch (type) {
+						case I.MarkType.Color: {
+							menuId = 'blockColor';
+							break;
+						};
+
+						case I.MarkType.BgColor: {
+							menuId = 'blockBackground';
+							break;
+						};
+					};
+
+					S.Menu.open(menuId, {
+						element: `#block-${ids[0]}`,
+						horizontal: I.MenuDirection.Center,
+						data: {
+							blockId: ids[0],
+							blockIds: ids,
+							rootId,
+							value: '',
+							onChange: (param: string) => {
+								cb(type, param);
+							},
+						}
 					});
+				} else {
+					cb(type, '');
 				};
 			};
 		};
@@ -944,17 +973,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Mark-up
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, (pressed: string) => {
 					type = item.type;
-					param = item.param;
 				});
 			};
 
 			if (type !== null) {
-				this.onMarkBlock(e, type, text, marks, param, range);
+				this.onMarkBlock(e, type, text, marks, '', range);
 			};
 		};
 
@@ -1377,6 +1404,38 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							cb();
 						}
+					}
+				});
+			});
+		} else 
+		if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {
+			let menuId = '';
+			switch (type) {
+				case I.MarkType.Color: {
+					menuId = 'blockColor';
+					break;
+				};
+
+				case I.MarkType.BgColor: {
+					menuId = 'blockBackground';
+					break;
+				};
+			};
+
+			S.Menu.close('blockContext', () => {
+				S.Menu.open(menuId, {
+					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+					horizontal: I.MenuDirection.Center,
+					offsetY: 4,
+					data: {
+						rootId,
+						blockId: block.id,
+						blockIds: [ block.id ],
+						value: (mark ? mark.param : ''),
+						onChange: (param: string) => {
+							marks = Mark.toggle(marks, { type, param, range });
+							cb();
+						},
 					}
 				});
 			});
@@ -1815,10 +1874,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const win = $(window);
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
-		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
-		const length = headers.length;
-		const co = isPopup ? container.offset().top : 0;
-		const ch = container.height() - J.Size.header;
 
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
@@ -1828,28 +1883,46 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			Storage.setScroll('editor', rootId, top, isPopup);
 		}, 50);
 
-		if (length) {
-			for (let i = 0; i < length; ++i) {
-				const block = headers[i];
-				const el = $(`#block-${block.id}`);
+		raf.cancel(this.frameScroll);
+		this.frameScroll = raf(() => this.updateToc());
 
-				if (!el.length) {
-					continue;
-				};
+		Preview.previewHide(false);
+	};
 
-				const t = el.offset().top - co;
-				const h = el.outerHeight();
-				const check = isPopup ? 0 : top;
+	updateToc () {
+		const { rootId, isPopup } = this.props;
+		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
+		const length = headers.length;
 
-				if ((t >= check) && (t + h <= check + ch)) {
-					this.tocBlockId = block.id;
-					break;
-				};
+		if (!length) {
+			return;
+		};
+
+		const container = U.Common.getScrollContainer(isPopup);
+		const co = isPopup ? container.offset().top : 0;
+		const ch = container.height() - J.Size.header;
+
+		let blockId = '';
+
+		for (let i = 0; i < length; ++i) {
+			const block = headers[i];
+			const el = $(`#block-${block.id}`);
+
+			if (!el.length) {
+				continue;
+			};
+
+			const t = el.offset().top - co;
+			const h = el.outerHeight();
+			const check = isPopup ? 0 : this.containerScrollTop;
+
+			if ((t >= check) && (t + h <= check + ch)) {
+				blockId = block.id;
+				break;
 			};
 		};
 
-		this.refToc?.setBlock(this.tocBlockId);
-		Preview.previewHide(false);
+		this.refToc?.setBlock(blockId);
 	};
 	
 	onCopy (e: any, isCut: boolean) {
@@ -1928,16 +2001,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
+		const urls = U.Common.getUrlsFromText(data.text);
 
-		if (!data.html) {
-			const urls = U.Common.getUrlsFromText(data.text);
-
-			console.log(urls, data.text);
-
-			if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
-				this.onPasteUrl(urls[0]);
-				return;
-			};
+		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
+			this.onPasteUrl(urls[0]);
+			return;
 		};
 
 		let id = '';

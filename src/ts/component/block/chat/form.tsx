@@ -24,6 +24,7 @@ interface Props extends I.BlockComponent {
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
 	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
+	isEmpty?: boolean;
 };
 
 interface State {
@@ -84,10 +85,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.removeBookmark = this.removeBookmark.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
 		this.getObjectFromPath = this.getObjectFromPath.bind(this);
+		this.updateAttachments = this.updateAttachments.bind(this);
 	};
 
 	render () {
-		const { subId, readonly, getReplyContent } = this.props;
+		const { subId, readonly, getReplyContent, isEmpty } = this.props;
 		const { attachments, replyingId } = this.state;
 		const value = this.getTextValue();
 		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
@@ -194,6 +196,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 											object={item}
 											onRemove={this.onAttachmentRemove}
 											bookmarkAsDefault={true}
+											updateAttachments={this.updateAttachments}
 										/>
 									</SwiperSlide>
 								))}
@@ -216,6 +219,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						addAttachments={this.addAttachments}
 						onMenuClose={this.onMenuClose}
 						removeBookmark={this.removeBookmark}
+						updateAttachments={this.updateAttachments}
 					/>
 
 					<div ref={ref => this.refCounter = ref} className="charCounter" />
@@ -242,10 +246,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
-					</div>
+					{!isEmpty ? (
+						<div className="navigation">
+							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
+						</div>
+					) : ''}
 
 					{form}
 
@@ -341,17 +347,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onBlurInput () {
-		const { rootId } = this.props;
-		const { attachments } = this.state;
-
 		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
-
-		Storage.setChat(rootId, {
-			text: this.getTextValue(),
-			marks: this.marks,
-			attachments,
-		});
+		this.saveState(this.state.attachments);
 	};
 
 	onKeyDownInput (e: any) {
@@ -432,17 +430,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		// Mark-up
 		if (range && range.to && (range.from != range.to)) {
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
-				keyboard.shortcut(item.key, e, () => {
-					type = item.type;
-					param = item.param;
-				});
+				keyboard.shortcut(item.key, e, () => type = item.type);
 			};
 
 			if (type !== null) {
-				this.refButtons.onTextButton(e, type, param);
+				this.refButtons.onTextButton(e, type, '');
 			};
 		};
 	};
@@ -464,8 +458,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let adjustMarks = false;
 
-		if ((value !== parsed.text) || parsed.updatedValue) {
-			this.updateValue(parsed.text);
+		if (value !== parsed.text) {
+			this.updateMarkup(parsed.text, { from: to, to });
 		};
 
 		if (canOpenMenuMention) {
@@ -1260,11 +1254,30 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.refEditable.setRange(this.range);
 	};
 
+	updateAttachments () {
+		const { attachments } = this.state;
+		const ids = attachments.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
+
+		U.Object.getByIds(ids, {}, (objects: any[]) => {
+			objects.forEach(item => {	
+				const idx = attachments.findIndex(it => it.id == item.id);
+
+				if (idx >= 0) {
+					attachments[idx] = item;
+				};
+			});
+
+			this.setAttachments(attachments);
+			this.saveState(attachments);
+		});
+	};
+
 	caretMenuParam () {
 		const win = $(window);
 		const rect = U.Common.getSelectionRect();
 
 		return {
+			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
@@ -1315,7 +1328,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const value = this.refEditable.getTextValue();
 		const onChange = (text: string, marks: I.Mark[]) => {
 			this.marks = marks;
-			this.updateValue(text);
 			this.updateMarkup(text, this.range);
 		};
 		const getValue = () => value;
@@ -1402,6 +1414,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	getReplyingId () {
 		return this.state.replyingId;
+	};
+
+	saveState (attachments?: any[]) {
+		const { rootId } = this.props;
+
+		Storage.setChat(rootId, {
+			text: this.getTextValue(),
+			marks: this.marks,
+			attachments,
+		});
 	};
 
 	resize () {

@@ -53,6 +53,7 @@ class CommonStore {
 	};
 	public diffValue: I.Diff[] = [];
 	public refs: Map<string, any> = new Map();
+	public windowId = '';
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -811,6 +812,14 @@ class CommonStore {
 	 */
 	diffSet (diff: I.Diff[]) {
 		this.diffValue = diff || [];
+	};
+
+	/**
+	 * Sets the window ID.
+	 * @param {string} id - The window ID.
+	 */
+	windowIdSet (id: string) {
+		this.windowId = String(id || '');
 	};
 
 	/**

@@ -85,7 +85,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return;
 		};
 
-		const { id, getId, getSize } = this.props;
+		const { id, getId, getSize, param } = this.props;
+		const { className, classNameWrap } = param;
 		const content = this.getContent();
 		const menuId = 'select';
 
@@ -97,6 +98,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			isSub: true,
 			rebind: this.rebind,
 			parentId: id,
+			className,
+			classNameWrap,
 			data: {
 				value: String(content[item.itemId]),
 				options: [],
@@ -126,6 +129,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 				break;
 		};
 
+		options = U.Menu.prepareForSelect(options);
 		menuParam.data = Object.assign(menuParam.data, { options });
 
 		if (!S.Menu.isOpen(menuId, item.id)) {
