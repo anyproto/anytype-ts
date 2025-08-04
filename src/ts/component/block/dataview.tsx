@@ -592,6 +592,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const hoverArea = node.find('.hoverArea');
 
 		const menuParam: any = {
+			classNameWrap: 'fromBlock',
 			onOpen: (context: any) => {
 				this.menuContext = context;
 				hoverArea.addClass('active');
