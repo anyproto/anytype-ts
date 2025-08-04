@@ -1099,6 +1099,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		S.Menu.open('searchObject', Object.assign({
 			element: $(element),
 			className: 'single',
+			classNameWrap: 'fromBlock',
 			data: {
 				rootId,
 				blockId: block.id,
