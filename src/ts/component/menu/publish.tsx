@@ -56,10 +56,8 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		publishRef.current?.setLoading(true);
 
-		let enableMultipublish = false;
-		if (config.experimental) {
-			enableMultipublish = enableMultipublishRef.current?.getValue()
-		}
+		const enableMultipublish = config.experimental ? enableMultipublishRef.current?.getValue() : false;
+
 		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), enableMultipublish, (message: any) => {
 			publishRef.current?.setLoading(false);
 
