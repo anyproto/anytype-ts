@@ -955,8 +955,8 @@
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
-	"popupSettingsSpaceShareMenuInviteNoneTitle": "Disable invite link",
-	"popupSettingsSpaceShareMenuInviteNoneDescription": "New members won't be able to join the space",
+	"popupSettingsSpaceShareMenuInviteNoneTitle": "Link disabled",
+	"popupSettingsSpaceShareMenuInviteNoneDescription": "Only invited members have access",
 	"popupSettingsSpaceShareMenuInviteEditorTitle": "Editor access",
 	"popupSettingsSpaceShareMenuInviteEditorDescription": "People with link can edit and write in chat",
 	"popupSettingsSpaceShareMenuInviteViewerTitle": "Viewer access",
@@ -1183,8 +1183,8 @@
 
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
-	"popupConfirmRevokeLinkTitle": "Delete sharing link",
-	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can generate a new link anytime.",
+	"popupConfirmRevokeLinkTitle": "Disable invite link",
+	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can enable a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Disable link",
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
@@ -1898,7 +1898,7 @@
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteUpdate": "Invite link has been changed to %s",
-	"toastInviteRevoke": "Invite link has been deleted",
+	"toastInviteRevoke": "Invite link has been disabled",
 	"toastImportStart": "Import process has started and may take some time",
 
 	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",
