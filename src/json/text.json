@@ -948,28 +948,30 @@
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
-	"popupSettingsSpaceShareTitle": "Sharing",
+	"popupSettingsSpaceShareTitle": "Members",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
-	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space.",
-	"popupSettingsSpaceShareInviteLinkDisabled": "Invitations are disabled by the space owner. In order to have an ability to invite people. please ask space owner to generate an invite link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
+	"popupSettingsSpaceShareMenuInviteNoneTitle": "Link disabled",
+	"popupSettingsSpaceShareMenuInviteNoneDescription": "Only invited members have access",
+	"popupSettingsSpaceShareMenuInviteEditorTitle": "Editor access",
+	"popupSettingsSpaceShareMenuInviteEditorDescription": "People with link can edit and write in chat",
+	"popupSettingsSpaceShareMenuInviteViewerTitle": "Viewer access",
+	"popupSettingsSpaceShareMenuInviteViewerDescription": "People with link can view and read chat",
+	"popupSettingsSpaceShareMenuInviteManualTitle": "Request access",
+	"popupSettingsSpaceShareMenuInviteManualDescription": "Owner must approve each join request",
+
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
-	"popupSettingsSpaceShareStopSharing": "Stop sharing",
-	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
-	"popupSettingsSpaceShareShowQR": "Show QR code",
-
-	"popupSettingsSpaceShareLinkWithApproveLabel": "This link requires manual approve from space owner. Once they request to join, you can set their access rights.",
-	"popupSettingsSpaceShareLinkWithoutApproveLabel": "This link doesn't require manual approve from space owner.",
+	"popupSettingsSpaceShareQRCode": "QR code",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -983,7 +985,7 @@
 	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
 	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
 	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",
-	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in shared spaces, and a unique identity on the Anytype Network.",
+	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in spaces, and a unique identity on the Anytype Network.",
 	"popupSettingsMembershipSlide2Title": "Support Digital Independence",
 	"popupSettingsMembershipSlide2Text": "Your contribution supports our team and endorses <a href=\"%s\">our&nbsp;vision</a> of a user-owned, secure, and collaborative digital network.",
 	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
@@ -1176,21 +1178,14 @@
 	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
 	"popupConfirmObjectOpenErrorButton": "Collect debug info",
 
-	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
-	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
-	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
-
 	"popupConfirmMemberRemoveTitle": "Remove member",
 	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
 
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
-	"popupConfirmRevokeLinkTitle": "Delete sharing link",
-	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can generate a new link anytime.",
-	"popupConfirmRevokeLinkConfirm": "Delete link",
-
-	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
-	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
+	"popupConfirmRevokeLinkTitle": "Disable invite link",
+	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can enable a new link anytime.",
+	"popupConfirmRevokeLinkConfirm": "Disable link",
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
@@ -1218,7 +1213,7 @@
 	"popupConfirmLostPhraseTextMac": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your macOS Keychain Access. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Keychain Access application, which you can find in the Utilities folder.<\/li><li>In the Keychain Access window, select \"Login\" from the list of Keychains on the left.<\/li><li>Click on the \"Passwords\" tab to view your saved passwords.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Check the \"Show password\" box, and your key will be displayed.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
 
 	"popupConfirmMembershipUpgradeTitle": "Membership Upgrade",
-	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more shared spaces. Anytype team will provide details and conditions tailored to your needs.",
+	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more spaces. Anytype team will provide details and conditions tailored to your needs.",
 	"popupConfirmMembershipUpgradeButton": "Contact Anytype Team",
 
 	"popupConfirmRelationOptionRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
@@ -1905,7 +1900,8 @@
 	"toastApproveLeaveRequest": "You approved %s request",
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
-	"toastInviteRevoke": "Invite link has been deleted",
+	"toastInviteUpdate": "Invite link has been changed to %s",
+	"toastInviteRevoke": "Invite link has been disabled",
 	"toastImportStart": "Import process has started and may take some time",
 
 	"toastObjectTypeAdded": "Object Type <b>%s</b> has been added to your Library",

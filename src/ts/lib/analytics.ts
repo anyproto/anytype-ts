@@ -79,6 +79,7 @@ class Analytics {
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
 
+		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
 
 		addWidgetMain: 'Main',
@@ -609,6 +610,17 @@ class Analytics {
 
 			case 'ObjectListSort': {
 				data.type = I.SortType[Number(data.type)];
+				break;
+			};
+
+			case 'ClickShareSpaceNewLink' : {
+				data.type = I.InviteLinkType[Number(data.type)];
+				break;
+			};
+
+			case 'ScreenInviteRequest' : {
+				data.type = Number(data.type) || 0;
+				data.type = I.InviteType[data.type];
 				break;
 			};
 

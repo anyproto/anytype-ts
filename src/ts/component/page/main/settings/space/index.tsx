@@ -115,8 +115,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					) : ''}
 
-					<Label className="spaceType" text={translate(`spaceAccessType${space.spaceAccessType || 0}`)} />
-
 					<IconObject
 						id="spaceIcon"
 						size={96}
