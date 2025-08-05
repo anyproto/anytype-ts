@@ -103,7 +103,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		let content = (
 			<div className="sides">
-				<div className={[ 'side', 'left', left.length > 1 ? 's50' : '' ].join(' ')}>
+				<div style={{ width: `${30 + left.length * 10}%` }} className={[ 'side', 'left', left.length > 1 ? 's50' : '' ].join(' ')}>
 					{left.map(mapper)}
 				</div>
 				{right.map(mapper)}
