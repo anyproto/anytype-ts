@@ -53,11 +53,9 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onPublish = (isUpdate?: boolean) => {
 		const analyticsName = isUpdate ? 'ShareObjectUpdate' : 'ShareObjectPublish';
-
-		publishRef.current?.setLoading(true);
-
 		const enableMultipublish = config.experimental ? enableMultipublishRef.current?.getValue() : false;
 
+		publishRef.current?.setLoading(true);
 		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), enableMultipublish, (message: any) => {
 			publishRef.current?.setLoading(false);
 
