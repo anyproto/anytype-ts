@@ -297,6 +297,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						value={item.type} 
 						onChange={v => onChange(item.id, 'type', v)} 
 						readonly={isReadonlyValue}
+						menuParam={{ className, classNameWrap }}
 					/>
 				</div>
 				{!isReadonlyValue ? (
