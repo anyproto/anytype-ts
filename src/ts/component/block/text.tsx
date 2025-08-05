@@ -321,7 +321,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { block } = this.props;
 		const ref = this.refEditable;
 
-		if (block.isTextCode() || !ref) {
+		if (block.isTextCode() || block.isTextTitle() || !ref) {
 			return;
 		};
 
