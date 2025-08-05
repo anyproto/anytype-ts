@@ -2,8 +2,11 @@
 
 .menus {
 	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 23; }
+
 	.menuWrap.fromChat,
-	.menuWrap.fromBlock { z-index: 25; }
+	.menuWrap.fromBlock,
+	.menuWrap.fromGraph { z-index: 25; }
+
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
