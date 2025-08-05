@@ -333,13 +333,11 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	return { edges, nodes };
 };
 
-/*
 export const ObjectToBookmark = (response: Rpc.Object.ToBookmark.Response) => {
 	return {
 		objectId: response.getObjectid(),
 	};
 };
-*/
 
 export const ObjectShareByLink = (response: Rpc.Object.ShareByLink.Response) => {
 	return {
