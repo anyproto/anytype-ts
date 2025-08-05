@@ -174,6 +174,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				onViewRemove,
 				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
 					sortOrFilterRelationSelect(component, {
+						classNameWrap: 'fromBlock',
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
