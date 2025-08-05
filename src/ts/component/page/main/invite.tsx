@@ -120,9 +120,9 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 												}, J.Constant.delay.popup);
 											} else {
 												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
-
-												analytics.event('JoinSpace');
 											};
+
+											analytics.event('ClickJoinSpaceWithoutApproval');
 										});
 									},
 								},
