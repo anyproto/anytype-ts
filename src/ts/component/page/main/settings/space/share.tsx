@@ -134,11 +134,11 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		const { isOnline } = S.Common;
 		const isLocalNetwork = U.Data.isLocalNetwork();
 		const space = U.Space.getSpaceview();
-		const noApproveIds: I.InviteLinkType[] = [ I.InviteLinkType.Editor, I.InviteLinkType.Viewer ]
+		const noApproveIds: I.InviteLinkType[] = [ I.InviteLinkType.Editor, I.InviteLinkType.Viewer ];
 
 		let ids: I.InviteLinkType[] = [ I.InviteLinkType.Manual ];
 		if (config.experimental) {
-			ids = (noApproveIds).concat(ids);
+			ids = noApproveIds.concat(ids);
 		};
 
 		const options: any[] = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
