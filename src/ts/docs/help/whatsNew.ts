@@ -40,7 +40,8 @@ export default () => {
 
 		h3(`Polished List View`),
 		text(`We’ve given the List View some well-deserved attention. It’s a simple and practical way to manage your objects, and now it’s smoother to use:`),
-		bullet(`<b>Properties now appear on the right-hand side</b>, making them easier to scan.`),
+		bullet(`<b>Properties now appear on the right-hand side by default, making them easier to scan.`),
+		bullet(`You can also place <b>properties before the object name</b>, if that suits your workflow better.`),
 		bullet(`<b>In-place editing</b> lets you click a property to edit it on the go, speeding up multi-object workflows.`),
 		bullet(`<b>Visual refinements</b> bring a cleaner, more consistent layout.`),
 		video('48/1.mp4', 'c70'),
