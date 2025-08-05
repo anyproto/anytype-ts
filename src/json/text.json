@@ -1770,6 +1770,9 @@
 	"menuHelpGallery": "ANY Experience Gallery",
 	"menuHelpShare": "Share Anytype",
 	"menuHelpMore": "More",
+	"menuHelpDeveloper": "Developers",
+	"menuHelpDeveloperPortal": "Developers Portal",
+	"menuHelpMcp": "MCP",
 
 	"menuObjectPrint": "Print",
 	"menuObjectSearchOnPage": "Search in Object",
