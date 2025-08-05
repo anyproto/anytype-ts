@@ -53,6 +53,14 @@ class Api {
 		WindowManager.sendToAll('pin-check');
 	};
 
+	pinSet (win) {
+		WindowManager.sendToAll('pin-set');
+	};
+
+	pinRemove (win) {
+		WindowManager.sendToAll('pin-remove');
+	};
+
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
