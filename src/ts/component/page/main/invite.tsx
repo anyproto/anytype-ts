@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, Preview, Onboarding } from 'Lib';
+import { I, C, S, U, J, translate, Preview, Onboarding, analytics } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -120,6 +120,8 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 												}, J.Constant.delay.popup);
 											} else {
 												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
+
+												analytics.event('JoinSpace');
 											};
 										});
 									},
