@@ -163,8 +163,6 @@ class MenuStore {
 	 * @param {() => void} [callBack] - Optional callback after close.
 	 */
 	close (id: string, callBack?: () => void) {
-		return;
-
 		const item = this.get(id);
 		if (!item) {
 			if (callBack) {
