@@ -45,6 +45,7 @@ export default () => {
 
 		h3('Table of Contents Enhancements'),
 		text(`A new ToC menu on the right side of the Editor makes it easier to navigate and manage long pages. For a steady overview while editing, you can also open it in the sidebar.`),
+		text(`Thanks for the contribution, @${link('https://github.com/anyproto/anytype-ts/pull/1493', 'CamilleHbp')}!`),
 		video('48/2.mp4', 'c70'),
 		text(''),
 
@@ -56,8 +57,8 @@ export default () => {
 		img(`48/1.png`, 'c70'),
 		text(''),
 
-		text('<b>Quick Filters for Year Ranges</b>'),
-		text(`You can now easily filter by This Year, Last Year or Next Year when using date-based filters – no need to manually set the range.`),
+		text('<b>Year Filters for Date Properties</b>'),
+		text(`When working with projects across years, you can now filter by <i>Last Year</i>, <i>Current Year</i> or <i>Next Year</i> – no need to manually enter date ranges.`),
 		img(`48/2.png`, 'c70'),
 		text(''),
 
@@ -83,8 +84,8 @@ export default () => {
 		text(`Thank you for the suggestion @${link('https://community.anytype.io/t/make-the-space-widget-fixed/26539', 'VisualNotes')}!`),
 		text(''),
 
-		text('<b>Create Objects and Widgets from Search</b>'),
-		text(`From the Add Widget search, you can now create a new object with your search query and instantly make a widget for it.`),
+		text('<b>Add Widget Context Menu: Create Objects Instantly</b>'),
+		text(`When no matching results appear in the Add Widget search, you can now create a new object directly from your input, and a widget will be added for it right away.`),
 		text(''),
 
 		text('<b>Pin Spaces in the Vault</b>'),
@@ -101,7 +102,7 @@ export default () => {
 		text(''),
 
 		text('<b>Improved Sorting on Manual Reordering in Collections</b>'),
-		text(`Manually reordering objects in a Collection now removes existing sorting rules upon confirmation. This ensures the new order is preserved and avoids confusion from conflicting sort logic.`),
+		text(`Manually reordering objects in a Collection now removes existing sorting rules upon confirmation. This ensures the new order is preserved and avoids conflicts in the sorting logic.`),
 		text(''),
 
 		text('<b>Default Sorting by Creation Date</b>'),
@@ -112,12 +113,12 @@ export default () => {
 		text(`We tweaked our accent color palette for improved consistency across light and dark themes.`),
 		text(''),
 
-		text('<b>Auto-Open File Pickers When Inserting Media</b>'),
+		text('<b>Auto-Open File Picker When Inserting Media</b>'),
 		text(`When you use the ${hl('/ command')} menu to add an image, file or video block, the correct system picker will now open automatically, skipping an extra click.`),
 		text(''),
 
 		text('<b>New Shortcut for Copying Deeplinks</b>'),
-		text(`You can now assign a custom shortcut to quickly copy an object’s deeplink from anywhere in the app.`),
+		text(`You can now assign a custom shortcut to copy an object’s deeplink from anywhere in the app.`),
 		text(`Thanks to @${link('https://community.anytype.io/t/copy-deeplink-shortcut/28203', 'siousu')}!`),
 		text(''),
 
