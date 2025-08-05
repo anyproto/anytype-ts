@@ -736,7 +736,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return ret;
 	};
 
-	getMessageMenuOptions (message, noControls) {
+	getMessageMenuOptions (message: I.ChatMessage, noControls: boolean) {
 		const { config } = S.Common;
 
 		let options: any[] = [];
@@ -760,7 +760,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			].filter(it => it)).concat(options);
 		};
 
-		if (config.experimental) {
+		if (config.experimental && options.length) {
 			options = options.concat([
 				{ isDiv: true },
 				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
