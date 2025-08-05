@@ -192,7 +192,6 @@ export default () => {
 		bullet(`After creating a new object via built-in type Queries, the cursor now appears in the title field. Thanks to @${link('https://community.anytype.io/t/cursor-removed-after-adding-new-object-in-built-in-type-queries/28289', 'sandyeggo')}!`),
 		bullet(`Changing a column's width in a Query no longer causes it to move position.`),
 		bullet(`Scrolling a table in Grid layout no longer clears unsaved input. Thanks to @${link('https://community.anytype.io/t/scrolling-a-table-clears-unsaved-input/27492', 'spiffytech')}!`),
-		bullet(`Opening a modal window from a card in Gallery view no longer causes the background to scroll. Thanks to @${link('https://community.anytype.io/t/28252', 'VisualNotes')}!`),
 		bullet(`Converting a Note to another type in a modal window no longer scrolls the background to scroll. Thanks to @${link('https://community.anytype.io/t/28129', 'Code-Jack')}!`),
 		bullet(`Menus in Grid and List views no longer overflow over the sidebar when scrolling horizontally.`),
 		text(''),
