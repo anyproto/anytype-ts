@@ -119,7 +119,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 									};
 
 									analytics.event('ShareSpace');
-									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType[I.InviteLinkType.Editor]});
+									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
 								});
 							});
 						};

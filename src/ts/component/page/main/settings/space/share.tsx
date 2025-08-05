@@ -202,7 +202,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 								analytics.event('ShareSpace');
 							};
 
-							analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType[Number(item.id)]});
+							analytics.event('ClickShareSpaceNewLink', { type: item.id});
 						});
 					};
 

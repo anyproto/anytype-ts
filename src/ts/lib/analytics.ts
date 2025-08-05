@@ -613,6 +613,17 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickShareSpaceNewLink' : {
+				data.type = I.InviteLinkType[Number(data.type)];
+				break;
+			};
+
+			case 'ScreenInviteRequest' : {
+				data.type = Number(data.type) || 0;
+				data.type = I.InviteType[data.type];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
