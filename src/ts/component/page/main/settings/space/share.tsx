@@ -149,7 +149,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		S.Menu.open('select', {
 			element: '#linkTypeWrapper',
 			className: 'inviteLinkType',
-			offsetX: 64,
+			offsetX: 60,
 			offsetY: -26,
 			data: {
 				options,
