@@ -1,14 +1,16 @@
-import React, { forwardRef, useRef, useState } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { IconObject, ObjectName } from 'Component';
-import { I, U, S, translate } from 'Lib';
+import { I, U, S, keyboard, translate } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
 
 const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
+	const { space } = S.Common
+	const spaceview = U.Space.getSpaceview();
 	const items = U.Menu.getVaultItems().filter(it => it.isChat);
 	const listRef = useRef<List>(null);
 	const cache = new CellMeasurerCache({
@@ -25,38 +27,80 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		};
 	};
 
+	const onOver = (item: any) => {
+		if (!keyboard.isMouseDisabled) {
+			setActive(item);
+		};
+	};
+
+	const onOut = () => {
+		if (!keyboard.isMouseDisabled) {
+			unsetActive();
+		};
+	};
+
+	const setActive = (item: any) => {
+		unsetActive();
+
+		if (item) {
+			$('#sidebarPageChat').find(`#item-${item.id}`).addClass('hover');
+		};
+	};
+
+	const unsetActive = () => {
+		$('#sidebarPageChat').find('.item.hover').removeClass('hover');
+	};
+
 	const Item = (item: any) => {
+		const cn = [ 'item' ];
+
+		if (item.targetSpaceId == space) {
+			cn.push('active');
+		};
+
 		return (
-			<div className="item" style={item.style} onClick={() => onClick(item.item)}>
-				<IconObject object={item.item} size={48} iconSize={48} canEdit={false} />
+			<div 
+				id={`item-${item.id}`}
+				className={cn.join(' ')}
+				style={item.style} 
+				onClick={() => onClick(item)}
+				onMouseOver={() => onOver(item)}
+				onMouseOut={onOut}
+			>
+				<IconObject object={item} size={48} iconSize={48} canEdit={false} />
 				<div className="info">
-					<ObjectName object={item.item} />
+					<ObjectName object={item} />
 				</div>
 			</div>
 		);
 	};
 
 	const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			if (!item) {
-				return null;
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<Item
-						item={item}
-						style={param.style}
-					/>
-				</CellMeasurer>
-			);
+		const item: any = items[param.index];
+		if (!item) {
+			return null;
 		};
+
+		return (
+			<CellMeasurer
+				key={param.key}
+				parent={param.parent}
+				cache={cache}
+				columnIndex={0}
+				rowIndex={param.index}
+			>
+				<Item
+					{...item}
+					index={param.index}
+					style={param.style}
+				/>
+			</CellMeasurer>
+		);
+	};
+
+	useEffect(() => {
+		setActive(spaceview);
+	}, [ space ]);
 
 	return (
 		<>
