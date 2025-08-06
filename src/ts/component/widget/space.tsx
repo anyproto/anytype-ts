@@ -12,7 +12,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
 	const isSpaceOwner = U.Space.isMyOwner();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const cn = [ 'body' ];
+	const cn = [];
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
 	const buttons = [

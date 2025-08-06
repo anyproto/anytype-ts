@@ -12,13 +12,13 @@ import SidebarSettingsLibrary from './page/settings/library';
 import SidebarPageChat from './page/chat';
 
 const Components = {
-	object: SidebarObject,
-	widget: SidebarWidget,
-	settings: SidebarSettingsIndex,
-	settingsSpace: SidebarSettingsIndex,
-	types: SidebarSettingsLibrary,
-	relations: SidebarSettingsLibrary,
-	chat: SidebarPageChat,
+	object:			 SidebarObject,
+	widget:			 SidebarWidget,
+	settings:		 SidebarSettingsIndex,
+	settingsSpace:	 SidebarSettingsIndex,
+	types:			 SidebarSettingsLibrary,
+	relations:		 SidebarSettingsLibrary,
+	chat:			 SidebarPageChat,
 };
 
 interface SidebarLeftRefProps {
@@ -205,7 +205,13 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				id="sidebarLeft" 
 				className="sidebar left" 
 			>
-				<Component ref={childRef} {...props} page={page} />
+				{Component ? (
+					<Component 
+						ref={childRef} 
+						page={page}
+						{...props} 
+					/> 
+				) : ''}
 
 				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
 					<div className="resize-handle" onClick={onHandleClick} />
