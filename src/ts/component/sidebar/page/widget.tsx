@@ -202,24 +202,19 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					<div className="grad" />
 
 					<div className="side left">
-						<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
-					</div>
-
-					<div className="side center">
 						{!isEditing ? (
-							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
+							<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
 						) : (
 							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
 						)}
 					</div>
 
+					<div className="side center">
+						<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="blank" onClick={this.onAdd} />
+					</div>
+
 					<div className="side right">
-						<Icon 
-							id="button-widget-help" 
-							className="help withBackground" 
-							tooltipParam={{ text: translate('commonHelp') }} 
-							onClick={this.onHelp} 
-						/>
+						<Button id="button-widget-help" className="help" text={'?'} color="blank" tooltipParam={{ text: translate('commonHelp') }}  onClick={this.onHelp}  />
 					</div>
 				</div>
 			);
@@ -276,6 +271,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		analytics.event('ClickAddWidget', { route });
 
+		const { isEditing } = this.state;
 		const { widgets } = S.Block;
 		const space = U.Space.getSpaceview();
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
@@ -285,6 +281,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const button = node.find('#widget-list-add');
 		const { top } = button.offset();
 		const position = top + 350 > nh ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+
+		if (isEditing) {
+			this.onEdit(e);
+		};
 
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);
