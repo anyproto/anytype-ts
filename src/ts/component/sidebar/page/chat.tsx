@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { IconObject, ObjectName, Filter, Label } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon } from 'Component';
 import { I, U, S, J, keyboard, translate, Mark } from 'Lib';
 
 const LIMIT = 20;
@@ -86,8 +86,11 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	const Item = (item: any) => {
 		const list = S.Chat.getList(S.Chat.getSpaceSubId(item.targetSpaceId));
+		const counters = S.Chat.getSpaceCounters(item.targetSpaceId);
 
-		let text: string = '';
+		let text = '';
+		let cnt = null;
+
 		if (list.length) {
 			const last = list[list.length - 1];
 			if (last) {
@@ -113,6 +116,13 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 			};
 		};
 
+		if (counters.mentionCounter) {
+			cnt = <Icon className="mention" />;
+		} else 
+		if (counters.messageCounter) {
+			cnt = counters.messageCounter;
+		};
+
 		return (
 			<div 
 				id={`item-${item.id}`}
@@ -124,7 +134,10 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 			>
 				<IconObject object={item} size={48} iconSize={48} canEdit={false} />
 				<div className="info">
-					<ObjectName object={item} />
+					<div className="nameWrapper">
+						<ObjectName object={item} />
+						{cnt ? <div className="cnt">{cnt}</div> : ''}
+					</div>
 					<Label text={text} />
 				</div>
 			</div>

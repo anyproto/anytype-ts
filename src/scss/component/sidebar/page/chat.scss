@@ -22,7 +22,10 @@
 	.item {
 		.iconObject { flex-shrink: 0; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-		.name { @include text-overflow-nw; font-weight: 500; }
+
+		.nameWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
+		.name { @include text-overflow-nw; font-weight: 500; flex-grow: 1; }
+
 		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
 
 		&::before {
@@ -31,5 +34,14 @@
 		}
 		&.active::before, &.hover::before { background: var(--color-shape-highlight-medium); }
 		&.selected::before { background: var(--color-system-selection); }
+
+		.cnt { 
+			min-width: 18px; height: 20px; border-radius: 10px; background: var(--color-system-accent-125); @include text-very-small; 
+			color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
+			padding: 0px 4px; cursor: default; flex-shrink: 0;
+		}
+		.cnt {
+			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
+		}
 	}
 }
