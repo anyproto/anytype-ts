@@ -64,7 +64,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 								<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
 								<Icon id="button-more-link" className="more withBackground" onClick={this.onMoreLink} />
 							</div>
-							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopy')} />
+							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c36" color="black" text={translate('commonCopy')} />
 						</div>
 					) : ''}
 				</div>
