@@ -421,7 +421,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 	onOver (e: any, item: any) {
 		const { id, getId, getSize, setActive, param } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const view = getView();
 		const filter = view.getFilter(itemId);
@@ -436,6 +436,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const menuParam = {
+			className, 
+			classNameWrap,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			horizontal: I.MenuDirection.Left,
@@ -635,11 +637,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 	onCalendar (value: number) {
 		const { id, getId, param } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 
 		S.Menu.open('calendar', {
+			className,
+			classNameWrap,
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
 			rebind: this.rebind,
@@ -662,7 +666,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const { id, param, getId, getSize } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
@@ -670,7 +674,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		S.Menu.closeAll([ 'dataviewOptionList', 'select' ], () => {
 			S.Menu.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
-				className: 'fromFilter',
+				className: [ 'fromFilter', className ].join(' '),
+				classNameWrap,
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
@@ -696,7 +701,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const { id, param, getId, getSize } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
 		const relation = S.Record.getRelationByKey(item.relationKey);
 		const filters = [];
@@ -707,8 +712,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		S.Menu.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
 			S.Menu.open('dataviewObjectList', { 
+				className: [ className, 'fromFilter' ].join(' '), 
+				classNameWrap,
 				element: `#${getId()}`,
-				className: 'fromFilter',
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
