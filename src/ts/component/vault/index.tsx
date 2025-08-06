@@ -286,7 +286,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
-		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
+		const newItems = arrayMove(items, oldIndex, newIndex);
 
 		let s = '';
 		newItems.forEach((it, i) => {
