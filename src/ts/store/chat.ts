@@ -182,6 +182,8 @@ class ChatStore {
 	 * @returns {{ prefix: string; spaceId: string; chatId: string; isSpace: boolean; }} The parsed parameters.
 	 */
 	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; windowId: string } {
+		subId = String(subId || '');
+
 		const [ prefix, spaceId, chatId, windowId ] = subId.split('-');
 
 		if (prefix == J.Constant.subId.chatSpace) {
@@ -195,11 +197,10 @@ class ChatStore {
 	/**
 	 * Gets the subscription ID for a space and chat.
 	 * @param {string} spaceId - The space ID.
-	 * @param {string} chatId - The chat ID.
 	 * @returns {string} The subscription ID.
 	 */
-	getSubId (spaceId: string, chatId: string): string {
-		return [ J.Constant.subId.chatSpace, spaceId, chatId, S.Common.windowId ].join('-');
+	getSpaceSubId (spaceId: string): string {
+		return [ J.Constant.subId.chatSpace, spaceId, '', S.Common.windowId ].join('-');
 	};
 
 	/**

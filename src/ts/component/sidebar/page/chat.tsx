@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { IconObject, ObjectName, Filter } from 'Component';
-import { I, U, S, J, keyboard, translate } from 'Lib';
+import { IconObject, ObjectName, Filter, Label } from 'Component';
+import { I, U, S, J, keyboard, translate, Mark } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
@@ -85,6 +85,34 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const Item = (item: any) => {
+		const list = S.Chat.getList(S.Chat.getSpaceSubId(item.targetSpaceId));
+
+		let text: string = '';
+		if (list.length) {
+			const last = list[list.length - 1];
+			if (last) {
+				const participantId = U.Space.getParticipantId(item.targetSpaceId, last.creator);
+				const author = last.dependencies.find(it => it.id == participantId);
+
+				if (author) {
+					text = `${author.name}: `;
+				};
+
+				if (last.content.text) {
+					text += U.Common.sanitize(Mark.toHtml(last.content.text, last.content.marks));
+					text = text.replace(/\n\r?/g, ' ');
+				} else 
+				if (last.attachments.length) {
+					const names = last.attachments.map(id => {
+						const object = last.dependencies.find(it => it.id == id);
+						return object ? U.Object.name(object) : '';
+					}).filter(it => it).join(', ');
+
+					text += names;
+				};
+			};
+		};
+
 		return (
 			<div 
 				id={`item-${item.id}`}
@@ -97,6 +125,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 				<IconObject object={item} size={48} iconSize={48} canEdit={false} />
 				<div className="info">
 					<ObjectName object={item} />
+					<Label text={text} />
 				</div>
 			</div>
 		);

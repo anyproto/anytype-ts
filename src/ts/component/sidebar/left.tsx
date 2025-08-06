@@ -123,7 +123,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			width.current = w;
 
-			if (childRef.current.resize) {
+			if (childRef.current && childRef.current.resize) {
 				childRef.current.resize();
 			};
 		});
