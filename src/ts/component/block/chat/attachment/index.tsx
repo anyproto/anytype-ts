@@ -49,6 +49,18 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			cn.push('isDownload');
 		};
 
+		const imageContent = () => {
+			let withBlur = false;
+
+			cn.push('isImage');
+			if (object.widthInPixels < 360 || object.heightInPixels > 360) {
+				withBlur = true;
+				cn.push('withBlur');
+			};
+
+			return this.renderImage(withBlur);
+		};
+
 		switch (object.layout) {
 			case I.ObjectLayout.File: {
 				if (showAsFile) {
@@ -64,14 +76,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 								break;
 							};
 
-							let withBlur = false;
-
-							cn.push('isImage');
-							if (object.widthInPixels < 360) {
-								withBlur = true;
-								cn.push('withBlur');
-							};
-							content = this.renderImage(withBlur);
+							content = imageContent();
 							break;
 						};
 					};
@@ -83,15 +88,8 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				if (showAsFile) {
 					break;
 				};
-
-				let withBlur = false;
-
-				cn.push('isImage');
-				if (object.widthInPixels < 360) {
-					withBlur = true;
-					cn.push('withBlur');
-				};
-				content = this.renderImage(withBlur);
+				
+				content = imageContent();
 				break;
 
 			case I.ObjectLayout.Video: {
