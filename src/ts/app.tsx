@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect, memo } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
@@ -117,10 +117,7 @@ Sentry.setContext('info', {
 
 const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	const { page, action } = (props.match?.params || {}) as any;
-	const noSidebar = 
-		[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
-		((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
+	const MemoSidebarLeft = React.memo(SidebarLeft);
 
 	return (
 		<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
@@ -128,7 +125,7 @@ const RoutePage: FC<RouteComponentProps> = (props) => {
 				<ListPopup key="listPopup" {...props} />
 				<ListMenu key="listMenu" {...props} />
 
-				{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...props} /> : ''}
+				<MemoSidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...props} />
 				<Page {...props} isPopup={false} />
 			</DragProvider>
 		</SelectionProvider>

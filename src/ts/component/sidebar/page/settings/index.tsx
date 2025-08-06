@@ -30,8 +30,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const items = this.getItems();
 		const theme = S.Common.getThemeClass();
 
-		console.log('SidebarSettingsIndex render', page, items);
-
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
 
