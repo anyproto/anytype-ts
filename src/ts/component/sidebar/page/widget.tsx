@@ -9,7 +9,7 @@ type State = {
 	previewId: string;
 };
 
-const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
+const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<I.SidebarPageComponent, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -23,7 +23,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	frame = 0;
 	timeout = 0;
 
-	constructor (props) {
+	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);

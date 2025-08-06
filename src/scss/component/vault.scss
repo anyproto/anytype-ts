@@ -91,11 +91,12 @@
 		&.gallery {
 			.iconWrap { background-image: url('~img/icon/vault/gallery.svg'); }
 		}
-
 		&.add {
 			.iconWrap { background-image: url('~img/icon/vault/plus.svg'); }
 		}
-
+		&.chat {
+			.iconWrap { background-image: url('~img/icon/vault/chat.svg'); }
+		}
 		&.settings {
 			.iconWrap { background-color: unset; background-image: url('~img/icon/vault/settings.svg'); }
 		}
