@@ -53,7 +53,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			let withBlur = false;
 
 			cn.push('isImage');
-			if (object.widthInPixels < 360 || object.heightInPixels > 360) {
+			if ((object.widthInPixels < 360) || (object.heightInPixels > 360)) {
 				withBlur = true;
 				cn.push('withBlur');
 			};
