@@ -117,7 +117,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			<>
 				<div className="inner">
 					<div className="head">
-						<div className="titleWrap" onClick={() => sidebar.leftPanelSetState({ page: 'widget' })}>
+						<div className="titleWrap" onClick={() => sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() })}>
 							<div className="side left">
 								<Icon className="back" />
 								<Title text={translate('commonAllContent')} />
@@ -695,7 +695,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			if (this.selected) {
 				this.clearSelection();
 			} else {
-				sidebar.leftPanelSetState({ page: 'widget' });
+				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 			};
 		});
 

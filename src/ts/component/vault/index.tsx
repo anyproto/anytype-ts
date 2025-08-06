@@ -191,7 +191,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
 				} else {
 					U.Space.openDashboard();
-					sidebar.leftPanelSetState({ page: 'widget' });
+					sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				};
 				break;
 			};

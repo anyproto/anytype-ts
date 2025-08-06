@@ -209,7 +209,7 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: 'widget' });
+				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				U.Space.openDashboard();
 			};
 			
@@ -466,7 +466,7 @@ class Keyboard {
 				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
 					const state = sidebar.leftPanelGetState();
 					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: 'widget' });
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					};
 				};
 

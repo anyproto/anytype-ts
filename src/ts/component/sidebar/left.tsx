@@ -38,7 +38,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
-	const [ page, setPage ] = useState('widget');
+	const [ page, setPage ] = useState(U.Space.getDefaultSidebarPage());
 	const { showVault, updateVersion } = S.Common;
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);

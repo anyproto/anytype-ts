@@ -423,6 +423,15 @@ class UtilSpace {
 		return [ 'https://', this.getPublishDomain(), slug ].join('/');
 	};
 
+	/**
+	 * Gets the default sidebar page based on the current space type.
+	 * @returns {string} The default sidebar page.
+	 */
+	getDefaultSidebarPage (): string {
+		const space = this.getSpaceview();
+		return space?.isChat ? 'chat' : 'widget';
+	};
+
 };
 
 export default new UtilSpace();
