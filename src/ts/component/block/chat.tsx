@@ -650,7 +650,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		});
 
-		if (!isFocused) {
+		if (isFocused) {
 			list.forEach(it => {
 				this.scrolledItems.add(it.id);
 
