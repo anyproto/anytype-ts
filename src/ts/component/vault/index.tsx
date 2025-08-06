@@ -24,7 +24,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
 	const items = U.Menu.getVaultItems();
-	const first = items.filter(it => it.isChat && it.counter);
+	const first = items.filter(it => it.isChat);
 	const second = items.filter(it => !it.isChat);
 	const profile = U.Space.getProfile();
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };

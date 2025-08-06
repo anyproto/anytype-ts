@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { IconObject, ObjectName } from 'Component';
-import { I, U } from 'Lib';
+import { I, U, S, translate } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
@@ -17,9 +17,17 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		keyMapper: (index) => items[index].id
 	});
 
+	const onClick = (item: any) => {
+		if (item.targetSpaceId != S.Common.space) {
+			U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+		} else {
+			U.Space.openDashboard();
+		};
+	};
+
 	const Item = (item: any) => {
 		return (
-			<div className="item" style={item.style}>
+			<div className="item" style={item.style} onClick={() => onClick(item.item)}>
 				<IconObject object={item.item} size={48} iconSize={48} canEdit={false} />
 				<div className="info">
 					<ObjectName object={item.item} />
@@ -53,6 +61,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	return (
 		<>
 			<div className="head">
+				<div className="name">{translate('commonChats')}</div>
 			</div>
 			<div className="body">
 				<InfiniteLoader

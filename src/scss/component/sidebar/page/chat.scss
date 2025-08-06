@@ -1,4 +1,19 @@
 .sidebarPage.pageChat {}
 .sidebarPage.pageChat {
+	> .head { 
+		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
+		gap: 0px 8px; overflow: hidden; flex-shrink: 0;
+	}
+	> .head {
+		.name { @include text-overflow-nw; }
+	}
 
+	> .body { padding-left: 8px; padding-right: 8px; }
+
+	.item { display: flex; align-items: center; gap: 0px 12px; padding: 8px; }
+	.item {
+		.iconObject { flex-shrink: 0; }
+		.info { flex-grow: 1; display: flex; flex-direction: column; }
+		.name { @include text-overflow-nw; font-weight: 500; }
+	}
 }
