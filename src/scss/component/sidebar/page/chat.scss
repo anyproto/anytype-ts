@@ -12,12 +12,17 @@
 
 	.ReactVirtualized__List { padding-left: 8px; padding-right: 8px; }
 
-	.item { display: flex; align-items: center; gap: 0px 12px; padding: 8px; }
+	.filterWrapper { padding: 0px 12px; margin: 0px 0px 8px 0px; }
+	.filter { padding: 0px; }
+	.filter { 
+		.inner { background-color: var(--color-shape-highlight-medium); }
+	}
+
+	.item { display: flex; align-items: center; gap: 0px 12px; padding: 8px 4px; }
 	.item {
 		.iconObject { flex-shrink: 0; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; }
 		.name { @include text-overflow-nw; font-weight: 500; }
-
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;

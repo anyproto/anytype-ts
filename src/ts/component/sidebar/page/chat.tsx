@@ -1,18 +1,26 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useState } from 'react';
+import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { IconObject, ObjectName } from 'Component';
-import { I, U, S, keyboard, translate } from 'Lib';
+import { IconObject, ObjectName, Filter } from 'Component';
+import { I, U, S, J, keyboard, translate } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
 
 const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space } = S.Common
+	const { space } = S.Common;
+	const [ filter, setFilter ] = useState('');
 	const spaceview = U.Space.getSpaceview();
-	const items = U.Menu.getVaultItems().filter(it => it.isChat);
+	const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+	const items = U.Menu.getVaultItems().filter(it => {
+		return it.isChat && it.name.match(reg);
+	});
 	const listRef = useRef<List>(null);
+	const filterRef = useRef(null);
+	const timeout = useRef(0);
 	const cache = new CellMeasurerCache({
 		defaultHeight: HEIGHT_ITEM,
 		fixedWidth: true,
@@ -29,13 +37,15 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			setActive(item);
+			unsetActive();
+			setHover(item);
 		};
 	};
 
 	const onOut = () => {
 		if (!keyboard.isMouseDisabled) {
-			unsetActive();
+			unsetHover();
+			setActive(spaceview);
 		};
 	};
 
@@ -43,25 +53,42 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		unsetActive();
 
 		if (item) {
-			$('#sidebarPageChat').find(`#item-${item.id}`).addClass('hover');
+			$('#sidebarPageChat').find(`#item-${item.id}`).addClass('active');
 		};
 	};
 
 	const unsetActive = () => {
+		$('#sidebarPageChat').find('.item.active').removeClass('active');
+	};
+
+	const setHover = (item: any) => {
+		if (item) {
+			$('#sidebarPageChat').find(`#item-${item.id}`).addClass('hover');
+		};
+	};
+
+	const unsetHover = () => {
 		$('#sidebarPageChat').find('.item.hover').removeClass('hover');
 	};
 
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
+			if (filter != v) {
+				setFilter(v);
+			};
+		}, J.Constant.delay.keyboard);
+	};
+
+	const onFilterClear = () => {
+		setFilter('');
+	};
+
 	const Item = (item: any) => {
-		const cn = [ 'item' ];
-
-		if (item.targetSpaceId == space) {
-			cn.push('active');
-		};
-
 		return (
 			<div 
 				id={`item-${item.id}`}
-				className={cn.join(' ')}
+				className="item"
 				style={item.style} 
 				onClick={() => onClick(item)}
 				onMouseOver={() => onOver(item)}
@@ -99,13 +126,23 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	useEffect(() => {
-		setActive(spaceview);
+		raf(() => setActive(spaceview));
 	}, [ space ]);
 
 	return (
 		<>
 			<div className="head">
 				<div className="name">{translate('commonChats')}</div>
+			</div>
+			<div className="filterWrapper">
+				<Filter 
+					ref={filterRef}
+					icon="search"
+					className="outlined"
+					placeholder={translate('commonSearch')}
+					onChange={onFilterChange}
+					onClear={onFilterClear}
+				/>
 			</div>
 			<div className="body">
 				<InfiniteLoader
