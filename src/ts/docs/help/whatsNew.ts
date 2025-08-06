@@ -47,7 +47,7 @@ export default () => {
 		video('48/1.mp4', 'c70'),
 		text(``),
 
-		h3('Table of Contents Enhancements'),
+		h3('Table of Contents'),
 		text(`A new ToC menu on the right side of the Editor makes it easier to navigate and manage long pages. For a steady overview while editing, you can also open it in the sidebar.`),
 		text(`Thanks for the contribution, @${link('https://github.com/anyproto/anytype-ts/pull/1493', 'CamilleHbp')}!`),
 		video('48/2.mp4', 'c70'),
@@ -209,7 +209,7 @@ export default () => {
 		bullet(`Fixed inconsistent behavior where hovering over ${hl('Create New Object')} and moving the cursor below could close the widget creation popup.`),
 		bullet(`The space widget now prevents overlapping text from other widgets while editing.`),
 		bullet(`Fixed a bug where creating a new object via the Object Widget resulted in duplicated block IDs. Thanks to @${link('https://community.anytype.io/t/page-widget-create-new-object-behaves-strangely/28078', 'VisualNotes')}!`),
-		bullet(`Newly created objects within the Collection Widget correctly appear in the collection. Thanks to @${link('https://community.anytype.io/t/collection-widget-newly-created-objects-dont-get-added/28126', 'krst')}!`),
+		bullet(`Newly created objects within the Collection Widget correctly appear in the related collection. Thanks to @${link('https://community.anytype.io/t/collection-widget-newly-created-objects-dont-get-added/28126', 'krst')}!`),
 		text(''),
 
 		text('<b>Sidebar</b>'),
