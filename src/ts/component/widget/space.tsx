@@ -56,7 +56,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'all': {
-				sidebar.leftPanelSetState({ page: 'object' });
+				sidebar.leftPanelSetState({ page: 'allObject' });
 				break;
 			};
 

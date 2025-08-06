@@ -187,17 +187,17 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 				};
 
 				case 'set': {
-					page = 'types';
+					page = 'settings/types';
 					break;
 				};
 
 				case 'relation': {
-					page = 'relations';
+					page = 'settings/relations';
 					break;
 				};
 
 				default: {
-					page = 'settingsSpace';
+					page = 'settings/space';
 					break;
 				};
 			};

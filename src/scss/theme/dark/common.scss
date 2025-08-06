@@ -380,7 +380,7 @@ html.themeDark {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 
-		> #containerObject {
+		> .sidebarPage.pageAllObject {
 			> .inner {
 				> .head {
 					.titleWrap {
@@ -398,7 +398,7 @@ html.themeDark {
 			}
 		}
 
-		> #containerSettings {
+		> .containerSettings {
 			> .body {
 				.list {
 					> .head {

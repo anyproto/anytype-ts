@@ -26,9 +26,9 @@ interface State {
 };
 
 const Components = {
-	'type':						 PageType,
-	'object/relation':			 PageObjectRelation,
-	'object/tableOfContents':	 PageObjectTableOfContents,
+	type:					 PageType,
+	objectRelation:			 PageObjectRelation,
+	objectTableOfContents:	 PageObjectTableOfContents,
 };
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
@@ -47,9 +47,11 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	});
 
 	const { page = '' } = state;
-	const Component = Components[page];
 	const cn = [ 'sidebar', 'right' ];
-	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
+	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
+	const Component = Components[id];
+	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const withPreview = [ 'type' ].includes(page);
 
 	if (withPreview) {
@@ -80,11 +82,12 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			className={cn.join(' ')}
 		>
 			{Component ? (
-				<div className={cnp.join(' ')}>
+				<div id={pageId} className={cnp.join(' ')}>
 					<Component 
 						ref={childRef} 
 						{...props} 
 						{...state}
+						getId={() => pageId}
 					/> 
 				</div>
 			): ''}

@@ -110,19 +110,15 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		return (
-			<div
-				ref={ref => this.node = ref}
-				id="containerSettings"
-				className="spaceSettingsLibrary"
-			>
+			<>
 				<div className="head" />
 
 				<div className="body">
 					<div className="list">
 						<div className="head">
-							<div className="left">
+							<div className="side left">
 								<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
-								<Title text={title} />
+								<div className="name">{title}</div>
 							</div>
 							<div className="side right">
 								<Icon id="button-object-more" className="more" onClick={this.onMore} />
@@ -175,7 +171,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 						) : ''}
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
@@ -365,7 +361,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebarLeft #containerSettings #button-object-more',
+			element: '.containerSettings #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
@@ -421,7 +417,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const menuParam = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `#sidebarLeft #containerSettings #item-${item.id}`,
+			element: `.containerSettings #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {},
 		};
@@ -470,11 +466,11 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			};
 
 			case I.ObjectContainerType.Relation: {
-				const node = $(this.node);
+				const node = $('.containerSettings');
 				const width = node.width() - 32;
 
 				S.Menu.open('blockRelationEdit', {
-					element: `#sidebarLeft #containerSettings #button-object-create`,
+					element: `.containerSettings #button-object-create`,
 					offsetY: 4,
 					width,
 					className: 'fixed',

@@ -649,7 +649,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 			} else 
 			if (targetId == J.Constant.widgetId.allObject) {
-				sidebar.leftPanelSetState({ page: 'object' });
+				sidebar.leftPanelSetState({ page: 'allObject' });
 			} else 
 			if (targetId == J.Constant.widgetId.chat) {
 				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });

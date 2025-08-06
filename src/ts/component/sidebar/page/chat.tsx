@@ -51,7 +51,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		};
 
 	return (
-		<div className="sidebarPage pageChat">
+		<>
 			<div className="head">
 			</div>
 			<div className="body">
@@ -82,7 +82,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 					)}
 				</InfiniteLoader>
 			</div>
-		</div>
+		</>
 	);
 
 }));

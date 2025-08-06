@@ -12,13 +12,13 @@ import SidebarSettingsLibrary from './page/settings/library';
 import SidebarPageChat from './page/chat';
 
 const Components = {
-	object:			 SidebarObject,
-	widget:			 SidebarWidget,
-	settings:		 SidebarSettingsIndex,
-	settingsSpace:	 SidebarSettingsIndex,
-	types:			 SidebarSettingsLibrary,
-	relations:		 SidebarSettingsLibrary,
-	chat:			 SidebarPageChat,
+	allObject:			 SidebarObject,
+	widget:				 SidebarWidget,
+	chat:				 SidebarPageChat,
+	settings:			 SidebarSettingsIndex,
+	settingsSpace:		 SidebarSettingsIndex,
+	settingsTypes:		 SidebarSettingsLibrary,
+	settingsRelations:	 SidebarSettingsLibrary,
 };
 
 interface SidebarLeftRefProps {
@@ -40,7 +40,18 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const movedX = useRef(false);
 	const [ page, setPage ] = useState('widget');
 	const { showVault, updateVersion } = S.Common;
-	const Component = Components[page];
+	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
+	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
+	const Component = Components[id];
+
+	if (id.match(/settings/)) {
+		cnp.push('containerSettings');
+	};
+
+	if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
+		cnp.push('spaceSettingsLibrary');
+	};
 
 	const init = () => {
 		const node = $(nodeRef.current);
@@ -169,23 +180,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	});
 
 	useImperativeHandle(ref, () => ({
-		getNode: () => {
-			return nodeRef.current;
-		},
-
-		setPage: (page: string) => {
-			if (Components[page]) {
-				setPage(page);
-			};
-		},
-
-		getPage: () => {
-			return page;
-		},
-
-		getChild: () => {
-			return childRef.current;
-		},
+		getNode: () => nodeRef.current,
+		setPage,
+		getPage: () => page,
+		getChild: () => childRef.current
 	}));
 
 	return (
@@ -206,11 +204,14 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				className="sidebar left" 
 			>
 				{Component ? (
-					<Component 
-						ref={childRef} 
-						page={page}
-						{...props} 
-					/> 
+					<div id={pageId} className={cnp.join(' ')}>
+						<Component 
+							ref={childRef} 
+							page={id}
+							{...props} 
+							getId={() => pageId}
+						/> 
+					</div>
 				) : ''}
 
 				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>

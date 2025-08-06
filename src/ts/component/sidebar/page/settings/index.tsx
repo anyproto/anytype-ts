@@ -17,18 +17,20 @@ const HEIGHT_DIV = 12;
 
 const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.Component<Props, {}> {
 
-	node: any = null;
 	cache: any = {};
 
 	render () {
 		const space = U.Space.getSpaceview();
+		const { page } = this.props;
 		const { membership } = S.Auth;
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
 		const param = keyboard.getMatch().params;
-		const isSpace = this.props.page == 'settingsSpace';
+		const isSpace = page == 'settingsSpace';
 		const items = this.getItems();
 		const theme = S.Common.getThemeClass();
+
+		console.log('SidebarSettingsIndex render', page, items);
 
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
@@ -133,11 +135,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		);
 
 		return (
-			<div
-				ref={ref => this.node = ref}
-				id="containerSettings"
-				className={isSpace ? 'spaceSettings' : 'appSettings'}
-			>
+			<>
 				<div className="head" />
 
 				<div className="body">
@@ -183,7 +181,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 						) : ''}
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
@@ -306,11 +304,10 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	onClick (item) {
 		if ([ 'types', 'relations' ].includes(item.id)) {
-			sidebar.leftPanelSetState({ page: item.id, });
-			return;
+			sidebar.leftPanelSetState({ page: `settings/${item.id}`, });
+		} else {
+			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 		};
-
-		U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 	};
 
 	onBack () {
