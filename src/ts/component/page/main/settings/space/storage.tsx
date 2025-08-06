@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
-import { I, J, translate, Action, analytics, U, S } from 'Lib';
+import { I, J, U, S, translate, Action, analytics } from 'Lib';
 
 const STORAGE_FULL = 0.95;
 
@@ -59,6 +59,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 			];
 			const filters: I.Filter[] = [
 				{ relationKey: 'syncStatus', condition: I.FilterCondition.In, value: item.filters },
+				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 			];
 			const sorts: I.Sort[] = [
 				{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
