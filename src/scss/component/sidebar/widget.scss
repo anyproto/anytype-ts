@@ -14,29 +14,29 @@
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 
-	> .bottom { 
-		position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; 
-		padding: 0px 8px;
-	}
+	> .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }
 	> .bottom {
 		.grad { 
-			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none; 
-			background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%);
+			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
+			background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
 		}
 
-		.side { position: relative; z-index: 1; }
-		.side.left { flex-shrink: 0; }
-		.side.center { flex-grow: 1; text-align: center; gap: 0px 8px; display: flex; align-items: center; justify-content: center; }
-		.side.right { flex-shrink: 0; }
+		.sides { position: relative; z-index: 1; width: 100%; display: flex; margin: 0 12px; align-items: center; justify-content: space-between; }
+		.side { width: 33%; flex-shrink: 0; }
+		.side.center { text-align: center; }
+		.side.right { text-align: right; }
 
-		.icon.settings { background-image: url('~img/icon/widget/button/settings.svg'); }
-		.icon.help { background-image: url('~img/icon/widget/button/help.svg'); }
-		.icon.plus { margin-right: 4px; width: 20px; height: 20px; background-image: url('~img/icon/plus/widgetBottom0.svg'); }
+		.icon.settings { background-color: var(--color-shape-highlight-medium); border-radius: 14px; background-image: url('~img/icon/widget/button/settings0.svg'); }
+		.icon.settings:hover { background-color: var(--color-shape-highlight-dark) !important; background-image: url('~img/icon/widget/button/settings1.svg'); }
 
-		.button.simple { @include text-common; color: var(--color-text-secondary); font-weight: 400; height: 28px; }
-		.button.simple:hover {
-			.icon.plus { background-image: url('~img/icon/plus/widgetBottom1.svg'); }
-		}
+		.button { height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; font-weight: 500; }
+		.button.help { font-size: 15px; padding: 0px; }
+
+		.button.simple { background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); }
+
+		.button.simple:hover,
+		.button.simple.hover { background-color: var(--color-shape-highlight-dark) !important; }
+
 		.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
 	}
 
