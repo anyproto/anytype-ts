@@ -2277,6 +2277,7 @@
 	"libRelationMedium": "Medium",
 	"libRelationLarge": "Large",
 	"libRelationPageCover": "Object cover",
+	"libRelationPicture": "Picture",
 
 	"libMenuClearStyle": "Clear style",
 	"libMenuRename": "Rename",

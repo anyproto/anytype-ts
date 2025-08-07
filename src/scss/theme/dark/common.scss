@@ -418,6 +418,12 @@ html.themeDark {
 				}
 			}
 		}
+
+		> #containerWidget {
+			> .bottom {
+				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/settings1.svg'); }
+			}
+		}
 	}
 
 	/* Notifications */

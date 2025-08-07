@@ -704,7 +704,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	addAttachments (list: any[], callBack?: () => void) {
 		const { attachments } = this.state;
 		const limit = J.Constant.limit.chat.attachments;
+		const ids = attachments.map(it => it.id);
 
+		list = list.filter(it => !ids.includes(it.id));
 		list = list.map(it => {
 			it.timestamp = U.Date.now();
 			return it;
