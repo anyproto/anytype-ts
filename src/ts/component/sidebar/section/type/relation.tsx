@@ -94,7 +94,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	if (conflictIds.length) {
 		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
-		const conflictRelations = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(filterMapper);
+		const systemKeys = Relation.systemKeys();
+
+		const conflictRelations = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(it => {
+			if (!it || systemKeys.includes(it.relationKey)) {
+				return false;
+			};
+
+			return filterMapper(it);
+		});
 
 		if (conflictRelations.length) {
 			lists.push({
