@@ -25,7 +25,7 @@
 			position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px; align-items: center; justify-content: space-between; 
 			gap: 0px 6px;
 		}
-		.side { flex-shrink: 0; }
+		.side { flex-shrink: 0; width: 33%; }
 		.side.center { text-align: center; flex-grow: 1; overflow: hidden; }
 		.side.right { text-align: right; }
 
