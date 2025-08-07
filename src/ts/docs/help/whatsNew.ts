@@ -17,8 +17,8 @@ export default () => {
 	const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 	const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 	const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-	const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full screen ${c || ''}" />`);
-	const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full screen ${c || ''}" />`);
+	const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full ${c || ''}" />`);
+	const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full ${c || ''}" />`);
 	const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 	return [
@@ -44,13 +44,13 @@ export default () => {
 		bullet(`You can also place <b>properties before the object name</b>, if that suits your workflow better.`),
 		bullet(`<b>In-place editing</b> lets you click a property to edit it on the go, speeding up multi-object workflows.`),
 		bullet(`<b>Visual refinements</b> bring a cleaner, more consistent layout.`),
-		video('48/1.mp4', 'c70'),
+		video('48/1.mp4', 'c70 screen'),
 		text(``),
 
 		h3('Table of Contents'),
 		text(`A new ToC menu on the right side of the Editor makes it easier to navigate and manage long pages. For a steady overview while editing, you can also open it in the sidebar.`),
 		text(`Thanks for the contribution, @${link('https://github.com/anyproto/anytype-ts/pull/1493', 'CamilleHbp')}!`),
-		video('48/2.mp4', 'c70'),
+		video('48/2.mp4', 'c70 screen'),
 		text(''),
 
 		h2(`Quality of Life Improvements`),
@@ -58,29 +58,29 @@ export default () => {
 
 		text('<b>Add Properties in Kanban and Calendar Views</b>'),
 		text(`You can now quickly add a new property directly from the Layout menu when configuring ${hl('Group by')} in Kanban or ${hl('Date Property')} in Calendar view.`),
-		img(`48/1.png`, 'c70'),
+		img(`48/1.png`, 'c70 screen'),
 		text(''),
 
 		text('<b>Year Filters for Date Properties</b>'),
 		text(`When working with projects across years, you can now filter by <i>Last Year</i>, <i>Current Year</i> or <i>Next Year</i> – no need to manually enter date ranges.`),
-		img(`48/2.png`, 'c70'),
+		img(`48/2.png`, 'c70 screen'),
 		text(''),
 
 		text('<b>Bookmark Preview Before Creation</b>'),
 		text(`When adding a bookmark, you’ll now see a preview of the link and have the option to include page content. This helps ensure you’re saving what you expect.`),
-		img(`48/3.png`, 'c70'),
+		img(`48/3.png`, 'c70 screen'),
 		text(''),
 
 		text('<b>Auto-Filled Link Input with Selected Text</b>'),
 		text(`When you create a link with text selected, the selected text now pre-fills the input field, making link creation much faster.`),
 		text(`Thanks to @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408/4', 'sturdily')} & @${link('https://community.anytype.io/t/highlight-and-auto-populate-texts-in-link-cmd-ctrl-k-menu/26408', 'C.c')}!`),
-		img(`48/4.png`, 'c50'),
+		img(`48/4.png`, 'c50 screen'),
 		text(''),
 
 		text('<b>Spotify Embeds</b>'),
 		text(`You can now embed a fully playable Spotify player in your pages using the new embed block.`),
 		text(`Thanks for the contribution, @${link('https://github.com/anyproto/anytype-ts/pull/1530', 'phil-gru')}!`),
-		img(`48/5.png`, 'c50'),
+		img(`48/5.png`, 'c50 screen'),
 		text(''),
 
 		text('<b>Sticky Space Widget During Scroll</b>'),
