@@ -19,7 +19,7 @@
 		.grad { 
 			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none; 
 			//background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%);
-			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, #F2F2F2 51.73%);
+			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-tertiary) 51.73%);
 		}
 
 		.sides { position: relative; z-index: 1; width: 100%; display: flex; margin: 0 12px; align-items: center; justify-content: space-between; }
