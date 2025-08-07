@@ -17,8 +17,8 @@ export default () => {
 	const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 	const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 	const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-	const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full ${c || ''}" />`);
-	const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full ${c || ''}" />`);
+	const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full screen ${c || ''}" />`);
+	const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full screen ${c || ''}" />`);
 	const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 	return [
