@@ -17,9 +17,8 @@
 	> .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }
 	> .bottom {
 		.grad { 
-			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none; 
-			//background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%);
-			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-tertiary) 51.73%);
+			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
+			background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
 		}
 
 		.sides { position: relative; z-index: 1; width: 100%; display: flex; margin: 0 12px; align-items: center; justify-content: space-between; }
@@ -27,14 +26,16 @@
 		.side.center { text-align: center; }
 		.side.right { text-align: right; }
 
-		.icon.settings { background-color: var(--color-shape-highlight-medium); border-radius: 14px; background-image: url('~img/icon/widget/button/settings.svg'); }
+		.icon.settings { background-color: var(--color-shape-highlight-medium); border-radius: 14px; background-image: url('~img/icon/widget/button/settings0.svg'); }
+		.icon.settings:hover { background-color: var(--color-shape-highlight-dark) !important; background-image: url('~img/icon/widget/button/settings1.svg'); }
 
-		.button { height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 10px; text-align: center; @include text-small; font-weight: 500; }
+		.button { height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; font-weight: 500; }
+		.button.help { font-size: 15px; padding: 0px; }
+
 		.button.simple { background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); }
 
-		.icon.settings:hover,
 		.button.simple:hover,
-		.button.simple.hover { background-color: var(--color-shape-highlight-dark) !important; color: var(--color-text-secondary) !important; }
+		.button.simple.hover { background-color: var(--color-shape-highlight-dark) !important; }
 
 		.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
 	}
