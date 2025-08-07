@@ -372,13 +372,9 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The style data.
 	 */
 	private setStyle (v: Partial<SidebarData>): void {
-		if (!this.objLeft || !this.objLeft.length) {
-			return;
+		if (this.objLeft && this.objLeft.length) {
+			this.objLeft.css({ width: v.isClosed ? 0 : v.width });
 		};
-
-		const width = v.isClosed ? 0 : v.width;
-
-		this.objLeft.css({ width });
 	};
 
 	/**
