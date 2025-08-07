@@ -28,6 +28,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection,
 			getCoverObject, onEditModeClick, canCellEdit,
 		} = this.props;
+		const { config } = S.Common;
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -51,7 +52,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			<div className="cardContent">
 				<ObjectCover object={cover} />
 
-				{canEdit ? (
+				{canEdit && config.experimental ? (
 					<Icon
 						className={[ 'editMode', (this.isEditing ? 'enabled' : '') ].join(' ')}
 						onClick={e => onEditModeClick(e, recordId)}
