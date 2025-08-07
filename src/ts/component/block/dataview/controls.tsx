@@ -312,6 +312,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			onCopy: onViewCopy,
 			onRemove: onViewRemove,
 			menuParam: {
+				classNameWrap: 'fromBlock',
 				element,
 				offsetY: 4,
 				horizontal: I.MenuDirection.Center,
