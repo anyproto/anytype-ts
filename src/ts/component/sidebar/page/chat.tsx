@@ -14,10 +14,51 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	const { space } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const spaceview = U.Space.getSpaceview();
-	const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
-	const items = U.Menu.getVaultItems().filter(it => {
-		return it.isChat && it.name.match(reg);
-	});
+
+	const getItems = () => {
+		let items = U.Menu.getVaultItems().filter(it => it.isChat).map(it => {
+			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
+
+			let text = '';
+			if (list.length) {
+				const last = list[list.length - 1];
+				if (last) {
+					const participantId = U.Space.getParticipantId(it.targetSpaceId, last.creator);
+					const author = last.dependencies.find(it => it.id == participantId);
+
+					if (author) {
+						text = `${author.name}: `;
+					};
+
+					if (last.content.text) {
+						text += U.Common.sanitize(Mark.toHtml(last.content.text, last.content.marks));
+						text = text.replace(/\n\r?/g, ' ');
+					} else 
+					if (last.attachments.length) {
+						const names = last.attachments.map(id => {
+							const object = last.dependencies.find(it => it.id == id);
+							return object ? U.Object.name(object) : '';
+						}).filter(it => it).join(', ');
+
+						text += names;
+					};
+				};
+			};
+
+			it.lastMessage = text;
+			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+			return it;
+		});
+
+		if (filter) {
+			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+			items = items.filter(it => it.name.match(reg) || it.lastMessage.match(reg));
+		};
+
+		return items;
+	};
+
+	const items = getItems();
 	const listRef = useRef<List>(null);
 	const filterRef = useRef(null);
 	const timeout = useRef(0);
@@ -85,42 +126,12 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const Item = (item: any) => {
-		const list = S.Chat.getList(S.Chat.getSpaceSubId(item.targetSpaceId));
-		const counters = S.Chat.getSpaceCounters(item.targetSpaceId);
-
-		let text = '';
 		let cnt = null;
-
-		if (list.length) {
-			const last = list[list.length - 1];
-			if (last) {
-				const participantId = U.Space.getParticipantId(item.targetSpaceId, last.creator);
-				const author = last.dependencies.find(it => it.id == participantId);
-
-				if (author) {
-					text = `${author.name}: `;
-				};
-
-				if (last.content.text) {
-					text += U.Common.sanitize(Mark.toHtml(last.content.text, last.content.marks));
-					text = text.replace(/\n\r?/g, ' ');
-				} else 
-				if (last.attachments.length) {
-					const names = last.attachments.map(id => {
-						const object = last.dependencies.find(it => it.id == id);
-						return object ? U.Object.name(object) : '';
-					}).filter(it => it).join(', ');
-
-					text += names;
-				};
-			};
-		};
-
-		if (counters.mentionCounter) {
+		if (item.counters.mentionCounter) {
 			cnt = <Icon className="mention" />;
 		} else 
-		if (counters.messageCounter) {
-			cnt = counters.messageCounter;
+		if (item.counters.messageCounter) {
+			cnt = item.counters.messageCounter;
 		};
 
 		return (
@@ -138,7 +149,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 						<ObjectName object={item} />
 						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
-					<Label text={text} />
+					<Label text={item.lastMessage} />
 				</div>
 			</div>
 		);
