@@ -179,13 +179,6 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	useEffect(() => {
-		const first = items.length ? items[0] : null;
-		if (first && (first.targetSpaceId != space)) {
-			U.Router.switchSpace(first.targetSpaceId, '', true, { replace: true, animate: true }, false);
-		};
-	}, []);
-
-	useEffect(() => {
 		raf(() => setActive(spaceview));
 	}, [ space ]);
 

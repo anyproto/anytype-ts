@@ -30,6 +30,8 @@ interface SidebarLeftRefProps {
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
+	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const ox = useRef(0);

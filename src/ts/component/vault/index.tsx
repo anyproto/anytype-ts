@@ -164,7 +164,19 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			};
 
 			case 'chat': {
+				const chats = U.Menu.getVaultItems().filter(it => it.isChat);
+
 				sidebar.leftPanelSetState({ page: 'chat' });
+
+				if (chats.length) {
+					const first = chats[0];
+					if (first.targetSpaceId != S.Common.space) {
+						U.Router.switchSpace(first.targetSpaceId, '', true, { 
+							replace: true, 
+							animate: true,
+						}, false);
+					};
+				};
 				break;
 			};
 

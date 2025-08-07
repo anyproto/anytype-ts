@@ -117,7 +117,7 @@ Sentry.setContext('info', {
 
 const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	const MemoSidebarLeft = React.memo(SidebarLeft);
+	const MemoSidebarLeft = memo(SidebarLeft);
 
 	return (
 		<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
