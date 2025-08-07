@@ -224,6 +224,7 @@
 	"commonNotSynced": "Not synced",
 	"commonNewVersion": "Version <span class='hl'>%s</span> is out now",
 	"commonUpgrade": "✦ Upgrade",
+	"commonWidgets": "Widgets",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

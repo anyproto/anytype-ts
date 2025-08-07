@@ -1,14 +1,15 @@
-import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics, Action } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics, Action, sidebar } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, onRelation, menuOpen } = props;
+	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
+	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getShowSidebarRight(isPopup);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
@@ -22,8 +23,10 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isRelation && !isDeleted;
 	const showPin = canWrite && !isRelation;
+	const showWidget = spaceview.isChat;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
+	const readonly = object.isArchived || isLocked;
 
 	let center = null;
 	let label = '';
@@ -104,6 +107,14 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.header);
 	};
 
+	const onWidget = () => {
+		sidebar.rightPanelToggle(true, isPopup, 'widget', {});
+	};
+
+	const onRelation = () => {
+		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+	};
+
 	const updateTemplatesCnt = () => {
 		if (!allowedTemplateSelect) {
 			return;
@@ -153,7 +164,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						id="button-header-relation" 
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'relation', 'withBackground', (rightSidebar == 'object/relation' ? 'active' : '') ].join(' ')}
-						onClick={() => onRelation({ readonly: object.isArchived || root.isLocked() })} 
+						onClick={onRelation} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
@@ -168,6 +179,16 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						}}
 						className={[ (object.isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
 						onClick={onPin}
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
+
+				{showWidget ? (
+					<Icon 
+						id="button-header-widget"
+						tooltipParam={{ text: translate('commonWidgets'), typeY: I.MenuDirection.Bottom }}
+						className="widgetsPanel withBackground"
+						onClick={onWidget} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}

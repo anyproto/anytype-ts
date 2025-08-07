@@ -5,20 +5,20 @@ import { observer } from 'mobx-react';
 import { Icon, Sync, Banner } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
 
-import SidebarWidget from './page/widget';
-import SidebarObject from './page/allObject';
-import SidebarSettingsIndex from './page/settings/index';
-import SidebarSettingsLibrary from './page/settings/library';
-import SidebarPageChat from './page/chat';
+import PageWidget from './page/widget';
+import PageObject from './page/allObject';
+import PageSettingsIndex from './page/settings/index';
+import PageSettingsLibrary from './page/settings/library';
+import PagePageChat from './page/chat';
 
 const Components = {
-	allObject:			 SidebarObject,
-	widget:				 SidebarWidget,
-	chat:				 SidebarPageChat,
-	settings:			 SidebarSettingsIndex,
-	settingsSpace:		 SidebarSettingsIndex,
-	settingsTypes:		 SidebarSettingsLibrary,
-	settingsRelations:	 SidebarSettingsLibrary,
+	allObject:			 PageObject,
+	widget:				 PageWidget,
+	chat:				 PagePageChat,
+	settings:			 PageSettingsIndex,
+	settingsSpace:		 PageSettingsIndex,
+	settingsTypes:		 PageSettingsLibrary,
+	settingsRelations:	 PageSettingsLibrary,
 };
 
 interface SidebarLeftRefProps {
