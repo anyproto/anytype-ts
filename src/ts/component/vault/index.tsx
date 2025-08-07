@@ -166,8 +166,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			case 'chat': {
 				const chats = U.Menu.getVaultItems().filter(it => it.isChat);
 
-				sidebar.leftPanelSetState({ page: 'chat' });
-
 				if (chats.length) {
 					const first = chats[0];
 					if (first.targetSpaceId != S.Common.space) {
@@ -176,6 +174,8 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 							animate: true,
 						}, false);
 					};
+				} else {
+					sidebar.leftPanelSetState({ page: 'chat' });
 				};
 				break;
 			};
