@@ -545,14 +545,24 @@ class Relation {
 			return !it.isHidden && formats.includes(it.format);
 		}).map(it => ({
 			id: it.relationKey, 
-			icon: 'relation ' + this.className(it.format),
+			icon: `relation ${this.className(it.format)}`,
 			name: it.name, 
 		}));
 
-		return [
+		const ret = [
 			{ id: '', icon: '', name: translate('commonNone') },
 			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
-		].concat(options);
+		];
+
+		if (!options.find(it => it.id == 'picture')) {
+			ret.push({ 
+				id: 'picture', 
+				icon: `relation ${this.className(I.RelationType.File)}`,
+				name: translate('libRelationPicture'),
+			});
+		};
+
+		return ret.concat(options);
 	};
 
 	/**
