@@ -1228,6 +1228,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		
 		C.BlockTextSetIcon(rootId, block.id, icon, '');
+		Storage.set('calloutIcon', icon);
 	};
 
 	onUploadIcon (objectId: string) {

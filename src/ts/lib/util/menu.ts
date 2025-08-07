@@ -824,11 +824,13 @@ class UtilMenu {
 
 							case 'pin': {
 								C.SpaceSetOrder(space.id, [ space.id ]);
+								analytics.event('PinSpace');
 								break;
 							};
 
 							case 'unpin': {
 								C.SpaceUnsetOrder(space.id);
+								analytics.event('UnpinSpace');
 								break;
 							};
 
