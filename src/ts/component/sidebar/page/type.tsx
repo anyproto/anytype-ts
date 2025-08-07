@@ -54,7 +54,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 				</div>
 
-				<div className="body customScrollbar">
+				<div className="body">
 					{sections.map((item, i) => (
 						<Section 
 							{...this.props} 

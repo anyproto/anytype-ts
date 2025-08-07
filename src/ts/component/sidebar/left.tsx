@@ -5,18 +5,20 @@ import { observer } from 'mobx-react';
 import { Icon, Sync, Banner } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
 
-import SidebarWidget from './page/widget';
-import SidebarObject from './page/allObject';
-import SidebarSettingsIndex from './page/settings/index';
-import SidebarSettingsLibrary from './page/settings/library'
+import PageWidget from './page/widget';
+import PageObject from './page/allObject';
+import PageSettingsIndex from './page/settings/index';
+import PageSettingsLibrary from './page/settings/library';
+import PagePageChat from './page/chat';
 
 const Components = {
-	object: SidebarObject,
-	widget: SidebarWidget,
-	settings: SidebarSettingsIndex,
-	settingsSpace: SidebarSettingsIndex,
-	types: SidebarSettingsLibrary,
-	relations: SidebarSettingsLibrary,
+	allObject:			 PageObject,
+	widget:				 PageWidget,
+	chat:				 PagePageChat,
+	settings:			 PageSettingsIndex,
+	settingsSpace:		 PageSettingsIndex,
+	settingsTypes:		 PageSettingsLibrary,
+	settingsRelations:	 PageSettingsLibrary,
 };
 
 interface SidebarLeftRefProps {
@@ -28,6 +30,7 @@ interface SidebarLeftRefProps {
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
+	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const ox = useRef(0);
@@ -36,9 +39,20 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
-	const [ page, setPage ] = useState('widget');
+	const [ page, setPage ] = useState(U.Space.getDefaultSidebarPage());
 	const { showVault, updateVersion } = S.Common;
-	const Component = Components[page];
+	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
+	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
+	const Component = Components[id];
+
+	if (id.match(/settings/)) {
+		cnp.push('containerSettings');
+	};
+
+	if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
+		cnp.push('spaceSettingsLibrary');
+	};
 
 	const init = () => {
 		const node = $(nodeRef.current);
@@ -110,7 +124,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			width.current = w;
 
-			if (childRef.current.resize) {
+			if (childRef.current && childRef.current.resize) {
 				childRef.current.resize();
 			};
 		});
@@ -167,23 +181,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	});
 
 	useImperativeHandle(ref, () => ({
-		getNode: () => {
-			return nodeRef.current;
-		},
-
-		setPage: (page: string) => {
-			if (Components[page]) {
-				setPage(page);
-			};
-		},
-
-		getPage: () => {
-			return page;
-		},
-
-		getChild: () => {
-			return childRef.current;
-		},
+		getNode: () => nodeRef.current,
+		setPage,
+		getPage: () => page,
+		getChild: () => childRef.current
 	}));
 
 	return (
@@ -203,7 +204,16 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				id="sidebarLeft" 
 				className="sidebar left" 
 			>
-				<Component ref={childRef} {...props} page={page} />
+				{Component ? (
+					<div id={pageId} className={cnp.join(' ')}>
+						<Component 
+							ref={childRef} 
+							page={id}
+							{...props} 
+							getId={() => pageId}
+						/> 
+					</div>
+				) : ''}
 
 				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
 					<div className="resize-handle" onClick={onHandleClick} />

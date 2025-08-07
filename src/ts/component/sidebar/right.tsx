@@ -1,10 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { J, U, S, sidebar } from 'Lib';
+import { U, S } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 import PageObjectTableOfContents from './page/object/tableOfContents';
+import PageWidget from './page/widget';
 
 interface Props {
 	isPopup?: boolean;
@@ -26,9 +27,10 @@ interface State {
 };
 
 const Components = {
-	'type':						 PageType,
-	'object/relation':			 PageObjectRelation,
-	'object/tableOfContents':	 PageObjectTableOfContents,
+	type:					 PageType,
+	objectRelation:			 PageObjectRelation,
+	objectTableOfContents:	 PageObjectTableOfContents,
+	widget:					 PageWidget,
 };
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
@@ -47,9 +49,11 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	});
 
 	const { page = '' } = state;
-	const Component = Components[page];
 	const cn = [ 'sidebar', 'right' ];
-	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
+	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
+	const Component = Components[id];
+	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const withPreview = [ 'type' ].includes(page);
 
 	if (withPreview) {
@@ -61,9 +65,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	});
 
 	useImperativeHandle(ref, () => ({
-		getState: () => {
-			return U.Common.objectCopy(state);
-		},
+		getState: () => U.Common.objectCopy(state),
 		setState: (newState: State) => {
 			if (newState.page !== state.page) {
 				delete(state.previous);
@@ -80,11 +82,12 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			className={cn.join(' ')}
 		>
 			{Component ? (
-				<div className={cnp.join(' ')}>
+				<div id={pageId} className={cnp.join(' ')}>
 					<Component 
 						ref={childRef} 
 						{...props} 
 						{...state}
+						getId={() => pageId}
 					/> 
 				</div>
 			): ''}

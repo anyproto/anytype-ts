@@ -24,10 +24,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
 	const items = U.Menu.getVaultItems();
-	const pinned = items.filter(it => it.isPinned);
-	const unpinned = items.filter(it => !it.isPinned);
+	const first = items.filter(it => it.isChat && it.counter);
+	const second = items.filter(it => !it.isChat);
 	const profile = U.Space.getProfile();
 	const itemAdd = { id: 'add', name: translate('commonNewSpace'), isButton: true };
+	const itemChat = { id: 'chat', name: translate('commonChat'), isButton: true };
 	const itemSettings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const canCreate = U.Space.canCreateSpace();
 
@@ -152,7 +153,30 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 		switch (item.id) {
 			case 'add': {
-				onAdd();
+				Action.spaceCreateMenu({
+					element: `#vault #item-add`,
+					className: 'spaceCreate fixed',
+					classNameWrap: 'fromSidebar',
+					vertical: I.MenuDirection.Center,
+					offsetX: 54,
+				}, analytics.route.vault);
+				break;
+			};
+
+			case 'chat': {
+				const chats = U.Menu.getVaultItems().filter(it => it.isChat);
+
+				if (chats.length) {
+					const first = chats[0];
+					if (first.targetSpaceId != S.Common.space) {
+						U.Router.switchSpace(first.targetSpaceId, '', true, { 
+							replace: true, 
+							animate: true,
+						}, false);
+					};
+				} else {
+					sidebar.leftPanelSetState({ page: 'chat' });
+				};
 				break;
 			};
 
@@ -179,21 +203,11 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 					U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
 				} else {
 					U.Space.openDashboard();
-					sidebar.leftPanelSetState({ page: 'widget' });
+					sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				};
 				break;
 			};
 		};
-	};
-
-	const onAdd = () => {
-		Action.spaceCreateMenu({
-			element: `#vault #item-add`,
-			className: 'spaceCreate fixed',
-			classNameWrap: 'fromSidebar',
-			vertical: I.MenuDirection.Center,
-			offsetX: 54,
-		}, analytics.route.vault);
 	};
 
 	const onArrow = (dir: number) => {
@@ -284,7 +298,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
-		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
+		const newItems = arrayMove(items, oldIndex, newIndex);
 
 		let s = '';
 		newItems.forEach((it, i) => {
@@ -384,6 +398,27 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			<div className="head" />
 			<div className="body">
 				<div id="scroll" className="side top" onScroll={onScroll}>
+					<VaultItem 
+						item={itemChat}
+						onClick={e => onClick(e, itemChat)}
+						onContextMenu={null}
+						onMouseEnter={e => onMouseEnter(e, itemChat)}
+						onMouseLeave={() => Preview.tooltipHide()}
+					/>
+
+					{first.map(item => (
+						<VaultItem 
+							key={`item-space-${item.id}`}
+							item={item}
+							onClick={e => onClick(e, item)}
+							onMouseEnter={e => onMouseEnter(e, item)}
+							onMouseLeave={() => Preview.tooltipHide()}
+							onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
+						/>
+					))}
+
+					{first.length && second.length ? <div className="div" /> : ''}
+
 					<DndContext
 						sensors={sensors}
 						collisionDetection={closestCenter}
@@ -393,10 +428,10 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 						modifiers={[ restrictToVerticalAxis, restrictToParentElement ]}
 					>
 						<SortableContext
-							items={pinned.map(item => item.id)}
+							items={second.map(item => item.id)}
 							strategy={verticalListSortingStrategy}
 						>
-							{pinned.map((item, i) => (
+							{second.map(item => (
 								<VaultItem 
 									key={`item-space-${item.id}`}
 									item={item}
@@ -408,19 +443,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 							))}
 						</SortableContext>
 					</DndContext>
-
-					{pinned.length && unpinned.length ? <div className="div" /> : ''}
-
-					{unpinned.map((item, i) => (
-						<VaultItem 
-							key={`item-space-${item.id}`}
-							item={item}
-							onClick={e => onClick(e, item)}
-							onMouseEnter={e => onMouseEnter(e, item)}
-							onMouseLeave={() => Preview.tooltipHide()}
-							onContextMenu={item.isButton ? null : e => onContextMenu(e, item)}
-						/>
-					))}
 				</div>
 
 				<div className="side bottom" onDragStart={e => e.preventDefault()}>

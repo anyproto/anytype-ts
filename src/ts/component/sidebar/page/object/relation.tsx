@@ -43,7 +43,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 					) : ''}
 				</div>
 
-				<div className="body customScrollbar">
+				<div className="body">
 					{!type ? (
 						<div className="section">
 							<div className="item empty">

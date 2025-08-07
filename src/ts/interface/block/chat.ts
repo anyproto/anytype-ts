@@ -55,6 +55,7 @@ export interface ChatMessage {
 	replyToMessageId: string;
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
+	dependencies: any[];
 	reactions: any;
 	isSynced: boolean;
 
