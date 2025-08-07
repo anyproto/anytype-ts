@@ -201,20 +201,22 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				<div className="bottom">
 					<div className="grad" />
 
-					<div className="side left">
-						{!isEditing ? (
-							<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
-						) : (
-							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
-						)}
-					</div>
+					<div className="sides">
+						<div className="side left">
+							{!isEditing ? (
+								<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
+							) : (
+								<Button color="orange" text={translate('commonDone')} onClick={this.onEdit} />
+							)}
+						</div>
 
-					<div className="side center">
-						<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="blank" onClick={this.onAdd} />
-					</div>
+						<div className="side center">
+							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
+						</div>
 
-					<div className="side right">
-						<Button id="button-widget-help" className="help" text={'?'} color="blank" tooltipParam={{ text: translate('commonHelp') }}  onClick={this.onHelp}  />
+						<div className="side right">
+							<Button id="button-widget-help" className="help" text={'?'} color="simple" tooltipParam={{ text: translate('commonHelp') }}  onClick={this.onHelp}  />
+						</div>
 					</div>
 				</div>
 			);
