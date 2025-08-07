@@ -206,7 +206,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							{!isEditing ? (
 								<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
 							) : (
-								<Button color="orange" text={translate('commonDone')} onClick={this.onEdit} />
+								<Button color="accent" text={translate('commonDone')} onClick={this.onEdit} />
 							)}
 						</div>
 

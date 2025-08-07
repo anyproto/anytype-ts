@@ -21,9 +21,12 @@
 			background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
 		}
 
-		.sides { position: relative; z-index: 1; width: 100%; display: flex; margin: 0 12px; align-items: center; justify-content: space-between; }
-		.side { width: 33%; flex-shrink: 0; }
-		.side.center { text-align: center; }
+		.sides { 
+			position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px; align-items: center; justify-content: space-between; 
+			gap: 0px 6px;
+		}
+		.side { flex-shrink: 0; }
+		.side.center { text-align: center; flex-grow: 1; overflow: hidden; }
 		.side.right { text-align: right; }
 
 		.icon.settings { background-color: var(--color-shape-highlight-medium); border-radius: 14px; background-image: url('~img/icon/widget/button/settings0.svg'); }
@@ -32,8 +35,7 @@
 		.button { height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; font-weight: 500; }
 		.button.help { font-size: 15px; padding: 0px; }
 
-		.button.simple { background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); }
-
+		.button.simple { background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); @include text-overflow-nw; }
 		.button.simple:hover,
 		.button.simple.hover { background-color: var(--color-shape-highlight-dark) !important; }
 
