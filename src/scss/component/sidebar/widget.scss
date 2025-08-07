@@ -25,8 +25,8 @@
 			position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px; align-items: center; justify-content: space-between; 
 			gap: 0px 6px;
 		}
-		.side { flex-shrink: 0; width: 33%; }
-		.side.center { text-align: center; flex-grow: 1; overflow: hidden; }
+		.side { flex-shrink: 0; width: 28px; }
+		.side.center { text-align: center; flex-grow: 1; width: auto; }
 		.side.right { text-align: right; }
 
 		.icon.settings { background-color: var(--color-shape-highlight-medium); border-radius: 14px; background-image: url('~img/icon/widget/button/settings0.svg'); }
