@@ -712,7 +712,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return 0;
 		};
 
-		const node = $(ref.node);
+		const node = $(ref.getNode());
 		return node.length ? node.offset().top + node.outerHeight() : 0;
 	};
 
