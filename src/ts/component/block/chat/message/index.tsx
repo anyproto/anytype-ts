@@ -401,13 +401,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
-	getAttachments (message: I.ChatMessage): any[] {
+	getAttachments (message: Partial<I.ChatMessage>): any[] {
 		const { subId, id } = this.props;
 
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
 
-	getAttachmentsClass (message: I.ChatMessage): string {
+	getAttachmentsClass (message: Partial<I.ChatMessage>): string {
 		const attachments = this.getAttachments(message);
 		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
@@ -430,7 +430,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		return c.join(' ');
 	};
 
-	canAddReaction (message: I.ChatMessage): boolean {
+	canAddReaction (message: Partial<I.ChatMessage>): boolean {
 		const { account } = S.Auth;
 		const { id, subId } = this.props;
 		const reactions = message.reactions || [];

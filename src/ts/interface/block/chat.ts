@@ -88,7 +88,7 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	onReplyEdit?: (e: any) => void;
 	onReplyClick?: (e: any) => void;
 	getReplyContent?: (message: any) => any;
-	message?: I.ChatMessage;
+	message?: Partial<I.ChatMessage>;
 };
 
 export interface BlockChat extends I.Block {};

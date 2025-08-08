@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react';
 import * as React from 'react';
-import {C, I, S} from "Lib";
+import {C, I, Mapper, S} from "Lib";
 import {
 	useInfiniteQuery,
 } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import {useRef, useCallback, useLayoutEffect, useState, useEffect} from "react";
 import {useVirtualizer, type Virtualizer, type VirtualizerOptions} from "@tanstack/react-virtual";
 import Message from "Component/block/chat/message";
+import {eventHandler} from "Lib/eventHandler";
 
 enum FetchPageType {
 	AfterOrderId,
@@ -29,7 +30,7 @@ function getChatId (rootId: string): string {
 const BlockChat = observer((props: { ref } & I.BlockComponent) => {
 	const chatId = getChatId(props.rootId);
 	const parentRef = useRef(null);
-	const [messages, setMessages] = useState<Array<I.ChatMessage>>([]);
+	const [messages, setMessages] = useState<Array<Partial<I.ChatMessage>>>([]);
 
 	const loadingRef = useRef(false);
 	const fetchMessages = useCallback((pageParam: PageParam) => {
@@ -42,13 +43,13 @@ const BlockChat = observer((props: { ref } & I.BlockComponent) => {
 		loadingRef.current = true;
 		if (pageParam.type === FetchPageType.BeforeOrderId) {
 			C.ChatGetMessages(chatId, pageParam.orderId, '', 20, false, (message: any) => {
-				const newMessages = message.messages as Array<I.ChatMessage>;
+				const newMessages = message.messages as Array<Partial<I.ChatMessage>>;
 				setMessages((messages) => ([...newMessages, ...messages]));
 				loadingRef.current = false;
 			});
 		} else {
 			C.ChatGetMessages(chatId, '', pageParam.orderId, 10, false, (message: any) => {
-				const newMessages = message.messages as Array<I.ChatMessage>;
+				const newMessages = message.messages as Array<Partial<I.ChatMessage>>;
 				setMessages((messages) => ([...messages, ...newMessages]));
 				loadingRef.current = false;
 			});
@@ -68,13 +69,43 @@ const BlockChat = observer((props: { ref } & I.BlockComponent) => {
 	const { onChange, keepBottomDistance } =
 		useKeepBottomDistance(rowVirtualizer);
 
-	// auto load more when component mounted
-	const autoLoadedDataRef = useRef(false);
 	useEffect(() => {
-		if (autoLoadedDataRef.current) return;
-		autoLoadedDataRef.current = true;
-		fetchMessages({type: FetchPageType.AfterOrderId, orderId: ''});
-	}, [fetchMessages]);
+		if (chatId == '') {
+			return;
+		}
+		const subId = chatId;
+		C.ChatSubscribeLastMessages(chatId, 20, subId, (response) => {
+			const newMessages = response.messages as Array<Partial<I.ChatMessage>>;
+			setMessages(newMessages);
+			eventHandler.register({
+				id: subId,
+				handle: (spaceId, eventMessage) => {
+					const addEvent = eventMessage.getChatadd();
+					if (addEvent && addEvent.getSubidsList().includes(subId)) {
+						const newMessage = Mapper.From.ChatMessage(addEvent.getMessage());
+						setMessages((messages) => {
+							const idx = messages.findIndex((msg) => {
+								return msg.orderId > addEvent.getOrderid()
+							})
+							if (idx == -1) {
+								return [...messages, newMessage]
+							} else if (idx == 0) {
+								return [newMessage, ...messages]
+							} else {
+								return [...messages.slice(0, idx-1), newMessage, ...messages.slice(idx)]
+							}
+						})
+						return true;
+					}
+					return false;
+				}
+			});
+		});
+
+		return () => {
+			eventHandler.unregister(chatId);
+		};
+	}, [chatId]);
 
 
 	const autoScolledToBottomRef = useRef(false);
