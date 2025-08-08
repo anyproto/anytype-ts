@@ -134,6 +134,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				};
 			});
 		} else {
+			const messages = S.Chat.getList(subId);
 			if (!messages.length) {
 				isLoading.current = false;
 				return;
@@ -597,38 +598,40 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		if (!hasScrollValue) {
+		if (!hasScroll()) {
 			readScrolledMessages();
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = getMessageScrollOffset(id);
-		const y = Math.max(0, top - container.height() / 2 - J.Size.header);
+		raf(() => {
+			const container = U.Common.getScrollContainer(isPopup);
+			const top = getMessageScrollOffset(id);
+			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
-		setIsBottom(false);
-		setAutoLoadDisabled(true);
+			setIsBottom(false);
+			setAutoLoadDisabled(true);
 
-		const cb = () => {
-			readScrolledMessages();
-			setAutoLoadDisabled(false);
+			const cb = () => {
+				readScrolledMessages();
+				setAutoLoadDisabled(false);
 
-			if (highlight) {
-				highlightMessage(id);
+				if (highlight) {
+					highlightMessage(id);
+				};
 			};
-		};
 
-		if (animate) {
-			const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-			animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
-		} else {
-			container.scrollTop(y);
-			cb();
-		};
+			if (animate) {
+				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
+				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+			} else {
+				container.scrollTop(y);
+				cb();
+			};
+		});
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
-		if (!hasScrollValue) {
+		if (!hasScroll()) {
 			readScrolledMessages();
 			setIsBottom(true);
 			return;
@@ -659,7 +662,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const scrollToBottomCheck = () => {
-		if (isBottom) {
+		if (isBottom.current) {
 			window.clearTimeout(timeoutScroll.current);
 			timeoutScroll.current = window.setTimeout(() => scrollToBottom(false), 50);
 		};
@@ -802,7 +805,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const sections = getSections();
-	const hasScrollValue = hasScroll();
 	const spaceview = U.Space.getSpaceview();
 	const isEmpty = !messages.length;
 
@@ -914,7 +916,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				loadMessagesByOrderId={loadMessagesByOrderId}
 				getMessages={getMessages}
 				getMessagesInViewport={getMessagesInViewport}
-				getIsBottom={() => hasScrollValue ? isBottom.current : true}
+				getIsBottom={() => hasScroll() ? isBottom.current : true}
 				getReplyContent={getReplyContent}
 				highlightMessage={highlightMessage}
 				loadDepsAndReplies={loadDepsAndReplies}
