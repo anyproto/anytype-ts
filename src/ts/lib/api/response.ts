@@ -178,13 +178,6 @@ export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 	};
 };
 
-export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
-	return {
-		objectId: response.getObjectid(),
-		details: details(response),
-	};
-};
-
 export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
 	return {
 		objectId: response.getObjectid(),
