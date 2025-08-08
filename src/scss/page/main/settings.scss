@@ -101,7 +101,7 @@
         .item:last-of-type::after { display: none; }
     }
 
-	> .settingsPage { padding: 36px 0px 60px; }
+	> .settingsPage { padding: 26px 0px 60px; }
 
     > .pageSettingsIndex,
     > .pageSettingsAccount {
@@ -136,13 +136,10 @@
 
     > .pageSettingsSpaceIndex,
     > .pageSettingsSpaceIndexEmpty {
-        .spaceHeader {
-            position: relative; margin: 0px 0px 8px 0px; padding: 16px 44px 32px; display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--color-shape-secondary); border-radius: 16px; width: 100%; gap: 10px 0px;
-        }
+        .spaceHeader { position: relative; margin: 0px 0px 20px 0px; padding: 0px 44px; display: flex; flex-direction: column; align-items: center; width: 100%; }
         .spaceHeader {
             .spaceType { margin-bottom: 8px; @include text-small; color: var(--color-text-secondary); }
-            .buttons { position: absolute; right: 16px; top: 16px; display: flex; gap: 0px 16px; opacity: 0; transition: opacity $transitionCommon; }
+            .buttons { position: absolute; right: 0px; top: 0px; display: flex; gap: 0px 16px; opacity: 0; transition: opacity $transitionCommon; }
             .buttons {
                 .button { border: 0px; padding: 0px; border-radius: 0; height: unset; background: none; }
                 .button.blank { color: var(--color-text-secondary); }
@@ -152,53 +149,48 @@
             }
             .iconObject { border: 1px solid var(--color-shape-highlight-medium); }
 
-            .spaceNameWrapper,
-            .spaceDescriptionWrapper { position: relative; width: 100%; }
-            .spaceNameWrapper,
-            .spaceDescriptionWrapper {
+            .spaceNameWrapper { position: relative; width: 100%; margin: 10px 0px 6px; }
+            .spaceNameWrapper {
                 .counter { position: absolute; right: -34px; bottom: 1px; @include text-small; text-align: right; display: none; }
                 .counter.show { display: block; }
                 .counter.red { color: var(--color-red); }
             }
 
             .spaceName { @include text-header1; }
-            .spaceName,
-            .spaceDescription { text-align: center; width: 100%; }
-            .spaceName,
-            .spaceDescription {
+            .spaceName { text-align: center; width: 100%; }
+            .spaceName {
                 .editable { position: relative; z-index: 1; }
                 .placeholder { z-index: 0; }
             }
+
+            .membersCounter { color: var(--color-text-secondary); }
         }
         .spaceHeader:hover,
         .spaceHeader.isEditing {
             .buttons { opacity: 1; }
         }
         .spaceHeader:not(.isEditing) {
-            .spaceNameWrapper,
-            .spaceDescriptionWrapper {
+            .spaceNameWrapper {
                 .counter { display: none !important; }
             }
         }
 
-        .spaceButtons { display: flex; gap: 0px 8px; margin-bottom: 36px; }
+        .spaceButtons { display: flex; justify-content: center; margin-bottom: 36px; }
         .spaceButtons {
+            .btn { width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
             .btn {
-                height: 86px; flex: 1 0 0px; border: 1px solid var(--color-shape-secondary); border-radius: 16px; transition: $transitionAllCommon;
-                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px 0px; position: relative; text-align: center;
-				padding: 0px 8px;
-            }
-            .btn {
-                .icon { width: 20px; height: 20px; }
-                .icon.invite { background: url('~img/icon/settings/invite.svg'); }
-                .icon.qr { background: url('~img/icon/settings/qr.svg'); }
-                .icon.more { background: url('~img/icon/settings/more.svg'); }
+                .icon {
+                    width: 64px; height: 64px; border-radius: 8px; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
+                    background-position: 50% 50%; background-size: 40px; transition: $transitionAllCommon;
+                }
+                .icon.invite { background-image: url('~img/icon/settings/invite.svg'); }
+                .icon.qr { background-image: url('~img/icon/settings/qr.svg'); }
+                .icon.copyLink { background-image: url('~img/icon/settings/copy.svg'); }
 
-                .label { @include text-common; @include text-overflow-nw; color: var(--color-text-primary); text-transform: capitalize; width: 100%; }
-                .tooltipOverlay { position: absolute; width: 100%; height: 100%; z-index: 3; }
+                .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; }
 
-                &:not(.disabled) {
-                    &:hover, &.hover { background: var(--color-shape-tertiary); }
+                &:hover, &.hover {
+                    .icon { background-color: var(--color-shape-highlight-dark); }
                 }
             }
         }

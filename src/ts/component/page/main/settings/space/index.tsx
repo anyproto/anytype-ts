@@ -15,7 +15,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	node: any = null;
 	refName: any = null;
-	refDescription: any = null;
 	refMode = null;
 	refUxType = null;
 	canSave: boolean = true;
@@ -132,25 +131,13 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							ref={ref => this.refName = ref}
 							placeholder={translate('defaultNamePage')}
 							readonly={!canWrite || !isEditing}
-							onKeyUp={() => this.onKeyUp('name')}
+							onKeyUp={this.onKeyUp}
 							maxLength={J.Constant.limit.space.name}
 						/>
 						<div className="counter" />
 					</div>
 
-					{isEditing || this.checkDescription() ? (
-						<div className="spaceDescriptionWrapper">
-							<Editable
-								classNameWrap="spaceDescription"
-								ref={ref => this.refDescription = ref}
-								placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
-								readonly={!canWrite || !isEditing}
-								onKeyUp={() => this.onKeyUp('description')}
-								maxLength={J.Constant.limit.space.description}
-							/>
-							<div className="counter" />
-						</div>
-					) : ''}
+					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 				</div>
 
 				<div className="spaceButtons">
@@ -165,7 +152,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
 								<Icon className={el.icon} />
 								<Label text={el.name} />
-								{el.tooltip ? <Icon className="tooltipOverlay" tooltipParam={{ text: el.tooltip }} /> : ''}
 							</div>
 						);
 					})}
@@ -357,11 +343,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		this.refName?.setValue(name);
 		this.refName?.placeholderCheck();
-
-		if (space.description) {
-			this.refDescription?.setValue(space.description);
-			this.refDescription?.placeholderCheck();
-		};
 	};
 
 	init () {
@@ -393,8 +374,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.setState({ cid, key });
 	};
 
-	onKeyUp (input: string) {
-		const ref = input == 'name' ? this.refName : this.refDescription;
+	onKeyUp () {
+		const ref = this.refName;
 
 		ref?.placeholderCheck();
 		this.updateCounters();
@@ -466,8 +447,21 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			};
 
 			case 'qr': {
+				if (!cid || !key) {
+					return;
+				};
+
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
+				break;
+			};
+
+			case 'copyLink': {
+				if (!cid || !key) {
+					return;
+				};
+
+				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
 				break;
 			};
 
@@ -545,7 +539,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		C.WorkspaceSetInfo(S.Common.space, {
 			name: this.checkName(this.refName?.getTextValue()),
-			description: this.refDescription?.getTextValue(),
 		});
 		this.setState({ isEditing: false });
 	};
@@ -564,56 +557,36 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		return v;
 	};
 
-	checkDescription (): boolean {
-		return !/^\r?\n$/.test(String(this.refDescription?.getTextValue() || ''));
-	};
-
 	getButtons () {
 		const { cid, key } = this.state;
-		const space = U.Space.getSpaceview();
-		const isDisabled = space.isPersonal;
-		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
-		return [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip },
-			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
-			{ id: 'more', name: translate('commonMore'), icon: 'more' },
-		].filter(it => it);
+		let buttons: any[] = [
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' }
+		];
+
+		if (cid && key) {
+			buttons = buttons.concat([
+				{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
+				{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			]);
+		};
+
+		return buttons;
 	};
 
 	updateCounters () {
 		const node = $(this.node);
-		const { name, nameThreshold, description, descriptionThreshold } = J.Constant.limit.space;
+		const { name, nameThreshold } = J.Constant.limit.space;
+		const el = node.find('.spaceNameWrapper .counter');
+		const counter = name - this.refName?.getTextValue().length;
+
+		el.text(counter).toggleClass('show', counter <= nameThreshold);
+		el.toggleClass('red', counter < 0);
 
 		let canSave = true;
-
-		[ 'name', 'description' ].forEach((input) => {
-			let ref = null;
-			let el = null;
-			let limit = 0;
-			let threshold = 0;
-
-			if (input == 'name') {
-				ref = this.refName;
-				el = node.find('.spaceNameWrapper .counter');
-				limit = name;
-				threshold = nameThreshold;
-			} else {
-				ref = this.refDescription;
-				el = node.find('.spaceDescriptionWrapper .counter');
-				limit = description;
-				threshold = descriptionThreshold;
-			};
-
-			const counter = limit - ref?.getTextValue().length;
-
-			el.text(counter).toggleClass('show', counter <= threshold);
-			el.toggleClass('red', counter < 0);
-
-			if (counter < 0) {
-				canSave = false;
-			};
-		});
+		if (counter < 0) {
+			canSave = false;
+		};
 
 		this.canSave = canSave;
 		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);

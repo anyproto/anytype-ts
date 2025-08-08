@@ -145,6 +145,10 @@ const App: FC = () => {
 	const init = () => {
 		const { version, arch, getGlobal } = electron;
 
+		window.setTimeout(() => {
+			U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+		}, 2000)
+
 		U.Router.init(history);
 		U.Smile.init();
 
