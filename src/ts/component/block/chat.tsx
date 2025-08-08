@@ -134,6 +134,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				};
 			});
 		} else {
+			const messages = S.Chat.getList(subId);
 			if (!messages.length) {
 				isLoading.current = false;
 				return;
