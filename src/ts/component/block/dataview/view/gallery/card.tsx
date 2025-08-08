@@ -25,7 +25,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 	render () {
 		const {
-			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection,
+			rootId, block, recordId, readonly, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection,
 			getCoverObject, onEditModeClick, canCellEdit,
 		} = this.props;
 		const { config } = S.Common;
@@ -93,20 +93,14 @@ const Card = observer(class Card extends React.Component<Props> {
 			</div>
 		);
 
-		if (!isInline) {
+		if (!isInline && !readonly) {
 			content = (
-				<SelectionTarget id={record.id} type={I.SelectType.Record}>
-					{content}
-				</SelectionTarget>
-			);
-
-			if (isCollection) {
-				content = (
-					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					<SelectionTarget id={record.id} type={I.SelectType.Record}>
 						{content}
-					</DropTarget>
-				);
-			};
+					</SelectionTarget>
+				</DropTarget>
+			);
 		};
 
 		return (
