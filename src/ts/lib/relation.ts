@@ -354,7 +354,7 @@ class Relation {
 			ret.push({ 
 				id: U.Common.sprintf(`_filter_template_%d_`, i), 
 				name: translate(`filterTemplate${i}`),
-				icon: `filterTemplate${i}`,
+				icon: `filterTemplate-${I.FilterValueTemplate[i].toLowerCase()}`,
 				templateType: id as I.FilterValueTemplate,
 			});
 		};

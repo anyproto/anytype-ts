@@ -58,8 +58,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 			const type = item.type ? S.Record.getTypeById(item.type) : null;
 
-			console.log(item);
-
 			let content = null;
 			if (item.isDiv) {
 				content = (
