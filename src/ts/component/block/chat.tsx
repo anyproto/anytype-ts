@@ -597,7 +597,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		if (!hasScrollValue) {
+		if (!hasScroll()) {
 			readScrolledMessages();
 			return;
 		};
@@ -628,7 +628,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
-		if (!hasScrollValue) {
+		if (!hasScroll()) {
 			readScrolledMessages();
 			setIsBottom(true);
 			return;
@@ -802,7 +802,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const sections = getSections();
-	const hasScrollValue = hasScroll();
 	const spaceview = U.Space.getSpaceview();
 	const isEmpty = !messages.length;
 
@@ -914,7 +913,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				loadMessagesByOrderId={loadMessagesByOrderId}
 				getMessages={getMessages}
 				getMessagesInViewport={getMessagesInViewport}
-				getIsBottom={() => hasScrollValue ? isBottom.current : true}
+				getIsBottom={() => hasScroll() ? isBottom.current : true}
 				getReplyContent={getReplyContent}
 				highlightMessage={highlightMessage}
 				loadDepsAndReplies={loadDepsAndReplies}
