@@ -579,9 +579,11 @@
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
-	"pageSettingsSpaceIndexEditInfo": "Edit info",
+	"pageSettingsSpaceIndexEdit": "Edit",
 	"pageSettingsSpaceIndexInviteMembers": "Invite Members",
+	"pageSettingsSpaceIndexAddMembers": "Add members",
 	"pageSettingsSpaceIndexQRCode": "QR code",
+	"pageSettingsSpaceIndexCopyLink": "Copy link",
 	"pageSettingsSpaceIndexSpaceMembers": "Space Members",
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
@@ -915,7 +917,9 @@
 	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
 	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 	"popupSettingsSpaceIndexPushTitle": "Message notifications",
-	"popupSettingsSpaceIndexPushText": "You will receive notifications when you are mentioned only",
+	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
+	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
+	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
 	"popupSettingsSpaceIndexUxTypeTitle": "Space UX Type",
 
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
