@@ -159,45 +159,44 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{space.isShared ? (
+					{space.isShared && config.experimental ? (
 						<>
-							{config.experimental ? (
-								<div className="section sectionSpaceManager">
-									<Label className="sub" text={translate(`electronMenuDebug`)} />
-									<div className="sectionContent">
 
-										<div className="item">
-											<div className="sides">
-												<div className="side left">
-													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-												</div>
+							<div className="section sectionSpaceManager">
+								<Label className="sub" text={translate(`electronMenuDebug`)} />
+								<div className="sectionContent">
 
-												<div className="side right">
-													<Select
-														id="linkStyle"
-														ref={ref => this.refUxType = ref}
-														value={String(space.uxType)}
-														options={spaceUxTypes}
-														onChange={v => {
-															v = Number(v);
+									<div className="item">
+										<div className="sides">
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+											</div>
 
-															const details: any = { 
-																spaceUxType: v,
-																spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
-															};
+											<div className="side right">
+												<Select
+													id="linkStyle"
+													ref={ref => this.refUxType = ref}
+													value={String(space.uxType)}
+													options={spaceUxTypes}
+													onChange={v => {
+														v = Number(v);
 
-															C.WorkspaceSetInfo(S.Common.space, details);
-															analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
-														}}
-														arrowClassName="black"
-														menuParam={{ horizontal: I.MenuDirection.Right }}
-													/>
-												</div>
+														const details: any = {
+															spaceUxType: v,
+															spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+														};
+
+														C.WorkspaceSetInfo(S.Common.space, details);
+														analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+													}}
+													arrowClassName="black"
+													menuParam={{ horizontal: I.MenuDirection.Right }}
+												/>
 											</div>
 										</div>
 									</div>
 								</div>
-							) : ''}
+							</div>
 
 							<div className="section sectionSpaceManager">
 								<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
@@ -209,7 +208,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexPushText')} />
+												<Label text={translate(`popupSettingsSpaceIndexPushText${space.notificationMode}`)} />
 											</div>
 
 											<div className="side right">
