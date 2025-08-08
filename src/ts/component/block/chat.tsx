@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, DragEvent, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -28,7 +28,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
-	const [ dummy, setDummy ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const { chatId } = object;
 	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
@@ -233,8 +232,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		let marks = [];
 
 		if (formRef.current) {
-			attachments = attachments.concat((formRef.current.state.attachments || []).filter(it => !it.isTmp).map(it => it.id));
-			marks = marks.concat(formRef.current.marks || []);
+			attachments = attachments.concat(formRef.current.getAttachments().filter(it => !it.isTmp).map(it => it.id));
+			marks = marks.concat(formRef.current.getMarks());
 
 			const replyingId = formRef.current.getReplyingId();
 
@@ -275,8 +274,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			keys: U.Subscription.chatRelationKeys(),
 			updateDetails: true,
 		}, () => {
-			setDummy(dummy + 1);
-
 			if (callBack) {
 				callBack();
 			};
@@ -536,7 +533,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
-		const formHeight = formRef.current ? $(formRef.current.node).outerHeight() : 120;
+		const formHeight = formRef.current ? $(formRef.current.getNode()).outerHeight() : 120;
 		const ch = isPopup ? container.outerHeight() : $(window).height();
 		const min = container.scrollTop();
 		const max = min + ch - formHeight;
@@ -915,8 +912,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				scrollToMessage={scrollToMessage}
 				loadMessagesByOrderId={loadMessagesByOrderId}
 				getMessages={getMessages}
-				getMessagesInViewport={getMessagesInViewport}
-				getIsBottom={() => hasScroll() ? isBottom.current : true}
 				getReplyContent={getReplyContent}
 				highlightMessage={highlightMessage}
 				loadDepsAndReplies={loadDepsAndReplies}

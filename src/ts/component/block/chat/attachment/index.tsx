@@ -21,7 +21,7 @@ interface RefProps {
 
 const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, scrollToBottom, onPreview, updateAttachments } = props;
+	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, scrollToBottom, onPreview, updateAttachments, onRemove } = props;
 	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -236,7 +236,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
-	const onRemove = (e: any) => {
+	const onRemoveHandler = (e: any) => {
 		e.stopPropagation();
 		onRemove(object.id);
 	};
@@ -401,7 +401,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onContextMenu={onContextMenu}
 		>
 			{content}
-			<Icon className="remove" onClick={onRemove} />
+			<Icon className="remove" onClick={onRemoveHandler} />
 		</div>
 	);
 
