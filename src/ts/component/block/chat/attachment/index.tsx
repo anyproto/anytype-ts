@@ -315,7 +315,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		const { object, subId } = this.props;
 		
-		if (object.isTmp) {
+		if (object.isTmp || object.isDeleted) {
 			return;
 		};
 
