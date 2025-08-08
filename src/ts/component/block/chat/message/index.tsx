@@ -28,18 +28,18 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	render () {
-		const { rootId, id, isNew, readonly, subId, hasMore, scrollToBottom, onContextMenu, onMore, onReplyEdit } = this.props;
+		const { rootId, id, isNew, readonly, subId, hasMore, scrollToBottom, onContextMenu, onMore, onReplyEdit, message } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
-		const message = S.Chat.getMessage(subId, id);
+		// const message = S.Chat.getMessage(subId, id);
 		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention, isSynced } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
-		const attachments = this.getAttachments();
+		const attachments = this.getAttachments(message);
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSelf = creator == account.id;
-		const attachmentsLayout = this.getAttachmentsClass();
-		const canAddReaction = this.canAddReaction();
+		const attachmentsLayout = this.getAttachmentsClass(message);
+		const canAddReaction = this.canAddReaction(message);
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
 		const ct = [ 'textWrapper' ];
@@ -262,8 +262,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	init () {
-		const { rootId, id, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
-		const message = S.Chat.getMessage(subId, id);
+		const { rootId, id, subId, renderLinks, renderMentions, renderObjects, renderEmoji, message } = this.props;
 		const { creator, content } = message;
 		const { marks, text } = content;
 		const { account } = S.Auth;
@@ -372,7 +371,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 	};
 
 	onAttachmentRemove (attachmentId: string) {
-		this.update({ attachments: this.getAttachments().filter(it => it.target != attachmentId) });
+		//this.update({ attachments: this.getAttachments().filter(it => it.target != attachmentId) });
 	};
 
 	onPreview (preview: any) {
@@ -402,15 +401,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
-	getAttachments (): any[] {
+	getAttachments (message: I.ChatMessage): any[] {
 		const { subId, id } = this.props;
-		const message = S.Chat.getMessage(subId, id);
 
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
 
-	getAttachmentsClass (): string {
-		const attachments = this.getAttachments();
+	getAttachmentsClass (message: I.ChatMessage): string {
+		const attachments = this.getAttachments(message);
 		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
 		const al = attachments.length;
@@ -432,10 +430,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<I.ChatMes
 		return c.join(' ');
 	};
 
-	canAddReaction (): boolean {
+	canAddReaction (message: I.ChatMessage): boolean {
 		const { account } = S.Auth;
 		const { id, subId } = this.props;
-		const message = S.Chat.getMessage(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 

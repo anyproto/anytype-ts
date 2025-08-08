@@ -9,6 +9,7 @@ import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard,
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
+import {eventHandler} from "Lib/eventHandler";
 
 const SORT_IDS = [ 
 	'BlockAdd', 
@@ -143,6 +144,9 @@ class Dispatcher {
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
+			if (eventHandler.handle(message.getSpaceid(), message)) {
+				continue;
+			}
 			const type = Mapper.Event.Type(message.getValueCase());
 			const { spaceId, data } = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;

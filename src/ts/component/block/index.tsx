@@ -240,7 +240,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			case I.BlockType.Chat: {
 				canDrop = canSelect = false;
 				blockComponent = (
-					<BlockChat 
+					<BlockChat
 						key={key} 
 						ref={setRef} 
 						{...this.props}
