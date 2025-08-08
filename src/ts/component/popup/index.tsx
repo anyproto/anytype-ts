@@ -36,7 +36,6 @@ import PopupApiCreate from './api/create';
 const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { id, param } = props;
-	const isMountedRef = useRef(false);
 	const nodeRef = useRef(null);
 	const componentRef = useRef(null);
 	const isAnimatingRef = useRef(false);
@@ -87,10 +86,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const animate = () => {
 		window.setTimeout(() => {
-			if (!isMountedRef.current) {
-				return;
-			};
-
 			if (isAnimatingRef.current) {
 				return;
 			};
@@ -108,10 +103,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		raf(() => {
-			if (!isMountedRef.current) {
-				return;
-			};
-				
 			const node = $(nodeRef.current);
 			const inner = node.find('.innerWrap');
 			const { ww } = U.Common.getWindowDimensions();
@@ -134,8 +125,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		isMountedRef.current = true;
-
 		if (!param.preventResize) {
 			position();
 		};
@@ -146,7 +135,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('popup', { params: { id } });
 
 		return () => {
-			isMountedRef.current = false;
 			unbind();
 		};
 	}, []);

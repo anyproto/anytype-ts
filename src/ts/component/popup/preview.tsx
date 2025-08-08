@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
@@ -24,19 +24,19 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const thumbsRef = useRef(null);
 	const galleryMapRef = useRef(new Map());
 
-	const unbind = useCallback(() => {
+	const unbind = () => {
 		$(window).off('resize.popupPreview keydown.popupPreview');
-	}, []);
+	};
 
-	const rebind = useCallback(() => {
+	const rebind = () => {
 		unbind();
 
 		const win = $(window);
 		win.on('resize.popupPreview', () => reload());
 		win.on('keydown.menu', e => onKeyDown(e));
-	}, []);
+	};
 
-	const setCurrentItem = useCallback((idx?: number) => {
+	const setCurrentItem = (idx?: number) => {
 		const initialIdx = data.initialIdx || 0;
 
 		if (!idx) {
@@ -48,24 +48,13 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (item && item.object) {
 			setCurrent(item.object);
 		};
-	}, [gallery, data.initialIdx]);
+	};
 
-	const onKeyDown = useCallback((e: any) => {
+	const onKeyDown = (e: any) => {
 		keyboard.shortcut('escape', e, () => close());
-	}, [close]);
+	};
 
-	const onExpand = useCallback((e: any) => {
-		e.stopPropagation();
-		e.preventDefault();
-
-		S.Popup.closeAll(null, () => {
-			if (current) {
-				U.Object.openAuto(current);
-			};
-		});
-	}, [current]);
-	
-	const onMore = useCallback((e: any) => {
+	const onMore = (e: any) => {
 		e.stopPropagation();
 		e.preventDefault();
 
@@ -89,9 +78,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				onDelete: cb,
 			}
 		});
-	}, [current, getId, close]);
+	};
 
-	const onError = useCallback((idx: number) => {
+	const onError = (idx: number) => {
 		const node = $(`#${getId()}-innerWrap`);
 		const wrap = node.find(`#itemPreview-${idx}`);
 
@@ -109,17 +98,17 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		obj.isLoaded = true;
 		galleryMapRef.current.set(idx, obj);
-	}, [ getId ]);
+	};
 
-	const getMaxWidthHeight = useCallback(() => {
+	const getMaxWidthHeight = () => {
 		const { ww, wh } = U.Common.getWindowDimensions();
 		const maxHeight = wh - (HEIGHT_FOOTER + HEIGHT_HEADER);
 		const maxWidth = ww - BORDER * 2 - sidebar.getDummyWidth();
 
 		return { maxWidth, maxHeight };
-	}, []);
+	};
 
-	const resizeMedia = useCallback((idx: number, width: number, height: number) => {
+	const resizeMedia = (idx: number, width: number, height: number) => {
 		const { maxWidth, maxHeight } = getMaxWidthHeight();
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
@@ -134,9 +123,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		wrap.css({ width: w, height: h });
-	}, [ getId, getMaxWidthHeight ]);
+	};
 
-	const resize = useCallback((idx: number) => {
+	const resize = (idx: number) => {
 		const node = $(`#${getId()}-innerWrap`);
 		const element = node.find(`#itemPreview-${idx}`);
 		const loader = element.find('.loader');
@@ -202,9 +191,9 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				break;
 			};
 		};
-	}, [ getId, resizeMedia, onError ]);
+	};
 
-	const reload = useCallback(() => {
+	const reload = () => {
 		gallery.forEach((el, idx) => {
 			const { src, type } = el;
 
@@ -213,7 +202,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 			resize(idx);
 		});
-	}, [ gallery, resize ]);
+	};
 
 	useEffect(() => {
 		reload();
@@ -223,10 +212,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return () => {
 			unbind();
 		};
-	}, [ reload, rebind, setCurrentItem, unbind ]);
+	}, []);
 
 	const getContent = (item: any, idx: number, isThumb?: boolean) => {
-		const { src, type, object } = item;
+		const { src, type } = item;
 		const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
 		const loader = !isThumb ? <Loader className="loader" /> : '';
 		const cn = [ 'previewItem' ];
@@ -284,7 +273,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					mousewheel={true}
 					thumbs={{ swiper: thumbsRef.current }}
 					navigation={true}
-					loop={true}
+					loop={false}
 					modules={[ Mousewheel, Keyboard, Thumbs, Navigation ]}
 					onTransitionEnd={data => setCurrentItem(data.activeIndex)}
 				>

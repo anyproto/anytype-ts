@@ -178,13 +178,6 @@ export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 	};
 };
 
-export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
-	return {
-		objectId: response.getObjectid(),
-		details: details(response),
-	};
-};
-
 export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
 	return {
 		objectId: response.getObjectid(),
@@ -331,12 +324,6 @@ export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	};
 
 	return { edges, nodes };
-};
-
-export const ObjectToBookmark = (response: Rpc.Object.ToBookmark.Response) => {
-	return {
-		objectId: response.getObjectid(),
-	};
 };
 
 export const ObjectShareByLink = (response: Rpc.Object.ShareByLink.Response) => {
@@ -641,6 +628,7 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 		inviteCid: response.getInvitecid(),
 		inviteKey: response.getInvitefilekey(),
 		inviteType: response.getInvitetype(),
+		permissions: response.getPermissions(),
 	};
 };
 
@@ -650,6 +638,12 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
 		inviteType: response.getInvitetype(),
+	};
+};
+
+export const SpaceSetOrder = (response: Rpc.Space.SetOrder.Response) => {
+	return {
+		list: response.getSpacevieworderList() || [],
 	};
 };
 

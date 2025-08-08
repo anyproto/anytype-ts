@@ -589,6 +589,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							lang: (Storage.get('codeLang') || J.Constant.default.codeLang),
 						};
 					};
+
+					if (param.content.style == I.TextStyle.Callout) {
+						const icon = Storage.get('calloutIcon');
+						if (icon) {
+							param.content.iconEmoji = icon;	
+						};
+					};
 				};
 
 				if (item.type == I.BlockType.File) {
@@ -607,7 +614,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				if (item.type == I.BlockType.Dataview) {
 					param.content.isCollection = item.itemId == 'collection';
 					param.content.views = [ 
-						{ type: I.ViewType.Grid, name: translate('commonAll') }
+						{ type: I.ViewType.List, name: translate('commonAll') }
 					];
 				};
 
@@ -703,6 +710,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							// Auto-open BlockFile upload dialog
 							if (param.type == I.BlockType.File) {
 								element.find(`.fileWrap`).trigger('mousedown');
+							};
+
+							// Auto-focus bookmark input field
+							if (param.type == I.BlockType.Bookmark) {
+								element.find('.urlToggle').trigger('click');
 							};
 						}, S.Menu.getTimeout());
 					});

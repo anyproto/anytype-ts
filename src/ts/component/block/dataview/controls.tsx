@@ -135,6 +135,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		const param: any = {
 			...toggleParam,
+			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
@@ -173,6 +174,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				onViewRemove,
 				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
 					sortOrFilterRelationSelect(component, {
+						classNameWrap: 'fromBlock',
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
@@ -243,7 +245,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const view = getView();
 		const type = S.Record.getTypeById(object.type);
 		
-		let viewType = I.ViewType.Grid;
+		let viewType = I.ViewType.List;
 		if (type && (undefined !== type.defaultViewType)) {
 			viewType = type.defaultViewType;
 		};
@@ -310,6 +312,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			onCopy: onViewCopy,
 			onRemove: onViewRemove,
 			menuParam: {
+				classNameWrap: 'fromBlock',
 				element,
 				offsetY: 4,
 				horizontal: I.MenuDirection.Center,

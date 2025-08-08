@@ -179,7 +179,6 @@ export default {
 		'syncStatus',
 		'syncDate',
 		'syncError',
-		'fileSyncStatus'
 	],
 
 	pageCover: 'pageCover',

@@ -26,6 +26,8 @@ export default {
 	publishDomain:		 '%s.org',
 	publish:			 'any.coop/%s',
 	api:				 '127.0.0.1:31009',
+	developerPortal:	 'https://developers.anytype.io',
+	mcp:				 'https://github.com/anyproto/anytype-mcp',
 
 	survey: {
 		register:		 'https://community.anytype.io/survey0',

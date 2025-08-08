@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
 import { I, C, S, U, translate, analytics, Onboarding } from 'Lib';
@@ -14,6 +14,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	const { getAuthor, onAuthor, position, onPage } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ category, setCategory ] = useState(null);
+	const [ dummy, setDummy ] = useState(0);
 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -26,32 +27,33 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 	const timeoutResizeRef = useRef(0);
 	const timeoutFilterRef = useRef(0);
 
-	const reset = useCallback(() => {
+	const reset = () => {
 		cacheRef.current.clearAll();
 
 		if (listRef.current) {
 			listRef.current.recomputeRowHeights(0);
 		};
-	}, []);
+	};
 
-	const onClick = useCallback((e: any, item: any) => {
+	const onClick = (e: any, item: any) => {
 		onPage('item', { object: item });
-	}, [ onPage ]);
+	};
 
-	const onCategory = useCallback((item: any) => {
+	const onCategory = (item: any) => {
 		setCategory(item.id == category?.id ? null : item);
 		analytics.event('ClickGalleryTab', { type: item.id });
-	}, [ category]);
+	};
 
-	const onFilterChange = useCallback((v: string) => {
+	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeoutFilterRef.current);
-		timeoutFilterRef.current = window.setTimeout(() => {}, 500);
-	}, []);
+		timeoutFilterRef.current = window.setTimeout(() => setDummy(dummy + 1), 500);
+	};
 
-	const onFilterClear = useCallback(() => {
-	}, []);
+	const onFilterClear = () => {
+		setDummy(dummy + 1);
+	};
 
-	const load = useCallback(() => {
+	const load = () => {
 		setIsLoading(true);
 
 		C.GalleryDownloadIndex((message: any) => {
@@ -62,17 +64,17 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			Onboarding.start('collaboration', true, false);
 			setIsLoading(false);
 		});
-	}, []);
+	};
 
-	const getCategories = useCallback(() => {
+	const getCategories = () => {
 		const { gallery } = S.Common;
 		return (gallery.categories || []).filter(it => it.list.length > 0);
-	}, []);
+	};
 
-	const getItems = useCallback(() => {
+	const getItems = () => {
 		const ret: any[] = [];
 		const filter = String(filterRef.current?.getValue() || '');
-		
+
 		let items = S.Common.gallery.list || [];
 		if (category) {
 			items = items.filter(it => category.list.includes(it.name));
@@ -102,16 +104,16 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		};
 
 		return ret.filter(it => it.children.length > 0);
-	}, [category]);
+	};
 
-	const onResize = useCallback(({ width }) => {
+	const onResize = ({ width }) => {
 		window.clearTimeout(timeoutResizeRef.current);
 		timeoutResizeRef.current = window.setTimeout(() => {}, 10);
-	}, []);
+	};
 
-	const categoryName = useCallback((id: string) => {
+	const categoryName = (id: string) => {
 		return translate(U.Common.toCamelCase(`usecaseCategory-${id}`));
-	}, []);
+	};
 
 	useEffect(() => {
 		if (!S.Common.gallery.list.length) {

@@ -115,8 +115,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					) : ''}
 
-					<Label className="spaceType" text={translate(`spaceAccessType${space.spaceAccessType || 0}`)} />
-
 					<IconObject
 						id="spaceIcon"
 						size={96}
@@ -176,7 +174,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{!space.isPersonal ? (
+					{space.isShared ? (
 						<>
 							{config.experimental ? (
 								<div className="section sectionSpaceManager">
@@ -196,7 +194,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 														value={String(space.uxType)}
 														options={spaceUxTypes}
 														onChange={v => {
-															C.WorkspaceSetInfo(S.Common.space, { spaceUxType: Number(v) });
+															v = Number(v);
+
+															const details: any = { 
+																spaceUxType: v,
+																spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+															};
+
+															C.WorkspaceSetInfo(S.Common.space, details);
 															analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
 														}}
 														arrowClassName="black"

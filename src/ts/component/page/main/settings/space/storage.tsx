@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
-import { I, J, translate, Action, analytics, U, S } from 'Lib';
+import { I, J, U, S, translate, Action, analytics } from 'Lib';
 
-const STORAGE_FULL = 0.7;
+const STORAGE_FULL = 0.95;
 
 const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
 
@@ -58,7 +58,8 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 				{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: () => this.onRemove(refId) }
 			];
 			const filters: I.Filter[] = [
-				{ relationKey: 'fileSyncStatus', condition: I.FilterCondition.In, value: item.filters },
+				{ relationKey: 'syncStatus', condition: I.FilterCondition.In, value: item.filters },
+				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 			];
 			const sorts: I.Sort[] = [
 				{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
@@ -76,8 +77,8 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 						info={I.ObjectManagerItemInfo.FileSize}
 						iconSize={18}
 						sorts={sorts}
-						keys={U.Subscription.syncStatusRelationKeys()}
 						filters={filters}
+						keys={U.Subscription.syncStatusRelationKeys()}
 						ignoreHidden={false}
 						ignoreArchived={false}
 						textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
@@ -102,7 +103,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 						refId={'notSynced'}
 						subId={J.Constant.subId.fileManagerNotSynced}
 						title={translate('pageSettingsSpaceNotSyncedFiles')}
-						filters={[ I.FileSyncStatus.NotSynced ]}
+						filters={[ I.SyncStatusObject.Error ]}
 					/>
 				) : ''}
 
@@ -111,7 +112,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 						refId={'synced'}
 						subId={J.Constant.subId.fileManagerSynced}
 						title={translate('pageSettingsSpaceSyncedFiles')}
-						filters={[ I.FileSyncStatus.Synced ]}
+						filters={[ I.SyncStatusObject.Synced ]}
 					/>
 				) : ''}
 			</div>

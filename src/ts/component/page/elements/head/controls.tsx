@@ -38,6 +38,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		focus.clear(true);
 
 		S.Menu.open('smile', { 
+			classNameWrap: 'fromBlock',
 			element: node.find('#button-icon'),
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => node.addClass('hover'),
@@ -77,6 +78,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		
 		S.Menu.open('blockLayout', { 
+			classNameWrap: 'fromBlock',
 			element: '.editorControls #button-layout',
 			onOpen: () => node.addClass('hover'),
 			onClose: () => node.removeClass('hover'),

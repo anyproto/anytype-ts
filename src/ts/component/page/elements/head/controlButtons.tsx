@@ -97,6 +97,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		};
 
 		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: onCoverOpen,
@@ -141,6 +142,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 
 	const onChange = (element: any) => {
 		S.Menu.open('blockCover', {
+			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {

@@ -824,11 +824,13 @@ class UtilMenu {
 
 							case 'pin': {
 								C.SpaceSetOrder(space.id, [ space.id ]);
+								analytics.event('PinSpace');
 								break;
 							};
 
 							case 'unpin': {
 								C.SpaceUnsetOrder(space.id);
+								analytics.event('UnpinSpace');
 								break;
 							};
 
@@ -851,17 +853,10 @@ class UtilMenu {
 	};
 
 	inviteContext (param: any) {
-		const { isOnline } = S.Common;
-		const { containerId, cid, key, onInviteRevoke } = param || {};
-		const isOwner = U.Space.isMyOwner();
-		const isLocalNetwork = U.Data.isLocalNetwork();
+		const { containerId, cid, key } = param || {};
 		const options: any[] = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+			{ id: 'qr', name: translate('popupSettingsSpaceShareQRCode') },
 		];
-
-		if (isOnline && isOwner && !isLocalNetwork) {
-			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
-		};
 
 		S.Menu.open('select', {
 			element: `#${containerId} #button-more-link`,
@@ -873,12 +868,7 @@ class UtilMenu {
 						case 'qr': {
 							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-							break;
-						};
-
-						case 'revoke': {
-							Action.inviteRevoke(S.Common.space, onInviteRevoke);
-							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
+							analytics.event('ScreenQr', { route: analytics.route.inviteLink });
 							break;
 						};
 					};
@@ -922,11 +912,11 @@ class UtilMenu {
 			if (c1.spaceOrder > c2.spaceOrder) return 1;
 			if (c1.spaceOrder < c2.spaceOrder) return -1;
 
-			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
-			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
+			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
+			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
 
-			if (c1.lastMessageDate > c2.lastMessageDate) return -1;
-			if (c1.lastMessageDate < c2.lastMessageDate) return 1;
+			if (d1 > d2) return -1;
+			if (d1 < d2) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;

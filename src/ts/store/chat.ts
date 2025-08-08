@@ -199,7 +199,7 @@ class ChatStore {
 	 * @returns {string} The subscription ID.
 	 */
 	getSubId (spaceId: string, chatId: string): string {
-		return [ J.Constant.subId.chatSpace, spaceId, chatId, U.Common.getWindowId() ].join('-');
+		return [ J.Constant.subId.chatSpace, spaceId, chatId, S.Common.windowId ].join('-');
 	};
 
 	/**

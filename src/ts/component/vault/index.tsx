@@ -292,7 +292,20 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
 		});
 
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id));
+		C.SpaceSetOrder(active.id, newItems.map(it => it.id), (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const list = message.list;
+			for (let i = 0; i < list.length; i++) {
+				const item = items[i];
+				if (item) {
+					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { spaceOrder: list[i] }}, false);
+				};
+			};
+		});
+
 		analytics.event('ReorderSpace');
 	};
 
@@ -317,9 +330,13 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const tooltipShow = (item: any, delay: number) => {
 		const node = $(nodeRef.current);
 		const element = node.find(`#item-${item.id}`);
+		const items = getSpaceItems();
+		const idx = items.findIndex(it => it.id == item.id) + 1;
+		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
+		const text = Preview.tooltipCaption(U.Common.htmlSpecialChars(item.tooltip || item.name), caption);
 
 		Preview.tooltipShow({ 
-			text: U.Common.htmlSpecialChars(item.tooltip || item.name), 
+			text, 
 			element, 
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
