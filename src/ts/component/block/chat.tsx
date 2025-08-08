@@ -603,29 +603,31 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = getMessageScrollOffset(id);
-		const y = Math.max(0, top - container.height() / 2 - J.Size.header);
+		raf(() => {
+			const container = U.Common.getScrollContainer(isPopup);
+			const top = getMessageScrollOffset(id);
+			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
-		setIsBottom(false);
-		setAutoLoadDisabled(true);
+			setIsBottom(false);
+			setAutoLoadDisabled(true);
 
-		const cb = () => {
-			readScrolledMessages();
-			setAutoLoadDisabled(false);
+			const cb = () => {
+				readScrolledMessages();
+				setAutoLoadDisabled(false);
 
-			if (highlight) {
-				highlightMessage(id);
+				if (highlight) {
+					highlightMessage(id);
+				};
 			};
-		};
 
-		if (animate) {
-			const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-			animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
-		} else {
-			container.scrollTop(y);
-			cb();
-		};
+			if (animate) {
+				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
+				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+			} else {
+				container.scrollTop(y);
+				cb();
+			};
+		});
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
@@ -660,7 +662,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const scrollToBottomCheck = () => {
-		if (isBottom) {
+		if (isBottom.current) {
 			window.clearTimeout(timeoutScroll.current);
 			timeoutScroll.current = window.setTimeout(() => scrollToBottom(false), 50);
 		};
