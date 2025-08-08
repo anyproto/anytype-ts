@@ -172,7 +172,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	renderBookmark () {
-		const { object } = this.props;
+		const { object, scrollToBottom } = this.props;
 		const { picture, source } = object;
 		const cn = [ 'inner' ];
 
@@ -197,7 +197,11 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 				{picture ? (
 					<div className="side right">
-						<img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" />
+						<img 
+							src={S.Common.imageUrl(picture, I.ImageSize.Medium)} 
+							className="img" 
+							onLoad={scrollToBottom}
+						/>
 					</div>
 				) : ''}
 			</div>
@@ -206,12 +210,15 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderImage (withBlur?: boolean) {
 		const { object, scrollToBottom } = this.props;
+		const node = $(this.node);
 
 		if (!this.src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
 					this.src = image;
-					$(this.node).find('#image').attr({ 'src': image });
+
+					node.find('#image').attr({ src: image });
+					node.find('#blur').attr({ backgroundImage: `url(${image})` });
 				});
 				this.src = './img/space.svg';
 			} else {
@@ -219,10 +226,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 		};
 
-		let blur: any = null;
-		if (withBlur) {
-			blur = <div className="blur" style={{ backgroundImage: `url(${this.src})` }} />;
-		};
+		const blur = withBlur ? <div id="blur" className="blur" style={{ backgroundImage: `url(${this.src})` }} /> : null;
 
 		return (
 			<div className="imgWrapper" onClick={this.onPreview}>
@@ -387,6 +391,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 							Renderer.send('updateCheck');
 						}, J.Constant.delay.popup);
 					};
+
 					if (syncError == I.SyncStatusError.Oversized) {
 						// delete?
 					};

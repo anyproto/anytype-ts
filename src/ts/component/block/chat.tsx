@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Icon, Button, EmptyState } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
@@ -147,8 +148,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const match = keyboard.getMatch(isPopup);
 
 		this.loadState(() => {
-			const { messageOrderId } = S.Chat.getState(this.getSubId());
-			const orderId = match.params.messageOrder || messageOrderId;
+			const state = S.Chat.getState(this.getSubId());
+			const orderId = match.params.messageOrder || state.messageOrderId;
 
 			if (orderId) {
 				this.firstUnreadOrderId = orderId;
@@ -821,27 +822,29 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const container = U.Common.getScrollContainer(isPopup);
-		const node = $(this.node);
-		const wrapper = node.find('#scrollWrapper');
-		const y = wrapper.outerHeight();
+		raf(() => {
+			const { isPopup } = this.props;
+			const container = U.Common.getScrollContainer(isPopup);
+			const node = $(this.node);
+			const wrapper = node.find('#scrollWrapper');
+			const y = wrapper.outerHeight();
 
-		this.setAutoLoadDisabled(true);
+			this.setAutoLoadDisabled(true);
 
-		const cb = () => {
-			this.readScrolledMessages();
-			this.setAutoLoadDisabled(false);
-			this.setIsBottom(true);
-		};
+			const cb = () => {
+				this.readScrolledMessages();
+				this.setAutoLoadDisabled(false);
+				this.setIsBottom(true);
+			};
 
-		if (animate) {
-			const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-			animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
-		} else {
-			container.scrollTop(y);
-			cb();
-		};
+			if (animate) {
+				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
+				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+			} else {
+				container.scrollTop(y);
+				cb();
+			};
+		});
 	};
 
 	scrollToBottomCheck () {
