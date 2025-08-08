@@ -928,8 +928,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			let n = 0;
 			for (const item of files) {
-				console.log(item.id, preloading.get(item.id));
-
 				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, preloading.get(item.id), (message: any) => {
 					n++;
 
@@ -1100,7 +1098,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onAttachmentRemove (id: string) {
 		const { attachments, preloading } = this.state;
 		const value = this.getTextValue();
-		const list = (this.state.attachments || []).filter(it => it.id != id);
+		const list = (attachments || []).filter(it => it.id != id);
 
 		if (preloading.has(id)) {
 			preloading.delete(id);
