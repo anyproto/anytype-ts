@@ -13,6 +13,8 @@ interface Props {
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
 	updateAttachments?: () => void;
+	isPreloading?: boolean;
+	preloadProgress?: number;
 };
 
 const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
@@ -34,7 +36,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	render () {
-		const { object, showAsFile, bookmarkAsDefault, isDownload } = this.props;
+		const { object, showAsFile, bookmarkAsDefault, isDownload, isPreloading, preloadProgress } = this.props;
 		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -49,6 +51,8 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			cn.push('isDownload');
 		};
 
+		if (isPreloading) {
+			cn.push('isPreloading');
 		const imageContent = () => {
 			let withBlur = false;
 
@@ -128,8 +132,20 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 				onContextMenu={this.onContextMenu}
+				style={isPreloading ? { opacity: 0.5, position: 'relative' } : {}}
 			>
 				{content}
+				{isPreloading && (
+					<div style={{
+						position: 'absolute',
+						top: '50%',
+						left: '50%',
+						transform: 'translate(-50%, -50%)',
+						zIndex: 10
+					}}>
+						<Loader />
+					</div>
+				)}
 				<Icon className="remove" onClick={this.onRemove} />
 			</div>
 		);

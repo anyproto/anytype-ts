@@ -308,9 +308,21 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, callBack?: (message: any) => void) => {
-	if (!url && !path) {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnlyOrCallback?: boolean | ((message: any) => void), preloadFileId?: string, callBack?: (message: any) => void) => {
+	if (!url && !path && !preloadFileId) {
 		return;
+	};
+
+	// Handle backward compatibility - if preloadOnlyOrCallback is a function, it's the old signature
+	let preloadOnly: boolean | undefined;
+	let callback: ((message: any) => void) | undefined;
+	
+	if (typeof preloadOnlyOrCallback === 'function') {
+		callback = preloadOnlyOrCallback;
+		preloadOnly = undefined;
+	} else {
+		preloadOnly = preloadOnlyOrCallback;
+		callback = callBack;
 	};
 
 	const { config } = S.Common;
@@ -321,8 +333,16 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
+	
+	if (preloadOnly !== undefined) {
+		request.setPreloadonly(preloadOnly);
+	};
+	
+	if (preloadFileId) {
+		request.setPreloadfileid(preloadFileId);
+	};
 
-	dispatcher.request(FileUpload.name, request, callBack);
+	dispatcher.request(FileUpload.name, request, callback);
 };
 
 export const FileDownload = (objectId: string, path: string, callBack?: (message: any) => void) => {
@@ -332,6 +352,14 @@ export const FileDownload = (objectId: string, path: string, callBack?: (message
 	request.setPath(path);
 
 	dispatcher.request(FileDownload.name, request, callBack);
+};
+
+export const FileDiscardPreload = (fileId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.File.DiscardPreload.Request();
+
+	request.setFileid(fileId);
+
+	dispatcher.request(FileDiscardPreload.name, request, callBack);
 };
 
 export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {

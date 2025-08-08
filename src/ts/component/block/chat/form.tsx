@@ -30,6 +30,7 @@ interface Props extends I.BlockComponent {
 interface State {
 	attachments: any[];
 	replyingId: string;
+	preloadingFiles: Map<string, { progress: number; preloadFileId?: string }>;
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -51,6 +52,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	state = {
 		attachments: [],
 		replyingId: '',
+		preloadingFiles: new Map(),
 	};
 
 	constructor (props: Props) {
@@ -190,16 +192,23 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
 							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={this.onAttachmentRemove}
-											bookmarkAsDefault={true}
-											updateAttachments={this.updateAttachments}
-										/>
-									</SwiperSlide>
-								))}
+								{attachments.map(item => {
+									const { preloadingFiles } = this.state;
+									const preloadInfo = preloadingFiles.get(item.id);
+									
+									return (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={item}
+												onRemove={this.onAttachmentRemove}
+												bookmarkAsDefault={true}
+												updateAttachments={this.updateAttachments}
+												isPreloading={!!preloadInfo && !preloadInfo.preloadFileId}
+												preloadProgress={preloadInfo?.progress || 0}
+											/>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</div>
 					) : ''}
@@ -702,7 +711,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	addAttachments (list: any[], callBack?: () => void) {
-		const { attachments } = this.state;
+		const { attachments, preloadingFiles } = this.state;
 		const limit = J.Constant.limit.chat.attachments;
 		const ids = attachments.map(it => it.id);
 
@@ -720,11 +729,48 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
+		// Start preloading files immediately
+		list.forEach(item => {
+			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
+				this.preloadFile(item);
+			};
+		});
+
 		this.setAttachments(list.concat(attachments), callBack);
 	};
 
 	setAttachments (list: any[], callBack?: () => void) {
 		this.setState({ attachments: list }, callBack);
+	};
+
+	preloadFile (item: any) {
+		const { preloadingFiles } = this.state;
+		const fileKey = item.id;
+
+		// Skip if already preloading or preloaded
+		if (preloadingFiles.has(fileKey)) {
+			return;
+		};
+
+		// Mark as preloading
+		preloadingFiles.set(fileKey, { progress: 0 });
+		this.setState({ preloadingFiles });
+
+		// Start preload
+		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, undefined, (message: any) => {
+			if (message.error?.code) {
+				// Remove from preloading on error
+				preloadingFiles.delete(fileKey);
+				this.setState({ preloadingFiles });
+				return;
+			};
+
+			if (message.preloadFileId) {
+				// Update with preloadFileId when complete
+				preloadingFiles.set(fileKey, { progress: 100, preloadFileId: message.preloadFileId });
+				this.setState({ preloadingFiles });
+			};
+		});
 	};
 
 	addBookmark (url: string, fromText?: boolean) {
@@ -897,9 +943,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				return;
 			};
 
+			const { preloadingFiles } = this.state;
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, (message: any) => {
+				const preloadInfo = preloadingFiles.get(item.id);
+				const preloadFileId = preloadInfo?.preloadFileId;
+				
+				// If file was preloaded, use the preloadFileId
+				// Otherwise upload normally (fallback)
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, preloadFileId, (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -907,6 +959,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					};
 
 					if (n == fl) {
+						// Clear preloaded files after successful send
+						files.forEach(file => {
+							preloadingFiles.delete(file.id);
+						});
+						this.setState({ preloadingFiles });
 						callBack();
 					};
 				});
@@ -959,6 +1016,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onEditClear (callBack?: () => void) {
+		const { preloadingFiles, attachments } = this.state;
+		
+		// Discard all preloaded files
+		attachments.forEach(item => {
+			if (item.isTmp && preloadingFiles.has(item.id)) {
+				const preloadInfo = preloadingFiles.get(item.id);
+				if (preloadInfo?.preloadFileId) {
+					C.FileDiscardPreload(preloadInfo.preloadFileId);
+				};
+			};
+		});
+
 		this.editingId = '';
 		this.marks = [];
 		this.updateMarkup('', { from: 0, to: 0 });
@@ -966,7 +1035,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.checkSendButton();
 		this.refButtons?.setButtons();
 
-		this.setState({ attachments: [] }, () => {
+		this.setState({ attachments: [], preloadingFiles: new Map() }, () => {
 			this.refEditable?.setRange(this.range);
 
 			if (callBack) {
@@ -1056,12 +1125,24 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		const value = this.getTextValue();
-		const attachments = (this.state.attachments || []).filter(it => it.id != id);
+		const { attachments, preloadingFiles } = this.state;
+		const filtered = (attachments || []).filter(it => it.id != id);
+		const removed = attachments.find(it => it.id == id);
 
-		if (this.editingId && !value && !attachments.length) {
+		// Discard preloaded file if it exists
+		if (removed && preloadingFiles.has(id)) {
+			const preloadInfo = preloadingFiles.get(id);
+			if (preloadInfo?.preloadFileId) {
+				C.FileDiscardPreload(preloadInfo.preloadFileId);
+			};
+			preloadingFiles.delete(id);
+			this.setState({ preloadingFiles });
+		};
+
+		if (this.editingId && !value && !filtered.length) {
 			this.onDelete(this.editingId);
 		} else {
-			this.setState({ attachments });
+			this.setState({ attachments: filtered });
 			analytics.event('DetachItemChat');
 		};
 	};
