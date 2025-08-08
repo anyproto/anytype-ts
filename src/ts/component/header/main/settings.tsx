@@ -35,16 +35,19 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
 				],
 				onSelect: (e: React.MouseEvent, option: any) => {
+
 					switch (option.id) {
 						case 'spaceInfo': {
 							Action.spaceInfo();
 							break;
 						};
+
 						case 'delete': {
 							Action.removeSpace(S.Common.space, analytics.route.settings);
 							break;
 						};
 					};
+
 				},
 			}
 		});

@@ -178,17 +178,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 													ref={ref => this.refUxType = ref}
 													value={String(space.uxType)}
 													options={spaceUxTypes}
-													onChange={v => {
-														v = Number(v);
-
-														const details: any = {
-															spaceUxType: v,
-															spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
-														};
-
-														C.WorkspaceSetInfo(S.Common.space, details);
-														analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
-													}}
+													onChange={v => this.onSpaceUxType(v)}
 													arrowClassName="black"
 													menuParam={{ horizontal: I.MenuDirection.Right }}
 												/>
@@ -435,20 +425,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			};
 
 			case 'qr': {
-				if (!cid || !key) {
-					return;
-				};
-
 				S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 				analytics.event('ScreenQr', { route: analytics.route.settingsSpace });
 				break;
 			};
 
 			case 'copyLink': {
-				if (!cid || !key) {
-					return;
-				};
-
 				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
 				break;
 			};
@@ -475,6 +457,18 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	onCancel () {
 		this.setState({ isEditing: false }, this.setName);
+	};
+
+	onSpaceUxType (v) {
+		v = Number(v);
+
+		const details: any = {
+			spaceUxType: v,
+			spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+		};
+
+		C.WorkspaceSetInfo(S.Common.space, details);
+		analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
 	};
 
 	checkName (v: string): string {
@@ -509,14 +503,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const { name, nameThreshold } = J.Constant.limit.space;
 		const el = node.find('.spaceNameWrapper .counter');
 		const counter = name - this.refName?.getTextValue().length;
+		const canSave = counter >= 0;
 
 		el.text(counter).toggleClass('show', counter <= nameThreshold);
-		el.toggleClass('red', counter < 0);
-
-		let canSave = true;
-		if (counter < 0) {
-			canSave = false;
-		};
+		el.toggleClass('red', !canSave);
 
 		this.canSave = canSave;
 		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
