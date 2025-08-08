@@ -57,7 +57,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
 		] : [
-			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
+			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
 		const spaceModes = [
