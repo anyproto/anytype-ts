@@ -315,6 +315,10 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		cn.push('isDownload');
 	};
 
+	if (isPreloading) {
+		cn.push('isPreloading');
+	};
+
 	const imageContent = () => {
 		let withBlur = false;
 
@@ -398,17 +402,10 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			ref={nodeRef}
 			className={cn.join(' ')}
 			onContextMenu={onContextMenu}
-			style={isPreloading ? { opacity: 0.5, position: 'relative' } : {}}
 		>
 			{content}
 			{isPreloading && (
-				<div style={{
-					position: 'absolute',
-					top: '50%',
-					left: '50%',
-					transform: 'translate(-50%, -50%)',
-					zIndex: 10
-				}}>
+				<div className="preloadingOverlay">
 					<Loader />
 				</div>
 			)}
