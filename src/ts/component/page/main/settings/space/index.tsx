@@ -38,7 +38,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.onType = this.onType.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
-		this.onDelete = this.onDelete.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -421,22 +420,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
-	onDelete () {
-		Action.removeSpace(S.Common.space, analytics.route.settings, (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			};
-		});
-	};
-
 	onClick (e: React.MouseEvent, item: any) {
 		if (item.isDisabled) {
 			return;
 		};
 
 		const { cid, key } = this.state;
-		const space = U.Space.getSpaceview();
-		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 		switch (item.id) {
 			case 'invite': {
@@ -464,65 +453,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
 				break;
 			};
-
-			case 'more': {
-				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
-				S.Menu.open('select', {
-					element,
-					horizontal: I.MenuDirection.Center,
-					offsetY: -40,
-					onOpen: () => $(element).addClass('hover'),
-					onClose: () => $(element).removeClass('hover'),
-					data: {
-						options: [
-							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-							{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
-						],
-						onSelect: (e: React.MouseEvent, option: any) => {
-							switch (option.id) {
-								case 'spaceInfo': {
-									this.onSpaceInfo();
-									break;
-								};
-								case 'delete': {
-									this.onDelete();
-									break;
-								};
-							};
-						},
-					}
-				});
-				break;
-			};
 		};
-	};
-
-	onSpaceInfo () {
-		const { account } = S.Auth;
-		const space = U.Space.getSpaceview();
-		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
-		const data = [
-			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
-			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
-			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
-			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
-		];
-
-		S.Popup.open('confirm', {
-			className: 'isWide spaceInfo',
-			data: {
-				title: translate('popupSettingsSpaceIndexSpaceInfoTitle'),
-				text: data.map(it => `<dl><dt>${it[0]}:</dt><dd>${it[1]}</dd></dl>`).join(''),
-				textConfirm: translate('commonCopy'),
-				colorConfirm: 'blank',
-				canCancel: false,
-				onConfirm: () => {
-					U.Common.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
-				},
-			}
-		});
-
-		analytics.event('ScreenSpaceInfo');
 	};
 
 	onEdit () {
