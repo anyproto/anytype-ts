@@ -204,7 +204,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 									<div className="item">
 										<div className="sides">
-											<Icon className="push" />
+											<Icon className={[ 'push', `push${space.notificationMode}` ].join(' ')} />
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
