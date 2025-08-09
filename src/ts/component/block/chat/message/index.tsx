@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, Preview, analytics } from 'Lib';
+import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
