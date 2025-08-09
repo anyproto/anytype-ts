@@ -1,11 +1,12 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, J, Mark, translate, Preview, analytics } from 'Lib';
+import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
+import Reaction from './reaction';
 
 const LINES_LIMIT = 10;
 
@@ -15,7 +16,7 @@ interface ChatMessageRefProps {
 	getNode: () => HTMLElement;
 };
 
-const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, scrollToBottom, onContextMenu, onMore, onReplyEdit,
@@ -67,22 +68,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		if (canExpand) {
 			node.addClass('canExpand');
 		};
-	};
-
-	const onReactionEnter = (e: any, authors: string[]) => {
-		const { space } = S.Common;
-
-		const text = authors.map(it => {
-			const author = U.Space.getParticipant(U.Space.getParticipantId(space, it));
-
-			return author?.name;
-		}).filter(it => it).join('\n');
-
-		Preview.tooltipShow({ text, element: $(e.currentTarget) });
-	};
-
-	const onReactionLeave = (e: any) => {
-		Preview.tooltipHide(false);
 	};
 
 	const onReactionAdd = () => {
@@ -249,9 +234,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 			controls.push({ id: 'reaction-add', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
 		};
 
-		//if (!isSelf) {
-			controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
-		//};
+		controls.push({ id: 'message-reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
 
 		if (hasMore) {
 			controls.push({ className: 'more', onClick: onMore });
@@ -296,37 +279,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 			const object = S.Detail.get(rootId, mark.param, []);
 		};
-	};
-
-	const Reaction = (item: any) => {
-		const authors = item.authors || [];
-		const length = authors.length;
-		const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
-		const isMe = authors.includes(account.id);
-		const cn = [ 'reaction' ];
-
-		if (isMe) {
-			cn.push('isMe');
-		};
-		if (length > 1) {
-			cn.push('isMulti');
-		};
-
-		return (
-			<div 
-				className={cn.join(' ')}
-				onClick={() => onReactionSelect(item.icon)}
-				onMouseEnter={e => onReactionEnter(e, authors)}
-				onMouseLeave={onReactionLeave}
-			>
-				<div className="value">
-					<IconObject object={{ iconEmoji: item.icon }} size={18} />
-				</div>
-				<div className="count">
-					{length > 1 ? length : <IconObject object={author} size={18} />}
-				</div>
-			</div>
-		);
 	};
 
 	if (!isSelf) {
@@ -437,7 +389,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 						{hasReactions ? (
 							<div className="reactions">
 								{reactions.map((item: any, i: number) => (
-									<Reaction key={i} {...item} />
+									<Reaction key={i} {...item} onSelect={onReactionSelect} />
 								))}
 								{!readonly && canAddReactionValue ? (
 									<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
@@ -451,5 +403,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	);
 
 }));
+
+const ChatMessage = memo(ChatMessageBase);
 
 export default ChatMessage;

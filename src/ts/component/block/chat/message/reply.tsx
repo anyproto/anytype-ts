@@ -1,9 +1,9 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, memo } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U } from 'Lib';
 
-const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props, ref) => {
+const ChatMessageReplyBase = observer(forwardRef<{}, I.ChatMessageComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const { id, subId, getReplyContent, onReplyClick } = props;
@@ -48,5 +48,7 @@ const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props,
 	);
 
 }));
+
+const ChatMessageReply = memo(ChatMessageReplyBase);
 
 export default ChatMessageReply;

@@ -47,7 +47,7 @@ export default {
 		},
 
 		chat: {
-			messages:					 50,
+			messages:					 100,
 			attachments:				 10,
 			files:						 10,
 			mentions:					 10,

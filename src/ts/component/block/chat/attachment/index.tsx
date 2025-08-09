@@ -204,7 +204,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onContextMenu = (e: any) => {
 		e.stopPropagation();
 
-
 		if (object.isTmp || object.isDeleted) {
 			return;
 		};

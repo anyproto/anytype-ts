@@ -939,7 +939,7 @@ class UtilMenu {
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
-	sortOrFilterRelationSelect (menuParam: any, param: any) {
+	sortOrFilterRelationSelect (menuParam: Partial<I.MenuParam>, param: any) {
 		const { rootId, blockId, getView, onSelect } = param;
 		const options = Relation.getFilterOptions(rootId, blockId, getView());
 
@@ -977,7 +977,7 @@ class UtilMenu {
 				withAdd: true,
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
-						this.sortOrFilterRelationAdd(this.menuContext, param, relation => callBack(relation));
+						this.sortOrFilterRelationAdd(this.menuContext, param, menuParam, relation => callBack(relation));
 					} else {
 						callBack(item);
 					};
@@ -986,7 +986,7 @@ class UtilMenu {
 		});
 	};
 
-	sortOrFilterRelationAdd (context: any, param: any, callBack: (relation: any) => void) {
+	sortOrFilterRelationAdd (context: any, param: any, menuParam: Partial<I.MenuParam>, callBack: (relation: any) => void) {
 		if (!context) {
 			return;
 		};
@@ -996,6 +996,7 @@ class UtilMenu {
 		const element = `#${context.getId()} #item-add`;
 
 		S.Menu.open('relationSuggest', {
+			...menuParam,
 			element,
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,

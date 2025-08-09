@@ -199,7 +199,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			rootId,
 			blockId: block.id,
 			getView,
-			onSelect: (item) => onSortOrFilterAdd(item, component, callBack),
+			onSelect: item => onSortOrFilterAdd(item, component, callBack),
 		});
 	};
 

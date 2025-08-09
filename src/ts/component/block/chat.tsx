@@ -1,10 +1,11 @@
-import React, { forwardRef, useRef, useEffect, useState, DragEvent, MouseEvent } from 'react';
+import React, { FC, forwardRef, useRef, useEffect, DragEvent, MouseEvent, memo } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, EmptyState } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
+import Section from './chat/section';
 import Message from './chat/message';
 import Form from './chat/form';
 
@@ -28,7 +29,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
-	const [ dummy, setDummy ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const { chatId } = object;
 	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
@@ -233,8 +233,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		let marks = [];
 
 		if (formRef.current) {
-			attachments = attachments.concat((formRef.current.state.attachments || []).filter(it => !it.isTmp).map(it => it.id));
-			marks = marks.concat(formRef.current.marks || []);
+			attachments = attachments.concat(formRef.current.getAttachments().filter(it => !it.isTmp).map(it => it.id));
+			marks = marks.concat(formRef.current.getMarks());
 
 			const replyingId = formRef.current.getReplyingId();
 
@@ -275,8 +275,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			keys: U.Subscription.chatRelationKeys(),
 			updateDetails: true,
 		}, () => {
-			setDummy(dummy + 1);
-
 			if (callBack) {
 				callBack();
 			};
@@ -536,7 +534,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
-		const formHeight = formRef.current ? $(formRef.current.node).outerHeight() : 120;
+		const formHeight = formRef.current ? $(formRef.current.getNode()).outerHeight() : 120;
 		const ch = isPopup ? container.outerHeight() : $(window).height();
 		const min = container.scrollTop();
 		const max = min + ch - formHeight;
@@ -553,7 +551,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		return ret;
 	};
 
-	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean) => {
+	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean): I.Option[] => {
 		let options: any[] = [];
 
 		if (message.content.text) {
@@ -699,7 +697,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 	};
 
-	const getReplyContent = (message: any): any => {
+	const getReplyContent = (message: any): { title: string; text: string; attachment: any; isMultiple: boolean; } => {
 		const { creator, content } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
@@ -718,7 +716,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		if (!l) {
-			return { title, text };
+			return { title, text, attachment: null, isMultiple: false };
 		};
 
 		const first = attachments[0];
@@ -737,6 +735,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 					attachmentLayout = 'Attachment';
 				};
 			});
+
 			attachmentText = text.length ? `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})` : `${l} ${U.Common.plural(l, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
 		};
 
@@ -763,7 +762,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const setIsBottom = (v: boolean) => {
 		isBottom.current = v;
 
-		const node = $(formRef.current?.node);
+		const node = $(formRef.current?.getNode());
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
@@ -807,43 +806,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const sections = getSections();
 	const spaceview = U.Space.getSpaceview();
 	const isEmpty = !messages.length;
-
-	const Section = (item: any) => {
-		const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
-		const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
-
-		return (
-			<div className="section">
-				<div className="date">
-					<Label text={date} />
-				</div>
-
-				{(item.list || []).map(item => {
-					const hasMore = !!getMessageMenuOptions(item, true).length;
-
-					return (
-						<Message
-							ref={ref => messageRefs.current[item.id] = ref}
-							key={item.id}
-							{...props}
-							id={item.id}
-							rootId={chatId}
-							blockId={block.id}
-							subId={subId}
-							isNew={item.orderId == firstUnreadOrderId.current}
-							hasMore={hasMore}
-							scrollToBottom={scrollToBottomCheck}
-							onContextMenu={e => onContextMenu(e, item)}
-							onMore={e => onContextMenu(e, item, true)}
-							onReplyEdit={e => onReplyEdit(e, item)}
-							onReplyClick={e => onReplyClick(e, item)}
-							getReplyContent={getReplyContent}
-						/>
-					);
-				})}
-			</div>
-		);
-	};
 
 	useEffect(() => {
 		rebind();
@@ -899,7 +861,24 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 					/>
 				) : (
 					<div className="scroll">
-						{sections.map(section => <Section {...section} key={section.createdAt} />)}
+						{sections.map(section => (
+							<Section 
+								{...props}
+								{...section} 
+								key={section.createdAt}
+								setRef={(ref, id) => messageRefs.current[id] = ref}
+								chatId={chatId}
+								block={block}
+								subId={subId}
+								firstUnreadOrderId={firstUnreadOrderId.current}
+								getMessageMenuOptions={getMessageMenuOptions}
+								scrollToBottom={scrollToBottomCheck}
+								onContextMenu={onContextMenu}
+								onReplyEdit={onReplyEdit}
+								onReplyClick={onReplyClick}
+								getReplyContent={getReplyContent}
+							/>
+						))}
 					</div>
 				)}
 			</div>
@@ -915,8 +894,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				scrollToMessage={scrollToMessage}
 				loadMessagesByOrderId={loadMessagesByOrderId}
 				getMessages={getMessages}
-				getMessagesInViewport={getMessagesInViewport}
-				getIsBottom={() => hasScroll() ? isBottom.current : true}
 				getReplyContent={getReplyContent}
 				highlightMessage={highlightMessage}
 				loadDepsAndReplies={loadDepsAndReplies}
