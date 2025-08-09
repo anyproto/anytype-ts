@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
@@ -16,7 +16,7 @@ interface ChatMessageRefProps {
 	getNode: () => HTMLElement;
 };
 
-const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, scrollToBottom, onContextMenu, onMore, onReplyEdit,
@@ -403,5 +403,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	);
 
 }));
+
+const ChatMessage = memo(ChatMessageBase);
 
 export default ChatMessage;

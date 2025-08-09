@@ -35,7 +35,8 @@ class ChatStore {
 	 * @param {I.ChatMessage[]} add - The chat messages to prepend.
 	 */
 	prepend (subId: string, add: I.ChatMessage[]): void {
-		this.set(subId, add.concat(this.getList(subId)));
+		add = add.map(it => new M.ChatMessage(it));
+		this.getList(subId).unshift(...add);
 	};
 
 	/**
@@ -44,7 +45,8 @@ class ChatStore {
 	 * @param {I.ChatMessage[]} add - The chat messages to append.
 	 */
 	append (subId: string, add: I.ChatMessage[]): void {
-		this.set(subId, this.getList(subId).concat(add));
+		add = add.map(it => new M.ChatMessage(it));
+		this.getList(subId).push(...add);
 	};
 
 	/**
