@@ -762,7 +762,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const setIsBottom = (v: boolean) => {
 		isBottom.current = v;
 
-		const node = $(formRef.current?.node);
+		const node = $(formRef.current?.getNode());
 		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
 
 		btn.toggleClass('active', !v);
