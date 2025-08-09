@@ -6,6 +6,7 @@ import { I, S, U, C, J, Mark, translate, Preview, analytics } from 'Lib';
 
 import Attachment from '../attachment';
 import Reply from './reply';
+import Reaction from './reaction';
 
 const LINES_LIMIT = 10;
 
@@ -67,22 +68,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		if (canExpand) {
 			node.addClass('canExpand');
 		};
-	};
-
-	const onReactionEnter = (e: any, authors: string[]) => {
-		const { space } = S.Common;
-
-		const text = authors.map(it => {
-			const author = U.Space.getParticipant(U.Space.getParticipantId(space, it));
-
-			return author?.name;
-		}).filter(it => it).join('\n');
-
-		Preview.tooltipShow({ text, element: $(e.currentTarget) });
-	};
-
-	const onReactionLeave = (e: any) => {
-		Preview.tooltipHide(false);
 	};
 
 	const onReactionAdd = () => {
@@ -298,37 +283,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		};
 	};
 
-	const Reaction = (item: any) => {
-		const authors = item.authors || [];
-		const length = authors.length;
-		const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
-		const isMe = authors.includes(account.id);
-		const cn = [ 'reaction' ];
-
-		if (isMe) {
-			cn.push('isMe');
-		};
-		if (length > 1) {
-			cn.push('isMulti');
-		};
-
-		return (
-			<div 
-				className={cn.join(' ')}
-				onClick={() => onReactionSelect(item.icon)}
-				onMouseEnter={e => onReactionEnter(e, authors)}
-				onMouseLeave={onReactionLeave}
-			>
-				<div className="value">
-					<IconObject object={{ iconEmoji: item.icon }} size={18} />
-				</div>
-				<div className="count">
-					{length > 1 ? length : <IconObject object={author} size={18} />}
-				</div>
-			</div>
-		);
-	};
-
 	if (!isSelf) {
 		userpicNode = (
 			<IconObject
@@ -437,7 +391,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 						{hasReactions ? (
 							<div className="reactions">
 								{reactions.map((item: any, i: number) => (
-									<Reaction key={i} {...item} />
+									<Reaction key={i} {...item} onSelect={onReactionSelect} />
 								))}
 								{!readonly && canAddReactionValue ? (
 									<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
