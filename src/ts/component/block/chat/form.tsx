@@ -49,6 +49,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	} = props;
 	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const [ replyingId, setReplyingId ] = useState<string>('');
+	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const { messageCounter, mentionCounter } = S.Chat.getState(subId);
 	const nodeRef = useRef(null);
 	const dummyRef = useRef(null);
@@ -466,10 +467,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const ids = attachments.map(it => it.id);
 
 		list = list.filter(it => !ids.includes(it.id));
-		list = list.map(it => {
-			it.timestamp = U.Date.now();
-			return it;
-		});
 
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
@@ -479,7 +476,35 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		list = list.map(it => {
+			it.timestamp = U.Date.now();
+			return it;
+		});
+
+		list.forEach(item => {
+			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
+				preloadFile(item);
+			};
+		});
+
 		setAttachments(list.concat(attachments));
+	};
+
+	const preloadFile = (item: any) => {
+		if (preloading.has(item.id)) {
+			return;
+		};
+
+		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (message.preloadFileId) {
+				preloading.set(item.id, message.preloadFileId);
+				setPreloading(preloading);
+			};
+		});
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -647,7 +672,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, (message: any) => {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, preloading.get(item.id), (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -706,12 +731,22 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		editingId.current = '';
 		buttonsRef.current?.setButtons();
 
+		attachments.forEach(item => {
+			if (item.isTmp && preloading.has(item.id)) {
+				const preloadId = preloading.get(item.id);
+				if (preloadId) {
+					C.FileDiscardPreload(preloadId);
+				};
+			};
+		});
+
 		setRange({ from: 0, to: 0 });
 		setMarks([]);
 		updateMarkup('', { from: 0, to: 0 });
 		clearCounter();
 		checkSendButton();
 		setAttachments([]);
+		setPreloading(new Map());
 	};
 
 	const onReply = (message: I.ChatMessage) => {
@@ -794,6 +829,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onAttachmentRemove = (id: string) => {
 		const value = getTextValue();
 		const list = (attachments || []).filter(it => it.id != id);
+
+		if (preloading.has(id)) {
+			C.FileDiscardPreload(preloading.get(id));
+			preloading.delete(id);
+		};
 
 		if (editingId.current && !value && !attachments.length) {
 			onDelete(editingId.current);
