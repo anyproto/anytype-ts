@@ -498,8 +498,8 @@
             .label { @include text-common; color: var(--color-text-secondary); }
 
             .linkTypeWrapper {
-                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: 100%;
-                padding: 0px 8px; margin: 0px 0px 8px 0px; gap: 0px 12px; border-radius: 12px;
+                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: calc(100% + 8px);
+                padding: 0px 8px; margin: 0px 0px 8px -8px; gap: 0px 12px; border-radius: 12px;
             }
             .linkTypeWrapper.canEdit:hover,
             .linkTypeWrapper.canEdit.hover { background-color: var(--color-shape-highlight-medium); }

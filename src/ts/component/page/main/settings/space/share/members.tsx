@@ -76,6 +76,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
 				} else
 				if (item.isJoining) {
+					tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
 					button = (
 						<Button
 							className="c36"
@@ -86,6 +87,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 					);
 				} else
 				if (item.isRemoving) {
+					tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 					button = (
 						<Button
 							className="c36"
@@ -110,13 +112,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			} else
 			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
-			};
-
-			if (item.isJoining) {
-				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
-			} else
-			if (item.isRemoving) {
-				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 			};
 
 			return (
