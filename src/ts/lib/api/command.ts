@@ -2288,15 +2288,6 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
 };
 
-export const SpaceLeaveApprove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.LeaveApprove.Request();
-
-	request.setSpaceid(spaceId);
-	request.setIdentitiesList(identities);
-
-	dispatcher.request(SpaceLeaveApprove.name, request, callBack);
-};
-
 // ---------------------- EXTENSION ---------------------- //
 
 export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) => void) => {

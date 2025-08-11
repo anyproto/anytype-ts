@@ -74,17 +74,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			if (isSpaceOwner) {
 				if (isCurrent) {
 					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
-				} else
-				if (item.isRemoving) {
-					withAction = true;
-					button = (
-						<Button
-							className="c36"
-							color="blank"
-							text={translate('commonApprove')}
-							onClick={() => this.onLeaveRequest(item)}
-						/>
-					);
 				} else {
 					button = (
 						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item, item.isJoining)}>
@@ -214,8 +203,8 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		let records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
 
 		records = records.sort((c1, c2) => {
-			const isRequest1 = c1.isJoining || c1.isRemoving;
-			const isRequest2 = c2.isJoining || c2.isRemoving;
+			const isRequest1 = c1.isJoining;
+			const isRequest2 = c2.isJoining;
 			const cd1 = c1.createdDate;
 			const cd2 = c2.createdDate;
 
@@ -350,10 +339,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				route: analytics.route.settings,
 			}
 		});
-	};
-
-	onLeaveRequest (item: any) {
-		Action.leaveApprove(S.Common.space, [ item.identity ], item.name, analytics.route.settings);
 	};
 
 	resize () {

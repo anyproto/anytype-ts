@@ -776,27 +776,6 @@ class Action {
 	};
 
 	/**
-	 * Approves a leave request for a space.
-	 * @param {string} spaceId - The space ID.
-	 * @param {string[]} identities - The identities to approve.
-	 * @param {string} name - The name for the toast message.
-	 * @param {string} route - The route context for analytics.
-	 * @param {function} [callBack] - Optional callback after approval.
-	 */
-	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
-		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
-			if (!message.error.code) {
-				Preview.toastShow({ text: U.Common.sprintf(translate('toastApproveLeaveRequest'), name) });
-				analytics.event('ApproveLeaveRequest', { route });
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	/**
 	 * Sets the interface language and optionally the spelling language.
 	 * @param {string} id - The language ID.
 	 */
