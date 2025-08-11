@@ -16,7 +16,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	const spaceview = U.Space.getSpaceview();
 
 	const getItems = () => {
-		let items = U.Menu.getVaultItems().filter(it => it.isChat).map(it => {
+		let items = U.Menu.getVaultItems().map(it => {
 			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
 
 			let text = '';
