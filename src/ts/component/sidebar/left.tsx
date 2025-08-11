@@ -148,7 +148,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onToggleClick = () => {
-		sidebar.toggleOpenClose();
+		//sidebar.toggleOpenClose();
+		const page = sidebar.leftPanelGetState().page == 'widget' ? 'chat' : 'widget';
+
+		sidebar.leftPanelSetState({ page });
 	};
 
 	const onToggleContext = () => {

@@ -316,6 +316,8 @@ class CommonStore {
 	};
 
 	get showVault (): boolean {
+		return false;
+
 		let ret = this.showVaultValue;
 		if (ret === null) {
 			ret = Storage.get('showVault');

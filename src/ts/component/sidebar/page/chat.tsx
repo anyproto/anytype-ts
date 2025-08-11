@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, memo } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -9,7 +9,7 @@ import { I, U, S, J, keyboard, translate, Mark } from 'Lib';
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
 
-const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageChatBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const [ filter, setFilter ] = useState('');
@@ -229,5 +229,7 @@ const SidebarPageChat = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	);
 
 }));
+
+const SidebarPageChat = memo(SidebarPageChatBase);
 
 export default SidebarPageChat;
