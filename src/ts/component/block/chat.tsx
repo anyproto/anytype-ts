@@ -876,7 +876,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 								const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
 
 								return (
-									<div className="sectionDate">
+									<div key={item.key} className="sectionDate">
 										<Label text={date} />
 									</div>
 								);
