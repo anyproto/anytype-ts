@@ -75,17 +75,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				if (isCurrent) {
 					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
 				} else
-				if (item.isJoining) {
-					withAction = true;
-					button = (
-						<Button
-							className="c36"
-							color="blank"
-							text={translate('popupSettingsSpaceShareViewRequest')}
-							onClick={() => this.onJoinRequest(item)}
-						/>
-					);
-				} else
 				if (item.isRemoving) {
 					withAction = true;
 					button = (
@@ -98,7 +87,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 					);
 				} else {
 					button = (
-						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
+						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item, item.isJoining)}>
 							<div className="item">
 								<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
 							</div>
@@ -222,9 +211,9 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 	};
 
 	getParticipantList () {
-		const records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
+		let records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
 
-		return records.sort((c1, c2) => {
+		records = records.sort((c1, c2) => {
 			const isRequest1 = c1.isJoining || c1.isRemoving;
 			const isRequest2 = c2.isJoining || c2.isRemoving;
 			const cd1 = c1.createdDate;
@@ -233,6 +222,16 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			if (isRequest1 && !isRequest2) return -1;
 			if (!isRequest1 && isRequest2) return 1;
 			if (isRequest1 && isRequest2) return cd1 < cd2 ? -1 : 1;
+
+			return 0;
+		});
+
+		return records.sort((c1, c2) => {
+			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
+			const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
+
+			if (isOwner1 && !isOwner2) return -1;
+			if (!isOwner1 && isOwner2) return 1;
 
 			return 0;
 		});
@@ -265,7 +264,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		return items;
 	};
 
-	onPermissionsSelect (item: any) {
+	onPermissionsSelect (item: any, isNew?: boolean) {
 		S.Menu.open('select', {
 			element: `#item-${item.id}-select`,
 			horizontal: I.MenuDirection.Right,
@@ -273,13 +272,13 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				value: item.permissions,
 				options: this.getParticipantOptions(),
 				onSelect: (e: any, el: any) => {
-					this.onChangePermissions(item, el.id);
+					this.onChangePermissions(item, el.id, isNew);
 				},
 			},
 		});
 	};
 
-	onChangePermissions (item: any, v: any) {
+	onChangePermissions (item: any, v: any, isNew?: boolean) {
 		const { space } = S.Common;
 
 		let title = '';
@@ -308,9 +307,13 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				text = U.Common.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
 
 				onConfirm = () => {
-					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
-
-					analytics.event('ChangeSpaceMemberPermissions', { type: v });
+					if (isNew) {
+						C.SpaceRequestApprove(space, item.identity, v);
+						analytics.event('ApproveInviteRequest', { type: v });
+					} else {
+						C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+						analytics.event('ChangeSpaceMemberPermissions', { type: v });
+					};
 				};
 				break;
 			};

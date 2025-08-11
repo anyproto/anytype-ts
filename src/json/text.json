@@ -968,6 +968,7 @@
 	"popupSettingsSpaceShareMenuInviteManualTitle": "Request access",
 	"popupSettingsSpaceShareMenuInviteManualDescription": "Owner must approve each join request",
 
+	"popupSettingsSpaceShareSelectPermissions": "Select permissions",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
