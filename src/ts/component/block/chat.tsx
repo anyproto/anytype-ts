@@ -454,8 +454,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		setIsBottom(false);
 
-		console.log(st);
-
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
 				loadMessages(-1, false);
