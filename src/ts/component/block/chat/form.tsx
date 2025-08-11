@@ -571,7 +571,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
-		const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		send.addClass('isLoading');
 		loader.addClass('active');
@@ -591,8 +590,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 		
 		const callBack = () => {
-			// Marks should be adjusted to remove leading new lines
-
+			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 			const parsed = getMarksFromHtml();
 			const text = trim(parsed.text);
 			const match = parsed.text.match(/^\r?\n+/);
@@ -651,7 +649,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
-						attachments.push({ target: message.objectId, type: I.AttachmentType.File });
+						attachments.push({ id: message.objectId, type: I.AttachmentType.File });
 					};
 
 					if (n == fl) {
@@ -669,11 +667,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of bookmarks) {
-				C.ObjectCreateFromUrl({ source: item.source }, S.Common.space, J.Constant.typeKey.bookmark, item.source, true, bookmark.defaultTemplateId, (message: any) => {
+				C.ObjectCreateBookmark({ source: item.source }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
 					if (message.objectId) {
-						attachments.push({ target: message.objectId, type: I.AttachmentType.Link });
+						attachments.push({ id: message.objectId, type: I.AttachmentType.Link });
 					};
 
 					if (n == bl) {
