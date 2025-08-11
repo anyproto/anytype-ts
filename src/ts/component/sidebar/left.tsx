@@ -190,17 +190,19 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		getChild: () => childRef.current
 	}));
 
+	const icon = id == 'chat' ? 'sidebarToggle' : 'sidebarBack';
+
 	return (
 		<>
 			<Icon 
-				id="sidebarToggle"
-				className="withBackground"
+				id={icon}
+				className="sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
 				onContextMenu={onToggleContext}
 			/>
 
-			<Sync id="sidebarSync" onClick={onSync} />
+			<Sync id="sidebarSync" className="sidebarHeadIcon" onClick={onSync} />
 
 			<div 
 				ref={nodeRef}

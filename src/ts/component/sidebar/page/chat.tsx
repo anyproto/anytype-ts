@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { IconObject, ObjectName, Filter, Label, Icon } from 'Component';
-import { I, U, S, J, keyboard, translate, Mark } from 'Lib';
+import { I, U, S, J, keyboard, translate, Mark, sidebar } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
@@ -65,13 +65,14 @@ const SidebarPageChatBase = observer(forwardRef<{}, I.SidebarPageComponent>((pro
 	const cache = new CellMeasurerCache({
 		defaultHeight: HEIGHT_ITEM,
 		fixedWidth: true,
-		keyMapper: (index) => items[index].id
+		keyMapper: index => items[index].id,
 	});
 
 	const onClick = (item: any) => {
 		if (item.targetSpaceId != S.Common.space) {
 			U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
 		} else {
+			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage(item.id) });
 			U.Space.openDashboard();
 		};
 	};

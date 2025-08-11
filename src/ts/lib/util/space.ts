@@ -427,8 +427,8 @@ class UtilSpace {
 	 * Gets the default sidebar page based on the current space type.
 	 * @returns {string} The default sidebar page.
 	 */
-	getDefaultSidebarPage (): string {
-		const space = this.getSpaceview();
+	getDefaultSidebarPage (id?: string): string {
+		const space = this.getSpaceview(id);
 		return space?.isChat ? 'chat' : 'widget';
 	};
 

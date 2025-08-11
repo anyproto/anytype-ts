@@ -8,12 +8,27 @@
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-#sidebarToggle, 
-#sidebarSync { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon
+.sidebarHeadIcon {
+	&.sidebarAnimation { transition: left $transitionSidebarTime linear; }
+	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
+}
 
-#sidebarToggle { backdrop-filter: blur(20px); left: 84px; background-image: url('~img/icon/widget/toggle0.svg'); }
-#sidebarToggle.sidebarAnimation, #sidebarSync.sidebarAnimation { transition: left $transitionSidebarTime linear; }
-#sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
+#sidebarToggle, #sidebarBack { backdrop-filter: blur(20px); left: 84px; }
+
+#sidebarToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
+#sidebarToggle {
+	&:hover, &.hover { background-image: url('~img/icon/widget/toggle1.svg'); }
+}
+
+#sidebarBack { background-image: url('~img/icon/widget/back0.svg'); }
+#sidebarBack {
+	&:hover, &.hover { background-image: url('~img/icon/widget/back1.svg'); }
+}
+
+.icon { width: 20px; height: 20px; flex-shrink: 0; }
+		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
 
 .sidebar { position: fixed; z-index: 24; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
