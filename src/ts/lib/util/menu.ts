@@ -903,17 +903,17 @@ class UtilMenu {
 			if (c1.isButton && !c2.isButton) return 1;
 			if (!c1.isButton && c2.isButton) return -1;
 
-			if (c1.isChat && !c2.isChat) return -1;
-			if (!c1.isChat && c2.isChat) return 1;
+			//if (c1.isChat && !c2.isChat) return -1;
+			//if (!c1.isChat && c2.isChat) return 1;
 
-			if (c1.counter && !c2.counter) return -1;
-			if (!c1.counter && c2.counter) return 1;
+			//if (c1.counter && !c2.counter) return -1;
+			//if (!c1.counter && c2.counter) return 1;
 
-			if (c1.tmpOrder > c2.tmpOrder) return 1;
-			if (c1.tmpOrder < c2.tmpOrder) return -1;
+			//if (c1.tmpOrder > c2.tmpOrder) return 1;
+			//if (c1.tmpOrder < c2.tmpOrder) return -1;
 
-			if (c1.spaceOrder > c2.spaceOrder) return 1;
-			if (c1.spaceOrder < c2.spaceOrder) return -1;
+			//if (c1.spaceOrder > c2.spaceOrder) return 1;
+			//if (c1.spaceOrder < c2.spaceOrder) return -1;
 
 			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
 			const d2 = c2.lastMessageDate || c2.spaceJoinDate;

@@ -17,6 +17,10 @@ const SidebarPageChatBase = observer(forwardRef<{}, I.SidebarPageComponent>((pro
 
 	const getItems = () => {
 		let items = U.Menu.getVaultItems().map(it => {
+			if (!it.chatId) {
+				return it;
+			};
+
 			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
 
 			let text = '';
@@ -127,11 +131,14 @@ const SidebarPageChatBase = observer(forwardRef<{}, I.SidebarPageComponent>((pro
 
 	const Item = (item: any) => {
 		let cnt = null;
-		if (item.counters.mentionCounter) {
-			cnt = <Icon className="mention" />;
-		} else 
-		if (item.counters.messageCounter) {
-			cnt = item.counters.messageCounter;
+
+		if (item.counters) {
+			if (item.counters.mentionCounter) {
+				cnt = <Icon className="mention" />;
+			} else 
+			if (item.counters.messageCounter) {
+				cnt = item.counters.messageCounter;
+			};
 		};
 
 		return (
