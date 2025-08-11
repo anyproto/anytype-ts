@@ -67,18 +67,20 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 		const Member = (item: any) => {
 			const isCurrent = item.id == participant?.id;
+			const isNew = item.isJoining;
 
-			let withAction = false;
 			let button = null;
 
 			if (isSpaceOwner) {
 				if (isCurrent) {
 					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
 				} else {
+					const placeholder = isNew ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
+
 					button = (
-						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item, item.isJoining)}>
+						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item, isNew)}>
 							<div className="item">
-								<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
+								<div className="name">{placeholder}</div>
 							</div>
 							<Icon className="arrow dark" />
 						</div>
@@ -93,7 +95,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			};
 
 			return (
-				<div id={`item-${item.id}`} className={[ 'row', withAction ? 'withAction' : '' ].join(' ')} style={item.style} >
+				<div id={`item-${item.id}`} className={[ 'row', isNew ? 'isNew' : '' ].join(' ')} style={item.style} >
 					<div className="side left" onClick={() => U.Object.openConfig(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />

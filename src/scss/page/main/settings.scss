@@ -586,14 +586,22 @@
                 }
             }
 
-            .row.withAction {
-                .iconObject { overflow: visible; }
-                .iconObject {
-                    img { border-radius: 50%; }
+            .row.isNew {
+                .side.left {
+                    .iconObject { overflow: visible; }
+                    .iconObject {
+                        img { border-radius: 50%; }
+                    }
+                    .iconObject::after {
+                        content: ''; position: absolute; right: 0px; top: 0px; width: 8px; height: 8px; background: var(--color-system-accent-100);
+                        border-radius: 50%; border: 2px solid var(--color-bg-primary);
+                    }
                 }
-                .iconObject::after {
-                    content: ''; position: absolute; right: 0px; top: 0px; width: 8px; height: 8px; background: var(--color-system-accent-100);
-                    border-radius: 50%; border: 2px solid var(--color-bg-primary);
+
+                .side.right {
+                    .select {
+                        .name { color: var(--color-text-secondary); }
+                    }
                 }
             }
         }
