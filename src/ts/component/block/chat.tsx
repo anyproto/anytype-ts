@@ -1,13 +1,12 @@
-import React, { FC, forwardRef, useRef, useEffect, DragEvent, MouseEvent, memo } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, EmptyState } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
-import Section from './chat/section';
-import Message from './chat/message';
 import Form from './chat/form';
+import Message from './chat/message';
 
 const GROUP_TIME = 300;
 
@@ -300,7 +299,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 	};
 
-	const getSections = () => {
+	const getSections = useCallback(() => {
 		const sections = [];
 
 		messages.forEach(item => {
@@ -345,7 +344,16 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 
 		return sections;
-	};
+	}, [ messages.length, showRelativeDates, dateFormat ]);
+
+	const getItems = useCallback(() => {
+		let items = [];
+		for (const section of sections) {
+			items.push({ key: section.key, createdAt: section.createdAt, isSection: true });
+			items = items.concat(section.list);
+		};
+		return items;
+	}, [ messages.length ]);
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		if (subIds.includes(subId)) {
@@ -435,7 +443,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const formWrapper = node.find('#formWrapper');
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = container.scrollTop();
-		const dates = node.find('.section > .date');
+		const dates = node.find('.sectionDate');
 		const fh = formWrapper.outerHeight();
 		const ch = container.outerHeight();
 		const hh = J.Size.header;
@@ -445,6 +453,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const isFocused = U.Common.getElectron().isFocused();
 
 		setIsBottom(false);
+
+		console.log(st);
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
@@ -806,6 +816,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const sections = getSections();
 	const spaceview = U.Space.getSpaceview();
 	const isEmpty = !messages.length;
+	const items = getItems();
 
 	useEffect(() => {
 		rebind();
@@ -861,24 +872,38 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 					/>
 				) : (
 					<div className="scroll">
-						{sections.map(section => (
-							<Section 
-								{...props}
-								{...section} 
-								key={section.createdAt}
-								setRef={(ref, id) => messageRefs.current[id] = ref}
-								chatId={chatId}
-								block={block}
-								subId={subId}
-								firstUnreadOrderId={firstUnreadOrderId.current}
-								getMessageMenuOptions={getMessageMenuOptions}
-								scrollToBottom={scrollToBottomCheck}
-								onContextMenu={onContextMenu}
-								onReplyEdit={onReplyEdit}
-								onReplyClick={onReplyClick}
-								getReplyContent={getReplyContent}
-							/>
-						))}
+						{items.map(item => {
+							if (item.isSection) {
+								const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
+								const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
+
+								return (
+									<div className="sectionDate">
+										<Label text={date} />
+									</div>
+								);
+							} else {
+								return (
+									<Message
+										ref={ref => messageRefs.current[item.id] = ref}
+										key={item.id}
+										{...props}
+										id={item.id}
+										rootId={chatId}
+										blockId={block.id}
+										subId={subId}
+										isNew={item.orderId == firstUnreadOrderId}
+										hasMore={!!getMessageMenuOptions(item, true).length}
+										scrollToBottom={scrollToBottomCheck}
+										onContextMenu={e => onContextMenu(e, item)}
+										onMore={e => onContextMenu(e, item, true)}
+										onReplyEdit={e => onReplyEdit(e, item)}
+										onReplyClick={e => onReplyClick(e, item)}
+										getReplyContent={getReplyContent}
+									/>
+								);
+							};
+						})}
 					</div>
 				)}
 			</div>
