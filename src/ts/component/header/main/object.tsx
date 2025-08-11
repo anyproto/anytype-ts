@@ -9,7 +9,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
-	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getShowSidebarRight(isPopup);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
@@ -23,7 +22,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isDeleted;
 	const showPin = canWrite && !isRelation;
-	const showWidget = spaceview.isChat;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
@@ -106,10 +104,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.header);
 	};
 
-	const onWidget = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'widget', {});
-	};
-
 	const onRelation = () => {
 		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
 	};
@@ -178,16 +172,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						}}
 						className={[ (object.isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
 						onClick={onPin}
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
-
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget"
-						tooltipParam={{ text: translate('commonWidgets'), typeY: I.MenuDirection.Bottom }}
-						className="widgetsPanel withBackground"
-						onClick={onWidget} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}

@@ -72,7 +72,6 @@ const SidebarPageChatBase = observer(forwardRef<{}, I.SidebarPageComponent>((pro
 		if (item.targetSpaceId != S.Common.space) {
 			U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
 		} else {
-			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage(item.id) });
 			U.Space.openDashboard();
 		};
 	};

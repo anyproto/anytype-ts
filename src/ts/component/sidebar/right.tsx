@@ -5,7 +5,6 @@ import { U, S } from 'Lib';
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 import PageObjectTableOfContents from './page/object/tableOfContents';
-import PageWidget from './page/widget';
 
 interface Props {
 	isPopup?: boolean;
@@ -30,7 +29,6 @@ const Components = {
 	type:					 PageType,
 	objectRelation:			 PageObjectRelation,
 	objectTableOfContents:	 PageObjectTableOfContents,
-	widget:					 PageWidget,
 };
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
