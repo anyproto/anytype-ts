@@ -237,9 +237,10 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		});
 	};
 
-	getParticipantOptions () {
+	getParticipantOptions (isNew?: boolean) {
 		const { membership } = S.Auth;
 		const tier = U.Data.getMembershipTier(membership.tier);
+		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
 
 		let items: any[] = [] as any[];
 
@@ -259,7 +260,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			items.push({ isDiv: true });
 		};
 
-		items.push({ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' });
+		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
 		return items;
 	};
@@ -270,7 +271,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			horizontal: I.MenuDirection.Right,
 			data: {
 				value: item.permissions,
-				options: this.getParticipantOptions(),
+				options: this.getParticipantOptions(isNew),
 				onSelect: (e: any, el: any) => {
 					this.onChangePermissions(item, el.id, isNew);
 				},
@@ -293,9 +294,16 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				button = translate('commonRemove');
 
 				onConfirm = () => {
-					C.SpaceParticipantRemove(space, [ item.identity ]);
+					if (isNew) {
+						C.SpaceRequestDecline(space, item.identity);
 
-					analytics.event('RemoveSpaceMember');
+						analytics.event('RejectInviteRequest');
+					} else {
+						C.SpaceParticipantRemove(space, [ item.identity ]);
+
+						analytics.event('RemoveSpaceMember');
+					};
+
 				};
 				break;
 			};
@@ -309,9 +317,11 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				onConfirm = () => {
 					if (isNew) {
 						C.SpaceRequestApprove(space, item.identity, v);
+
 						analytics.event('ApproveInviteRequest', { type: v });
 					} else {
 						C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+
 						analytics.event('ChangeSpaceMemberPermissions', { type: v });
 					};
 				};
