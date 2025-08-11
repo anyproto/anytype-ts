@@ -287,14 +287,11 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				onConfirm = () => {
 					if (isNew) {
 						C.SpaceRequestDecline(space, item.identity);
-
-						analytics.event('RejectInviteRequest');
 					} else {
 						C.SpaceParticipantRemove(space, [ item.identity ]);
-
-						analytics.event('RemoveSpaceMember');
 					};
 
+					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');
 				};
 				break;
 			};
@@ -308,13 +305,11 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				onConfirm = () => {
 					if (isNew) {
 						C.SpaceRequestApprove(space, item.identity, v);
-
-						analytics.event('ApproveInviteRequest', { type: v });
 					} else {
 						C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
-
-						analytics.event('ChangeSpaceMemberPermissions', { type: v });
 					};
+
+					analytics.event(isNew ? 'ApproveInviteRequest' : 'ChangeSpaceMemberPermissions', { type: v });
 				};
 				break;
 			};
