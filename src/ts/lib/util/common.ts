@@ -1118,7 +1118,7 @@ class UtilCommon {
 		s = String(s || '');
 
 		const rw = new RegExp(/^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
-		const ru = new RegExp(/^(file:\/\/)?(\/[\p{L}\p{N}\s._%\-()]+)+\/?$/u);
+		const ru = /^(file:\/\/\/?)(\/[\p{L}\p{M}\p{N}\s._%\-()]+)+\/?$/u;
 
 		let m = s.match(rw);
 		if (!m) {
