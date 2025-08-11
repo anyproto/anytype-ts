@@ -68,7 +68,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		const Member = (item: any) => {
 			const isCurrent = item.id == participant?.id;
 
-			let tag = null;
+			let withAction = false;
 			let button = null;
 
 			if (isSpaceOwner) {
@@ -76,7 +76,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
 				} else
 				if (item.isJoining) {
-					tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
+					withAction = true;
 					button = (
 						<Button
 							className="c36"
@@ -87,7 +87,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 					);
 				} else
 				if (item.isRemoving) {
-					tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
+					withAction = true;
 					button = (
 						<Button
 							className="c36"
@@ -115,11 +115,10 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			};
 
 			return (
-				<div id={`item-${item.id}`} className="row" style={item.style} >
+				<div id={`item-${item.id}`} className={[ 'row', withAction ? 'withAction' : '' ].join(' ')} style={item.style} >
 					<div className="side left" onClick={() => U.Object.openConfig(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
-						{tag}
 						{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="side right">

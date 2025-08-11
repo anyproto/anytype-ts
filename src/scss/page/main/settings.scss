@@ -585,6 +585,17 @@
                     .select.hover { background-color: var(--color-bg-primary); }
                 }
             }
+
+            .row.withAction {
+                .iconObject { overflow: visible; }
+                .iconObject {
+                    img { border-radius: 50%; }
+                }
+                .iconObject::after {
+                    content: ''; position: absolute; right: 0px; top: 0px; width: 8px; height: 8px; background: var(--color-system-accent-100);
+                    border-radius: 50%; border: 2px solid var(--color-bg-primary);
+                }
+            }
         }
 
         .buttons { display: flex; gap: 0px 16px; justify-content: space-evenly; }
