@@ -118,13 +118,7 @@ Sentry.setContext('info', {
 
 const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	return (
-		<>
-			<ListPopup key="listPopup" {...props} />
-			<ListMenu key="listMenu" {...props} />
-			<Page {...props} isPopup={false} />
-		</>
-	);
+	return <Page {...props} isPopup={false} />;
 
 };
 
@@ -511,6 +505,8 @@ const App: FC = () => {
 					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
 							<SidebarLeft ref={sidebarLeftRef} />
+							<ListPopup />
+							<ListMenu />
 
 							<Switch>
 								{J.Route.map((path: string, i: number) => (

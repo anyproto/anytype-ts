@@ -6,7 +6,7 @@ import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, match, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
+	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
@@ -86,7 +86,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				match,
 				isPopup,
 			}
 		});

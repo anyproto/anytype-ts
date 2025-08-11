@@ -9,7 +9,7 @@ interface HeaderMainHistoryRefProps {
 
 const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, match, isPopup, renderLeftIcons, menuOpen } = props;
+	const { rootId, isPopup, renderLeftIcons, menuOpen } = props;
 	const { dateFormat, timeFormat } = S.Common;
 	const [ version, setVersion ] = useState<I.HistoryVersion | null>(null);
 	const [ dummyState, setDummyState ] = useState(0);
@@ -41,7 +41,6 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				match,
 				isPopup,
 			}
 		});

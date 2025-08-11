@@ -137,11 +137,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getMatch () {
-		const { match, matchPopup, isPopup } = this.props;
-		const { history } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const data = U.Common.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
-		const ret = (isPopup ? matchPopup : match) || { params: {} };
+		const ret = U.Common.objectCopy(keyboard.getMatch(isPopup));
 
 		// Universal object route
 		if (pathname.match(/^\/object/)) {
@@ -248,7 +248,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	rebind () {
-		const { history, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const namespace = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
@@ -257,7 +258,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	unbind () {
-		const { history, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const namespace = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
