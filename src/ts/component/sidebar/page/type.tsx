@@ -98,7 +98,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			layoutWidth: 0,
 			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
-			defaultViewType: I.ViewType.Grid,
+			defaultViewType: I.ViewType.List,
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);

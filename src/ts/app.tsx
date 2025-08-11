@@ -60,6 +60,7 @@ if (!isPackaged) {
 			S,
 			U,
 			M,
+			J,
 			analytics,
 			dispatcher,
 			keyboard,

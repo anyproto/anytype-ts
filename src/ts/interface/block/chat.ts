@@ -46,6 +46,11 @@ export enum ChatReadType {
 	Mention = 1,
 };
 
+export interface ChatMessageReaction {
+	icon: string;
+	authors: string[];
+};
+
 export interface ChatMessage {
 	id: string;
 	orderId: string;
@@ -56,7 +61,7 @@ export interface ChatMessage {
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
 	dependencies: any[];
-	reactions: any;
+	reactions: ChatMessageReaction[];
 	isSynced: boolean;
 
 	// Internal

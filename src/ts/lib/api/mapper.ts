@@ -704,7 +704,7 @@ export const Mapper = {
 			};
 		},
 
-		ChatMessageReaction (obj: Model.ChatMessage.Reactions) {
+		ChatMessageReaction (obj: Model.ChatMessage.Reactions): I.ChatMessageReaction[] {
 			const reactions = [];
 
 			obj.getReactionsMap().forEach((identityList, emoji) => {

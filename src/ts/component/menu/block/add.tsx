@@ -614,7 +614,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				if (item.type == I.BlockType.Dataview) {
 					param.content.isCollection = item.itemId == 'collection';
 					param.content.views = [ 
-						{ type: I.ViewType.Grid, name: translate('commonAll') }
+						{ type: I.ViewType.List, name: translate('commonAll') }
 					];
 				};
 

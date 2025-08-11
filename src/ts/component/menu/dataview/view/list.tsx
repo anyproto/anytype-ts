@@ -62,8 +62,8 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const filters: I.Filter[] = [];
 		const object = getTarget();
 		const newView = {
-			name: Dataview.defaultViewName(I.ViewType.Grid),
-			type: I.ViewType.Grid,
+			name: Dataview.defaultViewName(I.ViewType.List),
+			type: I.ViewType.List,
 			groupRelationKey: Relation.getGroupOption(rootId, blockId, view.type, '')?.id,
 			cardSize: I.CardSize.Medium,
 			filters,

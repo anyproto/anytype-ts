@@ -199,7 +199,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			rootId,
 			blockId: block.id,
 			getView,
-			onSelect: (item) => onSortOrFilterAdd(item, component, callBack),
+			onSelect: item => onSortOrFilterAdd(item, component, callBack),
 		});
 	};
 
@@ -245,7 +245,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const view = getView();
 		const type = S.Record.getTypeById(object.type);
 		
-		let viewType = I.ViewType.Grid;
+		let viewType = I.ViewType.List;
 		if (type && (undefined !== type.defaultViewType)) {
 			viewType = type.defaultViewType;
 		};

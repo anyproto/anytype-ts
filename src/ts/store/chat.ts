@@ -36,11 +36,7 @@ class ChatStore {
 	 */
 	prepend (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
-
-		let list = this.getList(subId);
-		list.unshift(...add);
-		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.set(subId, list);
+		this.getList(subId).unshift(...add);
 	};
 
 	/**
@@ -50,11 +46,7 @@ class ChatStore {
 	 */
 	append (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
-
-		let list = this.getList(subId);
-		list.push(...add);
-		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.set(subId, list);
+		this.getList(subId).push(...add);
 	};
 
 	/**
