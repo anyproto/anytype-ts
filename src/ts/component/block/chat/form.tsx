@@ -487,7 +487,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			};
 		});
 
-		setAttachments(list.concat(attachments));
+		saveState(list.concat(attachments));
 	};
 
 	const preloadFile = (item: any) => {
@@ -575,7 +575,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		if (attachments.length != filtered.length) {
-			setAttachments(filtered);
+			saveState(filtered);
 		};
 	};
 
@@ -729,6 +729,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		editingId.current = '';
 		buttonsRef.current?.setButtons();
 
+		/*
 		attachments.forEach(item => {
 			if (item.isTmp && preloading.has(item.id)) {
 				const preloadId = preloading.get(item.id);
@@ -737,13 +738,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 		});
+		*/
 
 		setRange({ from: 0, to: 0 });
 		setMarks([]);
 		updateMarkup('', { from: 0, to: 0 });
 		clearCounter();
 		checkSendButton();
-		setAttachments([]);
+		saveState([]);
 		setPreloading(new Map());
 	};
 
@@ -836,7 +838,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (editingId.current && !value && !attachments.length) {
 			onDelete(editingId.current);
 		} else {
-			setAttachments(list);
+			saveState(list);
 			analytics.event('DetachItemChat');
 		};
 	};
@@ -876,7 +878,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onChatButtonSelect = (type: I.ChatButton, item: any) => {
 		switch (type) {
 			case I.ChatButton.Object: {
-				setAttachments([ item ].concat(attachments));
+				addAttachments([ item ]);
 				break;
 			};
 
@@ -920,8 +922,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					object.isTmp = true;
 					object.timestamp = U.Date.now();
 
-					attachments.unshift(object);
-					setAttachments(attachments);
+					saveState([ object ]);
 				});
 				break;
 			};
@@ -1043,7 +1044,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			});
 
-			setAttachments(attachments);
 			saveState(attachments);
 		});
 	};
@@ -1195,6 +1195,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const saveState = (attachments?: any[]) => {
+		setAttachments(attachments);
 		Storage.setChat(rootId, {
 			text: getTextValue(),
 			marks: marks.current,
