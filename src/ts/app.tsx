@@ -118,18 +118,12 @@ Sentry.setContext('info', {
 
 const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
-
 	return (
-		<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
-			<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
-				<ListPopup key="listPopup" {...props} />
-				<ListMenu key="listMenu" {...props} />
-
-				<SidebarLeft ref={sidebarLeftRef} {...props} />
-				<Page {...props} isPopup={false} />
-			</DragProvider>
-		</SelectionProvider>
+		<>
+			<ListPopup key="listPopup" {...props} />
+			<ListMenu key="listMenu" {...props} />
+			<Page {...props} isPopup={false} />
+		</>
 	);
 
 };
@@ -484,6 +478,8 @@ const App: FC = () => {
 	};
 
 	useEffect(() => init(), []);
+
+	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	
 	return (
 		<Router history={history}>
@@ -512,11 +508,17 @@ const App: FC = () => {
 					<ListNotification key="listNotification" />
 					<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
-					<Switch>
-						{J.Route.map((path: string, i: number) => (
-							<Route path={path} exact={true} key={i} component={RoutePage} />
-						))}
-					</Switch>
+					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
+						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
+							<SidebarLeft ref={sidebarLeftRef} />
+
+							<Switch>
+								{J.Route.map((path: string, i: number) => (
+									<Route path={path} exact={true} key={i} component={RoutePage} />
+								))}
+							</Switch>
+						</DragProvider>
+					</SelectionProvider>
 
 					<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
 				</div>

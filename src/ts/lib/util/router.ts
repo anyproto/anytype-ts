@@ -237,11 +237,12 @@ class UtilRouter {
 					analytics.removeContext();
 					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
-					sidebar.leftPanelSetState({ page: '' });
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 						this.isOpening = false;
+
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					});
 				},
 			});
