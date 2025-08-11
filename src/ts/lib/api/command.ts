@@ -1366,6 +1366,16 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
 
+export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateBookmark.Request();
+
+	request.setDetails(Encode.struct(details));
+	request.setSpaceid(spaceId);
+	request.setTemplateid(templateId);
+
+	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
+};
+
 export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateObjectType.Request();
 

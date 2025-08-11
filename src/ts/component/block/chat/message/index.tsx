@@ -19,7 +19,7 @@ interface ChatMessageRefProps {
 const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, scrollToBottom, onContextMenu, onMore, onReplyEdit,
+		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, scrollToBottom, onContextMenu, onMore, onReplyEdit,
 		renderLinks, renderMentions, renderObjects, renderEmoji,
 	} = props;
 	const { space } = S.Common;
@@ -323,6 +323,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 			className={cn.join(' ')}
 			onContextMenu={onContextMenu}
 			onDoubleClick={onReplyEdit}
+			style={style}
 		>
 			{isNew ? (
 				<div className="newMessages">

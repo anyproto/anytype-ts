@@ -84,6 +84,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		return (
 			<div
 				id={`record-${record.id}`}
+				ref={ref => onRefRecord(ref, record.id)}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}

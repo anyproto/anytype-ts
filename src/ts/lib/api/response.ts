@@ -208,6 +208,13 @@ export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOp
 	};
 };
 
+export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
+	return {
+		objectId: response.getObjectid(),
+		details: details(response),
+	};
+};
+
 export const ObjectOpen = (response: Rpc.Object.Open.Response) => {
 	return {
 		objectView: Mapper.From.ObjectView(response.getObjectview()),

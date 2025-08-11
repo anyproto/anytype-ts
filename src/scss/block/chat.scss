@@ -10,18 +10,14 @@
 
 		.scrollWrapper { display: flex; flex-direction: column; min-height: 206px; justify-content: flex-end; }
 		.scrollWrapper {
-			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px 0px; padding: 0px 0px 16px 0px; }
 		}
 
-		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
-		.section:first-child { padding-top: 0px; }
-		.section {
-			> .date { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 10; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
-			> .date {
-				.label { @include text-small; padding: 3px 10px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
-			}
-			> .date.hide { opacity: 0; }
+		.sectionDate { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 10; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
+		.sectionDate {
+			.label { @include text-small; padding: 3px 10px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
 		}
+		.sectionDate.hide { opacity: 0; }
 
 		markupmention.withImage {
 			smile, .space { display: none; }
