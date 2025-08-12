@@ -182,8 +182,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			return;
 		};
 
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id;
+		const { id } = U.Router.getParam(U.Router.getRoute());
 
 		let page = '';
 		switch (id) {
