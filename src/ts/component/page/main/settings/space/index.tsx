@@ -309,8 +309,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	componentDidMount (): void {
 		this.setName();
 		this.init();
-
-		analytics.event('ScreenSettingsSpaceIndex');
 	};
 
 	componentDidUpdate (): void {

@@ -30,6 +30,20 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const message = S.Chat.getMessage(subId, id);
 
+	useEffect(() => {
+		init();
+	});
+
+	useImperativeHandle(ref, () => ({
+		highlight: highlight,
+		onReactionAdd: onReactionAdd,
+		getNode: () => nodeRef.current,
+	}));
+
+	if (!message) {
+		return null;
+	};
+
 	const init = () => {
 		const { creator, content } = message;
 		const { marks, text } = content;
@@ -305,16 +319,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 			cn.push(`mediaLayout-${attachments.length}`)
 		};
 	};
-
-	useEffect(() => {
-		init();
-	});
-
-	useImperativeHandle(ref, () => ({
-		highlight: highlight,
-		onReactionAdd: onReactionAdd,
-		getNode: () => nodeRef.current,
-	}));
 
 	return (
 		<div

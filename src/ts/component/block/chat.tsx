@@ -454,8 +454,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		setIsBottom(false);
 
-		console.log(st);
-
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
 				loadMessages(-1, false);
@@ -878,7 +876,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 								const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
 
 								return (
-									<div className="sectionDate">
+									<div key={item.key} className="sectionDate">
 										<Label text={date} />
 									</div>
 								);

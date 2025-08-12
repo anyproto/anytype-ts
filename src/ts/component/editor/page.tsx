@@ -1844,6 +1844,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
+			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
