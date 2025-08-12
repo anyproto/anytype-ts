@@ -56,10 +56,6 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 		);
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenSettingsImport', { route: analytics.route.settingsSpaceIndex });
-	};
-
 	onClick (id: string) {
 		const { onPage } = this.props;
 		const items = this.getItems();
