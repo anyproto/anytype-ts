@@ -48,7 +48,7 @@
 		}
 		.settings.isEditing:hover { background-color: var(--color-system-accent-125); }
 
-		.button { height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; font-weight: 500; }
+		.button { transition: $transitionSettings; height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; font-weight: 500; }
 		.button.help { font-size: 15px; padding: 0px; }
 
 		.button.simple { background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); @include text-overflow-nw; }
