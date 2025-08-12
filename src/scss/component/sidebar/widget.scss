@@ -33,8 +33,10 @@
 
 		.settings { transition: $transitionSettings; position: relative; width: 28px; height: 28px; overflow: hidden; background-color: var(--color-shape-highlight-medium); border-radius: 14px; }
 		.settings {
-			.icon { transition: $transitionSettings; position: absolute; left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/settings0.svg'); }
-			.label { transition: $transitionSettings; position: absolute; left: 12px; top: 5px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
+			.icon,
+			.label { transition: $transitionSettings; position: absolute; }
+			.icon {  left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/settings0.svg'); }
+			.label { left: 12px; top: 5px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
 		}
 		.settings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
 		.settings:not(.isEditing):hover {
