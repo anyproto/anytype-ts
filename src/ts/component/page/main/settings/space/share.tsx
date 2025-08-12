@@ -188,9 +188,6 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 						console.log('MW RETURNS:')
 
 						const isChange = noApproveIds.includes(this.state.type) && noApproveIds.includes(Number(item.id));
-						// console.log('NO APPROVE IDS: ', noApproveIds)
-						// console.log('CURRENT TYPE: ', this.state.type)
-						// console.log('NEW TYPE: ', item.id)
 
 						if (isChange) {
 							C.SpaceInviteChange(S.Common.space, permissions, (message: any) => {
