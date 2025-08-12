@@ -429,7 +429,7 @@ class UtilSpace {
 	 */
 	getDefaultSidebarPage (id?: string): string {
 		const space = this.getSpaceview(id);
-		return space?.isChat ? 'chat' : 'widget';
+		return space?.isChat ? 'vault' : 'widget';
 	};
 
 };

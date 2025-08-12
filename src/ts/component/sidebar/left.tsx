@@ -9,12 +9,12 @@ import PageWidget from './page/widget';
 import PageObject from './page/allObject';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
-import PagePageChat from './page/chat';
+import PageVault from './page/vault';
 
 const Components = {
 	allObject:			 PageObject,
 	widget:				 PageWidget,
-	chat:				 PagePageChat,
+	vault:				 PageVault,
 	settings:			 PageSettingsIndex,
 	settingsSpace:		 PageSettingsIndex,
 	settingsTypes:		 PageSettingsLibrary,
@@ -45,6 +45,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const Component = Components[id];
+	const icon = id == 'vault' ? 'sidebarToggle' : 'sidebarBack';
 
 	if (id.match(/settings/)) {
 		cnp.push('containerSettings');
@@ -149,7 +150,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	const onToggleClick = () => {
 		//sidebar.toggleOpenClose();
-		const page = sidebar.leftPanelGetState().page == 'widget' ? 'chat' : 'widget';
+		const page = sidebar.leftPanelGetState().page == 'widget' ? 'vault' : 'widget';
 
 		sidebar.leftPanelSetState({ page });
 	};
@@ -189,8 +190,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		getPage: () => page,
 		getChild: () => childRef.current
 	}));
-
-	const icon = id == 'chat' ? 'sidebarToggle' : 'sidebarBack';
 
 	return (
 		<>

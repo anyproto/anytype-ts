@@ -1,5 +1,4 @@
-.sidebarPage.pageChat {}
-.sidebarPage.pageChat {
+.sidebarPage.pageVault {
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; overflow: hidden; flex-shrink: 0;
@@ -42,6 +41,10 @@
 		}
 		.cnt {
 			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
+		}
+
+		&.isLastPinned::after {
+			content: ""; position: absolute; left: 8px; bottom: 0px; width: calc(100% - 16px); height: 1px; background: var(--color-shape-primary); 
 		}
 	}
 }

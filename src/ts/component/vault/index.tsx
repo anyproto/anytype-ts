@@ -175,7 +175,7 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 						}, false);
 					};
 				} else {
-					sidebar.leftPanelSetState({ page: 'chat' });
+					sidebar.leftPanelSetState({ page: 'vault' });
 				};
 				break;
 			};
