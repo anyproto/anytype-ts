@@ -41,6 +41,10 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	}));
 
 	const init = () => {
+		if (!message) {
+			return;
+		};
+
 		const { creator, content } = message;
 		const { marks, text } = content;
 		const { account } = S.Auth;
