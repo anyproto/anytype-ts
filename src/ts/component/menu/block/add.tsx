@@ -366,7 +366,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		const { id, param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
 		const { filter } = S.Common;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -384,7 +384,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			className: param.className,
+			className,
+			classNameWrap,
 			rebind: this.rebind,
 			parentId: id,
 			data: {
