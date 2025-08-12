@@ -357,6 +357,8 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
+		S.Common.updateVersionSet('');
+		S.Progress.delete(I.ProgressType.Update);
 
 		if (auto) {
 			return;
