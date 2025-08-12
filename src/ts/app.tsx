@@ -153,6 +153,8 @@ const App: FC = () => {
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-progress', onUpdateProgress);
 		Renderer.on('spellcheck', onSpellcheck);
+		Renderer.on('pin-set', () => S.Common.pinInit());
+		Renderer.on('pin-remove', () => S.Common.pinInit());
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -342,6 +344,8 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
+		S.Common.updateVersionSet('');
+		S.Progress.delete(I.ProgressType.Update);
 
 		if (auto) {
 			return;
