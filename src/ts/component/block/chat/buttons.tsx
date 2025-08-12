@@ -1,10 +1,9 @@
-import * as React from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useEffect, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, analytics, I, J, keyboard, Mark, S, translate, U } from 'Lib';
 
 interface Props extends I.BlockComponent {
-	blockId: string;
 	value: string;
 	attachments: any[];
 	hasSelection: () => boolean;
@@ -15,81 +14,35 @@ interface Props extends I.BlockComponent {
 	onMenuClose: () => void;
 	onMention: () => void;
 	getObjectFromPath: (path: string) => void;
-	addAttachments: (attachments: any[], callBack?: () => void) => void;
+	addAttachments: (attachments: any[]) => void;
+	updateAttachments?: () => void;
 	removeBookmark: (url: string) => void;
 };
 
-interface State {
-	buttons: any[];
+interface RefProps {
+	getButtons: () => any[];
+	setButtons: () => void;
+	onChatButton: (e: MouseEvent, type: I.ChatButton) => void;
+	onTextButton: (e: MouseEvent, type: I.MarkType, param: string) => void;
 };
 
-const ChatButtons = observer(class ChatButtons extends React.Component<Props, State> {
+const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	state = {
-		buttons: [],
+	const { 
+		rootId, block, attachments, hasSelection, caretMenuParam, onMention, onChatButtonSelect, onTextButtonToggle, getMarksAndRange, removeBookmark,
+		addAttachments, getObjectFromPath, updateAttachments, onMenuClose,
+	} = props;
+	const [ buttons, setButtons ] = useState<any[]>([]);
+	const cmd = keyboard.cmdSymbol();
+
+	const onButton = (e: MouseEvent, item: any) => {
+		hasSelection() ? onTextButton(e, item.type, '') : onChatButton(e, item.type);
 	};
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onButton = this.onButton.bind(this);
-		this.onTextButton = this.onTextButton.bind(this);
-		this.onChatButton = this.onChatButton.bind(this);
-		this.onAttachment = this.onAttachment.bind(this);
-	};
-
-	render () {
-		const { block } = this.props;
-		const { buttons } = this.state;
-
-		return (
-			<div className="buttons">
-				{buttons.map((item: any, i: number) => {
-					const cn = [ item.icon, 'withBackground' ];
-
-					if (item.isActive) {
-						cn.push('isActive');
-					};
-
-					return (
-						<Icon 
-							id={`button-${block.id}-${item.type}`} 
-							key={i} 
-							className={cn.join(' ')} 
-							inner={item.inner}
-							onMouseDown={e => this.onButton(e, item)}
-							tooltipParam={{
-								text: item.name,
-								caption: item.caption,
-								typeY: I.MenuDirection.Top,
-							}}
-						/>
-					);
-				})}
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		this.setButtons();
-	};
-
-	setButtons () {
-		this.setState({ buttons: this.getButtons() });
-	};
-
-	onButton (e: React.MouseEvent, item: any) {
-		const { hasSelection } = this.props;
-
-		hasSelection() ? this.onTextButton(e, item.type, '') : this.onChatButton(e, item.type);
-	};
-
-	onChatButton (e: React.MouseEvent, type: I.ChatButton) {
-		const { block, caretMenuParam, onMention, onChatButtonSelect } = this.props;
-
+	const onChatButton = (e: MouseEvent, type: I.ChatButton) => {
 		switch (type) {
 			case I.ChatButton.Object: {
-				this.onAttachment();
+				onAttachment();
 				break;
 			};
 
@@ -115,8 +68,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		};
 	};
 
-	onTextButton (e: React.MouseEvent, type: I.MarkType, param: string) {
-		const { rootId, block, onTextButtonToggle, getMarksAndRange, removeBookmark } = this.props;
+	const onTextButton = (e: MouseEvent, type: I.MarkType, param: string) => {
 		const { marks, range } = getMarksAndRange();
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
@@ -186,14 +138,11 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		};
 	};
 
-	getButtons () {
-		const { hasSelection } = this.props;
-		return hasSelection() ? this.getTextButtons() : this.getChatButtons();
+	const getButtons = () => {
+		return hasSelection() ? getTextButtons() : getChatButtons();
 	};
 
-	getChatButtons () {
-		const cmd = keyboard.cmdSymbol();
-
+	const getChatButtons = () => {
 		return [
 			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
 			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
@@ -201,8 +150,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		];
 	};
 
-	getTextButtons () {
-		const { getMarksAndRange } = this.props;
+	const getTextButtons = () => {
 		const { marks, range } = getMarksAndRange();
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
@@ -235,9 +183,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		});
 	};
 
-	onAttachment (menu?: string) {
-		const { blockId, attachments, onMenuClose, onChatButtonSelect, addAttachments, getObjectFromPath } = this.props;
-
+	const onAttachment = (menu?: string) => {
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
 			{ id: 'media', icon: 'media', name: translate('commonMedia') },
@@ -270,12 +216,23 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 			menuId = 'searchObject';
 			data = {
+				canAdd: true,
 				skipIds: attachments.map(it => it.id),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
-				onSelect: (item: any) => {
+				onSelect: (item: any, isNew: boolean) => {
 					onChatButtonSelect(I.ChatButton.Object, item);
+
+					if (isNew) {
+						U.Object.openPopup(item, {
+							onClose: () => {
+								if (updateAttachments) {
+									updateAttachments();
+								};
+							}
+						});
+					};
 
 					analytics.event('AttachItemChat', { type: analyticsMenuName, count: 1 });
 				},
@@ -309,7 +266,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				noVirtualisation: true,
 				noScroll: true,
 				onSelect: (e: React.MouseEvent, option: any) => {
-					this.onAttachment(option.id);
+					onAttachment(option.id);
 				}
 			};
 
@@ -318,7 +275,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open(menuId, {
-				element: `#block-${blockId} #button-${blockId}-${I.ChatButton.Object}`,
+				element: `#block-${block.id} #button-${block.id}-${I.ChatButton.Object}`,
 				className: 'chatAttachment fixed',
 				offsetY: -8,
 				vertical: I.MenuDirection.Top,
@@ -333,6 +290,45 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			});
 		});
 	};
-});
+
+	useEffect(() => {
+		setButtons(getButtons());
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		setButtons: () => setButtons(getButtons()),
+		getButtons,
+		onChatButton,
+		onTextButton,
+	}));
+
+	return (
+		<div className="buttons">
+			{buttons.map((item: any, i: number) => {
+				const cn = [ item.icon, 'withBackground' ];
+
+				if (item.isActive) {
+					cn.push('isActive');
+				};
+
+				return (
+					<Icon 
+						id={`button-${block.id}-${item.type}`} 
+						key={i} 
+						className={cn.join(' ')} 
+						inner={item.inner}
+						onMouseDown={e => onButton(e, item)}
+						tooltipParam={{
+							text: item.name,
+							caption: item.caption,
+							typeY: I.MenuDirection.Top,
+						}}
+					/>
+				);
+			})}
+		</div>
+	);
+
+}));
 
 export default ChatButtons;

@@ -43,11 +43,13 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	};
 
 	const onAdd = (e: any) => {
+		const { width, height } = getSize();
+
 		S.Menu.open('dataviewFileList', {
 			element: `#${getId()}`,
 			className: 'single',
-			offsetX: param.width,
-			offsetY: () => -getSize().height,
+			offsetX: param.width || width,
+			offsetY: () => -height,
 			classNameWrap,
 			passThrough: true,
 			noFlipY: true,

@@ -1,15 +1,21 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, C, U, J, Relation, translate, keyboard } from 'Lib';
-import { Filter, MenuItemVertical, Icon } from 'Component';
+import { I, S, C, U, Relation, translate, keyboard } from 'Lib';
+import { Filter, MenuItemVertical } from 'Component';
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
+	node = null;
 	refName = null;
 	color = '';
-	timeout = 0;
 	n = -1;
+
+	constructor (props: I.Menu) {
+		super(props);
+
+		this.onClear = this.onClear.bind(this);
+	};
 
 	render () {
 		const { param } = this.props;
@@ -56,14 +62,14 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		);
 
 		return (
-			<div>
+			<div ref={ref => this.node = ref}>
 				<Filter
 					ref={ref => this.refName = ref}
 					placeholder={isNew ? translate('menuDataviewOptionCreatePlaceholder') : translate('menuDataviewOptionEditPlaceholder')}
 					className="outlined"
 					value={option.name}
 					onKeyUp={(e: any, v: string) => this.onKeyUp(e, v)}
-					onClear={() => this.onClear()}
+					onClear={this.onClear}
 				/>
 
 				{sections.map((item: any, i: number) => (
@@ -74,42 +80,26 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		const { param, getId } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { option, isNew } = data;
+		const { option } = data;
 
 		this.color = option.color;
 		this.rebind();
 		this.forceUpdate();
-
-		if (isNew) {
-			window.setTimeout(() => $(`#${getId()} #item-create`).addClass('disabled'), J.Constant.delay.menu);
-		};
 	};
 
 	componentDidUpdate () {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { isNew } = data;
-		const v = this.refName?.getValue() || '';
-
 		this.props.setActive();
-
-		if (isNew && !v.length) {
-			$(`#${getId()} #item-create`).addClass('disabled');
-		};
+		this.checkButton();
 	};
 
 	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
+		this.unbind();
 	};
 
 	focus () {
-		window.setTimeout(() => { 
-			if (this.refName) {
-				this.refName.focus(); 
-			};
-		}, 15);
+		window.setTimeout(() => this.refName?.focus(), 15);
 	};
 
 	rebind () {
@@ -159,8 +149,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { data } = param;
 		const { isNew } = data;
 
-		window.clearTimeout(this.timeout);
-
 		let ret = false;
 
 		keyboard.shortcut('enter', e, () => {
@@ -182,16 +170,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onKeyUp (e: any, v: string) {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { isNew } = data;
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
-
-		if (isNew) {
-			$(`#${getId()} #item-create`).toggleClass('disabled', !v.length);
-		};
+		this.checkButton();
 	};
 
 	onClick (e: any, item: any) {
@@ -230,9 +209,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	onClear () {
-		const { getId } = this.props;
-
-		$(`#${getId()} #item-create`).addClass('disabled');
+		$(this.node).find('#item-create').addClass('disabled');
 	};
 
 	remove () {
@@ -257,7 +234,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { option, isNew } = data;
-		const value = this.refName ? this.refName.getValue() : '';
+		const value = String(this.refName?.getValue() || '');
 
 		if (!value || isNew) {
 			return;
@@ -273,7 +250,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { relationKey } = data;
-		const value = this.refName ? this.refName.getValue() : '';
+		const value = String(this.refName?.getValue() || '');
 
 		if (!value) {
 			return;
@@ -301,6 +278,20 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		return this.color;
 	};
 	
+	checkButton () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isNew } = data;
+
+		if (!isNew) {
+			return;
+		};
+
+		const v = String(this.refName?.getValue() || '').trim();
+
+		$(this.node).find('#item-create').toggleClass('disabled', !v.length);
+	};
+
 });
 
 export default MenuOptionEdit;

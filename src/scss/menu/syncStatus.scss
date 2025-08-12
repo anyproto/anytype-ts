@@ -10,7 +10,7 @@
 		.syncPanel { height: 28px; padding: 0px 16px; display: flex; justify-content: space-between; align-items: center; }
 
 		.title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
-		.ReactVirtualized__List { padding: 8px; }
+		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.icons {
@@ -46,10 +46,16 @@
 			}
 		}
 
+		.incentiveBanner { margin: 10px 16px 0px 16px; padding: 12px 16px 16px 16px; border-radius: 8px; background: linear-gradient(180deg, #FEE7E0 30%, #FFF6F3 100%); }
+		.incentiveBanner {
+			.buttons { padding-top: 12px; display: flex; gap: 8px; }
+			.buttons {
+				.button { width: 50%; }
+			}
+		}
+
 		.items { height: 100%; }
 		.items {
-			.sectionName { padding: 4px 8px; }
-
 			.sides { display: flex; align-items: center; gap: 0px 6px; }
 			.sides {
 				.side.left { display: flex; align-items: center; flex-grow: 1; overflow: hidden; @include text-overflow-nw; }
@@ -65,23 +71,21 @@
 				}
 			}
 
-			.item { padding: 3px 8px; line-height: 22px; border-radius: 6px; }
 			.item {
-				&::before { border-radius: inherit; }
-
 				.info { display: flex; align-items: baseline; width: calc(100% - 24px); }
 				.info {
 					.iconObject { margin-right: 8px; }
 					.name { margin: 0px 6px 0px 0px; @include text-overflow-nw; }
 					.size { color: var(--color-text-secondary); }
 				}
-			}
 
-			.item:hover, .item.hover {
-				&::before { background: var(--color-shape-highlight-medium); }
-				.side.right {
-					.icon:not(.more) { display: none; }
-					.icon.more { display: block; }
+				&.hover {
+					&::before { background: var(--color-shape-highlight-medium); }
+
+					.side.right {
+						.icon:not(.more) { display: none; }
+						.icon.more { display: block; }
+					}
 				}
 			}
 		}

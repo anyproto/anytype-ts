@@ -119,7 +119,7 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpenedByWindowId(U.Common.getWindowId());
+		let home = Storage.getLastOpenedByWindowId(S.Common.windowId);
 
 		// Invalid data protection
 		if (!home || !home.id) {
@@ -391,9 +391,9 @@ class UtilSpace {
 	 * @param {string} id - The invite ID.
 	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.
 	 */
-	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType) => void) {
+	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void) {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
-			callBack(message.inviteCid, message.inviteKey, message.inviteType);
+			callBack(message.inviteCid, message.inviteKey, message.inviteType, message.permissions);
 		});
 	};
 
@@ -420,7 +420,7 @@ class UtilSpace {
 	 * @returns {string} The publish URL.
 	 */
 	getPublishUrl (slug: string): string {
-		return [ 'https://', this.getPublishDomain(), slug ].join('/');
+		return 'https://' + [ this.getPublishDomain(), slug ].join('/');
 	};
 
 };

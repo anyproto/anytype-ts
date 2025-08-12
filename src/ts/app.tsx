@@ -60,6 +60,7 @@ if (!isPackaged) {
 			S,
 			U,
 			M,
+			J,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -205,7 +206,7 @@ const App: FC = () => {
 	};
 
 	const onInit = (e: any, data: any) => {
-		const { dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -213,8 +214,6 @@ const App: FC = () => {
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
-		const color = Storage.get('color');
-		const bgColor = Storage.get('bgColor');
 		const route = String(data.route || redirect || '');
 
 		S.Common.configSet(config, true);
@@ -222,15 +221,9 @@ const App: FC = () => {
 		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
+		S.Common.windowIdSet(id);
 
 		Action.checkDefaultSpellingLang();
-
-		if (!color) {
-			Storage.set('color', 'orange');
-		};
-		if (!bgColor) {
-			Storage.set('bgColor', 'orange');
-		};
 
 		analytics.init();
 
@@ -364,6 +357,8 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
+		S.Common.updateVersionSet('');
+		S.Progress.delete(I.ProgressType.Update);
 
 		if (auto) {
 			return;

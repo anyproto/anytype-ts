@@ -1,82 +1,35 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Icon, Label, Button, Error } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface State {
-	error: string;
-};
+const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-const PopupInviteRequest = observer(class PopupInviteRequest extends React.Component<I.Popup, State> {
+	const { param, close } = props;
+	const { data } = param;
+	const { route } = data;
+	const [ error, setError ] = useState('');
+	const invite = data.invite || {};
+	const refButton = useRef(null);
+	const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+	const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
-	state = {
-		error: '',
-	};
-
-	refButton = null;
-
-	constructor (props: I.Popup) {
-		super(props);
-
-		this.onRequest = this.onRequest.bind(this);
-	};
-
-	render() {
-		const { error } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { invite } = data;
-		const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
-		const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
-
-		return (
-			<>
-				<Title text={translate('popupInviteRequestTitle')} />
-				
-				<div className="iconWrapper">
-					<Icon className="join" />
-				</div>
-
-				<Label className="invitation" text={U.Common.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
-
-				<div className="buttons">
-					<Button ref={ref => this.refButton = ref} onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
-				</div>
-
-				<div className="note">{translate('popupInviteRequestNote')}</div>
-
-				<Error text={error} />
-			</>
-		);
-	};
-
-	componentDidMount(): void {
-		const { param } = this.props;
-		const { data } = param;
-		const { route } = data;
-		const space = U.Space.getSpaceview();
-
-		analytics.event('ScreenInviteRequest', { route });
-	};
-
-	onRequest () {
-		const { param, close } = this.props;
+	const onRequest = () => {
 		const { account } = S.Auth;
 		const { data } = param;
 		const { invite, cid, key } = data;
-		const space = U.Space.getSpaceview();
 
-		if (!account || this.refButton.isLoading()) {
+		if (!account || refButton.current?.isLoading()) {
 			return;
 		};
 
-		this.refButton?.setLoading(true);
+		refButton.current?.setLoading(true);
 
 		C.SpaceJoin(account.info.networkId, invite.spaceId, cid, key, (message: any) => {
-			this.refButton?.setLoading(false);
+			refButton.current?.setLoading(false);
 
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				setError(message.error.description);
 				return;
 			};
 
@@ -87,6 +40,30 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		});
 	};
 
-});
+	useEffect(() => {
+		analytics.event('ScreenInviteRequest', { route, type: invite?.inviteType });
+	}, []);
+
+	return (
+		<>
+			<Title text={translate('popupInviteRequestTitle')} />
+			
+			<div className="iconWrapper">
+				<Icon className="join" />
+			</div>
+
+			<Label className="invitation" text={U.Common.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
+
+			<div className="buttons">
+				<Button ref={refButton} onClick={onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
+			</div>
+
+			<div className="note">{translate('popupInviteRequestNote')}</div>
+
+			<Error text={error} />
+		</>
+	);
+
+}));
 
 export default PopupInviteRequest;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
@@ -14,362 +14,115 @@ import Buttons from './buttons';
 interface Props extends I.BlockComponent {
 	blockId: string;
 	subId: string;
+	isEmpty?: boolean;
 	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string, animate?: boolean, highlight?: boolean) => void;
 	loadMessagesByOrderId: (orderId: string, callBack?: () => void) => void;
 	getMessages: () => I.ChatMessage[];
-	getMessagesInViewport: () => any[];
-	getIsBottom: () => boolean;
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
 	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
 };
 
-interface State {
-	attachments: any[];
-	replyingId: string;
+interface RefProps {
+	onReply: (message: I.ChatMessage) => void;
+	getReplyingId: () => string;
+	onEdit: (message: I.ChatMessage) => void;
+	onDelete: (id: string) => void;
+	getNode: () => HTMLDivElement;
+	onDragOver: (e: DragEvent) => void;
+	onDragLeave: (e: DragEvent) => void;
+	onDrop: (e: DragEvent) => void;
+	getAttachments: () => any[];
+	getMarks: () => I.Mark[];
 };
 
-const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
+const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	_isMounted = false;
-	node = null;
-	refEditable = null;
-	refButtons = null;
-	refCounter = null;
-	refDummy = null;
-	isLoading = [];
-	isSending = false;
-	marks: I.Mark[] = [];
-	range: I.TextRange = { from: 0, to: 0 };
-	timeoutFilter = 0;
-	timeoutDrag = 0;
-	editingId: string = '';
-	speedLimit = { last: 0, counter: 0 };
-	state = {
-		attachments: [],
-		replyingId: '',
-	};
+	const { account } = S.Auth;
+	const { space } = S.Common;
+	const { 
+		rootId, isPopup, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
+		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
+		highlightMessage,
+	} = props;
+	const [ attachments, setAttachments ] = useState<any[]>([]);
+	const [ replyingId, setReplyingId ] = useState<string>('');
+	const { messageCounter, mentionCounter } = S.Chat.getState(subId);
+	const nodeRef = useRef(null);
+	const dummyRef = useRef(null);
+	const editableRef = useRef(null);
+	const buttonsRef = useRef(null);
+	const counterRef = useRef(null);
+	const sendRef = useRef(null);
+	const timeoutFilter = useRef(0);
+	const timeoutDrag = useRef(0);
+	const isLoading = useRef<string[]>([]);
+	const isSending = useRef(false);
+	const range = useRef<I.TextRange>({ from: 0, to: 0 });
+	const marks = useRef<I.Mark[]>([]);
+	const editingId = useRef<string>('');
+	const speedLimit = useRef({ last: 0, counter: 0 });
+	const mc = messageCounter > 999 ? '999+' : messageCounter;
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onSelect = this.onSelect.bind(this);
-		this.onMouseDown = this.onMouseDown.bind(this);
-		this.onMouseUp = this.onMouseUp.bind(this);
-		this.onFocusInput = this.onFocusInput.bind(this);
-		this.onBlurInput = this.onBlurInput.bind(this);
-		this.onKeyUpInput = this.onKeyUpInput.bind(this);
-		this.onKeyDownInput = this.onKeyDownInput.bind(this);
-		this.onInput = this.onInput.bind(this);
-		this.onPaste = this.onPaste.bind(this);
-		this.onMention = this.onMention.bind(this);
-		this.onChatButtonSelect = this.onChatButtonSelect.bind(this);
-		this.onTextButtonToggle = this.onTextButtonToggle.bind(this);
-		this.onMenuClose = this.onMenuClose.bind(this);
-		this.onDragOver = this.onDragOver.bind(this);
-		this.onDragLeave = this.onDragLeave.bind(this);
-		this.onDrop = this.onDrop.bind(this);
-		this.onSend = this.onSend.bind(this);
-		this.onEdit = this.onEdit.bind(this);
-		this.onEditClear = this.onEditClear.bind(this);
-		this.onReply = this.onReply.bind(this);
-		this.onReplyClear = this.onReplyClear.bind(this);
-		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
-		this.onNavigationClick = this.onNavigationClick.bind(this);
-		this.addAttachments = this.addAttachments.bind(this);
-		this.hasSelection = this.hasSelection.bind(this);
-		this.caretMenuParam = this.caretMenuParam.bind(this);
-		this.removeBookmark = this.removeBookmark.bind(this);
-		this.getMarksAndRange = this.getMarksAndRange.bind(this);
-		this.getObjectFromPath = this.getObjectFromPath.bind(this);
-	};
-
-	render () {
-		const { subId, readonly, getReplyContent } = this.props;
-		const { attachments, replyingId } = this.state;
-		const value = this.getTextValue();
-		const { messageCounter, mentionCounter } = S.Chat.getState(subId);
-		const mc = messageCounter > 999 ? '999+' : messageCounter;
-
-		let form = null;
-		let title = '';
-		let text = '';
-		let icon: any = null;
-		let onClear = () => {};
-
-		if (this.editingId) {
-			title = translate('blockChatEditing');
-			onClear = () => this.onEditClear();
-		} else
-		if (replyingId) {
-			const message = S.Chat.getMessage(subId, replyingId);
-
-			if (message) {
-				const reply = getReplyContent(message);
-
-				title = reply.title;
-				text = reply.text;
-				if (reply.attachment) {
-					const object = reply.attachment;
-
-					let iconSize = null;
-					if (U.Object.getFileLayouts().concat(U.Object.getHumanLayouts()).includes(object.layout)) {
-						iconSize = 32;
-					};
-
-					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
-				};
-				if (reply.isMultiple && !reply.attachment) {
-					icon = <Icon className="isMultiple" />;
-				};
-				onClear = this.onReplyClear;
-			};
-		};
-
-		const Button = (item: any) => (
-			<div id={`navigation-${item.type}`} className={`btn ${item.className || ''}`} onClick={() => this.onNavigationClick(item.type)}>
-				<div className="bg" />
-				<Icon className={item.icon} />
-
-				{item.cnt ? (
-					<div className="counter">
-						<Label text={String(item.cnt)} />
-					</div>
-				) : ''}
-			</div>
-		);
-
-		if (readonly) {
-			form = <div className="readonly">{translate('blockChatFormReadonly')}</div>;
-		} else {
-			form = (
-				<div className="form customScrollbar">
-					<Loader id="form-loader" />
-
-					{title ? (
-						<div className="head">
-							<div className="side left">
-								{icon}
-								<div className="textWrapper">
-									<div className="name">{title}</div>
-									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
-								</div>
-							</div>
-							<div className="side right">
-								<Icon className="clear" onClick={onClear} />
-							</div>
-						</div>
-					) : ''}
-
-					<Editable 
-						ref={ref => this.refEditable = ref}
-						id="messageBox"
-						maxLength={J.Constant.limit.chat.text}
-						placeholder={translate('blockChatPlaceholder')}
-						onSelect={this.onSelect}
-						onFocus={this.onFocusInput}
-						onBlur={this.onBlurInput}
-						onKeyUp={this.onKeyUpInput} 
-						onKeyDown={this.onKeyDownInput}
-						onInput={this.onInput}
-						onPaste={this.onPaste}
-						onMouseDown={this.onMouseDown}
-						onMouseUp={this.onMouseUp}
-					/>
-
-					{attachments.length ? (
-						<div className="attachments">
-							<Swiper
-								slidesPerView={'auto'}
-								spaceBetween={8}
-								navigation={true}
-								mousewheel={true}
-								modules={[ Navigation, Mousewheel ]}
-							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={this.onAttachmentRemove}
-											bookmarkAsDefault={true}
-										/>
-									</SwiperSlide>
-								))}
-							</Swiper>
-						</div>
-					) : ''}
-
-					<Buttons
-						ref={ref => this.refButtons = ref}
-						{...this.props}
-						value={value}
-						hasSelection={this.hasSelection}
-						getMarksAndRange={this.getMarksAndRange}
-						attachments={attachments}
-						caretMenuParam={this.caretMenuParam}
-						onMention={this.onMention}
-						onChatButtonSelect={this.onChatButtonSelect}
-						onTextButtonToggle={this.onTextButtonToggle}
-						getObjectFromPath={this.getObjectFromPath}
-						addAttachments={this.addAttachments}
-						onMenuClose={this.onMenuClose}
-						removeBookmark={this.removeBookmark}
-					/>
-
-					<div ref={ref => this.refCounter = ref} className="charCounter" />
-
-					<Icon id="send" className="send" onClick={this.onSend} />
-				</div>
-			);
-		};
-
-		return (
-			<>
-				<div ref={ref => this.refDummy = ref} className="formDummy" />
-				<div 
-					ref={ref => this.node = ref}
-					id="formWrapper" 
-					className="formWrapper"
-					onDragOver={this.onDragOver}
-					onDragLeave={this.onDragLeave}
-				>
-					<div className="dragOverlay">
-						<div className="inner">
-							<Icon />
-							<Label text={translate('commonDropFiles')} />
-						</div>
-					</div>
-
-					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
-					</div>
-
-					{form}
-
-					<div className="bottom" />
-				</div>
-			</>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.checkSendButton();
-
-		const { rootId, readonly } = this.props;
-		const storage = Storage.getChat(rootId);
-
-		if (!readonly && storage) {
-			const text = String(storage.text || '');
-			const marks = storage.marks || [];
-			const attachments = (storage.attachments || []).filter(it => !it.isTmp);
-			const length = text.length;
-
-			this.marks = marks;
-			this.updateMarkup(text, { from: length, to: length });
-			this.updateCounter(text);
-
-			if (attachments.length) {
-				this.setAttachments(attachments);
-			};
-		};
-
-		this.resize();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.props.loadDepsAndReplies([], () => {
-			this.renderMarkup();
-			this.renderReply();
-		});
-		this.checkSendButton();
-		this.resize();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-
-		window.clearTimeout(this.timeoutFilter);
-		keyboard.disableSelection(false);
-	};
-
-	unbind () {
-		const { isPopup, block } = this.props;
+	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
-	rebind () {
-		const { isPopup, block } = this.props;
-		const win = $(window);
+	const rebind = () => {
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
-		this.unbind();
-		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
+		unbind();
+		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
 	};
 
-	checkSendButton () {
-		const node = $(this.node);
-		const button = node.find('#send');
+	const checkSendButton = () => {
+		const button = $(sendRef.current);
 
-		this.canSend() || this.isSending ? button.show() : button.hide();
+		canSend() || isSending.current ? button.show() : button.hide();
 	};
 
-	onSelect () {
-		this.range = this.refEditable.getRange();
-		this.updateButtons();
+	const onSelect = () => {
+		range.current = getRange();
+		updateButtons();
 	};
 
-	onMouseDown () {
-		this.onSelect();
+	const onMouseDown = () => {
+		onSelect();
 	};
 
-	onMouseUp () {
-		this.onSelect();
+	const onMouseUp = () => {
+		onSelect();
 	};
 
-	onFocusInput () {
+	const onFocusInput = () =>	 {
 		keyboard.disableSelection(true);
-		this.refEditable?.placeholderCheck();
+		editableRef.current?.placeholderCheck();
 	};
 
-	onBlurInput () {
-		const { rootId } = this.props;
-		const { attachments } = this.state;
-
+	const onBlurInput = () => {
 		keyboard.disableSelection(false);
-		this.refEditable?.placeholderCheck();
+		editableRef.current?.placeholderCheck();
 
-		Storage.setChat(rootId, {
-			text: this.getTextValue(),
-			marks: this.marks,
-			attachments,
-		});
+		saveState(attachments);
 	};
 
-	onKeyDownInput (e: any) {
-		const { account } = S.Auth;
-		const { checkMarkOnBackspace, getMessages, scrollToBottom } = this.props;
-		const range = this.range;
+	const onKeyDownInput = (e: any) => {
 		const cmd = keyboard.cmdKey();
-		const { attachments } = this.state;
 
-		let value = this.refEditable.getTextValue();
+		let value = editableRef.current?.getTextValue();
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
 			e.preventDefault();
-			this.onSend();
+			onSend();
 		});
 
 		keyboard.shortcut('arrowup', e, () => {
-			if (this.range.to || value || attachments.length || this.editingId) {
+			if (range.current.to || value || attachments.length || editingId.current) {
 				return;
 			};
 
@@ -378,12 +131,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			const list = getMessages().filter(it => it.creator == account.id);
 
 			if (list.length) {
-				this.onEdit(list[list.length - 1]);
+				onEdit(list[list.length - 1]);
 			};
 		});
 
 		keyboard.shortcut('backspace', e, () => {
-			const parsed = checkMarkOnBackspace(value, range, this.marks);
+			const parsed = checkMarkOnBackspace(value, range.current, marks.current);
 
 			if (!parsed.save) {
 				return;
@@ -392,94 +145,91 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			e.preventDefault();
 
 			value = parsed.value;
-			this.marks = parsed.marks;
+			setMarks(parsed.marks);
 
 			const l = value.length;
-			this.updateMarkup(value, { from: l, to: l });
+			updateMarkup(value, { from: l, to: l });
 			scrollToBottom();
 		});
 
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
-				this.refButtons.onChatButton(e, I.ChatButton.Object);
+				buttonsRef.current?.onChatButton(e, I.ChatButton.Object);
 			};
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
-				this.refButtons.onChatButton(e, I.ChatButton.Emoji);
+				buttonsRef.current?.onChatButton(e, I.ChatButton.Emoji);
 			};
 		});
 
 		keyboard.shortcut('chatMention', e, () => {
 			if (!S.Menu.isOpen('mention')) {
 				e.preventDefault();
-				this.refButtons.onChatButton(e, I.ChatButton.Mention);
+				buttonsRef.current?.onChatButton(e, I.ChatButton.Mention);
 			};
 		});
 
-		if (this.editingId) {
+		if (editingId.current) {
 			keyboard.shortcut('escape', e, () => {
-				this.editingId = '';
-				this.marks = [];
-				this.range = { from: 0, to: 0 };
-				this.updateValue('');
+				editingId.current = '';
+				range.current = { from: 0, to: 0 };
+
+				setMarks([]);
+				updateValue('');
 			});
 		};
 
 		// Mark-up
-		if (range && range.to && (range.from != range.to)) {
+		if (range.current && range.current.to && (range.current.from != range.current.to)) {
 			let type = null;
-			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
-				keyboard.shortcut(item.key, e, () => {
-					type = item.type;
-					param = item.param;
-				});
+				keyboard.shortcut(item.key, e, () => type = item.type);
 			};
 
 			if (type !== null) {
-				this.refButtons.onTextButton(e, type, param);
+				e.preventDefault();
+				buttonsRef.current?.onTextButton(e, type, '');
 			};
 		};
 	};
 
-	onKeyUpInput (e: any) {
-		this.range = this.refEditable.getRange() || { from: 0, to: 0 };
+	const onKeyUpInput = (e: any) => {
+		range.current = getRange();
 
-		const { attachments } = this.state;
-		const { to } = this.range;
+		const { to } = range.current;
 		const { filter } = S.Common;
-		const value = this.getTextValue();
-		const parsed = this.getMarksFromHtml();
-		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
-		const twoSymbolBefore = this.range ? value[this.range.from - 2] : '';
+		const value = getTextValue();
+		const parsed = getMarksFromHtml();
+		const oneSymbolBefore = range.current ? value[range.current.from - 1] : '';
+		const twoSymbolBefore = range.current ? value[range.current.from - 2] : '';
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || (twoSymbolBefore == ' '));
 
-		this.marks = parsed.marks;
+		setMarks(parsed.marks);
 
 		let adjustMarks = false;
 
-		if ((value !== parsed.text) || parsed.updatedValue) {
-			this.updateValue(parsed.text);
+		if (value !== parsed.text) {
+			updateMarkup(parsed.text, { from: to, to });
 		};
 
 		if (canOpenMenuMention) {
-			this.onMention(true);
+			onMention(true);
 		};
 
 		if (menuOpenMention) {
-			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
-				if (!this.range) {
+			window.clearTimeout(timeoutFilter.current);
+			timeoutFilter.current = window.setTimeout(() => {
+				if (!range.current) {
 					return;
 				};
 
-				const d = this.range.from - filter.from;
+				const d = range.current.from - filter.from;
 
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
@@ -497,53 +247,52 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		if (!keyboard.isSpecial(e)) {
-			for (let i = 0; i < this.marks.length; ++i) {
-				const mark = this.marks[i];
+			for (let i = 0; i < marks.current.length; ++i) {
+				const mark = marks.current[i];
 
 				if (Mark.needsBreak(mark.type) && (mark.range.to == to)) {
 					const adjusted = Mark.adjust([ mark ], mark.range.to - 1, -1);
 
-					this.marks[i] = adjusted[0];
+					marks.current[i] = adjusted[0];
 					adjustMarks = true;
 				};
 			};
 		};
 
-		if (!value && !attachments.length && this.editingId) {
-			this.onDelete(this.editingId);
+		if (!value && !attachments.length && editingId.current) {
+			onDelete(editingId.current);
 		};
 
 		if (adjustMarks) {
-			this.updateMarkup(value, { from: to, to });
+			updateMarkup(value, { from: to, to });
 		};
 
 		/*
-		keyboard.shortcut('space', e, () => this.checkUrls());
+		keyboard.shortcut('space', e, () => checkUrls());
 		*/
 
-		this.checkSendButton();
-		this.updateButtons();
-		this.removeBookmarks();
-		this.updateCounter();
+		checkSendButton();
+		updateButtons();
+		removeBookmarks();
+		updateCounter();
 	};
 
-	onInput () {
-		const value = this.getTextValue();
+	const onInput = () => {
+		const value = getTextValue();
 		const checkRtl = U.Common.checkRtl(value);
 
-		$(this.refEditable?.getNode()).toggleClass('isRtl', checkRtl);
+		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
 	};
 
-	onPaste (e: any) {
+	const onPaste = (e: any) => {
 		e.preventDefault();
 
-		const { space } = S.Common;
-		const { from, to } = this.range;
+		const { from, to } = range.current;
 		const limit = J.Constant.limit.chat.text;
-		const current = this.getTextValue();
+		const current = getTextValue();
 		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
 		const electron = U.Common.getElectron();
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
+		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
@@ -579,7 +328,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			});
 
 			if (targetIds.length) {
-				U.Object.getByIds(targetIds, { spaceId: space }, this.addAttachments);
+				U.Object.getByIds(targetIds, { spaceId: space }, addAttachments);
 			};
 		};
 
@@ -593,12 +342,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 
 			newText = U.Common.stringInsert(current, newText, from, to);
-			this.marks = Mark.adjust(this.marks, from, newText.length);
-			this.marks = this.marks.concat(newMarks);
+			marks.current = Mark.adjust(marks.current, from, newText.length);
+			marks.current = marks.current.concat(newMarks);
+
+			setMarks(marks.current);
 
 			const rt = to + newText.length;
-			this.range = { from: rt, to: rt };
-			this.updateMarkup(newText, this.range);
+			range.current = { from: rt, to: rt };
+			updateMarkup(newText, range.current);
 		};
 
 		if (json && json.blocks && json.blocks.length) {
@@ -622,21 +373,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		if (list.length) {
-			U.Common.saveClipboardFiles(list, {}, data => this.addAttachments(data.files));
+			U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files));
 		};
 
-		this.checkUrls();
-		this.updateCounter();
+		checkUrls();
+		updateCounter();
 	};
 
-	checkUrls () {
-		const text = this.getTextValue();
+	const checkUrls = () => {
+		const text = getTextValue();
 		const urls = U.Common.getUrlsFromText(text);
 		if (!urls.length) {
 			return;
 		};
 
-		this.removeBookmarks();
+		removeBookmarks();
 
 		for (const url of urls) {
 			const { from, to, isLocal, isUrl, value } = url;
@@ -645,72 +396,76 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				continue;
 			};
 
-			if (Mark.getInRange(this.marks, I.MarkType.Link, { from, to })) {
+			if (Mark.getInRange(marks.current, I.MarkType.Link, { from, to })) {
 				continue;
 			};
 
-			this.marks = Mark.adjust(this.marks, from - 1, value.length + 1);
-			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param: U.Common.urlFix(value) });
+			marks.current = Mark.adjust(marks.current, from - 1, value.length + 1);
+			marks.current.push({ 
+				type: I.MarkType.Link, 
+				range: { from, to }, 
+				param: U.Common.urlFix(value),
+			});
+
+			setMarks(marks.current);
 			
 			if (isUrl) {
-				this.addBookmark(value, true);
+				addBookmark(value, true);
 			};
 		};
 
-		this.updateMarkup(text, { from: this.range.to + 1, to: this.range.to + 1 });
+		updateMarkup(text, { from: range.current.to + 1, to: range.current.to + 1 });
 	};
 
-	canDrop (e: any): boolean {
-		return this._isMounted && !this.props.readonly && U.File.checkDropFiles(e);
+	const canDrop = (e: any): boolean => {
+		return !readonly && U.File.checkDropFiles(e);
 	};
 
-	onDragOver (e: any) {
+	const onDragOver = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		window.clearTimeout(this.timeoutDrag);
-		$(this.node).addClass('isDraggingOver');
+		window.clearTimeout(timeoutDrag.current);
+		$(nodeRef.current).addClass('isDraggingOver');
 	};
 	
-	onDragLeave (e: any) {
+	const onDragLeave = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		window.clearTimeout(this.timeoutDrag);
-		this.timeoutDrag = window.setTimeout(() => {
-			if (this._isMounted) {
-				$(this.node).removeClass('isDraggingOver');
-			};
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(() => {
+			$(nodeRef.current).removeClass('isDraggingOver');
 		}, 100);
 	};
-	
-	onDrop (e: any) {
-		if (!this.canDrop(e)) {
-			this.onDragLeave(e);
+
+	const onDrop = (e: any) => {
+		if (!canDrop(e)) {
+			onDragLeave(e);
 			return;
 		};
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { scrollToBottom } = this.props;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const electron = U.Common.getElectron();
-		const list = Array.from(e.dataTransfer.files).map((it: File) => this.getObjectFromFile(it)).filter(it => {
+		const list = Array.from(e.dataTransfer.files).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.addAttachments(list, scrollToBottom);
+		addAttachments(list);
 		keyboard.disableCommonDrop(false);
 	};
 
-	addAttachments (list: any[], callBack?: () => void) {
-		const { attachments } = this.state;
+	const addAttachments = (list: any[]) => {
 		const limit = J.Constant.limit.chat.attachments;
+		const ids = attachments.map(it => it.id);
 
+		list = list.filter(it => !ids.includes(it.id));
 		list = list.map(it => {
 			it.timestamp = U.Date.now();
 			return it;
@@ -724,14 +479,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
-		this.setAttachments(list.concat(attachments), callBack);
+		setAttachments(list.concat(attachments));
 	};
 
-	setAttachments (list: any[], callBack?: () => void) {
-		this.setState({ attachments: list }, callBack);
-	};
-
-	addBookmark (url: string, fromText?: boolean) {
+	const addBookmark = (url: string, fromText?: boolean) => {
 		const add = (param: any) => {
 			const { title, description, url } = param;
 			const item = {
@@ -744,7 +495,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				timestamp: U.Date.now(),
 				fromText
 			};
-			this.addAttachments([ item ]);
+			addAttachments([ item ]);
 		};
 
 		const scheme = U.Common.getScheme(url);
@@ -771,14 +522,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			U.Object.getById(target, { spaceId }, object => {
 				if (object) {
-					this.addAttachments([ object ]);
+					addAttachments([ object ]);
 				};
 			});
 		} else {
-			this.isLoading.push(url);
+			isLoading.current.push(url);
 
 			C.LinkPreview(url, (message: any) => {
-				this.isLoading = this.isLoading.filter(it => it != url);
+				isLoading.current = isLoading.current.filter(it => it != url);
 
 				if (!message.error.code) {
 					add({ ...message.previewLink, url });
@@ -787,82 +538,76 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	removeBookmarks () {
-		const attachments = this.state.attachments || [];
+	const removeBookmarks = () => {
 		const bookmarks = attachments.filter(it => (it.layout == I.ObjectLayout.Bookmark) && it.fromText);
 		
 		let filtered = attachments;
 		bookmarks.forEach(it => {
-			const marks = this.marks.filter(mark => mark.param == it.source);
-			if (!marks.length) {
+			const current = marks.current.filter(mark => mark.param == it.source);
+			if (!current.length) {
 				filtered = filtered.filter(file => file.id != it.id);
 			};
 		});
 
 		if (attachments.length != filtered.length) {
-			this.setAttachments(filtered);
+			setAttachments(filtered);
 		};
 	};
 
-	removeBookmark (url: string) {
-		this.onAttachmentRemove(sha1(url));
+	const removeBookmark = (url: string) => {
+		onAttachmentRemove(sha1(url));
 	};
 
-	onSend () {
-		if (this.isSending || !this.canSend() || S.Menu.isOpen('blockMention')){
+	const onSend = () => {
+		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
 
-		const { rootId, subId, scrollToBottom, scrollToMessage } = this.props;
-		const { replyingId } = this.state;
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 		const send = node.find('#send');
 		const loader = node.find('#form-loader');
-		const list = this.state.attachments || [];
-		const files = list.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
-		const bookmarks = list.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
+		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
+		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
-		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		send.addClass('isLoading');
 		loader.addClass('active');
-		this.isSending = true;
+		isSending.current = true;
 
 		const clear = () => {
-			this.onEditClear(() => {
-				this.isSending = false;
-				this.checkSendButton();
-			});
-			this.onReplyClear();
-			this.clearCounter();
-			this.checkSpeedLimit();
+			isSending.current = false;
+			checkSendButton();
+
+			onEditClear();
+			onReplyClear();
+			clearCounter();
+			checkSpeedLimit();
 
 			send.removeClass('isLoading');
 			loader.removeClass('active');
 		};
 		
 		const callBack = () => {
-			// Marks should be adjusted to remove leading new lines
-
-			const parsed = this.getMarksFromHtml();
-			const text = this.trim(parsed.text);
+			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
+			const parsed = getMarksFromHtml();
+			const text = trim(parsed.text);
 			const match = parsed.text.match(/^\r?\n+/);
 			const diff = match ? match[0].length : 0;
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 
-			if (this.editingId) {
-				const message = S.Chat.getMessage(subId, this.editingId);
+			if (editingId.current) {
+				const message = S.Chat.getMessage(subId, editingId.current	);
 				if (message) {
 					const update = U.Common.objectCopy(message);
 
-					update.attachments = attachments;
+					update.attachments = newAttachments;
 					update.content.text = text;
 					update.content.marks = marks;
 
-					C.ChatEditMessageContent(rootId, this.editingId, update, () => {
-						scrollToMessage(this.editingId, true, true);
+					C.ChatEditMessageContent(rootId, editingId.current, update, () => {
+						scrollToMessage(editingId.current, true, true);
 						clear();
 					});
 				};
@@ -874,19 +619,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						text,
 						style: I.TextStyle.Paragraph,
 					},
-					attachments,
+					attachments: newAttachments,
 					reactions: [],
 				};
 
 				let messageType = 'Text';
-				if (attachments.length && message.content?.text.length) {
-					messageType = 'Mixed';
-				} else
-				if (attachments.length) {
-					messageType = 'Attachment';
+				if (newAttachments.length) {
+					messageType = message.content?.text.length ? 'Mixed' : 'Attachment';
 				};
 
-				C.ChatAddMessage(rootId, message, (message: any) => {
+				C.ChatAddMessage(rootId, message, () => {
 					scrollToBottom();
 					clear();
 
@@ -907,7 +649,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					n++;
 
 					if (message.objectId) {
-						attachments.push({ target: message.objectId, type: I.AttachmentType.File });
+						attachments.push({ id: message.objectId, type: I.AttachmentType.File });
 					};
 
 					if (n == fl) {
@@ -925,11 +667,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 			let n = 0;
 			for (const item of bookmarks) {
-				C.ObjectCreateFromUrl({ source: item.source }, S.Common.space, J.Constant.typeKey.bookmark, item.source, true, bookmark.defaultTemplateId, (message: any) => {
+				C.ObjectCreateBookmark({ source: item.source }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
 					if (message.objectId) {
-						attachments.push({ target: message.objectId, type: I.AttachmentType.Link });
+						attachments.push({ id: message.objectId, type: I.AttachmentType.Link });
 					};
 
 					if (n == bl) {
@@ -942,66 +684,55 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		uploadFiles(() => fetchBookmarks(callBack));
 	};
 
-	onEdit (message: I.ChatMessage) {
-		const { subId } = this.props;
-		const { text, marks } = message.content;
+	const onEdit = (message: I.ChatMessage) => {
+		const { text } = message.content;
 		const l = text.length;
 		const attachments = (message.attachments || []).map(it => it.target).map(id => S.Detail.get(subId, id));
 
-		this.marks = marks;
-		this.editingId = message.id;
+		editingId.current = message.id;
 
-		this.setState({ replyingId: '' });
-		this.updateMarkup(text, { from: l, to: l });
-		this.updateCounter();
-
-		this.setAttachments(attachments, () => {
-			this.refEditable.setRange(this.range);
-		});
+		setMarks(message.content.marks);
+		setReplyingId('');
+		updateMarkup(text, { from: l, to: l });
+		updateCounter();
+		setAttachments(attachments);
 
 		analytics.event('ClickMessageMenuEdit');
 	};
 
-	onEditClear (callBack?: () => void) {
-		this.editingId = '';
-		this.marks = [];
-		this.updateMarkup('', { from: 0, to: 0 });
-		this.clearCounter();
-		this.checkSendButton();
-		this.refButtons.setButtons();
+	const onEditClear = () => {
+		editingId.current = '';
+		buttonsRef.current?.setButtons();
 
-		this.setState({ attachments: [] }, () => {
-			this.refEditable.setRange(this.range);
-
-			if (callBack) {
-				callBack();
-			};
-		});
+		setRange({ from: 0, to: 0 });
+		setMarks([]);
+		updateMarkup('', { from: 0, to: 0 });
+		clearCounter();
+		checkSendButton();
+		setAttachments([]);
 	};
 
-	onReply (message: I.ChatMessage) {
-		const { readonly } = this.props;
+	const onReply = (message: I.ChatMessage) => {
 		if (readonly) {
 			return;
 		};
 
-		const text = this.getTextValue();
+		const text = getTextValue();
 		const length = text.length;
 
-		this.range = { from: length, to: length };
-		this.refEditable?.setRange(this.range);
-		this.setState({ replyingId: message.id });
+		range.current = { from: length, to: length };
+		setRange(range.current);
+		setReplyingId(message.id);
 
 		analytics.event('ClickMessageMenuReply');
 	};
 
-	onReplyClear () {
-		this.setState({ replyingId: '' });
-		this.props.scrollToBottom();
+	const onReplyClear = () => {
+		setReplyingId('');
+		scrollToBottom();
 	};
 
-	onDelete (id: string) {
-		const { rootId, getMessages, scrollToMessage, scrollToBottom } = this.props;
+	const onDelete = (id: string) => {
 		const messages = getMessages();
 		const idx = messages.findIndex(it => it.id == id);
 		const next = messages[idx + 1];
@@ -1014,8 +745,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => {
 					C.ChatDeleteMessage(rootId, id, () => {
-						if (this.editingId == id) {
-							this.onEditClear();
+						if (editingId.current == id) {
+							onEditClear();
 						};
 
 						if (next) {
@@ -1028,8 +759,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					});
 				},
 				onCancel: () => {
-					if (this.editingId == id) {
-						this.onEditClear();
+					if (editingId.current == id) {
+						onEditClear();
 					};
 				},
 			}
@@ -1038,49 +769,48 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		analytics.event('ClickMessageMenuDelete');
 	};
 
-	getMarksAndRange (): any {
-		return { marks: this.marks, range: this.range };
+	const getMarksAndRange = (): { marks: I.Mark[], range: I.TextRange } => {
+		return { marks: marks.current, range: range.current };
 	};
 
-	getTextValue (): string {
-		return String(this.refEditable?.getTextValue() || '');
+	const getTextValue = (): string => {
+		return String(editableRef.current?.getTextValue() || '');
 	};
 
-	getHtmlValue (): string {
-		return String(this.refEditable?.getHtmlValue() || '');
+	const getHtmlValue = (): string => {
+		return String(editableRef.current?.getHtmlValue() || '');
 	};
 
-	trim (value: string): string {
+	const trim = (value: string): string => {
 		return String(value || '').replace(/^(\r?\n+)/g, '').replace(/(\r?\n+)$/g, '');
 	};
-	
-	getMarksFromHtml (): I.FromHtmlResult {
-		return Mark.fromHtml(this.getHtmlValue(), []);
+
+	const getMarksFromHtml = (): I.FromHtmlResult => {
+		return Mark.fromHtml(getHtmlValue(), []);
 	};
 
-	onAttachmentRemove (id: string) {
-		const value = this.getTextValue();
-		const attachments = (this.state.attachments || []).filter(it => it.id != id);
+	const onAttachmentRemove = (id: string) => {
+		const value = getTextValue();
+		const list = (attachments || []).filter(it => it.id != id);
 
-		if (this.editingId && !value && !attachments.length) {
-			this.onDelete(this.editingId);
+		if (editingId.current && !value && !attachments.length) {
+			onDelete(editingId.current);
 		} else {
-			this.setState({ attachments });
+			setAttachments(list);
 			analytics.event('DetachItemChat');
 		};
 	};
 
-	onNavigationClick (type: I.ChatReadType) {
+	const onNavigationClick = (type: I.ChatReadType) => {
 		switch (type) {
 			case I.ChatReadType.Message: {
-				this.props.onScrollToBottomClick();
+				onScrollToBottomClick();
 
 				analytics.event('ClickScrollToBottom');
 				break;
 			};
 
 			case I.ChatReadType.Mention: {
-				const { subId, getMessages, scrollToMessage, loadMessagesByOrderId, highlightMessage } = this.props;
 				const { mentionOrderId } = S.Chat.getState(subId);
 				const messages = getMessages();
 				const target = messages.find(it => it.orderId == mentionOrderId);
@@ -1099,53 +829,48 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	updateButtons () {
-		this.refButtons?.setButtons();
+	const updateButtons = () => {
+		buttonsRef.current?.setButtons();
 	};
 
-	onChatButtonSelect (type: I.ChatButton, item: any) {
-		const { scrollToBottom } = this.props;
-		const { attachments } = this.state;
-		const range = this.range || { from: 0, to: 0 };
-
+	const onChatButtonSelect = (type: I.ChatButton, item: any) => {
 		switch (type) {
 			case I.ChatButton.Object: {
-				this.setAttachments([ item ].concat(attachments), () => scrollToBottom());
+				setAttachments([ item ].concat(attachments));
 				break;
 			};
 
 			case I.ChatButton.Emoji: {
-				const to = range.from + 1;
+				const to = range.current.from + 1;
 
-				let value = this.getTextValue();
+				let value = getTextValue();
 
-				this.marks = Mark.adjust(this.marks, range.from, 1);
-				this.marks = Mark.toggle(this.marks, {
+				marks.current = Mark.adjust(marks.current, range.current.from, 1);
+				marks.current = Mark.toggle(marks.current, {
 					type: I.MarkType.Emoji,
 					param: item,
-					range: { from: range.from, to },
+					range: { from: range.current.from, to },
 				});
 
-				value = U.Common.stringInsert(value, ' ', range.from, range.from);
+				value = U.Common.stringInsert(value, ' ', range.current.from, range.current.from);
 
-				this.updateMarkup(value, { from: to, to });
+				updateMarkup(value, { from: to, to });
 				break;
 			};
 		};
 	};
 
-	onTextButtonToggle (type: I.MarkType, param: string) {
-		const { from, to } = this.range;
-		const { attachments } = this.state;
-		const value = this.getTextValue();
+	const onTextButtonToggle = (type: I.MarkType, param: string) => {
+		const { from, to } = range.current;
+		const value = getTextValue();
 
-		this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
-		this.updateMarkup(value, { from, to });
+		setMarks(Mark.toggle(marks.current, { type, param, range: { from, to } }));
+		updateMarkup(value, { from, to });
 
 		switch (type) {
 			case I.MarkType.Link: {
 				if (param) {
-					this.addBookmark(param);
+					addBookmark(param);
 				};
 				break;
 			};
@@ -1156,17 +881,25 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					object.timestamp = U.Date.now();
 
 					attachments.unshift(object);
-					this.setAttachments(attachments);
+					setAttachments(attachments);
 				});
 				break;
 			};
 		};
 
-		this.updateButtons();
-		this.renderMarkup();
+		updateButtons();
+		renderMarkup();
 	};
 
-	getObjectFromFile (file: File) {
+	const getRange = (): I.TextRange => {
+		return editableRef.current?.getRange() || { from: 0, to: 0 };
+	};
+
+	const setRange = (newRange: I.TextRange) => {
+		editableRef.current?.setRange(newRange);
+	};
+
+	const getObjectFromFile = (file: File) => {
 		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
 		const mime = electron.fileMime(path);
@@ -1187,7 +920,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	getObjectFromPath (path: string) {
+	const getObjectFromPath = (path: string) => {
 		const electron = U.Common.getElectron();
 		const name = electron.fileName(path);
 		const mime = electron.fileMime(path);
@@ -1208,15 +941,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	onMention (fromKeyboard?: boolean) {
-		if (!this.range) {
+	const onMention = (fromKeyboard?: boolean) => {
+		if (!range) {
 			return;
 		};
 
-		const { rootId, blockId, subId } = this.props;
-
-		let value = this.refEditable.getTextValue();
-		let from = this.range.from;
+		let value = editableRef.current?.getTextValue();
+		let from = range.current.from;
 
 		if (fromKeyboard) {
 			value = U.Common.stringCut(value, from - 1, from);
@@ -1227,28 +958,28 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		raf(() => {
 			S.Menu.open('blockMention', {
-				element: `#button-${blockId}-${I.ChatButton.Mention}`,
-				...this.caretMenuParam(),
+				element: `#button-${block.id}-${I.ChatButton.Mention}`,
+				...caretMenuParam(),
 				data: {
 					rootId,
-					blockId,
+					blockId: block.id,
 					pronounId: U.Space.getMyParticipant()?.id,
-					marks: this.marks,
+					marks: marks.current,
 					skipIds: [ S.Auth.account.id ],
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
-					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
+					onChange: (object: any, text: string, newMarks: I.Mark[], from: number, to: number) => {
 						if (S.Menu.isAnimating('blockMention')) {
 							return;
 						};
 
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
-						this.marks = marks;
+						setMarks(newMarks);
 						value = U.Common.stringInsert(value, text, from, from);
 
-						this.updateMarkup(value, { from: to, to });
+						updateMarkup(value, { from: to, to });
 						analytics.event('Mention');
 					},
 				},
@@ -1256,15 +987,33 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 	};
 
-	onMenuClose () {
-		this.refEditable.setRange(this.range);
+	const onMenuClose = () => {
+		setRange(range.current);
 	};
 
-	caretMenuParam () {
+	const updateAttachments = () => {
+		const ids = attachments.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
+
+		U.Object.getByIds(ids, {}, (objects: any[]) => {
+			objects.forEach(item => {	
+				const idx = attachments.findIndex(it => it.id == item.id);
+
+				if (idx >= 0) {
+					attachments[idx] = item;
+				};
+			});
+
+			setAttachments(attachments);
+			saveState(attachments);
+		});
+	};
+
+	const caretMenuParam = () => {
 		const win = $(window);
 		const rect = U.Common.getSelectionRect();
 
 		return {
+			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
@@ -1272,90 +1021,91 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			},
 			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
-			onClose: () => this.refEditable.setRange(this.range),
+			onClose: () => setRange(range.current),
 			noFlipX: true,
 			noFlipY: true,
 			offsetY: -8,
 		};
 	};
 
-	canSend (): boolean {
-		return !this.isLoading.length && Boolean(this.editingId || this.getTextValue().trim().length || this.state.attachments.length || this.marks.length);
+	const canSend = (): boolean => {
+		return !isLoading.current.length && 
+		!!(
+			editingId.current || 
+			getTextValue().trim().length || 
+			attachments.length || 
+			marks.current.length
+		);
 	};
 
-	hasSelection (): boolean {
-		return this.range ? this.range.to != this.range.from : false;
+	const hasSelection = (): boolean => {
+		return range.current ? range.current.to != range.current.from : false;
 	};
 
-	updateMarkup (value: string, range: I.TextRange) {
-		this.range = range;
-		this.updateValue(value);
-		this.renderMarkup();
-		this.checkSendButton();
+	const updateMarkup = (value: string, newRange: I.TextRange) => {
+		range.current = newRange;
+		updateValue(value);
+		renderMarkup();
+		checkSendButton();
 	};
 
-	updateValue (value: string) {
-		if (!this.refEditable) {
+	const updateValue = (value: string) => {
+		if (!editableRef.current) {
 			return;
 		};
 
-		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-		this.refEditable.setRange(this.range);
-		this.refEditable.placeholderCheck();
-		this.onInput();
+		editableRef.current.setValue(Mark.toHtml(value, marks.current));
+		editableRef.current.placeholderCheck();
+		setRange(range.current);
+		onInput();
 	};
 
-	renderMarkup () {
-		if (!this.refEditable) {
+	const renderMarkup = () => {
+		if (!editableRef.current) {
 			return;
 		};
 
-		const { rootId, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
-		const node = this.refEditable.getNode();
-		const value = this.refEditable.getTextValue();
-		const onChange = (text: string, marks: I.Mark[]) => {
-			this.marks = marks;
-			this.updateValue(text);
-			this.updateMarkup(text, this.range);
+		const node = editableRef.current?.getNode();
+		const value = editableRef.current?.getTextValue();
+		const onChange = (newText: string, newMarks: I.Mark[]) => {
+			setMarks(newMarks);
+			updateMarkup(newText, range.current);
 		};
 		const getValue = () => value;
 		const param = { onChange, subId };
 
-		renderMentions(rootId, node, this.marks, getValue, param);
-		renderObjects(rootId, node, this.marks, getValue, this.props, param);
-		renderLinks(rootId, node, this.marks, getValue, this.props, param);
+		renderMentions(rootId, node, marks.current, getValue, param);
+		renderObjects(rootId, node, marks.current, getValue, props, param);
+		renderLinks(rootId, node, marks.current, getValue, props, param);
 		renderEmoji(node);
 	};
 
-	renderReply () {
-		const { replyingId } = this.state;
+	const renderReply = () => {
 		if (!replyingId) {
 			return;
 		};
 
-		const { rootId, subId, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
 		const message = S.Chat.getMessage(subId, replyingId);
-
 		if (!message) {
 			return;
 		};
 
-		const marks = message.content.marks || [];
 		const getValue = () => String(message.content.text || '');
-		const node = $(this.node);
+		const marks = message.content.marks || [];
+		const node = $(nodeRef.current);
 		const head = node.find('.head');
 		const param = { subId, iconSize: 16 };
 
 		renderMentions(rootId, head, marks, getValue, param);
-		renderObjects(rootId, head, marks, getValue, this.props, param);
-		renderLinks(rootId, head, marks, getValue, this.props, param);
+		renderObjects(rootId, head, marks, getValue, props, param);
+		renderLinks(rootId, head, marks, getValue, props, param);
 		renderEmoji(head, param);
 	};
 
-	updateCounter (v?: string) {
-		v = v || this.getTextValue();
+	const updateCounter = (v?: string) => {
+		v = v || getTextValue();
 
-		const el = $(this.refCounter);
+		const el = $(counterRef.current);
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
@@ -1366,27 +1116,27 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	clearCounter () {
-		$(this.refCounter).text('').removeClass('show');
+	const clearCounter = () => {
+		$(counterRef.current).text('').removeClass('show');
 	};
 
-	checkSpeedLimit () {
-		const { last, counter } = this.speedLimit;
+	const checkSpeedLimit = () => {
+		const { last, counter } = speedLimit.current;
 		const now = U.Date.now();
 
 		if (now - last >= 5 ) {
-			this.speedLimit = { last: now, counter: 1 };
+			speedLimit.current = { last: now, counter: 1 };
 			return;
 		};
 
-		this.speedLimit = { last: now, counter: counter + 1 };
+		speedLimit.current = { last: now, counter: counter + 1 };
 
 		if (counter >= 5) {
-			this.speedLimit = { last: now, counter: 1 };
+			speedLimit.current = { last: now, counter: 1 };
 
 			S.Popup.open('confirm', {
 				onClose: () => {
-					this.refEditable.setRange(this.range);
+					setRange(range.current);
 				},
 				data: {
 					icon: 'warning',
@@ -1400,18 +1150,25 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	getReplyingId () {
-		return this.state.replyingId;
+	const setMarks = (newMarks: I.Mark[]) => {
+		marks.current = newMarks;
 	};
 
-	resize () {
-		const { isPopup } = this.props;
+	const saveState = (attachments?: any[]) => {
+		Storage.setChat(rootId, {
+			text: getTextValue(),
+			marks: marks.current,
+			attachments,
+		});
+	};
+
+	const resize = () => {
 		if (isPopup) {
 			return;
 		};
 
-		const node = $(this.node);
-		const dummy = $(this.refDummy);
+		const node = $(nodeRef.current);
+		const dummy = $(dummyRef.current);
 		const padding = 16;
 
 		if (!dummy.length) {
@@ -1424,6 +1181,230 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 	};
 
-});
+	let form = null;
+	let title = '';
+	let text = '';
+	let icon: any = null;
+	let onClear = () => {};
+
+	if (editingId.current) {
+		title = translate('blockChatEditing');
+		onClear = () => onEditClear();
+	} else
+	if (replyingId) {
+		const message = S.Chat.getMessage(subId, replyingId);
+
+		if (message) {
+			const reply = getReplyContent(message);
+
+			title = reply.title;
+			text = reply.text;
+			if (reply.attachment) {
+				const object = reply.attachment;
+				const iconSize = U.Object.getFileLayouts().concat(U.Object.getHumanLayouts()).includes(object.layout) ? 32 : null;
+
+				icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
+			};
+			if (reply.isMultiple && !reply.attachment) {
+				icon = <Icon className="isMultiple" />;
+			};
+
+			onClear = onReplyClear;
+		};
+	};
+
+	const Button = (item: any) => (
+		<div 
+			id={`navigation-${item.type}`} 
+			className={`btn ${item.className || ''}`} 
+			onClick={() => onNavigationClick(item.type)}
+		>
+			<div className="bg" />
+			<Icon className={item.icon} />
+
+			{item.cnt ? (
+				<div className="counter">
+					<Label text={String(item.cnt)} />
+				</div>
+			) : ''}
+		</div>
+	);
+
+	if (readonly) {
+		form = <div className="readonly">{translate('blockChatFormReadonly')}</div>;
+	} else {
+		form = (
+			<div className="form customScrollbar">
+				<Loader id="form-loader" />
+
+				{title ? (
+					<div className="head">
+						<div className="side left">
+							{icon}
+							<div className="textWrapper">
+								<div className="name">{title}</div>
+								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+							</div>
+						</div>
+						<div className="side right">
+							<Icon className="clear" onClick={onClear} />
+						</div>
+					</div>
+				) : ''}
+
+				<Editable 
+					ref={editableRef}
+					id="messageBox"
+					maxLength={J.Constant.limit.chat.text}
+					placeholder={translate('blockChatPlaceholder')}
+					onSelect={onSelect}
+					onFocus={onFocusInput}
+					onBlur={onBlurInput}
+					onKeyUp={onKeyUpInput} 
+					onKeyDown={onKeyDownInput}
+					onInput={onInput}
+					onPaste={onPaste}
+					onMouseDown={onMouseDown}
+					onMouseUp={onMouseUp}
+				/>
+
+				{attachments.length ? (
+					<div className="attachments">
+						<Swiper
+							slidesPerView={'auto'}
+							spaceBetween={8}
+							navigation={true}
+							mousewheel={true}
+							modules={[ Navigation, Mousewheel ]}
+						>
+							{attachments.map(item => (
+								<SwiperSlide key={item.id}>
+									<Attachment
+										object={item}
+										onRemove={onAttachmentRemove}
+										bookmarkAsDefault={true}
+										updateAttachments={updateAttachments}
+									/>
+								</SwiperSlide>
+							))}
+						</Swiper>
+					</div>
+				) : ''}
+
+				<Buttons
+					ref={buttonsRef}
+					{...props}
+					value={getTextValue()}
+					hasSelection={hasSelection}
+					getMarksAndRange={getMarksAndRange}
+					attachments={attachments}
+					caretMenuParam={caretMenuParam}
+					onMention={onMention}
+					onChatButtonSelect={onChatButtonSelect}
+					onTextButtonToggle={onTextButtonToggle}
+					getObjectFromPath={getObjectFromPath}
+					addAttachments={addAttachments}
+					onMenuClose={onMenuClose}
+					removeBookmark={removeBookmark}
+					updateAttachments={updateAttachments}
+				/>
+
+				<div ref={counterRef} className="charCounter" />
+				<Icon ref={sendRef} className="send" onClick={onSend} />
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		checkSendButton();
+
+		const storage = Storage.getChat(rootId);
+
+		if (!readonly && storage) {
+			const text = String(storage.text || '');
+			const attachments = (storage.attachments || []).filter(it => !it.isTmp);
+			const length = text.length;
+
+			setMarks(storage.marks || []);
+			updateMarkup(text, { from: length, to: length });
+			updateCounter(text);
+
+			if (attachments.length) {
+				setAttachments(attachments);
+			};
+		};
+
+		resize();
+		rebind();
+
+		return () => {
+			unbind();
+
+			window.clearTimeout(timeoutFilter.current);
+			keyboard.disableSelection(false);
+		};
+	}, []);
+
+	useEffect(() => {
+		loadDepsAndReplies([], () => {
+			renderMarkup();
+			renderReply();
+		});
+
+		checkSendButton();
+		resize();
+	});
+
+	useEffect(() => {
+		scrollToBottom();		
+		setRange(range.current);
+	}, [ attachments ]);
+
+	useImperativeHandle(ref, () => ({
+		getReplyingId: () => replyingId,
+		onReply,
+		onEdit,
+		onEditClear,
+		onDelete,
+		getNode: () => nodeRef.current,
+		onDragOver,
+		onDragLeave,
+		onDrop,
+		getAttachments: () => attachments,
+		getMarks: () => marks.current,
+	}));
+
+	return (
+		<>
+			<div ref={dummyRef} className="formDummy" />
+			<div 
+				ref={nodeRef}
+				id="formWrapper" 
+				className="formWrapper"
+				onDragOver={onDragOver}
+				onDragLeave={onDragLeave}
+			>
+				<div className="dragOverlay">
+					<div className="inner">
+						<Icon />
+						<Label text={translate('commonDropFiles')} />
+					</div>
+				</div>
+
+				{!isEmpty ? (
+					<div className="navigation">
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
+					</div>
+				) : ''}
+
+				{form}
+
+				<div className="bottom" />
+			</div>
+		</>
+	);
+
+}));
 
 export default ChatForm;

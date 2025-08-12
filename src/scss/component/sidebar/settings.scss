@@ -54,6 +54,7 @@
 
                 .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
                 .caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
+                .caption.alert { width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: var(--color-red); color: var(--color-control-bg); border-radius: 50%; }
             }
 
             .item.isTypeOrRelation { padding-left: 26px; }

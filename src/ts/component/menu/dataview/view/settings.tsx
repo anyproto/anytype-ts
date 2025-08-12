@@ -103,11 +103,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	focus () {
-		window.setTimeout(() => {
-			if (this.refName) {
-				this.refName.focus();
-			};
-		}, 15);
+		window.setTimeout(() => this.refName?.focus(), 15);
 	};
 
 	rebind () {
@@ -154,13 +150,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			if (k != Key.down) {
 				return;
 			} else {
-				this.refName.blur();
+				this.refName?.blur();
 				this.n = -1;
 			};
 		} else {
 			if ((k == Key.up) && !this.n) {
 				this.n = -1;
-				this.refName.focus();
+				this.refName?.focus();
 				return;
 			};
 		};

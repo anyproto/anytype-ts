@@ -49,7 +49,7 @@
 }
 
 .cellContent.editModeOn {
-	.empty { display: inline-block; }
+	.empty { display: inline-block; white-space: nowrap; }
 }
 
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }

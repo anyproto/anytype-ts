@@ -81,6 +81,7 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 				onOpen: () => obj.addClass('active'),
 				onClose: () => obj.removeClass('active'),
 				className: isFixed ? 'fixed' : '',
+				classNameWrap: 'fromBlock',
 				subIds: J.Menu.relationEdit,
 				data: {
 					...props,

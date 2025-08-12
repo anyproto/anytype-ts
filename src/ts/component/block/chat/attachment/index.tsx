@@ -1,126 +1,34 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import { I, U, S, J, Action, analytics, keyboard, translate, Renderer } from 'Lib';
 
 interface Props {
 	object: any;
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
+	isDownload?: boolean;
 	subId?: string;
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
+	updateAttachments?: () => void;
 };
 
-const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
+interface RefProps {
+	getPreviewItem: () => any;
+};
 
-	node = null;
-	src = '';
-	previewItem: any = null;
+const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	constructor (props: Props) {
-		super(props);
+	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, scrollToBottom, onPreview, updateAttachments, onRemove } = props;
+	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
+	const mime = String(object.mime || '');
+	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
+	const nodeRef = useRef(null);
+	const src = useRef('');
 
-		this.onOpen = this.onOpen.bind(this);
-		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onOpenBookmark = this.onOpenBookmark.bind(this);
-		this.onPreview = this.onPreview.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-		this.onSyncStatusClick = this.onSyncStatusClick.bind(this);
-		this.getPreviewItem = this.getPreviewItem.bind(this);
-	};
-
-	render () {
-		const { object, showAsFile, bookmarkAsDefault } = this.props;
-		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
-		const mime = String(object.mime || '');
-		const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
-
-		let content = null;
-
-		if (U.Object.isInFileLayouts(object.layout)) {
-			cn.push('isFile');
-		};
-
-		switch (object.layout) {
-			case I.ObjectLayout.File: {
-				if (showAsFile) {
-					break;
-				};
-
-				if (mime && object.file) {
-					const [ t1, t2 ] = mime.split('/');
-
-					switch (t1) {
-						case 'image': {
-							if (!J.Constant.fileExtension.image.includes(t2)) {
-								break;
-							};
-
-							cn.push('isImage');
-							content = this.renderImage();
-							break;
-						};
-					};
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Image:
-				if (showAsFile) {
-					break;
-				};
-
-				cn.push('isImage');
-				content = this.renderImage();
-				break;
-
-			case I.ObjectLayout.Video: {
-				if (showAsFile) {
-					break;
-				};
-
-				cn.push('isVideo');
-				content = this.renderVideo();
-				break;
-			};
-
-			case I.ObjectLayout.Audio: {
-				cn.push('isAudio');
-				content = this.renderAudio();
-				break;
-			};
-
-			case I.ObjectLayout.Bookmark: {
-				cn.push('isBookmark');
-				content = bookmarkAsDefault ? this.renderDefault() : this.renderBookmark();
-				break;
-			};
-		};
-
-		if (!content) {
-			content = this.renderDefault();
-		};
-
-		if (cn.length == 1) {
-			cn.push(U.Data.layoutClass(object.id, object.layout));
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={cn.join(' ')}
-				onContextMenu={this.onContextMenu}
-			>
-				{content}
-				<Icon className="remove" onClick={this.onRemove} />
-			</div>
-		);
-	};
-
-	renderDefault () {
-		const { object } = this.props;
+	const renderDefault = () => {
 		const isFile = U.Object.isInFileLayouts(object.layout);
 		const type = S.Record.getTypeById(object.type);
 
@@ -141,10 +49,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 
 		return (
-			<div className="clickable" onClick={this.onOpen}>
+			<div className="clickable" onClick={onOpen}>
 				<div className="iconWrapper">
 					<IconObject object={object} size={48} iconSize={iconSize} />
-					<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+					<Icon onClick={onSyncStatusClick} className="syncStatus" />
 				</div>
 
 				<div className="info">
@@ -155,8 +63,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		);
 	};
 
-	renderBookmark () {
-		const { object } = this.props;
+	const renderBookmark = () => {
 		const { picture, source } = object;
 		const cn = [ 'inner' ];
 
@@ -167,7 +74,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		return (
 			<div
 				className={cn.join(' ')}
-				onClick={this.onOpenBookmark}
+				onClick={onOpenBookmark}
 				{...U.Common.dataProps({ href: source })}
 			>
 				<div className="side left">
@@ -181,60 +88,70 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 				{picture ? (
 					<div className="side right">
-						<img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" />
+						<img 
+							src={S.Common.imageUrl(picture, I.ImageSize.Medium)} 
+							className="img" 
+							onLoad={scrollToBottom}
+						/>
 					</div>
 				) : ''}
 			</div>
 		);
 	};
 
-	renderImage () {
-		const { object, scrollToBottom } = this.props;
+	const renderImage = (withBlur?: boolean) => {
+		const { object, scrollToBottom } = props;
+		const node = $(nodeRef.current);
 
-		if (!this.src) {
+		if (!src.current) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
-					this.src = image;
-					$(this.node).find('#image').attr({ 'src': image });
+					src.current = image;
+
+					node.find('#image').attr({ src: image });
+					node.find('#blur').attr({ backgroundImage: `url(${image})` });
 				});
-				this.src = './img/space.svg';
+
+				src.current = './img/space.svg';
 			} else {
-				this.src = S.Common.imageUrl(object.id, I.ImageSize.Large);
+				src.current = S.Common.imageUrl(object.id, I.ImageSize.Large);
 			};
 		};
 
+		const blur = withBlur ? <div id="blur" className="blur" style={{ backgroundImage: `url(${src.current})` }} /> : null;
+
 		return (
-			<div className="imgWrapper" onClick={this.onPreview}>
+			<div className="imgWrapper" onClick={onPreviewHandler}>
+				{blur}
 				<img
 					id="image"
 					className="image"
-					src={this.src}
+					src={src.current}
 					onLoad={scrollToBottom}
 					onDragStart={e => e.preventDefault()}
 					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
 				/>
 
-				<Icon onClick={this.onSyncStatusClick} className="syncStatus" />
+				<Icon onClick={onSyncStatusClick} className="syncStatus" />
 			</div>
 		);
 	};
 
-	renderVideo () {
-		const { object } = this.props;
+	const renderVideo = () => {
 		const src = S.Common.fileUrl(object.id);
 
 		return (
 			<MediaVideo 
 				src={src} 
-				onClick={this.onPreview}
+				onClick={onPreviewHandler}
 				canPlay={false}
-				onSyncStatusClick={this.onSyncStatusClick}
+				onSyncStatusClick={onSyncStatusClick}
 			/>
 		);
 	};
 
-	renderAudio () {
-		const { object } = this.props;
+	const renderAudio = () => {
+		const { object } = props;
 		const playlist = [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
@@ -242,18 +159,22 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		return <MediaAudio playlist={playlist} />;
 	};
 
-	onOpen () {
-		const { object } = this.props;
+	const onOpen = () => {
+		const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
+
+		if (isDownload && (syncStatus != I.SyncStatusObject.Synced)) {
+			return;
+		};
 
 		switch (object.layout) {
 			case I.ObjectLayout.Bookmark: {
-				this.onOpenBookmark();
+				onOpenBookmark();
 				break;
 			};
 
 			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Image: {
-				this.onPreview();
+				onPreviewHandler();
 				break;
 			};
 
@@ -266,19 +187,23 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 			default: {
 				if (!object.isTmp) {
-					U.Object.openPopup(object);
+					U.Object.openPopup(object, {
+						onClose: () => {
+							if (updateAttachments) {
+								updateAttachments();
+							};
+						},
+					});
 				};
 				break;
 			};
 		};
 	};
 
-	onContextMenu (e: any) {
+	const onContextMenu = (e: any) => {
 		e.stopPropagation();
 
-		const { object, subId } = this.props;
-		
-		if (object.isTmp) {
+		if (object.isTmp || object.isDeleted) {
 			return;
 		};
 
@@ -296,13 +221,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		});
 	};
 
-	onOpenBookmark () {
-		Action.openUrl(this.props.object.source);
+	const onOpenBookmark = () => {
+		Action.openUrl(object.source);
 	};
 
-	onPreview () {
-		const { onPreview } = this.props;
-		const item = this.getPreviewItem();
+	const onPreviewHandler = () => {
+		const item = getPreviewItem();
 
 		if (onPreview) {
 			onPreview(item);
@@ -311,15 +235,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 	};
 
-	onRemove (e: any) {
-		const { object, onRemove } = this.props;
-
+	const onRemoveHandler = (e: any) => {
 		e.stopPropagation();
 		onRemove(object.id);
 	};
 
-	onSyncStatusClick (e: any) {
-		const { object } = this.props;
+	const onSyncStatusClick = (e: any) => {
 		const { syncError } = object;
 
 		if (syncError == I.SyncStatusError.None) {
@@ -354,6 +275,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 							Renderer.send('updateCheck');
 						}, J.Constant.delay.popup);
 					};
+
 					if (syncError == I.SyncStatusError.Oversized) {
 						// delete?
 					};
@@ -362,14 +284,13 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		});
 	};
 
-	getPreviewItem () {
-		const { object } = this.props;
+	const getPreviewItem = () => {
 		const ret: any = { object };
 
 		switch (object.layout) {
 			case I.ObjectLayout.Image: {
 				ret.type = I.FileType.Image;
-				ret.src = this.src || S.Common.imageUrl(object.id, I.ImageSize.Large);
+				ret.src = src.current || S.Common.imageUrl(object.id, I.ImageSize.Large);
 				break;
 			};
 
@@ -380,9 +301,109 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 
 		};
+
 		return ret;
 	};
 
-});
+	let content = null;
+
+	if (U.Object.isInFileLayouts(object.layout)) {
+		cn.push('isFile');
+	};
+
+	if (isDownload) {
+		cn.push('isDownload');
+	};
+
+	const imageContent = () => {
+		let withBlur = false;
+
+		cn.push('isImage');
+		if ((object.widthInPixels < 360) || (object.heightInPixels > 360)) {
+			withBlur = true;
+			cn.push('withBlur');
+		};
+
+		return renderImage(withBlur);
+	};
+
+	switch (object.layout) {
+		case I.ObjectLayout.File: {
+			if (showAsFile) {
+				break;
+			};
+
+			if (mime && object.file) {
+				const [ t1, t2 ] = mime.split('/');
+
+				switch (t1) {
+					case 'image': {
+						if (!J.Constant.fileExtension.image.includes(t2)) {
+							break;
+						};
+
+						content = imageContent();
+						break;
+					};
+				};
+			};
+			break;
+		};
+
+		case I.ObjectLayout.Image:
+			if (showAsFile) {
+				break;
+			};
+			
+			content = imageContent();
+			break;
+
+		case I.ObjectLayout.Video: {
+			if (showAsFile) {
+				break;
+			};
+
+			cn.push('isVideo');
+			content = renderVideo();
+			break;
+		};
+
+		case I.ObjectLayout.Audio: {
+			cn.push('isAudio');
+			content = renderAudio();
+			break;
+		};
+
+		case I.ObjectLayout.Bookmark: {
+			cn.push('isBookmark');
+			content = bookmarkAsDefault ? renderDefault() : renderBookmark();
+			break;
+		};
+	};
+
+	if (!content) {
+		content = renderDefault();
+	};
+
+	if (cn.length == 1) {
+		cn.push(U.Data.layoutClass(object.id, object.layout));
+	};
+
+	useImperativeHandle(ref, () => ({
+		getPreviewItem,
+	}));
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')}
+			onContextMenu={onContextMenu}
+		>
+			{content}
+			<Icon className="remove" onClick={onRemoveHandler} />
+		</div>
+	);
+
+}));
 
 export default ChatAttachment;

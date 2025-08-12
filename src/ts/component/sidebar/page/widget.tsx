@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText } from 'Component';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove } from 'Lib';
 
 type State = {
@@ -201,25 +201,22 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				<div className="bottom">
 					<div className="grad" />
 
-					<div className="side left">
-						<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
-					</div>
+					<div className="sides">
+						<div className="side left">
 
-					<div className="side center">
-						{!isEditing ? (
+							<div className={[ 'settings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
+								<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
+								<Label text={translate('commonDone')} />
+							</div>
+						</div>
+
+						<div className="side center">
 							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
-						) : (
-							<Button color="simple" text={translate('commonDone')} onClick={this.onEdit} />
-						)}
-					</div>
+						</div>
 
-					<div className="side right">
-						<Icon 
-							id="button-widget-help" 
-							className="help withBackground" 
-							tooltipParam={{ text: translate('commonHelp') }} 
-							onClick={this.onHelp} 
-						/>
+						<div className="side right">
+							<Button id="button-widget-help" className="help" text={'?'} color="simple" tooltipParam={{ text: translate('commonHelp') }}  onClick={this.onHelp}  />
+						</div>
 					</div>
 				</div>
 			);
@@ -276,6 +273,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		analytics.event('ClickAddWidget', { route });
 
+		const { isEditing } = this.state;
 		const { widgets } = S.Block;
 		const space = U.Space.getSpaceview();
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
@@ -285,6 +283,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const button = node.find('#widget-list-add');
 		const { top } = button.offset();
 		const position = top + 350 > nh ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+
+		if (isEditing) {
+			this.onEdit(e);
+		};
 
 		blocks.forEach(block => {
 			const children = S.Block.getChildren(widgets, block.id);

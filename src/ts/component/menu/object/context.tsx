@@ -247,7 +247,6 @@ class MenuContext extends React.Component<I.Menu> {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
-			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			noAutoHover: true,
@@ -308,7 +307,7 @@ class MenuContext extends React.Component<I.Menu> {
 				const collectionType = S.Record.getCollectionType();
 
 				menuId = 'searchObject';
-				menuParam.className = 'single';
+				menuParam.className = [ 'single', className ].join(' ');
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
@@ -360,6 +359,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
 		const objectIds = this.getObjectIds();
+		const space = U.Space.getSpaceview();
 		const win = $(window);
 		const length = objectIds.length;
 		const first = length == 1 ? this.getObject(subId, getObject, objectIds[0]) : null;
@@ -404,12 +404,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				if (!first) {
-					break;
-				};
-
-				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(first)}` });
-				analytics.event('CopyLink', { route });
+				U.Object.copyLink(first, space, 'web', route);
 				break;
 			};
 
