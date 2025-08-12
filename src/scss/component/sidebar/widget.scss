@@ -29,8 +29,24 @@
 		.side.center { text-align: center; flex-grow: 1; width: auto; }
 		.side.right { text-align: right; }
 
-		.icon.settings { background-color: var(--color-shape-highlight-medium); border-radius: 14px; background-image: url('~img/icon/widget/button/settings0.svg'); }
-		.icon.settings:hover { background-color: var(--color-shape-highlight-dark) !important; background-image: url('~img/icon/widget/button/settings1.svg'); }
+		$transitionSettings: all 0.25s $easeInQuint;
+
+		.settings { transition: $transitionSettings; position: relative; width: 28px; height: 28px; overflow: hidden; background-color: var(--color-shape-highlight-medium); border-radius: 14px; }
+		.settings {
+			.icon { transition: $transitionSettings; position: absolute; left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/settings0.svg'); }
+			.label { transition: $transitionSettings; position: absolute; left: 12px; top: 5px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
+		}
+		.settings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
+		.settings:not(.isEditing):hover {
+			.icon { background-image: url('~img/icon/widget/button/settings1.svg'); }
+		}
+
+		.settings.isEditing { width: 55px; background-color: var(--color-system-accent-100); }
+		.settings.isEditing {
+			.icon { opacity: 0; }
+			.label { opacity: 1; }
+		}
+		.settings.isEditing:hover { background-color: var(--color-system-accent-125); }
 
 		.button { height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; font-weight: 500; }
 		.button.help { font-size: 15px; padding: 0px; }
