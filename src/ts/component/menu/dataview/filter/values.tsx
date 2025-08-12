@@ -317,6 +317,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.props.setActive();
 
 		const item = view.getFilter(itemId);
+		if (!item) {
+			return;
+		};
+
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		if (relation && this.refInput) {
