@@ -82,7 +82,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 							<div className="item">
 								<div className="name">{placeholder}</div>
 							</div>
-							<Icon className="arrow dark" />
+							<Icon className={[ 'arrow', isNew ? 'light' : 'dark' ].join(' ')} />
 						</div>
 					);
 				};
@@ -236,7 +236,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		let items: any[] = [] as any[];
 
 		if (!tier?.price || (U.Space.getReaderLimit() - 1 >= 0)) {
-			items.push({ id: I.ParticipantPermissions.Reader });
+			items.push({ id: String(I.ParticipantPermissions.Reader) });
 		};
 		if (!tier?.price || (U.Space.getWriterLimit() - 1 >= 0)) {
 			items.push({ id: I.ParticipantPermissions.Writer });
@@ -264,7 +264,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				value: item.permissions,
 				options: this.getParticipantOptions(isNew),
 				onSelect: (e: any, el: any) => {
-					this.onChangePermissions(item, el.id, isNew);
+					this.onChangePermissions(item, Number(el.id), isNew);
 				},
 			},
 		});
