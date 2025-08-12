@@ -204,7 +204,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					<div className="sides">
 						<div className="side left">
 
-							<div className={[ 'settings', isEditing ? 'isEditing' : '' ].join(' ')} onClick={this.onEdit}>
+							<div className={[ 'settings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
 								<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
 								<Label text={translate('commonDone')} />
 							</div>
