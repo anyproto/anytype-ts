@@ -155,11 +155,17 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
+					const id = Number(item.id);
+
+					if (id == this.state.type) {
+						return;
+					};
+
 					let created = false;
 					let inviteType = I.InviteType.WithoutApprove;
 					let permissions = I.ParticipantPermissions.Reader;
 
-					if (item.id == I.InviteLinkType.None) {
+					if (id == I.InviteLinkType.None) {
 						Action.inviteRevoke(S.Common.space, () => {
 							this.setInvite('', '', inviteType, permissions);
 						});
@@ -169,7 +175,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 					this.setState({ isLoading: true, error: '' });
 
 					const callBack = () => {
-						switch (Number(item.id)) {
+						switch (id) {
 							case I.InviteLinkType.Editor: {
 								permissions = I.ParticipantPermissions.Writer;
 								break;
@@ -183,11 +189,11 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 						console.log('#### ##### #####')
 						console.log('CLIENT REQUESTS:')
-						console.log('LINK TYPE: ', I.InviteLinkType[item.id])
+						console.log('LINK TYPE: ', I.InviteLinkType[id])
 						console.log('..... ..... .....')
 						console.log('MW RETURNS:')
 
-						const isChange = noApproveIds.includes(this.state.type) && noApproveIds.includes(Number(item.id));
+						const isChange = noApproveIds.includes(this.state.type) && noApproveIds.includes(id);
 
 						if (isChange) {
 							C.SpaceInviteChange(S.Common.space, permissions, (message: any) => {
@@ -233,7 +239,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 							});
 						};
 
-						analytics.event('ClickShareSpaceNewLink', { type: item.id});
+						analytics.event('ClickShareSpaceNewLink', { type: id});
 					};
 
 					if (!space.isShared) {
