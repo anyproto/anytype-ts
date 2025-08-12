@@ -292,7 +292,20 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
 		});
 
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id));
+		C.SpaceSetOrder(active.id, newItems.map(it => it.id), (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const list = message.list;
+			for (let i = 0; i < list.length; i++) {
+				const item = items[i];
+				if (item) {
+					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { spaceOrder: list[i] }}, false);
+				};
+			};
+		});
+
 		analytics.event('ReorderSpace');
 	};
 

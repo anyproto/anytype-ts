@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
@@ -6,11 +6,8 @@ import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
-	const isMountedRef = useRef(false);
 	const nodeRef = useRef<any>(null);
-	const divRef = useRef(0);
-	const speedRef = useRef(1);
-
+	const wrapRef = useRef<any>(null);
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
 	const { id, fields, content } = block;
 	const { state, targetObjectId } = content;
@@ -22,7 +19,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		css.width = (width * 100) + '%';
 	};
 
-	const getWidth = useCallback((checkMax: boolean, v: number): number => {
+	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
 		const el = $(`#selectionTarget-${id}`);
 
@@ -34,62 +31,51 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	}, [ fields.width, id ]);
+	};
 
-	const onPlay = useCallback(() => {
+	const onPlay = () => {
 		$(nodeRef.current).addClass('isPlaying');
-	}, []);
+	};
 
-	const onPause = useCallback(() => {
+	const onPause = () => {
 		$(nodeRef.current).removeClass('isPlaying');
-	}, []);
+	};
 
-	const onKeyDownHandler = useCallback((e: any) => {
+	const onKeyDownHandler = (e: any) => {
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
 		};
-	}, [ onKeyDown, props ]);
+	};
 	
-	const onKeyUpHandler = useCallback((e: any) => {
+	const onKeyUpHandler = (e: any) => {
 		if (onKeyUp) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
 		};
-	}, [ onKeyUp, props ]);
+	};
 
-	const onFocus = useCallback(() => {
+	const onFocus = () => {
 		focus.set(block.id, { from: 0, to: 0 });
-	}, [ block.id ]);
+	};
 	
-	const onChangeUrl = useCallback((e: any, url: string) => {
+	const onChangeUrl = (e: any, url: string) => {
 		Action.upload(I.FileType.Video, rootId, id, url, '');
-	}, [ rootId, id ]);
+	};
 	
-	const onChangeFile = useCallback((e: any, path: string) => {
+	const onChangeFile = (e: any, path: string) => {
 		Action.upload(I.FileType.Video, rootId, id, '', path);
-	}, [ rootId, id ]);
+	};
 
-	const onResizeInit = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
+	const onResizeInit = () => {
+		const wrap = $(wrapRef.current);
+		
+		if (wrap.length) {
+			wrap.css({ width: (getWidth(true, 0) * 100) + '%' });
 		};
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
-		
-		if (!wrap.length) {
-			return;
-		};
-		
-		wrap.css({ width: (getWidth(true, 0) * 100) + '%' });
-	}, [ getWidth ]);
+	};
 
-	const onResizeStart = useCallback((e: any, checkMax: boolean) => {
+	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		if (!isMountedRef.current) {
-			return;
-		};
 		
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
@@ -104,19 +90,13 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		$(`#block-${block.id}`).addClass('isResizing');
 		win.on('mousemove.media', e => onResizeMove(e, checkMax));
 		win.on('mouseup.media', e => onResizeEnd(e, checkMax));
-	}, [ block.id ]);
+	};
 	
-	const onResizeMove = useCallback((e: any, checkMax: boolean) => {
+	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		if (!isMountedRef.current) {
-			return;
-		};
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
-		
+		const wrap = $(wrapRef.current);
 		if (!wrap.length) {
 			return;
 		};
@@ -125,16 +105,10 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const w = getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		wrap.css({ width: (w * 100) + '%' });
-	}, [ getWidth ]);
+	};
 	
-	const onResizeEnd = useCallback((e: any, checkMax: boolean) => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('.wrap');
-		
+	const onResizeEnd = (e: any, checkMax: boolean) => {
+		const wrap = $(wrapRef.current);
 		if (!wrap.length) {
 			return;
 		};
@@ -151,9 +125,9 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);
-	}, [ rootId, id, block.id, getWidth ]);
+	};
 
-	const initVideo = useCallback(() => {
+	const initVideo = () => {
 		const node = $(nodeRef.current);
 		const video = node.find('video');
 
@@ -161,22 +135,11 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		divRef.current = 16 / 9;
 		onResizeInit();
-
-		video.on('canplay', (e: any) => {
-			const el = video.get(0);
-
-			divRef.current = el.videoWidth / el.videoHeight;
-			onResizeInit();
-		});
-	}, [ onResizeInit ]);
+		video.on('canplay', (e: any) => onResizeInit());
+	};
 	
-	const rebind = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
+	const rebind = () => {
 		unbind();
 		
 		const node = $(nodeRef.current);
@@ -184,27 +147,21 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		node.on('resizeMove', (e: any, oe: any) => onResizeMove(oe, true));
 		node.on('resizeEnd', (e: any, oe: any) => onResizeEnd(oe, true));
 		node.on('resizeInit', (e: any, oe: any) => onResizeInit());
-	}, [ onResizeStart, onResizeMove, onResizeEnd, onResizeInit ]);
+	};
 	
-	const unbind = useCallback(() => {
-		if (!isMountedRef.current) {
-			return;
-		};
-		
+	const unbind = () => {
 		const node = $(nodeRef.current);
 		const video = node.find('video');
 		
 		node.off('resizeInit resizeStart resizeMove resizeEnd');
 		video.off('canplay');
-	}, []);
+	};
 
 	useEffect(() => {
-		isMountedRef.current = true;
 		rebind();
 		initVideo();
 
 		return () => {
-			isMountedRef.current = false;
 			unbind();
 		};
 	}, [ rebind, initVideo, unbind ]);
@@ -252,7 +209,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				
 			case I.FileState.Done: {
 				element = (
-					<div className="wrap resizable" style={css}>
+					<div ref={wrapRef} className="wrap resizable" style={css}>
 						<MediaVideo
 							src={S.Common.fileUrl(targetObjectId)}
 							onPlay={onPlay}

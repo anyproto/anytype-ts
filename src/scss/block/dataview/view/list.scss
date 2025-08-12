@@ -26,9 +26,9 @@
 					.cellWrapper { margin-right: 4px; }
 					.cellWrapper.isName { width: 100%; }
 				}
-				.side.left.s50 { width: 50%; }
+				.side.left.s50 { width: 50%; overflow: hidden; }
 				.side.left.s50 {
-					.cellWrapper.isName { min-width: 60%; }
+					.cellWrapper.isName { min-width: unset; flex-grow: 0; @include text-overflow-nw; }
 				}
 
 				> .cellWrapper { flex-grow: 0; }

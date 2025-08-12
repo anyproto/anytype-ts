@@ -15,7 +15,7 @@ const LIMIT = 20;
 const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, getId, setHover, onKeyDown, setActive, getSize, position } = props;
-	const { data } = param;
+	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, onSortAdd, onFilterOrSortAdd, isInline, getTarget, readonly } = data;
 	const [ dummy, setDummy ] = useState(0);
 	const nodeRef = useRef(null);
@@ -65,6 +65,8 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onClick = (e: any, item: any) => {
 		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
+			className,
+			classNameWrap,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			data: {
@@ -88,6 +90,8 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		];
 
 		S.Menu.open('select', {
+			className,
+			classNameWrap,
 			element: `${elementId} .more`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -111,6 +115,8 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const menuParam = {
+			className,
+			classNameWrap,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			horizontal: I.MenuDirection.Right,
@@ -291,6 +297,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						value={item.type} 
 						onChange={v => onChange(item.id, 'type', v)} 
 						readonly={isReadonlyValue}
+						menuParam={{ className, classNameWrap }}
 					/>
 				</div>
 				{!isReadonlyValue ? (

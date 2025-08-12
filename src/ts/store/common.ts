@@ -53,6 +53,7 @@ class CommonStore {
 	};
 	public diffValue: I.Diff[] = [];
 	public refs: Map<string, any> = new Map();
+	public windowId = '';
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -206,11 +207,7 @@ class CommonStore {
 	};
 
 	get pin (): string {
-		let ret = this.pinValue;
-		if (ret === null) {
-			ret = Storage.get('pin');
-		};
-		return String(ret || '');
+		return String(this.pinValue || '');
 	};
 
 	get pinTime (): number {
@@ -497,12 +494,20 @@ class CommonStore {
 	};
 
 	/**
+	 * Gets the pin ID for storage.
+	 */
+	pinId () {
+		return [ S.Auth.account.id, 'pin' ].join('-');
+	};
+
+	/**
 	 * Sets the pin value.
 	 * @param {string} v - The pin value.
 	 */
 	pinSet (v: string) {
 		this.pinValue = String(v || '');
-		Storage.set('pin', this.pinValue);
+		Renderer.send('keytarSet', this.pinId(), this.pinValue);
+		Renderer.send('pinSet');
 	};
 
 	/**
@@ -510,7 +515,29 @@ class CommonStore {
 	 */
 	pinRemove () {
 		this.pinValue = null;
-		Storage.delete('pin');
+		Renderer.send('keytarDelete', this.pinId());
+		Renderer.send('pinRemove');
+	};
+
+	/**
+	 * Initializes the pin value, optionally calling a callback.
+	 * @param {() => void} callBack - The callback function to call after initialization.
+	 */
+	pinInit (callBack?: () => void) {
+		const pin = Storage.get('pin');
+
+		if (pin) {
+			this.pinSet(pin);
+			Storage.delete('pin');
+
+			callBack?.();
+		} else {
+			Renderer.send('keytarGet', this.pinId()).then((value: string) => {
+				this.pinValue = String(value || '');
+
+				callBack?.();
+			});
+		};
 	};
 
 	/**
@@ -811,6 +838,14 @@ class CommonStore {
 	 */
 	diffSet (diff: I.Diff[]) {
 		this.diffValue = diff || [];
+	};
+
+	/**
+	 * Sets the window ID.
+	 * @param {string} id - The window ID.
+	 */
+	windowIdSet (id: string) {
+		this.windowId = String(id || '');
 	};
 
 	/**

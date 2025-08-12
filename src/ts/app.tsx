@@ -60,6 +60,7 @@ if (!isPackaged) {
 			S,
 			U,
 			M,
+			J,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -167,6 +168,8 @@ const App: FC = () => {
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-progress', onUpdateProgress);
 		Renderer.on('spellcheck', onSpellcheck);
+		Renderer.on('pin-set', () => S.Common.pinInit());
+		Renderer.on('pin-remove', () => S.Common.pinInit());
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -205,7 +208,7 @@ const App: FC = () => {
 	};
 
 	const onInit = (e: any, data: any) => {
-		const { dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -220,6 +223,7 @@ const App: FC = () => {
 		S.Common.themeSet(config.theme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
+		S.Common.windowIdSet(id);
 
 		Action.checkDefaultSpellingLang();
 
@@ -355,6 +359,8 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
+		S.Common.updateVersionSet('');
+		S.Progress.delete(I.ProgressType.Update);
 
 		if (auto) {
 			return;

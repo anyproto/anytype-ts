@@ -1,6 +1,6 @@
-import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
+import { Label, Button, Cell, Error, EmptySearch } from 'Component';
 import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
 
 const Diff = require('diff');
@@ -23,27 +23,27 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const detailsRef = useRef({});
 	const addRelationKeysRef = useRef([]);
 
-	const getRelationKeys = useCallback((): string[] => {
+	const getRelationKeys = (): string[] => {
 		return U.Common.arrayUnique(param.data.relationKeys || J.Relation.default);
-	}, [ param.data.relationKeys ]);
+	};
 
-	const getRelations = useCallback((): any[] => {
+	const getRelations = (): any[] => {
 		let ret = getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
 		ret = S.Record.checkHiddenObjects(ret);
 		ret = ret.filter(it => it && !it.isReadonlyValue);
 		ret = ret.sort(U.Data.sortByName);
 		return ret;
-	}, [ getRelationKeys ]);
+	};
 
-	const getObjectIds = useCallback(() => {
+	const getObjectIds = () => {
 		return param.data.objectIds || [];
-	}, [param.data.objectIds]);
+	};
 
-	const getObjects = useCallback(() => {
+	const getObjects = () => {
 		return S.Record.getRecords(SUB_ID_OBJECT, getRelationKeys());
-	}, [ getRelationKeys ]);
+	};
 
-	const loadDeps = useCallback((callBack?: () => void) => {
+	const loadDeps = (callBack?: () => void) => {
 		const cb = callBack || (() => {});
 
 		let depIds = [];
@@ -68,9 +68,9 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			],
 			noDeps: true,
 		}, cb);
-	}, []);
+	};
 
-	const initValues = useCallback(() => {
+	const initValues = () => {
 		const relations = getRelations();
 		const objects = getObjects();
 		const cnt = {};
@@ -115,9 +115,9 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		initialRef.current = U.Common.objectCopy(detailsRef.current);
-	}, [ getRelations, getObjects ]);
+	};
 
-	const loadObjects = useCallback((callBack?: () => void) => {
+	const loadObjects = (callBack?: () => void) => {
 		const { relationKeys } = data;
 		const objectIds = getObjectIds();
 		const keys = getRelationKeys();
@@ -160,9 +160,9 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				callBack();
 			};
 		});
-	}, [ data, getObjectIds, getRelationKeys, getObjects, param.data ]);
+	};
 
-	const onCellChange = useCallback((id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
+	const onCellChange = (id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
 		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
 			return;
@@ -174,13 +174,13 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (callBack) {
 			callBack({ error: { code: 0 } });
 		};
-	}, [ loadDeps ]);
+	};
 
-	const onCellClick = useCallback((e: any, id: string) => {
+	const onCellClick = (e: any, id: string) => {
 		cellRefs.current.get(id).onClick(e);
-	}, []);
+	};
 
-	const addRelation = useCallback((relationKey: string, callBack?: (message: any) => void) => {
+	const addRelation = (relationKey: string, callBack?: (message: any) => void) => {
 		const { targetId, blockId, view } = data;
 
 		if (!view) {
@@ -188,9 +188,9 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		Dataview.relationAdd(targetId, blockId, relationKey, view.relations.length, view, callBack);
-	}, [ data ]);
+	};
 
-	const save = useCallback(() => {
+	const save = () => {
 		const objectIds = getObjectIds();
 		const operations: any[] = []; 
 
@@ -247,7 +247,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			addRelation(addRelationKeysRef.current[0], cb);
 		};
-	}, [getObjectIds, view, close, addRelation]);
+	};
 
 	useEffect(() => {
 		loadObjects(() => initValues());

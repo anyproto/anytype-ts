@@ -31,6 +31,7 @@ class Api {
 		};
 
 		Util.send(win, 'init', {
+			id: win.id,
 			dataPath: Util.dataPath(),
 			config: ConfigManager.config,
 			isDark: Util.isDarkTheme(),
@@ -50,6 +51,14 @@ class Api {
 
 	pinCheck (win) {
 		WindowManager.sendToAll('pin-check');
+	};
+
+	pinSet (win) {
+		WindowManager.sendToAll('pin-set');
+	};
+
+	pinRemove (win) {
+		WindowManager.sendToAll('pin-remove');
 	};
 
 	setConfig (win, config, callBack) {

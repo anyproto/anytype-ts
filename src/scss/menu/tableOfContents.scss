@@ -6,9 +6,7 @@
 		.content { overflow: visible !important; padding-top: 0px; max-height: unset; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
-		.ReactVirtualized__List { padding: 8px; }
 
-		.item { padding-left: 8px; padding-right: 8px; border-radius: 6px; }
 		.item {
 			.name { width: 100%; }
 			.label { @include text-overflow-nw; }
@@ -22,9 +20,9 @@
 			.clickable { flex-direction: row-reverse; }
 		}
 
-		.bottom { flex-shrink: 0; padding: 0px 8px; }
+		.bottom { flex-shrink: 0; }
 		.bottom {
-			.line { margin: 0px 8px 8px 8px; }
+			.line { margin: 0px 16px 8px 16px; }
 		}
 	}
 

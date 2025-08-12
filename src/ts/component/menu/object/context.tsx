@@ -247,7 +247,6 @@ class MenuContext extends React.Component<I.Menu> {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
-			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			noAutoHover: true,
@@ -308,7 +307,7 @@ class MenuContext extends React.Component<I.Menu> {
 				const collectionType = S.Record.getCollectionType();
 
 				menuId = 'searchObject';
-				menuParam.className = 'single';
+				menuParam.className = [ 'single', className ].join(' ');
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },

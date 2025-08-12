@@ -143,7 +143,7 @@ const InputWithFile: FC<Props> = ({
 				return;
 			};
 			
-			const url = String(urlRef.current.getValue() || '');
+			const url = String(urlRef.current.getValue() || '').trim();
 			if (!url) {
 				return;
 			};
