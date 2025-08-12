@@ -2191,6 +2191,15 @@ export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, 
 	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
 };
 
+export const SpaceInviteChange = (spaceId: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteChange.Request();
+
+	request.setSpaceid(spaceId);
+	request.setPermissions(permissions as number);
+
+	dispatcher.request(SpaceInviteChange.name, request, callBack);
+};
+
 export const SpaceInviteView = (cid: string, key: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.InviteView.Request();
 

@@ -166,7 +166,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 						return;
 					};
 
-					this.setState({ isLoading: true });
+					this.setState({ isLoading: true, error: '' });
 
 					const callBack = () => {
 						switch (Number(item.id)) {
@@ -181,29 +181,62 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 							};
 						};
 
-						C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
-							this.setState({ isLoading: false });
+						console.log('#### ##### #####')
+						console.log('CLIENT REQUESTS:')
+						console.log('LINK TYPE: ', I.InviteLinkType[item.id])
+						console.log('..... ..... .....')
+						console.log('MW RETURNS:')
 
-							if (this.setError(message.error)) {
-								return;
-							};
+						const isChange = noApproveIds.includes(this.state.type) && noApproveIds.includes(Number(item.id));
+						// console.log('NO APPROVE IDS: ', noApproveIds)
+						// console.log('CURRENT TYPE: ', this.state.type)
+						// console.log('NEW TYPE: ', item.id)
 
-							let toast = '';
-							if (created) {
-								toast = translate('toastInviteGenerate');
-							} else {
-								toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
-							};
+						if (isChange) {
+							C.SpaceInviteChange(S.Common.space, permissions, (message: any) => {
+								this.setState({ isLoading: false });
+								if (this.setError(message.error)) {
+									return;
+								};
 
-							this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
-							Preview.toastShow({ text: toast });
+								console.log('LINK CHANGED TO: ', I.ParticipantPermissions[permissions])
+								console.log('LINK REMAINS: ')
 
-							if (!space.isShared) {
-								analytics.event('ShareSpace');
-							};
+								this.setInvite(this.state.cid, this.state.key, inviteType, permissions);
 
-							analytics.event('ClickShareSpaceNewLink', { type: item.id});
-						});
+								Preview.toastShow({ text: U.Common.sprintf(translate('toastInviteUpdate'), item.name) });
+							});
+						} else {
+							C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
+								this.setState({ isLoading: false });
+
+								if (this.setError(message.error)) {
+									return;
+								};
+
+								let toast = '';
+								if (created) {
+									toast = translate('toastInviteGenerate');
+								} else {
+									toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
+								};
+
+								console.log('LINK GENERATED WITH: ')
+								console.log('INVITE TYPE: ', I.InviteType[inviteType])
+								console.log('PERMISSIONS: ', I.ParticipantPermissions[permissions])
+								console.log('NEW LINK: ')
+								console.log(U.Space.getInviteLink(message.inviteCid, message.inviteKey))
+
+								this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
+								Preview.toastShow({ text: toast });
+
+								if (!space.isShared) {
+									analytics.event('ShareSpace');
+								};
+							});
+						};
+
+						analytics.event('ClickShareSpaceNewLink', { type: item.id});
 					};
 
 					if (!space.isShared) {
