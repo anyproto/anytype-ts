@@ -207,8 +207,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		});
 
 		this.forceUpdate();
-
-		analytics.event('ScreenSettingsSpaceShare');
 	};
 
 	componentDidUpdate() {
