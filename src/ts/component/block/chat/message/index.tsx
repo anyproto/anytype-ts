@@ -40,10 +40,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		getNode: () => nodeRef.current,
 	}));
 
-	if (!message) {
-		return null;
-	};
-
 	const init = () => {
 		const { creator, content } = message;
 		const { marks, text } = content;
@@ -217,6 +213,10 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		const width = bubble.outerWidth();
 
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
+	};
+
+	if (!message) {
+		return null;
 	};
 
 	const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention, isSynced } = message;
