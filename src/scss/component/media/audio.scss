@@ -22,12 +22,19 @@
             .icon.volume { background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.isMuted { background-image: url('~img/icon/audio/mute.svg'); }
 
+<<<<<<< HEAD
 			.volumeWrap { height: 32px; display: flex; align-items: center; }
 
 			.timeDragWrapper { flex: 1 0 auto; }
             .timeText { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
             .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px; }
+=======
+			.timeDragWrapper { flex: 1 0 auto; height: 100%; }
+            .timeText { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
+
+            .input-drag-horizontal { height: 100%; width: 100%; display: block; }
+>>>>>>> 7b6e04f30c (fix audio drag height)
             .input-drag-horizontal {
                 .icon { width: 6px; height: 6px; border: 0px; background: none; cursor: default; }
                 .bullet { width: 12px; height: 12px; border-radius: 6px; background: var(--color-control-accent); }
