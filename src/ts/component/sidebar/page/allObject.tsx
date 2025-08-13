@@ -188,7 +188,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 						) : ''}
 
 						{this.cache && items.length && !isLoading ? (
-							<div className="items customScrollbar">
+							<div className="items">
 								<InfiniteLoader
 									rowCount={items.length + 1}
 									loadMoreRows={this.loadMoreRows}

@@ -226,7 +226,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			<div 
 				id="containerWidget"
 				ref={node => this.node = node}
-				className="customScrollbar"
 			>
 				<div id="head" className="head">
 					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
