@@ -48,7 +48,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 	const { page = '' } = state;
 	const Component = Components[page];
-	const cn = [ 'sidebar', 'right' ];
+	const cn = [ 'sidebar', 'right', 'customScrollbar' ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = [ 'type' ].includes(page);
 
