@@ -142,7 +142,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	const positionDrag = () => {
 		const drag = $(volumeRef.current.getNode());
-		const icon = $(volumeIconRef.current.getNode());
+		const icon = $(volumeIconRef.current);
 		const height = icon.outerHeight();
 		const { left, top } = icon.offset();
 		const st = $(window).scrollTop();
@@ -152,7 +152,6 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 	const onVolumeEnter = () => {
 		const drag = $(volumeRef.current.getNode());
-		const icon = $(volumeIconRef.current.getNode());
 		const container = $(getScrollContainer?.());
 
 		drag.show();
