@@ -188,7 +188,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 						) : ''}
 
 						{this.cache && items.length && !isLoading ? (
-							<div className="items customScrollbar">
+							<div className="items">
 								<InfiniteLoader
 									rowCount={items.length + 1}
 									loadMoreRows={this.loadMoreRows}
@@ -473,6 +473,8 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		S.Menu.open('objectContext', {
 			element: `#sidebarLeft #containerObject #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			data: {
 				objectIds,
 				subId: J.Constant.subId.allObject,

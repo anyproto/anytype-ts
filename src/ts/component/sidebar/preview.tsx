@@ -16,7 +16,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
 		layoutFormat: I.LayoutFormat.Page,
-		defaultViewType: I.ViewType.Grid,
+		defaultViewType: I.ViewType.List,
 	};
 
 	constructor (props: I.SidebarPageComponent) {

@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
+import { Label, Button, Cell, Error, EmptySearch } from 'Component';
 import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
 
 const Diff = require('diff');
@@ -9,180 +9,50 @@ const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
 const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
 
-interface State {
-	error: string;
-};
+const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-const PopupRelation = observer(class PopupRelation extends React.Component<I.Popup, State> {
+	const { param, close, getId } = props;
+	const { data } = param;
+	const { readonly, view } = data;
 
-	refCheckbox = null;
-	cellRefs: Map<string, any> = new Map();
-	initial: any = {};
-	details: any = {};
-	addRelationKeys = [];
-	state = {
-		error: '',
+	const [ error, setError ] = useState('');
+
+	const checkboxRef = useRef(null);
+	const cellRefs = useRef(new Map());
+	const initialRef = useRef({});
+	const detailsRef = useRef({});
+	const addRelationKeysRef = useRef([]);
+
+	const getRelationKeys = (): string[] => {
+		return U.Common.arrayUnique(param.data.relationKeys || J.Relation.default);
 	};
 
-	constructor (props: I.Popup) {
-		super(props);
-
-		this.save = this.save.bind(this);
-		this.onCellClick = this.onCellClick.bind(this);
-		this.onCellChange = this.onCellChange.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
+	const getRelations = (): any[] => {
+		let ret = getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
+		ret = S.Record.checkHiddenObjects(ret);
+		ret = ret.filter(it => it && !it.isReadonlyValue);
+		ret = ret.sort(U.Data.sortByName);
+		return ret;
 	};
 
-	render () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { readonly, view } = data;
-		const { error } = this.state;
-		const objects = this.getObjects();
-		const relations = this.getRelations();
-		const length = objects.length;
-
-		const Item = (item: any) => {
-			const id = Relation.cellId(ID_PREFIX, item.relationKey, '');
-			const cn = [ 'block', 'blockRelation' ];
-
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-
-			return (
-				<div className={cn.join(' ')}>
-					<div className="sides">
-						<div className="info">
-							<div className="name">{item.name}</div>
-						</div>
-						<div 
-							id={id} 
-							className={[ 'cell', Relation.className(item.format), (!readonly ? 'canEdit' : '') ].join(' ')} 
-							onClick={e => this.onCellClick(e, id)}
-						>
-							<Cell 
-								ref={ref => this.cellRefs.set(id, ref)}
-								rootId={SUB_ID_DEPS}
-								subId={SUB_ID_DEPS}
-								block={new M.Block({ id: '', type: I.BlockType.Relation, content: {} })}
-								relationKey={item.relationKey}
-								getRecord={() => this.details}
-								viewType={I.ViewType.Grid}
-								readonly={readonly}
-								idPrefix={ID_PREFIX}
-								menuClassName="fromBlock"
-								onCellChange={this.onCellChange}
-								getView={view ? (() => view): null}
-								pageContainer={U.Common.getCellContainer('popupRelation')}
-							/>
-						</div>
-					</div>
-				</div>
-			);
-		};
-
-		return (
-			<div>
-				<Label text={U.Common.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
-
-				{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
-					<div className="blocks">
-						{relations.map(item => <Item key={item.relationKey} {...item} />)}
-					</div>
-				)}
-
-				<div className="line" />
-
-				<div className="buttons">
-					<Button text="Save" className="c28" onClick={this.save} />
-					<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
-				</div>
-
-				<Error text={error} />
-			</div>
-		);
+	const getObjectIds = () => {
+		return param.data.objectIds || [];
 	};
 
-	componentDidMount(): void {
-		this.loadObjects(() => this.initValues());
+	const getObjects = () => {
+		return S.Record.getRecords(SUB_ID_OBJECT, getRelationKeys());
 	};
 
-	componentDidUpdate (): void {
-		const id = S.Common.cellId;		
-		if (id) {
-			S.Common.cellId = '';
-			
-			const ref = this.cellRefs.get(id);
-			if (ref) {
-				ref.onClick($.Event('click'));
-			};
-		};
-	};
-
-	componentWillUnmount(): void {
-		S.Menu.closeAll(J.Menu.cell);
-		U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
-	};
-
-	loadObjects (callBack?: () => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { relationKeys } = data;
-		const objectIds = this.getObjectIds();
-		const keys = this.getRelationKeys();
-
-		U.Subscription.subscribe({
-			subId: SUB_ID_OBJECT,
-			filters: [
-				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
-			],
-			keys: J.Relation.default.concat(keys),
-			noDeps: true,
-		}, () => {
-			if (!relationKeys) {
-				const objects = this.getObjects();
-
-				let keys = [];
-
-				objects.forEach(it => {
-					const type = S.Record.getTypeById(it.type);
-					if (!type) {
-						return;
-					};
-
-					const recommended = (type.recommendedRelations || []).map(it => {
-						const relation = S.Record.getRelationById(it);
-						return relation ? relation.relationKey : '';
-					}).filter(it => it);
-
-					if (recommended.length) {
-						keys = keys.concat(recommended);
-					};
-				});
-
-				if (keys.length) {
-					this.props.param.data.relationKeys = U.Common.arrayUnique(keys);
-				};
-			};
-
-			if (callBack) {
-				callBack();
-			};
-		});
-	};
-
-	loadDeps (callBack?: () => void) {
+	const loadDeps = (callBack?: () => void) => {
 		const cb = callBack || (() => {});
 
 		let depIds = [];
 
-		for (const k in this.details) {
+		for (const k in detailsRef.current) {
 			const relation = S.Record.getRelationByKey(k);
 
 			if (relation && Relation.isArrayType(relation.format)) {
-				depIds = depIds.concat(Relation.getArrayValue(this.details[k]));
+				depIds = depIds.concat(Relation.getArrayValue(detailsRef.current[k]));
 			};
 		};
 
@@ -200,9 +70,9 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		}, cb);
 	};
 
-	initValues () {
-		const relations = this.getRelations();
-		const objects = this.getObjects();
+	const initValues = () => {
+		const relations = getRelations();
+		const objects = getObjects();
 		const cnt = {};
 
 		let reference = null;
@@ -226,7 +96,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					});
 
 					if (tmp.length) {
-						this.details[relationKey] = tmp;
+						detailsRef.current[relationKey] = tmp;
 					};
 				} else {
 					cnt[relationKey] = cnt[relationKey] || 1;
@@ -234,7 +104,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 						cnt[relationKey]++;
 					};
 					if ((cnt[relationKey] == objects.length) && value) {
-						this.details[relationKey] = value;
+						detailsRef.current[relationKey] = value;
 					};
 				};
 
@@ -244,89 +114,87 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			reference = object;
 		});
 
-		this.initial = U.Common.objectCopy(this.details);
-		this.forceUpdate();
+		initialRef.current = U.Common.objectCopy(detailsRef.current);
 	};
 
-	getRelationKeys (): string[] {
-		return U.Common.arrayUnique(this.props.param.data.relationKeys || J.Relation.default);
+	const loadObjects = (callBack?: () => void) => {
+		const { relationKeys } = data;
+		const objectIds = getObjectIds();
+		const keys = getRelationKeys();
+
+		U.Subscription.subscribe({
+			subId: SUB_ID_OBJECT,
+			filters: [
+				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
+			],
+			keys: J.Relation.default.concat(keys),
+			noDeps: true,
+		}, () => {
+			if (!relationKeys) {
+				const objects = getObjects();
+
+				let keys = [];
+
+				objects.forEach(it => {
+					const type = S.Record.getTypeById(it.type);
+					if (!type) {
+						return;
+					};
+
+					const recommended = (type.recommendedRelations || []).map(it => {
+						const relation = S.Record.getRelationById(it);
+						return relation ? relation.relationKey : '';
+					}).filter(it => it);
+
+					if (recommended.length) {
+						keys = keys.concat(recommended);
+					};
+				});
+
+				if (keys.length) {
+					param.data.relationKeys = U.Common.arrayUnique(keys);
+				};
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
-	getRelations (): any[] {
-		const { config } = S.Common;
-
-		let ret = this.getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
-		ret = S.Record.checkHiddenObjects(ret);
-		ret = ret.filter(it => it && !it.isReadonlyValue);
-		ret = ret.sort(U.Data.sortByName);
-		return ret;
-	};
-
-	getObjectIds () {
-		return this.props.param.data.objectIds || [];
-	};
-
-	getObjects () {
-		return S.Record.getRecords(SUB_ID_OBJECT, this.getRelationKeys());
-	};
-
-	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
+	const onCellChange = (id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
 		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
 			return;
 		};
 
-		this.details[relationKey] = Relation.formatValue(relation, value, true);
-		this.loadDeps(() => this.forceUpdate());
+		detailsRef.current[relationKey] = Relation.formatValue(relation, value, true);
+		loadDeps();
 
 		if (callBack) {
 			callBack({ error: { code: 0 } });
 		};
 	};
 
-	onCellClick (e: any, id: string) {
-		this.cellRefs.get(id).onClick(e);
+	const onCellClick = (e: any, id: string) => {
+		cellRefs.current.get(id).onClick(e);
 	};
 
-	onAdd () {
-		const { getId } = this.props;
-		const element = `#${getId()} #item-add`;
+	const addRelation = (relationKey: string, callBack?: (message: any) => void) => {
+		const { targetId, blockId, view } = data;
 
-		S.Menu.open('relationSuggest', { 
-			element,
-			offsetX: J.Size.blockMenu,
-			horizontal: I.MenuDirection.Right,
-			vertical: I.MenuDirection.Center,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
-			data: {
-				menuIdEdit: 'blockRelationEdit',
-				skipKeys: this.getRelationKeys(),
-				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
-					this.props.param.data.relationKeys = this.getRelationKeys().concat([ relation.relationKey ]);
+		if (!view) {
+			return;
+		};
 
-					this.addRelationKeys.push(relation.relationKey);
-					this.loadObjects();
-
-					S.Menu.close('relationSuggest');
-				},
-			}
-		});
+		Dataview.relationAdd(targetId, blockId, relationKey, view.relations.length, view, callBack);
 	};
 
-	onCheckbox () {
-		this.refCheckbox.toggle();
-	};
-
-	save () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { view } = data;
-		const objectIds = this.getObjectIds();
+	const save = () => {
+		const objectIds = getObjectIds();
 		const operations: any[] = []; 
 
-		for (const k in this.details) {
+		for (const k in detailsRef.current) {
 			const relation = S.Record.getRelationByKey(k);
 
 			if (!relation) {
@@ -334,7 +202,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			};
 
 			if (Relation.isArrayType(relation.format) && (relation.format != I.RelationType.Select)) {
-				const diff = Diff.diffArrays(this.initial[k] || [], this.details[k] || []);
+				const diff = Diff.diffArrays(initialRef.current[k] || [], detailsRef.current[k] || []);
 
 				diff.forEach(it => {
 					let opKey = '';
@@ -353,13 +221,13 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					};
 				});
 			} else {
-				operations.push({ relationKey: k, set: Relation.formatValue(relation, this.details[k], true) });
+				operations.push({ relationKey: k, set: Relation.formatValue(relation, detailsRef.current[k], true) });
 			};
 		};
 
 		C.ObjectListModifyDetailValues(objectIds, operations, (message: any) => {
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
+				setError(message.error.description);
 			} else {
 				close();
 			};
@@ -367,32 +235,106 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 		analytics.event('ChangeRelationValue', { id: 'Batch', count: objectIds.length });
 
-		if (this.addRelationKeys.length && view) {
+		if (addRelationKeysRef.current.length && view) {
 			const cb = () => {
-				this.addRelationKeys.shift();
-				if (!this.addRelationKeys.length) {
+				addRelationKeysRef.current.shift();
+				if (!addRelationKeysRef.current.length) {
 					return;
 				};
 
-				this.addRelation(this.addRelationKeys[0], cb);
+				addRelation(addRelationKeysRef.current[0], cb);
 			};
 
-			this.addRelation(this.addRelationKeys[0], cb);
+			addRelation(addRelationKeysRef.current[0], cb);
 		};
 	};
 
-	addRelation (relationKey: string, callBack?: (message: any) => void){
-		const { param } = this.props;
-		const { data } = param;
-		const { targetId, blockId, view } = data;
+	useEffect(() => {
+		loadObjects(() => initValues());
 
-		if (!view) {
-			return;
+		return () => {
+			S.Menu.closeAll(J.Menu.cell);
+			U.Subscription.destroyList([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
+		};
+	}, [ loadObjects, initValues ]);
+
+	useEffect(() => {
+		const id = S.Common.cellId;		
+		if (id) {
+			S.Common.cellId = '';
+			
+			const ref = cellRefs.current.get(id);
+			if (ref) {
+				ref.onClick($.Event('click'));
+			};
+		};
+	});
+
+	const objects = getObjects();
+	const relations = getRelations();
+	const length = objects.length;
+
+	const Item = (item: any) => {
+		const id = Relation.cellId(ID_PREFIX, item.relationKey, '');
+		const cn = [ 'block', 'blockRelation' ];
+
+		if (item.isHidden) {
+			cn.push('isHidden');
 		};
 
-		Dataview.relationAdd(targetId, blockId, relationKey, view.relations.length, view, callBack);
+		return (
+			<div className={cn.join(' ')}>
+				<div className="sides">
+					<div className="info">
+						<div className="name">{item.name}</div>
+					</div>
+					<div 
+						id={id} 
+						className={[ 'cell', Relation.className(item.format), (!readonly ? 'canEdit' : '') ].join(' ')} 
+						onClick={e => onCellClick(e, id)}
+					>
+						<Cell 
+							ref={ref => cellRefs.current.set(id, ref)}
+							rootId={SUB_ID_DEPS}
+							subId={SUB_ID_DEPS}
+							block={new M.Block({ id: '', type: I.BlockType.Relation, content: {} })}
+							relationKey={item.relationKey}
+							getRecord={() => detailsRef.current}
+							viewType={I.ViewType.Grid}
+							readonly={readonly}
+							idPrefix={ID_PREFIX}
+							menuClassName="fromBlock"
+							onCellChange={onCellChange}
+							getView={view ? (() => view): null}
+							pageContainer={U.Common.getCellContainer('popupRelation')}
+						/>
+					</div>
+				</div>
+			</div>
+		);
 	};
 
-});
+	return (
+		<div>
+			<Label text={U.Common.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
+
+			{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
+				<div className="blocks">
+					{relations.map(item => <Item key={item.relationKey} {...item} />)}
+				</div>
+			)}
+
+			<div className="line" />
+
+			<div className="buttons">
+				<Button text="Save" className="c28" onClick={save} />
+				<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
+			</div>
+
+			<Error text={error} />
+		</div>
+	);
+
+}));
 
 export default PopupRelation;

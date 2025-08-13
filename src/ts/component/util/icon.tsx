@@ -1,4 +1,4 @@
-import React, { MouseEvent, DragEvent, forwardRef, useRef, useEffect } from 'react';
+import React, { MouseEvent, DragEvent, forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { I, Preview } from 'Lib';
 

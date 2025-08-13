@@ -15,8 +15,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	node: any = null;
 	refName: any = null;
-	refDescription: any = null;
 	refMode = null;
+	refUxType = null;
 	canSave: boolean = true;
 
 	state = {
@@ -38,12 +38,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.onType = this.onType.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
-		this.onDelete = this.onDelete.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
 		const { error, isEditing } = this.state;
+		const { config } = S.Common;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
@@ -57,7 +57,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
 		] : [
-			{ color: 'blank', text: translate('pageSettingsSpaceIndexEditInfo'), onClick: this.onEdit },
+			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
 		const spaceModes = [
@@ -66,6 +66,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ id: I.NotificationMode.Nothing },
 		].map((it: any) => {
 			it.name = translate(`notificationMode${it.id}`);
+			return it;
+		});
+
+		const spaceUxTypes = [
+			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
+		].map((it: any) => {
+			it.name = translate(`spaceUxType${it.id}`);
 			return it;
 		});
 
@@ -105,8 +113,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						</div>
 					) : ''}
 
-					<Label className="spaceType" text={translate(`spaceAccessType${space.spaceAccessType || 0}`)} />
-
 					<IconObject
 						id="spaceIcon"
 						size={96}
@@ -124,25 +130,13 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							ref={ref => this.refName = ref}
 							placeholder={translate('defaultNamePage')}
 							readonly={!canWrite || !isEditing}
-							onKeyUp={() => this.onKeyUp('name')}
+							onKeyUp={this.onKeyUp}
 							maxLength={J.Constant.limit.space.name}
 						/>
 						<div className="counter" />
 					</div>
 
-					{isEditing || this.checkDescription() ? (
-						<div className="spaceDescriptionWrapper">
-							<Editable
-								classNameWrap="spaceDescription"
-								ref={ref => this.refDescription = ref}
-								placeholder={translate('popupSettingsSpaceIndexDescriptionPlaceholder')}
-								readonly={!canWrite || !isEditing}
-								onKeyUp={() => this.onKeyUp('description')}
-								maxLength={J.Constant.limit.space.description}
-							/>
-							<div className="counter" />
-						</div>
-					) : ''}
+					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 				</div>
 
 				<div className="spaceButtons">
@@ -157,7 +151,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
 								<Icon className={el.icon} />
 								<Label text={el.name} />
-								{el.tooltip ? <Icon className="tooltipOverlay" tooltipParam={{ text: el.tooltip }} /> : ''}
 							</div>
 						);
 					})}
@@ -166,38 +159,67 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{!space.isPersonal ? (
-						<div className="section sectionSpaceManager">
-							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-							<div className="sectionContent">
+					{space.isShared && config.experimental ? (
+						<>
 
-								<div className="item">
-									<div className="sides">
-										<Icon className="push" />
+							<div className="section sectionSpaceManager">
+								<Label className="sub" text={translate(`electronMenuDebug`)} />
+								<div className="sectionContent">
 
-										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-											<Label text={translate('popupSettingsSpaceIndexPushText')} />
-										</div>
+									<div className="item">
+										<div className="sides">
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+											</div>
 
-										<div className="side right">
-											<Select
-												id="linkStyle"
-												ref={ref => this.refMode = ref}
-												value={String(space.notificationMode)}
-												options={spaceModes}
-												onChange={v => {
-													C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-													analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-												}}
-												arrowClassName="black"
-												menuParam={{ horizontal: I.MenuDirection.Right }}
-											/>
+											<div className="side right">
+												<Select
+													id="linkStyle"
+													ref={ref => this.refUxType = ref}
+													value={String(space.uxType)}
+													options={spaceUxTypes}
+													onChange={v => this.onSpaceUxType(v)}
+													arrowClassName="black"
+													menuParam={{ horizontal: I.MenuDirection.Right }}
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+
+							<div className="section sectionSpaceManager">
+								<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+								<div className="sectionContent">
+
+									<div className="item">
+										<div className="sides">
+											<Icon className={[ 'push', `push${space.notificationMode}` ].join(' ')} />
+
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+												<Label text={translate(`popupSettingsSpaceIndexPushText${space.notificationMode}`)} />
+											</div>
+
+											<div className="side right">
+												<Select
+													id="linkStyle"
+													ref={ref => this.refMode = ref}
+													value={String(space.notificationMode)}
+													options={spaceModes}
+													onChange={v => {
+														C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+														analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+													}}
+													arrowClassName="black"
+													menuParam={{ horizontal: I.MenuDirection.Right }}
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</>
 					) : ''}
 
 					{canWrite ? (
@@ -287,8 +309,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	componentDidMount (): void {
 		this.setName();
 		this.init();
-
-		analytics.event('ScreenSettingsSpaceIndex');
 	};
 
 	componentDidUpdate (): void {
@@ -309,11 +329,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		this.refName?.setValue(name);
 		this.refName?.placeholderCheck();
-
-		if (space.description) {
-			this.refDescription?.setValue(space.description);
-			this.refDescription?.placeholderCheck();
-		};
 	};
 
 	init () {
@@ -345,8 +360,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		this.setState({ cid, key });
 	};
 
-	onKeyUp (input: string) {
-		const ref = input == 'name' ? this.refName : this.refDescription;
+	onKeyUp () {
+		const ref = this.refName;
 
 		ref?.placeholderCheck();
 		this.updateCounters();
@@ -392,22 +407,12 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
-	onDelete () {
-		Action.removeSpace(S.Common.space, analytics.route.settings, (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			};
-		});
-	};
-
 	onClick (e: React.MouseEvent, item: any) {
 		if (item.isDisabled) {
 			return;
 		};
 
 		const { cid, key } = this.state;
-		const space = U.Space.getSpaceview();
-		const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 		switch (item.id) {
 			case 'invite': {
@@ -423,64 +428,11 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				break;
 			};
 
-			case 'more': {
-				const element = `#${U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)}`;
-				S.Menu.open('select', {
-					element,
-					horizontal: I.MenuDirection.Center,
-					offsetY: -40,
-					onOpen: () => $(element).addClass('hover'),
-					onClose: () => $(element).removeClass('hover'),
-					data: {
-						options: [
-							{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-							{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
-						],
-						onSelect: (e: React.MouseEvent, option: any) => {
-							switch (option.id) {
-								case 'spaceInfo': {
-									this.onSpaceInfo();
-									break;
-								};
-								case 'delete': {
-									this.onDelete();
-									break;
-								};
-							};
-						},
-					}
-				});
+			case 'copyLink': {
+				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
 				break;
 			};
 		};
-	};
-
-	onSpaceInfo () {
-		const { account } = S.Auth;
-		const space = U.Space.getSpaceview();
-		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
-		const data = [
-			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
-			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
-			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
-			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
-		];
-
-		S.Popup.open('confirm', {
-			className: 'isWide spaceInfo',
-			data: {
-				title: translate('popupSettingsSpaceIndexSpaceInfoTitle'),
-				text: data.map(it => `<dl><dt>${it[0]}:</dt><dd>${it[1]}</dd></dl>`).join(''),
-				textConfirm: translate('commonCopy'),
-				colorConfirm: 'blank',
-				canCancel: false,
-				onConfirm: () => {
-					U.Common.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
-				},
-			}
-		});
-
-		analytics.event('ScreenSpaceInfo');
 	};
 
 	onEdit () {
@@ -497,13 +449,24 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		C.WorkspaceSetInfo(S.Common.space, {
 			name: this.checkName(this.refName?.getTextValue()),
-			description: this.refDescription?.getTextValue(),
 		});
 		this.setState({ isEditing: false });
 	};
 
 	onCancel () {
 		this.setState({ isEditing: false }, this.setName);
+	};
+
+	onSpaceUxType (v) {
+		v = Number(v);
+
+		const details: any = {
+			spaceUxType: v,
+			spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+		};
+
+		C.WorkspaceSetInfo(S.Common.space, details);
+		analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
 	};
 
 	checkName (v: string): string {
@@ -516,56 +479,32 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		return v;
 	};
 
-	checkDescription (): boolean {
-		return !/^\r?\n$/.test(String(this.refDescription?.getTextValue() || ''));
-	};
-
 	getButtons () {
 		const { cid, key } = this.state;
-		const space = U.Space.getSpaceview();
-		const isDisabled = space.isPersonal;
-		const tooltip = isDisabled ? translate('pageSettingsSpaceIndexEntrySpaceTooltip') : '';
 
-		return [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexInviteMembers'), icon: 'invite', isDisabled, tooltip },
-			cid && key ? { id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' } : null,
-			{ id: 'more', name: translate('commonMore'), icon: 'more' },
-		].filter(it => it);
+		let buttons: any[] = [
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' }
+		];
+
+		if (cid && key) {
+			buttons = buttons.concat([
+				{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
+				{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
+			]);
+		};
+
+		return buttons;
 	};
 
 	updateCounters () {
 		const node = $(this.node);
-		const { name, nameThreshold, description, descriptionThreshold } = J.Constant.limit.space;
+		const { name, nameThreshold } = J.Constant.limit.space;
+		const el = node.find('.spaceNameWrapper .counter');
+		const counter = name - this.refName?.getTextValue().length;
+		const canSave = counter >= 0;
 
-		let canSave = true;
-
-		[ 'name', 'description' ].forEach((input) => {
-			let ref = null;
-			let el = null;
-			let limit = 0;
-			let threshold = 0;
-
-			if (input == 'name') {
-				ref = this.refName;
-				el = node.find('.spaceNameWrapper .counter');
-				limit = name;
-				threshold = nameThreshold;
-			} else {
-				ref = this.refDescription;
-				el = node.find('.spaceDescriptionWrapper .counter');
-				limit = description;
-				threshold = descriptionThreshold;
-			};
-
-			const counter = limit - ref?.getTextValue().length;
-
-			el.text(counter).toggleClass('show', counter <= threshold);
-			el.toggleClass('red', counter < 0);
-
-			if (counter < 0) {
-				canSave = false;
-			};
-		});
+		el.text(counter).toggleClass('show', counter <= nameThreshold);
+		el.toggleClass('red', !canSave);
 
 		this.canSave = canSave;
 		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);

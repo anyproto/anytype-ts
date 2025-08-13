@@ -15,8 +15,8 @@ const LIMIT = 20;
 const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getSize, setHover, setActive, onKeyDown, position } = props;
-	const { data } = param;
-	const { rootId, blockId, readonly, getView } = data;
+	const { data, className, classNameWrap } = param;
+	const { rootId, blockId, readonly, getView, onAdd } = data;
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const topRef = useRef(0);
@@ -59,14 +59,14 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 	};
 
-	const onAdd = (e: any) => {
-		const { data } = param;
-		const { rootId, blockId, getView, onAdd } = data;
+	const onAddHandler = (e: any) => {
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const object = S.Detail.get(rootId, rootId);
 
 		S.Menu.open('relationSuggest', { 
+			className,
+			classNameWrap,
 			element: `#${getId()} #item-add`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Top,
@@ -120,6 +120,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 
 		S.Menu.open('dataviewRelationEdit', { 
+			className,
+			classNameWrap,
 			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
@@ -353,7 +355,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					<div 
 						id="item-add" 
 						className="item add" 
-						onClick={onAdd} 
+						onClick={onAddHandler} 
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>

@@ -14,6 +14,7 @@ interface Props {
 	textEmpty?: string;
 	filters?: I.Filter[];
 	sorts?: I.Sort[];
+	keys?: string[];
 	rowHeight?: number;
 	sources?: string[];
 	collectionId?: string;
@@ -74,6 +75,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	textEmpty = '',
 	filters = [],
 	sorts = [],
+	keys = [],
 	rowHeight = 0,
 	sources = [],
 	collectionId = '',
@@ -203,6 +205,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		U.Subscription.subscribe({
 			subId,
 			sorts,
+			keys,
 			filters: fl,
 			ignoreArchived,
 			ignoreHidden,

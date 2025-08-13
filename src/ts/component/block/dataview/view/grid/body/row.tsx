@@ -14,7 +14,10 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, style, recordId, readonly, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, onSelectToggle } = this.props;
+		const { 
+			rootId, block, style, recordId, readonly, isInline, 
+			onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths, getVisibleRelations, onSelectToggle 
+		} = this.props;
 		const relations = getVisibleRelations();
 		const widths = getColumnWidths('', 0);
 		const record = getRecord(recordId);
@@ -84,6 +87,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		return (
 			<div
 				id={`record-${record.id}`}
+				ref={ref => onRefRecord(ref, record.id)}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}

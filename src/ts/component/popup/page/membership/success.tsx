@@ -1,19 +1,19 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button } from 'Component';
 import { I, U, translate } from 'Lib';
 
-const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess extends React.Component<I.Popup> {
+const PopupMembershipPageSuccess = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { tier, emailVerified, onContinue } = data;
-		const tierItem = U.Data.getMembershipTier(tier);
+	const { param } = props;
+	const { data } = param;
+	const { tier, emailVerified, onContinue } = data;
+	const tierItem = U.Data.getMembershipTier(tier);
 
-		let title = '';
-		let text = '';
+	let title = '';
+	let text = '';
 
+	if (tierItem) {
 		if (emailVerified) {
 			title = translate('popupMembershipSuccessVerificationTitle');
 			text = translate('popupMembershipSuccessVerificationText');
@@ -21,28 +21,18 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 			title = U.Common.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name);
 			text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
 		};
-
-		if (!tierItem) {
-			return null;
-		};
-
-		return (
-			<>
-				<Title text={title} />
-				<Icon className="tierIcon" />
-				<Label text={text} />
-
-				{onContinue ? <Button onClick={onContinue} className="c36" color="blank" text={translate('commonContinue')} /> : ''}
-			</>
-		);
 	};
 
-	componentDidMount () {
-		window.setTimeout(() => {
-			this.props.position();
-		}, 5);
-	};
+	return (
+		<>
+			<Title text={title} />
+			<Icon className="tierIcon" />
+			<Label text={text} />
 
-});
+			{onContinue ? <Button onClick={onContinue} className="c36" color="blank" text={translate('commonContinue')} /> : ''}
+		</>
+	);
+
+}));
 
 export default PopupMembershipPageSuccess;

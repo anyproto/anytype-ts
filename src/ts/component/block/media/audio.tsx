@@ -1,134 +1,21 @@
-import * as React from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio, Icon } from 'Component';
 import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
 
-const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
+const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
-	_isMounted = false;
-	node: any = null;
-	refPlayer: any = null;
+	const nodeRef = useRef<any>(null);
+	const refPlayerRef = useRef<any>(null);
 
-	constructor (props: I.BlockComponent) {
-		super(props);
+	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
+	const { id, content } = block;
+	const { state, targetObjectId } = content;
+	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
+	const { name } = object;
 
-		this.onPlay = this.onPlay.bind(this);
-		this.onPause = this.onPause.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onChangeFile = this.onChangeFile.bind(this);
-	};
-
-	render () {
-		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
-		const { state, targetObjectId } = content;
-		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
-		const { name } = object;
-		
-		let element = null;
-
-		if (object.isDeleted) {
-			element = (
-				<div className="deleted">
-					<Icon className="ghost" />
-					<div className="name">{translate('commonDeletedObject')}</div>
-				</div>
-			);
-		} else {
-			switch (state) {
-				default:
-				case I.FileState.Error:
-				case I.FileState.Empty: {
-					element = (
-						<>
-							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-							<InputWithFile 
-								block={block} 
-								icon="audio" 
-								textFile={translate('blockAudioUpload')} 
-								accept={J.Constant.fileExtension.audio} 
-								onChangeUrl={this.onChangeUrl} 
-								onChangeFile={this.onChangeFile} 
-								readonly={readonly} 
-							/>
-						</>
-					);
-					break;
-				};
-					
-				case I.FileState.Uploading: {
-					element = <Loader />;
-					break;
-				};
-					
-				case I.FileState.Done: {
-					element = (
-						<MediaAudio
-							ref={node => this.refPlayer = node}
-							playlist={this.getPlaylist()}
-							onPlay={this.onPlay}
-							onPause={this.onPause}
-						/>
-					);
-					break;
-				};
-			};
-		};
-		
-		return (
-			<div
-				ref={node => this.node = node}
-				className={[ 'focusable', 'c' + id ].join(' ')}
-				tabIndex={0}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onFocus={this.onFocus}
-			>
-				{element}
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.rebind();
-		this.refPlayer?.updatePlaylist(this.getPlaylist());
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
-
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		$(this.node).on('resize', () => {
-			if (this.refPlayer) {
-				this.refPlayer.resize();
-			};
-		});
-	};
-
-	unbind () {
-		if (this._isMounted) {
-			$(this.node).off('resize');
-		};
-	};
-
-	getPlaylist () {
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
+	const getPlaylist = () => {
 		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
 
 		return [ 
@@ -136,28 +23,22 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		];
 	};
 
-	onPlay () {
-		if (this._isMounted) {
-			$(this.node).addClass('isPlaying');
-		};
+	const onPlay = () => {
+		$(nodeRef.current).addClass('isPlaying');
 	};
 
-	onPause () {
-		if (this._isMounted) {
-			$(this.node).removeClass('isPlaying');
-		};
+	const onPause = () => {
+		$(nodeRef.current).removeClass('isPlaying');
 	};
 
-	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
-
+	const onKeyDownHandler = (e: any) => {
 		let ret = false;
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			this.refPlayer?.onPlay();
+			refPlayerRef.current?.onPlay();
 			ret = true;
 		});
 
@@ -166,32 +47,117 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		};
 		
 		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
+			onKeyDown(e, '', [], { from: 0, to: 0 }, props);
 		};
 	};
 	
-	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
-
+	const onKeyUpHandler = (e: any) => {
 		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
+			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
 		};
 	};
 
-	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
+	const onFocus = () => {
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	onChangeUrl (e: any, url: string) {
-		const { rootId, block } = this.props;
+	const onChangeUrl = (e: any, url: string) => {
 		Action.upload(I.FileType.Audio, rootId, block.id, url, '');
 	};
 	
-	onChangeFile (e: any, path: string) {
-		const { rootId, block } = this.props;
+	const onChangeFile = (e: any, path: string) => {
 		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
 	};
 
-});
+	const rebind = () => {
+		$(nodeRef.current).on('resize', () => {
+			refPlayerRef.current?.resize();
+		});
+	};
+
+	const unbind = () => {
+		$(nodeRef.current).off('resize');
+	};
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, [ rebind, unbind ]);
+
+	useEffect(() => {
+		rebind();
+		refPlayerRef.current?.updatePlaylist(getPlaylist());
+	});
+
+	useImperativeHandle(ref, () => ({}));
+	
+	let element = null;
+
+	if (object.isDeleted) {
+		element = (
+			<div className="deleted">
+				<Icon className="ghost" />
+				<div className="name">{translate('commonDeletedObject')}</div>
+			</div>
+		);
+	} else {
+		switch (state) {
+			default:
+			case I.FileState.Error:
+			case I.FileState.Empty: {
+				element = (
+					<>
+						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+						<InputWithFile 
+							block={block} 
+							icon="audio" 
+							textFile={translate('blockAudioUpload')} 
+							accept={J.Constant.fileExtension.audio} 
+							onChangeUrl={onChangeUrl} 
+							onChangeFile={onChangeFile} 
+							readonly={readonly} 
+						/>
+					</>
+				);
+				break;
+			};
+				
+			case I.FileState.Uploading: {
+				element = <Loader />;
+				break;
+			};
+				
+			case I.FileState.Done: {
+				element = (
+					<MediaAudio
+						ref={refPlayerRef}
+						playlist={getPlaylist()}
+						onPlay={onPlay}
+						onPause={onPause}
+						getScrollContainer={() => U.Common.getScrollContainer(isPopup)}
+					/>
+				);
+				break;
+			};
+		};
+	};
+	
+	return (
+		<div
+			ref={nodeRef}
+			className={[ 'focusable', 'c' + id ].join(' ')}
+			tabIndex={0}
+			onKeyDown={onKeyDownHandler}
+			onKeyUp={onKeyUpHandler}
+			onFocus={onFocus}
+		>
+			{element}
+		</div>
+	);
+
+}));
 
 export default BlockAudio;

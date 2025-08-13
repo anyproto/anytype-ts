@@ -298,7 +298,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { viewId } = S.Record.getMeta(this.getSubId(), '');
+		const { block, isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
+		const viewId = match.params.viewId || block.content.viewId;
 
 		if (viewId && (viewId != this.viewId)) {
 			this.loadData(viewId, 0, true);
@@ -592,6 +594,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const hoverArea = node.find('.hoverArea');
 
 		const menuParam: any = {
+			classNameWrap: 'fromBlock',
 			onOpen: (context: any) => {
 				this.menuContext = context;
 				hoverArea.addClass('active');
@@ -814,6 +817,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Menu.open('dataviewNew', {
 			...menuParam,
+			classNameWrap: 'fromBlock',
 			offsetY: 10,
 			noAnimation: true,
 			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
@@ -1006,6 +1010,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		S.Menu.open('objectContext', {
+			classNameWrap: 'fromBlock',
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
@@ -1098,6 +1103,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		S.Menu.open('searchObject', Object.assign({
 			element: $(element),
 			className: 'single',
+			classNameWrap: 'fromBlock',
 			data: {
 				rootId,
 				blockId: block.id,
@@ -1119,6 +1125,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
+				classNameWrap: 'fromBlock',
 				element,
 				horizontal: I.MenuDirection.Center,
 				onOpen: () => element.addClass('active'), 

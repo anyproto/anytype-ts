@@ -9,7 +9,7 @@ interface State {
 	isLoading: boolean;
 };
 
-const LIMIT = 10;
+const LIMIT = 16;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_SMALL = 28;
 const HEIGHT_ITEM_BIG = 56;

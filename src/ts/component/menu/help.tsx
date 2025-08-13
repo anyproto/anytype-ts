@@ -34,13 +34,22 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: 'contact' },
 			{ isDiv: true },
 			{ 
+				id: 'developer', arrow: true, children: [
+					{ id: 'developerPortal' },
+					{ id: 'mcp' },
+				],
+			},
+			{ 
 				id: 'more', arrow: true, children: [
 					{ id: 'terms' },
 					{ id: 'privacy' },
 					{ id: 'tech' },
-				].map(optionMapper),
+				],
 			},
-		].map(optionMapper);
+		].map(it => {
+			it.children = (it.children || []).map(optionMapper);
+			return optionMapper(it);
+		});
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
@@ -56,6 +65,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
+		const menuId = 'select';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -65,18 +75,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			rebind,
-		};
-
-		let menuId = '';
-		switch (item.id) {
-			case 'more': {
-				menuId = 'select';
-				menuParam.data = {
-					options: item.children,
-					onSelect: onClick,
-				};
-				break;
-			};
+			data: {
+				options: item.children,
+				onSelect: onClick,
+			}
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
@@ -93,6 +95,11 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		Highlight.hide(item.id);
 
 		switch (item.id) {
+			default: {
+				Action.openUrl(J.Url[item.id]);
+				break;
+			};
+
 			case 'whatsNew': {
 				U.Common.showWhatsNew();
 				break;
@@ -100,15 +107,6 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'shortcut': {
 				keyboard.onShortcut();
-				break;
-			};
-
-			case 'gallery':
-			case 'terms':
-			case 'tutorial':
-			case 'privacy':
-			case 'community': {
-				Action.openUrl(J.Url[item.id]);
 				break;
 			};
 

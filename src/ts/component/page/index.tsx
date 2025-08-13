@@ -265,16 +265,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	event () {
-		const { page, action, id } = this.getMatchParams();
-		const params = { page, action, id: undefined };
-		const isMainType = this.isMainType();
-		const isMainRelation = this.isMainRelation();
-
-		if (isMainType || isMainRelation) {
-			params.id = id;
-		};
-
-		analytics.event('page', { params });
+		analytics.event('page', { params: this.getMatchParams() });
 	};
 
 	isIndex () {
