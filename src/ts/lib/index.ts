@@ -27,6 +27,7 @@ import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
 import { translate } from './translate';
+import { getSparkOnboardingService } from './service/sparkOnboarding';
 
 export {
 	I,
@@ -59,4 +60,5 @@ export {
 	Preview,
 	Highlight,
 	Animation,
+	getSparkOnboardingService,
 };

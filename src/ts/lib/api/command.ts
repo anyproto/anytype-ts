@@ -1587,13 +1587,14 @@ export const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?:
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-export const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, callBack?: (message: any) => void) => {
+export const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, isAI: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
 	request.setUrl(url);
 	request.setTitle(title);
 	request.setIsnewspace(isNewSpace);
+	request.setIsai(isAI);
 
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };

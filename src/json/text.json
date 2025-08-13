@@ -1089,6 +1089,9 @@
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",
+	"popupSpaceCreateAIOnboarding": "AI Onboarding",
+	"popupConfirmCloseAIOnboardingTitle": "Exit AI Onboarding?",
+	"popupConfirmCloseAIOnboardingText": "Are you sure you want to exit? Your progress will be lost.",
 
 	"popupSpaceJoinByLinkLabel": "Join by invite link",
 	"popupSpaceJoinByLinkInputPlaceholder": "Paste invite link...",
@@ -2607,6 +2610,18 @@
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
 	"spaceUxType2": "Stream",
-	"spaceUxType3": "Chat"
+	"spaceUxType3": "Chat",
 
+	"aiOnboardingTitle": "Create Your Perfect Space",
+	"aiOnboardingWelcomeMessage": "Hello! I'm here to help you create your perfect space. What project, idea, or challenge would you like to work on?",
+	"aiOnboardingQuestionsIntro": "Perfect! A few quick questions:",
+	"aiOnboardingBuildingSpace": "Wonderful selection! Building your space now...",
+	"aiOnboardingSpaceReady": "Your space is ready! Time to bring your ideas to life 🚀",
+	
+	"aiOnboardingStatusPreparingQuestions": "Preparing questions for you...",
+	"aiOnboardingStatusUnderstanding": "Understanding how Anytype can help you...",
+	"aiOnboardingStatusDraftingTypes": "Drafting your custom types...",
+	"aiOnboardingStatusGenerating": "Generating your types and objects...",
+	"aiOnboardingStatusCreatingProgress": "Creating types and objects... %d of %d",
+	"aiOnboardingStatusFinalTouches": "Final touches..."
 }
