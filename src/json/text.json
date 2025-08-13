@@ -156,7 +156,6 @@
 	"commonUpdate": "Update",
 	"commonUpdateNow": "Update Now",
 	"commonOwner": "Owner",
-	"commonUpdateProgress": "Downloading update... %s/%s",
 	"commonVersionHistory": "Version History",
 	"commonActions": "Actions",
 	"commonAddRelation": "Add Property",
@@ -391,7 +390,7 @@
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
-	"progressUpdateDownloading": "Downloading",
+	"progressUpdateDownloading": "Downloading update",
 
 	"spellcheckAdd": "Add to dictionary",
 
