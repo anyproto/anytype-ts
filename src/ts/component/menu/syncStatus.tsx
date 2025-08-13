@@ -293,7 +293,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	onIncentiveButtonClick (id: string) {
 		switch (id) {
 			case 'storage': {
-				U.Object.openAuto({ id: 'spaceStorageManager', layout: I.ObjectLayout.Settings });
+				U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
 				break;
 			};
 

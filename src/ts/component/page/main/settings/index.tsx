@@ -30,7 +30,7 @@ import PageExportProtobuf from './export/protobuf';
 import PageExportMarkdown from './export/markdown';
 
 import PageSpaceIndex from './space/index';
-import PageSpaceStorageManager from './space/storage';
+import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 
@@ -74,7 +74,7 @@ const Components: any = {
 
 	spaceIndex:			 PageSpaceIndex,
 	spaceIndexEmpty:	 PageSpaceIndex,
-	spaceStorageManager: PageSpaceStorageManager,
+	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 
@@ -84,7 +84,7 @@ const Components: any = {
 };
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceIndexEmpty', 'spaceStorageManager', 'spaceShare',
+	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
@@ -172,48 +172,48 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	init () {
-		if (this.isSpace()) {
-			if (!U.Space.canMyParticipantWrite()) {
-				return;
-			};
-			const param = U.Router.getParam(U.Router.getRoute());
-			const id = param.id;
-
-			let page = '';
-			switch (id) {
-				case 'spaceIndexEmpty': {
-					page = 'widget';
-					break;
-				};
-
-				case 'set': {
-					page = 'types';
-					break;
-				};
-
-				case 'relation': {
-					page = 'relations';
-					break;
-				};
-
-				default: {
-					page = 'settingsSpace';
-					break;
-				};
-			};
-
-			sidebar.leftPanelSetState({ page });
-		} else {
+		if (!this.isSpace()) {
 			S.Common.getRef('vault')?.setActive('settings');
 			sidebar.leftPanelSetState({ page: 'settings' });
+			return;
 		};
+
+		if (!U.Space.canMyParticipantWrite()) {
+			return;
+		};
+
+		const param = U.Router.getParam(U.Router.getRoute());
+		const id = param.id;
+
+		let page = '';
+		switch (id) {
+			case 'spaceIndexEmpty': {
+				page = 'widget';
+				break;
+			};
+
+			case 'set': {
+				page = 'types';
+				break;
+			};
+
+			case 'relation': {
+				page = 'relations';
+				break;
+			};
+
+			default: {
+				page = 'settingsSpace';
+				break;
+			};
+		};
+
+		sidebar.leftPanelSetState({ page });
 	};
 
 	onExport (type: I.ExportType, param: any) {
 		analytics.event('ClickExport', { type, route: analytics.route.settings });
-		Action.export(S.Common.space, [], type, { ...param, route: analytics.route.settings }, () => {
-			// callback?
-		});
+		Action.export(S.Common.space, [], type, { ...param, route: analytics.route.settings });
 	};
 
 	setConfirmPin (v: () => void) {

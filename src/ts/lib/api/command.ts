@@ -313,7 +313,6 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 		return;
 	};
 
-	const { config } = S.Common;
 	const request = new Rpc.File.Upload.Request();
 
 	request.setSpaceid(spaceId);
@@ -1355,6 +1354,16 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
+};
+
+export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateBookmark.Request();
+
+	request.setDetails(Encode.struct(details));
+	request.setSpaceid(spaceId);
+	request.setTemplateid(templateId);
+
+	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
 export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {

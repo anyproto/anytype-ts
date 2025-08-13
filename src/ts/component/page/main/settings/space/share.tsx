@@ -78,8 +78,6 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 	componentDidMount () {
 		this.init();
-
-		analytics.event('ScreenSettingsSpaceShare');
 	};
 
 	init () {

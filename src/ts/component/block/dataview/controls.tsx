@@ -199,7 +199,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			rootId,
 			blockId: block.id,
 			getView,
-			onSelect: (item) => onSortOrFilterAdd(item, component, callBack),
+			onSelect: item => onSortOrFilterAdd(item, component, callBack),
 		});
 	};
 
@@ -510,7 +510,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		onViewSettings,
 		toggleHoverArea,
 		resize,
-		getHeadRef: () => headRef,
+		getHeadRef: () => headRef.current,
 	}));
 
 	return (

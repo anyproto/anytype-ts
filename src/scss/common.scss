@@ -75,13 +75,13 @@ html.platformLinux {
 }
 
 .customScrollbar {
-	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
-	::-webkit-scrollbar-corner { background-color: transparent; }
-	::-webkit-scrollbar-button { display: none; }
+	::-webkit-scrollbar, &::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
+	::-webkit-scrollbar-corner, &::-webkit-scrollbar-corner { background-color: transparent; }
+	::-webkit-scrollbar-button, &::-webkit-scrollbar-button { display: none; }
 }
 .customScrollbar:hover {
-	::-webkit-scrollbar-thumb { background: var(--color-control-active); }
+	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: var(--color-control-active); }
 }
 
 html.platformWindows, html.platformLinux {

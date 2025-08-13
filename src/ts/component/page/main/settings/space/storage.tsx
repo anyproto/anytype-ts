@@ -5,7 +5,7 @@ import { I, J, U, S, translate, Action, analytics } from 'Lib';
 
 const STORAGE_FULL = 0.95;
 
-const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
+const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends React.Component<I.PageSettingsComponent, {}> {
 
 	node = null;
 	refManagers = {
@@ -81,7 +81,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 						keys={U.Subscription.syncStatusRelationKeys()}
 						ignoreHidden={false}
 						ignoreArchived={false}
-						textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
+						textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
 					/>
 				</div>
 			);
@@ -119,10 +119,6 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		);
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenSettingsSpaceStorageManager');
-	};
-
 	componentWillUnmount () {
 		U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 	};
@@ -150,4 +146,4 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 });
 
-export default PageMainSettingsStorageManager;
+export default PageMainSettingsStorage;
