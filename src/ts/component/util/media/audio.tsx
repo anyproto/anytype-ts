@@ -147,7 +147,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		const { left, top } = icon.offset();
 		const st = $(window).scrollTop();
 
-		drag.css({ left: left, top: top + height + 4 - st });
+		drag.css({ left: left, top: top - height - 4 - 72 - st });
 	};
 
 	const onVolumeEnter = () => {
