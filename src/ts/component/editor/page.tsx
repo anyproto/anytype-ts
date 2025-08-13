@@ -1844,6 +1844,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
+			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
@@ -1864,7 +1865,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				rootId,
 				text,
 				marks,
-				blockCreate: this.blockCreate
+				blockCreate: this.blockCreate,
 			},
 		});
 	};
@@ -2074,18 +2075,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
-		const first = S.Block.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 		const length = block.getLength();
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 		const processor = U.Embed.getProcessorByUrl(url);
-		const canObject = isEmpty && !isInsideTable && !isLocal;
 		const canBlock = !isInsideTable && !isLocal;
 
 		const options: any[] = [
 			{ id: 'link', name: translate('editorPagePasteLink') },
-			canObject ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
 			canBlock ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
 		].filter(it => it);
@@ -2143,21 +2139,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							break;
 						};
 
-						case 'object': {
-							C.ObjectToBookmark(rootId, url, (message: any) => {
-								if (!message.error.code) {
-									U.Object.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-									analytics.createObject(J.Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, analytics.route.bookmark, message.middleTime);
-								};
-							});
-							break;
-						};
-
 						case 'block': {
 							const bookmark = S.Record.getBookmarkType();
 
 							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
+									this.blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
 							});
@@ -2178,6 +2166,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						case 'embed': {
 							if (processor !== null) {
 								this.blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
+									this.blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 									$(`#block-${blockId} .preview`).trigger('click');
 								});
 							};
@@ -2217,7 +2206,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			if (param.type == I.BlockType.Text) {
-				window.setTimeout(() => this.focus(message.blockId, 0, 0, false), 15);
+				this.focus(message.blockId, 0, 0, true);
 			};
 
 			if (callBack) {

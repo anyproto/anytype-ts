@@ -824,11 +824,13 @@ class UtilMenu {
 
 							case 'pin': {
 								C.SpaceSetOrder(space.id, [ space.id ]);
+								analytics.event('PinSpace');
 								break;
 							};
 
 							case 'unpin': {
 								C.SpaceUnsetOrder(space.id);
+								analytics.event('UnpinSpace');
 								break;
 							};
 
@@ -851,17 +853,10 @@ class UtilMenu {
 	};
 
 	inviteContext (param: any) {
-		const { isOnline } = S.Common;
-		const { containerId, cid, key, onInviteRevoke } = param || {};
-		const isOwner = U.Space.isMyOwner();
-		const isLocalNetwork = U.Data.isLocalNetwork();
+		const { containerId, cid, key } = param || {};
 		const options: any[] = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+			{ id: 'qr', name: translate('popupSettingsSpaceShareQRCode') },
 		];
-
-		if (isOnline && isOwner && !isLocalNetwork) {
-			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
-		};
 
 		S.Menu.open('select', {
 			element: `#${containerId} #button-more-link`,
@@ -873,12 +868,7 @@ class UtilMenu {
 						case 'qr': {
 							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-							break;
-						};
-
-						case 'revoke': {
-							Action.inviteRevoke(S.Common.space, onInviteRevoke);
-							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
+							analytics.event('ScreenQr', { route: analytics.route.inviteLink });
 							break;
 						};
 					};
@@ -949,7 +939,7 @@ class UtilMenu {
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
-	sortOrFilterRelationSelect (menuParam: any, param: any) {
+	sortOrFilterRelationSelect (menuParam: Partial<I.MenuParam>, param: any) {
 		const { rootId, blockId, getView, onSelect } = param;
 		const options = Relation.getFilterOptions(rootId, blockId, getView());
 
@@ -987,7 +977,7 @@ class UtilMenu {
 				withAdd: true,
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
-						this.sortOrFilterRelationAdd(this.menuContext, param, relation => callBack(relation));
+						this.sortOrFilterRelationAdd(this.menuContext, param, menuParam, relation => callBack(relation));
 					} else {
 						callBack(item);
 					};
@@ -996,7 +986,7 @@ class UtilMenu {
 		});
 	};
 
-	sortOrFilterRelationAdd (context: any, param: any, callBack: (relation: any) => void) {
+	sortOrFilterRelationAdd (context: any, param: any, menuParam: Partial<I.MenuParam>, callBack: (relation: any) => void) {
 		if (!context) {
 			return;
 		};
@@ -1006,6 +996,7 @@ class UtilMenu {
 		const element = `#${context.getId()} #item-add`;
 
 		S.Menu.open('relationSuggest', {
+			...menuParam,
 			element,
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,
@@ -1202,6 +1193,8 @@ class UtilMenu {
 	};
 
 	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
+		param = param || {};
+		param.data = param.data || {};
 		details = details || {};
 		flags = flags || {};
 

@@ -101,7 +101,7 @@
         .item:last-of-type::after { display: none; }
     }
 
-	> .settingsPage { padding: 36px 0px 60px; }
+	> .settingsPage { padding: 26px 0px 60px; }
 
     > .pageSettingsIndex,
     > .pageSettingsAccount {
@@ -136,13 +136,10 @@
 
     > .pageSettingsSpaceIndex,
     > .pageSettingsSpaceIndexEmpty {
-        .spaceHeader {
-            position: relative; margin: 0px 0px 8px 0px; padding: 16px 44px 32px; display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--color-shape-secondary); border-radius: 16px; width: 100%; gap: 10px 0px;
-        }
+        .spaceHeader { position: relative; margin: 0px 0px 20px 0px; padding: 0px 44px; display: flex; flex-direction: column; align-items: center; width: 100%; }
         .spaceHeader {
             .spaceType { margin-bottom: 8px; @include text-small; color: var(--color-text-secondary); }
-            .buttons { position: absolute; right: 16px; top: 16px; display: flex; gap: 0px 16px; opacity: 0; transition: opacity $transitionCommon; }
+            .buttons { position: absolute; right: 0px; top: 0px; display: flex; gap: 0px 16px; opacity: 0; transition: opacity $transitionCommon; }
             .buttons {
                 .button { border: 0px; padding: 0px; border-radius: 0; height: unset; background: none; }
                 .button.blank { color: var(--color-text-secondary); }
@@ -152,53 +149,48 @@
             }
             .iconObject { border: 1px solid var(--color-shape-highlight-medium); }
 
-            .spaceNameWrapper,
-            .spaceDescriptionWrapper { position: relative; width: 100%; }
-            .spaceNameWrapper,
-            .spaceDescriptionWrapper {
+            .spaceNameWrapper { position: relative; width: 100%; margin: 10px 0px 6px; }
+            .spaceNameWrapper {
                 .counter { position: absolute; right: -34px; bottom: 1px; @include text-small; text-align: right; display: none; }
                 .counter.show { display: block; }
                 .counter.red { color: var(--color-red); }
             }
 
             .spaceName { @include text-header1; }
-            .spaceName,
-            .spaceDescription { text-align: center; width: 100%; }
-            .spaceName,
-            .spaceDescription {
+            .spaceName { text-align: center; width: 100%; }
+            .spaceName {
                 .editable { position: relative; z-index: 1; }
                 .placeholder { z-index: 0; }
             }
+
+            .membersCounter { color: var(--color-text-secondary); }
         }
         .spaceHeader:hover,
         .spaceHeader.isEditing {
             .buttons { opacity: 1; }
         }
         .spaceHeader:not(.isEditing) {
-            .spaceNameWrapper,
-            .spaceDescriptionWrapper {
+            .spaceNameWrapper {
                 .counter { display: none !important; }
             }
         }
 
-        .spaceButtons { display: flex; gap: 0px 8px; margin-bottom: 36px; }
+        .spaceButtons { display: flex; justify-content: center; margin-bottom: 36px; }
         .spaceButtons {
+            .btn { width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
             .btn {
-                height: 86px; flex: 1 0 0px; border: 1px solid var(--color-shape-secondary); border-radius: 16px; transition: $transitionAllCommon;
-                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px 0px; position: relative; text-align: center;
-				padding: 0px 8px;
-            }
-            .btn {
-                .icon { width: 20px; height: 20px; }
-                .icon.invite { background: url('~img/icon/settings/invite.svg'); }
-                .icon.qr { background: url('~img/icon/settings/qr.svg'); }
-                .icon.more { background: url('~img/icon/settings/more.svg'); }
+                .icon {
+                    width: 64px; height: 64px; border-radius: 8px; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
+                    background-position: 50% 50%; background-size: 40px; transition: $transitionAllCommon;
+                }
+                .icon.invite { background-image: url('~img/icon/settings/invite.svg'); }
+                .icon.qr { background-image: url('~img/icon/settings/qr.svg'); }
+                .icon.copyLink { background-image: url('~img/icon/settings/copy.svg'); }
 
-                .label { @include text-common; @include text-overflow-nw; color: var(--color-text-primary); text-transform: capitalize; width: 100%; }
-                .tooltipOverlay { position: absolute; width: 100%; height: 100%; z-index: 3; }
+                .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; }
 
-                &:not(.disabled) {
-                    &:hover, &.hover { background: var(--color-shape-tertiary); }
+                &:hover, &.hover {
+                    .icon { background-color: var(--color-shape-highlight-dark); }
                 }
             }
         }
@@ -224,7 +216,9 @@
 						.icon { flex-shrink: 0; width: 20px; height: 20px; }
 						.icon.type { background-image: url('~img/icon/settings/type.svg'); }
 						.icon.home { background-image: url('~img/icon/settings/home.svg'); }
-						.icon.push { background-image: url('~img/icon/settings/push.svg'); }
+						.icon.push0 { background-image: url('~img/icon/settings/pushOn.svg'); }
+                        .icon.push1,
+                        .icon.push2 { background-image: url('~img/icon/settings/pushOff.svg'); }
 						.icon.widget { background-image: url('~img/icon/settings/widget.svg'); }
 						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
                         .icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }
@@ -436,8 +430,8 @@
         }
     }
 
-    > .pageSettingsSpaceStorageManager { padding-bottom: 0px; }
-    > .pageSettingsSpaceStorageManager {
+    > .pageSettingsSpaceStorage { padding-bottom: 0px; }
+    > .pageSettingsSpaceStorage {
         > .wrap { height: 100%; display: flex; flex-direction: column; position: relative; }
 
         .button.payment { position: absolute; right: 0px; top: 5px; }
@@ -503,13 +497,53 @@
             .label { margin-bottom: 8px; }
             .label { @include text-common; color: var(--color-text-secondary); }
 
-            .inviteLinkWrapper { display: flex; align-items: center; height: 40px; margin-bottom: 12px; gap: 0px 8px; }
+            .linkTypeWrapper {
+                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: 100%;
+                padding: 0px 8px; margin: 0px 0px 8px 0px; gap: 0px 12px; border-radius: 12px;
+            }
+            .linkTypeWrapper.canEdit:hover,
+            .linkTypeWrapper.canEdit.hover { background-color: var(--color-shape-highlight-medium); }
+            .linkTypeWrapper {
+                .icon {
+                    width: 48px; height: 48px; border-radius: 50%; background-size: 20px;
+                    background-position: 50% 50%; background-color: var(--color-shape-highlight-medium);
+                }
+                .icon.editor { background-image: url('~img/icon/menu/inviteLink/editor.svg'); }
+                .icon.viewer { background-image: url('~img/icon/menu/inviteLink/viewer.svg'); }
+                .icon.manual { background-image: url('~img/icon/menu/inviteLink/manual.svg'); }
+                .icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
+                .icon.loading {
+                    @keyframes rotate {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+
+                    &:before {
+                        content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
+                        width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;
+                    }
+                }
+
+                .info {
+                    .title { @include text-common; font-weight: 500; margin: 0px; }
+                    .label { @include text-small; color: var(--color-text-secondary); margin: 0px; }
+                }
+
+                &.canEdit {
+                    .info {
+                        .title { display: flex; align-items: center; }
+                        .title:after { content: ''; width: 20px; height: 20px; display: inline-block; background: url('~img/arrow/select/dark.svg'); }
+                    }
+                }
+            }
+
+            .inviteLinkWrapper { display: flex; align-items: center; height: 36px; margin-bottom: 12px; gap: 0px 8px; }
             .inviteLinkWrapper {
                 .inputWrapper {
                     width: 100%; display: flex; align-items: center; background: var(--color-shape-tertiary); border-radius: 8px; padding: 0px 8px 0px 16px;
                     gap: 0px 8px;
                 }
-                .input { height: 40px; border-radius: inherit; padding: 0px; font-weight: 500; }
+                .input { height: 40px; border-radius: inherit; padding: 0px; }
 
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
                 .button { flex-shrink: 0; }

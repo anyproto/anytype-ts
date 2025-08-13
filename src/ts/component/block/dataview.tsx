@@ -298,7 +298,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { viewId } = S.Record.getMeta(this.getSubId(), '');
+		const { block, isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
+		const viewId = match.params.viewId || block.content.viewId;
 
 		if (viewId && (viewId != this.viewId)) {
 			this.loadData(viewId, 0, true);
@@ -1008,6 +1010,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		S.Menu.open('objectContext', {
+			classNameWrap: 'fromBlock',
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };

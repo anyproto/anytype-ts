@@ -54,7 +54,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 				</div>
 
-				<div className="body customScrollbar">
+				<div className="body">
 					{sections.map((item, i) => (
 						<Section 
 							{...this.props} 
@@ -98,7 +98,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			layoutWidth: 0,
 			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
-			defaultViewType: I.ViewType.Grid,
+			defaultViewType: I.ViewType.List,
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);

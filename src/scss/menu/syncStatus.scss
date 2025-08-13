@@ -10,7 +10,7 @@
 		.syncPanel { height: 28px; padding: 0px 16px; display: flex; justify-content: space-between; align-items: center; }
 
 		.title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
-		.ReactVirtualized__List { padding: 8px; }
+		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.icons {
@@ -56,8 +56,6 @@
 
 		.items { height: 100%; }
 		.items {
-			.sectionName { padding: 4px 8px; }
-
 			.sides { display: flex; align-items: center; gap: 0px 6px; }
 			.sides {
 				.side.left { display: flex; align-items: center; flex-grow: 1; overflow: hidden; @include text-overflow-nw; }
@@ -73,23 +71,21 @@
 				}
 			}
 
-			.item { padding: 3px 8px; line-height: 22px; border-radius: 6px; }
 			.item {
-				&::before { border-radius: inherit; }
-
 				.info { display: flex; align-items: baseline; width: calc(100% - 24px); }
 				.info {
 					.iconObject { margin-right: 8px; }
 					.name { margin: 0px 6px 0px 0px; @include text-overflow-nw; }
 					.size { color: var(--color-text-secondary); }
 				}
-			}
 
-			.item:hover, .item.hover {
-				&::before { background: var(--color-shape-highlight-medium); }
-				.side.right {
-					.icon:not(.more) { display: none; }
-					.icon.more { display: block; }
+				&.hover {
+					&::before { background: var(--color-shape-highlight-medium); }
+
+					.side.right {
+						.icon:not(.more) { display: none; }
+						.icon.more { display: block; }
+					}
 				}
 			}
 		}

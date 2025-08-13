@@ -1,8 +1,11 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
+import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, translate, Action, analytics } from 'Lib';
+import { I, U, translate, Action, analytics } from 'Lib';
 
-const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
+const PageMainVoid = observer(forwardRef<{}, I.PageComponent>(() => {
+
+	const spaces = U.Space.getList().filter(it => it.isLocalOk);
 
 	const onClick = () => {
 		const param = {
@@ -14,6 +17,12 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 
 		Action.spaceCreateMenu(param, analytics.route.void);
 	};
+
+	useEffect(() => {
+		if (spaces.length) {
+			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, { replace: true }, false);
+		};
+	}, [ spaces, spaces.length ]);
 
 	return (
 		<div className="wrapper">
@@ -30,6 +39,6 @@ const PageMainVoid = forwardRef<{}, I.PageComponent>(() => {
 		</div>
 	);
 
-});
+}));
 
 export default PageMainVoid;

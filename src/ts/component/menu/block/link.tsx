@@ -152,6 +152,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 	
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		if (filter) {
+			this.refFilter.setRange({ from: 0, to: filter.length });
+		};
+
 		this.rebind();
 		this.resize();
 		this.load(true);

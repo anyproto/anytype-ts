@@ -36,6 +36,7 @@ export default {
 		graphDepth:		 	 			 5,
 		cellEntry:		 	 			 320,
 		listObject:		 	 			 50,
+		tableOfContents:	 			 30,
 
 		space: {
 			count:						 50,
@@ -47,7 +48,7 @@ export default {
 		},
 
 		chat: {
-			messages:					 50,
+			messages:					 100,
 			attachments:				 10,
 			files:						 10,
 			mentions:					 10,

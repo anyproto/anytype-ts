@@ -15,7 +15,7 @@ const LIMIT = 20;
 const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, getId, getSize, setHover, onKeyDown, setActive, position } = props;
-	const { data } = param;
+	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly } = data;
 	const view = getView();
 	const subId = S.Record.getSubId(rootId, blockId);
@@ -108,6 +108,8 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		S.Menu.open('dataviewFilterValues', {
+			className,
+			classNameWrap,
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -209,6 +211,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				rowIndex={param.index}
 			>
 				<Item 
+					{...props}
 					key={item.id} 
 					{...item} 
 					subId={subId}

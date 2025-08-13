@@ -48,6 +48,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const canWrite = U.Space.canMyParticipantWrite();
 		const subIdObject = S.Record.getSubId(rootId, 'object');
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
+		const { output, more, label, canAdd } = this.getOptionsData();
 
 		const columnsObject: any[] = [
 			{ relationKey: 'type', name: translate('commonObjectType'), isCell: true },
@@ -57,8 +58,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			},
 			{ relationKey: object.relationKey, name: translate('commonValue'), isCell: true },
 		];
-
-		const { output, more, label, canAdd } = this.getOptionsData();
 
 		let options = null;
 		let optionsLabel = label;
@@ -250,7 +249,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	getObject () {
 		const rootId = this.getRootId();
-		return S.Detail.get(rootId, rootId);
+		return S.Detail.get(rootId, rootId, J.Relation.relation);
 	};
 
 	getOptionsData (): { output: any[], more: number, label: string, canAdd: boolean } {

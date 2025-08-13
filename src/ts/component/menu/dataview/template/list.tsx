@@ -216,7 +216,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	onMore (e: any, template: any) {
 		const { id, param, getId } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { onSetDefault, route, typeId, getView } = data;
 		const item = U.Common.objectCopy(template);
 		const node = $(`#item-${item.id}`);
@@ -236,6 +236,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
 			S.Menu.open('dataviewTemplateContext', {
+				className, 
+				classNameWrap,
 				menuKey: item.id,
 				element: `#${getId()} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,

@@ -44,7 +44,7 @@
 			.dropTarget { width: 100%; height: 100%; }
 			.dropTarget.targetBot { width: calc(100% - 8px); margin: 0px auto 0px auto; }
 
-			.head { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
+			.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
 			.head {
 				.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
 

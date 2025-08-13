@@ -55,8 +55,9 @@
 		.counters { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 		.counters {
 			.icon.count { 
-				width: 20px; height: 20px; border-radius: 50%; background-color: var(--color-text-tertiary); display: flex; align-items: center; 
-				justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-small;
+				min-width: 18px; width: auto; height: 20px; border-radius: 10px; background-color: var(--color-text-tertiary); display: flex; 
+				align-items: center; justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-small; 
+				padding: 0px 4px;
 			}
 			.icon.count.mention { background-image: url('~img/icon/widget/mention.svg'); background-size: 12px; }
 		}

@@ -319,9 +319,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	renderLatex () {
 		const { block } = this.props;
-		const ref = this.refEditable;
 
-		if (block.isTextCode() || !ref) {
+		if (block.isTextCode() || block.isTextTitle() || !this.refEditable) {
 			return;
 		};
 
@@ -329,7 +328,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
-			ref.setValue(html);
+			this.refEditable.setValue(html);
 		};
 	};
 
@@ -1228,6 +1227,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		
 		C.BlockTextSetIcon(rootId, block.id, icon, '');
+		Storage.set('calloutIcon', icon);
 	};
 
 	onUploadIcon (objectId: string) {

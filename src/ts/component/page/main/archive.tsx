@@ -83,6 +83,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					buttons={buttons}
 					iconSize={48}
 					resize={resize}
+					keys={J.Relation.default}
 					textEmpty={translate('pageMainArchiveEmpty')}
 					isReadonly={!U.Space.canMyParticipantWrite()}
 				/>

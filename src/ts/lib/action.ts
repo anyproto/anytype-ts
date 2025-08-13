@@ -1133,6 +1133,34 @@ class Action {
 		});
 	};
 
+	spaceInfo () {
+		const { account } = S.Auth;
+		const space = U.Space.getSpaceview();
+		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
+		const data = [
+			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
+			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
+			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
+			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
+		];
+
+		S.Popup.open('confirm', {
+			className: 'isWide spaceInfo',
+			data: {
+				title: translate('popupSettingsSpaceIndexSpaceInfoTitle'),
+				text: data.map(it => `<dl><dt>${it[0]}:</dt><dd>${it[1]}</dd></dl>`).join(''),
+				textConfirm: translate('commonCopy'),
+				colorConfirm: 'blank',
+				canCancel: false,
+				onConfirm: () => {
+					U.Common.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
+				},
+			}
+		});
+
+		analytics.event('ScreenSpaceInfo');
+	};
+
 };
 
 export default new Action();
