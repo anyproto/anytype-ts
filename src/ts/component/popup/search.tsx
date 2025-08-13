@@ -1,407 +1,94 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType } from 'Component';
 import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark, sidebar } from 'Lib';
 
-interface State {
-	isLoading: boolean;
-	backlink: any;
-};
-
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
 const HEIGHT_ITEM = 60;
 const LIMIT_HEIGHT = 15;
 
-const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
+const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	
-	node: any = null;
-	state = {
-		isLoading: false,
-		backlink: null,
-	};
-	refFilter: any = null;
-	refList: any = null;
-	refRows: any[] = [];
-	timeout = 0;
-	delay = 0;
-	cache: any = {};
-	items: any[] = [];
-	n = 0;
-	top = 0;
-	offset = 0;
-	filter = '';
-	range: I.TextRange = { from: 0, to: 0 };
-	
-	constructor (props: I.Popup) {
-		super (props);
+	const { param, storageGet, storageSet, getId, close } = props;
+	const { data } = param;
+	const { route } = data;
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ backlink, setBacklink ] = useState(null);
+	const nodeRef = useRef(null);
+	const filterInputRef = useRef(null);
+	const listRef = useRef(null);
+	const rowsRef = useRef([]);
+	const timeoutRef = useRef(0);
+	const delayRef = useRef(0);
+	const cacheRef = useRef({});
+	const itemsRef = useRef([]);
+	const nRef = useRef(0);
+	const topRef = useRef(0);
+	const offsetRef = useRef(0);
+	const filterValueRef = useRef('');
+	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
 
-		this.onClick = this.onClick.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterClear = this.onFilterClear.bind(this);
-		this.onFilterSelect = this.onFilterSelect.bind(this);
-		this.onBacklink = this.onBacklink.bind(this);
-		this.onClearSearch = this.onClearSearch.bind(this);
-		this.onContext = this.onContext.bind(this);
-		this.loadMoreRows = this.loadMoreRows.bind(this);
-	};
-	
-	render () {
-		const { isLoading } = this.state;
-		const items = this.getItems();
-		const shift = keyboard.shiftSymbol();
+	const initCache = () => {
+		const items = getItems();
 
-		const Context = (meta: any): any => {
-			const { highlight, relationKey, ranges } = meta;
-			const relationDetails = meta.relationDetails || {};
-
-			let key: any = '';
-			let value: any = '';
-
-			if (relationKey) {
-				if ([ 'name', 'pluralName', 'type', 'snippet' ].includes(relationKey)) {
-					return '';
-				} else {
-					const relation = S.Record.getRelationByKey(relationKey);
-					key = relation ? <div className="key">{relation.name}:</div> : '';
-				};
-			};
-
-			if (highlight) {
-				const text = Mark.toHtml(highlight, ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
-
-				value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
-			} else 
-			if (relationDetails.name) {
-				const { relationOptionColor } = relationDetails;
-				const color = relationOptionColor ? `textColor-${relationOptionColor}` : '';
-				const cn = [ 'value' ];
-
-				if (color) {
-					cn.push(`textColor-${relationOptionColor}`);
-					cn.push(`bgColor-${relationOptionColor}`);
-				};
-
-				value = <div className={cn.join(' ')}>{relationDetails.name}</div>;
-			};
-
-			return value ? (
-				<div className="context">
-					{key}
-					{value}
-				</div>
-			) : '';
-		};
-
-		const Item = (item: any) => {
-			const cn = [ 'item' ];
-
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-			if (item.isSmall) {
-				cn.push('isSmall');
-			};
-
-			let content = null;
-			let icon = null;
-			let object = null;
-			let size = 40;
-
-			if (item.isObject) {
-				object = item;
-			} else 
-			if (item.id == 'account') {
-				object = U.Space.getParticipant();
-			} else 
-			if (item.id == 'spaceIndex') {
-				object = U.Space.getSpaceview();
-			};
-
-			if ([ 'account', 'spaceIndex' ].includes(item.id)) {
-				size = 20;
-			};
-
-			if (object) {
-				icon = <IconObject object={object} size={size} />;
-			} else {
-				icon = <Icon className={item.icon} />;
-			};
-
-			if (item.isObject) {
-				const { metaList } = item;
-				const meta = metaList[0] || {};
-
-				let advanced = null;
-
-				if (item.links.length || item.backlinks.length) {
-					advanced = (
-						<Icon
-							className="advanced"
-							tooltipParam={{ text: translate('popupSearchTooltipSearchByBacklinks'), caption: `${shift} + Enter` }}
-							onClick={e => this.onBacklink(e, item)}
-						/>
-					);
-				};
-
-				let name = U.Object.name(item, true);
-
-				if (meta.highlight && [ 'name', 'pluralName' ].includes(meta.relationKey)) {
-					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
-
-					if (U.Object.isInFileLayouts(item.layout)) {
-						name = U.File.name({ ...object, name });
-					};
-				} else {
-					name = U.Common.htmlSpecialChars(name);
-				};
-
-				content = (
-					<div className="sides" onContextMenu={e => this.onContext(e, item)}>
-						<div className="side left">
-							<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
-							<Context {...meta} />
-							<div className="caption">{item.caption}</div>
-						</div>
-						<div className="side right">
-							{advanced}
-						</div>
-					</div>
-				);
-			} else {
-				content = (
-					<div className="sides">
-						<div className="side left">
-							<div className="name">{item.name}</div>
-						</div>
-						<div className="side right">
-							<div className="caption">
-								{item.shortcut.map((item, i) => (
-									<Label key={i} text={item} />
-								))}
-							</div>
-						</div>
-					</div>
-				);
-			};
-
-			return (
-				<div
-					ref={node => this.refRows[item.index] = node}
-					id={`item-${item.id}`} 
-					className={cn.join(' ')}
-					onMouseOver={e => this.onOver(e, item)} 
-					onClick={e => this.onClick(e, item)}
-				>
-					{icon}
-					{content}
-				</div>
-			);
-		};
-
-		const rowRenderer = ({ index, key, style, parent }) => {
-			const item = items[index];
-
-			let content = null;
-			if (item.isSection) {
-				content = (
-					<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
-						{item.name}
-						{item.withClear ? <div onClick={this.onClearSearch} className="clear">{translate('commonClear')}</div> : ''}
-					</div>
-				);
-			} else {
-				content = (
-					<div className="row" style={style}>
-						<Item {...item} index={index} />
-					</div>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={key}
-					parent={parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				{isLoading ? <Loader id="loader" /> : ''}
-				
-				<div className="head">
-					<Filter 
-						icon="search"
-						value={this.filter}
-						ref={ref => this.refFilter = ref} 
-						placeholder={translate('popupSearchPlaceholder')}
-						onSelect={this.onFilterSelect}
-						onChange={v => this.onFilterChange(v)}
-						onKeyUp={(e, v) => this.onFilterChange(v)}
-						onClear={this.onFilterClear}
-					/>
-				</div>
-
-				{!items.length && !isLoading ? (
-					<EmptySearch filter={this.filter} />
-				) : ''}
-				
-				{this.cache && items.length && !isLoading ? (
-					<div key="items" className="items">
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!items[index]}
-							threshold={LIMIT_HEIGHT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={param => this.getRowHeight(items[param.index], param.index)}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											onScroll={this.onScroll}
-											scrollToAlignment="center"
-											overscanRowCount={20}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { param, storageGet } = this.props;
-		const { data } = param;
-		const { route } = data;
-		const storage = storageGet();
-		const { backlink } = storage;
-		const filter = String(storage.filter || '');
-
-		const setFilter = () => {
-			if (!this.refFilter) {
-				return;
-			};
-
-			this.range = { from: 0, to: filter.length };
-			this.refFilter.setValue(filter);
-			this.refFilter.setRange(this.range);
-			this.reload();
-		};
-
-		this.initCache();
-		this.rebind();
-
-		focus.clear(true);
-
-		if (backlink) {
-			U.Object.getById(backlink, {}, item => this.setBacklink(item, 'Saved', () => setFilter()));
-		} else {
-			setFilter();
-		};
-
-		analytics.event('ScreenSearch', { route, type: (filter ? 'Saved' : 'Empty') });
-	};
-	
-	componentDidUpdate () {
-		const items = this.getItems();
-
-		this.initCache();
-		this.setActive(items[this.n]);
-
-		if (this.refList) {
-			this.refList.recomputeRowHeights(0);
-			this.refList.scrollToPosition(this.top);
-		};
-	};
-	
-	componentWillUnmount () {
-		this.unbind();
-
-		U.Subscription.destroyList([ J.Constant.subId.search ]);
-		window.clearTimeout(this.timeout);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.search', e => this.onKeyDown(e));
-	};
-
-	unbind () {
-		$(window).off('keydown.search');
-	};
-
-	initCache () {
-		const items = this.getItems();
-
-		this.cache = new CellMeasurerCache({
+		cacheRef.current = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_SECTION,
 			keyMapper: i => (items[i] || {}).id,
 		});
 	};
 
-	onScroll ({ scrollTop }) {
+	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
-			this.top = scrollTop;
+			topRef.current = scrollTop;
 		};
 	};
 
-	onKeyDown (e: any) {
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.search', e => onKeyDown(e));
+	};
+
+	const unbind = () => {
+		$(window).off('keydown.search');
+	};
+
+	const onKeyDown = (e: any) => {
 		e.stopPropagation();
 
 		if (keyboard.isComposition) {
 			return;
 		};
 
-		const { close } = this.props;
-		const { backlink } = this.state;
-		const items = this.getItems();
+		const items = getItems();
 		const cmd = keyboard.cmdKey();
-		const filter = this.getFilter();
-		const item = items[this.n];
+		const filter = getFilter();
+		const item = items[nRef.current];
 
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('escape', e, () => {
 			if (backlink) {
-				this.onClearSearch();
+				onClearSearch();
 			} else {
 				close();
 			};
 		});
 
 		keyboard.shortcut('shift+enter', e, () => {
-			if (item && (item.links.length || item.backlinks.length)) {
-				this.onBacklink(e, item);
+			const links = Relation.getArrayValue(item.links);
+			const backlinks = Relation.getArrayValue(item.backlinks);
+
+			if (item && (links.length || backlinks.length)) {
+				onBacklink(e, item);
 			};
 		});
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed == 'arrowup' ? -1 : 1);
+			onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
@@ -412,167 +99,153 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				return;
 			};
 
-			const item = items[this.n];
+			const item = items[nRef.current];
 			if (item) {
-				this.onClick(e, item);
+				onClick(e, item);
 			};
 		});
 
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
-
-			this.pageCreate(filter);
+			pageCreate(filter);
 		});
 
 		keyboard.shortcut('search', e, () => close());
 	};
 
-	onArrow (dir: number) {
-		if (!this.refList) {
+	const onArrow = (dir: number) => {
+		if (!listRef.current) {
 			return;
 		};
 
-		const items = this.getItems();
+		const items = getItems();
 		const l = items.length;
 
-		this.n += dir;
+		nRef.current += dir;
 
-		if ((dir > 0) && (this.n > l - 1)) {
-			this.n = 0;
+		if ((dir > 0) && (nRef.current > l - 1)) {
+			nRef.current = 0;
 		};
 
-		if ((dir < 0) && (this.n < 0)) {
-			this.n = l - 1;
+		if ((dir < 0) && (nRef.current < 0)) {
+			nRef.current = l - 1;
 		};
 
-		const item = items[this.n];
+		const item = items[nRef.current];
 		if (item && item.isSection) {
-			this.onArrow(dir);
+			onArrow(dir);
 			return;
 		};
 
-		this.refList.scrollToRow(Math.max(0, this.n));
-		this.setActive(item);
+		listRef.current.scrollToRow(Math.max(0, nRef.current));
+		setActive(item);
 	};
 
-	setActive (item: any) {
+	const setActive = (item: any) => {
 		if (!item) {
 			return;
 		};
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
-		this.n = this.getItems().findIndex(it => it.id == item.id);
-		this.unsetActive();
+		nRef.current = getItems().findIndex(it => it.id == item.id);
+		unsetActive();
 
 		node.find(`#item-${item.id}`).addClass('active');
 	};
 
-	unsetActive () {
-		const node = $(this.node);
-		node.find('.item.active').removeClass('active');
+	const unsetActive = () => {
+		$(nodeRef.current).find('.item.active').removeClass('active');
 	};
 
-	onFilterChange (v: string) {
-		const { storageSet, param } = this.props;
-		const { data } = param;
-		const { route } = data;
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(timeoutRef.current);
 
-		window.clearTimeout(this.timeout);
-
-		if (this.filter == v) {
+		if (filterValueRef.current == v) {
 			return;
 		};
 
-		this.timeout = window.setTimeout(() => {
+		timeoutRef.current = window.setTimeout(() => {
 			storageSet({ filter: v });
 
-			if (this.filter != v) {
+			if (filterValueRef.current != v) {
 				analytics.event('SearchInput', { route });
 			};
 
-			this.filter = v;
-			this.range = this.refFilter?.getRange();
-			this.reload();
+			filterValueRef.current = v;
+			rangeRef.current = filterInputRef.current?.getRange();
+			reload();
 
-			if (!this.delay) {
-				this.delay = J.Constant.delay.keyboard;
+			if (!delayRef.current) {
+				delayRef.current = J.Constant.delay.keyboard;
 			};
-		}, this.delay);
+		}, delayRef.current);
 	};
 
-	onFilterSelect (e: any) {
-		this.range = this.refFilter.getRange();
+	const onFilterSelect = (e: any) => {
+		rangeRef.current = filterInputRef.current.getRange();
 	};
 
-	onFilterClear () {
-		const { param, storageSet } = this.props;
-		const { data } = param;
-		const { route } = data;
-
+	const onFilterClear = () => {
 		storageSet({ filter: '' });
 		analytics.event('SearchInput', { route });
 	};
 
-	onBacklink (e: React.MouseEvent, item: any) {
+	const onBacklink = (e: React.MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.props.storageSet({ backlink: item.id });
-		this.setBacklink(item, 'Empty');
+		storageSet({ backlink: item.id });
+		setBacklinkState(item, 'Empty');
 	};
 
-	setBacklink (item: any, type: string, callBack?: () => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { route } = data;
+	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
+		setBacklink(item);
+		resetSearch();
+		analytics.event('SearchBacklink', { route, type });
 
-		this.setState({ backlink: item }, () => {
-			this.resetSearch();
-			analytics.event('SearchBacklink', { route, type });
-
-			if (callBack) {
-				callBack();
-			};
-		});
+		if (callBack) {
+			callBack();
+		};
 	};
 
-	onClearSearch () {
-		this.props.storageSet({ backlink: '' });
-		this.setState({ backlink: null }, () => this.resetSearch());
+	const onClearSearch = () => {
+		storageSet({ backlink: '' });
+		setBacklink(null);
+		resetSearch();
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
+	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
-			this.offset += J.Constant.limit.menuRecords;
-			this.load(false, () => resolve(null));
+			offsetRef.current += J.Constant.limit.menuRecords;
+			load(false, () => resolve(null));
 		});
 	};
 
-	resetSearch () {
-		this.refFilter?.setValue('');
-		this.reload();
+	const resetSearch = () => {
+		filterInputRef.current?.setValue('');
+		reload();
 	};
 
-	reload () {
-		this.n = 0;
-		this.offset = 0;
-		this.top = 0;
-		this.load(true, () => {
-			const items = this.getItems().filter(it => !it.isSection);
+	const reload = () => {
+		nRef.current = 0;
+		offsetRef.current = 0;
+		topRef.current = 0;
+		load(true, () => {
+			const items = getItems().filter(it => !it.isSection);
 
 			if (items.length) {
-				window.setTimeout(() => this.setActive(items[0]));
+				window.setTimeout(() => setActive(items[0]));
 			};
 		});
 	};
 
-	load (clear: boolean, callBack?: () => void) {
+	const load = (clear: boolean, callBack?: () => void) => {
 		const { space, config } = S.Common;
-		const { backlink } = this.state;
-		const filter = this.filter;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
 		const filters: any[] = [
+			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
@@ -589,26 +262,29 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		let limit = J.Constant.limit.menuRecords;
 
-		if (!filter && clear && !backlink) {
+		if (!filterValueRef.current && clear && !backlink) {
 			limit = 8;
 		};
 
 		if (backlink) {
-			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
+			const links = Relation.getArrayValue(backlink.links);
+			const backlinks = Relation.getArrayValue(backlink.backlinks);
+
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
 		};
 
 		if (clear) {
-			this.setState({ isLoading: true });
+			setIsLoading(true);
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filter, this.offset, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			if (message.error.code) {
-				this.setState({ isLoading: false });
+				setIsLoading(false);
 				return;
 			};
 
 			if (clear) {
-				this.items = [];
+				itemsRef.current = [];
 			};
 
 			const records = (message.records || []).map(it => {
@@ -618,28 +294,27 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				return it;
 			});
 
-			this.items = this.items.concat(records);
+			itemsRef.current = itemsRef.current.concat(records);
 
-			if (this.items.length) {
+			if (itemsRef.current.length) {
 				U.Subscription.subscribeIds({
 					subId: J.Constant.subId.search,
-					ids: this.items.map(it => it.id),
+					ids: itemsRef.current.map(it => it.id),
 					noDeps: true,
 				});
 			};
 
 			if (clear) {
-				this.setState({ isLoading: false }, callBack);
+				setIsLoading(false);
+				if (callBack) callBack();
 			} else {
-				this.forceUpdate(callBack);
+				if (callBack) callBack();
 			};
 		});
-
 	};
 
-	getItems () {
-		const { backlink } = this.state;
-		const filter = this.getFilter();
+	const getItems = () => {
+		const filter = getFilter();
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
 
@@ -650,7 +325,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			name = translate('commonCreateObject');
 		};
 
-		let items = S.Record.checkHiddenObjects(this.items);
+		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
 		if (backlink) {
 			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
@@ -761,18 +436,18 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
-	pageCreate (name: string) {
+	const pageCreate = (name: string) => {
 		keyboard.pageCreate({ name }, analytics.route.search, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.n = item.index;
-			this.setActive(item);
+			nRef.current = item.index;
+			setActive(item);
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		if (!item) {
 			return;
 		};
@@ -783,10 +458,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		e.stopPropagation();
 
-		const { close, param } = this.props;
-		const { data } = param;
-		const { route } = data;
-		const filter = this.getFilter();
+		const filter = getFilter();
 		const rootId = keyboard.getRootId();
 		const metaList = item.metaList || [];
 		const meta = metaList.length ? metaList[0] : {};
@@ -820,7 +492,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				switch (item.id) {
 					case 'add': {
-						this.pageCreate(filter)
+						pageCreate(filter);
 						break;
 					};
 
@@ -836,11 +508,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		analytics.event('SearchResult', { route, index: item.index + 1, length: filter.length });
 	};
 
-	onContext (e: any, item: any) {
-		const { getId, param } = this.props;
-		const { data } = param;
-		const { route } = data;
-
+	const onContext = (e: any, item: any) => {
 		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${item.id}`,
 			recalcRect: () => { 
@@ -858,7 +526,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
-	getRowHeight (item: any, index: number) {
+	const getRowHeight = (item: any, index: number) => {
 		let h = HEIGHT_ITEM;
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
@@ -866,16 +534,303 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (item.isSmall) {
 			h = HEIGHT_SMALL;
 		};
-		if (this.cache && this.cache.rowHeight) {
-			h = Math.max(this.cache.rowHeight({ index }), h);
+		if (cacheRef.current && (cacheRef.current as any).rowHeight) {
+			h = Math.max((cacheRef.current as any).rowHeight({ index }), h);
 		};
 		return h;
 	};
 
-	getFilter () {
-		return this.refFilter ? this.refFilter.getValue() : '';
+	const getFilter = () => {
+		return String(filterInputRef.current?.getValue() || '');
 	};
 
-});
+	useEffect(() => {
+		const storage = storageGet();
+		const storageBacklink = storage.backlink;
+		const filter = String(storage.filter || '');
+
+		const setFilter = () => {
+			if (!filterInputRef.current) {
+				return;
+			};
+
+			rangeRef.current = { from: 0, to: filter.length };
+			filterInputRef.current.setValue(filter);
+			filterInputRef.current.setRange(rangeRef.current);
+			reload();
+		};
+
+		initCache();
+		focus.clear(true);
+		window.setTimeout(() => rebind(), J.Constant.delay.popup);
+
+		if (storageBacklink) {
+			U.Object.getById(storageBacklink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
+		} else {
+			setFilter();
+		};
+
+		analytics.event('ScreenSearch', { route, type: (filter ? 'Saved' : 'Empty') });
+
+		return () => {
+			unbind();
+			U.Subscription.destroyList([ J.Constant.subId.search ]);
+			window.clearTimeout(timeoutRef.current);
+		};
+	}, []);
+
+	useEffect(() => {
+		const items = getItems();
+
+		initCache();
+		setActive(items[nRef.current]);
+
+		if (listRef.current) {
+			listRef.current.recomputeRowHeights(0);
+			listRef.current.scrollToPosition(topRef.current);
+		};
+	});
+
+	const items = getItems();
+	const shift = keyboard.shiftSymbol();
+
+	const Context = (meta: any): any => {
+		const { highlight, relationKey, ranges } = meta;
+		const relationDetails = meta.relationDetails || {};
+
+		let key: any = '';
+		let value: any = '';
+
+		if (relationKey) {
+			if ([ 'name', 'pluralName', 'type', 'snippet' ].includes(relationKey)) {
+				return '';
+			} else {
+				const relation = S.Record.getRelationByKey(relationKey);
+				key = relation ? <div className="key">{relation.name}:</div> : '';
+			};
+		};
+
+		if (highlight) {
+			const text = Mark.toHtml(highlight, ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
+
+			value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
+		} else 
+		if (relationDetails.name) {
+			const { relationOptionColor } = relationDetails;
+			const color = relationOptionColor ? `textColor-${relationOptionColor}` : '';
+			const cn = [ 'value' ];
+
+			if (color) {
+				cn.push(`textColor-${relationOptionColor}`);
+				cn.push(`bgColor-${relationOptionColor}`);
+			};
+
+			value = <div className={cn.join(' ')}>{relationDetails.name}</div>;
+		};
+
+		return value ? (
+			<div className="context">
+				{key}
+				{value}
+			</div>
+		) : '';
+	};
+
+	const Item = (item: any) => {
+		const cn = [ 'item' ];
+
+		if (item.isHidden) {
+			cn.push('isHidden');
+		};
+		if (item.isSmall) {
+			cn.push('isSmall');
+		};
+
+		let content = null;
+		let icon = null;
+		let object = null;
+		let size = 40;
+
+		if (item.isObject) {
+			object = item;
+		} else 
+		if (item.id == 'account') {
+			object = U.Space.getParticipant();
+		} else 
+		if (item.id == 'spaceIndex') {
+			object = U.Space.getSpaceview();
+		};
+
+		if ([ 'account', 'spaceIndex' ].includes(item.id)) {
+			size = 20;
+		};
+
+		if (object) {
+			icon = <IconObject object={object} size={size} />;
+		} else {
+			icon = <Icon className={item.icon} />;
+		};
+
+		if (item.isObject) {
+			const { metaList } = item;
+			const meta = metaList[0] || {};
+
+			let advanced = null;
+
+			if (item.links.length || item.backlinks.length) {
+				advanced = (
+					<Icon
+						className="advanced"
+						tooltipParam={{ text: translate('popupSearchTooltipSearchByBacklinks'), caption: `${shift} + Enter` }}
+						onClick={e => onBacklink(e, item)}
+					/>
+				);
+			};
+
+			let name = U.Object.name(item, true);
+
+			if (meta.highlight && [ 'name', 'pluralName' ].includes(meta.relationKey)) {
+				name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
+
+				if (U.Object.isInFileLayouts(item.layout)) {
+					name = U.File.name({ ...object, name });
+				};
+			} else {
+				name = U.Common.htmlSpecialChars(name);
+			};
+
+			content = (
+				<div className="sides" onContextMenu={e => onContext(e, item)}>
+					<div className="side left">
+						<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+						<Context {...meta} />
+						<div className="caption">{item.caption}</div>
+					</div>
+					<div className="side right">
+						{advanced}
+					</div>
+				</div>
+			);
+		} else {
+			content = (
+				<div className="sides">
+					<div className="side left">
+						<div className="name">{item.name}</div>
+					</div>
+					<div className="side right">
+						<div className="caption">
+							{item.shortcut.map((item, i) => (
+								<Label key={i} text={item} />
+							))}
+						</div>
+					</div>
+				</div>
+			);
+		};
+
+		return (
+			<div
+				ref={node => rowsRef.current[item.index] = node}
+				id={`item-${item.id}`} 
+				className={cn.join(' ')}
+				onMouseOver={e => onOver(e, item)} 
+				onClick={e => onClick(e, item)}
+			>
+				{icon}
+				{content}
+			</div>
+		);
+	};
+
+	const rowRenderer = ({ index, key, style, parent }) => {
+		const item = items[index];
+
+		let content = null;
+		if (item.isSection) {
+			content = (
+				<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
+					{item.name}
+					{item.withClear ? <div onClick={onClearSearch} className="clear">{translate('commonClear')}</div> : ''}
+				</div>
+			);
+		} else {
+			content = (
+				<div className="row" style={style}>
+					<Item {...item} index={index} />
+				</div>
+			);
+		};
+
+		return (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cacheRef.current}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				{content}
+			</CellMeasurer>
+		);
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			className="wrap"
+		>
+			{isLoading ? <Loader id="loader" /> : ''}
+			
+			<div className="head">
+				<Filter 
+					icon="search"
+					value={filterValueRef.current}
+					ref={filterInputRef} 
+					placeholder={translate('popupSearchPlaceholder')}
+					onSelect={onFilterSelect}
+					onChange={v => onFilterChange(v)}
+					onKeyUp={(e, v) => onFilterChange(v)}
+					onClear={onFilterClear}
+				/>
+			</div>
+
+			{!items.length && !isLoading ? (
+				<EmptySearch filter={filterValueRef.current} />
+			) : ''}
+			
+			{cacheRef.current && items.length && !isLoading ? (
+				<div key="items" className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={LIMIT_HEIGHT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cacheRef.current}
+										rowCount={items.length}
+										rowHeight={param => getRowHeight(items[param.index], param.index)}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										onScroll={onScroll}
+										scrollToAlignment="center"
+										overscanRowCount={20}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			) : ''}
+		</div>
+	);
+
+}));
 
 export default PopupSearch;

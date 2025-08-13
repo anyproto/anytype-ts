@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { I, U, Action } from 'Lib';
 
@@ -10,58 +10,15 @@ const Components: any = {
 	item: PopupUsecasePageItem,
 };
 
-const PopupUsecase = observer(class PopupUsecase extends React.Component<I.PopupUsecase> {
+const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
-	node = null;
-	ref = null;
+	const { param, getId } = props;
+	const { data } = param;
+	const page = data.page || 'list';
+	const nodeRef = useRef(null);
+	const componentRef = useRef(null);
 
-	constructor (props: I.PopupUsecase) {
-		super(props);
-
-		this.onPage = this.onPage.bind(this);
-		this.getAuthor = this.getAuthor.bind(this);
-		this.onAuthor = this.onAuthor.bind(this);
-	};
-	
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const page = data.page || 'list';
-
-		let content = null;
-		if (Components[page]) {
-			const Component = Components[page];
-			content = (
-				<Component 
-					ref={ref => this.ref = ref}
-					{...this.props} 
-					onPage={this.onPage} 
-					getAuthor={this.getAuthor}
-					onAuthor={this.onAuthor}
-				/>
-			);
-		};
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				className={[ 'page', U.Common.toCamelCase(`page-${page}`) ].join(' ')}
-			>
-				{content}
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		const { param } = this.props;
-		const { data } = param;
-		const { page } = data;
-
-		this.onPage(page || 'list');
-	};
-
-	onPage (page: string, data?: any): void {
-		const { param, getId } = this.props;
+	const onPage = (page: string, data?: any): void => {
 		const obj = $(`#${getId()}-innerWrap`);
 
 		data = data || {};
@@ -70,7 +27,7 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 		obj.scrollTop(0);
 	};
 
-	getAuthor (author: string): string {
+	const getAuthor = (author: string): string => {
 		if (!author) {
 			return '';
 		};
@@ -81,12 +38,41 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 		return String(a.pathname || '').replace(/^\//, '');
 	};
 
-	onAuthor (author: string): void {
+	const onAuthor = (author: string): void => {
 		if (author) {
 			Action.openUrl(author);
 		};
 	};
 
-});
+	useEffect(() => {
+		onPage(page);
+	}, []);
+
+	let content = null;
+
+	if (Components[page]) {
+		const Component = Components[page];
+
+		content = (
+			<Component 
+				ref={componentRef}
+				{...props} 
+				onPage={onPage} 
+				getAuthor={getAuthor}
+				onAuthor={onAuthor}
+			/>
+		);
+	};
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={[ 'page', U.Common.toCamelCase(`page-${page}`) ].join(' ')}
+		>
+			{content}
+		</div>
+	);
+
+}));
 
 export default PopupUsecase;

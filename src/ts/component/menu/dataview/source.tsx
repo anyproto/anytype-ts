@@ -99,7 +99,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { readonly } = data;
 		const value = this.getValue();
 
@@ -108,6 +108,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		};
 
 		const menuParam = {
+			className,
+			classNameWrap,
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,
@@ -126,7 +128,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 
 						analytics.event('SetSelectQuery', { type: 'type' });
 						close();
-					}
+					},
 				};
 				break;
 			};
@@ -144,7 +146,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						};
 
 						close();
-					}
+					},
 				};
 				break;
 			};
@@ -156,7 +158,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	save (value: string[], callBack?: () => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { objectId, blockId } = data;
+		const { objectId } = data;
 
 		C.ObjectSetSource(objectId, value, () => {
 			if (callBack) {

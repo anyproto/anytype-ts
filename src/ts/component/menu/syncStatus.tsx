@@ -2,15 +2,14 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
 	isLoading: boolean;
 };
 
-const HEIGHT_SECTION = 26;
-const HEIGHT_ITEM = 28;
+const HEIGHT = 28;
 const SUB_ID = 'syncStatusObjectsList';
 const LIMIT = 12;
 
@@ -28,7 +27,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		super(props);
 
 		this.cache = new CellMeasurerCache({
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: HEIGHT,
 			fixedWidth: true,
 		});
 
@@ -39,6 +38,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
+		const { notSyncedCounter } = S.Auth.getSyncStatus();
+		const { setActive } = this.props;
+		const isOwner = U.Space.isMyOwner();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
@@ -71,6 +74,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					id={`item-${item.id}`}
 					className="item sides"
 					onClick={e => this.onContextMenu(e, item)}
+					onMouseEnter={() => setActive(item, false)}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="side left" >
@@ -133,6 +137,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					<EmptySearch text={emptyText} />
 				) : ''}
 
+				{notSyncedCounter && canWrite ? (
+					<div className="incentiveBanner">
+						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
+						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
+						<div className="buttons">
+							<Button onClick={() => this.onIncentiveButtonClick('storage')} className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="blank" />
+							{isOwner ? <Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} /> : ''}
+						</div>
+					</div>
+				) : ''}
+
 				{this.cache && items.length ? (
 					<div className="items">
 						<InfiniteLoader
@@ -150,7 +165,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											scrollToAlignment="center"
@@ -275,6 +290,20 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
+	onIncentiveButtonClick (id: string) {
+		switch (id) {
+			case 'storage': {
+				U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
+				break;
+			};
+
+			case 'upgrade': {
+				Action.membershipUpgrade();
+				break;
+			};
+		};
+	};
+
 	load () {
 		if (U.Data.isLocalNetwork()) {
 			return;
@@ -284,7 +313,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
-			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
+			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Error, I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc, includeTime: true },
 		];
 
@@ -435,7 +464,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					};
 
 					case I.SyncStatusSpace.Synced: {
-						message = translate('menuSyncStatusInfoSelfMessageSynced');
+						message = translate('commonSynced');
 						break;
 					};
 
@@ -460,10 +489,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		return { id, className, title, message, buttons };
 	};
 
-	getRowHeight (item: any) {
-		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-	};
-
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems().slice(0, LIMIT);
@@ -473,7 +498,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		if (!items.length) {
 			height = 160;
 		} else {
-			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+			height = items.reduce((res: number, current: any) => res + HEIGHT, height);
 		};
 
 		obj.css({ height });
@@ -486,24 +511,21 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		const listHeight = this.refList.props.height;
-		const itemHeight = this.getRowHeight(items[index]);
 
 		let offset = 0;
 		let total = 0;
 
 		for (let i = 0; i < items.length; ++i) {
-			const h = this.getRowHeight(items[i]);
-
 			if (i < index) {
-				offset += h;
+				offset += HEIGHT;
 			};
-			total += h;
+			total += HEIGHT;
 		};
 
-		if (offset + itemHeight < listHeight) {
+		if (offset + HEIGHT < listHeight) {
 			offset = 0;
 		} else {
-			offset -= listHeight / 2 - itemHeight / 2;
+			offset -= listHeight / 2 - HEIGHT / 2;
 		};
 
 		offset = Math.min(offset, total - listHeight + 16);

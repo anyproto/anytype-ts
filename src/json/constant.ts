@@ -36,6 +36,7 @@ export default {
 		graphDepth:		 	 			 5,
 		cellEntry:		 	 			 320,
 		listObject:		 	 			 50,
+		tableOfContents:	 			 30,
 
 		space: {
 			count:						 50,
@@ -47,7 +48,7 @@ export default {
 		},
 
 		chat: {
-			messages:					 50,
+			messages:					 100,
 			attachments:				 10,
 			files:						 10,
 			mentions:					 10,
@@ -104,25 +105,26 @@ export default {
 	},
 
 	subId: {
-		search:			 'search',
-		profile:		 'profile',
-		deleted:		 'deleted',
-		type:			 'type',
-		typeStore:		 'typeStore',
-		relation:		 'relation',
-		relationStore:	 'relationStore',
-		option:			 'option',
-		store:			 'store',
-		archive:		 'archive',
-		sidebar:		 'sidebar',
-		space:			 'space',
-		fileManager:	 'fileManager',
-		participant:	 'participant',
-		subSpace:		 'subSpace',
-		allObject:		 'allObject',
-		library: 		 'library',
-		chatSpace:		 'lastMessage',
-		template:		 'template',
+		search:			 		'search',
+		profile:		 		'profile',
+		deleted:		 		'deleted',
+		type:			 		'type',
+		typeStore:		 		'typeStore',
+		relation:		 		'relation',
+		relationStore:	 		'relationStore',
+		option:			 		'option',
+		store:			 		'store',
+		archive:		 		'archive',
+		sidebar:		 		'sidebar',
+		space:			 		'space',
+		participant:	 		'participant',
+		subSpace:		 		'subSpace',
+		allObject:		 		'allObject',
+		library: 		 		'library',
+		chatSpace:		 		'lastMessage',
+		template:		 		'template',
+		fileManagerSynced: 		'fileManagerSynced',
+		fileManagerNotSynced: 	'fileManagerNotSynced'
 	},
 
 	typeKey: {

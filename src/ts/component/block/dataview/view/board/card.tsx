@@ -17,9 +17,10 @@ const Card = observer(class Card extends React.Component<Props> {
 
 	render () {
 		const {
-			rootId, block, groupId, id, getView, onContext, onRefCell, onDragStartCard, getIdPrefix, isInline,
+			rootId, block, groupId, id, isPopup, getView, onContext, onRefCell, getIdPrefix, isInline,
 			getVisibleRelations, getCoverObject, onEditModeClick, canCellEdit
 		} = this.props;
+		const { config } = S.Common;
 		const view = getView();
 		const { coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -42,7 +43,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="cardContent">
-				<ObjectCover object={cover} />
+				<ObjectCover object={cover} isPopup={isPopup} />
 
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
@@ -97,7 +98,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				onContextMenu={e => onContext(e, record.id, subId)}
 				{...U.Common.dataProps({ id: record.id })}
 			>
-				{canEdit ? (
+				{canEdit && config.experimental ? (
 					<Icon
 						className={[ 'editMode', this.isEditing ? 'enabled' : '' ].join(' ')}
 						onClick={e => onEditModeClick(e, record.id)}

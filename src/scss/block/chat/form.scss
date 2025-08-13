@@ -2,7 +2,7 @@
 .formWrapper {
 	.navigation { 
 		position: absolute; right: 0px; bottom: calc(100% + 8px); display: flex; flex-direction: column; align-items: flex-end; 
-		justify-content: flex-end; gap: 16px 0px; 
+		justify-content: flex-end; gap: 16px 0px; padding: 0px 16px;
 	}
 	.navigation {
 		.btn { position: relative; width: 36px; height: 36px; display: none; align-items: center; justify-content: center; }
@@ -121,6 +121,14 @@
 
 		.attachment { max-width: 300px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05); }
 		.swiper-slide:last-child .attachment { margin-right: 6px; }
+
+		.attachment.isImage {
+			.imgWrapper { width: 100%; height: 100%; min-height: unset; min-width: unset; }
+			.imgWrapper {
+				.blur { display: none; }
+				.image { aspect-ratio: 1; border-radius: 8px; width: 100%; height: 100%; }
+			}
+		}
 	}
 
 	.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }

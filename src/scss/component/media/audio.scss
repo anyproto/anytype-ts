@@ -4,17 +4,14 @@
 .mediaAudio {
     .controlsWrapper { width: 100%; position: relative; text-align: left; color: var(--color-text-primary); }
     .controlsWrapper {
-        .name { 
-			@include text-common; @include text-overflow-nw; display: inline-block; vertical-align: top; line-height: 20px; padding-bottom: 3px; 
-			width: 100%;
-		}
+        .name { @include text-common; @include text-overflow-nw; display: inline-block; vertical-align: top; line-height: 24px; width: 100%; }
 
         @container media-audio (max-width: 208px) { 
 			.controls { column-gap: 5px; }
 			.timeText { display: none; }
 		}
 
-		.controls { display: flex; align-items: center; column-gap: 10px; }
+		.controls { display: flex; align-items: center; column-gap: 10px; height: 32px; }
         .controls {
             .icon { width: 20px; height: 20px; vertical-align: top; transition: none; flex-shrink: 0; }
             .icon.play { background-image: url('~img/icon/audio/play.svg'); margin-left: -4px; }
@@ -22,12 +19,10 @@
             .icon.volume { background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.isMuted { background-image: url('~img/icon/audio/mute.svg'); }
 
-			.volumeWrap { height: 32px; display: flex; align-items: center; }
-
-			.timeDragWrapper { flex: 1 0 auto; }
+			.timeDragWrapper { flex: 1 0 auto; height: 100%; }
             .timeText { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
-            .input-drag-horizontal { display: inline-block; vertical-align: top; height: 20px; }
+            .input-drag-horizontal { height: 100%; width: 100%; display: block; }
             .input-drag-horizontal {
                 .icon { width: 6px; height: 6px; border: 0px; background: none; cursor: default; }
                 .bullet { width: 12px; height: 12px; border-radius: 6px; background: var(--color-control-accent); }
@@ -35,10 +30,11 @@
                 .back { width: 100%; height: 4px; background: var(--color-shape-secondary); transform: translateY(-50%); margin-top: 0px; }
             }
 
+			.input-drag-vertical { display: none; transition: opacity 0.2s ease-in-out; position: fixed; z-index: 1000; opacity: 0; }
+			.input-drag-vertical.active { opacity: 1; }
+
+			.volumeWrap { display: flex; align-items: center; }
         }
-        
-        #timeDrag { margin: 6px 0px; width: 100%; display: block; }
-        
     }
 }
 

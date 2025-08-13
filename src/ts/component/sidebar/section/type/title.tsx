@@ -139,7 +139,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onSelect () {
-		this.range = this.refName.getRange();
+		this.range = this.refName?.getRange() || null;
 	};
 
 	onBlur () {
