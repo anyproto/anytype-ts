@@ -333,7 +333,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		const { id, getId, getSize, param, close } = this.props;
-		const { classNameWrap, data } = param;
+		const { className, classNameWrap, data } = param;
 		const { rootId } = data;
 		const relation = this.getRelation();
 
@@ -353,6 +353,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			offsetX: getSize().width,
+			className,
 			classNameWrap,
 			onOpen: context => menuContext = context,
 			rebind: this.rebind,
@@ -402,6 +403,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+								className,
+								classNameWrap,
 								rebind: menuContext.ref?.rebind,
 								parentId: menuContext.props.id,
 								data: {

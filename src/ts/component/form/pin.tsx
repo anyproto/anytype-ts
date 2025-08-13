@@ -64,7 +64,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 
 	/** returns the pin state stored in the input DOM */
 	const getValue = () => {
-		return inputRefs.current.map((input) => input.getValue()).join('');
+		return inputRefs.current.map(input => input.getValue()).join('');
 	};
 
 	/** sets all the input boxes to empty string */

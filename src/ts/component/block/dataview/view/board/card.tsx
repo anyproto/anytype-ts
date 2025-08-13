@@ -17,7 +17,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 	render () {
 		const {
-			rootId, block, groupId, id, getView, onContext, onRefCell, onDragStartCard, getIdPrefix, isInline,
+			rootId, block, groupId, id, isPopup, getView, onContext, onRefCell, getIdPrefix, isInline,
 			getVisibleRelations, getCoverObject, onEditModeClick, canCellEdit
 		} = this.props;
 		const { config } = S.Common;
@@ -43,7 +43,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="cardContent">
-				<ObjectCover object={cover} />
+				<ObjectCover object={cover} isPopup={isPopup} />
 
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
