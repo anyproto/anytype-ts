@@ -210,11 +210,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 
 						<div className="side center">
-							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
+							<Button 
+								id="widget-list-add"
+								text={translate('menuWidgetAddWidget')}
+								onClick={this.onAdd}
+							/>
 						</div>
 
 						<div className="side right">
-							<Button id="button-widget-help" className="help" text={'?'} color="simple" tooltipParam={{ text: translate('commonHelp') }}  onClick={this.onHelp}  />
+							<Button 
+								id="button-widget-help"
+								className="help"
+								text="?"
+								tooltipParam={{ text: translate('commonHelp') }}
+								onClick={this.onHelp}
+							/>
 						</div>
 					</div>
 				</div>

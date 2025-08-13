@@ -8,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const iconCache: Map<string, string> = new Map();
 
@@ -1359,6 +1360,10 @@ class UtilCommon {
 		s = String(s || '');
 
 		if (!TEST_HTML.test(s)) {
+			return s;
+		};
+
+		if (!UNSAFE_HTML_PATTERN.test(s)) {
 			return s;
 		};
 

@@ -47,11 +47,11 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	});
 
 	const { page = '' } = state;
-	const cn = [ 'sidebar', 'right' ];
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
+	const cn = [ 'sidebar', 'right', 'customScrollbar' ];
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = [ 'type' ].includes(page);
 
 	if (withPreview) {

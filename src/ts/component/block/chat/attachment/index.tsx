@@ -9,6 +9,7 @@ interface Props {
 	bookmarkAsDefault?: boolean;
 	isDownload?: boolean;
 	subId?: string;
+	isPopup?: boolean;
 	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
@@ -151,12 +152,12 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const renderAudio = () => {
-		const { object } = props;
+		const { object, isPopup } = props;
 		const playlist = [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
 
-		return <MediaAudio playlist={playlist} />;
+		return <MediaAudio playlist={playlist} getScrollContainer={() => U.Common.getScrollContainer(isPopup)} />;
 	};
 
 	const onOpen = () => {

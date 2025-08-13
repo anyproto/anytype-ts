@@ -206,7 +206,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			<div 
 				ref={nodeRef}
 				id="sidebarLeft" 
-				className="sidebar left" 
+				className="sidebar left customScrollbar" 
 			>
 				{Component ? (
 					<div id={pageId} className={cnp.join(' ')}>

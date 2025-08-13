@@ -1189,6 +1189,8 @@ class UtilMenu {
 	};
 
 	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
+		param = param || {};
+		param.data = param.data || {};
 		details = details || {};
 		flags = flags || {};
 
