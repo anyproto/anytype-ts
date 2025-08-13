@@ -17,7 +17,7 @@ class UtilFile {
 	 * @param {number} v - The file size in bytes.
 	 * @returns {string} The formatted file size string.
 	 */
-	size (v: number): string {
+	size (v: number, withSpace?: boolean): string {
 		v = Number(v) || 0;
 
 		let ret = 0;
@@ -30,6 +30,10 @@ class UtilFile {
 				unit = UNITS[i];
 				break;
 			};
+		};
+
+		if (withSpace) {
+			unit = ` ${unit}`;
 		};
 
 		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit : '';

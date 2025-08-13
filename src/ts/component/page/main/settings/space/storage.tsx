@@ -25,26 +25,45 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		const { localUsage, bytesLimit } = spaceStorage;
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const spaces = U.Space.getList();
+		const currentSpace = U.Space.getSpaceview();
 		const usageCn = [ 'item' ];
 		const canWrite = U.Space.canMyParticipantWrite();
+
+		const segments: any = {
+			current: { name: currentSpace.name, usage: 0, className: 'current', },
+			other: { name: translate('popupSettingsSpaceStorageProgressBarOther'), usage: 0, className: 'other', },
+		};
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
 		let label = U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit));
 
-		const progressSegments = (spaces || []).map(space => {
+		(spaces || []).forEach((space) => {
 			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
 			const isOwner = U.Space.isMyOwner(space.targetSpaceId);
+			const isCurrent = space.targetSpaceId == currentSpace.targetSpaceId;
 
 			if (!isOwner) {
-				return null;
+				return;
 			};
 
 			bytesUsed += usage;
-			return { name: space.name, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
-		}).filter(it => it);
+			if (isCurrent) {
+				segments.current.usage = usage;
+			} else {
+				segments.other.usage += usage;
+			};
+		});
+
+		const chunks: any[] = Object.values(segments);
+		const progressSegments = (chunks || []).map(chunk => {
+			const { name, usage, className } = chunk;
+
+			return { name, className, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: true, };
+		});
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
+		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
 		if (isRed) {
 			usageCn.push('red');
@@ -95,7 +114,20 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 				<Label text={label} />
 
 				<div className={usageCn.join(' ')}>
-					<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
+					<ProgressBar segments={progressSegments} />
+
+					<div className="info">
+						<div className="totalUsage">
+							<span>{U.File.size(bytesUsed, true)} </span>
+							{U.Common.sprintf(translate('popupSettingsSpaceStorageProgressBarUsageLabel'), U.File.size(bytesLimit, true))}
+						</div>
+
+						<div className="legend">
+							{legend.map(item => (
+								<div className={[ 'chunk', item.className ].join(' ')}>{item.name}</div>
+							))}
+						</div>
+					</div>
 				</div>
 
 				{notSyncedCounter && canWrite ? (
