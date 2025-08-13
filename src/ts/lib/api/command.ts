@@ -2182,11 +2182,8 @@ export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, 
 	const request = new Rpc.Space.InviteGenerate.Request();
 
 	request.setSpaceid(spaceId);
-
-	if (inviteType && permissions) {
-		request.setInvitetype(inviteType as number);
-		request.setPermissions(permissions as number);
-	};
+	request.setInvitetype(inviteType as number || 0);
+	request.setPermissions(permissions as number || 0);
 
 	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
 };

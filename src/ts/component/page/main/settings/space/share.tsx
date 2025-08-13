@@ -190,6 +190,8 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 						console.log('#### ##### #####')
 						console.log('CLIENT REQUESTS:')
 						console.log('LINK TYPE: ', I.InviteLinkType[id])
+						console.log('INVITE TYPE: ', I.InviteType[inviteType], ` (${inviteType})`)
+						console.log('PERMISSIONS: ', I.ParticipantPermissions[permissions], ` (${permissions})`)
 						console.log('..... ..... .....')
 						console.log('MW RETURNS:')
 
