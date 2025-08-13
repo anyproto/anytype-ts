@@ -110,7 +110,7 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 			<div ref={ref => this.node = ref} className="wrap">
 				{buttonUpgrade}
 
-				<UpsellStorage />
+				<UpsellStorage route={analytics.route.settingsStorage} />
 
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={label} />
@@ -160,7 +160,7 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 	onUpgrade (id?: I.TierType) {
 		Action.membershipUpgrade(id);
 
-		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
+		analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.settingsStorage });
 	};
 
 	onRemove (refId: string) {

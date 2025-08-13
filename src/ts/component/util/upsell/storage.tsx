@@ -1,12 +1,14 @@
-import React, { FC, MouseEvent } from 'react';
-import { Icon, Label, Button } from 'Component';
-import { S, translate, U, I, Action } from 'Lib';
+import React, { FC } from 'react';
+import { Label, Button } from 'Component';
+import { S, translate, U, I, Action, analytics } from 'Lib';
 
 interface Props {
+	route: string;
 	className?: string;
 };
 
 const UpsellStorage: FC<Props> = ({
+	route = '',
 	className = '',
 }) => {
 
@@ -21,6 +23,7 @@ const UpsellStorage: FC<Props> = ({
 	const { bytesLimit } = spaceStorage;
 	const bytesUsed = U.Common.calculateStorageUsage();
 	const usagePercent = bytesUsed / bytesLimit;
+	const roundedUsagePercent = Math.ceil(usagePercent * 100 / 5) * 5;
 
 	const show = (usagePercent > 0.55) && (usagePercent < 1)
 		&& U.Common.checkCanMembershipUpgrade()
@@ -32,7 +35,6 @@ const UpsellStorage: FC<Props> = ({
 	};
 
 	const tier: I.MembershipTier = membershipTiers[0];
-
 	if (!tier.price || !tier.period || !tier.periodType) {
 		return null;
 	};
@@ -48,12 +50,14 @@ const UpsellStorage: FC<Props> = ({
 
 	const onClick = () => {
 		Action.membershipUpgrade(tier.id);
+
+		analytics.event('ClickUpgradePlanTooltip', { type: `Storage${roundedUsagePercent}`, route });
 	};
 
 	return (
 		<div className={cn.join(' ')}>
 			<div className="text">
-				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${Math.ceil(usagePercent * 100 / 5) * 5}%`)} />
+				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${roundedUsagePercent}%`)} />
 				<Label className="incentive" text={translate('upsellBannerStorageIncentiveText')} />
 				<Label className="upsell" text={U.Common.sprintf(translate('upsellBannerStorageUpsellText'), `$${tier.price} ${period}`)} />
 			</div>

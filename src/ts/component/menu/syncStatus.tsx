@@ -133,11 +133,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 				</div>
 
-				<UpsellStorage className="fromSyncMenu" />
-
-				{!isLoading && !items.length ? (
-					<EmptySearch text={emptyText} />
-				) : ''}
+				<UpsellStorage className="fromSyncMenu" route={analytics.route.syncStatus} />
 
 				{notSyncedCounter && canWrite ? (
 					<div className="incentiveBanner">
@@ -148,6 +144,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							{isOwner ? <Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} /> : ''}
 						</div>
 					</div>
+				) : ''}
+
+				{!isLoading && !items.length ? (
+					<EmptySearch text={emptyText} />
 				) : ''}
 
 				{this.cache && items.length ? (
@@ -301,6 +301,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			case 'upgrade': {
 				Action.membershipUpgrade();
+				analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.syncStatus });
 				break;
 			};
 		};
