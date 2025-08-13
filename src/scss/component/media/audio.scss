@@ -19,10 +19,10 @@
             .icon.volume { background-image: url('~img/icon/audio/volume.svg'); }
             .icon.volume.isMuted { background-image: url('~img/icon/audio/mute.svg'); }
 
-			.timeDragWrapper { flex: 1 0 auto; }
+			.timeDragWrapper { flex: 1 0 auto; height: 100%; }
             .timeText { @include text-small; text-wrap: nowrap; width: 36px; text-align: center; }
 
-            .input-drag-horizontal { width: 100%; display: block; }
+            .input-drag-horizontal { height: 100%; width: 100%; display: block; }
             .input-drag-horizontal {
                 .icon { width: 6px; height: 6px; border: 0px; background: none; cursor: default; }
                 .bullet { width: 12px; height: 12px; border-radius: 6px; background: var(--color-control-accent); }
