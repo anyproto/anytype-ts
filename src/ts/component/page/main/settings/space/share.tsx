@@ -188,14 +188,6 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 							};
 						};
 
-						console.log('#### ##### #####')
-						console.log('CLIENT REQUESTS:')
-						console.log('LINK TYPE: ', I.InviteLinkType[id])
-						console.log('INVITE TYPE: ', I.InviteType[inviteType], ` (${inviteType})`)
-						console.log('PERMISSIONS: ', I.ParticipantPermissions[permissions], ` (${permissions})`)
-						console.log('..... ..... .....')
-						console.log('MW RETURNS:')
-
 						const isChange = noApproveIds.includes(this.state.type) && noApproveIds.includes(id);
 
 						if (isChange) {
@@ -204,9 +196,6 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 								if (this.setError(message.error)) {
 									return;
 								};
-
-								console.log('LINK CHANGED TO: ', I.ParticipantPermissions[permissions])
-								console.log('LINK REMAINS: ')
 
 								this.setInvite(this.state.cid, this.state.key, inviteType, permissions);
 
@@ -226,12 +215,6 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 								} else {
 									toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
 								};
-
-								console.log('LINK GENERATED WITH: ')
-								console.log('INVITE TYPE: ', I.InviteType[inviteType])
-								console.log('PERMISSIONS: ', I.ParticipantPermissions[permissions])
-								console.log('NEW LINK: ')
-								console.log(U.Space.getInviteLink(message.inviteCid, message.inviteKey))
 
 								this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
 								Preview.toastShow({ text: toast });
