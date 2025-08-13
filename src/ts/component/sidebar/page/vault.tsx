@@ -139,7 +139,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onClick = (item: any) => {
 		if (item.targetSpaceId != S.Common.space) {
-			U.Router.switchSpace(item.targetSpaceId, '', true, { replace: true, animate: true }, false);
+			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard();
 		};

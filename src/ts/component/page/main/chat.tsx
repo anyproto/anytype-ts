@@ -128,9 +128,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	let content = null;
 	let inner = null;
 
-	if (isLoading) {
-		inner = <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
-	} else {
+	if (!isLoading) {
 		inner = (
 			<div ref={blocksRef} className="blocks">
 				<Block

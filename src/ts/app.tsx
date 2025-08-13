@@ -495,10 +495,7 @@ const App: FC = () => {
 					{drag}
 					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
-
-					<div id="globalFade">
-						<Loader id="loader" />
-					</div>
+					<div id="globalFade" />
 
 					<PreviewIndex />
 					<Progress />

@@ -97,7 +97,7 @@ class UtilRouter {
 
 		param = param || {};
 
-		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
+		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
 
@@ -231,7 +231,7 @@ class UtilRouter {
 
 			this.go('/main/blank', { 
 				replace: true, 
-				animate: true,
+				animate: routeParam.animate,
 				delay: 100,
 				onRouteChange: () => {
 					analytics.removeContext();
