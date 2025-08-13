@@ -17,6 +17,7 @@ interface Props {
 interface DragVerticalRefProps {
 	getValue: () => number;
 	setValue: (v: number) => void;
+	getNode: () => HTMLDivElement;
 };
 
 const DragVertical = forwardRef<DragVerticalRefProps, Props>(({
@@ -54,6 +55,7 @@ const DragVertical = forwardRef<DragVerticalRefProps, Props>(({
 	useImperativeHandle(ref, () => ({
 		getValue: () => inputRef.current?.getValue(),
 		setValue: (v: number) => inputRef.current?.setValue(v),
+		getNode: () => divRef.current,
 	}));
 
 	useEffect(() => {
