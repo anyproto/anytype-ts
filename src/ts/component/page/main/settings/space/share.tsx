@@ -115,6 +115,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		};
 
 		this.setState({ cid, key, type });
+		this.refInput.setValue(U.Space.getInviteLink(cid, key));
 	};
 
 	onUpgrade (type: string) {
