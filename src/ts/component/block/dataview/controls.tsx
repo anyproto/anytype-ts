@@ -510,7 +510,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		onViewSettings,
 		toggleHoverArea,
 		resize,
-		getHeadRef: () => headRef,
+		getHeadRef: () => headRef.current,
 	}));
 
 	return (

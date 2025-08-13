@@ -319,9 +319,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	renderLatex () {
 		const { block } = this.props;
-		const ref = this.refEditable;
 
-		if (block.isTextCode() || block.isTextTitle() || !ref) {
+		if (block.isTextCode() || block.isTextTitle() || !this.refEditable) {
 			return;
 		};
 
@@ -329,7 +328,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
-			ref.setValue(html);
+			this.refEditable.setValue(html);
 		};
 	};
 
