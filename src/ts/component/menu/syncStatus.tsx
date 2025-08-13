@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellStorage } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -132,6 +132,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
 					</div>
 				</div>
+
+				<UpsellStorage className="fromSyncMenu" />
 
 				{!isLoading && !items.length ? (
 					<EmptySearch text={emptyText} />

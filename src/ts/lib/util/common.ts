@@ -1929,6 +1929,25 @@ class UtilCommon {
 		return periodLabel;
 	};
 
+	calculateStorageUsage (): number {
+		const spaces = U.Space.getList();
+
+		let usage = 0;
+
+		(spaces || []).forEach((space) => {
+			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+			const isOwner = U.Space.isMyOwner(space.targetSpaceId);
+
+			if (!isOwner) {
+				return;
+			};
+
+			usage += Number(object.bytesUsage) || 0;
+		});
+
+		return usage;
+	};
+
 };
 
 export default new UtilCommon();

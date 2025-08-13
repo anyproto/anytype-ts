@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
+import { Title, ListObjectManager, Label, Button, ProgressBar, UpsellStorage } from 'Component';
 import { I, J, U, S, translate, Action, analytics } from 'Lib';
-
-const STORAGE_FULL = 0.95;
 
 const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends React.Component<I.PageSettingsComponent, {}> {
 
@@ -28,10 +26,6 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		const currentSpace = U.Space.getSpaceview();
 		const usageCn = [ 'item', 'usageWrapper' ];
 		const canWrite = U.Space.canMyParticipantWrite();
-		const { membershipTiers } = S.Common;
-		const { membership } = S.Auth;
-
-		console.log(membershipTiers)
 
 		const segments: any = {
 			current: { name: currentSpace.name, usage: 0, className: 'current', },
@@ -68,53 +62,13 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		});
 
 		const usagePercent = bytesUsed / bytesLimit;
-		const isRed = localUsage >= bytesLimit;
+		const isRed = usagePercent >= 100;
 		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
 		if (isRed) {
 			usageCn.push('red');
 			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={() => this.onUpgrade()} />;
 			label = translate('popupSettingsSpaceIndexStorageIsFullText');
-		};
-
-		const Upsell = () => {
-			const showUpsell = !isRed
-				&& (usagePercent > 0.55)
-				&& U.Common.checkCanMembershipUpgrade()
-				&& membershipTiers[0]
-				&& (membershipTiers[0].id != membership.tier);
-
-			if (!showUpsell) {
-				return null;
-			};
-
-			const tier = membershipTiers[0];
-
-			if (!tier.price || !tier.period || !tier.periodType) {
-				return null;
-			};
-
-			const periodLabel = U.Common.getMembershipPeriodLabel(tier);
-
-			let period = '';
-			if (tier.period == 1) {
-				period = `/ ${U.Common.plural(tier.period, periodLabel)}`;
-			} else {
-				period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), tier.period, U.Common.plural(tier.period, periodLabel));
-			};
-
-			const label = U.Common.sprintf(
-				translate('popupSettingsSpaceStorageUpsellBannerText'),
-				`${Math.ceil(usagePercent * 100 / 5) * 5}%`,
-				`$${tier.price} ${period}`
-			);
-
-			return (
-				<div className="upsellBanner">
-					<Label text={label} />
-					<Button text={translate('commonUpgrade')} color="accent" className="c28" onClick={() => this.onUpgrade(tier.id)} />
-				</div>
-			);
 		};
 
 		const Manager = (item: any) => {
@@ -156,7 +110,7 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 			<div ref={ref => this.node = ref} className="wrap">
 				{buttonUpgrade}
 
-				<Upsell />
+				<UpsellStorage />
 
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={label} />

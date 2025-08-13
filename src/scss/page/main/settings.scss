@@ -434,14 +434,7 @@
     > .pageSettingsSpaceStorage {
         > .wrap { height: 100%; display: flex; flex-direction: column; position: relative; }
 
-        .upsellBanner {
-            display: flex; justify-content: space-between; align-items: center; background: var(--color-system-selection);
-            padding: 16px; border-radius: 8px; margin-bottom: 44px; gap: 0px 8px;
-        }
-        .upsellBanner {
-            .label { margin-bottom: 0px; }
-            .button { flex-shrink: 0; }
-        }
+        .upsellBanner { margin-bottom: 44px; }
 
         .button.payment { position: absolute; right: 0px; top: 5px; }
 
