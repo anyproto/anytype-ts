@@ -21,11 +21,7 @@ interface Props {
 	onContextMenu?(e: MouseEvent): void;
 };
 
-interface IconRefProps {
-	getNode(): HTMLDivElement;
-};
-
-const Icon = forwardRef<IconRefProps, Props>(({
+const Icon = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	icon = '',
 	className = '',
@@ -89,13 +85,9 @@ const Icon = forwardRef<IconRefProps, Props>(({
 		};
 	};
 
-	useImperativeHandle(ref, () => ({
-		getNode: () => nodeRef.current,
-	}));
-
 	return (
 		<div 
-			ref={nodeRef}
+			ref={ref || nodeRef}
 			id={id} 
 			draggable={draggable} 
 			className={[ 'icon', className ].join(' ')} 
