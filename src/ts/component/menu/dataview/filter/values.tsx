@@ -323,24 +323,26 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
-		if (relation && this.refInput) {
-			const isDate = relation.format == I.RelationType.Date;
+		if (!relation || !this.refInput) {
+			return;
+		};
 
-			if (this.refInput.setValue) {
-				if (isDate) {
-					if (item.quickOption == I.FilterQuickOption.ExactDate) {
-						this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
-					} else {
-						this.refInput.setValue(item.value);
-					};
+		const isDate = Relation.isDate(relation.format);
+
+		if (this.refInput.setValue) {
+			if (isDate) {
+				if (item.quickOption == I.FilterQuickOption.ExactDate) {
+					this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
 				} else {
 					this.refInput.setValue(item.value);
 				};
+			} else {
+				this.refInput.setValue(item.value);
 			};
+		};
 
-			if (this.range && this.refInput.setRange && !isDate) {
-				this.refInput.setRange(this.range);
-			};
+		if (this.range && this.refInput.setRange && !isDate) {
+			this.refInput.setRange(this.range);
 		};
 	};
 
