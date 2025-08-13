@@ -101,7 +101,6 @@ import ShareTooltip from './util/share/tooltip';
 import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
-import Floater from './util/floater';
 import QR from './util/qr';
 
 export {
@@ -203,7 +202,6 @@ export {
 	FooterAuthDisclaimer,
 
 	EmailCollection,
-	Floater,
 	HeadSimple,
 	EditorControls,
 

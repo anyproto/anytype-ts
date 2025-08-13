@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Icon, DragHorizontal, DragVertical, Floater, Label } from 'Component';
+import { Icon, DragHorizontal, DragVertical, Label } from 'Component';
 import { U } from 'Lib';
 
 interface PlaylistItem {
@@ -11,6 +11,7 @@ interface PlaylistItem {
 
 interface Props {
 	playlist: PlaylistItem[];
+	getScrollContainer?(): any;
 	onPlay?(): void;
 	onPause?(): void;
 };
@@ -25,6 +26,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	playlist = [],
 	onPlay,
 	onPause,
+	getScrollContainer,
 }, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
@@ -32,14 +34,15 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const timeRef = useRef(null);
 	const timeTextRef = useRef(null);
 	const volumeIconRef = useRef(null);
+	const volumeRef = useRef(null);
 	const playIconRef = useRef(null);
-	const floaterRef = useRef(null);
+	const timeoutRef = useRef(0);
+	const frameRef = useRef(0);
 	const resizeObserver = new ResizeObserver(() => {
 		raf(() => resize());
 	});
 	const [ current, setCurrent ] = useState<PlaylistItem>(null);
 	const { src, name }	= current || {};
-	const ci = [ 'volume' ];
 
 	const isPlaying = useRef(false);
 	const volume = useRef(1);
@@ -137,12 +140,48 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		};
 	};
 
+	const positionDrag = () => {
+		const drag = $(volumeRef.current.getNode());
+		const icon = $(volumeIconRef.current.getNode());
+		const height = icon.outerHeight();
+		const { left, top } = icon.offset();
+		const st = $(window).scrollTop();
+
+		drag.css({ left: left, top: top + height + 4 - st });
+	};
+
 	const onVolumeEnter = () => {
-		floaterRef.current.show();
+		const drag = $(volumeRef.current.getNode());
+		const icon = $(volumeIconRef.current.getNode());
+		const container = $(getScrollContainer?.());
+
+		drag.show();
+		positionDrag();
+		clearTimeout(timeoutRef.current);
+
+		if (frameRef.current) {
+			raf.cancel(frameRef.current);
+		};
+
+		frameRef.current = raf(() => {
+			drag.addClass('active');
+
+			if (container.length) {
+				container.off('scroll.audio').on('scroll.audio', () => drag.hide());
+			};
+		});
 	};
 
 	const onVolumeLeave = () => {
-		floaterRef.current.hide();
+		const drag = $(volumeRef.current.getNode());
+		const container = $(getScrollContainer?.());
+
+		drag.removeClass('active');
+		timeoutRef.current = window.setTimeout(() => drag.hide(), 200);
+
+		if (container.length) {
+			container.off('scroll.audio');
+		};
 	};
 
 	const onTimeUpdate = () => {
@@ -183,6 +222,12 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			if (nodeRef.current) {
 				resizeObserver.disconnect();
 			};
+
+			if (frameRef.current) {
+				raf.cancel(frameRef.current);
+			};
+
+			clearTimeout(timeoutRef.current);
 		};
 	}, []);
 
@@ -240,25 +285,20 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 					<div className="volumeWrap" onMouseLeave={onVolumeLeave}>
 						<Icon
 							ref={volumeIconRef} 
-							className={ci.join(' ')} 
+							className="volume"
 							onMouseDown={onMute}
 							onMouseEnter={onVolumeEnter}
 							onClick={e => e.stopPropagation()}
 						/>
 
-						<Floater 
-							ref={floaterRef}
-							anchorEl={volumeIconRef.current}
-							offset={4}
-						>
-							<DragVertical
-								id="volume"
-								className="volume"
-								value={volume.current}
-								onChange={(e: any, v: number) => onVolume(v)}
-								onMouseEnter={onVolumeEnter}
-							/>
-						</Floater>
+						<DragVertical
+							ref={volumeRef}
+							id="volume"
+							className="volume"
+							value={volume.current}
+							onChange={(e: any, v: number) => onVolume(v)}
+							onMouseEnter={onVolumeEnter}
+						/>
 					</div>
 				</div>
 			</div>
