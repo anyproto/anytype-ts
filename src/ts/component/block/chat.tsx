@@ -466,11 +466,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
-				//loadMessages(-1, false);
+				loadMessages(-1, false);
 			};
 
 			if (st - fh >= scrollWrapper.outerHeight() - ch) {
-				//loadMessages(1, false);
+				loadMessages(1, false);
 			};
 		};
 
