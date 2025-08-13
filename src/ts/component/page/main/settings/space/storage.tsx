@@ -26,8 +26,12 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const spaces = U.Space.getList();
 		const currentSpace = U.Space.getSpaceview();
-		const usageCn = [ 'item' ];
+		const usageCn = [ 'item', 'usageWrapper' ];
 		const canWrite = U.Space.canMyParticipantWrite();
+		const { membershipTiers } = S.Common;
+		const { membership } = S.Auth;
+
+		console.log(membershipTiers)
 
 		const segments: any = {
 			current: { name: currentSpace.name, usage: 0, className: 'current', },
@@ -62,13 +66,55 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 
 			return { name, className, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: true, };
 		});
-		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
+
+		const usagePercent = bytesUsed / bytesLimit;
+		const isRed = localUsage >= bytesLimit;
 		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={this.onUpgrade} />;
+			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={() => this.onUpgrade()} />;
 			label = translate('popupSettingsSpaceIndexStorageIsFullText');
+		};
+
+		const Upsell = () => {
+			const showUpsell = !isRed
+				&& (usagePercent > 0.55)
+				&& U.Common.checkCanMembershipUpgrade()
+				&& membershipTiers[0]
+				&& (membershipTiers[0].id != membership.tier);
+
+			if (!showUpsell) {
+				return null;
+			};
+
+			const tier = membershipTiers[0];
+
+			if (!tier.price || !tier.period || !tier.periodType) {
+				return null;
+			};
+
+			const periodLabel = U.Common.getMembershipPeriodLabel(tier);
+
+			let period = '';
+			if (tier.period == 1) {
+				period = `/ ${U.Common.plural(tier.period, periodLabel)}`;
+			} else {
+				period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), tier.period, U.Common.plural(tier.period, periodLabel));
+			};
+
+			const label = U.Common.sprintf(
+				translate('popupSettingsSpaceStorageUpsellBannerText'),
+				`${Math.ceil(usagePercent * 100 / 5) * 5}%`,
+				`$${tier.price} ${period}`
+			);
+
+			return (
+				<div className="upsellBanner">
+					<Label text={label} />
+					<Button text={translate('commonUpgrade')} color="accent" className="c28" onClick={() => this.onUpgrade(tier.id)} />
+				</div>
+			);
 		};
 
 		const Manager = (item: any) => {
@@ -110,6 +156,8 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 			<div ref={ref => this.node = ref} className="wrap">
 				{buttonUpgrade}
 
+				<Upsell />
+
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={label} />
 
@@ -123,8 +171,8 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 						</div>
 
 						<div className="legend">
-							{legend.map(item => (
-								<div className={[ 'chunk', item.className ].join(' ')}>{item.name}</div>
+							{legend.map((item, idx) => (
+								<div key={idx} className={[ 'item', item.className ].join(' ')}>{item.name}</div>
 							))}
 						</div>
 					</div>
@@ -155,8 +203,8 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 	};
 
-	onUpgrade () {
-		Action.membershipUpgrade();
+	onUpgrade (id?: I.TierType) {
+		Action.membershipUpgrade(id);
 
 		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};

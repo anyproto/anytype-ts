@@ -928,6 +928,9 @@
 	"popupSettingsSpaceStorageProgressBarFree": "Free space",
 	"popupSettingsSpaceStorageProgressBarUsageLabel": "of %s used",
 
+	"popupSettingsSpaceStorageUpsellBannerText": "<b>%s of remote storage used.</b> If you run out of space, you can't backup you data. Get 128 GB for %s.",
+	"popupSettingsSpaceStorageUpsellBannerTextPeriod": "%s / %s",
+
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportData": "Import data",
