@@ -19,13 +19,13 @@ const run = async () => {
 			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
 		} else {
 			content = await requestWithRetry(lang, MAX_RETRIES, RETRY_DELAY);
-		}
+		};
 
 		if (content) {
 			fs.writeFileSync(fp, content);
 			console.log('Saved lang file:', fp);
-		}
-	}
+		};
+	};
 };
 
 const requestWithRetry = async (lang, retries, delay) => {
@@ -40,9 +40,9 @@ const requestWithRetry = async (lang, retries, delay) => {
 			} else {
 				console.log(`All ${retries} attempts failed for ${lang}`);
 				return null;
-			}
-		}
-	}
+			};
+		};
+	};
 };
 
 const request = async (lang) => {
@@ -62,7 +62,7 @@ const request = async (lang) => {
 
 	if (process.env.GITHUB_TOKEN) {
 		options.headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
-	}
+	};
 
 	return new Promise((resolve, reject) => {
 		const success = response => {
@@ -73,7 +73,7 @@ const request = async (lang) => {
 					reject(data.message);
 				} else {
 					resolve(Buffer.from(data.content, 'base64').toString());
-				}
+				};
 			});
 		};
 
