@@ -922,7 +922,7 @@
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
 	"popupSettingsSpaceIndexUxTypeTitle": "Space UX Type",
 
-	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
+	"popupSettingsSpaceStorageEmptyLabel": "Your storage is empty",
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",

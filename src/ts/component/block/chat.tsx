@@ -34,7 +34,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const messages = S.Chat.getList(subId);
 
 	const unbind = () => {
-		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate' ];
+		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -50,6 +50,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		win.on(`messageAdd.${ns}`, (e, message, subIds) => onMessageAdd(message, subIds));
 		win.on(`messageUpdate.${ns}`, (e, message, subIds) => onMessageAdd(message, subIds));
 		win.on(`reactionUpdate.${ns}`, () => scrollToBottomCheck());
+		win.on(`focus.${ns}`, () => readScrolledMessages());
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => onScroll(e));
 	};

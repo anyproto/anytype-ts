@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText } from 'Component';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove } from 'Lib';
 
 type State = {
@@ -203,19 +203,29 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 					<div className="sides">
 						<div className="side left">
-							{!isEditing ? (
-								<Icon className="settings withBackground" tooltipParam={{ text: translate('sidebarEdit') }} onClick={this.onEdit} />
-							) : (
-								<Button color="accent" text={translate('commonDone')} onClick={this.onEdit} />
-							)}
+
+							<div className={[ 'settings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
+								<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
+								<Label text={translate('commonDone')} />
+							</div>
 						</div>
 
 						<div className="side center">
-							<Button id="widget-list-add" text={translate('menuWidgetAddWidget')} color="simple" onClick={this.onAdd} />
+							<Button 
+								id="widget-list-add"
+								text={translate('menuWidgetAddWidget')}
+								onClick={this.onAdd}
+							/>
 						</div>
 
 						<div className="side right">
-							<Button id="button-widget-help" className="help" text={'?'} color="simple" tooltipParam={{ text: translate('commonHelp') }}  onClick={this.onHelp}  />
+							<Button 
+								id="button-widget-help"
+								className="help"
+								text="?"
+								tooltipParam={{ text: translate('commonHelp') }}
+								onClick={this.onHelp}
+							/>
 						</div>
 					</div>
 				</div>
@@ -226,7 +236,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			<div 
 				id="containerWidget"
 				ref={node => this.node = node}
-				className="customScrollbar"
 			>
 				<div id="head" className="head">
 					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />

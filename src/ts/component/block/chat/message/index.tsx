@@ -30,7 +30,21 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const message = S.Chat.getMessage(subId, id);
 
+	useEffect(() => {
+		init();
+	});
+
+	useImperativeHandle(ref, () => ({
+		highlight: highlight,
+		onReactionAdd: onReactionAdd,
+		getNode: () => nodeRef.current,
+	}));
+
 	const init = () => {
+		if (!message) {
+			return;
+		};
+
 		const { creator, content } = message;
 		const { marks, text } = content;
 		const { account } = S.Auth;
@@ -205,6 +219,10 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
 	};
 
+	if (!message) {
+		return null;
+	};
+
 	const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId, isReadMessage, isReadMention, isSynced } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const attachments = getAttachments();
@@ -305,16 +323,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 			cn.push(`mediaLayout-${attachments.length}`)
 		};
 	};
-
-	useEffect(() => {
-		init();
-	});
-
-	useImperativeHandle(ref, () => ({
-		highlight: highlight,
-		onReactionAdd: onReactionAdd,
-		getNode: () => nodeRef.current,
-	}));
 
 	return (
 		<div

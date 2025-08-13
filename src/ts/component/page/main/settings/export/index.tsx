@@ -42,10 +42,6 @@ const PageMainSettingsExportIndex = observer(class PageMainSettingsExportIndex e
 		);
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenSettingsExportIndex', { route: analytics.route.settingsSpaceIndex });
-	};
-
 	onClick (id: string) {
 		const { onPage } = this.props;
 		const items = this.getItems();

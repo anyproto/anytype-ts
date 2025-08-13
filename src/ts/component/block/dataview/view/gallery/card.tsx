@@ -25,7 +25,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 	render () {
 		const {
-			rootId, block, recordId, getRecord, getView, onRefCell, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection,
+			rootId, block, recordId, isPopup, style, isInline, isCollection, getRecord, getView, onRefCell, onContext, getIdPrefix, getVisibleRelations, 
 			getCoverObject, onEditModeClick, canCellEdit,
 		} = this.props;
 		const { config } = S.Common;
@@ -50,7 +50,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="cardContent">
-				<ObjectCover object={cover} />
+				<ObjectCover object={cover} isPopup={isPopup} />
 
 				{canEdit && config.experimental ? (
 					<Icon
