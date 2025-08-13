@@ -1,4 +1,4 @@
-import React, { MouseEvent, DragEvent, forwardRef, useRef, useEffect } from 'react';
+import React, { MouseEvent, DragEvent, forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { I, Preview } from 'Lib';
 
@@ -21,7 +21,11 @@ interface Props {
 	onContextMenu?(e: MouseEvent): void;
 };
 
-const Icon = forwardRef<HTMLDivElement, Props>(({
+interface IconRefProps {
+	getNode(): HTMLDivElement;
+};
+
+const Icon = forwardRef<IconRefProps, Props>(({
 	id = '',
 	icon = '',
 	className = '',
@@ -85,9 +89,13 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		};
 	};
 
+	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
+	}));
+
 	return (
 		<div 
-			ref={ref || nodeRef}
+			ref={nodeRef}
 			id={id} 
 			draggable={draggable} 
 			className={[ 'icon', className ].join(' ')} 

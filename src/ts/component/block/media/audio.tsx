@@ -9,7 +9,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const nodeRef = useRef<any>(null);
 	const refPlayerRef = useRef<any>(null);
 
-	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
+	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
 	const { state, targetObjectId } = content;
 	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
@@ -137,6 +137,7 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						playlist={getPlaylist()}
 						onPlay={onPlay}
 						onPause={onPause}
+						getScrollContainer={() => U.Common.getScrollContainer(isPopup)}
 					/>
 				);
 				break;
