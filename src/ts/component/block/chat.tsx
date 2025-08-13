@@ -16,10 +16,9 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
-	const listRef = useRef(null);
+	const scrollWrapperRef = useRef(null);
 	const messageRefs = useRef({});
 	const timeoutInterface = useRef(0);
-	const timeoutScroll = useRef(0);
 	const timeoutScrollStop = useRef(0);
 	const top = useRef(0);
 	const firstUnreadOrderId = useRef('');
@@ -310,7 +309,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 	};
 
-	const getSections = useCallback(() => {
+	const getSections = () => {
 		const sections = [];
 
 		messages.forEach(item => {
@@ -355,7 +354,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 
 		return sections;
-	}, [ messages.length, showRelativeDates, dateFormat ]);
+	};
 
 	const getItems = useCallback(() => {
 		let items = [];
@@ -450,7 +449,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const onScroll = (e: any) => {
 		const node = $(nodeRef.current);
-		const scrollWrapper = node.find('#scrollWrapper');
+		const scrollWrapper = $(scrollWrapperRef.current);
 		const formWrapper = node.find('#formWrapper');
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = container.scrollTop();
@@ -467,11 +466,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
-				loadMessages(-1, false);
+				//loadMessages(-1, false);
 			};
 
 			if (st - fh >= scrollWrapper.outerHeight() - ch) {
-				loadMessages(1, false);
+				//loadMessages(1, false);
 			};
 		};
 
@@ -656,8 +655,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
-			const node = $(nodeRef.current);
-			const wrapper = node.find('#scrollWrapper');
+			const wrapper = $(scrollWrapperRef.current);
 			const y = wrapper.outerHeight();
 
 			setAutoLoadDisabled(true);
@@ -680,8 +678,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const scrollToBottomCheck = () => {
 		if (isBottom.current) {
-			window.clearTimeout(timeoutScroll.current);
-			timeoutScroll.current = window.setTimeout(() => scrollToBottom(false), 50);
+			scrollToBottom(false);
 		};
 	};
 
@@ -866,11 +863,14 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			unbind();
 
 			window.clearTimeout(timeoutInterface.current);
-			window.clearTimeout(timeoutScroll.current);
 			window.clearTimeout(timeoutScrollStop.current);
 		};
 
 	}, []);
+
+	useEffect(() => {
+		scrollToBottomCheck();
+	}, [ messages.length, dummy ]);
 
 	return (
 		<div 
@@ -880,7 +880,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			onDragLeave={onDragLeave} 
 			onDrop={onDrop}
 		>
-			<div id="scrollWrapper" ref={listRef} className="scrollWrapper">
+			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{isEmpty ? (
 					<EmptyState
 						text={translate('blockChatEmpty')}
