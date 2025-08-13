@@ -79,6 +79,7 @@ class Analytics {
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
 
+		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
 
 		addWidgetMain: 'Main',
@@ -317,11 +318,6 @@ class Analytics {
 				code = this.menuMapper(data.params);
 				break;
 			};
-
-			case 'settings': {
-				code = this.settingsMapper(data.params);
-				break;
-			};
 		};
 
 		if (!code) {
@@ -389,6 +385,12 @@ class Analytics {
 						break;
 					};
 				};
+				break;
+			};
+
+			case 'ChangeSpaceUxType': {
+				data.type = Number(data.type) || 0;
+				data.type = I.SpaceUxType[data.type];
 				break;
 			};
 
@@ -606,6 +608,17 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickShareSpaceNewLink' : {
+				data.type = I.InviteLinkType[Number(data.type)];
+				break;
+			};
+
+			case 'ScreenInviteRequest' : {
+				data.type = Number(data.type) || 0;
+				data.type = I.InviteType[data.type];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -696,19 +709,52 @@ class Analytics {
 	 * @returns {string} The mapped route string.
 	 */
 	pageMapper (params: any): string {
-		const { page, action } = params;
+		const { page, action, id } = params;
 		const key = [ page, action ].join('/');
+		const keyId = [ key, id ].join('/');
 		const map = {
-			'auth/login':		 'ScreenLogin',
+			'auth/login':					 'ScreenLogin',
 
-			'main/graph':		 'ScreenGraph',
-			'main/navigation':	 'ScreenNavigation',
-			'main/media':		 'ScreenMedia',
-			'main/history':		 'ScreenHistory',
-			'main/date':		 'ScreenDate',
+			'main/graph':					 'ScreenGraph',
+			'main/navigation':				 'ScreenNavigation',
+			'main/media':					 'ScreenMedia',
+			'main/history':					 'ScreenHistory',
+			'main/date':					 'ScreenDate',
+
+			'main/settings/account':		 'ScreenSettingsAccount',
+			'main/settings/index':			 'ScreenSettingsAccount',
+			'main/settings/api':			 'ScreenSettingsApi',
+			'main/settings/delete':			 'ScreenSettingsDelete',
+			'main/settings/language':		 'ScreenSettingsLanguage',
+			'main/settings/membership':		 'ScreenSettingsMembership',
+			'main/settings/personal':		 'ScreenSettingsPersonal',
+			'main/settings/phrase':			 'ScreenSettingsPhrase',
+
+			'main/settings/pinIndex':		 'ScreenSettingsPinCode',
+			'main/settings/pinConfirm':		 'ScreenSettingsPinConfirm',
+			'main/settings/pinSelect':		 'ScreenSettingsPinSelect',
+
+			'main/settings/spaceIndex':		 'ScreenSettingsSpaceIndex',
+			'main/settings/spaceList':		 'ScreenSettingsSpaceList',
+			'main/settings/spaceShare':		 'ScreenSettingsSpaceShare',
+			'main/settings/spaceStorage':	 'ScreenSettingsSpaceStorage',
+
+			'main/settings/importIndex':	 'ScreenSettingsImportIndex',
+			'main/settings/importCsv':		 'ScreenSettingsImportCsv',
+			'main/settings/importNotion':	 'ScreenSettingsImportNotion',
+			'main/settings/importObsidian':	 'ScreenSettingsImportObsidian',
+
+			'main/settings/exportIndex':	 'ScreenSettingsExportIndex',
+			'main/settings/exportMarkdown':	 'ScreenSettingsExportMarkdown',
+			'main/settings/exportProtobuf':	 'ScreenSettingsExportProtobuf',
+
+			'main/settings/dataIndex':		 'ScreenSettingsDataIndex',
+			'main/settings/dataPublish':	 'ScreenSettingsDataPublish',
 		};
 
-		return map[key] || '';
+		console.log(params);
+
+		return map[key] || map[keyId] || '';
 	};
 
 	/**
@@ -737,28 +783,6 @@ class Analytics {
 		};
 
 		return map[id] || '';
-	};
-
-	/**
-	 * Maps settings parameters to an analytics route string.
-	 * @param {any} params - The settings parameters.
-	 * @returns {string} The mapped route string.
-	 */
-	settingsMapper (params: any): string {
-		const { id } = params;
-		const prefix = 'ScreenSettings';
-
-		const map = {
-			index: '',
-			phrase: '',
-			pinIndex: 'PinCode',
-			importIndex: 'Import',
-			importNotion: 'ImportNotion',
-			exportMarkdown: 'Export',
-		};
-
-		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? U.Common.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	/**

@@ -99,11 +99,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	focus () {
-		window.setTimeout(() => { 
-			if (this.refName) {
-				this.refName.focus(); 
-			};
-		}, 15);
+		window.setTimeout(() => this.refName?.focus(), 15);
 	};
 
 	rebind () {
@@ -238,7 +234,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { option, isNew } = data;
-		const value = this.refName ? this.refName.getValue() : '';
+		const value = String(this.refName?.getValue() || '');
 
 		if (!value || isNew) {
 			return;
@@ -254,7 +250,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { relationKey } = data;
-		const value = this.refName ? this.refName.getValue() : '';
+		const value = String(this.refName?.getValue() || '');
 
 		if (!value) {
 			return;

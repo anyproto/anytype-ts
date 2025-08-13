@@ -491,6 +491,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		const menuParam = {
+			classNameWrap: 'fromBlock',
 			recalcRect,
 			element: `#block-${block.id} #${element}`,
 			offsetY: 4,

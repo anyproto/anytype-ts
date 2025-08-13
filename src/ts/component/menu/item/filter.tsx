@@ -5,7 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
 
-interface Props extends I.Filter {
+interface Props extends I.Menu, I.Filter {
 	id: string;
 	subId: string;
 	relation: any;

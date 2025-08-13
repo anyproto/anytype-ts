@@ -33,9 +33,11 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		const { data } = param;
 		const { onSubmit, route } = data;
-		const value = inputRef.current.getValue();
+		const value = inputRef.current.getValue().trim();
 		const details = data.details || {};
 		const bookmark = S.Record.getBookmarkType();
+
+		console.log('onSubmit', value, details, bookmark);
 
 		if (!value) {
 			return;
@@ -69,6 +71,8 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	};
 
 	const onChange = (e: any, v: string) => {
+		v = String(v || '').trim();
+
 		if (isLoading) {
 			return;
 		};

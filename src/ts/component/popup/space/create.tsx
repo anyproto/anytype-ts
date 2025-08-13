@@ -113,7 +113,14 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 									return;
 								};
 
-								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithApprove, I.ParticipantPermissions.Writer);
+								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+									if (message.error) {
+										return;
+									};
+
+									analytics.event('ShareSpace');
+									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
+								});
 							});
 						};
 

@@ -360,6 +360,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		const { left, top } = node.offset();
 		const menuParam = {
+			classNameWrap: 'fromGraph',
 			onOpen: () => isPreviewDisabled.current = true,
 			onClose: () => isPreviewDisabled.current = false,
 			recalcRect: () => ({

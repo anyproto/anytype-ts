@@ -14,8 +14,8 @@ const LIMIT = 20;
 
 const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, setHover, onKeyDown, setActive, close, getSize, position } = props;
-	const { data } = param;
+	const { param, getId, setHover, onKeyDown, setActive, close, position } = props;
+	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, loadData, getView, getSources, isInline, getTarget, onViewSwitch, onViewCopy, onViewRemove, readonly } = data;
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -62,8 +62,8 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const filters: I.Filter[] = [];
 		const object = getTarget();
 		const newView = {
-			name: Dataview.defaultViewName(I.ViewType.Grid),
-			type: I.ViewType.Grid,
+			name: Dataview.defaultViewName(I.ViewType.List),
+			type: I.ViewType.List,
 			groupRelationKey: Relation.getGroupOption(rootId, blockId, view.type, '')?.id,
 			cardSize: I.CardSize.Medium,
 			filters,
@@ -100,6 +100,8 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			close,
 			menuParam: {
 				element: `#${getId()} #item-${view.id} .more`,
+				className,
+				classNameWrap,
 				horizontal: I.MenuDirection.Center,
 			}
 		});
@@ -178,6 +180,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				className="item" 
 				onClick={e => onClick(e, item)}
 				onMouseEnter={e => onOver(e, item)}
+				onContextMenu={e => onViewContext(e, item)}
 				ref={setNodeRef}
 				{...attributes}
 				{...listeners}
