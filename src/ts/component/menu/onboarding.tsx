@@ -10,7 +10,7 @@ interface State {
 	error: { description: string, code: number };
 };
 
-const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu, State> {
+const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	node: any = null;
 	confetti: any = null;
@@ -36,6 +36,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const items = this.getItems();
 		const { showConfetti } = section;
 		const item = items[current];
+		if (!item) {
+			return null;
+		};
+
 		const l = items.length;
 		const withSteps = l > 1;
 		const withEmailForm = key == 'emailCollection';
