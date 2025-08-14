@@ -752,8 +752,6 @@ class Analytics {
 			'main/settings/dataPublish':	 'ScreenSettingsDataPublish',
 		};
 
-		console.log(params);
-
 		return map[key] || map[keyId] || '';
 	};
 
