@@ -629,6 +629,13 @@ export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Respo
 	};
 };
 
+export const MembershipWebAuth = (response: Rpc.Membership.WebAuth.Response) => {
+	return {
+		url: response.getUrl(),
+		jwt: response.getJwt(),
+	};
+};
+
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),

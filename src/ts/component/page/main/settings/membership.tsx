@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
+import { I, S, U, J, Action, C, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel, Navigation } from 'swiper/modules';
 
@@ -15,6 +15,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 		this.onSwiper = this.onSwiper.bind(this);
 		this.onContact = this.onContact.bind(this);
 		this.onCode = this.onCode.bind(this);
+		this.onWebAuth = this.onWebAuth.bind(this);
 	};
 
 	render () {
@@ -202,6 +203,14 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				) : ''}
 
 				<div className="actionItems">
+					<div onClick={this.onWebAuth} className="item redeemCode">
+						<Label text={translate('popupSettingsMembershipWebAuth')} />
+						<Icon className="arrow" />
+					</div>
+				</div>
+				
+
+				<div className="actionItems">
 					{links.map((item, i) => (
 						<div key={i} onClick={() => this.onLink(item)} className="item">
 							<Label text={item.name} />
@@ -231,6 +240,25 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 	onCode () {
 		S.Popup.open('membershipActivation', {});
+	};
+
+	onWebAuth () {
+		const { account } = S.Auth;
+
+		C.MembershipWebAuth((message: any) => {
+			if (message.url && message.jwt) {
+				Action.openUrl(message.url + '?jwt=' + message.jwt + '&id=' + account.id);
+			} else  {
+				const errorText = typeof message.error === 'string' ? message.error : message.error.description || message.error.message || 'Unknown error';
+				S.Popup.open('confirm', {
+					data: {
+						title: translate('commonError'),
+						text: errorText,
+						textConfirm: translate('commonOk'),
+					},
+				});
+			}
+		});
 	};
 
 });

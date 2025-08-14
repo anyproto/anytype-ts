@@ -2168,6 +2168,12 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
 };
 
+export const MembershipWebAuth = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.WebAuth.Request();
+	
+	dispatcher.request(MembershipWebAuth.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {

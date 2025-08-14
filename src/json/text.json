@@ -989,6 +989,7 @@
 	"popupSettingsMembershipPending": "Pending...",
 
 	"popupSettingsMembershipRedeemCode": "I already have a code",
+	"popupSettingsMembershipWebAuth": "Seat-based setup",
 
 	"popupSettingsMembershipLevelsDetails": "Membership plan details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
