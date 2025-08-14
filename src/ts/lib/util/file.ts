@@ -15,6 +15,7 @@ class UtilFile {
 	/**
 	 * Returns a human-readable file size string for a given number of bytes.
 	 * @param {number} v - The file size in bytes.
+	 * @param {boolean} withSpace - Flag saying to divide number and unit with space.
 	 * @returns {string} The formatted file size string.
 	 */
 	size (v: number, withSpace?: boolean): string {
@@ -32,11 +33,7 @@ class UtilFile {
 			};
 		};
 
-		if (withSpace) {
-			unit = ` ${unit}`;
-		};
-
-		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit : '';
+		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + (withSpace ? ' ' : '') + unit : '';
 	};
 
 	/**
