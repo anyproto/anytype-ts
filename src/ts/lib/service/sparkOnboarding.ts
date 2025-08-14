@@ -198,10 +198,12 @@ export class SparkOnboardingService extends EventEmitter {
 				break;
 
 			case 'object_titles_generated':
-				const titlesMsg = message as any; // Message type: { type: string; typeKey: string; titles: string[] }
+				const titlesMsg = message as any;
+				console.log('[SparkOnboarding Service] object_titles_generated message received:', titlesMsg);
+				// Use typeName for clarity - 'type' in the message is the message type itself
 				this.emit('object_titles_generated', {
-					type: titlesMsg.type,
-					typeKey: titlesMsg.typeKey,
+					typeName: titlesMsg.typeName || titlesMsg.type_name, // The actual type name
+					typeKey: titlesMsg.typeKey || titlesMsg.type_key,
 					titles: titlesMsg.titles
 				});
 				break;

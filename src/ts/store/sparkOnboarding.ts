@@ -30,6 +30,12 @@ class SparkOnboardingStore {
 
 	private service: SparkOnboardingService | null = null;
 
+	// Utility function to convert type name to node ID
+	// This ensures consistent ID generation across all handlers
+	private typeNameToNodeId(typeName: string): string {
+		return `type-${typeName.toLowerCase().replace(/\s+/g, '-')}`;
+	}
+
 	constructor() {
 		makeObservable(this, {
 			step: observable,
@@ -88,12 +94,12 @@ class SparkOnboardingStore {
 			
 			// Define example types with icons that actually exist
 			const exampleTypes = [
-				{ id: 'project-type', label: 'Project', iconName: 'folder' },
-				{ id: 'task-type', label: 'Task', iconName: 'checkbox' },
-				{ id: 'milestone-type', label: 'Milestone', iconName: 'flag' },
-				{ id: 'note-type', label: 'Note', iconName: 'document-text' },
-				{ id: 'idea-type', label: 'Idea', iconName: 'bulb' },
-				{ id: 'research-type', label: 'Research', iconName: 'bookmark' }
+				{ label: 'Project', iconName: 'folder' },
+				{ label: 'Task', iconName: 'checkbox' },
+				{ label: 'Milestone', iconName: 'flag' },
+				{ label: 'Note', iconName: 'document-text' },
+				{ label: 'Idea', iconName: 'bulb' },
+				{ label: 'Research', iconName: 'bookmark' }
 			];
 			
 			// Position types using the same logic as real types
@@ -122,7 +128,7 @@ class SparkOnboardingStore {
 				y = Math.max(80, Math.min(height - 80, baseY));
 				
 				sampleNodes.push({
-					id: type.id,
+					id: this.typeNameToNodeId(type.label),
 					type: 'type' as const,
 					label: type.label,
 					iconName: type.iconName, // Add the icon
@@ -133,14 +139,13 @@ class SparkOnboardingStore {
 			});
 			
 			// Add objects around their types
-			const objectsPerType = {
-				'project-type': ['Q1 Launch'],
-				'task-type': ['Design Review', 'Testing'],
-				'milestone-type': ['Beta Release'],
-				'note-type': ['Meeting Notes'],
-				'idea-type': ['Feature Ideas'],
-				'research-type': ['Market Analysis']
-			};
+			const objectsPerType = {};
+			objectsPerType[this.typeNameToNodeId('Project')] = ['Q1 Launch'];
+			objectsPerType[this.typeNameToNodeId('Task')] = ['Design Review', 'Testing'];
+			objectsPerType[this.typeNameToNodeId('Milestone')] = ['Beta Release'];
+			objectsPerType[this.typeNameToNodeId('Note')] = ['Meeting Notes'];
+			objectsPerType[this.typeNameToNodeId('Idea')] = ['Feature Ideas'];
+			objectsPerType[this.typeNameToNodeId('Research')] = ['Market Analysis'];
 			
 			// Position objects around their types
 			sampleNodes.forEach(typeNode => {
@@ -525,15 +530,17 @@ class SparkOnboardingStore {
 					x = 250 + (horizontalIndex * 150); // Start at 250px from left, 150px spacing
 				}
 				
+				const nodeId = this.typeNameToNodeId(type.name);
 				const node = {
-					id: `type-${type.key.toLowerCase().replace(/\s+/g, '-')}`,
+					id: nodeId,
 					type: 'type',
 					label: type.name,
 					iconName: undefined, // Will be set from schema if available
 					x: x || 100,
 					y: y || 100
 				};
-				console.log('[SparkOnboarding Store] Adding node to graph:', node);
+				console.log('[SparkOnboarding Store] Creating type node with ID:', nodeId, 'for type:', type.name);
+				console.log('[SparkOnboarding Store] Full node object:', node);
 				this.addGraphNode(node);
 			});
 			console.log('[SparkOnboarding Store] Final graph state - nodes:', this.graphNodes.length, 'all nodes:', this.graphNodes);
@@ -556,7 +563,7 @@ class SparkOnboardingStore {
 			this.generationProgress.status = `Generated type: ${typeName}`;
 			
 			// Update the type node with iconName if provided in schema
-			const typeNodeId = `type-${typeName.toLowerCase().replace(/\s+/g, '-')}`;
+			const typeNodeId = this.typeNameToNodeId(typeName);
 			const typeNode = this.graphNodes.find(n => n.id === typeNodeId);
 			if (typeNode) {
 				// Only use icon from schema, no guessing
@@ -575,19 +582,29 @@ class SparkOnboardingStore {
 			}
 		});
 
-		this.service.on('object_titles_generated', (data: { type: string; typeKey: string; titles: string[] }) => {
+		this.service.on('object_titles_generated', (data: { typeName: string; typeKey: string; titles: string[] }) => {
 			console.log('[SparkOnboarding Store] object_titles_generated received:', data);
+			console.log('[SparkOnboarding Store] Type name from event:', data.typeName);
+			console.log('[SparkOnboarding Store] Type key from event:', data.typeKey);
 			
-			// Find the type node ID
-			const typeNodeId = `type-${data.typeKey.toLowerCase().replace(/\s+/g, '-')}`;
+			// Construct the type node ID from the type name (not typeKey) for consistency
+			// This matches how we create the node ID in analysisComplete
+			const typeNodeId = this.typeNameToNodeId(data.typeName);
+			console.log('[SparkOnboarding Store] Generated type node ID:', typeNodeId);
+			console.log('[SparkOnboarding Store] All nodes in graph:', this.graphNodes.map(n => ({ id: n.id, type: n.type, label: n.label })));
+			console.log('[SparkOnboarding Store] Type nodes only:', this.graphNodes.filter(n => n.type === 'type').map(n => ({ id: n.id, label: n.label })));
+			
 			const typeNode = this.graphNodes.find(n => n.id === typeNodeId);
+			console.log('[SparkOnboarding Store] Type node found?', typeNode ? 'YES' : 'NO', typeNode);
 			
 			if (typeNode) {
+				console.log('[SparkOnboarding Store] Found type node:', typeNode.id, typeNode.label);
 				// Add object nodes for each title
 				const { positions } = this.getEdgePositions();
 				
 				data.titles.forEach((title, index) => {
-					const objectId = `object-${data.typeKey.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+					// Use the type node's ID for consistency
+					const objectId = `${typeNode.id}-object-${index}`;
 					
 					// Position objects around their type node in a much wider circle
 					const angle = (Math.PI * 2 * index) / data.titles.length - Math.PI / 2; // Start from top
@@ -616,11 +633,13 @@ class SparkOnboardingStore {
 					
 					// Add link from type to object
 					this.addGraphLink({
-						source: typeNodeId,
+						source: typeNode.id,
 						target: objectId,
 						opacity: 0.4
 					});
 				});
+			} else {
+				console.warn('[SparkOnboarding Store] Type node not found for type name:', data.typeName);
 			}
 		});
 

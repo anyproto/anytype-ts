@@ -15,96 +15,96 @@ interface Message {
 // Example goals - diverse use cases across multiple spheres
 const EXAMPLE_GOALS = [
 	// Creative & Writing
-	"I'm writing a novel and need to track characters and plot",
-	"I want to build a world for my fantasy story with maps and lore",
-	"I'm creating a comic book and need to organize scripts and artwork",
-	"I'm writing poetry and want to organize themes and inspirations",
-	"I need to manage my blog content calendar and ideas",
+	'I\'m writing a novel and need to track characters and plot',
+	'I want to build a world for my fantasy story with maps and lore',
+	'I\'m creating a comic book and need to organize scripts and artwork',
+	'I\'m writing poetry and want to organize themes and inspirations',
+	'I need to manage my blog content calendar and ideas',
 	
 	// Business & Entrepreneurship
-	"I'm starting a business and need to plan everything",
-	"I'm planning a product launch",
-	"I need to track my freelance clients and projects",
-	"I want to organize my startup's investor pitch deck",
-	"I'm building a SaaS and need to track features and roadmap",
-	"I need to manage my e-commerce inventory and suppliers",
+	'I\'m starting a business and need to plan everything',
+	'I\'m planning a product launch',
+	'I need to track my freelance clients and projects',
+	'I want to organize my startup\'s investor pitch deck',
+	'I\'m building a SaaS and need to track features and roadmap',
+	'I need to manage my e-commerce inventory and suppliers',
 	
 	// Learning & Education
-	"I want to learn programming and track my progress",
-	"I'm studying for medical school and need to organize notes",
-	"I'm learning a new language and want to track vocabulary",
-	"I need to prepare for professional certifications",
-	"I'm homeschooling my kids and need to plan curriculum",
-	"I want to build a personal learning path for data science",
+	'I want to learn programming and track my progress',
+	'I\'m studying for medical school and need to organize notes',
+	'I\'m learning a new language and want to track vocabulary',
+	'I need to prepare for professional certifications',
+	'I\'m homeschooling my kids and need to plan curriculum',
+	'I want to build a personal learning path for data science',
 	
 	// Research & Academia
-	"I'm researching a topic and collecting insights",
-	"I'm writing my PhD thesis and need to organize literature",
-	"I need to manage my scientific experiments and data",
-	"I'm conducting user research and need to synthesize findings",
-	"I want to track market research for my industry analysis",
+	'I\'m researching a topic and collecting insights',
+	'I\'m writing my PhD thesis and need to organize literature',
+	'I need to manage my scientific experiments and data',
+	'I\'m conducting user research and need to synthesize findings',
+	'I want to track market research for my industry analysis',
 	
 	// Personal Finance & Investments
-	"I want to track my investment portfolio and strategies",
-	"I need to plan my path to financial independence",
-	"I'm managing rental properties and need to track everything",
-	"I want to organize my tax documents and deductions",
-	"I need to plan and track my budget and savings goals",
-	"I'm analyzing cryptocurrency projects and investments",
+	'I want to track my investment portfolio and strategies',
+	'I need to plan my path to financial independence',
+	'I\'m managing rental properties and need to track everything',
+	'I want to organize my tax documents and deductions',
+	'I need to plan and track my budget and savings goals',
+	'I\'m analyzing cryptocurrency projects and investments',
 	
 	// Health & Wellness
-	"I need a creative space for my art projects",
-	"I want to track my fitness journey and workout plans",
-	"I'm managing a chronic condition and tracking symptoms",
-	"I need to plan my meals and track nutrition",
-	"I want to document my mental health journey and patterns",
-	"I'm training for a marathon and need to track progress",
+	'I need a creative space for my art projects',
+	'I want to track my fitness journey and workout plans',
+	'I\'m managing a chronic condition and tracking symptoms',
+	'I need to plan my meals and track nutrition',
+	'I want to document my mental health journey and patterns',
+	'I\'m training for a marathon and need to track progress',
 	
 	// Hobbies & Collections
-	"I want to organize my board game collection and sessions",
-	"I'm building model trains and need to track parts and layouts",
-	"I collect vintage watches and want to catalog them",
-	"I'm into photography and need to organize shoots and locations",
-	"I want to track my reading list and book notes",
-	"I'm a wine enthusiast tracking tastings and vintages",
+	'I want to organize my board game collection and sessions',
+	'I\'m building model trains and need to track parts and layouts',
+	'I collect vintage watches and want to catalog them',
+	'I\'m into photography and need to organize shoots and locations',
+	'I want to track my reading list and book notes',
+	'I\'m a wine enthusiast tracking tastings and vintages',
 	
 	// Home & Family
-	"I want to document my family history",
-	"I'm planning a wedding and need to track everything",
-	"I need to organize home renovation projects and contractors",
-	"I want to create a digital recipe book with family recipes",
-	"I'm planning our family vacation itineraries",
-	"I need to manage household maintenance schedules",
+	'I want to document my family history',
+	'I\'m planning a wedding and need to track everything',
+	'I need to organize home renovation projects and contractors',
+	'I want to create a digital recipe book with family recipes',
+	'I\'m planning our family vacation itineraries',
+	'I need to manage household maintenance schedules',
 	
 	// Professional & Career
-	"I need to solve workflow inefficiencies at work",
-	"I want to track my career goals and achievements",
-	"I'm preparing for job interviews and need to organize materials",
-	"I need to manage my professional network and contacts",
-	"I want to document processes for my team",
-	"I'm building my personal brand and content strategy",
+	'I need to solve workflow inefficiencies at work',
+	'I want to track my career goals and achievements',
+	'I\'m preparing for job interviews and need to organize materials',
+	'I need to manage my professional network and contacts',
+	'I want to document processes for my team',
+	'I\'m building my personal brand and content strategy',
 	
 	// Technology & Development
-	"I want to build a second brain for my ideas",
-	"I'm developing an app and need to track bugs and features",
-	"I need to organize my code snippets and solutions",
-	"I want to document my homelab setup and configurations",
-	"I'm learning DevOps and tracking my infrastructure projects",
-	"I need to manage multiple open source contributions",
+	'I want to build a second brain for my ideas',
+	'I\'m developing an app and need to track bugs and features',
+	'I need to organize my code snippets and solutions',
+	'I want to document my homelab setup and configurations',
+	'I\'m learning DevOps and tracking my infrastructure projects',
+	'I need to manage multiple open source contributions',
 	
 	// Community & Social Impact
-	"I'm organizing a community garden project",
-	"I want to track volunteer work and social impact",
-	"I'm planning a charity fundraiser event",
-	"I need to manage a non-profit organization's projects",
-	"I want to document local history and stories",
+	'I\'m organizing a community garden project',
+	'I want to track volunteer work and social impact',
+	'I\'m planning a charity fundraiser event',
+	'I need to manage a non-profit organization\'s projects',
+	'I want to document local history and stories',
 	
 	// Gaming & Entertainment
-	"I'm designing a tabletop RPG campaign world",
-	"I want to track my video game backlog and reviews",
-	"I'm organizing an esports team and strategies",
-	"I need to plan my streaming content and schedule",
-	"I want to create a universe for my game development project"
+	'I\'m designing a tabletop RPG campaign world',
+	'I want to track my video game backlog and reviews',
+	'I\'m organizing an esports team and strategies',
+	'I need to plan my streaming content and schedule',
+	'I want to create a universe for my game development project'
 ];
 
 const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
@@ -461,13 +461,13 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				const lastMessage = newMessages[newMessages.length - 1];
 				if (lastMessage && lastMessage.type === 'ai') {
 					lastMessage.content = (
-						<div className="completionMessage">
-							<Icon className="success large" />
-							<div className="title">All set! Your space is ready to explore.</div>
-							<div className="spaceInfo">
-								<div className="spaceName">{sparkOnboarding.manifest.spaceName}</div>
-								<div className="stat success">✓ {sparkOnboarding.manifest.typesCount} types created</div>
-								<div className="stat success">✓ {sparkOnboarding.manifest.objectsCount} objects added</div>
+						<div className='completionMessage'>
+							<Icon className='success large' />
+							<div className='title'>All set! Your space is ready to explore.</div>
+							<div className='spaceInfo'>
+								<div className='spaceName'>{sparkOnboarding.manifest.spaceName}</div>
+								<div className='stat success'>✓ {sparkOnboarding.manifest.typesCount} types created</div>
+								<div className='stat success'>✓ {sparkOnboarding.manifest.objectsCount} objects added</div>
 							</div>
 						</div>
 					);
@@ -485,7 +485,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				if (lastMessage && lastMessage.type === 'ai') {
 					lastMessage.content = (
 						<div>
-							<Error text={error || "Something went wrong. Please try again."} />
+							<Error text={error || 'Something went wrong. Please try again.'} />
 						</div>
 					);
 				}
@@ -529,8 +529,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	// Render loading state
 	if (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error) {
 		return (
-			<div ref={nodeRef} className="wrap">
-				<Loader id="loader" />
+			<div ref={nodeRef} className='wrap'>
+				<Loader id='loader' />
 			</div>
 		);
 	}
@@ -538,28 +538,28 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	// Render error state
 	if (sparkOnboarding.error) {
 		return (
-			<div ref={nodeRef} className="wrap">
+			<div ref={nodeRef} className='wrap'>
 				<Error text={sparkOnboarding.error} />
-				<div className="buttons">
-					<Button text="Close" onClick={() => onClose(true)} />
+				<div className='buttons'>
+					<Button text='Close' onClick={() => onClose(true)} />
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div ref={nodeRef} className="mainWrapper">
-				<div className="chatSection">
+		<div ref={nodeRef} className='mainWrapper'>
+				<div className='chatSection'>
 					{/* Header */}
-					<div className="header">
-						<div className="headerContent">
-							<div className="title">
-								Create Your Perfect Space <span className="sparkle">✦</span> Anytype AI
+					<div className='header'>
+						<div className='headerContent'>
+							<div className='title'>
+								Create Your Perfect Space <span className='sparkle'>✦</span> Anytype AI
 							</div>
-							<div className="subtitle">
-								{sparkOnboarding.spaceName || "Share your ideas, projects, or problems to solve"}
+							<div className='subtitle'>
+								{sparkOnboarding.spaceName || 'Share your ideas, projects, or problems to solve'}
 							</div>
-							<div className="progressPills">
+							<div className='progressPills'>
 								{[0, 1, 2, 3, 4, 5].map(i => {
 									const isActive = i === sparkOnboarding.stepIndex;
 									const isCompleted = i < sparkOnboarding.stepIndex;
@@ -572,20 +572,20 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 								})}
 							</div>
 						</div>
-						<button className="closeButton" onClick={() => onClose()} title="Exit">
+						<button className='closeButton' onClick={() => onClose()} title='Exit'>
 							Exit
 						</button>
 					</div>
 
 					{/* Chat Container */}
-					<div className="chatContainer">
-						<div className="messagesWrapper" onScroll={handleScroll}>
+					<div className='chatContainer'>
+						<div className='messagesWrapper' onScroll={handleScroll}>
 						{messages.map(message => (
 							<div key={message.id} className={`message ${message.type}`}>
 								{message.type === 'typing' ? (
 									message.content
 								) : (
-									<div className="bubble">
+									<div className='bubble'>
 										{message.content}
 									</div>
 								)}
@@ -593,8 +593,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						))}
 						{/* Status appears as a message bubble when active */}
 						{showStatus && currentStatus && (
-							<div className="message ai">
-								<div className="bubble">
+							<div className='message ai'>
+								<div className='bubble'>
 									<StatusMessage text={currentStatus} isActive={true} />
 								</div>
 							</div>
@@ -604,7 +604,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 					{/* Input Area */}
 					{showCreateSpace && (
-						<div className="inputArea ctaArea">
+						<div className='inputArea ctaArea'>
 							<button
 								className={`ctaButton ${isCreatingSpace ? 'loading' : ''}`}
 								onClick={() => {
@@ -615,7 +615,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							>
 								{isCreatingSpace ? (
 									<>
-										<span className="loader"></span>
+										<span className='loader'></span>
 										<span>Loading...</span>
 									</>
 								) : (
@@ -625,14 +625,14 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						</div>
 					)}
 					{showInput && (
-						<div className="inputArea">
+						<div className='inputArea'>
 							{/* Smart Suggestions */}
 							{showExamples && sparkOnboarding.step === I.OnboardingStep.Goal && filteredExamples.length > 0 && (
-								<div className="smartSuggestions">
+								<div className='smartSuggestions'>
 									{filteredExamples.map((example, i) => (
 										<button 
 											key={i}
-											className="suggestionChip"
+											className='suggestionChip'
 											onClick={() => handleExampleClick(example)}
 										>
 											{example}
@@ -641,10 +641,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 								</div>
 							)}
 							
-							<div className="inputWrapper">
+							<div className='inputWrapper'>
 								<textarea
 									ref={inputRef}
-									className="textarea"
+									className='textarea'
 									value={inputValue}
 									onChange={(e) => setInputValue(e.target.value)}
 									onKeyDown={(e) => {
@@ -655,8 +655,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 									}}
 									placeholder={
 										sparkOnboarding.step === I.OnboardingStep.Questions 
-											? "Type your answer..."
-											: "Describe your project, passion, or problem..."
+											? 'Type your answer...'
+											: 'Describe your project, passion, or problem...'
 									}
 									rows={1}
 								/>
@@ -671,9 +671,9 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						</div>
 					)}
 					{showGoToSpace && (
-						<div className="inputArea ctaArea">
+						<div className='inputArea ctaArea'>
 							<button
-								className="ctaButton"
+								className='ctaButton'
 								onClick={handleGoToSpace}
 							>
 								Open Space →
@@ -688,10 +688,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 // Typing Indicator Component
 const TypingIndicator = () => (
-	<div className="typingDots">
-		<span className="dot"></span>
-		<span className="dot"></span>
-		<span className="dot"></span>
+	<div className='typingDots'>
+		<span className='dot'></span>
+		<span className='dot'></span>
+		<span className='dot'></span>
 	</div>
 );
 
@@ -702,10 +702,10 @@ const TypeCard = ({ type, isSelected, onToggle }) => {
 
 	return (
 		<div className={cn.join(' ')} onClick={onToggle}>
-			<div className="header">
+			<div className='header'>
 				{type.icon && <Icon className={type.icon} />}
-				<div className="name">{type.name}</div>
-				{isSelected && <Icon className="check" />}
+				<div className='name'>{type.name}</div>
+				{isSelected && <Icon className='check' />}
 			</div>
 		</div>
 	);
@@ -719,7 +719,7 @@ const CompactTypeBlock = ({ type, isSelected, onToggle }) => {
 	return (
 		<div className={cn.join(' ')} onClick={onToggle}>
 			{type.icon && <Icon className={type.icon} />}
-			<span className="name">{type.name}</span>
+			<span className='name'>{type.name}</span>
 		</div>
 	);
 };
