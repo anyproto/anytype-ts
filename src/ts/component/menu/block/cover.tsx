@@ -274,7 +274,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -384,7 +384,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		keyboard.disableCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
 			this.setState({ isLoading: false });
 			keyboard.disableCommonDrop(false);
 			
@@ -414,7 +414,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', (message: any) => {
 				if (!message.error.code) {
 					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};
