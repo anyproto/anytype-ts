@@ -515,7 +515,7 @@ class Mark {
 	 */
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
 		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
-		const reg2 = /^[`\*_\[~]+/;
+		const reg2 = /^(`{1}|\*+|_+|\[|~{2})/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
