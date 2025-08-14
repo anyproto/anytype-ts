@@ -305,6 +305,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		});
 
 		const onSelect = (target: any, isNew: boolean) => {
+			if (!target) {
+				return;
+			};
+
 			const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
 			const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
 			const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
