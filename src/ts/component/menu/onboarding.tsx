@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Label, EmailCollection } from 'Component';
+import { Button, Icon, Label } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -29,7 +29,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	};
 
 	render () {
-		const { param, position, close } = this.props;
+		const { param } = this.props;
 		const { data, noClose } = param;
 		const { key, current } = data;
 		const section = this.getSection();
@@ -42,7 +42,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 
 		const l = items.length;
 		const withSteps = l > 1;
-		const withEmailForm = key == 'emailCollection';
 
 		let buttons = [];
 		let category = '';
@@ -93,9 +92,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 						autoPlay={true} 
 						loop={true} 
 					/>
-				) : ''}
-				{withEmailForm ? (
-					<EmailCollection onStepChange={position} onComplete={() => close()} />
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>

@@ -2163,22 +2163,6 @@
 	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
 
-	"emailCollectionStep0Title": "Want to stay in touch?",
-	"emailCollectionStep0Description": "Enter your email to receive tips and updates. We do not link your account with your email, ever. Cancel anytime.",
-	"emailCollectionStep1Title": "Just a moment",
-	"emailCollectionStep1Description": "Enter the code we've sent you to your email",
-	"emailCollectionStep2Title": "You're Subscribed!",
-
-	"emailCollectionStep2News": "You are now set to receive the latest updates. Enjoy exploring!",
-	"emailCollectionStep2Tips": "You are now set to receive new insights. Enjoy exploring!",
-	"emailCollectionStep2NewsAndTips": "You are now set to receive the latest updates and perks. Enjoy exploring!",
-
-	"emailCollectionCheckboxTipsLabel": "Insider tips & tutorials on using Anytype",
-	"emailCollectionCheckboxNewsLabel": "Product updates & company news",
-	"emailCollectionEnterEmail": "Enter email...",
-	"emailCollectionCodeSent": "Code sent!",
-	"emailCollectionGreat": "Great!",
-
 	"onboardingObjectCreationFinish": "Creating Objects",
 	"onboardingObjectCreationFinish11": "<b>For the Object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.",
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",

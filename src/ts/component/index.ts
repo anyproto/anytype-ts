@@ -62,7 +62,6 @@ import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
 import TabSwitch from './form/tabSwitch';
-import EmailCollection from './form/emailCollection';
 import HeadSimple from './page/elements/head/simple';
 import EditorControls from './page/elements/head/controls';
 
@@ -201,7 +200,6 @@ export {
 	ShareBanner,
 	FooterAuthDisclaimer,
 
-	EmailCollection,
 	HeadSimple,
 	EditorControls,
 
