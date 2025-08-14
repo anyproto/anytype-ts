@@ -3,11 +3,7 @@ import { Menu } from 'Component';
 import { observer } from 'mobx-react';
 import { I, S } from 'Lib';
 
-interface Props {
-	history: any;
-};
-
-const ListMenu: FC<Props> = observer(() => {
+const ListMenu: FC = observer(() => {
 	const { list } = S.Menu;
 
 	return (

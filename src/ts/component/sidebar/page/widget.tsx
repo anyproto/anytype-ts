@@ -9,21 +9,20 @@ type State = {
 	previewId: string;
 };
 
-const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
+const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<I.SidebarPageComponent, State> {
 		
 	state: State = {
 		isEditing: false,
 		previewId: '',
 	};
 
-	node = null;
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
 	timeout = 0;
 
-	constructor (props) {
+	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
@@ -233,10 +232,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 
 		return (
-			<div 
-				id="containerWidget"
-				ref={node => this.node = node}
-			>
+			<>
 				<div id="head" className="head">
 					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					<div className="name">{space.name}</div>
@@ -252,7 +248,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 
 				{bottom}
-			</div>
+			</>
 		);
 	};
 
@@ -287,7 +283,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const space = U.Space.getSpaceview();
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 		const nh = node.outerHeight();
 		const button = node.find('#widget-list-add');
 		const { top } = button.offset();
@@ -462,7 +458,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 		const obj = node.find(`#widget-${blockId}`);
 		const clone = $('<div />').addClass('widget isClone').css({ 
 			zIndex: 10000, 
@@ -562,7 +558,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 		const top = node.find('#body').scrollTop();
 
 		node.find('.dropTarget.firstTarget').toggleClass('isScrolled', top > 0);
@@ -577,7 +573,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	clear () {
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 
 		node.find('.widget.isOver').removeClass('isOver top bottom');
 		node.find('.widget.isClone').remove();

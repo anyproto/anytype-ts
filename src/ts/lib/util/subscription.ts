@@ -640,7 +640,7 @@ class UtilSubscription {
 	 * @returns {string[]} The list of relation keys.
 	 */
 	spaceRelationKeys () {
-		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant);
+		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant).concat('tmpOrder');
 	};
 
 	/**

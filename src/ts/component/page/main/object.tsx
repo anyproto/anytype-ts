@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, C, U, S, Action, analytics } from 'Lib';
+import { I, U, Action, analytics, keyboard } from 'Lib';
 
 const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	const { match } = props;
-
 	useEffect(() => {
+		const { isPopup } = props;
+		const match = keyboard.getMatch(isPopup);
 		const { id, spaceId, cid, key, messageOrder } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 		const route = match.params.route || analytics.route.app;

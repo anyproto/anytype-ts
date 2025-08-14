@@ -8,7 +8,9 @@ interface PageMainInviteRefProps {
 
 const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
 
-	const { isPopup, location } = props;
+	const { isPopup } = props;
+	const { history } = U.Router;
+	const { location } = history;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const cidRef = useRef('');

@@ -1,4 +1,3 @@
-import { RouteComponentProps } from 'react-router';
 import { I } from 'Lib';
 
 export enum Platform {
@@ -134,7 +133,7 @@ export enum HomePredefinedId {
 	Existing	 = 'existing',
 };
 
-export interface HeaderComponent extends RouteComponentProps<any> {
+export interface HeaderComponent {
 	rootId?: string;
 	isPopup?: boolean;
 	tabs?: any[];
@@ -151,10 +150,9 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 	onBanner?: (e: any) => void;
 	onBannerClose?: (e: any) => void;
-	onRelation?: (data?: any) => void;
 };
 
-export interface PageComponent extends RouteComponentProps<any> {
+export interface PageComponent {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
@@ -162,7 +160,7 @@ export interface PageComponent extends RouteComponentProps<any> {
 	storageSet?(data: any): void;
 };
 
-export interface PageSettingsComponent extends PageComponent, RouteComponentProps<any> {
+export interface PageSettingsComponent extends PageComponent {
 	onPage: (id: string, data?: any) => void;
 	setConfirmPin: (v: () => void) => void;
 	onConfirmPin: () => void;
@@ -207,6 +205,7 @@ export interface SidebarPageComponent {
 	noPreview?: boolean;
 	previous?: any;
 	blockId?: string;
+	getId?(): string;
 };
 
 export interface SidebarSectionComponent extends SidebarPageComponent {

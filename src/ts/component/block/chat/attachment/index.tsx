@@ -10,7 +10,6 @@ interface Props {
 	isDownload?: boolean;
 	subId?: string;
 	isPopup?: boolean;
-	scrollToBottom?: () => void;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
 	updateAttachments?: () => void;
@@ -22,7 +21,7 @@ interface RefProps {
 
 const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, scrollToBottom, onPreview, updateAttachments, onRemove } = props;
+	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
 	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -92,7 +91,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 						<img 
 							src={S.Common.imageUrl(picture, I.ImageSize.Medium)} 
 							className="img" 
-							onLoad={scrollToBottom}
 						/>
 					</div>
 				) : ''}
@@ -101,7 +99,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const renderImage = (withBlur?: boolean) => {
-		const { object, scrollToBottom } = props;
+		const { object } = props;
 		const node = $(nodeRef.current);
 
 		if (!src.current) {
@@ -120,6 +118,18 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const blur = withBlur ? <div id="blur" className="blur" style={{ backgroundImage: `url(${src.current})` }} /> : null;
+		const ratio = object.widthInPixels / object.heightInPixels;
+		
+		let width = 0;
+		let height = 0;
+
+		if (object.widthInPixels >= object.heightInPixels) {
+			width = Math.min(object.widthInPixels, 360);
+			height = width / ratio;
+		} else {
+			height = Math.min(object.heightInPixels, 360);
+			width = height * ratio;
+		};
 
 		return (
 			<div className="imgWrapper" onClick={onPreviewHandler}>
@@ -128,9 +138,8 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id="image"
 					className="image"
 					src={src.current}
-					onLoad={scrollToBottom}
 					onDragStart={e => e.preventDefault()}
-					style={{ aspectRatio: `${object.widthInPixels} / ${object.heightInPixels}` }}
+					style={{ aspectRatio: `${width}/${height}`, width, height }}
 				/>
 
 				<Icon onClick={onSyncStatusClick} className="syncStatus" />

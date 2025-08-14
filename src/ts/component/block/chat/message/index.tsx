@@ -345,7 +345,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 				</div>
 
 				<div className="side right">
-
 					<Reply {...props} id={replyToMessageId} />
 
 					{authorNode}
@@ -374,7 +373,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 												key={i}
 												object={item}
 												subId={subId}
-												scrollToBottom={scrollToBottom}
 												onRemove={() => onAttachmentRemove(item.id)}
 												onPreview={(preview) => onPreview(preview)}
 												showAsFile={!attachmentsLayout}

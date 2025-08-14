@@ -157,10 +157,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
-	const onRelation = (data) => {
-		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { ...data, rootId });
-	};
-
 	const getContainer = () => {
 		return (isPopup ? '.popup' : '') + ' .header';
 	};
@@ -221,7 +217,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					menuOpen={menuOpen}
 					renderLeftIcons={renderLeftIcons}
 					renderTabs={renderTabs}
-					onRelation={onRelation}
 				/>
 			) : ''}
 		</div>

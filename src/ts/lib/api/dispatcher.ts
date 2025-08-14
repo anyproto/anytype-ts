@@ -982,7 +982,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId == J.Constant.subId.chatSpace) {
-							subId = S.Chat.getSubId(spaceId, rootId);
+							subId = S.Chat.getSpaceSubId(spaceId);
 						};
 
 						const list = S.Chat.getList(subId);
@@ -1029,7 +1029,7 @@ class Dispatcher {
 				case 'ChatStateUpdate': {
 					mapped.subIds.forEach(subId => {
 						if (subId == J.Constant.subId.chatSpace) {
-							subId = S.Chat.getSubId(spaceId, rootId);
+							subId = S.Chat.getSpaceSubId(spaceId);
 						};
 
 						S.Chat.setState(subId, mapped.state);

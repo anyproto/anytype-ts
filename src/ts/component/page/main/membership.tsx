@@ -13,7 +13,8 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const tier = U.Data.getMembershipTier(membership.tier);
 
 	const init = () => {
-		const { location } = props;
+		const { history } = U.Router;
+		const { location } = history;
 		const data = U.Common.searchParam(location.search);
 
 		let newTier = data.tier;

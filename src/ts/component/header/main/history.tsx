@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Button } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics, sidebar } from 'Lib';
 
 interface HeaderMainHistoryRefProps {
 	setVersion: (version: I.HistoryVersion) => void;
@@ -9,18 +9,20 @@ interface HeaderMainHistoryRefProps {
 
 const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, match, isPopup, renderLeftIcons, onRelation, menuOpen } = props;
+	const { rootId, isPopup, renderLeftIcons, menuOpen } = props;
 	const { dateFormat, timeFormat } = S.Common;
 	const [ version, setVersion ] = useState<I.HistoryVersion | null>(null);
 	const [ dummyState, setDummyState ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, []);
 	const root = S.Block.getLeaf(rootId, rootId);
+	const isLocked = root ? root.isLocked() : false;
 	const isDeleted = object._empty_ || object.isDeleted;
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isTypeOrRelation && !isDeleted;
+	const readonly = object.isArchived || isLocked;
 
 	let date = [];
 
@@ -39,10 +41,13 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				match,
 				isPopup,
 			}
 		});
+	};
+
+	const onRelation = () => {
+		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
 	};
 
 	const onShare = () => {
@@ -85,7 +90,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 						id="button-header-relation" 
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className="relation withBackground"
-						onClick={() => onRelation({ readonly: object.isArchived || root?.isLocked() })} 
+						onClick={onRelation} 
 					/> 
 				) : ''}
 

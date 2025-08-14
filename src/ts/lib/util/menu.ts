@@ -884,7 +884,6 @@ class UtilMenu {
 		};
 
 		const items = U.Common.objectCopy(U.Space.getList()).
-			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
 			map(it => {
 				it.counter = 0;
 				it.lastMessageDate = 0;
@@ -900,9 +899,6 @@ class UtilMenu {
 			});
 
 		items.sort((c1, c2) => {
-			if (c1.isButton && !c2.isButton) return 1;
-			if (!c1.isButton && c2.isButton) return -1;
-
 			if (c1.isPinned && !c2.isPinned) return -1;
 			if (!c1.isPinned && c2.isPinned) return 1;
 
