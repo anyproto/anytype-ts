@@ -268,7 +268,7 @@
             .iconWrapper.error::before { background: #581f0c; }
         }
 
-		.incentiveBanner, .title, .button.blank { color: var(--color-text-inversion); }
+		.incentiveBanner { background: linear-gradient(180deg, #74321e 30%, #9c492f 100%); }
 
 		.items {
             .sides {

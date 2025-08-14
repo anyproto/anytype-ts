@@ -142,8 +142,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
 						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
 						<div className="buttons">
-							<Button onClick={() => this.onIncentiveButtonClick('storage')} className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="blank" />
-							{isOwner ? <Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} /> : ''}
+							<Button className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" onClick={() => this.onIncentiveButtonClick('storage')} />
+							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
 						</div>
 					</div>
 				) : ''}
