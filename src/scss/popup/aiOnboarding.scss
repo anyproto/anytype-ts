@@ -47,6 +47,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 	.statusText {
 		display: inline-block;
 		transition: all 0.3s ease;
+		font-weight: 600; // Make status text bold
 	}
 }
 
@@ -332,7 +333,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				height: 10px; // Small spacer
 			}
 
-			// Custom scrollbar - hidden by default, shows on hover/scroll
+			// Custom scrollbar - hidden by default, only shows when scrolling
 			&::-webkit-scrollbar {
 				width: 6px;
 				transition: opacity 0.3s ease;
@@ -348,8 +349,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				transition: background 0.3s ease;
 			}
 			
-			// Show scrollbar on hover or when scrolling
-			&:hover,
+			// Show scrollbar only when actively scrolling
 			&.isScrolling {
 				&::-webkit-scrollbar-thumb {
 					background: rgba($lavender-cool, 0.2);

@@ -1089,7 +1089,7 @@
 	"popupSpaceCreateLabel": "Encrypted & local-first",
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",
-	"popupSpaceCreateAIOnboarding": "AI Onboarding",
+	"popupSpaceCreateAIOnboarding": "✦ Create with AI",
 	"popupConfirmCloseAIOnboardingTitle": "Exit AI Onboarding?",
 	"popupConfirmCloseAIOnboardingText": "Are you sure you want to exit? Your progress will be lost.",
 
