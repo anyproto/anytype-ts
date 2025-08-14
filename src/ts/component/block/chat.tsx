@@ -470,9 +470,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			item = $(item);
 
 			const y = item.offset().top - st;
-
-			console.log(item.find('.label').text(), y, hh + 8);
-
 			if (y <= hh + 8) {
 				last = item;
 			};

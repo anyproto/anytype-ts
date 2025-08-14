@@ -38,9 +38,13 @@
 			.button { display: block; }
 		}
 
-		.incentiveBanner { display: flex; gap: 0px 8px; align-items: center; padding: 16px; background: var(--color-system-selection); border-radius: 8px; margin-bottom: 12px; }
+		.incentiveBanner { 
+			display: flex; gap: 0px 8px; align-items: flex-start; padding: 16px; background: var(--color-system-selection); border-radius: 8px; margin-bottom: 4px; 
+		}
 		.incentiveBanner {
-			.button { flex-shrink: 0; }
+			b { font-weight: 600; }
+			.label { line-height: 20px; }
+			.button { flex-shrink: 0; @include text-small; }
 		}
 
 		.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; justify-content: space-evenly; height: 36px; }

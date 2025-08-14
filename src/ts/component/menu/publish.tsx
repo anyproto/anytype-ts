@@ -227,6 +227,11 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			) : ''}
 
+<div className="incentiveBanner">
+					<Label text={translate('menuPublishBecomeMemberText')} />
+					<Button className="c28" color="accent" text={translate('commonUpgrade')} onClick={onUpgrade} />
+				</div>
+
 			{!tier?.namesCount ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
