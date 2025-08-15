@@ -300,11 +300,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	componentDidUpdate () {
 		const { isPopup } = this.props;
 		const match = keyboard.getMatch(isPopup);
-		const ref = match.params.ref;
+		const params = U.Common.objectCopy(match.params);
+		const ref = params.ref;
 
 		let viewId = S.Record.getMeta(this.getSubId(), '').viewId;
-		if ((ref == 'widget') && match.params.viewId) {
-			viewId = match.params.viewId;
+		if ((ref == 'widget') && params.viewId) {
+			delete(params[0]);
+			delete(params.ref);
+
+			viewId = params.viewId;
+			U.Router.go(U.Router.build(params), {});
 		};
 
 		if (viewId && (viewId != this.viewId)) {
