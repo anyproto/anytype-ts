@@ -82,6 +82,7 @@ class UtilRouter {
 				route = route.concat([ it.key, it.value ]);
 			});
 		};
+
 		return route.join('/');
 	};
 

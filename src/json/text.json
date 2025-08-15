@@ -156,7 +156,6 @@
 	"commonUpdate": "Update",
 	"commonUpdateNow": "Update Now",
 	"commonOwner": "Owner",
-	"commonUpdateProgress": "Downloading update... %s/%s",
 	"commonVersionHistory": "Version History",
 	"commonActions": "Actions",
 	"commonAddRelation": "Add Property",
@@ -391,7 +390,7 @@
 	"progressMigration": "Recovering vault...",
 	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdate": "Update...",
-	"progressUpdateDownloading": "Downloading",
+	"progressUpdateDownloading": "Downloading update",
 
 	"spellcheckAdd": "Add to dictionary",
 
@@ -457,31 +456,6 @@
 	"onboardingExperienceUsecaseStartFromScratchTitle": "Start Without A Template",
 	"onboardingExperienceUsecaseStartFromScratchText": "Structure your space yourself. If you change your mind, you can always add an experience from our gallery later on.",
 	"onboardingExperienceUsecaseButtonStartFromScratch": "Start From Scratch",
-
-	"onboardingExperienceItemsPrivateTitle": "Just Me",
-	"onboardingExperienceItemsPrivateText": "A private place for your notes, files, and bookmarks",
-	"onboardingExperienceItemsSharedTitle": "With Others",
-	"onboardingExperienceItemsSharedText": "Your household, team, class, friend group, etc.",
-	"onboardingExperienceItemsPersonalTitle": "Personal",
-	"onboardingExperienceItemsPersonalPrivateText": "Diary, creative writing, recipe book, household management",
-	"onboardingExperienceItemsPersonalSharedText": "Household management, shared recipe book ",
-	"onboardingExperienceItemsEducationTitle": "Education",
-	"onboardingExperienceItemsEducationText": "Course notes, assignment tracking, exam calendar",
-	"onboardingExperienceItemsWorkTitle": "Work",
-	"onboardingExperienceItemsWorkText": "Project management, personal meeting notes, freelance work",
-	"onboardingExperienceItemsCommunityTitle": "Community",
-	"onboardingExperienceItemsCommunityText": "Neighborhood groups, fan communities, gardening tips",
-
-	"usecase2Title": "Personal projects",
-	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
-	"usecase3Title": "Bookshelf",
-	"usecase3Label": "Create your own base of knowledge with books, movies, recipes, and more",
-	"usecase4Title": "Diary and Quick notes",
-	"usecase4Label": "Keep your daily notes and self-reflections secure and private",
-	"usecase5Title": "Strategic Writing",
-	"usecase5Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
-	"usecase6Title": "Empty",
-	"usecase6Label": "Just a blank canvas",
 
 	"usecaseCategoryDashboard": "Dashboard",
 	"usecaseCategoryWork": "Work",
@@ -802,6 +776,7 @@
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
 	"popupSettingsAccountAndKeyTitle": "Vault & Key",
+	"popupSettingsDataManagementTitle": "Data Management",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -829,7 +804,7 @@
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
-	"popupSettingsPhraseTitle": "Key",
+	"popupSettingsPhraseTitle": "Login Key",
 	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
 
 	"popupSettingsApiTitle": "API Keys",
@@ -866,8 +841,7 @@
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
-	"popupSettingsDataManagementTitle": "Data management",
-	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
+	"popupSettingsLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
 	"popupSettingsDataManagementLocalStorageTextLocalOnly": "In order to save space on this device, you can remove all your files. Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
 	"popupSettingsDataManagementLocalStorageUsage": "%s used",
@@ -1871,7 +1845,7 @@
 	"menuPublishButtonOpen": "Open Object",
 	"menuPublishButtonCopy": "Copy Web Link",
 	"menuPublishLabelOffline": "No internet connection",
-	"menuPublishBecomeMemberText": "Become a member to get a domain and increase publishing limits",
+	"menuPublishBecomeMemberText": "<b>Get a custom domain</b> and higher  limits by becoming a member",
 
 	"previewEdit": "Edit Link",
 
@@ -2174,22 +2148,6 @@
 	"onboardingObjectCreationStart": "Creating Objects",
 	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
 	"onboardingObjectCreationStart2Button": "I got it!",
-
-	"emailCollectionStep0Title": "Want to stay in touch?",
-	"emailCollectionStep0Description": "Enter your email to receive tips and updates. We do not link your account with your email, ever. Cancel anytime.",
-	"emailCollectionStep1Title": "Just a moment",
-	"emailCollectionStep1Description": "Enter the code we've sent you to your email",
-	"emailCollectionStep2Title": "You're Subscribed!",
-
-	"emailCollectionStep2News": "You are now set to receive the latest updates. Enjoy exploring!",
-	"emailCollectionStep2Tips": "You are now set to receive new insights. Enjoy exploring!",
-	"emailCollectionStep2NewsAndTips": "You are now set to receive the latest updates and perks. Enjoy exploring!",
-
-	"emailCollectionCheckboxTipsLabel": "Insider tips & tutorials on using Anytype",
-	"emailCollectionCheckboxNewsLabel": "Product updates & company news",
-	"emailCollectionEnterEmail": "Enter email...",
-	"emailCollectionCodeSent": "Code sent!",
-	"emailCollectionGreat": "Great!",
 
 	"onboardingObjectCreationFinish": "Creating Objects",
 	"onboardingObjectCreationFinish11": "<b>For the Object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.",
