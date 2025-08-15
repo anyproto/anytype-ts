@@ -15,11 +15,10 @@ const UpsellStorage: FC<Props> = ({
 	const cn = [
 		'upsellBanner',
 		'upsellStorage',
-		className ? className : ''
+		className,
 	];
-	const { membershipTiers } = S.Common;
+	const { membershipTiers, spaceStorage } = S.Common;
 	const { membership } = S.Auth;
-	const { spaceStorage } = S.Common;
 	const { bytesLimit } = spaceStorage;
 	const bytesUsed = U.Common.calculateStorageUsage();
 	const usagePercent = bytesUsed / bytesLimit;
