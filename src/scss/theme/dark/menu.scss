@@ -307,6 +307,11 @@
 	.menu.menuPublish {
 		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
 
+		.incentiveBanner { background-color: rgba(55, 122, 255, 0.15); }
+		.incentiveBanner {
+			.button { color: var(--color-text-primary); }
+		}
+
 		.outer {
 			.icon.link { background-image: url('#{$themePath}/icon/widget/button/link.svg'); }
 			.icon.space { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
