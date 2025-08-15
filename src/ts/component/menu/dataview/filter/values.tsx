@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
-import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
+import { Select, Tag, Icon, IconObject, Input, MenuItemVertical, ObjectName } from 'Component';
 
 const TIMEOUT = 1000;
 
@@ -135,6 +135,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				Item = (element: any) => {	
 					const type = S.Record.getTypeById(element.type);
 
+					let icon = null;
+					if (element.icon) {
+						icon = <Icon className={element.icon} />;
+					} else {
+						icon = <IconObject object={element} />;
+					};
+
 					return (
 						<div 
 							id={`item-object-${element.id}`} 
@@ -142,8 +149,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							onMouseEnter={() => setHover({ id: `object-${element.id}` })}
 						>
 							<div className="clickable" onClick={e => this.onObject(e, item)}>
-								<IconObject object={element} />
-								<div className="name">{element.name}</div>
+								{icon}
+								<ObjectName object={element} />
 							</div>
 							<div className="caption">
 								{type?.name}
@@ -155,7 +162,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => S.Detail.get(subId, it, []));
+				list = Relation.getArrayValue(item.value).map(it => {
+					return Relation.getFilterTemplateOption(it) || S.Detail.get(subId, it, []);
+				});
 				list = list.filter(it => !it._empty_);
 
 				value = (
@@ -735,6 +744,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					relation: observable.box(relation),
 					canAdd: true,
 					canEdit: true,
+					dataChange: (context: any, items: any) => {
+						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
+
+						if (items.length) {
+							templates.push({ isDiv: true });
+						};						
+
+						return templates.concat(items);
+					},
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
 
