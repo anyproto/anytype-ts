@@ -13,6 +13,9 @@
 	}
 
 	.block.blockDataview.isInline {
-		.viewContent.viewGraph { height: 500px; }
+		.viewContent.viewGraph { 
+			min-height: 300px;
+			/* Height is now dynamically set based on pageLimit */
+		}
 	}
 }

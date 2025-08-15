@@ -98,7 +98,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	resize () {
-		const { isPopup, isInline } = this.props;
+		const { isPopup, isInline, getView } = this.props;
 		const node = $(this.node);
 
 		if (!node || !node.length) {
@@ -116,6 +116,17 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			const { top } = node.offset();
 
 			node.css({ width: cw, height: Math.max(600, ch - top - 2), marginLeft: -margin - 2 });
+		} else {
+			// For inline views: use pageLimit to determine height
+			// Same logic as Grid View: 40px per row for inline
+			const view = getView();
+			const pageLimit = view?.pageLimit || 50;
+			const rowHeight = 40; // Same as Grid View inline
+			const headerHeight = 120; // More space for controls/header
+			const footerHeight = 44; // Space for FootRow (aggregation row)
+			const height = Math.max(200, headerHeight + (pageLimit * rowHeight) + footerHeight);
+			
+			node.css({ height });
 		};
 
 		if (this.refGraph) {
