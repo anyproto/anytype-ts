@@ -776,6 +776,7 @@
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
 	"popupSettingsAccountAndKeyTitle": "Vault & Key",
+	"popupSettingsDataManagementTitle": "Data Management",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -803,7 +804,7 @@
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
-	"popupSettingsPhraseTitle": "Key",
+	"popupSettingsPhraseTitle": "Login Key",
 	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
 
 	"popupSettingsApiTitle": "API Keys",
@@ -840,8 +841,7 @@
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
-	"popupSettingsDataManagementTitle": "Data management",
-	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
+	"popupSettingsLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
 	"popupSettingsDataManagementLocalStorageTextLocalOnly": "In order to save space on this device, you can remove all your files. Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
 	"popupSettingsDataManagementLocalStorageUsage": "%s used",

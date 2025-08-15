@@ -35,7 +35,7 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 
 		return (
 			<>
-				<Title text={translate('popupSettingsDataManagementTitle')} />
+				<Title text={translate('popupSettingsLocalStorageTitle')} />
 				<Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
 				<div className="actionItems">
@@ -51,20 +51,6 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 						</div>
 						<div className="side right">
 							<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={this.onOffload} />
-						</div>
-					</div>
-
-					<div className="item">
-						<div className="side left">
-							<Icon className="sites" />
-
-							<div className="txt">
-								<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
-								<Label text={size} />
-							</div>
-						</div>
-						<div className="side right">
-							<Button color="blank" className="c28" text={translate(`commonManage`)} onClick={() => onPage('dataPublish')} />
 						</div>
 					</div>
 
