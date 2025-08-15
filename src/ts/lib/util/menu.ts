@@ -255,6 +255,7 @@ class UtilMenu {
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			items.push({ id: 'archive', icon: 'remove', name: U.Common.sprintf(translate('commonMoveNFilesToBin'), count, U.Common.plural(count, translate('pluralLCFile'))) });
 		};
 
 		if (hasBookmark) {
