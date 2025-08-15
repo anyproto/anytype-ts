@@ -250,13 +250,13 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			},
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
-					{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
 					this.withMembership() ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') } : null
 				].filter(it => it),
 			},
 			{
 				id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), children: [
-					{ id: 'dataIndex', name: translate('popupSettingsLocalStorageTitle'), icon: 'storage', subPages: [ 'delete' ] },
+					{ id: 'dataIndex', name: translate('popupSettingsLocalStorageTitle'), icon: 'storage' },
 					{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 					{ id: 'dataPublish', name: translate('popupSettingsDataManagementDataPublishTitle'), icon: 'sites' },
 					{ id: 'api', name: translate('popupSettingsApiTitle'), icon: 'api'  },
