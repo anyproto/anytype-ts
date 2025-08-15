@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellStorage } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -133,9 +133,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 				</div>
 
-				{!isLoading && !items.length ? (
-					<EmptySearch text={emptyText} />
-				) : ''}
+				<UpsellStorage className="fromSyncMenu" route={analytics.route.syncStatus} />
 
 				{notSyncedCounter && canWrite ? (
 					<div className="incentiveBanner">
@@ -146,6 +144,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
 						</div>
 					</div>
+				) : ''}
+
+				{!isLoading && !items.length ? (
+					<EmptySearch text={emptyText} />
 				) : ''}
 
 				{this.cache && items.length ? (
@@ -299,6 +301,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			case 'upgrade': {
 				Action.membershipUpgrade();
+				analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.syncStatus });
 				break;
 			};
 		};

@@ -188,6 +188,14 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	componentDidMount () {
+		this.setCache();
+	};
+
+	componentDidUpdate () {
+		this.setCache();
+	};
+
+	setCache () {
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
