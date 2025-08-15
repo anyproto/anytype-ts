@@ -298,9 +298,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { block, isPopup } = this.props;
+		const { isPopup } = this.props;
 		const match = keyboard.getMatch(isPopup);
-		const viewId = match.params.viewId || block.content.viewId;
+		const ref = match.params.ref;
+
+		let viewId = S.Record.getMeta(this.getSubId(), '').viewId;
+		if ((ref == 'widget') && match.params.viewId) {
+			viewId = match.params.viewId;
+		};
 
 		if (viewId && (viewId != this.viewId)) {
 			this.loadData(viewId, 0, true);
