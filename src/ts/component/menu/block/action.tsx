@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview, Preview } from 'Lib';
 
 interface State {
 	filter: string;
@@ -615,6 +615,28 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
+			case 'archive': {
+				const objectIds = ids.map(id => {
+					const b = S.Block.getLeaf(rootId, id);
+					return b ? b.getTargetObjectId() : null;
+				}).filter(id => id);
+
+				if (objectIds.length) {
+					C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						Preview.toastShow({ action: I.ToastAction.Archive, ids: objectIds });
+						analytics.event('MoveToBin', { route: analytics.route.menuAction, count: objectIds.length });
+						Action.remove(rootId, blockId, ids);
+					});
+				} else {
+					Action.remove(rootId, blockId, ids);
+				}
+				break;
+			};
+				
 			case 'openAsObject': {
 				U.Object.openConfig(S.Detail.get(rootId, targetObjectId));
 
