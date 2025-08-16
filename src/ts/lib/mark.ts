@@ -726,6 +726,32 @@ class Mark {
 	};
 
 	/**
+	 * Gets a part of the string and marks within a specified range.
+	 * @param {string} text - The full text.
+	 * @param {I.TextRange} range - The range to extract.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {{ text: string, marks: I.Mark[] }} The extracted text and marks.
+	 */
+	getPartOfString (text: string, range: I.TextRange, marks: I.Mark[]): { text: string, marks: I.Mark[] } {
+		const newText = text.substring(range.from, range.to);
+		const newMarks: I.Mark[] = [];
+
+		for (const mark of marks) {
+			if (mark.range.from >= range.from && mark.range.to <= range.to) {
+				newMarks.push({ ...mark, range: { from: mark.range.from - range.from, to: mark.range.to - range.from } });
+			} else 
+			if ((mark.range.from < range.to) && (mark.range.to > range.from)) {
+				const from = Math.max(mark.range.from - range.from, 0);
+				const to = Math.min(mark.range.to - range.from, text.length);
+
+				newMarks.push({ ...mark, range: { from, to } });
+			};
+		};
+
+		return { text: newText, marks: newMarks };
+	};
+
+	/**
 	 * Toggles a link mark in the list of marks.
 	 * @param {I.Mark} newMark - The new link mark.
 	 * @param {I.Mark[]} marks - The list of marks.
