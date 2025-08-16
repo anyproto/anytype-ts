@@ -9,7 +9,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const space = U.Space.getSpaceview();
 	const plusRef = useRef(null);
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
+	const requestCnt = participants.filter(it => it.isJoining).length;
 	const isSpaceOwner = U.Space.isMyOwner();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'body' ];

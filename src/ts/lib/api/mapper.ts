@@ -512,8 +512,7 @@ export const Mapper = {
 						break;
 					};
 
-					case I.NotificationType.Join: 
-					case I.NotificationType.Leave: 
+					case I.NotificationType.Join:
 					case I.NotificationType.Remove: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),

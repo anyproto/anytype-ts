@@ -16,7 +16,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 	const participant = U.Space.getMyParticipant(spaceId);
 	const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
-	const participantCheck = participant && (participant.isRemoving || participant.isJoining);
+	const participantCheck = participant && participant.isJoining;
 
 	let buttons = [];
 
@@ -35,13 +35,6 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 			buttons = buttons.concat([
 				{ id: 'request', text: translate('notificationButtonRequest') },
 				{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch'), color: 'blank' },
-			]);
-			break;
-		};
-
-		case I.NotificationType.Leave: {
-			buttons = buttons.concat([
-				{ id: 'approve', text: translate('commonApprove') }
 			]);
 			break;
 		};
@@ -75,15 +68,6 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 						identity: payload.identity,
 						route: analytics.route.notification,
 					}
-				});
-				break;
-			};
-
-			case 'approve': {
-				Action.leaveApprove(payload.spaceId, [ payload.identity ], payload.identityName, analytics.route.notification, (message: any) => {
-					if (message.error.code) {
-						setError(message.error.description);
-					};
 				});
 				break;
 			};

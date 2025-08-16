@@ -59,8 +59,7 @@ class Notification implements I.Notification {
 				break;
 			};
 
-			case I.NotificationType.Join: 
-			case I.NotificationType.Leave: {
+			case I.NotificationType.Join: {
 				this.title = '';
 				this.text = U.Common.sprintf(this.text, identityName, spaceName);
 				break;
