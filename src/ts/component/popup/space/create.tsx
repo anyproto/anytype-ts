@@ -172,7 +172,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		setCanSave(!isRed);
 
 		if (show) {
-			el.text(counter)
+			el.text(counter);
 		};
 	};
 

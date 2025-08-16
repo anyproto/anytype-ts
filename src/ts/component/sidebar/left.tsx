@@ -8,7 +8,7 @@ import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib
 import SidebarWidget from './page/widget';
 import SidebarObject from './page/allObject';
 import SidebarSettingsIndex from './page/settings/index';
-import SidebarSettingsLibrary from './page/settings/library'
+import SidebarSettingsLibrary from './page/settings/library';
 
 const Components = {
 	object: SidebarObject,
