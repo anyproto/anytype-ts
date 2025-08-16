@@ -149,6 +149,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
+
+			resize();
 			scrollToBottom();
 		});
 
@@ -183,9 +185,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			});
 		};
 
-		keyboard.shortcut(`${cmd}+c`, e, (pressed) => {
+		keyboard.shortcut(`${cmd}+c`, e, () => {
 			e.preventDefault();
 			onCopy();
+		});
+
+		keyboard.shortcut(`shift+enter`, e, () => {
+			resize();
+			scrollToBottom();
 		});
 
 		// Mark-up
