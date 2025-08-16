@@ -149,9 +149,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
-
-			resize();
-			scrollToBottom();
 		});
 
 		keyboard.shortcut('chatObject', e, () => {
@@ -257,6 +254,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			return;
 		};
+
+		keyboard.shortcut('backspace', e, () => {
+			resize();
+			scrollToBottom();
+		});
 
 		if (!keyboard.isSpecial(e)) {
 			for (let i = 0; i < marks.current.length; ++i) {
