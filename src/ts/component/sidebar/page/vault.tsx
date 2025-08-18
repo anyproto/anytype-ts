@@ -7,7 +7,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button } from 'Component';
 import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
 
 const LIMIT = 20;
@@ -27,6 +27,9 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
+	const profile = U.Space.getProfile();
+	const theme = S.Common.getThemeClass();
+	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -379,6 +382,29 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		);
 	};
 
+	const onSettings = () => {
+		U.Router.go('/main/settings/index', {});
+	};
+
+	const onGallery = () => {
+		S.Popup.open('usecase', {
+			data: {
+				route: analytics.route.usecaseApp,
+			},
+		});
+	};
+
+	const onHelp = () => {
+		S.Menu.open('help', {
+			element: '#button-widget-help',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			vertical: I.MenuDirection.Top,
+			offsetY: -78,
+			subIds: J.Menu.help,
+		});
+	};
+
 	useEffect(() => {
 		rebind();
 
@@ -446,6 +472,31 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						</AutoSizer>
 					)}
 				</InfiniteLoader>
+			</div>
+			<div className="bottom">
+				<div className="sides">
+					<div className="side left">
+						<div className="settings" onClick={onSettings}>
+							<IconObject object={settings} size={32} iconSize={32} param={{ userIcon: J.Theme[theme].textInversion }} />
+							<ObjectName object={settings} />
+						</div>
+					</div>
+					<div className="side right">
+						<Icon
+							className="gallery"
+							tooltipParam={{ text: translate('sidebarEdit') }}
+							onClick={onGallery}
+						/>
+
+						<Button
+							id="button-widget-help"
+							className="help"
+							text="?"
+							tooltipParam={{ text: translate('commonHelp') }}
+							onClick={onHelp}
+						/>
+					</div>
+				</div>
 			</div>
 		</>
 	);
