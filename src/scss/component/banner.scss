@@ -1,11 +1,11 @@
 @import "~scss/_mixins";
 
 .banner {
-    border-radius: 8px; padding: 12px 16px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary);
+    border-radius: 12px; padding: 12px 16px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary);
 }
 .banner {
 	.title { @include text-common; margin-bottom: 0px; }
-    .label { @include text-small; margin-bottom: 8px; }
+    .label { @include text-small; margin-bottom: 6px; }
 	.inner { display: flex; flex-direction: column; gap: 2px 0; align-items: flex-start; }
 
 	.button.simple { color: var(--color-text-primary); font-weight: 600; }
