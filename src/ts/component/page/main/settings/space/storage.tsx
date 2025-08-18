@@ -29,7 +29,6 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 
 		const segments: any = {
 			current: { name: currentSpace.name, usage: 0, className: 'current', },
-			other: { name: translate('popupSettingsSpaceStorageProgressBarOther'), usage: 0, className: 'other', },
 		};
 
 		let bytesUsed = 0;
@@ -50,7 +49,11 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 			if (isCurrent) {
 				segments.current.usage = usage;
 			} else {
-				segments.other.usage += usage;
+				if (segments.other) {
+					segments.other.usage += usage;
+				} else {
+					segments.other = { name: translate('popupSettingsSpaceStorageProgressBarOther'), usage, className: 'other', }
+				};
 			};
 		});
 
