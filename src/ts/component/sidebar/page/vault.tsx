@@ -20,7 +20,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
-	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
 	const spaceview = U.Space.getSpaceview();
@@ -380,7 +379,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 		return () => {
 			unbind();
-			window.clearTimeout(timeoutHover.current);
 		};
 	}, []);
 
