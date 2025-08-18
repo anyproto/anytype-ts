@@ -6,7 +6,6 @@ import { I, S, U, keyboard, sidebar, translate } from 'Lib';
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, renderLeftIcons, isPopup } = props;
 	const spaceview = U.Space.getSpaceview();
-	const showWidget = spaceview.isChat;
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
@@ -18,16 +17,12 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		});
 	};
 
-	const onWidget = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-	};
-
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(true, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isChat, onOpen)}</div>
 			<div className="side center" />
 			<div className="side right">
-				{showWidget ? (
+				{spaceview.isChat ? (
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}

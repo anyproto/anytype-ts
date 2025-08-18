@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
@@ -16,6 +16,7 @@ const HEIGHT_ITEM = 64;
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { space } = S.Common;
+	const { isPopup, sidebarDirection } = props;
 	const [ filter, setFilter ] = useState('');
 	const spaceview = U.Space.getSpaceview();
 	const sensors = useSensors(
@@ -142,6 +143,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard();
+			sidebar.panelSetState(isPopup, sidebarDirection, { page: U.Space.getDefaultSidebarPage(item.id) });
 		};
 	};
 
