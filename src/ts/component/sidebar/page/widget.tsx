@@ -45,7 +45,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const { showVault } = S.Common;
 		const { sidebarDirection } = this.props;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();

@@ -15,10 +15,8 @@ interface VaultRefProps {
 const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 	const nodeRef = useRef(null);
-	const { showVault } = S.Common;
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
-	const closeVault = useRef(false);
 	const top = useRef(0);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
@@ -36,10 +34,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
-
-	if (!showVault) {
-		cn.push('isHidden');
-	};
 
 	const unbind = () => {
 		const events = [ 'resize', 'keydown', 'keyup' ];
@@ -64,7 +58,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const onKeyDown = (e: any) => {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
-		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -76,12 +69,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 			if (sidebar.isAnimating) {
 				return;
-			};
-
-			if (!showVault) {
-				S.Common.showVaultSet(true);
-				sidebar.resizePage(width, null, false);
-				closeVault.current = true;
 			};
 
 			if (isClosed) {
@@ -122,12 +109,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		};
 
 		if (!sidebar.isAnimating) {
-			if (closeVault.current) {
-				S.Common.showVaultSet(false);
-				sidebar.resizePage(width, null, false);
-				closeVault.current = false;
-			};
-
 			if (closeSidebar.current) {
 				sidebar.close();
 				closeSidebar.current = false;

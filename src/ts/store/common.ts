@@ -41,7 +41,6 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public showVaultValue = null;
 	public updateVersionValue = '';
 	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
 	public hideSidebarValue = null;
@@ -106,7 +105,6 @@ class CommonStore {
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
-			showVaultValue: observable,
 			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
@@ -127,7 +125,6 @@ class CommonStore {
 			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
-			showVault: computed,
 			showRelativeDates: computed,
 			dateFormat: computed,
 			timeFormat: computed,
@@ -149,7 +146,6 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			membershipTiersListSet: action,
-			showVaultSet: action,
 			showSidebarRightSet: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
@@ -309,19 +305,6 @@ class CommonStore {
 
 	get diff (): I.Diff[] {
 		return this.diffValue || [];
-	};
-
-	get showVault (): boolean {
-		return false;
-
-		let ret = this.showVaultValue;
-		if (ret === null) {
-			ret = Storage.get('showVault');
-		};
-		if (undefined === ret) {
-			ret = true;
-		};
-		return ret;
 	};
 
 	get firstDay (): number {
@@ -603,14 +586,6 @@ class CommonStore {
 	 */
 	updateVersionSet (v: string) {
 		this.updateVersionValue = String(v || '');
-	};
-
-	/**
-	 * Sets the show vault value.
-	 * @param {boolean} v - The show vault value.
-	 */
-	showVaultSet (v: boolean) {
-		this.boolSet('showVault', v);
 	};
 
 	/**

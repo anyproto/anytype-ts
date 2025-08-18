@@ -193,7 +193,7 @@ class Sidebar {
 	 * Handles mouse move events for sidebar hover and auto-show/hide.
 	 */
 	onMouseMove (): void {
-		const { showVault, hideSidebar } = S.Common;
+		const { hideSidebar } = S.Common;
 
 		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging || keyboard.isResizing) {
 			return;
@@ -208,7 +208,7 @@ class Sidebar {
 
 		const { x } = keyboard.mouse.page;
 		const { width, isClosed } = this.data;
-		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
+		const vw = isClosed ? 0 : J.Size.vault.width;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -242,11 +242,10 @@ class Sidebar {
 
 	getVaultWidth (): number {
 		const { isClosed } = this.data;
-		const { showVault } = S.Common;
 		const isMain = keyboard.isMain();
 		const isPopup = keyboard.isPopup();
 
-		return isClosed || !showVault || !isMain || isPopup ? 0 : J.Size.vault.width;
+		return isClosed || !isMain || isPopup ? 0 : J.Size.vault.width;
 	};
 
 	/**
@@ -274,7 +273,7 @@ class Sidebar {
 			widthRight = this.objRight.outerWidth();
 		};
 
-		const { showVault, isFullScreen } = S.Common;
+		const { isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = this.getVaultWidth();
 
@@ -297,7 +296,7 @@ class Sidebar {
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 
-		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
+		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
 			rightButtonX = 120;
 
