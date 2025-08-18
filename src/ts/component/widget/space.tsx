@@ -11,7 +11,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
 	const isSpaceOwner = U.Space.isMyOwner();
-	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [];
 	const cmd = keyboard.cmdSymbol();
 	const alt = keyboard.altSymbol();
@@ -84,29 +83,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			className={cn.join(' ')}
 			onClick={onSettings}
 		>
-			<div className="sides">
-				<div className="side left">
-					<IconObject 
-						id="widget-space-icon" 
-						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-						size={20}
-						iconSize={20}
-						menuParam={{ className: 'fixed' }}
-					/>
-					<div className="txt">
-						<ObjectName object={space} />
-					</div>
-				</div>
-				<div className="side right">
-					{canWrite ? (
-						<div className="plusWrapper" onMouseEnter={onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-							<Icon ref={plusRef} className="plus withBackground" onClick={onCreate} />
-							<Icon id={`widget-${parent.id}-arrow`} className="arrow withBackground" onClick={onArrow} />
-						</div>
-					) : ''}
-				</div>
-			</div>
-
 			<div className="buttons">
 				{buttons.map((item, i) => {
 					let cnt = null;

@@ -280,7 +280,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	return (
 		<>
 			<div className="head">
-				<div className="name">{translate('commonChats')}</div>
 			</div>
 			<div className="filterWrapper">
 				<Filter 

@@ -24,7 +24,6 @@ class Sidebar {
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
 	toggleButton: JQuery<HTMLElement> = null;
-	backButton: JQuery<HTMLElement> = null;
 	syncButton: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
@@ -75,7 +74,6 @@ class Sidebar {
 		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
 		this.toggleButton = $('#sidebarToggle');
-		this.backButton = $('#sidebarBack');
 		this.syncButton = $('#sidebarSync');
 		this.vault = $(S.Common.getRef('vault')?.getNode());
 	};
@@ -326,13 +324,11 @@ class Sidebar {
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 
 			this.toggleButton.toggleClass('sidebarAnimation', animate);
-			this.backButton.toggleClass('sidebarAnimation', animate);
 			this.syncButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 
 			this.page.css({ width: pageWidth });
 			this.toggleButton.css({ left: toggleX });
-			this.backButton.css({ left: toggleX });
 			this.syncButton.css({ left: syncX });
 		};
 

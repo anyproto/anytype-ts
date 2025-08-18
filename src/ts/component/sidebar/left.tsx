@@ -45,7 +45,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const Component = Components[id];
-	const icon = id == 'vault' ? 'sidebarToggle' : 'sidebarBack';
 
 	if (id.match(/settings/)) {
 		cnp.push('containerSettings');
@@ -149,10 +148,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onToggleClick = () => {
-		//sidebar.toggleOpenClose();
-		const page = sidebar.leftPanelGetState().page == 'widget' ? 'vault' : 'widget';
-
-		sidebar.leftPanelSetState({ page });
+		sidebar.toggleOpenClose();
 	};
 
 	const onToggleContext = () => {
@@ -194,7 +190,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	return (
 		<>
 			<Icon 
-				id={icon}
+				id="sidebarToggle"
 				className="sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}

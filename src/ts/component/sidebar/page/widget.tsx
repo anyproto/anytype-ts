@@ -1,8 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove } from 'Lib';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label, IconObject, ObjectName } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -36,6 +36,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.onHelp = this.onHelp.bind(this);
+		this.onPlusHover = this.onPlusHover.bind(this);
+		this.onCreate = this.onCreate.bind(this);
+		this.onArrow = this.onArrow.bind(this);
+		this.onBack = this.onBack.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -46,6 +50,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const hasShareBanner = U.Space.hasShareBanner();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
 
 		if (isEditing) {
@@ -236,10 +241,30 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		return (
 			<>
-				<div id="head" className="head">
+				<div className="head">
 					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
-					<div className="name">{space.name}</div>
 				</div>
+
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back withBackground" onClick={this.onBack} />
+					</div>
+
+					<div className="side center">
+						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
+						<ObjectName object={space} />
+					</div>
+
+					<div className="side right">
+						{canWrite ? (
+							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
+								<Icon className="plus withBackground" onClick={this.onCreate} />
+								<Icon className="arrow withBackground" onClick={this.onArrow} />
+							</div>
+						) : ''}
+					</div>
+				</div>
+
 				<div
 					id="body"
 					className={cn.join(' ')}
@@ -257,6 +282,39 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	componentDidUpdate (): void {
 		this.onScroll();
+	};
+
+	onPlusHover (e: any) {
+		const t = Preview.tooltipCaption(translate('commonNew'), [ 
+			keyboard.getCaption('createObject'), 
+			keyboard.getCaption('selectType'),
+		].join(' / '));
+
+		Preview.tooltipShow({ text: t, element: $(e.currentTarget) });
+	};
+
+	onCreate = (e: any) => {
+		e.stopPropagation();
+		keyboard.pageCreate({}, analytics.route.navigation, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+	};
+
+	onArrow = (e: any) => {
+		e.stopPropagation();
+
+		U.Menu.typeSuggest({ 
+			element: $(e.currentTarget),
+			offsetY: 2,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.widget, object => U.Object.openAuto(object));
+	};
+
+	onBack = () => {
+		sidebar.leftPanelSetState({ page: 'vault' });
 	};
 
 	onHelp () {
