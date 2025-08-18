@@ -14,9 +14,10 @@ class ScrollOnMove {
 	x = 0;
 	y = 0;
 	frame = 0;
+	timeout = 0;
 	isScrolling = false;
 	
-	onMouseDown (param: { isWindow?: boolean; container?: JQuery }) {
+	onMouseDown (param: { isWindow?: boolean; container?: JQuery, onMouseUp?: () => void }) {
 		this.param = param || {};
 
 		const { isWindow, container } = this.param;
@@ -46,6 +47,10 @@ class ScrollOnMove {
 		if (this.isScrolling && !this.frame) {
 			this.frame = raf(this.loop);
 		};
+
+		// Hack to fix events not being triggered on mouseup
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.onMouseUp(), 300);
 	};
 
 	private loop = () => {
@@ -126,11 +131,15 @@ class ScrollOnMove {
 		return true;
 	};
 
-	onMouseUp () {
+	onMouseUp (noCallback?: boolean) {
 		this.x = 0;
 		this.y = 0;
 		this.isScrolling = false;
 		this.clear();
+
+		if (this.param.onMouseUp && !noCallback) {
+			this.param.onMouseUp();
+		};
 	};
 
 	clear() {
@@ -139,6 +148,7 @@ class ScrollOnMove {
 			this.frame = 0;
 		};
 	};
+
 };
 
 export const scrollOnMove: ScrollOnMove = new ScrollOnMove();

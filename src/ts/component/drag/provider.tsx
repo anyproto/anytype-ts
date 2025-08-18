@@ -210,13 +210,16 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		win.on('drag.drag', e => onDrag(e));
 		win.on('dragend.drag', e => onDragEnd(e));
-		win.on('dragcancel.drag', e => onDragEnd(e));
 
 		container.off('scroll.drag').on('scroll.drag', e => onScroll(e));
 		sidebar.off('scroll.drag').on('scroll.drag', e => onScroll(e));
 
 		$('.colResize.active').removeClass('active');
-		scrollOnMove.onMouseDown({ isWindow: !isPopup, container });
+		scrollOnMove.onMouseDown({ 
+			isWindow: !isPopup, 
+			container,
+			onMouseUp: () => onDragEnd(e),
+		});
 
 		if (dropType == I.DropType.Block) {
 			selection?.set(I.SelectType.Block, ids);
@@ -276,7 +279,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		sidebar.off('scroll.drag');
 
 		$('.isDragging').removeClass('isDragging');
-		scrollOnMove.onMouseUp();
+		scrollOnMove.onMouseUp(true);
 
 		window.clearTimeout(timeoutDragOver.current);
 	};

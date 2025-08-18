@@ -173,7 +173,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 	
 	const onMouseMove = (e: any) => {
-		if (keyboard.isSelectionDisabled) {
+		if (keyboard.isSelectionDisabled || keyboard.isDragging) {
 			hide();
 			return;
 		};
