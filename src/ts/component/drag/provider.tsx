@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
 
@@ -58,6 +57,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				targetContextId: item.attr('data-target-context-id'),
 				viewType: item.attr('data-view-type'),
 			};
+
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
 			const x = offset.left;
@@ -530,6 +530,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		for (const [ key, value ] of objectData.current) {
 			const { left, top } = value.obj.offset();
+
 			objectData.current.set(key, { ...value, x: left, y: top });
 		};
 	};
@@ -538,8 +539,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
 		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
-		let data: any = {};
 
+		let data: any = {};
 		try {
 			for (const type of dataTransfer.types) {
 				if (type.match(/^data-/)) {
