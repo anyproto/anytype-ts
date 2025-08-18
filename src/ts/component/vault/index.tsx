@@ -20,7 +20,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 	const closeSidebar = useRef(false);
 	const closeVault = useRef(false);
 	const top = useRef(0);
-	const timeoutHover = useRef(0);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
 	const items = U.Menu.getVaultItems();
@@ -66,7 +65,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
 		const { showVault } = S.Common;
-		const items = getSpaceItems();
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -91,15 +89,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 				sidebar.open(width);
 			};
 		});
-
-		for (let i = 1; i <= 9; i++) {
-			const id = Number(i) - 1;
-			keyboard.shortcut(`space${i}`, e, () => {
-				if (items[id]) {
-					onClick(e, items[id]);
-				};
-			});
-		};
 	};
 
 	const onKeyUp = (e: any) => {
@@ -366,12 +355,6 @@ const Vault = observer(forwardRef<VaultRefProps>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-		rebind();
-
-		return () => {
-			unbind();
-			window.clearTimeout(timeoutHover.current);
-		};
 	}, []);
 
 	useEffect(() => {

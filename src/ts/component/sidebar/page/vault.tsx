@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
@@ -18,11 +18,111 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const { space } = S.Common;
 	const { isPopup, sidebarDirection } = props;
 	const [ filter, setFilter ] = useState('');
+	const checkKeyUp = useRef(false);
+	const closeSidebar = useRef(false);
+	const timeoutHover = useRef(0);
+	const pressed = useRef(new Set());
+	const n = useRef(-1);
 	const spaceview = U.Space.getSpaceview();
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
+
+	const unbind = () => {
+		const events = [ 'keydown', 'keyup' ];
+		const ns = 'sidebarPageVault';
+
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+	};
+
+	const rebind = () => {
+		const win = $(window);
+
+		unbind();
+		win.on('keydown.sidebarPageVault', e => onKeyDown(e));
+		win.on('keyup.sidebarPageVault', e => onKeyUp(e));
+	};
+
+	const onKeyDown = (e: any) => {
+		const key = e.key.toLowerCase();
+		const { isClosed, width } = sidebar.data;
+
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			pressed.current.add(key);
+		};
+
+		keyboard.shortcut('prevSpace, nextSpace', e, pressed => {
+			checkKeyUp.current = true;
+			onArrow(pressed == 'prevSpace' ? -1 : 1);
+
+			if (sidebar.isAnimating) {
+				return;
+			};
+
+			if (isClosed) {
+				closeSidebar.current = true;
+				sidebar.open(width);
+			};
+		});
+	};
+
+	const onKeyUp = (e: any) => {
+		const key: any = String(e.key || '').toLowerCase();
+		if (!key) {
+			return;
+		};
+
+		pressed.current.delete(key);
+
+		if (
+			(
+				pressed.current.has(Key.ctrl) || 
+				pressed.current.has(Key.tab)
+			) ||
+			!checkKeyUp.current
+		) {
+			return;
+		};
+
+		const { width } = sidebar.data;
+		const items = U.Menu.getVaultItems();
+		const item = items[n.current];
+
+		checkKeyUp.current = false;
+
+		if (item) {
+			onClick(item);
+		};
+
+		if (!sidebar.isAnimating && closeSidebar.current) {
+			sidebar.close();
+			closeSidebar.current = false;
+		};
+};
+
+	const onArrow = (dir: number) => {
+		const items = U.Menu.getVaultItems();
+
+		if (items.length == 1) {
+			return;
+		};
+		
+		n.current += dir;
+		if (n.current < 0) {
+			n.current = items.length - 1;
+		};
+		if (n.current >= items.length) {
+			n.current = 0;
+		};
+
+		unsetHover();
+
+		const next = items[n.current];
+		if (next) {
+			setHover(next);
+		};
+	};
 
 	const onSortStart = () => {
 		keyboard.setDragging(true);
@@ -274,6 +374,15 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			</CellMeasurer>
 		);
 	};
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+			window.clearTimeout(timeoutHover.current);
+		};
+	}, []);
 
 	useEffect(() => {
 		raf(() => setActive(spaceview));

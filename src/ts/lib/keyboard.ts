@@ -368,6 +368,26 @@ class Keyboard {
 					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
 				});
 			};
+
+			// Switch space
+			for (let i = 1; i <= 9; i++) {
+				const id = Number(i) - 1;
+				keyboard.shortcut(`space${i}`, e, () => {
+					const spaces = U.Menu.getVaultItems();
+					const item = spaces[id];
+	
+					if (!item) {
+						return;
+					};
+
+					if (item.targetSpaceId != S.Common.space) {
+						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+					} else {
+						U.Space.openDashboard();
+						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
+					};
+				});
+			};
 		};
 
 		this.initPinCheck();
