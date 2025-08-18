@@ -996,6 +996,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {
@@ -1012,6 +1013,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.cache = {};
@@ -1092,6 +1094,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {
@@ -1108,6 +1111,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.cache = {};

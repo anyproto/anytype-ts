@@ -354,6 +354,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	resize () {
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {

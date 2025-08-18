@@ -210,9 +210,10 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		win.on('drag.drag', e => onDrag(e));
 		win.on('dragend.drag', e => onDragEnd(e));
+		win.on('mouseup.drag', e => scrollOnMove.onMouseUp(e));
 
-		container.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
-		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
+		container.off('scroll.drag').on('scroll.drag', e => onScroll(e));
+		sidebar.off('scroll.drag').on('scroll.drag', e => onScroll(e));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
@@ -252,6 +253,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	};
 
 	const onDragEnd = (e: any) => {
+		console.log('[DragProvider].onDragEnd');
+
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
@@ -517,12 +520,14 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
 	};
 
-	const onScroll = () => {
-		if (keyboard.isDragging) {
-			for (const [ key, value ] of objectData.current) {
-				const { left, top } = value.obj.offset();
-				objectData.current.set(key, { ...value, x: left, y: top });
-			};
+	const onScroll = (e: any) => {
+		if (!keyboard.isDragging) {
+			return;
+		};
+
+		for (const [ key, value ] of objectData.current) {
+			const { left, top } = value.obj.offset();
+			objectData.current.set(key, { ...value, x: left, y: top });
 		};
 	};
 
