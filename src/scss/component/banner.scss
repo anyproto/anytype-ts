@@ -20,6 +20,7 @@
 }
 .banner.green { background-color: var(--color-bg-lime); }
 
+.banner.sidebarUpdateBanner { width: 288px; left: 80px; }
 .banner.sidebarUpdateBanner {
 	.button { width: 100%; @include text-small; font-weight: 500; }
 	.button:before {

@@ -14,7 +14,7 @@ interface Props {
 
 const Banner: FC<Props> = ({ 
 	id = '',
-	title= '',
+	title = '',
 	text = '',
 	button = '',
 	color = 'green',
