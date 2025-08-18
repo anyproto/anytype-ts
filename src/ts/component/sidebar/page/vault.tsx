@@ -84,7 +84,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			return;
 		};
 
-		const { width } = sidebar.data;
 		const items = U.Menu.getVaultItems();
 		const item = items[n.current];
 
@@ -316,6 +315,14 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isLastPinned');
 		};
 
+		if (item.isLocalLoading) {
+			cn.push('isLoading');
+		};
+
+		if (item.isMuted) {
+			cn.push('isMuted');
+		};
+
 		let cnt = null;
 		if (item.counters) {
 			if (item.counters.mentionCounter) {
@@ -339,7 +346,9 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				onMouseOut={onOut}
 				onContextMenu={e => onContextMenu(e, item)}
 			>
-				<IconObject object={item} size={48} iconSize={48} canEdit={false} />
+				<div className="iconWrap">
+					<IconObject object={item} size={48} iconSize={48} canEdit={false} />
+				</div>
 				<div className="info">
 					<div className="nameWrapper">
 						<ObjectName object={item} />

@@ -19,7 +19,7 @@
 
 	.item { display: flex; align-items: center; gap: 0px 12px; padding: 8px 4px; }
 	.item {
-		.iconObject { flex-shrink: 0; }
+		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 		.nameWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
@@ -45,6 +45,22 @@
 
 		&.isLastPinned::after {
 			content: ""; position: absolute; left: 8px; bottom: 0px; width: calc(100% - 16px); height: 1px; background: var(--color-shape-primary); 
+		}
+
+		&.isMuted {
+			.cnt { background-color: var(--color-text-secondary); }
+		}
+
+		&.isLoading {
+			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 48px; height: 48px; }
+			.iconWrap {
+				.iconObject { display: none; }
+				&:before {
+					content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px; border-radius: inherit;
+					width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;
+				}
+			}
+			.cnt { display: none; }
 		}
 	}
 }

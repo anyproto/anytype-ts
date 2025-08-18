@@ -2,11 +2,6 @@
 
 .loaderWrapper { width: 24px; height: 24px; margin: 0px auto; position: relative; }
 .loaderWrapper {
-	@keyframes rotate {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
-
 	@keyframes dots-light {
 		0% { background-color: var(--color-text-primary); }
 		32% { background-color: var(--color-text-primary); }
