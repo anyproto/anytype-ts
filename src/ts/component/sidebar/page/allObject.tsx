@@ -17,7 +17,7 @@ const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_DEFAULT = 64;
 const HEIGHT_ITEM_COMPACT = 36;
 
-const SidebarPageObject = observer(class SidebarPageObject extends React.Component<{}, State> {
+const SidebarPageObject = observer(class SidebarPageObject extends React.Component<I.SidebarPageComponent, State> {
 	
 	state = {
 		isLoading: false,
@@ -44,7 +44,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	x = 0;
 	top = 0;
 
-	constructor (props: any) {
+	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
@@ -63,6 +63,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	render () {
 		const { isLoading } = this.state;
+		const { sidebarDirection } = this.props;
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
@@ -117,7 +118,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			<>
 				<div className="inner">
 					<div className="head">
-						<div className="titleWrap" onClick={() => sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() })}>
+						<div className="titleWrap" onClick={() => sidebar.panelSetState(false, sidebarDirection, { page: 'widget' })}>
 							<div className="side left">
 								<Icon className="back" />
 								<Title text={translate('commonAllContent')} />

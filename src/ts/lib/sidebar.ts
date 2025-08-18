@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -510,6 +510,20 @@ class Sidebar {
 
 			$(window).trigger('resize');
 		}, animate ? J.Constant.delay.sidebar : 0);
+	};
+
+	panelSetState (isPopup: boolean, direction: I.SidebarDirection, v: any) {
+		switch (direction) {
+			case I.SidebarDirection.Left: {
+				this.leftPanelSetState(v);
+				break;
+			};
+
+			case I.SidebarDirection.Right: {
+				this.rightPanelSetState(isPopup, v);
+				break;
+			};
+		};
 	};
 
 	/**

@@ -6,13 +6,13 @@ import { Icon, Sync, Banner } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
 
 import PageWidget from './page/widget';
-import PageObject from './page/allObject';
+import PageAllObject from './page/allObject';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
 
 const Components = {
-	allObject:			 PageObject,
+	allObject:			 PageAllObject,
 	widget:				 PageWidget,
 	vault:				 PageVault,
 	settings:			 PageSettingsIndex,
@@ -215,6 +215,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							page={id}
 							{...props} 
 							getId={() => pageId}
+							sidebarDirection={I.SidebarDirection.Left}
 						/> 
 					</div>
 				) : ''}

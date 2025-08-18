@@ -25,6 +25,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
+	const spaceview = U.Space.getSpaceview();
+	const showWidget = spaceview.isChat;
 
 	let center = null;
 	let label = '';
@@ -158,6 +160,16 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'relation', 'withBackground', (rightSidebar == 'object/relation' ? 'active' : '') ].join(' ')}
 						onClick={onRelation} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
+
+				{showWidget ? (
+					<Icon 
+						id="button-header-widget" 
+						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'widgetPanel', 'withBackground' ].join(' ')}
+						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId })} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}

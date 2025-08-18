@@ -196,39 +196,6 @@ export interface ButtonComponent {
 	onMouseEnter?(e: any): void;
 };
 
-export interface SidebarPageComponent {
-	page?: string;
-	rootId?: string;
-	isPopup?: boolean;
-	readonly?: boolean;
-	details?: any;
-	noPreview?: boolean;
-	previous?: any;
-	blockId?: string;
-	getId?(): string;
-};
-
-export interface SidebarSectionComponent extends SidebarPageComponent {
-	id: string;
-	object: any;
-	item?: any;
-	readonly?: boolean;
-	onChange?(update: any): void;
-	disableButton?(v: boolean): void;
-	onDragStart?: (e: React.DragEvent) => void;
-};
-
-export interface SidebarSectionRef {
-	forceUpdate(): void;
-};
-
-export enum SidebarRelationList {
-	Featured 		= 1,
-	Recommended 	= 2,
-	Hidden 			= 3,
-	Local 			= 4,
-};
-
 export enum SurveyType {
 	Register		 = 0,
 	Delete			 = 1,

@@ -42,6 +42,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
 		const { showVault } = S.Common;
+		const { sidebarDirection } = this.props;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const hasShareBanner = U.Space.hasShareBanner();
@@ -164,6 +165,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									isEditing={isEditing}
 									canEdit={false}
 									canRemove={false}
+									sidebarDirection={sidebarDirection}
 								/>
 							</DropTarget>
 						</>
@@ -190,6 +192,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								onDrag={this.onDrag}
 								setPreview={this.setPreview}
 								setEditing={this.setEditing}
+								sidebarDirection={sidebarDirection}
 							/>
 						);
 					})}

@@ -1,11 +1,11 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, translate, sidebar, keyboard, analytics, Preview } from 'Lib';
+import { I, U, translate, sidebar, keyboard, analytics, Preview } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
-	const { parent } = props;
+	const { parent, sidebarDirection } = props;
 	const space = U.Space.getSpaceview();
 	const plusRef = useRef(null);
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
@@ -56,7 +56,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'all': {
-				sidebar.leftPanelSetState({ page: 'allObject' });
+				sidebar.panelSetState(false, sidebarDirection, { page: 'allObject' });
 				break;
 			};
 

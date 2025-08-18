@@ -1,10 +1,12 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { U, S } from 'Lib';
+import { I, U, S } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 import PageObjectTableOfContents from './page/object/tableOfContents';
+import PageWidget from './page/widget';
+import PageAllObject from './page/allObject';
 
 interface Props {
 	isPopup?: boolean;
@@ -29,6 +31,8 @@ const Components = {
 	type:					 PageType,
 	objectRelation:			 PageObjectRelation,
 	objectTableOfContents:	 PageObjectTableOfContents,
+	widget:					 PageWidget,
+	allObject:				 PageAllObject,
 };
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
@@ -85,6 +89,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 						ref={childRef} 
 						{...props} 
 						{...state}
+						sidebarDirection={I.SidebarDirection.Right}
 						getId={() => pageId}
 					/> 
 				</div>
