@@ -235,6 +235,24 @@ class AuthStore {
 	};
 
 	/**
+	 * Gets the number of not synced files across all spaces the user owns.
+	 * @returns {I.NotSyncedFiles}
+	 */
+	getNotSynced (): I.NotSyncedFiles {
+		let total = 0;
+		let files = [];
+
+		for (const [id, space] of this.syncStatusMap) {
+			if (U.Space.isMyOwner(space.id) && space.notSyncedCounter) {
+				total += space.notSyncedCounter || 0;
+				files.push({ spaceId: space.id, notSyncedCounter: space.notSyncedCounter });
+			};
+		};
+
+		return { total, files };
+	};
+
+	/**
 	 * Clears all authentication and account data.
 	 */
 	clearAll () {

@@ -4,8 +4,7 @@
 	.menu.menuSyncStatus { width: var(--menu-width-large); }
 	.menu.menuSyncStatus {
 		.content { 
-			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px; 
-			overflow: visible;
+			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px;
 		}
 		.syncPanel { height: 28px; padding: 0px 16px; display: flex; justify-content: space-between; align-items: center; }
 
