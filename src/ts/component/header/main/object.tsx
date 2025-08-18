@@ -9,7 +9,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
-	const rightSidebar = S.Common.getShowSidebarRight(isPopup);
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
@@ -158,7 +158,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-relation" 
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (rightSidebar == 'object/relation' ? 'active' : '') ].join(' ')}
+						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
 						onClick={onRelation} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
@@ -168,7 +168,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'widgetPanel', 'withBackground' ].join(' ')}
+						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
 						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId })} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 

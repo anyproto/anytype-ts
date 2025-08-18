@@ -389,16 +389,21 @@ class Sidebar {
 	 * @param {any} [param] - Additional parameters for the panel.
 	 */
 	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
-		const current = S.Common.getShowSidebarRight(isPopup);
-		const shouldOpen = !current || (page != current);
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const shouldOpen = !rightSidebar.isOpen || (rightSidebar.page != page);
+
+		if (rightSidebar.isOpen && (page != rightSidebar.page)) {
+			animate = false;
+		};
 
 		// open the panel if it is different page from the current page
 		if (shouldOpen) {
-			S.Common.showSidebarRightSet(isPopup, page);
-			this.rightPanelSetState(isPopup, { page, ...param });
+			S.Common.showSidebarRightSet(isPopup, page, true);
 		} else {
-			S.Common.showSidebarRightSet(isPopup, null);
+			S.Common.showSidebarRightSet(isPopup, '', false);
 		};
+
+		this.rightPanelSetState(isPopup, { page, ...param });
 
 		window.setTimeout(() => {
 			this.initObjects();
@@ -433,7 +438,7 @@ class Sidebar {
 			};
 
 			if (!shouldOpen) {
-				S.Common.showSidebarRightSet(isPopup, null);
+				S.Common.showSidebarRightSet(isPopup, '', false);
 			};
 
 			$(window).trigger('resize');

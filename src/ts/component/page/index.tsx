@@ -192,7 +192,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = S.Auth;
 		const { pin } = S.Common;
 		const { isPopup } = this.props;
-		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
@@ -228,7 +228,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (refSidebar && showSidebarRight) {
+		if (refSidebar && rightSidebar.isOpen) {
 			refSidebar.setState({ rootId: this.getRootId() });
 		};
 

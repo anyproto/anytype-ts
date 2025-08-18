@@ -42,7 +42,10 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public updateVersionValue = '';
-	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
+	public showSidebarRightValue = { 
+		full: { page: null, isOpen: false }, 
+		popup: { page: null, isOpen: false },
+	};
 	public hideSidebarValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
@@ -562,11 +565,11 @@ class CommonStore {
 	/**
 	 * Sets the show sidebar right value.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @param {string | null} page - The page to set, null if no page is shown
+	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	showSidebarRightSet (isPopup: boolean, page: string | null) {
-		const key = isPopup ? 'popup' : 'full';
-		const newState = { [ key ]: { page } };
+	showSidebarRightSet (isPopup: boolean, page: string, isOpen: boolean) {
+		const key = this.getStateKey(isPopup);
+		const newState = { [ key ]: { page, isOpen } };
 
 		set(this.showSidebarRightValue, newState);
 	};
@@ -855,12 +858,21 @@ class CommonStore {
 	};
 
 	/**
-	 * Gets the show sidebar right value for a popup or full view.
+	 * Gets the state key for a popup or full view.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @returns {string} The current page shown in the sidebar
+	 * @returns {string} The state key.
 	 */
-	getShowSidebarRight (isPopup: boolean): string {
-		return String(this.showSidebarRightValue[(isPopup ? 'popup' : 'full')].page || '');
+	getStateKey (isPopup: boolean): string {
+		return isPopup ? 'popup' : 'full';
+	};
+
+	/**
+	 * Gets the current state of the right sidebar.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
+	 */
+	getRightSidebarState (isPopup: boolean): { page: string; isOpen: boolean; } {
+		return this.showSidebarRightValue[this.getStateKey(isPopup)];
 	};
 
 	/**

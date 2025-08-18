@@ -6,6 +6,7 @@ import { I, S, U, keyboard, sidebar, translate } from 'Lib';
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, renderLeftIcons, isPopup } = props;
 	const spaceview = U.Space.getSpaceview();
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
@@ -26,7 +27,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'widgetPanel', 'withBackground' ].join(' ')}
+						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
 						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId })} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 

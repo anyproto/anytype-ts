@@ -38,7 +38,7 @@ const Components = {
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
 	const { isPopup } = props;
-	const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const childRef = useRef(null);
 	const [ state, setState ] = useState<State>({
 		page: '',
@@ -78,7 +78,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		},
 	}));
 
-	return showSidebarRight ? (
+	return rightSidebar.isOpen ? (
 		<div 
 			id="sidebarRight"
 			className={cn.join(' ')}
