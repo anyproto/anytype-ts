@@ -17,6 +17,7 @@ export enum TierType {
 	NewExplorer				 = 20,
 	Starter					 = 21,
 	Pioneer					 = 22,
+	BuilderMonthly			 = 29,
 	Team					 = 1000,
 };
 
