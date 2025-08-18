@@ -207,7 +207,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
-		sidebar.rightPanelToggle(false, isPopup);
+		S.Common.setRightSidebarState(isPopup, '', false);
 
 		if (!Component) {
 			return;

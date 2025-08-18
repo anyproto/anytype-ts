@@ -398,9 +398,9 @@ class Sidebar {
 
 		// open the panel if it is different page from the current page
 		if (shouldOpen) {
-			S.Common.showSidebarRightSet(isPopup, page, true);
+			S.Common.setRightSidebarState(isPopup, page, true);
 		} else {
-			S.Common.showSidebarRightSet(isPopup, '', false);
+			S.Common.setRightSidebarState(isPopup, '', false);
 		};
 
 		this.rightPanelSetState(isPopup, { page, ...param });
@@ -438,7 +438,7 @@ class Sidebar {
 			};
 
 			if (!shouldOpen) {
-				S.Common.showSidebarRightSet(isPopup, '', false);
+				S.Common.setRightSidebarState(isPopup, '', false);
 			};
 
 			$(window).trigger('resize');

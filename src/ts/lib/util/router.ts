@@ -109,8 +109,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		S.Common.showSidebarRightSet(false, '', false);
-		sidebar.rightPanelToggle(false, false);
+		S.Common.setRightSidebarState(false, '', false);
 		focus.clear(true);
 
 		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
@@ -195,7 +194,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		sidebar.rightPanelToggle(false, false);
+		S.Common.setRightSidebarState(false, '', false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);

@@ -42,7 +42,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public updateVersionValue = '';
-	public showSidebarRightValue = { 
+	public rightSidebarStateValue = { 
 		full: { page: null, isOpen: false }, 
 		popup: { page: null, isOpen: false },
 	};
@@ -111,7 +111,7 @@ class CommonStore {
 			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
-			showSidebarRightValue: observable,
+			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
 			timeFormatValue: observable,
@@ -149,7 +149,7 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			membershipTiersListSet: action,
-			showSidebarRightSet: action,
+			setRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
@@ -567,11 +567,10 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	showSidebarRightSet (isPopup: boolean, page: string, isOpen: boolean) {
+	setRightSidebarState (isPopup: boolean, page: string, isOpen: boolean) {
 		const key = this.getStateKey(isPopup);
-		const newState = { [ key ]: { page, isOpen } };
 
-		set(this.showSidebarRightValue, newState);
+		set(this.rightSidebarStateValue, { [ key ]: { page, isOpen } });
 	};
 
 	/**
@@ -872,7 +871,7 @@ class CommonStore {
 	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
 	 */
 	getRightSidebarState (isPopup: boolean): { page: string; isOpen: boolean; } {
-		return this.showSidebarRightValue[this.getStateKey(isPopup)];
+		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '', isOpen: false };
 	};
 
 	/**
