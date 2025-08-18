@@ -100,7 +100,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			sidebar.close();
 			closeSidebar.current = false;
 		};
-};
+	};
 
 	const onArrow = (dir: number) => {
 		const items = U.Menu.getVaultItems();
@@ -309,6 +309,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			...item.style,
 		};
 		const cn = [ 'item' ];
+		const icons = [];
 
 		if (isDragging) {
 			cn.push('isDragging');
@@ -320,6 +321,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 		if (item.isMuted) {
 			cn.push('isMuted');
+			icons.push('muted');
+		};
+
+		if (item.isPinned) {
+			cn.push('isPinned');
+			icons.push('pin');
+		};
+
+		// placeholder for error logic
+		let withError = false;
+		if (withError) {
+			cn.push('withError');
+			icons.push('error');
 		};
 
 		let cnt = null;
@@ -351,6 +365,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<div className="info">
 					<div className="nameWrapper">
 						<ObjectName object={item} />
+
+						<div className="icons">
+							{icons.map(icon => <Icon className={icon} />)}
+						</div>
 						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
 					<Label text={item.lastMessage} />
