@@ -390,12 +390,12 @@ class Sidebar {
 	 */
 	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		const current = S.Common.getShowSidebarRight(isPopup);
-		const shouldOpen = !page || (page != current);
+		const shouldOpen = !current || (page != current);
 
 		// open the panel if it is different page from the current page
 		if (shouldOpen) {
 			S.Common.showSidebarRightSet(isPopup, page);
-			this.rightPanelSetState(isPopup, { page: page, ...param });
+			this.rightPanelSetState(isPopup, { page, ...param });
 		} else {
 			S.Common.showSidebarRightSet(isPopup, null);
 		};

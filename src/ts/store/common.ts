@@ -565,7 +565,9 @@ class CommonStore {
 	 * @param {string | null} page - The page to set, null if no page is shown
 	 */
 	showSidebarRightSet (isPopup: boolean, page: string | null) {
-		const newState = { [(isPopup ? 'popup' : 'full')]: { page } };
+		const key = isPopup ? 'popup' : 'full';
+		const newState = { [ key ]: { page } };
+
 		set(this.showSidebarRightValue, newState);
 	};
 
