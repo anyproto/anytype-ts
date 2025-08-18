@@ -51,5 +51,5 @@ export interface P2PSyncStatus {
 
 export interface NotSyncedFiles {
 	total: number;
-	files: { spaceId: string, notSyncedCounter: number }[];
+	files: { spaceId: string, counter: number }[];
 };
