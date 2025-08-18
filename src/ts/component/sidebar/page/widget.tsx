@@ -46,18 +46,25 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
 		const { sidebarDirection } = this.props;
-		const cn = [ 'body' ];
+		const cnsh = [ 'subHead' ];
+		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const hasShareBanner = U.Space.hasShareBanner();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
+		const counters = S.Chat.getTotalCounters();
+		const cnt = counters?.messageCounter;
 
 		if (isEditing) {
-			cn.push('isEditing');
+			cnb.push('isEditing');
 		};
 
 		if (hasShareBanner) {
-			cn.push('withShareBanner');
+			cnb.push('withShareBanner');
+		};
+
+		if (cnt) {
+			cnsh.push('withCounter');
 		};
 
 		let content = null;
@@ -68,7 +75,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			const block = S.Block.getLeaf(widgets, previewId);
 
 			if (block) {
-				cn.push('isListPreview');
+				cnb.push('isListPreview');
 				content = (
 					<Widget 
 						{...this.props}
@@ -209,7 +216,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 					<div className="sides">
 						<div className="side left">
-
 							<div className={[ 'settings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
 								<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
 								<Label text={translate('commonDone')} />
@@ -244,9 +250,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 				</div>
 
-				<div className="subHead">
+				<div className={cnsh.join(' ')}>
 					<div className="side left">
 						<Icon className="back" onClick={this.onBack} />
+						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
 
 					<div className="side center">
@@ -266,7 +273,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				<div
 					id="body"
-					className={cn.join(' ')}
+					className={cnb.join(' ')}
 					onScroll={this.onScroll}
 					onDrop={this.onDrop}
 					onDragOver={e => e.preventDefault()}

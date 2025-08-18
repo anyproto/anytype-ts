@@ -23,6 +23,12 @@
 		.icon.back { background-size: 20px; }
 		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
 
+		.cnt { 
+			min-width: 18px; height: 20px; border-radius: 10px; background: var(--color-system-accent-125); @include text-very-small; 
+			color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
+			padding: 0px 4px; cursor: default; flex-shrink: 0;
+		}
+
 		.side.left { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
 		.side.center { flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; }
@@ -36,6 +42,11 @@
 			.icon { height: 24px !important; }
 			.icon.plus { width: 22px !important; background-image: url('~img/icon/widget/button/create.svg'); }
 			.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
+		}
+
+		&.withCounter {
+			.icon.back { background-image: url('~img/icon/widget/back2.svg'); }
+			.icon.back:hover { background-image: url('~img/icon/widget/back2.svg'); }
 		}
 	}
 
