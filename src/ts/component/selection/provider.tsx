@@ -144,7 +144,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			};
 		};
 		
-		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
+		scrollOnMove.onMouseDown({ isWindow: !isPopup, container });
 		unbindMouse();
 
 		win.on(`mousemove.selection`, e => onMouseMove(e));
@@ -278,7 +278,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			$(window).trigger('selectionEnd');
 		};
 		
-		scrollOnMove.onMouseUp(e);
+		scrollOnMove.onMouseUp();
 
 		const list = ids.current.get(I.SelectType.Block) || [];
 		

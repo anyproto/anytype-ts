@@ -486,7 +486,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onDragEnd = (e: any) => {
-		scrollOnMove.onMouseUp(e);
+		scrollOnMove.onMouseUp();
 
 		analytics.event('ReorderWidget', {
 			layout,
