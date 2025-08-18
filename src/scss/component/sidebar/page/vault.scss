@@ -59,39 +59,4 @@
 			.cnt { display: none; }
 		}
 	}
-
-	$transitionSettings: background-color 0.25s $easeInQuint;
-	> .bottom {
-		.sides { display: flex; align-items: center; justify-content: space-between; padding: 0px 12px 12px; gap: 0px 12px; }
-
-		.side.left { width: 100%; overflow: hidden; }
-		.side.left {
-			.settings { display: flex; gap: 0px 8px; align-items: center; justify-content: flex-start; }
-			.settings:hover {
-				.iconObject { background-color: var(--color-shape-highlight-dark); }
-			}
-
-			.iconObject { flex-shrink: 0; transition: $transitionSettings; background-color: var(--color-shape-highlight-medium); }
-			.name { font-weight: 500; white-space: nowrap; @include text-overflow-nw; }
-		}
-
-		.side.right { display: flex; gap: 0px 8px; flex-shrink: 0; }
-		.side.right {
-			.button,
-			.icon { transition: $transitionSettings; height: 32px; width: 32px; border-radius: 16px; background-color: var(--color-shape-highlight-medium);  }
-
-			.button { padding: 0px; text-align: center; @include text-small; font-size: 15px; font-weight: 500; color: var(--color-text-secondary); overflow: visible;}
-
-			.icon { background-size: 20px; }
-			.icon.gallery { background-image: url('~img/icon/vault/gallery.svg'); }
-
-			.icon:hover,
-			.icon.hover,
-			.button:hover,
-			.button.hover { background-color: var(--color-shape-highlight-dark) !important; }
-			.button {
-				.txt { @include text-overflow-nw; }
-			}
-		}
-	}
 }
