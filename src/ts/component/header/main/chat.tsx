@@ -22,7 +22,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			<div className="side left">{renderLeftIcons(!spaceview.isChat, onOpen)}</div>
 			<div className="side center" />
 			<div className="side right">
-				{spaceview.isChat ? (
+				{spaceview.isChat && !isPopup ? (
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}

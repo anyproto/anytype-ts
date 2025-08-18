@@ -26,7 +26,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
 	const spaceview = U.Space.getSpaceview();
-	const showWidget = spaceview.isChat;
+	const showWidget = spaceview.isChat && !isPopup;
 
 	let center = null;
 	let label = '';
