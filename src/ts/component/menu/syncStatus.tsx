@@ -297,7 +297,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			case 'storage': {
 				const { files } = S.Auth.getNotSynced();
 
-				if (files[0] && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
+				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
 					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
 				} else {
 					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
