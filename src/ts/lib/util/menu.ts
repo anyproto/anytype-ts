@@ -1020,43 +1020,6 @@ class UtilMenu {
 		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
 	};
 
-	sidebarContext (element: string) {
-		const { showVault } = S.Common;
-		const { isClosed, width } = sidebar.data;
-		const options = this.sidebarModeOptions();
-		const value = showVault ? 'all' : 'sidebar';
-
-		S.Menu.open('selectSidebarToggle', {
-			component: 'select',
-			element,
-			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Right,
-			noFlipX: true,
-			data: {
-				options,
-				value,
-				onSelect: (e: any, item: any) => {
-					raf(() => {
-						switch (item.id) {
-							case 'all':
-							case 'sidebar': {
-								S.Common.showVaultSet(item.id == 'all');
-								if (isClosed) {
-									sidebar.open(width);
-								} else {
-									sidebar.resizePage(width, null, false);
-								};
-								break;
-							};
-						};
-					});
-
-					analytics.event('ChangeSidebarMode', { type: item.id });
-				},
-			},
-		});
-	};
-
 	codeLangOptions (): I.Option[] {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};

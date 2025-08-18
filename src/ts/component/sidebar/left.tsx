@@ -151,10 +151,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		sidebar.toggleOpenClose();
 	};
 
-	const onToggleContext = () => {
-		U.Menu.sidebarContext('#sidebarLeftButton');
-	};
-
 	useEffect(() => {
 		init();
 		sidebar.init();
@@ -182,7 +178,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				className="sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
-				onContextMenu={onToggleContext}
 			/>
 
 			<div id="sidebarRightButton" />

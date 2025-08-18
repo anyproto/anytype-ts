@@ -88,16 +88,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 					</div>
 
 					<div className="item">
-						<Label text={translate('popupSettingsPersonalSidebarMode')} />
-						<div id="sidebarMode" className="select" onMouseDown={() => U.Menu.sidebarContext(`#${getId()} #sidebarMode`)}>
-							<div className="item">
-								<div className="name">{sidebarMode}</div>
-							</div>
-							<Icon className="arrow black" />
-						</div>
-					</div>
-
-					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
 						<Switch
 							className="big"
