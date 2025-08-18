@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader, Banner } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import CanvasWorkerBridge from 'Component/page/auth/animation/canvasWorkerBridge';
 
@@ -475,6 +475,26 @@ const App: FC = () => {
 		});
 	};
 
+	const { updateVersion } = S.Common;
+	const updateBanner = updateVersion ? (
+		<Banner
+			id="sidebarUpdateBanner"
+			title={translate('commonUpdateAvailable')}
+			text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)}
+			button={translate('commonUpdateApp')}
+			buttonColor="black"
+			onClick={() => {
+				Renderer.send('updateConfirm');
+				S.Common.updateVersionSet('');
+				U.Common.checkUpdateVersion(updateVersion);
+			}}
+			onClose={() => {
+				S.Common.updateVersionSet('');
+				Renderer.send('updateCancel');
+			}}
+		/>
+	) : '';
+
 	useEffect(() => init(), []);
 
 	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
@@ -502,6 +522,8 @@ const App: FC = () => {
 					<Toast />
 					<ListNotification key="listNotification" />
 					<Vault ref={ref => S.Common.refSet('vault', ref)} />
+
+					{updateBanner}
 
 					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>

@@ -441,7 +441,13 @@ html.themeDark {
 		}
 	}
 
-	.banner { background-image: unset; border: 1px solid var(--color-shape-highlight-dark); }
+	.banner { border: 1px solid var(--color-shape-highlight-dark); }
+	.banner {
+		.icon.close { background-image: url('#{$themePath}/icon/banner/close.svg'); }
+	}
+	.banner.sidebarUpdateBanner {
+		.button:before { background-image: url('#{$themePath}/icon/banner/download.svg'); }
+	}
 
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
