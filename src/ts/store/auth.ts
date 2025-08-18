@@ -243,9 +243,11 @@ class AuthStore {
 		let files = [];
 
 		for (const [id, space] of this.syncStatusMap) {
-			if (U.Space.isMyOwner(space.id) && space.notSyncedCounter) {
-				total += space.notSyncedCounter || 0;
-				files.push({ spaceId: space.id, notSyncedCounter: space.notSyncedCounter });
+			const { id, notSyncedCounter } = space;
+
+			if (U.Space.isMyOwner(id) && notSyncedCounter) {
+				total += notSyncedCounter || 0;
+				files.push({ spaceId: id, counter: notSyncedCounter });
 			};
 		};
 
