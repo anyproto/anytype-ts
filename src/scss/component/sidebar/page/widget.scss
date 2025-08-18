@@ -67,12 +67,12 @@
 
 		$transitionSettings: all 0.25s $easeInQuint;
 
-		.settings { transition: $transitionSettings; position: relative; width: 28px; height: 28px; overflow: hidden; background-color: var(--color-shape-highlight-medium); border-radius: 14px; }
+		.settings { transition: $transitionSettings; position: relative; width: 32px; height: 32px; overflow: hidden; background-color: var(--color-shape-highlight-medium); border-radius: 16px; }
 		.settings {
 			.icon,
 			.label { transition: $transitionSettings; position: absolute; }
-			.icon {  left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/widgetSettings0.svg'); }
-			.label { left: 12px; top: 5px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
+			.icon {  left: 6px; top: 6px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/widgetSettings0.svg'); }
+			.label { left: 12px; top: 7px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
 		}
 		.settings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
 		.settings:not(.isEditing):hover {
@@ -87,7 +87,7 @@
 		.settings.isEditing:hover { background-color: var(--color-system-accent-125); }
 
 		.button { 
-			transition: $transitionSettings; height: 28px; min-width: 28px; border-radius: 14px; padding: 0px 11px; text-align: center; @include text-small; 
+			transition: $transitionSettings; height: 32px; min-width: 32px; border-radius: 16px; padding: 0px 12px; text-align: center; @include text-small;
 			font-weight: 500; background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); overflow: visible;
 		}
 		.button.help { font-size: 15px; padding: 0px; }
