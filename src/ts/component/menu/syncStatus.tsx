@@ -295,7 +295,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	onIncentiveButtonClick (id: string) {
 		switch (id) {
 			case 'storage': {
-				const { files } = S.Auth.getNotSynced() || [];
+				const { files } = S.Auth.getNotSynced();
 
 				if (files[0] && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
 					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
