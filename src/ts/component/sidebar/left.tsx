@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, Mo
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, Sync, Banner } from 'Component';
+import { Icon, Banner } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
 
 import PageWidget from './page/widget';
@@ -152,19 +152,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onToggleContext = () => {
-		U.Menu.sidebarContext('#sidebarToggle');
-	};
-
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => S.Menu.open('syncStatus', {
-			element: '#sidebarSync',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			subIds: J.Menu.syncStatus,
-			data: {
-				rootId: keyboard.getRootId(),
-			},
-		}));
+		U.Menu.sidebarContext('#sidebarLeftButton');
 	};
 
 	useEffect(() => {
@@ -190,14 +178,14 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	return (
 		<>
 			<Icon 
-				id="sidebarToggle"
+				id="sidebarLeftButton"
 				className="sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
 				onContextMenu={onToggleContext}
 			/>
 
-			<Sync id="sidebarSync" className="sidebarHeadIcon" onClick={onSync} />
+			<div id="sidebarRightButton" />
 
 			<div 
 				ref={nodeRef}

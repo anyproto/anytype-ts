@@ -185,7 +185,7 @@ export default {
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Right,
 					stickToElementEdge: I.MenuDirection.None,
-					highlightElements: [ '#menuSyncStatus', '#sidebarSync' ],
+					highlightElements: [ '#menuSyncStatus', '#sidebarRightButton' ],
 					offsetY: 14,
 				}
 			},

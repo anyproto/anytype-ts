@@ -1,8 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon } from 'Component';
+import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { Icon, Sync } from 'Component';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -64,6 +64,10 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
+	const onSync = () => {
+		menuOpen('syncStatus', '#headerSync', {});
+	};
+
 	const renderLeftIcons = (withGraph?: boolean, onOpen?: () => void) => {
 		const buttons: any[] = [
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
@@ -94,6 +98,8 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 						/>
 					);
 				})}
+
+				<Sync id="headerSync" onClick={onSync} />
 			</>
 		);
 	};

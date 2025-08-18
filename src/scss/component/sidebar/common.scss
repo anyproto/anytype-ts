@@ -15,10 +15,10 @@
 	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
 }
 
-#sidebarToggle, #sidebarBack { backdrop-filter: blur(20px); left: 84px; }
+#sidebarLeftButton, #sidebarBack { backdrop-filter: blur(20px); left: 84px; }
 
-#sidebarToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-#sidebarToggle {
+#sidebarLeftButton { background-image: url('~img/icon/widget/toggle0.svg'); }
+#sidebarLeftButton {
 	&:hover, &.hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 }
 

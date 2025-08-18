@@ -20,9 +20,9 @@ html.printMedia {
 	.toast,
 	.focusable.isFocused::before,
 	#vault,
-	#sidebarToggle,
+	#sidebarLeftButton,
 	#sidebarBack,
-	#sidebarSync,
+	#sidebarRightButton,
 	.tableOfContents
 	{ display: none !important; }
 

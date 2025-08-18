@@ -23,8 +23,8 @@ class Sidebar {
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
-	toggleButton: JQuery<HTMLElement> = null;
-	syncButton: JQuery<HTMLElement> = null;
+	leftButton: JQuery<HTMLElement> = null;
+	rightButton: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
@@ -73,8 +73,8 @@ class Sidebar {
 		this.loader = this.page.find('#loader');
 		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.toggleButton = $('#sidebarToggle');
-		this.syncButton = $('#sidebarSync');
+		this.leftButton = $('#sidebarLeftButton');
+		this.rightButton = $('#sidebarRightButton');
 		this.vault = $(S.Common.getRef('vault')?.getNode());
 	};
 
@@ -263,8 +263,8 @@ class Sidebar {
 
 		this.initObjects();
 
-		let toggleX = 16;
-		let syncX = 52;
+		let leftButtonX = 16;
+		let rightButtonX = 52;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -298,11 +298,11 @@ class Sidebar {
 		const hw = pageWidth - ho;
 
 		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
-			toggleX = 84;
-			syncX = 120;
+			leftButtonX = 84;
+			rightButtonX = 120;
 
 			if (widthLeft) {
-				syncX = widthLeft - 40;
+				rightButtonX = widthLeft - 40;
 			};
 		};
 
@@ -323,13 +323,13 @@ class Sidebar {
 			this.dummyLeft.css({ width: widthLeft });
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 
-			this.toggleButton.toggleClass('sidebarAnimation', animate);
-			this.syncButton.toggleClass('sidebarAnimation', animate);
+			this.leftButton.toggleClass('sidebarAnimation', animate);
+			this.rightButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 
 			this.page.css({ width: pageWidth });
-			this.toggleButton.css({ left: toggleX });
-			this.syncButton.css({ left: syncX });
+			this.leftButton.css({ left: leftButtonX });
+			this.rightButton.css({ left: rightButtonX });
 		};
 
 		$(window).trigger('sidebarResize');
