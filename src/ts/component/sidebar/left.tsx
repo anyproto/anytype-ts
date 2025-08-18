@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, Banner } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate, Action, analytics } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageAllObject from './page/allObject';
@@ -45,6 +45,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const Component = Components[id];
+	const canCreate = U.Space.canCreateSpace();
 
 	if (id.match(/settings/)) {
 		cnp.push('containerSettings');
@@ -52,6 +53,14 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
 		cnp.push('spaceSettingsLibrary');
+	};
+
+	const onCreate = () => {
+		Action.spaceCreateMenu({
+			element: `#sidebarRightButton`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		}, analytics.route.vault);
 	};
 
 	const onResizeStart = (e: MouseEvent) => {
@@ -162,12 +171,19 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		<>
 			<Icon 
 				id="sidebarLeftButton"
-				className="sidebarHeadIcon withBackground"
+				className="toggle sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
 			/>
 
-			<div id="sidebarRightButton" />
+			{canCreate ? (
+				<Icon 
+					id="sidebarRightButton"
+					className="plus sidebarHeadIcon withBackground"
+					tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+					onClick={onCreate}
+				/>
+			) : ''}
 
 			<div 
 				ref={nodeRef}

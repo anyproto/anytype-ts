@@ -15,17 +15,14 @@
 	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
 }
 
-#sidebarLeftButton, #sidebarBack { backdrop-filter: blur(20px); left: 84px; }
+#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
 
-#sidebarLeftButton { background-image: url('~img/icon/widget/toggle0.svg'); }
-#sidebarLeftButton {
+.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
+.sidebarHeadIcon.toggle {
 	&:hover, &.hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 }
 
-#sidebarBack { background-image: url('~img/icon/widget/back0.svg'); }
-#sidebarBack {
-	&:hover, &.hover { background-image: url('~img/icon/widget/back1.svg'); }
-}
+.sidebarHeadIcon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
 .icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }

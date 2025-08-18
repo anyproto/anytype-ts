@@ -388,6 +388,15 @@ class Keyboard {
 					};
 				});
 			};
+
+
+			keyboard.shortcut('createSpace', e, () => {
+				Action.spaceCreateMenu({
+					element: `#sidebarRightButton`,
+					className: 'spaceCreate fixed',
+					classNameWrap: 'fromSidebar',
+				}, analytics.route.shortcut);
+			});
 		};
 
 		this.initPinCheck();
