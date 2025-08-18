@@ -14,7 +14,10 @@
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 
-	.subHead { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; justify-content: stretch; padding: 6px 12px; position: relative; }
+	.subHead { 
+		display: flex; flex-direction: row; align-items: center; gap: 0px 10px; justify-content: stretch; padding: 6px 12px; position: relative; 
+		margin: 0px 0px 4px 0px;
+	}
 	.subHead {
 		.icon { width: 24px !important; height: 24px !important; }
 		.icon.back { background-size: 20px; }
@@ -57,12 +60,12 @@
 		.settings {
 			.icon,
 			.label { transition: $transitionSettings; position: absolute; }
-			.icon {  left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/settings0.svg'); }
+			.icon {  left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/widgetSettings0.svg'); }
 			.label { left: 12px; top: 5px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
 		}
 		.settings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
 		.settings:not(.isEditing):hover {
-			.icon { background-image: url('~img/icon/widget/button/settings1.svg'); }
+			.icon { background-image: url('~img/icon/widget/button/widgetSettings1.svg'); }
 		}
 
 		.settings.isEditing { width: 55px; background-color: var(--color-system-accent-100); }
