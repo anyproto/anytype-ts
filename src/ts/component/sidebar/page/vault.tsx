@@ -311,10 +311,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isDragging');
 		};
 
-		if (item.index == pinned.length - 1) {
-			cn.push('isLastPinned');
-		};
-
 		if (item.isLocalLoading) {
 			cn.push('isLoading');
 		};
