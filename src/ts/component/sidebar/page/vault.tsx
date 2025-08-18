@@ -27,6 +27,9 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
+	const profile = U.Space.getProfile();
+	const theme = S.Common.getThemeClass();
+	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -382,10 +385,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			</CellMeasurer>
 		);
 	};
-
-	const profile = U.Space.getProfile();
-	const theme = S.Common.getThemeClass();
-	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 
 	const onSettings = () => {
 		U.Router.go('/main/settings/index', {});
