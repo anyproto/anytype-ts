@@ -247,7 +247,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				<div className="subHead">
 					<div className="side left">
-						<Icon className="back withBackground" onClick={this.onBack} />
+						<Icon className="back" onClick={this.onBack} />
 					</div>
 
 					<div className="side center">
