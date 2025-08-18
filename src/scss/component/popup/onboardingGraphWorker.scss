@@ -14,5 +14,9 @@
 		top: 0;
 		left: 0;
 		cursor: default; // Always use normal pointer
+		image-rendering: auto; // Let browser handle rendering normally
+		// Prevent any scaling artifacts
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
 	}
 }

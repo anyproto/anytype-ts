@@ -14,9 +14,9 @@
 
 	.popupBlocker {
 		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
+		// Use calc instead of transform to avoid GPU layer
+		top: calc(50% - 340px); // Half of 680px height
+		left: calc(50% - 360px); // Half of 720px width
 		width: 720px;
 		height: 680px;
 		pointer-events: auto; // Block events in popup area

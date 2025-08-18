@@ -107,9 +107,16 @@ let dragOffset = { x: 0, y: 0 };
 // Tick counter for debugging
 let tickCount = 0;
 
-addEventListener('message', ({ data }) => { 
+// Track message frequency
+let messageCount = 0;
+let lastMessageLog = Date.now();
+let messageCounts = {};
+
+addEventListener('message', ({ data }) => {
+	// Message frequency tracking removed for production
+
 	if (this[data.id]) {
-		this[data.id](data); 
+		this[data.id](data);
 	};
 });
 
@@ -166,7 +173,16 @@ init = (param) => {
 	}
 
 	util.ctx = ctx;
-	resize(param);
+	// Initialize dimensions first
+	width = param.width;
+	height = param.height;
+	density = param.density || 1;
+	
+	// Set up canvas properly
+	ctx.canvas.width = Math.round(width * density);
+	ctx.canvas.height = Math.round(height * density);
+	ctx.setTransform(density, 0, 0, density, 0, 0);
+	
 	initTheme(param.theme || 'dark');
 	initFonts();
 	recalcConstants();
@@ -174,11 +190,13 @@ init = (param) => {
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg || 'transparent';
 	
-	transform = d3.zoomIdentity.translate(0, 0).scale(1);
+	// No zoom for this graph - always use scale 1
+	transform = { x: 0, y: 0, k: 1 };
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
-	simulation.alphaDecay(0.02); // Moderate decay
-	simulation.velocityDecay(0.6); // Balanced damping - allows movement but prevents runaway
+	simulation.alphaDecay(0.05); // Cool faster than 0.02
+	simulation.alphaMin(0); // Don't auto-stop based on alpha, we control it via velocity
+	simulation.velocityDecay(0.4); // Default velocity decay
 
 	initForces();
 
@@ -186,44 +204,71 @@ init = (param) => {
 	tickCount = 0;
 	// Simplified logging - no force tracking interference
 	
+	// Only redraw when nodes are actually moving
+	let lastRedraw = 0;
+	this.simMoving1 = false; // Use global scope
+	
 	simulation.on('tick', () => {
-		tickCount++;
+		// Check for any motion at all - very small threshold
+		const wasMoving = this.simMoving1;
+		this.simMoving1 = false;
+		let maxVelocity = 0;
+		for (const n of nodes) {
+			const velocity = Math.abs(n.vx || 0) + Math.abs(n.vy || 0);
+			maxVelocity = Math.max(maxVelocity, velocity);
+			if (velocity > 1e-3) { // Much smaller threshold
+				this.simMoving1 = true; 
+				break; 
+			}
+		}
 		
-		// Apply gentle force to pull nodes away from edges (30px margin)
-		nodes.forEach(node => {
-			const margin = 30;
-			const forceFactor = 0.1; // Gentle force
-			
-			// Don't hard-clamp positions, just apply forces
-			// Left edge
-			if (node.x < margin) {
-				const distance = margin - node.x;
-				node.vx += distance * forceFactor;
-			}
-			// Right edge
-			if (node.x > width - margin) {
-				const distance = node.x - (width - margin);
-				node.vx -= distance * forceFactor;
-			}
-			// Top edge
-			if (node.y < margin) {
-				const distance = margin - node.y;
-				node.vy += distance * forceFactor;
-			}
-			// Bottom edge
-			if (node.y > height - margin) {
-				const distance = node.y - (height - margin);
-				node.vy -= distance * forceFactor;
-			}
-		});
+		// Transition tracking removed for production
 		
-		applyBlockingForces();
+		// Safety valve: clear any accidental leftover target
+		if (!isDragging && simulation.alphaTarget() > 0 && simulation.alpha() < 0.03) {
+			simulation.alphaTarget(0); // guarantee cool-down
+		}
 		
+		const now = performance.now();
+		if (this.simMoving1 && (now - lastRedraw) > 33) { // ~30fps max when moving
+			lastRedraw = now;
+			redraw();
+		} else if (!this.simMoving1 && !isDragging) {
+			// Check if any nodes are in blocking areas
+			if (hasNodesInBlock()) {
+				// Keep higher energy so the block force can push them out
+				if (simulation.alpha() < 0.3) simulation.alpha(0.3); // Much higher alpha for blocking
+			} else {
+				// Only stop when nothing is moving AND no nodes in blocking areas
+				simulation.stop();
+			}
+		}
+	});
+	
+	simulation.on('end', () => {
+		// Ensure final redraw when simulation stops
+		console.log('Simulation ended, alpha reached minimum');
 		redraw();
 	});
 	simulation.tick(50); // Fewer initial ticks to prevent drift buildup
 
 	root = getNodeById(rootId);
+	
+	// Add diagnostic watchdog to monitor simulation state
+	// Comment out in production to save CPU
+	/*
+	setInterval(() => {
+		if (!simulation) return;
+		const a = simulation.alpha().toFixed(3);
+		const at = simulation.alphaTarget().toFixed(3);
+		console.log('[sim]', { alpha: a, alphaTarget: at, isDragging });
+		// Auto-fix any stuck target
+		if (!isDragging && simulation.alphaTarget() > 0 && simulation.alpha() < 0.03) {
+			console.log('[sim] Fixing stuck alphaTarget:', at);
+			simulation.alphaTarget(0);
+		}
+	}, 500);
+	*/
 
 	const x = root ? root.x : width / 2;
 	const y = root ? root.y : height / 2;
@@ -237,8 +282,10 @@ init = (param) => {
  */
 setBlockingAreas = (param) => {
 	blockingAreas = param.areas || [];
+	// Update the blocking force with new areas
 	if (simulation) {
-		simulation.alpha(0.3).restart();
+		simulation.force('block', forceBlock(blockingAreas));
+		simulation.alpha(0.08).restart(); // soft impulse
 	}
 };
 
@@ -249,6 +296,8 @@ setData = (param) => {
 	// Store the new data
 	data.nodes = param.nodes || [];
 	data.edges = param.edges || [];
+	
+	console.log('[Worker setData] Received nodes:', data.nodes.length, 'edges:', data.edges.length);
 	
 	// Keep existing node positions if they exist
 	const existingPositions = {};
@@ -273,6 +322,8 @@ setData = (param) => {
 		return isValid;
 	}) : [];
 	edges = util.objectCopy(edges);
+	
+	console.log('[Worker setData] Valid edges after filtering:', edges.length);
 	
 	// Restore positions for existing nodes
 	nodes.forEach(node => {
@@ -384,62 +435,89 @@ setData = (param) => {
 	if (simulation) {
 		// Update existing simulation with new nodes
 		simulation.nodes(nodes);
-		// Moderate restart
-		simulation.alpha(0.3).restart(); // Moderate alpha
+		console.log('[Worker] Restarting simulation with alpha 0.3 for', nodes.length, 'nodes and', edges.length, 'edges');
+		simulation.alpha(0.3).restart(); // Moderate restart
 	} else {
 		// Create new simulation with the nodes
 		simulation = d3.forceSimulation(nodes);
 		simulation.alpha(0.5); // Moderate initial setup
-		simulation.alphaDecay(0.02); // Moderate decay
-		simulation.velocityDecay(0.6); // Balanced damping - allows movement but prevents runaway
+		simulation.alphaDecay(0.02); // Slower decay to give blocking force more time
+		simulation.alphaMin(0); // Don't auto-stop based on alpha, we control it via velocity
+		simulation.velocityDecay(0.4); // Default velocity decay
+		console.log('[Worker] Created new simulation for', nodes.length, 'nodes');
 	}
 	
-	// Apply blocking forces first to ensure nodes are in safe positions
-	applyBlockingForces();
+	// Blocking forces are now handled by the custom force in initForces
 	
 	// Only initialize forces if this is a new simulation
-	if (!simulation.on('tick')) {
+	// Check if we already have a tick handler by using a flag
+	if (!this.tickHandlerSet) {
+		this.tickHandlerSet = true;
 		initForces();
 		
+		// Only redraw when nodes are actually moving
+		let lastRedraw = 0;
+		this.simMoving2 = false; // Use global scope for second handler
+		
 		simulation.on('tick', () => {
-			// Apply gentle force to pull nodes away from edges (30px margin)
-			nodes.forEach(node => {
-				const margin = 30;
-				const forceFactor = 0.1; // Gentle force
-				
-				// Don't hard-clamp positions, just apply forces
-				// Left edge
-				if (node.x < margin) {
-					const distance = margin - node.x;
-					node.vx += distance * forceFactor;
+			// Check for any motion at all - very small threshold
+			const wasMoving = this.simMoving2;
+			this.simMoving2 = false;
+			let maxVelocity = 0;
+			for (const n of nodes) {
+				const velocity = Math.abs(n.vx || 0) + Math.abs(n.vy || 0);
+				maxVelocity = Math.max(maxVelocity, velocity);
+				if (velocity > 1e-3) { // Much smaller threshold
+					this.simMoving2 = true; 
+					break; 
 				}
-				// Right edge
-				if (node.x > width - margin) {
-					const distance = node.x - (width - margin);
-					node.vx -= distance * forceFactor;
+			}
+			
+			// Transition tracking removed for production
+			
+			// Safety valve: clear any accidental leftover target
+			if (!isDragging && simulation.alphaTarget() > 0 && simulation.alpha() < 0.03) {
+				simulation.alphaTarget(0); // guarantee cool-down
+			}
+			
+			const now = performance.now();
+			if (this.simMoving2 && (now - lastRedraw) > 33) { // ~30fps max when moving
+				lastRedraw = now;
+				redraw();
+			} else if (!this.simMoving2 && !isDragging) {
+				// Check if any nodes are in blocking areas
+				if (hasNodesInBlock()) {
+					// Keep higher energy so the block force can push them out
+					if (simulation.alpha() < 0.3) simulation.alpha(0.3); // Much higher alpha for blocking
+				} else {
+					// Only stop when nothing is moving AND no nodes in blocking areas
+					simulation.stop();
 				}
-				// Top edge
-				if (node.y < margin) {
-					const distance = margin - node.y;
-					node.vy += distance * forceFactor;
-				}
-				// Bottom edge
-				if (node.y > height - margin) {
-					const distance = node.y - (height - margin);
-					node.vy -= distance * forceFactor;
-				}
-			});
-			applyBlockingForces();
+			}
+		});
+		
+		simulation.on('end', () => {
+			// Ensure final redraw when simulation stops
+			console.log('Simulation ended in setData');
 			redraw();
 		});
 	} else {
 		// Update the link force with new edges and ensure distance is set
 		if (simulation.force('link')) {
+			console.log('[Worker] Updating link force with', edges.length, 'edges');
 			simulation.force('link')
 				.links(edges)
-				.distance(100) // Ensure distance is always 100px
-				.strength(1.0) // Strong force
-				.iterations(10); // Many iterations for precision
+				.distance(100) // Original distance
+				.strength(0.5) // Less rigid to prevent levering
+				.iterations(2); // Standard iterations
+			
+			// Restart simulation to apply the new forces
+			if (edges.length > 0) {
+				console.log('[Worker] Restarting simulation to apply link forces');
+				simulation.alpha(0.3).restart(); // Moderate restart
+			}
+		} else {
+			console.log('[Worker] No link force found to update!');
 		}
 	}
 	
@@ -464,15 +542,15 @@ applyBlockingForces = () => {
 			const nodeY = node.y;
 			const nodeRadius = 30; // Use fixed radius for blocking calculation
 			
-			// CRITICAL FIX: Convert blocking area from screen space to simulation space
-			// Screen coords to simulation coords: (screen - translation) / scale
-			const simAreaX = (area.x - transform.x) / transform.k;
-			const simAreaY = (area.y - transform.y) / transform.k;
-			const simAreaWidth = area.width / transform.k;
-			const simAreaHeight = area.height / transform.k;
+			// Since we don't use zoom (transform.k = 1, transform.x = 0, transform.y = 0),
+			// we can use the area coordinates directly
+			const simAreaX = area.x;
+			const simAreaY = area.y;
+			const simAreaWidth = area.width;
+			const simAreaHeight = area.height;
 			
-			// Check if node center is inside the blocking area (with buffer) - now in same coordinate space
-			const buffer = 30 / transform.k; // Buffer also needs to be in simulation space
+			// Check if node center is inside the blocking area (with buffer)
+			const buffer = 30; // Fixed buffer size
 			const isInside = nodeX > (simAreaX - buffer) && 
 							 nodeX < (simAreaX + simAreaWidth + buffer) &&
 							 nodeY > (simAreaY - buffer) && 
@@ -483,13 +561,12 @@ applyBlockingForces = () => {
 				const simCenterX = simAreaX + simAreaWidth / 2;
 				const simCenterY = simAreaY + simAreaHeight / 2;
 				
-				// Calculate available space on each side (in simulation space)
-				const simWidth = width / transform.k;
-				const simHeight = height / transform.k;
+				// Calculate available space on each side
+				// Use the actual width/height directly since transform.k = 1
 				const leftSpace = simAreaX;
-				const rightSpace = simWidth - (simAreaX + simAreaWidth);
+				const rightSpace = width - (simAreaX + simAreaWidth);
 				const topSpace = simAreaY;
-				const bottomSpace = simHeight - (simAreaY + simAreaHeight);
+				const bottomSpace = height - (simAreaY + simAreaHeight);
 				
 				// Determine best direction based on available space
 				const horizontalSpace = Math.max(leftSpace, rightSpace);
@@ -497,19 +574,19 @@ applyBlockingForces = () => {
 				
 				let targetX, targetY;
 				
-				// Calculate safe target position (in simulation space)
-				const minSafeDistance = 50 / transform.k; // Convert to simulation space
+				// Calculate safe target position
+				const minSafeDistance = 50; // Fixed safe distance
 				
 				// Choose direction with more space
 				if (horizontalSpace > verticalSpace) {
 					// Push to sides (we have more horizontal space)
 					if (nodeX < simCenterX) {
 						// Push to left - fixed position, no randomness
-						targetX = simAreaX - minSafeDistance - 30 / transform.k; // Fixed offset in sim space
+						targetX = simAreaX - minSafeDistance - 30; // Fixed offset
 						targetY = nodeY; // Keep Y unchanged
 					} else {
 						// Push to right - fixed position, no randomness
-						targetX = simAreaX + simAreaWidth + minSafeDistance + 30 / transform.k; // Fixed offset in sim space
+						targetX = simAreaX + simAreaWidth + minSafeDistance + 30; // Fixed offset
 						targetY = nodeY; // Keep Y unchanged
 					}
 				} else {
@@ -517,11 +594,11 @@ applyBlockingForces = () => {
 					if (nodeY < simCenterY) {
 						// Push to top - fixed position, no randomness
 						targetX = nodeX; // Keep X unchanged
-						targetY = simAreaY - minSafeDistance - 30 / transform.k; // Fixed offset in sim space
+						targetY = simAreaY - minSafeDistance - 30; // Fixed offset
 					} else {
 						// Push to bottom - fixed position, no randomness
 						targetX = nodeX; // Keep X unchanged
-						targetY = simAreaY + simAreaHeight + minSafeDistance + 30 / transform.k; // Fixed offset in sim space
+						targetY = simAreaY + simAreaHeight + minSafeDistance + 30; // Fixed offset
 					}
 				}
 				
@@ -531,8 +608,9 @@ applyBlockingForces = () => {
 				const distance = Math.sqrt(dx * dx + dy * dy);
 				
 				if (distance > 5) { // Apply force only if significantly inside
-					// Moderate force to gently push nodes out
-					const force = Math.min(2, distance * 0.1); // Gentler, consistent force
+					// Scale force with simulation alpha so it fades out
+					const alpha = simulation ? simulation.alpha() : 0.1;
+					const force = Math.min(2, distance * 0.1) * alpha; // Scale with alpha
 					
 					node.vx = (node.vx || 0) + (dx / distance) * force;
 					node.vy = (node.vy || 0) + (dy / distance) * force;
@@ -541,6 +619,90 @@ applyBlockingForces = () => {
 		});
 	});
 };
+
+// Helper to check if any nodes are inside blocking areas
+function hasNodesInBlock(buffer = 30) {
+	if (!blockingAreas.length || !nodes.length) return false;
+	for (const n of nodes) {
+		const x = n.x, y = n.y;
+		for (const a of blockingAreas) {
+			if (
+				x > (a.x - buffer) && x < (a.x + a.width + buffer) &&
+				y > (a.y - buffer) && y < (a.y + a.height + buffer)
+			) return true;
+		}
+	}
+	return false;
+}
+
+// Soft canvas bounds force to prevent nodes from drifting to edges
+function forceBounds(padding = 40, k = 0.3) {
+	let nodes = [];
+	function force(alpha) {
+		const f = k * alpha;
+		for (const n of nodes) {
+			if (n.x < padding) n.vx += (padding - n.x) * f;
+			else if (n.x > width - padding) n.vx += (width - padding - n.x) * f;
+			if (n.y < padding) n.vy += (padding - n.y) * f;
+			else if (n.y > height - padding) n.vy += (height - padding - n.y) * f;
+		}
+	}
+	force.initialize = _ => (nodes = _);
+	return force;
+}
+
+// Custom blocking force that scales with alpha
+function forceBlock(areas, buffer = 30, k = 0.1) { // Moderate force now that it's perpendicular
+	let nodes = [];
+	function force(alpha) {
+		if (!areas.length) return;
+		// Keep a minimum push while inside, even at low alpha
+		const minAlpha = 0.2; // Lower minimum since perpendicular push is more efficient
+		for (const n of nodes) {
+			for (const a of areas) {
+				const inside =
+					n.x > (a.x - buffer) && n.x < (a.x + a.width + buffer) &&
+					n.y > (a.y - buffer) && n.y < (a.y + a.height + buffer);
+				if (!inside) continue;
+
+				// Find which edge is closest
+				const cx = a.x + a.width / 2, cy = a.y + a.height / 2;
+				const distToLeft = n.x - a.x;
+				const distToRight = (a.x + a.width) - n.x;
+				const distToTop = n.y - a.y;
+				const distToBottom = (a.y + a.height) - n.y;
+				
+				// Find minimum distance to an edge
+				const minDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
+				
+				let dx = 0, dy = 0;
+				// Push perpendicular to the nearest edge
+				if (minDist === distToLeft) {
+					dx = -(buffer + 50); // Push left
+					dy = 0;
+				} else if (minDist === distToRight) {
+					dx = buffer + 50; // Push right
+					dy = 0;
+				} else if (minDist === distToTop) {
+					dx = 0;
+					dy = -(buffer + 50); // Push up
+				} else {
+					dx = 0;
+					dy = buffer + 50; // Push down
+				}
+				
+				// Use stronger force when inside to ensure ejection
+				const f = k * Math.max(alpha, minAlpha);
+				n.vx += dx * f;
+				n.vy += dy * f;
+				
+				// Debug logging removed for production
+			}
+		}
+	}
+	force.initialize = _nodes => (nodes = _nodes);
+	return force;
+}
 
 /**
  * Custom force initialization with blocking area consideration
@@ -558,32 +720,34 @@ initForces = () => {
 
 	clusters = Object.values(clusters);
 
-	// No monitoring interference
-	
-	// Initialize simulation with basic forces
+	// Initialize simulation with proper forces
 	simulation
 		.force('charge', d3.forceManyBody()
-			.strength(-10) // Minimal repulsion
-			.distanceMax(50) // Very limited range
+			.strength(-60) // Gentle repulsion to prevent drifting
+			.distanceMax(300) // Don't push across the whole canvas
 			.theta(0.9)) // Higher theta for more accurate force calculation
 		.force('collide', d3.forceCollide(d => {
 			// Use actual node radius to prevent overlap
 			const baseRadius = getRadius(d);
 			return baseRadius + 10; // Small buffer to prevent visual overlap
-		}).strength(0.8)); // Good strength to prevent overlap
+		}).strength(0.8)) // Good strength to prevent overlap
+		.force('block', forceBlock(blockingAreas)) // Add blocking as a proper force
+		.force('bounds', forceBounds(40, 0.35)); // Soft canvas bounds to prevent drifting
 
 	// Initialize link force properly with edges
 	if (edges && edges.length > 0) {
 		const linkForce = d3.forceLink(edges)
 			.id(d => d.id)
-			.distance(100) // 100px distance for all links
-			.strength(0.9) // Strong force to maintain distance
-			.iterations(5); // Many iterations for precision
+			.distance(100) // Original distance from forceProps
+			.strength(0.5) // Less rigid to prevent levering
+			.iterations(2); // Standard iterations
 		
 		simulation.force('link', linkForce);
+		console.log('[Worker initForces] Created link force with', edges.length, 'edges');
 	} else {
 		// Create empty link force that can be updated later
 		simulation.force('link', d3.forceLink([]).id(d => d.id));
+		console.log('[Worker initForces] Created empty link force (no edges yet)');
 	}
 
 	updateForces();
@@ -602,13 +766,14 @@ draw = (t) => {
 	TWEEN.update();
 
 	ctx.save();
+	
+	// Set transform every frame to ensure consistency
+	ctx.setTransform(density, 0, 0, density, 0, 0);
 	ctx.clearRect(0, 0, width, height);
 	
 	// Reset globalAlpha to ensure clean state
 	ctx.globalAlpha = 1;
 	
-	ctx.translate(transform.x, transform.y);
-	ctx.scale(transform.k, transform.k);
 	ctx.font = getFont();
 	
 	// Debug: Draw blocking areas (remove in production)
@@ -623,11 +788,24 @@ draw = (t) => {
 		});
 	}
 
+	// Helper to check if edge is in viewport
+	function edgeInView(a, b) {
+		const ax = transform.x + a.x * transform.k;
+		const ay = transform.y + a.y * transform.k;
+		const bx = transform.x + b.x * transform.k;
+		const by = transform.y + b.y * transform.k;
+		const outLeft  = ax < -50 && bx < -50;
+		const outRight = ax > width + 50 && bx > width + 50;
+		const outUp    = ay < -50 && by < -50;
+		const outDown  = ay > height + 50 && by > height + 50;
+		return !(outLeft || outRight || outUp || outDown);
+	}
+	
 	// Draw edges - ALWAYS at full opacity, before nodes
 	const currentAlpha = ctx.globalAlpha;
 	ctx.globalAlpha = 1; // Force full opacity for edges
 	
-	// Draw ALL edges, not just those in viewport - edges should always be visible
+	// Draw edges with viewport culling for performance
 	edges.forEach(d => {
 		// Get actual nodes for source and target (handle both object and ID references)
 		let sourceNode = typeof d.source === 'object' ? d.source : getNodeById(d.source);
@@ -637,8 +815,10 @@ draw = (t) => {
 		if (sourceNode && targetNode && 
 		    !isNaN(sourceNode.x) && !isNaN(sourceNode.y) && 
 		    !isNaN(targetNode.x) && !isNaN(targetNode.y)) {
-			// Always draw the edge, no viewport checking for edges
-			drawEdge({ source: sourceNode, target: targetNode }, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+			// Only draw edge if it's in viewport
+			if (edgeInView(sourceNode, targetNode)) {
+				drawEdge({ source: sourceNode, target: targetNode }, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+			}
 		}
 	});
 	
@@ -647,6 +827,9 @@ draw = (t) => {
 	// Draw nodes with radial gradient
 	let drawnNodes = [];
 	let skippedNodes = [];
+	
+	// No nodes check removed for production
+	
 	nodes.forEach(d => {
 		// Always draw nodes that are being dragged, or check viewport
 		if (isDragging && dragNode && d.id === dragNode.id) {
@@ -659,6 +842,8 @@ draw = (t) => {
 			skippedNodes.push(d.id);
 		}
 	});
+	
+	// Node draw logging removed for production
 
 	if (selectBox.x && selectBox.y && selectBox.width && selectBox.height) {
 		drawSelectBox();
@@ -899,7 +1084,11 @@ updateForces = () => {
 	updateOrphans();
 	
 	let map = getNodeMap();
-	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+	edges = edges.filter(d => {
+		const s = typeof d.source === 'object' ? d.source.id : d.source;
+		const t = typeof d.target === 'object' ? d.target.id : d.target;
+		return map.get(s) && map.get(t);
+	});
 	
 	nodes = nodes.map(d => {
 		let o = old.get(d.id) || { x: width / 2, y: height / 2 };
@@ -918,9 +1107,13 @@ updateForces = () => {
 	nodes.forEach(d => {
 		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
-	
-	simulation.alpha(1).restart();
-	
+
+	// Restart if stopped or cool (aligned with stop threshold)
+	// Callers should check if structure actually changed before calling this
+	if (simulation.alpha() < 0.02) {
+		simulation.alpha(0.12).restart();
+	}
+
 	nodeMap = getNodeMap();
 	redraw();
 };
@@ -951,11 +1144,21 @@ updateOrphans = () => {
 	});
 };
 
+// Fix redraw scheduler to prevent spinning
+let rafId = 0;
+let redrawCount = 0;
+let lastRedrawLog = 0;
+
 redraw = () => {
-	cancelAnimationFrame(frame);
-	if (!paused) {
-		frame = requestAnimationFrame(draw);
-	};
+	if (rafId || paused) return; // coalesce multiple calls
+	
+	// Debug: log redraw frequency
+	// Redraw counting removed for production
+	
+	rafId = requestAnimationFrame(t => { 
+		rafId = 0; 
+		draw(t); 
+	});
 };
 
 drawSelectBox = () => {
@@ -984,16 +1187,20 @@ recalcConstants = () => {
 	lineWidth3 = lineWidth * 3;
 };
 
+// Helper functions for transform since we don't use zoom
+const invertX = (x) => x - transform.x;
+const invertY = (y) => y - transform.y;
+
 onDragToSelectStart = (data) => {
 	const { x, y } = data;
 	
-	selectBox.x = transform.invertX(x);
-	selectBox.y = transform.invertY(y);
+	selectBox.x = invertX(x);
+	selectBox.y = invertY(y);
 };
 
 onDragToSelectMove = (data) => {
-	const x = transform.invertX(data.x);
-	const y = transform.invertY(data.y);
+	const x = invertX(data.x);
+	const y = invertY(data.y);
 	
 	selectBox.width = x - selectBox.x;
 	selectBox.height = y - selectBox.y;
@@ -1039,8 +1246,8 @@ onDragMove = ({ subjectId, x, y }) => {
 	
 	const radius = getRadius(d);
 	
-	d.fx = transform.invertX(x) - radius / 2;
-	d.fy = transform.invertY(y) - radius / 2;
+	d.fx = invertX(x) - radius / 2;
+	d.fy = invertY(y) - radius / 2;
 	
 	redraw();
 };
@@ -1079,8 +1286,15 @@ onSetRootId = ({ x, y }) => {
 };
 
 onSetEdges = (param) => {
+	// Check if structure actually changed (not just styles)
+	const structureChanged = didEdgesStructureChange(edges, param.edges);
 	data.edges = param.edges;
-	updateForces();
+	
+	if (structureChanged) {
+		updateForces();
+	} else {
+		redraw(); // Just redraw for style changes
+	}
 };
 
 onSetSelected = ({ ids }) => {
@@ -1088,29 +1302,7 @@ onSetSelected = ({ ids }) => {
 	redraw();
 };
 
-onMouseMove = ({ x, y }) => {
-	const d = getNodeByCoords(x, y);
-	
-	isOver = d ? d.id : '';
-	
-	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
-	redraw();
-	clearTimeout(timeoutHover);
-	
-	if (!d) {
-		isHovering = false;
-		return;
-	};
-	
-	timeoutHover = setTimeout(() => {
-		const d = getNodeByCoords(x, y);
-		if (d) {
-			isHovering = true;
-		};
-		
-		redraw();
-	}, 200);
-};
+// Removed first duplicate onMouseMove that had risky send('onMouseMove') - keeping later one
 
 onContextMenu = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
@@ -1194,18 +1386,47 @@ setRootId = (param) => {
 };
 
 restart = (alpha) => {
-	simulation.alphaTarget(alpha).restart();
+	simulation.alpha(alpha).restart(); // impulse; will cool down
+};
+
+// Wake the simulation with small alpha when needed
+wake = () => {
+	if (!simulation) return;
+	// Wake if stopped, cool, or nodes are in blocking areas
+	if (simulation.alpha() < 0.02 || hasNodesInBlock()) {
+		simulation.alpha(0.08).restart();
+	}
 };
 
 resize = (data) => {
+	// Update dimensions
 	width = data.width;
 	height = data.height;
-	density = data.density;
+	density = data.density || 1; // Don't use window.devicePixelRatio in worker - it's undefined
 	
-	ctx.canvas.width = width * density;
-	ctx.canvas.height = height * density;
-	ctx.scale(density, density);
+	// Resize the canvas
+	ctx.canvas.width = Math.round(width * density);
+	ctx.canvas.height = Math.round(height * density);
 	
+	// Set transform
+	ctx.setTransform(density, 0, 0, density, 0, 0);
+	
+	// Update blocking area position (for the popup) to stay centered
+	if (blockingAreas && blockingAreas.length > 0) {
+		const centerX = width / 2;
+		const centerY = height / 2;
+		blockingAreas.forEach(area => {
+			area.x = centerX - area.width / 2;
+			area.y = centerY - area.height / 2;
+		});
+		
+		// Update the blocking force with new positions
+		if (simulation) {
+			simulation.force('block', forceBlock(blockingAreas));
+		}
+	}
+	
+	// Just redraw immediately
 	redraw();
 };
 
@@ -1220,23 +1441,30 @@ updateTheme = ({ theme, colors }) => {
 	redraw();
 };
 
-image = ({ src, bitmap }) => {
-	console.log('[Worker] Received image (handler 2):', src, 'bitmap:', bitmap);
-	if (!images[src]) {
-		images[src] = bitmap;
-		console.log('[Worker] Stored image:', src, 'total images:', Object.keys(images).length);
-	} else {
-		console.log('[Worker] Image already exists:', src);
-	}
-};
+// Removed duplicate image handler - keeping first one
 
 // Utility functions
 const send = (id, data) => {
 	this.postMessage({ id, data });
 };
 
+// Helper to detect if edge structure actually changed
+function didEdgesStructureChange(oldEdges, newEdges) {
+	if (oldEdges.length !== newEdges.length) return true;
+	for (let i = 0; i < newEdges.length; i++) {
+		const a = oldEdges[i], b = newEdges[i];
+		const as = typeof a.source === 'object' ? a.source.id : a.source;
+		const at = typeof a.target === 'object' ? a.target.id : a.target;
+		const bs = typeof b.source === 'object' ? b.source.id : b.source;
+		const bt = typeof b.target === 'object' ? b.target.id : b.target;
+		if (as !== bs || at !== bt) return true;
+	}
+	return false;
+}
+
 const checkNodeInViewport = (d) => {
-	const dr = (d.customRadius || nodeStyle.defaultRadius) * transform.k;
+	// Keep radius consistent - in CSS px, not scaled
+	const dr = d.customRadius || nodeStyle.defaultRadius;
 	const distX = transform.x + d.x * transform.k - dr;
 	const distY = transform.y + d.y * transform.k - dr;
 	
@@ -1250,7 +1478,7 @@ const getNodeById = (id) => {
 const getNodeByCoords = (x, y) => {
 	// Increase search radius to match the actual node size (25-30 pixels)
 	const searchRadius = 30 / transform.k;
-	return simulation.find(transform.invertX(x), transform.invertY(y), searchRadius);
+	return simulation.find(invertX(x), invertY(y), searchRadius);
 };
 
 const getEdgeMap = () => {
@@ -1312,16 +1540,10 @@ onMouseDown = ({ x, y }) => {
 			actualNode.fx = actualNode.x;
 			actualNode.fy = actualNode.y;
 			
-			// Activate simulation for dragging but control the alpha carefully
+			// Activate simulation with sustained target for dragging
 			if (simulation) {
-				// Only restart if simulation is completely stopped
-				if (simulation.alpha() < 0.001) {
-					// Start with low alpha to prevent force explosion
-					simulation.alpha(0.05).alphaTarget(0.05).restart();
-				} else {
-					// Just set target, don't restart
-					simulation.alphaTarget(0.05);
-				}
+				wake(); // Wake if stopped
+				simulation.alphaTarget(0.05); // Sustained target for dragging
 			}
 		}
 	}
@@ -1366,18 +1588,20 @@ onMouseMove = ({ x, y }) => {
 			});
 		}
 		
-		// Keep simulation running with enough activity for links to work
-		if (simulation && simulation.alpha() < 0.05) {
-			// Just set alpha target, don't restart which would set alpha to 1
-			simulation.alphaTarget(0.05);
+		// Keep simulation running with sustained target during drag
+		if (simulation) {
+			simulation.alphaTarget(0.05); // Sustained target for dragging
 		}
 		
 		redraw();
 	} else {
-		// Check for hover
+		// Only redraw if hover target actually changed
 		const node = getNodeByCoords(x, y);
-		isOver = node ? node.id : '';
-		redraw();
+		const nextOver = node ? node.id : '';
+		if (nextOver !== isOver) {
+			isOver = nextOver;
+			redraw();
+		}
 	}
 };
 
@@ -1387,16 +1611,16 @@ onMouseUp = ({ x, y }) => {
 		dragNode.fx = null;
 		dragNode.fy = null;
 		
-		// Stop simulation gradually
-		if (simulation) {
-			simulation.alphaTarget(0);
-		}
-		
 		isDragging = false;
 		dragNode = null;
-		
-		redraw();
 	}
+	
+	// ALWAYS reset target to 0 after drag ends
+	if (simulation) {
+		simulation.alphaTarget(0);
+	}
+	
+	redraw();
 };
 
 onMouseLeave = () => {
@@ -1408,14 +1632,15 @@ onMouseLeave = () => {
 		dragNode.fx = null;
 		dragNode.fy = null;
 		
-		// Give simulation energy to push node out of any blocking area
-		if (simulation) {
-			simulation.alphaTarget(0.3).restart();
-		}
-		
 		isDragging = false;
 		dragNode = null;
-		
-		redraw();
 	}
+	
+	// No impulse on leave - the sim will cool down naturally
+	// Only ensure target is 0
+	if (simulation) {
+		simulation.alphaTarget(0);
+	}
+	
+	redraw();
 };

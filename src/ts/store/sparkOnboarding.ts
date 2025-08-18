@@ -416,6 +416,34 @@ class SparkOnboardingStore {
 			this.isConnected = true;
 		});
 
+		this.service.on('sessionReconnected', (data: any) => {
+			console.log('[SparkOnboarding Store] Session reconnected, restoring state:', data);
+			this.isConnected = true;
+			
+			// Restore state from reconnection data
+			if (data.state) {
+				// Restore questions and answers if they exist
+				if (data.state.questions) {
+					this.questions = data.state.questions;
+				}
+				if (data.state.answers) {
+					this.answers = data.state.answers;
+				}
+				// Restore space name if it exists
+				if (data.state.spaceName) {
+					this.spaceName = data.state.spaceName;
+				}
+				// Restore step - determine based on what data we have
+				if (data.state.step) {
+					this.step = data.state.step;
+				}
+				// Restore any generation progress
+				if (data.state.generationProgress) {
+					this.generationProgress = data.state.generationProgress;
+				}
+			}
+		});
+
 		this.service.on('disconnected', () => {
 			this.isConnected = false;
 		});
@@ -557,27 +585,29 @@ class SparkOnboardingStore {
 			this.isLoading = false;
 		});
 
-		this.service.on('typeGenerated', (typeName: string, typeSchema: any) => {
+		this.service.on('typeGenerated', (typeName: string, icon: string, properties: string[]) => {
 			this.generationProgress.current++;
 			this.generationProgress.types.push(typeName);
 			this.generationProgress.status = `Generated type: ${typeName}`;
 			
-			// Update the type node with iconName if provided in schema
+			// Update the type node with icon if provided
 			const typeNodeId = this.typeNameToNodeId(typeName);
 			const typeNode = this.graphNodes.find(n => n.id === typeNodeId);
 			if (typeNode) {
-				// Only use icon from schema, no guessing
-				const iconName = typeSchema?.['x-icon-name'];
-				
-				if (iconName) {
-					typeNode.iconName = iconName;
-					console.log('[SparkOnboarding Store] Updated type node with icon from schema:', typeName, iconName);
+				if (icon) {
+					typeNode.iconName = icon;
+					console.log('[SparkOnboarding Store] Updated type node with icon:', typeName, icon);
 					
 					// Force a re-render by creating a new array reference
 					this.graphNodes = [...this.graphNodes];
 				} else {
 					// No icon provided - that's fine, node will display without icon
 					console.log('[SparkOnboarding Store] No icon provided for type:', typeName);
+				}
+				
+				// Log properties for debugging
+				if (properties && properties.length > 0) {
+					console.log('[SparkOnboarding Store] Type properties:', typeName, properties);
 				}
 			}
 		});
@@ -643,9 +673,7 @@ class SparkOnboardingStore {
 			}
 		});
 
-		this.service.on('propertyGenerated', (typeName: string, propertyName: string) => {
-			this.generationProgress.status = `Added property "${propertyName}" to ${typeName}`;
-		});
+		// propertyGenerated is no longer sent - properties are included in typeGenerated
 
 		this.service.on('objectGenerated', (typeName: string, object: any) => {
 			this.generationProgress.status = `Created object: ${object?.title || 'Untitled'}`;
@@ -709,16 +737,25 @@ class SparkOnboardingStore {
 			this.generationProgress.status = status;
 		});
 
-		this.service.on('workspaceReady', (downloadUrl: string, manifest: I.WorkspaceManifest) => {
+		this.service.on('workspaceReady', (downloadUrl: string, spaceName: string) => {
 			this.downloadUrl = downloadUrl;
-			this.manifest = manifest;
+			// Create a minimal manifest with just the space name
+			// The actual counts will be taken from generationProgress
+			this.manifest = {
+				spaceName: spaceName,
+				typesCount: this.generationProgress.types.length,
+				objectsCount: this.graphNodes.filter(n => n.type === 'object').length,
+				createdAt: new Date().toISOString()
+			};
 			this.step = I.OnboardingStep.Complete;
 			this.isLoading = false;
 		});
 
 		this.service.on('importSuccess', (spaceId: string) => {
 			// Space switch and navigation is handled by the service
-			// Just reset the store
+			// Close the session permanently since we're done
+			this.service.closeSession();
+			// Reset the store
 			this.reset();
 			this.disconnect();
 		});

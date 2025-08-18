@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, getSparkOnboardingService } from 'Lib';
+import { I, S, U, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
 import $ from 'jquery';
@@ -505,10 +505,15 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 	// Initialize connection
 	useEffect(() => {
+		// Prevent keyboard events from reaching the underlying editor
+		keyboard.setFocus(true);
+		
 		sparkOnboarding.init();
 		sparkOnboarding.connect();
 
 		return () => {
+			// Restore keyboard focus when popup closes
+			keyboard.setFocus(false);
 			sparkOnboarding.disconnect();
 		};
 	}, []);

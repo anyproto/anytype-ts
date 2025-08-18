@@ -16,6 +16,7 @@ export class SparkOnboardingService extends EventEmitter {
 	private reconnectTimeout: NodeJS.Timeout | null = null;
 	private messageQueue: any[] = [];
 	private isConnecting: boolean = false;
+	private isReconnecting: boolean = false;
 
 	constructor(config: SparkOnboardingConfig = {}) {
 		super();
@@ -23,6 +24,10 @@ export class SparkOnboardingService extends EventEmitter {
 		// Note: process.env is not available in browser, would need to be injected at build time
 		this.url = config.url || 'ws://localhost:8765';
 		this.maxReconnectAttempts = config.maxRetries || 3;
+		
+		// Session ID is only kept in memory for network reconnection
+		// Not persisted to localStorage since a page refresh should start a new flow
+		this.sessionId = null;
 	}
 
 	async connect(): Promise<void> {
@@ -49,7 +54,10 @@ export class SparkOnboardingService extends EventEmitter {
 			this.isConnecting = true;
 
 			try {
-				this.ws = new WebSocket(this.url, 'anytype-onboarding');
+				// Include session ID in URL if we have one (for reconnection)
+				const connectUrl = this.sessionId ? `${this.url}?sessionId=${this.sessionId}` : this.url;
+				console.log('[SparkOnboarding] Connecting to:', connectUrl, this.sessionId ? '(with session)' : '(new session)');
+				this.ws = new WebSocket(connectUrl, 'anytype-onboarding');
 
 				this.ws.onopen = () => {
 					console.log('[SparkOnboarding] Connected to server');
@@ -120,7 +128,9 @@ export class SparkOnboardingService extends EventEmitter {
 			this.ws = null;
 		}
 
-		this.sessionId = null;
+		// Don't clear sessionId - keep it for potential reconnection
+		// Session will remain on server for 20 minutes
+		// this.sessionId = null;
 		this.messageQueue = [];
 	}
 
@@ -153,7 +163,21 @@ export class SparkOnboardingService extends EventEmitter {
 		switch (message.type) {
 			case 'connected':
 				this.sessionId = (message as I.ConnectedMessage).sessionId;
+				console.log('[SparkOnboarding] New session started:', this.sessionId);
 				this.emit('sessionStarted', this.sessionId);
+				break;
+
+			case 'reconnected':
+				// Server restored our session, update state
+				const reconnectMsg = message as any;
+				this.sessionId = reconnectMsg.sessionId;
+				console.log('[SparkOnboarding] Session reconnected:', this.sessionId);
+				this.emit('sessionReconnected', reconnectMsg);
+				// Emit events to restore state
+				if (reconnectMsg.state) {
+					// Restore any state that needs to be synced
+					this.emit('stateRestored', reconnectMsg.state);
+				}
 				break;
 
 			case 'questions_ready':
@@ -181,16 +205,13 @@ export class SparkOnboardingService extends EventEmitter {
 				break;
 
 			case 'type_generated':
-				const typeMsg = message as any; // The actual message structure differs from interface
-				// The message has 'schema' not 'typeSchema'
+				const typeMsg = message as any;
 				console.log('[SparkOnboarding Service] type_generated message:', typeMsg);
-				this.emit('typeGenerated', typeMsg.typeName, typeMsg.schema);
+				// New structure: icon instead of schema
+				this.emit('typeGenerated', typeMsg.typeName, typeMsg.icon, typeMsg.properties);
 				break;
 
-			case 'property_generated':
-				const propMsg = message as I.PropertyGeneratedMessage;
-				this.emit('propertyGenerated', propMsg.typeName, propMsg.propertyName, propMsg.propertySchema);
-				break;
+			// property_generated is no longer sent - properties are included in type_generated
 
 			case 'object_generated':
 				const objMsg = message as I.ObjectGeneratedMessage;
@@ -214,8 +235,9 @@ export class SparkOnboardingService extends EventEmitter {
 				break;
 
 			case 'workspace_ready':
-				const workspaceMsg = message as I.WorkspaceReadyMessage;
-				this.emit('workspaceReady', workspaceMsg.downloadUrl, workspaceMsg.manifest);
+				const workspaceMsg = message as any;
+				// New structure: only spaceName and downloadUrl
+				this.emit('workspaceReady', workspaceMsg.downloadUrl, workspaceMsg.spaceName);
 				break;
 
 			case 'error':
@@ -330,6 +352,15 @@ export class SparkOnboardingService extends EventEmitter {
 
 	getSessionId(): string | null {
 		return this.sessionId;
+	}
+
+	// Send close_session message to permanently close the session
+	closeSession(): void {
+		if (this.sessionId) {
+			console.log('[SparkOnboarding] Closing session:', this.sessionId);
+			this.send({ type: 'close_session' });
+			this.sessionId = null;
+		}
 	}
 }
 

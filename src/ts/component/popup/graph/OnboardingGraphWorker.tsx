@@ -103,8 +103,16 @@ const OnboardingGraphWorker = observer(({
 		});
 	};
 
+	// Throttle mouse move events to reduce message overhead
+	const lastMouseMoveRef = useRef<number>(0);
+	
 	const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		if (!workerRef.current) return;
+		
+		// Throttle to max 30 events per second
+		const now = Date.now();
+		if (now - lastMouseMoveRef.current < 33) return;
+		lastMouseMoveRef.current = now;
 		
 		const rect = canvasRef.current?.getBoundingClientRect();
 		if (!rect) return;
@@ -203,13 +211,7 @@ const OnboardingGraphWorker = observer(({
 
 		setIsInitialized(true);
 		
-		// Send initial resize message
-		workerRef.current.postMessage({
-			id: 'resize',
-			width,
-			height,
-			density: window.devicePixelRatio || 1,
-		});
+		// Don't send initial resize here - it's handled by the resize effect
 
 		// Cleanup
 		return () => {
@@ -223,8 +225,12 @@ const OnboardingGraphWorker = observer(({
 
 	// Update graph data when nodes/links change using MobX reaction
 	useEffect(() => {
-		if (!isInitialized) return;
+		if (!isInitialized || !workerRef.current) return;
 
+		// Track reaction frequency
+		let reactionCount = 0;
+		let lastReactionLog = Date.now();
+		
 		// Use MobX reaction to properly track observable changes
 		const dispose = reaction(
 			() => ({
@@ -235,6 +241,8 @@ const OnboardingGraphWorker = observer(({
 			}),
 			(data) => {
 				if (!workerRef.current) return;
+				
+				// Reaction frequency tracking removed for production
 				
 				console.log('OnboardingGraphWorker: Sending nodes to worker:', data.nodesLength);
 		
@@ -287,7 +295,7 @@ const OnboardingGraphWorker = observer(({
 				customRadius: node.type === 'space' ? 30 : (node.type === 'type' ? 25 : 20),
 				centerColor: 'rgba(255, 255, 255, 1)', // Always white center
 				edgeColor: node.type === 'type'
-					? 'hsla(155, 76%, 57%, 1)'   // Green for types
+					? 'hsla(155, 76%, 57%, 1)' // Green for types
 					: 'hsla(201, 100%, 75%, 1)', // Blue for objects
 			};
 		});
@@ -300,6 +308,7 @@ const OnboardingGraphWorker = observer(({
 			name: '',
 			opacity: link.opacity || 0.3,
 		}));
+		
 
 				// Send data to worker
 				workerRef.current.postMessage({
@@ -315,7 +324,7 @@ const OnboardingGraphWorker = observer(({
 		);
 
 		return () => dispose(); // Cleanup reaction
-	}, [isInitialized, width, height, popupWidth, popupHeight]);
+	}, [isInitialized]); // Only recreate when initialization changes
 
 	// Handle resize
 	useEffect(() => {
@@ -354,8 +363,6 @@ const OnboardingGraphWorker = observer(({
 		>
 			<canvas
 				ref={canvasRef}
-				width={width}
-				height={height}
 				onMouseDown={handleMouseDown}
 				onMouseMove={handleMouseMove}
 				onMouseUp={handleMouseUp}
