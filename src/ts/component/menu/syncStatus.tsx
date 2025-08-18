@@ -38,7 +38,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
-		const { notSyncedCounter } = S.Auth.getSyncStatus();
+		const notSyncedCounter = S.Auth.getNotSynced().total;
 		const { setActive } = this.props;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -295,7 +295,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	onIncentiveButtonClick (id: string) {
 		switch (id) {
 			case 'storage': {
-				U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
+				const { files } = S.Auth.getNotSynced();
+
+				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
+					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
+				} else {
+					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
+				};
 				break;
 			};
 
