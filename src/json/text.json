@@ -1312,7 +1312,6 @@
 	"popupShortcutDescription": "Click any shortcut to edit it",
 	"popupShortcutKeyboard": "Keyboard Shortcuts",
 	"popupShortcutResetKey": "Conflicts with %s. It has been set to blank.",
-	"popupShortcutConflict": "Conflicts with %s",
 	"popupShortcutImport": "Import Shortcuts Mapping",
 	"popupShortcutExport": "Export Shortcuts Mapping",
 	"popupShortcutResetAll": "Reset All To Default",
@@ -1325,6 +1324,10 @@
 	"popupShortcutToastUpdated": "Shortcuts mapping updated",
 	"popupShortcutToastExported": "Shortcuts mapping exported",
 	"popupShortcutToastSaved": "Shortcut assigned",
+
+	"popupShortcutConflict": "<b>%s</b> is already assigned to \"<b>%s</b>\"",
+	"popupShortcutOverride": "Override",
+	"popupShortcutRemove": "Remove",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutInterface": "Interface",
