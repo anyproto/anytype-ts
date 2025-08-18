@@ -1905,6 +1905,48 @@ class UtilCommon {
 		return canUpgradeTiers.includes(membership.tier);
 	};
 
+	getMembershipPeriodLabel (tier: I.MembershipTier): string {
+		// default is year
+		let periodLabel = translate('pluralYear');
+
+		if (tier.periodType) {
+			switch (tier.periodType) {
+				case I.MembershipTierDataPeriodType.PeriodTypeDays: {
+					periodLabel = translate('pluralDay');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
+					periodLabel = translate('pluralWeek');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
+					periodLabel = translate('pluralMonth');
+					break;
+				};
+			};
+		};
+
+		return periodLabel;
+	};
+
+	calculateStorageUsage (): number {
+		const spaces = U.Space.getList();
+
+		let usage = 0;
+
+		(spaces || []).forEach((space) => {
+			if (!U.Space.isMyOwner(space.targetSpaceId)) {
+				return;
+			};
+
+			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+
+			usage += Number(object.bytesUsage) || 0;
+		});
+
+		return usage;
+	};
+
 };
 
 export default new UtilCommon();

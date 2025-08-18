@@ -268,6 +268,8 @@
             .iconWrapper.error::before { background: #581f0c; }
         }
 
+		.incentiveBanner { background: linear-gradient(180deg, #74321e 30%, #9c492f 100%); }
+
 		.items {
             .sides {
                 .side.right {
@@ -304,6 +306,11 @@
 
 	.menu.menuPublish {
 		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
+
+		.incentiveBanner { background-color: rgba(55, 122, 255, 0.15); }
+		.incentiveBanner {
+			.button { color: var(--color-text-primary); }
+		}
 
 		.outer {
 			.icon.link { background-image: url('#{$themePath}/icon/widget/button/link.svg'); }

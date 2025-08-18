@@ -515,7 +515,7 @@ class Mark {
 	 */
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
 		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
-		const reg2 = /^[`\*_\[~]+/;
+		const reg2 = /^(`{1}|\*+|_+|\[|~{2})/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
@@ -723,6 +723,32 @@ class Mark {
 
 		};
 		return attr;
+	};
+
+	/**
+	 * Gets a part of the string and marks within a specified range.
+	 * @param {string} text - The full text.
+	 * @param {I.TextRange} range - The range to extract.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {{ text: string, marks: I.Mark[] }} The extracted text and marks.
+	 */
+	getPartOfString (text: string, range: I.TextRange, marks: I.Mark[]): { text: string, marks: I.Mark[] } {
+		const newText = text.substring(range.from, range.to);
+		const newMarks: I.Mark[] = [];
+
+		for (const mark of marks) {
+			if (mark.range.from >= range.from && mark.range.to <= range.to) {
+				newMarks.push({ ...mark, range: { from: mark.range.from - range.from, to: mark.range.to - range.from } });
+			} else 
+			if ((mark.range.from < range.to) && (mark.range.to > range.from)) {
+				const from = Math.max(mark.range.from - range.from, 0);
+				const to = Math.min(mark.range.to - range.from, text.length);
+
+				newMarks.push({ ...mark, range: { from, to } });
+			};
+		};
+
+		return { text: newText, marks: newMarks };
 	};
 
 	/**
