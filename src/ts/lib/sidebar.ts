@@ -45,7 +45,6 @@ class Sidebar {
 			};
 
 			this.set(stored);
-
 		} else {
 			this.set({
 				width: J.Size.sidebar.width.default,
@@ -59,7 +58,7 @@ class Sidebar {
 
 		vault.toggleClass('isClosed', isClosed);
 		this.objLeft.toggleClass('isClosed', isClosed);
-		this.updateBannerPosition(stored.isClosed);
+		this.updateBannerPosition(isClosed);
 	};
 
 	/**

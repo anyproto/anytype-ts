@@ -198,25 +198,13 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			<Sync id="sidebarSync" onClick={onSync} />
 
-			<Banner
-				id="sidebarUpdateBanner"
-				title={translate('commonUpdateAvailable')}
-				text={U.Common.sprintf(translate('commonNewVersion'), '1.2.3')}
-				button={translate('commonUpdateNow')}
-				buttonColor="black"
-				onClick={() => {
-					S.Common.updateVersionSet('');
-				}}
-				onClose={() => {
-					S.Common.updateVersionSet('');
-				}}
-			/>
-
 			{updateVersion ? (
 				<Banner
-					id="update"
+					id="sidebarUpdateBanner"
+					title={translate('commonUpdateAvailable')}
 					text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)}
-					button={translate('commonUpdateNow')}
+					button={translate('commonUpdateApp')}
+					buttonColor="black"
 					onClick={() => {
 						Renderer.send('updateConfirm');
 						S.Common.updateVersionSet('');
