@@ -25,6 +25,7 @@ class Sidebar {
 	loader: JQuery<HTMLElement> = null;
 	toggleButton: JQuery<HTMLElement> = null;
 	syncButton: JQuery<HTMLElement> = null;
+	updateBanner: JQuery<HTMLElement> = null;
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
@@ -44,6 +45,7 @@ class Sidebar {
 			};
 
 			this.set(stored);
+
 		} else {
 			this.set({
 				width: J.Size.sidebar.width.default,
@@ -57,6 +59,7 @@ class Sidebar {
 
 		vault.toggleClass('isClosed', isClosed);
 		this.objLeft.toggleClass('isClosed', isClosed);
+		this.updateBannerPosition(stored.isClosed);
 	};
 
 	/**
@@ -75,6 +78,7 @@ class Sidebar {
 		this.dummyLeft = $('#sidebarDummyLeft');
 		this.toggleButton = $('#sidebarToggle');
 		this.syncButton = $('#sidebarSync');
+		this.updateBanner = $('#sidebarUpdateBanner');
 		this.vault = $(S.Common.getRef('vault')?.getNode());
 	};
 
@@ -265,6 +269,7 @@ class Sidebar {
 
 		let toggleX = 16;
 		let syncX = 52;
+		let bannerWidth = J.Size.sidebar.width.min - 32;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -303,6 +308,7 @@ class Sidebar {
 
 			if (widthLeft) {
 				syncX = widthLeft - 40;
+				bannerWidth = widthLeft - J.Size.vault.width - 16;
 			};
 		};
 
@@ -330,6 +336,8 @@ class Sidebar {
 			this.page.css({ width: pageWidth });
 			this.toggleButton.css({ left: toggleX });
 			this.syncButton.css({ left: syncX });
+
+			this.updateBanner.css({ width: bannerWidth });
 		};
 
 		$(window).trigger('sidebarResize');
@@ -406,6 +414,7 @@ class Sidebar {
 		this.vault.addClass('anim');
 		this.setVaultAnimationParam(this.data.width, true);
 		this.vault.addClass('isClosed');
+		this.updateBannerPosition(true);
 	};
 
 	/**
@@ -416,6 +425,7 @@ class Sidebar {
 		this.vault.addClass('anim');
 		this.setVaultAnimationParam(width, false);
 		this.vault.removeClass('isClosed');
+		this.updateBannerPosition(false);
 	};
 
 	/**
@@ -440,6 +450,12 @@ class Sidebar {
 	 */
 	getVaultDuration (width: number): number {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
+	};
+
+	updateBannerPosition (close: boolean) {
+		window.setTimeout(() => {
+			this.updateBanner.css({ left: close ? 12 : 80 });
+		}, close ? J.Constant.delay.sidebar : 0);
 	};
 
 	/**

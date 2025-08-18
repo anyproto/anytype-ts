@@ -198,6 +198,37 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			<Sync id="sidebarSync" onClick={onSync} />
 
+			<Banner
+				id="sidebarUpdateBanner"
+				title={translate('commonUpdateAvailable')}
+				text={U.Common.sprintf(translate('commonNewVersion'), '1.2.3')}
+				button={translate('commonUpdateNow')}
+				buttonColor="black"
+				onClick={() => {
+					S.Common.updateVersionSet('');
+				}}
+				onClose={() => {
+					S.Common.updateVersionSet('');
+				}}
+			/>
+
+			{updateVersion ? (
+				<Banner
+					id="update"
+					text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)}
+					button={translate('commonUpdateNow')}
+					onClick={() => {
+						Renderer.send('updateConfirm');
+						S.Common.updateVersionSet('');
+						U.Common.checkUpdateVersion(updateVersion);
+					}}
+					onClose={() => {
+						S.Common.updateVersionSet('');
+						Renderer.send('updateCancel');
+					}}
+				/>
+			) : ''}
+
 			<div 
 				ref={nodeRef}
 				id="sidebarLeft" 
@@ -208,23 +239,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
 					<div className="resize-handle" onClick={onHandleClick} />
 				</div>
-
-				{updateVersion ? (
-					<Banner 
-						id="update" 
-						text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)} 
-						button={translate('commonUpdateNow')} 
-						onClick={() => {
-							Renderer.send('updateConfirm');
-							S.Common.updateVersionSet('');
-							U.Common.checkUpdateVersion(updateVersion);
-						}}
-						onClose={() => {
-							S.Common.updateVersionSet('');
-							Renderer.send('updateCancel');
-						}}
-					/>
-				) : ''}
 			</div>
 		</>
 	);

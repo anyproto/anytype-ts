@@ -220,7 +220,8 @@
 	"commonObjectEmpty": "It's empty here.",
 	"commonSynced": "Synced",
 	"commonNotSynced": "Not synced",
-	"commonNewVersion": "Version <span class='hl'>%s</span> is out now",
+	"commonUpdateAvailable": "Update Available",
+	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
 
 	"pluralDay": "day|days",
