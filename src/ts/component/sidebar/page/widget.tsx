@@ -1,29 +1,28 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove } from 'Lib';
+import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label, IconObject, ObjectName } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
 
 type State = {
 	isEditing: boolean;
 	previewId: string;
 };
 
-const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<{}, State> {
+const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<I.SidebarPageComponent, State> {
 		
 	state: State = {
 		isEditing: false,
 		previewId: '',
 	};
 
-	node = null;
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
 	timeout = 0;
 
-	constructor (props) {
+	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
@@ -37,15 +36,20 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.onHelp = this.onHelp.bind(this);
+		this.onPlusHover = this.onPlusHover.bind(this);
+		this.onCreate = this.onCreate.bind(this);
+		this.onArrow = this.onArrow.bind(this);
+		this.onBack = this.onBack.bind(this);
 	};
 
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const { showVault } = S.Common;
+		const { sidebarDirection } = this.props;
 		const cn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const hasShareBanner = U.Space.hasShareBanner();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
 
 		if (isEditing) {
@@ -165,6 +169,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									isEditing={isEditing}
 									canEdit={false}
 									canRemove={false}
+									sidebarDirection={sidebarDirection}
 								/>
 							</DropTarget>
 						</>
@@ -191,6 +196,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								onDrag={this.onDrag}
 								setPreview={this.setPreview}
 								setEditing={this.setEditing}
+								sidebarDirection={sidebarDirection}
 							/>
 						);
 					})}
@@ -233,14 +239,31 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 
 		return (
-			<div 
-				id="containerWidget"
-				ref={node => this.node = node}
-			>
-				<div id="head" className="head">
+			<>
+				<div className="head">
 					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
-					<div className="name">{space.name}</div>
 				</div>
+
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back" onClick={this.onBack} />
+					</div>
+
+					<div className="side center">
+						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
+						<ObjectName object={space} />
+					</div>
+
+					<div className="side right">
+						{canWrite ? (
+							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
+								<Icon className="plus withBackground" onClick={this.onCreate} />
+								<Icon className="arrow withBackground" onClick={this.onArrow} />
+							</div>
+						) : ''}
+					</div>
+				</div>
+
 				<div
 					id="body"
 					className={cn.join(' ')}
@@ -252,12 +275,45 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 
 				{bottom}
-			</div>
+			</>
 		);
 	};
 
 	componentDidUpdate (): void {
 		this.onScroll();
+	};
+
+	onPlusHover (e: any) {
+		const t = Preview.tooltipCaption(translate('commonNew'), [ 
+			keyboard.getCaption('createObject'), 
+			keyboard.getCaption('selectType'),
+		].join(' / '));
+
+		Preview.tooltipShow({ text: t, element: $(e.currentTarget) });
+	};
+
+	onCreate = (e: any) => {
+		e.stopPropagation();
+		keyboard.pageCreate({}, analytics.route.navigation, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+	};
+
+	onArrow = (e: any) => {
+		e.stopPropagation();
+
+		U.Menu.typeSuggest({ 
+			element: $(e.currentTarget),
+			offsetY: 2,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.widget, object => U.Object.openAuto(object));
+	};
+
+	onBack = () => {
+		sidebar.leftPanelSetState({ page: 'vault' });
 	};
 
 	onHelp () {
@@ -287,7 +343,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const space = U.Space.getSpaceview();
 		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 		const targets = [];
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 		const nh = node.outerHeight();
 		const button = node.find('#widget-list-add');
 		const { top } = button.offset();
@@ -466,7 +522,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 		const obj = node.find(`#widget-${blockId}`);
 		const clone = $('<div />').addClass('widget isClone').css({ 
 			zIndex: 10000, 
@@ -566,7 +622,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 		const top = node.find('#body').scrollTop();
 
 		node.find('.dropTarget.firstTarget').toggleClass('isScrolled', top > 0);
@@ -581,7 +637,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	clear () {
-		const node = $(this.node);
+		const node = $('#sidebarPageWidget');
 
 		node.find('.widget.isOver').removeClass('isOver top bottom');
 		node.find('.widget.isClone').remove();

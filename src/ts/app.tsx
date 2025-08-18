@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
@@ -132,22 +132,7 @@ Sentry.setContext('info', {
 
 const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	const { page, action } = (props.match?.params || {}) as any;
-	const noSidebar = 
-		[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
-		((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
-
-	return (
-		<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
-			<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
-				<ListPopup key="listPopup" {...props} />
-				<ListMenu key="listMenu" {...props} />
-
-				{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...props} /> : ''}
-				<Page {...props} isPopup={false} />
-			</DragProvider>
-		</SelectionProvider>
-	);
+	return <Page {...props} isPopup={false} />;
 
 };
 
@@ -525,6 +510,8 @@ const App: FC = () => {
 	) : '';
 
 	useEffect(() => init(), []);
+
+	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	
 	return (
 		<Router history={history}>
@@ -542,10 +529,7 @@ const App: FC = () => {
 					{drag}
 					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
-
-					<div id="globalFade">
-						<Loader id="loader" />
-					</div>
+					<div id="globalFade" />
 
 					<PreviewIndex />
 					<Progress />
@@ -555,11 +539,19 @@ const App: FC = () => {
 
 					{updateBanner}
 
-					<Switch>
-						{J.Route.map((path: string, i: number) => (
-							<Route path={path} exact={true} key={i} component={RoutePage} />
-						))}
-					</Switch>
+					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
+						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
+							<SidebarLeft ref={sidebarLeftRef} />
+							<ListPopup />
+							<ListMenu />
+
+							<Switch>
+								{J.Route.map((path: string, i: number) => (
+									<Route path={path} exact={true} key={i} component={RoutePage} />
+								))}
+							</Switch>
+						</DragProvider>
+					</SelectionProvider>
 
 					<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
 				</div>

@@ -1,5 +1,5 @@
-> #containerWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
-> #containerWidget {
+> .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
+> .sidebarPage.pageWidget {
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; overflow: hidden; flex-shrink: 0;
@@ -12,6 +12,31 @@
 	}
 	> .head.show {
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
+	}
+
+	.subHead { 
+		display: flex; flex-direction: row; align-items: center; gap: 0px 10px; justify-content: stretch; padding: 6px 12px; position: relative; 
+		margin: 0px 0px 4px 0px;
+	}
+	.subHead {
+		.icon { width: 24px !important; height: 24px !important; }
+		.icon.back { background-size: 20px; }
+		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
+
+		.side.left { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+		.side.center { flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; }
+		.side.center {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
+		}
+
+		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
+		.side.right {
+			.icon { height: 24px !important; }
+			.icon.plus { width: 22px !important; background-image: url('~img/icon/widget/button/create.svg'); }
+			.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
+		}
 	}
 
 	> .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }
@@ -35,12 +60,12 @@
 		.settings {
 			.icon,
 			.label { transition: $transitionSettings; position: absolute; }
-			.icon {  left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/settings0.svg'); }
+			.icon {  left: 4px; top: 4px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/widgetSettings0.svg'); }
 			.label { left: 12px; top: 5px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
 		}
 		.settings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
 		.settings:not(.isEditing):hover {
-			.icon { background-image: url('~img/icon/widget/button/settings1.svg'); }
+			.icon { background-image: url('~img/icon/widget/button/widgetSettings1.svg'); }
 		}
 
 		.settings.isEditing { width: 55px; background-color: var(--color-system-accent-100); }

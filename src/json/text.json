@@ -34,6 +34,7 @@
 	"commonDashboard": "Dashboard",
 	"commonGraph": "Graph",
 	"commonChat": "Chat",
+	"commonChats": "Chats",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -223,6 +224,7 @@
 	"commonUpdateAvailable": "Update Available",
 	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
+	"commonWidgets": "Widgets",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -792,7 +794,6 @@
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
 	"popupSettingsPersonalLinkStyle": "Link to object style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
-	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",

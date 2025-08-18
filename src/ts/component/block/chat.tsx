@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -16,10 +16,9 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
-	const listRef = useRef(null);
+	const scrollWrapperRef = useRef(null);
 	const messageRefs = useRef({});
 	const timeoutInterface = useRef(0);
-	const timeoutScroll = useRef(0);
 	const timeoutScrollStop = useRef(0);
 	const top = useRef(0);
 	const firstUnreadOrderId = useRef('');
@@ -28,10 +27,12 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
+	const [ dummy, setDummy ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const { chatId } = object;
 	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
 	const messages = S.Chat.getList(subId);
+	const initialRender = useRef(true);
 
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
@@ -70,7 +71,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
+		isLoading.current = true;
+
 		C.ChatSubscribeLastMessages(chatId, 0, subId, (message: any) => {
+			isLoading.current = false;
+
 			if (message.state) {
 				S.Chat.setState(subId, message.state);
 			};
@@ -86,7 +91,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
+		isLoading.current = true;
+
 		C.ChatSubscribeLastMessages(chatId, J.Constant.limit.chat.messages, subId, (message: any) => {
+			isLoading.current = false;
+
 			if (message.error.code) {
 				if (callBack) {
 					callBack();
@@ -440,7 +449,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const onScroll = (e: any) => {
 		const node = $(nodeRef.current);
-		const scrollWrapper = node.find('#scrollWrapper');
+		const scrollWrapper = $(scrollWrapperRef.current);
 		const formWrapper = node.find('#formWrapper');
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = container.scrollTop();
@@ -646,8 +655,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
-			const node = $(nodeRef.current);
-			const wrapper = node.find('#scrollWrapper');
+			const wrapper = $(scrollWrapperRef.current);
 			const y = wrapper.outerHeight();
 
 			setAutoLoadDisabled(true);
@@ -670,8 +678,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const scrollToBottomCheck = () => {
 		if (isBottom.current) {
-			window.clearTimeout(timeoutScroll.current);
-			timeoutScroll.current = window.setTimeout(() => scrollToBottom(false), 50);
+			scrollToBottom(false);
 		};
 	};
 
@@ -814,16 +821,23 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const sections = getSections();
 	const spaceview = U.Space.getSpaceview();
-	const isEmpty = !messages.length;
+	const isEmpty = !initialRender.current && !isLoading.current && !messages.length;
 	const items = getItems();
 
 	useEffect(() => {
 		rebind();
 
+		initialRender.current = false;
+
 		loadState(() => {
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
 			const orderId = match.params.messageOrder || state.messageOrderId;
+
+			const cb = () => {
+				setDummy(dummy + 1);
+				scrollToBottom();
+			};
 
 			if (orderId) {
 				firstUnreadOrderId.current = orderId;
@@ -833,12 +847,13 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 					if (target) {
 						scrollToMessage(target.id);
+						setDummy(dummy + 1);
 					} else {
-						loadMessages(1, true, scrollToBottom);
+						loadMessages(1, true, cb);
 					};
 				});
 			} else {
-				loadMessages(1, true, scrollToBottom);
+				loadMessages(1, true, cb);
 			};
 
 			analytics.event('ScreenChat');
@@ -848,11 +863,14 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			unbind();
 
 			window.clearTimeout(timeoutInterface.current);
-			window.clearTimeout(timeoutScroll.current);
 			window.clearTimeout(timeoutScrollStop.current);
 		};
 
 	}, []);
+
+	useEffect(() => {
+		scrollToBottomCheck();
+	}, [ messages.length, dummy ]);
 
 	return (
 		<div 
@@ -862,7 +880,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			onDragLeave={onDragLeave} 
 			onDrop={onDrop}
 		>
-			<div id="scrollWrapper" ref={listRef} className="scrollWrapper">
+			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{isEmpty ? (
 					<EmptyState
 						text={translate('blockChatEmpty')}

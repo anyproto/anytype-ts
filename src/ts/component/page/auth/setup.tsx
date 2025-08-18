@@ -1,14 +1,15 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey } from 'Lib';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
 
 const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
 	const cn = [ 'animation' ];
-	const { match } = props;
+	const { isPopup } = props;
 	const { account } = S.Auth;
+	const match = keyboard.getMatch(isPopup);
 
 	const init = () => {
 		const { dataPath } = S.Common;  

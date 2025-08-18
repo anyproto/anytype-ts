@@ -29,8 +29,9 @@ html.bodyIndex, html.bodyAuth {
 	#mainAnimation { height: 100vh; width: 100vw; position: absolute; top: 0px; left: 0px; z-index: -1; display: block; }
 
 	#vault,
-	#sidebarToggle,
-	#sidebarSync,
+	#sidebarLeftButton,
+	#sidebarBack,
+	#sidebarRightButton,
 	#notifications,
 	.sidebar,
 	.sidebarDummy,

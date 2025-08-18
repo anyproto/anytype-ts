@@ -23,6 +23,11 @@ body.isFullScreen {
 :focus { outline: 0px; }
 ::selection { background-color: var(--color-system-selection); }
 
+@keyframes rotate {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus
