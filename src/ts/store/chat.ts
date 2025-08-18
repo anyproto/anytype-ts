@@ -408,7 +408,7 @@ class ChatStore {
 			};
 		};
 
-		Renderer.send('setBadge', String(t || ''));
+		Renderer.send('setBadge', this.counterString(t));
 	};
 
 	/**
@@ -418,6 +418,15 @@ class ChatStore {
 	 */
 	isMention (message: I.ChatMessage, participantId: string): boolean {
 		return !!message.content.marks.find(it => (it.type == I.MarkType.Mention) && (it.param == participantId));
+	};
+
+	/**
+	 * Converts a counter value to a string for display.
+	 * @param {number} c - The counter value.
+	 * @returns {string} The formatted counter string.
+	 */
+	counterString (c: number): string {
+		return String((c > 999 ? '999+' : c) || '');
 	};
 
 };

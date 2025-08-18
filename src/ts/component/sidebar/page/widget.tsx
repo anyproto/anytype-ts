@@ -53,7 +53,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
-		const cnt = counters?.messageCounter;
+		const cnt = S.Chat.counterString(counters.messageCounter);
 
 		if (isEditing) {
 			cnb.push('isEditing');

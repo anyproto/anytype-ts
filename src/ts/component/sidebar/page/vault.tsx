@@ -329,7 +329,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				cnt = <Icon className="mention" />;
 			} else 
 			if (item.counters.messageCounter) {
-				cnt = item.counters.messageCounter;
+				cnt = S.Chat.counterString(item.counters.messageCounter);
 			};
 		};
 
