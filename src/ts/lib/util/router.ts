@@ -109,7 +109,8 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelToggle(false, keyboard.isPopup());
+		S.Common.showSidebarRightSet(false, '', false);
+		sidebar.rightPanelToggle(false, false);
 		focus.clear(true);
 
 		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
