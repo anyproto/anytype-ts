@@ -115,7 +115,7 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
-			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {

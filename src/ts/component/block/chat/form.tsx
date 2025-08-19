@@ -149,7 +149,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
-			scrollToBottom();
 		});
 
 		keyboard.shortcut('chatObject', e, () => {
@@ -182,6 +181,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				updateValue('');
 			});
 		};
+
+		keyboard.shortcut(`${cmd}+c`, e, () => {
+			e.preventDefault();
+			onCopy();
+		});
+
+		keyboard.shortcut(`shift+enter`, e, () => {
+			resize();
+			scrollToBottom();
+		});
 
 		// Mark-up
 		if (range.current && range.current.to && (range.current.from != range.current.to)) {
@@ -246,6 +255,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		keyboard.shortcut('backspace', e, () => {
+			resize();
+			scrollToBottom();
+		});
+
 		if (!keyboard.isSpecial(e)) {
 			for (let i = 0; i < marks.current.length; ++i) {
 				const mark = marks.current[i];
@@ -282,6 +296,25 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const checkRtl = U.Common.checkRtl(value);
 
 		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
+	};
+
+	const onCopy = () => {
+		const text = getTextValue();
+		const range = getRange();
+		const str = text.substring(range.from, range.to);
+		const res = Mark.getPartOfString(text, range, marks.current);
+		const block = new M.Block({
+			type: I.BlockType.Text,
+			content: res,
+		});
+
+		U.Common.clipboardCopy({ 
+			text: str, 
+			anytype: {
+				range,
+				blocks: [ block ],
+			},
+		});
 	};
 
 	const onPaste = (e: any) => {

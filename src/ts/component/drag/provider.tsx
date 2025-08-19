@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
 
@@ -58,6 +57,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				targetContextId: item.attr('data-target-context-id'),
 				viewType: item.attr('data-view-type'),
 			};
+
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
 			const x = offset.left;
@@ -211,11 +211,15 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		win.on('drag.drag', e => onDrag(e));
 		win.on('dragend.drag', e => onDragEnd(e));
 
-		container.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
-		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => onScroll(), 20));
+		container.off('scroll.drag').on('scroll.drag', e => onScroll(e));
+		sidebar.off('scroll.drag').on('scroll.drag', e => onScroll(e));
 
 		$('.colResize.active').removeClass('active');
-		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
+		scrollOnMove.onMouseDown({ 
+			isWindow: !isPopup, 
+			container,
+			onMouseUp: () => onDragEnd(e),
+		});
 
 		if (dropType == I.DropType.Block) {
 			selection?.set(I.SelectType.Block, ids);
@@ -252,6 +256,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	};
 
 	const onDragEnd = (e: any) => {
+		console.log('[DragProvider].onDragEnd');
+
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
@@ -273,7 +279,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		sidebar.off('scroll.drag');
 
 		$('.isDragging').removeClass('isDragging');
-		scrollOnMove.onMouseUp(e);
+		scrollOnMove.onMouseUp(true);
 
 		window.clearTimeout(timeoutDragOver.current);
 	};
@@ -517,12 +523,15 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
 	};
 
-	const onScroll = () => {
-		if (keyboard.isDragging) {
-			for (const [ key, value ] of objectData.current) {
-				const { left, top } = value.obj.offset();
-				objectData.current.set(key, { ...value, x: left, y: top });
-			};
+	const onScroll = (e: any) => {
+		if (!keyboard.isDragging) {
+			return;
+		};
+
+		for (const [ key, value ] of objectData.current) {
+			const { left, top } = value.obj.offset();
+
+			objectData.current.set(key, { ...value, x: left, y: top });
 		};
 	};
 
@@ -530,8 +539,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
 		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
-		let data: any = {};
 
+		let data: any = {};
 		try {
 			for (const type of dataTransfer.types) {
 				if (type.match(/^data-/)) {

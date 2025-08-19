@@ -29,12 +29,12 @@
 			.label { @include text-small; font-weight: 500; }
 		}
 
-		.body { padding: 0px 8px 16px 8px; flex-grow: 1; overflow: auto; }
+		.body { padding: 0px 0px 16px 0px; flex-grow: 1; overflow: auto; }
 		.body {
 			.section {
-				> .name { padding: 9px 8px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
+				> .name { padding: 9px 16px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 
-				.item { padding: 6px 8px; border-radius: 6px; gap: 0px 8px; cursor: default; min-height: 36px; 	}
+				.item { padding: 6px 16px; gap: 0px 8px; cursor: default; min-height: 36px; 	}
 				.item.canEdit:not(.isEditing) {
 					&:hover, &.hover {
 						.symbols {
@@ -44,10 +44,16 @@
 						.label.grey { color: var(--color-blue); }
 					}
 				}
-				.item.hasError { box-shadow: 0px 0px 0px 2px var(--color-red) inset; }
+				.item.hasError { background: var(--color-bg-red); }
+				.item.hasError {
+					.symbols {
+						.label { background-color: var(--color-bg-tag-red); }
+					}
+				}
 
 				.item {
 					.flex { flex-direction: row; align-items: center; line-height: 24px; }
+					.alert { width: 20px; height: 20px; margin-right: 6px; background: url('~img/icon/alert.svg'); }
 					.name { flex-grow: 1; }
 					.error { margin: 0.5em 0px 0px 0px; @include text-small; }
 
