@@ -51,8 +51,6 @@ class Sidebar {
 			this.resizePage(J.Size.sidebar.width.default, null, false);
 		};
 
-		const { isClosed } = this.data;
-
 		this.objLeft.toggleClass('isClosed', this.data.isClosed);
 	};
 
@@ -306,6 +304,8 @@ class Sidebar {
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
 		};
+
+		console.log(this.rightButton);
 
 		$(window).trigger('sidebarResize');
 	};

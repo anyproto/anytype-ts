@@ -40,12 +40,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const [ page, setPage ] = useState('');
-	const { updateVersion } = S.Common;
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const Component = Components[id];
-	const canCreate = U.Space.canCreateSpace();
+	const canCreate = U.Space.canCreateSpace() && (id == 'vault');
 
 	if (id.match(/settings/)) {
 		cnp.push('containerSettings');
@@ -159,6 +158,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			Preview.tooltipHide(true);
 		};
 	}, []);
+
+	useEffect(() => {
+		sidebar.resizePage(null, null, false);
+	}, [ page]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
