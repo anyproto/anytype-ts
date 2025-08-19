@@ -192,7 +192,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 	};
 
-	const filterCnt = view.filters.length;
+	const filterCnt = view?.filters.length;
 	const items = getItems();
 
 	for (const filter of items) {

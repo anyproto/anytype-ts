@@ -37,8 +37,6 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		const details = data.details || {};
 		const bookmark = S.Record.getBookmarkType();
 
-		console.log('onSubmit', value, details, bookmark);
-
 		if (!value) {
 			return;
 		};

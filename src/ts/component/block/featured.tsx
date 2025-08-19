@@ -41,8 +41,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	render () {
-		trace();
-
 		const { rootId, block, size, iconSize, isPopup, readonly } = this.props;
 		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();

@@ -119,9 +119,27 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClick = (e: MouseEvent): void => {
-		if (!e.button) {
-			U.Object.openEvent(e, { ...object, _routeParam_: { viewId: block.content.viewId } });
+		if (e.button) {
+			return;
 		};
+
+		let { viewId } = block.content;
+
+		if (!viewId) {
+			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
+
+			if (views.length) {
+				viewId = views[0].id;
+			};
+		};
+
+		U.Object.openEvent(e, { 
+			...object, 
+			_routeParam_: { 
+				viewId,
+				additional: [ { key: 'ref', value: 'widget' } ],
+			} 
+		});
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
@@ -468,7 +486,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onDragEnd = (e: any) => {
-		scrollOnMove.onMouseUp(e);
+		scrollOnMove.onMouseUp();
 
 		analytics.event('ReorderWidget', {
 			layout,
