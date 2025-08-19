@@ -164,6 +164,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			passThrough: true,
 			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
+			noBorder: true,
 			onOpen: () => {
 				$(element).addClass('withMenu');
 				setOn();

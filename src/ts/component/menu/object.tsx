@@ -173,7 +173,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !isFilePreview && !isInSet;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !object.templateIsBundled;
-		const allowedPin = canWrite && !object.isArchived && !object.templateIsBundled;
+		const allowedPin = canWrite && !object.isArchived && !isTemplate;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
 		const allowedLinkTo = canWrite && !isRelation &&!object.isArchived;
 		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;

@@ -22,7 +22,12 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		<>
 			<IconObject object={object} size={96} />
 			<ObjectName object={object} />
-			<Label text={U.Common.shorten(object.resolvedName, 150)} />
+			<Label 
+				text={U.Common.shorten(object.resolvedName, 150)} 
+				onClick={() => {
+					U.Common.copyToast(translate('blockFeaturedIdentity'), object.identity);
+				}} 
+			/>
 			<ObjectDescription object={object} />
 		</>
 	) : <EmptySearch text={translate('commonNotFound')} />;

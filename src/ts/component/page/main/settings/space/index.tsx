@@ -481,6 +481,11 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	getButtons () {
 		const { cid, key } = this.state;
+		const space = U.Space.getSpaceview();
+		
+		if (space.isPersonal) {
+			return [];
+		};
 
 		let buttons: any[] = [
 			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' }

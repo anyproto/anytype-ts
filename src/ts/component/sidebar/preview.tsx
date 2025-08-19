@@ -265,6 +265,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	resize () {
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {

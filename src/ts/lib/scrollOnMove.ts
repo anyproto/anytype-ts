@@ -1,200 +1,154 @@
-import $ from 'jquery';
 import raf from 'raf';
 
 const BORDER = 100;
+const MAX_STEP = 10;
+const SPEED_DIV = 30; // bigger → slower overall
 
 class ScrollOnMove {
-	
-	timeout = 0;
 	viewportWidth = 0;
 	viewportHeight = 0;
 	documentWidth = 0;
 	documentHeight = 0;
 	param: any = {};
+
+	x = 0;
+	y = 0;
 	frame = 0;
+	timeout = 0;
+	isScrolling = false;
+	
+	onMouseDown (param: { isWindow?: boolean; container?: JQuery, onMouseUp?: () => void }) {
+		this.param = param || {};
 
-	/**
-	 * Handles mouse down event and sets up viewport/document dimensions.
-	 * @param {any} e - The mouse event.
-	 * @param {Object} param - Parameters for the scroll.
-	 */
-	onMouseDown (e: any, param: { isWindow?: boolean, container?: JQuery }) {
-		param = param || {};
-		this.param = param;
-
-		const { isWindow, container } = param;
-
+		const { isWindow, container } = this.param;
 		if (!isWindow) {
 			const content = container.find('> .content');
-
 			this.viewportWidth = container.width();
 			this.viewportHeight = container.height();
 			this.documentWidth = content.width();
 			this.documentHeight = content.height();
 		} else {
-			this.viewportWidth = document.documentElement.clientWidth;
-			this.viewportHeight = document.documentElement.clientHeight;
+			const element = document.documentElement;
+			const body = document.body;
 
-			this.documentWidth = Math.max(
-				document.body.scrollWidth,
-				document.body.offsetWidth,
-				document.body.clientWidth,
-				document.documentElement.scrollWidth,
-				document.documentElement.offsetWidth,
-				document.documentElement.clientWidth
-			);
-			
-			this.documentHeight = Math.max(
-				document.body.scrollHeight,
-				document.body.offsetHeight,
-				document.body.clientHeight,
-				document.documentElement.scrollHeight,
-				document.documentElement.offsetHeight,
-				document.documentElement.clientHeight
-			);
+			this.viewportWidth = element.clientWidth;
+			this.viewportHeight = element.clientHeight;
+			this.documentWidth = Math.max(body.scrollWidth, element.scrollWidth);
+			this.documentHeight = Math.max(body.scrollHeight, element.scrollHeight);
+		};
+
+		this.isScrolling = true;
+	};
+
+	onMouseMove (x: number, y: number) {
+		this.x = x;
+		this.y = y;
+
+		if (this.isScrolling && !this.frame) {
+			this.frame = raf(this.loop);
+		};
+
+		// Hack to fix events not being triggered on mouseup
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.onMouseUp(), 300);
+	};
+
+	private loop = () => {
+		// If scrolling was cancelled externally — stop immediately
+		if (!this.isScrolling) {
+			this.clear();
+			return;
+		};
+
+		// Only continue the loop if we actually scrolled this frame
+		const didScroll = this.adjustWindowScroll();
+		if (didScroll) {
+			this.frame = raf(this.loop);
+		} else {
+			// Nothing to scroll (cursor left edges or we hit a limit) — stop the loop
+			this.clear();
 		};
 	};
 
-	/**
-	 * Starts checking for window scroll based on mouse position.
-	 * @param {any} param - Scroll parameters.
-	 */
-	checkForWindowScroll (param: any) {
-		this.clear();
-		this.frame = raf(() => {
-			if (this.adjustWindowScroll(param)) {
-				this.checkForWindowScroll(param);
-			};
-		});
-	};
-
-	/**
-	 * Adjusts window scroll if mouse is near the edge.
-	 * @param {any} param - Scroll parameters.
-	 * @returns {boolean} True if scroll was adjusted.
-	 */
-	adjustWindowScroll (param: any) {
-		const { 
-			viewportX, viewportY,
-			isInLeftEdge, isInRightEdge, isInTopEdge, isInBottomEdge, 
-			edgeLeft, edgeRight, edgeTop, edgeBottom, 
-		} = param;
+	private adjustWindowScroll(): boolean {
 		const { isWindow, container } = this.param;
 
-		const maxScrollX = this.documentWidth - this.viewportWidth; 
-		const maxScrollY = this.documentHeight - this.viewportHeight;
+		// Current pointer
+		const x = this.x;
+		const y = this.y;
 
-		let currentScrollX = 0;
-		let currentScrollY = 0;
-
-		if (!isWindow) {
-			currentScrollX = container.scrollLeft();
-			currentScrollY = container.scrollTop();
-		} else {
-			currentScrollX = window.pageXOffset;
-			currentScrollY = window.pageYOffset;
-		};
-
-		const canScrollUp = (currentScrollY > 0);
-		const canScrollDown = (currentScrollY < maxScrollY);
-		const canScrollLeft = (currentScrollX > 0);
-		const canScrollRight = (currentScrollX < maxScrollX);
-		const maxStep = 10;
-
-		let nextScrollX = currentScrollX;
-		let nextScrollY = currentScrollY;
-		let intensity = 0;
-
-		if (isInLeftEdge && canScrollLeft) {
-			intensity = (edgeLeft - viewportX) / BORDER;
-			nextScrollX = nextScrollX - maxStep * intensity;
-		} else 
-		if (isInRightEdge && canScrollRight) {
-			intensity = (viewportX - edgeRight) / BORDER;
-			nextScrollX = nextScrollX + maxStep * intensity;
-		};
-
-		if (isInTopEdge && canScrollUp) {
-			intensity = (edgeTop - viewportY) / BORDER;
-			nextScrollY = nextScrollY - maxStep * intensity;
-		} else 
-		if (isInBottomEdge && canScrollDown) {
-			intensity = (viewportY - edgeBottom) / BORDER;
-			nextScrollY = nextScrollY + maxStep * intensity;
-		};
-
-		nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
-		nextScrollY = Math.max(0, Math.min(maxScrollY, nextScrollY));
-
-		// Disable move on X
-		nextScrollX = currentScrollX;
-
-		if (
-			(nextScrollX !== currentScrollX) ||
-			(nextScrollY !== currentScrollY)
-		) {
-			if (container.length) {
-				container.scrollLeft(nextScrollX);
-				container.scrollTop(nextScrollY);
-			};
-			return true;
-		} else {
-			return false;
-		};
-	};
-	
-	/**
-	 * Handles mouse move event and triggers auto-scroll if near edge.
-	 * @param {number} x - Mouse X position.
-	 * @param {number} y - Mouse Y position.
-	 */
-	onMouseMove (x: number, y: number) {
+		// Edge thresholds inside the viewport
 		const edgeTop = BORDER;
 		const edgeLeft = BORDER;
 		const edgeBottom = this.viewportHeight - BORDER;
 		const edgeRight = this.viewportWidth - BORDER;
 
-		const isInLeftEdge = (x > 0) && (x < edgeLeft);
-		const isInRightEdge = x > edgeRight;
-		const isInTopEdge = (y > 0) && (y < edgeTop);
-		const isInBottomEdge = y > edgeBottom;
+		// Is the pointer in one of the scroll zones?
+		const inLeftEdge = x > 0 && x < edgeLeft;
+		const inRightEdge = x > edgeRight && x < this.viewportWidth;
+		const inTopEdge = y > 0 && y < edgeTop;
+		const inBottomEdge = y > edgeBottom && y < this.viewportHeight;
 
-		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
-			this.clear();
-			return;
+		// If we’re not in any edge, there’s nothing to do
+		if (!(inLeftEdge || inRightEdge || inTopEdge || inBottomEdge)) {
+			return false;
 		};
-	
-		this.checkForWindowScroll({
-			viewportX:		 x, 
-			viewportY:		 y,
-			isInLeftEdge:	 isInLeftEdge, 
-			isInRightEdge:	 isInRightEdge, 
-			isInTopEdge:	 isInTopEdge, 
-			isInBottomEdge:	 isInBottomEdge, 
-			edgeLeft:		 edgeLeft, 
-			edgeRight:		 edgeRight, 
-			edgeTop:		 edgeTop, 
-			edgeBottom:		 edgeBottom, 
-		});
-	};
-	
-	/**
-	 * Handles mouse up event and clears any ongoing scroll.
-	 * @param {any} e - The mouse event.
-	 */
-	onMouseUp (e: any) {
-		this.clear();
+
+		// Current scroll positions
+		const curX = isWindow ? window.pageXOffset : container.scrollLeft();
+		const curY = isWindow ? window.pageYOffset : container.scrollTop();
+
+		// Max scroll offsets
+		const maxX = Math.max(0, this.documentWidth - this.viewportWidth);
+		const maxY = Math.max(0, this.documentHeight - this.viewportHeight);
+
+		// Compute intended step based on proximity to the edge (closer → faster)
+		const dx = inLeftEdge ? -Math.min(MAX_STEP, Math.ceil((edgeLeft - x) / SPEED_DIV))
+				: inRightEdge ? Math.min(MAX_STEP, Math.ceil((x - edgeRight) / SPEED_DIV))
+				: 0;
+
+		const dy = inTopEdge ? -Math.min(MAX_STEP, Math.ceil((edgeTop - y) / SPEED_DIV))
+				: inBottomEdge? Math.min(MAX_STEP, Math.ceil((y - edgeBottom) / SPEED_DIV))
+				: 0;
+
+		// Clamp to available range so we never “try” to scroll past the limits
+		const nextX = Math.max(0, Math.min(maxX, curX + dx));
+		const nextY = Math.max(0, Math.min(maxY, curY + dy));
+
+		// If clamped values don’t change anything, abort (prevents infinite loop)
+		if (nextX === curX && nextY === curY) {
+			return false;
+		};
+
+		// Do the scroll
+		if (isWindow) {
+			window.scrollTo(nextX, nextY);
+		} else {
+			container.scrollLeft(nextX);
+			container.scrollTop(nextY);
+		};
+
+		return true;
 	};
 
-	/**
-	 * Clears any ongoing scroll animation frame.
-	 */
-	clear () {
+	onMouseUp (noCallback?: boolean) {
+		this.x = 0;
+		this.y = 0;
+		this.isScrolling = false;
+		this.clear();
+
+		if (this.param.onMouseUp && !noCallback) {
+			this.param.onMouseUp();
+		};
+	};
+
+	clear() {
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 	};
-	
+
 };
 
- export const scrollOnMove: ScrollOnMove = new ScrollOnMove();
+export const scrollOnMove: ScrollOnMove = new ScrollOnMove();
