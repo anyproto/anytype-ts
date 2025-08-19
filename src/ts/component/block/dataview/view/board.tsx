@@ -244,6 +244,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 	};
 
@@ -303,6 +304,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {
@@ -384,6 +386,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {

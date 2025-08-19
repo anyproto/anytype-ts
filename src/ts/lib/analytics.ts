@@ -78,6 +78,7 @@ class Analytics {
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
+		settingsStorage: 'ScreenSettingsSpaceStorage',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
@@ -247,7 +248,7 @@ class Analytics {
 	 * @param {I.TierType} tier - The user's tier.
 	 */
 	setTier (tier: I.TierType) {
-		this.setProperty({ tier: I.TierType[tier] || 'Custom' });
+		this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
 	};
 
 	/**

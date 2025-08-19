@@ -206,6 +206,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {
@@ -255,6 +256,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 	};
 

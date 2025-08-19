@@ -391,8 +391,11 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+				{ id: 'spaceList', icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
+				{ id: 'dataPublish', icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
+				{ id: 'api', icon: 'settings-api', name: translate('popupSettingsApiTitle') },
 			];
 
 			const pageItems: any[] = [
