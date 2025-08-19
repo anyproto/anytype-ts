@@ -105,7 +105,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			} else {
 				U.Data.onAuthWithoutSpace(routeParam);
 			};
-
+			
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(false);
 
@@ -200,7 +200,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={buttonText} onClick={onCancel} />
+						<Button text={buttonText} className="c28" onClick={onCancel} />
 					</div>
 					{more}
 				</div>
