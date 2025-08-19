@@ -160,66 +160,65 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					<Error text={error} />
 
 					{space.isShared && config.experimental ? (
-						<>
+						<div className="section sectionSpaceManager">
+							<Label className="sub" text={translate(`electronMenuDebug`)} />
+							<div className="sectionContent">
 
-							<div className="section sectionSpaceManager">
-								<Label className="sub" text={translate(`electronMenuDebug`)} />
-								<div className="sectionContent">
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+										</div>
 
-									<div className="item">
-										<div className="sides">
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-											</div>
-
-											<div className="side right">
-												<Select
-													id="linkStyle"
-													ref={ref => this.refUxType = ref}
-													value={String(space.uxType)}
-													options={spaceUxTypes}
-													onChange={v => this.onSpaceUxType(v)}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
-											</div>
+										<div className="side right">
+											<Select
+												id="linkStyle"
+												ref={ref => this.refUxType = ref}
+												value={String(space.uxType)}
+												options={spaceUxTypes}
+												onChange={v => this.onSpaceUxType(v)}
+												arrowClassName="black"
+												menuParam={{ horizontal: I.MenuDirection.Right }}
+											/>
 										</div>
 									</div>
 								</div>
 							</div>
+						</div>
+					) : ''}
 
-							<div className="section sectionSpaceManager">
-								<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-								<div className="sectionContent">
+					{space.isShared ? (
+						<div className="section sectionSpaceManager">
+							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+							<div className="sectionContent">
 
-									<div className="item">
-										<div className="sides">
-											<Icon className={[ 'push', `push${space.notificationMode}` ].join(' ')} />
+								<div className="item">
+									<div className="sides">
+										<Icon className={[ 'push', `push${space.notificationMode}` ].join(' ')} />
 
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-												<Label text={translate(`popupSettingsSpaceIndexPushText${space.notificationMode}`)} />
-											</div>
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+											<Label text={translate(`popupSettingsSpaceIndexPushText${space.notificationMode}`)} />
+										</div>
 
-											<div className="side right">
-												<Select
-													id="linkStyle"
-													ref={ref => this.refMode = ref}
-													value={String(space.notificationMode)}
-													options={spaceModes}
-													onChange={v => {
-														C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-														analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-													}}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
-											</div>
+										<div className="side right">
+											<Select
+												id="linkStyle"
+												ref={ref => this.refMode = ref}
+												value={String(space.notificationMode)}
+												options={spaceModes}
+												onChange={v => {
+													C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+													analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+												}}
+												arrowClassName="black"
+												menuParam={{ horizontal: I.MenuDirection.Right }}
+											/>
 										</div>
 									</div>
 								</div>
 							</div>
-						</>
+						</div>
 					) : ''}
 
 					{canWrite ? (
