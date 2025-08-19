@@ -258,7 +258,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
 
-		checkShowAll(subId);
+		checkShowAll(subId, viewType == I.ViewType.Board);
 	});
 
 	useImperativeHandle(ref, () => ({

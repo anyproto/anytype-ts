@@ -551,8 +551,21 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
-	const checkShowAll = (subId) => {
-		const { total } = S.Record.getMeta(subId, '');
+	const checkShowAll = (subId: string, isBoard?: boolean) => {
+		let total = 0;
+		if (isBoard) {
+			const rootId = getRootId();
+			if (!rootId) {
+				return;
+			};
+
+			const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false);
+
+			total = groups.length;
+		} else {
+			total = S.Record.getMeta(subId, '').total;
+		};
+
 		const show = !isPreview && (total > limit);
 
 		if (show != withShowAll.current) {
