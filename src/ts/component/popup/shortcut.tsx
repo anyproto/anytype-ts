@@ -367,7 +367,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 				const options = [
 					{ id: 'override', name: translate('popupShortcutOverride') },
-					{ id: 'reset', name: translate('popupShortcutRemove') },
+					{ id: 'reset', name: translate('commonRemove') },
 				];
 
 				const reset = () => {
