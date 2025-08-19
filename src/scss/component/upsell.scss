@@ -1,0 +1,15 @@
+@import "~scss/_mixins";
+
+.upsellBanner.upsellStorage {
+    display: flex; justify-content: space-between; align-items: center; background: var(--color-system-selection);
+    padding: 16px; border-radius: 8px; gap: 0px 8px;
+}
+.upsellBanner.upsellStorage {
+    .label { margin-bottom: 0px; display: inline; }
+    .button { flex-shrink: 0; }
+}
+.upsellBanner.upsellStorage.fromSyncMenu { align-items: flex-start; }
+.upsellBanner.upsellStorage.fromSyncMenu {
+    .label { display: block; }
+    .label.incentive { display: none; }
+}

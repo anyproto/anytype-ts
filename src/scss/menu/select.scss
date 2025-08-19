@@ -128,4 +128,13 @@
 			.icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
 		}
 	}
+
+	/* Shortcut conflict */
+	.menu.menuSelect.shortcutConflict {
+		.content { height: unset !important; }
+		.menuLabel { padding: 8px 16px 0px; @include text-small; color: var(--color-text-secondary); }
+		.menuLabel {
+			b { font-weight: 500; }
+		}
+	}
 }

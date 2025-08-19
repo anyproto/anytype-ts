@@ -4,8 +4,7 @@
 	.menu.menuSyncStatus { width: var(--menu-width-large); }
 	.menu.menuSyncStatus {
 		.content { 
-			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px; 
-			overflow: visible;
+			padding: 16px 0px 0px 0px; height: 100%; max-height: unset; display: flex; flex-direction: column; gap: 4px 0px;
 		}
 		.syncPanel { height: 28px; padding: 0px 16px; display: flex; justify-content: space-between; align-items: center; }
 
@@ -46,12 +45,14 @@
 			}
 		}
 
+		.upsellBanner { margin: 14px 16px 0px 16px; }
+
 		.incentiveBanner { margin: 10px 16px 0px 16px; padding: 12px 16px 16px 16px; border-radius: 8px; background: linear-gradient(180deg, #FEE7E0 30%, #FFF6F3 100%); }
 		.incentiveBanner {
-			.buttons { padding-top: 12px; display: flex; gap: 8px; }
-			.buttons {
-				.button { width: 50%; }
-			}
+			.buttons { padding-top: 12px; display: flex; gap: 8px; justify-content: flex-end; }
+			.button { @include text-small; }
+			.button.dark { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
+			.button.dark:hover { background: var(--color-shape-highlight-dark); }
 		}
 
 		.items { height: 100%; }

@@ -8,6 +8,7 @@ interface Segment {
 	caption: string;
 	percent: number;
 	isActive: boolean;
+	className?: string;
 };
 
 interface Props {
@@ -37,6 +38,10 @@ const ProgressBar: FC<Props> = ({
 
 		if (item.isActive) {
 			cn.push('isActive');
+		};
+
+		if (item.className) {
+			cn.push(item.className);
 		};
 
 		return (
