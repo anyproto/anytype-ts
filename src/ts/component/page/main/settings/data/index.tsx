@@ -25,17 +25,13 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 	};
 
 	render () {
-		const { onPage } = this.props;
-		const { list } = this.state;
 		const { dataPath, spaceStorage } = S.Common;
 		const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
-		const size = U.File.size(list.reduce((acc, item) => acc + item.size, 0));
-		const isLocal = U.Data.isLocalNetwork();
 
 		return (
 			<>
-				<Title text={translate('popupSettingsDataManagementTitle')} />
+				<Title text={translate('popupSettingsLocalStorageTitle')} />
 				<Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
 				<div className="actionItems">
@@ -56,20 +52,6 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 
 					<div className="item">
 						<div className="side left">
-							<Icon className="sites" />
-
-							<div className="txt">
-								<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
-								<Label text={size} />
-							</div>
-						</div>
-						<div className="side right">
-							<Button color="blank" className="c28" text={translate(`commonManage`)} onClick={() => onPage('dataPublish')} />
-						</div>
-					</div>
-
-					<div className="item">
-						<div className="side left">
 							<Icon className="location" />
 
 							<div className="txt">
@@ -82,14 +64,6 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 						</div>
 					</div>
 				</div>
-
-				{!isLocal ? (
-					<>
-						<Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
-						<Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-						<Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
-					</>
-				) : ''}
 			</>
 		);
 	};

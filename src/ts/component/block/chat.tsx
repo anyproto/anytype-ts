@@ -300,7 +300,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 	};
 
-	const getSections = useCallback(() => {
+	const getSections = () => {
 		const sections = [];
 
 		messages.forEach(item => {
@@ -345,7 +345,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		});
 
 		return sections;
-	}, [ messages.length, showRelativeDates, dateFormat ]);
+	};
 
 	const getItems = useCallback(() => {
 		let items = [];
@@ -465,18 +465,18 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			};
 		};
 
+		let last = null;
 		dates.each((i, item: any) => {
 			item = $(item);
 
 			const y = item.offset().top - st;
-
-			item.removeClass('hide');
-
-			if (y == hh + 8) {
-				window.clearTimeout(timeoutInterface.current);
-				timeoutInterface.current = window.setTimeout(() => item.addClass('hide'), 1000);
+			if (y <= hh + 8) {
+				last = item;
 			};
 		});
+
+		dates.removeClass('active');
+		(last || dates.first()).addClass('active');
 
 		if (isFocused) {
 			list.forEach(it => {

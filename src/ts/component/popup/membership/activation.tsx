@@ -3,8 +3,9 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
 import { I, C, S, translate } from 'Lib';
 
-const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
+const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
+	const { close, param } = props;
 	const { data } = param;
 	const { code } = data;
 	const inputRef = useRef(null);
@@ -36,7 +37,18 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>(({ param = {}
 				return;
 			};
 
-			S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, code } });
+			if (message.tier == I.TierType.Team) {
+				C.MembershipCodeRedeem(code, '', () => {
+					if (message.error.code) {
+						setError(message.error.description);
+						return;
+					};
+
+					close();
+				});
+			} else {
+				S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, code } });
+			};
 		});
 	};
 

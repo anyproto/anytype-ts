@@ -59,7 +59,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.shortcut('escape', e, () => {
 			e.stopPropagation();
-			onCancel(e);
+			onCancel?.(e);
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
