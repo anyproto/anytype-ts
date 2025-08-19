@@ -305,8 +305,6 @@ class Sidebar {
 			this.rightButton.css({ left: rightButtonX });
 		};
 
-		console.log(this.rightButton);
-
 		$(window).trigger('sidebarResize');
 	};
 

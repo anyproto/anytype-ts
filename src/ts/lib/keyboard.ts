@@ -392,10 +392,27 @@ class Keyboard {
 
 
 			keyboard.shortcut('createSpace', e, () => {
+				const element = `#sidebarRightButton`;
+
+				let rect = null;
+				let horizontal = I.MenuDirection.Left;
+				let vertical = I.MenuDirection.Top;
+
+				if (!$(element).length) {
+					const { ww, wh } = U.Common.getWindowDimensions();
+
+					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+					horizontal = I.MenuDirection.Center;
+					vertical = I.MenuDirection.Center;
+				};
+
 				Action.spaceCreateMenu({
-					element: `#sidebarRightButton`,
+					element,
+					rect,
 					className: 'spaceCreate fixed',
 					classNameWrap: 'fromSidebar',
+					horizontal,
+					vertical,
 				}, analytics.route.shortcut);
 			});
 		};
