@@ -736,10 +736,9 @@ class Action {
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name =  U.Common.shorten(space.name, 32);
+		const name =  isOwner ? space.name : U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
-		const longTitle = U.Common.sprintf(translate(`space${suffix}WarningTitle`), space.name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
@@ -751,7 +750,6 @@ class Action {
 			data: {
 				icon: 'confirm',
 				title,
-				longTitle,
 				text,
 				textConfirm: confirm,
 				colorConfirm: 'red',

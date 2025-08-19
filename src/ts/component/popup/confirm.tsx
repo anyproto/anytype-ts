@@ -7,7 +7,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { title, text, icon, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage, longTitle } = data;
+	const { title, text, icon, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
 	const cn = [ 'wrap' ];
 	const [ error, setError ] = useState('');
 	const errorText = String(data.error || error || '');
@@ -145,8 +145,8 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		setHighlight();
 		rebind();
 
-		if (longTitle) {
-			titleRef.current.setValue(longTitle);
+		if (title) {
+			titleRef.current.setValue(title);
 		};
 
 		return () => {
@@ -162,15 +162,12 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<Icon className={icon} />
 				</div>
 			) : ''}
-			{longTitle ? (
-				<Editable
-					ref={titleRef}
-					classNameWrap="title"
-					readonly={true}
-				/>
-			) : (
-				<Title text={title} />
-			)}
+
+			<Editable
+				ref={titleRef}
+				classNameWrap="title"
+				readonly={true}
+			/>
 			<Label className="descr" text={text} />
 
 			{storageKey ? (
