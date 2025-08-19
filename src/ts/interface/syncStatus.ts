@@ -48,3 +48,8 @@ export interface P2PSyncStatus {
 	id: string;
 	status: P2PStatus;
 };
+
+export interface NotSyncedFiles {
+	total: number;
+	files: { spaceId: string, counter: number }[];
+};

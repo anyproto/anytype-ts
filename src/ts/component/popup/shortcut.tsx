@@ -10,6 +10,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ filter, setFilter ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const [ editingId, setEditingId ] = useState('');
+	const [ errorId, setErrorId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
 	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
@@ -128,7 +129,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						};
 
 						case 'reset': {
-							error.current = {};
+							setErrorId('');
 
 							S.Popup.open('confirm', {
 								data: {
@@ -188,6 +189,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		let onClickHandler = () => {};
 		let onContextHandler = () => {};
 		let buttons = null;
+		let alert = null;
 
 		if (canEdit) {
 			cn.push('canEdit');
@@ -197,8 +199,9 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				symbols = keyboard.getSymbolsFromKeys(editingKeys);
 			};
 
-			if (error.current[item.id]) {
+			if (errorId == item.id) {
 				cn.push('hasError');
+				alert = <Icon className="alert" />
 			};
 
 			onClickHandler = () => onClick(item);
@@ -230,10 +233,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				onContextMenu={onContextHandler}
 			>
 				<div className="flex">
+					{alert}
 					<div className="name">{item.name}</div>
 					{buttons}
 				</div>
-				{error.current[item.id] ? <Error text={error.current[item.id]} /> : ''}
 			</div>
 		);
 	};
@@ -242,8 +245,10 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		setFilter(value);
 	}; 
 
-	const checkConflicts = (id: string, pressed: string[]) => {
+	const checkConflicts = (id: string, pressed: string[], callBack: (conflict: any) => void) => {
 		const items = J.Shortcut.getItems();
+
+		let conflict = null;
 
 		for (const i in items) {
 			const item = items[i];
@@ -252,21 +257,20 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				continue;
 			};
 
-			const isEqual = U.Common.objectCompare(item.keys, pressed);
-			if (isEqual) {
-				error.current[id] = U.Common.sprintf(item.id ? translate('popupShortcutResetKey') : translate('popupShortcutConflict'), item.name);
+			if (U.Common.objectCompare(item.keys, pressed)) {
+				setErrorId(id);
 
 				if (item.id) {
-					Storage.updateShortcuts(item.id, []);
+					conflict = item;
 				};
-
-				setDummy(dummy + 1);
 			};
 		};
+
+		callBack(conflict);
 	};
 
 	const clear = () => {
-		error.current = {};
+		setErrorId('');
 		setEditingId('');
 		setEditingKeys([]);
 		window.clearTimeout(timeout.current);
@@ -352,11 +356,64 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			pressed = U.Common.arrayUnique(pressed);
-			checkConflicts(editingId, pressed);
+			checkConflicts(editingId, pressed, (conflict) => {
+				setEditingKeys(pressed);
 
-			Storage.updateShortcuts(editingId, pressed);
-			setEditingKeys(pressed);
-			setTimeout();
+				if (!conflict) {
+					Storage.updateShortcuts(editingId, pressed);
+					setTimeout();
+					return;
+				};
+
+				const options = [
+					{ id: 'override', name: translate('popupShortcutOverride') },
+					{ id: 'reset', name: translate('commonRemove') },
+				];
+
+				const reset = () => {
+					Storage.updateShortcuts(editingId, []);
+					clear();
+				};
+
+				let updated = false;
+
+				keyboard.setShortcutEditing(false);
+				window.clearTimeout(timeout.current);
+
+				S.Menu.open('select', {
+					element: `#${getId()} #item-${editingId}`,
+					horizontal: I.MenuDirection.Center,
+					className: 'shortcutConflict',
+					offsetY: -4,
+					onClose: () => {
+						if (!updated) {
+							reset();
+						};
+					},
+					data: {
+						options,
+						menuLabel: U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name),
+						noVirtualisation: true,
+						onSelect: (e, item) => {
+							updated = true;
+
+							switch (item.id) {
+								case 'override': {
+									Storage.updateShortcuts(editingId, pressed);
+									Storage.updateShortcuts(conflict.id, []);
+									clear();
+									break;
+								};
+
+								case 'reset': {
+									reset();
+									break;
+								};
+							};
+						}
+					}
+				});
+			});
 		});
 
 	}, [ editingId ]);

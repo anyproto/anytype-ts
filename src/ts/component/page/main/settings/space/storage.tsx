@@ -52,7 +52,7 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 				if (segments.other) {
 					segments.other.usage += usage;
 				} else {
-					segments.other = { name: translate('popupSettingsSpaceStorageProgressBarOther'), usage, className: 'other', }
+					segments.other = { name: translate('popupSettingsSpaceStorageProgressBarOther'), usage, className: 'other' };
 				};
 			};
 		});
