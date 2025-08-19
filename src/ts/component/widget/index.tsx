@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
@@ -66,6 +66,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const childRef = useRef(null);
 	const subId = useRef('');
 	const timeout = useRef(0);
+	const withShowAll = useRef(false);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const isChat = targetId == J.Constant.widgetId.chat;
 
@@ -550,6 +551,29 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
+	const checkShowAll = (subId: string, isBoard?: boolean) => {
+		let total = 0;
+		if (isBoard) {
+			const rootId = getRootId();
+			if (!rootId) {
+				return;
+			};
+
+			const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false);
+
+			total = groups.length;
+		} else {
+			total = S.Record.getMeta(subId, '').total;
+		};
+
+		const show = !isPreview && (total > limit);
+
+		if (show != withShowAll.current) {
+			withShowAll.current = show;
+			setDummy(dummy + 1);
+		};
+	};
+
 	const onContext = (param: any) => {
 		const { node, element, withElement, subId, objectId, data } = param;
 
@@ -594,6 +618,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getTraceId,
 		sortFavorite,
 		addGroupLabels,
+		checkShowAll,
 		onContext,
 		onCreate,
 	};
@@ -623,6 +648,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let isDraggable = canWrite;
 	let collapse = null;
 	let icon = null;
+	let showAll = null;
+
+	if (withShowAll.current) {
+		showAll = <Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />
+	};
 
 	if (isPreview) {
 		back = (
@@ -822,6 +852,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<div id="wrapper" className="contentWrapper">
 				{content}
 			</div>
+
+			{showAll}
 
 			<div className="dimmer" />
 
