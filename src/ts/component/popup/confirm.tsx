@@ -1,13 +1,13 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { Title, Icon, Label, Button, Checkbox, Error, Input } from 'Component';
-import { I, keyboard, translate, Storage } from 'Lib';
+import { Title, Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
+import { I, keyboard, translate, Storage, J } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { title, text, icon, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
+	const { title, text, icon, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage, longTitle } = data;
 	const cn = [ 'wrap' ];
 	const [ error, setError ] = useState('');
 	const errorText = String(data.error || error || '');
@@ -15,6 +15,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const nodeRef = useRef(null);
 	const checkboxRef = useRef(null);
 	const inputRef = useRef(null);
+	const titleRef = useRef(null);
 	const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 	const canCancel = undefined === data.canCancel ? true : data.canCancel;
 	const textConfirm = data.textConfirm || translate('commonOk');
@@ -144,6 +145,10 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		setHighlight();
 		rebind();
 
+		if (longTitle) {
+			titleRef.current.setValue(longTitle);
+		};
+
 		return () => {
 			keyboard.setFocus(false);
 			unbind();
@@ -157,7 +162,15 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<Icon className={icon} />
 				</div>
 			) : ''}
-			<Title text={title} />
+			{longTitle ? (
+				<Editable
+					ref={titleRef}
+					classNameWrap="title"
+					readonly={true}
+				/>
+			) : (
+				<Title text={title} />
+			)}
 			<Label className="descr" text={text} />
 
 			{storageKey ? (
