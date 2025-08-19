@@ -477,7 +477,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	position () {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, noBorder } = param;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -604,11 +604,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 			};
 
-			x = Math.max(borderLeft, x);
-			x = Math.min(ww - width - J.Size.menuBorder, x);
+			if (!noBorder) {
+				x = Math.max(borderLeft, x);
+				x = Math.min(ww - width - J.Size.menuBorder, x);
 
-			y = Math.max(borderTop, y);
-			y = Math.min(wh - height - borderBottom, y);
+				y = Math.max(borderTop, y);
+				y = Math.min(wh - height - borderBottom, y);
+			};
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;

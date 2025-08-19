@@ -161,7 +161,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			<ShareTooltip
 				text={translate('shareTooltipLabel')}
-				onClick={() => U.Router.go('/main/settings/membership', {})}
+				onClick={() => {
+					U.Router.go('/main/settings/membership', {});
+					analytics.event('ClickUpgradePlanTooltip', { type: 'help' });
+				}}
 			/>
 		</>
 	);

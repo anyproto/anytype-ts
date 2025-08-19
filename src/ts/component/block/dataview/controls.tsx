@@ -49,7 +49,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
 	const headRef = useRef(null);
-	const frameRef = useRef(0);
 	const head = isInline ? <Head ref={headRef} {...props} /> : null;
 
 	if (isInline) {
@@ -407,28 +406,22 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		if (frameRef.current) {
-			raf.cancel(frameRef.current);
+		const node = $(nodeRef.current);
+		const sideLeft = node.find('#dataviewControlsSideLeft');
+		const sideRight = node.find('#dataviewControlsSideRight');
+		const nw = node.outerWidth();
+
+		if (node.hasClass('small')) {
+			node.removeClass('small');
 		};
 
-		frameRef.current = raf(() => {
-			const node = $(nodeRef.current);
-			const sideLeft = node.find('#dataviewControlsSideLeft');
-			const sideRight = node.find('#dataviewControlsSideRight');
-			const nw = node.outerWidth();
+		const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
 
-			if (node.hasClass('small')) {
-				node.removeClass('small');
-			};
-
-			const width = Math.floor(sideLeft.outerWidth() + sideRight.outerWidth());
-
-			if (width + 16 > nw) {
-				node.addClass('small');
-			} else {
-				S.Menu.closeAll([ 'dataviewViewList' ]);
-			};
-		});
+		if (width + 16 > nw) {
+			node.addClass('small');
+		} else {
+			S.Menu.closeAll([ 'dataviewViewList' ]);
+		};
 	};
 
 	const buttons = [
@@ -498,8 +491,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 			container.off('mousedown.filter');
 			win.off('keydown.filter');
-
-			raf.cancel(frameRef.current);
 		};
 
 	}, []);

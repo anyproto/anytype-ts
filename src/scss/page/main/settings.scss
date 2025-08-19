@@ -434,19 +434,55 @@
     > .pageSettingsSpaceStorage {
         > .wrap { height: 100%; display: flex; flex-direction: column; position: relative; }
 
+        .upsellBanner { margin-bottom: 44px; }
+
         .button.payment { position: absolute; right: 0px; top: 5px; }
 
-        .label { margin-bottom: 16px; }
-        .progressBar { margin-bottom: 40px; }
-        .progressBar {
-            .bar { height: 32px; }
-        }
+        .label { margin-bottom: 32px; }
 
-        .red {
+        .usageWrapper {
+            .progressBar { margin-bottom: 12px; }
             .progressBar {
+                .bar { height: 8px; }
                 .bar {
-                    .fill { background-color: #f55522; }
-                    .fill.empty { background-color: #fcd1c3; }
+                    .fill { border-radius: 8px; }
+                    .fill.current { background-color: var(--color-orange); min-width: 32px; }
+                    .fill.other { background-color: var(--color-yellow); }
+                    .fill.empty { background-color: var(--color-bg-tag-grey); }
+                }
+            }
+
+            .info { margin-bottom: 36px; }
+            .info {
+                .totalUsage { color: var(--color-text-secondary); margin-bottom: 16px; }
+                .totalUsage {
+                    span { @include text-header1; color: var(--color-text-primary); }
+                }
+
+                .legend { display: flex; gap: 0px 32px; @include text-small; }
+                .legend {
+                    .item { display: flex; gap: 0px 8px; align-items: center; @include text-small; }
+
+                    .item:before { content: ''; width: 24px; height: 4px; border-radius: 100px; }
+                    .item.current::before { background: var(--color-orange); }
+                    .item.other::before { background: var(--color-yellow); }
+                    .item.free::before { background: var(--color-bg-tag-grey); }
+                }
+            }
+
+            .red {
+                .progressBar {
+                    .bar {
+                        .fill.current { background: var(--color-red); }
+                        .fill.other { background: var(--color-bg-tag-red); }
+                        .fill.empty { display: none; }
+                    }
+                }
+                .info {
+                    .legend {
+                        .item.current::before { background: var(--color-red); }
+                        .item.other::before { background: var(--color-red); }
+                    }
                 }
             }
         }
