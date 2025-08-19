@@ -20,9 +20,19 @@ export class SparkOnboardingService extends EventEmitter {
 
 	constructor(config: SparkOnboardingConfig = {}) {
 		super();
-		// Use config or fallback to localhost
-		// Note: process.env is not available in browser, would need to be injected at build time
-		this.url = config.url || 'ws://localhost:8765';
+		// Use environment variables or config with fallbacks
+		// Note: These need to be injected at build time via webpack/rspack DefinePlugin
+		const defaultUrl = 'wss://stage1-anytype-spark.anytype.io';
+		const envUrl = typeof process !== 'undefined' && process.env?.SPARK_ONBOARDING_URL;
+		this.url = config.url || envUrl || defaultUrl;
+		
+		// Convert http to ws and https to wss if needed
+		if (this.url.startsWith('http://')) {
+			this.url = this.url.replace('http://', 'ws://');
+		} else if (this.url.startsWith('https://')) {
+			this.url = this.url.replace('https://', 'wss://');
+		}
+		
 		this.maxReconnectAttempts = config.maxRetries || 3;
 		
 		// Session ID is only kept in memory for network reconnection
@@ -54,9 +64,25 @@ export class SparkOnboardingService extends EventEmitter {
 			this.isConnecting = true;
 
 			try {
-				// Include session ID in URL if we have one (for reconnection)
-				const connectUrl = this.sessionId ? `${this.url}?sessionId=${this.sessionId}` : this.url;
-				console.log('[SparkOnboarding] Connecting to:', connectUrl, this.sessionId ? '(with session)' : '(new session)');
+				// Check if auth is disabled via environment variable
+				const authDisabled = typeof process !== 'undefined' && process.env?.SPARK_ONBOARDING_NO_AUTH === 'true';
+				
+				// Build URL with auth token and session ID
+				const url = new URL(this.url);
+				
+				// Add auth token if not disabled
+				if (!authDisabled) {
+					const token = typeof process !== 'undefined' && process.env?.SPARK_ONBOARDING_TOKEN || 'spark_92eabe0c7f006ff22b0d81f3974b355556756afd3262249e4a748076c4483869';
+					url.searchParams.append('token', token);
+				}
+				
+				// Include session ID if we have one (for reconnection)
+				if (this.sessionId) {
+					url.searchParams.append('sessionId', this.sessionId);
+				}
+				
+				const connectUrl = url.toString();
+				console.log('[SparkOnboarding] Connecting to:', connectUrl.replace(/token=[^&]+/, 'token=***'), this.sessionId ? '(with session)' : '(new session)');
 				this.ws = new WebSocket(connectUrl, 'anytype-onboarding');
 
 				this.ws.onopen = () => {
@@ -303,8 +329,11 @@ export class SparkOnboardingService extends EventEmitter {
 					// Convert relative URL to full URL if needed
 					let fullUrl = downloadUrl;
 					if (downloadUrl.startsWith('/')) {
-						const baseUrl = this.url.replace('ws://', 'http://').replace('wss://', 'https://');
-						fullUrl = `${baseUrl}${downloadUrl}`;
+						// Remove query params from base URL
+						const baseUrl = new URL(this.url);
+						baseUrl.protocol = baseUrl.protocol.replace('ws', 'http');
+						baseUrl.search = ''; // Clear query params
+						fullUrl = `${baseUrl.origin}${downloadUrl}`;
 					}
 
 					// Now import the experience into the created workspace

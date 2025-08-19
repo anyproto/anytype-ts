@@ -540,13 +540,35 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		);
 	}
 
-	// Render error state
+	// Render error state with better UI
 	if (sparkOnboarding.error) {
 		return (
-			<div ref={nodeRef} className='wrap'>
-				<Error text={sparkOnboarding.error} />
-				<div className='buttons'>
-					<Button text='Close' onClick={() => onClose(true)} />
+			<div ref={nodeRef} className='errorStateWrapper'>
+				<div className='errorContent'>
+					<div className='errorIcon'>
+						<Icon className='warning large' />
+					</div>
+					<div className='errorTitle'>Connection Issue</div>
+					<div className='errorMessage'>
+						{sparkOnboarding.error === 'Failed to connect to onboarding service' 
+							? 'Unable to connect to the AI service. Please check your internet connection and try again.'
+							: sparkOnboarding.error}
+					</div>
+					<div className='errorActions'>
+						<Button 
+							className='c28 primary' 
+							text='Try Again' 
+							onClick={() => {
+								sparkOnboarding.resetError();
+								sparkOnboarding.connect();
+							}} 
+						/>
+						<Button 
+							className='c28 secondary' 
+							text='Close' 
+							onClick={() => onClose(true)} 
+						/>
+					</div>
 				</div>
 			</div>
 		);

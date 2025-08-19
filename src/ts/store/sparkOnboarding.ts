@@ -59,6 +59,7 @@ class SparkOnboardingStore {
 			reset: action,
 			connect: action,
 			disconnect: action,
+			resetError: action,
 			setStep: action,
 			setUserGoal: action,
 			setAnswers: action,
@@ -242,6 +243,10 @@ class SparkOnboardingStore {
 			this.service.disconnect();
 			this.isConnected = false;
 		}
+	}
+
+	resetError(): void {
+		this.error = null;
 	}
 
 	setStep(step: I.OnboardingStep): void {
