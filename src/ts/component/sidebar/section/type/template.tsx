@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { I, J, U, S, C, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Mousewheel } from 'swiper/modules';
+import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 
 const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
@@ -11,6 +11,11 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
 	const templateId = object?.defaultTemplateId;
+	const pages = [];
+
+	for (let i = 0; i < items.length; i += 6) {
+		pages.push(items.slice(i, i + 6));
+	};
 
 	const onAdd = () => {
 		const details: any = {
@@ -137,15 +142,18 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 			{items.length ? (
 				<div className="items">
 					<Swiper
-						slidesPerView={2}
-						spaceBetween={12}
+						slidesPerView={1}
+						spaceBetween={16}
 						navigation={true}
 						mousewheel={true}
-						modules={[ Navigation, Mousewheel ]}
+						pagination={pages.length > 1 ? { clickable: true } : false}
+						modules={[ Navigation, Mousewheel, Pagination ]}
 					>
-						{items.map((item: any, i: number) => (
-							<SwiperSlide key={item.id}>
-								<Item key={i} {...item} />
+						{pages.map((page: any, idx: number) => (
+							<SwiperSlide key={idx}>
+								{page.map((item, i) => (
+									<Item key={i} {...item} />
+								))}
 							</SwiperSlide>
 						))}
 					</Swiper>
