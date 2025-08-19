@@ -18,7 +18,7 @@
 				}
 			}
 
-			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; padding-right: 12px; }
+			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; }
 			.sides {
 				.side { display: flex; flex-direction: row; align-items: center; }
 				.side.left { flex: 1 1 auto; min-width: 40%; }

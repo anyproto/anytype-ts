@@ -36,7 +36,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 	render () {
 		const { param, setHover } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, getView, itemId } = data;
 
 		const view = getView();
@@ -67,6 +67,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			noScroll: true,
 			noVirtualisation: true,
 			onClose: this.onSelectClose,
+			className,
+			classNameWrap,
 		};
 
 		let wrapValue = false;

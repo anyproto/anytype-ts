@@ -255,6 +255,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 	};
 
@@ -302,6 +303,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			if (this.frame) {
 				raf.cancel(this.frame);
+				this.frame = 0;
 			};
 
 			this.frame = raf(() => {

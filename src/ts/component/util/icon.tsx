@@ -18,6 +18,7 @@ interface Props {
 	onMouseLeave?(e: MouseEvent): void;
 	onMouseMove?(e: MouseEvent): void;
 	onDragStart?(e: DragEvent): void;
+	onDragEnd?(e: DragEvent): void;
 	onContextMenu?(e: MouseEvent): void;
 };
 
@@ -37,6 +38,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	onMouseLeave,
 	onMouseMove,
 	onDragStart,
+	onDragEnd,
 	onContextMenu,
 }, ref) => {
 
@@ -98,6 +100,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onMouseMove={onMouseMove}
 			onContextMenu={onContextMenuHandler} 
 			onDragStart={onDragStart} 
+			onDragEnd={onDragEnd}
 			onClick={onClick} 
 			onDoubleClick={onDoubleClick}
 		>

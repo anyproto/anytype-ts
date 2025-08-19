@@ -783,12 +783,10 @@ class UtilMenu {
 	spaceContext (space: any, param: any) {
 		const { targetSpaceId } = space;
 		const options: any[] = [];
-		const pinned = this.getVaultItems().filter(it => it.isPinned);
 
 		if (space.spaceOrder) {
 			options.push({ id: 'unpin', name: translate('commonUnpin') });
-		} else 
-		if (pinned.length < J.Constant.limit.space.pin) {
+		} else { 
 			options.push({ id: 'pin', name: translate('commonPin') });
 		};
 

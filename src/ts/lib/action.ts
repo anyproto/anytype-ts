@@ -918,21 +918,18 @@ class Action {
 		});
 	};
 
-	membershipUpgrade () {
+	membershipUpgrade (tier?: I.TierType) {
 		if (!U.Common.checkCanMembershipUpgrade()) {
 			this.membershipUpgradeViaEmail();
 			return;
 		};
-
-		const { membership } = S.Auth;
-		const isBuilder = membership.tier == I.TierType.Builder;
 
 		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
 			{
 				onRouteChange: () => {
 					S.Popup.open('membership', {
-						data: { tier: isBuilder ? I.TierType.CoCreator : I.TierType.Builder }
+						data: { tier: tier ? tier : I.TierType.Builder }
 					});
 				}
 			},

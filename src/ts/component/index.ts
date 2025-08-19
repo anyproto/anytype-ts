@@ -62,7 +62,6 @@ import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
 import TabSwitch from './form/tabSwitch';
-import EmailCollection from './form/emailCollection';
 import HeadSimple from './page/elements/head/simple';
 import EditorControls from './page/elements/head/controls';
 
@@ -102,6 +101,8 @@ import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 import QR from './util/qr';
+
+import UpsellStorage from './util/upsell/storage';
 
 export {
 	Page,
@@ -201,9 +202,10 @@ export {
 	ShareBanner,
 	FooterAuthDisclaimer,
 
-	EmailCollection,
 	HeadSimple,
 	EditorControls,
 
 	QR,
+
+	UpsellStorage,
 };
