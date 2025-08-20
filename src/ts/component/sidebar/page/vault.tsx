@@ -7,7 +7,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, ProgressText } from 'Component';
 import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
 
 const LIMIT = 20;
@@ -213,7 +213,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 		if (filter) {
 			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
-			items = items.filter(it => it.name.match(reg) || it.lastMessage.match(reg));
+			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
 		return items;
@@ -438,6 +438,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	return (
 		<>
 			<div className="head">
+				<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 			</div>
 			<div className="filterWrapper">
 				<Filter 
@@ -491,6 +492,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					)}
 				</InfiniteLoader>
 			</div>
+
 			<div className="bottom">
 				<div className="grad" />
 				<div className="sides">
@@ -500,6 +502,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 							<ObjectName object={settings} />
 						</div>
 					</div>
+
 					<div className="side right">
 						<Icon
 							className="gallery"

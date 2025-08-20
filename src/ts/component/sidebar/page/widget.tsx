@@ -45,7 +45,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const { sidebarDirection } = this.props;
+		const { sidebarDirection, isPopup } = this.props;
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
@@ -54,6 +54,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
 		const cnt = S.Chat.counterString(counters.messageCounter);
+		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
+		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 
 		if (isEditing) {
 			cnb.push('isEditing');
@@ -247,29 +249,42 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		return (
 			<>
 				<div className="head">
-					<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
-				</div>
-
-				<div className={cnsh.join(' ')}>
-					<div className="side left">
-						<Icon className="back" onClick={this.onBack} />
-						{cnt ? <div className="cnt">{cnt}</div> : ''}
-					</div>
-
-					<div className="side center">
-						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
-						<ObjectName object={space} />
-					</div>
-
-					<div className="side right">
-						{canWrite ? (
-							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-								<Icon className="plus withBackground" onClick={this.onCreate} />
-								<Icon className="arrow withBackground" onClick={this.onArrow} />
+					{isDirectionLeft ? (
+						<div className="side left">
+							<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
+						</div>
+					) : (
+						<>
+							<div className="side left" />
+							<div className="side right">
+								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget')} />
 							</div>
-						) : ''}
-					</div>
+						</>
+					)}
 				</div>
+
+				{isDirectionLeft ? (
+					<div className={cnsh.join(' ')}>
+						<div className="side left">
+							<Icon className="back" onClick={this.onBack} />
+							{cnt ? <div className="cnt">{cnt}</div> : ''}
+						</div>
+
+						<div className="side center">
+							<IconObject object={space} size={20} iconSize={20} canEdit={false} />
+							<ObjectName object={space} />
+						</div>
+
+						<div className="side right">
+							{canWrite ? (
+								<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
+									<Icon className="plus withBackground" onClick={this.onCreate} />
+									<Icon className="arrow withBackground" onClick={this.onArrow} />
+								</div>
+							) : ''}
+						</div>
+					</div>
+				) : ''}
 
 				<div
 					id="body"
