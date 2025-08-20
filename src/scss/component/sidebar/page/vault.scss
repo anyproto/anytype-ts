@@ -7,9 +7,7 @@
 		.name { @include text-overflow-nw; }
 	}
 
-	> .body { padding-left: 0px; padding-right: 0px; overflow: visible; }
-
-	.ReactVirtualized__List { padding-left: 8px; padding-right: 8px; }
+	> .body { padding: 0px 6px 68px 12px; overflow: visible; }
 
 	.filterWrapper { padding: 0px 12px; margin: 0px 0px 8px 0px; }
 	.filter { padding: 0px; }
