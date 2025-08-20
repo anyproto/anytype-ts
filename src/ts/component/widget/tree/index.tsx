@@ -72,7 +72,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			children = records.map(id => mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
 		} else {
 			children = getChildNodesDetails(object.id);
-			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links), true);
+			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links), !isPreview);
 		};
 
 		if (isPreview && isRecent) {
