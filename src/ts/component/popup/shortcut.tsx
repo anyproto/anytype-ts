@@ -12,6 +12,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ editingId, setEditingId ] = useState('');
 	const [ errorId, setErrorId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
+	const [ currentKeys, setCurrentKeys ] = useState([]);
 	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
@@ -22,6 +23,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onClick = (item: any) => {
 		setEditingId(item.id);
+		setCurrentKeys(item.keys);
 
 		analytics.event('ClickShortcut', { name: item.id });
 	};
@@ -42,6 +44,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					switch (el.id) {
 						case 'edit': {
 							setEditingId(item.id);
+							setCurrentKeys(item.keys);
 							break;
 						};
 
@@ -259,10 +262,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (U.Common.objectCompare(item.keys, pressed)) {
 				setErrorId(id);
-
-				if (item.id) {
-					conflict = item;
-				};
+				conflict = item;
 			};
 		};
 
@@ -273,6 +273,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		setErrorId('');
 		setEditingId('');
 		setEditingKeys([]);
+		setCurrentKeys([]);
 		window.clearTimeout(timeout.current);
 		keyboard.setShortcutEditing(false);
 		Renderer.send('initMenu');
@@ -365,13 +366,19 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					return;
 				};
 
-				const options = [
+				let menuLabel = U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
+				let options = [
 					{ id: 'override', name: translate('popupShortcutOverride') },
 					{ id: 'reset', name: translate('commonRemove') },
 				];
 
+				if (!conflict.id || conflict.noEdit) {
+					menuLabel = U.Common.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
+					options = [ { id: 'reset', name: translate('commonOkay') } ];
+				};
+
 				const reset = () => {
-					Storage.updateShortcuts(editingId, []);
+					Storage.updateShortcuts(editingId, currentKeys);
 					clear();
 				};
 
@@ -392,7 +399,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					},
 					data: {
 						options,
-						menuLabel: U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name),
+						menuLabel,
 						noVirtualisation: true,
 						onSelect: (e, item) => {
 							updated = true;
