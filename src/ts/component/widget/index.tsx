@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -22,6 +23,11 @@ interface Props extends I.WidgetComponent {
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
+	const nodeRef = useRef(null);
+	const childRef = useRef(null);
+	const subId = useRef('');
+	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, onDrag, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
@@ -61,12 +67,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const object = getObject();
 	const limit = getLimit(block.content);
-	const [ dummy, setDummy ] = useState(0);
-	const nodeRef = useRef(null);
-	const childRef = useRef(null);
-	const subId = useRef('');
-	const timeout = useRef(0);
-	const withShowAll = useRef(false);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const isChat = targetId == J.Constant.widgetId.chat;
 
@@ -552,6 +552,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const checkShowAll = (subId: string, isBoard?: boolean) => {
+		const node = $(nodeRef.current);
+		const innerWrap = node.find('#innerWrap');
+		
+		innerWrap.find('#button-show-all').remove();
+
+		const wrapper = $('<div id="button-show-all"></div>');
+
+		ReactDOM.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />, wrapper.get(0));
+		innerWrap.append(wrapper);
+
 		let total = 0;
 		if (isBoard) {
 			const rootId = getRootId();
@@ -568,10 +578,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const show = !isPreview && (total > limit);
 
-		if (show != withShowAll.current) {
-			withShowAll.current = show;
-			setDummy(dummy + 1);
-		};
+		show ? wrapper.show() : wrapper.hide();
 	};
 
 	const onContext = (param: any) => {
@@ -604,6 +611,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
+	const buttons = [];
 	const canCreate = canCreateHandler();
 	const childProps = {
 		...props,
@@ -642,17 +650,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let head = null;
 	let content = null;
 	let back = null;
-	let buttons = [];
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
 	let collapse = null;
 	let icon = null;
-	let showAll = null;
-
-	if (withShowAll.current) {
-		showAll = <Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />
-	};
 
 	if (isPreview) {
 		back = (
@@ -852,8 +854,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<div id="wrapper" className="contentWrapper">
 				{content}
 			</div>
-
-			{showAll}
 
 			<div className="dimmer" />
 
