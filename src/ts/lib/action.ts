@@ -736,7 +736,7 @@ class Action {
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = U.Common.shorten(space.name, 32);
+		const name =  isOwner ? space.name : U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
