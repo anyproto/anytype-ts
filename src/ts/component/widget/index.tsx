@@ -552,6 +552,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const checkShowAll = (subId: string, isBoard?: boolean) => {
+		const rootId = getRootId();
+		if (!rootId) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		
@@ -564,11 +569,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		let total = 0;
 		if (isBoard) {
-			const rootId = getRootId();
-			if (!rootId) {
-				return;
-			};
-
 			const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false);
 
 			total = groups.length;
@@ -576,7 +576,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			total = S.Record.getMeta(subId, '').total;
 		};
 
-		const show = !isPreview && (total > limit);
+		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+		const viewType = view ? view.type : I.ViewType.List;
+		const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
+		const show = !isPreview && (total > limit) && isAllowedView;
 
 		show ? wrapper.show() : wrapper.hide();
 	};
