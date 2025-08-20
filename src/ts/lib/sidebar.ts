@@ -299,6 +299,7 @@ class Sidebar {
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
+			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.page.css({ width: pageWidth });
 			this.leftButton.css({ left: leftButtonX });
