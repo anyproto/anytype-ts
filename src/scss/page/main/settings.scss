@@ -534,8 +534,8 @@
             .label { @include text-common; color: var(--color-text-secondary); }
 
             .linkTypeWrapper {
-                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: 100%;
-                padding: 0px 8px; margin: 0px 0px 8px 0px; gap: 0px 12px; border-radius: 12px;
+                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: calc(100% + 8px);
+                padding: 0px 8px; margin: 0px 0px 8px -8px; gap: 0px 12px; border-radius: 12px;
             }
             .linkTypeWrapper.canEdit:hover,
             .linkTypeWrapper.canEdit.hover { background-color: var(--color-shape-highlight-medium); }
@@ -619,6 +619,25 @@
                     }
                     .select:hover,
                     .select.hover { background-color: var(--color-bg-primary); }
+                }
+            }
+
+            .row.isNew {
+                .side.left {
+                    .iconObject { overflow: visible; }
+                    .iconObject {
+                        img { border-radius: 50%; }
+                    }
+                    .iconObject::after {
+                        content: ''; position: absolute; right: 0px; top: 0px; width: 8px; height: 8px; background: var(--color-system-accent-100);
+                        border-radius: 50%; border: 2px solid var(--color-bg-primary);
+                    }
+                }
+
+                .side.right {
+                    .select {
+                        .name { color: var(--color-text-secondary); }
+                    }
                 }
             }
         }

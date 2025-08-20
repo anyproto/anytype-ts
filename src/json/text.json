@@ -953,19 +953,15 @@
 	"popupSettingsSpaceShareMenuInviteManualTitle": "Request access",
 	"popupSettingsSpaceShareMenuInviteManualDescription": "Owner must approve each join request",
 
+	"popupSettingsSpaceShareSelectPermissions": "Select permissions",
+	"popupSettingsSpaceShareRejectRequest": "Reject request",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
-	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareQRCode": "QR code",
-
-	"popupSettingsSpaceRemove": "Move %s to Bin?",
-	"popupSettingsSpaceRemoveTitle": "Move to Bin",
-	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
-	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
 	"popupSettingsMembershipTitle1": "Membership",
 	"popupSettingsMembershipTitle2": "Let's build together",
@@ -1887,7 +1883,6 @@
 	"toastLinkedTo": "has been linked to",
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
-	"toastApproveLeaveRequest": "You approved %s request",
 	"toastInviteCopy": "Invite link has been copied", 
 	"toastInviteGenerate": "Invite link has been created",
 	"toastInviteUpdate": "Invite link has been changed to %s",
@@ -2400,13 +2395,6 @@
 	"errorSpaceParticipantRemove105": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceParticipantRemove106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
-	"errorSpaceLeaveApprove101": "Oops! Something went wrong. Please try again later.",
-	"errorSpaceLeaveApprove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceLeaveApprove103": "Oops! The request failed. Please check your Internet connection and try again.",
-	"errorSpaceLeaveApprove104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
-	"errorSpaceLeaveApprove105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
-	"errorSpaceLeaveApprove106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
-
 	"errorSpaceExit101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceExit102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceExit103": "Oops! The request failed. Please check your Internet connection and try again.",
@@ -2476,8 +2464,6 @@
 	"notificationImportErrorText17": "No objects of the required format were found in the imported folder. Make sure you have selected the correct file format, such as HTML or Markdown",
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>'%s'</b> space",
-
-	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>'%s'</b> space",
 
 	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your vault soon.",
 
