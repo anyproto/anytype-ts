@@ -185,7 +185,7 @@ class Dataview {
 			const objectIds = el ? el.objectIds || [] : [];
 
 			if (objectIds.length) {
-				sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+				sorts.unshift({ relationKey: 'id', type: I.SortType.Custom, customOrder: objectIds });
 			};
 		};
 

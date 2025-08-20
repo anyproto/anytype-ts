@@ -115,6 +115,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		};
 
 		this.setState({ cid, key, type });
+		this.refInput?.setValue(U.Space.getInviteLink(cid, key));
 	};
 
 	onUpgrade (type: string) {
@@ -128,17 +129,14 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			return;
 		};
 
-		const { config } = S.Common;
 		const { isOnline } = S.Common;
 		const isLocalNetwork = U.Data.isLocalNetwork();
 		const space = U.Space.getSpaceview();
-		const noApproveIds: I.InviteLinkType[] = [ I.InviteLinkType.Editor, I.InviteLinkType.Viewer ];
-
-		let ids: I.InviteLinkType[] = [ I.InviteLinkType.Manual ];
-		if (config.experimental) {
-			ids = noApproveIds.concat(ids);
-		};
-
+		const noApproveIds: I.InviteLinkType[] = [
+			I.InviteLinkType.Editor,
+			I.InviteLinkType.Viewer
+		];
+		const ids: I.InviteLinkType[] = noApproveIds.concat([ I.InviteLinkType.Manual ]);
 		const options: any[] = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
 
 		if (isOnline && !isLocalNetwork) {
@@ -155,21 +153,27 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
+					const id = Number(item.id);
+
+					if (id == this.state.type) {
+						return;
+					};
+
 					let created = false;
 					let inviteType = I.InviteType.WithoutApprove;
 					let permissions = I.ParticipantPermissions.Reader;
 
-					if (item.id == I.InviteLinkType.None) {
+					if (id == I.InviteLinkType.None) {
 						Action.inviteRevoke(S.Common.space, () => {
 							this.setInvite('', '', inviteType, permissions);
 						});
 						return;
 					};
 
-					this.setState({ isLoading: true });
+					this.setState({ isLoading: true, error: '' });
 
 					const callBack = () => {
-						switch (Number(item.id)) {
+						switch (id) {
 							case I.InviteLinkType.Editor: {
 								permissions = I.ParticipantPermissions.Writer;
 								break;
@@ -181,29 +185,44 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 							};
 						};
 
-						C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
-							this.setState({ isLoading: false });
+						const isChange = noApproveIds.includes(this.state.type) && noApproveIds.includes(id);
 
-							if (this.setError(message.error)) {
-								return;
-							};
+						if (isChange) {
+							C.SpaceInviteChange(S.Common.space, permissions, (message: any) => {
+								this.setState({ isLoading: false });
+								if (this.setError(message.error)) {
+									return;
+								};
 
-							let toast = '';
-							if (created) {
-								toast = translate('toastInviteGenerate');
-							} else {
-								toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
-							};
+								this.setInvite(this.state.cid, this.state.key, inviteType, permissions);
 
-							this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
-							Preview.toastShow({ text: toast });
+								Preview.toastShow({ text: U.Common.sprintf(translate('toastInviteUpdate'), item.name) });
+							});
+						} else {
+							C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
+								this.setState({ isLoading: false });
 
-							if (!space.isShared) {
-								analytics.event('ShareSpace');
-							};
+								if (this.setError(message.error)) {
+									return;
+								};
 
-							analytics.event('ClickShareSpaceNewLink', { type: item.id});
-						});
+								let toast = '';
+								if (created) {
+									toast = translate('toastInviteGenerate');
+								} else {
+									toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
+								};
+
+								this.setInvite(message.inviteCid, message.inviteKey, inviteType, permissions);
+								Preview.toastShow({ text: toast });
+
+								if (!space.isShared) {
+									analytics.event('ShareSpace');
+								};
+							});
+						};
+
+						analytics.event('ClickShareSpaceNewLink', { type: id});
 					};
 
 					if (!space.isShared) {

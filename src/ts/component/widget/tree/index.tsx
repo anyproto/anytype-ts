@@ -18,7 +18,7 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, getData, getTraceId, sortFavorite, addGroupLabels } = props;
+	const { block, parent, isPreview, isSystemTarget, getLimit, getData, getTraceId, sortFavorite, addGroupLabels, checkShowAllButton } = props;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -72,7 +72,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			children = records.map(id => mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
 		} else {
 			children = getChildNodesDetails(object.id);
-			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
+			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links), !isPreview);
 		};
 
 		if (isPreview && isRecent) {
@@ -120,7 +120,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 			const isOpen = Storage.checkToggle(subKey, getTreeKey(node));
 			if (isOpen) {
-				subscribeToChildNodes(childNode.id, childNode.links);
+				subscribeToChildNodes(childNode.id, childNode.links, false);
 				treeNodeList = loadTreeRecursive(rootId, childNode.id, treeNodeList, getChildNodesDetails(childNode.id), depth + 1, childBranch);
 			};
 		};
@@ -143,11 +143,15 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	// Subscribe to changes to child nodes for a given node Id and its links
-	const subscribeToChildNodes = (nodeId: string, links: string[]): void => {
+	const subscribeToChildNodes = (nodeId: string, links: string[], withLimit: boolean): void => {
 		links = filterDeletedLinks(links);
 
 		if (!links.length) {
 			return;
+		};
+
+		if (withLimit) {
+			links = links.slice(0, getLimit(parent.content));
 		};
 
 		const hash = sha1(U.Common.arrayUnique(links).join('-'));
@@ -227,7 +231,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const nodes = loadTree();
 		const node = $(nodeRef.current);
 		const length = nodes.length;
-		const css: any = { height: getTotalHeight() + 8, paddingBottom: '' };
+		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
+		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
 		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
@@ -355,6 +360,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	}, []);
 
 	useEffect(() => {
+		checkShowAllButton(getSubId());
 		resize();
 
 		// Reload the tree if the links have changed
@@ -369,6 +375,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		listRef.current?.scrollToPosition(top.current);
 
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
+
+		checkShowAllButton(getSubId());
 	});
 
 	useImperativeHandle(ref, () => ({

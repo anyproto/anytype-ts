@@ -86,8 +86,11 @@
 		}
 	}
 
-	.showAll { display: flex; align-items: center; justify-content: center; margin: 0px 8px 12px; border: 0; @include text-small; font-weight: 500; }
-	.showAll:after { content: ''; width: 8px; height: 8px; display: block; background-image: url('~img/arrow/showAll.svg'); margin: 0px -12px 0px 4px; }
+	#button-show-all { padding: 0px 8px; }
+	#button-show-all {
+		.button { display: flex; align-items: center; justify-content: center; border: 0; @include text-small; font-weight: 500; }
+		.button:after { content: ''; width: 8px; height: 8px; display: block; background-image: url('~img/arrow/showAll.svg'); margin: 0px -12px 0px 4px; }
+	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 
@@ -141,6 +144,10 @@
 	}
 
 	.emptyWrap { padding: 16px 16px 8px 16px; }
+
+	&.widgetView {
+		#viewSelect { padding-top: 8px; }
+	}
 }
 
 .widget.isClosed {

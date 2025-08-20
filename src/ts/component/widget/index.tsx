@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -22,6 +23,11 @@ interface Props extends I.WidgetComponent {
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
+	const nodeRef = useRef(null);
+	const childRef = useRef(null);
+	const subId = useRef('');
+	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, onDrag, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
@@ -61,12 +67,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const object = getObject();
 	const limit = getLimit(block.content);
-	const [ dummy, setDummy ] = useState(0);
-	const nodeRef = useRef(null);
-	const childRef = useRef(null);
-	const subId = useRef('');
-	const timeout = useRef(0);
-	const withShowAll = useRef(false);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const isChat = targetId == J.Constant.widgetId.chat;
 
@@ -551,27 +551,61 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
-	const checkShowAll = (subId: string, isBoard?: boolean) => {
+	const checkShowAllButton = (subId: string) => {
+		const rootId = getRootId();
+		if (!rootId) {
+			return;
+		};
+
+		addShowAllButton();
+
+		const node = $(nodeRef.current);
+		const innerWrap = node.find('#innerWrap');
+		const wrapper = node.find('#button-show-all');
+		
 		let total = 0;
-		if (isBoard) {
-			const rootId = getRootId();
-			if (!rootId) {
+		let show = false;
+
+		if (!isSystemTarget && block.isWidgetTree()) {
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+			const targetId = child ? child.getTargetObjectId() : '';
+
+			if (!targetId) {
 				return;
 			};
 
-			const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false);
+			const object = S.Detail.get(S.Block.widgets, targetId);
+			const total = Relation.getArrayValue(object.links).length;
 
-			total = groups.length;
+			show = !isPreview && (total > limit);
 		} else {
-			total = S.Record.getMeta(subId, '').total;
+			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+			const viewType = view?.type || I.ViewType.List;
+			const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
+
+			if (view && view.isBoard()) {
+				total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+			} else {
+				total = S.Record.getMeta(subId, '').total;
+			};
+
+			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		const show = !isPreview && (total > limit);
+		show ? wrapper.show() : wrapper.hide();
+		innerWrap.toggleClass('withShowAll', show);
+	};
 
-		if (show != withShowAll.current) {
-			withShowAll.current = show;
-			setDummy(dummy + 1);
-		};
+	const addShowAllButton = () => {
+		const node = $(nodeRef.current);
+		const innerWrap = node.find('#innerWrap');
+		const wrapper = $('<div id="button-show-all"></div>');
+
+		ReactDOM.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />, wrapper.get(0));
+
+		innerWrap.find('#button-show-all').remove();
+		innerWrap.append(wrapper);
 	};
 
 	const onContext = (param: any) => {
@@ -604,6 +638,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
+	const buttons = [];
 	const canCreate = canCreateHandler();
 	const childProps = {
 		...props,
@@ -618,7 +653,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getTraceId,
 		sortFavorite,
 		addGroupLabels,
-		checkShowAll,
+		checkShowAllButton,
 		onContext,
 		onCreate,
 	};
@@ -642,17 +677,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let head = null;
 	let content = null;
 	let back = null;
-	let buttons = [];
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
 	let collapse = null;
 	let icon = null;
-	let showAll = null;
-
-	if (withShowAll.current) {
-		showAll = <Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />
-	};
 
 	if (isPreview) {
 		back = (
@@ -852,8 +881,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<div id="wrapper" className="contentWrapper">
 				{content}
 			</div>
-
-			{showAll}
 
 			<div className="dimmer" />
 
