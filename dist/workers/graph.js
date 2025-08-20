@@ -333,6 +333,7 @@ updateForces = () => {
 updateSettings = (param) => {
 	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'depth', 'cluster', 'filterTypes' ];
 	
+	let needInit = false;
 	let needUpdate = false;
 	let needFocus = false;
 
@@ -344,12 +345,23 @@ updateSettings = (param) => {
 				needFocus = true;
 			};
 
+			if (key == 'cluster') {
+			};
+
 			break;
 		};
 	};
 
 	settings = Object.assign(settings, param);
-	needUpdate ? updateForces() : redraw();
+
+	if (needInit) {
+		initForces();
+	} else 
+	if (needUpdate) {
+		updateForces();
+	} else {
+		redraw();
+	};
 
 	if (needFocus) {
 		setTimeout(() => this.setRootId({ rootId }), delayFocus);
