@@ -299,8 +299,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		window.clearTimeout(timeoutHistory.current);
 		timeoutHistory.current = window.setTimeout(() => {
-			historySaveStack();
-		}, 500);
+			historySaveState();
+		}, J.Constant.delay.chatHistory);
 	};
 
 	const onInput = () => {
@@ -525,7 +525,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		setAttachments(list.concat(attachments));
-		historySaveStack();
+		historySaveState();
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -729,7 +729,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateMarkup(text, { from: l, to: l });
 		updateCounter();
 		setAttachments(attachments);
-		historySaveStack();
+		historySaveState();
 
 		analytics.event('ClickMessageMenuEdit');
 	};
@@ -745,7 +745,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onReplyClear();
 		clearCounter();
 		checkSpeedLimit();
-		historyClearStack();
+		historyClearState();
 
 		send.removeClass('isLoading');
 		loader.removeClass('active');
@@ -832,11 +832,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		if (states[targetIdx]) {
-			historyLoadStack(targetIdx);
+			historyLoadState(targetIdx);
 		};
 	};
 
-	const historySaveStack = () => {
+	const historySaveState = () => {
 		const parsed = getMarksFromHtml();
 		const text = trim(parsed.text);
 		const match = parsed.text.match(/^\r?\n+/);
@@ -862,7 +862,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		history.current.states.push(item);
 	};
 
-	const historyLoadStack = (idx: number) => {
+	const historyLoadState = (idx: number) => {
 		const { text, marks, attachments, replyingId } = history.current.states[idx];
 		const l = text.length;
 
@@ -874,7 +874,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setAttachments(attachments);
 	};
 
-	const historyClearStack = () => {
+	const historyClearState = () => {
 		window.clearTimeout(timeoutHistory.current);
 		history.current = { position: -1, states: [] };
 	};
@@ -1443,7 +1443,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				setAttachments(attachments);
 			};
 
-			historySaveStack();
+			historySaveState();
 		};
 
 		resize();
