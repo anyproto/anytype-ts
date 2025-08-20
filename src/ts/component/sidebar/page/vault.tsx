@@ -7,7 +7,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, ProgressText } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, ProgressText, EmptySearch } from 'Component';
 import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
 
 const LIMIT = 20;
@@ -229,7 +229,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const items = getItems();
-	const pinned = items.filter(it => it.isPinned);
 	const listRef = useRef<List>(null);
 	const filterRef = useRef(null);
 	const timeout = useRef(0);
@@ -451,6 +450,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				/>
 			</div>
 			<div className="body">
+				{!items.length ? (
+					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
+				) : ''}
+
 				<InfiniteLoader
 					rowCount={items.length + 1}
 					loadMoreRows={() => {}}
