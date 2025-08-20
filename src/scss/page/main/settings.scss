@@ -337,7 +337,7 @@
     }
 
     > .pageSettingsPhrase {
-        .inputs { margin: 0px 0px 54px 0px; }
+        .inputs, .qrWrap { margin: 0px 0px 32px 0px; }
 
         .qrWrap { width: 130px; overflow: hidden; }
     }
