@@ -6,7 +6,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow-x: hidden; overflow-y: auto; background: var(--color-bg-primary);
-	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable both-edges;
+	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; user-select: none !important; }

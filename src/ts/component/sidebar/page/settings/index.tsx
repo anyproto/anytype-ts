@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, J, keyboard, S, sidebar, translate, U } from 'Lib';
-import { Icon, IconObject, ObjectName, Label } from 'Component';
+import { I, keyboard, S, sidebar, translate, U } from 'Lib';
+import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends React.Component {
@@ -11,7 +11,7 @@ interface Props extends React.Component {
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
-const HEIGHT_SECTION_FIRST = 34;
+const HEIGHT_SECTION_FIRST = 28;
 const HEIGHT_ACCOUNT = 56;
 const HEIGHT_DIV = 12;
 
@@ -136,14 +136,18 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			<>
 				<div className="head" />
 
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back" onClick={this.onBack} />
+					</div>
+
+					<div className="side center">
+						<div className="name">{translate('commonSettings')}</div>
+					</div>
+				</div>
+
 				<div className="body">
 					<div className="list">
-						{isSpace ? (
-							<div className="head" onClick={this.onBack}>
-								<Icon className="back" />
-								<ObjectName object={space} />
-							</div>
-						) : ''}
 						<div className="inner">
 							<InfiniteLoader
 								rowCount={items.length}
