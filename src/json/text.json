@@ -1321,6 +1321,7 @@
 	"popupShortcutToastSaved": "Shortcut assigned",
 
 	"popupShortcutConflict": "<b>%s</b> is already assigned to \"<b>%s</b>\"",
+	"popupShortcutRestricted": "<b>%s</b> is restricted to assign. Please select other keys",
 	"popupShortcutOverride": "Override",
 
 	"popupShortcutBasics": "Basics",
