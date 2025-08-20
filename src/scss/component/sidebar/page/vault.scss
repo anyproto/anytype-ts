@@ -7,15 +7,16 @@
 		.name { @include text-overflow-nw; }
 	}
 
-	> .body { padding: 0px 6px 68px 12px; overflow: visible; }
+	> .body { padding: 0px 0px 68px 0px; overflow: visible; }
+	.ReactVirtualized__List { padding: 0px 8px; }
 
-	.filterWrapper { padding: 0px 12px; margin: 0px 0px 8px 0px; }
+	.filterWrapper { padding: 0px 16px; margin: 0px 0px 8px 0px; }
 	.filter { padding: 0px; }
 	.filter { 
-		.inner { background-color: var(--color-shape-highlight-medium); }
+		.inner { background-color: var(--color-shape-highlight-medium); border-radius: 15px; }
 	}
 
-	.item { display: flex; align-items: center; gap: 0px 12px; padding: 8px 4px; }
+	.item { display: flex; align-items: center; gap: 0px 12px; padding: 8px; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -27,7 +28,7 @@
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
-			pointer-events: none; border-radius: 6px;
+			pointer-events: none; border-radius: 8px;
 		}
 		&.active::before, &.hover::before { background: var(--color-shape-highlight-medium); }
 		&.selected::before { background: var(--color-system-selection); }

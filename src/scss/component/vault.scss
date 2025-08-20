@@ -16,7 +16,7 @@
 
 	.body { 
 		display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); 
-		width: $vaultWidthCollapsed;
+		width: $vaultWidthCollapsed; 
 	}
 	.body {
 		.side { padding: 0px 10px; display: flex; flex-direction: column; align-items: center; }
