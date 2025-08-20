@@ -26,7 +26,7 @@ export interface WidgetComponent {
 	getTraceId?: () => string;
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
-	checkShowAll?: (subId: string, isBoard?: boolean) => void;
+	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;
 	onCreate?: (param: any) => void;
 };

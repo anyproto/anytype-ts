@@ -18,7 +18,7 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, getLimit, getData, getTraceId, sortFavorite, addGroupLabels } = props;
+	const { block, parent, isPreview, isSystemTarget, getLimit, getData, getTraceId, sortFavorite, addGroupLabels, checkShowAllButton } = props;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -231,7 +231,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const nodes = loadTree();
 		const node = $(nodeRef.current);
 		const length = nodes.length;
-		const css: any = { height: getTotalHeight() + 8, paddingBottom: '' };
+		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
+		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
 		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
@@ -359,6 +360,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	}, []);
 
 	useEffect(() => {
+		checkShowAllButton(getSubId());
 		resize();
 
 		// Reload the tree if the links have changed
@@ -373,6 +375,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		listRef.current?.scrollToPosition(top.current);
 
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
+
+		checkShowAllButton(getSubId());
 	});
 
 	useImperativeHandle(ref, () => ({

@@ -551,37 +551,61 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
-	const checkShowAll = (subId: string, isBoard?: boolean) => {
+	const checkShowAllButton = (subId: string) => {
 		const rootId = getRootId();
 		if (!rootId) {
 			return;
 		};
 
+		addShowAllButton();
+
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
+		const wrapper = node.find('#button-show-all');
 		
-		innerWrap.find('#button-show-all').remove();
+		let total = 0;
+		let show = false;
 
+		if (!isSystemTarget && block.isWidgetTree()) {
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+			const targetId = child ? child.getTargetObjectId() : '';
+
+			if (!targetId) {
+				return;
+			};
+
+			const object = S.Detail.get(S.Block.widgets, targetId);
+			const total = Relation.getArrayValue(object.links).length;
+
+			show = !isPreview && (total > limit);
+		} else {
+			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+			const viewType = view?.type || I.ViewType.List;
+			const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
+
+			if (view && view.isBoard()) {
+				total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+			} else {
+				total = S.Record.getMeta(subId, '').total;
+			};
+
+			show = !isPreview && (total > limit) && isAllowedView;
+		};
+
+		show ? wrapper.show() : wrapper.hide();
+		innerWrap.toggleClass('withShowAll', show);
+	};
+
+	const addShowAllButton = () => {
+		const node = $(nodeRef.current);
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = $('<div id="button-show-all"></div>');
 
 		ReactDOM.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />, wrapper.get(0));
+
+		innerWrap.find('#button-show-all').remove();
 		innerWrap.append(wrapper);
-
-		let total = 0;
-		if (isBoard) {
-			const groups = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false);
-
-			total = groups.length;
-		} else {
-			total = S.Record.getMeta(subId, '').total;
-		};
-
-		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-		const viewType = view ? view.type : I.ViewType.List;
-		const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
-		const show = !isPreview && (total > limit) && isAllowedView;
-
-		show ? wrapper.show() : wrapper.hide();
 	};
 
 	const onContext = (param: any) => {
@@ -629,7 +653,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getTraceId,
 		sortFavorite,
 		addGroupLabels,
-		checkShowAll,
+		checkShowAllButton,
 		onContext,
 		onCreate,
 	};
