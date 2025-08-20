@@ -17,7 +17,7 @@ interface WidgetViewRefProps {
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, getData, getTraceId, getLimit, sortFavorite } = props;
+	const { parent, block, isSystemTarget, getData, getTraceId, getLimit, sortFavorite, checkShowAll } = props;
 	const { viewId, limit, layout } = parent.content;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -257,6 +257,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
+
+		checkShowAll(subId, viewType == I.ViewType.Board);
 	});
 
 	useImperativeHandle(ref, () => ({
