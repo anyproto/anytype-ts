@@ -140,20 +140,17 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				</div>
 
 				<div className="spaceButtons">
-					{buttons.map((el, idx) => {
-						const cn = [ 'btn' ];
-
-						if (el.isDisabled) {
-							cn.push('disabled');
-						};
-
-						return (
-							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
-								<Icon className={el.icon} />
-								<Label text={el.name} />
-							</div>
-						);
-					})}
+					{buttons.map((item, i) => (
+						<div 
+							key={i} 
+							id={U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)} 
+							className="btn" 
+							onClick={e => this.onClick(e, item)}
+						>
+							<Icon className={item.icon} />
+							<Label text={item.name} />
+						</div>
+					))}
 				</div>
 
 				<div className="sections">
@@ -479,7 +476,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		return v;
 	};
 
-	getButtons () {
+	getButtons (): any[] {
 		const { cid, key } = this.state;
 		
 		if (!cid || !key) {
