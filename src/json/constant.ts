@@ -82,6 +82,7 @@ export default {
 		widget:			 400,
 		sidebar:		 180,
 		highlight:  	 1000,
+		chatHistory:	 500,
 	},
 
 	fileExtension: {
