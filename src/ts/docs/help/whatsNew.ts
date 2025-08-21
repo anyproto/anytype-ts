@@ -25,6 +25,82 @@ export default () => {
 		{ type: I.BlockType.IconPage, icon: '👋' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 
+		title(`Desktop 0.49.0 Released!`),
+		text(''),
+		text('Some features didn’t fit into last week’s release – so here we are again. This update brings a long-awaited request, plus a few practical improvements and smaller fixes we wanted to share with you as soon as possible.'),
+		text(``),
+
+		h2(`Highlights`),
+
+		h3(`Invite Links Without Approval`),
+		text(`One of your most requested features has arrived. You can finally add new members to your space without manual approval: just share an invite link with Editor or Viewer access, and you're all set.`),
+		text(`How it works:`),
+		bullet(`Each space can have only <b>one active invite link</b> at a time.`),
+		bullet(`<b>Editor/Viewer links stay the same</b> – switching between them doesn’t generate a new link, but new members will get the role currently selected in space settings.`),
+		bullet(`Switching to <b>Request access</b> generates a new link and <b>disables previous</b> Editor/Viewer links.`),
+		bullet(`Switching back to Editor/Viewer (no approval) <b>generates a new link</b>, replacing the previous one.`),
+		bullet(`Switching to <b>Link disabled</b> invalidates any active link, but does not remove existing members.`),
+		img(`49/1.png`, 'c70 screen'),
+		text(``),
+
+		h3(`Updated Templates Section in Edit Type`),
+		text(`The new interface displays up to 6 templates in the Edit Type sidebar and adds a visual <b>horizontal swiper</b> for browsing more.`),
+		img(`49/2.png`, 'c70 screen'),
+		text(``),
+
+		h2(`Quality of Life Improvements`),
+		text(''),
+
+		text(`<b>Reorganized App Settings</b>`),
+		text(`App settings have been slightly reorganized into three clear sections to make navigation more intuitive:`),
+		bullet(`<b>Data Management</b> is now called <b>Local Storage</b>.`),
+		bullet(`<b>My Sites has</b> been moved to a higher level under the <b>Data Management</b> section.`),
+		bullet(`<b>Account Deletion</b> is now located under the <b>Login Key</b>.`),
+		img(`49/3.png`, 'c70 screen'),
+		text(``),
+
+		text(`<b>See All in Widgets</b>`),
+		text(`Widgets now show a ${hl('See all')} button when they contain more objects than are currently visible. It opens a widget view similar to system widgets like Pinned or Recently Edited, making it clear there’s more to explore.`),
+		img(`49/4.png`, 'c70 screen'),
+		text(``),
+
+		text(`<b>Shortcut Conflicts Resolution</b>`),
+		text(`Assigning a shortcut that’s already in use now shows a confirmation prompt – offering the option to <b>Override</b> (clears the old mapping) or <b>Remove</b> (clears the new one). Certain system shortcuts that can’t be reassigned are now also protected from accidental value deletion.`),
+		img(`49/5.png`, 'c70 screen'),
+		text(``),
+
+		text(`<b>PIN Code Reworked on Keychain</b>`),
+		text(`The PIN code is now stored in the system keychain, along with your Vault Key, for better security.`),
+		text(`For backward compatibility, it will continue to be used from local storage <b>until you save it again</b> – so if you want to fully switch to the new system, just update or save your PIN again.`),
+		text(``),
+
+		text(`<b>Remote Storage Banners</b>`),
+		text(`New indicators are here to keep you in the loop about your remote storage usage, with banners appearing from 55% usage and showing your current percentage in the Sync Status menu.`),
+		text(``),
+
+		text(`<b>Copy Identity from Member Card</b>`),
+		text(`You can now copy a member’s identity (or their name.any) from the space member's card.`),
+		text(``),
+
+		h2(`Bug Fixes`),
+		text(''),
+
+		bullet(`Fixed an issue where code formatting wasn't triggered when a backtick was followed by a tilde (${hl(' ~ ')}). Thanks to @${link('https://community.anytype.io/t/24194', 'dantefromhell')} and @${link('https://community.anytype.io/t/26055', 'dave2')} for reporting!`),
+		bullet(`In the Calendar view and views within Inline Collections, properties configured in filters are now correctly added to new objects. Thanks to @${link('https://community.anytype.io/t/28504', 'sturdily')}!`),
+		bullet(`When multiple widgets point to the same Query but use different views, clicking the widget title now opens the corresponding view. Thanks to @${link('https://community.anytype.io/t/27530', 'siousu')}!`),
+		bullet(`Navigating back to a Query with the ${hl('<')} button now restores the previously open view. Thanks to @${link('https://community.anytype.io/t/26928', 'Shampra')}!`),
+		bullet(`After adding a bookmark to the Editor, pressing ${hl('Enter')} now adds a new block so you can continue writing without interruption.`),
+		bullet(`Fixed unreadable "Out of storage" indicator in the Sync Status menu when using dark mode. Thanks to @${link('https://community.anytype.io/t/28543', 'Alan71')}!`),
+		bullet(`The Pin option has been removed from templates, since they aren’t supported in widgets. We recognize this made quick access easier for some workflows – thanks to @${link('https://community.anytype.io/t/28537', 'C.c')} for raising the point.`),
+		bullet(`Fixed an issue where the date picker overlapped the edit field when editing date properties in lower rows of a Grid view. Thanks to @${link('https://community.anytype.io/t/date-picker-overlaps-itself-with-the-date-edit-filed/28278', 'Code-Jack')}!`),
+		bullet(`Custom Sort order in Collections now applies correctly in widgets.`),
+		bullet(`Long space names are no longer cut off in the Deletion pop-up.`),
+		bullet(`The update animation no longer remains after a network error interrupts the download process.`),
+		bullet(`Improved performance when handling large code blocks in the Editor.`),
+
+		div(),
+		// --------------------------------------------//
+
 		title(`Desktop 0.48.0 Released!`),
 		text(''),
 		text('<b>Hey, Anytype Community!</b>'),
