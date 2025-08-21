@@ -688,7 +688,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="iconWrap back">
 				<Icon
 					className="back"
-					onClick={() => {
+					onClick={e => {
+						e.stopPropagation();
+
 						setPreview('');
 						analytics.event('ScreenHome', { view: 'Widget' });
 					}}
