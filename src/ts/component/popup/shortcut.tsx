@@ -12,18 +12,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ editingId, setEditingId ] = useState('');
 	const [ errorId, setErrorId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
-	const [ currentKeys, setCurrentKeys ] = useState([]);
 	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
 	const current = page || sections[0].id;
 	const section = U.Common.objectCopy(sections.find(it => it.id == current));
 	const timeout = useRef(0);
-	const error = useRef({});
 	const id = getId();
 
 	const onClick = (item: any) => {
 		setEditingId(item.id);
-		setCurrentKeys(item.keys);
 
 		analytics.event('ClickShortcut', { name: item.id });
 	};
@@ -44,7 +41,6 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 					switch (el.id) {
 						case 'edit': {
 							setEditingId(item.id);
-							setCurrentKeys(item.keys);
 							break;
 						};
 
@@ -187,6 +183,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const Item = (item: any) => {
 		const cn = [ 'item' ];
 		const canEdit = item.id && !item.noEdit;
+		const isEditing = editingId && (editingId == item.id);
 
 		let symbols = item.symbols || [];
 		let onClickHandler = () => {};
@@ -197,7 +194,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		if (canEdit) {
 			cn.push('canEdit');
 
-			if (editingId && (editingId == item.id)) {
+			if (isEditing) {
 				cn.push('isEditing');
 				symbols = keyboard.getSymbolsFromKeys(editingKeys);
 			};
@@ -211,7 +208,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			onContextHandler = () => onContext(item);
 		};
 
-		if (editingId && (editingId == item.id) && !symbols.length) {
+		if (isEditing && !symbols.length) {
 			buttons = <Label className="text" text={translate('popupShortcutPress')} />;
 		} else
 		if (symbols.length) {
@@ -273,7 +270,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		setErrorId('');
 		setEditingId('');
 		setEditingKeys([]);
-		setCurrentKeys([]);
+
 		window.clearTimeout(timeout.current);
 		keyboard.setShortcutEditing(false);
 		Renderer.send('initMenu');
@@ -293,10 +290,76 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		const setTimeout = () => {
 			window.clearTimeout(timeout.current);
 			timeout.current = window.setTimeout(() => {
-				clear();
-				Preview.toastShow({ text: translate('popupShortcutToastSaved') });
-				analytics.event('UpdateShortcut', { name: editingId });
-			}, 2000);
+				checkConflicts(editingId, pressed, (conflict) => {
+					if (!conflict) {
+						Storage.updateShortcuts(editingId, pressed);
+						clear();
+
+						Preview.toastShow({ text: translate('popupShortcutToastSaved') });
+						analytics.event('UpdateShortcut', { name: editingId });
+						return;
+					};
+
+					const item = J.Shortcut.getItems()[editingId];
+
+					let menuLabel = U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
+					let options = [
+						{ id: 'override', name: translate('popupShortcutOverride') },
+						{ id: 'reset', name: translate('commonRemove') },
+					];
+
+					if (!conflict.id || conflict.noEdit) {
+						menuLabel = U.Common.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
+						options = [ 
+							{ id: 'reset', name: translate('commonOkay') },
+						];
+					};
+
+					const reset = () => {
+						Storage.updateShortcuts(editingId, item.keys || []);
+						clear();
+					};
+
+					let updated = false;
+
+					keyboard.setShortcutEditing(false);
+					window.clearTimeout(timeout.current);
+
+					S.Menu.open('select', {
+						element: `#${getId()} #item-${editingId}`,
+						horizontal: I.MenuDirection.Center,
+						className: 'shortcutConflict',
+						offsetY: -4,
+						onClose: () => {
+							if (!updated) {
+								reset();
+							};
+						},
+						data: {
+							options,
+							menuLabel,
+							noVirtualisation: true,
+							onSelect: (e, item) => {
+								updated = true;
+
+								switch (item.id) {
+									case 'override': {
+										Storage.updateShortcuts(editingId, pressed);
+										Storage.updateShortcuts(conflict.id, []);
+										clear();
+										break;
+									};
+
+									case 'reset': {
+										reset();
+										break;
+									};
+								};
+							}
+						}
+					});
+				});
+			}, 500);
 		};
 
 		let pressed = [];
@@ -357,70 +420,9 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			pressed = U.Common.arrayUnique(pressed);
-			checkConflicts(editingId, pressed, (conflict) => {
-				setEditingKeys(pressed);
 
-				if (!conflict) {
-					Storage.updateShortcuts(editingId, pressed);
-					setTimeout();
-					return;
-				};
-
-				let menuLabel = U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
-				let options = [
-					{ id: 'override', name: translate('popupShortcutOverride') },
-					{ id: 'reset', name: translate('commonRemove') },
-				];
-
-				if (!conflict.id || conflict.noEdit) {
-					menuLabel = U.Common.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
-					options = [ { id: 'reset', name: translate('commonOkay') } ];
-				};
-
-				const reset = () => {
-					Storage.updateShortcuts(editingId, currentKeys);
-					clear();
-				};
-
-				let updated = false;
-
-				keyboard.setShortcutEditing(false);
-				window.clearTimeout(timeout.current);
-
-				S.Menu.open('select', {
-					element: `#${getId()} #item-${editingId}`,
-					horizontal: I.MenuDirection.Center,
-					className: 'shortcutConflict',
-					offsetY: -4,
-					onClose: () => {
-						if (!updated) {
-							reset();
-						};
-					},
-					data: {
-						options,
-						menuLabel,
-						noVirtualisation: true,
-						onSelect: (e, item) => {
-							updated = true;
-
-							switch (item.id) {
-								case 'override': {
-									Storage.updateShortcuts(editingId, pressed);
-									Storage.updateShortcuts(conflict.id, []);
-									clear();
-									break;
-								};
-
-								case 'reset': {
-									reset();
-									break;
-								};
-							};
-						}
-					}
-				});
-			});
+			setEditingKeys(pressed);
+			setTimeout();
 		});
 
 	}, [ editingId ]);
