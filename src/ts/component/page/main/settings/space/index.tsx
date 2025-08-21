@@ -55,7 +55,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
-			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
+			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
@@ -481,24 +481,16 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	getButtons () {
 		const { cid, key } = this.state;
-		const space = U.Space.getSpaceview();
 		
-		if (space.isPersonal) {
+		if (!cid || !key) {
 			return [];
 		};
 
-		let buttons: any[] = [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' }
+		return [
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' },
+			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
+			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
 		];
-
-		if (cid && key) {
-			buttons = buttons.concat([
-				{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
-				{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
-			]);
-		};
-
-		return buttons;
 	};
 
 	updateCounters () {
