@@ -485,7 +485,12 @@ class CommonStore {
 	 * Gets the pin ID for storage.
 	 */
 	pinId () {
-		return [ S.Auth.account.id, 'pin' ].join('-');
+		const { account } = S.Auth;
+		if (!account) {
+			return '';
+		};
+
+		return [ account.id, 'pin' ].join('-');
 	};
 
 	/**
