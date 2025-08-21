@@ -549,11 +549,6 @@
                 .icon.manual { background-image: url('~img/icon/menu/inviteLink/manual.svg'); }
                 .icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
                 .icon.loading {
-                    @keyframes rotate {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-
                     &:before {
                         content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
                         width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;

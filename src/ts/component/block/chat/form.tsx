@@ -49,7 +49,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	} = props;
 	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const [ replyingId, setReplyingId ] = useState<string>('');
-	const { messageCounter, mentionCounter } = S.Chat.getState(subId);
+	const counters = S.Chat.getState(subId);
 	const nodeRef = useRef(null);
 	const dummyRef = useRef(null);
 	const editableRef = useRef(null);
@@ -65,8 +65,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const marks = useRef<I.Mark[]>([]);
 	const editingId = useRef<string>('');
 	const speedLimit = useRef({ last: 0, counter: 0 });
+	const mentionCounter = counters.mentionCounter;
+	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
-	const mc = messageCounter > 999 ? '999+' : messageCounter;
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize' ];
@@ -1506,7 +1507,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				{!isEmpty ? (
 					<div className="navigation">
 						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
 					</div>
 				) : ''}
 

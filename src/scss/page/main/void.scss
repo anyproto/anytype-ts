@@ -1,7 +1,8 @@
 @import "~scss/_mixins";
 
 .bodyMain.bodyMainVoid {
-	#sidebarToggle,
+	#sidebarLeftButton,
+	#sidebarBack,
 	.sidebar,
     .sidebarDummy { display: none; }
 }

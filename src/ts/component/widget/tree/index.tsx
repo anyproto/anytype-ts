@@ -237,7 +237,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
-			const maxHeight = $('#sidebarLeft #containerWidget #body').height() - head.outerHeight(true);
+			const maxHeight = $('#sidebarPageWidget #body').height() - head.outerHeight(true);
 
 			css.height = Math.min(maxHeight, css.height + 8);
 		};
