@@ -434,6 +434,16 @@ html.themeDark {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
+			.spaceChatSidebarHeader {
+				.buttons {
+					.item {
+						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
+						.icon.search { background-image: url('#{$themePath}/icon/sidebar/chatSpace/search.svg'); }
+						.icon.mute.pushOn { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
+						.icon.mute.pushOff { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+					}
+				}
+			}
 		}
 	}
 
