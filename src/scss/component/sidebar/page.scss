@@ -1,7 +1,7 @@
 > .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
 > .sidebarPage {
 	> .head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
+		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
 	> .head {
