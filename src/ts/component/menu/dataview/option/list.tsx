@@ -239,11 +239,10 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const getItems = (): any[] => {
 		const isSelect = relation.format == I.RelationType.Select;
-		const value = Relation.getArrayValue(data.value);
 		const skipIds = Relation.getArrayValue(data.skipIds);
 		const ret = [];
 
-		let items = S.Record.getRecords(J.Constant.subId.option, U.Subscription.optionRelationKeys()).filter(it => it.relationKey == relation.relationKey);
+		let items = S.Record.getRecords(J.Constant.subId.option, U.Subscription.optionRelationKeys(true)).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
 		items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skipIds.includes(it.id));
