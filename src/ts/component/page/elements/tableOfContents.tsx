@@ -70,15 +70,14 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 		for (let i = 0; i < list.length; ++i) {
 			const block = list[i];
-			const el = document.getElementById(`block-${block.id}`);
+			const el = $(`#block-${block.id}`);
 
-			if (!el) {
+			if (!el.length) {
 				continue;
 			};
 
-			const rect = el.getBoundingClientRect();
-			const t = rect.top + top - co;
-			const h = rect.height;
+			const t = el.offset().top - co;
+			const h = el.outerHeight();
 			const check = isPopup ? 0 : top;
 
 			if ((t >= check) && (t + h <= check + ch)) {
@@ -95,11 +94,9 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			return;
 		};
 
-		const node = $(nodeRef.current);
-
 		S.Menu.open('tableOfContents', {
 			className: 'fixed',
-			element: node,
+			element: $(nodeRef.current),
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			noFlipX: true,
@@ -121,7 +118,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		S.Common.setTimeout('tableOfContents', 100, () => S.Menu.close('tableOfContents'));
 	};
 
-	const resize = () => {
+	const resize = (callBack?: () => void) => {
 		raf(() => {
 			const node = $(nodeRef.current);
 			if (!node.length) {
@@ -138,12 +135,16 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			};
 
 			node.css({ left: containerOffset.current.left + containerWidth.current - node.outerWidth() - 6 });
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
 	useEffect(() => {
 		rebind();
-		resize();
+		resize(() => onScroll(0));
 
 		if (isPopup) {
 			window.setTimeout(() => resize(), J.Constant.delay.popup);
