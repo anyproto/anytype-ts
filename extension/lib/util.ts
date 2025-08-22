@@ -71,7 +71,6 @@ class Util {
 
 				S.Auth.accountSet(message.account);
 				S.Common.configSet(message.account.config, false);
-				S.Common.showVaultSet(false);
 
 				U.Data.onInfo(message.account.info);
 

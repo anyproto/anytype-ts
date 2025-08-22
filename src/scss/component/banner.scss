@@ -1,12 +1,12 @@
 @import "~scss/_mixins";
 
 .banner {
-    border-radius: 8px; padding: 12px 16px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary);
+    border-radius: 12px; padding: 12px 16px; box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary);
 }
 .banner {
-    .label { @include text-common; line-height: 20px; }
+	.title { @include text-common; margin-bottom: 0px; }
+    .label { @include text-small; margin-bottom: 6px; }
 	.inner { display: flex; flex-direction: column; gap: 2px 0; align-items: flex-start; }
-	.hl { display: inline-block; padding: 0px 4px; background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
 
 	.button.simple { color: var(--color-text-primary); font-weight: 600; }
 	.button.simple {
@@ -14,8 +14,17 @@
 	}
 
     .icon.close { 
-		background-image: url('~img/icon/banner/close.svg'); background-size: 8px !important; position: absolute; right: 8px; top: 8px;
-		width: 16px !important; height: 16px !important;
+		background-image: url('~img/icon/banner/close.svg'); position: absolute; right: 6px; top: 6px;
+		width: 20px !important; height: 20px !important;
 	}
 }
-.banner.green { background-image: linear-gradient(90deg, #c5f3e5 0%, #f1ffc9 27.23%, #fff 54%); }
+.banner.green { background-color: var(--color-bg-lime); }
+
+.banner.sidebarUpdateBanner { width: 288px; left: 12px; }
+.banner.sidebarUpdateBanner {
+	.button { width: 100%; @include text-small; font-weight: 500; }
+	.button:before {
+		content: ''; display: inline-block; width: 16px; height: 16px;
+		margin: 0px 6px 0px -20px; background: url('~img/icon/banner/download.svg');
+	}
+}

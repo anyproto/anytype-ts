@@ -38,7 +38,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = false; //S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
-		const showSidebar = S.Common.getShowSidebarRight(isPopup);
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -67,7 +67,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio || isPdf) {
-			if (showSidebar || isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
+			if (rightSidebar.isOpen || isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
@@ -88,7 +88,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			cn.push('horizontal');
 		};
 
-		if (showSidebar) {
+		if (rightSidebar.isOpen) {
 			cn.push('withSidebar');
 		};
 
