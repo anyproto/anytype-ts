@@ -268,11 +268,11 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			if (c1.tmpOrder > c2.tmpOrder) return 1;
 			if (c1.tmpOrder < c2.tmpOrder) return -1;
 
-			if (c1.optionOrder > c2.optionOrder) return 1;
-			if (c1.optionOrder < c2.optionOrder) return -1;
+			if (c1.order > c2.order) return 1;
+			if (c1.order < c2.order) return -1;
 
-			return 0;
-		}).sort(U.Data.sortByName);
+			return U.Data.sortByName(c1, c2);
+		});
 
 		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');

@@ -385,8 +385,10 @@ class DetailStore {
 	private mapOption (object: any) {
 		object.text = object.name;
 		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
+		object.order = Relation.getStringValue(object.optionOrder);
 
 		delete(object.relationOptionColor);
+		delete(object.optionOrder);
 
 		return object;
 	};
