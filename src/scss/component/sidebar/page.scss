@@ -52,7 +52,7 @@
 
 	> .body {
 		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: none; overflow-y: scroll; overscroll-behavior: none; 
-		scrollbar-gutter: stable; flex-grow: 1;
+		flex-grow: 1;
 	}
 	> .body {
 		.group { display: flex; flex-direction: column; }
