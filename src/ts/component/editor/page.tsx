@@ -1892,13 +1892,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	updateToc () {
 		const { rootId, isPopup } = this.props;
-		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
+		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader()).map(it => it.id);
 		const length = headers.length;
 
 		if (!length) {
 			return;
 		};
 
+		const root = S.Block.wrapTree(rootId, rootId);
+		const list = S.Block.unwrapTree([ root ]).filter(it => headers.includes(it.id));
 		const container = U.Common.getScrollContainer(isPopup);
 		const co = isPopup ? container.offset().top : 0;
 		const ch = container.height() - J.Size.header;
@@ -1906,7 +1908,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let blockId = '';
 
 		for (let i = 0; i < length; ++i) {
-			const block = headers[i];
+			const block = list[i];
 			const el = $(`#block-${block.id}`);
 
 			if (!el.length) {
