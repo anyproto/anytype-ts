@@ -72,7 +72,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, index, onMouseEnter, onMouseLeave } = this.props;
 		
 		if (!block) {
 			return null;
@@ -93,7 +93,6 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		hAlign = hAlign || I.BlockHAlign.Left;
 
-		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = S.Block.getLeaf(rootId, rootId);
 		const cn: string[] = [ 'block', U.Data.blockClass(block), `align${hAlign}`, `index${index}` ];

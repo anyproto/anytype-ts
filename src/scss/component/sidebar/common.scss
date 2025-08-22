@@ -8,12 +8,27 @@
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-#sidebarToggle, 
-#sidebarSync { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon
+.sidebarHeadIcon {
+	&.sidebarAnimation { transition: left $transitionSidebarTime linear; }
+	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
+}
 
-#sidebarToggle { backdrop-filter: blur(20px); left: 84px; background-image: url('~img/icon/widget/toggle0.svg'); }
-#sidebarToggle.sidebarAnimation, #sidebarSync.sidebarAnimation { transition: left $transitionSidebarTime linear; }
-#sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
+#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
+#sidebarRightButton:not(.withSidebar) { display: none; }
+
+.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
+.sidebarHeadIcon.toggle {
+	&:hover, &.hover { background-image: url('~img/icon/widget/toggle1.svg'); }
+}
+
+.sidebarHeadIcon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
+
+.icon { width: 20px; height: 20px; flex-shrink: 0; }
+		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
+
+#sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { position: fixed; z-index: 24; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
@@ -33,10 +48,7 @@
 }
 
 .sidebar {
-	@import "./widget";
-	@import "./allObject";
 	@import "./page";
-	@import "./settings";
 	
 	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
 	.resize-h {

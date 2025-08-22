@@ -182,8 +182,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			return;
 		};
 
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id;
+		const { id } = U.Router.getParam(U.Router.getRoute());
 
 		let page = '';
 		switch (id) {
@@ -193,17 +192,17 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			};
 
 			case 'set': {
-				page = 'types';
+				page = 'settings/types';
 				break;
 			};
 
 			case 'relation': {
-				page = 'relations';
+				page = 'settings/relations';
 				break;
 			};
 
 			default: {
-				page = 'settingsSpace';
+				page = 'settings/space';
 				break;
 			};
 		};
