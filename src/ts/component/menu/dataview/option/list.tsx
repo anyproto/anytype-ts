@@ -230,12 +230,8 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 				const item = newItems[i];
 				if (item) {
 					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { optionOrder: list[i] }}, false);
-
-					console.log('SET ORDER', item.name, list[i]);
 				};
 			};
-
-			console.log(JSON.stringify(getItems(), null, 2));
 		});
 
 		keyboard.disableSelection(false);
