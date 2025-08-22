@@ -8,6 +8,8 @@
 		.side.left { flex-grow: 1; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
 
+		.button, .icon { -webkit-app-region: no-drag; }
+
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 

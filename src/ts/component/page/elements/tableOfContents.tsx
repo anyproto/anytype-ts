@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
