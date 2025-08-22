@@ -409,7 +409,7 @@ class Sidebar {
 			S.Common.setRightSidebarState(isPopup, '', false);
 		};
 
-		this.rightPanelSetState(isPopup, { page, ...param });
+		this.rightPanelSetState(isPopup, { page: '' });
 
 		window.setTimeout(() => {
 			this.initObjects();
@@ -435,6 +435,10 @@ class Sidebar {
 
 				this.objRight.css(cssEnd);
 				this.resizePage(null, shouldOpen ? null : 0, animate);
+
+				window.setTimeout(() => {
+					this.rightPanelSetState(isPopup, { page, ...param });
+				}, animate ? J.Constant.delay.sidebar : 0);
 			});
 		});
 
