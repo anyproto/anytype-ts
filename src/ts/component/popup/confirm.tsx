@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { Title, Icon, Label, Button, Checkbox, Error, Input } from 'Component';
-import { I, keyboard, translate, Storage } from 'Lib';
+import { Title, Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
+import { I, keyboard, translate, Storage, J } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
@@ -15,6 +15,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const nodeRef = useRef(null);
 	const checkboxRef = useRef(null);
 	const inputRef = useRef(null);
+	const titleRef = useRef(null);
 	const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 	const canCancel = undefined === data.canCancel ? true : data.canCancel;
 	const textConfirm = data.textConfirm || translate('commonOk');
@@ -144,6 +145,10 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		setHighlight();
 		rebind();
 
+		if (title) {
+			titleRef.current.setValue(title);
+		};
+
 		return () => {
 			keyboard.setFocus(false);
 			unbind();
@@ -157,7 +162,12 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<Icon className={icon} />
 				</div>
 			) : ''}
-			<Title text={title} />
+
+			<Editable
+				ref={titleRef}
+				classNameWrap="title"
+				readonly={true}
+			/>
 			<Label className="descr" text={text} />
 
 			{storageKey ? (

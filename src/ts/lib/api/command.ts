@@ -2182,13 +2182,19 @@ export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, 
 	const request = new Rpc.Space.InviteGenerate.Request();
 
 	request.setSpaceid(spaceId);
-
-	if (inviteType && permissions) {
-		request.setInvitetype(inviteType as number);
-		request.setPermissions(permissions as number);
-	};
+	request.setInvitetype(inviteType as number || 0);
+	request.setPermissions(permissions as number || 0);
 
 	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
+};
+
+export const SpaceInviteChange = (spaceId: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteChange.Request();
+
+	request.setSpaceid(spaceId);
+	request.setPermissions(permissions as number);
+
+	dispatcher.request(SpaceInviteChange.name, request, callBack);
 };
 
 export const SpaceInviteView = (cid: string, key: string, callBack?: (message: any) => void) => {
@@ -2286,15 +2292,6 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	request.setIdentitiesList(identities);
 
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
-};
-
-export const SpaceLeaveApprove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.LeaveApprove.Request();
-
-	request.setSpaceid(spaceId);
-	request.setIdentitiesList(identities);
-
-	dispatcher.request(SpaceLeaveApprove.name, request, callBack);
 };
 
 // ---------------------- EXTENSION ---------------------- //

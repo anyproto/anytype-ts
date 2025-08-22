@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { C, U, J, S } from 'Lib'; 

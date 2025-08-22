@@ -49,7 +49,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	} = props;
 	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const [ replyingId, setReplyingId ] = useState<string>('');
-	const { messageCounter, mentionCounter } = S.Chat.getState(subId);
+	const counters = S.Chat.getState(subId);
 	const nodeRef = useRef(null);
 	const dummyRef = useRef(null);
 	const editableRef = useRef(null);
@@ -58,13 +58,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const sendRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
+	const timeoutHistory = useRef(0);
 	const isLoading = useRef<string[]>([]);
 	const isSending = useRef(false);
 	const range = useRef<I.TextRange>({ from: 0, to: 0 });
 	const marks = useRef<I.Mark[]>([]);
 	const editingId = useRef<string>('');
 	const speedLimit = useRef({ last: 0, counter: 0 });
-	const mc = messageCounter > 999 ? '999+' : messageCounter;
+	const mentionCounter = counters.mentionCounter;
+	const messageCounter = S.Chat.counterString(counters.messageCounter);
+	const history = useRef({ position: -1, states: [] });
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize' ];
@@ -205,6 +208,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				buttonsRef.current?.onTextButton(e, type, '');
 			};
 		};
+
+		// UnDo, ReDo
+		keyboard.shortcut('undo', e, () => onHistory(e, -1));
+		keyboard.shortcut('redo', e, () => onHistory(e, 1));
+
 	};
 
 	const onKeyUpInput = (e: any) => {
@@ -289,6 +297,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateButtons();
 		removeBookmarks();
 		updateCounter();
+
+		window.clearTimeout(timeoutHistory.current);
+		timeoutHistory.current = window.setTimeout(() => {
+			historySaveState();
+		}, J.Constant.delay.chatHistory);
 	};
 
 	const onInput = () => {
@@ -513,6 +526,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		setAttachments(list.concat(attachments));
+		historySaveState();
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -608,19 +622,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		send.addClass('isLoading');
 		loader.addClass('active');
 		isSending.current = true;
-
-		const clear = () => {
-			isSending.current = false;
-			checkSendButton();
-
-			onEditClear();
-			onReplyClear();
-			clearCounter();
-			checkSpeedLimit();
-
-			send.removeClass('isLoading');
-			loader.removeClass('active');
-		};
 		
 		const callBack = () => {
 			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
@@ -729,8 +730,26 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateMarkup(text, { from: l, to: l });
 		updateCounter();
 		setAttachments(attachments);
+		historySaveState();
 
 		analytics.event('ClickMessageMenuEdit');
+	};
+
+	const clear = () => {
+		const node = $(nodeRef.current);
+		const send = node.find('#send');
+		const loader = node.find('#form-loader');
+		isSending.current = false;
+		checkSendButton();
+
+		onEditClear();
+		onReplyClear();
+		clearCounter();
+		checkSpeedLimit();
+		historyClearState();
+
+		send.removeClass('isLoading');
+		loader.removeClass('active');
 	};
 
 	const onEditClear = () => {
@@ -800,6 +819,65 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		analytics.event('ClickMessageMenuDelete');
+	};
+
+	const onHistory = (e, dir) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { position, states } = history.current;
+		const targetIdx = position + dir;
+
+		if (targetIdx < 0) {
+			clear();
+		};
+
+		if (states[targetIdx]) {
+			historyLoadState(targetIdx);
+		};
+	};
+
+	const historySaveState = () => {
+		const parsed = getMarksFromHtml();
+		const text = trim(parsed.text);
+		const match = parsed.text.match(/^\r?\n+/);
+		const diff = match ? match[0].length : 0;
+		const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
+		const item = {
+			text,
+			marks,
+			replyingId,
+			attachments: U.Common.objectCopy(attachments),
+		};
+		const { position, states } = history.current;
+
+		if (U.Common.compareJSON(states[position], item)) {
+			return;
+		};
+
+		if (position < states.length - 1) {
+			history.current.states = states.slice(0, position + 1);
+		};
+
+		history.current.position += 1;
+		history.current.states.push(item);
+	};
+
+	const historyLoadState = (idx: number) => {
+		const { text, marks, attachments, replyingId } = history.current.states[idx];
+		const l = text.length;
+
+		history.current.position = idx;
+		setMarks(marks);
+		setReplyingId(replyingId);
+		updateMarkup(text, { from: l, to: l });
+		updateCounter();
+		setAttachments(attachments);
+	};
+
+	const historyClearState = () => {
+		window.clearTimeout(timeoutHistory.current);
+		history.current = { position: -1, states: [] };
 	};
 
 	const getMarksAndRange = (): { marks: I.Mark[], range: I.TextRange } => {
@@ -1365,6 +1443,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			if (attachments.length) {
 				setAttachments(attachments);
 			};
+
+			historySaveState();
 		};
 
 		resize();
@@ -1427,7 +1507,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				{!isEmpty ? (
 					<div className="navigation">
 						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={mc} />
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
 					</div>
 				) : ''}
 

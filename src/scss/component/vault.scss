@@ -2,7 +2,7 @@
 
 .vault { 
 	background-color: var(--color-shape-primary); z-index: 30; width: $vaultWidthCollapsed; height: 100%; display: flex; flex-direction: column; 
-	flex-shrink: 0; position: fixed; left: 0px; top: 0px; overflow: hidden; transform: translate3d(0px, 0px, 0px); transition: none;
+	flex-shrink: 0; position: fixed; left: 0px; top: 0px; overflow: hidden; transform: translate3d(0px, 0px, 0px); transition: none; display: none;
 }
 .vault.isClosed, .vault.isHidden { width: 0px; }
 .vault.anim { transition-property: width; transition-timing-function: linear; }
@@ -16,7 +16,7 @@
 
 	.body { 
 		display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); 
-		width: $vaultWidthCollapsed;
+		width: $vaultWidthCollapsed; 
 	}
 	.body {
 		.side { padding: 0px 10px; display: flex; flex-direction: column; align-items: center; }
@@ -64,11 +64,6 @@
 				.iconObject, .cnt { display: none; }
 			}
 
-			@keyframes rotate {
-				0% { transform: rotate(0deg); }
-				100% { transform: rotate(360deg); }
-			}
-
 			&:before {
 				content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
 				width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear;
@@ -91,11 +86,9 @@
 		&.gallery {
 			.iconWrap { background-image: url('~img/icon/vault/gallery.svg'); }
 		}
-
 		&.add {
 			.iconWrap { background-image: url('~img/icon/vault/plus.svg'); }
 		}
-
 		&.settings {
 			.iconWrap { background-color: unset; background-image: url('~img/icon/vault/settings.svg'); }
 		}

@@ -147,7 +147,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
-	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted } = object || {};
+	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted, uxType } = object || {};
 	const { userIcon } = param;
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
@@ -441,8 +441,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		};
 
 		case I.ObjectLayout.SpaceView: {
-			icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-			cn.push('withImage');
+			icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
+			cn.push('withImage', `uxType${uxType}`);
 
 			if (iconImage) {
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;

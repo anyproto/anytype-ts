@@ -162,7 +162,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const searchIds = getSearchIds();
 
 		if (objectIds.length) {
-			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+			sorts.unshift({ relationKey: 'id', type: I.SortType.Custom, customOrder: objectIds });
 		};
 
 		if (searchIds) {
