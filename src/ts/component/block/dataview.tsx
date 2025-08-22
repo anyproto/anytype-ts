@@ -999,7 +999,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.ctrlKey) {
+		if (keyboard.isCmd(e)) {
 			return;
 		};
 

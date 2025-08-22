@@ -1674,6 +1674,10 @@ class Keyboard {
 		return ret;
 	};
 
+	isCmd (e: any): boolean {
+		return U.Common.isPlatformMac() ? e.metaKey : e.ctrlKey;
+	};
+
 	/**
 	 * Handles a keyboard shortcut.
 	 * @param {string} s - The shortcut name.
