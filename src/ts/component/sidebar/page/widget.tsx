@@ -284,7 +284,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					) : (
 						<>
-							<div className="side left" />
+							<div className="side left">
+								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
+							</div>
 							<div className="side right">
 								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget')} />
 							</div>
