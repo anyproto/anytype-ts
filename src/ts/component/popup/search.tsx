@@ -109,7 +109,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
-			pageCreate(filter);
+			e.stopPropagation();
+
+			close(() => pageCreate(filter));
 		});
 
 		keyboard.shortcut('search', e, () => close());
