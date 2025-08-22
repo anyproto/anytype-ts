@@ -212,7 +212,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			);
 
-			bottom = (
+			bottom = isDirectionRight ? '' : (
 				<div className="bottom">
 					<div className="grad" />
 
