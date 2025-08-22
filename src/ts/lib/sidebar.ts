@@ -438,6 +438,13 @@ class Sidebar {
 
 				window.setTimeout(() => {
 					this.rightPanelSetState(isPopup, { page, ...param });
+					this.objRight.removeClass('anim');
+
+					const inner = this.objRight.find('.sidebarPage');
+
+					inner.css({ opacity: 0 });
+					raf(() => inner.css({ opacity: 1 }));
+
 				}, animate ? J.Constant.delay.sidebar : 0);
 			});
 		});
