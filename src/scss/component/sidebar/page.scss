@@ -31,7 +31,7 @@
 
 		.side.left { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-		.side.center { flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; }
+		.side.center { flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
 		.side.center {
 			.iconObject { flex-shrink: 0; }
 			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
