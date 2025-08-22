@@ -50,10 +50,10 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const year = U.Date.date('Y', U.Date.now());
 		const canWrite = U.Space.canMyParticipantWrite();
 		const showButtons = this.showButtons();
-		const showSidebar = S.Common.getShowSidebarRight(isPopup);
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const cn = [];
 
-		if (showSidebar) {
+		if (rightSidebar.isOpen) {
 			cn.push('withSidebar');
 		};
 

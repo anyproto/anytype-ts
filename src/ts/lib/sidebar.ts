@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -23,9 +23,8 @@ class Sidebar {
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
-	toggleButton: JQuery<HTMLElement> = null;
-	syncButton: JQuery<HTMLElement> = null;
-	vault: JQuery<HTMLElement> = null;
+	leftButton: JQuery<HTMLElement> = null;
+	rightButton: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
 
@@ -36,7 +35,6 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
-		const vault = $(S.Common.getRef('vault')?.getNode());
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -53,10 +51,7 @@ class Sidebar {
 			this.resizePage(J.Size.sidebar.width.default, null, false);
 		};
 
-		const { isClosed } = this.data;
-
-		vault.toggleClass('isClosed', isClosed);
-		this.objLeft.toggleClass('isClosed', isClosed);
+		this.objLeft.toggleClass('isClosed', this.data.isClosed);
 	};
 
 	/**
@@ -73,9 +68,8 @@ class Sidebar {
 		this.loader = this.page.find('#loader');
 		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
-		this.toggleButton = $('#sidebarToggle');
-		this.syncButton = $('#sidebarSync');
-		this.vault = $(S.Common.getRef('vault')?.getNode());
+		this.leftButton = $('#sidebarLeftButton');
+		this.rightButton = $('#sidebarRightButton');
 	};
 
 	/**
@@ -94,17 +88,13 @@ class Sidebar {
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, null, true);
-		this.vaultHide();
 
 		this.removeAnimation(() => {
 			this.objLeft.addClass('isClosed');
 
 			window.clearTimeout(this.timeoutAnim);
-			this.timeoutAnim = window.setTimeout(() => {
-				$(window).trigger('resize');
-				this.setAnimating(false);
-				this.vault.removeClass('anim');
-			}, this.getVaultDuration(this.data.width));
+			$(window).trigger('resize');
+			this.setAnimating(false);
 		});
 	};
 
@@ -119,23 +109,18 @@ class Sidebar {
 
 		this.setElementsWidth(width);
 		this.setAnimating(true);
-		this.vaultShow(width);
 
-		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => {
-			this.objLeft.removeClass('isClosed');
-			this.objLeft.addClass('anim');
+		this.objLeft.removeClass('isClosed');
+		this.objLeft.addClass('anim');
 
-			this.setStyle({ width });
-			this.set({ isClosed: false });
-			this.resizePage(width, null, true);
+		this.setStyle({ width });
+		this.set({ isClosed: false });
+		this.resizePage(width, null, true);
 
-			this.removeAnimation(() => {
-				$(window).trigger('resize');
-				this.setAnimating(false);
-				this.vault.removeClass('anim');
-			});
-		}, this.getVaultDuration(width));
+		this.removeAnimation(() => {
+			$(window).trigger('resize');
+			this.setAnimating(false);
+		});
 	};
 
 	/**
@@ -193,7 +178,7 @@ class Sidebar {
 	 * Handles mouse move events for sidebar hover and auto-show/hide.
 	 */
 	onMouseMove (): void {
-		const { showVault, hideSidebar } = S.Common;
+		const { hideSidebar } = S.Common;
 
 		if (!this.objLeft || !this.objLeft.length || keyboard.isDragging || keyboard.isResizing) {
 			return;
@@ -208,7 +193,7 @@ class Sidebar {
 
 		const { x } = keyboard.mouse.page;
 		const { width, isClosed } = this.data;
-		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
+		const vw = isClosed ? 0 : J.Size.sidebar.threshold;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -240,15 +225,6 @@ class Sidebar {
 		};
 	};
 
-	getVaultWidth (): number {
-		const { isClosed } = this.data;
-		const { showVault } = S.Common;
-		const isMain = keyboard.isMain();
-		const isPopup = keyboard.isPopup();
-
-		return isClosed || !showVault || !isMain || isPopup ? 0 : J.Size.vault.width;
-	};
-
 	/**
 	 * Resizes the page and sidebar elements based on sidebar widths and animation state.
 	 * @param {number} widthLeft - The width of the left sidebar.
@@ -263,8 +239,8 @@ class Sidebar {
 
 		this.initObjects();
 
-		let toggleX = 16;
-		let syncX = 52;
+		let leftButtonX = 16;
+		let rightButtonX = 52;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -274,11 +250,8 @@ class Sidebar {
 			widthRight = this.objRight.outerWidth();
 		};
 
-		const { showVault, isFullScreen } = S.Common;
+		const { isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = this.getVaultWidth();
-
-		widthLeft += vw;
 
 		if (isPopup) {
 			widthLeft = 0;
@@ -297,12 +270,12 @@ class Sidebar {
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 
-		if ((widthLeft && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
-			toggleX = 84;
-			syncX = 120;
+		if (U.Common.isPlatformMac() && !isFullScreen) {
+			leftButtonX = 84;
+			rightButtonX = 120;
 
 			if (widthLeft) {
-				syncX = widthLeft - 40;
+				rightButtonX = widthLeft - 40;
 			};
 		};
 
@@ -323,13 +296,14 @@ class Sidebar {
 			this.dummyLeft.css({ width: widthLeft });
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 
-			this.toggleButton.toggleClass('sidebarAnimation', animate);
-			this.syncButton.toggleClass('sidebarAnimation', animate);
+			this.leftButton.toggleClass('sidebarAnimation', animate);
+			this.rightButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
+			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.page.css({ width: pageWidth });
-			this.toggleButton.css({ left: toggleX });
-			this.syncButton.css({ left: syncX });
+			this.leftButton.css({ left: leftButtonX });
+			this.rightButton.css({ left: rightButtonX });
 		};
 
 		$(window).trigger('sidebarResize');
@@ -372,13 +346,9 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The style data.
 	 */
 	private setStyle (v: Partial<SidebarData>): void {
-		if (!this.objLeft || !this.objLeft.length) {
-			return;
+		if (this.objLeft && this.objLeft.length) {
+			this.objLeft.css({ width: v.isClosed ? 0 : v.width });
 		};
-
-		const width = v.isClosed ? 0 : v.width;
-
-		this.objLeft.css({ width });
 	};
 
 	/**
@@ -400,49 +370,6 @@ class Sidebar {
 	};
 
 	/**
-	 * Hides the vault sidebar element with animation.
-	 */
-	vaultHide () {
-		this.vault.addClass('anim');
-		this.setVaultAnimationParam(this.data.width, true);
-		this.vault.addClass('isClosed');
-	};
-
-	/**
-	 * Shows the vault sidebar element with animation.
-	 * @param {number} width - The width to show the vault at.
-	 */
-	vaultShow (width: number) {
-		this.vault.addClass('anim');
-		this.setVaultAnimationParam(width, false);
-		this.vault.removeClass('isClosed');
-	};
-
-	/**
-	 * Sets the vault animation parameters.
-	 * @param {number} width - The width for the animation.
-	 * @param {boolean} withDelay - Whether to add a delay to the animation.
-	 */
-	setVaultAnimationParam (width: number, withDelay: boolean) {
-		const css: any = { transitionDuration: `${this.getVaultDuration(width)}ms`, transitionDelay: '' };
-
-		if (withDelay) {
-			css.transitionDelay = `${J.Constant.delay.sidebar}ms`;
-		};
-
-		this.vault.css(css);
-	};
-
-	/**
-	 * Gets the duration for the vault animation based on width.
-	 * @param {number} width - The width for the animation.
-	 * @returns {number} The animation duration in ms.
-	 */
-	getVaultDuration (width: number): number {
-		return J.Size.vault.width / width * J.Constant.delay.sidebar;
-	};
-
-	/**
 	 * Gets the reference to the right panel for the given context.
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 * @returns {any} The right panel reference.
@@ -461,16 +388,21 @@ class Sidebar {
 	 * @param {any} [param] - Additional parameters for the panel.
 	 */
 	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
-		const current = S.Common.getShowSidebarRight(isPopup);
-		const shouldOpen = !page || (page != current);
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const shouldOpen = !rightSidebar.isOpen || (rightSidebar.page != page);
+
+		if (rightSidebar.isOpen && (page != rightSidebar.page)) {
+			animate = false;
+		};
 
 		// open the panel if it is different page from the current page
 		if (shouldOpen) {
-			S.Common.showSidebarRightSet(isPopup, page);
-			this.rightPanelSetState(isPopup, { page: page, ...param });
+			S.Common.setRightSidebarState(isPopup, page, true);
 		} else {
-			S.Common.showSidebarRightSet(isPopup, null);
+			S.Common.setRightSidebarState(isPopup, '', false);
 		};
+
+		this.rightPanelSetState(isPopup, { page, ...param });
 
 		window.setTimeout(() => {
 			this.initObjects();
@@ -505,11 +437,25 @@ class Sidebar {
 			};
 
 			if (!shouldOpen) {
-				S.Common.showSidebarRightSet(isPopup, null);
+				S.Common.setRightSidebarState(isPopup, '', false);
 			};
 
 			$(window).trigger('resize');
 		}, animate ? J.Constant.delay.sidebar : 0);
+	};
+
+	panelSetState (isPopup: boolean, direction: I.SidebarDirection, v: any) {
+		switch (direction) {
+			case I.SidebarDirection.Left: {
+				this.leftPanelSetState(v);
+				break;
+			};
+
+			case I.SidebarDirection.Right: {
+				this.rightPanelSetState(isPopup, v);
+				break;
+			};
+		};
 	};
 
 	/**

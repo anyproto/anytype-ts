@@ -2,21 +2,23 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, Mo
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, Sync, Banner } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate } from 'Lib';
+import { Icon, Banner } from 'Component';
+import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate, Action, analytics } from 'Lib';
 
-import SidebarWidget from './page/widget';
-import SidebarObject from './page/allObject';
-import SidebarSettingsIndex from './page/settings/index';
-import SidebarSettingsLibrary from './page/settings/library'
+import PageWidget from './page/widget';
+import PageAllObject from './page/allObject';
+import PageSettingsIndex from './page/settings/index';
+import PageSettingsLibrary from './page/settings/library';
+import PageVault from './page/vault';
 
 const Components = {
-	object: SidebarObject,
-	widget: SidebarWidget,
-	settings: SidebarSettingsIndex,
-	settingsSpace: SidebarSettingsIndex,
-	types: SidebarSettingsLibrary,
-	relations: SidebarSettingsLibrary,
+	allObject:			 PageAllObject,
+	widget:				 PageWidget,
+	vault:				 PageVault,
+	settings:			 PageSettingsIndex,
+	settingsSpace:		 PageSettingsIndex,
+	settingsTypes:		 PageSettingsLibrary,
+	settingsRelations:	 PageSettingsLibrary,
 };
 
 interface SidebarLeftRefProps {
@@ -28,6 +30,7 @@ interface SidebarLeftRefProps {
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
+	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const ox = useRef(0);
@@ -36,16 +39,27 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
-	const [ page, setPage ] = useState('widget');
-	const { showVault, updateVersion } = S.Common;
-	const Component = Components[page];
+	const [ page, setPage ] = useState('');
+	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
+	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
+	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
+	const Component = Components[id];
+	const canCreate = U.Space.canCreateSpace() && (id == 'vault');
 
-	const init = () => {
-		const node = $(nodeRef.current);
-		const vault = $(S.Common.getRef('vault').node);
+	if (id.match(/settings/)) {
+		cnp.push('containerSettings');
+	};
 
-		node.toggleClass('withVault', showVault);
-		vault.toggleClass('isHidden', !showVault);
+	if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
+		cnp.push('spaceSettingsLibrary');
+	};
+
+	const onCreate = () => {
+		Action.spaceCreateMenu({
+			element: `#sidebarRightButton`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		}, analytics.route.vault);
 	};
 
 	const onResizeStart = (e: MouseEvent) => {
@@ -110,7 +124,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			width.current = w;
 
-			if (childRef.current.resize) {
+			if (childRef.current && childRef.current.resize) {
 				childRef.current.resize();
 			};
 		});
@@ -137,24 +151,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		sidebar.toggleOpenClose();
 	};
 
-	const onToggleContext = () => {
-		U.Menu.sidebarContext('#sidebarToggle');
-	};
-
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => S.Menu.open('syncStatus', {
-			element: '#sidebarSync',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			subIds: J.Menu.syncStatus,
-			data: {
-				rootId: keyboard.getRootId(),
-			},
-		}));
-	};
-
 	useEffect(() => {
-		init();
 		sidebar.init();
 
 		return () => {
@@ -163,68 +160,54 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	}, []);
 
 	useEffect(() => {
-		init();
-	});
+		sidebar.resizePage(null, null, false);
+	}, [ page]);
 
 	useImperativeHandle(ref, () => ({
-		getNode: () => {
-			return nodeRef.current;
-		},
-
-		setPage: (page: string) => {
-			if (Components[page]) {
-				setPage(page);
-			};
-		},
-
-		getPage: () => {
-			return page;
-		},
-
-		getChild: () => {
-			return childRef.current;
-		},
+		getNode: () => nodeRef.current,
+		setPage,
+		getPage: () => page,
+		getChild: () => childRef.current
 	}));
 
 	return (
 		<>
 			<Icon 
-				id="sidebarToggle"
-				className="withBackground"
+				id="sidebarLeftButton"
+				className="toggle sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
-				onContextMenu={onToggleContext}
 			/>
 
-			<Sync id="sidebarSync" onClick={onSync} />
+			{canCreate ? (
+				<Icon 
+					id="sidebarRightButton"
+					className="plus sidebarHeadIcon withBackground"
+					tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+					onClick={onCreate}
+				/>
+			) : ''}
 
 			<div 
 				ref={nodeRef}
 				id="sidebarLeft" 
 				className="sidebar left customScrollbar" 
 			>
-				<Component ref={childRef} {...props} page={page} />
+				{Component ? (
+					<div id={pageId} className={cnp.join(' ')}>
+						<Component 
+							ref={childRef} 
+							page={id}
+							{...props} 
+							getId={() => pageId}
+							sidebarDirection={I.SidebarDirection.Left}
+						/> 
+					</div>
+				) : ''}
 
 				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
 					<div className="resize-handle" onClick={onHandleClick} />
 				</div>
-
-				{updateVersion ? (
-					<Banner 
-						id="update" 
-						text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)} 
-						button={translate('commonUpdateNow')} 
-						onClick={() => {
-							Renderer.send('updateConfirm');
-							S.Common.updateVersionSet('');
-							U.Common.checkUpdateVersion(updateVersion);
-						}}
-						onClose={() => {
-							S.Common.updateVersionSet('');
-							Renderer.send('updateCancel');
-						}}
-					/>
-				) : ''}
 			</div>
 		</>
 	);

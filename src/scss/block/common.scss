@@ -9,6 +9,8 @@
 		.wrapMenu, .wrapContent { display: none; }
 	}
 
+	.block.index0-0, .block.index0 { padding-top: 0px !important; }
+
 	.block.diffNone {
 		> .wrapMenu {
 			.iconObject { display: block; }

@@ -17,12 +17,11 @@ const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_DEFAULT = 64;
 const HEIGHT_ITEM_COMPACT = 36;
 
-const SidebarPageObject = observer(class SidebarPageObject extends React.Component<{}, State> {
+const SidebarPageObject = observer(class SidebarPageObject extends React.Component<I.SidebarPageComponent, State> {
 	
 	state = {
 		isLoading: false,
 	};
-	node = null;
 	refFilter = null;
 	refList = null;
 	refSwiper = null;
@@ -45,7 +44,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	x = 0;
 	top = 0;
 
-	constructor (props: any) {
+	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
@@ -64,6 +63,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	render () {
 		const { isLoading } = this.state;
+		const { sidebarDirection } = this.props;
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
@@ -115,13 +115,10 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		};
 
 		return (
-			<div 
-				id="containerObject"
-				ref={ref => this.node = ref}
-			>
+			<>
 				<div className="inner">
 					<div className="head">
-						<div className="titleWrap" onClick={() => sidebar.leftPanelSetState({ page: 'widget' })}>
+						<div className="titleWrap" onClick={() => sidebar.panelSetState(false, sidebarDirection, { page: 'widget' })}>
 							<div className="side left">
 								<Icon className="back" />
 								<Title text={translate('commonAllContent')} />
@@ -226,7 +223,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 						) : ''}
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
@@ -280,7 +277,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		this.unbind();
 
 		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
-		$(this.node).on('click', e => {
+		$('#sidebarPageAllObject').on('click', e => {
 			if (!this.refFilter || this.refFilter.isFocused()) {
 				return;
 			};
@@ -295,7 +292,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	unbind () {
 		$(window).off('keydown.sidebarObject');
-		$(this.node).off('click');
+		$('#sidebarPageAllObject').off('click');
 	};
 
 	initSort () {
@@ -471,7 +468,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('objectContext', {
-			element: `#sidebarLeft #containerObject #item-${item.id}`,
+			element: `#sidebarPageAllObject #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -501,7 +498,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebarLeft #containerObject #button-object-more',
+			element: '#sidebarPageAllObject #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
@@ -660,9 +657,9 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 	onBookmarkMenu (details: any, callBack: (id: string) => void) {
 		U.Menu.onBookmarkMenu({
-			element: '#sidebarLeft #containerObject #button-object-create',
+			element: '#sidebarPageAllObject #button-object-create',
 			offsetY: 4,
-			width: $(this.node).width() - 32,
+			width: $('#sidebarPageAllObject').width() - 32,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
@@ -689,7 +686,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 		};
 
 		const items = this.getItems();
-		const node = $(this.node);
+		const node = $('#sidebarPageAllObject');
 
 		keyboard.shortcut('arrowup, arrowdown, shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 			this.onArrow(pressed.match('arrowdown') ? 1 : -1, !!pressed.match('shift'));
@@ -699,7 +696,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 			if (this.selected) {
 				this.clearSelection();
 			} else {
-				sidebar.leftPanelSetState({ page: 'widget' });
+				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 			};
 		});
 
@@ -885,7 +882,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	renderSelection () {
-		const node = $(this.node);
+		const node = $('#sidebarPageAllObject');
 
 		node.find('.item.selected').removeClass('selected');
 
@@ -908,15 +905,17 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 	};
 
 	setActive (item: any) {
+		const node = $('#sidebarPageAllObject');
+
 		this.unsetActive();
 
 		if (item) {
-			$(this.node).find(`#item-${item.id}`).addClass('active');
+			node.find(`#item-${item.id}`).addClass('active');
 		};
 	};
 
 	unsetActive () {
-		$(this.node).find('.item.active').removeClass('active');
+		$('#sidebarPageAllObject').find('.item.active').removeClass('active');
 	};
 
 	getRowHeight (item: any): number {

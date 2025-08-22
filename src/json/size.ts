@@ -5,16 +5,13 @@ export default {
 	menuBorder: 10,
 	header: 52,
 
-	vault: {
-		width: 72,
-	},
-
 	history: {
 		panel: 348,
 	},
 
 	sidebar: {
 		width: { min: 240, max: 500, default: 336, close: 180 },
+		threshold: 72,
 		right: 348,
 	},
 

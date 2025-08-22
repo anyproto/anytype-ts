@@ -1,5 +1,5 @@
-> #containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
-> #containerSettings {
+> .containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
+> .containerSettings {
     > .head {
         display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
         gap: 0px 8px; overflow: hidden;
@@ -14,7 +14,7 @@
 				font-weight: 600; padding: 4px 16px 11px 8px; 
 			}
             > .head {
-                .icon { width: 24px !important; height: 24px !important; }
+                .icon { width: 24px !important; height: 24px !important; background-size: 20px !important; }
                 .icon.back { background-image: url('~img/icon/widget/back0.svg'); flex-shrink: 0; }
                 .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 
@@ -29,7 +29,7 @@
             .inner { height: 100%; }
             .row {
                 > .section { padding-top: 16px; }
-                > .section.isFirst { padding-top: 12px; }
+                > .section.isFirst { padding-top: 4px; }
             }
 
             .section {
@@ -78,18 +78,7 @@
     }
 }
 
-> #containerSettings.spaceSettings,
-> #containerSettings.spaceSettingsLibrary {
-    > .body {
-        > .list {
-            > .head {
-                .icon { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px;}
-            }
-        }
-    }
-}
-
-> #containerSettings.spaceSettings {
+> .containerSettings.spaceSettings {
     > .body {
         > .list { padding-bottom: 0px; }
         > .list {
@@ -99,7 +88,7 @@
     }
 }
 
-> #containerSettings.spaceSettingsLibrary {
+> .containerSettings.spaceSettingsLibrary {
     > .body {
         > .list { padding-bottom: 0px; justify-content: flex-start; }
         > .list {
