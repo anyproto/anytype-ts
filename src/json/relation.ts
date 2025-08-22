@@ -96,6 +96,8 @@ export default {
 		'name',
 		'relationOptionColor',
 		'createdDate',
+		'optionOrder',
+		'tmpOrder',
 	],
 
 	type: [

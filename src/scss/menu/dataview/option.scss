@@ -14,10 +14,8 @@
 		}
 
 		.item { display: flex; align-items: center; }
-		.item:not(.add, .empty) { padding: 0px 10px 0px 0px; gap: 0px 4px; }
+		.item:not(.add, .empty) { gap: 0px 4px; padding-left: 10px; }
 		.item {
-			.clickable { padding: 4px 14px; }
-
 			.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
 			.buttons {
 				.icon.more { display: none; }

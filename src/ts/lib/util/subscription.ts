@@ -541,6 +541,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
+					{ relationKey: 'optionOrder', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -641,6 +642,14 @@ class UtilSubscription {
 	 */
 	spaceRelationKeys () {
 		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant).concat('tmpOrder');
+	};
+
+	/**
+	 * Returns the relation keys for option subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
+	optionRelationKeys () {
+		return J.Relation.option.concat('tmpOrder');
 	};
 
 	/**
