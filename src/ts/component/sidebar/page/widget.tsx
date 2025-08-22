@@ -250,9 +250,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			<>
 				<div className="head">
 					{isDirectionLeft ? (
-						<div className="side left">
-							<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
-						</div>
+						<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					) : (
 						<>
 							<div className="side left" />
