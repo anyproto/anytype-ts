@@ -23,7 +23,6 @@ import ListBanner from './list/banner';
 
 import Header from './header';
 import Footer from './footer';
-import Vault from './vault';
 import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
@@ -182,7 +181,6 @@ export {
 	SidebarLeft,
 	SidebarRight,
 
-	Vault,
 	Widget,
 
 	ObjectName,

@@ -510,7 +510,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					<div className="side right">
 						<Icon
 							className="gallery"
-							tooltipParam={{ text: translate('sidebarEdit') }}
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}
 						/>
 
