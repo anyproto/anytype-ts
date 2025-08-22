@@ -381,6 +381,16 @@ html.themeDark {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 
+		> .sidebarPage {
+			> .body {
+				.group {
+					> .titleWrap {
+						.icon.question { background-image: url('#{$themePath}/icon/sidebar/question.svg'); }
+					}
+				}
+			}
+		}
+		
 		> .sidebarPage.pageAllObject {
 			> .inner {
 				> .head {
@@ -420,7 +430,7 @@ html.themeDark {
 			}
 		}
 
-		> #containerWidget {
+		> .sidebarPage.pageWidget {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
