@@ -98,7 +98,7 @@ class UtilRouter {
 
 		param = param || {};
 
-		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
+		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
 
@@ -109,7 +109,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelToggle(false, keyboard.isPopup());
+		S.Common.setRightSidebarState(false, '', false);
 		focus.clear(true);
 
 		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
@@ -194,7 +194,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		sidebar.rightPanelToggle(false, false);
+		S.Common.setRightSidebarState(false, '', false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -232,7 +232,7 @@ class UtilRouter {
 
 			this.go('/main/blank', { 
 				replace: true, 
-				animate: true,
+				animate: routeParam.animate,
 				delay: 100,
 				onRouteChange: () => {
 					analytics.removeContext();
@@ -242,6 +242,8 @@ class UtilRouter {
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 						this.isOpening = false;
+
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					});
 				},
 			});

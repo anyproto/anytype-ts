@@ -70,7 +70,7 @@ const PageMainSettingsImportIndex = observer(class PageMainSettingsImportIndex e
 				};
 
 				U.Space.openDashboard();
-				sidebar.leftPanelSetState({ page: 'widget' });
+				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 			});
 		} else {
 			onPage(U.Common.toCamelCase('import-' + item.id));

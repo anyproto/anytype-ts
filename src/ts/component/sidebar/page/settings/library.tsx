@@ -24,7 +24,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 	node: any = null;
 	cache: any = {};
-	type: I.ObjectContainerType = I.ObjectContainerType.Type;
 	refFilter = null;
 	filter = '';
 	timeoutFilter = 0;
@@ -110,19 +109,15 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		return (
-			<div
-				ref={ref => this.node = ref}
-				id="containerSettings"
-				className="spaceSettingsLibrary"
-			>
+			<>
 				<div className="head" />
 
 				<div className="body">
 					<div className="list">
 						<div className="head">
-							<div className="left">
+							<div className="side left">
 								<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
-								<Title text={title} />
+								<div className="name">{title}</div>
 							</div>
 							<div className="side right">
 								<Icon id="button-object-more" className="more" onClick={this.onMore} />
@@ -175,12 +170,11 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 						) : ''}
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
 	componentDidMount () {
-		this.type = this.props.page == 'types' ? I.ObjectContainerType.Type : I.ObjectContainerType.Relation;
 		this.refFilter.focus();
 		this.initSort();
 		this.load(true, this.openFirst);
@@ -191,8 +185,9 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	initSort () {
+		const type = this.getType();
 		const storage = this.storageGet();
-		const sort = storage.sort[this.type];
+		const sort = storage.sort[type];
 
 		if (!sort) {
 			const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType).filter(it => it.isSort);
@@ -209,6 +204,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const type = this.getType();
 		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
 		const option = options.find(it => it.id == this.sortId);
 
@@ -228,7 +224,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 		};
 
-		switch (this.type) {
+		switch (type) {
 			case I.ObjectContainerType.Type: {
 				filters = filters.concat([
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
@@ -282,18 +278,24 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	getSections () {
-		const isType = this.type == I.ObjectContainerType.Type;
+		const type = this.getType();
 		const records = S.Record.getRecords(J.Constant.subId.library);
 
 		let myLabel = '';
 		let systemLabel = '';
 
-		if (isType) {
-			myLabel = translate('commonMyTypes');
-			systemLabel = translate('commonSystemTypes');
-		} else {
-			myLabel = translate('commonMyRelations');
-			systemLabel = translate('commonSystemRelations');
+		switch (type) {
+			case I.ObjectContainerType.Type: {
+				myLabel = translate('commonMyTypes');
+				systemLabel = translate('commonSystemTypes');
+				break;
+			};	
+
+			case I.ObjectContainerType.Relation: {
+				myLabel = translate('commonMyRelations');
+				systemLabel = translate('commonSystemRelations');
+				break;
+			};
 		};
 
 		return [
@@ -360,12 +362,13 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	onMore (e) {
 		e.stopPropagation();
 
+		const type = this.getType();
 		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
 
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebarLeft #containerSettings #button-object-more',
+			element: '.containerSettings #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
@@ -380,7 +383,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 					this.sortId = item.id;
 					this.sortType = item.type;
 
-					storage.sort[this.type] = { id: item.id, type: item.type };
+					storage.sort[type] = { id: item.id, type: item.type };
 					analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 
 					this.storageSet(storage);
@@ -421,7 +424,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const menuParam = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `#sidebarLeft #containerSettings #item-${item.id}`,
+			element: `.containerSettings #item-${item.id}`,
 			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {},
 		};
@@ -461,20 +464,21 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		e.preventDefault();
 		e.stopPropagation();
 
+		const type = this.getType();
 		const isPopup = keyboard.isPopup();
 
-		switch (this.type) {
+		switch (type) {
 			case I.ObjectContainerType.Type: {
 				U.Object.createType({ name: this.filter }, isPopup);
 				break;
 			};
 
 			case I.ObjectContainerType.Relation: {
-				const node = $(this.node);
+				const node = $('.containerSettings');
 				const width = node.width() - 32;
 
 				S.Menu.open('blockRelationEdit', {
-					element: `#sidebarLeft #containerSettings #button-object-create`,
+					element: `.containerSettings #button-object-create`,
 					offsetY: 4,
 					width,
 					className: 'fixed',
@@ -495,7 +499,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			};
 		};
 
-
 		analytics.event(`ScreenCreate${this.getAnalyticsSuffix()}`, { route: 'SettingsSpace' });
 	};
 
@@ -510,11 +513,12 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	getAnalyticsSuffix () {
+		const type = this.getType();
 		const map = {
 			[I.ObjectContainerType.Type]: 'Type',
 			[I.ObjectContainerType.Relation]: 'Relation',
 		};
-		return map[this.type];
+		return map[type];
 	};
 
 	openFirst () {
@@ -527,6 +531,23 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		};
 
 		this.onClick(records[0]);
+	};
+
+	getType () {
+		let t = '';
+
+		switch (this.props.page) {
+			case 'settingsTypes': {
+				t = I.ObjectContainerType.Type; 
+				break;
+			};
+
+			case 'settingsRelations': {
+				t = I.ObjectContainerType.Relation; break;
+			};
+		};
+
+		return t;
 	};
 
 });

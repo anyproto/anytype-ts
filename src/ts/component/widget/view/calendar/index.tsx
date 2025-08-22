@@ -34,6 +34,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 			element: `#${getElementId(item.d, item.m, item.y)}`,
 			offsetY: 4,
 			noFlipY: true,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			data: {
 				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {

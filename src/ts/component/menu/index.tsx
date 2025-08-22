@@ -472,7 +472,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getBorderLeft (isFixed) {
-		return (Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder) + (isFixed ? 0 : J.Size.vault.width);
+		return Number(window.AnytypeGlobalConfig?.menuBorderLeft) || J.Size.menuBorder;
 	};
 
 	position () {
