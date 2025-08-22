@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard, analytics } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -132,8 +132,15 @@ class Sidebar {
 		};
 		
 		const { width, isClosed } = this.data;
-		
-		isClosed ? this.open(width) : this.close();
+
+		if (isClosed) {
+			this.open(width);
+			analytics.event('ExpandSidebar');
+		} else {
+			this.close();
+			analytics.event('CollapseSidebar');
+		};
+
 		S.Menu.closeAll();
 	};
 
