@@ -192,3 +192,8 @@
 	}
 	.readonly::before { content: ''; display: block; width: 8px; height: 12px; background: url('~img/icon/lock.svg'); }
 }
+
+
+.sidebarAnimation { 
+	.formWrapper { transition: left $transitionSidebarTime linear; }
+}
