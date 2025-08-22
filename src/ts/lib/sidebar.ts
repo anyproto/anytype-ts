@@ -422,6 +422,7 @@ class Sidebar {
 			};
 
 			this.objRight.css(cssStart);
+			this.rightPanelSetState(isPopup, { page, ...param });
 
 			raf(() => {
 				if (animate) {
@@ -431,10 +432,6 @@ class Sidebar {
 				this.objRight.css(cssEnd);
 				this.resizePage(null, shouldOpen ? null : 0, animate);
 			});
-
-			window.setTimeout(() => {
-				this.rightPanelSetState(isPopup, { page, ...param });
-			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 
 		window.setTimeout(() => {
