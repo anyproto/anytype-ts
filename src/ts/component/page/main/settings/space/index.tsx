@@ -55,7 +55,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
-			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave'  },
+			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
 		] : [
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
@@ -140,20 +140,17 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				</div>
 
 				<div className="spaceButtons">
-					{buttons.map((el, idx) => {
-						const cn = [ 'btn' ];
-
-						if (el.isDisabled) {
-							cn.push('disabled');
-						};
-
-						return (
-							<div key={idx} id={U.Common.toCamelCase(`settingsSpaceButton-${el.id}`)} className={cn.join(' ')} onClick={e => this.onClick(e, el)}>
-								<Icon className={el.icon} />
-								<Label text={el.name} />
-							</div>
-						);
-					})}
+					{buttons.map((item, i) => (
+						<div 
+							key={i} 
+							id={U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)} 
+							className="btn" 
+							onClick={e => this.onClick(e, item)}
+						>
+							<Icon className={item.icon} />
+							<Label text={item.name} />
+						</div>
+					))}
 				</div>
 
 				<div className="sections">
@@ -479,26 +476,18 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		return v;
 	};
 
-	getButtons () {
+	getButtons (): any[] {
 		const { cid, key } = this.state;
-		const space = U.Space.getSpaceview();
 		
-		if (space.isPersonal) {
+		if (!cid || !key) {
 			return [];
 		};
 
-		let buttons: any[] = [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' }
+		return [
+			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' },
+			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
+			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
 		];
-
-		if (cid && key) {
-			buttons = buttons.concat([
-				{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
-				{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
-			]);
-		};
-
-		return buttons;
 	};
 
 	updateCounters () {

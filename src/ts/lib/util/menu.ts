@@ -882,7 +882,6 @@ class UtilMenu {
 		};
 
 		const items = U.Common.objectCopy(U.Space.getList()).
-			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
 			map(it => {
 				it.counter = 0;
 				it.lastMessageDate = 0;
@@ -898,9 +897,6 @@ class UtilMenu {
 			});
 
 		items.sort((c1, c2) => {
-			if (c1.isButton && !c2.isButton) return 1;
-			if (!c1.isButton && c2.isButton) return -1;
-
 			if (c1.isPinned && !c2.isPinned) return -1;
 			if (!c1.isPinned && c2.isPinned) return 1;
 
@@ -1022,43 +1018,6 @@ class UtilMenu {
 			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
 		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
-	};
-
-	sidebarContext (element: string) {
-		const { showVault } = S.Common;
-		const { isClosed, width } = sidebar.data;
-		const options = this.sidebarModeOptions();
-		const value = showVault ? 'all' : 'sidebar';
-
-		S.Menu.open('selectSidebarToggle', {
-			component: 'select',
-			element,
-			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Right,
-			noFlipX: true,
-			data: {
-				options,
-				value,
-				onSelect: (e: any, item: any) => {
-					raf(() => {
-						switch (item.id) {
-							case 'all':
-							case 'sidebar': {
-								S.Common.showVaultSet(item.id == 'all');
-								if (isClosed) {
-									sidebar.open(width);
-								} else {
-									sidebar.resizePage(width, null, false);
-								};
-								break;
-							};
-						};
-					});
-
-					analytics.event('ChangeSidebarMode', { type: item.id });
-				},
-			},
-		});
 	};
 
 	codeLangOptions (): I.Option[] {

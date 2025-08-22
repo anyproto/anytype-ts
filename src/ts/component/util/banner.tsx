@@ -1,10 +1,12 @@
 import React, { FC, MouseEvent } from 'react';
-import { Icon, Label, Button } from 'Component';
+import { Icon, Title, Label, Button } from 'Component';
 
 interface Props {
 	id?: string;
+	title?: string;
 	text?: string;
 	button?: string;
+	buttonColor?: string;
 	color?: string;
 	onClick?: () => void;
 	onClose?: () => void;
@@ -12,9 +14,11 @@ interface Props {
 
 const Banner: FC<Props> = ({ 
 	id = '',
+	title = '',
 	text = '',
 	button = '',
 	color = 'green',
+	buttonColor = 'simple',
 	onClick,
 	onClose,
 }) => {
@@ -37,8 +41,9 @@ const Banner: FC<Props> = ({
 			onClick={onClick}
 		>
 			<div className="inner">
+				{title ? <Title text={title} /> : '' }
 				<Label text={text} />
-				{button ? <Button text={button} color="simple" /> : ''}
+				{button ? <Button text={button} className="c28" color={buttonColor} /> : ''}
 			</div>
 
 			<Icon className="close withBackground" onClick={onCloseHandler} />

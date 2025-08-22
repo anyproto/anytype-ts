@@ -48,7 +48,7 @@ export default {
 		},
 
 		chat: {
-			messages:					 100,
+			messages:					 50,
 			attachments:				 10,
 			files:						 10,
 			mentions:					 10,
@@ -82,6 +82,7 @@ export default {
 		widget:			 400,
 		sidebar:		 180,
 		highlight:  	 1000,
+		chatHistory:	 500,
 	},
 
 	fileExtension: {
