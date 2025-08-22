@@ -183,6 +183,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			let text = '';
 			if (list.length) {
 				const last = list[list.length - 1];
+
 				if (last) {
 					const participantId = U.Space.getParticipantId(it.targetSpaceId, last.creator);
 					const author = last.dependencies.find(it => it.id == participantId);
@@ -196,8 +197,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						text = text.replace(/\n\r?/g, ' ');
 					} else 
 					if (last.attachments.length) {
-						const names = last.attachments.map(id => {
-							const object = last.dependencies.find(it => it.id == id);
+						const names = last.attachments.map(item => {
+							const object = last.dependencies.find(it => it.id == item.target);
 							return object ? U.Object.name(object) : '';
 						}).filter(it => it).join(', ');
 
