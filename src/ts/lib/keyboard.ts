@@ -154,6 +154,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -182,7 +183,7 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (S.Common.getShowSidebarRight(isPopup)) {
+			if (rightSidebar.isOpen) {
 				sidebar.rightPanelToggle(true, isPopup);
 			} else
 			if (S.Popup.isOpen()) {
@@ -209,7 +210,7 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: 'widget' });
+				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				U.Space.openDashboard();
 			};
 			
@@ -368,6 +369,52 @@ class Keyboard {
 					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
 				});
 			};
+
+			// Switch space
+			for (let i = 1; i <= 9; i++) {
+				const id = Number(i) - 1;
+				keyboard.shortcut(`space${i}`, e, () => {
+					const spaces = U.Menu.getVaultItems();
+					const item = spaces[id];
+	
+					if (!item) {
+						return;
+					};
+
+					if (item.targetSpaceId != S.Common.space) {
+						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+					} else {
+						U.Space.openDashboard();
+						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
+					};
+				});
+			};
+
+
+			keyboard.shortcut('createSpace', e, () => {
+				const element = `#sidebarRightButton`;
+
+				let rect = null;
+				let horizontal = I.MenuDirection.Left;
+				let vertical = I.MenuDirection.Top;
+
+				if (!$(element).length) {
+					const { ww, wh } = U.Common.getWindowDimensions();
+
+					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+					horizontal = I.MenuDirection.Center;
+					vertical = I.MenuDirection.Center;
+				};
+
+				Action.spaceCreateMenu({
+					element,
+					rect,
+					className: 'spaceCreate fixed',
+					classNameWrap: 'fromSidebar',
+					horizontal,
+					vertical,
+				}, analytics.route.shortcut);
+			});
 		};
 
 		this.initPinCheck();
@@ -466,7 +513,7 @@ class Keyboard {
 				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
 					const state = sidebar.leftPanelGetState();
 					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: 'widget' });
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					};
 				};
 

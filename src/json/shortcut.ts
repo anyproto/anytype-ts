@@ -39,6 +39,7 @@ const getSections = () => {
 						{ id: 'moveToBin', name: translate('popupShortcutMainBasics25'), keys: [] },
 						{ id: 'addFavorite', name: translate('popupShortcutMainBasics26'), keys: [] },
 						{ id: 'tableOfContents', name: translate('sidebarToc'), keys: [] },
+						{ id: 'createSpace', name: translate('commonCreateSpace'), keys: [] },
 						{ id: 'logout', name: translate('commonLogout'), keys: [] },
 					]
 				},

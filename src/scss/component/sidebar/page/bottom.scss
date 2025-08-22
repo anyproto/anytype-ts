@@ -1,0 +1,79 @@
+$transitionSettings: all 0.25s $easeInQuint;
+
+.sidebarPage.pageVault,
+.sidebarPage.pageWidget {
+    > .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }
+    > .bottom {
+        .grad {
+            position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
+            background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
+        }
+
+        .sides { position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px; align-items: center; justify-content: space-between; gap: 0px 6px; }
+        .side.center { text-align: center; flex-grow: 1; flex-shrink: 0; width: auto; }
+        .side.right { text-align: right; flex-shrink: 0; }
+
+        .widgetSettings { transition: $transitionSettings; position: relative; width: 32px; height: 32px; overflow: hidden; background-color: var(--color-shape-highlight-medium); border-radius: 16px; }
+        .widgetSettings {
+            .icon,
+            .label { transition: $transitionSettings; position: absolute; }
+            .icon {  left: 6px; top: 6px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/widgetSettings0.svg'); }
+            .label { left: 12px; top: 7px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
+        }
+        .widgetSettings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
+        .widgetSettings:not(.isEditing):hover {
+            .icon { background-image: url('~img/icon/widget/button/widgetSettings1.svg'); }
+        }
+
+        .widgetSettings.isEditing { width: 55px; background-color: var(--color-system-accent-100); }
+        .widgetSettings.isEditing {
+            .icon { opacity: 0; }
+            .label { opacity: 1; }
+        }
+        .widgetSettings.isEditing:hover { background-color: var(--color-system-accent-125); }
+
+        .side {
+            > .button,
+            > .icon { transition: $transitionSettings; height: 32px; min-width: 32px; border-radius: 16px; background-color: var(--color-shape-highlight-medium);  }
+
+            > .button { padding: 0px 12px; text-align: center; @include text-small; font-weight: 500; color: var(--color-text-secondary); overflow: visible; }
+            > .button.help { font-size: 15px; padding: 0px; }
+
+            > .icon { background-size: 20px; }
+            > .icon.gallery { background-image: url('~img/icon/vault/gallery.svg'); }
+
+            > .icon:hover,
+            > .icon.hover,
+            > .button:hover,
+            > .button.hover { background-color: var(--color-shape-highlight-dark) !important; }
+            > .button {
+                .txt { @include text-overflow-nw; }
+            }
+        }
+
+        .button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
+    }
+}
+
+.sidebarPage.pageWidget {
+    > .bottom {
+        .side.left { width: 32px; }
+    }
+}
+
+.sidebarPage.pageVault {
+    > .bottom {
+        .side.left { width: 100%; overflow: hidden; }
+        .side.left {
+            .appSettings { display: flex; gap: 0px 8px; align-items: center; justify-content: flex-start; }
+            .appSettings:hover {
+                .iconObject { background-color: var(--color-shape-highlight-dark); }
+            }
+
+            .iconObject { flex-shrink: 0; transition: $transitionSettings; background-color: var(--color-shape-highlight-medium); }
+            .name { font-weight: 500; white-space: nowrap; @include text-overflow-nw; }
+        }
+
+        .side.right { display: flex; gap: 0px 8px; flex-shrink: 0; width: unset; }
+    }
+}

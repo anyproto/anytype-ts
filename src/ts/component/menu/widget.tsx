@@ -161,7 +161,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { isEditing } = data;
 		const targetId = this.target?.id;
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
-		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout);
+		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
 		const sections: any[] = [];
 		const space = U.Space.getSpaceview();
 

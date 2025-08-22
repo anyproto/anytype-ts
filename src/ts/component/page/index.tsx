@@ -135,11 +135,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getMatch () {
-		const { match, matchPopup, isPopup } = this.props;
-		const { history } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const data = U.Common.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
-		const ret = (isPopup ? matchPopup : match) || { params: {} };
+		const ret = U.Common.objectCopy(keyboard.getMatch(isPopup));
 
 		// Universal object route
 		if (pathname.match(/^\/object/)) {
@@ -192,7 +192,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = S.Auth;
 		const { pin } = S.Common;
 		const { isPopup } = this.props;
-		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
@@ -207,7 +207,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
-		sidebar.rightPanelToggle(false, isPopup);
+		S.Common.setRightSidebarState(isPopup, '', false);
 
 		if (!Component) {
 			return;
@@ -228,7 +228,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (refSidebar && showSidebarRight) {
+		if (refSidebar && rightSidebar.isOpen) {
 			refSidebar.setState({ rootId: this.getRootId() });
 		};
 
@@ -246,7 +246,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	rebind () {
-		const { history, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const namespace = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
@@ -255,7 +256,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	unbind () {
-		const { history, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const namespace = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 

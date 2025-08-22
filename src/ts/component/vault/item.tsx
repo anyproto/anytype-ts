@@ -23,7 +23,7 @@ const VaultItem: FC<Props> = observer(({
 
 	const cn = [ 'item' ];
 	const theme = S.Common.getThemeClass();
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
