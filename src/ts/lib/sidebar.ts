@@ -434,7 +434,7 @@ class Sidebar {
 
 			window.setTimeout(() => {
 				this.rightPanelSetState(isPopup, { page, ...param });
-			}, J.Constant.delay.sidebar);
+			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 
 		window.setTimeout(() => {
