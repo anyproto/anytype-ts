@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -6,7 +6,7 @@ import { I, S, U, J, sidebar } from 'Lib';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
-	onScroll?: (v: number) => void;
+	onScroll?: () => void;
 };
 
 const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComponent>((props, ref) => {
@@ -61,8 +61,11 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		return list;
 	};
 
-	const onScroll = (top: number) => {
-		const list = getList();
+	const list = useMemo(() => getList(), [ tree ]);
+
+	const onScroll = () => {
+		const container = U.Common.getScrollContainer(isPopup);
+		const top = container.scrollTop();
 		const co = isPopup ? containerOffset.current.top : 0;
 		const ch = containerHeight.current - J.Size.header;
 
@@ -118,7 +121,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		S.Common.setTimeout('tableOfContents', 100, () => S.Menu.close('tableOfContents'));
 	};
 
-	const resize = (callBack?: () => void) => {
+	const resize = () => {
 		raf(() => {
 			const node = $(nodeRef.current);
 			if (!node.length) {
@@ -136,15 +139,13 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 			node.css({ left: containerOffset.current.left + containerWidth.current - node.outerWidth() - 6 });
 
-			if (callBack) {
-				callBack();
-			};
+			onScroll();
 		});
 	};
 
 	useEffect(() => {
 		rebind();
-		resize(() => onScroll(0));
+		resize();
 
 		if (isPopup) {
 			window.setTimeout(() => resize(), J.Constant.delay.popup);
@@ -155,7 +156,9 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		};
 	}, []);
 
-	useEffect(() => resize());
+	useEffect(() => {
+		resize();
+	}, [ tree ]);
 
 	useImperativeHandle(ref, () => ({
 		setBlock,

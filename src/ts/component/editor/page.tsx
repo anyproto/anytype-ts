@@ -1885,7 +1885,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		}, 50);
 
 		raf.cancel(this.frameScroll);
-		this.frameScroll = raf(() => this.refToc?.onScroll(top));
+		this.frameScroll = raf(() => this.refToc?.onScroll());
 
 		Preview.previewHide(false);
 	};
