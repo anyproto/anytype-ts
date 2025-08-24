@@ -89,6 +89,10 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 			};
 		};
 
+		if ((top == U.Common.getMaxScrollHeight(isPopup)) && list.length) {
+			blockId = list[list.length - 1].id;
+		};
+
 		setBlock(blockId);
 	};
 
