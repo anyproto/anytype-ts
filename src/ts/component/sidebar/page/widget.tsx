@@ -45,7 +45,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const { sidebarDirection, isPopup } = this.props;
+		const { sidebarDirection, isPopup, page } = this.props;
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
@@ -255,7 +255,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						<>
 							<div className="side left" />
 							<div className="side right">
-								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget')} />
+								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, page)} />
 							</div>
 						</>
 					)}
