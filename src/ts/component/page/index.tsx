@@ -136,13 +136,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getMatch () {
 		const { isPopup } = this.props;
-		const { history } = U.Router;
-		const data = U.Common.searchParam(history?.location?.search);
-		const pathname = String(history?.location?.pathname || '');
+		const data = U.Common.searchParam(U.Router.getSearch());
+		const path = U.Router.getRoute();
 		const ret = U.Common.objectCopy(keyboard.getMatch(isPopup));
 
 		// Universal object route
-		if (pathname.match(/^\/object/)) {
+		if (path.match(/^\/object/)) {
 			ret.params = Object.assign(ret.params, {
 				page: 'main',
 				action: 'object',
@@ -152,7 +151,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Invite route
-		if (pathname.match(/^\/invite/)) {
+		if (path.match(/^\/invite/)) {
 			ret.params = Object.assign(ret.params, {
 				page: 'main',
 				action: 'invite',
@@ -161,7 +160,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Membership route
-		if (pathname.match(/^\/membership/)) {
+		if (path.match(/^\/membership/)) {
 			ret.params = Object.assign(ret.params, {
 				page: 'main',
 				action: 'membership',
@@ -236,10 +235,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.resize();
 		this.event();
 		this.rebind();
-
-		if (!isPopup) {
-			keyboard.setMatch(match);
-		};
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();

@@ -36,7 +36,7 @@ export default {
 		graphDepth:		 	 			 5,
 		cellEntry:		 	 			 320,
 		listObject:		 	 			 50,
-		tableOfContents:	 			 30,
+		tableOfContents:	 			 50,
 
 		space: {
 			count:						 50,
