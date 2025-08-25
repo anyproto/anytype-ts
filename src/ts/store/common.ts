@@ -683,9 +683,14 @@ class CommonStore {
 	/**
 	 * Sets the theme class on the document.
 	 */
-	setThemeClass () {
+	setThemeClass (forceSystem?: boolean) {
 		const head = $('head');
-		const c = this.getThemeClass();
+
+		let c = this.getThemeClass();
+
+		if (forceSystem) {
+			c = this.nativeThemeIsDark ? 'dark' : '';
+		};
 
 		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
