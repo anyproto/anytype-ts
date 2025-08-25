@@ -113,13 +113,16 @@
 			.item {
 				.icon {
 					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
-					background-position: 50% 50%; background-repeat: no-repeat; background-size: 20px;
+					background-position: 50% 50%; background-repeat: no-repeat; background-size: 20px; transition: background-color $transitionCommon;
 				}
 				.icon.add { background-image: url('~img/icon/sidebar/chatSpace/add.svg'); }
 				.icon.search { background-image: url('~img/icon/sidebar/chatSpace/search.svg'); }
 				.icon.mute.pushOn { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
 				.icon.mute.pushOff { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
 				.label { @include text-small; }
+			}
+			.item:hover {
+				.icon { background-color: var(--color-shape-highlight-dark); }
 			}
 		}
 	}
