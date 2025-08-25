@@ -229,7 +229,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			for (let i = 0; i < list.length; i++) {
 				const item = newItems[i];
 				if (item) {
-					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { optionOrder: list[i] }}, false);
+					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { relationOptionOrder: list[i] }}, false);
 				};
 			};
 		});
@@ -314,7 +314,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	};
 
 	const Item = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
 		const active = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 		const style = {
@@ -344,6 +344,9 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			const cn = [ 'item' ];
 			if (active) {
 				cn.push('withCheckbox');
+			};
+			if (isDragging) {
+				cn.push('isDragging');
 			};
 
 			content = (
