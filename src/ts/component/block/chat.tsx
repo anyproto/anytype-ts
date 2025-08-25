@@ -932,7 +932,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				blockId={block.id}
 				subId={subId}
 				onScrollToBottomClick={onScrollToBottomClick}
-				scrollToBottom={scrollToBottom}
+				scrollToBottom={scrollToBottomCheck}
 				scrollToMessage={scrollToMessage}
 				loadMessagesByOrderId={loadMessagesByOrderId}
 				getMessages={getMessages}
