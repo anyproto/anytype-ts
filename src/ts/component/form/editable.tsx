@@ -111,11 +111,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		if (t == '\n') {
 			t = '';
 		};
+
 		return t;
 	};
 
 	const getHtmlValue = (): string => {
-		return String($(editableRef.current).html() || '');
+		return String($(editableRef.current).get(0).innerHTML || '');
 	};
 
 	const getRangeHandler = (): I.TextRange => {
