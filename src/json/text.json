@@ -417,6 +417,9 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
+	"authSelectIntroLine1": "Encrypted, local,",
+	"authSelectIntroLine2": "yours forever",
+
 	"authSelectLogin": "I already have the key",
 	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",

@@ -59,7 +59,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			replace: true,
 			onRouteChange: () => {
 				S.Common.showRelativeDatesSet(true);
-				S.Common.getRef('mainAnimation')?.destroy();
 				U.Space.initSpaceState();
 
 				const routeParam = { replace: true };

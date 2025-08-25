@@ -92,8 +92,6 @@ const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	useEffect(() => {
-		S.Common.getRef('mainAnimation')?.create();
-
 		window.setTimeout(() => Survey.check(I.SurveyType.Delete), S.Popup.getTimeout());
 	}, []);
 

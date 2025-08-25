@@ -1,32 +1,7 @@
 @import "~scss/_mixins";
 
 html.bodyIndex, html.bodyAuth {
-	--color-bg-primary: #000 !important;
-	--color-bg-secondary: #252525 !important;
-
-	--color-text-primary: #d4d4d4 !important;
-	--color-text-secondary: #9a9a9a !important;
-	--color-text-tertiary: #606060 !important;
-
-	--color-shape-tertiary: #2b2b2b !important;
-	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05) !important;
-
-	--color-button-stroke: #252525 !important;
-	--color-button-black-hover: rgba(37, 37, 37, 0.8);
-	--color-button-blank-hover: rgba(23, 23, 23, 0.8);
-
-	--color-input-opaque: rgba(255, 255, 255, 0.1) !important;
-	--color-popup: #141414 !important;
-
-	--color-error: #8a351a !important;
-	--color-error-background: #240e07 !important;
-
-	--color-control-accent: #d4d4d4 !important;
-
-	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
-
-	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
-	#mainAnimation { height: 100vh; width: 100vw; position: absolute; top: 0px; left: 0px; z-index: -1; display: block; }
+	body { overflow: hidden; }
 
 	#vault,
 	#sidebarLeftButton,
@@ -35,64 +10,6 @@ html.bodyIndex, html.bodyAuth {
 	.sidebar,
 	.sidebarDummy,
 	.shareTooltip { display: none !important; }
-
-	.popup { 
-		.innerWrap { background: var(--color-popup) !important;; box-shadow: var(--shadow) !important; color: var(--color-text-primary) !important; }
-	}
-
-	#popupConfirm-innerWrap {
-		h1 { font-size: var(--font-size-header3); margin-bottom: 16px; color: var(--color-text-primary) !important; }
-		b { display: block; font-weight: 700; color: var(--color-text-primary) !important; margin-bottom: 8px; }
-		p { margin-bottom: 8px; }
-		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
-		ul.last { margin: 0px; }
-	}
-
-	#popupSettingsOnboarding-innerWrap {
-		.actionItems, .actionItems .item { border-color: var(--color-button-stroke) !important; }
-		.label.small { color: var(--color-text-tertiary) !important; }
-
-		.select { background: var(--color-button-stroke) !important; border-color: var(--color-button-stroke) !important; }
-		.select {
-			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
-		}
-	}
-
-	.menus {
-		.menu.vertical { background: var(--color-popup) !important; box-shadow: var(--shadow) !important; }
-		.menu.vertical {
-			.item { background: var(--color-popup) !important; }
-			.item.hover::before { background: var(--color-shape-highlight-medium) !important; }
-		}
-		.menu.menuAccountPath {
-			.label { color: var(--color-text-secondary) !important; }
-			.label.path { color: var(--color-text-primary) !important; }
-		}
-	}
-
-
-	.tooltip:not(.menuNote) {
-		padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
-	}
-	.tooltip:not(.menuNote) {
-		.txt { line-height: 22px; }
-		b { display: block; font-weight: 500; color: var(--color-text-primary) !important; }
-		ul { list-style-position: inside; padding-left: 0.75em; }
-	}
-
-	.tooltip.menuNote { white-space: nowrap; background-color: var(--color-bg-secondary); color: var(--color-text-primary); padding: 4px 8px; @include text-small; }
-	.tooltip.menuNote {
-		.txt { line-height: 18px; }
-	}
-
-	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
-	.toast {
-		.inner {
-			.buttons {
-				.button { color: var(--color-text-primary); }
-			}
-		}
-	}
 
 	/* Notifications */
 
@@ -109,25 +26,6 @@ html.bodyIndex, html.bodyAuth {
 			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
-
-	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: var(--color-system-accent-100) !important; }
-		.dot { border-color: #fff; }
-	}
-
-	.button.black { background: var(--color-button-stroke) !important; color: var(--color-text-primary) !important;  }
-	.button.black:not(.disabled):hover { background: var(--color-button-black-hover) !important; color: var(--color-text-primary) !important; }
-	.button.black.disabled { background-color: var(--color-shape-highlight-medium) !important; }
-
-	.button.disabled { color: var(--color-text-tertiary) !important; }
-
-	.button.blank { border-color: var(--color-button-stroke) !important; color: var(--color-text-primary) !important; background: none; }
-	.button.blank:not(.disabled):hover{ background: var(--color-button-blank-hover) !important; }
-
-	.phraseWrapper { background: var(--color-input-opaque) !important; color: #f8f8f8; }
-	.phraseWrapper.isHidden {
-		.word { background-color: #f8f8f8; }
-	}
 }
 
 html.bodyAuthDeleted {
@@ -141,9 +39,6 @@ html.bodyAuthDeleted {
 	.input { height: 40px; border: solid 1px var(--color-shape-primary) !important; text-align: center; }
 
 	.header { width: 100% !important; }
-	.header {
-		.icon:hover { background-color: var(--color-shape-tertiary) !important; }
-	}
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back {
@@ -169,17 +64,23 @@ html.bodyAuthDeleted {
 .pageIndexIndex, .pageAuthSelect {
 	.frame { width: 720px; }
 
-	.logo { 
-		width: 100%; height: 183px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
-		background-size: contain;
+	.intro { display: flex; flex-direction: column; gap: 4px 0px; margin-bottom: 32px; }
+	.intro {
+		.label { margin: 0px; line-height: 60px; font-weight: 400;  }
+		.label.line1 { font-size: 58px; letter-spacing: -3.77px; color: var(--color-text-primary); }
+		.label.line2 { font-size: 64px; font-family: 'RiccioneExtraLight'; letter-spacing: -1.74px; color: var(--color-text-secondary); }
 	}
+
 	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 456px; }
 	.label {
 		a { color: var(--color-text-secondary); }
 		a:hover { color: var(--color-text-primary); }
 	}
 
-	.buttons { display: flex; flex-direction: row; gap: 0px 12px; justify-content: center; width: 100%; position: absolute; bottom: -68px; }
+	.buttons { display: flex; flex-direction: column; gap: 12px 0px; justify-content: center; width: 100%; }
+	.buttons {
+		.button { border-radius: 24px; width: 224px; }
+	}
 
 	.footer {
 		.label.disclaimer { color: var(--color-text-tertiary) !important; }
@@ -190,13 +91,14 @@ html.bodyAuthDeleted {
 	}
 }
 
+.pageAuthLogin { background-color: var(--color-shape-tertiary); }
 .pageAuthLogin {
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; }
 	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: 0px; transform: translateY(calc(-100% - 16px)); }
 
 	.title { margin: 0px 0px 20px 0px; }
-	.phraseWrapper { margin: 0px 0px 40px 0px; }
+	.phraseWrapper { margin: 0px 0px 40px 0px; background-color: var(--color-bg-primary); }
 }
 
 .pageAuthInvite {

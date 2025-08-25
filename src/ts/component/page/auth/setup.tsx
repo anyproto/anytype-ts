@@ -61,8 +61,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					const whatsNew = Storage.get('whatsNew');
 					const primitivesOnboarding = Storage.get('primitivesOnboarding');
 
-					S.Common.getRef('mainAnimation')?.destroy();
-
 					[
 						I.SurveyType.Register, 
 						I.SurveyType.Object,

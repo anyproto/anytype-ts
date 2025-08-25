@@ -10,7 +10,6 @@ import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, ListBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
-import CanvasWorkerBridge from 'Component/page/auth/animation/canvasWorkerBridge';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -516,8 +515,6 @@ const App: FC = () => {
 							</Switch>
 						</DragProvider>
 					</SelectionProvider>
-
-					<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
 				</div>
 			</Provider>
 		</Router>
