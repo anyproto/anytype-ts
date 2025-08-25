@@ -1885,45 +1885,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		}, 50);
 
 		raf.cancel(this.frameScroll);
-		this.frameScroll = raf(() => this.updateToc());
+		this.frameScroll = raf(() => this.refToc?.onScroll());
 
 		Preview.previewHide(false);
-	};
-
-	updateToc () {
-		const { rootId, isPopup } = this.props;
-		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
-		const length = headers.length;
-
-		if (!length) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		const co = isPopup ? container.offset().top : 0;
-		const ch = container.height() - J.Size.header;
-
-		let blockId = '';
-
-		for (let i = 0; i < length; ++i) {
-			const block = headers[i];
-			const el = $(`#block-${block.id}`);
-
-			if (!el.length) {
-				continue;
-			};
-
-			const t = el.offset().top - co;
-			const h = el.outerHeight();
-			const check = isPopup ? 0 : this.containerScrollTop;
-
-			if ((t >= check) && (t + h <= check + ch)) {
-				blockId = block.id;
-				break;
-			};
-		};
-
-		this.refToc?.setBlock(blockId);
 	};
 	
 	onCopy (e: any, isCut: boolean) {

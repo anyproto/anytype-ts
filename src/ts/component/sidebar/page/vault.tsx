@@ -425,6 +425,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	useEffect(() => {
 		rebind();
+		analytics.event('ScreenVault');
 
 		return () => {
 			unbind();

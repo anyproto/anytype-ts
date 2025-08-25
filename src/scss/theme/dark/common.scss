@@ -382,6 +382,20 @@ html.themeDark {
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 
 		> .sidebarPage {
+			> .subHead {
+				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
+
+				.side.right {
+					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
+					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
+				}
+
+				&.withCounter {
+					.icon.back { background-image: url('~img/icon/widget/back2.svg'); }
+					.icon.back:hover { background-image: url('~img/icon/widget/back2.svg'); }
+				}
+			}
+
 			> .body {
 				.group {
 					> .titleWrap {

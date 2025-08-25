@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, keyboard, sidebar, translate } from 'Lib';
+import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, renderLeftIcons, isPopup } = props;
@@ -28,7 +28,10 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
-						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId })} 
+						onClick={() => {
+							sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+							analytics.event('ScreenChatSidebar');
+						}} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
