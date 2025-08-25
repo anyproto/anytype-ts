@@ -150,7 +150,7 @@ class UtilSpace {
 	 * @returns {any[]} The list of active spaces.
 	 */
 	getList () {
-		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys()).filter(it => it.isAccountActive);
+		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys(true)).filter(it => it.isAccountActive);
 	};
 
 	/**
