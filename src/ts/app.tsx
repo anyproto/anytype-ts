@@ -177,8 +177,10 @@ const App: FC = () => {
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
+			const accountId = Storage.get('accountId');
+
 			S.Common.nativeThemeSet(isDark);
-			S.Common.themeSet(S.Common.theme);
+			S.Common.themeSet(accountId ? S.Common.theme : S.Common.nativeTheme);
 		});
 
 		Renderer.on('pin-check', () => {
@@ -204,7 +206,7 @@ const App: FC = () => {
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
-		S.Common.themeSet(config.theme);
+		S.Common.themeSet(accountId ? config.theme : S.Common.nativeTheme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
