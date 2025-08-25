@@ -431,7 +431,6 @@ class Sidebar {
 			};
 
 			this.objRight.css(cssStart);
-			this.rightPanelSetState(isPopup, { page, ...param });
 
 			raf(() => {
 				if (animate) {
