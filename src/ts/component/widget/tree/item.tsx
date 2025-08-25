@@ -43,6 +43,10 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('isHidden');
 	};
 
+	if (isSection) {
+		cn.push('isSection');
+	};
+
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean): void => {
 		e.preventDefault();
 		e.stopPropagation();
