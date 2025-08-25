@@ -80,7 +80,7 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
-		sidebar:		 180,
+		sidebar:		 150,
 		highlight:  	 1000,
 		chatHistory:	 500,
 	},
