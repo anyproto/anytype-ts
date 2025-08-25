@@ -229,7 +229,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			for (let i = 0; i < list.length; i++) {
 				const item = newItems[i];
 				if (item) {
-					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { relationOptionOrder: list[i] }}, false);
+					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { orderId: list[i] }}, false);
 				};
 			};
 		});
@@ -252,19 +252,11 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		};
 
 		items.sort((c1, c2) => {
-			/*
-			const isSelected1 = value.includes(c1.id);
-			const isSelected2 = value.includes(c2.id);
-
-			if (isSelected1 && !isSelected2) return -1;
-			if (!isSelected1 && isSelected2) return 1;
-			*/
-
 			if (c1.tmpOrder > c2.tmpOrder) return 1;
 			if (c1.tmpOrder < c2.tmpOrder) return -1;
 
-			if (c1.order > c2.order) return 1;
-			if (c1.order < c2.order) return -1;
+			if (c1.orderId > c2.orderId) return 1;
+			if (c1.orderId < c2.orderId) return -1;
 
 			return U.Data.sortByName(c1, c2);
 		});

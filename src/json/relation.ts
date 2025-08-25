@@ -96,7 +96,7 @@ export default {
 		'name',
 		'createdDate',
 		'relationOptionColor',
-		'relationOptionOrder',
+		'orderId',
 	],
 
 	type: [
