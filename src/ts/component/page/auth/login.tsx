@@ -182,7 +182,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 					</div>
 					<div className="buttons">
 						<div className="animation">
-							<Button ref={submitRef} className="c48" text={translate('authLoginSubmit')} onClick={onSubmit} />
+							<Button ref={submitRef} className="c48" color="accent" text={translate('authLoginSubmit')} onClick={onSubmit} />
 						</div>
 
 						<div className="animation">

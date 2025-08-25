@@ -26,6 +26,10 @@ html.bodyIndex, html.bodyAuth {
 			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
+
+	.pageFlex {
+		> .page { transition: background-color linear 0.2s; }
+	}
 }
 
 html.bodyAuthDeleted {
@@ -51,9 +55,13 @@ html.bodyAuthDeleted {
 	.iconObject { margin-bottom: 12px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
-	.button { min-width: 224px; @include text-common; }
+	.button { min-width: 224px; @include text-common; font-weight: 400; }
 	.button.disabled { color: var(--color-text-tertiary) !important; background-color: var(--color-control-inactive) !important; }
-	
+	.button.c48 { border-radius: 24px; }
+	.button.blank { border: 0px; background: var(--color-shape-highlight-medium); }
+	.button.blank:not(.disabled):hover,
+	.button.blank:not(.disabled).hover { background: var(--color-shape-highlight-dark) !important; }
+
 	.small { color: var(--color-text-secondary) !important; }
 	.small:hover { color: var(--color-text-primary) !important; }
 
@@ -78,9 +86,6 @@ html.bodyAuthDeleted {
 	}
 
 	.buttons { display: flex; flex-direction: column; gap: 12px 0px; justify-content: center; width: 100%; }
-	.buttons {
-		.button { border-radius: 24px; width: 224px; }
-	}
 
 	.footer {
 		.label.disclaimer { color: var(--color-text-tertiary) !important; }
@@ -151,7 +156,6 @@ html.bodyAuthDeleted {
 	.label.description { width: 508px; margin: 0px 0px 32px 0px; }
 
 	.buttons { flex-direction: column; gap: 12px 0px; }
-	.button.c48 { width: 224px; border-radius: 24px; }
 
 	.tooltipLink:hover { text-decoration: underline; }
 
