@@ -285,6 +285,8 @@ class UtilData {
 	 * @param {boolean} noTierCache - Whether to skip tier cache.
 	 */
 	onAuthOnce (noTierCache: boolean) {
+		const { windowId } = S.Common;
+
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
@@ -299,9 +301,17 @@ class UtilData {
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
 			for (const item of message.previews) {
-				S.Chat.setState(S.Chat.getSubId(item.spaceId, item.chatId), { 
-					...item.state, 
-					lastMessageDate: Number(item.message?.createdAt || 0),
+				const { spaceId, message, state, dependencies } = item;
+				const subId = S.Chat.getSpaceSubId(spaceId);
+
+				if (message) {
+					message.dependencies = dependencies || [];
+					S.Chat.add(subId, 0, new M.ChatMessage(message));
+				};
+
+				S.Chat.setState(subId, { 
+					...state, 
+					lastMessageDate: Number(message?.createdAt || 0),
 				});
 			};
 		});

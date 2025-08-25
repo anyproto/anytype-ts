@@ -1265,6 +1265,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	onBeforeInput = (e: any) => {
+		const { block } = this.props;
+		
+		if (block.isTextCode()) {
+			return;
+		};
+
 		const range = this.getRange();
 
 		let html = this.refEditable ? this.refEditable.getHtmlValue() : '';

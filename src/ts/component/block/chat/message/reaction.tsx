@@ -44,8 +44,6 @@ const ChatMessageReactionBase = observer(forwardRef<{}, Props>((props, ref) => {
 
 }));
 
-const ChatMessageReaction = memo(ChatMessageReactionBase, (prev, next) => {
-	return (prev.icon == next.icon) && (prev.authors === next.authors);
-});
+const ChatMessageReaction = memo(ChatMessageReactionBase);
 
 export default ChatMessageReaction;

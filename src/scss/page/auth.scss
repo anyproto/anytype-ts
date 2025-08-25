@@ -29,8 +29,8 @@ html.bodyIndex, html.bodyAuth {
 	#mainAnimation { height: 100vh; width: 100vw; position: absolute; top: 0px; left: 0px; z-index: -1; display: block; }
 
 	#vault,
-	#sidebarToggle,
-	#sidebarSync,
+	#sidebarLeftButton,
+	#sidebarRightButton,
 	#notifications,
 	.sidebar,
 	.sidebarDummy,
@@ -221,8 +221,11 @@ html.bodyAuthDeleted {
 	.wrapper { transition: opacity 0.5s ease-in-out; }
 	.frame { width: 480px; }
 	.title.fromBackup { margin: 0px 0px 12px 0px; }
+
 	.buttons { margin: 24px 0px 0px 0px; gap: 14px; }
+	.button { min-width: 120px; }
 	.button.simple { font-weight: 400; }
+
 	.icon.warning { width: 56px; height: 56px; background-image: url('~img/icon/popup/confirm/warning-grey.svg'); margin: 0px 0px 20px 0px; }
 }
 

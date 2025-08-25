@@ -343,7 +343,7 @@ html.themeDark {
 
 	.header.mainSettings {
 		.identity {
-			.icon.anyName { background-image: url('#{$themePath}/icon/header/settings/anyName.svg'); }
+			.icon.anyName { background-image: url('#{$themePath}/icon/header/anyName.svg'); }
 		}
 	}
 
@@ -381,7 +381,31 @@ html.themeDark {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 
-		> #containerObject {
+		> .sidebarPage {
+			> .subHead {
+				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
+
+				.side.right {
+					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
+					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
+				}
+
+				&.withCounter {
+					.icon.back { background-image: url('~img/icon/widget/back2.svg'); }
+					.icon.back:hover { background-image: url('~img/icon/widget/back2.svg'); }
+				}
+			}
+
+			> .body {
+				.group {
+					> .titleWrap {
+						.icon.question { background-image: url('#{$themePath}/icon/sidebar/question.svg'); }
+					}
+				}
+			}
+		}
+		
+		> .sidebarPage.pageAllObject {
 			> .inner {
 				> .head {
 					.titleWrap {
@@ -399,7 +423,7 @@ html.themeDark {
 			}
 		}
 
-		> #containerSettings {
+		> .containerSettings {
 			> .body {
 				.list {
 					> .head {
@@ -420,9 +444,9 @@ html.themeDark {
 			}
 		}
 
-		> #containerWidget {
+		> .sidebarPage.pageWidget {
 			> .bottom {
-				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/settings1.svg'); }
+				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
 		}
 	}
@@ -441,7 +465,13 @@ html.themeDark {
 		}
 	}
 
-	.banner { background-image: unset; border: 1px solid var(--color-shape-highlight-dark); }
+	.banner { border: 1px solid var(--color-shape-highlight-dark); }
+	.banner {
+		.icon.close { background-image: url('#{$themePath}/icon/banner/close.svg'); }
+	}
+	.banner.sidebarUpdateBanner {
+		.button:before { background-image: url('#{$themePath}/icon/banner/download.svg'); }
+	}
 
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }

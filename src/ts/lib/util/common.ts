@@ -1947,6 +1947,17 @@ class UtilCommon {
 		return usage;
 	};
 
+	getMaxScrollHeight (isPopup: boolean): number {
+		let container;
+		if (isPopup) {
+			container = this.getScrollContainer(true).get(0);
+			return container.scrollHeight - container.clientHeight;
+		} else {
+			container = window;
+			return document.documentElement.scrollHeight - window.innerHeight;
+		};
+	};
+
 };
 
 export default new UtilCommon();

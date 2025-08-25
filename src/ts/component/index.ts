@@ -19,10 +19,10 @@ import ListNotification from './list/notification';
 import ListChildren from './list/children';
 import ListObject from './list/object';
 import ListObjectManager from './list/objectManager';
+import ListBanner from './list/banner';
 
 import Header from './header';
 import Footer from './footer';
-import Vault from './vault';
 import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
@@ -125,6 +125,7 @@ export {
 	ListObject,
 	ListObjectManager,
 	ListNotification,
+	ListBanner,
 
 	Header,
 	Footer,
@@ -180,7 +181,6 @@ export {
 	SidebarLeft,
 	SidebarRight,
 
-	Vault,
 	Widget,
 
 	ObjectName,

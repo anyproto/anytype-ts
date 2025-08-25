@@ -91,17 +91,13 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setFocus = () => {
-		const el = $(editableRef.current).get(0);
 		const l = getTextValue().length;
 
-		raf(() => {
-			el.focus({ preventScroll: true });
-			setRange(el, { start: l, end: l });
-		});
+		raf(() => setRangeHandler({ from: l, to: l }));
 	};
 
 	const setValue = (html: string) => {
-		$(editableRef.current).get(0).innerHTML = U.Common.sanitize(html, true);
+		editableRef.current.innerHTML = U.Common.sanitize(html, true);
 	};
 
 	const getTextValue = (): string => {
@@ -111,15 +107,16 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		if (t == '\n') {
 			t = '';
 		};
+
 		return t;
 	};
 
 	const getHtmlValue = (): string => {
-		return String($(editableRef.current).html() || '');
+		return String(editableRef.current.innerHTML || '');
 	};
 
 	const getRangeHandler = (): I.TextRange => {
-		const range = getRange($(editableRef.current).get(0) as Element);
+		const range = getRange(editableRef.current);
 		return range ? { from: range.start, to: range.end } : null;
 	};
 
@@ -128,10 +125,8 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 			return;
 		};
 
-		const el = $(editableRef.current).get(0);
-
-		el.focus({ preventScroll: true });
-		setRange(el, { start: range.from, end: range.to });
+		editableRef.current.focus({ preventScroll: true });
+		setRange(editableRef.current, { start: range.from, end: range.to });
 	};
 
 	const onPasteHandler = (e: any) => {
