@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -20,6 +20,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const relation = data.relation.get();
 	const value = Relation.getArrayValue(data.value);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
+	const [ dummy, setDummy ] = useState(0);
 	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const n = useRef(-1);
@@ -63,6 +64,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 	const onFilterChange = (v: string) => {
 		data.filter = v;
+		setDummy(dummy + 1);
 	};
 
 	const onOver = (e: any, item: any) => {
@@ -134,7 +136,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const onOptionAdd = () => {
 		const colors = U.Menu.getBgColors();
 		const option = { 
-			name: filterRef.current?.getValue(), 
+			name: String(data.filter || '').trim(),
 			color: colors[U.Common.rand(1, colors.length - 1)].value,
 		};
 
