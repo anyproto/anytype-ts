@@ -207,8 +207,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				};
 			};
 
-			console.log(it.name, text);
-
 			it.lastMessage = text;
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 			return it;

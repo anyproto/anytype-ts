@@ -1288,21 +1288,19 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const dummy = $(dummyRef.current);
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
-		let sw = 0;
+		let left = 0;
 		let width = container.width();
 
-		if (!isPopup && !sidebar.data.isClosed) {
-			sw = sidebar.getDummyWidth();
-			width -= sw;
-
-			console.log('SW', sw, 'IS CLOSED', sidebar.data.isClosed);
+		if (!sidebar.data.isClosed) {
+			width = container.width() - sidebar.data.width;
+			left = sidebar.data.width;
 		};
 
 		if (rightSidebar && rightSidebar.isOpen) {
 			width -= J.Size.sidebar.right;
 		};
 
-		node.css({ width, left: sw });
+		node.css({ width, left });
 		dummy.css({ height: node.outerHeight() });
 	};
 
