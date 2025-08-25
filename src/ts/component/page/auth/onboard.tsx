@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'r
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error } from 'Component';
 import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
+import current from 'ts/component/popup/page/membership/current';
 
 enum Stage {
 	Email	 = 0,
@@ -17,8 +18,15 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	const frameRef = useRef(null);
 	const nextRef = useRef(null);
 	const emailRef = useRef(null);
+	const shuffled = useRef({ role: null, purpose: null });
+	const selected = useRef({ role: [], purpose: [] });
 	const [ stage, setStage ] = useState(Stage.Email);
 	const [ error, setError ] = useState('');
+	const [ dummy, setDummy ] = useState(0);
+	const options = {
+		role: [ 'student', 'manager', 'developer', 'writer', 'designer', 'artist', 'marketer', 'consultant', 'founder', 'researcher' ],
+		purpose: [ 'messaging', 'knowledge', 'notes', 'projects', 'planning', 'tracking', 'team' ],
+	};
 	const cnb = [ 'c48' ];
 
 	const unbind = () => {
@@ -152,6 +160,54 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
 	};
 
+	const shuffleItems = (stage: string) => {
+		const s = options[stage].map(value => ({ value, sort: Math.random() }))
+			.sort((a, b) => a.sort - b.sort)
+			.map(({ value }) => value);
+
+		s.push('other');
+
+		shuffled.current[stage] = s;
+
+		return s;
+	};
+
+	const getItems = (stage: string) => {
+		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
+
+		return items.map(it => ({ id: it, name: translate(`authOnboardOptions${U.Common.ucFirst(it)}`), stage }));
+	};
+
+	const onItemClick = (item: any) => {
+		const { id, stage } = item;
+		const s = selected.current[stage];
+
+		if (s.length && s.indexOf(id) > -1) {
+			selected.current[stage] = s.filter(it => it != item.id);
+		} else {
+			if (stage == 'role') {
+				selected.current[stage] = [ item.id ];
+			} else {
+				selected.current[stage].push(item.id);
+			};
+		};
+
+		setDummy(dummy + 1);
+	};
+
+	const itemsMapper = (item: any) => {
+		const { id, name, stage } = item;
+		const s = selected.current[stage];
+		const isSelected = s.indexOf(id) > -1;
+
+		return (
+			<div className={[ 'option', 'animation', isSelected ? 'selected' : '' ].join(' ')} key={id} onClick={() => onItemClick(item)}>
+				<Icon className={id} />
+				<Label text={name} />
+			</div>
+		);
+	};
+
 	if (!canMoveForward()) {
 		cnb.push('disabled');
 	};
@@ -193,11 +249,13 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		};
 
 		case Stage.Role: {
-			cnb.push('disabled');
+			if (!selected.current.role.length) {
+				cnb.push('disabled');
+			};
 
 			content = (
-				<div className="optionsWrapper selectRole">
-
+				<div className="optionsWrapper">
+					{getItems('role').map(itemsMapper)}
 				</div>
 			);
 
@@ -215,11 +273,13 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		};
 
 		case Stage.Purpose: {
-			cnb.push('disabled');
+			if (!selected.current.purpose.length){
+				cnb.push('disabled');
+			};
 
 			content = (
-				<div className="optionsWrapper selectRole">
-
+				<div className="optionsWrapper">
+					{getItems('purpose').map(itemsMapper)}
 				</div>
 			);
 
@@ -263,7 +323,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 			<Frame ref={frameRef}>
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
-				<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
+				<Label id="label" className="description animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
 
 				{content}
 				<Error className="animation" text={error} />

@@ -448,6 +448,26 @@
 	"authOnboardRoleTitle": "Tell Us About Yourself",
 	"authOnboardRoleLabel": "Select one role or background that best fits you",
 
+	"authOnboardOptionsStudent": "Student",
+	"authOnboardOptionsManager": "Manager / IT Professional",
+	"authOnboardOptionsDeveloper": "Software Developer",
+	"authOnboardOptionsWriter": "Writer / Journalist",
+	"authOnboardOptionsDesigner": "Designer",
+	"authOnboardOptionsArtist": "Artist / Content Creator",
+	"authOnboardOptionsMarketer": "Marketer",
+	"authOnboardOptionsConsultant": "Consultant",
+	"authOnboardOptionsFounder": "Founder / Entrepreneur",
+	"authOnboardOptionsResearcher": "Researcher / Academic",
+
+	"authOnboardOptionsMessaging": "Messaging & group chats",
+	"authOnboardOptionsKnowledge": "Personal knowledge management",
+	"authOnboardOptionsNotes": "Personal note-taking",
+	"authOnboardOptionsProjects": "Projects & tasks management",
+	"authOnboardOptionsPlanning": "Life planning",
+	"authOnboardOptionsTracking": "Habit tracking",
+	"authOnboardOptionsTeam": "Team work & shared docs",
+	"authOnboardOptionsOther": "Other",
+
 	"authOnboardPurposeTitle": "What do you want to use Anytype for?",
 	"authOnboardPurposeLabel": "Select as many as you want",
 

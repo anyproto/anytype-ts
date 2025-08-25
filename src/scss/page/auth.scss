@@ -148,7 +148,7 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard {
 	.title { margin: 0px 0px 8px 0px; }
-	.label { width: 508px; margin: 0px 0px 32px 0px; }
+	.label.description { width: 508px; margin: 0px 0px 32px 0px; }
 
 	.buttons { flex-direction: column; gap: 12px 0px; }
 	.button.c48 { width: 224px; border-radius: 24px; }
@@ -158,6 +158,45 @@ html.bodyAuthDeleted {
 	.inputWrapper { margin: 0px 0px 24px 0px; }
 	.inputWrapper {
 		.input { @include text-paragraph; font-weight: 500; background-color: var(--color-shape-tertiary); border-radius: 20px; border: 0px; padding: 0px 26px; height: 64px; width: 480px; }
+	}
+
+	.optionsWrapper {
+		display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; width: 720px; margin-bottom: 32px;
+		opacity: 1 !important; transform: scale3d(1, 1, 1) !important;
+	}
+	.optionsWrapper {
+		.option {
+			position: relative; display: flex; gap: 0px 6px; align-items: center; width: unset; padding: 0px 14px; height: 52px;
+			@include text-common; font-weight: 500; background: var(--color-shape-highlight-light); border-radius: 16px;
+		}
+		.option:hover,
+		.option.selected { background-color: var(--color-system-selection); }
+		.option.selected:after {
+			content: ''; position: absolute; right: -4px; top: -4px; width: 18px; height: 18px; border-radius: 50%;
+			background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat;
+		}
+
+		.icon { width: 32px; height: 32px; background-size: 32px; }
+		.icon.student { background-image: url('~img/icon/onboarding/options/student.png'); }
+		.icon.manager { background-image: url('~img/icon/onboarding/options/manager.png'); }
+		.icon.developer { background-image: url('~img/icon/onboarding/options/developer.png'); }
+		.icon.writer { background-image: url('~img/icon/onboarding/options/writer.png'); }
+		.icon.designer { background-image: url('~img/icon/onboarding/options/designer.png'); }
+		.icon.artist { background-image: url('~img/icon/onboarding/options/artist.png'); }
+		.icon.marketer { background-image: url('~img/icon/onboarding/options/marketer.png'); }
+		.icon.consultant { background-image: url('~img/icon/onboarding/options/consultant.png'); }
+		.icon.founder { background-image: url('~img/icon/onboarding/options/founder.png'); }
+		.icon.researcher { background-image: url('~img/icon/onboarding/options/researcher.png'); }
+		.icon.messaging { background-image: url('~img/icon/onboarding/options/messaging.png'); }
+		.icon.knowledge { background-image: url('~img/icon/onboarding/options/knowledge.png'); }
+		.icon.notes { background-image: url('~img/icon/onboarding/options/notes.png'); }
+		.icon.projects { background-image: url('~img/icon/onboarding/options/projects.png'); }
+		.icon.planning { background-image: url('~img/icon/onboarding/options/planning.png'); }
+		.icon.tracking { background-image: url('~img/icon/onboarding/options/tracking.png'); }
+		.icon.team { background-image: url('~img/icon/onboarding/options/team.png'); }
+		.icon.other { background-image: url('~img/icon/onboarding/options/other.png'); }
+
+		.label { color: var(--color-text-secondary); @include text-common; }
 	}
 }
 
