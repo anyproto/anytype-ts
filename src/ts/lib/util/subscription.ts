@@ -542,7 +542,7 @@ class UtilSubscription {
 				],
 				sorts: [
 					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'createdDate', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
