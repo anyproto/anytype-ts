@@ -1,3 +1,4 @@
+.sidebarPage.pageVault { overflow: hidden; }
 .sidebarPage.pageVault {
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
@@ -7,10 +8,11 @@
 		.name { @include text-overflow-nw; }
 	}
 
-	> .body { padding: 0px 0px 48px 0px; overflow: visible; }
+	> .body { padding: 0px 0px 48px 0px; overflow: hidden; }
+
 	.ReactVirtualized__List { padding: 0px 2px 0px 8px; scrollbar-gutter: stable; }
 
-	.filterWrapper { padding: 0px 16px; margin: 0px 0px 8px 0px; }
+	.filterWrapper { padding: 0px 16px; margin: 0px 0px 8px 0px; overflow: hidden; }
 	.filter { padding: 0px; }
 	.filter { 
 		.inner { background-color: var(--color-shape-highlight-medium); border-radius: 15px; }
@@ -22,9 +24,8 @@
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 		.nameWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
-		.name { @include text-overflow-nw; font-weight: 500; flex-grow: 1; }
-
-		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
+		.name { @include clamp1; font-weight: 500; flex-grow: 1; }
+		.label { @include clamp1; @include text-small; color: var(--color-text-secondary); }
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;

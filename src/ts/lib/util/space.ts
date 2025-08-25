@@ -296,21 +296,6 @@ class UtilSpace {
 	};
 
 	/**
-	 * Checks if the share banner should be shown.
-	 * @returns {boolean} True if the share banner should be shown, false otherwise.
-	 */
-	hasShareBanner () {
-		/*
-		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
-		const space = this.getSpaceview();
-		const closed = Storage.get('shareBannerClosed');
-
-		return !space.isPersonal && !space.isShared && !closed && this.isMyOwner() && !hasShared;
-		*/
-		return false;
-	};
-
-	/**
 	 * Gets the reader limit for the current space.
 	 * @returns {number} The reader limit.
 	 */

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label, IconObject, ObjectName } from 'Component';
+import { Button, Icon, Widget, DropTarget, ProgressText, Label, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
 
 type State = {
@@ -49,7 +49,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
-		const hasShareBanner = U.Space.hasShareBanner();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
@@ -66,10 +65,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (isEditing) {
 			cnb.push('isEditing');
-		};
-
-		if (hasShareBanner) {
-			cnb.push('withShareBanner');
 		};
 
 		if (cnt) {
@@ -164,8 +159,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				<div className="content">
 					{space && !space._empty_ ? (
 						<>
-							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
-
 							<DropTarget 
 								{...this.props} 
 								isTargetTop={true}

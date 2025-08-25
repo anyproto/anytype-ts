@@ -1,4 +1,4 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; transition: opacity 0.1s ease-in-out; }
+> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; transition: opacity 0.025s ease-in-out; }
 > .sidebarPage {
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
@@ -54,7 +54,7 @@
 	}
 
 	> .body {
-		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: none; overflow-y: scroll; overscroll-behavior: none; 
+		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 		flex-grow: 1;
 	}
 	> .body {

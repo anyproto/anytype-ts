@@ -207,6 +207,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				};
 			};
 
+			console.log(it.name, text);
+
 			it.lastMessage = text;
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 			return it;
@@ -438,7 +440,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	return (
 		<>
-			<div className="head">
+			<div id="head" className="head">
 				<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 			</div>
 			<div className="filterWrapper">
@@ -451,7 +453,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					onClear={onFilterClear}
 				/>
 			</div>
-			<div className="body">
+			<div id="body" className="body">
 				{!items.length ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
