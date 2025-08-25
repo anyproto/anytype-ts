@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Frame, Title, Label, Button } from 'Component';
 import { I, C, S, U, Action, Survey, analytics, translate } from 'Lib';
-import { OnboardStage } from './animation/constants';
 
 const DAYS = 30;
 
