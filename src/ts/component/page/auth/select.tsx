@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { Frame, Button, Header, Footer, Error } from 'Component';
+import { Frame, Button, Header, Footer, Error, Label } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
 
 const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
@@ -15,6 +15,7 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const onRegister = () => {
 		const { account } = S.Auth;
 		const cb = () => U.Router.go('/auth/onboard', {});
+		// Anytype.Lib.U.Router.go('/auth/onboard', {})
 
 		if (account) {
 			cb();
@@ -30,8 +31,6 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		S.Common.getRef('mainAnimation')?.create();
-
 		Animation.to(() => {
 			U.Common.renderLinks($(nodeRef.current));
 
@@ -45,14 +44,17 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 			<Header {...props} component="authIndex" />
 			
 			<Frame>
-				<div className="logo animation" />
+				<div className="intro animation">
+					<Label className="line1" text={translate('authSelectIntroLine1')} />
+					<Label className="line2" text={translate('authSelectIntroLine2')} />
+				</div>
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={translate('authSelectLogin')} color="blank" className="c48" onClick={onLogin} />
+						<Button text={translate('authSelectLogin')} color="accent" className="c48" onClick={onLogin} />
 					</div>
 					<div className="animation">
-						<Button ref={registerRef} text={translate('authSelectSignup')} className="c48" onClick={onRegister} />
+						<Button ref={registerRef} text={translate('authSelectSignup')} color="blank" className="c48" onClick={onRegister} />
 					</div>
 				</div>
 

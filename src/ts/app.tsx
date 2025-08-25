@@ -10,7 +10,6 @@ import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, ListBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
-import CanvasWorkerBridge from 'Component/page/auth/animation/canvasWorkerBridge';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -178,8 +177,10 @@ const App: FC = () => {
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
+			const accountId = Storage.get('accountId');
+
 			S.Common.nativeThemeSet(isDark);
-			S.Common.themeSet(S.Common.theme);
+			S.Common.themeSet(accountId ? S.Common.theme : S.Common.nativeTheme);
 		});
 
 		Renderer.on('pin-check', () => {
@@ -205,7 +206,7 @@ const App: FC = () => {
 
 		S.Common.configSet(config, true);
 		S.Common.nativeThemeSet(isDark);
-		S.Common.themeSet(config.theme);
+		S.Common.themeSet(accountId ? config.theme : S.Common.nativeTheme);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
@@ -516,8 +517,6 @@ const App: FC = () => {
 							</Switch>
 						</DragProvider>
 					</SelectionProvider>
-
-					<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
 				</div>
 			</Provider>
 		</Router>

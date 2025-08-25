@@ -81,7 +81,6 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			const routeParam = { 
 				replace: true, 
 				onFadeIn: () => {
-					S.Common.getRef('mainAnimation')?.destroy();
 					Action.checkDiskSpace();
 				},
 			};

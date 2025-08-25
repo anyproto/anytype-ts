@@ -1,12 +1,13 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Phrase, Icon, Input, Error } from 'Component';
+import { Frame, Title, Label, Button, Icon, Input, Error } from 'Component';
 import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
+import current from 'ts/component/popup/page/membership/current';
 
 enum Stage {
-	Phrase	 = 0,
-	Name	 = 1,
-	Email	 = 2,
+	Email	 = 0,
+	Role 	 = 1,
+	Purpose  = 2,
 };
 
 const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
@@ -15,13 +16,17 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	const { redirect } = S.Common;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
-	const phraseRef = useRef(null);
 	const nextRef = useRef(null);
-	const nameRef = useRef(null);
 	const emailRef = useRef(null);
-	const [ stage, setStage ] = useState(Stage.Phrase);
-	const [ phraseVisible, setPhraseVisible ] = useState(false);
+	const shuffled = useRef({ role: null, purpose: null });
+	const selected = useRef({ role: [], purpose: [] });
+	const [ stage, setStage ] = useState(Stage.Email);
 	const [ error, setError ] = useState('');
+	const [ dummy, setDummy ] = useState(0);
+	const options = {
+		role: [ 'student', 'manager', 'developer', 'writer', 'designer', 'artist', 'marketer', 'consultant', 'founder', 'researcher' ],
+		purpose: [ 'messaging', 'knowledge', 'notes', 'projects', 'planning', 'tracking', 'team' ],
+	};
 	const cnb = [ 'c48' ];
 
 	const unbind = () => {
@@ -29,12 +34,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	const rebind = () => {
-		const node = $(nodeRef.current);
-		const tooltipPhrase = node.find('#tooltipPhrase');
-
 		unbind();
 		$(window).on('keydown.onboarding', e => onKeyDown(e));
-		tooltipPhrase.off('click').on('click', () => onPhraseTooltip());
 	};
 
 	const onKeyDown = e => {
@@ -51,7 +52,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	// Guard to prevent illegal state change
 	const canMoveBack = (): boolean => {
-		return stage <= Stage.Email;
+		return stage <= Stage.Purpose;
 	};
 
 	const onAuth = () => {
@@ -59,7 +60,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			replace: true,
 			onRouteChange: () => {
 				S.Common.showRelativeDatesSet(true);
-				S.Common.getRef('mainAnimation')?.destroy();
 				U.Space.initSpaceState();
 
 				const routeParam = { replace: true };
@@ -96,7 +96,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
-	const onForward = (skipName?: boolean) => {
+	const onForward = () => {
 		if (!canMoveForward()) {
 			return;
 		};
@@ -104,35 +104,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 		switch (stage) {
-			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + 1));
-				break;
-			};
-
-			case Stage.Name: {
-				const name = nameRef.current?.getValue();
-				const cb = () => {
-					Animation.from(() => {
-						nextRef.current?.setLoading(false);
-
-						if (needEmail) {
-							setStage(stage + 1);
-						} else {
-							onAuth();
-						};
-					});
-				};
-
-				if (!skipName && name) {
-					nextRef.current?.setLoading(true);
-					U.Object.setName(S.Block.profile, name, cb);
-				} else {
-					cb();
-					analytics.event('ScreenOnboardingSkipName');
-				};	
-				break;
-			};
-
 			case Stage.Email: {
 				const email = emailRef.current?.getValue();
 
@@ -147,14 +118,24 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 							return;
 						};
 
+						Animation.from(() => setStage(stage + 1));
+
 						analytics.event('ScreenOnboardingEnterEmail', { middleTime: message.middleTime });
 					});
-
-					onAuth();
 				} else {
-					onAuth();
+					Animation.from(() => setStage(stage + 1));
 					analytics.event('ScreenOnboardingSkipEmail');
 				};
+				break;
+			};
+
+			case Stage.Role: {
+				Animation.from(() => setStage(stage + 1));
+				break;
+			};
+
+			case Stage.Purpose: {
+				onAuth();
 				break;
 			};
 		};
@@ -166,21 +147,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			return;
 		};
 
-		if (stage == Stage.Phrase) {
+		if (stage == Stage.Email) {
 			Animation.from(() => U.Router.go('/', { replace: true }));
 		} else {
 			setStage(stage - 1);
-		};
-	};
-
-	const onShowPhrase = () => {
-		if (phraseVisible) {
-			onForward();
-		} else {
-			phraseRef.current?.onToggle();
-			setPhraseVisible(true);
-
-			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: Stage[stage] });
 		};
 	};
 
@@ -190,14 +160,52 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
 	};
 
-	const onCopy = () => {
-		U.Common.copyToast(translate('commonPhrase'), phraseRef.current?.getValue());
-		analytics.event('KeychainCopy', { type: 'Onboarding' });
+	const shuffleItems = (stage: string) => {
+		const s = options[stage].map(value => ({ value, sort: Math.random() }))
+			.sort((a, b) => a.sort - b.sort)
+			.map(({ value }) => value);
+
+		s.push('other');
+
+		shuffled.current[stage] = s;
+
+		return s;
 	};
 
-	const onPhraseTooltip = () => {
-		S.Popup.open('phrase', {});
-		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[stage] });
+	const getItems = (stage: string) => {
+		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
+
+		return items.map(it => ({ id: it, name: translate(`authOnboardOptions${U.Common.ucFirst(it)}`), stage }));
+	};
+
+	const onItemClick = (item: any) => {
+		const { id, stage } = item;
+		const s = selected.current[stage];
+
+		if (s.length && s.indexOf(id) > -1) {
+			selected.current[stage] = s.filter(it => it != item.id);
+		} else {
+			if (stage == 'role') {
+				selected.current[stage] = [ item.id ];
+			} else {
+				selected.current[stage].push(item.id);
+			};
+		};
+
+		setDummy(dummy + 1);
+	};
+
+	const itemsMapper = (item: any) => {
+		const { id, name, stage } = item;
+		const s = selected.current[stage];
+		const isSelected = s.indexOf(id) > -1;
+
+		return (
+			<div className={[ 'option', 'animation', isSelected ? 'selected' : '' ].join(' ')} key={id} onClick={() => onItemClick(item)}>
+				<Icon className={id} />
+				<Label text={name} />
+			</div>
+		);
 	};
 
 	if (!canMoveForward()) {
@@ -208,65 +216,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	let buttons = null;
 
 	switch (stage) {
-		case Stage.Phrase: {
-			const text = phraseVisible ? translate('commonNext') : translate('authOnboardPhraseSubmit');
-
-			content = (
-				<Phrase
-					ref={phraseRef}
-					className="animation"
-					readonly={true}
-					isHidden={!phraseVisible}
-					onCopy={onCopy}
-					onClick={onCopy}
-					tooltipCopy={translate('pageAuthOnboardCopyKey')}
-				/>
-			);
-
-			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={text} onClick={onShowPhrase} />
-					</div>
-
-					{!phraseVisible ? (
-						<div className="animation">
-							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
-						</div>
-					) : ''}
-				</>
-			);
-			break;
-		};
-
-		case Stage.Name: {
-			const profile = U.Space.getProfile();
-
-			content = (
-				<div className="inputWrapper animation">
-					<Input
-						key="name"
-						ref={nameRef}
-						focusOnMount={true}
-						placeholder={profile?.name || translate('authOnboardNamePlaceholder')}
-						maxLength={255}
-					/>
-				</div>
-			);
-
-			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={() => onForward()} />
-					</div>
-					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward(true)} />
-					</div>
-				</>
-			);
-			break;
-		};
-
 		case Stage.Email: {
 			cnb.push('disabled');
 
@@ -286,13 +235,62 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
 					</div>
-					{/*
 					<div className="animation">
 						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
 					</div>
+					{/*
+					<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
 					*/}
+				</>
+			);
+			break;
+		};
+
+		case Stage.Role: {
+			if (!selected.current.role.length) {
+				cnb.push('disabled');
+			};
+
+			content = (
+				<div className="optionsWrapper">
+					{getItems('role').map(itemsMapper)}
+				</div>
+			);
+
+			buttons = (
+				<>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+					</div>
+					<div className="animation">
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+					</div>
+				</>
+			);
+			break;
+		};
+
+		case Stage.Purpose: {
+			if (!selected.current.purpose.length){
+				cnb.push('disabled');
+			};
+
+			content = (
+				<div className="optionsWrapper">
+					{getItems('purpose').map(itemsMapper)}
+				</div>
+			);
+
+			buttons = (
+				<>
+					<div className="animation">
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+					</div>
+					<div className="animation">
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+					</div>
 				</>
 			);
 			break;
@@ -313,13 +311,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 	useEffect(() => {
 		init();
 
-		if (account && (stage == Stage.Phrase)) {
-			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
-		};
-
-		const step = stage == Stage.Name ? 'Soul' : Stage[stage];
-
-		analytics.event('ScreenOnboarding', { step });
+		analytics.event('ScreenOnboarding', { step: Stage[stage] });
 	}, [ stage ]);
 
 	return (
@@ -331,7 +323,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 
 			<Frame ref={frameRef}>
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
-				<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
+				<Label id="label" className="description animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
 
 				{content}
 				<Error className="animation" text={error} />
