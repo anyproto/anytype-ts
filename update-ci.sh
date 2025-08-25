@@ -84,7 +84,7 @@ else
     ASSET_ID=$(echo $VERSION | jq ".assets | map(select(.name | match(\"js_(nightly|v[0-9]+.[0-9]+.[0-9]+([^_]+)?)_${OS_ARCH}\";\"i\")))[0].id")
 
     if [[ "$ASSET_ID" == "" ]]; then
-        echo "ERROR: ASSET_ID not found in VERSION='$VERSION'" 1>&2
+        echo "ERROR: ASSET_ID not found" 1>&2
         exit 1
     fi
 
