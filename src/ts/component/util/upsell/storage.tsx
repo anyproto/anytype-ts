@@ -28,6 +28,7 @@ const UpsellStorage: FC<Props> = ({
 
 	const show = (usagePercent > 55) && (usagePercent < 100)
 		&& U.Common.checkCanMembershipUpgrade()
+		&& U.Data.isAnytypeNetwork()
 		&& membershipTiers[0]
 		&& (membershipTiers[0].id != membership.tier)
 		&& !notSyncedCounter;

@@ -367,7 +367,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						<ObjectName object={item} />
 
 						<div className="icons">
-							{icons.map(icon => <Icon className={icon} />)}
+							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
