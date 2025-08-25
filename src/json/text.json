@@ -441,17 +441,15 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardNameTitle": "Add your name",
-	"authOnboardNameLabel": "Only seen by people you share something with. There is no central registry for these names.",
-	"authOnboardNamePlaceholder": "Enter your name...",
-
 	"authOnboardEmailTitle": "Stay in the loop",
 	"authOnboardEmailLabel": "We'd love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won't share your data. Ever.",
 	"authOnboardEmailPlaceholder": "Enter your email...",
 
-	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — you control your data.<br/>You can find this key later in app settings.<br/><span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show my key",
+	"authOnboardRoleTitle": "Tell Us About Yourself",
+	"authOnboardRoleLabel": "Select one role or background that best fits you",
+
+	"authOnboardPurposeTitle": "What do you want to use Anytype for?",
+	"authOnboardPurposeLabel": "Select as many as you want",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",

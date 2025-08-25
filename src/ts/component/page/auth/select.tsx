@@ -15,6 +15,7 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const onRegister = () => {
 		const { account } = S.Auth;
 		const cb = () => U.Router.go('/auth/onboard', {});
+		// Anytype.Lib.U.Router.go('/auth/onboard', {})
 
 		if (account) {
 			cb();
@@ -43,14 +44,18 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 			<Header {...props} component="authIndex" />
 			
 			<Frame>
-				<div className="intro">
+				<div className="intro animation">
 					<Label className="line1" text={translate('authSelectIntroLine1')} />
 					<Label className="line2" text={translate('authSelectIntroLine2')} />
 				</div>
 
 				<div className="buttons">
-					<Button text={translate('authSelectLogin')} color="accent" className="c48" onClick={onLogin} />
-					<Button ref={registerRef} text={translate('authSelectSignup')} color="blank" className="c48" onClick={onRegister} />
+					<div className="animation">
+						<Button text={translate('authSelectLogin')} color="accent" className="c48" onClick={onLogin} />
+					</div>
+					<div className="animation">
+						<Button ref={registerRef} text={translate('authSelectSignup')} color="blank" className="c48" onClick={onRegister} />
+					</div>
 				</div>
 
 				<Error text={error} />

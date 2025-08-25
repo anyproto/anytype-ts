@@ -36,7 +36,7 @@ html.bodyAuthDeleted {
 
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
-	.input { height: 40px; border: solid 1px var(--color-shape-primary) !important; text-align: center; }
+	.input { height: 40px; text-align: center; }
 
 	.header { width: 100% !important; }
 	.footer { width: 100% !important; }
@@ -52,7 +52,7 @@ html.bodyAuthDeleted {
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { min-width: 224px; @include text-common; }
-	.button.disabled { color: var(--color-text-tertiary) !important; }
+	.button.disabled { color: var(--color-text-tertiary) !important; background-color: var(--color-control-inactive) !important; }
 	
 	.small { color: var(--color-text-secondary) !important; }
 	.small:hover { color: var(--color-text-primary) !important; }
@@ -148,35 +148,16 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard {
 	.title { margin: 0px 0px 8px 0px; }
-	.label { width: 640px; margin: 0px 0px 34px 0px; }
-	.button { min-width: 224px; width: auto; }
+	.label { width: 508px; margin: 0px 0px 32px 0px; }
 
-	.tooltipLink { color: var(--color-text-primary) !important; }
+	.buttons { flex-direction: column; gap: 12px 0px; }
+	.button.c48 { width: 224px; border-radius: 24px; }
+
 	.tooltipLink:hover { text-decoration: underline; }
 
-	.phraseWrapper, .inputWrapper { margin: 0px 0px 40px 0px; }
-	.phraseWrapper {
-		.icon { display: none; }
-		.icon.copy { display: block; right: 16px; background-image: url('~img/icon/onboarding/copy.svg'); }
-	}
-
+	.inputWrapper { margin: 0px 0px 24px 0px; }
 	.inputWrapper {
-		.input { 
-			border-radius: 26px; border: none !important; background: var(--color-input-opaque) !important; color: var(--color-text-primary) !important; 
-			font-size: var(--font-size-header3); padding: 0px 26px; height: 72px; width: 480px;
-		}
-		.input:hover { filter: brightness(1.2); }
-		.input::placeholder { color: var(--color-text-tertiary) !important; }
-	}
-
-	.stageName {
-		.label { width: 480px; margin-bottom: 40px; }
-	}
-
-	.stageEmail {
-		.label { width: 504px; margin-bottom: 40px; }
-
-		.buttons { flex-direction: column; gap: 16px; }
+		.input { @include text-paragraph; font-weight: 500; background-color: var(--color-shape-tertiary); border-radius: 20px; border: 0px; padding: 0px 26px; height: 64px; width: 480px; }
 	}
 }
 
