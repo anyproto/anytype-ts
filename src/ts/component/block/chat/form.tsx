@@ -1291,6 +1291,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		node.addClass('sidebarAnimation');
+
 		raf(() => {
 			dummy.css({ height: node.outerHeight(true) });
 			node.css({ left: dummy.offset().left - padding, width: dummy.width() + padding * 2 });

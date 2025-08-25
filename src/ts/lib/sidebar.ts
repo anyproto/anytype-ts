@@ -243,6 +243,7 @@ class Sidebar {
 		const isMain = keyboard.isMain();
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
+		const isMainChat = keyboard.isMainChat();
 
 		this.initObjects();
 
@@ -293,7 +294,10 @@ class Sidebar {
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
-		//this.page.toggleClass('sidebarAnimation', animate);
+
+		if (isMainChat) {
+			this.page.toggleClass('sidebarAnimation', animate);
+		};
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });

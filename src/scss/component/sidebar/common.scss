@@ -45,6 +45,10 @@
 
 .sidebar.right {
 	@import "./preview";
+
+	.sidebarPage.pageWidget {
+		.body { padding-bottom: 12px; }
+	}
 }
 
 .sidebar {

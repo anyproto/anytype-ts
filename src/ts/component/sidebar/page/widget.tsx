@@ -56,6 +56,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const isMuted = space.notificationMode != I.NotificationMode.All;
+		const chatSpaceHeaderButtons = [
+			{ id: 'add', name: translate('commonAdd') },
+			{ id: 'search', name: translate('commonSearch') },
+			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'pushOff' : 'pushOn' },
+		];
 
 		if (isEditing) {
 			cnb.push('isEditing');
@@ -169,17 +176,41 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								className="firstTarget"
 								cacheKey="firstTarget"
 							>
-								<Widget 
-									block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
-									disableContextMenu={true} 
-									onDragStart={this.onDragStart}
-									onDragOver={this.onDragOver}
-									onDrag={this.onDrag}
-									isEditing={isEditing}
-									canEdit={false}
-									canRemove={false}
-									sidebarDirection={sidebarDirection}
-								/>
+								{isDirectionRight ? (
+									<div className="spaceChatSidebarHeader">
+										<div className="spaceInfo">
+											<IconObject
+												id="spaceIcon"
+												size={80}
+												iconSize={80}
+												object={{ ...space, spaceId: S.Common.space }}
+											/>
+											<ObjectName object={{ ...space, spaceId: S.Common.space }} />
+
+											{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+										</div>
+										<div className="buttons">
+											{chatSpaceHeaderButtons.map((item, idx) => (
+												<div className="item" onClick={e => this.onChatSpaceButton(e, item)} key={idx}>
+													<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
+													<Label text={item.name} />
+												</div>
+											))}
+										</div>
+									</div>
+								) : (
+									<Widget
+										block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
+										disableContextMenu={true}
+										onDragStart={this.onDragStart}
+										onDragOver={this.onDragOver}
+										onDrag={this.onDrag}
+										isEditing={isEditing}
+										canEdit={false}
+										canRemove={false}
+										sidebarDirection={sidebarDirection}
+									/>
+								)}
 							</DropTarget>
 						</>
 					) : ''}
@@ -212,7 +243,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			);
 
-			bottom = (
+			bottom = isDirectionRight ? '' : (
 				<div className="bottom">
 					<div className="grad" />
 
@@ -253,7 +284,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					) : (
 						<>
-							<div className="side left" />
+							<div className="side left">
+								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
+							</div>
 							<div className="side right">
 								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, page)} />
 							</div>
@@ -653,6 +686,31 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (!isEditing && !e.button) {
 			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+		};
+	};
+
+	onChatSpaceButton (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		const space = U.Space.getSpaceview();
+		const isMuted = space.notificationMode != I.NotificationMode.All;
+
+		switch (item.id) {
+			case 'add': {
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
+				break;
+			};
+
+			case 'search': {
+				keyboard.onSearchPopup(analytics.route.widget);
+				break;
+			};
+
+			case 'mute': {
+				C.PushNotificationSetSpaceMode(S.Common.space, Number(isMuted ? I.NotificationMode.All : I.NotificationMode.Mentions));
+				break;
+			};
 		};
 	};
 
