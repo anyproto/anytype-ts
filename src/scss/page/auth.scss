@@ -44,12 +44,6 @@ html.bodyAuthDeleted {
 
 	.header { width: 100% !important; }
 	.footer { width: 100% !important; }
-
-	.icon.arrow.back {
-		position: fixed; top: 50%; left: 10px; width: 32px; height: 56px; margin-top: -28px; background-image: url('~img/arrow/auth0.svg');
-		z-index: 2;
-	}
-	.icon.arrow.back:hover { background-image: url('~img/arrow/auth1.svg'); }
 	
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
@@ -69,6 +63,8 @@ html.bodyAuthDeleted {
 	.withError { background: var(--color-error-background) !important; }
 }
 
+
+.pageIndexIndex, .pageAuthSelect { background-color: var(--color-shape-tertiary); }
 .pageIndexIndex, .pageAuthSelect {
 	.frame { width: 720px; }
 
@@ -96,14 +92,13 @@ html.bodyAuthDeleted {
 	}
 }
 
-.pageAuthLogin { background-color: var(--color-shape-tertiary); }
 .pageAuthLogin {
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; }
 	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: 0px; transform: translateY(calc(-100% - 16px)); }
 
 	.title { margin: 0px 0px 20px 0px; }
-	.phraseWrapper { margin: 0px 0px 40px 0px; background-color: var(--color-bg-primary); }
+	.phraseWrapper { margin: 0px 0px 40px 0px; background-color: var(--color-shape-tertiary); }
 }
 
 .pageAuthInvite {

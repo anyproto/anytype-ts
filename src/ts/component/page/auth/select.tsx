@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { Frame, Button, Header, Footer, Error, Label } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
+import { observer } from 'mobx-react';
 
-const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const registerRef = useRef(null);
@@ -15,7 +16,6 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const onRegister = () => {
 		const { account } = S.Auth;
 		const cb = () => U.Router.go('/auth/onboard', {});
-		// Anytype.Lib.U.Router.go('/auth/onboard', {})
 
 		if (account) {
 			cb();
@@ -64,6 +64,6 @@ const PageAuthSelect = forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-});
+}));
 
 export default PageAuthSelect;

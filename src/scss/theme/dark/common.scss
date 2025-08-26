@@ -336,6 +336,10 @@ html.themeDark {
 
 	/* Header */
 
+	.header.authIndex {
+		.logo { background: url('~img/logo/white.svg'); }
+	}
+
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }

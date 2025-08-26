@@ -134,8 +134,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
-	const back = <Icon className="arrow back" onClick={onCancel} />;
-
 	let loader = null;
 	let title = '';
 	let label = '';
@@ -189,8 +187,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			className="wrapper"
 		>
 			<Frame>
-				{back}
-
 				{icon}
 				{title ? <Title className={cn.join(' ')} text={title} /> : ''}
 				{label ? <Label className={cn.join(' ')} text={label} /> : ''}

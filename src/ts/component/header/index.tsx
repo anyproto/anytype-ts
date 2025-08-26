@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon, Sync } from 'Component';
+import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -29,7 +30,7 @@ const Components = {
 	mainSettings: 		 HeaderMainSettings,
 };
 
-const Header = forwardRef<{}, Props>((props, ref) => {
+const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { 
 		component, 
@@ -228,6 +229,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-});
+}));
 
 export default Header;

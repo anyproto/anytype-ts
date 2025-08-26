@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
+import { Frame, Error, Button, Header, Phrase } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
 const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
@@ -132,11 +132,6 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 
 		keyboard.shortcut('enter', e, () => onSubmit(e));
 	};
-	
-	const onCancel = () => {
-		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/', { replace: true }));
-	};
 
 	const onForgot = () => {
 		const platform = U.Common.getPlatform();
@@ -166,7 +161,6 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	return (
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
-			<Icon className="arrow back" onClick={onCancel} />
 			
 			<Frame>
 				<form className="form" onSubmit={onSubmit}>

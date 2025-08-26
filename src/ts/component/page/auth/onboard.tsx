@@ -319,8 +319,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			ref={nodeRef} 
 			className={`stage${Stage[stage]}`}
 		>
-			{canMoveBack() ? <Icon className="arrow back" onClick={onBack} /> : ''}
-
 			<Frame ref={frameRef}>
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 				<Label id="label" className="description animation" text={translate(`authOnboard${Stage[stage]}Label`)} />

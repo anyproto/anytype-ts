@@ -420,12 +420,12 @@
 	"authSelectIntroLine1": "Encrypted, local,",
 	"authSelectIntroLine2": "yours forever",
 
-	"authSelectLogin": "I already have the key",
+	"authSelectLogin": "I already have a Key",
 	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
-	"authLoginLostPhrase": "I've lost the Key",
+	"authLoginLostPhrase": "I've lost my Key",
 
 	"authDeleteTitle": "Delete Profile",
 	"authDeleteTitleDeleted": "Vault data removed from the backup node",
