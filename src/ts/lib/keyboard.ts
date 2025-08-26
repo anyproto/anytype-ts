@@ -1266,6 +1266,8 @@ class Keyboard {
 			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
+		ret.route = String(ret.route || '');
+
 		// Universal object route
 		if (ret.route.match(/^\/object/)) {
 			ret.params = Object.assign(ret.params, {
