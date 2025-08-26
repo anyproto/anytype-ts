@@ -53,7 +53,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const getLimit = ({ limit, layout }): number => {
 		if (isPreview) {
-			return 0;
+			return J.Constant.limit.menuRecords;
 		};
 
 		const options = U.Menu.getWidgetLimitOptions(layout).map(it => Number(it.id));

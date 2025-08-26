@@ -131,8 +131,6 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 	useEffect(() => {
 		cache.current.clearAll();
 		listRef.current?.recomputeRowHeights(0);
-
-		console.log('recomputeRowHeights');
 	}, [ rows.length ]);
 
 	return (
