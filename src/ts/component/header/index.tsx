@@ -17,6 +17,7 @@ import HeaderMainEmpty from './main/empty';
 interface Props extends I.HeaderComponent {
 	component: string;
 	className?: string;
+	onBack?: () => void;
 };
 
 const Components = {

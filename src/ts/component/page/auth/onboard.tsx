@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Icon, Input, Error } from 'Component';
+import { Frame, Title, Label, Button, Icon, Input, Error, Header } from 'Component';
 import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
-import current from 'ts/component/popup/page/membership/current';
 
 enum Stage {
 	Email	 = 0,
@@ -10,7 +9,7 @@ enum Stage {
 	Purpose  = 2,
 };
 
-const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { redirect } = S.Common;
@@ -185,11 +184,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 		if (s.length && s.indexOf(id) > -1) {
 			selected.current[stage] = s.filter(it => it != item.id);
 		} else {
-			if (stage == 'role') {
-				selected.current[stage] = [ item.id ];
-			} else {
-				selected.current[stage].push(item.id);
-			};
+			selected.current[stage] = [ item.id ];
 		};
 
 		setDummy(dummy + 1);
@@ -319,6 +314,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>(() => {
 			ref={nodeRef} 
 			className={`stage${Stage[stage]}`}
 		>
+			<Header {...props} component="authIndex" onBack={onBack} />
+
 			<Frame ref={frameRef}>
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 				<Label id="label" className="description animation" text={translate(`authOnboard${Stage[stage]}Label`)} />

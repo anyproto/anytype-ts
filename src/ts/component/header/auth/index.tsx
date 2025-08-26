@@ -3,16 +3,24 @@ import { Icon, Label, Select } from 'Component';
 import { observer } from 'mobx-react';
 import { Action, Animation, I, S, U, J } from 'Lib';
 
-const HeaderAuthIndex = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+interface Props extends I.HeaderComponent {
+	onBack?: () => void;
+};
 
+const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
+
+	const { onBack } = props;
 	const pathname = U.Router.getRoute();
 	const { action } = U.Router.getParam(pathname);
 	const { interfaceLang } = S.Common;
 	const interfaceLanguages = U.Menu.getInterfaceLanguages();
 	const refLang = useRef(null);
 
-	const onBack = () => {
-		const isOnboarding = action == 'onboard';
+	const onBackHandler = () => {
+		if (onBack) {
+			onBack();
+			return;
+		};
 
 		S.Auth.logout(true, false);
 		Animation.from(() => U.Router.go('/', { replace: true }));
@@ -27,7 +35,7 @@ const HeaderAuthIndex = observer(forwardRef<{}, I.HeaderComponent>((props, ref) 
 	return (
 		<>
 			<div className="side left">
-				<Icon className="arrow back" onClick={onBack} />
+				<Icon className="arrow back withBackground" onClick={onBackHandler} />
 			</div>
 			<div className="side center">
 				<div className="logo" />
