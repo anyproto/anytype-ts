@@ -92,12 +92,6 @@
 	> .body.isOnboardingHidden { visibility: visible; }
 	> .body.isListPreview { overflow: hidden; height: 100%; padding-bottom: 12px; }
 
-	> .body.isListPreview {
-		.viewGallery {
-			.body { padding: 8px 16px !important; }
-		}
-	}
-
 	.spaceChatSidebarHeader { padding-bottom: 8px; }
 	.spaceChatSidebarHeader {
 		.spaceInfo { margin-bottom: 18px; display: flex; flex-direction: column; align-items: center; }
