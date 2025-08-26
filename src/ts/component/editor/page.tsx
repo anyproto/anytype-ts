@@ -2281,8 +2281,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			style = I.TextStyle.Paragraph;
 		};
 
-		console.log();
-
 		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
 			if (message.error.code) {
 				return;
