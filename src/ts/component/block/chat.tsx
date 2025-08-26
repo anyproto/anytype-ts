@@ -656,7 +656,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const wrapper = $(scrollWrapperRef.current);
-			const y = wrapper.outerHeight();
+			const y = wrapper.outerHeight() + 40;
 
 			setAutoLoadDisabled(true);
 

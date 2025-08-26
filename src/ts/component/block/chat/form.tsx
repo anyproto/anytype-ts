@@ -781,7 +781,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setRange(range.current);
 		setReplyingId(message.id);
 		resize();
-		scrollToBottom();
 
 		analytics.event('ClickMessageMenuReply');
 	};
@@ -1304,6 +1303,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		node.css({ width, left });
 		dummy.css({ height: node.outerHeight() });
+
+		scrollToBottom();
 	};
 
 	let form = null;
