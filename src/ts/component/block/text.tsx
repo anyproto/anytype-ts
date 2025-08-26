@@ -1260,8 +1260,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Use provided value and range if available, fallback to current
 		const v = value !== undefined ? value : this.getValue();
 		const r = range !== undefined ? range : this.getRange();
-
-		this.setValue(v, r);
 	};
 
 	onBeforeInput = (e: any) => {
