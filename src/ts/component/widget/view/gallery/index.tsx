@@ -52,10 +52,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 
 	const rows = getItems();
 
-	console.log(rows);
-
 	let content = null;
-
 	if (isPreview) {
 		const rowRenderer = (param: any) => (
 			<CellMeasurer

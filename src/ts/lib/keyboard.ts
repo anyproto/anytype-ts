@@ -1256,12 +1256,43 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
 		let ret: any = { params: {} };
+		let data: any = {};
+
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
 			ret.route = U.Router.getRoute();
 			ret.params = this.getRouteMatch();
+			data = U.Common.searchParam(U.Router.getSearch());
 		};
+
+		// Universal object route
+		if (ret.route.match(/^\/object/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			});
+		};
+
+		// Invite route
+		if (ret.route.match(/^\/invite/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'invite',
+				...data,
+			});
+		};
+
+		// Membership route
+		if (ret.route.match(/^\/membership/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'membership',
+			});
+		};
+
 		return ret;
 	};
 
