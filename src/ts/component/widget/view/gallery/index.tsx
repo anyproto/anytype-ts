@@ -27,13 +27,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 		for (let i = 0; i < items.length; i++) {
 			const id = items[i].id;
 
-			row.children.push({
-				id,
-				itemId: id,
-				iconName: id,
-				iconOption: 1,
-				layout: I.ObjectLayout.Type
-			});
+			row.children.push({ id });
 			n++;
 
 			if (n == LIMIT_ROW) {
