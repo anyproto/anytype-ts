@@ -77,10 +77,9 @@ html.bodyAuthDeleted {
 	}
 
 	$easingBubbleWrapper: cubic-bezier(0.5, 0, 0.75, 0);
-	$easingBubble: linear(0, 0.457 2.7%, 0.743 4.9%, 0.847 6%, 0.922 7.1%, 0.963 8.1%, 0.974 8.6%, 0.979 9.2%, 0.976 9.7%, 0.965 10.3%, 0.922 11.4%, 0.854 12.5%, 0.755 13.7%, 0.52 15.9%, -0.116 21.1%, -0.254 22.4%, -0.372 23.7%, -0.459 24.9%, -0.52 26%, -0.561 27.1%, -0.573 27.6%, -0.583 28.2%, -0.586 28.7%, -0.586 29.2%, -0.581 29.7%, -0.574 30.2%, -0.548 31.2%, -0.506 32.3%, -0.381 34.6%, -0.032 39.7%, 0.11 42.1%, 0.174 43.5%, 0.221 44.8%, 0.252 46.1%, 0.262 46.7%, 0.27 47.4%, 0.274 48.4%, 0.271 49.4%, 0.261 50.4%, 0.243 51.5%, 0.193 53.6%, 0.048 58.5%, -0.012 60.8%, -0.038 62.1%, -0.059 63.4%, -0.073 64.6%, -0.083 65.9%, -0.086 66.9%, -0.087 67.9%, -0.085 68.9%, -0.08 70%, -0.066 72%, -0.028 76.3%, -0.012 78.3%, 0 80.5%, 0.008 82.6%, 0.011 84.4%, 0.011 86.3%, 0.002 94.4%, 0);
 	@keyframes bubble {
-		0%, 25% { transform: scale3d(0.9, 0.9, 1);  }
-		100% { transform: scale3d(1.1, 1.1, 1); }
+		0%, 100% { transform: scale3d(0.9, 0.9, 1);  }
+		50% { transform: scale3d(1.1, 1.1, 1); }
 	}
 
 	.bubbleWrapper {
@@ -88,7 +87,7 @@ html.bodyAuthDeleted {
 		display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all $easingBubbleWrapper 1s;
 	}
 	.bubbleWrapper {
-		.bubble { animation: bubble $easingBubble infinite 2.6s; border-radius: 50%; width: 100%; height: 100%; background-color: transparent; }
+		.bubble { animation: bubble ease-in-out infinite 3.2s; border-radius: 50%; width: 100%; height: 100%; background-color: transparent; }
 		.bubble {
 			.img { width: 100%; height: 100%; background-size: 100%; background-image: url('~img/icon/bubble.svg'); transition: opacity $easingBubbleWrapper 1s; }
 		}
