@@ -68,12 +68,17 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		menuOpen('syncStatus', '#headerSync', {});
 	};
 
-	const renderLeftIcons = (withGraph?: boolean, onOpen?: () => void) => {
-		const buttons: any[] = [
+	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
+		let buttons: any[] = [
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
-			{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-			{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
 		];
+
+		if (withNavigation) {
+			buttons = buttons.concat([
+				{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
+				{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+			]);
+		};
 
 		if (withGraph) {
 			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
@@ -81,6 +86,8 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 
 		return (
 			<>
+				<Sync id="headerSync" onClick={onSync} />
+
 				{buttons.map(item => {
 					const cn = [ item.id, 'withBackground' ];
 
@@ -98,8 +105,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 						/>
 					);
 				})}
-
-				<Sync id="headerSync" onClick={onSync} />
 			</>
 		);
 	};

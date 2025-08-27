@@ -136,7 +136,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	return (
 		<>
 			<div className="side left">
-				{renderLeftIcons(true, onOpen)}
+				{renderLeftIcons(true, true, onOpen)}
 			</div>
 
 			<div className="side center">
