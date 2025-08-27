@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
+import $ from 'jquery';
 import { Frame, Button, Header, Footer, Error, Label } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
 import { observer } from 'mobx-react';
@@ -9,8 +10,15 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 	const registerRef = useRef(null);
 	const [ error, setError ] = useState('');
 
+	const inflate = (callBack: () => void) => {
+		$('#introBubble').addClass('inflate');
+		window.setTimeout(() => {
+			callBack();
+		},1000);
+	};
+
 	const onLogin = () => {
-		Animation.from(() => U.Router.go('/auth/login', {}));
+		inflate(() => U.Router.go('/auth/login', {}));
 	};
 
 	const onRegister = () => {
@@ -27,7 +35,7 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 		U.Data.accountCreate(error => {
 			registerRef.current.setLoading(false);
 			setError(error);
-		}, () => Animation.from(cb));
+		}, () => inflate(cb));
 	};
 
 	useEffect(() => {
@@ -47,6 +55,12 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 				<div className="intro animation">
 					<Label className="line1" text={translate('authSelectIntroLine1')} />
 					<Label className="line2" text={translate('authSelectIntroLine2')} />
+
+					<div id="introBubble" className="bubbleWrapper">
+						<div className="bubble">
+							<div className="img" />
+						</div>
+					</div>
 				</div>
 
 				<div className="buttons">

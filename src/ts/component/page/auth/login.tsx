@@ -1,5 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
@@ -149,7 +150,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	};
 
 	useEffect(() => {
-		Animation.to();
+		$('.frame').removeClass('invisible');
 		focus();
 	}, []);
 
@@ -162,7 +163,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
 			
-			<Frame>
+			<Frame className="invisible">
 				<form className="form" onSubmit={onSubmit}>
 					<Error text={error} className="animation" />
 
