@@ -408,7 +408,6 @@ class Mark {
 		marks.sort((a, b) => b.range.from - a.range.from);
 
 		for (const mark of marks) {
-			console.log(mark.param, mark.range.from, mark.range.to);
 			text = U.Common.stringInsert(text, mark.param, mark.range.from, mark.range.to);
 		};
 
