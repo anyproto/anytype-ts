@@ -260,7 +260,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			if (c1.orderId > c2.orderId) return 1;
 			if (c1.orderId < c2.orderId) return -1;
 
-			return U.Data.sortByName(c1, c2);
+			return U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc);
 		});
 
 		if (data.filter) {
