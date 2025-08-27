@@ -193,7 +193,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					};
 
 					if (last.content.text) {
-						text += U.Common.sanitize(Mark.toHtml(last.content.text, last.content.marks));
+						text += U.Common.sanitize(Mark.insertEmoji(last.content.text, last.content.marks));
 						text = text.replace(/\n\r?/g, ' ');
 					} else 
 					if (last.attachments.length) {
