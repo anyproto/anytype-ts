@@ -193,7 +193,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					};
 
 					if (last.content.text) {
-						text += U.Common.sanitize(Mark.toHtml(last.content.text, last.content.marks));
+						text += U.Common.sanitize(last.content.text);
 						text = text.replace(/\n\r?/g, ' ');
 					} else 
 					if (last.attachments.length) {
