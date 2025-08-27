@@ -28,7 +28,9 @@ const HeaderAuthIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	useEffect(() => {
 		window.setTimeout(() => {
-			refLang?.current.setValue(S.Common.interfaceLang);
+			if (refLang && refLang.current) {
+				refLang.current.setValue(S.Common.interfaceLang);
+			};
 		}, J.Constant.delay.route);
 	}, []);
 

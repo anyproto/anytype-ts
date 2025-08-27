@@ -203,21 +203,21 @@ html.bodyAuthDeleted {
 		.icon { width: 32px; height: 32px; background-size: 32px; }
 		.icon.student { background-image: url('~img/icon/onboarding/options/student.png'); }
 		.icon.manager { background-image: url('~img/icon/onboarding/options/manager.png'); }
-		.icon.developer { background-image: url('~img/icon/onboarding/options/developer.png'); }
+		.icon.softwareDeveloper { background-image: url('~img/icon/onboarding/options/developer.png'); }
 		.icon.writer { background-image: url('~img/icon/onboarding/options/writer.png'); }
 		.icon.designer { background-image: url('~img/icon/onboarding/options/designer.png'); }
 		.icon.artist { background-image: url('~img/icon/onboarding/options/artist.png'); }
 		.icon.marketer { background-image: url('~img/icon/onboarding/options/marketer.png'); }
 		.icon.consultant { background-image: url('~img/icon/onboarding/options/consultant.png'); }
-		.icon.founder { background-image: url('~img/icon/onboarding/options/founder.png'); }
+		.icon.entrepreneur { background-image: url('~img/icon/onboarding/options/founder.png'); }
 		.icon.researcher { background-image: url('~img/icon/onboarding/options/researcher.png'); }
 		.icon.messaging { background-image: url('~img/icon/onboarding/options/messaging.png'); }
 		.icon.knowledge { background-image: url('~img/icon/onboarding/options/knowledge.png'); }
-		.icon.notes { background-image: url('~img/icon/onboarding/options/notes.png'); }
+		.icon.noteTaking { background-image: url('~img/icon/onboarding/options/notes.png'); }
 		.icon.projects { background-image: url('~img/icon/onboarding/options/projects.png'); }
-		.icon.planning { background-image: url('~img/icon/onboarding/options/planning.png'); }
-		.icon.tracking { background-image: url('~img/icon/onboarding/options/tracking.png'); }
-		.icon.team { background-image: url('~img/icon/onboarding/options/team.png'); }
+		.icon.lifePlanning { background-image: url('~img/icon/onboarding/options/planning.png'); }
+		.icon.habitTracking { background-image: url('~img/icon/onboarding/options/tracking.png'); }
+		.icon.teamWork { background-image: url('~img/icon/onboarding/options/team.png'); }
 		.icon.other { background-image: url('~img/icon/onboarding/options/other.png'); }
 
 		.label { color: var(--color-text-secondary); @include text-common; }

@@ -5,8 +5,8 @@ import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onb
 
 enum Stage {
 	Email	 = 0,
-	Role 	 = 1,
-	Purpose  = 2,
+	Persona 	 = 1,
+	UseCase  = 2,
 };
 
 const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
@@ -18,13 +18,13 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const nextRef = useRef(null);
 	const emailRef = useRef(null);
 	const shuffled = useRef({ role: null, purpose: null });
-	const selected = useRef({ role: [], purpose: [] });
+	const selected = useRef({ role: null, purpose: null });
 	const [ stage, setStage ] = useState(Stage.Email);
 	const [ error, setError ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const options = {
-		role: [ 'student', 'manager', 'developer', 'writer', 'designer', 'artist', 'marketer', 'consultant', 'founder', 'researcher' ],
-		purpose: [ 'messaging', 'knowledge', 'notes', 'projects', 'planning', 'tracking', 'team' ],
+		role: [ 'student', 'manager', 'softwareDeveloper', 'writer', 'designer', 'artist', 'marketer', 'consultant', 'entrepreneur', 'researcher' ],
+		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
 	};
 	const cnb = [ 'c48' ];
 
@@ -51,7 +51,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 
 	// Guard to prevent illegal state change
 	const canMoveBack = (): boolean => {
-		return stage <= Stage.Purpose;
+		return stage <= Stage.UseCase;
 	};
 
 	const onAuth = () => {
@@ -128,13 +128,27 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 				break;
 			};
 
-			case Stage.Role: {
+			case Stage.Persona: {
 				Animation.from(() => setStage(stage + 1));
+
+				if (selected.current.role) {
+					const items = getItems('role');
+					const type = items.find(it => it.id == selected.current.role).type;
+
+					analytics.event('ClickOnboarding', { step: 'Persona', type });
+				};
 				break;
 			};
 
-			case Stage.Purpose: {
+			case Stage.UseCase: {
 				onAuth();
+
+				if (selected.current.purpose) {
+					const items = getItems('purpose');
+					const type = items.find(it => it.id == selected.current.purpose).type;
+
+					analytics.event('ClickOnboarding', { step: 'UseCase', type });
+				};
 				break;
 			};
 		};
@@ -174,18 +188,16 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const getItems = (stage: string) => {
 		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
 
-		return items.map(it => ({ id: it, name: translate(`authOnboardOptions${U.Common.ucFirst(it)}`), stage }));
+		return items.map(it => {
+			const type = U.Common.toUpperCamelCase(it);
+
+			return { id: it, name: translate(`authOnboardOptions${type}`), type, stage };
+		});
 	};
 
 	const onItemClick = (item: any) => {
 		const { id, stage } = item;
-		const s = selected.current[stage];
-
-		if (s.length && s.indexOf(id) > -1) {
-			selected.current[stage] = s.filter(it => it != item.id);
-		} else {
-			selected.current[stage] = [ item.id ];
-		};
+		selected.current[stage] = item.id;
 
 		setDummy(dummy + 1);
 	};
@@ -193,7 +205,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const itemsMapper = (item: any) => {
 		const { id, name, stage } = item;
 		const s = selected.current[stage];
-		const isSelected = s.indexOf(id) > -1;
+		const isSelected = s == item.id;
 
 		return (
 			<div className={[ 'option', 'animation', isSelected ? 'selected' : '' ].join(' ')} key={id} onClick={() => onItemClick(item)}>
@@ -243,8 +255,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			break;
 		};
 
-		case Stage.Role: {
-			if (!selected.current.role.length) {
+		case Stage.Persona: {
+			if (!selected.current.role) {
 				cnb.push('disabled');
 			};
 
@@ -267,8 +279,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			break;
 		};
 
-		case Stage.Purpose: {
-			if (!selected.current.purpose.length){
+		case Stage.UseCase: {
+			if (!selected.current.purpose){
 				cnb.push('disabled');
 			};
 
