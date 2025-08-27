@@ -157,57 +157,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			content = (
 				<div className="content">
-					{space && !space._empty_ ? (
-						<>
-							<DropTarget 
-								{...this.props} 
-								isTargetTop={true}
-								rootId={S.Block.widgets} 
-								id={first?.id}
-								dropType={I.DropType.Widget} 
-								canDropMiddle={false}
-								className="firstTarget"
-								cacheKey="firstTarget"
-							>
-								{isDirectionRight ? (
-									<div className="spaceChatSidebarHeader">
-										<div className="spaceInfo">
-											<IconObject
-												id="spaceIcon"
-												size={80}
-												iconSize={80}
-												object={{ ...space, spaceId: S.Common.space }}
-											/>
-											<ObjectName object={{ ...space, spaceId: S.Common.space }} />
-
-											{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
-										</div>
-										<div className="buttons">
-											{chatSpaceHeaderButtons.map((item, idx) => (
-												<div className="item" onClick={e => this.onChatSpaceButton(e, item)} key={idx}>
-													<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
-													<Label text={item.name} />
-												</div>
-											))}
-										</div>
-									</div>
-								) : (
-									<Widget
-										block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
-										disableContextMenu={true}
-										onDragStart={this.onDragStart}
-										onDragOver={this.onDragOver}
-										onDrag={this.onDrag}
-										isEditing={isEditing}
-										canEdit={false}
-										canRemove={false}
-										sidebarDirection={sidebarDirection}
-									/>
-								)}
-							</DropTarget>
-						</>
-					) : ''}
-
 					{blocks.map((block, i) => {
 						const { widgets } = S.Block;
 						const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -270,6 +219,58 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			);
 		};
 
+		let bodyHead = null;
+		if (space && !space._empty_) {
+			bodyHead = (
+				<DropTarget 
+					{...this.props} 
+					isTargetTop={true}
+					rootId={S.Block.widgets} 
+					id={first?.id}
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false}
+					className="firstTarget"
+					cacheKey="firstTarget"
+				>
+					{isDirectionRight ? (
+						<div className="spaceHeader">
+							<div className="spaceInfo">
+								<IconObject
+									id="spaceIcon"
+									size={80}
+									iconSize={80}
+									object={{ ...space, spaceId: S.Common.space }}
+								/>
+								<ObjectName object={{ ...space, spaceId: S.Common.space }} />
+
+								{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+							</div>
+							<div className="buttons">
+								{chatSpaceHeaderButtons.map((item, idx) => (
+									<div className="item" onClick={e => this.onChatSpaceButton(e, item)} key={idx}>
+										<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
+										<Label text={item.name} />
+									</div>
+								))}
+							</div>
+						</div>
+					) : (
+						<Widget
+							block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
+							disableContextMenu={true}
+							onDragStart={this.onDragStart}
+							onDragOver={this.onDragOver}
+							onDrag={this.onDrag}
+							isEditing={isEditing}
+							canEdit={false}
+							canRemove={false}
+							sidebarDirection={sidebarDirection}
+						/>
+					)}
+				</DropTarget>
+			);
+		};
+
 		return (
 			<>
 				<div className="head">
@@ -309,6 +310,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 					</div>
 				) : ''}
+
+				{bodyHead}
 
 				<div
 					id="body"

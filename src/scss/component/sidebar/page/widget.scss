@@ -14,6 +14,18 @@
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 
+	> .dropTarget.firstTarget { 
+		position: relative; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); 
+		padding: 0px 12px 12px 12px;
+	}
+	> .dropTarget.firstTarget {
+		&::after {
+			content: ''; position: absolute; left: 0px; bottom: -30px; width: 100%; height: 55px; pointer-events: none; 
+			background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%); opacity: 0; transition: opacity 0.2s ease-in-out;
+		}
+		&.isScrolled::after { opacity: 1; }
+	}
+
 	> .body {
 		padding: 0px 6px 68px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 	}
@@ -30,17 +42,6 @@
 
 		> .content { display: flex; flex-direction: column; gap: 12px 0px; }
 		> .content {
-			> .dropTarget.firstTarget { 
-				position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); 
-			}
-			> .dropTarget.firstTarget {
-				&::after {
-					content: ''; position: absolute; left: 0px; bottom: -45px; width: 100%; height: 55px; pointer-events: none; 
-					background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%); opacity: 0; transition: opacity 0.2s ease-in-out;
-				}
-				&.isScrolled::after { opacity: 1; }
-			}
-
 			> .dropTarget.lastTarget { position: relative; display: flex; flex-direction: column; gap: 12px 0px; }
 
 			> .dropTarget.firstTarget.isOver, 
@@ -92,8 +93,8 @@
 	> .body.isOnboardingHidden { visibility: visible; }
 	> .body.isListPreview { overflow: hidden; height: 100%; padding-bottom: 12px; }
 
-	.spaceChatSidebarHeader { padding-bottom: 8px; }
-	.spaceChatSidebarHeader {
+	.spaceHeader { position: relative; z-index: 1; }
+	.spaceHeader {
 		.spaceInfo { margin-bottom: 18px; display: flex; flex-direction: column; align-items: center; }
 		.spaceInfo {
 			.iconObject { margin-bottom: 8px; }
@@ -102,11 +103,11 @@
 		}
 		.buttons { display: flex; justify-content: center; gap: 0px 24px; }
 		.buttons {
-			.item { width: 48px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; }
+			.item { width: 48px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; align-items: center; }
 			.item {
 				.icon {
 					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
-					background-position: 50% 50%; background-repeat: no-repeat; background-size: 20px; transition: background-color $transitionCommon;
+					background-position: 50% 50%; background-repeat: no-repeat; background-size: 20px; transition: all 0.2s ease-in-out;
 				}
 				.icon.add { background-image: url('~img/icon/sidebar/chatSpace/add.svg'); }
 				.icon.search { background-image: url('~img/icon/sidebar/chatSpace/search.svg'); }
@@ -116,6 +117,19 @@
 			}
 			.item:hover {
 				.icon { background-color: var(--color-shape-highlight-dark); }
+			}
+		}
+	}
+
+	.isScrolled {
+		.spaceHeader {
+			.spaceInfo { flex-direction: row; gap: 0px 8px; justify-content: center; align-items: center; }
+			.iconObject { width: 20px; height: 20px; margin: 0px; }
+
+			.buttons {
+				.item {
+					.icon { width: 24px; height: 24px; background-size: 16px; }
+				}
 			}
 		}
 	}
