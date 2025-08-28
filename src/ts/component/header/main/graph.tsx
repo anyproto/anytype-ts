@@ -68,7 +68,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(false)}</div>
+			<div className="side left">{renderLeftIcons(true, false)}</div>
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">

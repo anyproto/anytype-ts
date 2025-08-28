@@ -12,7 +12,7 @@ $transitionSettings: all 0.25s $easeInQuint;
             background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
         }
 
-        .sides { position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px; align-items: center; justify-content: space-between; gap: 0px 6px; }
+        .sides { position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px 12px 12px; align-items: center; justify-content: space-between; gap: 0px 6px; }
         .side.center { text-align: center; flex-grow: 1; flex-shrink: 0; width: auto; }
         .side.right { text-align: right; flex-shrink: 0; }
 

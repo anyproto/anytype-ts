@@ -77,8 +77,13 @@
 
 	.menu.menuSelect.spaceCreate { width: var(--menu-width-set); }
 	.menu.menuSelect.spaceCreate {
+		.content { height: auto !important; }
+
+		.item { height: 64px; }
 		.item {
-			.icon { width: 40px; height: 40px; }
+			.info { padding-left: 58px !important; }
+
+			.icon { width: 48px; height: 48px; }
 			.icon.chat { background-image: url('~img/icon/menu/spaceCreate/chat.svg'); }
 			.icon.space { background-image: url('~img/icon/menu/spaceCreate/space.svg'); }
 			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }

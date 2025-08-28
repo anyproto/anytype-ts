@@ -111,8 +111,9 @@
 				}
 				.icon.add { background-image: url('~img/icon/sidebar/chatSpace/add.svg'); }
 				.icon.search { background-image: url('~img/icon/sidebar/chatSpace/search.svg'); }
-				.icon.mute.pushOn { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
-				.icon.mute.pushOff { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
+				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
+				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
+				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
 				.label { @include text-small; }
 			}
 			.item:hover {

@@ -73,7 +73,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							viewType={I.ViewType.Grid}
 							readonly={readonly || !allowedValue}
 							idPrefix={idPrefix}
-							menuClassName="fromBlock"
+							menuClassNameWrap="fromBlock"
 							onCellChange={this.onCellChange}
 							pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 						/>
