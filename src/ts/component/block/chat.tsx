@@ -29,6 +29,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isAutoLoadDisabled = useRef(false);
 	const [ dummy, setDummy ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
 	const { chatId } = object;
 	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
 	const messages = S.Chat.getList(subId);

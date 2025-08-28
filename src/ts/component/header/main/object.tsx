@@ -164,16 +164,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					/> 
 				) : ''}
 
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget" 
-						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
-						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId })} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
-
 				{showPin ? (
 					<Icon 
 						id="button-header-pin" 
@@ -198,7 +188,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					/> 
 				) : ''}
 
-				{spaceview.isChat ? (
+				{showWidget ? (
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
