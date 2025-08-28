@@ -403,8 +403,7 @@ const App: FC = () => {
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		S.Menu.open('select', {
-			className: 'fromBlock',
-			classNameWrap: 'fromPopup',
+			classNameWrap: 'fromBlock',
 			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			onOpen: () => S.Menu.close('blockContext'),
 			onClose: () => keyboard.disableContextOpen(false),

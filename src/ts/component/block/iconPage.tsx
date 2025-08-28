@@ -14,6 +14,7 @@ const BlockIconPage = observer(forwardRef<{}, I.BlockComponent>(({
 			canEdit={!readonly} 
 			getObject={() => S.Detail.get(rootId, rootId, [])} 
 			size={96} 
+			menuParam={{ classNameWrap: 'fromBlock' }}
 		/>
 	);
 
