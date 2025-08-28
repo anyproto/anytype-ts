@@ -137,10 +137,10 @@ html.bodyAuthDeleted {
 	.pin { display: flex; gap: 0px 8px; flex-direction: row; }
 	.pin {
 		.input { 
-			width: 86px; height: 86px; border-radius: 24px; background: var(--color-input-opaque) !important; padding: 0px; text-align: center; 
-			vertical-align: top; font-size: var(--font-size-header3); border-width: 2px; border-color: rgba(0,0,0,0) !important; box-shadow: 0px 0px;
+			width: 86px; height: 86px; border-radius: 24px; padding: 0px; text-align: center;
+			vertical-align: top; font-size: var(--font-size-header3); border-width: 2px; box-shadow: 0px 0px;
 		}
-		.input.isFocused { box-shadow: 0px 0px; border-color: var(--color-system-accent-100) !important; }
+		.input.isFocused { box-shadow: 0px 0px; }
 	}
 }
 
