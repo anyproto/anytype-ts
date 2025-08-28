@@ -180,7 +180,7 @@ const App: FC = () => {
 			const accountId = Storage.get('accountId');
 
 			S.Common.nativeThemeSet(isDark);
-			S.Common.themeSet(accountId ? S.Common.theme : S.Common.nativeTheme);
+			S.Common.themeSet(S.Common.theme);
 		});
 
 		Renderer.on('pin-check', () => {
