@@ -434,7 +434,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	useEffect(() => {
 		raf(() => setActive(spaceview));
-	}, [ space ]);
+	});
 
 	return (
 		<>
