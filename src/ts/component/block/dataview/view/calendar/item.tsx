@@ -151,7 +151,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,
 				offsetY: -(node.outerHeight() + 4),
-				className: 'fromBlock',
+				classNameWrap: 'fromBlock',
 				noFlipX: true,
 				data: {
 					...this.props,

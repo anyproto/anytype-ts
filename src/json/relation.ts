@@ -94,8 +94,9 @@ export default {
 		'type',
 		'layout',
 		'name',
-		'relationOptionColor',
 		'createdDate',
+		'relationOptionColor',
+		'orderId',
 	],
 
 	type: [

@@ -1,6 +1,17 @@
 export default {
 	icon: {
-		text: '#fff',
+		text: {
+			grey: '#e3e3e3',
+			yellow: '#f4eb91',
+			orange: '#fcdc9c',
+			red: '#fcd1c3',
+			pink: '#f8c2e5',
+			purple: '#e8d0f1',
+			blue: '#cbd2fa',
+			ice: '#b2dff9',
+			teal: '#a9ebe6',
+			lime: '#c5efa3',
+		},
 		bg: {
 			grey: '#949494',
 			yellow: '#ecd91b',

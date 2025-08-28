@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
+import $ from 'jquery';
+import { Frame, Error, Button, Header, Phrase } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
 const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
@@ -8,6 +9,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	const nodeRef = useRef(null);
 	const phraseRef = useRef(null);
 	const submitRef = useRef(null);
+	const frameRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const isSelecting = useRef(false);
 	const { accounts } = S.Auth;
@@ -81,7 +83,6 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			const routeParam = { 
 				replace: true, 
 				onFadeIn: () => {
-					S.Common.getRef('mainAnimation')?.destroy();
 					Action.checkDiskSpace();
 				},
 			};
@@ -133,11 +134,6 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 
 		keyboard.shortcut('enter', e, () => onSubmit(e));
 	};
-	
-	const onCancel = () => {
-		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/', { replace: true }));
-	};
 
 	const onForgot = () => {
 		const platform = U.Common.getPlatform();
@@ -155,7 +151,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	};
 
 	useEffect(() => {
-		Animation.to();
+		$(frameRef.current.getNode()).removeClass('invisible');
 		focus();
 	}, []);
 
@@ -167,9 +163,8 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	return (
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
-			<Icon className="arrow back" onClick={onCancel} />
 			
-			<Frame>
+			<Frame ref={frameRef} className="invisible">
 				<form className="form" onSubmit={onSubmit}>
 					<Error text={error} className="animation" />
 
@@ -183,7 +178,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 					</div>
 					<div className="buttons">
 						<div className="animation">
-							<Button ref={submitRef} className="c48" text={translate('authLoginSubmit')} onClick={onSubmit} />
+							<Button ref={submitRef} className="c48" color="accent" text={translate('authLoginSubmit')} onClick={onSubmit} />
 						</div>
 
 						<div className="animation">

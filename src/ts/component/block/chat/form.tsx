@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -51,10 +51,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const nodeRef = useRef(null);
-	const dummyRef = useRef(null);
 	const editableRef = useRef(null);
 	const buttonsRef = useRef(null);
 	const counterRef = useRef(null);
+	const dummyRef = useRef(null);
 	const sendRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -353,7 +353,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const parseBlocks = (blocks: I.Block[]) => {
 			const targetIds = [];
 
-			blocks.forEach((block: I.Block) => {
+			blocks.forEach((block: I.Block, index: number) => {
 				if (block.isText()) {
 					const text = block.getText();
 			
@@ -363,7 +363,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					};
 					marks = Mark.adjust(marks, 0, newText.length);
 
-					newText += text + '\n';
+					newText += text;
+
+					if (index < blocks.length - 1) {
+						newText += '\n';
+					};
+
 					newMarks = newMarks.concat(marks);
 				} else {
 					const targetId = block.getTargetObjectId();
@@ -812,6 +817,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		range.current = { from: length, to: length };
 		setRange(range.current);
 		setReplyingId(message.id);
+		resize();
 
 		analytics.event('ClickMessageMenuReply');
 	};
@@ -1319,18 +1325,27 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(nodeRef.current);
 		const dummy = $(dummyRef.current);
-		const padding = 16;
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
-		if (!dummy.length) {
-			return;
+		let left = 0;
+		let width = container.width();
+
+		if (!sidebar.data.isClosed) {
+			width = container.width() - sidebar.data.width;
+			left = sidebar.data.width;
 		};
 
-		raf(() => {
-			dummy.css({ height: node.outerHeight(true) });
-			node.css({ left: dummy.offset().left - padding, width: dummy.width() + padding * 2 });
-		});
+		if (rightSidebar && rightSidebar.isOpen) {
+			width -= J.Size.sidebar.right;
+		};
+
+		node.css({ width, left });
+		dummy.css({ height: node.outerHeight() });
+
+		scrollToBottom();
 	};
 
 	let form = null;
@@ -1530,7 +1545,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	return (
 		<>
-			<div ref={dummyRef} className="formDummy" />
+			<div ref={dummyRef} />
 			<div 
 				ref={nodeRef}
 				id="formWrapper" 
@@ -1538,23 +1553,25 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				onDragOver={onDragOver}
 				onDragLeave={onDragLeave}
 			>
-				<div className="dragOverlay">
-					<div className="inner">
-						<Icon />
-						<Label text={translate('commonDropFiles')} />
+				<div className="inner">
+					<div className="dragOverlay">
+						<div className="inner">
+							<Icon />
+							<Label text={translate('commonDropFiles')} />
+						</div>
 					</div>
+
+					{!isEmpty ? (
+						<div className="navigation">
+							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
+						</div>
+					) : ''}
+
+					{form}
+
+					<div className="bottom" />
 				</div>
-
-				{!isEmpty ? (
-					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-					</div>
-				) : ''}
-
-				{form}
-
-				<div className="bottom" />
 			</div>
 		</>
 	);

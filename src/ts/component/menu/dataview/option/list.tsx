@@ -1,244 +1,80 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter } from 'Component';
 import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 40;
 
-const MenuOptionList = observer(class MenuOptionList extends React.Component<I.Menu> {
-	
-	refFilter: any = null;
-	refList: any = null;
-	cache: any = {};
-	n = -1;
-	filter = '';
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-	};
-	
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter, canAdd, canEdit, noFilter } = data;
-		const relation = data.relation.get();
-		const value = Relation.getArrayValue(data.value);
-		const items = this.getItems();
+const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
-		let placeholder = '';
-		let empty = '';
+	const { id, param, close, position, setActive, getId, onKeyDown, getSize } = props;
+	const { data, className, classNameWrap } = param;
+	const { filter, canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, maxHeight } = data;
+	const relation = data.relation.get();
+	const value = Relation.getArrayValue(data.value);
+	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
+	const [ dummy, setDummy ] = useState(0);
+	const listRef = useRef(null);
+	const filterRef = useRef(null);
+	const n = useRef(-1);
+	const filterValueRef = useRef('');
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
 
-		if (canAdd) {
-			placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
-			empty = translate('menuDataviewOptionListTypeToCreate');
-		} else {
-			placeholder = translate('menuDataviewOptionListFilterOptions');
-			empty = translate('menuDataviewOptionListTypeToSearch');
-		};
-
-		if (!canEdit) {
-			empty = translate('placeholderCellCommon');
-		};
-
-		if (!this.cache) {
-			return null;
-		};
-
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			const active = value.includes(item.id);
-			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
-			
-			let content = null;
-			if (item.id == 'add') {
-				content = (
-					<div 
-						id="item-add" 
-						className="item add" 
-						style={param.style}
-						onClick={e => this.onClick(e, item)} 
-						onMouseEnter={e => this.onOver(e, item)}
-					>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
-			} else 
-			if (item.isSection) {
-				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
-			} else {
-				const cn = [ 'item' ];
-				if (active) {
-					cn.push('withCheckbox');
-				};
-
-				content = (
-					<div 
-						id={`item-${item.id}`} 
-						className={cn.join(' ')} 
-						style={param.style} 
-						onMouseEnter={e => this.onOver(e, item)}
-					>
-						<div className="clickable" onClick={e => this.onClick(e, item)}>
-							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
-						</div>
-						<div className="buttons">
-							{active ? <Icon className="chk" /> : ''}
-							{isAllowed ? <Icon className="more" onClick={e => this.onEdit(e, item)} /> : ''}
-						</div>
-					</div>
-				);
-			};
-
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					{content}
-				</CellMeasurer>
-			);
-		};
-
-		return (
-			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
-				{!noFilter ? (
-					<Filter
-						className="outlined"
-						icon="search"
-						ref={ref => this.refFilter = ref} 
-						placeholderFocus={placeholder} 
-						value={filter}
-						onChange={this.onFilterChange} 
-						focusOnMount={true}
-					/>
-				) : ''}
-
-				<div className="items">
-					{items.length ? (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					) : (
-						<div className="item empty">{empty}</div>
-					)}
-				</div>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const items = this.getItems();
-
-		this.rebind();
-		this.resize();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		this.forceUpdate();
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDownHander(e));
+		$(`#${getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
+		window.setTimeout(() => setActive(), 15);
 	};
 
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-
-		if (this.filter != filter) {
-			this.n = 0;
-		};
-
-		this.props.setActive();
-		this.props.position();
-		this.resize();
-	};
-
-	componentWillUnmount () {
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		$(`#${this.props.getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
-		$(`#${this.props.getId()}`).off('click');
+		$(`#${getId()}`).off('click');
 	};
 
-	onKeyDown (e: any) {
+	const onKeyDownHander = (e: any) => {
 		// Chinese IME is open
 		if (keyboard.isComposition) {
 			return;
 		};
 
-		const items = this.getItems();
+		const items = getItems();
 		
 		let ret = false;
 
 		keyboard.shortcut('arrowright', e, () => {
-			this.onEdit(e, items[this.n]);
+			onEdit(e, items[n.current]);
 			ret = true;
 		});
 
 		if (!ret) {
-			this.props.onKeyDown(e);
+			onKeyDown(e);
 		};
 	};
 
-	onFilterChange (v: string) {
-		this.props.param.data.filter = v;
+	const onFilterChange = (v: string) => {
+		data.filter = v;
+		setDummy(dummy + 1);
 	};
 
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 
-	onClick (e: any, item: any) {
+	const onClick = (e: any, item: any) => {
 		e.stopPropagation();
-
-		const { param } = this.props;
-		const { data } = param;
-		const { cellRef, canEdit, noSelect } = data;
 
 		if (!canEdit) {
 			return;
@@ -251,24 +87,20 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		if (item.id == 'add') {
-			this.onOptionAdd();
+			onOptionAdd();
 		} else if (!noSelect) {
 			if (value.includes(item.id)) {
-				this.onValueRemove(item.id);
+				onValueRemove(item.id);
 			} else {
-				this.onValueAdd(item.id);
+				onValueAdd(item.id);
 			};
 		};
 
-		this.refFilter?.setValue('');
-		this.onFilterChange('');
+		filterValueRef.current = '';
+		onFilterChange('');
 	};
 
-	onValueAdd (id: string) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onChange, maxCount } = data;
-
+	const onValueAdd = (id: string) => {
 		let value = Relation.getArrayValue(data.value);
 
 		value.push(id);
@@ -282,45 +114,41 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
-		S.Menu.updateData(this.props.id, { value });
+		S.Menu.updateData(props.id, { value });
 		
 		if (onChange) {
 			onChange(value);
 		};
 	};
 
-	onValueRemove (id: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onChange } = data;
+	const onValueRemove = (id: string) => {
 		const value = Relation.getArrayValue(data.value);
 		const idx = value.indexOf(id);
 
 		value.splice(idx, 1);
-		S.Menu.updateData(this.props.id, { value });
+		S.Menu.updateData(props.id, { value });
 		
 		if (onChange) {
 			onChange(value);
 		};
 	};
 
-	onOptionAdd () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const relation = data.relation.get();
+	const onOptionAdd = () => {
 		const colors = U.Menu.getBgColors();
-		const option = { name: filter, color: colors[U.Common.rand(1, colors.length - 1)].value };
+		const option = { 
+			name: String(data.filter || '').trim(),
+			color: colors[U.Common.rand(1, colors.length - 1)].value,
+		};
 
 		if (!option.name) {
 			return;
 		};
 
-		const items = this.getItems();
+		const items = getItems();
 		const match = items.find(it => it.name == option.name);
 
 		if (match) {
-			this.onValueAdd(match.id);
+			onValueAdd(match.id);
 			return;
 		};
 
@@ -333,24 +161,22 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 				return;
 			};
 
-			this.refFilter?.setValue('');
-			this.onFilterChange('');
-			this.onValueAdd(message.objectId);
+			filterRef.current?.setValue('');
+			onFilterChange('');
+			onValueAdd(message.objectId);
 
-			window.setTimeout(() => this.resize(), 50);
+			window.setTimeout(() => resize(), 50);
 		});
 	};
-	
-	onEdit (e: any, item: any) {
+
+	const onEdit = (e: any, item: any) => {
 		e.stopPropagation();
 
 		if (!item || (item.id == 'add')) {
 			return;
 		};
 
-		const { id, param, getId, getSize } = this.props;
-		const { data, classNameWrap } = param;
-		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && data.canEdit;
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 
 		if (!isAllowed) {
 			return;
@@ -363,8 +189,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
-			classNameWrap: classNameWrap,
-			rebind: this.rebind,
+			className,
+			classNameWrap,
+			rebind,
 			parentId: id,
 			data: {
 				...data,
@@ -373,17 +200,51 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		});
 	};
 
-	getItems (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-		const { canAdd, filterMapper, canEdit, noSelect } = data;
-		const relation = data.relation.get();
+	const onSortStart = () => {
+		keyboard.disableSelection(true);
+	};
+
+	const onSortEnd = (result: any) => {
+		const { active, over } = result;
+
+		if (!active || !over) {
+			return;
+		};
+
+		const items = getItems();
+		const oldIndex = items.findIndex(it => it.id == active.id);
+		const newIndex = items.findIndex(it => it.id == over.id);
+		const newItems = arrayMove(items, oldIndex, newIndex);
+
+		let s = '';
+		newItems.forEach((it, i) => {
+			s = U.Common.lexString(s);
+			S.Detail.update(J.Constant.subId.option, { id: it.id, details: { tmpOrder: s }}, false);
+		});
+
+		C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const list = message.list;
+			for (let i = 0; i < list.length; i++) {
+				const item = newItems[i];
+				if (item) {
+					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { orderId: list[i] }}, false);
+				};
+			};
+		});
+
+		keyboard.disableSelection(false);
+	};
+
+	const getItems = (): any[] => {
 		const isSelect = relation.format == I.RelationType.Select;
-		const value = Relation.getArrayValue(data.value);
 		const skipIds = Relation.getArrayValue(data.skipIds);
 		const ret = [];
 
-		let items = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
+		let items = S.Record.getRecords(J.Constant.subId.option, U.Subscription.optionRelationKeys(true)).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
 		items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skipIds.includes(it.id));
@@ -393,14 +254,14 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		items.sort((c1, c2) => {
-			const isSelected1 = value.includes(c1.id);
-			const isSelected2 = value.includes(c2.id);
+			if (c1.tmpOrder > c2.tmpOrder) return 1;
+			if (c1.tmpOrder < c2.tmpOrder) return -1;
 
-			if (isSelected1 && !isSelected2) return -1;
-			if (!isSelected1 && isSelected2) return 1;
+			if (c1.orderId > c2.orderId) return 1;
+			if (c1.orderId < c2.orderId) return -1;
 
-			return 0;
-		}).sort(U.Data.sortByName);
+			return U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc);
+		});
 
 		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
@@ -419,11 +280,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		return items.concat(ret);
 	};
 
-	resize () {
-		const { getId, position, param } = this.props;
-		const { data } = param;
-		const { noFilter, maxHeight } = data;
-		const items = this.getItems();
+	const resize = () => {
+		const items = getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16 + (noFilter ? 0 : 38);
 		const height = Math.max(HEIGHT + offset, Math.min(maxHeight || 360, items.length * HEIGHT + offset));
@@ -431,7 +289,192 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		obj.css({ height });
 		position();
 	};
-	
-});
+
+	const items = getItems();
+
+	let placeholder = '';
+	let empty = '';
+
+	if (canAdd) {
+		placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
+		empty = translate('menuDataviewOptionListTypeToCreate');
+	} else {
+		placeholder = translate('menuDataviewOptionListFilterOptions');
+		empty = translate('menuDataviewOptionListTypeToSearch');
+	};
+
+	if (!canEdit) {
+		empty = translate('placeholderCellCommon');
+	};
+
+	const Item = (item: any) => {
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+		const active = value.includes(item.id);
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
+		const style = {
+			...item.style,
+			transform: CSS.Transform.toString(transform),
+			transition,
+		};
+
+		let content = null;
+		if (item.id == 'add') {
+			content = (
+				<div 
+					id="item-add" 
+					className="item add" 
+					style={item.style}
+					onClick={e => onClick(e, item)} 
+					onMouseEnter={e => onOver(e, item)}
+				>
+					<Icon className="plus" />
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else 
+		if (item.isSection) {
+			content = <div className="sectionName" style={item.style}>{item.name}</div>;
+		} else {
+			const cn = [ 'item' ];
+			if (active) {
+				cn.push('withCheckbox');
+			};
+			if (isDragging) {
+				cn.push('isDragging');
+			};
+
+			content = (
+				<div 
+					id={`item-${item.id}`} 
+					className={cn.join(' ')} 
+					onMouseEnter={e => onOver(e, item)}
+					ref={setNodeRef}
+					{...attributes}
+					{...listeners}
+					style={style}
+				>
+					{canEdit ? <Icon className="dnd" /> : ''}
+					<div className="clickable" onClick={e => onClick(e, item)}>
+						<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
+					</div>
+					<div className="buttons">
+						{active ? <Icon className="chk" /> : ''}
+						{isAllowed ? <Icon className="more" onClick={e => onEdit(e, item)} /> : ''}
+					</div>
+				</div>
+			);
+		};
+
+		return content;
+	};
+
+	const rowRenderer = ({ key, parent, index, style }) => {
+		const item: any = items[index];
+		
+		return (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
+			>
+				<Item {...item} style={style} />
+			</CellMeasurer>
+		);
+	};
+
+	useEffect(() => {
+		rebind();
+		resize();
+		setActive();
+		position();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		if (filterValueRef.current != filter) {
+			n.current = 0;
+		};
+
+		setActive();
+		position();
+		resize();
+	});
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+	}), []);
+
+	return (
+		<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+			{!noFilter ? (
+				<Filter
+					className="outlined"
+					icon="search"
+					ref={filterRef} 
+					placeholderFocus={placeholder} 
+					value={filter}
+					onChange={onFilterChange} 
+					focusOnMount={true}
+				/>
+			) : ''}
+
+			<div className="items">
+				{items.length ? (
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragStart={onSortStart}
+						onDragEnd={onSortEnd}
+						modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
+					>
+						<SortableContext
+							items={items.map((item) => item.id)}
+							strategy={verticalListSortingStrategy}
+						>
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={() => true}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={listRef}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={cache.current}
+												rowCount={items.length}
+												rowHeight={HEIGHT}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						</SortableContext>
+					</DndContext>
+				) : (
+					<div className="item empty">{empty}</div>
+				)}
+			</div>
+		</div>
+	);
+
+}));
 
 export default MenuOptionList;

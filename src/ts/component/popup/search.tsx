@@ -28,8 +28,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const nRef = useRef(0);
 	const topRef = useRef(0);
 	const offsetRef = useRef(0);
-	const filterValueRef = useRef('');
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
+	const storage = storageGet();
+	const filter = String(storage.filter || '');
+	const filterValueRef = useRef(filter);
 
 	const initCache = () => {
 		const items = getItems();
@@ -107,7 +109,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
-			pageCreate(filter);
+			e.stopPropagation();
+
+			close(() => pageCreate(filter));
 		});
 
 		keyboard.shortcut('search', e, () => close());
