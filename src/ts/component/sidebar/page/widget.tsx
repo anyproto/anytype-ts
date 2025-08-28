@@ -303,7 +303,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							{canWrite ? (
 								<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
 									<Icon className="plus withBackground" onClick={this.onCreate} />
-									<Icon className="arrow withBackground" onClick={this.onArrow} />
+									<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
 								</div>
 							) : ''}
 						</div>
@@ -347,7 +347,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		e.stopPropagation();
 
 		U.Menu.typeSuggest({ 
-			element: $(e.currentTarget),
+			element: '#button-sidebar-select-type',
 			offsetY: 2,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',

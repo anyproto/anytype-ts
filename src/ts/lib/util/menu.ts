@@ -1350,7 +1350,6 @@ class UtilMenu {
 							window.setTimeout(() => {
 								this.onBookmarkMenu({
 									...param,
-									element: `#widget-space-arrow`,
 									data: { details },
 								}, object => cb(object, 0));
 							}, S.Menu.getTimeout());
