@@ -20,7 +20,7 @@
 
 	> .subHead { 
 		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 6px 12px; position: relative; 
-		margin: 0px 0px 4px 0px;
+		margin: 0px 0px 4px 0px; height: 40px;
 	}
 	> .subHead {
 		.icon.back { background-size: 20px; }
