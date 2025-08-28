@@ -218,6 +218,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		S.Menu.open('objectContext', {
+			classNameWrap: 'fromBlock',
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };

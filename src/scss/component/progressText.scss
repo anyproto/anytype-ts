@@ -4,10 +4,7 @@
 }
 
 .progressText {
-	@include text-small; font-weight: 500;
+	@include text-small; @include text-overflow-nw; font-weight: 500;
 	background: linear-gradient(90deg, #bfbfbf 25%, var(--color-text-primary) 50%, #bfbfbf 75%);
-	background-size: 200% 100%;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
-	animation: progressText 1.5s linear infinite;
+	background-size: 200% 100%; background-clip: text; -webkit-text-fill-color: transparent; animation: progressText 1.5s linear infinite;
 }

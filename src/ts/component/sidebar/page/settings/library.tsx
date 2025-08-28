@@ -49,6 +49,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const pathname = U.Router.getRoute();
 		const param = U.Router.getParam(pathname);
 		const items = this.getItems();
+		const title = this.getTitle();
 
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
@@ -101,18 +102,11 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			</CellMeasurer>
 		);
 
-		let title = '';
-		if (this.props.page == 'types') {
-			title = U.Common.plural(10, translate('pluralObjectType'));
-		} else {
-			title = U.Common.plural(10, translate('pluralProperty'));
-		};
-
 		return (
 			<>
-				<div className="head" />
+				<div id="head" className="head" />
 
-				<div className="body">
+				<div id="body" className="body">
 					<div className="list">
 						<div className="head">
 							<div className="side left">
@@ -544,6 +538,24 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 			case 'settingsRelations': {
 				t = I.ObjectContainerType.Relation; break;
+			};
+		};
+
+		return t;
+	};
+
+	getTitle () {
+		let t = '';
+
+		switch (this.props.page) {
+			case 'settingsTypes': {
+				t = U.Common.plural(10, translate('pluralObjectType'));
+				break;
+			};
+
+			case 'settingsRelations': {
+				t = U.Common.plural(10, translate('pluralProperty'));
+				break;
 			};
 		};
 

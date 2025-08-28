@@ -992,7 +992,8 @@ class Dispatcher {
 							idx = list.length;
 						};
 
-						S.Chat.add(subId, idx, message);
+						message.dependencies = dependencies || [];
+						S.Chat.add(subId, idx, new M.ChatMessage(message));
 					});
 
 					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {

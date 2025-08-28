@@ -1803,6 +1803,20 @@ class UtilCommon {
 	};
 
 	/**
+	 * Returns the text color for an icon option.
+	 * @param {number} o - The icon option index.
+	 * @returns {string} The text color string.
+	 */
+	iconTextByOption (o: number): string {
+		const { text, list } = J.Theme.icon;
+
+		o = Number(o) || 0;
+		o = Math.max(0, Math.min(list.length, o));
+
+		return text[list[o - 1]];
+	};
+
+	/**
 	 * Shows the "What's New" popup and updates storage.
 	 */
 	showWhatsNew () {
@@ -1945,6 +1959,17 @@ class UtilCommon {
 		});
 
 		return usage;
+	};
+
+	getMaxScrollHeight (isPopup: boolean): number {
+		let container;
+		if (isPopup) {
+			container = this.getScrollContainer(true).get(0);
+			return container.scrollHeight - container.clientHeight;
+		} else {
+			container = window;
+			return document.documentElement.scrollHeight - window.innerHeight;
+		};
 	};
 
 };

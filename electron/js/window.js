@@ -23,9 +23,10 @@ class WindowManager {
 	create (options, param) {
 		const Api = require('./api.js');
 		const { showMenuBar } = ConfigManager.config;
+		const isDark = Util.isDarkTheme();
 
 		param = Object.assign({
-			backgroundColor: Util.getBgColor('dark'),
+			backgroundColor: Util.getBgColor(isDark ? 'dark' : ''),
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {

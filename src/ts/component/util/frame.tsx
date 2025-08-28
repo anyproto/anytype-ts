@@ -11,6 +11,7 @@ interface Props {
 
 interface FrameRefProps {
 	resize: () => void,
+	getNode: () => HTMLDivElement | null,
 };
 
 const Frame = forwardRef<FrameRefProps, Props>(({ 
@@ -54,6 +55,7 @@ const Frame = forwardRef<FrameRefProps, Props>(({
 	useLayoutEffect(() => resize());
 
 	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
 		resize,
 	}));
 

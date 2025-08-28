@@ -703,6 +703,12 @@ export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Respo
 	};
 };
 
+export const RelationOptionSetOrder = (response: Rpc.Relation.Option.SetOrder.Response) => {
+	return {
+		list: response.getRelationoptionorderList() || [],
+	};
+};
+
 export const PublishingCreate = (response: Rpc.Publishing.Create.Response) => {
 	return { 
 		url: response.getUri(),
