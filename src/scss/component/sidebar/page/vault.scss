@@ -25,7 +25,7 @@
 
 		.nameWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
 		.name { @include clamp1; font-weight: 500; flex-grow: 1; }
-		.label { @include clamp1; @include text-small; white-space: nowrap; color: var(--color-text-secondary); }
+		.label { @include clamp1; @include text-small; color: var(--color-text-secondary); }
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
