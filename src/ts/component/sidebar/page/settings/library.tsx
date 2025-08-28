@@ -564,4 +564,4 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 });
 
-export default SidebarSettingsLibrary
+export default SidebarSettingsLibrary;
