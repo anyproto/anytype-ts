@@ -293,7 +293,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		obj.attr({ class: cn.join(' ') });
-		S.Common.setThemeClass(!this.isMain());
+		S.Common.setThemeClass();
 	};
 
 	getId (prefix: string) {
