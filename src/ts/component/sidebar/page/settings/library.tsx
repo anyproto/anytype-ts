@@ -104,9 +104,9 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 		return (
 			<>
-				<div className="head" />
+				<div id="head" className="head" />
 
-				<div className="body">
+				<div id="body" className="body">
 					<div className="list">
 						<div className="head">
 							<div className="side left">

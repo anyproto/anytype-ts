@@ -1803,6 +1803,20 @@ class UtilCommon {
 	};
 
 	/**
+	 * Returns the text color for an icon option.
+	 * @param {number} o - The icon option index.
+	 * @returns {string} The text color string.
+	 */
+	iconTextByOption (o: number): string {
+		const { text, list } = J.Theme.icon;
+
+		o = Number(o) || 0;
+		o = Math.max(0, Math.min(list.length, o));
+
+		return text[list[o - 1]];
+	};
+
+	/**
 	 * Shows the "What's New" popup and updates storage.
 	 */
 	showWhatsNew () {

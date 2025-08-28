@@ -90,12 +90,34 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
-	> .body.withShareBanner:not(.isOnboardingHidden) { margin-top: -10px; }
 	> .body.isListPreview { overflow: hidden; height: 100%; padding-bottom: 12px; }
 
-	> .body.isListPreview {
-		.viewGallery {
-			.body { padding: 8px 16px !important; }
+	.spaceChatSidebarHeader { padding-bottom: 8px; }
+	.spaceChatSidebarHeader {
+		.spaceInfo { margin-bottom: 18px; display: flex; flex-direction: column; align-items: center; }
+		.spaceInfo {
+			.iconObject { margin-bottom: 8px; }
+			.name { @include text-header3; margin-bottom: 0px; }
+			.label { @include text-small; color: var(--color-text-secondary); }
+		}
+		.buttons { display: flex; justify-content: center; gap: 0px 24px; }
+		.buttons {
+			.item { width: 48px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; }
+			.item {
+				.icon {
+					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
+					background-position: 50% 50%; background-repeat: no-repeat; background-size: 28px; transition: background-color $transitionCommon;
+				}
+				.icon.add { background-image: url('~img/icon/sidebar/chatSpace/add.svg'); }
+				.icon.search { background-image: url('~img/icon/sidebar/chatSpace/search.svg'); }
+				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
+				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
+				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
+				.label { @include text-small; }
+			}
+			.item:hover {
+				.icon { background-color: var(--color-shape-highlight-dark); }
+			}
 		}
 	}
 }

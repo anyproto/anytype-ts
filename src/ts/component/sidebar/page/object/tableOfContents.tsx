@@ -12,7 +12,7 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 
 	return (
 		<>
-			<div className="head">
+			<div id="head" className="head">
 				<div className="side left">
 					<Label text={translate('sidebarToc')} />
 				</div>
@@ -21,7 +21,7 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 				</div>
 			</div>
 
-			<div className="body">
+			<div id="body" className="body">
 				<Section
 					{...props}
 					id="tableOfContents"

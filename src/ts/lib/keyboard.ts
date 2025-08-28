@@ -9,8 +9,6 @@ class Keyboard {
 	};
 	timeoutPin = 0;
 	timeoutSidebarHide = 0;
-	match: any = {};
-	matchPopup: any = {};
 	source: any = null;
 	selection: any = null;
 	shortcuts: any = {};
@@ -217,6 +215,11 @@ class Keyboard {
 			Preview.previewHide(false);
 		});
 
+		// Switch dark/light mode
+		this.shortcut('theme', e, () => {
+			Action.themeSet(!theme ? 'dark' : '');
+		});
+
 		if (isMain) {
 
 			// Print
@@ -279,11 +282,6 @@ class Keyboard {
 			// Select type
 			this.shortcut('selectType', e, () => {
 				$('#widget-space #widget-space-arrow').trigger('click');
-			});
-
-			// Switch dark/light mode
-			this.shortcut('theme', e, () => {
-				Action.themeSet(!theme ? 'dark' : '');
 			});
 
 			// Lock the app
@@ -1242,6 +1240,14 @@ class Keyboard {
 	};
 
 	/**
+	 * Gets the route match object from the router history.
+	 * @returns {any} The route match object.
+	 */
+	getRouteMatch () {
+		return U.Router.getParam(U.Router.getRoute()) || {};
+	};
+
+	/**
 	 * Gets the match object for the current context.
 	 * @param {boolean} [isPopup] - Whether to get for popup context.
 	 * @returns {any} The match object.
@@ -1250,14 +1256,43 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
 		let ret: any = { params: {} };
+		let data: any = {};
+
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
-			const match = U.Common.objectCopy(this.match);
-			const param = U.Router.getParam(U.Router.getRoute());
+			ret.route = U.Router.getRoute();
+			ret.params = this.getRouteMatch();
+			data = U.Common.searchParam(U.Router.getSearch());
+		};
 
-			ret = Object.assign(ret, match);
-			ret.params = Object.assign(ret.params, param);
+		ret.route = String(ret.route || '');
+
+		// Universal object route
+		if (ret.route.match(/^\/object/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			});
+		};
+
+		// Invite route
+		if (ret.route.match(/^\/invite/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'invite',
+				...data,
+			});
+		};
+
+		// Membership route
+		if (ret.route.match(/^\/membership/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'membership',
+			});
 		};
 
 		return ret;
@@ -1268,7 +1303,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMain () {
-		return this.match?.params?.page == 'main';
+		return this.getRouteMatch().page == 'main';
 	};
 	
 	/**
@@ -1276,7 +1311,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainEditor () {
-		return this.isMain() && (this.match?.params?.action == 'edit');
+		return this.isMain() && (this.getRouteMatch().action == 'edit');
 	};
 
 	/**
@@ -1284,7 +1319,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSet () {
-		return this.isMain() && (this.match?.params?.action == 'set');
+		return this.isMain() && (this.getRouteMatch().action == 'set');
 	};
 
 	/**
@@ -1292,7 +1327,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainGraph () {
-		return this.isMain() && (this.match?.params?.action == 'graph');
+		return this.isMain() && (this.getRouteMatch().action == 'graph');
 	};
 
 	/**
@@ -1300,7 +1335,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainChat () {
-		return this.isMain() && (this.match?.params?.action == 'chat');
+		return this.isMain() && (this.getRouteMatch().action == 'chat');
 	};
 
 	/**
@@ -1308,7 +1343,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainIndex () {
-		return this.isMain() && (this.match?.params?.action == 'index');
+		return this.isMain() && (this.getRouteMatch().action == 'index');
 	};
 
 	/**
@@ -1316,7 +1351,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainHistory () {
-		return this.isMain() && (this.match?.params?.action == 'history');
+		return this.isMain() && (this.getRouteMatch().action == 'history');
 	};
 
 	/**
@@ -1324,7 +1359,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainVoid () {
-		return this.isMain() && (this.match?.params?.action == 'void');
+		return this.isMain() && (this.getRouteMatch().action == 'void');
 	};
 
 	/**
@@ -1332,7 +1367,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainType () {
-		return this.isMain() && (this.match?.params?.action == 'type');
+		return this.isMain() && (this.getRouteMatch().action == 'type');
 	};
 
 	/**
@@ -1340,7 +1375,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSettings () {
-		return this.isMain() && (this.match?.params?.action == 'settings');
+		return this.isMain() && (this.getRouteMatch().action == 'settings');
 	};
 
 	/**
@@ -1348,7 +1383,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuth () {
-		return this.match?.params?.page == 'auth';
+		return this.getRouteMatch().page == 'auth';
 	};
 
 	/**
@@ -1356,7 +1391,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuthPinCheck () {
-		return this.isAuth() && (this.match?.params?.action == 'pin-check');
+		return this.isAuth() && (this.getRouteMatch().action == 'pin-check');
 	};
 	
 	/**
@@ -1396,14 +1431,6 @@ class Keyboard {
 
 		this.isPinChecked = v;
 		Renderer.send('setPinChecked', v);
-	};
-
-	/**
-	 * Sets the match object.
-	 * @param {any} match - The match object.
-	 */
-	setMatch (match: any) {
-		this.match = U.Common.objectCopy(match);
 	};
 
 	/**

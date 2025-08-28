@@ -7,7 +7,7 @@ const HeaderMainEmpty = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(true)}</div>
+			<div className="side left">{renderLeftIcons(true, true)}</div>
 			<div className="side center" />
 			<div className="side right" />
 		</>
