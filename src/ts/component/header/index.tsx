@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon, Sync } from 'Component';
+import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -16,6 +17,7 @@ import HeaderMainEmpty from './main/empty';
 interface Props extends I.HeaderComponent {
 	component: string;
 	className?: string;
+	onBack?: () => void;
 };
 
 const Components = {
@@ -29,7 +31,7 @@ const Components = {
 	mainSettings: 		 HeaderMainSettings,
 };
 
-const Header = forwardRef<{}, Props>((props, ref) => {
+const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { 
 		component, 
@@ -68,12 +70,17 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		menuOpen('syncStatus', '#headerSync', {});
 	};
 
-	const renderLeftIcons = (withGraph?: boolean, onOpen?: () => void) => {
-		const buttons: any[] = [
+	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
+		let buttons: any[] = [
 			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
-			{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-			{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
 		];
+
+		if (withNavigation) {
+			buttons = buttons.concat([
+				{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
+				{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
+			]);
+		};
 
 		if (withGraph) {
 			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
@@ -81,6 +88,8 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 
 		return (
 			<>
+				<Sync id="headerSync" onClick={onSync} />
+
 				{buttons.map(item => {
 					const cn = [ item.id, 'withBackground' ];
 
@@ -98,8 +107,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 						/>
 					);
 				})}
-
-				<Sync id="headerSync" onClick={onSync} />
 			</>
 		);
 	};
@@ -228,6 +235,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-});
+}));
 
 export default Header;

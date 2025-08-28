@@ -285,8 +285,6 @@ class UtilData {
 	 * @param {boolean} noTierCache - Whether to skip tier cache.
 	 */
 	onAuthOnce (noTierCache: boolean) {
-		const { windowId } = S.Common;
-
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
@@ -317,7 +315,10 @@ class UtilData {
 		});
 
 		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
-		U.Subscription.createGlobal(() => Storage.clearDeletedSpaces());
+		U.Subscription.createGlobal(() => {
+			Storage.clearDeletedSpaces(false);
+			Storage.clearDeletedSpaces(true);
+		});
 
 		analytics.event('OpenAccount');
 	};

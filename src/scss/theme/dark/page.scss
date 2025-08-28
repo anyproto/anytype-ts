@@ -1,5 +1,14 @@
 @import "~scss/_mixins";
 
+/* PageAuthSelect */
+.pageIndexIndex, .pageAuthSelect {
+	.bubbleWrapper {
+		.bubble {
+			.img { background-image: url('#{$themePath}/icon/bubble.svg'); }
+		}
+	}
+}
+
 /* PageMainGraph */
 
 .pageMainGraph {

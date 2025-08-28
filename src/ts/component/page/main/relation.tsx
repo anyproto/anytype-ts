@@ -531,7 +531,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						canAdd: canAdd && !isReadonlyRelation,
 						canEdit: canAdd && !isReadonlyRelation,
 						noSelect: true,
-						skipIds,
 						value: [],
 						relation: observable.box(object),
 					},

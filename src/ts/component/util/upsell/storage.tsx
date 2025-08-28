@@ -21,13 +21,17 @@ const UpsellStorage: FC<Props> = ({
 	const { membership } = S.Auth;
 	const { bytesLimit } = spaceStorage;
 	const bytesUsed = U.Common.calculateStorageUsage();
-	const usagePercent = bytesUsed / bytesLimit;
-	const roundedUsagePercent = Math.ceil(usagePercent * 100 / 5) * 5;
+	const notSyncedCounter = S.Auth.getNotSynced().total;
+	const usagePercent = bytesUsed / bytesLimit * 100;
+	const roundedUsagePercent = Math.ceil(usagePercent / 5) * 5;
+	const output = usagePercent < 90 ? roundedUsagePercent : Math.round(usagePercent);
 
-	const show = (usagePercent > 0.55) && (usagePercent < 1)
+	const show = (usagePercent > 55) && (usagePercent < 100)
 		&& U.Common.checkCanMembershipUpgrade()
+		&& U.Data.isAnytypeNetwork()
 		&& membershipTiers[0]
-		&& (membershipTiers[0].id != membership.tier);
+		&& (membershipTiers[0].id != membership.tier)
+		&& !notSyncedCounter;
 
 	if (!show) {
 		return null;
@@ -50,13 +54,13 @@ const UpsellStorage: FC<Props> = ({
 	const onClick = () => {
 		Action.membershipUpgrade(tier.id);
 
-		analytics.event('ClickUpgradePlanTooltip', { type: `Storage${roundedUsagePercent}`, route });
+		analytics.event('ClickUpgradePlanTooltip', { type: `Storage${output}`, route });
 	};
 
 	return (
 		<div className={cn.join(' ')}>
 			<div className="text">
-				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${roundedUsagePercent}%`)} />
+				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} />
 				<Label className="incentive" text={translate('upsellBannerStorageIncentiveText')} />
 				<Label className="upsell" text={U.Common.sprintf(translate('upsellBannerStorageUpsellText'), `$${tier.price} ${period}`)} />
 			</div>

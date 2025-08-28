@@ -134,45 +134,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.previewHide(true);
 	};
 
-	getMatch () {
-		const { isPopup } = this.props;
-		const { history } = U.Router;
-		const data = U.Common.searchParam(history?.location?.search);
-		const pathname = String(history?.location?.pathname || '');
-		const ret = U.Common.objectCopy(keyboard.getMatch(isPopup));
-
-		// Universal object route
-		if (pathname.match(/^\/object/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			});
-		};
-
-		// Invite route
-		if (pathname.match(/^\/invite/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'invite',
-				...data,
-			});
-		};
-
-		// Membership route
-		if (pathname.match(/^\/membership/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'membership',
-			});
-		};
-
-		return ret;
-	};
-
 	getMatchParams () {
-		const match = this.getMatch();
+		const { isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
 		const page = String(match?.params?.page || 'index');
 		const action = String(match?.params?.action || 'index');
 		const id = String(match?.params?.id || '');
@@ -193,7 +157,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { pin } = S.Common;
 		const { isPopup } = this.props;
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
@@ -236,10 +199,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.resize();
 		this.event();
 		this.rebind();
-
-		if (!isPopup) {
-			keyboard.setMatch(match);
-		};
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
@@ -338,7 +297,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getId (prefix: string) {
-		const match = this.getMatch();
+		const { isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 

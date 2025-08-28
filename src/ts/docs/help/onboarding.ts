@@ -95,7 +95,6 @@ export default {
 				'.widget', 
 				'#sidebarPageWidget #list > .buttons',
 				'#sidebarPageWidget #body',
-				'.shareBanner',
 			],
 			/*
 			onClose: () => Onboarding.start('emailCollection', false),

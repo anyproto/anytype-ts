@@ -84,7 +84,7 @@ class Api {
 	};
 
 	setBackground (win, theme) {
-		BrowserWindow.getAllWindows().forEach(win => win.setBackgroundColor(Util.getBgColor(theme)));
+		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(Util.getBgColor(theme)));
 	};
 
 	setZoom (win, zoom) {
