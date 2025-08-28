@@ -9,6 +9,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	const nodeRef = useRef(null);
 	const phraseRef = useRef(null);
 	const submitRef = useRef(null);
+	const frameRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const isSelecting = useRef(false);
 	const { accounts } = S.Auth;
@@ -150,7 +151,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 	};
 
 	useEffect(() => {
-		$('.frame').removeClass('invisible');
+		$(frameRef.current.getNode()).removeClass('invisible');
 		focus();
 	}, []);
 
@@ -163,7 +164,7 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 		<div ref={nodeRef}>
 			<Header {...props} component="authIndex" />
 			
-			<Frame className="invisible">
+			<Frame ref={frameRef} className="invisible">
 				<form className="form" onSubmit={onSubmit}>
 					<Error text={error} className="animation" />
 

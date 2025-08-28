@@ -8,10 +8,11 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 
 	const nodeRef = useRef(null);
 	const registerRef = useRef(null);
+	const introBubbleRef = useRef(null);
 	const [ error, setError ] = useState('');
 
 	const inflate = (callBack: () => void) => {
-		$('#introBubble').addClass('inflate');
+		$(introBubbleRef.current).addClass('inflate');
 		window.setTimeout(() => {
 			callBack();
 		},1000);
@@ -56,7 +57,7 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 					<Label className="line1" text={translate('authSelectIntroLine1')} />
 					<Label className="line2" text={translate('authSelectIntroLine2')} />
 
-					<div id="introBubble" className="bubbleWrapper">
+					<div ref={introBubbleRef} className="bubbleWrapper">
 						<div className="bubble">
 							<div className="img" />
 						</div>
