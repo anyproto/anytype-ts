@@ -484,7 +484,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		return [
-			{ id: 'invite', name: translate('pageSettingsSpaceIndexAddMembers'), icon: 'invite' },
+			{ id: 'invite', name: translate('commonAdd'), icon: 'invite' },
 			{ id: 'copyLink', name: translate('pageSettingsSpaceIndexCopyLink'), icon: 'copyLink' },
 			{ id: 'qr', name: translate('pageSettingsSpaceIndexQRCode'), icon: 'qr' },
 		];

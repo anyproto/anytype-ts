@@ -1,5 +1,7 @@
-.formWrapper.isFixed { padding: 0px 16px; position: fixed; z-index: 11; bottom: 0px; }
+.formWrapper.isFixed { padding: 0px 16px; position: fixed; z-index: 11; bottom: 0px; background: var(--color-bg-primary); }
 .formWrapper {
+	.inner { max-width: 704px; margin: 0px auto; position: relative; }
+
 	.navigation { 
 		position: absolute; right: 0px; bottom: calc(100% + 8px); display: flex; flex-direction: column; align-items: flex-end; 
 		justify-content: flex-end; gap: 16px 0px; padding: 0px 16px;
@@ -131,7 +133,7 @@
 		}
 	}
 
-	.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
+	.buttons { display: flex; gap: 0px 8px; padding: 0px 16px; margin-left: -4px; }
 	.buttons {
 		.icon { margin: 0px; transition: none; }
 

@@ -134,7 +134,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 		return (
 			<>
-				<div className="head" />
+				<div id="head" className="head" />
 
 				<div className="subHead">
 					<div className="side left">
@@ -146,7 +146,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					</div>
 				</div>
 
-				<div className="body">
+				<div id="body" className="body">
 					<div className="list">
 						<div className="inner">
 							<InfiniteLoader

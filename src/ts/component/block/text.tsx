@@ -1255,16 +1255,24 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.refEditable.placeholderHide();
 		};
 	};
-	
+
 	onCompositionEnd = (e: any, value: string, range: I.TextRange) => {
 		// Use provided value and range if available, fallback to current
 		const v = value !== undefined ? value : this.getValue();
 		const r = range !== undefined ? range : this.getRange();
-
+		
+		// Populate marks before setValue to prevent formatting issue
+		this.marks = this.getMarksFromHtml().marks;
 		this.setValue(v, r);
 	};
 
 	onBeforeInput = (e: any) => {
+		const { block } = this.props;
+		
+		if (block.isTextCode()) {
+			return;
+		};
+
 		const range = this.getRange();
 
 		let html = this.refEditable ? this.refEditable.getHtmlValue() : '';
