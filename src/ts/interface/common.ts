@@ -141,7 +141,7 @@ export interface HeaderComponent {
 	text?: string;
 	layout?: I.ObjectLayout;
 	withBanner?: boolean;
-	renderLeftIcons?: (withGraph?: boolean, onOpen?: () => void) => any;
+	renderLeftIcons?: (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => any;
 	renderTabs?: () => any;
 	onTab?: (id: string) => void;
 	onSearch?: () => void;

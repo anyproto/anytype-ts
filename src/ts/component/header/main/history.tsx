@@ -68,7 +68,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(true)}</div>
+			<div className="side left">{renderLeftIcons(true, true)}</div>
 
 			<div className="side center">
 				<div className="txt">{date.join(' ')}</div>

@@ -393,11 +393,6 @@ html.themeDark {
 					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
 					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 				}
-
-				&.withCounter {
-					.icon.back { background-image: url('~img/icon/widget/back2.svg'); }
-					.icon.back:hover { background-image: url('~img/icon/widget/back2.svg'); }
-				}
 			}
 
 			> .body {
@@ -492,12 +487,6 @@ html.themeDark {
 	.shareTooltip {
 		.icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
 		.icon.close { background-color: var(--color-bg-secondary); }
-	}
-
-	.shareBanner { background: var(--color-bg-primary); }
-	.shareBanner {
-		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
-		.icon.close { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 	}
 
 	.emptyState {

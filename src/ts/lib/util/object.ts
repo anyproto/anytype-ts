@@ -157,7 +157,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup = Object.assign(param.data.matchPopup.params, object._routeParam_);
 		};
 
 		keyboard.setSource(null);

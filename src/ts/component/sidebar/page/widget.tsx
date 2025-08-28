@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label, IconObject, ObjectName } from 'Component';
+import { Button, Icon, Widget, DropTarget, ProgressText, Label, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
 
 type State = {
@@ -49,7 +49,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
-		const hasShareBanner = U.Space.hasShareBanner();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
@@ -59,17 +58,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
 		const chatSpaceHeaderButtons = [
+			{ id: 'chat', name: translate('commonChat') },
 			{ id: 'add', name: translate('commonAdd') },
-			{ id: 'search', name: translate('commonSearch') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'pushOff' : 'pushOn' },
+			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
 		];
 
 		if (isEditing) {
 			cnb.push('isEditing');
-		};
-
-		if (hasShareBanner) {
-			cnb.push('withShareBanner');
 		};
 
 		if (cnt) {
@@ -164,8 +159,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				<div className="content">
 					{space && !space._empty_ ? (
 						<>
-							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
-
 							<DropTarget 
 								{...this.props} 
 								isTargetTop={true}
@@ -285,10 +278,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					) : (
 						<>
 							<div className="side left">
-								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
+								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
 							</div>
 							<div className="side right">
-								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, page)} />
+								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
 							</div>
 						</>
 					)}
@@ -523,7 +516,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					if (system.length) {
 						system = system.filter(it => it.id != J.Constant.widgetId.allObject);
 
-						if (!space.chatId && !U.Object.isAllowedChat(true)) {
+						if (!space.isChat || (!space.chatId && !U.Object.isAllowedChat(true))) {
 							system = system.filter(it => it.id != J.Constant.widgetId.chat);
 						};
 
@@ -696,14 +689,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const isMuted = space.notificationMode != I.NotificationMode.All;
 
 		switch (item.id) {
-			case 'add': {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
+			case 'chat': {
+				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 				break;
 			};
 
-			case 'search': {
-				keyboard.onSearchPopup(analytics.route.widget);
+			case 'add': {
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
 

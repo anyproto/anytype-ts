@@ -640,7 +640,7 @@ class RecordStore {
 	 * @returns {any|null} The option object or null.
 	 */
 	getOption (id: string) {
-		const object = S.Detail.get(J.Constant.subId.option, id, J.Relation.option, true);
+		const object = S.Detail.get(J.Constant.subId.option, id, U.Subscription.optionRelationKeys(true), true);
 		return object._empty_ ? null : object;
 	};
 

@@ -397,6 +397,24 @@ class Mark {
 	};
 
 	/**
+	 * Inserts emoji marks into the text.
+	 * @param {string} text - The text content.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @returns {string} The text with emojis inserted.
+	 */
+	insertEmoji (text: string, marks: I.Mark[]): string {
+		text = String(text || '');
+		marks = [ ...marks ].filter(it => it.type == I.MarkType.Emoji);
+		marks.sort((a, b) => b.range.from - a.range.from);
+
+		for (const mark of marks) {
+			text = U.Common.stringInsert(text, mark.param, mark.range.from, mark.range.to);
+		};
+
+		return text;
+	};
+
+	/**
 	 * Cleans HTML, removing unwanted tags and normalizing content.
 	 * @param {string} html - The HTML string.
 	 * @returns {JQuery<HTMLElement>} The cleaned jQuery object.
