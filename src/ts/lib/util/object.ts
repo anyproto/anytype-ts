@@ -518,7 +518,7 @@ class UtilObject {
 
 	isAllowedChat (): boolean {
 		const space = U.Space.getSpaceview();
-		return space.isShared;
+		return space.isChat && space.isShared;
 	};
 
 	isAllowedMultiChat (): boolean {
