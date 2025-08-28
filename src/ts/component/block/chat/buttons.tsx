@@ -144,9 +144,9 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const getChatButtons = () => {
 		return [
-			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
+			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject') },
 			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
-			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention'), caption: `${cmd} + M` },
+			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention') },
 		];
 	};
 

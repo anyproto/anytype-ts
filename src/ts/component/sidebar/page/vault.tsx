@@ -193,7 +193,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					};
 
 					if (last.content.text) {
-						text += U.Common.sanitize(Mark.toHtml(last.content.text, last.content.marks));
+						text += U.Common.sanitize(Mark.insertEmoji(last.content.text, last.content.marks));
 						text = text.replace(/\n\r?/g, ' ');
 					} else 
 					if (last.attachments.length) {
@@ -434,11 +434,11 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	useEffect(() => {
 		raf(() => setActive(spaceview));
-	}, [ space ]);
+	});
 
 	return (
 		<>
-			<div className="head">
+			<div id="head" className="head">
 				<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 			</div>
 			<div className="filterWrapper">
@@ -451,7 +451,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					onClear={onFilterClear}
 				/>
 			</div>
-			<div className="body">
+			<div id="body" className="body">
 				{!items.length ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}

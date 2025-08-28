@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ShareBanner, ProgressText, Label, IconObject, ObjectName } from 'Component';
+import { Button, Icon, Widget, DropTarget, ProgressText, Label, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
 
 type State = {
@@ -49,20 +49,22 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
-		const hasShareBanner = U.Space.hasShareBanner();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
 		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const isMuted = space.notificationMode != I.NotificationMode.All;
+		const chatSpaceHeaderButtons = [
+			{ id: 'chat', name: translate('commonChat') },
+			{ id: 'add', name: translate('commonAdd') },
+			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
+		];
 
 		if (isEditing) {
 			cnb.push('isEditing');
-		};
-
-		if (hasShareBanner) {
-			cnb.push('withShareBanner');
 		};
 
 		if (cnt) {
@@ -157,8 +159,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				<div className="content">
 					{space && !space._empty_ ? (
 						<>
-							{hasShareBanner ? <ShareBanner onClose={() => this.forceUpdate()} /> : ''}
-
 							<DropTarget 
 								{...this.props} 
 								isTargetTop={true}
@@ -169,17 +169,41 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								className="firstTarget"
 								cacheKey="firstTarget"
 							>
-								<Widget 
-									block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
-									disableContextMenu={true} 
-									onDragStart={this.onDragStart}
-									onDragOver={this.onDragOver}
-									onDrag={this.onDrag}
-									isEditing={isEditing}
-									canEdit={false}
-									canRemove={false}
-									sidebarDirection={sidebarDirection}
-								/>
+								{isDirectionRight ? (
+									<div className="spaceChatSidebarHeader">
+										<div className="spaceInfo">
+											<IconObject
+												id="spaceIcon"
+												size={80}
+												iconSize={80}
+												object={{ ...space, spaceId: S.Common.space }}
+											/>
+											<ObjectName object={{ ...space, spaceId: S.Common.space }} />
+
+											{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+										</div>
+										<div className="buttons">
+											{chatSpaceHeaderButtons.map((item, idx) => (
+												<div className="item" onClick={e => this.onChatSpaceButton(e, item)} key={idx}>
+													<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
+													<Label text={item.name} />
+												</div>
+											))}
+										</div>
+									</div>
+								) : (
+									<Widget
+										block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
+										disableContextMenu={true}
+										onDragStart={this.onDragStart}
+										onDragOver={this.onDragOver}
+										onDrag={this.onDrag}
+										isEditing={isEditing}
+										canEdit={false}
+										canRemove={false}
+										sidebarDirection={sidebarDirection}
+									/>
+								)}
 							</DropTarget>
 						</>
 					) : ''}
@@ -212,7 +236,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			);
 
-			bottom = (
+			bottom = isDirectionRight ? '' : (
 				<div className="bottom">
 					<div className="grad" />
 
@@ -253,9 +277,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
 					) : (
 						<>
-							<div className="side left" />
+							<div className="side left">
+								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
+							</div>
 							<div className="side right">
-								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, page)} />
+								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
 							</div>
 						</>
 					)}
@@ -277,7 +303,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							{canWrite ? (
 								<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
 									<Icon className="plus withBackground" onClick={this.onCreate} />
-									<Icon className="arrow withBackground" onClick={this.onArrow} />
+									<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
 								</div>
 							) : ''}
 						</div>
@@ -321,7 +347,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		e.stopPropagation();
 
 		U.Menu.typeSuggest({ 
-			element: $(e.currentTarget),
+			element: '#button-sidebar-select-type',
 			offsetY: 2,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -490,7 +516,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					if (system.length) {
 						system = system.filter(it => it.id != J.Constant.widgetId.allObject);
 
-						if (!space.chatId && !U.Object.isAllowedChat(true)) {
+						if (!space.isChat || (!space.chatId && !U.Object.isAllowedChat(true))) {
 							system = system.filter(it => it.id != J.Constant.widgetId.chat);
 						};
 
@@ -653,6 +679,31 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (!isEditing && !e.button) {
 			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+		};
+	};
+
+	onChatSpaceButton (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		const space = U.Space.getSpaceview();
+		const isMuted = space.notificationMode != I.NotificationMode.All;
+
+		switch (item.id) {
+			case 'chat': {
+				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+				break;
+			};
+
+			case 'add': {
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
+				break;
+			};
+
+			case 'mute': {
+				C.PushNotificationSetSpaceMode(S.Common.space, Number(isMuted ? I.NotificationMode.All : I.NotificationMode.Mentions));
+				break;
+			};
 		};
 	};
 

@@ -97,7 +97,6 @@ import MediaMermaid from './util/media/mermaid';
 import ProgressBar from './util/progressBar';
 import ProgressText from './util/progressText';
 import ShareTooltip from './util/share/tooltip';
-import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 import QR from './util/qr';
@@ -199,7 +198,6 @@ export {
 	ProgressBar,
 	ProgressText,
 	ShareTooltip,
-	ShareBanner,
 	FooterAuthDisclaimer,
 
 	HeadSimple,

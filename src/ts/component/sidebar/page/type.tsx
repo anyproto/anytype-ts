@@ -32,7 +32,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		return (
 			<>
-				<div className="head">
+				<div id="head" className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeTitle')} />
 					</div>
@@ -54,7 +54,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 				</div>
 
-				<div className="body">
+				<div id="body" className="body">
 					{sections.map((item, i) => (
 						<Section 
 							{...this.props} 

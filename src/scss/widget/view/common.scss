@@ -3,9 +3,10 @@
 .widget.widgetView { display: flex; flex-direction: column; };
 .widget.widgetView {
 	.loaderWrapper { position: relative; }
-	.innerWrap { height: 100%; min-height: 36px; padding-bottom: 8px; }
+	.innerWrap { height: 100%; min-height: 36px; padding-bottom: 8px; display: flex; flex-direction: column; }
 	.contentWrapper { flex-grow: 1; min-height: 8px; }
 	.head { padding-bottom: 2px; }
+	.body { flex-grow: 1; }
 
 	#viewSelect { padding: 0px 16px; }
 	#viewSelect:empty { display: none; }
@@ -37,6 +38,13 @@
 .widget.widgetView.isClosed {
 	.contentWrapper { height: 8px; }
 	.innerWrap { opacity: 0; }
+}
+
+.widget.widgetView.isPreview {
+	.viewGallery {
+		.body { padding: 0px !important; }
+		.ReactVirtualized__List { padding: 4px 16px; }
+	}
 }
 
 .widget.widgetView {

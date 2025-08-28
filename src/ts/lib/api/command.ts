@@ -1405,6 +1405,16 @@ export const RelationListRemoveOption = (optionIds: string[], checkInObjects: bo
 	dispatcher.request(RelationListRemoveOption.name, request, callBack);
 };
 
+export const RelationOptionSetOrder = (spaceId: string, relationKey: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.Option.SetOrder.Request();
+
+	request.setSpaceid(spaceId);
+	request.setRelationkey(relationKey);
+	request.setRelationoptionorderList(ids);
+
+	dispatcher.request(RelationOptionSetOrder.name, request, callBack);
+};
+
 export const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.BookmarkFetch.Request();
 

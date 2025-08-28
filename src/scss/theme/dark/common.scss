@@ -336,6 +336,10 @@ html.themeDark {
 
 	/* Header */
 
+	.header.authIndex {
+		.logo { background: url('~img/logo/white.svg'); }
+	}
+
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
@@ -388,11 +392,6 @@ html.themeDark {
 				.side.right {
 					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
 					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
-				}
-
-				&.withCounter {
-					.icon.back { background-image: url('~img/icon/widget/back2.svg'); }
-					.icon.back:hover { background-image: url('~img/icon/widget/back2.svg'); }
 				}
 			}
 
@@ -448,6 +447,16 @@ html.themeDark {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
+			.spaceChatSidebarHeader {
+				.buttons {
+					.item {
+						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
+						.icon.search { background-image: url('#{$themePath}/icon/sidebar/chatSpace/search.svg'); }
+						.icon.mute.pushOn { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
+						.icon.mute.pushOff { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+					}
+				}
+			}
 		}
 	}
 
@@ -478,12 +487,6 @@ html.themeDark {
 	.shareTooltip {
 		.icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
 		.icon.close { background-color: var(--color-bg-secondary); }
-	}
-
-	.shareBanner { background: var(--color-bg-primary); }
-	.shareBanner {
-		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
-		.icon.close { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 	}
 
 	.emptyState {

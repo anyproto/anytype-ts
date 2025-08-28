@@ -42,6 +42,7 @@ const BlockIconUser = observer(forwardRef<BlockIconUserRefProps, I.BlockComponen
 				iconSize={128}
 				menuParam={{
 					horizontal: I.MenuDirection.Center,
+					classNameWrap: 'fromBlock',
 				}}
 			/>
 		</div>

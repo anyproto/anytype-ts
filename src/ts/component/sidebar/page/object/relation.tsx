@@ -31,7 +31,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
         return (
 			<>
-				<div className="head">
+				<div id="head" className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeRelation')} />
 					</div>
@@ -43,7 +43,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 					) : ''}
 				</div>
 
-				<div className="body">
+				<div id="body" className="body">
 					{!type ? (
 						<div className="section">
 							<div className="item empty">

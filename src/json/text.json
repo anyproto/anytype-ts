@@ -409,7 +409,6 @@
 	"headerSettingsIdentityInfoExplorePlans": "Explore plans",
 
 	"shareTooltipLabel": "Become Anytype<br/>member today!",
-	"shareBannerLabel": "<b>Share the space!</b> Invite your friends and build together.",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -417,12 +416,15 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLogin": "I already have the key",
+	"authSelectIntroLine1": "Encrypted, local,",
+	"authSelectIntroLine2": "yours forever",
+
+	"authSelectLogin": "I already have a Key",
 	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
-	"authLoginLostPhrase": "I've lost the Key",
+	"authLoginLostPhrase": "I've lost my Key",
 
 	"authDeleteTitle": "Delete Profile",
 	"authDeleteTitleDeleted": "Vault data removed from the backup node",
@@ -438,17 +440,34 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardNameTitle": "Add your name",
-	"authOnboardNameLabel": "Only seen by people you share something with. There is no central registry for these names.",
-	"authOnboardNamePlaceholder": "Enter your name...",
-
 	"authOnboardEmailTitle": "Stay in the loop",
 	"authOnboardEmailLabel": "We'd love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won't share your data. Ever.",
 	"authOnboardEmailPlaceholder": "Enter your email...",
 
-	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — you control your data.<br/>You can find this key later in app settings.<br/><span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show my key",
+	"authOnboardPersonaTitle": "Tell Us About Yourself",
+	"authOnboardPersonaLabel": "Select one role or background that best fits you",
+	"authOnboardUseCaseTitle": "What do you want to use Anytype for?",
+	"authOnboardUseCaseLabel": "Select one use case that suits you",
+
+	"authOnboardOptionsStudent": "Student",
+	"authOnboardOptionsManager": "Manager / IT Professional",
+	"authOnboardOptionsSoftwareDeveloper": "Software Developer",
+	"authOnboardOptionsWriter": "Writer / Journalist",
+	"authOnboardOptionsDesigner": "Designer",
+	"authOnboardOptionsArtist": "Artist / Content Creator",
+	"authOnboardOptionsMarketer": "Marketer",
+	"authOnboardOptionsConsultant": "Consultant",
+	"authOnboardOptionsEntrepreneur": "Founder / Entrepreneur",
+	"authOnboardOptionsResearcher": "Researcher / Academic",
+
+	"authOnboardOptionsMessaging": "Messaging & group chats",
+	"authOnboardOptionsKnowledge": "Personal knowledge management",
+	"authOnboardOptionsNoteTaking": "Personal note-taking",
+	"authOnboardOptionsProjects": "Projects & tasks management",
+	"authOnboardOptionsLifePlanning": "Life planning",
+	"authOnboardOptionsHabitTracking": "Habit tracking",
+	"authOnboardOptionsTeamWork": "Team work & shared docs",
+	"authOnboardOptionsOther": "Other",
 
 	"onboardingExperienceSubTitle": "Build your first space",
 	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
@@ -1935,6 +1954,7 @@
 	"layout8": "Image",
 	"layout9": "Note",
 	"layout11": "Bookmark",
+	"layout17": "Date",
 	"layout19": "Space Member",
 	"layout20": "Database",
 

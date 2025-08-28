@@ -61,8 +61,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					const whatsNew = Storage.get('whatsNew');
 					const primitivesOnboarding = Storage.get('primitivesOnboarding');
 
-					S.Common.getRef('mainAnimation')?.destroy();
-
 					[
 						I.SurveyType.Register, 
 						I.SurveyType.Object,
@@ -136,8 +134,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
-	const back = <Icon className="arrow back" onClick={onCancel} />;
-
 	let loader = null;
 	let title = '';
 	let label = '';
@@ -191,8 +187,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			className="wrapper"
 		>
 			<Frame>
-				{back}
-
 				{icon}
 				{title ? <Title className={cn.join(' ')} text={title} /> : ''}
 				{label ? <Label className={cn.join(' ')} text={label} /> : ''}

@@ -2,14 +2,17 @@ $transitionSettings: all 0.25s $easeInQuint;
 
 .sidebarPage.pageVault,
 .sidebarPage.pageWidget {
-    > .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }
-    > .bottom {
+	> .bottom { 
+		position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; 
+		overflow: hidden;
+	}
+	> .bottom {
         .grad {
             position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
             background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
         }
 
-        .sides { position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px; align-items: center; justify-content: space-between; gap: 0px 6px; }
+        .sides { position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px 12px 12px; align-items: center; justify-content: space-between; gap: 0px 6px; }
         .side.center { text-align: center; flex-grow: 1; flex-shrink: 0; width: auto; }
         .side.right { text-align: right; flex-shrink: 0; }
 
@@ -63,7 +66,7 @@ $transitionSettings: all 0.25s $easeInQuint;
 
 .sidebarPage.pageVault {
     > .bottom {
-        .side.left { width: 100%; overflow: hidden; }
+        .side.left { width: 100%; overflow: hidden; min-width: 32px; }
         .side.left {
             .appSettings { display: flex; gap: 0px 8px; align-items: center; justify-content: flex-start; }
             .appSettings:hover {

@@ -25,9 +25,6 @@
 
 .sidebarHeadIcon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
-.icon { width: 20px; height: 20px; flex-shrink: 0; }
-		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
-
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { position: fixed; z-index: 24; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
@@ -45,9 +42,16 @@
 
 .sidebar.right {
 	@import "./preview";
+
+	.sidebarPage.pageWidget {
+		.body { padding-bottom: 12px; }
+	}
 }
 
 .sidebar {
+	.icon { width: 20px; height: 20px; flex-shrink: 0; }
+	.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
+
 	@import "./page";
 	
 	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; background: var(--color-bg-primary); }

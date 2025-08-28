@@ -1472,8 +1472,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (isDelete && (range.from == range.to) && (range.to == length)) {
 				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1, length);
 			};
-		};
-		if (!block.isText() && !keyboard.isFocused) {
+		} else 
+		if (!keyboard.isFocused) {
 			this.blockRemove(block);
 		};
 	};
@@ -1532,9 +1532,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const isEnter = pressed == 'enter';
 		const isShift = !!pressed.match('shift');
-		const length = block.getLength();
-		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const replace = !range.to && block.isTextList() && !length;
 
 		if (block.isTextCode() && isEnter) {
 			return;
@@ -1553,15 +1550,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (replace) {
-			if (parent?.isTextList()) {
-				this.onTabBlock(e, range, true);
-			} else {
-				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph, () => {
-					C.BlockTextListClearStyle(rootId, [ block.id ]);
-				});
-			};
-		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
@@ -2272,7 +2260,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let style = I.TextStyle.Paragraph;
 		let mode = I.BlockSplitMode.Bottom;
 
-		if ((length && isList) || (!isTitle && ((range.from != length) || (range.to != length)))) {
+		if (isList || (!isTitle && ((range.from != length) || (range.to != length)))) {
 			style = content.style;
 		};
 

@@ -151,7 +151,6 @@ class Sidebar {
 	setElementsWidth (width: any): void {
 		this.objLeft.find('#head').css({ width });
 		this.objLeft.find('#body').css({ width });
-		this.objLeft.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
 	/**
@@ -243,6 +242,7 @@ class Sidebar {
 		const isMain = keyboard.isMain();
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
+		const isMainChat = keyboard.isMainChat();
 
 		this.initObjects();
 
@@ -293,21 +293,23 @@ class Sidebar {
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
-		//this.page.toggleClass('sidebarAnimation', animate);
+
+		if (isMainChat) {
+			this.page.toggleClass('sidebarAnimation', animate);
+		};
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
-			this.dummyLeft.css({ width: widthLeft });
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
-
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
+			this.dummyLeft.css({ width: widthLeft });
 			this.page.css({ width: pageWidth });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });

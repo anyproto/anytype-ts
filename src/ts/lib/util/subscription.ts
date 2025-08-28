@@ -415,7 +415,7 @@ class UtilSubscription {
 			{
 				spaceId: techSpaceId,
 				subId: J.Constant.subId.space,
-				keys: this.spaceRelationKeys(),
+				keys: this.spaceRelationKeys(false),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
@@ -536,12 +536,13 @@ class UtilSubscription {
 			},
 			{
 				subId: J.Constant.subId.option,
-				keys: J.Relation.option,
+				keys: this.optionRelationKeys(false),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
+					{ relationKey: 'orderId', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -639,8 +640,28 @@ class UtilSubscription {
 	 * Returns the relation keys for space subscriptions.
 	 * @returns {string[]} The list of relation keys.
 	 */
-	spaceRelationKeys () {
-		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant).concat('tmpOrder');
+	spaceRelationKeys (withTmpOrder: boolean) {
+		const ret = [ ...J.Relation.default, ...J.Relation.space, ...J.Relation.participant ];
+
+		if (withTmpOrder) {
+			ret.push('tmpOrder');
+		};
+
+		return ret;
+	};
+
+	/**
+	 * Returns the relation keys for option subscriptions.
+	 * @returns {string[]} The list of relation keys.
+	 */
+	optionRelationKeys (withTmpOrder: boolean) {
+		const ret = [ ...J.Relation.option ];
+
+		if (withTmpOrder) {
+			ret.push('tmpOrder');
+		};
+
+		return ret;
 	};
 
 	/**

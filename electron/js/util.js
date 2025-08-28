@@ -65,6 +65,8 @@ class Util {
 	};
 
 	getBgColor (theme) {
+		theme = String(theme || '');
+
 		const bg = {
 			'': '#fff',
 			dark: '#060606',

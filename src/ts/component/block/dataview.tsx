@@ -304,8 +304,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const ref = params.ref;
 
 		let viewId = S.Record.getMeta(this.getSubId(), '').viewId;
+
 		if ((ref == 'widget') && params.viewId) {
-			delete(params[0]);
 			delete(params.ref);
 
 			viewId = params.viewId;
