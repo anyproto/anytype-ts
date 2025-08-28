@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewOptionList { width: var(--menu-width-value);; }
+	.menu.menuDataviewOptionList { width: var(--menu-width-value); }
 	.menu.menuDataviewOptionList {
 		.content { overflow: hidden; transition: none; padding: 0px; max-height: unset; }
 		.content {
@@ -14,48 +14,51 @@
 		}
 
 		.item { display: flex; align-items: center; }
-		.item:not(.add, .empty) { padding: 0px 10px 0px 0px; gap: 0px 4px; }
+		.item:not(.add, .empty) { gap: 0px 4px; padding-left: 10px; }
 		.item {
-			.clickable { padding: 4px 14px; }
-
 			.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
 			.buttons {
 				.icon.more { display: none; }
 			}
-		}
-		.item.withCheckbox {
-			.clickable { width: calc(100% - 24px); }
+
+			&.withCheckbox {
+				.clickable { width: calc(100% - 24px); }
+			}
+
+			&:hover, &.hover {
+				.clickable { width: calc(100% - 28px); }
+				.buttons {
+					.icon.more { display: block; }
+				}
+			}
+
+			&.withCheckbox:hover, &.withCheckbox.hover {
+				.clickable { width: calc(100% - 50px); }
+			}
+
+			&.add {
+				.name { @include text-overflow-nw; }
+			}
+
+			&.isDragging { z-index: 1; }
 		}
 
-		.item:hover, .item.hover {
-			.clickable { width: calc(100% - 28px); }
-			.buttons {
-				.icon.more { display: block; }
+		&.fromFilter {
+			.item {
+				.icon.more { display: none; }
 			}
 		}
-		.item.withCheckbox:hover, .item.withCheckbox.hover {
-			.clickable { width: calc(100% - 50px); }
-		}
 
-		.item.add {
-			.name { @include text-overflow-nw; }
-		}
-	}
+		&.fromFeatured {
+			.filter { padding-top: 8px; }
+			.item {
+				.buttons,
+				.icon.chk { right: 14px; }
 
-	.menu.menuDataviewOptionList.fromFilter {
-		.item {
-			.icon.more { display: none; }
-		}
-	}
-
-	.menu.menuDataviewOptionList.fromFeatured {
-		.filter { padding-top: 8px; }
-		.item {
-			.buttons,
-			.icon.chk { right: 14px; }
-		}
-		.item:hover, .item.hover {
-			.icon.chk { right: 40px; }
+				&:hover, &.hover {
+					.icon.chk { right: 40px; }
+				}
+			}
 		}
 	}
 

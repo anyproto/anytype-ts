@@ -28,7 +28,9 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const [ dummy, setDummy ] = useState(0);
+	const frameRef = useRef(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
 	const { chatId } = object;
 	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
 	const messages = S.Chat.getList(subId);
@@ -475,17 +477,21 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		let last = null;
-		dates.each((i, item: any) => {
-			item = $(item);
 
-			const y = item.offset().top - st;
-			if (y <= hh + 8) {
-				last = item;
-			};
+		raf.cancel(frameRef.current);
+		frameRef.current = raf(() => {
+			dates.each((i, item: any) => {
+				item = $(item);
+
+				const y = item.offset().top - st;
+				if (y <= hh + 8) {
+					last = item;
+				};
+			});
+
+			dates.removeClass('active');
+			(last || dates.first()).addClass('active');
 		});
-
-		dates.removeClass('active');
-		(last || dates.first()).addClass('active');
 
 		if (isFocused) {
 			list.forEach(it => {
@@ -656,7 +662,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const wrapper = $(scrollWrapperRef.current);
-			const y = wrapper.outerHeight();
+			const y = wrapper.outerHeight() + 40;
 
 			setAutoLoadDisabled(true);
 
@@ -932,7 +938,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				blockId={block.id}
 				subId={subId}
 				onScrollToBottomClick={onScrollToBottomClick}
-				scrollToBottom={scrollToBottom}
+				scrollToBottom={scrollToBottomCheck}
 				scrollToMessage={scrollToMessage}
 				loadMessagesByOrderId={loadMessagesByOrderId}
 				getMessages={getMessages}

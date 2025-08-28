@@ -64,6 +64,7 @@
 	.icon.pin { background-image: url('~img/icon/menu/action/pin0.svg'); }
 	.icon.unpin { background-image: url('~img/icon/menu/action/unpin0.svg'); }
 	.icon.widgetPanel { background-image: url('~img/icon/header/widget.svg'); }
+	.icon.share { background-image: url('~img/icon/header/share.svg'); }
 }
 .header.isSmall {
 	.path { visibility: hidden; overflow: hidden; width: 0px; }
@@ -91,13 +92,33 @@ body.isFullScreen {
 
 .header.authIndex { height: 52px; width: 100% !important; }
 .header.authIndex {
-	.side.left { padding: 0px; }
-	.logo { width: 70px; height: 18px; background: url('~img/logo/white.svg'); }
+	.side.left { padding: 86px; }
+
+	.select {
+		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px 4px 29px; border-radius: 6px;
+		@include text-small; font-weight: 500; color: var(--color-text-secondary);
+	}
+	.select:hover,
+	.select.hover { background: var(--color-shape-highlight-medium); }
+	.select {
+		.icon.arrow { display: none; }
+
+		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }
+	}
+
+	.logo { width: 70px; height: 18px; background: url('~img/logo/black.svg'); }
 }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.header.authIndex {
 		.icon.settings { display: none; }
+	}
+}
+
+html.bodyIndexIndex,
+html.bodyAuthSelect {
+	.header.authIndex {
+		.icon.arrow.back { display: none; }
 	}
 }
 

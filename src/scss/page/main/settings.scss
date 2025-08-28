@@ -180,8 +180,8 @@
             .btn { width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
             .btn {
                 .icon {
-                    width: 64px; height: 64px; border-radius: 8px; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
-                    background-position: 50% 50%; background-size: 40px; transition: $transitionAllCommon;
+                    width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
+                    background-position: 50% 50%; background-size: 20px; transition: $transitionAllCommon;
                 }
                 .icon.invite { background-image: url('~img/icon/settings/invite.svg'); }
                 .icon.qr { background-image: url('~img/icon/settings/qr.svg'); }

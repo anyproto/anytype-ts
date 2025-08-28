@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard, analytics } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -132,8 +132,15 @@ class Sidebar {
 		};
 		
 		const { width, isClosed } = this.data;
-		
-		isClosed ? this.open(width) : this.close();
+
+		if (isClosed) {
+			this.open(width);
+			analytics.event('ExpandSidebar');
+		} else {
+			this.close();
+			analytics.event('CollapseSidebar');
+		};
+
 		S.Menu.closeAll();
 	};
 
@@ -144,7 +151,6 @@ class Sidebar {
 	setElementsWidth (width: any): void {
 		this.objLeft.find('#head').css({ width });
 		this.objLeft.find('#body').css({ width });
-		this.objLeft.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
 	/**
@@ -236,6 +242,7 @@ class Sidebar {
 		const isMain = keyboard.isMain();
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
+		const isMainChat = keyboard.isMainChat();
 
 		this.initObjects();
 
@@ -286,21 +293,23 @@ class Sidebar {
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
-		//this.page.toggleClass('sidebarAnimation', animate);
+
+		if (isMainChat) {
+			this.page.toggleClass('sidebarAnimation', animate);
+		};
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
-			this.dummyLeft.css({ width: widthLeft });
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
-
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
+			this.dummyLeft.css({ width: widthLeft });
 			this.page.css({ width: pageWidth });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
@@ -402,7 +411,7 @@ class Sidebar {
 			S.Common.setRightSidebarState(isPopup, '', false);
 		};
 
-		this.rightPanelSetState(isPopup, { page, ...param });
+		this.rightPanelSetState(isPopup, { page: '' });
 
 		window.setTimeout(() => {
 			this.initObjects();
@@ -428,6 +437,17 @@ class Sidebar {
 
 				this.objRight.css(cssEnd);
 				this.resizePage(null, shouldOpen ? null : 0, animate);
+
+				window.setTimeout(() => {
+					this.rightPanelSetState(isPopup, { page, ...param });
+					this.objRight.removeClass('anim');
+
+					const inner = this.objRight.find('.sidebarPage');
+
+					inner.css({ opacity: 0 });
+					raf(() => inner.css({ opacity: 1 }));
+
+				}, animate ? J.Constant.delay.sidebar : 0);
 			});
 		});
 

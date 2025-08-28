@@ -136,7 +136,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	return (
 		<>
 			<div className="side left">
-				{renderLeftIcons(true, onOpen)}
+				{renderLeftIcons(true, true, onOpen)}
 			</div>
 
 			<div className="side center">
@@ -145,12 +145,12 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 
 			<div className="side right">
 				{showShare ? (
-					<Button 
+					<Icon 
 						id="button-header-share" 
-						text={translate('commonShare')} 
-						color="blank" 
-						className="c28" 
-						onClick={onShare}
+						tooltipParam={{ text: translate('commonShare'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'share', 'withBackground' ].join(' ')}
+						onClick={onShare} 
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 
@@ -160,16 +160,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
 						onClick={onRelation} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
-
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget" 
-						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
-						onClick={() => sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId })} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
@@ -194,6 +184,19 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
 						className="more withBackground"
 						onClick={onMore} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
+
+				{showWidget ? (
+					<Icon 
+						id="button-header-widget" 
+						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
+						onClick={() => {
+							sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+							analytics.event('ScreenChatSidebar');
+						}} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}

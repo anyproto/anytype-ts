@@ -254,8 +254,16 @@ class UtilRouter {
 	 * Gets the current route path as a string.
 	 * @returns {string} The current route path.
 	 */
-	getRoute () {
+	getRoute (): string {
 		return String(this.history?.location?.pathname || '');
+	};
+
+	/**
+	 * Gets the current search query string.
+	 * @returns {string} The current search query.
+	 */
+	getSearch (): string {
+		return String(this.history?.location?.search || '');
 	};
 
 	/**

@@ -157,7 +157,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup = Object.assign(param.data.matchPopup.params, object._routeParam_);
 		};
 
 		keyboard.setSource(null);
@@ -519,6 +519,11 @@ class UtilObject {
 	isAllowedChat (withSpace?: boolean): boolean {
 		const electron = U.Common.getElectron();
 		const space = U.Space.getSpaceview();
+
+		if (!space.isChat) {
+			return false;
+		};
+
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
 
