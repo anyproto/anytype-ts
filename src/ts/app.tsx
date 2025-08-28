@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, ListBanner, SidebarLeft, Vault, Loader, } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, ListBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import CanvasWorkerBridge from 'Component/page/auth/animation/canvasWorkerBridge';
 
@@ -501,8 +501,6 @@ const App: FC = () => {
 					<Progress />
 					<Toast />
 					<ListNotification key="listNotification" />
-					<Vault ref={ref => S.Common.refSet('vault', ref)} />
-
 					<ListBanner />
 
 					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>

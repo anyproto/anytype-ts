@@ -50,10 +50,10 @@
 .sidebar {
 	@import "./page";
 	
-	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
+	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; background: var(--color-bg-primary); }
 	.resize-h {
 		.resize-handle {
-			position: absolute; left: 6px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
+			position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
 			width: 12px; height: 32px;
 		}
 		.resize-handle::after {

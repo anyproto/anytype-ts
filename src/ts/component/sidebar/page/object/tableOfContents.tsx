@@ -7,7 +7,7 @@ import Section from 'Component/sidebar/section';
 
 const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref: any) => {
 
-	const { rootId, isPopup } = props;
+	const { rootId, isPopup, page } = props;
 	const object = S.Detail.get(rootId, rootId);
 
 	return (
@@ -17,7 +17,7 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 					<Label text={translate('sidebarToc')} />
 				</div>
 				<div className="side right">
-					<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup)} />
+					<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, page)} />
 				</div>
 			</div>
 

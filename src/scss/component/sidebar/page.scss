@@ -1,12 +1,14 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
+> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; transition: opacity 0.1s ease-in-out; }
 > .sidebarPage {
 	> .head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
+		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
 	> .head {
 		.side.left { flex-grow: 1; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
+
+		.button, .icon { -webkit-app-region: no-drag; }
 
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
@@ -51,8 +53,8 @@
 	}
 
 	> .body {
-		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow: scroll; overscroll-behavior: none; 
-		scrollbar-gutter: stable; flex-grow: 1;
+		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: none; overflow-y: scroll; overscroll-behavior: none; 
+		flex-grow: 1;
 	}
 	> .body {
 		.group { display: flex; flex-direction: column; }

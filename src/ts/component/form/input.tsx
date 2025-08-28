@@ -260,7 +260,7 @@ const Input = forwardRef<InputRef, Props>(({
 
 	useEffect(() => {
 		if (maskOptions && inputRef.current) {
-			new Inputmask(maskOptions.mask, maskOptions).mask($(inputRef.current).get(0));
+			new Inputmask(maskOptions.mask, maskOptions).mask(inputRef.current);
 		};
 
 		if (focusOnMount && inputRef.current) {

@@ -352,7 +352,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const parseBlocks = (blocks: I.Block[]) => {
 			const targetIds = [];
 
-			blocks.forEach((block: I.Block) => {
+			blocks.forEach((block: I.Block, index: number) => {
 				if (block.isText()) {
 					const text = block.getText();
 			
@@ -362,7 +362,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					};
 					marks = Mark.adjust(marks, 0, newText.length);
 
-					newText += text + '\n';
+					newText += text;
+
+					if (index < blocks.length - 1) {
+						newText += '\n';
+					};
+
 					newMarks = newMarks.concat(marks);
 				} else {
 					const targetId = block.getTargetObjectId();

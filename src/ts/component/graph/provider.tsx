@@ -183,6 +183,8 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			};
 		})
 		.on('contextmenu', (e: any) => {
+			e.stopPropagation();
+
 			const [ x, y ] = d3.pointer(e);
 			send('onContextMenu', { x, y });
 		})
