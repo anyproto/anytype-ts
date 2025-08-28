@@ -215,6 +215,11 @@ class Keyboard {
 			Preview.previewHide(false);
 		});
 
+		// Switch dark/light mode
+		this.shortcut('theme', e, () => {
+			Action.themeSet(!theme ? 'dark' : '');
+		});
+
 		if (isMain) {
 
 			// Print
@@ -277,11 +282,6 @@ class Keyboard {
 			// Select type
 			this.shortcut('selectType', e, () => {
 				$('#widget-space #widget-space-arrow').trigger('click');
-			});
-
-			// Switch dark/light mode
-			this.shortcut('theme', e, () => {
-				Action.themeSet(!theme ? 'dark' : '');
 			});
 
 			// Lock the app
