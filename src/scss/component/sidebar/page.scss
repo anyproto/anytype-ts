@@ -19,7 +19,7 @@
 	}
 
 	> .subHead { 
-		display: flex; flex-direction: row; align-items: center; gap: 0px 10px; justify-content: stretch; padding: 6px 12px; position: relative; 
+		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 6px 12px; position: relative; 
 		margin: 0px 0px 4px 0px;
 	}
 	> .subHead {
@@ -27,7 +27,7 @@
 		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
 
 		.cnt { 
-			min-width: 18px; height: 20px; border-radius: 10px; background: var(--color-system-accent-125); @include text-very-small; 
+			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
 			color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
 			padding: 0px 4px; cursor: default; flex-shrink: 0;
 		}
