@@ -197,6 +197,19 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
+
+				{spaceview.isChat ? (
+					<Icon 
+						id="button-header-widget" 
+						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
+						onClick={() => {
+							sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+							analytics.event('ScreenChatSidebar');
+						}} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
 			</div>
 		</>
 	);

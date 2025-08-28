@@ -58,9 +58,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
 		const chatSpaceHeaderButtons = [
+			{ id: 'chat', name: translate('commonChat') },
 			{ id: 'add', name: translate('commonAdd') },
-			{ id: 'search', name: translate('commonSearch') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'pushOff' : 'pushOn' },
+			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
 		];
 
 		if (isEditing) {
@@ -278,10 +278,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					) : (
 						<>
 							<div className="side left">
-								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
+								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
 							</div>
 							<div className="side right">
-								<Icon className="close withBackground" onClick={() => sidebar.rightPanelToggle(true, isPopup, page)} />
+								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
 							</div>
 						</>
 					)}
@@ -689,14 +689,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const isMuted = space.notificationMode != I.NotificationMode.All;
 
 		switch (item.id) {
-			case 'add': {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
+			case 'chat': {
+				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 				break;
 			};
 
-			case 'search': {
-				keyboard.onSearchPopup(analytics.route.widget);
+			case 'add': {
+				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
 
