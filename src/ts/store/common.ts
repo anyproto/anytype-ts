@@ -668,10 +668,10 @@ class CommonStore {
 	 * Gets the current theme class string.
 	 * @returns {string} The theme class.
 	 */
-	getThemeClass () {
+	getThemeClass (forceSystem?: boolean): string {
 		let ret = '';
 
-		if (this.themeId == 'system') {
+		if (forceSystem || (this.themeId == 'system')) {
 			ret = this.nativeThemeIsDark ? 'dark' : '';
 		} else {
 			ret = this.themeId;
@@ -685,12 +685,7 @@ class CommonStore {
 	 */
 	setThemeClass (forceSystem?: boolean) {
 		const head = $('head');
-
-		let c = this.getThemeClass();
-
-		if (forceSystem) {
-			c = this.nativeThemeIsDark ? 'dark' : '';
-		};
+		const c = this.getThemeClass(forceSystem);
 
 		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
