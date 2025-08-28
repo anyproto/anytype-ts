@@ -519,6 +519,11 @@ class UtilObject {
 	isAllowedChat (withSpace?: boolean): boolean {
 		const electron = U.Common.getElectron();
 		const space = U.Space.getSpaceview();
+
+		if (!space.isChat) {
+			return false;
+		};
+
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
 

@@ -184,7 +184,7 @@ class Keyboard {
 				S.Menu.closeLast();
 			} else 
 			if (rightSidebar.isOpen) {
-				sidebar.rightPanelToggle(true, isPopup);
+				sidebar.rightPanelToggle(true, isPopup, rightSidebar.page);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -1672,6 +1672,10 @@ class Keyboard {
 			ret.push('capslock');
 		};
 		return ret;
+	};
+
+	isCmd (e: any): boolean {
+		return U.Common.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	/**

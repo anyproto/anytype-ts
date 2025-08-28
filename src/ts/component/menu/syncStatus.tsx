@@ -45,6 +45,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
+		const showIncentive = notSyncedCounter && canWrite && U.Data.isAnytypeNetwork();
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -135,7 +136,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 				<UpsellStorage className="fromSyncMenu" route={analytics.route.syncStatus} />
 
-				{notSyncedCounter && canWrite ? (
+				{showIncentive ? (
 					<div className="incentiveBanner">
 						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
 						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />

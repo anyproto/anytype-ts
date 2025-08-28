@@ -367,7 +367,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						<ObjectName object={item} />
 
 						<div className="icons">
-							{icons.map(icon => <Icon className={icon} />)}
+							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
@@ -425,6 +425,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	useEffect(() => {
 		rebind();
+		analytics.event('ScreenVault');
 
 		return () => {
 			unbind();
@@ -510,7 +511,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					<div className="side right">
 						<Icon
 							className="gallery"
-							tooltipParam={{ text: translate('sidebarEdit') }}
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}
 						/>
 

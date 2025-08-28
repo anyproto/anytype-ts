@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard } from 'Lib';
+import { I, U, S, J, Storage, keyboard, analytics } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -132,8 +132,15 @@ class Sidebar {
 		};
 		
 		const { width, isClosed } = this.data;
-		
-		isClosed ? this.open(width) : this.close();
+
+		if (isClosed) {
+			this.open(width);
+			analytics.event('ExpandSidebar');
+		} else {
+			this.close();
+			analytics.event('CollapseSidebar');
+		};
+
 		S.Menu.closeAll();
 	};
 
@@ -402,7 +409,7 @@ class Sidebar {
 			S.Common.setRightSidebarState(isPopup, '', false);
 		};
 
-		this.rightPanelSetState(isPopup, { page, ...param });
+		this.rightPanelSetState(isPopup, { page: '' });
 
 		window.setTimeout(() => {
 			this.initObjects();
@@ -428,6 +435,17 @@ class Sidebar {
 
 				this.objRight.css(cssEnd);
 				this.resizePage(null, shouldOpen ? null : 0, animate);
+
+				window.setTimeout(() => {
+					this.rightPanelSetState(isPopup, { page, ...param });
+					this.objRight.removeClass('anim');
+
+					const inner = this.objRight.find('.sidebarPage');
+
+					inner.css({ opacity: 0 });
+					raf(() => inner.css({ opacity: 1 }));
+
+				}, animate ? J.Constant.delay.sidebar : 0);
 			});
 		});
 
