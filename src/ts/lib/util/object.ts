@@ -792,7 +792,15 @@ class UtilObject {
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
 		const newColor = color || U.Common.iconBgByOption(option);
-		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
+
+		let svg = '';
+		try {
+			svg = U.Common.updateSvg(require(`img/icon/type/${id}.svg`), { id, size, fill: newColor });
+		} catch (e) {
+			svg = U.Common.updateSvg(require('img/icon/error.svg'), { id, size, fill: newColor });
+		};
+
+		return svg;
 	};
 
 };
