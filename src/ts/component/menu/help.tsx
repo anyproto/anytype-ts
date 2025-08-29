@@ -4,11 +4,12 @@ import { I, S, U, J, keyboard, analytics, Action, Highlight, translate } from 'L
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { setActive, close, getId, onKeyDown, param, getSize } = props;
+	const { id, param, setActive, close, getId, onKeyDown, getSize } = props;
 	const n = useRef(-1);
 
 	const rebind = () => {
 		unbind();
+
 		$(window).on('keydown.menu', e => onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 	};
@@ -78,6 +79,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			rebind,
+			parentId: id,
 			data: {
 				options: item.children,
 				onSelect: onClick,
@@ -127,9 +129,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				S.Popup.open('share', {});
 				break;
 			};
-
 		};
-
 	};
 
 	const items = getItems();
@@ -147,6 +147,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		onOver,
 	}), []);
 
 	return (
@@ -164,6 +165,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			<ShareTooltip
 				text={translate('shareTooltipLabel')}
+				onMouseEnter={() => {
+					n.current = -1;
+					S.Menu.closeAll([ 'select' ]);
+				}}
 				onClick={() => {
 					U.Router.go('/main/settings/membership', {});
 					analytics.event('ClickUpgradePlanTooltip', { type: 'help' });
