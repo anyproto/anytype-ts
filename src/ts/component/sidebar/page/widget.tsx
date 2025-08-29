@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Widget, DropTarget, ProgressText, Label, IconObject, ObjectName } from 'Component';
+import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
 
 type State = {
@@ -327,9 +327,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		return (
 			<>
 				<div className="head">
-					{isDirectionLeft ? (
-						<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
-					) : (
+					{isDirectionRight ? (
 						<>
 							<div className="side left">
 								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
@@ -338,7 +336,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
 							</div>
 						</>
-					)}
+					) : ''}
 				</div>
 
 				{subHead}
