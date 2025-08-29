@@ -129,6 +129,8 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 									},
 								},
 							});
+
+							analytics.event('ScreenInviteRequest', { route, type: I.InviteType.WithoutApprove });
 						} else {
 							request(message);
 						};
