@@ -1,5 +1,7 @@
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
+const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
+
 class UtilObject {
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -793,9 +795,10 @@ class UtilObject {
 	typeIcon (id: string, option: number, size: number, color?: string): string {
 		const newColor = color || U.Common.iconBgByOption(option);
 
-		let svg = '';
+		let svg: any = '';
 		try {
-			svg = U.Common.updateSvg(require(`img/icon/type/${id}.svg`), { id, size, fill: newColor });
+			svg = typeIcons(`./${id}.svg`);
+			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
 		} catch (e) {
 			svg = U.Common.updateSvg(require('img/icon/error.svg'), { id, size, fill: newColor });
 		};
