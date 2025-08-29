@@ -72,4 +72,5 @@ export default {
 	graphSettings: [ 'select' ],
 	syncStatus: [ 'syncStatusInfo' ],
 	help: [ 'select' ],
+	chatForm: [ 'typeSuggest' ],
 };

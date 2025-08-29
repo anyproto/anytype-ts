@@ -1129,13 +1129,14 @@ class Keyboard {
 	 * Handles search popup action.
 	 * @param {string} route - The route context.
 	 */
-	onSearchPopup (route: string) {
+	onSearchPopup (route: string, param?: Partial<I.PopupParam>) {
 		if (S.Popup.isOpen('search')) {
 			S.Popup.close('search');
 		} else {
 			S.Popup.open('search', {
+				...param,
 				preventCloseByEscape: true,
-				data: { isPopup: this.isPopup(), route },
+				data: { ...param.data, isPopup: this.isPopup(), route },
 			});
 		};
 	};

@@ -1153,7 +1153,7 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1295,24 +1295,28 @@ class UtilMenu {
 
 		const check = async () => {
 			const items = await getClipboardData();
-			const buttons: any[] = [
-				flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
-			].filter(it => it);
+			const buttons: any[] = [];
 
-			if (items.length) {
-				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
+			if (!flags.noButtons) {
+				buttons.push({ 
+					id: 'add', icon: 'plus', onClick: () => {
+						U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
+						this.menuContext?.close();
+
+						if (param.data.onAdd) {
+							param.data.onAdd();
+						};
+					}, 
+				});
+
+				if (flags.withImport) {
+					buttons.push({ id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true });
+				};
+
+				if (items.length) {
+					buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
+				};
 			};
-
-			buttons.unshift({ 
-				id: 'add', icon: 'plus', onClick: () => {
-					U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
-					this.menuContext?.close();
-
-					if (param.data.onAdd) {
-						param.data.onAdd();
-					};
-				}, 
-			});
 
 			S.Menu.open('typeSuggest', {
 				...param,

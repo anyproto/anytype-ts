@@ -14,7 +14,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
-	const { route } = data;
+	const { route, onObjectSelect } = data;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ backlink, setBacklink ] = useState(null);
 	const nodeRef = useRef(null);
@@ -348,6 +348,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
+		if (onObjectSelect) {
+			return items;
+		};
+
 		/* Settings and pages */
 
 		if (filter) {
@@ -473,6 +477,11 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		close(() => {
 			// Object
 			if (item.isObject) {
+				if (onObjectSelect) {
+					onObjectSelect(item);
+					return;
+				};
+
 				U.Object.openEvent(e, { ...item, id: item.id }, {
 					onRouteChange: () => {
 						if (!meta.blockId) {
