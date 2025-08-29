@@ -17,17 +17,20 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		$(window).off('keydown.menu');
 	};
 
-	const optionMapper = (it: any) => ({ ...it, name: it.name || translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) });
+	const optionMapper = (it: any) => ({ 
+		...it, 
+		children: (it.children || []).map(optionMapper),
+		name: it.name || translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) 
+	});
 
 	const getItems = () => {
 		return [
 			{ 
-				id: 'whatsNew', icon: 'help-star', document: 'whatsNew', 
+				id: 'whatsNew', icon: 'help-bell', document: 'whatsNew', 
 				caption: <Button className="c16" text={U.Common.getElectron().version.app} /> 
 			},
 			{ id: 'shortcut', icon: 'help-keyboard', caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
-			//{ id: 'gallery' },
 			{ id: 'share' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
@@ -47,7 +50,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				],
 			},
 		].map(it => {
-			it.children = (it.children || []).map(optionMapper);
+			it.icon = it.icon || (it.id ? `help-${it.id}` : '');
 			return optionMapper(it);
 		});
 	};
