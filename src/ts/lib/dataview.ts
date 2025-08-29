@@ -193,8 +193,8 @@ class Dataview {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(this.filterMapper),
-				sorts: sorts.map(this.filterMapper),
+				filters: filters.map(it => this.filterMapper(it, { rootId })),
+				sorts: sorts.map(it => this.sortMapper(it)),
 				keys,
 				limit,
 				offset,
@@ -212,12 +212,42 @@ class Dataview {
 	};
 
 	/**
-	 * Maps a filter or sort object for a dataview subscription.
+	 * Maps a filter object for a dataview subscription.
+	 * @param {any} view - The dataview view object.
+	 * @param {any} it - The filter or sort object.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {any} The mapped object.
+	 */
+	filterMapper (it: any, param?: any) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+
+		if (!relation) {
+			return it;
+		};
+
+		it.format = relation.format;
+		it.includeTime = relation.includeTime;
+
+		if (Relation.isArrayType(relation.format)) {
+			it.value = Relation.formatValue(relation, it.value, false);
+
+			if (Array.isArray(it.value)) {
+				it.value = it.value.map(it => this.valueTemplateMapper(it, param));
+			} else {
+				it.value = this.valueTemplateMapper(it.value, param);
+			};
+		};
+
+		return it;
+	};
+
+	/**
+	 * Maps a sort object for a dataview subscription.
 	 * @param {any} view - The dataview view object.
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
-	filterMapper (it: any) {
+	sortMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
 
 		if (relation) {
@@ -225,6 +255,51 @@ class Dataview {
 			it.includeTime = relation.includeTime;
 		};
 		return it;
+	};
+
+	/**
+	 * Maps a filter value template to a value.
+	 * @param {string} value - The filter value.
+	 * @param {any} [param] - Additional parameters, e.g., rootId.
+	 * @returns {string} The mapped value.
+	 */
+	valueTemplateMapper (value: string, param?: any): string {
+		param = param || {};
+
+		const { rootId } = param;
+		const { account } = S.Auth;
+		const { space } = S.Common;
+		const option = Relation.getFilterTemplateOption(value);
+
+		if (!option) {
+			return value;
+		};
+
+		let r = '';
+
+		switch (option.templateType) {
+			default: {
+				r = value;
+				break;
+			};
+
+			case I.FilterValueTemplate.User: {
+				r = account.id;
+				break;
+			};
+
+			case I.FilterValueTemplate.Participant: {
+				r = U.Space.getParticipantId(space, account.id);
+				break;
+			};
+
+			case I.FilterValueTemplate.Object: {
+				r = rootId;
+				break;
+			};
+		};
+
+		return r;
 	};
 
 	/**
