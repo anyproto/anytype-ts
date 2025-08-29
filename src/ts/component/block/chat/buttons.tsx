@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useEffect, MouseEvent, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, analytics, I, J, keyboard, Mark, S, translate, U } from 'Lib';
@@ -33,6 +33,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 		addAttachments, getObjectFromPath, updateAttachments, onMenuClose,
 	} = props;
 	const [ buttons, setButtons ] = useState<any[]>([]);
+	const menuContext = useRef(null);
 	const cmd = keyboard.cmdSymbol();
 
 	const onButton = (e: MouseEvent, item: any) => {
@@ -84,7 +85,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {} as any,
-		};
+		}; 
 
 		let menuId = '';
 
@@ -183,27 +184,87 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
-	const onAttachment = (menu?: string) => {
-		const options: any[] = [
-			{ id: 'object', icon: 'object', name: translate('commonObject') },
-			{ id: 'media', icon: 'media', name: translate('commonMedia') },
-			{ id: 'file', icon: 'file', name: translate('commonFile') },
-			{ id: 'upload', icon: 'upload', name: translate('commonUpload') },
-		];
-
-		const upload = () => {
-			Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
-				if (paths.length) {
-					addAttachments(paths.map(path => getObjectFromPath(path)));
-
-					analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
-				};
-			});
-
-			analytics.event('ClickChatAttach', { type: 'Upload' });
+	const onAttachmentOver = (e: any, item: any) => {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.chatForm);
+			return;
 		};
 
-		let menuId = '';
+		const context = menuContext.current;
+		if (!context) {
+			return;
+		};
+
+		switch (item.id) {
+			case 'create': {
+				U.Menu.typeSuggest({ 
+					element: `#${context.getId()} #item-${item.id}`,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					offsetX: context.getSize().width,
+					vertical: I.MenuDirection.Center,
+					isSub: true,
+					data: {
+						onAdd: () => context?.close(),
+					},
+				}, {}, { noButtons: true }, analytics.route.chat, object => {
+					onChatButtonSelect(I.ChatButton.Object, object);
+
+					U.Object.openPopup(object, { onClose: updateAttachments });
+					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
+					context?.close();
+				});
+				break;
+			};
+		};
+	};
+
+	const onAttachment = () => {
+		const options: any[] = [
+			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
+			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
+		];
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('select', {
+				element: `#block-${block.id} #button-${block.id}-${I.ChatButton.Object}`,
+				className: 'chatAttachment fixed fromBlock',
+				offsetY: -8,
+				vertical: I.MenuDirection.Top,
+				noFlipX: true,
+				noFlipY: true,
+				onOpen: context => menuContext.current = context,
+				data: {
+					options,
+					noVirtualisation: true,
+					noScroll: true,
+					onOver: (e: any, item: any) => {
+						onAttachmentOver(e, item);
+					},
+					onSelect: (e: MouseEvent, option: any) => {
+						switch (option.id) {
+							case 'search': {
+								break;
+							};
+
+							case 'upload': {
+								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
+									addAttachments(paths.map(path => getObjectFromPath(path)));
+
+									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
+								});
+
+								analytics.event('ClickChatAttach', { type: 'Upload' });
+								break;
+							};
+						};
+					},
+				},
+			});
+		});
+
+		/*
 		let data: any = {};
 
 		if (menu) {
@@ -238,6 +299,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 				},
 			};
 
+			/*
 			if (menu == 'object') {
 				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
 			} else
@@ -259,6 +321,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 			};
 
 			analytics.event('ClickScreenChatAttach', { type: analyticsMenuName });
+			
 		} else {
 			menuId = 'select';
 			data = {
@@ -289,6 +352,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 				data,
 			});
 		});
+		*/
 	};
 
 	useEffect(() => {
