@@ -82,27 +82,6 @@ const SidebarPageVaultUpdate = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	/*
-	{updateVersion ? (
-				<Banner
-					id="sidebarUpdateBanner"
-					title={translate('commonUpdateAvailable')}
-					text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)}
-					button={translate('commonUpdateApp')}
-					buttonColor="black"
-					onClick={() => {
-						Renderer.send('updateConfirm');
-						S.Common.updateVersionSet('');
-						U.Common.checkUpdateVersion(updateVersion);
-					}}
-					onClose={() => {
-						S.Common.updateVersionSet('');
-						Renderer.send('updateCancel');
-					}}
-				/>
-			) : ''}
-	*/
-
 	return (
 		<div 
 			id={`item-${id}`}
