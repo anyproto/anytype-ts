@@ -90,7 +90,7 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
-	> .body.isListPreview { overflow: hidden; height: 100%; padding-bottom: 12px; }
+	> .body.isListPreview { overflow: hidden; padding-bottom: 12px; padding-right: 12px; }
 
 	.spaceChatSidebarHeader { padding-bottom: 8px; }
 	.spaceChatSidebarHeader {

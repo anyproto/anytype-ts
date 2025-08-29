@@ -107,18 +107,21 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			<>
 				<div id="head" className="head" />
 
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
+					</div>
+					<div className="side center">
+						<Icon className="settings-type" />
+						<div className="name">{title}</div>
+					</div>
+					<div className="side right">
+						<Icon id="button-object-more" className="more" onClick={this.onMore} />
+					</div>
+				</div>
+
 				<div id="body" className="body">
 					<div className="list">
-						<div className="head">
-							<div className="side left">
-								<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
-								<div className="name">{title}</div>
-							</div>
-							<div className="side right">
-								<Icon id="button-object-more" className="more" onClick={this.onMore} />
-							</div>
-						</div>
-
 						<div className="filterWrapper">
 							<div className="side left">
 								<Filter

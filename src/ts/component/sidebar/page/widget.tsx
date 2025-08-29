@@ -45,7 +45,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const { sidebarDirection, isPopup, page } = this.props;
+		const { sidebarDirection } = this.props;
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
@@ -74,12 +74,43 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		let content = null;
 		let first = null;
 		let bottom = null;
+		let subHead = null;
 
 		if (previewId) {
 			const block = S.Block.getLeaf(widgets, previewId);
-
 			if (block) {
 				cnb.push('isListPreview');
+
+				const child = this.getChild(block.id);
+				const object = this.getObject(child?.getTargetObjectId());
+
+				let icon = null;
+				if (object.isSystem) {
+					icon = <Icon className={object.icon} />;
+				} else {
+					icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
+				};
+
+				subHead = (
+					<div className="subHead">
+						<div className="side left">
+							<Icon className="back" onClick={e => {
+								e.stopPropagation();
+
+								this.setPreview('');
+								analytics.event('ScreenHome', { view: 'Widget' });
+							}} />
+						</div>
+
+						<div className="side center">
+							{icon}
+							<ObjectName object={object} />
+						</div>
+
+						<div className="side right" />
+					</div>
+				);
+
 				content = (
 					<Widget 
 						{...this.props}
@@ -154,6 +185,29 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				buttons.push({ id: 'widget-list-done', className: 'grey c28', text: translate('commonDone'), onMouseDown: this.onEdit });
 			};
+
+			subHead = isDirectionLeft ? (
+				<div className={cnsh.join(' ')}>
+					<div className="side left">
+						<Icon className="back" onClick={this.onBack} />
+						{cnt ? <div className="cnt">{cnt}</div> : ''}
+					</div>
+
+					<div className="side center">
+						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
+						<ObjectName object={space} />
+					</div>
+
+					<div className="side right">
+						{canWrite ? (
+							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
+								<Icon className="plus withBackground" onClick={this.onCreate} />
+								<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
+							</div>
+						) : ''}
+					</div>
+				</div>
+			) : '';
 
 			content = (
 				<div className="content">
@@ -236,7 +290,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			);
 
-			bottom = isDirectionRight ? '' : (
+			bottom = isDirectionLeft ? (
 				<div className="bottom">
 					<div className="grad" />
 
@@ -267,7 +321,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 					</div>
 				</div>
-			);
+			) : '';
 		};
 
 		return (
@@ -287,28 +341,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					)}
 				</div>
 
-				{isDirectionLeft ? (
-					<div className={cnsh.join(' ')}>
-						<div className="side left">
-							<Icon className="back" onClick={this.onBack} />
-							{cnt ? <div className="cnt">{cnt}</div> : ''}
-						</div>
-
-						<div className="side center">
-							<IconObject object={space} size={20} iconSize={20} canEdit={false} />
-							<ObjectName object={space} />
-						</div>
-
-						<div className="side right">
-							{canWrite ? (
-								<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-									<Icon className="plus withBackground" onClick={this.onCreate} />
-									<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
-								</div>
-							) : ''}
-						</div>
-					</div>
-				) : ''}
+				{subHead}
 
 				<div
 					id="body"
@@ -757,13 +790,29 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	getChild (id: string): I.Block {
 		const { widgets } = S.Block;
-
 		const childrenIds = S.Block.getChildrenIds(widgets, id);
+
 		if (!childrenIds.length) {
 			return null;
 		};
 
 		return S.Block.getLeaf(widgets, childrenIds[0]);
+	};
+
+	getObject = (id: string) => {
+		if (!id) {
+			return null;
+		};
+
+		const { widgets } = S.Block;
+
+		let object = null;
+		if (U.Menu.isSystemWidget(id)) {
+			object = U.Menu.getSystemWidgets().find(it => it.id == id);
+		} else {
+			object = S.Detail.get(widgets, id);
+		};
+		return object;
 	};
 
 });

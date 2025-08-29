@@ -134,16 +134,12 @@
 	.item.isSection .inner::before { display: none !important; }
 }
 
+.widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; }
 .widget.isPreview {
-	.head { border-bottom: 1px solid var(--color-shape-secondary); padding: 12px 16px 11px 8px !important; }
-	.head::before { top: 18px; }
-	.head {
-		.sides { padding: 0px; }
-		.headerIcon { display: block !important; }
-		.sides::after { display: none; }
-	}
-
+	.contentWrapper, .innerWrap { height: 100%; }
 	.emptyWrap { padding: 16px 16px 8px 16px; }
+
+	.innerWrap { padding: 0px !important; }
 
 	&.widgetView {
 		#viewSelect { padding-top: 8px; }
