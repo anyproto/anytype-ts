@@ -414,7 +414,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onHelp = () => {
 		S.Menu.open('help', {
-			element: '#button-widget-help',
+			element: '#sidebarPageVault #button-help',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
@@ -516,7 +516,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						/>
 
 						<Button
-							id="button-widget-help"
+							id="button-help"
 							className="help"
 							text="?"
 							tooltipParam={{ text: translate('commonHelp') }}

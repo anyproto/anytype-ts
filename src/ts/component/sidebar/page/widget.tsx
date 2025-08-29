@@ -312,7 +312,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 						<div className="side right">
 							<Button 
-								id="button-widget-help"
+								id="button-help"
 								className="help"
 								text="?"
 								tooltipParam={{ text: translate('commonHelp') }}
@@ -396,11 +396,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onHelp () {
+		const { sidebarDirection } = this.props;
+
 		S.Menu.open('help', {
-			element: '#button-widget-help',
+			element: '#sidebarPageWidget #button-help',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
+			horizontal: sidebarDirection == I.SidebarDirection.Left ? I.MenuDirection.Left : I.MenuDirection.Right,
 			offsetY: -78,
 			subIds: J.Menu.help,
 		});
