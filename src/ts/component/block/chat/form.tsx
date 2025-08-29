@@ -517,10 +517,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const ids = attachments.map(it => it.id);
 
 		list = list.filter(it => !ids.includes(it.id));
-		list = list.map(it => {
-			it.timestamp = U.Date.now();
-			return it;
-		});
+		list = list.map(it => ({ ...it, timestamp: U.Date.now() }));
 
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
@@ -530,7 +527,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		setAttachments(list.concat(attachments));
+		setAttachments([ ...list, ...attachments ]);
 		historySaveState();
 	};
 
@@ -953,7 +950,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onChatButtonSelect = (type: I.ChatButton, item: any) => {
 		switch (type) {
 			case I.ChatButton.Object: {
-				setAttachments([ item ].concat(attachments));
+				addAttachments([ item ]);
 				break;
 			};
 
@@ -1120,7 +1117,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			});
 
-			setAttachments(attachments);
+			const updated = attachments.map(a => {
+				const replacement = objects.find(o => o.id === a.id);
+				return replacement ? replacement : a;
+			});
+
+			setAttachments(updated);
 			saveState(attachments);
 		});
 	};
@@ -1423,15 +1425,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					value={getTextValue()}
 					hasSelection={hasSelection}
 					getMarksAndRange={getMarksAndRange}
-					attachments={attachments}
 					caretMenuParam={caretMenuParam}
 					onMention={onMention}
 					onChatButtonSelect={onChatButtonSelect}
 					onTextButtonToggle={onTextButtonToggle}
 					getObjectFromPath={getObjectFromPath}
-					addAttachments={addAttachments}
 					onMenuClose={onMenuClose}
 					removeBookmark={removeBookmark}
+					addAttachments={addAttachments}
+					getAttachments={() => attachments}
 					updateAttachments={updateAttachments}
 				/>
 
@@ -1484,7 +1486,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	});
 
 	useEffect(() => {
-		scrollToBottom();		
+		scrollToBottom();
 		setRange(range.current);
 	}, [ attachments ]);
 
