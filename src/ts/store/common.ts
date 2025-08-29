@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
-import { I, M, S, U, J, Storage, Renderer, keyboard } from 'Lib';
+import { I, M, S, U, J, Storage, Renderer } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -603,7 +603,7 @@ class CommonStore {
 	 */
 	themeSet (v: string) {
 		this.themeId = String(v || '');
-		this.setThemeClass(!keyboard.isMain());
+		this.setThemeClass();
 	};
 
 	/**
