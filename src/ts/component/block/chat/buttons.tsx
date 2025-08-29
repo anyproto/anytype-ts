@@ -5,7 +5,6 @@ import { Action, analytics, I, J, keyboard, Mark, S, translate, U } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	value: string;
-	attachments: any[];
 	hasSelection: () => boolean;
 	getMarksAndRange: () => any;
 	caretMenuParam: () => any;
@@ -16,6 +15,7 @@ interface Props extends I.BlockComponent {
 	getObjectFromPath: (path: string) => void;
 	addAttachments: (attachments: any[]) => void;
 	updateAttachments?: () => void;
+	getAttachments: () => any[];
 	removeBookmark: (url: string) => void;
 };
 
@@ -29,7 +29,7 @@ interface RefProps {
 const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { 
-		rootId, block, attachments, hasSelection, caretMenuParam, onMention, onChatButtonSelect, onTextButtonToggle, getMarksAndRange, removeBookmark,
+		rootId, block, hasSelection, caretMenuParam, onMention, onChatButtonSelect, onTextButtonToggle, getMarksAndRange, removeBookmark,
 		addAttachments, getObjectFromPath, updateAttachments, onMenuClose,
 	} = props;
 	const [ buttons, setButtons ] = useState<any[]>([]);
@@ -55,7 +55,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 						noHead: true,
 						noUpload: true,
 						value: '',
-						onSelect: (icon) => onChatButtonSelect(type, icon),
+						onSelect: icon => onChatButtonSelect(type, icon),
 						route: analytics.route.message,
 					}
 				});
@@ -207,10 +207,9 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 					data: {
 						onAdd: () => context?.close(),
 					},
-				}, {}, { noButtons: true }, analytics.route.chat, object => {
+				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
-					U.Object.openPopup(object, { onClose: updateAttachments });
 					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
 					context?.close();
 				});
@@ -239,12 +238,18 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 					options,
 					noVirtualisation: true,
 					noScroll: true,
-					onOver: (e: any, item: any) => {
-						onAttachmentOver(e, item);
-					},
+					onOver: onAttachmentOver,
 					onSelect: (e: MouseEvent, option: any) => {
 						switch (option.id) {
 							case 'search': {
+								keyboard.onSearchPopup(analytics.route.message, {
+									data: {
+										onObjectSelect: item => {
+											addAttachments([ item ]);
+											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
+										},
+									},
+								});
 								break;
 							};
 
@@ -268,13 +273,6 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let data: any = {};
 
 		if (menu) {
-			if (menu == 'upload') {
-				upload();
-				return;
-			};
-
-			const analyticsMenuName = U.Common.toUpperCamelCase(menu);
-
 			menuId = 'searchObject';
 			data = {
 				canAdd: true,
