@@ -59,10 +59,15 @@ class Keyboard {
 				U.Data.getMembershipTiers(false);
 			};
 		});
+
+		win.on('focus.common', () => {
+			S.Common.windowIsFocusedSet(true);
+		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
+			S.Common.windowIsFocusedSet(false);
 
 			S.Menu.closeAll([ 'blockContext' ]);
 

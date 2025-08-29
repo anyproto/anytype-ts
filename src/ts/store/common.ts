@@ -56,6 +56,7 @@ class CommonStore {
 	public diffValue: I.Diff[] = [];
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
+	public windowIsFocused = true;
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -912,6 +913,14 @@ class CommonStore {
 	 */
 	clearTimeout (id: string) {
 		window.clearTimeout(this.getTimeout(id));
+	};
+
+	/**
+	 * Sets whether the window is focused.
+	 * @param {boolean} v - Whether the window is focused.
+	 */
+	windowIsFocusedSet (v: boolean) {
+		this.windowIsFocused = Boolean(v);
 	};
 
 };
