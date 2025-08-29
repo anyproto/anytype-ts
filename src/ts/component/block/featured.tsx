@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
+import { observable, trace } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
 import { I, C, S, U, J, M, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 
@@ -347,7 +347,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	getObject () {
-		return S.Detail.get(this.props.rootId, this.getStoreId(), this.getItems().map(it => it.relationKey));
+		const keys = [ 'type', 'setOf', 'featuredRelations', 'layout' ].concat(this.getItems().map(it => it.relationKey));
+
+		return S.Detail.get(this.props.rootId, this.getStoreId(), keys, true);
 	};
 
 	checkType () {

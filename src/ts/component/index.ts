@@ -19,10 +19,10 @@ import ListNotification from './list/notification';
 import ListChildren from './list/children';
 import ListObject from './list/object';
 import ListObjectManager from './list/objectManager';
+import ListBanner from './list/banner';
 
 import Header from './header';
 import Footer from './footer';
-import Vault from './vault';
 import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
@@ -62,7 +62,6 @@ import Pin from './form/pin';
 import Filter from './form/filter';
 import Phrase from './form/phrase';
 import TabSwitch from './form/tabSwitch';
-import EmailCollection from './form/emailCollection';
 import HeadSimple from './page/elements/head/simple';
 import EditorControls from './page/elements/head/controls';
 
@@ -98,11 +97,11 @@ import MediaMermaid from './util/media/mermaid';
 import ProgressBar from './util/progressBar';
 import ProgressText from './util/progressText';
 import ShareTooltip from './util/share/tooltip';
-import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
-import Floater from './util/floater';
 import QR from './util/qr';
+
+import UpsellStorage from './util/upsell/storage';
 
 export {
 	Page,
@@ -125,6 +124,7 @@ export {
 	ListObject,
 	ListObjectManager,
 	ListNotification,
+	ListBanner,
 
 	Header,
 	Footer,
@@ -180,7 +180,6 @@ export {
 	SidebarLeft,
 	SidebarRight,
 
-	Vault,
 	Widget,
 
 	ObjectName,
@@ -199,13 +198,12 @@ export {
 	ProgressBar,
 	ProgressText,
 	ShareTooltip,
-	ShareBanner,
 	FooterAuthDisclaimer,
 
-	EmailCollection,
-	Floater,
 	HeadSimple,
 	EditorControls,
 
 	QR,
+
+	UpsellStorage,
 };

@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
@@ -8,9 +8,8 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, Vault, Loader } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, ListBanner, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
-import CanvasWorkerBridge from 'Component/page/auth/animation/canvasWorkerBridge';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -60,6 +59,7 @@ if (!isPackaged) {
 			S,
 			U,
 			M,
+			J,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -117,22 +117,7 @@ Sentry.setContext('info', {
 
 const RoutePage: FC<RouteComponentProps> = (props) => {
 
-	const { page, action } = (props.match?.params || {}) as any;
-	const noSidebar = 
-		[ 'auth', 'object', 'invite', 'membership' ].includes(page) || 
-		((page == 'main') && [ 'blank', 'object', 'invite', 'membership' ].includes(action));
-
-	return (
-		<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
-			<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
-				<ListPopup key="listPopup" {...props} />
-				<ListMenu key="listMenu" {...props} />
-
-				{!noSidebar ? <SidebarLeft ref={ref => S.Common.refSet('sidebarLeft', ref)} key="sidebarLeft" {...props} /> : ''}
-				<Page {...props} isPopup={false} />
-			</DragProvider>
-		</SelectionProvider>
-	);
+	return <Page {...props} isPopup={false} />;
 
 };
 
@@ -167,6 +152,8 @@ const App: FC = () => {
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-progress', onUpdateProgress);
 		Renderer.on('spellcheck', onSpellcheck);
+		Renderer.on('pin-set', () => S.Common.pinInit());
+		Renderer.on('pin-remove', () => S.Common.pinInit());
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -356,6 +343,8 @@ const App: FC = () => {
 
 	const onUpdateError = (e: any, err: string, auto: boolean) => {
 		console.error(err);
+		S.Common.updateVersionSet('');
+		S.Progress.delete(I.ProgressType.Update);
 
 		if (auto) {
 			return;
@@ -413,8 +402,7 @@ const App: FC = () => {
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		S.Menu.open('select', {
-			className: 'fromBlock',
-			classNameWrap: 'fromPopup',
+			classNameWrap: 'fromBlock',
 			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			onOpen: () => S.Menu.close('blockContext'),
 			onClose: () => keyboard.disableContextOpen(false),
@@ -486,6 +474,8 @@ const App: FC = () => {
 	};
 
 	useEffect(() => init(), []);
+
+	const sidebarLeftRef = useCallback(ref => S.Common.refSet('sidebarLeft', ref), []);
 	
 	return (
 		<Router history={history}>
@@ -503,24 +493,27 @@ const App: FC = () => {
 					{drag}
 					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
-
-					<div id="globalFade">
-						<Loader id="loader" />
-					</div>
+					<div id="globalFade" />
 
 					<PreviewIndex />
 					<Progress />
 					<Toast />
 					<ListNotification key="listNotification" />
-					<Vault ref={ref => S.Common.refSet('vault', ref)} />
+					<ListBanner />
 
-					<Switch>
-						{J.Route.map((path: string, i: number) => (
-							<Route path={path} exact={true} key={i} component={RoutePage} />
-						))}
-					</Switch>
+					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
+						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
+							<SidebarLeft ref={sidebarLeftRef} />
+							<ListPopup />
+							<ListMenu />
 
-					<CanvasWorkerBridge ref={ref => S.Common.refSet('mainAnimation', ref)} state={0} />
+							<Switch>
+								{J.Route.map((path: string, i: number) => (
+									<Route path={path} exact={true} key={i} component={RoutePage} />
+								))}
+							</Switch>
+						</DragProvider>
+					</SelectionProvider>
 				</div>
 			</Provider>
 		</Router>

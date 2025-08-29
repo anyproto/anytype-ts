@@ -36,7 +36,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 	render () {
 		const { param, setHover } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId, getView, itemId } = data;
 
 		const view = getView();
@@ -67,6 +67,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			noScroll: true,
 			noVirtualisation: true,
 			onClose: this.onSelectClose,
+			className,
+			classNameWrap,
 		};
 
 		let wrapValue = false;
@@ -317,26 +319,32 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.props.setActive();
 
 		const item = view.getFilter(itemId);
+		if (!item) {
+			return;
+		};
+
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
-		if (relation && this.refInput) {
-			const isDate = relation.format == I.RelationType.Date;
+		if (!relation || !this.refInput) {
+			return;
+		};
 
-			if (this.refInput.setValue) {
-				if (isDate) {
-					if (item.quickOption == I.FilterQuickOption.ExactDate) {
-						this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
-					} else {
-						this.refInput.setValue(item.value);
-					};
+		const isDate = Relation.isDate(relation.format);
+
+		if (this.refInput.setValue) {
+			if (isDate) {
+				if (item.quickOption == I.FilterQuickOption.ExactDate) {
+					this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
 				} else {
 					this.refInput.setValue(item.value);
 				};
+			} else {
+				this.refInput.setValue(item.value);
 			};
+		};
 
-			if (this.range && this.refInput.setRange && !isDate) {
-				this.refInput.setRange(this.range);
-			};
+		if (this.range && this.refInput.setRange && !isDate) {
+			this.refInput.setRange(this.range);
 		};
 	};
 

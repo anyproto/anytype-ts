@@ -157,7 +157,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup = Object.assign(param.data.matchPopup.params, object._routeParam_);
 		};
 
 		keyboard.setSource(null);
@@ -519,6 +519,11 @@ class UtilObject {
 	isAllowedChat (withSpace?: boolean): boolean {
 		const electron = U.Common.getElectron();
 		const space = U.Space.getSpaceview();
+
+		if (!space.isChat) {
+			return false;
+		};
+
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
 
@@ -591,22 +596,18 @@ class UtilObject {
 		};
 
 		if (object.layout != type.recommendedLayout) {
-			console.log('[hasLayoutConflict] layout', object.layout, type.recommendedLayout);
 			return true;
 		};
 
 		if (!this.hasEqualLayoutAlign(object, type)) {
-			console.log('[hasLayoutConflict] layoutAlign', object.layoutAlign, type.layoutAlign);
 			return true;
 		};
 
 		if (!this.hasEqualLayoutWidth(object, type)) {
-			console.log('[hasLayoutConflict] layoutWidth', type.layoutWidth);
 			return true;
 		};
 
 		if (!this.hasEqualFeaturedRelations(object, type)) {
-			console.log('[hasLayoutConflict] featuredRelations');
 			return true;
 		};
 

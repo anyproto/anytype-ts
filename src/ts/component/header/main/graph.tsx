@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { Icon } from 'Component';
 import { I, S, U, J, translate } from 'Lib';
 
@@ -68,7 +68,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(false)}</div>
+			<div className="side left">{renderLeftIcons(true, false)}</div>
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">

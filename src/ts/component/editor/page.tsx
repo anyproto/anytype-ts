@@ -1472,8 +1472,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (isDelete && (range.from == range.to) && (range.to == length)) {
 				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1, length);
 			};
-		};
-		if (!block.isText() && !keyboard.isFocused) {
+		} else 
+		if (!keyboard.isFocused) {
 			this.blockRemove(block);
 		};
 	};
@@ -1532,9 +1532,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const isEnter = pressed == 'enter';
 		const isShift = !!pressed.match('shift');
-		const length = block.getLength();
-		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const replace = !range.to && block.isTextList() && !length;
 
 		if (block.isTextCode() && isEnter) {
 			return;
@@ -1553,15 +1550,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (replace) {
-			if (parent?.isTextList()) {
-				this.onTabBlock(e, range, true);
-			} else {
-				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph, () => {
-					C.BlockTextListClearStyle(rootId, [ block.id ]);
-				});
-			};
-		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
@@ -1844,6 +1832,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
+			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
@@ -1864,7 +1853,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				rootId,
 				text,
 				marks,
-				blockCreate: this.blockCreate
+				blockCreate: this.blockCreate,
 			},
 		});
 	};
@@ -1884,45 +1873,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		}, 50);
 
 		raf.cancel(this.frameScroll);
-		this.frameScroll = raf(() => this.updateToc());
+		this.frameScroll = raf(() => this.refToc?.onScroll());
 
 		Preview.previewHide(false);
-	};
-
-	updateToc () {
-		const { rootId, isPopup } = this.props;
-		const headers = S.Block.getBlocks(rootId, it => it.isTextTitle() || it.isTextHeader());
-		const length = headers.length;
-
-		if (!length) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		const co = isPopup ? container.offset().top : 0;
-		const ch = container.height() - J.Size.header;
-
-		let blockId = '';
-
-		for (let i = 0; i < length; ++i) {
-			const block = headers[i];
-			const el = $(`#block-${block.id}`);
-
-			if (!el.length) {
-				continue;
-			};
-
-			const t = el.offset().top - co;
-			const h = el.outerHeight();
-			const check = isPopup ? 0 : this.containerScrollTop;
-
-			if ((t >= check) && (t + h <= check + ch)) {
-				blockId = block.id;
-				break;
-			};
-		};
-
-		this.refToc?.setBlock(blockId);
 	};
 	
 	onCopy (e: any, isCut: boolean) {
@@ -2143,6 +2096,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
+									this.blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
 							});
@@ -2163,6 +2118,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						case 'embed': {
 							if (processor !== null) {
 								this.blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
+									this.blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 									$(`#block-${blockId} .preview`).trigger('click');
 								});
 							};
@@ -2202,7 +2158,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			if (param.type == I.BlockType.Text) {
-				window.setTimeout(() => this.focus(message.blockId, 0, 0, false), 15);
+				this.focus(message.blockId, 0, 0, true);
 			};
 
 			if (callBack) {
@@ -2304,7 +2260,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let style = I.TextStyle.Paragraph;
 		let mode = I.BlockSplitMode.Bottom;
 
-		if ((length && isList) || (!isTitle && ((range.from != length) || (range.to != length)))) {
+		if (isList || (!isTitle && ((range.from != length) || (range.to != length)))) {
 			style = content.style;
 		};
 

@@ -144,7 +144,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			};
 		};
 		
-		scrollOnMove.onMouseDown(e, { isWindow: !isPopup, container });
+		scrollOnMove.onMouseDown({ isWindow: !isPopup, container });
 		unbindMouse();
 
 		win.on(`mousemove.selection`, e => onMouseMove(e));
@@ -173,7 +173,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 	
 	const onMouseMove = (e: any) => {
-		if (keyboard.isSelectionDisabled) {
+		if (keyboard.isSelectionDisabled || keyboard.isDragging) {
 			hide();
 			return;
 		};
@@ -236,19 +236,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					$(window).trigger('selectionClear');
 				};
 			} else {
-				const needCheck = e.ctrlKey || e.metaKey;
-
-				/*
-				if (e.ctrlKey || e.metaKey) {
-					for (const i in I.SelectType) {
-						const list = idsOnStart.current.get(I.SelectType[i]) || [];
-
-						needCheck = needCheck || Boolean(list.length);
-					};
-				};
-				*/
-
-				if (needCheck) {
+				if (keyboard.isCmd(e)) {
 					checkNodes(e);
 				};
 				
@@ -278,7 +266,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			$(window).trigger('selectionEnd');
 		};
 		
-		scrollOnMove.onMouseUp(e);
+		scrollOnMove.onMouseUp();
 
 		const list = ids.current.get(I.SelectType.Block) || [];
 		
@@ -357,7 +345,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return list;
 		};
 
-		if (e.ctrlKey || e.metaKey) {
+		if (keyboard.isCmd(e)) {
 			list = (idsOnStart.current.get(type) || []).includes(node.id) ? list.filter(it => it != node.id) : list.concat(node.id);
 		} else
 		if (e.altKey) {
@@ -373,12 +361,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const match = keyboard.getMatch();
 		return [ 'set', 'type', 'relation' ].includes(match.params.action);
 	};
-	
+
 	const checkNodes = (e: any) => {
 		const recalc = recalcCoords(e.pageX, e.pageY);
 		const rect = U.Common.objectCopy(getRect(x.current, y.current, recalc.x, recalc.y));
 
-		if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+		if (!e.shiftKey && !e.altKey && !keyboard.isCmd(e)) {
 			initIds();
 		};
 
@@ -407,7 +395,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return;
 		};
 
-		if ((length == 1) && !(e.ctrlKey || e.metaKey)) {
+		if ((length == 1) && !keyboard.isCmd(e)) {
 			const selected = $(`#block-${list[I.SelectType.Block][0]}`);
 			const value = selected.find('#value');
 

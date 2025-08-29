@@ -1,5 +1,14 @@
 @import "~scss/_mixins";
 
+/* PageAuthSelect */
+.pageIndexIndex, .pageAuthSelect {
+	.bubbleWrapper {
+		.bubble {
+			.img { background-image: url('#{$themePath}/icon/bubble.svg'); }
+		}
+	}
+}
+
 /* PageMainGraph */
 
 .pageMainGraph {
@@ -69,7 +78,9 @@
 					.item {
 						.icon.type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
 						.icon.home { background-image: url('#{$themePath}/icon/settings/home.svg'); }
-						.icon.push { background-image: url('#{$themePath}/icon/settings/push.svg'); }
+						.icon.push0 { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
+						.icon.push1,
+						.icon.push2 { background-image: url('#{$themePath}/icon/settings/pushOff.svg'); }
 						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
 						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 					}
@@ -161,9 +172,9 @@
 	.pageSettingsSpaceIndex {
 		.spaceButtons {
 			.btn {
-				.icon.invite { background: url('#{$themePath}/icon/settings/invite.svg'); }
-				.icon.qr { background: url('#{$themePath}/icon/settings/qr.svg'); }
-				.icon.more { background: url('#{$themePath}/icon/settings/more.svg'); }
+				.icon.invite { background-image: url('#{$themePath}/icon/settings/invite.svg'); }
+				.icon.qr { background-image: url('#{$themePath}/icon/settings/qr.svg'); }
+				.icon.copyLink { background-image: url('#{$themePath}/icon/settings/copy.svg'); }
 			}
 		}
 

@@ -178,13 +178,6 @@ export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 	};
 };
 
-export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
-	return {
-		objectId: response.getObjectid(),
-		details: details(response),
-	};
-};
-
 export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
 	return {
 		objectId: response.getObjectid(),
@@ -208,6 +201,13 @@ export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Respons
 };
 
 export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOption.Response) => {
+	return {
+		objectId: response.getObjectid(),
+		details: details(response),
+	};
+};
+
+export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
 	return {
 		objectId: response.getObjectid(),
 		details: details(response),
@@ -700,6 +700,12 @@ export const RelationListWithValue = (response: Rpc.Relation.ListWithValue.Respo
 				counter: it.getCounter(),
 			};
 		}),
+	};
+};
+
+export const RelationOptionSetOrder = (response: Rpc.Relation.Option.SetOrder.Response) => {
+	return {
+		list: response.getRelationoptionorderList() || [],
 	};
 };
 

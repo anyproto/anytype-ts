@@ -53,6 +53,14 @@ class Api {
 		WindowManager.sendToAll('pin-check');
 	};
 
+	pinSet (win) {
+		WindowManager.sendToAll('pin-set');
+	};
+
+	pinRemove (win) {
+		WindowManager.sendToAll('pin-remove');
+	};
+
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
@@ -76,7 +84,7 @@ class Api {
 	};
 
 	setBackground (win, theme) {
-		BrowserWindow.getAllWindows().forEach(win => win.setBackgroundColor(Util.getBgColor(theme)));
+		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(Util.getBgColor(theme)));
 	};
 
 	setZoom (win, zoom) {

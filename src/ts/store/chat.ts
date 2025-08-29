@@ -36,11 +36,7 @@ class ChatStore {
 	 */
 	prepend (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
-
-		let list = this.getList(subId);
-		list.unshift(...add);
-		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.set(subId, list);
+		this.getList(subId).unshift(...add);
 	};
 
 	/**
@@ -50,11 +46,7 @@ class ChatStore {
 	 */
 	append (subId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
-
-		let list = this.getList(subId);
-		list.push(...add);
-		list = U.Common.arrayUniqueObjects(list, 'id');
-		this.set(subId, list);
+		this.getList(subId).push(...add);
 	};
 
 	/**
@@ -182,6 +174,8 @@ class ChatStore {
 	 * @returns {{ prefix: string; spaceId: string; chatId: string; isSpace: boolean; }} The parsed parameters.
 	 */
 	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; windowId: string } {
+		subId = String(subId || '');
+
 		const [ prefix, spaceId, chatId, windowId ] = subId.split('-');
 
 		if (prefix == J.Constant.subId.chatSpace) {
@@ -195,11 +189,10 @@ class ChatStore {
 	/**
 	 * Gets the subscription ID for a space and chat.
 	 * @param {string} spaceId - The space ID.
-	 * @param {string} chatId - The chat ID.
 	 * @returns {string} The subscription ID.
 	 */
-	getSubId (spaceId: string, chatId: string): string {
-		return [ J.Constant.subId.chatSpace, spaceId, chatId, S.Common.windowId ].join('-');
+	getSpaceSubId (spaceId: string): string {
+		return [ J.Constant.subId.chatSpace, spaceId, '', S.Common.windowId ].join('-');
 	};
 
 	/**
@@ -415,7 +408,7 @@ class ChatStore {
 			};
 		};
 
-		Renderer.send('setBadge', String(t || ''));
+		Renderer.send('setBadge', this.counterString(t));
 	};
 
 	/**
@@ -425,6 +418,15 @@ class ChatStore {
 	 */
 	isMention (message: I.ChatMessage, participantId: string): boolean {
 		return !!message.content.marks.find(it => (it.type == I.MarkType.Mention) && (it.param == participantId));
+	};
+
+	/**
+	 * Converts a counter value to a string for display.
+	 * @param {number} c - The counter value.
+	 * @returns {string} The formatted counter string.
+	 */
+	counterString (c: number): string {
+		return String((c > 999 ? '999+' : c) || '');
 	};
 
 };

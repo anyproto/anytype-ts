@@ -32,7 +32,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 		return (
 			<>
-				<div className="head">
+				<div id="head" className="head">
 					<div className="side left">
 						<Label text={translate('sidebarTypeTitle')} />
 					</div>
@@ -54,7 +54,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					</div>
 				</div>
 
-				<div className="body customScrollbar">
+				<div id="body" className="body">
 					{sections.map((item, i) => (
 						<Section 
 							{...this.props} 
@@ -98,7 +98,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			layoutWidth: 0,
 			layoutFormat: I.LayoutFormat.Page,
 			recommendedFeaturedRelations: [],
-			defaultViewType: I.ViewType.Grid,
+			defaultViewType: I.ViewType.List,
 		}, details);
 
 		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
@@ -290,8 +290,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	close () {
+		const { isPopup, page } = this.props;
+
 		this.previewRef?.show(false);
-		sidebar.rightPanelToggle(true, this.props.isPopup);
+		sidebar.rightPanelToggle(true, isPopup, page);
 	};
 
 	updateSections () {

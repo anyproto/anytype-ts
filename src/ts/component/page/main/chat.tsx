@@ -3,17 +3,18 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-	const { isPopup, match } = props;
+	const { isPopup } = props;
 	const nodeRef = useRef(null);
 	const headerRef = useRef(null);
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const match = keyboard.getMatch(isPopup);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const type = S.Record.getChatType();
@@ -127,9 +128,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	let content = null;
 	let inner = null;
 
-	if (isLoading) {
-		inner = <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
-	} else {
+	if (!isLoading) {
 		inner = (
 			<div ref={blocksRef} className="blocks">
 				<Block

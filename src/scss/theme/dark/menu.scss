@@ -87,7 +87,7 @@
     /* Smile */
 
     .menu.menuSmile {
-		.body.smile {
+		.body.tabSmile {
 			.foot {
 				.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
 				.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
@@ -268,6 +268,8 @@
             .iconWrapper.error::before { background: #581f0c; }
         }
 
+		.incentiveBanner { background: linear-gradient(180deg, #74321e 30%, #9c492f 100%); }
+
 		.items {
             .sides {
                 .side.right {
@@ -305,10 +307,14 @@
 	.menu.menuPublish {
 		.input.isReadonly { background: rgba(255, 255, 255, 0.03); }
 
+		.incentiveBanner { background-color: rgba(55, 122, 255, 0.15); }
+		.incentiveBanner {
+			.button { color: var(--color-text-primary); }
+		}
+
 		.outer {
-			.icon.link { background-image: url('#{$themePath}/icon/widget/button/link.svg'); }
-			.icon.space { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
-			.icon.export { background-image: url('#{$themePath}/icon/widget/button/export.svg'); }
+			.icon.space { background-image: url('#{$themePath}/icon/publish/member.svg'); }
+			.icon.export { background-image: url('#{$themePath}/icon/publish/export.svg'); }
 		}
 	}
 
@@ -316,7 +322,7 @@
 
 	.menu.menuIdentity {
 		.content {
-			.icon { background-image: url('#{$themePath}/icon/header/settings/anyName.svg'); }
+			.icon { background-image: url('#{$themePath}/icon/header/anyName.svg'); }
 		}
 	}
 

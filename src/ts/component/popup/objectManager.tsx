@@ -84,7 +84,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				buttons={[]}
 				iconSize={48}
 				collectionId={collectionId}
-				textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
+				textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
 				onAfterLoad={onAfterLoad}
 				disableHeight={false}
 				scrollElement={$(`#${getId()}-innerWrap .items`).get(0)}

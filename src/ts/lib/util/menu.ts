@@ -783,12 +783,10 @@ class UtilMenu {
 	spaceContext (space: any, param: any) {
 		const { targetSpaceId } = space;
 		const options: any[] = [];
-		const pinned = this.getVaultItems().filter(it => it.isPinned);
 
 		if (space.spaceOrder) {
 			options.push({ id: 'unpin', name: translate('commonUnpin') });
-		} else 
-		if (pinned.length < J.Constant.limit.space.pin) {
+		} else { 
 			options.push({ id: 'pin', name: translate('commonPin') });
 		};
 
@@ -824,11 +822,13 @@ class UtilMenu {
 
 							case 'pin': {
 								C.SpaceSetOrder(space.id, [ space.id ]);
+								analytics.event('PinSpace');
 								break;
 							};
 
 							case 'unpin': {
 								C.SpaceUnsetOrder(space.id);
+								analytics.event('UnpinSpace');
 								break;
 							};
 
@@ -882,7 +882,6 @@ class UtilMenu {
 		};
 
 		const items = U.Common.objectCopy(U.Space.getList()).
-			concat({ id: 'gallery', name: translate('commonGallery'), isButton: true }).
 			map(it => {
 				it.counter = 0;
 				it.lastMessageDate = 0;
@@ -898,9 +897,6 @@ class UtilMenu {
 			});
 
 		items.sort((c1, c2) => {
-			if (c1.isButton && !c2.isButton) return 1;
-			if (!c1.isButton && c2.isButton) return -1;
-
 			if (c1.isPinned && !c2.isPinned) return -1;
 			if (!c1.isPinned && c2.isPinned) return 1;
 
@@ -909,6 +905,9 @@ class UtilMenu {
 
 			if (c1.spaceOrder > c2.spaceOrder) return 1;
 			if (c1.spaceOrder < c2.spaceOrder) return -1;
+
+			if (c1.counter && !c2.counter) return -1;
+			if (!c1.counter && c2.counter) return 1;
 
 			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
 			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
@@ -937,7 +936,7 @@ class UtilMenu {
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
-	sortOrFilterRelationSelect (menuParam: any, param: any) {
+	sortOrFilterRelationSelect (menuParam: Partial<I.MenuParam>, param: any) {
 		const { rootId, blockId, getView, onSelect } = param;
 		const options = Relation.getFilterOptions(rootId, blockId, getView());
 
@@ -975,7 +974,7 @@ class UtilMenu {
 				withAdd: true,
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
-						this.sortOrFilterRelationAdd(this.menuContext, param, relation => callBack(relation));
+						this.sortOrFilterRelationAdd(this.menuContext, param, menuParam, relation => callBack(relation));
 					} else {
 						callBack(item);
 					};
@@ -984,7 +983,7 @@ class UtilMenu {
 		});
 	};
 
-	sortOrFilterRelationAdd (context: any, param: any, callBack: (relation: any) => void) {
+	sortOrFilterRelationAdd (context: any, param: any, menuParam: Partial<I.MenuParam>, callBack: (relation: any) => void) {
 		if (!context) {
 			return;
 		};
@@ -994,6 +993,7 @@ class UtilMenu {
 		const element = `#${context.getId()} #item-add`;
 
 		S.Menu.open('relationSuggest', {
+			...menuParam,
 			element,
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,
@@ -1021,43 +1021,6 @@ class UtilMenu {
 			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
 		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
-	};
-
-	sidebarContext (element: string) {
-		const { showVault } = S.Common;
-		const { isClosed, width } = sidebar.data;
-		const options = this.sidebarModeOptions();
-		const value = showVault ? 'all' : 'sidebar';
-
-		S.Menu.open('selectSidebarToggle', {
-			component: 'select',
-			element,
-			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Right,
-			noFlipX: true,
-			data: {
-				options,
-				value,
-				onSelect: (e: any, item: any) => {
-					raf(() => {
-						switch (item.id) {
-							case 'all':
-							case 'sidebar': {
-								S.Common.showVaultSet(item.id == 'all');
-								if (isClosed) {
-									sidebar.open(width);
-								} else {
-									sidebar.resizePage(width, null, false);
-								};
-								break;
-							};
-						};
-					});
-
-					analytics.event('ChangeSidebarMode', { type: item.id });
-				},
-			},
-		});
 	};
 
 	codeLangOptions (): I.Option[] {
@@ -1190,6 +1153,8 @@ class UtilMenu {
 	};
 
 	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
+		param = param || {};
+		param.data = param.data || {};
 		details = details || {};
 		flags = flags || {};
 
@@ -1385,7 +1350,6 @@ class UtilMenu {
 							window.setTimeout(() => {
 								this.onBookmarkMenu({
 									...param,
-									element: `#widget-space-arrow`,
 									data: { details },
 								}, object => cb(object, 0));
 							}, S.Menu.getTimeout());

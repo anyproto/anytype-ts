@@ -94,8 +94,9 @@ export default {
 		'type',
 		'layout',
 		'name',
-		'relationOptionColor',
 		'createdDate',
+		'relationOptionColor',
+		'orderId',
 	],
 
 	type: [
@@ -164,7 +165,6 @@ export default {
 		'spaceUxType',
 		'spacePushNotificationMode',
 		'spaceOrder',
-		'tmpOrder',
 		'spaceJoinDate',
 	],
 

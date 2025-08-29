@@ -23,6 +23,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ isStatusLoading, setIsStatusLoading ] = useState(false);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
 	const [ error, setError ] = useState('');
+	const showIncentive = !tier?.namesCount && U.Data.isAnytypeNetwork();
 
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
@@ -209,7 +210,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className="simple"
 					text={translate('commonCopy')}
 					onClick={() => {
-						U.Common.copyToast(translate('commonLink'), url)
+						U.Common.copyToast(translate('commonLink'), url);
 						analytics.event('ClickShareObjectCopyUrl', { objectType: object.type });
 					}} 
 				/>
@@ -227,10 +228,10 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			) : ''}
 
-			{!tier?.namesCount ? (
+			{showIncentive ? (
 				<div className="incentiveBanner">
 					<Label text={translate('menuPublishBecomeMemberText')} />
-					<Button text={translate('commonUpgrade')} onClick={onUpgrade} />
+					<Button className="c28" color="accent" text={translate('commonUpgrade')} onClick={onUpgrade} />
 				</div>
 			) : ''}
 

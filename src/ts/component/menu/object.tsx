@@ -43,7 +43,7 @@ class MenuObject extends React.Component<I.Menu> {
 		);
 
 		let sectionPage = null;
-		if (block && block.isPage() && config.sudo && restrictions.length) {
+		if (block && block.isPage() && config.sudo && config.debug.ui && restrictions.length) {
 			sectionPage = (
 				<>
 					<div className="section">
@@ -97,10 +97,11 @@ class MenuObject extends React.Component<I.Menu> {
 		const isChat = U.Object.isChatLayout(object.layout);
 		const isBookmark = U.Object.isBookmarkLayout(object.layout);
 		const isParticipant = U.Object.isParticipantLayout(object.layout);
-		const isInSetLayouts = U.Object.isInSetLayouts(object.layout);
-		const isInFileLayouts = U.Object.isInFileLayouts(object.layout);
-		const isInFileOrSystemLayouts = U.Object.isInFileOrSystemLayouts(object.layout);
-		const isTypeOrRelationLayout = U.Object.isTypeOrRelationLayout(object.layout);
+		const isInSet = U.Object.isInSetLayouts(object.layout);
+		const isInFile = U.Object.isInFileLayouts(object.layout);
+		const isInFileOrSystem = U.Object.isInFileOrSystemLayouts(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isRelation = U.Object.isRelationLayout(object.layout);
 		const isType = U.Object.isTypeLayout(object.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
@@ -162,29 +163,29 @@ class MenuObject extends React.Component<I.Menu> {
 		// Restrictions
 
 		const hasShortMenu = (
-			isTypeOrRelationLayout ||
-			isInFileLayouts ||
-			isInSetLayouts ||
+			isTypeOrRelation ||
+			isInFile ||
+			isInSet ||
 			isParticipant ||
 			isChat
 		);
 
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !isFilePreview && !isInSetLayouts;
-		const allowedHistory = !object.isArchived && !isInFileOrSystemLayouts && !isParticipant && !isDate && !object.templateIsBundled;
-		const allowedPin = canWrite && !object.isArchived && !object.templateIsBundled;
-		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystemLayouts;
-		const allowedLinkTo = canWrite && !object.isArchived;
-		const allowedAddCollection = canWrite && !object.isArchived && !isTemplate;
-		const allowedPageLink = !object.isArchived;
-		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelationLayout;
+		const allowedSearch = !isFilePreview && !isInSet;
+		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !object.templateIsBundled;
+		const allowedPin = canWrite && !object.isArchived && !isTemplate;
+		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
+		const allowedLinkTo = canWrite && !isRelation &&!object.isArchived;
+		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;
+		const allowedPageLink = !isRelation && !object.isArchived;
+		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelation;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
+		const allowedWidget = canWrite && !isRelation &&!object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview;
-		const allowedDownloadFile = isInFileLayouts;
-		const allowedOpenFile = isInFileLayouts;
+		const allowedDownloadFile = isInFile;
+		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
 		const allowedEditType = isType && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
 

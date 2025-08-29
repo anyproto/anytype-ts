@@ -164,6 +164,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			passThrough: true,
 			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
+			noBorder: true,
 			onOpen: () => {
 				$(element).addClass('withMenu');
 				setOn();
@@ -385,7 +386,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 							};
 
 							case 'reload': {
-								C.ObjectBookmarkFetch(record.id, value, () => analytics.event('ReloadSourceData'));
+								C.ObjectBookmarkFetch(record.id, value.trim(), () => analytics.event('ReloadSourceData'));
 								break;
 							};
 						};

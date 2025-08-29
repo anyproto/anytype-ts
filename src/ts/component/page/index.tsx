@@ -27,7 +27,6 @@ import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
-import PageMainOnboarding from './main/onboarding';
 import PageMainChat from './main/chat';
 import PageMainDate from './main/date';
 import PageMainSettings from './main/settings';
@@ -56,7 +55,6 @@ const Components = {
 	'main/invite':			 PageMainInvite,
 	'main/membership':		 PageMainMembership,
 	'main/object':			 PageMainObject,
-	'main/onboarding':		 PageMainOnboarding,
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,
 	'main/date':			 PageMainDate,
@@ -136,45 +134,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.previewHide(true);
 	};
 
-	getMatch () {
-		const { match, matchPopup, isPopup } = this.props;
-		const { history } = this.props;
-		const data = U.Common.searchParam(history?.location?.search);
-		const pathname = String(history?.location?.pathname || '');
-		const ret = (isPopup ? matchPopup : match) || { params: {} };
-
-		// Universal object route
-		if (pathname.match(/^\/object/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			});
-		};
-
-		// Invite route
-		if (pathname.match(/^\/invite/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'invite',
-				...data,
-			});
-		};
-
-		// Membership route
-		if (pathname.match(/^\/membership/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'membership',
-			});
-		};
-
-		return ret;
-	};
-
 	getMatchParams () {
-		const match = this.getMatch();
+		const { isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
 		const page = String(match?.params?.page || 'index');
 		const action = String(match?.params?.action || 'index');
 		const id = String(match?.params?.id || '');
@@ -194,8 +156,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = S.Auth;
 		const { pin } = S.Common;
 		const { isPopup } = this.props;
-		const showSidebarRight = S.Common.getShowSidebarRight(isPopup);
-		const match = this.getMatch();
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
@@ -209,7 +170,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
-		sidebar.rightPanelToggle(false, isPopup);
+		S.Common.setRightSidebarState(isPopup, '', false);
 
 		if (!Component) {
 			return;
@@ -230,7 +191,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (refSidebar && showSidebarRight) {
+		if (refSidebar && rightSidebar.isOpen) {
 			refSidebar.setState({ rootId: this.getRootId() });
 		};
 
@@ -239,16 +200,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.event();
 		this.rebind();
 
-		if (!isPopup) {
-			keyboard.setMatch(match);
-		};
-
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 	};
 
 	rebind () {
-		const { history, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const namespace = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
@@ -257,7 +215,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	unbind () {
-		const { history, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const { history } = U.Router;
 		const namespace = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
@@ -265,16 +224,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	event () {
-		const { page, action, id } = this.getMatchParams();
-		const params = { page, action, id: undefined };
-		const isMainType = this.isMainType();
-		const isMainRelation = this.isMainRelation();
-
-		if (isMainType || isMainRelation) {
-			params.id = id;
-		};
-
-		analytics.event('page', { params });
+		analytics.event('page', { params: this.getMatchParams() });
 	};
 
 	isIndex () {
@@ -347,7 +297,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getId (prefix: string) {
-		const match = this.getMatch();
+		const { isPopup } = this.props;
+		const match = keyboard.getMatch(isPopup);
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 
@@ -365,6 +316,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	resize () {
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {

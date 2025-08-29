@@ -48,6 +48,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 			name: nameRef.current?.getTextValue(),
 			layout: I.ObjectLayout.SpaceView,
 			iconOption,
+			uxType,
 		};
 	};
 
@@ -180,8 +181,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	useEffect(() => {
 		const object = getObject();
+
 		iconRef.current?.setObject(object);
 		nameRef.current?.setFocus();
+
 		updateCounter();
 	}, [ iconOption ]);
 

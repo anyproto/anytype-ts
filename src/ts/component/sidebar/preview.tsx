@@ -16,7 +16,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		layoutAlign: I.BlockHAlign.Left,
 		layoutWidth: 0,
 		layoutFormat: I.LayoutFormat.Page,
-		defaultViewType: I.ViewType.Grid,
+		defaultViewType: I.ViewType.List,
 	};
 
 	constructor (props: I.SidebarPageComponent) {
@@ -257,14 +257,14 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	getNodeWidth (): number {
 		const { isPopup } = this.props;
 		const container = U.Common.getPageFlexContainer(isPopup);
-		const vw = sidebar.getVaultWidth();
 
-		return container.width() - J.Size.sidebar.right - vw;
+		return container.width() - J.Size.sidebar.right;
 	};
 
 	resize () {
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 
 		this.frame = raf(() => {

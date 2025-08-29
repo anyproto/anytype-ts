@@ -9,8 +9,6 @@ class Keyboard {
 	};
 	timeoutPin = 0;
 	timeoutSidebarHide = 0;
-	match: any = {};
-	matchPopup: any = {};
 	source: any = null;
 	selection: any = null;
 	shortcuts: any = {};
@@ -154,6 +152,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -182,8 +181,8 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (S.Common.getShowSidebarRight(isPopup)) {
-				sidebar.rightPanelToggle(true, isPopup);
+			if (rightSidebar.isOpen) {
+				sidebar.rightPanelToggle(true, isPopup, rightSidebar.page);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -209,11 +208,16 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: 'widget' });
+				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				U.Space.openDashboard();
 			};
 			
 			Preview.previewHide(false);
+		});
+
+		// Switch dark/light mode
+		this.shortcut('theme', e, () => {
+			Action.themeSet(!theme ? 'dark' : '');
 		});
 
 		if (isMain) {
@@ -278,11 +282,6 @@ class Keyboard {
 			// Select type
 			this.shortcut('selectType', e, () => {
 				$('#widget-space #widget-space-arrow').trigger('click');
-			});
-
-			// Switch dark/light mode
-			this.shortcut('theme', e, () => {
-				Action.themeSet(!theme ? 'dark' : '');
 			});
 
 			// Lock the app
@@ -368,6 +367,52 @@ class Keyboard {
 					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
 				});
 			};
+
+			// Switch space
+			for (let i = 1; i <= 9; i++) {
+				const id = Number(i) - 1;
+				keyboard.shortcut(`space${i}`, e, () => {
+					const spaces = U.Menu.getVaultItems();
+					const item = spaces[id];
+	
+					if (!item) {
+						return;
+					};
+
+					if (item.targetSpaceId != S.Common.space) {
+						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+					} else {
+						U.Space.openDashboard();
+						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
+					};
+				});
+			};
+
+
+			keyboard.shortcut('createSpace', e, () => {
+				const element = `#sidebarRightButton`;
+
+				let rect = null;
+				let horizontal = I.MenuDirection.Left;
+				let vertical = I.MenuDirection.Top;
+
+				if (!$(element).length) {
+					const { ww, wh } = U.Common.getWindowDimensions();
+
+					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+					horizontal = I.MenuDirection.Center;
+					vertical = I.MenuDirection.Center;
+				};
+
+				Action.spaceCreateMenu({
+					element,
+					rect,
+					className: 'spaceCreate fixed',
+					classNameWrap: 'fromSidebar',
+					horizontal,
+					vertical,
+				}, analytics.route.shortcut);
+			});
 		};
 
 		this.initPinCheck();
@@ -466,7 +511,7 @@ class Keyboard {
 				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
 					const state = sidebar.leftPanelGetState();
 					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: 'widget' });
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					};
 				};
 
@@ -1195,6 +1240,14 @@ class Keyboard {
 	};
 
 	/**
+	 * Gets the route match object from the router history.
+	 * @returns {any} The route match object.
+	 */
+	getRouteMatch () {
+		return U.Router.getParam(U.Router.getRoute()) || {};
+	};
+
+	/**
 	 * Gets the match object for the current context.
 	 * @param {boolean} [isPopup] - Whether to get for popup context.
 	 * @returns {any} The match object.
@@ -1203,14 +1256,43 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 
 		let ret: any = { params: {} };
+		let data: any = {};
+
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
-			const match = U.Common.objectCopy(this.match);
-			const param = U.Router.getParam(U.Router.getRoute());
+			ret.route = U.Router.getRoute();
+			ret.params = this.getRouteMatch();
+			data = U.Common.searchParam(U.Router.getSearch());
+		};
 
-			ret = Object.assign(ret, match);
-			ret.params = Object.assign(ret.params, param);
+		ret.route = String(ret.route || '');
+
+		// Universal object route
+		if (ret.route.match(/^\/object/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			});
+		};
+
+		// Invite route
+		if (ret.route.match(/^\/invite/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'invite',
+				...data,
+			});
+		};
+
+		// Membership route
+		if (ret.route.match(/^\/membership/)) {
+			ret.params = Object.assign(ret.params, {
+				page: 'main',
+				action: 'membership',
+			});
 		};
 
 		return ret;
@@ -1221,7 +1303,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMain () {
-		return this.match?.params?.page == 'main';
+		return this.getRouteMatch().page == 'main';
 	};
 	
 	/**
@@ -1229,7 +1311,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainEditor () {
-		return this.isMain() && (this.match?.params?.action == 'edit');
+		return this.isMain() && (this.getRouteMatch().action == 'edit');
 	};
 
 	/**
@@ -1237,7 +1319,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSet () {
-		return this.isMain() && (this.match?.params?.action == 'set');
+		return this.isMain() && (this.getRouteMatch().action == 'set');
 	};
 
 	/**
@@ -1245,7 +1327,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainGraph () {
-		return this.isMain() && (this.match?.params?.action == 'graph');
+		return this.isMain() && (this.getRouteMatch().action == 'graph');
 	};
 
 	/**
@@ -1253,7 +1335,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainChat () {
-		return this.isMain() && (this.match?.params?.action == 'chat');
+		return this.isMain() && (this.getRouteMatch().action == 'chat');
 	};
 
 	/**
@@ -1261,7 +1343,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainIndex () {
-		return this.isMain() && (this.match?.params?.action == 'index');
+		return this.isMain() && (this.getRouteMatch().action == 'index');
 	};
 
 	/**
@@ -1269,7 +1351,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainHistory () {
-		return this.isMain() && (this.match?.params?.action == 'history');
+		return this.isMain() && (this.getRouteMatch().action == 'history');
 	};
 
 	/**
@@ -1277,7 +1359,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainVoid () {
-		return this.isMain() && (this.match?.params?.action == 'void');
+		return this.isMain() && (this.getRouteMatch().action == 'void');
 	};
 
 	/**
@@ -1285,7 +1367,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainType () {
-		return this.isMain() && (this.match?.params?.action == 'type');
+		return this.isMain() && (this.getRouteMatch().action == 'type');
 	};
 
 	/**
@@ -1293,7 +1375,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSettings () {
-		return this.isMain() && (this.match?.params?.action == 'settings');
+		return this.isMain() && (this.getRouteMatch().action == 'settings');
 	};
 
 	/**
@@ -1301,7 +1383,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuth () {
-		return this.match?.params?.page == 'auth';
+		return this.getRouteMatch().page == 'auth';
 	};
 
 	/**
@@ -1309,7 +1391,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuthPinCheck () {
-		return this.isAuth() && (this.match?.params?.action == 'pin-check');
+		return this.isAuth() && (this.getRouteMatch().action == 'pin-check');
 	};
 	
 	/**
@@ -1349,14 +1431,6 @@ class Keyboard {
 
 		this.isPinChecked = v;
 		Renderer.send('setPinChecked', v);
-	};
-
-	/**
-	 * Sets the match object.
-	 * @param {any} match - The match object.
-	 */
-	setMatch (match: any) {
-		this.match = U.Common.objectCopy(match);
 	};
 
 	/**
@@ -1625,6 +1699,10 @@ class Keyboard {
 			ret.push('capslock');
 		};
 		return ret;
+	};
+
+	isCmd (e: any): boolean {
+		return U.Common.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	/**

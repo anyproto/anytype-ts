@@ -1,8 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
@@ -22,6 +23,11 @@ interface Props extends I.WidgetComponent {
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
+	const nodeRef = useRef(null);
+	const childRef = useRef(null);
+	const subId = useRef('');
+	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, onDrag, setPreview, canEdit, canRemove } = props;
 	const { viewId } = block.content;
@@ -47,7 +53,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const getLimit = ({ limit, layout }): number => {
 		if (isPreview) {
-			return J.Constant.limit.menuRecords;
+			return 1000;
 		};
 
 		const options = U.Menu.getWidgetLimitOptions(layout).map(it => Number(it.id));
@@ -61,11 +67,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const object = getObject();
 	const limit = getLimit(block.content);
-	const [ dummy, setDummy ] = useState(0);
-	const nodeRef = useRef(null);
-	const childRef = useRef(null);
-	const subId = useRef('');
-	const timeout = useRef(0);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const isChat = targetId == J.Constant.widgetId.chat;
 
@@ -119,9 +120,27 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClick = (e: MouseEvent): void => {
-		if (!e.button) {
-			U.Object.openEvent(e, { ...object, _routeParam_: { viewId: block.content.viewId } });
+		if (e.button) {
+			return;
 		};
+
+		let { viewId } = block.content;
+
+		if (!viewId) {
+			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
+
+			if (views.length) {
+				viewId = views[0].id;
+			};
+		};
+
+		U.Object.openEvent(e, { 
+			...object, 
+			_routeParam_: { 
+				viewId,
+				additional: [ { key: 'ref', value: 'widget' } ],
+			} 
+		});
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
@@ -468,7 +487,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onDragEnd = (e: any) => {
-		scrollOnMove.onMouseUp(e);
+		scrollOnMove.onMouseUp();
 
 		analytics.event('ReorderWidget', {
 			layout,
@@ -532,6 +551,63 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
+	const checkShowAllButton = (subId: string) => {
+		const rootId = getRootId();
+		if (!rootId) {
+			return;
+		};
+
+		addShowAllButton();
+
+		const node = $(nodeRef.current);
+		const innerWrap = node.find('#innerWrap');
+		const wrapper = node.find('#button-show-all');
+		
+		let total = 0;
+		let show = false;
+
+		if (!isSystemTarget && block.isWidgetTree()) {
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+			const targetId = child ? child.getTargetObjectId() : '';
+
+			if (!targetId) {
+				return;
+			};
+
+			const object = S.Detail.get(S.Block.widgets, targetId);
+			const total = Relation.getArrayValue(object.links).length;
+
+			show = !isPreview && (total > limit);
+		} else {
+			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+			const viewType = view?.type || I.ViewType.List;
+			const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
+
+			if (view && view.isBoard()) {
+				total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+			} else {
+				total = S.Record.getMeta(subId, '').total;
+			};
+
+			show = !isPreview && (total > limit) && isAllowedView;
+		};
+
+		show ? wrapper.show() : wrapper.hide();
+		innerWrap.toggleClass('withShowAll', show);
+	};
+
+	const addShowAllButton = () => {
+		const node = $(nodeRef.current);
+		const innerWrap = node.find('#innerWrap');
+		const wrapper = $('<div id="button-show-all"></div>');
+
+		ReactDOM.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />, wrapper.get(0));
+
+		innerWrap.find('#button-show-all').remove();
+		innerWrap.append(wrapper);
+	};
+
 	const onContext = (param: any) => {
 		const { node, element, withElement, subId, objectId, data } = param;
 
@@ -562,6 +638,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
+	const buttons = [];
 	const canCreate = canCreateHandler();
 	const childProps = {
 		...props,
@@ -576,6 +653,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getTraceId,
 		sortFavorite,
 		addGroupLabels,
+		checkShowAllButton,
 		onContext,
 		onCreate,
 	};
@@ -599,7 +677,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let head = null;
 	let content = null;
 	let back = null;
-	let buttons = [];
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
@@ -611,7 +688,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="iconWrap back">
 				<Icon
 					className="back"
-					onClick={() => {
+					onClick={e => {
+						e.stopPropagation();
+
 						setPreview('');
 						analytics.event('ScreenHome', { view: 'Widget' });
 					}}
@@ -649,7 +728,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 			} else 
 			if (targetId == J.Constant.widgetId.allObject) {
-				sidebar.leftPanelSetState({ page: 'object' });
+				sidebar.leftPanelSetState({ page: 'allObject' });
 			} else 
 			if (targetId == J.Constant.widgetId.chat) {
 				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });

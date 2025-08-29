@@ -313,7 +313,6 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 		return;
 	};
 
-	const { config } = S.Common;
 	const request = new Rpc.File.Upload.Request();
 
 	request.setSpaceid(spaceId);
@@ -1344,16 +1343,6 @@ export const ObjectCreateSet = (sources: string[], details: any, templateId: str
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.CreateBookmark.Request();
-
-	request.setDetails(Encode.struct(details));
-	request.setSpaceid(spaceId);
-	request.setTemplateid(templateId);
-
-	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
-};
-
 export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateFromUrl.Request();
 
@@ -1365,6 +1354,16 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setTemplateid(templateId);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
+};
+
+export const ObjectCreateBookmark = (details: any, spaceId: string, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateBookmark.Request();
+
+	request.setDetails(Encode.struct(details));
+	request.setSpaceid(spaceId);
+	request.setTemplateid(templateId);
+
+	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
 export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
@@ -1404,6 +1403,16 @@ export const RelationListRemoveOption = (optionIds: string[], checkInObjects: bo
 	request.setCheckinobjects(checkInObjects);
 
 	dispatcher.request(RelationListRemoveOption.name, request, callBack);
+};
+
+export const RelationOptionSetOrder = (spaceId: string, relationKey: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Relation.Option.SetOrder.Request();
+
+	request.setSpaceid(spaceId);
+	request.setRelationkey(relationKey);
+	request.setRelationoptionorderList(ids);
+
+	dispatcher.request(RelationOptionSetOrder.name, request, callBack);
 };
 
 export const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
@@ -2184,13 +2193,19 @@ export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, 
 	const request = new Rpc.Space.InviteGenerate.Request();
 
 	request.setSpaceid(spaceId);
-
-	if (inviteType && permissions) {
-		request.setInvitetype(inviteType as number);
-		request.setPermissions(permissions as number);
-	};
+	request.setInvitetype(inviteType as number || 0);
+	request.setPermissions(permissions as number || 0);
 
 	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
+};
+
+export const SpaceInviteChange = (spaceId: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteChange.Request();
+
+	request.setSpaceid(spaceId);
+	request.setPermissions(permissions as number);
+
+	dispatcher.request(SpaceInviteChange.name, request, callBack);
 };
 
 export const SpaceInviteView = (cid: string, key: string, callBack?: (message: any) => void) => {
@@ -2288,15 +2303,6 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	request.setIdentitiesList(identities);
 
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
-};
-
-export const SpaceLeaveApprove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.LeaveApprove.Request();
-
-	request.setSpaceid(spaceId);
-	request.setIdentitiesList(identities);
-
-	dispatcher.request(SpaceLeaveApprove.name, request, callBack);
 };
 
 // ---------------------- EXTENSION ---------------------- //

@@ -982,7 +982,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId == J.Constant.subId.chatSpace) {
-							subId = S.Chat.getSubId(spaceId, rootId);
+							subId = S.Chat.getSpaceSubId(spaceId);
 						};
 
 						const list = S.Chat.getList(subId);
@@ -992,7 +992,8 @@ class Dispatcher {
 							idx = list.length;
 						};
 
-						S.Chat.add(subId, idx, message);
+						message.dependencies = dependencies || [];
+						S.Chat.add(subId, idx, new M.ChatMessage(message));
 					});
 
 					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
@@ -1029,7 +1030,7 @@ class Dispatcher {
 				case 'ChatStateUpdate': {
 					mapped.subIds.forEach(subId => {
 						if (subId == J.Constant.subId.chatSpace) {
-							subId = S.Chat.getSubId(spaceId, rootId);
+							subId = S.Chat.getSpaceSubId(spaceId);
 						};
 
 						S.Chat.setState(subId, mapped.state);

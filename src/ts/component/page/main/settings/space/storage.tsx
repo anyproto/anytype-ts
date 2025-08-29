@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, ListObjectManager, Label, Button, ProgressBar } from 'Component';
+import { Title, ListObjectManager, Label, Button, ProgressBar, UpsellStorage } from 'Component';
 import { I, J, U, S, translate, Action, analytics } from 'Lib';
 
-const STORAGE_FULL = 0.95;
-
-const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageManager extends React.Component<I.PageSettingsComponent, {}> {
+const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends React.Component<I.PageSettingsComponent, {}> {
 
 	node = null;
 	refManagers = {
@@ -25,30 +23,54 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		const { localUsage, bytesLimit } = spaceStorage;
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const spaces = U.Space.getList();
-		const usageCn = [ 'item' ];
+		const currentSpace = U.Space.getSpaceview();
+		const usageCn = [ 'item', 'usageWrapper' ];
 		const canWrite = U.Space.canMyParticipantWrite();
+
+		const segments: any = {
+			current: { name: currentSpace.name, usage: 0, className: 'current', },
+		};
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
 		let label = U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit));
 
-		const progressSegments = (spaces || []).map(space => {
+		(spaces || []).forEach((space) => {
 			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
 			const isOwner = U.Space.isMyOwner(space.targetSpaceId);
+			const isCurrent = space.targetSpaceId == currentSpace.targetSpaceId;
 
 			if (!isOwner) {
-				return null;
+				return;
 			};
 
 			bytesUsed += usage;
-			return { name: space.name, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
-		}).filter(it => it);
-		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
+			if (isCurrent) {
+				segments.current.usage = usage;
+			} else {
+				if (segments.other) {
+					segments.other.usage += usage;
+				} else {
+					segments.other = { name: translate('popupSettingsSpaceStorageProgressBarOther'), usage, className: 'other' };
+				};
+			};
+		});
+
+		const chunks: any[] = Object.values(segments);
+		const progressSegments = (chunks || []).map(chunk => {
+			const { name, usage, className } = chunk;
+
+			return { name, className, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: true, };
+		});
+
+		const usagePercent = bytesUsed / bytesLimit;
+		const isRed = usagePercent >= 100;
+		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={this.onUpgrade} />;
+			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={() => this.onUpgrade()} />;
 			label = translate('popupSettingsSpaceIndexStorageIsFullText');
 		};
 
@@ -81,7 +103,7 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 						keys={U.Subscription.syncStatusRelationKeys()}
 						ignoreHidden={false}
 						ignoreArchived={false}
-						textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
+						textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
 					/>
 				</div>
 			);
@@ -91,11 +113,26 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 			<div ref={ref => this.node = ref} className="wrap">
 				{buttonUpgrade}
 
+				<UpsellStorage route={analytics.route.settingsStorage} />
+
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={label} />
 
 				<div className={usageCn.join(' ')}>
-					<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
+					<ProgressBar segments={progressSegments} />
+
+					<div className="info">
+						<div className="totalUsage">
+							<span>{U.File.size(bytesUsed, true)} </span>
+							{U.Common.sprintf(translate('popupSettingsSpaceStorageProgressBarUsageLabel'), U.File.size(bytesLimit, true))}
+						</div>
+
+						<div className="legend">
+							{legend.map((item, idx) => (
+								<div key={idx} className={[ 'item', item.className ].join(' ')}>{item.name}</div>
+							))}
+						</div>
+					</div>
 				</div>
 
 				{notSyncedCounter && canWrite ? (
@@ -119,18 +156,14 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 		);
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenSettingsSpaceStorageManager');
-	};
-
 	componentWillUnmount () {
 		U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 	};
 
-	onUpgrade () {
-		Action.membershipUpgrade();
+	onUpgrade (id?: I.TierType) {
+		Action.membershipUpgrade(id);
 
-		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
+		analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.settingsStorage });
 	};
 
 	onRemove (refId: string) {
@@ -150,4 +183,4 @@ const PageMainSettingsStorageManager = observer(class PageMainSettingsStorageMan
 
 });
 
-export default PageMainSettingsStorageManager;
+export default PageMainSettingsStorage;

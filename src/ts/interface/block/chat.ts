@@ -46,6 +46,11 @@ export enum ChatReadType {
 	Mention = 1,
 };
 
+export interface ChatMessageReaction {
+	icon: string;
+	authors: string[];
+};
+
 export interface ChatMessage {
 	id: string;
 	orderId: string;
@@ -55,7 +60,8 @@ export interface ChatMessage {
 	replyToMessageId: string;
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
-	reactions: any;
+	dependencies: any[];
+	reactions: ChatMessageReaction[];
 	isSynced: boolean;
 
 	// Internal
@@ -82,6 +88,7 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	isNew: boolean;
 	hasMore: boolean;
 	subId: string
+	style?: any;
 	scrollToBottom?: () => void;
 	onContextMenu: (e: any) => void;
 	onMore: (e: any) => void;

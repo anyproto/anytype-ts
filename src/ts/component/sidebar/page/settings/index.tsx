@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, J, keyboard, S, sidebar, translate, U } from 'Lib';
-import { Icon, IconObject, ObjectName, Label } from 'Component';
+import { I, keyboard, S, sidebar, translate, U } from 'Lib';
+import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends React.Component {
@@ -11,22 +11,22 @@ interface Props extends React.Component {
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
-const HEIGHT_SECTION_FIRST = 34;
+const HEIGHT_SECTION_FIRST = 28;
 const HEIGHT_ACCOUNT = 56;
 const HEIGHT_DIV = 12;
 
 const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.Component<Props, {}> {
 
-	node: any = null;
 	cache: any = {};
 
 	render () {
 		const space = U.Space.getSpaceview();
+		const { page } = this.props;
 		const { membership } = S.Auth;
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant() || profile;
 		const param = keyboard.getMatch().params;
-		const isSpace = this.props.page == 'settingsSpace';
+		const isSpace = page == 'settingsSpace';
 		const items = this.getItems();
 		const theme = S.Common.getThemeClass();
 
@@ -133,21 +133,21 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		);
 
 		return (
-			<div
-				ref={ref => this.node = ref}
-				id="containerSettings"
-				className={isSpace ? 'spaceSettings' : 'appSettings'}
-			>
-				<div className="head" />
+			<>
+				<div id="head" className="head" />
 
-				<div className="body">
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back" onClick={this.onBack} />
+					</div>
+
+					<div className="side center">
+						<div className="name">{translate('commonSettings')}</div>
+					</div>
+				</div>
+
+				<div id="body" className="body">
 					<div className="list">
-						{isSpace ? (
-							<div className="head" onClick={this.onBack}>
-								<Icon className="back" />
-								<ObjectName object={space} />
-							</div>
-						) : ''}
 						<div className="inner">
 							<InfiniteLoader
 								rowCount={items.length}
@@ -183,11 +183,19 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 						) : ''}
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
 	componentDidMount () {
+		this.setCache();
+	};
+
+	componentDidUpdate () {
+		this.setCache();
+	};
+
+	setCache () {
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -225,7 +233,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					isEntrySpace ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
-					{ id: 'spaceStorageManager', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: notSyncedCounter },
+					{ id: 'spaceStorage', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: notSyncedCounter },
 					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				].filter(it => it),
 			},
@@ -239,17 +247,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	getAppSettings () {
-		const settingsVault = [
-			{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
-			{ id: 'dataIndex', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'dataPublish', 'delete' ] },
-			{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-			{ id: 'api', name: translate('popupSettingsApiTitle') },
-		];
-
-		if (this.withMembership()) {
-			settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
-		};
-
 		return [
 			{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 			{
@@ -259,7 +256,20 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 				]
 			},
-			{ id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
+			{
+				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
+					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
+					this.withMembership() ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') } : null
+				].filter(it => it),
+			},
+			{
+				id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), children: [
+					{ id: 'dataIndex', name: translate('popupSettingsLocalStorageTitle'), icon: 'storage' },
+					{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
+					{ id: 'dataPublish', name: translate('popupSettingsDataManagementDataPublishTitle'), icon: 'sites' },
+					{ id: 'api', name: translate('popupSettingsApiTitle'), icon: 'api'  },
+				]
+			}
 		];
 	};
 
@@ -306,15 +316,14 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	onClick (item) {
 		if ([ 'types', 'relations' ].includes(item.id)) {
-			sidebar.leftPanelSetState({ page: item.id, });
-			return;
+			sidebar.leftPanelSetState({ page: `settings/${item.id}`, });
+		} else {
+			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 		};
-
-		U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 	};
 
 	onBack () {
-		sidebar.leftPanelSetState({ page: 'widget' });
+		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		U.Space.openDashboard();
 	};
 

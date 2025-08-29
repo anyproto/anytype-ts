@@ -255,6 +255,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (this.frame) {
 			raf.cancel(this.frame);
+			this.frame = 0;
 		};
 	};
 
@@ -302,6 +303,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			if (this.frame) {
 				raf.cancel(this.frame);
+				this.frame = 0;
 			};
 
 			this.frame = raf(() => {
@@ -319,9 +321,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	renderLatex () {
 		const { block } = this.props;
-		const ref = this.refEditable;
 
-		if (block.isTextCode() || block.isTextTitle() || !ref) {
+		if (block.isTextCode() || block.isTextTitle() || !this.refEditable) {
 			return;
 		};
 
@@ -329,7 +330,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const html = U.Common.getLatex(value);
 
 		if (html !== value) {
-			ref.setValue(html);
+			this.refEditable.setValue(html);
 		};
 	};
 
@@ -1228,6 +1229,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		
 		C.BlockTextSetIcon(rootId, block.id, icon, '');
+		Storage.set('calloutIcon', icon);
 	};
 
 	onUploadIcon (objectId: string) {
@@ -1253,16 +1255,24 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.refEditable.placeholderHide();
 		};
 	};
-	
+
 	onCompositionEnd = (e: any, value: string, range: I.TextRange) => {
 		// Use provided value and range if available, fallback to current
 		const v = value !== undefined ? value : this.getValue();
 		const r = range !== undefined ? range : this.getRange();
-
+		
+		// Populate marks before setValue to prevent formatting issue
+		this.marks = this.getMarksFromHtml().marks;
 		this.setValue(v, r);
 	};
 
 	onBeforeInput = (e: any) => {
+		const { block } = this.props;
+		
+		if (block.isTextCode()) {
+			return;
+		};
+
 		const range = this.getRange();
 
 		let html = this.refEditable ? this.refEditable.getHtmlValue() : '';

@@ -93,9 +93,8 @@ export default {
 			hiddenElements: [ 
 				'#widget-buttons', 
 				'.widget', 
-				'#containerWidget #list > .buttons',
-				'#containerWidget #body',
-				'.shareBanner',
+				'#sidebarPageWidget #list > .buttons',
+				'#sidebarPageWidget #body',
 			],
 			/*
 			onClose: () => Onboarding.start('emailCollection', false),
@@ -114,7 +113,11 @@ export default {
 				description: translate('onboardingWidgetsText'),
 				param: {
 					element: '.widgetView',
-					highlightElements: [ '#containerWidget .widget.widgetView', '#containerWidget .widget.widgetTree', '#containerWidget .widget.widgetLink' ]
+					highlightElements: [ 
+						'#sidebarPageWidget .widget.widgetView', 
+						'#sidebarPageWidget .widget.widgetTree', 
+						'#sidebarPageWidget .widget.widgetLink',
+					]
 				}
 			},
 			{
@@ -146,7 +149,7 @@ export default {
 			width: 288,
 			offsetX: -304,
 			offsetY: () => {
-				const $element = $('#containerSettings #item-membership');
+				const $element = $('.containerSettings #item-membership');
 				return -$element.outerHeight();
 			},
 		},
@@ -157,7 +160,7 @@ export default {
 				buttonText: translate('onboardingMembershipButton'),
 				cloneElementClassName: 'onboardingSettingsItem',
 				param: {
-					element: '#containerSettings #item-membership',
+					element: '.containerSettings #item-membership',
 				}
 			}
 		]
@@ -181,7 +184,7 @@ export default {
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Right,
 					stickToElementEdge: I.MenuDirection.None,
-					highlightElements: [ '#menuSyncStatus', '#sidebarSync' ],
+					highlightElements: [ '#menuSyncStatus', '#sidebarRightButton' ],
 					offsetY: 14,
 				}
 			},

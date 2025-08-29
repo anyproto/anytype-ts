@@ -736,7 +736,7 @@ class Action {
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = U.Common.shorten(space.name, 32);
+		const name =  isOwner ? space.name : U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
@@ -772,27 +772,6 @@ class Action {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: 'Cancel', route });
 				}
 			},
-		});
-	};
-
-	/**
-	 * Approves a leave request for a space.
-	 * @param {string} spaceId - The space ID.
-	 * @param {string[]} identities - The identities to approve.
-	 * @param {string} name - The name for the toast message.
-	 * @param {string} route - The route context for analytics.
-	 * @param {function} [callBack] - Optional callback after approval.
-	 */
-	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
-		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
-			if (!message.error.code) {
-				Preview.toastShow({ text: U.Common.sprintf(translate('toastApproveLeaveRequest'), name) });
-				analytics.event('ApproveLeaveRequest', { route });
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
 		});
 	};
 
@@ -918,21 +897,18 @@ class Action {
 		});
 	};
 
-	membershipUpgrade () {
+	membershipUpgrade (tier?: I.TierType) {
 		if (!U.Common.checkCanMembershipUpgrade()) {
 			this.membershipUpgradeViaEmail();
 			return;
 		};
-
-		const { membership } = S.Auth;
-		const isBuilder = membership.tier == I.TierType.Builder;
 
 		U.Object.openRoute(
 			{ id: 'membership', layout: I.ObjectLayout.Settings },
 			{
 				onRouteChange: () => {
 					S.Popup.open('membership', {
-						data: { tier: isBuilder ? I.TierType.CoCreator : I.TierType.Builder }
+						data: { tier: tier ? tier : I.TierType.Builder }
 					});
 				}
 			},
@@ -974,9 +950,7 @@ class Action {
 							return;
 						};
 
-						if (callBack) {
-							callBack();
-						};
+						C.SpaceStopSharing(spaceId, callBack);
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
@@ -1131,6 +1105,34 @@ class Action {
 				callBack();
 			};
 		});
+	};
+
+	spaceInfo () {
+		const { account } = S.Auth;
+		const space = U.Space.getSpaceview();
+		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
+		const data = [
+			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
+			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
+			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
+			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
+		];
+
+		S.Popup.open('confirm', {
+			className: 'isWide spaceInfo',
+			data: {
+				title: translate('popupSettingsSpaceIndexSpaceInfoTitle'),
+				text: data.map(it => `<dl><dt>${it[0]}:</dt><dd>${it[1]}</dd></dl>`).join(''),
+				textConfirm: translate('commonCopy'),
+				colorConfirm: 'blank',
+				canCancel: false,
+				onConfirm: () => {
+					U.Common.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
+				},
+			}
+		});
+
+		analytics.event('ScreenSpaceInfo');
 	};
 
 };

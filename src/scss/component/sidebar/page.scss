@@ -1,24 +1,57 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
+> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; transition: opacity 0.025s ease-in-out; }
 > .sidebarPage {
-	.head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
+	> .head { 
+		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
-	.head {
+	> .head {
 		.side.left { flex-grow: 1; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
+
+		.button, .icon { -webkit-app-region: no-drag; }
 
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 
 		.icon.close { background-image: url('~img/icon/close.svg'); }
+		.icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
+		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
 	}
 
-	.body {
-		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow: scroll; overscroll-behavior: none; 
-		scrollbar-gutter: stable both-edges; flex-grow: 1;
+	> .subHead { 
+		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 6px 12px; position: relative; 
+		margin: 0px 0px 4px 0px; height: 40px;
 	}
-	.body {
+	> .subHead {
+		.icon.back { background-size: 20px; }
+		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
+
+		.cnt { 
+			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
+			color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
+			padding: 0px 4px; cursor: default; flex-shrink: 0;
+		}
+
+		.side.left { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+		.side.center { flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
+		.side.center {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
+		}
+
+		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
+		.side.right {
+			.icon.plus { background-image: url('~img/icon/widget/button/create.svg'); }
+			.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
+		}
+	}
+
+	> .body {
+		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
+		flex-grow: 1;
+	}
+	> .body {
 		.group { display: flex; flex-direction: column; }
 		.group {
 			> .titleWrap { padding: 0px 4px 12px 4px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }
@@ -126,5 +159,10 @@
 }
 
 @import "./page/type.scss";
+@import "./page/vault.scss";
+@import "./page/widget.scss";
+@import "./page/allObject.scss";
+@import "./page/settings.scss";
 @import "./page/object/relation.scss";
 @import "./page/object/tableOfContents.scss";
+@import "./page/bottom.scss";

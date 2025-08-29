@@ -199,7 +199,7 @@ initForces = () => {
 
 	const l = clusters.length;
 
-	clusters = Object.values(clusters).map((c, i) => {
+	clusters = clusters.map((c, i) => {
 		c.radius = Math.sqrt((i + 1) / l * -Math.log(Math.random())) * maxRadius;
 		c.x = Math.cos(i / l * 2 * Math.PI) * 150 + width / 2 + Math.random();
 		c.y = Math.sin(i / l * 2 * Math.PI) * 150 + height / 2 + Math.random();
@@ -285,18 +285,6 @@ updateForces = () => {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
 	};
 
-	// Cluster by object type
-	if (settings.cluster) {
-		simulation.force('cluster', d3.forceCluster()
-			.centers(d => clusters.find(c => c.id == d.type))
-			.strength(1)
-			.centerInertia(0.75));
-		simulation.force('collide', d3.forceCollide(d => getRadius(d) * 2));
-	} else {
-		simulation.force('cluster', null);
-		simulation.force('collide', null);
-	};
-
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
@@ -312,6 +300,18 @@ updateForces = () => {
 		.id(d => d.id)
 		.links(edges);
 
+	// Cluster by object type
+	if (settings.cluster) {
+		simulation.force('cluster', d3.forceCluster()
+			.centers(d => clusters.find(c => c.id == d.typeKey))
+			.strength(1)
+			.centerInertia(0.1));
+		simulation.force('collide', d3.forceCollide(d => getRadius(d)));
+	} else {
+		simulation.force('cluster', null);
+		simulation.force('collide', null);
+	};
+
 	// Build edgeMap in a single pass over edges
 	const tmpEdgeMap = getEdgeMap();
 
@@ -320,9 +320,9 @@ updateForces = () => {
 		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
 
-	simulation.alpha(1).restart();
-
+	simulation.alpha(0.5).restart();
 	nodeMap = getNodeMap();
+
 	redraw();
 };
 
@@ -349,7 +349,12 @@ updateSettings = (param) => {
 	};
 
 	settings = Object.assign(settings, param);
-	needUpdate ? updateForces() : redraw();
+
+	if (needUpdate) {
+		updateForces();
+	} else {
+		redraw();
+	};
 
 	if (needFocus) {
 		setTimeout(() => this.setRootId({ rootId }), delayFocus);

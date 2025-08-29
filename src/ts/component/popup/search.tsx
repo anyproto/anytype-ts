@@ -28,8 +28,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const nRef = useRef(0);
 	const topRef = useRef(0);
 	const offsetRef = useRef(0);
-	const filterValueRef = useRef('');
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
+	const storage = storageGet();
+	const filter = String(storage.filter || '');
+	const filterValueRef = useRef(filter);
 
 	const initCache = () => {
 		const items = getItems();
@@ -79,7 +81,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('shift+enter', e, () => {
-			if (item && (item.links.length || item.backlinks.length)) {
+			const links = Relation.getArrayValue(item.links);
+			const backlinks = Relation.getArrayValue(item.backlinks);
+
+			if (item && (links.length || backlinks.length)) {
 				onBacklink(e, item);
 			};
 		});
@@ -104,7 +109,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
-			pageCreate(filter);
+			e.stopPropagation();
+
+			close(() => pageCreate(filter));
 		});
 
 		keyboard.shortcut('search', e, () => close());
@@ -264,7 +271,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (backlink) {
-			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
+			const links = Relation.getArrayValue(backlink.links);
+			const backlinks = Relation.getArrayValue(backlink.backlinks);
+
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
 		};
 
 		if (clear) {
@@ -385,8 +395,11 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+				{ id: 'spaceList', icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
+				{ id: 'dataPublish', icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
+				{ id: 'api', icon: 'settings-api', name: translate('popupSettingsApiTitle') },
 			];
 
 			const pageItems: any[] = [

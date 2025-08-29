@@ -78,10 +78,11 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 			return [];
 		};
 
+		const recordIds = getRecordIds();
 		const { targetBlockId } = block.content;
 		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-		let items = getRecordIds().map(id => S.Detail.get(subId, id, J.Relation.sidebar));
+		let items = recordIds.map(id => S.Detail.get(subId, id, J.Relation.sidebar));
 
 		if (isPreview && isRecent) {
 			// add group labels
@@ -95,7 +96,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		const length = getItems().length;
 
 		raf(() => {
-			const container = $('#sidebarLeft #containerWidget #body');
+			const container = $('#sidebarPageWidget #body');
 			const obj = $(`#widget-${parent.id}`);
 			const node = $(nodeRef.current);
 			const head = obj.find('.head');

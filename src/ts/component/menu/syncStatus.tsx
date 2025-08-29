@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellStorage } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -38,13 +38,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
-		const { notSyncedCounter } = S.Auth.getSyncStatus();
+		const notSyncedCounter = S.Auth.getNotSynced().total;
 		const { setActive } = this.props;
 		const isOwner = U.Space.isMyOwner();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
+		const showIncentive = notSyncedCounter && canWrite && U.Data.isAnytypeNetwork();
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -133,19 +134,21 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 				</div>
 
-				{!isLoading && !items.length ? (
-					<EmptySearch text={emptyText} />
-				) : ''}
+				<UpsellStorage className="fromSyncMenu" route={analytics.route.syncStatus} />
 
-				{notSyncedCounter && canWrite ? (
+				{showIncentive ? (
 					<div className="incentiveBanner">
 						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
 						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
 						<div className="buttons">
-							<Button onClick={() => this.onIncentiveButtonClick('storage')} className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="blank" />
-							{isOwner ? <Button onClick={() => this.onIncentiveButtonClick('upgrade')} className="c28" text={translate('commonUpgrade')} /> : ''}
+							<Button className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" onClick={() => this.onIncentiveButtonClick('storage')} />
+							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
 						</div>
 					</div>
+				) : ''}
+
+				{!isLoading && !items.length ? (
+					<EmptySearch text={emptyText} />
 				) : ''}
 
 				{this.cache && items.length ? (
@@ -293,12 +296,19 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	onIncentiveButtonClick (id: string) {
 		switch (id) {
 			case 'storage': {
-				U.Object.openAuto({ id: 'spaceStorageManager', layout: I.ObjectLayout.Settings });
+				const { files } = S.Auth.getNotSynced();
+
+				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
+					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
+				} else {
+					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
+				};
 				break;
 			};
 
 			case 'upgrade': {
 				Action.membershipUpgrade();
+				analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.syncStatus });
 				break;
 			};
 		};

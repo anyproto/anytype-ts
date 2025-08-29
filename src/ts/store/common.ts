@@ -41,9 +41,11 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public showVaultValue = null;
 	public updateVersionValue = '';
-	public showSidebarRightValue = { full: { page: null }, popup: { page: null } }; // If page is null, don't show sidebar
+	public rightSidebarStateValue = { 
+		full: { page: null, isOpen: false }, 
+		popup: { page: null, isOpen: false },
+	};
 	public hideSidebarValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
@@ -106,11 +108,10 @@ class CommonStore {
 			fullscreenObjectValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
-			showVaultValue: observable,
 			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
-			showSidebarRightValue: observable,
+			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
 			timeFormatValue: observable,
@@ -127,7 +128,6 @@ class CommonStore {
 			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
-			showVault: computed,
 			showRelativeDates: computed,
 			dateFormat: computed,
 			timeFormat: computed,
@@ -149,8 +149,7 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			membershipTiersListSet: action,
-			showVaultSet: action,
-			showSidebarRightSet: action,
+			setRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
@@ -207,11 +206,7 @@ class CommonStore {
 	};
 
 	get pin (): string {
-		let ret = this.pinValue;
-		if (ret === null) {
-			ret = Storage.get('pin');
-		};
-		return String(ret || '');
+		return String(this.pinValue || '');
 	};
 
 	get pinTime (): number {
@@ -313,17 +308,6 @@ class CommonStore {
 
 	get diff (): I.Diff[] {
 		return this.diffValue || [];
-	};
-
-	get showVault (): boolean {
-		let ret = this.showVaultValue;
-		if (ret === null) {
-			ret = Storage.get('showVault');
-		};
-		if (undefined === ret) {
-			ret = true;
-		};
-		return ret;
 	};
 
 	get firstDay (): number {
@@ -498,12 +482,25 @@ class CommonStore {
 	};
 
 	/**
+	 * Gets the pin ID for storage.
+	 */
+	pinId () {
+		const { account } = S.Auth;
+		if (!account) {
+			return '';
+		};
+
+		return [ account.id, 'pin' ].join('-');
+	};
+
+	/**
 	 * Sets the pin value.
 	 * @param {string} v - The pin value.
 	 */
 	pinSet (v: string) {
 		this.pinValue = String(v || '');
-		Storage.set('pin', this.pinValue);
+		Renderer.send('keytarSet', this.pinId(), this.pinValue);
+		Renderer.send('pinSet');
 	};
 
 	/**
@@ -511,7 +508,29 @@ class CommonStore {
 	 */
 	pinRemove () {
 		this.pinValue = null;
-		Storage.delete('pin');
+		Renderer.send('keytarDelete', this.pinId());
+		Renderer.send('pinRemove');
+	};
+
+	/**
+	 * Initializes the pin value, optionally calling a callback.
+	 * @param {() => void} callBack - The callback function to call after initialization.
+	 */
+	pinInit (callBack?: () => void) {
+		const pin = Storage.get('pin');
+
+		if (pin) {
+			this.pinSet(pin);
+			Storage.delete('pin');
+
+			callBack?.();
+		} else {
+			Renderer.send('keytarGet', this.pinId()).then((value: string) => {
+				this.pinValue = String(value || '');
+
+				callBack?.();
+			});
+		};
 	};
 
 	/**
@@ -551,11 +570,12 @@ class CommonStore {
 	/**
 	 * Sets the show sidebar right value.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @param {string | null} page - The page to set, null if no page is shown
+	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	showSidebarRightSet (isPopup: boolean, page: string | null) {
-		const newState = { [(isPopup ? 'popup' : 'full')]: { page } };
-		set(this.showSidebarRightValue, newState);
+	setRightSidebarState (isPopup: boolean, page: string, isOpen: boolean) {
+		const key = this.getStateKey(isPopup);
+
+		set(this.rightSidebarStateValue, { [ key ]: { page, isOpen } });
 	};
 
 	/**
@@ -575,14 +595,6 @@ class CommonStore {
 	 */
 	updateVersionSet (v: string) {
 		this.updateVersionValue = String(v || '');
-	};
-
-	/**
-	 * Sets the show vault value.
-	 * @param {boolean} v - The show vault value.
-	 */
-	showVaultSet (v: boolean) {
-		this.boolSet('showVault', v);
 	};
 
 	/**
@@ -656,10 +668,10 @@ class CommonStore {
 	 * Gets the current theme class string.
 	 * @returns {string} The theme class.
 	 */
-	getThemeClass () {
+	getThemeClass (forceSystem?: boolean): string {
 		let ret = '';
 
-		if (this.themeId == 'system') {
+		if (forceSystem || (this.themeId == 'system')) {
 			ret = this.nativeThemeIsDark ? 'dark' : '';
 		} else {
 			ret = this.themeId;
@@ -671,9 +683,9 @@ class CommonStore {
 	/**
 	 * Sets the theme class on the document.
 	 */
-	setThemeClass () {
+	setThemeClass (forceSystem?: boolean) {
 		const head = $('head');
-		const c = this.getThemeClass();
+		const c = this.getThemeClass(forceSystem);
 
 		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
@@ -850,12 +862,21 @@ class CommonStore {
 	};
 
 	/**
-	 * Gets the show sidebar right value for a popup or full view.
+	 * Gets the state key for a popup or full view.
 	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @returns {string} The current page shown in the sidebar
+	 * @returns {string} The state key.
 	 */
-	getShowSidebarRight (isPopup: boolean): string {
-		return String(this.showSidebarRightValue[(isPopup ? 'popup' : 'full')].page || '');
+	getStateKey (isPopup: boolean): string {
+		return isPopup ? 'popup' : 'full';
+	};
+
+	/**
+	 * Gets the current state of the right sidebar.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
+	 */
+	getRightSidebarState (isPopup: boolean): { page: string; isOpen: boolean; } {
+		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '', isOpen: false };
 	};
 
 	/**

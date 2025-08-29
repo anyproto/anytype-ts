@@ -5,7 +5,7 @@
 	.section.objectTableOfContents {
 		.wrap { height: 100%; }
 
-		.items { overflow: scroll; overscroll-behavior: none; scrollbar-gutter: stable both-edges; padding: 0px; height: 100%; padding: 8px; }
+		.items { overflow: scroll; overscroll-behavior: none; scrollbar-gutter: stable; padding: 0px; height: 100%; padding: 8px; }
 		.item {
 			.label { padding: 0px; @include text-common; @include text-overflow-nw; font-weight: 400; color: var(--color-text-primary); }
 

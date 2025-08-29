@@ -83,24 +83,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				buttonText = translate('commonManage');
 			} else 
 			if (item.period) {
-				// default is year
-				let periodLabel = translate('pluralYear');
-				if (item.periodType) {
-					switch (item.periodType) {
-						case I.MembershipTierDataPeriodType.PeriodTypeDays: {
-							periodLabel = translate('pluralDay');
-							break;
-						};
-						case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
-							periodLabel = translate('pluralWeek');
-							break;
-						};
-						case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
-							periodLabel = translate('pluralMonth');
-							break;
-						};
-					};
-				};
+				const periodLabel = U.Common.getMembershipPeriodLabel(item);
 
 				if (item.period == 1) {
 					period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));

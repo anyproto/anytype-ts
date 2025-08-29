@@ -8,6 +8,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 const TEST_HTML = /<[^>]*>/;
+const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const iconCache: Map<string, string> = new Map();
 
@@ -1118,7 +1119,7 @@ class UtilCommon {
 		s = String(s || '');
 
 		const rw = new RegExp(/^(file:\/\/)?(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
-		const ru = new RegExp(/^(file:\/\/)?(\/[\p{L}\p{N}\s._%\-()]+)+\/?$/u);
+		const ru = /^(file:\/\/\/?)(\/[\p{L}\p{M}\p{N}\s._%\-(),]+)+\/?$/u;
 
 		let m = s.match(rw);
 		if (!m) {
@@ -1359,6 +1360,10 @@ class UtilCommon {
 		s = String(s || '');
 
 		if (!TEST_HTML.test(s)) {
+			return s;
+		};
+
+		if (!UNSAFE_HTML_PATTERN.test(s)) {
 			return s;
 		};
 
@@ -1798,6 +1803,20 @@ class UtilCommon {
 	};
 
 	/**
+	 * Returns the text color for an icon option.
+	 * @param {number} o - The icon option index.
+	 * @returns {string} The text color string.
+	 */
+	iconTextByOption (o: number): string {
+		const { text, list } = J.Theme.icon;
+
+		o = Number(o) || 0;
+		o = Math.max(0, Math.min(list.length, o));
+
+		return text[list[o - 1]];
+	};
+
+	/**
 	 * Shows the "What's New" popup and updates storage.
 	 */
 	showWhatsNew () {
@@ -1898,6 +1917,59 @@ class UtilCommon {
 		];
 
 		return canUpgradeTiers.includes(membership.tier);
+	};
+
+	getMembershipPeriodLabel (tier: I.MembershipTier): string {
+		// default is year
+		let periodLabel = translate('pluralYear');
+
+		if (tier.periodType) {
+			switch (tier.periodType) {
+				case I.MembershipTierDataPeriodType.PeriodTypeDays: {
+					periodLabel = translate('pluralDay');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
+					periodLabel = translate('pluralWeek');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
+					periodLabel = translate('pluralMonth');
+					break;
+				};
+			};
+		};
+
+		return periodLabel;
+	};
+
+	calculateStorageUsage (): number {
+		const spaces = U.Space.getList();
+
+		let usage = 0;
+
+		(spaces || []).forEach((space) => {
+			if (!U.Space.isMyOwner(space.targetSpaceId)) {
+				return;
+			};
+
+			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+
+			usage += Number(object.bytesUsage) || 0;
+		});
+
+		return usage;
+	};
+
+	getMaxScrollHeight (isPopup: boolean): number {
+		let container;
+		if (isPopup) {
+			container = this.getScrollContainer(true).get(0);
+			return container.scrollHeight - container.clientHeight;
+		} else {
+			container = window;
+			return document.documentElement.scrollHeight - window.innerHeight;
+		};
 	};
 
 };

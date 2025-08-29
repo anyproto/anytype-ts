@@ -80,7 +80,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								getRecord={() => S.Detail.get(rootId, rootId, [ item.relationKey ])}
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
-								menuClassName="fromBlock"
+								menuClassNameWrap="fromBlock"
 								pageContainer={U.Common.getCellContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
@@ -366,7 +366,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		const { id, param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
 		const { filter } = S.Common;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -384,7 +384,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			className: param.className,
+			className,
+			classNameWrap,
 			rebind: this.rebind,
 			parentId: id,
 			data: {
@@ -589,6 +590,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							lang: (Storage.get('codeLang') || J.Constant.default.codeLang),
 						};
 					};
+
+					if (param.content.style == I.TextStyle.Callout) {
+						const icon = Storage.get('calloutIcon');
+						if (icon) {
+							param.content.iconEmoji = icon;	
+						};
+					};
 				};
 
 				if (item.type == I.BlockType.File) {
@@ -607,7 +615,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				if (item.type == I.BlockType.Dataview) {
 					param.content.isCollection = item.itemId == 'collection';
 					param.content.views = [ 
-						{ type: I.ViewType.Grid, name: translate('commonAll') }
+						{ type: I.ViewType.List, name: translate('commonAll') }
 					];
 				};
 

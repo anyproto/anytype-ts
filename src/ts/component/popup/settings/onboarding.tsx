@@ -157,8 +157,6 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		Preview.tooltipHide();
 	};
 
-	const { interfaceLang } = S.Common;
-	const interfaceLanguages = U.Menu.getInterfaceLanguages();
 	const isDefault = config.path == U.Common.getElectron().defaultPath();
 	const networkModes = getNetworkModes();
 
@@ -168,21 +166,6 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<div className="actionItems">
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalInterfaceLanguage')} />
-						<Select
-							id="interfaceLang"
-							value={interfaceLang}
-							options={interfaceLanguages}
-							onChange={v => Action.setInterfaceLang(v)}
-							arrowClassName="black"
-							menuParam={{ 
-								horizontal: I.MenuDirection.Right, 
-								width: 300,
-								className: 'fixed',
-							}}
-						/>
-					</div>
 
 					<div className="item">
 						<Label text={translate('popupSettingsOnboardingModeTitle')} />

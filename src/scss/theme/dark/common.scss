@@ -290,6 +290,7 @@ html.themeDark {
 	.icon.settings-membership { background-image: url('#{$themePath}/icon/settings/membership.svg'); }
 	.icon.settings-language { background-image: url('#{$themePath}/icon/settings/language.svg'); }
 	.icon.settings-api { background-image: url('#{$themePath}/icon/settings/api.svg'); }
+	.icon.settings-sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
 	.icon.settings-space { background-image: url('#{$themePath}/icon/settings/overview.svg'); }
 	.icon.settings-members { background-image: url('#{$themePath}/icon/settings/members.svg'); }
 	.icon.settings-import { background-image: url('#{$themePath}/icon/settings/import.svg'); }
@@ -335,6 +336,10 @@ html.themeDark {
 
 	/* Header */
 
+	.header.authIndex {
+		.logo { background: url('~img/logo/white.svg'); }
+	}
+
 	.header.isCommon {
 		.path { border: 0px; line-height: 28px; }
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
@@ -342,7 +347,7 @@ html.themeDark {
 
 	.header.mainSettings {
 		.identity {
-			.icon.anyName { background-image: url('#{$themePath}/icon/header/settings/anyName.svg'); }
+			.icon.anyName { background-image: url('#{$themePath}/icon/header/anyName.svg'); }
 		}
 	}
 
@@ -380,7 +385,26 @@ html.themeDark {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 
-		> #containerObject {
+		> .sidebarPage {
+			> .subHead {
+				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
+
+				.side.right {
+					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
+					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
+				}
+			}
+
+			> .body {
+				.group {
+					> .titleWrap {
+						.icon.question { background-image: url('#{$themePath}/icon/sidebar/question.svg'); }
+					}
+				}
+			}
+		}
+		
+		> .sidebarPage.pageAllObject {
 			> .inner {
 				> .head {
 					.titleWrap {
@@ -398,7 +422,7 @@ html.themeDark {
 			}
 		}
 
-		> #containerSettings {
+		> .containerSettings {
 			> .body {
 				.list {
 					> .head {
@@ -418,6 +442,22 @@ html.themeDark {
 				}
 			}
 		}
+
+		> .sidebarPage.pageWidget {
+			> .bottom {
+				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
+			}
+			.spaceChatSidebarHeader {
+				.buttons {
+					.item {
+						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
+						.icon.search { background-image: url('#{$themePath}/icon/sidebar/chatSpace/search.svg'); }
+						.icon.mute.pushOn { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
+						.icon.mute.pushOff { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+					}
+				}
+			}
+		}
 	}
 
 	/* Notifications */
@@ -434,19 +474,19 @@ html.themeDark {
 		}
 	}
 
-	.banner { background-image: unset; border: 1px solid var(--color-shape-highlight-dark); }
+	.banner { border: 1px solid var(--color-shape-highlight-dark); }
+	.banner {
+		.icon.close { background-image: url('#{$themePath}/icon/banner/close.svg'); }
+	}
+	.banner.sidebarUpdateBanner {
+		.button:before { background-image: url('#{$themePath}/icon/banner/download.svg'); }
+	}
 
 	/* Share Tooltip */
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
 		.icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
 		.icon.close { background-color: var(--color-bg-secondary); }
-	}
-
-	.shareBanner { background: var(--color-bg-primary); }
-	.shareBanner {
-		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
-		.icon.close { background-image: url('#{$themePath}/icon/widget/remove.svg'); }
 	}
 
 	.emptyState {

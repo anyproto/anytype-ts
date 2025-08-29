@@ -81,6 +81,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const { noHead, noRemove, value } = data;
 		const tabs = this.getTabs();
 		const items = this.getItems();
+		const cnb = [ 'body', `tab${Tab[tab]}` ];
 
 		let content = null;
 
@@ -417,7 +418,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 					</div>
 				) : ''}
 				
-				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+				<div className={cnb.join(' ')}>
 					{isLoading ? <Loader /> : ''}
 					{content}
 				</div>
@@ -558,6 +559,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 					const item = J.Emoji.emojis[id] || {};
 					return { 
 						id, 
+						name: item.name,
 						skin: this.skin, 
 						keywords: item.keywords || [], 
 						skins: item.skins || [],
@@ -569,7 +571,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		if (filter) {
 			sections = sections.filter((s: any) => {
 				s.children = (s.children || []).filter(c => {
-					if (c.id.match(reg)) {
+					if (c.id.match(reg) || c.name.match(reg)) {
 						return true;
 					};
 					for (const w of c.keywords) {

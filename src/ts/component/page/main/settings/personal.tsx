@@ -6,8 +6,7 @@ import { I, S, U, translate, Action, analytics, Renderer } from 'Lib';
 const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends React.Component<I.PageSettingsComponent> {
 
 	render () {
-		const { getId } = this.props;
-		const { config, linkStyle, fullscreenObject, hideSidebar, showVault } = S.Common;
+		const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
 		const { hideTray, showMenuBar } = config;
 		const { theme } = S.Common;
 
@@ -22,7 +21,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
 		];
-		const sidebarMode = showVault ? translate('sidebarMenuAll') : translate('sidebarMenuSidebar');
 
 		return (
 			<>
@@ -85,16 +83,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalSidebar')} />
 						<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalSidebarMode')} />
-						<div id="sidebarMode" className="select" onMouseDown={() => U.Menu.sidebarContext(`#${getId()} #sidebarMode`)}>
-							<div className="item">
-								<div className="name">{sidebarMode}</div>
-							</div>
-							<Icon className="arrow black" />
-						</div>
 					</div>
 
 					<div className="item">
