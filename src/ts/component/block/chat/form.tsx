@@ -42,12 +42,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
+	const { attachments } = S.Chat;
 	const { 
 		rootId, isPopup, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage,
 	} = props;
-	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const counters = S.Chat.getState(subId);
 	const nodeRef = useRef(null);
@@ -81,6 +81,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		unbind();
 		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+	};
+
+	const setAttachments = (list: any[]) => {
+		S.Chat.setAttachments(list);
 	};
 
 	const checkSendButton = () => {
@@ -1105,25 +1109,21 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setRange(range.current);
 	};
 
-	const updateAttachments = () => {
-		const ids = attachments.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
+	const updateAttachments = (attachments: any[]) => {
+		const list = U.Common.objectCopy(attachments);
+		const ids = list.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
 
 		U.Object.getByIds(ids, {}, (objects: any[]) => {
 			objects.forEach(item => {	
-				const idx = attachments.findIndex(it => it.id == item.id);
+				const idx = list.findIndex(it => it.id == item.id);
 
 				if (idx >= 0) {
-					attachments[idx] = item;
+					list[idx] = item;
 				};
 			});
 
-			const updated = attachments.map(a => {
-				const replacement = objects.find(o => o.id === a.id);
-				return replacement ? replacement : a;
-			});
-
-			setAttachments(updated);
-			saveState(attachments);
+			setAttachments(list);
+			saveState(list);
 		});
 	};
 
@@ -1411,7 +1411,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 										object={item}
 										onRemove={onAttachmentRemove}
 										bookmarkAsDefault={true}
-										updateAttachments={updateAttachments}
+										updateAttachments={() => updateAttachments(S.Chat.attachments)}
 									/>
 								</SwiperSlide>
 							))}
@@ -1434,7 +1434,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					removeBookmark={removeBookmark}
 					addAttachments={addAttachments}
 					getAttachments={() => attachments}
-					updateAttachments={updateAttachments}
+					updateAttachments={() => updateAttachments(S.Chat.attachments)}
 				/>
 
 				<div ref={counterRef} className="charCounter" />

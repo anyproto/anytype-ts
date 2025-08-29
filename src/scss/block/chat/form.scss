@@ -96,7 +96,7 @@
 	}
 	.editableWrap.isRtl { text-align: right; }
 
-	.attachments { margin: 6px 0px 0px 0px; padding: 0px 8px; max-height: 360px; overflow: visible; max-width: unset; }
+	.attachments { margin: 6px 0px; padding: 0px 8px; max-height: 360px; overflow: visible; max-width: unset; }
 	.attachments {
 		.swiper { width: 100%; overflow: visible; }
 		.swiper-slide { width: unset; }

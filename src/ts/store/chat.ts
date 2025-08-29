@@ -6,15 +6,22 @@ class ChatStore {
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
+	public attachmentsValue: any[] = [];
 
 	constructor () {
 		makeObservable(this, {
+			attachmentsValue: observable,
 			add: action,
 			update: action,
 			delete: action,
 			setReply: action,
 			setState: action,
+			setAttachments: action,
 		});
+	};
+
+	get attachments (): any[] {
+		return this.attachmentsValue || [];
 	};
 
 	/**
@@ -427,6 +434,13 @@ class ChatStore {
 	 */
 	counterString (c: number): string {
 		return String((c > 999 ? '999+' : c) || '');
+	};
+
+	/**
+	 * Sets the attachments list.
+	 */
+	setAttachments (list: any[]) {
+		this.attachmentsValue = list || [];
 	};
 
 };

@@ -30,7 +30,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { 
 		rootId, block, hasSelection, caretMenuParam, onMention, onChatButtonSelect, onTextButtonToggle, getMarksAndRange, removeBookmark,
-		addAttachments, getObjectFromPath, updateAttachments, onMenuClose,
+		addAttachments, getObjectFromPath, updateAttachments, getAttachments,
 	} = props;
 	const [ buttons, setButtons ] = useState<any[]>([]);
 	const menuContext = useRef(null);
@@ -210,6 +210,8 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
+					U.Object.openPopup(object, { onClose: updateAttachments });
+
 					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
 					context?.close();
 				});
@@ -233,6 +235,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 				vertical: I.MenuDirection.Top,
 				noFlipX: true,
 				noFlipY: true,
+				subIds: J.Menu.chatForm,
 				onOpen: context => menuContext.current = context,
 				data: {
 					options,
@@ -244,6 +247,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 							case 'search': {
 								keyboard.onSearchPopup(analytics.route.message, {
 									data: {
+										skipIds: getAttachments().map(it => it.id),
 										onObjectSelect: item => {
 											addAttachments([ item ]);
 											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
@@ -268,89 +272,6 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 				},
 			});
 		});
-
-		/*
-		let data: any = {};
-
-		if (menu) {
-			menuId = 'searchObject';
-			data = {
-				canAdd: true,
-				skipIds: attachments.map(it => it.id),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-				],
-				onSelect: (item: any, isNew: boolean) => {
-					onChatButtonSelect(I.ChatButton.Object, item);
-
-					if (isNew) {
-						U.Object.openPopup(item, {
-							onClose: () => {
-								if (updateAttachments) {
-									updateAttachments();
-								};
-							}
-						});
-					};
-
-					analytics.event('AttachItemChat', { type: analyticsMenuName, count: 1 });
-				},
-			};
-
-			/*
-			if (menu == 'object') {
-				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
-			} else
-			if ([ 'file', 'media' ].includes(menu)) {
-				const layouts = {
-					media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
-					file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ],
-				};
-
-				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: layouts[menu] });
-				data = Object.assign(data, {
-					canAdd: true,
-					addParam: {
-						name: translate('commonUpload'),
-						icon: 'upload',
-						onClick: upload
-					},
-				});
-			};
-
-			analytics.event('ClickScreenChatAttach', { type: analyticsMenuName });
-			
-		} else {
-			menuId = 'select';
-			data = {
-				options,
-				noVirtualisation: true,
-				noScroll: true,
-				onSelect: (e: React.MouseEvent, option: any) => {
-					onAttachment(option.id);
-				}
-			};
-
-			analytics.event('ScreenChatAttach');
-		};
-
-		S.Menu.closeAll(null, () => {
-			S.Menu.open(menuId, {
-				element: `#block-${block.id} #button-${block.id}-${I.ChatButton.Object}`,
-				className: 'chatAttachment fixed',
-				offsetY: -8,
-				vertical: I.MenuDirection.Top,
-				noFlipX: true,
-				noFlipY: true,
-				onClose: () => {
-					if (menu) {
-						onMenuClose();
-					};
-				},
-				data,
-			});
-		});
-		*/
 	};
 
 	useEffect(() => {
