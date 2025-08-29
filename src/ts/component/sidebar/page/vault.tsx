@@ -10,6 +10,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
 import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
 
+import ItemProgress from './vault/update';
+
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
 
@@ -382,35 +384,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
 					<Label text={item.lastMessage} />
-				</div>
-			</div>
-		);
-	};
-
-	const ItemProgress = (item: any) => {
-		const segments = [];
-		const obj = progress.length ? progress[0] : null;
-
-		if (!obj) {
-			return null;
-		};
-
-		if (progress.length) {
-			segments.push({ name: '', caption: '', percent: obj.current / obj.total, isActive: true });
-		};
-
-		return (
-			<div 
-				id={`item-${item.id}`}
-				className="item progress"
-				style={item.style}
-			>
-				<div className="iconWrap">
-					<Icon className="progress" />
-				</div>
-				<div className="info">
-					<Label text={item.name} />
-					<ProgressBar segments={segments} />
 				</div>
 			</div>
 		);

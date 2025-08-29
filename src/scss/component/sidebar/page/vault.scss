@@ -68,5 +68,19 @@
 			}
 			.cnt { display: none; }
 		}
+
+		&.isProgress {
+			.info { gap: 4px 0px; }
+			.icon { width: 48px; height: 48px; background-image: url('~img/logo/yellow.svg'); }
+			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
+			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
+
+			.progressBar {
+				.bar { gap: 0px; height: 8px; border-radius: 6px; }
+				.fill.isActive { background-color: #ffb76c; }
+				.fill.empty { background-color: var(--color-shape-highlight-medium); }
+				.labels { display: none; }
+			}
+		}
 	}
 }
