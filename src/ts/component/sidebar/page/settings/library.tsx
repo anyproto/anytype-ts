@@ -30,6 +30,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	sortId: I.SortId = I.SortId.LastUsed;
 	sortType: I.SortType = I.SortType.Desc;
 	searchIds: string[] = null;
+	savedRoute: any = {};
 
 	constructor (props: any) {
 		super(props);
@@ -169,13 +170,16 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	componentDidMount () {
+		this.savedRoute = U.Common.objectCopy(keyboard.getMatch(false));
 		this.refFilter.focus();
+
 		this.initSort();
 		this.load(true, this.openFirst);
 	};
 
 	componentWillUnmount () {
 		U.Subscription.destroyList([ J.Constant.subId.library ]);
+		U.Router.go(`/${U.Router.build(this.savedRoute.params)}`, {});
 	};
 
 	initSort () {
