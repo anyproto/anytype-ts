@@ -531,17 +531,22 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const showCreateSpace = sparkOnboarding.step === I.OnboardingStep.Complete && sparkOnboarding.manifest;
 	const showGoToSpace = newSpaceId && !isImporting;
 
-	// Render loading state
-	if (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error) {
+	// Render loading state (including during retry)
+	if (sparkOnboarding.isLoading || (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error)) {
 		return (
 			<div ref={nodeRef} className='wrap'>
 				<Loader id='loader' />
+				{sparkOnboarding.isLoading && sparkOnboarding.error && (
+					<div style={{ textAlign: 'center', marginTop: '20px', color: 'rgba(0,0,0,0.6)' }}>
+						Reconnecting...
+					</div>
+				)}
 			</div>
 		);
 	}
 
 	// Render error state with better UI
-	if (sparkOnboarding.error) {
+	if (sparkOnboarding.error && !sparkOnboarding.isLoading) {
 		return (
 			<div ref={nodeRef} className='errorStateWrapper'>
 				<div className='errorContent'>
@@ -559,7 +564,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							className='c28 primary' 
 							text='Try Again' 
 							onClick={() => {
-								sparkOnboarding.resetError();
+								// Just trigger connect, don't reset error
+								// The error will be cleared on successful connection
 								sparkOnboarding.connect();
 							}} 
 						/>

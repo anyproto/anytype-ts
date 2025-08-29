@@ -225,11 +225,12 @@ class SparkOnboardingStore {
 		}
 
 		this.isLoading = true;
-		this.error = null;
+		// Don't clear error immediately - keep it visible during retry attempt
 
 		try {
 			await this.service.connect();
 			this.isConnected = true;
+			this.error = null; // Clear error only on success
 		} catch (error) {
 			this.error = error.message || 'Failed to connect to onboarding service';
 			this.isConnected = false;
