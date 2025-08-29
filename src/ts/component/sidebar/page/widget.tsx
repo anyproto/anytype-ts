@@ -290,7 +290,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				</div>
 			);
 
-			bottom = isDirectionLeft ? (
+			bottom = (
 				<div className="bottom">
 					<div className="grad" />
 
@@ -321,7 +321,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 					</div>
 				</div>
-			) : '';
+			);
 		};
 
 		return (
@@ -701,6 +701,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
+		const { sidebarDirection } = this.props;
+		if (sidebarDirection != I.SidebarDirection.Left) {
+			return;
+		};
+
 		const node = $('#sidebarPageWidget');
 		const top = node.find('#body').scrollTop();
 
