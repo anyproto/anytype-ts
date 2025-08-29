@@ -17,7 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space } = S.Common;
+	const { space, updateVersion } = S.Common;
 	const { isPopup, sidebarDirection } = props;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
@@ -220,13 +220,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
-		if (progress.length) {
-			items.unshift({
-				id: 'progress-update',
-				icon: 'progress-update',
-				name: translate('progressUpdateDownloading'),
-				isProgress: true,
-			});
+		if (progress.length || updateVersion) {
+			items.unshift({ id: 'update-progress', isProgress: true, isUpdate: Boolean(updateVersion) });
 		};
 
 		return items;
@@ -443,6 +438,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		});
 	};
 
+	const getRowHeight = (item: any) => {
+		return HEIGHT_ITEM + (item.isUpdate ? 36 : 0);
+	};
+
 	useEffect(() => {
 		rebind();
 		analytics.event('ScreenVault');
@@ -501,7 +500,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 											height={height}
 											deferredMeasurmentCache={cache}
 											rowCount={items.length}
-											rowHeight={HEIGHT_ITEM}
+											rowHeight={({ index }) => getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}

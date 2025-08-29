@@ -69,11 +69,17 @@
 			.cnt { display: none; }
 		}
 
+		&.isProgress { flex-direction: column; gap: 8px 0px; }
 		&.isProgress {
+			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
+
 			.info { gap: 4px 0px; }
 			.icon { width: 48px; height: 48px; background-image: url('~img/logo/yellow.svg'); }
 			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
 			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
+			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
+			.button { flex-grow: 1; flex-basis: 50%; border-radius: 14px; border: 0px; background-color: var(--color-shape-highlight-medium); }
+			.button:hover { background-color: var(--color-shape-highlight-dark); }
 
 			.progressBar {
 				.bar { gap: 0px; height: 8px; border-radius: 6px; }

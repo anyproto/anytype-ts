@@ -3,8 +3,8 @@ import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, Label, ProgressBar } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { Icon, Label, ProgressBar, Button } from 'Component';
+import { I, S, U, translate, Renderer } from 'Lib';
 
 interface Props extends I.SidebarPageComponent {
 	id: string;
@@ -14,21 +14,94 @@ interface Props extends I.SidebarPageComponent {
 
 const SidebarPageVaultUpdate = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { id, name, style } = props;
-	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
-	const segments = [];
-	const obj = progress.length ? progress[0] : null;
+	const { id, style } = props;
+	const { updateVersion } = S.Common;
+	const cn = [ 'item', 'isProgress' ];
 
-	if (!obj) {
-		return null;
+	let info = null;
+	let buttons = null;
+
+	if (updateVersion) {
+		cn.push('withButtons');
+
+		info = (
+			<div className="info">
+				<div className="name">{translate('commonUpdateAvailable')}</div>
+				<Label text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)} />
+			</div>
+		);
+
+		buttons = (
+			<div className="buttons">
+				<Button 
+					color="blank"
+					className="c28"
+					text={translate('commonLater')} 
+					onClick={() => {
+						S.Common.updateVersionSet('');
+						Renderer.send('updateCancel');
+					}}
+				/>
+				<Button 
+					color="blank"
+					className="c28"
+					text={translate('commonUpdateApp')}
+					onClick={() => {
+						Renderer.send('updateConfirm');
+						S.Common.updateVersionSet('');
+						U.Common.checkUpdateVersion(updateVersion);
+					}}
+				/>
+			</div>
+		);
+
+	} else {
+		const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
+		const obj = progress.length ? progress[0] : null;
+		const segments = [];
+
+		if (!obj) {
+			return null;
+		};
+
+		let percent = 0;
+		if (progress.length) {
+			segments.push({ name: '', caption: '', percent: obj.current / obj.total, isActive: true });
+
+			percent = S.Progress.getPercent(progress);
+		};
+
+		info = (
+			<div className="info">
+				<div className="nameWrapper">
+					<div className="name">{translate('progressUpdateDownloading')}</div>
+					<div className="percent">{percent}%</div>
+				</div>
+				<ProgressBar segments={segments} />
+			</div>
+		);
 	};
 
-	let percent = 0;
-	if (progress.length) {
-		segments.push({ name: '', caption: '', percent: obj.current / obj.total, isActive: true });
-
-		percent = S.Progress.getPercent(progress);
-	};
+	/*
+	{updateVersion ? (
+				<Banner
+					id="sidebarUpdateBanner"
+					title={translate('commonUpdateAvailable')}
+					text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)}
+					button={translate('commonUpdateApp')}
+					buttonColor="black"
+					onClick={() => {
+						Renderer.send('updateConfirm');
+						S.Common.updateVersionSet('');
+						U.Common.checkUpdateVersion(updateVersion);
+					}}
+					onClose={() => {
+						S.Common.updateVersionSet('');
+						Renderer.send('updateCancel');
+					}}
+				/>
+			) : ''}
+	*/
 
 	return (
 		<div 
@@ -36,14 +109,11 @@ const SidebarPageVaultUpdate = observer(forwardRef<{}, Props>((props, ref) => {
 			className="item isProgress"
 			style={style}
 		>
-			<Icon />
-			<div className="info">
-				<div className="nameWrapper">
-					<div className="name">{name}</div>
-					<div className="percent">{percent}%</div>
-				</div>
-				<ProgressBar segments={segments} />
+			<div className="infoWrapper">
+				<Icon />
+				{info}
 			</div>
+			{buttons}
 		</div>
 	);
 
