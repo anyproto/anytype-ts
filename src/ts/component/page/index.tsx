@@ -166,11 +166,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const Component = Components[path];
 		const routeParam = { replace: true };
 		const refSidebar = sidebar.rightPanelRef(isPopup);
+		const state = S.Common.getRightSidebarState(isPopup);
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
-		S.Common.setRightSidebarState(isPopup, '', false);
 
 		if (!Component) {
 			return;
@@ -192,7 +192,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (refSidebar && rightSidebar.isOpen) {
-			refSidebar.setState({ rootId: this.getRootId() });
+			refSidebar.setState({ rootId: this.getRootId(), page: state.page });
 		};
 
 		this.setBodyClass();
