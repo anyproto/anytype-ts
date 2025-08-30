@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { Frame, Error, Button, Header, Phrase } from 'Component';
+import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
 const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
@@ -167,6 +167,9 @@ const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any)
 			<Frame ref={frameRef} className="invisible">
 				<form className="form" onSubmit={onSubmit}>
 					<Error text={error} className="animation" />
+
+					<Title className="animation" text={translate(`authLoginTitle`)} />
+					<Label id="label" className="description animation" text={translate(`authLoginLabel`)} />
 
 					<div className="animation">
 						<Phrase 

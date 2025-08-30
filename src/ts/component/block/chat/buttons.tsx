@@ -1,11 +1,10 @@
-import React, { forwardRef, useImperativeHandle, useState, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useEffect, MouseEvent, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, analytics, I, J, keyboard, Mark, S, translate, U } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	value: string;
-	attachments: any[];
 	hasSelection: () => boolean;
 	getMarksAndRange: () => any;
 	caretMenuParam: () => any;
@@ -16,6 +15,7 @@ interface Props extends I.BlockComponent {
 	getObjectFromPath: (path: string) => void;
 	addAttachments: (attachments: any[]) => void;
 	updateAttachments?: () => void;
+	getAttachments: () => any[];
 	removeBookmark: (url: string) => void;
 };
 
@@ -29,10 +29,11 @@ interface RefProps {
 const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { 
-		rootId, block, attachments, hasSelection, caretMenuParam, onMention, onChatButtonSelect, onTextButtonToggle, getMarksAndRange, removeBookmark,
-		addAttachments, getObjectFromPath, updateAttachments, onMenuClose,
+		rootId, block, hasSelection, caretMenuParam, onMention, onChatButtonSelect, onTextButtonToggle, getMarksAndRange, removeBookmark,
+		addAttachments, getObjectFromPath, updateAttachments, getAttachments,
 	} = props;
 	const [ buttons, setButtons ] = useState<any[]>([]);
+	const menuContext = useRef(null);
 	const cmd = keyboard.cmdSymbol();
 
 	const onButton = (e: MouseEvent, item: any) => {
@@ -54,7 +55,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 						noHead: true,
 						noUpload: true,
 						value: '',
-						onSelect: (icon) => onChatButtonSelect(type, icon),
+						onSelect: icon => onChatButtonSelect(type, icon),
 						route: analytics.route.message,
 					}
 				});
@@ -84,7 +85,7 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {} as any,
-		};
+		}; 
 
 		let menuId = '';
 
@@ -183,110 +184,92 @@ const ChatButtons = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
-	const onAttachment = (menu?: string) => {
+	const onAttachmentOver = (e: any, item: any) => {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.chatForm);
+			return;
+		};
+
+		const context = menuContext.current;
+		if (!context) {
+			return;
+		};
+
+		switch (item.id) {
+			case 'create': {
+				U.Menu.typeSuggest({ 
+					element: `#${context.getId()} #item-${item.id}`,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					offsetX: context.getSize().width,
+					vertical: I.MenuDirection.Center,
+					isSub: true,
+					data: {
+						onAdd: () => context?.close(),
+					},
+				}, {}, { noButtons: true }, analytics.route.message, object => {
+					onChatButtonSelect(I.ChatButton.Object, object);
+
+					U.Object.openPopup(object, { onClose: updateAttachments });
+
+					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
+					context?.close();
+				});
+				break;
+			};
+		};
+	};
+
+	const onAttachment = () => {
 		const options: any[] = [
-			{ id: 'object', icon: 'object', name: translate('commonObject') },
-			{ id: 'media', icon: 'media', name: translate('commonMedia') },
-			{ id: 'file', icon: 'file', name: translate('commonFile') },
-			{ id: 'upload', icon: 'upload', name: translate('commonUpload') },
+			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
+			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
 		];
 
-		const upload = () => {
-			Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
-				if (paths.length) {
-					addAttachments(paths.map(path => getObjectFromPath(path)));
-
-					analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
-				};
-			});
-
-			analytics.event('ClickChatAttach', { type: 'Upload' });
-		};
-
-		let menuId = '';
-		let data: any = {};
-
-		if (menu) {
-			if (menu == 'upload') {
-				upload();
-				return;
-			};
-
-			const analyticsMenuName = U.Common.toUpperCamelCase(menu);
-
-			menuId = 'searchObject';
-			data = {
-				canAdd: true,
-				skipIds: attachments.map(it => it.id),
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-				],
-				onSelect: (item: any, isNew: boolean) => {
-					onChatButtonSelect(I.ChatButton.Object, item);
-
-					if (isNew) {
-						U.Object.openPopup(item, {
-							onClose: () => {
-								if (updateAttachments) {
-									updateAttachments();
-								};
-							}
-						});
-					};
-
-					analytics.event('AttachItemChat', { type: analyticsMenuName, count: 1 });
-				},
-			};
-
-			if (menu == 'object') {
-				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() });
-			} else
-			if ([ 'file', 'media' ].includes(menu)) {
-				const layouts = {
-					media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
-					file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ],
-				};
-
-				data.filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: layouts[menu] });
-				data = Object.assign(data, {
-					canAdd: true,
-					addParam: {
-						name: translate('commonUpload'),
-						icon: 'upload',
-						onClick: upload
-					},
-				});
-			};
-
-			analytics.event('ClickScreenChatAttach', { type: analyticsMenuName });
-		} else {
-			menuId = 'select';
-			data = {
-				options,
-				noVirtualisation: true,
-				noScroll: true,
-				onSelect: (e: React.MouseEvent, option: any) => {
-					onAttachment(option.id);
-				}
-			};
-
-			analytics.event('ScreenChatAttach');
-		};
-
 		S.Menu.closeAll(null, () => {
-			S.Menu.open(menuId, {
+			S.Menu.open('select', {
 				element: `#block-${block.id} #button-${block.id}-${I.ChatButton.Object}`,
-				className: 'chatAttachment fixed',
+				className: 'chatAttachment fixed fromBlock',
 				offsetY: -8,
 				vertical: I.MenuDirection.Top,
 				noFlipX: true,
 				noFlipY: true,
-				onClose: () => {
-					if (menu) {
-						onMenuClose();
-					};
+				subIds: J.Menu.chatForm,
+				onOpen: context => menuContext.current = context,
+				data: {
+					options,
+					noVirtualisation: true,
+					noScroll: true,
+					onOver: onAttachmentOver,
+					onSelect: (e: MouseEvent, option: any) => {
+						switch (option.id) {
+							case 'search': {
+								keyboard.onSearchPopup(analytics.route.message, {
+									data: {
+										skipIds: getAttachments().map(it => it.id),
+										onObjectSelect: item => {
+											addAttachments([ item ]);
+											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
+										},
+									},
+								});
+								break;
+							};
+
+							case 'upload': {
+								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
+									addAttachments(paths.map(path => getObjectFromPath(path)));
+
+									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
+								});
+
+								analytics.event('ClickChatAttach', { type: 'Upload' });
+								break;
+							};
+						};
+					},
 				},
-				data,
 			});
 		});
 	};

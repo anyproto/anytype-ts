@@ -122,7 +122,6 @@ html.bodyAuthDeleted {
 	.icon { height: 20px; width: 20px; }
 	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: 0px; transform: translateY(calc(-100% - 16px)); }
 
-	.title { margin: 0px 0px 20px 0px; }
 	.phraseWrapper { margin: 0px 0px 40px 0px; background-color: var(--color-shape-tertiary); }
 }
 
@@ -165,6 +164,8 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthLogin {
 	.frame { width: 1064px; }
+	.title { margin: 0px 0px 8px 0px; }
+	.label.description { margin: 0px 0px 32px 0px; }
 
 	@media (max-width: 1160px) {
 		.frame { width: calc(100% - 96px); }
@@ -172,9 +173,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthOnboard {
-	.title { margin: 0px 0px 8px 0px; }
-	.label.description { width: 508px; margin: 0px 0px 32px 0px; }
-
+	.label.description { width: 508px; }
 	.buttons { flex-direction: column; gap: 12px 0px; }
 
 	.tooltipLink:hover { text-decoration: underline; }

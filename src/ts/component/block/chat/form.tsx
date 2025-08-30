@@ -42,12 +42,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
+	const { attachments } = S.Chat;
 	const { 
 		rootId, isPopup, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage,
 	} = props;
-	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const nodeRef = useRef(null);
@@ -82,6 +82,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		unbind();
 		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+	};
+
+	const setAttachments = (list: any[]) => {
+		S.Chat.setAttachments(list);
 	};
 
 	const checkSendButton = () => {
@@ -518,6 +522,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const ids = attachments.map(it => it.id);
 
 		list = list.filter(it => !ids.includes(it.id));
+		list = list.map(it => ({ ...it, timestamp: U.Date.now() }));
 
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
@@ -527,18 +532,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		list = list.map(it => {
-			it.timestamp = U.Date.now();
-			return it;
-		});
-
 		list.forEach(item => {
 			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
 				preloadFile(item);
 			};
 		});
 
-		saveState(list.concat(attachments));
+		saveState([ ...list, ...attachments ]);
 		historySaveState();
 	};
 
@@ -1149,19 +1149,20 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setRange(range.current);
 	};
 
-	const updateAttachments = () => {
-		const ids = attachments.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
+	const updateAttachments = (attachments: any[]) => {
+		const list = U.Common.objectCopy(attachments);
+		const ids = list.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
 
 		U.Object.getByIds(ids, {}, (objects: any[]) => {
 			objects.forEach(item => {	
-				const idx = attachments.findIndex(it => it.id == item.id);
+				const idx = list.findIndex(it => it.id == item.id);
 
 				if (idx >= 0) {
-					attachments[idx] = item;
+					list[idx] = item;
 				};
 			});
 
-			saveState(attachments);
+			saveState(list);
 		});
 	};
 
@@ -1450,7 +1451,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 										object={item}
 										onRemove={onAttachmentRemove}
 										bookmarkAsDefault={true}
-										updateAttachments={updateAttachments}
+										updateAttachments={() => updateAttachments(S.Chat.attachments)}
 									/>
 								</SwiperSlide>
 							))}
@@ -1464,16 +1465,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					value={getTextValue()}
 					hasSelection={hasSelection}
 					getMarksAndRange={getMarksAndRange}
-					attachments={attachments}
 					caretMenuParam={caretMenuParam}
 					onMention={onMention}
 					onChatButtonSelect={onChatButtonSelect}
 					onTextButtonToggle={onTextButtonToggle}
 					getObjectFromPath={getObjectFromPath}
-					addAttachments={addAttachments}
 					onMenuClose={onMenuClose}
 					removeBookmark={removeBookmark}
-					updateAttachments={updateAttachments}
+					addAttachments={addAttachments}
+					getAttachments={() => attachments}
+					updateAttachments={() => updateAttachments(S.Chat.attachments)}
 				/>
 
 				<div ref={counterRef} className="charCounter" />
@@ -1525,7 +1526,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	});
 
 	useEffect(() => {
-		scrollToBottom();		
+		scrollToBottom();
 		setRange(range.current);
 	}, [ attachments ]);
 

@@ -113,7 +113,7 @@ class Dispatcher {
 		const ctx: string[] = [ event.getContextid() ];
 		const electron = U.Common.getElectron();
 		const currentWindow = electron.currentWindow();
-		const { windowId } = currentWindow;
+		const { windowId, windowIsFocused } = currentWindow;
 		const isMainWindow = windowId === 1;
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
@@ -907,7 +907,7 @@ class Dispatcher {
 
 					S.Notification.add(item);
 
-					if (isMainWindow && !electron.isFocused()) {
+					if (isMainWindow && !windowIsFocused) {
 						U.Common.notification(item);
 					};
 					break;
@@ -996,7 +996,7 @@ class Dispatcher {
 						S.Chat.add(subId, idx, new M.ChatMessage(message));
 					});
 
-					if (showNotification && isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
+					if (showNotification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
 							title: space.name, 
 							text: `${author?.name}: ${message.content.text}`,
