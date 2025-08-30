@@ -19,7 +19,7 @@ class UtilSpace {
 			this.openFirstSpaceOrVoid(null, param);
 			return;
 		};
-		
+
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();
@@ -62,6 +62,10 @@ class UtilSpace {
 
 		if (!id) {
 			return null;
+		};
+
+		if (space.isChat) {
+			return this.getChat();
 		};
 
 		let ret = null;
