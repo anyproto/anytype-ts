@@ -50,7 +50,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		blockId: '',
 	});
 
-	const { page = '' } = state;
+	const page = String(state.page || '');
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
