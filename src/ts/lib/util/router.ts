@@ -109,7 +109,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		S.Common.setRightSidebarState(false, '', false);
+		//S.Common.setRightSidebarState(false, '', false);
 		focus.clear(true);
 
 		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
