@@ -397,8 +397,6 @@ class Sidebar {
 	 * @param {any} [param] - Additional parameters for the panel.
 	 */
 	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
-		console.trace();
-
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const shouldOpen = !rightSidebar.isOpen || (rightSidebar.page != page);
 

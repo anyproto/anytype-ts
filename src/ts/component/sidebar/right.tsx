@@ -63,12 +63,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	};
 
 	useEffect(() => {
-		console.log('MOUNT');
-	}, []);
-
-	useEffect(() => {
-		console.log('UPDATE', state);
-
 		childRef.current?.forceUpdate();
 	});
 

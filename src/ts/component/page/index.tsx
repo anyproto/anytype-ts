@@ -171,7 +171,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
-		//S.Common.setRightSidebarState(isPopup, state.page, state.isOpen);
 
 		if (!Component) {
 			return;
