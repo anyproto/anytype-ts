@@ -326,7 +326,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		return (
 			<>
-				<div className="head">
+				<div id="head" className="head">
 					{isDirectionRight ? (
 						<>
 							<div className="side left">
@@ -703,14 +703,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	onScroll () {
 		const { sidebarDirection } = this.props;
-		if (sidebarDirection != I.SidebarDirection.Left) {
-			return;
-		};
-
 		const node = $('#sidebarPageWidget');
 		const top = node.find('#body').scrollTop();
+		const isScrolled = top > 0;
 
-		node.find('.dropTarget.firstTarget').toggleClass('isScrolled', top > 0);
+		if (sidebarDirection == I.SidebarDirection.Left) {
+			node.find('.dropTarget.firstTarget').toggleClass('isScrolled', isScrolled);
+		} else {
+			node.find('#head').toggleClass('isScrolled', isScrolled);
+		};
 	};
 
 	onArchive (e: any) {
