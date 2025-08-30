@@ -134,6 +134,7 @@ export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
 		objectId: response.getObjectid(),
 		details: details(response),
+		preloadFileId: response.getPreloadfileid(),
 	};
 };
 

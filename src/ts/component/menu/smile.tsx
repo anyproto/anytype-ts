@@ -1217,7 +1217,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setLoading(true);
 		keyboard.disableCommonDrop(true);
 		
-		C.FileUpload(this.getSpaceId(), '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(this.getSpaceId(), '', file, I.FileType.Image, {}, false, '', (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			
@@ -1237,7 +1237,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			this.setLoading(true);
 
-			C.FileUpload(this.getSpaceId(), '', paths[0], I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(this.getSpaceId(), '', paths[0], I.FileType.Image, {}, false, '', (message: any) => {
 				this.setLoading(false);
 
 				if (!message.error.code) {
