@@ -142,6 +142,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				const target = child.getTargetObjectId();
 
+				if (target == J.Constant.widgetId.chat) {
+					return false;
+				};
+
 				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
 				};
@@ -548,11 +552,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					let system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 
 					if (system.length) {
-						system = system.filter(it => it.id != J.Constant.widgetId.allObject);
-
-						if (!space.isChat || (!space.chatId && !U.Object.isAllowedChat(true))) {
-							system = system.filter(it => it.id != J.Constant.widgetId.chat);
-						};
+						system = system.filter(it => ![ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(it.id));
 
 						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
 					};
