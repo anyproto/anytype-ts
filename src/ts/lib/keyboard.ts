@@ -1135,6 +1135,9 @@ class Keyboard {
 	 * @param {string} route - The route context.
 	 */
 	onSearchPopup (route: string, param?: Partial<I.PopupParam>) {
+		param = param || {};
+		param.data = param.data || {};
+
 		if (S.Popup.isOpen('search')) {
 			S.Popup.close('search');
 		} else {
