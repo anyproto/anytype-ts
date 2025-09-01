@@ -140,6 +140,7 @@ const App: FC = () => {
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }} 
 						onClick={() => Renderer.send('menu')} 
 					/>
+					<div className="name">Anytype</div>
 				</div>
 				<div className="side right">
 					<Icon 

@@ -252,6 +252,7 @@ html.platformMac
 	}
 	#drag {
 		.side { width: 50%; display: flex; align-items: center; }
+		.side.left { justify-content: flex-start; gap: 0px 8px; @include text-common; font-weight: 500; }
 		.side.right { justify-content: flex-end; gap: 0px 8px; }
 		.icon { -webkit-app-region: no-drag; }
 	}
