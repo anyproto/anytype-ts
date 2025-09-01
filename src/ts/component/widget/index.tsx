@@ -305,7 +305,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		const icon = node.find('.icon.collapse');
-		const isClosed = Storage.checkToggle('widget', block.id);
+		const isClosed = !Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
 			node.toggleClass('isClosed', isClosed);
@@ -319,7 +319,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const isClosed = Storage.checkToggle('widget', block.id);
+		const isClosed = !Storage.checkToggle('widget', block.id);
 
 		isClosed ? open() : close();
 		Storage.setToggle('widget', block.id, !isClosed);
@@ -348,7 +348,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => { 
-			const isClosed = Storage.checkToggle('widget', block.id);
+			const isClosed = !Storage.checkToggle('widget', block.id);
 
 			if (!isClosed) {
 				node.removeClass('isClosed');
