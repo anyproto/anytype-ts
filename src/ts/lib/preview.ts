@@ -72,8 +72,6 @@ class Preview {
 			let x = left + offsetX;
 			let y = top + offsetY;
 
-			console.log(element, left);
-
 			switch (typeX) {
 				default:
 				case I.MenuDirection.Left: {
@@ -115,8 +113,6 @@ class Preview {
 			y = Math.max(BORDER, y);
 
 			node.css({ left: x, top: y }).addClass('show');
-
-		console.log(x, y);
 
 			window.clearTimeout(this.timeout.delay);
 			this.timeout.delay = window.setTimeout(() => this.delayTooltip = delay, 500);

@@ -266,4 +266,10 @@ html.platformWindows {
 
 	.sidebar { margin-top: 40px; height: calc(100% - 40px); }
 	.sidebarHeadIcon { top: 52px; }
+
+	.popups {
+		.popup.popupShortcut {
+			.innerWrap { top: 40px; height: calc(100% - 40px); }
+		}
+	}
 }

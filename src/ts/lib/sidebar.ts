@@ -301,9 +301,7 @@ class Sidebar {
 		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
-			const wh = $('#appContainer').height() - 40;
-
-			console.log($('#appContainer').height());
+			const wh = U.Common.getAppContainerHeight();
 
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);

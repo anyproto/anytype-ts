@@ -107,8 +107,6 @@ class ScrollOnMove {
 		const maxX = Math.max(0, this.documentWidth - this.viewportWidth);
 		const maxY = Math.max(0, this.documentHeight - this.viewportHeight);
 
-		console.log({ curX, curY, maxX, maxY });
-
 		// Compute intended step based on proximity to the edge (closer → faster)
 		const dx = inLeftEdge ? -Math.min(MAX_STEP, Math.ceil((edgeLeft - x) / SPEED_DIV))
 				: inRightEdge ? Math.min(MAX_STEP, Math.ceil((x - edgeRight) / SPEED_DIV))

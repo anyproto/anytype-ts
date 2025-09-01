@@ -133,7 +133,7 @@ const App: FC = () => {
 	} else 
 	if (U.Common.isPlatformWindows()) {
 		drag = (
-			<div id="drag">
+			<div id="drag" className="withButtons">
 				<div className="side left">
 					<Icon 
 						className="window-menu withBackground" 
