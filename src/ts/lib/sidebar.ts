@@ -279,10 +279,10 @@ class Sidebar {
 		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
 			rightButtonX = 120;
+		};
 
-			if (widthLeft) {
-				rightButtonX = widthLeft - 40;
-			};
+		if (widthLeft) {
+			rightButtonX = widthLeft - 40;
 		};
 
 		this.objRight.css({ height: container.height() });
