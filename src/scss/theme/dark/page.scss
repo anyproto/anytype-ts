@@ -7,6 +7,10 @@
 			.img { background-image: url('#{$themePath}/icon/bubble.svg'); }
 		}
 	}
+
+	.buttons {
+		.button.accent { color: var(--color-text-primary); }
+	}
 }
 
 /* PageMainGraph */
