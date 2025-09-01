@@ -1263,12 +1263,12 @@ class Keyboard {
 	 */
 	getMatch (isPopup?: boolean) {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
+		const ret: any = { params: {} };
 
-		let ret: any = { params: {} };
 		let data: any = {};
 
 		if (popup) {
-			ret = Object.assign(ret, this.getPopupMatch());
+			ret.params = Object.assign(ret.params, this.getPopupMatch());
 		} else {
 			ret.route = U.Router.getRoute();
 			ret.params = this.getRouteMatch();
