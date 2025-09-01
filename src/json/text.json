@@ -2595,6 +2595,10 @@
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
 	"spaceUxType2": "Stream",
-	"spaceUxType3": "Chat"
+	"spaceUxType3": "Chat",
+
+	"windowMinimize": "Minimize",
+	"windowMaximize": "Maximize",
+	"windowClose": "Close"
 
 }

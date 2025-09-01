@@ -631,7 +631,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			win.off('dragend.widget');
 		});
 
-		scrollOnMove.onMouseDown({ isWindow: false, container: node.find('#body') });
+		scrollOnMove.onMouseDown({ container: node.find('#body') });
 	};
 
 	onDrag (e: React.DragEvent, blockId: string): void {

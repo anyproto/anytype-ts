@@ -379,7 +379,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		const message = `#block-${block.id} #item-${item.id}`;
-		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {
 			className: 'chatMessage',
@@ -463,7 +463,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 
-		setIsBottom(false);
+		setIsBottom(st == U.Common.getMaxScrollHeight(isPopup));
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
@@ -557,7 +557,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const formHeight = formRef.current ? $(formRef.current.getNode()).outerHeight() : 120;
-		const ch = isPopup ? container.outerHeight() : $(window).height();
+		const ch = container.outerHeight();
 		const min = container.scrollTop();
 		const max = min + ch - formHeight;
 		const ret = [];
@@ -641,8 +641,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			};
 
 			if (animate) {
-				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
 			} else {
 				container.scrollTop(y);
 				cb();
@@ -657,7 +656,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		raf(() => {
+		frameRef.current = raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const wrapper = $(scrollWrapperRef.current);
 			const y = wrapper.outerHeight() + 40;
@@ -671,8 +670,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			};
 
 			if (animate) {
-				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
 			} else {
 				container.scrollTop(y);
 				cb();
@@ -793,15 +791,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const hasScroll = () => {
-		const container = U.Common.getScrollContainer(isPopup);
-
-		if (isPopup && container.length) {
-			const el = container.get(0);
-
-			return el.scrollHeight > el.clientHeight;
-		};
-
-		return document.documentElement.scrollHeight > window.innerHeight;
+		return U.Common.getMaxScrollHeight(isPopup) > 0;
 	};
 
 	const highlightMessage = (id: string, orderId?: string) => {

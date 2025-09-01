@@ -752,6 +752,8 @@ class UtilCommon {
 	 * @returns {I.Platform} The platform.
 	 */
 	getPlatform (): I.Platform {
+		return I.Platform.Windows;
+
 		return J.Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
@@ -924,7 +926,7 @@ class UtilCommon {
 	 * @returns {JQuery<HTMLElement>} The scroll container.
 	 */
 	getScrollContainer (isPopup: boolean) {
-		return (isPopup ? $('#popupPage-innerWrap') : $(window)) as JQuery<HTMLElement>;
+		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
 	/**
@@ -1856,7 +1858,8 @@ class UtilCommon {
 
 		const no = node.offset().top;
 		const st = container.scrollTop();
-		const y = Math.max(J.Size.header + 20, (isPopup ? (no - container.offset().top + st) : no) - J.Size.header - 20);
+		const offset = 20;
+		const y = Math.max(J.Size.header + offset, no - container.offset().top + st - J.Size.header - offset);
 
 		container.scrollTop(y);
 	};
@@ -1962,14 +1965,12 @@ class UtilCommon {
 	};
 
 	getMaxScrollHeight (isPopup: boolean): number {
-		let container;
-		if (isPopup) {
-			container = this.getScrollContainer(true).get(0);
-			return container.scrollHeight - container.clientHeight;
-		} else {
-			container = window;
-			return document.documentElement.scrollHeight - window.innerHeight;
-		};
+		const container = this.getScrollContainer(isPopup).get(0);
+		return container.scrollHeight - container.clientHeight;
+	};
+
+	getAppContainerHeight () {
+		return $('#appContainer').height() - Number($('#drag.withButtons').outerHeight() || 0);
 	};
 
 };
