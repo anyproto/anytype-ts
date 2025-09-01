@@ -57,6 +57,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
+	const formHeight = useRef(0);
 	const isLoading = useRef<string[]>([]);
 	const isSending = useRef(false);
 	const range = useRef<I.TextRange>({ from: 0, to: 0 });
@@ -97,6 +98,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkTextMenu();
 	};
 
+	const checkFormHeight = () => {
+		const h = $(nodeRef?.current).outerHeight();
+
+		if (formHeight?.current != h) {
+			formHeight.current = h;
+			resize();
+		};
+	};
+
 	const checkTextMenu = () => {
 		if (!hasSelection()) {
 			if (S.Menu.isOpen('chatText')) {
@@ -109,6 +119,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Common.setTimeout('chatText', 150, () => {
 			S.Menu.open('chatText', {
+				classNameWrap: 'fromBlock',
 				element: '#messageBox',
 				recalcRect: () => {
 					const rect = U.Common.getSelectionRect();
@@ -334,6 +345,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
+		checkFormHeight();
 
 		window.clearTimeout(timeoutHistory.current);
 		timeoutHistory.current = window.setTimeout(() => {
@@ -589,7 +601,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
-					U.Object.openPopup(object, { onClose: updateAttachments });
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.attachments) });
 
 					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
 					context?.close();
