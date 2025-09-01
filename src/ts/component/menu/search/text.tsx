@@ -237,17 +237,8 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	getScrollContainer () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
-
-		if (!isPopup) {
-			return $(window);
-		} else {
-			const scrollable = this.container.find('.scrollable');
-
-			return scrollable.length ? scrollable : this.container;
-		};
+		const scrollable = this.container.find('.scrollable');
+		return scrollable.length ? scrollable : this.container;
 	};
 
 	getSearchContainer () {
@@ -267,9 +258,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
 		const offset = J.Size.lastBlock + J.Size.header;
 		const tag = Mark.getTag(I.MarkType.Search);
@@ -286,17 +274,8 @@ class MenuSearchText extends React.Component<I.Menu> {
 		
 		const st = this.container.scrollTop();
 		const no = next.offset().top;
-
-		let wh = 0;
-		let y = 0;
-
-		if (isPopup) {
-			y = no - this.container.offset().top + st;
-			wh = scrollContainer.height();
-		} else {
-			y = no;
-			wh = $(window).height();
-		};
+		const wh = scrollContainer.height();
+		const y = no - this.container.offset().top + st;
 
 		this.setCnt();
 		scrollContainer.scrollTop(y - wh + offset);

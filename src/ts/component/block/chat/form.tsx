@@ -1289,13 +1289,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(nodeRef.current);
 		const dummy = $(dummyRef.current);
+		const cw = container.width();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		let left = 0;
-		let width = container.width();
+		let width = cw;
 
 		if (!sidebar.data.isClosed) {
-			width = container.width() - sidebar.data.width;
+			width = cw - sidebar.data.width;
 			left = sidebar.data.width;
 		};
 

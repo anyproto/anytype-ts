@@ -379,7 +379,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		const message = `#block-${block.id} #item-${item.id}`;
-		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {
 			className: 'chatMessage',
@@ -557,7 +557,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const formHeight = formRef.current ? $(formRef.current.getNode()).outerHeight() : 120;
-		const ch = isPopup ? container.outerHeight() : $(window).height();
+		const ch = container.outerHeight();
 		const min = container.scrollTop();
 		const max = min + ch - formHeight;
 		const ret = [];
@@ -641,8 +641,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			};
 
 			if (animate) {
-				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
 			} else {
 				container.scrollTop(y);
 				cb();
@@ -671,8 +670,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			};
 
 			if (animate) {
-				const animContainer = isPopup ? U.Common.getScrollContainer(isPopup) : $('html, body');
-				animContainer.stop(true, true).animate({ scrollTop: y }, 300, cb);
+				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
 			} else {
 				container.scrollTop(y);
 				cb();
@@ -795,13 +793,13 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const hasScroll = () => {
 		const container = U.Common.getScrollContainer(isPopup);
 
-		if (isPopup && container.length) {
+		if (container.length) {
 			const el = container.get(0);
 
 			return el.scrollHeight > el.clientHeight;
 		};
 
-		return document.documentElement.scrollHeight > window.innerHeight;
+		return false;
 	};
 
 	const highlightMessage = (id: string, orderId?: string) => {

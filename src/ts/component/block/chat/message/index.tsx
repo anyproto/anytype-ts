@@ -86,7 +86,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 	const onReactionAdd = () => {
 		const node = $(nodeRef.current);
-		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
+		const container = U.Common.getScrollContainer(isPopup);
 
 		let menuContext = null;
 

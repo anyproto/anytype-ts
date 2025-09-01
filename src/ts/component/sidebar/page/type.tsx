@@ -116,10 +116,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	disableScroll (v: boolean) {
-		const { isPopup } = this.props;
-		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
-
-		container.toggleClass('overPopup', v);
+		U.Common.getScrollContainer(this.props.isPopup).toggleClass('overPopup', v);
 	};
 	
 	getObject () {

@@ -258,7 +258,7 @@ class Sidebar {
 		};
 
 		const { isFullScreen } = S.Common;
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 
 		if (isPopup) {
 			widthLeft = 0;
@@ -273,7 +273,7 @@ class Sidebar {
 		widthRight = Number(widthRight) || 0;
 
 		const container = U.Common.getScrollContainer(isPopup);
-		const pageWidth = (!isPopup ? ww : this.pageFlex.width()) - widthLeft - widthRight;
+		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 
@@ -287,7 +287,6 @@ class Sidebar {
 		};
 
 		this.objRight.css({ height: container.height() });
-
 		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
 
@@ -310,7 +309,7 @@ class Sidebar {
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
-			this.page.css({ width: pageWidth });
+			this.page.css({ width: pageWidth, height: wh });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
 		};
