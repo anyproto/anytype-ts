@@ -48,6 +48,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		} else {
 			object = S.Detail.get(widgets, targetId);
 		};
+
+		console.log('widget object', targetId, object);
+
 		return object;
 	};
 

@@ -125,58 +125,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				);
 			};
 		} else {
-			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
-				if (!block.isWidget()) {
-					return false;
-				};
-
-				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-				if (!childrenIds.length) {
-					return false;
-				};
-
-				const child = S.Block.getLeaf(widgets, childrenIds[0]);
-				if (!child) {
-					return false;
-				};
-
-				const target = child.getTargetObjectId();
-
-				if (target == J.Constant.widgetId.chat) {
-					return false;
-				};
-
-				if (Object.values(J.Constant.widgetId).includes(target)) {
-					return true;
-				};
-
-				const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
-				if (object._empty_ || object.isArchived || object.isDeleted) {
-					return false;
-				};
-
-				return true;
-			}).sort((a: I.Block, b: I.Block) => {
-				const c1 = this.getChild(a.id);
-				const c2 = this.getChild(b.id);
-
-				const t1 = c1?.getTargetObjectId();
-				const t2 = c2?.getTargetObjectId();
-
-				const isChat1 = t1 == J.Constant.widgetId.chat;
-				const isChat2 = t2 == J.Constant.widgetId.chat;
-
-				const isBin1 = t1 == J.Constant.widgetId.bin;
-				const isBin2 = t2 == J.Constant.widgetId.bin;
-
-				if (isChat1 && !isChat2) return -1;
-				if (!isChat1 && isChat2) return 1;
-
-				if (isBin1 && !isBin2) return 1;
-				if (!isBin1 && isBin2) return -1;
-
-				return 0;
-			});
+			const blocks = this.getBlocks();
 
 			if (blocks.length) {
 				first = blocks[0];
@@ -793,6 +742,69 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
+	};
+
+	getBlocks = () => {
+		const { widgets } = S.Block;
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes());
+		const element = S.Block.getMapElement(widgets, widgets);
+
+		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+
+			if (target == J.Constant.widgetId.chat) {
+				return false;
+			};
+
+			if (Object.values(J.Constant.widgetId).includes(target)) {
+				return true;
+			};
+
+			const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
+			if (object._empty_ || object.isArchived || object.isDeleted) {
+				return false;
+			};
+
+			return true;
+		});
+
+		blocks.sort((a: I.Block, b: I.Block) => {
+			const c1 = this.getChild(a.id);
+			const c2 = this.getChild(b.id);
+
+			const t1 = c1?.getTargetObjectId();
+			const t2 = c2?.getTargetObjectId();
+
+			const isChat1 = t1 == J.Constant.widgetId.chat;
+			const isChat2 = t2 == J.Constant.widgetId.chat;
+
+			const isBin1 = t1 == J.Constant.widgetId.bin;
+			const isBin2 = t2 == J.Constant.widgetId.bin;
+
+			if (isChat1 && !isChat2) return -1;
+			if (!isChat1 && isChat2) return 1;
+
+			if (isBin1 && !isBin2) return 1;
+			if (!isBin1 && isBin2) return -1;
+
+			return 0;
+		});
+
+		return blocks;
 	};
 
 	getChild (id: string): I.Block {
