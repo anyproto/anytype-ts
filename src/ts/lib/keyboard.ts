@@ -286,7 +286,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#widget-space #widget-space-arrow').trigger('click');
+				$('#button-sidebar-select-type').trigger('click');
 			});
 
 			// Lock the app
