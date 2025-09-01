@@ -50,6 +50,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const counters = S.Chat.getState(subId);
 	const nodeRef = useRef(null);
+	const dummyRef = useRef(null);
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
@@ -1422,12 +1423,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(nodeRef.current);
+		const dummy = $(dummyRef.current);
 		const cw = container.width();
 		const { isClosed, width } = sidebar.data;
 		const left = isClosed ? 0 : width;
 		const margin = 16;
 
 		node.css({ width: cw - margin * 2, left: left + margin });
+		dummy.css({ height: node.height() });
 		scrollToBottom();
 	};
 
@@ -1623,32 +1626,35 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			ref={nodeRef}
-			id="formWrapper" 
-			className="formWrapper"
-			onDragOver={onDragOver}
-			onDragLeave={onDragLeave}
-		>
-			<div className="inner">
-				<div className="dragOverlay">
-					<div className="inner">
-						<Icon />
-						<Label text={translate('commonDropFiles')} />
+		<>
+			<div ref={dummyRef} />
+			<div 
+				ref={nodeRef}
+				id="formWrapper" 
+				className="formWrapper"
+				onDragOver={onDragOver}
+				onDragLeave={onDragLeave}
+			>
+				<div className="inner">
+					<div className="dragOverlay">
+						<div className="inner">
+							<Icon />
+							<Label text={translate('commonDropFiles')} />
+						</div>
 					</div>
+
+					{!isEmpty ? (
+						<div className="navigation">
+							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
+						</div>
+					) : ''}
+
+					{form}
+
 				</div>
-
-				{!isEmpty ? (
-					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-					</div>
-				) : ''}
-
-				{form}
-
 			</div>
-		</div>
+		</>
 	);
 
 }));
