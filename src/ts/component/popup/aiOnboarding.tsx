@@ -531,22 +531,28 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const showCreateSpace = sparkOnboarding.step === I.OnboardingStep.Complete && sparkOnboarding.manifest;
 	const showGoToSpace = newSpaceId && !isImporting;
 
-	// Render loading state (including during retry)
-	if (sparkOnboarding.isLoading || (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error)) {
+	// Render loading state only for initial connection
+	if (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error && messages.length === 0) {
 		return (
 			<div ref={nodeRef} className='wrap'>
 				<Loader id='loader' />
-				{sparkOnboarding.isLoading && sparkOnboarding.error && (
-					<div style={{ textAlign: 'center', marginTop: '20px', color: 'rgba(0,0,0,0.6)' }}>
-						Reconnecting...
-					</div>
-				)}
 			</div>
 		);
 	}
 
-	// Render error state with better UI
-	if (sparkOnboarding.error && !sparkOnboarding.isLoading) {
+	// Render error state with better UI (but allow retry with loading)
+	if (sparkOnboarding.error && (!sparkOnboarding.isLoading || sparkOnboarding.error === 'Failed to connect to onboarding service')) {
+		// Show loading overlay during retry
+		if (sparkOnboarding.isLoading) {
+			return (
+				<div ref={nodeRef} className='wrap'>
+					<Loader id='loader' />
+					<div style={{ textAlign: 'center', marginTop: '20px', color: 'rgba(0,0,0,0.6)' }}>
+						Reconnecting...
+					</div>
+				</div>
+			);
+		}
 		return (
 			<div ref={nodeRef} className='errorStateWrapper'>
 				<div className='errorContent'>
