@@ -80,6 +80,8 @@ import MenuSyncStatusInfo from './syncStatus/info';
 
 import MenuIdentity from './identity';
 
+import MenuChatText from './chat/text';
+
 interface State {
 	tab: string;
 };
@@ -163,6 +165,8 @@ const Components: any = {
 	syncStatusInfo:			 MenuSyncStatusInfo,
 
 	identity:				 MenuIdentity,
+
+	chatText: 				 MenuChatText,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {

@@ -41,7 +41,7 @@
 		transition: background-color $easeInQuint 0.2s; 
 	}
 	.bubble {
-		.textWrapper { line-height: 20px; padding: 8px 12px; }
+		.textWrapper { line-height: 20px; padding: 6px 12px; }
 		.text { user-select: text !important; display: inline; }
 		.time { 
 			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; 
