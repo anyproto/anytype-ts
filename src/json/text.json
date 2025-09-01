@@ -2600,6 +2600,10 @@
 	"spaceUxType2": "Stream",
 	"spaceUxType3": "Chat",
 
+	"windowMinimize": "Minimize",
+	"windowMaximize": "Maximize",
+	"windowClose": "Close",
+
 	"aiOnboardingTitle": "Create Your Perfect Space",
 	"aiOnboardingWelcomeMessage": "Hello! I'm here to help you create your perfect space. What project, idea, or challenge would you like to work on?",
 	"aiOnboardingQuestionsIntro": "Perfect! A few quick questions:",

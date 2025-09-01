@@ -314,8 +314,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		const hh = J.Size.header;
 
 		let containerOffset = { top: 0, left: 0 };
-
-		if (isPopup && container.length) {
+		if (container.length) {
 			containerOffset = container.offset();
 		};
 

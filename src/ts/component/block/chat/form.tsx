@@ -50,9 +50,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const counters = S.Chat.getState(subId);
 	const nodeRef = useRef(null);
+	const dummyRef = useRef(null);
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
-	const dummyRef = useRef(null);
 	const sendRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -1424,23 +1424,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(nodeRef.current);
 		const dummy = $(dummyRef.current);
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const cw = container.width();
+		const { isClosed, width } = sidebar.data;
+		const left = isClosed ? 0 : width;
+		const margin = 16;
 
-		let left = 0;
-		let width = container.width();
-
-		if (!sidebar.data.isClosed) {
-			width = container.width() - sidebar.data.width;
-			left = sidebar.data.width;
-		};
-
-		if (rightSidebar && rightSidebar.isOpen) {
-			width -= J.Size.sidebar.right;
-		};
-
-		node.css({ width, left });
-		dummy.css({ height: node.outerHeight() });
-
+		node.css({ width: cw - margin * 2, left: left + margin });
+		dummy.css({ height: node.height() });
 		scrollToBottom();
 	};
 

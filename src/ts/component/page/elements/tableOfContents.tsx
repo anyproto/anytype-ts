@@ -66,7 +66,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const onScroll = () => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
-		const co = isPopup ? containerOffset.current.top : 0;
+		const co = containerOffset.current.top;
 		const ch = containerHeight.current - J.Size.header;
 
 		let blockId = '';
@@ -81,7 +81,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 			const t = el.offset().top - co;
 			const h = el.outerHeight();
-			const check = isPopup ? 0 : top;
+			const check = 0;
 
 			if ((t >= check) && (t + h <= check + ch)) {
 				blockId = block.id;
@@ -136,10 +136,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 
 			containerWidth.current = container.width();
 			containerHeight.current = container.height();
-
-			if (isPopup) {
-				containerOffset.current = container.offset();
-			};
+			containerOffset.current = container.offset();
 
 			node.css({ left: containerOffset.current.left + containerWidth.current - node.outerWidth() - 6 });
 

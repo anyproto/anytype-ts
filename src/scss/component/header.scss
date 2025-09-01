@@ -80,13 +80,13 @@
 
 html:not(.platformMac) {
 	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 88px; }
+		.side.left { padding-left: 52px; }
 	}
 }
 
 body.isFullScreen {
 	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 88px; }
+		.side.left { padding-left: 52px; }
 	}
 }
 
