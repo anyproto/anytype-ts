@@ -40,7 +40,12 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0s; }
 input, textarea, select { font-family: 'Inter'; }
 
+#root { height: 100%; }
+#appContainer { display: flex; flex-direction: column; height: 100%; }
+#selection { flex-grow: 1; overflow: hidden; }
+
 #drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
+
 #root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #060606; z-index: 1000; transition: opacity 0.3s ease-in-out; }
 #root-loader {
 	.inner { 
@@ -242,10 +247,7 @@ a { color: var(--color-text-primary); }
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
 
-html.platformWindows,
-html.platformMac
- {
-	#root { height: 100%; }
+html.platformWindows {
 	#drag { 
 		height: 40px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
 		flex-direction: row; padding: 0px 12px;
@@ -261,9 +263,6 @@ html.platformMac
 		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }
 		.icon.window-close { background-image: url('~img/icon/window/close.svg'); }
 	}
-
-	#appContainer { display: flex; flex-direction: column; height: 100%; }
-	#selection { flex-grow: 1; overflow: hidden; }
 
 	.sidebar { margin-top: 40px; height: calc(100% - 40px); }
 	.sidebarHeadIcon { top: 52px; }

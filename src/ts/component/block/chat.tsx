@@ -463,7 +463,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 
-		setIsBottom(false);
+		setIsBottom(st == U.Common.getMaxScrollHeight(isPopup));
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
@@ -656,7 +656,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		raf(() => {
+		frameRef.current = raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const wrapper = $(scrollWrapperRef.current);
 			const y = wrapper.outerHeight() + 40;
@@ -791,15 +791,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const hasScroll = () => {
-		const container = U.Common.getScrollContainer(isPopup);
-
-		if (container.length) {
-			const el = container.get(0);
-
-			return el.scrollHeight > el.clientHeight;
-		};
-
-		return false;
+		return U.Common.getMaxScrollHeight(isPopup) > 0;
 	};
 
 	const highlightMessage = (id: string, orderId?: string) => {

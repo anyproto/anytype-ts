@@ -303,6 +303,8 @@ class Sidebar {
 		if (!isPopup) {
 			const wh = $('#appContainer').height() - 40;
 
+			console.log($('#appContainer').height());
+
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
