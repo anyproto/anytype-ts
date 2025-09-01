@@ -85,10 +85,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
-	componentWillUnmount (): void {
-		this.disableScroll(false);
-	}; 
-
 	init () {
 		const type = this.getObject();
 		const details: any = this.props.details || {};
@@ -105,7 +101,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.backup = U.Common.objectCopy(this.object);
 
 		this.updateSections();
-		this.disableScroll(true);
 		this.disableButton(true);
 	};
 
@@ -115,10 +110,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 	};
 
-	disableScroll (v: boolean) {
-		U.Common.getScrollContainer(this.props.isPopup).toggleClass('overPopup', v);
-	};
-	
 	getObject () {
 		const type = S.Record.getTypeById(this.props.rootId);
 		if (!type) {

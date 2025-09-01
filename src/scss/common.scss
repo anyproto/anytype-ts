@@ -265,6 +265,6 @@ html.platformMac
 	#appContainer { display: flex; flex-direction: column; height: 100%; }
 	#selection { flex-grow: 1; overflow: hidden; }
 
-	.sidebar { margin-top: 40px; }
+	.sidebar { margin-top: 40px; height: calc(100% - 40px); }
 	.sidebarHeadIcon { top: 52px; }
 }
