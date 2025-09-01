@@ -1292,8 +1292,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const cw = container.width();
 		const { isClosed, width } = sidebar.data;
 		const left = isClosed ? 0 : width;
+		const margin = 16;
 
-		node.css({ width: cw, left });
+		node.css({ width: cw - margin * 2, left: left + margin });
 		dummy.css({ height: node.outerHeight() });
 
 		scrollToBottom();

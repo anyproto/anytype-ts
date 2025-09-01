@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, ListBanner, SidebarLeft } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, Icon, SidebarLeft } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -125,7 +125,44 @@ const App: FC = () => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef(null);
-	const drag = !U.Common.isPlatformLinux() ? <div id="drag" /> : '';
+
+	let drag = null;
+
+	if (U.Common.isPlatformMac()) {
+		drag = <div id="drag" />;
+	} else 
+	if (U.Common.isPlatformWindows()) {
+		drag = (
+			<div id="drag">
+				<div className="side left">
+					<Icon 
+						className="window-menu withBackground" 
+						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }} 
+						onClick={() => Renderer.send('menu')} 
+					/>
+				</div>
+				<div className="side right">
+					<Icon 
+						className="window-min withBackground" 
+						tooltipParam={{ text: translate('windowMinimize'), typeY: I.MenuDirection.Bottom }} 
+						onClick={() => Renderer.send('minimize')} 
+					/>
+
+					<Icon 
+						className="window-max withBackground" 
+						tooltipParam={{ text: translate('windowMaximize'), typeY: I.MenuDirection.Bottom }} 
+						onClick={() => Renderer.send('maximize')} 
+					/>
+
+					<Icon 
+						className="window-close withBackground" 
+						tooltipParam={{ text: translate('windowClose'), typeY: I.MenuDirection.Bottom }} 
+						onClick={() => Renderer.send('close')} 
+					/>
+				</div>
+			</div>
+		);
+	};
 
 	const init = () => {
 		const { version, arch, getGlobal } = electron;

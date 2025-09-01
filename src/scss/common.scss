@@ -246,7 +246,16 @@ html.platformWindows,
 html.platformMac
  {
 	#root { height: 100%; }
-	#drag { height: 40px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; }
+	#drag { 
+		height: 40px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
+		flex-direction: row; padding: 0px 12px;
+	}
+	#drag {
+		.side { width: 50%; display: flex; align-items: center; }
+		.side.right { justify-content: flex-end; gap: 0px 8px; }
+		.icon { -webkit-app-region: no-drag; }
+	}
+
 	#appContainer { display: flex; flex-direction: column; height: 100%; }
 	#selection { flex-grow: 1; overflow: hidden; }
 

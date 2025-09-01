@@ -1,4 +1,4 @@
-#page.isFull { overflow: auto; }
+#page.isFull { overflow-x: hidden; overflow-y: auto; }
 
 @import "./auth";
 @import "./main/edit";
