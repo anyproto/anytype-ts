@@ -125,7 +125,7 @@ const App: FC = () => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef(null);
-	const drag = U.Common.isPlatformMac() ? <div id="drag" /> : '';
+	const drag = !U.Common.isPlatformLinux() ? <div id="drag" /> : '';
 
 	const init = () => {
 		const { version, arch, getGlobal } = electron;
@@ -480,7 +480,7 @@ const App: FC = () => {
 	return (
 		<Router history={history}>
 			<Provider {...S}>
-				<div ref={nodeRef}>
+				<div id="appContainer" ref={nodeRef}>
 					{isLoading ? (
 						<div id="root-loader" className="loaderWrapper">
 							<div className="inner">

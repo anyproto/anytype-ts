@@ -5,7 +5,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow-x: hidden; overflow-y: auto; background: var(--color-bg-primary);
+	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
 	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
 }
 body.colResize { cursor: col-resize !important; }
@@ -241,3 +241,15 @@ a { color: var(--color-text-primary); }
 
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
+
+html.platformWindows,
+html.platformMac
+ {
+	#root { height: 100%; }
+	#drag { height: 40px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; }
+	#appContainer { display: flex; flex-direction: column; height: 100%; }
+	#selection { flex-grow: 1; overflow: hidden; }
+
+	.sidebar { margin-top: 40px; }
+	.sidebarHeadIcon { top: 52px; }
+}

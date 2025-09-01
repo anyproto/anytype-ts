@@ -752,6 +752,8 @@ class UtilCommon {
 	 * @returns {I.Platform} The platform.
 	 */
 	getPlatform (): I.Platform {
+		return I.Platform.Windows;
+
 		return J.Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 

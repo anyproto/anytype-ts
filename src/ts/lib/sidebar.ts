@@ -258,7 +258,6 @@ class Sidebar {
 		};
 
 		const { isFullScreen } = S.Common;
-		const { ww, wh } = U.Common.getWindowDimensions();
 
 		if (isPopup) {
 			widthLeft = 0;
@@ -302,6 +301,8 @@ class Sidebar {
 		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
+			const wh = $('#appContainer').height() - 40;
+
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
