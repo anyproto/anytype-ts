@@ -71,13 +71,6 @@
         .phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
         .word { @include text-small; font-weight: 500; margin: 0; }
         .bg { filter: blur(8px); opacity: 0.5; }
-
-        .icon { margin: 0px; top: 12px; right: 12px; z-index: 1; }
-        .icon.show { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
-
-		&.isHidden {
-			.icon.show { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); }
-		}
     }
 
     .select {
