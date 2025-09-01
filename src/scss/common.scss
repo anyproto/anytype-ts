@@ -252,9 +252,14 @@ html.platformMac
 	}
 	#drag {
 		.side { width: 50%; display: flex; align-items: center; }
-		.side.left { justify-content: flex-start; gap: 0px 8px; @include text-common; font-weight: 500; }
-		.side.right { justify-content: flex-end; gap: 0px 8px; }
+		.side.left { justify-content: flex-start; gap: 0px 22px; @include text-common; font-weight: 500; }
+		.side.right { justify-content: flex-end; gap: 0px 28px; }
+
 		.icon { -webkit-app-region: no-drag; }
+		.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
+		.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
+		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }
+		.icon.window-close { background-image: url('~img/icon/window/close.svg'); }
 	}
 
 	#appContainer { display: flex; flex-direction: column; height: 100%; }
