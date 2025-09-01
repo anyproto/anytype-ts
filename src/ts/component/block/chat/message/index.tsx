@@ -92,6 +92,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 		S.Menu.open('smile', { 
 			element: node.find('#reaction-add'),
+			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
 			onOpen: context => {
