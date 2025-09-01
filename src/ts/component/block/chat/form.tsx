@@ -1290,21 +1290,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const dummy = $(dummyRef.current);
 		const cw = container.width();
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const { isClosed, width } = sidebar.data;
+		const left = isClosed ? 0 : width;
 
-		let left = 0;
-		let width = cw;
-
-		if (!sidebar.data.isClosed) {
-			width = cw - sidebar.data.width;
-			left = sidebar.data.width;
-		};
-
-		if (rightSidebar && rightSidebar.isOpen) {
-			width -= J.Size.sidebar.right;
-		};
-
-		node.css({ width, left });
+		node.css({ width: cw, left });
 		dummy.css({ height: node.outerHeight() });
 
 		scrollToBottom();
