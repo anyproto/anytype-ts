@@ -1,0 +1,17 @@
+.menus {
+    .menu.menuChatText { width: unset; padding: 0px; height: 44px; transform-origin: 50% 50% !important; }
+    .menu.menuChatText {
+        .content { height: 100%; padding: 0px 8px; }
+        .buttons { display: flex; align-items: center; height: 100%; justify-content: center; }
+
+        .icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; }
+        .icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
+
+        .icon.active.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
+        .icon.active.kbd { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
+        .icon.active.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
+        .icon.active.link { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
+        .icon.active.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
+        .icon.active.underline { background-image: url('~img/icon/menu/action/mark/underline1.svg'); }
+    }
+}
