@@ -500,6 +500,15 @@ html.themeDark {
 		.icon.window-close { background-image: url('#{$themePath}/icon/window/close.svg') !important; }
 	}
 
+	/* Key Phrase */
+	.phraseWrapper {
+		.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/hide1.svg'); }
+
+		&.isHidden {
+			.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/see1.svg'); }
+		}
+	}
+
 	@import "./menu";
 	@import "./popup";
 	@import "./page";
