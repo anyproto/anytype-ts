@@ -497,12 +497,10 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				scrolledItems.current.add(it.id);
 
 				if (!it.isReadMessage) {
-					S.Chat.setReadMessageStatus(subId, [ it.id ], true);
-					C.ChatReadMessages(chatId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Message);
+					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
 				};
 				if (!it.isReadMention) {
-					S.Chat.setReadMentionStatus(subId, [ it.id ], true);
-					C.ChatReadMessages(chatId, it.orderId, it.orderId, lastStateId, I.ChatReadType.Mention);
+					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
 				};
 			});
 		};
@@ -514,6 +512,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
+	};
+
+	const readMessage = (id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
+		S.Chat.setReadMessageStatus(subId, [ id ], true);
+		C.ChatReadMessages(chatId, orderId, orderId, lastStateId, type);
 	};
 
 	const onReadStop = () => {
@@ -556,7 +559,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
-		const formHeight = formRef.current ? $(formRef.current.getNode()).outerHeight() : 120;
+		const formHeight = $(formRef.current.getNode()).outerHeight();
 		const ch = container.outerHeight();
 		const min = container.scrollTop();
 		const max = min + ch - formHeight;
@@ -616,6 +619,15 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const scrollToMessage = (id: string, animate?: boolean, highlight?: boolean) => {
 		if (!id) {
 			return;
+		};
+
+		const state = S.Chat.getState(subId);
+		const { lastStateId } = state;
+		const message = S.Chat.getMessage(subId, id);
+
+		if (message) {
+			readMessage(id, message.orderId, lastStateId, I.ChatReadType.Message);
+			readMessage(id, message.orderId, lastStateId, I.ChatReadType.Mention);
 		};
 
 		if (!hasScroll()) {
