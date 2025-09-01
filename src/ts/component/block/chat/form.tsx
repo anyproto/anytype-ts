@@ -109,6 +109,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Common.setTimeout('chatText', 150, () => {
 			S.Menu.open('chatText', {
+				classNameWrap: 'fromBlock',
 				element: '#messageBox',
 				recalcRect: () => {
 					const rect = U.Common.getSelectionRect();
@@ -589,7 +590,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
-					U.Object.openPopup(object, { onClose: updateAttachments });
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.attachments) });
 
 					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
 					context?.close();
