@@ -57,6 +57,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
+	const formHeight = useRef(0);
 	const isLoading = useRef<string[]>([]);
 	const isSending = useRef(false);
 	const range = useRef<I.TextRange>({ from: 0, to: 0 });
@@ -95,6 +96,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onSelect = () => {
 		range.current = getRange();
 		checkTextMenu();
+	};
+
+	const checkFormHeight = () => {
+		const h = $(nodeRef?.current).outerHeight();
+
+		if (formHeight?.current != h) {
+			formHeight.current = h;
+			resize();
+		};
 	};
 
 	const checkTextMenu = () => {
@@ -335,6 +345,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
+		checkFormHeight();
 
 		window.clearTimeout(timeoutHistory.current);
 		timeoutHistory.current = window.setTimeout(() => {
