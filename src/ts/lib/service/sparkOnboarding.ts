@@ -20,11 +20,9 @@ export class SparkOnboardingService extends EventEmitter {
 
 	constructor(config: SparkOnboardingConfig = {}) {
 		super();
-		// Use environment variables or config with fallbacks
-		// Note: These need to be injected at build time via webpack/rspack DefinePlugin
-		const defaultUrl = 'wss://stage1-anytype-spark.anytype.io';
-		const envUrl = typeof process !== 'undefined' && process.env?.SPARK_ONBOARDING_URL;
-		this.url = config.url || envUrl || defaultUrl;
+		// Use config override or environment variable (with default)
+		// SPARK_ONBOARDING_URL is injected at build time via rspack DefinePlugin
+		this.url = config.url || SPARK_ONBOARDING_URL;
 		
 		// Convert http to ws and https to wss if needed
 		if (this.url.startsWith('http://')) {
@@ -32,6 +30,8 @@ export class SparkOnboardingService extends EventEmitter {
 		} else if (this.url.startsWith('https://')) {
 			this.url = this.url.replace('https://', 'wss://');
 		}
+		
+		console.log('[SparkOnboarding] Using server:', this.url);
 		
 		this.maxReconnectAttempts = config.maxRetries || 3;
 		
@@ -64,16 +64,17 @@ export class SparkOnboardingService extends EventEmitter {
 			this.isConnecting = true;
 
 			try {
-				// Check if auth is disabled via environment variable
-				const authDisabled = typeof process !== 'undefined' && process.env?.SPARK_ONBOARDING_NO_AUTH === 'true';
-				
 				// Build URL with auth token and session ID
 				const url = new URL(this.url);
 				
+				// Check if auth is disabled (SPARK_ONBOARDING_NO_AUTH is injected at build time)
+				const authDisabled = SPARK_ONBOARDING_NO_AUTH === 'true';
+				
 				// Add auth token if not disabled
 				if (!authDisabled) {
-					const token = typeof process !== 'undefined' && process.env?.SPARK_ONBOARDING_TOKEN || 'spark_92eabe0c7f006ff22b0d81f3974b355556756afd3262249e4a748076c4483869';
-					url.searchParams.append('token', token);
+					url.searchParams.append('token', SPARK_ONBOARDING_TOKEN);
+				} else {
+					console.log('[SparkOnboarding] Auth disabled');
 				}
 				
 				// Include session ID if we have one (for reconnection)
