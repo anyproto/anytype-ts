@@ -151,7 +151,7 @@ class UtilObject {
 		const action = this.actionByLayout(object.layout);
 		const params = {
 			page: 'main',
-			action: action,
+			action,
 			id: object.id,
 		};
 
@@ -159,7 +159,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
 		};
 
 		keyboard.setSource(null);
