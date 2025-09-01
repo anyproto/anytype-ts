@@ -1663,8 +1663,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					{form}
 
 				</div>
-
-				<div className="bottom" />
 			</div>
 		</>
 	);
