@@ -131,6 +131,9 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			width = height * ratio;
 		};
 
+		width = Number(width) || 0;
+		height = Number(height) || 0;
+
 		return (
 			<div className="imgWrapper" onClick={onPreviewHandler}>
 				{blur}

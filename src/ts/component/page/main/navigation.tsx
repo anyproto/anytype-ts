@@ -227,6 +227,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		this.loadPage(rootId);
 		this.resize();
 		this.rebind();
+		S.Common.setRightSidebarState(false, '', false);
 
 		focus.clear(true);
 		keyboard.setFocus(true);

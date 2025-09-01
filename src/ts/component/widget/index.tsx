@@ -676,7 +676,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	let head = null;
 	let content = null;
-	let back = null;
 	let targetTop = null;
 	let targetBot = null;
 	let isDraggable = canWrite;
@@ -684,20 +683,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let icon = null;
 
 	if (isPreview) {
-		back = (
-			<div className="iconWrap back">
-				<Icon
-					className="back"
-					onClick={e => {
-						e.stopPropagation();
-
-						setPreview('');
-						analytics.event('ScreenHome', { view: 'Widget' });
-					}}
-				/>
-			</div>
-		);
-
 		isDraggable = false;
 	} else {
 		if (!(spaceview.isChat && isChat)) {
@@ -748,78 +733,79 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			icon = <IconObject object={object} size={20} iconSize={20} className="headerIcon" />;
 		};
 
-		head = (
-			<div className="head" onClick={onClickHandler}>
-				<div className="sides">
-					<div className="side left">
-						{back}
-						<div className="clickable">
-							{collapse}
-							{icon}
-							<ObjectName object={object} withPlural={true} />
-							{leftCnt ? <span className="count">{cnt}</span> : ''}
+		if (!isPreview) {
+			head = (
+				<div className="head" onClick={onClickHandler}>
+					<div className="sides">
+						<div className="side left">
+							<div className="clickable">
+								{collapse}
+								{icon}
+								<ObjectName object={object} withPlural={true} />
+								{leftCnt ? <span className="count">{cnt}</span> : ''}
+							</div>
+						</div>
+						<div className="side right">
+							{counters.messageCounter || counters.mentionCounter ? (
+								<div className="counters">
+									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
+									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
+								</div>
+							) : ''}
+
+							{buttons.length ? (
+								<div className="buttons">
+									{buttons.map(item => (
+										<div key={item.id} className={[ 'iconWrap', item.id ].join(' ')} onClick={item.onClick}>
+											<Icon className={item.icon} tooltipParam={{ text: item.tooltip }} />
+										</div>
+									))}
+								</div>
+							) : ''}
 						</div>
 					</div>
-					<div className="side right">
-						{counters.messageCounter || counters.mentionCounter ? (
-							<div className="counters">
-								{counters.mentionCounter ? <Icon className="count mention" /> : ''}
-								{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
-							</div>
-						) : ''}
-
-						{buttons.length ? (
-							<div className="buttons">
-								{buttons.map(item => (
-									<div key={item.id} className={[ 'iconWrap', item.id ].join(' ')} onClick={item.onClick}>
-										<Icon className={item.icon} tooltipParam={{ text: item.tooltip }} />
-									</div>
-								))}
-							</div>
-						) : ''}
-					</div>
 				</div>
-			</div>
-		);
+			);
 
-		if (canDrop) {
-			head = (
-				<DropTarget
-					cacheKey={[ block.id, object.id ].join('-')}
-					id={object.id}
-					rootId={targetId}
-					targetContextId={object.id}
-					dropType={I.DropType.Menu}
-					canDropMiddle={true}
-					className="targetHead"
-				>
-					{head}
-				</DropTarget>
+			if (canDrop) {
+				head = (
+					<DropTarget
+						cacheKey={[ block.id, object.id ].join('-')}
+						id={object.id}
+						rootId={targetId}
+						targetContextId={object.id}
+						dropType={I.DropType.Menu}
+						canDropMiddle={true}
+						className="targetHead"
+					>
+						{head}
+					</DropTarget>
+				);
+			};
+
+			targetTop = (
+				<DropTarget 
+					{...props} 
+					isTargetTop={true} 
+					rootId={S.Block.widgets} 
+					id={block.id} 
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false} 
+					onClick={onClickHandler}
+				/>
+			);
+
+			targetBot = (
+				<DropTarget 
+					{...props} 
+					isTargetBottom={true} 
+					rootId={S.Block.widgets} 
+					id={block.id} 
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false} 
+				/>
 			);
 		};
-
-		targetTop = (
-			<DropTarget 
-				{...props} 
-				isTargetTop={true} 
-				rootId={S.Block.widgets} 
-				id={block.id} 
-				dropType={I.DropType.Widget} 
-				canDropMiddle={false} 
-				onClick={onClickHandler}
-			/>
-		);
-
-		targetBot = (
-			<DropTarget 
-				{...props} 
-				isTargetBottom={true} 
-				rootId={S.Block.widgets} 
-				id={block.id} 
-				dropType={I.DropType.Widget} 
-				canDropMiddle={false} 
-			/>
-		);
 	};
 
 	switch (layout) {

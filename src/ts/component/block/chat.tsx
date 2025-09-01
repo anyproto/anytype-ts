@@ -462,7 +462,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const isFocused = U.Common.getElectron().isFocused();
 
 		setIsBottom(false);
 
@@ -493,7 +492,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			(last || dates.first()).addClass('active');
 		});
 
-		if (isFocused) {
+		if (S.Common.windowIsFocused) {
 			list.forEach(it => {
 				scrolledItems.current.add(it.id);
 
@@ -527,9 +526,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const last = S.Chat.getMessage(subId, ids[ids.length - 1]);
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const isFocused = U.Common.getElectron().isFocused();
 
-		if (isFocused) {
+		if (S.Common.windowIsFocused) {
 			if (first && last) {
 				C.ChatReadMessages(chatId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
 				C.ChatReadMessages(chatId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);

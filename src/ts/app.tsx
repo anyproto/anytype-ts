@@ -499,7 +499,6 @@ const App: FC = () => {
 					<Progress />
 					<Toast />
 					<ListNotification key="listNotification" />
-					<ListBanner />
 
 					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>

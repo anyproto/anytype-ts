@@ -507,6 +507,10 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	rightPanelSetState (isPopup: boolean, v: any) {
+		if (!v.page) {
+			v.page = S.Common.getRightSidebarState(isPopup).page;
+		};
+
 		this.rightPanelRef(isPopup)?.setState(v);
 	};
 

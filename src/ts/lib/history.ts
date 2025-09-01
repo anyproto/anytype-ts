@@ -46,6 +46,9 @@ class History {
 	 * @returns {string} The route string.
 	 */
 	build (match: any): string {
+		match = match || {};
+		match.params = match.params || {};
+
 		return [ match.params.page, match.params.action, match.params.id ].join('/');
 	};
 
