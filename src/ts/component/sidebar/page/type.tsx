@@ -77,7 +77,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
-		const { noPreview } = this.props;
+		const { noPreview, } = this.props;
 
 		this.init();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
@@ -85,8 +85,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
+	componentDidUpdate(prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
+		if (this.props.rootId != prevProps.rootId) {
+			this.init();
+		};
+	};
+
 	init () {
 		const type = this.getObject();
+
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
