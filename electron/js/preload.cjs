@@ -5,6 +5,7 @@ const os = require('os');
 const path = require('path');
 const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
+const focused = BrowserWindow.getFocusedWindow();
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
@@ -39,7 +40,6 @@ contextBridge.exposeInMainWorld('Electron', {
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 
 	currentWindow: () => getCurrentWindow(),
-	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
 	isFocused: () => getCurrentWindow().isFocused(),
 	focus: () => {
 		getCurrentWindow().focus();

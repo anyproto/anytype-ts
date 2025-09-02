@@ -1,5 +1,12 @@
 @import "~scss/_mixins";
 
+/* PageAuth */
+.pageAuth, .pageIndex {
+	.buttons {
+		.button.accent { color: var(--color-text-primary); }
+	}
+};
+
 /* PageAuthSelect */
 .pageIndexIndex, .pageAuthSelect {
 	.bubbleWrapper {

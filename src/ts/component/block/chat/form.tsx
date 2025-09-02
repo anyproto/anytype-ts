@@ -1,15 +1,14 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent } from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
 import Attachment from './attachment';
-import Buttons from './buttons';
 
 interface Props extends I.BlockComponent {
 	blockId: string;
@@ -51,10 +50,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const nodeRef = useRef(null);
-	const editableRef = useRef(null);
-	const buttonsRef = useRef(null);
-	const counterRef = useRef(null);
 	const dummyRef = useRef(null);
+	const editableRef = useRef(null);
+	const counterRef = useRef(null);
 	const sendRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -69,6 +67,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const mentionCounter = counters.mentionCounter;
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
+	const menuContext = useRef(null);
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize' ];
@@ -96,7 +95,50 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onSelect = () => {
 		range.current = getRange();
-		updateButtons();
+		checkTextMenu();
+	};
+
+	const checkTextMenu = () => {
+		if (!hasSelection()) {
+			if (S.Menu.isOpen('chatText')) {
+				S.Menu.close('chatText');
+			};
+			return;
+		};
+
+		const win = $(window);
+
+		S.Common.setTimeout('chatText', 150, () => {
+			S.Menu.open('chatText', {
+				classNameWrap: 'fromBlock',
+				element: '#messageBox',
+				recalcRect: () => {
+					const rect = U.Common.getSelectionRect();
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				},
+				horizontal: I.MenuDirection.Left,
+				offsetY: 4,
+				offsetX: -8,
+				passThrough: true,
+				data: {
+					rootId,
+					blockId: block.id,
+					range: range.current,
+					marks: marks.current,
+					onTextButtonToggle: onTextButtonToggle,
+					removeBookmark: removeBookmark
+				}
+			});
+		});
+	};
+
+	const updateTextMenu = () => {
+		if (S.Menu.isOpen('chatText')) {
+			S.Menu.updateData('chatText', {
+				range: range.current,
+				marks: marks.current,
+			});
+		};
 	};
 
 	const onMouseDown = () => {
@@ -162,21 +204,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
-				buttonsRef.current?.onChatButton(e, I.ChatButton.Object);
+				onAttachment();
 			};
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
-				buttonsRef.current?.onChatButton(e, I.ChatButton.Emoji);
-			};
-		});
-
-		keyboard.shortcut('chatMention', e, () => {
-			if (!S.Menu.isOpen('mention')) {
-				e.preventDefault();
-				buttonsRef.current?.onChatButton(e, I.ChatButton.Mention);
+				onEmoji();
 			};
 		});
 
@@ -210,7 +245,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			if (type !== null) {
 				e.preventDefault();
-				buttonsRef.current?.onTextButton(e, type, '');
+				onTextButtonToggle(type, '');
 			};
 		};
 
@@ -299,9 +334,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		*/
 
 		checkSendButton();
-		updateButtons();
 		removeBookmarks();
 		updateCounter();
+		resize();
 
 		window.clearTimeout(timeoutHistory.current);
 		timeoutHistory.current = window.setTimeout(() => {
@@ -515,6 +550,110 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		addAttachments(list);
 		keyboard.disableCommonDrop(false);
+	};
+
+	const onEmoji = () => {
+		S.Menu.open('smile', {
+			element: `#button-${block.id}-emoji`,
+			...caretMenuParam(),
+			data: {
+				noHead: true,
+				noUpload: true,
+				value: '',
+				onSelect: icon => onChatButtonSelect(I.ChatButton.Emoji, icon),
+				route: analytics.route.message,
+			}
+		});
+	};
+
+	const onAttachmentOver = (e: any, item: any) => {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.chatForm);
+			return;
+		};
+
+		const context = menuContext.current;
+		if (!context) {
+			return;
+		};
+
+		switch (item.id) {
+			case 'create': {
+				U.Menu.typeSuggest({
+					element: `#${context.getId()} #item-${item.id}`,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					offsetX: context.getSize().width,
+					vertical: I.MenuDirection.Center,
+					isSub: true,
+					data: {
+						onAdd: () => context?.close(),
+					},
+				}, {}, { noButtons: true }, analytics.route.message, object => {
+					onChatButtonSelect(I.ChatButton.Object, object);
+
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.attachments) });
+
+					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
+					context?.close();
+				});
+				break;
+			};
+		};
+	};
+
+	const onAttachment = () => {
+		const options: any[] = [
+			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
+			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
+		];
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('select', {
+				element: `#block-${block.id} #button-${block.id}-attachment`,
+				className: 'chatAttachment fixed fromBlock',
+				offsetY: -8,
+				vertical: I.MenuDirection.Top,
+				noFlipX: true,
+				noFlipY: true,
+				subIds: J.Menu.chatForm,
+				onOpen: context => menuContext.current = context,
+				data: {
+					options,
+					noVirtualisation: true,
+					noScroll: true,
+					onOver: onAttachmentOver,
+					onSelect: (e: MouseEvent, option: any) => {
+						switch (option.id) {
+							case 'search': {
+								keyboard.onSearchPopup(analytics.route.message, {
+									data: {
+										skipIds: attachments.map(it => it.id),
+										onObjectSelect: item => {
+											addAttachments([ item ]);
+											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
+										},
+									},
+								});
+								break;
+							};
+
+							case 'upload': {
+								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
+									addAttachments(paths.map(path => getObjectFromPath(path)));
+
+									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
+								});
+
+								analytics.event('ClickChatAttach', { type: 'Upload' });
+								break;
+							};
+						};
+					},
+				},
+			});
+		});
 	};
 
 	const addAttachments = (list: any[]) => {
@@ -784,18 +923,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onEditClear = () => {
 		editingId.current = '';
-		buttonsRef.current?.setButtons();
-
-		/*
-		attachments.forEach(item => {
-			if (item.isTmp && preloading.has(item.id)) {
-				const preloadId = preloading.get(item.id);
-				if (preloadId) {
-					C.FileDiscardPreload(preloadId);
-				};
-			};
-		});
-		*/
 
 		setRange({ from: 0, to: 0 });
 		setMarks([]);
@@ -804,6 +931,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkSendButton();
 		saveState([]);
 		setPreloading(new Map());
+		checkTextMenu();
 	};
 
 	const onReply = (message: I.ChatMessage) => {
@@ -988,10 +1116,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
-	const updateButtons = () => {
-		buttonsRef.current?.setButtons();
-	};
-
 	const onChatButtonSelect = (type: I.ChatButton, item: any) => {
 		switch (type) {
 			case I.ChatButton.Object: {
@@ -1025,6 +1149,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		setMarks(Mark.toggle(marks.current, { type, param, range: { from, to } }));
 		updateMarkup(value, { from, to });
+		updateTextMenu();
 
 		switch (type) {
 			case I.MarkType.Link: {
@@ -1045,7 +1170,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			};
 		};
 
-		updateButtons();
 		renderMarkup();
 	};
 
@@ -1329,23 +1453,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const node = $(nodeRef.current);
 		const dummy = $(dummyRef.current);
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const cw = container.width();
+		const { isClosed, width } = sidebar.data;
+		const left = isClosed ? 0 : width;
+		const margin = 16;
 
-		let left = 0;
-		let width = container.width();
-
-		if (!sidebar.data.isClosed) {
-			width = container.width() - sidebar.data.width;
-			left = sidebar.data.width;
-		};
-
-		if (rightSidebar && rightSidebar.isOpen) {
-			width -= J.Size.sidebar.right;
-		};
-
-		node.css({ width, left });
-		dummy.css({ height: node.outerHeight() });
-
+		node.css({ width: cw - margin * 2, left: left + margin });
+		dummy.css({ height: node.height() });
 		scrollToBottom();
 	};
 
@@ -1402,84 +1516,80 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		form = <div className="readonly">{translate('blockChatFormReadonly')}</div>;
 	} else {
 		form = (
-			<div className="form customScrollbar">
-				<Loader id="form-loader" />
+			<>
+				<Icon
+					id={`button-${block.id}-attachment`}
+					className="plus"
+					onClick={onAttachment}
+				/>
 
-				{title ? (
-					<div className="head">
-						<div className="side left">
-							{icon}
-							<div className="textWrapper">
-								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+				<div className="form customScrollbar">
+					<Loader id="form-loader" />
+
+					{title ? (
+						<div className="head">
+							<div className="side left">
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
+							</div>
+							<div className="side right">
+								<Icon className="clear" onClick={onClear} />
 							</div>
 						</div>
-						<div className="side right">
-							<Icon className="clear" onClick={onClear} />
+					) : ''}
+
+					{attachments.length ? (
+						<div className="attachments">
+							<Swiper
+								slidesPerView={'auto'}
+								spaceBetween={8}
+								navigation={true}
+								mousewheel={true}
+								modules={[ Navigation, Mousewheel ]}
+							>
+								{attachments.map(item => (
+									<SwiperSlide key={item.id}>
+										<Attachment
+											object={item}
+											onRemove={onAttachmentRemove}
+											bookmarkAsDefault={true}
+											updateAttachments={() => updateAttachments(S.Chat.attachments)}
+										/>
+									</SwiperSlide>
+								))}
+							</Swiper>
 						</div>
-					</div>
-				) : ''}
+					) : ''}
 
-				<Editable 
-					ref={editableRef}
-					id="messageBox"
-					maxLength={J.Constant.limit.chat.text}
-					placeholder={translate('blockChatPlaceholder')}
-					onSelect={onSelect}
-					onFocus={onFocusInput}
-					onBlur={onBlurInput}
-					onKeyUp={onKeyUpInput} 
-					onKeyDown={onKeyDownInput}
-					onInput={onInput}
-					onPaste={onPaste}
-					onMouseDown={onMouseDown}
-					onMouseUp={onMouseUp}
+					<Editable
+						ref={editableRef}
+						id="messageBox"
+						maxLength={J.Constant.limit.chat.text}
+						placeholder={translate('blockChatPlaceholder')}
+						onSelect={onSelect}
+						onFocus={onFocusInput}
+						onBlur={onBlurInput}
+						onKeyUp={onKeyUpInput}
+						onKeyDown={onKeyDownInput}
+						onInput={onInput}
+						onPaste={onPaste}
+						onMouseDown={onMouseDown}
+						onMouseUp={onMouseUp}
+					/>
+
+					<div ref={counterRef} className="charCounter" />
+					<Icon ref={sendRef} className="send" onClick={onSend} />
+				</div>
+
+				<Icon
+					id={`button-${block.id}-emoji`}
+					className="emoji"
+					onClick={onEmoji}
 				/>
-
-				{attachments.length ? (
-					<div className="attachments">
-						<Swiper
-							slidesPerView={'auto'}
-							spaceBetween={8}
-							navigation={true}
-							mousewheel={true}
-							modules={[ Navigation, Mousewheel ]}
-						>
-							{attachments.map(item => (
-								<SwiperSlide key={item.id}>
-									<Attachment
-										object={item}
-										onRemove={onAttachmentRemove}
-										bookmarkAsDefault={true}
-										updateAttachments={() => updateAttachments(S.Chat.attachments)}
-									/>
-								</SwiperSlide>
-							))}
-						</Swiper>
-					</div>
-				) : ''}
-
-				<Buttons
-					ref={buttonsRef}
-					{...props}
-					value={getTextValue()}
-					hasSelection={hasSelection}
-					getMarksAndRange={getMarksAndRange}
-					caretMenuParam={caretMenuParam}
-					onMention={onMention}
-					onChatButtonSelect={onChatButtonSelect}
-					onTextButtonToggle={onTextButtonToggle}
-					getObjectFromPath={getObjectFromPath}
-					onMenuClose={onMenuClose}
-					removeBookmark={removeBookmark}
-					addAttachments={addAttachments}
-					getAttachments={() => attachments}
-					updateAttachments={() => updateAttachments(S.Chat.attachments)}
-				/>
-
-				<div ref={counterRef} className="charCounter" />
-				<Icon ref={sendRef} className="send" onClick={onSend} />
-			</div>
+			</>
 		);
 	};
 
@@ -1571,7 +1681,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 					{form}
 
-					<div className="bottom" />
 				</div>
 			</div>
 		</>

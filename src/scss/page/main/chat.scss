@@ -7,7 +7,3 @@
 		.formWrapper { transition-property: left, width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 	}
 }
-
-html.bodyMainChat {
-	body { overflow-y: scroll; }
-}

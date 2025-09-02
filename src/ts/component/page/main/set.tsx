@@ -314,7 +314,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		raf(() => {
-			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
 			const container = U.Common.getPageContainer(isPopup);
@@ -324,8 +323,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			if (cover.length) {
 				cover.css({ top: hh });
 			};
-
-			container.css({ minHeight: isPopup ? '' : win.height() });
 		});
 	};
 

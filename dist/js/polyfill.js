@@ -10,7 +10,6 @@ window.Electron = {
 	platform: 'Windows',
 	version: {
 	},
-	isMaximized: () => {},
 	getGlobal: (v) => {
 		switch (v) {
 			case 'serverAddress':
