@@ -142,10 +142,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				const target = child.getTargetObjectId();
 
-				if (target == J.Constant.widgetId.chat) {
-					return false;
-				};
-
 				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
 				};
@@ -163,14 +159,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				const t1 = c1?.getTargetObjectId();
 				const t2 = c2?.getTargetObjectId();
 
-				const isChat1 = t1 == J.Constant.widgetId.chat;
-				const isChat2 = t2 == J.Constant.widgetId.chat;
-
 				const isBin1 = t1 == J.Constant.widgetId.bin;
 				const isBin2 = t2 == J.Constant.widgetId.bin;
-
-				if (isChat1 && !isChat2) return -1;
-				if (!isChat1 && isChat2) return 1;
 
 				if (isBin1 && !isBin2) return 1;
 				if (!isBin1 && isBin2) return -1;
@@ -267,21 +257,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					) : ''}
 
 					{blocks.map((block, i) => {
-						const { widgets } = S.Block;
-						const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-						const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-						const targetId = child ? child.getTargetObjectId() : '';
-						const isChat = targetId == J.Constant.widgetId.chat;
-						const canEdit = !isChat || !space.isChat;
-
 						return (
 							<Widget
 								{...this.props}
 								key={`widget-${block.id}`}
 								block={block}
-								isEditing={canEdit ? isEditing : false}
-								canEdit={canEdit}
-								canRemove={canEdit}
+								isEditing={isEditing}
+								canEdit={true}
+								canRemove={true}
 								onDragStart={this.onDragStart}
 								onDragOver={this.onDragOver}
 								onDrag={this.onDrag}
@@ -552,7 +535,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					let system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 
 					if (system.length) {
-						system = system.filter(it => ![ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(it.id));
+						system = system.filter(it => ![ J.Constant.widgetId.allObject ].includes(it.id));
 
 						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
 					};
@@ -595,7 +578,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		const targetId = child.getTargetObjectId();
 
-		if ([ J.Constant.widgetId.chat, J.Constant.widgetId.bin ].includes(targetId)) {
+		if ([ J.Constant.widgetId.bin ].includes(targetId)) {
 			e.preventDefault();
 			return;
 		};
@@ -661,9 +644,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			if (child) {
 				const t = child.getTargetObjectId();
-				if (t == J.Constant.widgetId.chat) {
-					this.position = I.BlockPosition.Bottom;
-				};
 				if (t == J.Constant.widgetId.bin) {
 					this.position = I.BlockPosition.Top;
 				};
