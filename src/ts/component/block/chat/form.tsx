@@ -1427,7 +1427,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const cw = container.width();
 		const { isClosed, width } = sidebar.data;
 		const left = isClosed ? 0 : width;
-		const margin = 16;
+		const margin = 32;
 
 		node.css({ width: cw - margin * 2, left: left + margin });
 		dummy.css({ height: node.height() });
@@ -1635,6 +1635,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				onDragOver={onDragOver}
 				onDragLeave={onDragLeave}
 			>
+				<div className="grad" />
+				<div className="bg" />
 				<div className="inner">
 					<div className="dragOverlay">
 						<div className="inner">

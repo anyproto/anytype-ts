@@ -1,6 +1,12 @@
-.formWrapper.isFixed { padding: 12px 16px; position: fixed; z-index: 11; bottom: 0px; background: var(--color-bg-primary); }
+.formWrapper.isFixed { padding: 12px 0px; position: fixed; z-index: 11; bottom: 0px; }
 .formWrapper {
-	.inner { display: flex; gap: 0px 8px; align-items: flex-end; max-width: 704px; margin: 0px auto; position: relative; }
+	.grad {
+		position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; z-index: 1;
+		background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-bg-primary) 68.18%);
+	}
+	.bg { position: absolute; left: 0px; top: 88px; width: 100%; height: calc(100% - 88px); background: var(--color-bg-primary); z-index: 0; }
+
+	.inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; }
 	.inner {
 		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-highlight-medium); }
 		> .icon:hover, .icon.hover { background-color: var(--color-shape-highlight-dark); }
@@ -12,7 +18,7 @@
 
 	.navigation { 
 		position: absolute; right: 0px; bottom: calc(100% + 8px); display: flex; flex-direction: column; align-items: flex-end; 
-		justify-content: flex-end; gap: 16px 0px; padding: 0px;
+		justify-content: flex-end; gap: 16px 0px; padding: 0px; z-index: 3;
 	}
 	.navigation {
 		.btn { position: relative; width: 36px; height: 36px; display: none; align-items: center; justify-content: center; }
