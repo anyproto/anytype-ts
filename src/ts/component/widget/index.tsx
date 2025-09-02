@@ -329,12 +329,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const isOpen = getIsOpen();
 
-		console.log('onToggle', block.id, isOpen);
-		console.trace();
-
 		isOpen ? close() : open();
 		Storage.setToggle('widget', block.id, !isOpen);
-		console.log('setToggle', block.id, !isOpen);
 	};
 
 	const open = () => {

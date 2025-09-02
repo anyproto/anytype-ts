@@ -102,7 +102,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 						<div className="side center">
 							{icon}
-							<ObjectName object={object} />
+							<ObjectName object={object} withPlural={true} />
 						</div>
 
 						<div className="side right" />
@@ -330,13 +330,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	init () {
 		S.Block.updateWidgetList();
 
-		const { page } = this.props;
 		const sections = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
 
-		sections.forEach(id => {
-			this.initToggle(id, !Storage.checkToggle(page, String(id)));
-		});
-
+		sections.forEach(id => this.initToggle(id));
 		this.onScroll();
 	};
 
@@ -408,7 +404,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		const targetId = child.getTargetObjectId();
 
-		if ([ J.Constant.widgetId.chat, J.Constant.widgetId.bin ].includes(targetId)) {
+		if ([ J.Constant.widgetId.bin ].includes(targetId)) {
 			e.preventDefault();
 			return;
 		};
@@ -474,9 +470,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			if (child) {
 				const t = child.getTargetObjectId();
-				if (t == J.Constant.widgetId.chat) {
-					this.position = I.BlockPosition.Bottom;
-				};
 				if (t == J.Constant.widgetId.bin) {
 					this.position = I.BlockPosition.Top;
 				};
@@ -564,26 +557,26 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		U.Object.createType({}, false);
 	};
 
-	initToggle (id: I.WidgetSection, isOpen: boolean) {
+	initToggle (id: I.WidgetSection) {
 		const obj = $(`#sidebarPageWidget`);
 		const section = obj.find(`#section-${id}`);
 		const list = section.find('> .items');
+		const isClosed = Storage.checkToggle('widgetSection', String(id));
 
-		section.toggleClass('isOpen', isOpen);
-		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
+		section.toggleClass('isOpen', !isClosed);
+		list.toggleClass('isOpen', !isClosed).css({ height: (!isClosed ? 'auto': 0) });
 	};
 
 	onToggle = (id: I.WidgetSection) => {
-		const { page } = this.props;
 		const obj = $(`#sidebarPageWidget`);
 		const section = obj.find(`#section-${id}`);
 		const list = section.find('> .items');
-		const isOpen = section.hasClass('isOpen');
+		const isClosed = Storage.checkToggle('widgetSection', String(id));
 
 		U.Common.toggle(list, 200);
-		section.toggleClass('isOpen', !isOpen);
-		list.toggleClass('isOpen', !isOpen);
-		Storage.setToggle(page, String(id), !isOpen);
+		section.toggleClass('isOpen', isClosed);
+		list.toggleClass('isOpen', isClosed);
+		Storage.setToggle('widgetSection', String(id), !isClosed);
 	};
 
 	clear () {

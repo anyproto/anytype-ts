@@ -117,6 +117,7 @@ export default {
 		'iconOption',
 		'pluralName',
 		'headerRelationsLayout',
+		'setOf',
 	],
 
 	graph: [

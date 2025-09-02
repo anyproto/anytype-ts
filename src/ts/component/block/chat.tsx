@@ -561,14 +561,13 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const container = U.Common.getScrollContainer(isPopup);
 		const formHeight = $(formRef.current.getNode()).outerHeight();
 		const ch = container.outerHeight();
-		const min = container.scrollTop();
-		const max = min + ch - formHeight;
+		const max = ch - formHeight;
 		const ret = [];
 
 		messages.forEach((it: any) => {
 			const st = getMessageScrollOffset(it.id);
 
-			if ((st >= min) && (st <= max)) {
+			if ((st >= 0) && (st <= max)) {
 				ret.push(it);
 			};
 		});

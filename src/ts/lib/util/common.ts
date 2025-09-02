@@ -1689,7 +1689,7 @@ class UtilCommon {
 			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ heght: 'auto' }), delay);
+			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ height: 'auto' }), delay);
 		};
 	};
 

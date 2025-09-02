@@ -36,7 +36,7 @@
 
 		> .content { display: flex; flex-direction: column; gap: 12px 0px; }
 		> .content {
-			.widgetSection { display: flex; flex-direction: column; gap: 4px 0px; }
+			.widgetSection { display: flex; flex-direction: column; }
 			.widgetSection {
 				> .nameWrap { display: flex; @include text-small; color: var(--color-text-secondary); justify-content: space-between; }
 				> .nameWrap {
@@ -64,6 +64,8 @@
 				> .items { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 6px; overflow: hidden; height: 0px; }
 				> .items {
 					&.anim { transition: height 0.2s $easeInQuint; }
+
+					.widget:first-child { margin-top: 4px; }
 				}
 
 				&.isOpen {
@@ -133,7 +135,7 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
-	> .body.isListPreview { overflow: hidden; padding-bottom: 12px; padding-right: 12px; }
+	> .body.isListPreview { overflow: hidden; padding: 0px 12px 12px 12px; }
 
 	.spaceChatSidebarHeader { padding-bottom: 8px; }
 	.spaceChatSidebarHeader {

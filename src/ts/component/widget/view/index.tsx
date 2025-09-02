@@ -2,6 +2,8 @@ import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } f
 import { observer } from 'mobx-react';
 import { Select, Label } from 'Component';
 import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel, Navigation } from 'swiper/modules';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -17,7 +19,7 @@ interface WidgetViewRefProps {
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton } = props;
+	const { parent, block, isSystemTarget, isPreview, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton } = props;
 	const { viewId, limit, layout } = parent.content;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -170,21 +172,57 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	let viewSelect = null;
 
 	if (!isSystemTarget && (views.length > 1)) {
-		viewSelect = (
-			<Select 
-				ref={selectRef}
-				id={`select-view-${rootId}`} 
-				value={viewId} 
-				options={views} 
-				onChange={onChangeView}
-				arrowClassName="light"
-				menuParam={{ 
-					width: 300,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-				}}
-			/>
-		);
+		if (isPreview) {
+			viewSelect = (
+				<div id="tabs" className="tabs">
+					<Swiper
+						direction="horizontal"
+						slidesPerView="auto"
+						slidesPerGroupAuto={true}
+						spaceBetween={12}
+						mousewheel={true}
+						navigation={true}
+						modules={[ Mousewheel, Navigation ]}
+					>
+						{views.map((it: any, i: number) => {
+							const cn = [ 'tab' ];
+
+							if (viewId == it.id) {
+								cn.push('active');
+							};
+
+							return (
+								<SwiperSlide key={it.id}>
+									<div 
+										key={it.id} 
+										className={cn.join(' ')} 
+										onClick={() => onChangeView(it.id)}
+									>
+										{it.name}
+									</div>
+								</SwiperSlide>
+							);
+						})}
+					</Swiper>
+				</div>
+			);
+		} else {
+			viewSelect = (
+				<Select 
+					ref={selectRef}
+					id={`select-view-${rootId}`} 
+					value={viewId} 
+					options={views} 
+					onChange={onChangeView}
+					arrowClassName="light"
+					menuParam={{ 
+						width: 300,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+					}}
+				/>
+			);
+		};
 	};
 
 	if (isEmpty) {
