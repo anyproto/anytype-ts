@@ -189,6 +189,8 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
 			top.current = scrollTop;
+
+			console.log(top.current);
 		};
 	};
 
@@ -461,6 +463,9 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			resize();
 		};
 
+		console.log(top.current);
+		console.trace();
+
 		if (listRef.current) {
 			listRef.current.recomputeRowHeights();
 
@@ -468,7 +473,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 				listRef.current.scrollToPosition(top.current);
 			};
 		};
-	});
+	}, [ records.length ]);
 
 	useImperativeHandle(ref, () => ({
 		getSelected: () => selected.current,
