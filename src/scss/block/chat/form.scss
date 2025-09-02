@@ -8,8 +8,8 @@
 
 	.inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; }
 	.inner {
-		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-highlight-medium); }
-		> .icon:hover, .icon.hover { background-color: var(--color-shape-highlight-dark); }
+		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
+		> .icon:hover, .icon.hover { background-color: var(--color-shape-secondary); }
 		> .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
 		> .icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 
@@ -68,7 +68,7 @@
 	}
 }
 
-.form { padding: 0px; border: 0px; background-color: var(--color-shape-highlight-medium); border-radius: 16px; position: relative; overflow: hidden; }
+.form { padding: 0px; border: 0px; background-color: var(--color-shape-tertiary); border-radius: 16px; position: relative; overflow: hidden; }
 .form {
 	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; }
 	#form-loader.active { display: block; }
