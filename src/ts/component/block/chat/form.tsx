@@ -1283,10 +1283,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const canSend = (): boolean => {
-		return !isLoading.current.length && 
+		const v = getTextValue();
+		const isLimit = v.length > J.Constant.limit.chat.text;
+
+		return !isLoading.current.length && !isLimit &&
 		!!(
-			editingId.current || 
-			getTextValue().trim().length || 
+			editingId.current ||
+			v.trim().length ||
 			attachments.length || 
 			marks.current.length
 		);
@@ -1363,15 +1366,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
-		if (l >= limit - 50) {
-			el.addClass('show').text(`${l} / ${limit}`);
+		el.toggleClass('red', l > limit);
+
+		if (l > limit - 50) {
+			el.addClass('show').text(limit - l);
 		} else {
 			el.removeClass('show');
 		};
 	};
 
 	const clearCounter = () => {
-		$(counterRef.current).text('').removeClass('show');
+		$(counterRef.current).text('').removeClass('show').removeClass('red');
 	};
 
 	const checkSpeedLimit = () => {
