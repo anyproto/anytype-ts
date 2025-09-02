@@ -118,21 +118,29 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const blur = withBlur ? <div id="blur" className="blur" style={{ backgroundImage: `url(${src.current})` }} /> : null;
-		const ratio = object.widthInPixels / object.heightInPixels;
-		
-		let width = 0;
-		let height = 0;
+		const style: any = {};
 
-		if (object.widthInPixels >= object.heightInPixels) {
-			width = Math.min(object.widthInPixels, 360);
-			height = width / ratio;
-		} else {
-			height = Math.min(object.heightInPixels, 360);
-			width = height * ratio;
+		if (object.widthInPixels && object.heightInPixels) {
+			const ratio = object.widthInPixels / object.heightInPixels;
+
+			let width = 0;
+			let height = 0;
+
+			if (object.widthInPixels >= object.heightInPixels) {
+				width = Math.min(object.widthInPixels, 360);
+				height = width / ratio;
+			} else {
+				height = Math.min(object.heightInPixels, 360);
+				width = height * ratio;
+			};
+
+			width = Number(width) || 0;
+			height = Number(height) || 0;
+
+			style.width = Number(width) || 0;
+			style.height = Number(height) || 0;		
+			style.aspectRatio = `${width}/${height}`;
 		};
-
-		width = Number(width) || 0;
-		height = Number(height) || 0;
 
 		return (
 			<div className="imgWrapper" onClick={onPreviewHandler}>
@@ -142,7 +150,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 					className="image"
 					src={src.current}
 					onDragStart={e => e.preventDefault()}
-					style={{ aspectRatio: `${width}/${height}`, width, height }}
+					style={style}
 				/>
 
 				<Icon onClick={onSyncStatusClick} className="syncStatus" />
