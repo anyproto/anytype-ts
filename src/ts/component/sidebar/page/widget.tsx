@@ -328,6 +328,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	init () {
+		S.Block.updateWidgetList();
+
 		const { page } = this.props;
 		const sections = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
 
@@ -569,9 +571,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		section.toggleClass('isOpen', isOpen);
 		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
-
-
-		console.log('initToggle', id, isOpen);
 	};
 
 	onToggle = (id: I.WidgetSection) => {

@@ -258,38 +258,6 @@ class UtilData {
 
 						const { pin } = S.Common;
 
-						// Add type widgets
-						const types = S.Record.checkHiddenObjects(S.Record.getTypes());
-						const element = S.Block.getMapElement(widgets, widgets);
-
-						types.forEach(type => {
-							S.Detail.update(widgets, { id: type.id, details: type }, false);
-				
-							const child = new M.Block({
-								id: `type-child-${type.id}`,
-								type: I.BlockType.Link,
-								content: { targetBlockId: type.id },
-							});
-				
-							const parent = new M.Block({
-								id: `type-${type.id}`,
-								type: I.BlockType.Widget,
-								content: {
-									layout: I.WidgetLayout.Compact,
-									section: I.WidgetSection.Type,
-								},
-							});
-				
-							S.Block.add(widgets, parent);
-							S.Block.add(widgets, child);
-							S.Block.updateStructure(widgets, parent.id, [ child.id ]);
-
-							element.childrenIds.push(parent.id);
-						});
-
-						S.Block.updateStructure(widgets, widgets, element.childrenIds);
-						S.Block.updateStructureParents(widgets);
-
 						// Redirect
 						if (pin && !keyboard.isPinChecked) {
 							U.Router.go('/auth/pin-check', routeParam);

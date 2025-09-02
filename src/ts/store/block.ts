@@ -968,6 +968,50 @@ class BlockStore {
 		return list;
 	};
 
+	updateWidgetList () {
+		const { widgets } = this;
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes());
+		const element = S.Block.getMapElement(widgets, widgets);
+
+		let update = false;
+
+		types.forEach(type => {
+			const id = `type-${type.id}`;
+			if (element.childrenIds.includes(id)) {
+				return;
+			};
+
+			S.Detail.update(widgets, { id: type.id, details: type }, false);
+
+			const parent = new M.Block({
+				id,
+				type: I.BlockType.Widget,
+				content: {
+					layout: I.WidgetLayout.Compact,
+					section: I.WidgetSection.Type,
+				},
+			});
+
+			const child = new M.Block({
+				id: `type-child-${type.id}`,
+				type: I.BlockType.Link,
+				content: { targetBlockId: type.id },
+			});
+
+			S.Block.add(widgets, parent);
+			S.Block.add(widgets, child);
+			S.Block.updateStructure(widgets, parent.id, [ child.id ]);
+
+			element.childrenIds.push(parent.id);
+			update = true;
+		});
+
+		if (update) {
+			this.updateStructure(widgets, widgets, element.childrenIds);
+			this.updateStructureParents(widgets);
+		};
+	};
+
 	getWidgetsForTarget (id: string) {
 		const { widgets } = this;
 		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
