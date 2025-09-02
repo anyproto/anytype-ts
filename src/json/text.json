@@ -2026,6 +2026,10 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
+	"widgetSectionPinned": "Pinned",
+	"widgetSectionType": "Objects",
+	"widgetSectionNewType": "New Type",
+
 	"widgetFavorite": "Pinned",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",

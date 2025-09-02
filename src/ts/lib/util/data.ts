@@ -257,9 +257,13 @@ class UtilData {
 						keyboard.initPinCheck();
 
 						const { pin } = S.Common;
+						const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
 
-						// TODO: Hack for type widgets
+						blocks.forEach(block => {
+							S.Block.updateContent(widgets, block.id, { section: I.WidgetSection.Pin });
+						});
 
+						// Add type widgets
 						const types = S.Record.checkHiddenObjects(S.Record.getTypes());
 						const element = S.Block.getMapElement(widgets, widgets);
 
@@ -277,6 +281,7 @@ class UtilData {
 								type: I.BlockType.Widget,
 								content: {
 									layout: I.WidgetLayout.Compact,
+									section: I.WidgetSection.Type,
 								},
 							});
 				
