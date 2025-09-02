@@ -1645,14 +1645,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			>
 				<div className="grad" />
 				<div className="bg" />
-				<div className="inner">
-					<div className="dragOverlay">
-						<div className="inner">
-							<Icon />
-							<Label text={translate('commonDropFiles')} />
-						</div>
-					</div>
 
+				<div className="dragOverlay">
+					<div className="inner">
+						<Icon />
+						<Label text={translate('commonDropFiles')} />
+					</div>
+				</div>
+
+				<div className="inner">
 					{!isEmpty ? (
 						<div className="navigation">
 							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
