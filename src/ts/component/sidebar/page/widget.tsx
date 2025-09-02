@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -226,9 +226,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						};
 
 						return (
-							<div className="widgetSection" key={section.id}>
+							<div id={`section-${section.id}`} className="widgetSection" key={section.id}>
 								<div className="nameWrap">
-									<div className="name">
+									<div className="name" onClick={() => this.onToggle(section.id)}>
 										<Icon className="arrow" />
 										{section.name}
 									</div>
@@ -319,7 +319,22 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		);
 	};
 
+	componentDidMount(): void {
+		this.init();
+	};
+
 	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		const { page } = this.props;
+		const sections = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+
+		sections.forEach(id => {
+			this.initToggle(id, Storage.checkToggle(page, String(id)));
+		});
+
 		this.onScroll();
 	};
 
@@ -545,6 +560,31 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	onTypeCreate = () => {
 		U.Object.createType({}, false);
+	};
+
+	initToggle (id: I.WidgetSection, isOpen: boolean) {
+		const obj = $(`#sidebarPageWidget`);
+		const section = obj.find(`#section-${id}`);
+		const list = section.find('> .items');
+
+		section.toggleClass('isOpen', isOpen);
+		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
+
+
+		console.log('initToggle', id, isOpen);
+	};
+
+	onToggle = (id: I.WidgetSection) => {
+		const { page } = this.props;
+		const obj = $(`#sidebarPageWidget`);
+		const section = obj.find(`#section-${id}`);
+		const list = section.find('> .items');
+		const isOpen = section.hasClass('isOpen');
+
+		U.Common.toggle(list, 200);
+		section.toggleClass('isOpen', !isOpen);
+		list.toggleClass('isOpen', !isOpen);
+		Storage.setToggle(page, String(id), !isOpen);
 	};
 
 	clear () {

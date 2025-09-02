@@ -257,11 +257,6 @@ class UtilData {
 						keyboard.initPinCheck();
 
 						const { pin } = S.Common;
-						const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
-
-						blocks.forEach(block => {
-							S.Block.updateContent(widgets, block.id, { section: I.WidgetSection.Pin });
-						});
 
 						// Add type widgets
 						const types = S.Record.checkHiddenObjects(S.Record.getTypes());

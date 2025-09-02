@@ -108,7 +108,6 @@ class MenuObject extends React.Component<I.Menu> {
 
 		let archive = null;
 		let remove = null;
-		let pin = null;
 		let pageLock = null;
 		let template = null;
 		let setDefaultTemplate = null;
@@ -119,7 +118,6 @@ class MenuObject extends React.Component<I.Menu> {
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'linkTo', name: translate('commonCopyLink') };
 		let pageDeeplink = { id: 'pageDeeplink', icon: 'linkTo', name: translate('commonCopyDeeplink') };
@@ -137,12 +135,6 @@ class MenuObject extends React.Component<I.Menu> {
 			pageCopy.name = translate('commonDuplicate');
 		} else {
 			template = { id: 'templateCreate', icon: 'template', name: translate('menuObjectUseAsTemplate') };
-		};
-
-		if (object.isFavorite) {
-			pin = { id: 'unpin', name: translate('commonUnpin') };
-		} else {
-			pin = { id: 'pin', name: translate('commonPin') };
 		};
 
 		if (block) {
@@ -173,7 +165,6 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !isFilePreview && !isInSet;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !object.templateIsBundled;
-		const allowedPin = canWrite && !object.isArchived && !isTemplate;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
 		const allowedLinkTo = canWrite && !isRelation &&!object.isArchived;
 		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;
@@ -181,7 +172,6 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelation;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const allowedWidget = canWrite && !isRelation &&!object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview;
 		const allowedDownloadFile = isInFile;
@@ -200,9 +190,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedReload)			 pageReload = null;
 		if (!allowedSearch)			 search = null;
 		if (!allowedHistory)		 history = null;
-		if (!allowedPin)			 pin = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
-		if (!allowedWidget)			 createWidget = null;
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)			 pageExport = null;
@@ -216,7 +204,6 @@ class MenuObject extends React.Component<I.Menu> {
 			template = null;
 			setDefaultTemplate = null;
 			remove = null;
-			pin = null;
 		};
 
 		advancedOptions.push(pageDeeplink);
@@ -227,9 +214,6 @@ class MenuObject extends React.Component<I.Menu> {
 			advanced = null;
 		};
 
-		// Temporary hidden options
-		pin = null;
-
 		let sections = [];
 		if (hasShortMenu) {
 			if (!U.Object.isInSetLayouts(object.layout)) {
@@ -238,7 +222,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ createWidget, pin, pageLock, history ] },
+				{ children: [ pageLock, history ] },
 				{ children: [ linkTo, addCollection, template, pageLink ] },
 				{ children: [ search, pageCopy, archive, remove ] },
 				{ children: [ print ] },
@@ -261,7 +245,7 @@ class MenuObject extends React.Component<I.Menu> {
 			} else {
 				sections = sections.concat([
 					{ children: [ openObject ] },
-					{ children: [ createWidget, pin, pageLock ] },
+					{ children: [ pageLock ] },
 					{ children: [ linkTo, addCollection, template, pageLink ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageReload ] },
@@ -534,12 +518,6 @@ class MenuObject extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'pin':
-			case 'unpin': {
-				Action.setIsFavorite([ rootId ], item.id == 'pin', route);
-				break;
-			};
-
 			case 'templateCreate': {
 				C.TemplateCreateFromObject(rootId, (message: any) => {
 					U.Object.openConfig({ id: message.id, layout: object.layout });
@@ -554,13 +532,6 @@ class MenuObject extends React.Component<I.Menu> {
 				U.Object.setDefaultTemplateId(object.targetObjectType, rootId);
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
 				analytics.event('ChangeDefaultTemplate', { route });
-				break;
-			};
-
-			case 'createWidget': {
-				const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
-
-				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);
 				break;
 			};
 

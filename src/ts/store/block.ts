@@ -968,6 +968,30 @@ class BlockStore {
 		return list;
 	};
 
+	getWidgetsForTarget (id: string) {
+		const { widgets } = this;
+		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+			return id == target;
+		});
+
+		return list;
+	};
+
 };
 
 export const Block: BlockStore = new BlockStore();

@@ -113,6 +113,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		win.on(`updateWidgetData.${block.id}`, () => childRef.current?.updateData && childRef.current?.updateData());
 		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews && childRef.current?.updateViews());
+		win.on(`widgetOpen.${block.id}`, (e, param) => {
+			if ((block.content.section == I.WidgetSection.Type) && (param.id != block.id)) {
+				close();
+			};
+		});
 	};
 
 	const onRemove = (e: MouseEvent): void => {
@@ -324,12 +329,17 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const open = () => {
+		const win = $(window);
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
 		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
+
+		if (block.content.section == I.WidgetSection.Type) {
+			win.trigger('widgetOpen', { id: block.id });
+		};
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
