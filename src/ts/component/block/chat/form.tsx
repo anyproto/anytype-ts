@@ -555,6 +555,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		S.Menu.open('smile', {
 			element: `#button-${block.id}-emoji`,
 			...caretMenuParam(),
+			horizontal: I.MenuDirection.Center,
 			data: {
 				noHead: true,
 				noUpload: true,
@@ -614,6 +615,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				className: 'chatAttachment fixed fromBlock',
 				offsetY: -8,
 				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Center,
 				noFlipX: true,
 				noFlipY: true,
 				subIds: J.Menu.chatForm,
@@ -1238,10 +1240,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				},
 			});
 		});
-	};
-
-	const onMenuClose = () => {
-		setRange(range.current);
 	};
 
 	const updateAttachments = (attachments: any[]) => {
