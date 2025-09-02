@@ -334,7 +334,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const sections = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
 
 		sections.forEach(id => {
-			this.initToggle(id, Storage.checkToggle(page, String(id)));
+			this.initToggle(id, !Storage.checkToggle(page, String(id)));
 		});
 
 		this.onScroll();

@@ -36,6 +36,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
 	const targetId = child ? child.getTargetObjectId() : '';
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
+	const isSectionType = block.content.section == I.WidgetSection.Type;
 
 	const getObject = () => {
 		if (!child) {
@@ -114,7 +115,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		win.on(`updateWidgetData.${block.id}`, () => childRef.current?.updateData && childRef.current?.updateData());
 		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews && childRef.current?.updateViews());
 		win.on(`widgetOpen.${block.id}`, (e, param) => {
-			if ((block.content.section == I.WidgetSection.Type) && (param.id != block.id)) {
+			if (isSectionType && (param.id != block.id)) {
 				close();
 			};
 		});
@@ -304,17 +305,21 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
+	const getIsOpen = () => {
+		return Storage.checkToggle('widget', block.id);
+	};
+
 	const initToggle = () => {
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		const icon = node.find('.icon.collapse');
-		const isClosed = !Storage.checkToggle('widget', block.id);
+		const isOpen = getIsOpen();
 
 		if (!isPreview) {
-			node.toggleClass('isClosed', isClosed);
-			icon.toggleClass('isClosed', isClosed);
+			node.toggleClass('isClosed', !isOpen);
+			icon.toggleClass('isClosed', !isOpen);
 
-			isClosed ? innerWrap.hide() : innerWrap.show();
+			isOpen ? innerWrap.show() : innerWrap.hide();
 		};
 	};
 
@@ -322,10 +327,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const isClosed = !Storage.checkToggle('widget', block.id);
+		const isOpen = getIsOpen();
 
-		isClosed ? open() : close();
-		Storage.setToggle('widget', block.id, !isClosed);
+		console.log('onToggle', block.id, isOpen);
+		console.trace();
+
+		isOpen ? close() : open();
+		Storage.setToggle('widget', block.id, !isOpen);
+		console.log('setToggle', block.id, !isOpen);
 	};
 
 	const open = () => {
@@ -337,7 +346,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
 
-		if (block.content.section == I.WidgetSection.Type) {
+		if (isSectionType) {
 			win.trigger('widgetOpen', { id: block.id });
 		};
 
@@ -356,9 +365,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => { 
-			const isClosed = !Storage.checkToggle('widget', block.id);
+			const isOpen = getIsOpen();
 
-			if (!isClosed) {
+			if (isOpen) {
 				node.removeClass('isClosed');
 				wrapper.css({ height: 'auto' });
 			};
@@ -383,9 +392,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
-			const isClosed = Storage.checkToggle('widget', block.id);
+			const isOpen = getIsOpen();
 
-			if (isClosed) {
+			if (!isOpen) {
 				wrapper.css({ height: '' });
 				innerWrap.hide();
 			};
@@ -672,10 +681,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClickHandler = (e: MouseEvent) => {
-		if (block.isWidgetLink()) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (block.isWidgetLink() || !isSectionType) {
 			onExpandHandler(e);
 		} else {
-			onSetPreview();
+			!getIsOpen() ? onToggle(e) : onSetPreview();
 		};
 	};
 
@@ -726,7 +738,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isPreview) {
 		isDraggable = false;
 	} else {
-		buttons.push({ id: 'expand', icon: 'expand', tooltip: translate('commonOpenObject'), onClick: onExpandHandler });
+		if (isSectionType) {
+			buttons.push({ id: 'expand', icon: 'expand', tooltip: translate('commonOpenObject'), onClick: onExpandHandler });
+		};
 
 		if (canCreate) {
 			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
