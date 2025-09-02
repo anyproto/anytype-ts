@@ -639,6 +639,36 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
+	const onExpandHandler = (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (targetId == J.Constant.widgetId.bin) {
+			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+		} else 
+		if (targetId == J.Constant.widgetId.allObject) {
+			sidebar.leftPanelSetState({ page: 'allObject' });
+		} else 
+		if (targetId == J.Constant.widgetId.chat) {
+			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+		} else
+		if (isSystemTarget) {
+			onSetPreview();
+		} else {
+			onClick(e);
+		};
+
+		analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
+	};
+
+	const onClickHandler = (e: MouseEvent) => {
+		if (block.isWidgetLink()) {
+			onExpandHandler(e);
+		} else {
+			onSetPreview();
+		};
+	};
+
 	const buttons = [];
 	const canCreate = canCreateHandler();
 	const childProps = {
@@ -686,9 +716,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isPreview) {
 		isDraggable = false;
 	} else {
-		if (!(spaceview.isChat && isChat)) {
-			buttons.push({ id: 'more', icon: 'options', tooltip: translate('widgetOptions'), onClick: onOptions });
-		};
+		buttons.push({ id: 'expand', icon: 'expand', tooltip: translate('commonOpenObject'), onClick: onExpandHandler });
 
 		if (canCreate) {
 			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
@@ -706,28 +734,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
-		const onClickHandler = (e: any) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			if (targetId == J.Constant.widgetId.bin) {
-				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-			} else 
-			if (targetId == J.Constant.widgetId.allObject) {
-				sidebar.leftPanelSetState({ page: 'allObject' });
-			} else 
-			if (targetId == J.Constant.widgetId.chat) {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-			} else
-			if (isSystemTarget) {
-				onSetPreview();
-			} else {
-				onClick(e);
-			};
-
-			analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
-		};
-
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
