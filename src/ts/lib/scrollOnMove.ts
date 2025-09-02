@@ -22,11 +22,12 @@ class ScrollOnMove {
 
 		const { isWindow, container } = this.param;
 		if (!isWindow) {
-			const content = container.find('> .content');
+			const el = container.get(0);
+
 			this.viewportWidth = container.width();
 			this.viewportHeight = container.height();
-			this.documentWidth = content.width();
-			this.documentHeight = content.height();
+			this.documentWidth = el.scrollWidth;
+			this.documentHeight = el.scrollHeight;
 		} else {
 			const element = document.documentElement;
 			const body = document.body;
@@ -41,6 +42,8 @@ class ScrollOnMove {
 	};
 
 	onMouseMove (x: number, y: number) {
+		const { isWindow } = this.param;
+
 		this.x = x;
 		this.y = y;
 
@@ -49,8 +52,10 @@ class ScrollOnMove {
 		};
 
 		// Hack to fix events not being triggered on mouseup
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.onMouseUp(), 300);
+		if (isWindow) {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => this.onMouseUp(), 300);
+		};
 	};
 
 	private loop = () => {

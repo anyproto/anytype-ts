@@ -103,7 +103,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const [ dummy, setDummy ] = useState(0);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
-	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
+	const scrollContainer = scrollElement || U.Common.getScrollContainer(isPopup).get(0);
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');

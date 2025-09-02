@@ -337,6 +337,22 @@ class Api {
 		});
 	};
 
+	menu (win) {
+		MenuManager.menu.popup({ x: 12, y: 44 });
+	};
+
+	minimize (win) {
+		win.minimize();
+	};
+
+	maximize (win) {
+		win.isMaximized() ? win.unmaximize() : win.maximize();
+	};
+
+	close (win) {
+		win.close();
+	};
+
 };
 
 module.exports = new Api();
