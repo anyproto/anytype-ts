@@ -12,10 +12,11 @@
 
 	.ReactVirtualized__List { padding: 0px 2px 0px 8px; scrollbar-gutter: stable; }
 
-	.filterWrapper { padding: 0px 16px; margin: 0px 0px 8px 0px; overflow: hidden; }
+	.filterWrapper { padding: 4px 16px 8px 16px; overflow: hidden; }
 	.filter { padding: 0px; }
 	.filter { 
-		.inner { background-color: var(--color-shape-highlight-medium); border-radius: 15px; gap: 0px 2px; padding: 0px 6px; }
+		.icon.search { background-image: url('~img/icon/vault/search.svg'); }
+		.inner { background-color: var(--color-shape-highlight-medium); border-radius: 15px; gap: 0px 2px; padding: 0px 6px; height: 28px; }
 	}
 
 	.item { display: flex; align-items: center; gap: 0px 10px; padding: 8px; background-color: var(--color-shape-tertiary); }

@@ -170,7 +170,7 @@
 
         .spaceButtons { display: flex; justify-content: center; margin-bottom: 36px; }
         .spaceButtons {
-            .btn { width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
+            .btn { width: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
             .btn {
                 .icon {
                     width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
@@ -180,7 +180,7 @@
                 .icon.qr { background-image: url('~img/icon/settings/qr.svg'); }
                 .icon.copyLink { background-image: url('~img/icon/settings/copy.svg'); }
 
-                .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; }
+                .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; padding: 0px 2px; }
 
                 &:hover, &.hover {
                     .icon { background-color: var(--color-shape-highlight-dark); }

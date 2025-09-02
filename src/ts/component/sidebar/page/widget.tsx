@@ -218,7 +218,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								cacheKey="firstTarget"
 							>
 								{isDirectionRight ? (
-									<div className="spaceChatSidebarHeader">
+									<div className="spaceHeader">
 										<div className="spaceInfo">
 											<IconObject
 												id="spaceIcon"
