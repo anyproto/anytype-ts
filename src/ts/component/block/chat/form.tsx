@@ -41,7 +41,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
-	const { attachments } = S.Chat;
 	const { 
 		rootId, isPopup, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
@@ -67,6 +66,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
+
+	let { attachments } = S.Chat;
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize' ];
@@ -828,6 +829,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
+						attachments = attachments.filter(it => it.id != item.id);
 						attachments.push({ id: message.objectId, type: I.AttachmentType.File });
 					};
 
@@ -850,6 +852,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
+						attachments = attachments.filter(it => it.id != item.id);
 						attachments.push({ id: message.objectId, type: I.AttachmentType.Link });
 					};
 
