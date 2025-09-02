@@ -1,10 +1,10 @@
-.formWrapper.isFixed { padding: 12px 0px; position: fixed; z-index: 11; bottom: 0px; }
+.formWrapper.isFixed { padding: 0px 0px 12px 0px; position: fixed; z-index: 11; bottom: 0px; }
 .formWrapper {
 	.grad {
-		position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; z-index: 1;
+		position: absolute; left: 0px; top: -44px; width: 100%; height: 88px; pointer-events: none; z-index: 1;
 		background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-bg-primary) 68.18%);
 	}
-	.bg { position: absolute; left: 0px; top: 88px; width: 100%; height: calc(100% - 88px); background: var(--color-bg-primary); z-index: 0; }
+	.bg { position: absolute; left: 0px; top: 44px; width: 100%; height: calc(100% - 44px); background: var(--color-bg-primary); z-index: 0; }
 
 	.inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; }
 	.inner {
