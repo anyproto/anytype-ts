@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
 import { S, U } from 'Lib';
-import 'scss/component/popup/onboardingGraphWorker.scss';
 
 interface OnboardingGraphWorkerProps {
 	width: number;

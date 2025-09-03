@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { S } from 'Lib';
 import OnboardingGraphWorker from './graph/OnboardingGraphWorker';
-import 'scss/component/popup/dimmerWithGraph.scss';
 
 interface DimmerWithGraphProps {
 	onClick?: () => void;
@@ -91,7 +90,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 	}, [shouldRenderGraph, graphDimensions.width, graphDimensions.height]);
 	
 	return (
-		<div className="dimmerWithGraph">
+		<div className="dimmer withGraph">
 			{/* Standard dimmer */}
 			<div className="dimmer" onClick={onClick} />
 			
