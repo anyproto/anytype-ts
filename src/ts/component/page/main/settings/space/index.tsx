@@ -172,6 +172,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 											<div className="side right">
 												<Select
 													id="linkStyle"
+													readonly={!canWrite}
 													ref={ref => this.refUxType = ref}
 													value={String(space.uxType)}
 													options={spaceUxTypes}

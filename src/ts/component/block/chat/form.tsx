@@ -555,6 +555,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onEmoji = () => {
 		S.Menu.open('smile', {
 			element: `#button-${block.id}-emoji`,
+			horizontal: I.MenuDirection.Right,
 			...caretMenuParam(),
 			data: {
 				noHead: true,
@@ -1268,21 +1269,25 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const caretMenuParam = () => {
 		const win = $(window);
 		const rect = U.Common.getSelectionRect();
-
-		return {
+		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
-			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
 			onClose: () => setRange(range.current),
 			noFlipX: true,
 			noFlipY: true,
 			offsetY: -8,
 		};
+
+		if (rect) {
+			param.horizontal = I.MenuDirection.Center;
+		};
+
+		return param;
 	};
 
 	const canSend = (): boolean => {
