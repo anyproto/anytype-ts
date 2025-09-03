@@ -40,6 +40,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onCreate = this.onCreate.bind(this);
 		this.onArrow = this.onArrow.bind(this);
 		this.onBack = this.onBack.bind(this);
+		this.getObject = this.getObject.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -121,6 +122,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						setEditing={this.setEditing}
 						canEdit={true}
 						canRemove={false}
+						getObject={this.getObject}
 					/>
 				);
 			};
@@ -250,6 +252,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 										canEdit={false}
 										canRemove={false}
 										sidebarDirection={sidebarDirection}
+										getObject={this.getObject}
 									/>
 								)}
 							</DropTarget>
@@ -271,6 +274,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								setPreview={this.setPreview}
 								setEditing={this.setEditing}
 								sidebarDirection={sidebarDirection}
+								getObject={this.getObject}
 							/>
 						);
 					})}
@@ -530,13 +534,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								name.match(reg);
 						}).
 						map(it => ({ ...it, caption: '' }));
-					const lists = [];
 
-					let system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
+					const lists = [];
+					const system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg) && !it.isHidden);
 
 					if (system.length) {
-						system = system.filter(it => ![ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(it.id));
-
 						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
 					};
 
