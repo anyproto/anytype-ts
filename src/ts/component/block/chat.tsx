@@ -580,12 +580,16 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
+			if (config.experimental) {
+				options.push({ id: 'link', icon: 'link', name: translate('commonCopyLink') });
+			};
 		};
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
 				{ id: 'edit', icon: 'pencil', name: translate('commonEdit') },
-				{ id: 'delete', icon: 'remove', name: translate('commonDelete') },
+				{ isDiv: true },
+				{ id: 'delete', icon: 'remove', name: translate('commonDelete'), color: 'red' },
 			]);
 		};
 
@@ -600,7 +604,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		if (config.experimental && options.length) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
 				{ id: 'unread', name: translate('blockChatMarkAsUnread') },
 			]);
 		};
