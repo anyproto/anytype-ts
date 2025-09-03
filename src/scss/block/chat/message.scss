@@ -20,7 +20,7 @@
 	.bubbleInner {
 		> .controls { 
 			flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; 
-			opacity: 0; transition: opacity $transitionCommon; width: 76px;
+			opacity: 0; transition: opacity $transitionCommon; min-width: 76px;
 		}
 		> .controls {
 			.icon { width: 20px; height: 20px; }
