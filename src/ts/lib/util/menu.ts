@@ -643,7 +643,7 @@ class UtilMenu {
 
 				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard();
+						U.Space.openDashboard({ replace: false });
 					};
 				});
 			});
