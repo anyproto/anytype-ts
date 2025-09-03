@@ -453,12 +453,12 @@ class UtilMenu {
 		let options = [];
 		switch (layout) {
 			default: {
-				options = [ 6, 10, 14 ];
+				options = [ 6, 10, 14, 30, 50 ];
 				break;
 			};
 
 			case I.WidgetLayout.List: {
-				options = [ 4, 6, 8 ];
+				options = [ 4, 6, 8, 30, 50 ];
 				break;
 			};
 		};
