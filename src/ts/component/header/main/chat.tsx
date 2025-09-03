@@ -5,9 +5,10 @@ import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, renderLeftIcons, isPopup } = props;
+	const { widgetSide } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const isChat = spaceview.isChat;
+	const showWidget = !isPopup && (widgetSide == I.SidebarDirection.Right);
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
@@ -20,9 +21,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onClick = () => {
-		if (isChat) {
-			U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })
-		};
+		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	let object = null;
@@ -42,7 +41,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				</div>
 			</div>
 			<div className="side right">
-				{isChat ? (
+				{showWidget ? (
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
