@@ -559,16 +559,15 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
-		const formHeight = $(formRef.current.getNode()).outerHeight();
+		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
 		const ch = container.outerHeight();
-		const min = container.scrollTop();
-		const max = min + ch - formHeight;
+		const max = ch - formHeight;
 		const ret = [];
 
 		messages.forEach((it: any) => {
 			const st = getMessageScrollOffset(it.id);
 
-			if ((st >= min) && (st <= max)) {
+			if ((st >= 0) && (st <= max)) {
 				ret.push(it);
 			};
 		});
@@ -581,12 +580,16 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
+			if (config.experimental) {
+				options.push({ id: 'link', icon: 'link', name: translate('commonCopyLink') });
+			};
 		};
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
 				{ id: 'edit', icon: 'pencil', name: translate('commonEdit') },
-				{ id: 'delete', icon: 'remove', name: translate('commonDelete') },
+				{ isDiv: true },
+				{ id: 'delete', icon: 'remove', name: translate('commonDelete'), color: 'red' },
 			]);
 		};
 
@@ -601,7 +604,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		if (config.experimental && options.length) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
 				{ id: 'unread', name: translate('blockChatMarkAsUnread') },
 			]);
 		};

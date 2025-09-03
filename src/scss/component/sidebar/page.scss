@@ -19,8 +19,8 @@
 	}
 
 	> .subHead { 
-		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 6px 12px; position: relative; 
-		margin: 0px 0px 4px 0px; height: 40px;
+		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 0px 12px; position: relative; 
+		margin: 0px 0px 4px 0px; height: 36px; flex-shrink: 0;
 	}
 	> .subHead {
 		.icon.back { background-size: 20px; }
@@ -44,7 +44,7 @@
 
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 		.side.right {
-			.icon.plus { background-image: url('~img/icon/widget/button/create.svg'); }
+			.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
 			.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 		}
 	}

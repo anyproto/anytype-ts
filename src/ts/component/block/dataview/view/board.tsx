@@ -21,6 +21,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	isDraggingCard = false;
 	ox = 0;
 	creating = false;
+	hoverId = '';
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -277,7 +278,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		let isLeft = false;
-		let hoverId = '';
+
+		this.hoverId = '';
 
 		for (const group of groups) {
 			const rect = this.cache[group.id];
@@ -287,7 +289,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 			if (rect && this.cache[groupId] && U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
-				hoverId = group.id;
+				this.hoverId = group.id;
 
 				this.newIndex = rect.index;
 
@@ -310,28 +312,31 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.frame = raf(() => {
 			node.find('.isOver').removeClass('isOver left right');
 
-			if (hoverId) {
-				node.find(`#column-${hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+			if (this.hoverId) {
+				node.find(`#column-${this.hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
 			};
 		});
 	};
 
 	onDragEndColumn (e: any, groupId: string) {
 		const { rootId, block, getView } = this.props;
-		const view = getView();
-		const update: any[] = [];
-		const current = this.cache[groupId];
 
-		let groups = this.getGroups(true);
-		groups = arrayMove(groups, current.index, this.newIndex);
-		S.Record.groupsSet(rootId, block.id, groups);
+		if (this.hoverId) {
+			const view = getView();
+			const update: any[] = [];
+			const current = this.cache[groupId];
 
-		groups.forEach((it: any, i: number) => {
-			update.push({ ...it, groupId: it.id, index: i });
-		});
+			let groups = this.getGroups(true);
+			groups = arrayMove(groups, current.index, this.newIndex);
+			S.Record.groupsSet(rootId, block.id, groups);
 
-		Dataview.groupUpdate(rootId, block.id, view.id, update);
-		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
+			groups.forEach((it: any, i: number) => {
+				update.push({ ...it, groupId: it.id, index: i });
+			});
+
+			Dataview.groupUpdate(rootId, block.id, view.id, update);
+			C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
+		};
 
 		this.cache = {};
 		this.isDraggingColumn = false;
@@ -366,7 +371,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		let isTop = false;
-		let hoverId = '';
+		
+		this.hoverId = '';
 
 		for (const i in this.cache) {
 			const rect = this.cache[i];
@@ -376,8 +382,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 			if (U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
 				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
-				hoverId = rect.id;
 
+				this.hoverId = rect.id;
 				this.newGroupId = rect.groupId;
 				this.newIndex = isTop ? rect.index : rect.index + 1;
 				break;
@@ -392,8 +398,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.frame = raf(() => {
 			node.find('.isOver').removeClass('isOver top bottom');
 
-			if (hoverId) {
-				node.find(`#record-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+			if (this.hoverId) {
+				node.find(`#record-${this.hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -409,7 +415,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.cache = {};
 		this.isDraggingCard = false;
 
-		if (!current.groupId || !this.newGroupId || ((current.index == this.newIndex) && (current.groupId == this.newGroupId))) {
+		if (!this.hoverId || !current.groupId || !this.newGroupId || ((current.index == this.newIndex) && (current.groupId == this.newGroupId))) {
 			return;
 		};
 

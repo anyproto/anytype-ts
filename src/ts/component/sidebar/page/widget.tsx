@@ -40,6 +40,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onCreate = this.onCreate.bind(this);
 		this.onArrow = this.onArrow.bind(this);
 		this.onBack = this.onBack.bind(this);
+		this.getObject = this.getObject.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -121,6 +122,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						setEditing={this.setEditing}
 						canEdit={true}
 						canRemove={false}
+						getObject={this.getObject}
 					/>
 				);
 			};
@@ -142,10 +144,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				const target = child.getTargetObjectId();
 
-				if (target == J.Constant.widgetId.chat) {
-					return false;
-				};
-
 				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
 				};
@@ -163,14 +161,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				const t1 = c1?.getTargetObjectId();
 				const t2 = c2?.getTargetObjectId();
 
-				const isChat1 = t1 == J.Constant.widgetId.chat;
-				const isChat2 = t2 == J.Constant.widgetId.chat;
-
 				const isBin1 = t1 == J.Constant.widgetId.bin;
 				const isBin2 = t2 == J.Constant.widgetId.bin;
-
-				if (isChat1 && !isChat2) return -1;
-				if (!isChat1 && isChat2) return 1;
 
 				if (isBin1 && !isBin2) return 1;
 				if (!isBin1 && isBin2) return -1;
@@ -205,7 +197,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					<div className="side right">
 						{canWrite ? (
 							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-								<Icon className="plus withBackground" onClick={this.onCreate} />
+								<Icon className="create withBackground" onClick={this.onCreate} />
 								<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
 							</div>
 						) : ''}
@@ -228,7 +220,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								cacheKey="firstTarget"
 							>
 								{isDirectionRight ? (
-									<div className="spaceChatSidebarHeader">
+									<div className="spaceHeader">
 										<div className="spaceInfo">
 											<IconObject
 												id="spaceIcon"
@@ -260,6 +252,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 										canEdit={false}
 										canRemove={false}
 										sidebarDirection={sidebarDirection}
+										getObject={this.getObject}
 									/>
 								)}
 							</DropTarget>
@@ -267,27 +260,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					) : ''}
 
 					{blocks.map((block, i) => {
-						const { widgets } = S.Block;
-						const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-						const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-						const targetId = child ? child.getTargetObjectId() : '';
-						const isChat = targetId == J.Constant.widgetId.chat;
-						const canEdit = !isChat || !space.isChat;
-
 						return (
 							<Widget
 								{...this.props}
 								key={`widget-${block.id}`}
 								block={block}
-								isEditing={canEdit ? isEditing : false}
-								canEdit={canEdit}
-								canRemove={canEdit}
+								isEditing={isEditing}
+								canEdit={true}
+								canRemove={true}
 								onDragStart={this.onDragStart}
 								onDragOver={this.onDragOver}
 								onDrag={this.onDrag}
 								setPreview={this.setPreview}
 								setEditing={this.setEditing}
 								sidebarDirection={sidebarDirection}
+								getObject={this.getObject}
 							/>
 						);
 					})}
@@ -547,13 +534,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								name.match(reg);
 						}).
 						map(it => ({ ...it, caption: '' }));
-					const lists = [];
 
-					let system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
+					const lists = [];
+					const system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg) && !it.isHidden);
 
 					if (system.length) {
-						system = system.filter(it => ![ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(it.id));
-
 						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
 					};
 
@@ -595,7 +580,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		const targetId = child.getTargetObjectId();
 
-		if ([ J.Constant.widgetId.chat, J.Constant.widgetId.bin ].includes(targetId)) {
+		if ([ J.Constant.widgetId.bin ].includes(targetId)) {
 			e.preventDefault();
 			return;
 		};
@@ -661,9 +646,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			if (child) {
 				const t = child.getTargetObjectId();
-				if (t == J.Constant.widgetId.chat) {
-					this.position = I.BlockPosition.Bottom;
-				};
 				if (t == J.Constant.widgetId.bin) {
 					this.position = I.BlockPosition.Top;
 				};
