@@ -11,16 +11,16 @@
 		> .side.left {
 			.iconObject { display: none; }
 		}
-		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; }
+		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; flex-grow: 1; }
 	}
 
-	.bubbleOuter { display: flex; flex-direction: column; }
+	.bubbleOuter { display: flex; flex-direction: column; width: 100%; }
 
-	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
+	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; max-width: 70%; }
 	.bubbleInner {
 		> .controls { 
 			flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; 
-			opacity: 0; transition: opacity $transitionCommon; 
+			opacity: 0; transition: opacity $transitionCommon; width: 76px;
 		}
 		> .controls {
 			.icon { width: 20px; height: 20px; }
@@ -128,6 +128,8 @@
 			> .side.left { display: none; }
 			> .side.right { align-items: flex-end; }
 		}
+
+		.bubbleOuter { align-items: flex-end; }
 
 		.bubbleInner { flex-direction: row-reverse; }
 		.bubbleInner {
