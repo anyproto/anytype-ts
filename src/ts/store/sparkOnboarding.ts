@@ -108,7 +108,7 @@ class SparkOnboardingStore {
 			const typeCount = exampleTypes.length;
 			
 			exampleTypes.forEach((type, index) => {
-				let x, y;
+				let x;
 				const useLeft = index % 2 === 0;
 				
 				if (useLeft) {
@@ -126,7 +126,7 @@ class SparkOnboardingStore {
 				const verticalCount = Math.ceil(typeCount / 2);
 				const verticalSpacing = (height - 200) / Math.max(verticalCount - 1, 1);
 				const baseY = 100 + (verticalIndex * verticalSpacing);
-				y = Math.max(80, Math.min(height - 80, baseY));
+				const y = Math.max(80, Math.min(height - 80, baseY));
 				
 				sampleNodes.push({
 					id: this.typeNameToNodeId(type.label),
@@ -777,8 +777,8 @@ class SparkOnboardingStore {
 			case I.OnboardingStep.Goal:
 				return this.userGoal.trim().length > 10;
 			case I.OnboardingStep.Questions:
-				return this.answers.length === this.questions.length && 
-					   this.answers.every(a => a.trim().length > 0);
+				return this.answers.length === this.questions.length &&
+				this.answers.every(a => a.trim().length > 0);
 			case I.OnboardingStep.TypeReview:
 				return this.selectedTypes.length > 0;
 			default:

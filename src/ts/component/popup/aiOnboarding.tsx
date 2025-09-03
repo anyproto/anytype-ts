@@ -461,13 +461,13 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				const lastMessage = newMessages[newMessages.length - 1];
 				if (lastMessage && lastMessage.type === 'ai') {
 					lastMessage.content = (
-						<div className='completionMessage'>
-							<Icon className='success large' />
-							<div className='title'>All set! Your space is ready to explore.</div>
-							<div className='spaceInfo'>
-								<div className='spaceName'>{sparkOnboarding.manifest.spaceName}</div>
-								<div className='stat success'>✓ {sparkOnboarding.manifest.typesCount} types created</div>
-								<div className='stat success'>✓ {sparkOnboarding.manifest.objectsCount} objects added</div>
+						<div className="completionMessage">
+							<Icon className="success large" />
+							<div className="title">All set! Your space is ready to explore.</div>
+							<div className="spaceInfo">
+								<div className="spaceName">{sparkOnboarding.manifest.spaceName}</div>
+								<div className="stat success">✓ {sparkOnboarding.manifest.typesCount} types created</div>
+								<div className="stat success">✓ {sparkOnboarding.manifest.objectsCount} objects added</div>
 							</div>
 						</div>
 					);
@@ -534,8 +534,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	// Render loading state only for initial connection
 	if (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error && messages.length === 0) {
 		return (
-			<div ref={nodeRef} className='wrap'>
-				<Loader id='loader' />
+			<div ref={nodeRef} className="wrap">
+				<Loader id="loader" />
 			</div>
 		);
 	}
@@ -545,8 +545,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		// Show loading overlay during retry
 		if (sparkOnboarding.isLoading) {
 			return (
-				<div ref={nodeRef} className='wrap'>
-					<Loader id='loader' />
+				<div ref={nodeRef} className="wrap">
+					<Loader id="loader" />
 					<div style={{ textAlign: 'center', marginTop: '20px', color: 'rgba(0,0,0,0.6)' }}>
 						Reconnecting...
 					</div>
@@ -554,21 +554,21 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			);
 		}
 		return (
-			<div ref={nodeRef} className='errorStateWrapper'>
-				<div className='errorContent'>
-					<div className='errorIcon'>
-						<Icon className='warning large' />
+			<div ref={nodeRef} className="errorStateWrapper">
+				<div className="errorContent">
+					<div className="errorIcon">
+						<Icon className="warning large" />
 					</div>
-					<div className='errorTitle'>Connection Issue</div>
-					<div className='errorMessage'>
+					<div className="errorTitle">Connection Issue</div>
+					<div className="errorMessage">
 						{sparkOnboarding.error === 'Failed to connect to onboarding service' 
 							? 'Unable to connect to the AI service. Please check your internet connection and try again.'
 							: sparkOnboarding.error}
 					</div>
-					<div className='errorActions'>
+					<div className="errorActions">
 						<Button 
-							className='c28 primary' 
-							text='Try Again' 
+							className="c28 primary" 
+							text="Try Again" 
 							onClick={() => {
 								// Just trigger connect, don't reset error
 								// The error will be cleared on successful connection
@@ -576,8 +576,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							}} 
 						/>
 						<Button 
-							className='c28 secondary' 
-							text='Close' 
+							className="c28 secondary" 
+							text="Close" 
 							onClick={() => onClose(true)} 
 						/>
 					</div>
@@ -587,18 +587,18 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	}
 
 	return (
-		<div ref={nodeRef} className='mainWrapper'>
-				<div className='chatSection'>
+		<div ref={nodeRef} className="mainWrapper">
+				<div className="chatSection">
 					{/* Header */}
-					<div className='header'>
-						<div className='headerContent'>
-							<div className='title'>
-								Create Your Perfect Space <span className='sparkle'>✦</span> Anytype AI
+					<div className="header">
+						<div className="headerContent">
+							<div className="title">
+								Create Your Perfect Space <span className="sparkle">✦</span> Anytype AI
 							</div>
-							<div className='subtitle'>
+							<div className="subtitle">
 								{sparkOnboarding.spaceName || 'Share your ideas, projects, or problems to solve'}
 							</div>
-							<div className='progressPills'>
+							<div className="progressPills">
 								{[0, 1, 2, 3, 4, 5].map(i => {
 									const isActive = i === sparkOnboarding.stepIndex;
 									const isCompleted = i < sparkOnboarding.stepIndex;
@@ -611,20 +611,20 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 								})}
 							</div>
 						</div>
-						<button className='closeButton' onClick={() => onClose()} title='Exit'>
+						<button className="closeButton" onClick={() => onClose()} title="Exit">
 							Exit
 						</button>
 					</div>
 
 					{/* Chat Container */}
-					<div className='chatContainer'>
-						<div className='messagesWrapper' onScroll={handleScroll}>
+					<div className="chatContainer">
+						<div className="messagesWrapper" onScroll={handleScroll}>
 						{messages.map(message => (
 							<div key={message.id} className={`message ${message.type}`}>
 								{message.type === 'typing' ? (
 									message.content
 								) : (
-									<div className='bubble'>
+									<div className="bubble">
 										{message.content}
 									</div>
 								)}
@@ -632,8 +632,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						))}
 						{/* Status appears as a message bubble when active */}
 						{showStatus && currentStatus && (
-							<div className='message ai'>
-								<div className='bubble'>
+							<div className="message ai">
+								<div className="bubble">
 									<StatusMessage text={currentStatus} isActive={true} />
 								</div>
 							</div>
@@ -643,7 +643,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 					{/* Input Area */}
 					{showCreateSpace && (
-						<div className='inputArea ctaArea'>
+						<div className="inputArea ctaArea">
 							<button
 								className={`ctaButton ${isCreatingSpace ? 'loading' : ''}`}
 								onClick={() => {
@@ -654,7 +654,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							>
 								{isCreatingSpace ? (
 									<>
-										<span className='loader'></span>
+										<span className="loader"></span>
 										<span>Loading...</span>
 									</>
 								) : (
@@ -664,14 +664,14 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						</div>
 					)}
 					{showInput && (
-						<div className='inputArea'>
+						<div className="inputArea">
 							{/* Smart Suggestions */}
 							{showExamples && sparkOnboarding.step === I.OnboardingStep.Goal && filteredExamples.length > 0 && (
-								<div className='smartSuggestions'>
+								<div className="smartSuggestions">
 									{filteredExamples.map((example, i) => (
 										<button 
 											key={i}
-											className='suggestionChip'
+											className="suggestionChip"
 											onClick={() => handleExampleClick(example)}
 										>
 											{example}
@@ -680,10 +680,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 								</div>
 							)}
 							
-							<div className='inputWrapper'>
+							<div className="inputWrapper">
 								<textarea
 									ref={inputRef}
-									className='textarea'
+									className="textarea"
 									value={inputValue}
 									onChange={(e) => setInputValue(e.target.value)}
 									onKeyDown={(e) => {
@@ -710,9 +710,9 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						</div>
 					)}
 					{showGoToSpace && (
-						<div className='inputArea ctaArea'>
+						<div className="inputArea ctaArea">
 							<button
-								className='ctaButton'
+								className="ctaButton"
 								onClick={handleGoToSpace}
 							>
 								Open Space →
@@ -727,10 +727,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 // Typing Indicator Component
 const TypingIndicator = () => (
-	<div className='typingDots'>
-		<span className='dot'></span>
-		<span className='dot'></span>
-		<span className='dot'></span>
+	<div className="typingDots">
+		<span className="dot"></span>
+		<span className="dot"></span>
+		<span className="dot"></span>
 	</div>
 );
 
@@ -741,10 +741,10 @@ const TypeCard = ({ type, isSelected, onToggle }) => {
 
 	return (
 		<div className={cn.join(' ')} onClick={onToggle}>
-			<div className='header'>
+			<div className="header">
 				{type.icon && <Icon className={type.icon} />}
-				<div className='name'>{type.name}</div>
-				{isSelected && <Icon className='check' />}
+				<div className="name">{type.name}</div>
+				{isSelected && <Icon className="check" />}
 			</div>
 		</div>
 	);
@@ -758,7 +758,7 @@ const CompactTypeBlock = ({ type, isSelected, onToggle }) => {
 	return (
 		<div className={cn.join(' ')} onClick={onToggle}>
 			{type.icon && <Icon className={type.icon} />}
-			<span className='name'>{type.name}</span>
+			<span className="name">{type.name}</span>
 		</div>
 	);
 };

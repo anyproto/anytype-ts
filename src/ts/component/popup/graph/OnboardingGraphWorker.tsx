@@ -228,8 +228,8 @@ const OnboardingGraphWorker = observer(({
 		if (!isInitialized || !workerRef.current) return;
 
 		// Track reaction frequency
-		let reactionCount = 0;
-		let lastReactionLog = Date.now();
+		const reactionCount = 0;
+		const lastReactionLog = Date.now();
 		
 		// Use MobX reaction to properly track observable changes
 		const dispose = reaction(
