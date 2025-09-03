@@ -58,7 +58,7 @@
 	}
 	.dragOverlay {
 		.inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px 0px; }
-		.icon { width: 58px; height: 58px; background-size: 100%; background-image: url('~img/icon/chat/dragState.svg'); }
+		.icon { width: 58px; height: 58px; background-image: url('~img/icon/chat/dragState.svg'); }
 		.label { @include text-header3; font-weight: 700; color: var(--color-text-tertiary); }
 	}
 
