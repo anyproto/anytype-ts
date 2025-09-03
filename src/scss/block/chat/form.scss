@@ -6,8 +6,8 @@
 	}
 	.bg { position: absolute; left: 0px; top: 44px; width: 100%; height: calc(100% - 44px); background: var(--color-bg-primary); z-index: 0; }
 
-	.inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; }
-	.inner {
+	> .inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; }
+	> .inner {
 		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
 		> .icon:hover, .icon.hover { background-color: var(--color-shape-secondary); }
 		> .icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
@@ -58,7 +58,7 @@
 	}
 	.dragOverlay {
 		.inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px 0px; }
-		.icon { width: 58px; height: 58px; background-image: url('~img/icon/chat/dragState.svg'); }
+		.icon { width: 58px; height: 58px; background-size: 100%; background-image: url('~img/icon/chat/dragState.svg'); }
 		.label { @include text-header3; font-weight: 700; color: var(--color-text-tertiary); }
 	}
 
