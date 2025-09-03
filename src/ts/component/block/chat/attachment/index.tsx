@@ -221,28 +221,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
-	const onContextMenu = (e: any) => {
-		e.stopPropagation();
-
-		if (object.isTmp || object.isDeleted) {
-			return;
-		};
-
-		S.Menu.open('objectContext', {
-			classNameWrap: 'fromBlock',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
-			data: {
-				objectIds: [ object.id ],
-				subId,
-				allowedLinkTo: true,
-				allowedOpen: true,
-			}
-		});
-	};
-
 	const onOpenBookmark = () => {
 		Action.openUrl(object.source);
 	};
@@ -419,7 +397,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		<div 
 			ref={nodeRef}
 			className={cn.join(' ')}
-			onContextMenu={onContextMenu}
 		>
 			{content}
 			<Icon className="remove" onClick={onRemoveHandler} />
