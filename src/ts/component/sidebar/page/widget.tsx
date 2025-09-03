@@ -197,7 +197,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					<div className="side right">
 						{canWrite ? (
 							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-								<Icon className="plus withBackground" onClick={this.onCreate} />
+								<Icon className="create withBackground" onClick={this.onCreate} />
 								<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
 							</div>
 						) : ''}
