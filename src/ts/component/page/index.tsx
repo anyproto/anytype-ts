@@ -70,6 +70,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	render () {
 		const { isPopup } = this.props;
 		const { config, theme } = S.Common;
+		const { showMenuBar } = config;
 		const { account } = S.Auth;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
@@ -290,6 +291,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		if (config.debug.ui) {
 			cn.push('debug');
+		};
+		if (!config.showMenuBar) {
+			cn.push('noMenuBar');
 		};
 
 		obj.attr({ class: cn.join(' ') });

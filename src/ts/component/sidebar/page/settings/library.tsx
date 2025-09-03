@@ -112,7 +112,6 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 						<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
 					</div>
 					<div className="side center">
-						<Icon className="settings-type" />
 						<div className="name">{title}</div>
 					</div>
 					<div className="side right">

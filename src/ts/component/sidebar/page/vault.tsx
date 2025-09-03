@@ -250,7 +250,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		if (item.targetSpaceId != S.Common.space) {
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
-			U.Space.openDashboard();
+			U.Space.openDashboard({ replace: false });
 			sidebar.panelSetState(isPopup, sidebarDirection, { page: U.Space.getDefaultSidebarPage(item.id) });
 		};
 	};

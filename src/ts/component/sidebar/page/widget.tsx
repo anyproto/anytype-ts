@@ -39,6 +39,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onCreate = this.onCreate.bind(this);
 		this.onArrow = this.onArrow.bind(this);
 		this.onBack = this.onBack.bind(this);
+		this.getObject = this.getObject.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -119,6 +120,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						setEditing={this.setEditing}
 						canEdit={true}
 						canRemove={false}
+						getObject={this.getObject}
 					/>
 				);
 			};
@@ -170,7 +172,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							cacheKey="firstTarget"
 						>
 							{isDirectionRight ? (
-								<div className="spaceChatSidebarHeader">
+								<div className="spaceHeader">
 									<div className="spaceInfo">
 										<IconObject
 											id="spaceIcon"
@@ -179,7 +181,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 											object={{ ...space, spaceId: S.Common.space }}
 										/>
 										<ObjectName object={{ ...space, spaceId: S.Common.space }} />
-
 										{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 									</div>
 									<div className="buttons">
@@ -202,6 +203,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									canEdit={false}
 									canRemove={false}
 									sidebarDirection={sidebarDirection}
+									getObject={this.getObject}
 								/>
 							)}
 						</DropTarget>
@@ -252,6 +254,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 											setPreview={this.setPreview}
 											setEditing={this.setEditing}
 											sidebarDirection={sidebarDirection}
+											getObject={this.getObject}
 										/>
 									))}
 								</div>

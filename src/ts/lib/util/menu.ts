@@ -626,7 +626,7 @@ class UtilMenu {
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
-		const { spaceview } = S.Block;
+		const spaceview = U.Space.getSpaceview();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -635,7 +635,7 @@ class UtilMenu {
 					return;
 				};
 
-				S.Detail.update(J.Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
@@ -643,10 +643,21 @@ class UtilMenu {
 
 				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard();
+						U.Space.openDashboard({ replace: false });
 					};
 				});
 			});
+		};
+
+		let options = [];
+		if (spaceview.isChat) {
+			options.push({ id: I.HomePredefinedId.Chat, name: translate('commonChat') });
+		} else {
+			options = [
+				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+				{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
+				{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
+			];
 		};
 
 		analytics.event('ClickChangeSpaceDashboard');
@@ -658,12 +669,7 @@ class UtilMenu {
 			onOpen: context => this.setContext(context),
 			onClose: () => S.Menu.closeAll(subIds),
 			data: {
-				options: [
-					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-					(U.Object.isAllowedChat(true) ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
-					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-				].filter(it => it),
+				options,
 				onOver: (e: any, item: any) => {
 					if (!this.menuContext) {
 						return;
@@ -929,8 +935,8 @@ class UtilMenu {
 
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}` },
-			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
+			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}`, isHidden: true },
+			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all', isHidden: true },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
 			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },

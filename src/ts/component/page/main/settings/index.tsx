@@ -159,6 +159,8 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	componentDidMount () {
 		this.init();
+
+		S.Common.setRightSidebarState(false, '', false);
 	};
 
 	componentDidUpdate () {

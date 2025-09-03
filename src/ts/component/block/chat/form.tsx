@@ -41,7 +41,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
-	const { attachments } = S.Chat;
 	const { 
 		rootId, isPopup, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
@@ -67,6 +66,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
+
+	let { attachments } = S.Chat;
 
 	const unbind = () => {
 		const events = [ 'resize', 'sidebarResize' ];
@@ -554,8 +555,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onEmoji = () => {
 		S.Menu.open('smile', {
 			element: `#button-${block.id}-emoji`,
+			horizontal: I.MenuDirection.Right,
 			...caretMenuParam(),
-			horizontal: I.MenuDirection.Center,
 			data: {
 				noHead: true,
 				noUpload: true,
@@ -830,6 +831,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
+						attachments = attachments.filter(it => it.id != item.id);
 						attachments.push({ id: message.objectId, type: I.AttachmentType.File });
 					};
 
@@ -852,6 +854,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
+						attachments = attachments.filter(it => it.id != item.id);
 						attachments.push({ id: message.objectId, type: I.AttachmentType.Link });
 					};
 
@@ -1263,28 +1266,35 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const caretMenuParam = () => {
 		const win = $(window);
 		const rect = U.Common.getSelectionRect();
-
-		return {
+		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
-			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
 			onClose: () => setRange(range.current),
 			noFlipX: true,
 			noFlipY: true,
 			offsetY: -8,
 		};
+
+		if (rect) {
+			param.horizontal = I.MenuDirection.Center;
+		};
+
+		return param;
 	};
 
 	const canSend = (): boolean => {
-		return !isLoading.current.length && 
+		const v = getTextValue();
+		const isLimit = v.length > J.Constant.limit.chat.text;
+
+		return !isLoading.current.length && !isLimit &&
 		!!(
-			editingId.current || 
-			getTextValue().trim().length || 
+			editingId.current ||
+			v.trim().length ||
 			attachments.length || 
 			marks.current.length
 		);
@@ -1361,15 +1371,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
-		if (l >= limit - 50) {
-			el.addClass('show').text(`${l} / ${limit}`);
+		el.toggleClass('red', l > limit);
+
+		if (l > limit - 50) {
+			el.addClass('show').text(limit - l);
 		} else {
 			el.removeClass('show');
 		};
 	};
 
 	const clearCounter = () => {
-		$(counterRef.current).text('').removeClass('show');
+		$(counterRef.current).text('').removeClass('show').removeClass('red');
 	};
 
 	const checkSpeedLimit = () => {
@@ -1425,7 +1437,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const cw = container.width();
 		const { isClosed, width } = sidebar.data;
 		const left = isClosed ? 0 : width;
-		const margin = 16;
+		const margin = 32;
 
 		node.css({ width: cw - margin * 2, left: left + margin });
 		dummy.css({ height: node.height() });
@@ -1633,14 +1645,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				onDragOver={onDragOver}
 				onDragLeave={onDragLeave}
 			>
-				<div className="inner">
-					<div className="dragOverlay">
-						<div className="inner">
-							<Icon />
-							<Label text={translate('commonDropFiles')} />
-						</div>
-					</div>
+				<div className="grad" />
+				<div className="bg" />
 
+				<div className="dragOverlay">
+					<div className="inner">
+						<Icon />
+						<Label text={translate('commonDropFiles')} />
+					</div>
+				</div>
+
+				<div className="inner">
 					{!isEmpty ? (
 						<div className="navigation">
 							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}

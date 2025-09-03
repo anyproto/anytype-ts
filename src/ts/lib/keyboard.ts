@@ -214,7 +214,7 @@ class Keyboard {
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
 				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-				U.Space.openDashboard();
+				U.Space.openDashboard({ replace: false });
 			};
 			
 			Preview.previewHide(false);
@@ -270,7 +270,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('home', e, () => {
 				if (S.Auth.account && !S.Popup.isOpen('search')) {
-					U.Space.openDashboard();
+					U.Space.openDashboard({ replace: false });
 				};
 			});
 
@@ -386,7 +386,7 @@ class Keyboard {
 					if (item.targetSpaceId != S.Common.space) {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 					} else {
-						U.Space.openDashboard();
+						U.Space.openDashboard({ replace: false });
 						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
 					};
 				});
@@ -520,7 +520,7 @@ class Keyboard {
 				};
 
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
-					U.Space.openDashboard();
+					U.Space.openDashboard({ replace: false });
 				} else {
 					history.goBack();
 				};
