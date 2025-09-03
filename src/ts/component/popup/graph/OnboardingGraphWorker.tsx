@@ -20,7 +20,7 @@ const OnboardingGraphWorker = observer(({
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const workerRef = useRef<Worker | null>(null);
 	const loadedImages = useRef<Set<string>>(new Set());
-	const { sparkOnboarding } = S;
+	const { SparkOnboarding: sparkOnboarding } = S;
 	const [isInitialized, setIsInitialized] = useState(false);
 	const [isDragging, setIsDragging] = useState(false);
 

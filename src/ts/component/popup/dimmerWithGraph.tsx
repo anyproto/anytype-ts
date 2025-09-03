@@ -9,7 +9,7 @@ interface DimmerWithGraphProps {
 }
 
 const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
-	const { sparkOnboarding } = S;
+	const { SparkOnboarding: sparkOnboarding } = S;
 	const [shouldRenderGraph, setShouldRenderGraph] = useState(false);
 	const [graphDimensions, setGraphDimensions] = useState({
 		width: typeof window !== 'undefined' ? window.innerWidth : 1200,

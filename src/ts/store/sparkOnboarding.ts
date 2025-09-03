@@ -810,4 +810,4 @@ class SparkOnboardingStore {
 	}
 }
 
-export default new SparkOnboardingStore();
+export const SparkOnboarding: SparkOnboardingStore = new SparkOnboardingStore();

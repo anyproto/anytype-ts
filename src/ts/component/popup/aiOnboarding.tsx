@@ -111,7 +111,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const nodeRef = useRef(null);
 	const messagesEndRef = useRef(null);
 	const inputRef = useRef(null);
-	const { sparkOnboarding } = S;
+	const { SparkOnboarding: sparkOnboarding } = S;
 
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [inputValue, setInputValue] = useState('');
