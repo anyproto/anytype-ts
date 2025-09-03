@@ -535,7 +535,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					let system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg));
 
 					if (system.length) {
-						system = system.filter(it => ![ J.Constant.widgetId.allObject ].includes(it.id));
+						system = system.filter(it => ![ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(it.id));
 
 						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
 					};
