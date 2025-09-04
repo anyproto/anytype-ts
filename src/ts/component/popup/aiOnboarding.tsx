@@ -294,10 +294,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
-					title: translate('popupConfirmCloseAIOnboardingTitle') || 'Exit AI Onboarding?',
-					text: translate('popupConfirmCloseAIOnboardingText') || 'Are you sure you want to exit? Your progress will be lost.',
-					textConfirm: translate('commonYes') || 'Yes, Exit',
-					textCancel: translate('commonNo') || 'Continue',
+					title: translate('popupConfirmCloseAIOnboardingTitle'),
+					text: translate('popupConfirmCloseAIOnboardingText'),
+					textConfirm: translate('popupConfirmCloseAIOnboardingConfirm'),
+					textCancel: translate('popupConfirmCloseAIOnboardingCancel'),
 					onConfirm: () => {
 						sparkOnboarding.disconnect();
 						sparkOnboarding.reset();
@@ -494,7 +494,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				if (lastMessage && lastMessage.type === 'ai') {
 					lastMessage.content = (
 						<div>
-							<Error text={error || 'Something went wrong. Please try again.'} />
+							<Error text={error || translate('popupAiOnboardingErrorDefault')} />
 						</div>
 					);
 				}
@@ -569,10 +569,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					<div className="errorIcon">
 						<Icon className="warning large" />
 					</div>
-					<div className="errorTitle">Connection Issue</div>
+					<div className="errorTitle">{translate('popupAiOnboardingConnectionIssueTitle')}</div>
 					<div className="errorMessage">
 						{sparkOnboarding.error === 'Failed to connect to onboarding service' 
-							? 'Unable to connect to the AI service. Please check your internet connection and try again.'
+							? translate('popupAiOnboardingConnectionError')
 							: sparkOnboarding.error}
 					</div>
 					<div className="errorActions">
@@ -604,10 +604,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					<div className="header">
 						<div className="headerContent">
 							<div className="title">
-								Create Your Perfect Space <span className="sparkle">✦</span> Anytype AI
+								{translate('popupAiOnboardingTitle')} <span className="sparkle">✦</span> Anytype AI
 							</div>
 							<div className="subtitle">
-								{sparkOnboarding.spaceName || 'Share your ideas, projects, or problems to solve'}
+								{sparkOnboarding.spaceName || translate('popupAiOnboardingDefaultSubtitle')}
 							</div>
 							<div className="progressPills">
 								{[0, 1, 2, 3, 4, 5].map(i => {
@@ -669,7 +669,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 										<span>Loading...</span>
 									</>
 								) : (
-									'Go to Your Space'
+									translate('popupAiOnboardingGoToSpace')
 								)}
 							</button>
 						</div>
@@ -705,8 +705,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 									}}
 									placeholder={
 										sparkOnboarding.step === I.OnboardingStep.Questions 
-											? 'Type your answer...'
-											: 'Describe your project, passion, or problem...'
+											? translate('popupAiOnboardingTypeAnswer')
+											: translate('popupAiOnboardingDescribeProject')
 									}
 									rows={1}
 								/>
