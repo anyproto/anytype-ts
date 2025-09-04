@@ -7,9 +7,9 @@
 
 .header {
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; }
-	.side.left { padding: 0px 8px; flex-shrink: 0; }
+	.side.left { padding: 0px 12px; flex-shrink: 0; }
 	.side.center { flex-grow: 1; justify-content: center; max-width: 60%; }
-	.side.right { padding: 0px 8px; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
+	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 	.side.right {
 		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); flex-shrink: 0; }
 	}

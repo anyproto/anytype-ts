@@ -16,7 +16,7 @@
 
 	.bubbleOuter { display: flex; flex-direction: column; width: 100%; }
 
-	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; max-width: 70%; }
+	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; max-width: 480px; }
 	.bubbleInner {
 		> .controls { 
 			flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; 
