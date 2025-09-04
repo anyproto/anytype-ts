@@ -408,21 +408,17 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 			case I.OnboardingStep.UserBenefit:
 				console.log('[AIOnboarding Component] UserBenefit case - userBenefit:', sparkOnboarding.userBenefit, 'benefitShown:', benefitShown);
-				if (!sparkOnboarding.userBenefit || !benefitShown) {
-					break;
-				};
-
-				console.log('[AIOnboarding Component] Showing user benefit message');
-
-				// Show the benefit text
-				addMessage('ai', sparkOnboarding.userBenefit);
-				setBenefitShown(true);
-				scrollToBottom();
-				
-				// Show status immediately for drafting types
-				setTimeout(() => {
-					updateStatus(translate('aiOnboardingStatusDraftingTypes'));
-				}, 100);
+				if (sparkOnboarding.userBenefit && !benefitShown) {
+					// Show the benefit text
+					addMessage('ai', sparkOnboarding.userBenefit);
+					setBenefitShown(true);
+					scrollToBottom();
+					
+					// Show status immediately for drafting types
+					setTimeout(() => {
+						updateStatus(translate('aiOnboardingStatusDraftingTypes'));
+					}, 100);
+				}
 				break;
 
 			// TypeReview step is now auto-skipped - types are submitted automatically

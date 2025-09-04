@@ -498,7 +498,6 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('analysisComplete', (data: { spaceName: string; suggestedTypes: I.SuggestedType[] }) => {
-			console.log('[SparkOnboarding Store] analysisComplete received, current step:', this.step);
 			console.log('[SparkOnboarding Store] Suggested types:', data.suggestedTypes);
 
 			this.spaceName = data.spaceName;
@@ -507,15 +506,12 @@ class SparkOnboardingStore {
 			this.selectedTypes = data.suggestedTypes.map(t => t.key);
 			
 			// Skip TypeReview - auto-submit all types and go to generation
-			console.log('[SparkOnboarding Store] Auto-submitting all types and skipping to generation');
 			this.isLoading = false;
 			
-			// Auto-confirm all types after a brief delay to show the graph
-			setTimeout(() => {
-				this.confirmTypes();
-			}, 500);
+			// Auto-confirm all types immediately
+			this.confirmTypes();
 			
-			// Clear sample nodes and add real types to the graph
+			// Clear sample nodes and add real types to the graph with staged animation
 			const filteredNodes = this.graphNodes.filter(n => !n.id.startsWith('sample-'));
 			const filteredLinks = this.graphLinks.filter(l => 
 				!l.source.startsWith('sample-') && !l.target.startsWith('sample-')
@@ -523,72 +519,119 @@ class SparkOnboardingStore {
 
 			this.graphNodes = filteredNodes;
 			this.graphLinks = filteredLinks;
-
-			console.log('[SparkOnboarding Store] After clearing samples, nodes:', this.graphNodes.length, 'links:', this.graphLinks.length);
 			
-			// Add all suggested types to the graph immediately on the edges
+			// Add types with staged animation
 			const { positions } = this.getEdgePositions();
-			console.log('[SparkOnboarding Store] Adding types to graph, positions:', positions);
 			
 			// Calculate better spacing for types
 			const typeCount = data.suggestedTypes.length;
 			
 			data.suggestedTypes.forEach((type, index) => {
-				let x, y;
+				// Add delay for staged animation (base 1000ms + random 0-1000ms)
+				const typeDelay = 1000 + (index * 1000) + (Math.random() * 1000);
 				
-				// Get popup boundaries
-				const popupLeft = (window.innerWidth - 720) / 2;
-				const popupRight = popupLeft + 720;
-				
-				if (positions.useHorizontal) {
-					// Better distribution in free space
-					const useLeft = index % 2 === 0;
+				setTimeout(() => {
+					let x, y;
 					
-					if (useLeft) {
-						// Better distribution in left free space
-						const leftFreeSpace = popupLeft;
-						// Center of left free area
-						x = leftFreeSpace / 2 + (Math.random() - 0.5) * 100; // Center with some variation
+					// Get popup boundaries
+					const popupLeft = (window.innerWidth - 720) / 2;
+					const popupRight = popupLeft + 720;
+					
+					if (positions.useHorizontal) {
+						// Better distribution in free space
+						const useLeft = index % 2 === 0;
+						
+						if (useLeft) {
+							// Better distribution in left free space
+							const leftFreeSpace = popupLeft;
+							// Center of left free area
+							x = leftFreeSpace / 2 + (Math.random() - 0.5) * 100; // Center with some variation
+						} else {
+							// Better distribution in right free space
+							const rightFreeSpace = window.innerWidth - popupRight;
+							// Center of right free area
+							x = popupRight + (rightFreeSpace / 2) + (Math.random() - 0.5) * 100; // Center with some variation
+						}
+						
+						// Better vertical distribution across full height
+						const verticalIndex = Math.floor(index / 2);
+						const verticalCount = Math.ceil(typeCount / 2);
+						// Use more of the vertical space
+						const verticalSpacing = (window.innerHeight - 200) / Math.max(verticalCount - 1, 1);
+						const baseY = 100 + (verticalIndex * verticalSpacing);
+
+						y = Math.max(80, Math.min(window.innerHeight - 80, baseY)); // Keep within bounds
 					} else {
-						// Better distribution in right free space
-						const rightFreeSpace = window.innerWidth - popupRight;
-						// Center of right free area
-						x = popupRight + (rightFreeSpace / 2) + (Math.random() - 0.5) * 100; // Center with some variation
-					}
+						// Use top and bottom edges for narrow screens
+						const useTop = index % 2 === 0;
+						y = useTop ? positions.topY : positions.bottomY;
+						// Spread horizontally along the edge
+						const horizontalIndex = Math.floor(index / 2);
+						x = 250 + (horizontalIndex * 150); // Start at 250px from left, 150px spacing
+					};
 					
-					// Better vertical distribution across full height
-					const verticalIndex = Math.floor(index / 2);
-					const verticalCount = Math.ceil(typeCount / 2);
-					// Use more of the vertical space
-					const verticalSpacing = (window.innerHeight - 200) / Math.max(verticalCount - 1, 1);
-					const baseY = 100 + (verticalIndex * verticalSpacing);
+					const nodeId = this.typeNameToNodeId(type.name);
+					
+					// Extract icon from the type data (if available in the new structure)
+					const iconName = (type as any).icon || undefined;
+					
+					const node = {
+						id: nodeId,
+						type: 'type',
+						label: type.name,
+						iconName: iconName, // Use icon from analysis_complete message
+						x: x || 100,
+						y: y || 100
+					};
 
-					y = Math.max(80, Math.min(window.innerHeight - 80, baseY)); // Keep within bounds
-				} else {
-					// Use top and bottom edges for narrow screens
-					const useTop = index % 2 === 0;
-					y = useTop ? positions.topY : positions.bottomY;
-					// Spread horizontally along the edge
-					const horizontalIndex = Math.floor(index / 2);
-					x = 250 + (horizontalIndex * 150); // Start at 250px from left, 150px spacing
-				};
-				
-				const nodeId = this.typeNameToNodeId(type.name);
-				const node = {
-					id: nodeId,
-					type: 'type',
-					label: type.name,
-					iconName: undefined, // Will be set from schema if available
-					x: x || 100,
-					y: y || 100
-				};
-
-				console.log('[SparkOnboarding Store] Creating type node with ID:', nodeId, 'for type:', type.name);
-				console.log('[SparkOnboarding Store] Full node object:', node);
-				this.addGraphNode(node);
+					this.addGraphNode(node);
+					
+					// Add example objects with additional delay after the type appears
+					const exampleTitles = (type as any).exampleTitles || [];
+					if (exampleTitles.length > 0) {
+						
+						exampleTitles.forEach((title: string, objIndex: number) => {
+							// Objects appear 1 second after their type, one by one
+							const objectDelay = 1000 + (objIndex * 1000) + (Math.random() * 1000);
+							
+							setTimeout(() => {
+								const objectId = `${nodeId}-object-${objIndex}`;
+								
+								// Position objects around their type node in a much wider circle
+								const angle = (Math.PI * 2 * objIndex) / exampleTitles.length - Math.PI / 2; // Start from top
+								const radius = 220 + (Math.random() * 40); // Good separation
+								
+								// Calculate position and keep within bounds
+								let objX = (x || 100) + radius * Math.cos(angle);
+								let objY = (y || 100) + radius * Math.sin(angle);
+								
+								// Ensure objects stay within canvas bounds
+								const margin = 50;
+								objX = Math.max(margin, Math.min(window.innerWidth - margin, objX));
+								objY = Math.max(margin, Math.min(window.innerHeight - margin, objY));
+								
+								const objectNode = {
+									id: objectId,
+									type: 'object' as const,
+									label: title,
+									x: objX,
+									y: objY,
+									opacity: 0.8
+								};
+								
+								this.addGraphNode(objectNode);
+								
+								// Add link from type to object
+								this.addGraphLink({
+									source: nodeId,
+									target: objectId,
+									opacity: 0.4
+								});
+							}, objectDelay);
+						});
+					}
+				}, typeDelay);
 			});
-
-			console.log('[SparkOnboarding Store] Final graph state - nodes:', this.graphNodes.length, 'all nodes:', this.graphNodes);
 		});
 
 		this.service.on('generationStarted', (totalTypes: number) => {
@@ -604,151 +647,15 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('typeGenerated', (typeName: string, icon: string, properties: string[]) => {
-			this.generationProgress.current++;
-			this.generationProgress.types.push(typeName);
-			this.generationProgress.status = `Generated type: ${typeName}`;
-			
-			// Update the type node with icon if provided
-			const typeNodeId = this.typeNameToNodeId(typeName);
-			const typeNode = this.graphNodes.find(n => n.id === typeNodeId);
-			if (typeNode) {
-				if (icon) {
-					typeNode.iconName = icon;
-					console.log('[SparkOnboarding Store] Updated type node with icon:', typeName, icon);
-					
-					// Force a re-render by creating a new array reference
-					this.graphNodes = [...this.graphNodes];
-				} else {
-					// No icon provided - that's fine, node will display without icon
-					console.log('[SparkOnboarding Store] No icon provided for type:', typeName);
-				};
-				
-				// Log properties for debugging
-				if (properties && properties.length > 0) {
-					console.log('[SparkOnboarding Store] Type properties:', typeName, properties);
-				};
-			};
-		});
-
-		this.service.on('object_titles_generated', (data: { typeName: string; typeKey: string; titles: string[] }) => {
-			console.log('[SparkOnboarding Store] object_titles_generated received:', data);
-			console.log('[SparkOnboarding Store] Type name from event:', data.typeName);
-			console.log('[SparkOnboarding Store] Type key from event:', data.typeKey);
-			
-			// Construct the type node ID from the type name (not typeKey) for consistency
-			// This matches how we create the node ID in analysisComplete
-			const typeNodeId = this.typeNameToNodeId(data.typeName);
-			console.log('[SparkOnboarding Store] Generated type node ID:', typeNodeId);
-			console.log('[SparkOnboarding Store] All nodes in graph:', this.graphNodes.map(n => ({ id: n.id, type: n.type, label: n.label })));
-			console.log('[SparkOnboarding Store] Type nodes only:', this.graphNodes.filter(n => n.type === 'type').map(n => ({ id: n.id, label: n.label })));
-			
-			const typeNode = this.graphNodes.find(n => n.id === typeNodeId);
-			console.log('[SparkOnboarding Store] Type node found?', typeNode ? 'YES' : 'NO', typeNode);
-			
-			if (typeNode) {
-				console.log('[SparkOnboarding Store] Found type node:', typeNode.id, typeNode.label);
-				// Add object nodes for each title
-				const { positions } = this.getEdgePositions();
-				
-				data.titles.forEach((title, index) => {
-					// Use the type node's ID for consistency
-					const objectId = `${typeNode.id}-object-${index}`;
-					
-					// Position objects around their type node in a much wider circle
-					const angle = (Math.PI * 2 * index) / data.titles.length - Math.PI / 2; // Start from top
-					const radius = 220 + (Math.random() * 40); // 2.5x increase for much better separation
-					
-					// Calculate position and keep within bounds
-					let objX = typeNode.x + radius * Math.cos(angle);
-					let objY = typeNode.y + radius * Math.sin(angle);
-					
-					// Ensure objects stay within canvas bounds
-					const margin = 50;
-					objX = Math.max(margin, Math.min(window.innerWidth - margin, objX));
-					objY = Math.max(margin, Math.min(window.innerHeight - margin, objY));
-					
-					const objectNode = {
-						id: objectId,
-						type: 'object' as const,
-						label: title,
-						x: objX,
-						y: objY,
-						opacity: 0.8 // Slightly more visible
-					};
-					
-					console.log('[SparkOnboarding Store] Adding object node:', objectNode);
-					this.addGraphNode(objectNode);
-					
-					// Add link from type to object
-					this.addGraphLink({
-						source: typeNode.id,
-						target: objectId,
-						opacity: 0.4
-					});
-				});
-			} else {
-				console.warn('[SparkOnboarding Store] Type node not found for type name:', data.typeName);
-			};
+			// later on we will add type-to-type properties and handle them here
+			return;
 		});
 
 		// propertyGenerated is no longer sent - properties are included in typeGenerated
 
 		this.service.on('objectGenerated', (typeName: string, object: any) => {
-			this.generationProgress.status = `Created object: ${object?.title || 'Untitled'}`;
-			
-			// Skip adding to graph - we already handle this via object_titles_generated
-			// This prevents duplicate nodes and link errors
-			console.log('[SparkOnboarding Store] objectGenerated: Skipping graph update (handled by object_titles_generated)');
+			// later on we will add object-to-object properties and handle them here
 			return;
-			
-			/* DISABLED - Handled by object_titles_generated
-			// Add object node to graph - clustered around parent type
-			if (!typeName) {
-				console.warn('[SparkOnboarding] objectGenerated: typeName is undefined');
-				return;
-			}
-			const typeNodeId = `type-${typeName.toLowerCase().replace(/\s+/g, '-')}`;
-			const parentNode = this.graphNodes.find(n => n.id === typeNodeId);
-			
-			if (parentNode) {
-				const { positions } = this.getEdgePositions();
-				const localObjectCount = this.graphNodes.filter(n => 
-					n.type === 'object' && 
-					this.graphLinks.some(l => l.source === typeNodeId && l.target === n.id)
-				).length;
-				
-				let x, y;
-				if (positions.useHorizontal) {
-					// Objects stay near their parent type on the same edge
-					const isLeftSide = parentNode.x < window.innerWidth / 2;
-					// Keep objects on the same edge as their parent, just slightly offset
-					x = parentNode.x + (isLeftSide ? 30 : -30);
-					// Stack objects vertically near their parent
-					y = parentNode.y + 40 + (localObjectCount * 35);
-				} else {
-					// Objects cluster around their parent on top/bottom
-					const isTopSide = parentNode.y < window.innerHeight / 2;
-					// Keep objects on the same edge as their parent
-					y = parentNode.y + (isTopSide ? 30 : -30);
-					// Spread objects horizontally near their parent
-					x = parentNode.x + 40 + (localObjectCount * 60);
-				}
-				
-				const objectNode = {
-					id: `object-${object.title.toLowerCase().replace(/\s+/g, '-')}`,
-					type: 'object',
-					label: object.title,
-					x: x,
-					y: y
-				};
-				
-				this.addGraphNode(objectNode);
-				this.addGraphLink({
-					source: typeNodeId,
-					target: objectNode.id
-				});
-			}
-			*/
 		});
 
 		this.service.on('generationProgress', (status: string, progress: number) => {
