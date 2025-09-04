@@ -55,6 +55,8 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
+	.sync { -webkit-app-region: no-drag; }
+
 	.icon.back { margin-left: 8px; }
 	.icon.forward { margin-right: 8px; }
 
