@@ -236,3 +236,28 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
           AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
+
+      # FAILURE - send to alerts channel
+      - name: Notify Slack (failure → alerts)
+        if: ${{ failure() }}
+        uses: ravsamhq/notify-slack-action@v2
+        with:
+          status: ${{ job.status }}
+          notification_title: "❌ {workflow}"
+          message_format: "{emoji} *{job}* in *{workflow}* {status_message}"
+          footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_ALERTS }}
+
+      # SUCCESS - send to builds channel
+      - name: Notify Slack (ok → builds)
+        if: ${{ success() }}
+        uses: ravsamhq/notify-slack-action@v2
+        with:
+          status: ${{ job.status }}
+          notification_title: "✅ {workflow}"
+          message_format: "{emoji} *{job}* in *{workflow}* {status_message}"
+          footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
+
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}
