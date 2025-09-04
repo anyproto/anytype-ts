@@ -193,7 +193,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		S.Common.setRightSidebarState(false, '', false);
+		//S.Common.setRightSidebarState(false, '', false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -241,12 +241,28 @@ class UtilRouter {
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 						this.isOpening = false;
-
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+						this.onSpaceSwitch();
 					});
 				},
 			});
 		});
+	};
+
+	onSpaceSwitch () {
+		const { widgetSide } = S.Common;
+
+		switch (widgetSide) {
+			case I.SidebarDirection.Left: {
+				sidebar.leftPanelSetState({ page: 'widget' });
+				break;
+			};
+
+			case I.SidebarDirection.Right:
+				S.Common.setRightSidebarState(false, '', false);
+				sidebar.leftPanelSetState({ page: 'vault' });
+				sidebar.rightPanelToggle(false, false, 'widget', {});
+				break;
+		};
 	};
 
 	/**
