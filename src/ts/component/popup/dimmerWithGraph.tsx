@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { S } from 'Lib';
 import OnboardingGraphWorker from './graph/OnboardingGraphWorker';
 
 interface DimmerWithGraphProps {
@@ -8,9 +7,9 @@ interface DimmerWithGraphProps {
 }
 
 const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
-	const { SparkOnboarding: sparkOnboarding } = S;
-	const [shouldRenderGraph, setShouldRenderGraph] = useState(false);
-	const [graphDimensions, setGraphDimensions] = useState({
+
+	const [ shouldRenderGraph, setShouldRenderGraph ] = useState(false);
+	const [ graphDimensions, setGraphDimensions ] = useState({
 		width: typeof window !== 'undefined' ? window.innerWidth : 1200,
 		height: typeof window !== 'undefined' ? window.innerHeight : 800,
 	});
@@ -20,14 +19,16 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 	const lastRenderLog = useRef(Date.now());
 	
 	renderCount.current++;
+
 	const now = Date.now();
 	if (now - lastRenderLog.current > 1000) {
 		if (renderCount.current > 1) {
 			console.log(`[DimmerWithGraph] Rendered ${renderCount.current} times/sec`);
-		}
+		};
+
 		renderCount.current = 0;
 		lastRenderLog.current = now;
-	}
+	};
 	
 	// Delay graph rendering to improve initial load performance
 	useEffect(() => {
@@ -46,7 +47,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 			// Cancel any pending animation frame
 			if (animationFrame) {
 				cancelAnimationFrame(animationFrame);
-			}
+			};
 			
 			// Use requestAnimationFrame for smooth updates synchronized with browser repaints
 			animationFrame = requestAnimationFrame(() => {
@@ -55,9 +56,10 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 				
 				// Only update if dimensions actually changed
 				setGraphDimensions(prev => {
-					if (prev.width !== newWidth || prev.height !== newHeight) {
+					if ((prev.width !== newWidth) || (prev.height !== newHeight)) {
 						return { width: newWidth, height: newHeight };
-					}
+					};
+
 					return prev;
 				});
 			});
@@ -70,14 +72,17 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 		return () => {
 			if (animationFrame) {
 				cancelAnimationFrame(animationFrame);
-			}
+			};
+
 			window.removeEventListener('resize', handleResize);
 		};
 	}, []);
 	
 	// Memoize the graph component to prevent unnecessary re-renders
 	const graphComponent = useMemo(() => {
-		if (!shouldRenderGraph) return null;
+		if (!shouldRenderGraph) {
+			return null;
+		};
 		
 		return (
 			<OnboardingGraphWorker 
@@ -87,7 +92,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 				popupHeight={680}
 			/>
 		);
-	}, [shouldRenderGraph, graphDimensions.width, graphDimensions.height]);
+	}, [ shouldRenderGraph, graphDimensions.width, graphDimensions.height ]);
 	
 	return (
 		<div className="dimmer withGraph">
@@ -106,6 +111,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 			</div>
 		</div>
 	);
+
 });
 
 export default DimmerWithGraph;

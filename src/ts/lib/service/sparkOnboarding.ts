@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { I, S, U, C, Preview, translate, Renderer } from 'Lib';
+import { I, U, C } from 'Lib';
 
 interface SparkOnboardingConfig {
 	url?: string;
@@ -8,6 +8,7 @@ interface SparkOnboardingConfig {
 }
 
 export class SparkOnboardingService extends EventEmitter {
+
 	private ws: WebSocket | null = null;
 	private url: string;
 	private sessionId: string | null = null;
@@ -16,9 +17,8 @@ export class SparkOnboardingService extends EventEmitter {
 	private reconnectTimeout: NodeJS.Timeout | null = null;
 	private messageQueue: any[] = [];
 	private isConnecting: boolean = false;
-	private isReconnecting: boolean = false;
 
-	constructor(config: SparkOnboardingConfig = {}) {
+	constructor( config: SparkOnboardingConfig = {}) {
 		super();
 		// Use config override or environment variable (with default)
 		// SPARK_ONBOARDING_URL is injected at build time via rspack DefinePlugin
@@ -29,7 +29,7 @@ export class SparkOnboardingService extends EventEmitter {
 			this.url = this.url.replace('http://', 'ws://');
 		} else if (this.url.startsWith('https://')) {
 			this.url = this.url.replace('https://', 'wss://');
-		}
+		};
 		
 		console.log('[SparkOnboarding] Using server:', this.url);
 		
@@ -41,9 +41,9 @@ export class SparkOnboardingService extends EventEmitter {
 	}
 
 	async connect(): Promise<void> {
-		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+		if (this.ws && (this.ws.readyState === WebSocket.OPEN)) {
 			return Promise.resolve();
-		}
+		};
 
 		if (this.isConnecting) {
 			return new Promise((resolve, reject) => {
@@ -51,14 +51,15 @@ export class SparkOnboardingService extends EventEmitter {
 					if (this.ws && this.ws.readyState === WebSocket.OPEN) {
 						clearInterval(checkConnection);
 						resolve();
-					}
+					};
+
 					if (!this.isConnecting) {
 						clearInterval(checkConnection);
 						reject(new Error('Connection failed'));
-					}
+					};
 				}, 100);
 			});
-		}
+		};
 
 		return new Promise((resolve, reject) => {
 			this.isConnecting = true;
@@ -75,12 +76,12 @@ export class SparkOnboardingService extends EventEmitter {
 					url.searchParams.append('token', SPARK_ONBOARDING_TOKEN);
 				} else {
 					console.log('[SparkOnboarding] Auth disabled');
-				}
+				};
 				
 				// Include session ID if we have one (for reconnection)
 				if (this.sessionId) {
 					url.searchParams.append('sessionId', this.sessionId);
-				}
+				};
 				
 				const connectUrl = url.toString();
 				console.log('[SparkOnboarding] Connecting to:', connectUrl.replace(/token=[^&]+/, 'token=***'), this.sessionId ? '(with session)' : '(new session)');
@@ -101,18 +102,21 @@ export class SparkOnboardingService extends EventEmitter {
 						this.handleMessage(message);
 					} catch (error) {
 						console.error('[SparkOnboarding] Failed to parse message:', error);
-					}
+					};
 				};
 
 				this.ws.onerror = (error) => {
 					console.error('[SparkOnboarding] WebSocket error:', error);
+
 					this.isConnecting = false;
 					this.emit('error', error);
+
 					reject(error);
 				};
 
 				this.ws.onclose = () => {
 					console.log('[SparkOnboarding] Disconnected from server');
+
 					this.isConnecting = false;
 					this.ws = null;
 					this.sessionId = null;
@@ -153,7 +157,7 @@ export class SparkOnboardingService extends EventEmitter {
 		if (this.ws) {
 			this.ws.close();
 			this.ws = null;
-		}
+		};
 
 		// Don't clear sessionId - keep it for potential reconnection
 		// Session will remain on server for 20 minutes
@@ -166,7 +170,7 @@ export class SparkOnboardingService extends EventEmitter {
 			console.log('[SparkOnboarding] Queuing message:', message.type);
 			this.messageQueue.push(message);
 			return;
-		}
+		};
 
 		try {
 			this.ws.send(JSON.stringify(message));
@@ -174,78 +178,93 @@ export class SparkOnboardingService extends EventEmitter {
 		} catch (error) {
 			console.error('[SparkOnboarding] Failed to send message:', error);
 			this.messageQueue.push(message);
-		}
-	}
+		};
+	};
 
 	private processMessageQueue(): void {
-		while (this.messageQueue.length > 0 && this.ws && this.ws.readyState === WebSocket.OPEN) {
+		while ((this.messageQueue.length > 0) && this.ws && (this.ws.readyState === WebSocket.OPEN)) {
 			const message = this.messageQueue.shift();
 			this.send(message);
-		}
-	}
+		};
+	};
 
 	private handleMessage(message: I.SparkMessage): void {
 		console.log('[SparkOnboarding] Received:', message.type);
 
 		switch (message.type) {
-			case 'connected':
+			case 'connected': {
 				this.sessionId = (message as I.ConnectedMessage).sessionId;
+
 				console.log('[SparkOnboarding] New session started:', this.sessionId);
+
 				this.emit('sessionStarted', this.sessionId);
 				break;
+			};
 
-			case 'reconnected':
+			case 'reconnected': {
 				// Server restored our session, update state
 				const reconnectMsg = message as any;
 				this.sessionId = reconnectMsg.sessionId;
+
 				console.log('[SparkOnboarding] Session reconnected:', this.sessionId);
+
 				this.emit('sessionReconnected', reconnectMsg);
+
 				// Emit events to restore state
 				if (reconnectMsg.state) {
 					// Restore any state that needs to be synced
 					this.emit('stateRestored', reconnectMsg.state);
-				}
+				};
 				break;
+			};
 
-			case 'questions_ready':
+			case 'questions_ready': {
 				this.emit('questionsReady', (message as I.QuestionsReadyMessage).questions);
 				break;
+			};
 
-			case 'space_name_generated':
+			case 'space_name_generated': {
 				this.emit('spaceNameGenerated', (message as I.SpaceNameGeneratedMessage).spaceName);
 				break;
+			};
 
-			case 'user_benefit_generated':
+			case 'user_benefit_generated': {
 				this.emit('userBenefitGenerated', (message as I.UserBenefitGeneratedMessage).userBenefit);
 				break;
+			};
 
-			case 'analysis_complete':
+			case 'analysis_complete': {
 				const analysis = message as I.AnalysisCompleteMessage;
 				this.emit('analysisComplete', {
 					spaceName: analysis.spaceName,
 					suggestedTypes: analysis.suggestedTypes
 				});
 				break;
+			};
 
-			case 'generation_started':
+			case 'generation_started': {
 				this.emit('generationStarted', (message as I.GenerationStartedMessage).totalTypes);
 				break;
+			};
 
-			case 'type_generated':
+			case 'type_generated': {
 				const typeMsg = message as any;
 				console.log('[SparkOnboarding Service] type_generated message:', typeMsg);
+				
 				// New structure: icon instead of schema
 				this.emit('typeGenerated', typeMsg.typeName, typeMsg.icon, typeMsg.properties);
 				break;
+			};
 
 			// property_generated is no longer sent - properties are included in type_generated
 
-			case 'object_generated':
+			case 'object_generated': {
 				const objMsg = message as I.ObjectGeneratedMessage;
 				this.emit('objectGenerated', objMsg.typeName, objMsg.object);
 				break;
+			};
 
-			case 'object_titles_generated':
+			case 'object_titles_generated': {
 				const titlesMsg = message as any;
 				console.log('[SparkOnboarding Service] object_titles_generated message received:', titlesMsg);
 				// Use typeName for clarity - 'type' in the message is the message type itself
@@ -255,144 +274,131 @@ export class SparkOnboardingService extends EventEmitter {
 					titles: titlesMsg.titles
 				});
 				break;
+			};
 
-			case 'generation_progress':
+			case 'generation_progress': {
 				const progressMsg = message as I.GenerationProgressMessage;
 				this.emit('generationProgress', progressMsg.status, progressMsg.progress);
 				break;
+			};
 
-			case 'workspace_ready':
+			case 'workspace_ready': {
 				const workspaceMsg = message as any;
 				// New structure: only spaceName and downloadUrl
 				this.emit('workspaceReady', workspaceMsg.downloadUrl, workspaceMsg.spaceName);
 				break;
+			};
 
-			case 'error':
+			case 'error': {
 				const errorMsg = message as I.ErrorMessage;
 				this.emit('error', new Error(errorMsg.message));
 				break;
+			};
 
-			default:
+			default: {
 				console.warn('[SparkOnboarding] Unknown message type:', message.type);
-		}
-	}
+				break;
+			};
+		};
+	};
 
 	// Public API methods
-	startOnboarding(userGoal: string): void {
-		this.send({
-			type: 'start_onboarding',
-			userGoal
-		});
-	}
+	startOnboarding (userGoal: string): void {
+		this.send({ type: 'start_onboarding', userGoal });
+	};
 
-	submitAnswers(answers: string[]): void {
-		this.send({
-			type: 'submit_answers',
-			answers
-		});
-	}
+	submitAnswers (answers: string[]): void {
+		this.send({ type: 'submit_answers', answers });
+	};
 
-	confirmTypes(selectedTypes: string[]): void {
-		this.send({
-			type: 'confirm_types',
-			selectedTypes
-		});
-	}
+	confirmTypes (selectedTypes: string[]): void {
+		this.send({ type: 'confirm_types', selectedTypes });
+	};
 
+	async importWorkspace (downloadUrl: string, manifest: I.WorkspaceManifest): Promise<void> {
+		const name = manifest.spaceName || 'AI Workspace';
 
-	async importWorkspace(downloadUrl: string, manifest: I.WorkspaceManifest): Promise<void> {
 		try {
 			// First, create the workspace with usecase NONE
-			C.WorkspaceCreate(
-				{ 
-					name: manifest.spaceName || 'AI Workspace',
-					iconOption: 1 // Default icon option
-				},
-				I.Usecase.None, // Use NONE usecase
-				(createMessage: any) => {
-					if (createMessage.error && createMessage.error.code) {
-						this.emit('importError', createMessage.error.description);
-						console.error('[SparkOnboarding] Workspace creation failed:', createMessage.error.description);
+
+			C.WorkspaceCreate({ name, iconOption: 1 }, I.Usecase.None, (createMessage: any) => {
+				if (createMessage.error && createMessage.error.code) {
+					this.emit('importError', createMessage.error.description);
+					console.error('[SparkOnboarding] Workspace creation failed:', createMessage.error.description);
+					return;
+				};
+
+				// Get the newly created space ID
+				const newSpaceId = createMessage.objectId || createMessage.spaceId;
+				
+				if (!newSpaceId) {
+					this.emit('importError', 'Failed to create workspace');
+					console.error('[SparkOnboarding] No space ID returned from workspace creation');
+					return;
+				};
+
+				console.log('[SparkOnboarding] Workspace created with ID:', newSpaceId);
+
+				// Convert relative URL to full URL if needed
+				let fullUrl = downloadUrl;
+				if (downloadUrl.startsWith('/')) {
+					// Remove query params from base URL
+					const baseUrl = new URL(this.url);
+					baseUrl.protocol = baseUrl.protocol.replace('ws', 'http');
+					baseUrl.search = ''; // Clear query params
+
+					fullUrl = `${baseUrl.origin}${downloadUrl}`;
+				};
+
+				// Now import the experience into the created workspace
+				C.ObjectImportExperience(newSpaceId, fullUrl, name, false, true, (importMessage: any) => {
+					if (importMessage.error && importMessage.error.code) {
+						this.emit('importError', importMessage.error.description);
+						console.error('[SparkOnboarding] Import failed:', importMessage.error.description);
 						return;
-					}
+					};
 
-					// Get the newly created space ID
-					const newSpaceId = createMessage.objectId || createMessage.spaceId;
-					
-					if (!newSpaceId) {
-						this.emit('importError', 'Failed to create workspace');
-						console.error('[SparkOnboarding] No space ID returned from workspace creation');
-						return;
-					}
+					// Switch to the new space
+					const routeParam = {
+						onRouteChange: () => {
+							// Initialize space state
+							U.Space.initSpaceState();
 
-					console.log('[SparkOnboarding] Workspace created with ID:', newSpaceId);
+							// Open dashboard
+							U.Space.openDashboard({ replace: true });
 
-					// Convert relative URL to full URL if needed
-					let fullUrl = downloadUrl;
-					if (downloadUrl.startsWith('/')) {
-						// Remove query params from base URL
-						const baseUrl = new URL(this.url);
-						baseUrl.protocol = baseUrl.protocol.replace('ws', 'http');
-						baseUrl.search = ''; // Clear query params
-						fullUrl = `${baseUrl.origin}${downloadUrl}`;
-					}
-
-					// Now import the experience into the created workspace
-					C.ObjectImportExperience(
-						newSpaceId, // Use the created space ID
-						fullUrl, // url to download from
-						manifest.spaceName || 'AI Workspace', // title
-						false, // isNewSpace - false since we already created it
-						true, // isAI - new parameter for AI onboarding
-						(importMessage: any) => {
-							if (importMessage.error && importMessage.error.code) {
-								this.emit('importError', importMessage.error.description);
-								console.error('[SparkOnboarding] Import failed:', importMessage.error.description);
-								return;
-							}
-
-							// Switch to the new space
-							const routeParam = {
-								onRouteChange: () => {
-									// Initialize space state
-									U.Space.initSpaceState();
-
-									// Open dashboard
-									U.Space.openDashboard({ replace: true });
-
-									// Emit success event
-									this.emit('importSuccess', newSpaceId);
-								}
-							};
-							
-							U.Router.switchSpace(newSpaceId, '', true, routeParam, false);
-						}
-					);
-				}
-			);
+							// Emit success event
+							this.emit('importSuccess', newSpaceId);
+						},
+					};
+						
+					U.Router.switchSpace(newSpaceId, '', true, routeParam, false);
+				});
+			});
 		} catch (error) {
 			console.error('[SparkOnboarding] Import failed:', error);
 			this.emit('importError', error.message);
-		}
-	}
+		};
+	};
 
-	isConnected(): boolean {
+	isConnected (): boolean {
 		return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
-	}
+	};
 
-	getSessionId(): string | null {
+	getSessionId (): string | null {
 		return this.sessionId;
-	}
+	};
 
 	// Send close_session message to permanently close the session
-	closeSession(): void {
+	closeSession (): void {
 		if (this.sessionId) {
 			console.log('[SparkOnboarding] Closing session:', this.sessionId);
 			this.send({ type: 'close_session' });
 			this.sessionId = null;
-		}
-	}
-}
+		};
+	};
+
+};
 
 // Singleton instance
 let instance: SparkOnboardingService | null = null;

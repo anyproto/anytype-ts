@@ -21,12 +21,5 @@
 		}
 
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
-		
-		// AI Onboarding button with purple sparkle
-		.button.aiOnboarding {
-			.sparkle {
-				color: #9B8ADB; // Purple color for the sparkle
-			}
-		}
 	}
 }

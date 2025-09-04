@@ -1,16 +1,15 @@
-import React, { forwardRef, useRef, useEffect, useState, useCallback } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
-import $ from 'jquery';
 
 interface Message {
 	id: string;
 	type: 'ai' | 'user' | 'typing';
-	content: React.ReactNode;
+	content: ReactNode;
 	timestamp: number;
-}
+};
 
 // Example goals - diverse use cases across multiple spheres
 const EXAMPLE_GOALS = [
@@ -108,25 +107,25 @@ const EXAMPLE_GOALS = [
 ];
 
 const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
+
 	const nodeRef = useRef(null);
 	const messagesEndRef = useRef(null);
 	const inputRef = useRef(null);
 	const { SparkOnboarding: sparkOnboarding } = S;
 
-	const [messages, setMessages] = useState<Message[]>([]);
-	const [inputValue, setInputValue] = useState('');
-	const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-	const [randomExamples, setRandomExamples] = useState<string[]>([]);
-	const [filteredExamples, setFilteredExamples] = useState<string[]>([]);
-	const [showExamples, setShowExamples] = useState(true);
-	const [newSpaceId, setNewSpaceId] = useState<string>('');
-	const [isImporting, setIsImporting] = useState(false);
-	const [isSending, setIsSending] = useState(false);
-	const [benefitShown, setBenefitShown] = useState(false);
-	const [isCreatingSpace, setIsCreatingSpace] = useState(false);
+	const [ messages, setMessages ] = useState<Message[]>([]);
+	const [ inputValue, setInputValue ] = useState('');
+	const [ selectedTypes, setSelectedTypes ] = useState<string[]>([]);
+	const [ currentQuestionIndex, setCurrentQuestionIndex ] = useState(0);
+	const [ randomExamples, setRandomExamples ] = useState<string[]>([]);
+	const [ filteredExamples, setFilteredExamples ] = useState<string[]>([]);
+	const [ showExamples, setShowExamples ] = useState(true);
+	const [ newSpaceId, setNewSpaceId ] = useState<string>('');
+	const [ isImporting, setIsImporting ] = useState(false);
+	const [ isSending, setIsSending ] = useState(false);
+	const [ benefitShown, setBenefitShown ] = useState(false);
+	const [ isCreatingSpace, setIsCreatingSpace ] = useState(false);
 	
-
 	const scrollToBottom = () => {
 		setTimeout(() => {
 			messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -144,7 +143,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		// Clear existing timeout
 		if (scrollTimeoutRef.current) {
 			clearTimeout(scrollTimeoutRef.current);
-		}
+		};
 		
 		// Remove scrolling class after scrolling stops
 		scrollTimeoutRef.current = setTimeout(() => {
@@ -157,17 +156,17 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		return () => {
 			if (scrollTimeoutRef.current) {
 				clearTimeout(scrollTimeoutRef.current);
-			}
+			};
 		};
 	}, []);
 
 	const addMessage = (type: 'ai' | 'user' | 'typing', content: React.ReactNode, replaceTyping = false) => {
 		setMessages(prev => {
-			let newMessages = [...prev];
+			let newMessages = [ ...prev ];
 			
 			if (replaceTyping) {
 				newMessages = newMessages.filter(m => m.type !== 'typing');
-			}
+			};
 			
 			const newMessage: Message = {
 				id: `msg-${Date.now()}-${Math.random()}`,
@@ -176,13 +175,14 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				timestamp: Date.now()
 			};
 			
-			return [...newMessages, newMessage];
+			return [ ...newMessages, newMessage ];
 		});
+
 		scrollToBottom();
 	};
 
-	const [currentStatus, setCurrentStatus] = useState<string>('');
-	const [showStatus, setShowStatus] = useState<boolean>(false);
+	const [ currentStatus, setCurrentStatus ] = useState<string>('');
+	const [ showStatus, setShowStatus ] = useState<boolean>(false);
 	
 	const updateStatus = (status: string) => {
 		if (status) {
@@ -197,20 +197,21 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			setTimeout(() => {
 				setCurrentStatus('');
 			}, 300);
-		}
+		};
 	};
 
-
 	const handleGoalSubmit = async () => {
-		if (!inputValue.trim() || inputValue.trim().length < 3) {
+		if (!inputValue.trim() || (inputValue.trim().length < 3)) {
 			return;
-		}
+		};
 
 		setShowExamples(false);
 		setIsSending(true);
 		
 		addMessage('user', inputValue);
+
 		const goal = inputValue.trim();
+
 		sparkOnboarding.setUserGoal(goal);
 		setInputValue('');
 
@@ -225,7 +226,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const handleQuestionAnswer = () => {
 		if (!inputValue.trim()) {
 			return;
-		}
+		};
 
 		addMessage('user', inputValue);
 		
@@ -242,7 +243,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			// After last question, show status while waiting for server response
 			updateStatus(translate('aiOnboardingStatusUnderstanding'));
 			sparkOnboarding.submitAnswers();
-		}
+		};
 	};
 
 	const handleTypeSelection = () => {
@@ -270,14 +271,16 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	};
 
 	const handleGoToSpace = () => {
-		if (newSpaceId) {
-			close();
-			U.Router.switchSpace(newSpaceId, '', true, {
-				onRouteChange: () => {
-					U.Space.openDashboard({ replace: true });
-				}
-			}, false);
-		}
+		if (!newSpaceId) {
+			return;
+		};
+
+		close();
+		U.Router.switchSpace(newSpaceId, '', true, {
+			onRouteChange: () => {
+				U.Space.openDashboard();
+			},
+		}, false);
 	};
 
 	const handleExampleClick = (example: string) => {
@@ -287,7 +290,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 	const onClose = (force?: boolean) => {
 		// If not forced, show confirmation dialog
-		if (!force && (sparkOnboarding.step !== I.OnboardingStep.Goal || messages.length > 1)) {
+		if (!force && ((sparkOnboarding.step !== I.OnboardingStep.Goal) || (messages.length > 1))) {
 			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
@@ -299,14 +302,14 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						sparkOnboarding.disconnect();
 						sparkOnboarding.reset();
 						close();
-					}
-				}
+					},
+				},
 			});
 		} else {
 			sparkOnboarding.disconnect();
 			sparkOnboarding.reset();
 			close();
-		}
+		};
 	};
 
 	// Initialize
@@ -320,9 +323,9 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	// Filter examples based on input
 	useEffect(() => {
 		// Only filter when on Goal step and examples are shown
-		if (sparkOnboarding.step !== I.OnboardingStep.Goal || !showExamples) {
+		if ((sparkOnboarding.step !== I.OnboardingStep.Goal) || !showExamples) {
 			return;
-		}
+		};
 
 		const searchTerm = inputValue.toLowerCase().trim();
 		
@@ -336,81 +339,90 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				// Hide if it's an exact match (user already typed it or clicked it)
 				if (lowerExample === searchTerm) {
 					return false;
-				}
+				};
+
 				return lowerExample.includes(searchTerm);
 			});
 			
 			// Show up to 6 matches
 			setFilteredExamples(matches.slice(0, 6));
-		}
-	}, [inputValue, randomExamples, showExamples, sparkOnboarding.step]);
+		};
+	}, [ inputValue, randomExamples, showExamples, sparkOnboarding.step ]);
 
 	// Update status with generation progress
 	useEffect(() => {
-		if (sparkOnboarding.step === I.OnboardingStep.Generation) {
-			const current = sparkOnboarding.generationProgress.current;
-			const total = sparkOnboarding.generationProgress.total;
-			
-			if (current > 0 && total > 0) {
-				if (current === total) {
-					updateStatus(translate('aiOnboardingStatusFinalTouches'));
-				} else {
-					updateStatus(U.Common.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
-				}
-			} else {
-				updateStatus(translate('aiOnboardingStatusGenerating'));
-			}
-		}
-	}, [sparkOnboarding.generationProgress.current, sparkOnboarding.generationProgress.total, sparkOnboarding.step]);
+		if (sparkOnboarding.step != I.OnboardingStep.Generation) {
+			return;
+		};
 
+		const current = sparkOnboarding.generationProgress.current;
+		const total = sparkOnboarding.generationProgress.total;
+		
+		if (current > 0 && total > 0) {
+			if (current === total) {
+				updateStatus(translate('aiOnboardingStatusFinalTouches'));
+			} else {
+				updateStatus(U.Common.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
+			};
+		} else {
+			updateStatus(translate('aiOnboardingStatusGenerating'));
+		};
+	}, [ sparkOnboarding.generationProgress.current, sparkOnboarding.generationProgress.total, sparkOnboarding.step ]);
 
 	// Handle step changes
 	useEffect(() => {
 		console.log('[AIOnboarding Component] Step changed to:', sparkOnboarding.step);
 		switch (sparkOnboarding.step) {
-			case I.OnboardingStep.Goal:
-				if (messages.length === 0) {
+			case I.OnboardingStep.Goal: {
+				if (!messages.length) {
 					addMessage('ai', (
 						<div>
 							<Label text={translate('aiOnboardingWelcomeMessage')} />
 						</div>
 					));
-				}
+				};
 				break;
+			};
 
 			case I.OnboardingStep.Questions:
-				if (sparkOnboarding.questions.length > 0 && currentQuestionIndex === 0) {
-					// Clear status since questions are ready
-					updateStatus('');
-					// Show intro message
-					addMessage('ai', 
-						<div>
-							<Label text={translate('aiOnboardingQuestionsIntro')} />
-						</div>
-					);
+				if (!sparkOnboarding.questions.length || currentQuestionIndex) {
+					break;
+				};
+
+				// Clear status since questions are ready
+				updateStatus('');
+				// Show intro message
+				addMessage('ai', 
+					<div>
+						<Label text={translate('aiOnboardingQuestionsIntro')} />
+					</div>
+				);
+				scrollToBottom();
+
+				// Show first question right after
+				setTimeout(() => {
+					addMessage('ai', <Label text={sparkOnboarding.questions[0]} />);
 					scrollToBottom();
-					// Show first question right after
-					setTimeout(() => {
-						addMessage('ai', <Label text={sparkOnboarding.questions[0]} />);
-						scrollToBottom();
-					}, 100);
-				}
+				}, 100);
 				break;
 
 			case I.OnboardingStep.UserBenefit:
 				console.log('[AIOnboarding Component] UserBenefit case - userBenefit:', sparkOnboarding.userBenefit, 'benefitShown:', benefitShown);
-				if (sparkOnboarding.userBenefit && !benefitShown) {
-					console.log('[AIOnboarding Component] Showing user benefit message');
-					// Show the benefit text
-					addMessage('ai', sparkOnboarding.userBenefit);
-					setBenefitShown(true);
-					scrollToBottom();
-					
-					// Show status immediately for drafting types
-					setTimeout(() => {
-						updateStatus(translate('aiOnboardingStatusDraftingTypes'));
-					}, 100);
-				}
+				if (!sparkOnboarding.userBenefit || !benefitShown) {
+					break;
+				};
+
+				console.log('[AIOnboarding Component] Showing user benefit message');
+
+				// Show the benefit text
+				addMessage('ai', sparkOnboarding.userBenefit);
+				setBenefitShown(true);
+				scrollToBottom();
+				
+				// Show status immediately for drafting types
+				setTimeout(() => {
+					updateStatus(translate('aiOnboardingStatusDraftingTypes'));
+				}, 100);
 				break;
 
 			// TypeReview step is now auto-skipped - types are submitted automatically
@@ -421,15 +433,15 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				const current = sparkOnboarding.generationProgress.current;
 				const total = sparkOnboarding.generationProgress.total;
 				
-				if (current > 0 && total > 0) {
+				if ((current > 0) && (total > 0)) {
 					if (current === total) {
 						updateStatus(translate('aiOnboardingStatusFinalTouches'));
 					} else {
 						updateStatus(U.Common.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
-					}
+					};
 				} else {
 					updateStatus(translate('aiOnboardingStatusGenerating'));
-				}
+				};
 				break;
 
 			case I.OnboardingStep.Complete:
@@ -442,10 +454,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							<Label text={translate('aiOnboardingSpaceReady')} />
 						</div>
 					);
-				}
+				};
 				break;
 		}
-	}, [sparkOnboarding.step, currentQuestionIndex, benefitShown]);
+	}, [ sparkOnboarding.step, currentQuestionIndex, benefitShown ]);
 
 	// Listen for import success/error
 	useEffect(() => {
@@ -459,7 +471,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			setMessages(prev => {
 				const newMessages = [...prev];
 				const lastMessage = newMessages[newMessages.length - 1];
-				if (lastMessage && lastMessage.type === 'ai') {
+
+				if (lastMessage && (lastMessage.type === 'ai')) {
 					lastMessage.content = (
 						<div className="completionMessage">
 							<Icon className="success large" />
@@ -471,7 +484,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							</div>
 						</div>
 					);
-				}
+				};
 				return newMessages;
 			});
 		};
@@ -524,7 +537,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			handleGoalSubmit();
 		} else if (sparkOnboarding.step === I.OnboardingStep.Questions) {
 			handleQuestionAnswer();
-		}
+		};
 	};
 
 	const showInput = sparkOnboarding.step === I.OnboardingStep.Goal || sparkOnboarding.step === I.OnboardingStep.Questions;
@@ -532,13 +545,13 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const showGoToSpace = newSpaceId && !isImporting;
 
 	// Render loading state only for initial connection
-	if (!sparkOnboarding.isConnected && sparkOnboarding.step === I.OnboardingStep.Goal && !sparkOnboarding.error && messages.length === 0) {
+	if (!sparkOnboarding.isConnected && (sparkOnboarding.step === I.OnboardingStep.Goal) && !sparkOnboarding.error && !messages.length) {
 		return (
 			<div ref={nodeRef} className="wrap">
 				<Loader id="loader" />
 			</div>
 		);
-	}
+	};
 
 	// Render error state with better UI (but allow retry with loading)
 	if (sparkOnboarding.error && (!sparkOnboarding.isLoading || sparkOnboarding.error === 'Failed to connect to onboarding service')) {
@@ -552,7 +565,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					</div>
 				</div>
 			);
-		}
+		};
+
 		return (
 			<div ref={nodeRef} className="errorStateWrapper">
 				<div className="errorContent">
@@ -575,6 +589,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 								sparkOnboarding.connect();
 							}} 
 						/>
+
 						<Button 
 							className="c28 secondary" 
 							text="Close" 
@@ -584,7 +599,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				</div>
 			</div>
 		);
-	}
+	};
 
 	return (
 		<div ref={nodeRef} className="mainWrapper">
@@ -728,16 +743,19 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 // Typing Indicator Component
 const TypingIndicator = () => (
 	<div className="typingDots">
-		<span className="dot"></span>
-		<span className="dot"></span>
-		<span className="dot"></span>
+		<span className="dot" />
+		<span className="dot" />
+		<span className="dot" />
 	</div>
 );
 
 // Type Card Component (for large grid display)
 const TypeCard = ({ type, isSelected, onToggle }) => {
-	const cn = ['typeCard'];
-	if (isSelected) cn.push('selected');
+	const cn = [ 'typeCard' ];
+
+	if (isSelected) {
+		cn.push('selected');
+	};
 
 	return (
 		<div className={cn.join(' ')} onClick={onToggle}>
@@ -752,8 +770,10 @@ const TypeCard = ({ type, isSelected, onToggle }) => {
 
 // Compact Type Block Component (for inline chat display)
 const CompactTypeBlock = ({ type, isSelected, onToggle }) => {
-	const cn = ['compactTypeBlock'];
-	if (isSelected) cn.push('selected');
+	const cn = [ 'compactTypeBlock' ];
+	if (isSelected) {
+			cn.push('selected');
+	};
 
 	return (
 		<div className={cn.join(' ')} onClick={onToggle}>
@@ -762,6 +782,5 @@ const CompactTypeBlock = ({ type, isSelected, onToggle }) => {
 		</div>
 	);
 };
-
 
 export default PopupAIOnboarding;

@@ -34,9 +34,9 @@ class SparkOnboardingStore {
 	// This ensures consistent ID generation across all handlers
 	private typeNameToNodeId(typeName: string): string {
 		return `type-${typeName.toLowerCase().replace(/\s+/g, '-')}`;
-	}
+	};
 
-	constructor() {
+	constructor () {
 		makeObservable(this, {
 			step: observable,
 			isConnected: observable,
@@ -74,15 +74,14 @@ class SparkOnboardingStore {
 			isValid: computed,
 			progressPercentage: computed,
 			stepIndex: computed,
-			totalSteps: computed
 		});
-	}
+	};
 
-	init(): void {
+	init (): void {
 		if (!this.service) {
 			this.service = getSparkOnboardingService();
 			this.setupEventListeners();
-		}
+		};
 		
 		// Initialize with some sample nodes if empty
 		const enableExamples = false; // Toggle to enable/disable example nodes
@@ -119,7 +118,7 @@ class SparkOnboardingStore {
 					// Center of right free area
 					const rightFreeSpace = width - popupRight;
 					x = popupRight + (rightFreeSpace / 2) + (Math.random() - 0.5) * 100;
-				}
+				};
 				
 				// Distribute vertically
 				const verticalIndex = Math.floor(index / 2);
@@ -150,26 +149,29 @@ class SparkOnboardingStore {
 			
 			// Position objects around their types
 			sampleNodes.forEach(typeNode => {
-				if (typeNode.type === 'type' && objectsPerType[typeNode.id]) {
-					const objects = objectsPerType[typeNode.id];
-					objects.forEach((objLabel, index) => {
-						// Position objects in a circle around type
-						const angle = (Math.PI * 2 * index) / objects.length - Math.PI / 2;
-						const radius = 220 + (Math.random() * 40); // Same as real objects - much larger distance
-						
-						const objX = typeNode.x + radius * Math.cos(angle);
-						const objY = typeNode.y + radius * Math.sin(angle);
-						
-						sampleNodes.push({
-							id: `${typeNode.id}-obj-${index}`,
-							type: 'object' as const,
-							label: objLabel,
-							x: Math.max(50, Math.min(width - 50, objX)),
-							y: Math.max(50, Math.min(height - 50, objY)),
-							opacity: 0.7
-						});
+				if ((typeNode.type != 'type') || !objectsPerType[typeNode.id]) {
+					return;
+				};
+
+				const objects = objectsPerType[typeNode.id];
+
+				objects.forEach((objLabel, index) => {
+					// Position objects in a circle around type
+					const angle = (Math.PI * 2 * index) / objects.length - Math.PI / 2;
+					const radius = 220 + (Math.random() * 40); // Same as real objects - much larger distance
+					
+					const objX = typeNode.x + radius * Math.cos(angle);
+					const objY = typeNode.y + radius * Math.sin(angle);
+					
+					sampleNodes.push({
+						id: `${typeNode.id}-obj-${index}`,
+						type: 'object' as const,
+						label: objLabel,
+						x: Math.max(50, Math.min(width - 50, objX)),
+						y: Math.max(50, Math.min(height - 50, objY)),
+						opacity: 0.7
 					});
-				}
+				});
 			});
 			
 			// Create links between types and their objects
@@ -191,10 +193,10 @@ class SparkOnboardingStore {
 			// Use push to trigger observable updates
 			sampleNodes.forEach(node => this.graphNodes.push(node));
 			sampleLinks.forEach(link => this.graphLinks.push(link));
-		}
-	}
+		};
+	};
 
-	reset(): void {
+	reset (): void {
 		this.step = I.OnboardingStep.Goal;
 		this.isConnected = false;
 		this.isLoading = false;
@@ -217,12 +219,12 @@ class SparkOnboardingStore {
 		// Keep initial test nodes or reset to empty
 		this.graphNodes = [];
 		this.graphLinks = [];
-	}
+	};
 
-	async connect(): Promise<void> {
+	async connect (): Promise<void> {
 		if (!this.service) {
 			this.init();
-		}
+		};
 
 		this.isLoading = true;
 		// Don't clear error immediately - keep it visible during retry attempt
@@ -236,40 +238,40 @@ class SparkOnboardingStore {
 			this.isConnected = false;
 		} finally {
 			this.isLoading = false;
-		}
-	}
+		};
+	};
 
-	disconnect(): void {
+	disconnect (): void {
 		if (this.service) {
 			this.service.disconnect();
 			this.isConnected = false;
-		}
-	}
+		};
+	};
 
-	resetError(): void {
+	resetError (): void {
 		this.error = null;
-	}
+	};
 
-	setStep(step: I.OnboardingStep): void {
+	setStep (step: I.OnboardingStep): void {
 		this.step = step;
-	}
+	};
 
-	setUserGoal(goal: string): void {
+	setUserGoal (goal: string): void {
 		this.userGoal = goal;
-	}
+	};
 
-	setAnswers(answers: string[]): void {
+	setAnswers (answers: string[]): void {
 		this.answers = answers;
-	}
+	};
 
-	setSelectedTypes(types: string[]): void {
+	setSelectedTypes (types: string[]): void {
 		this.selectedTypes = types;
-	}
+	};
 
-	async startOnboarding(): Promise<void> {
+	async startOnboarding (): Promise<void> {
 		if (!this.service || !this.userGoal) {
 			return;
-		}
+		};
 
 		this.isLoading = true;
 		this.error = null;
@@ -278,13 +280,13 @@ class SparkOnboardingStore {
 			this.service.startOnboarding(this.userGoal);
 		} catch (error) {
 			this.error = error.message || 'Failed to start onboarding';
-		}
-	}
+		};
+	};
 
-	async submitAnswers(): Promise<void> {
+	async submitAnswers (): Promise<void> {
 		if (!this.service || !this.answers.length) {
 			return;
-		}
+		};
 
 		this.isLoading = true;
 		this.error = null;
@@ -293,13 +295,13 @@ class SparkOnboardingStore {
 			this.service.submitAnswers(this.answers);
 		} catch (error) {
 			this.error = error.message || 'Failed to submit answers';
-		}
-	}
+		};
+	};
 
-	async confirmTypes(): Promise<void> {
+	async confirmTypes (): Promise<void> {
 		if (!this.service || !this.selectedTypes.length) {
 			return;
-		}
+		};
 
 		this.isLoading = true;
 		this.error = null;
@@ -308,13 +310,13 @@ class SparkOnboardingStore {
 			this.service.confirmTypes(this.selectedTypes);
 		} catch (error) {
 			this.error = error.message || 'Failed to confirm types';
-		}
-	}
+		};
+	};
 
-	async importWorkspace(): Promise<void> {
+	async importWorkspace (): Promise<void> {
 		if (!this.service || !this.downloadUrl || !this.manifest) {
 			return;
-		}
+		};
 
 		this.isLoading = true;
 		this.error = null;
@@ -326,50 +328,52 @@ class SparkOnboardingStore {
 				...this.manifest,
 				spaceName: this.spaceName || this.manifest.spaceName
 			};
+
 			await this.service.importWorkspace(this.downloadUrl, manifestWithGeneratedName);
 		} catch (error) {
 			this.error = error.message || 'Failed to import workspace';
 			this.isLoading = false;
-		}
-	}
+		};
+	};
 
-	addGraphNode(node: any): void {
+	addGraphNode (node: any): void {
 		// Increase limit to handle more nodes - performance should be fine with modern browsers
 		const MAX_NODES = 50; // Increased from 20 to 50
-		
-		if (!this.graphNodes.find(n => n.id === node.id)) {
-			// If we're at the limit, remove the oldest object node (preserve types)
-			if (this.graphNodes.length >= MAX_NODES) {
-				// Try to remove an object node first, not a type
-				const objectIndex = this.graphNodes.findIndex(n => n.type === 'object');
-				if (objectIndex !== -1) {
-					this.graphNodes.splice(objectIndex, 1);
-				} else {
-					// If no objects, remove the oldest non-sample node
-					const nonSampleIndex = this.graphNodes.findIndex(n => !n.id.startsWith('sample-'));
-					if (nonSampleIndex !== -1) {
-						this.graphNodes.splice(nonSampleIndex, 1);
-					}
-				}
-			}
-			this.graphNodes.push(node);
-		}
-	}
 
-	addGraphLink(link: any): void {
-		const linkExists = this.graphLinks.some(l => 
-			l.source === link.source && l.target === link.target
-		);
+		if (this.graphNodes.find(n => n.id === node.id)) {
+			return;
+		};
+		
+		// If we're at the limit, remove the oldest object node (preserve types)
+		if (this.graphNodes.length >= MAX_NODES) {
+			// Try to remove an object node first, not a type
+			const objectIndex = this.graphNodes.findIndex(n => n.type === 'object');
+
+			if (objectIndex !== -1) {
+				this.graphNodes.splice(objectIndex, 1);
+			} else {
+				// If no objects, remove the oldest non-sample node
+				const nonSampleIndex = this.graphNodes.findIndex(n => !n.id.startsWith('sample-'));
+				if (nonSampleIndex !== -1) {
+					this.graphNodes.splice(nonSampleIndex, 1);
+				};
+			};
+		};
+
+		this.graphNodes.push(node);
+	};
+
+	addGraphLink (link: any): void {
+		const linkExists = this.graphLinks.some(l => (l.source === link.source) && (l.target === link.target));
+
 		if (!linkExists) {
 			this.graphLinks.push(link);
-		}
-	}
+		};
+	};
 
-
-	private getEdgePositions(): { positions: { useHorizontal: boolean; leftX?: number; rightX?: number; topY?: number; bottomY?: number } } {
+	private getEdgePositions (): { positions: { useHorizontal: boolean; leftX?: number; rightX?: number; topY?: number; bottomY?: number } } {
 		const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
 		const height = typeof window !== 'undefined' ? window.innerHeight : 800;
-		const aspectRatio = width / height;
 		
 		// Popup dimensions with extra margin
 		const popupWidth = 720;
@@ -395,7 +399,7 @@ class SparkOnboardingStore {
 					useHorizontal: true,
 					leftX: leftEdge, // Firmly on left edge
 					rightX: rightEdge // Firmly on right edge
-				}
+				},
 			};
 		} else {
 			// Position nodes on top and bottom edges for narrow screens
@@ -407,16 +411,15 @@ class SparkOnboardingStore {
 					useHorizontal: false,
 					topY: topEdge, // Firmly on top edge
 					bottomY: bottomEdge // Firmly on bottom edge
-				}
+				},
 			};
-		}
-	}
+		};
+	};
 
-
-	private setupEventListeners(): void {
+	private setupEventListeners (): void {
 		if (!this.service) {
 			return;
-		}
+		};
 
 		this.service.on('connected', () => {
 			this.isConnected = true;
@@ -431,23 +434,27 @@ class SparkOnboardingStore {
 				// Restore questions and answers if they exist
 				if (data.state.questions) {
 					this.questions = data.state.questions;
-				}
+				};
+
 				if (data.state.answers) {
 					this.answers = data.state.answers;
-				}
+				};
+
 				// Restore space name if it exists
 				if (data.state.spaceName) {
 					this.spaceName = data.state.spaceName;
-				}
+				};
+
 				// Restore step - determine based on what data we have
 				if (data.state.step) {
 					this.step = data.state.step;
-				}
+				};
+
 				// Restore any generation progress
 				if (data.state.generationProgress) {
 					this.generationProgress = data.state.generationProgress;
-				}
-			}
+				};
+			};
 		});
 
 		this.service.on('disconnected', () => {
@@ -493,6 +500,7 @@ class SparkOnboardingStore {
 		this.service.on('analysisComplete', (data: { spaceName: string; suggestedTypes: I.SuggestedType[] }) => {
 			console.log('[SparkOnboarding Store] analysisComplete received, current step:', this.step);
 			console.log('[SparkOnboarding Store] Suggested types:', data.suggestedTypes);
+
 			this.spaceName = data.spaceName;
 			this.suggestedTypes = data.suggestedTypes;
 			// Pre-select all types by default
@@ -512,8 +520,10 @@ class SparkOnboardingStore {
 			const filteredLinks = this.graphLinks.filter(l => 
 				!l.source.startsWith('sample-') && !l.target.startsWith('sample-')
 			);
+
 			this.graphNodes = filteredNodes;
 			this.graphLinks = filteredLinks;
+
 			console.log('[SparkOnboarding Store] After clearing samples, nodes:', this.graphNodes.length, 'links:', this.graphLinks.length);
 			
 			// Add all suggested types to the graph immediately on the edges
@@ -529,8 +539,6 @@ class SparkOnboardingStore {
 				// Get popup boundaries
 				const popupLeft = (window.innerWidth - 720) / 2;
 				const popupRight = popupLeft + 720;
-				const popupTop = (window.innerHeight - 680) / 2;
-				const popupBottom = popupTop + 680;
 				
 				if (positions.useHorizontal) {
 					// Better distribution in free space
@@ -554,6 +562,7 @@ class SparkOnboardingStore {
 					// Use more of the vertical space
 					const verticalSpacing = (window.innerHeight - 200) / Math.max(verticalCount - 1, 1);
 					const baseY = 100 + (verticalIndex * verticalSpacing);
+
 					y = Math.max(80, Math.min(window.innerHeight - 80, baseY)); // Keep within bounds
 				} else {
 					// Use top and bottom edges for narrow screens
@@ -562,7 +571,7 @@ class SparkOnboardingStore {
 					// Spread horizontally along the edge
 					const horizontalIndex = Math.floor(index / 2);
 					x = 250 + (horizontalIndex * 150); // Start at 250px from left, 150px spacing
-				}
+				};
 				
 				const nodeId = this.typeNameToNodeId(type.name);
 				const node = {
@@ -573,10 +582,12 @@ class SparkOnboardingStore {
 					x: x || 100,
 					y: y || 100
 				};
+
 				console.log('[SparkOnboarding Store] Creating type node with ID:', nodeId, 'for type:', type.name);
 				console.log('[SparkOnboarding Store] Full node object:', node);
 				this.addGraphNode(node);
 			});
+
 			console.log('[SparkOnboarding Store] Final graph state - nodes:', this.graphNodes.length, 'all nodes:', this.graphNodes);
 		});
 
@@ -587,6 +598,7 @@ class SparkOnboardingStore {
 				types: [],
 				status: 'Starting generation...'
 			};
+
 			this.step = I.OnboardingStep.Generation;
 			this.isLoading = false;
 		});
@@ -609,13 +621,13 @@ class SparkOnboardingStore {
 				} else {
 					// No icon provided - that's fine, node will display without icon
 					console.log('[SparkOnboarding Store] No icon provided for type:', typeName);
-				}
+				};
 				
 				// Log properties for debugging
 				if (properties && properties.length > 0) {
 					console.log('[SparkOnboarding Store] Type properties:', typeName, properties);
-				}
-			}
+				};
+			};
 		});
 
 		this.service.on('object_titles_generated', (data: { typeName: string; typeKey: string; titles: string[] }) => {
@@ -676,7 +688,7 @@ class SparkOnboardingStore {
 				});
 			} else {
 				console.warn('[SparkOnboarding Store] Type node not found for type name:', data.typeName);
-			}
+			};
 		});
 
 		// propertyGenerated is no longer sent - properties are included in typeGenerated
@@ -770,30 +782,37 @@ class SparkOnboardingStore {
 			this.error = error;
 			this.isLoading = false;
 		});
-	}
+	};
 
-	get isValid(): boolean {
+	get isValid (): boolean {
 		switch (this.step) {
-			case I.OnboardingStep.Goal:
+			case I.OnboardingStep.Goal: {
 				return this.userGoal.trim().length > 10;
-			case I.OnboardingStep.Questions:
-				return this.answers.length === this.questions.length &&
-				this.answers.every(a => a.trim().length > 0);
-			case I.OnboardingStep.TypeReview:
+			};
+
+			case I.OnboardingStep.Questions: {
+				return (this.answers.length === this.questions.length) && this.answers.every(a => a.trim().length > 0);
+			};
+
+			case I.OnboardingStep.TypeReview: {
 				return this.selectedTypes.length > 0;
-			default:
+			};
+
+			default: {
 				return true;
-		}
-	}
+			};
+		};
+	};
 
-	get progressPercentage(): number {
-		if (this.generationProgress.total === 0) {
+	get progressPercentage (): number {
+		if (!this.generationProgress.total) {
 			return 0;
-		}
-		return Math.round((this.generationProgress.current / this.generationProgress.total) * 100);
-	}
+		};
 
-	get stepIndex(): number {
+		return Math.round((this.generationProgress.current / this.generationProgress.total) * 100);
+	};
+
+	get stepIndex (): number {
 		const steps = [
 			I.OnboardingStep.Goal,
 			I.OnboardingStep.Questions,
@@ -803,11 +822,8 @@ class SparkOnboardingStore {
 			I.OnboardingStep.Complete
 		];
 		return steps.indexOf(this.step);
-	}
+	};
 
-	get totalSteps(): number {
-		return 6;
-	}
-}
+};
 
 export const SparkOnboarding: SparkOnboardingStore = new SparkOnboardingStore();

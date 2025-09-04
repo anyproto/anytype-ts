@@ -190,6 +190,13 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 	};
 
+	let dimmer = null;
+	if (id == 'aiOnboarding') {
+		dimmer = <DimmerWithGraph onClick={onDimmer} />;
+	} else {
+		dimmer = <Dimmer onClick={onDimmer} />;
+	};
+
 	return (
 		<div 
 			ref={nodeRef}
@@ -209,11 +216,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					/>
 				</div>
 			</div>
-			{id === 'aiOnboarding' ? (
-				<DimmerWithGraph onClick={onDimmer} />
-			) : (
-				<Dimmer onClick={onDimmer} />
-			)}
+			{dimmer}
 		</div>
 	);
 	
