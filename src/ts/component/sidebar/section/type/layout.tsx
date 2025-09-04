@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
 import { I, U, translate } from 'Lib';
@@ -11,77 +11,35 @@ const Components = [
 	FormatList,
 ];
 
-const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends React.Component<I.SidebarSectionComponent> {
-	
-	node = null;
-	refFormat = null;
+const SidebarSectionTypeLayout = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
-	constructor (props: I.SidebarSectionComponent) {
-		super(props);
+	const { object, readonly, onChange } = props;
+	const formatOptions: I.Option[] = [
+		{ id: I.LayoutFormat.Page, name: translate('sidebarSectionLayoutFormatPage') },
+		{ id: I.LayoutFormat.List, name: translate('sidebarSectionLayoutFormatList') },
+	];
+	const Component = Components[object.layoutFormat];
+	const nodeRef = useRef<HTMLDivElement>(null);
+	const formatRef = useRef(null);
 
-		this.onLayout = this.onLayout.bind(this);
+	useEffect(() => {
+		setValue();
+	});
+
+	const setValue = () => {
+		formatRef.current?.setValue(object.layoutFormat);
 	};
 
-    render () {
-		const { object, readonly } = this.props;
-		const formatOptions: I.Option[] = [
-			{ id: I.LayoutFormat.Page, name: translate('sidebarSectionLayoutFormatPage') },
-			{ id: I.LayoutFormat.List, name: translate('sidebarSectionLayoutFormatList') },
-		];
-		const Component = Components[object.layoutFormat];
+	const onLayout = (id: I.LayoutFormat): void => {
+		const layoutOptions = getLayoutOptions(id);
 
-        return (
-			<div ref={ref => this.node = ref} className="wrap">
-				{!object.id ? (
-					<>
-						<Label text={translate('sidebarSectionLayoutFormat')} />
-						<div className="items">
-							<div className="item">
-								<TabSwitch
-									ref={ref => this.refFormat = ref}
-									options={formatOptions}
-									value={object.layoutFormat}
-									onChange={this.onLayout}
-									readonly={readonly}
-								/>
-							</div>
-						</div>
-					</>
-				) : ''}
-
-				<Label text={translate('sidebarSectionLayoutName')} />
-
-				{Component ? <Component {...this.props} layoutOptions={this.getLayoutOptions(object.layoutFormat)} /> : ''}
-			</div>
-		);
-    };
-
-	componentDidMount (): void {
-		this.setValue();
-	};
-
-	componentDidUpdate (): void {
-		this.setValue();
-	};
-
-	setValue () {
-		const { object } = this.props;
-
-		this.refFormat?.setValue(object.layoutFormat);
-	};
-
-	onLayout (id: I.LayoutFormat): void {
-		const layoutOptions = this.getLayoutOptions(id);
-
-		this.props.onChange({ 
+		onChange({ 
 			layoutFormat: id, 
 			recommendedLayout: layoutOptions[0].id,
 		});
 	};
 
-	getLayoutOptions (format: I.LayoutFormat): any[] {
-		const { object, readonly } = this.props;
-
+	const getLayoutOptions = (format: I.LayoutFormat): any[] => {
 		let ret = [];
 
 		if (readonly) {
@@ -118,6 +76,31 @@ const SidebarSectionTypeLayout = observer(class SidebarSectionTypeLayout extends
 		}));
 	};
 
-});
+	return (
+		<div ref={nodeRef} className="wrap">
+			{!object.id ? (
+				<>
+					<Label text={translate('sidebarSectionLayoutFormat')} />
+					<div className="items">
+						<div className="item">
+							<TabSwitch
+								ref={formatRef}
+								options={formatOptions}
+								value={object.layoutFormat}
+								onChange={onLayout}
+								readonly={readonly}
+							/>
+						</div>
+					</div>
+				</>
+			) : ''}
+
+			<Label text={translate('sidebarSectionLayoutName')} />
+
+			{Component ? <Component {...props} layoutOptions={getLayoutOptions(object.layoutFormat)} /> : ''}
+		</div>
+	);
+
+}));
 
 export default SidebarSectionTypeLayout;
