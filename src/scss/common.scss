@@ -253,8 +253,8 @@ html.platformWindows:not(.noMenuBar) {
 		flex-direction: row;
 	}
 	#menuBar {
-		.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; }
-		.side.left { justify-content: flex-start; gap: 0px 2px; @include text-common; font-weight: 500; }
+		.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; @include text-small; font-weight: 500; }
+		.side.left { justify-content: flex-start; gap: 0px 2px; }
 		.side.right { justify-content: flex-end; }
 
 		.icon { width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; }
