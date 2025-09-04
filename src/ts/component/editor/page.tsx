@@ -2420,9 +2420,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 				const ct = scrollContainer.offset().top;
 				const ch = scrollContainer.height();
-				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
+				const height = Math.max(J.Size.lastBlock, Math.min(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct ));
 
-				last.css({ height: Math.max(J.Size.lastBlock, height) });
+				last.css({ height });
 			};
 
 			if (note.length) {
