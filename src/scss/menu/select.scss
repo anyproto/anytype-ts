@@ -111,14 +111,6 @@
 		}
 	}
 
-	/* Chat message */
-	.menu.menuSelect.chatMessage {
-		.item {
-			.icon.reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
-			.icon.reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
-		}
-	}
-
 	/* Invite Link */
 	.menu.menuSelect.inviteLinkType { width: var(--menu-width-large); }
 	.menu.menuSelect.inviteLinkType {

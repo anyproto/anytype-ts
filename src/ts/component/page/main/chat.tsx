@@ -86,29 +86,14 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 		raf(() => {
 			const node = $(nodeRef.current);
-			const blocks = $(blocksRef.current);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const scrollWrapper = node.find('#scrollWrapper');
 			const formWrapper = node.find('#formWrapper').addClass('isFixed');
-			const controls = node.find('.editorControls');
-			const head = node.find('.headSimple');
 
 			const fh = Number(formWrapper.outerHeight(true)) || 0;
-			const ch = Number(controls.outerHeight(true)) || 0;
-			const hh = Number(head.outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - J.Size.header - fh - ch - hh;
+			const mh = scrollContainer.height() - J.Size.header - fh;
 
 			scrollWrapper.css({ minHeight: mh });
-
-			if (type && type.layoutWidth) {
-				const pageContainer = U.Common.getPageContainer(isPopup);
-				const mw = pageContainer.width();
-				const size = mw * 0.6;
-				const w = (mw - 96 - size) * type.layoutWidth;
-				const width = Math.max(300, Math.max(size, Math.min(mw - 96, size + w)));
-
-				blocks.css({ maxWidth: width });
-			};
 		});
 	};
 

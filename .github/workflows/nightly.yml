@@ -1,0 +1,263 @@
+name: Nightly Builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: electron.builder channel
+        required: true
+        default: alpha
+        type: choice
+        options:
+          - alpha
+          - beta
+  schedule:
+    - cron: '0 2 * * *' # every day at 2am (UTC)
+
+permissions:
+  contents: 'write'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - macos-13
+          - ubuntu-22.04
+          - windows-latest
+
+    steps:
+      - name: Setup
+        run: |
+          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+          check-latest: true
+
+      - name: Setup GO
+        run: |
+          go version
+          echo GOPATH=$(go env GOPATH) >> $GITHUB_ENV
+          echo GOBIN=$(go env GOPATH)/bin >> $GITHUB_ENV
+          echo $(go env GOPATH)/bin >> $GITHUB_PATH
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install LibSecret
+        if: matrix.os == 'ubuntu-latest' # only for ubuntu 24 or latest
+        run:
+          sudo apt-get install libsecret-1-dev
+
+      - name: Install AzureSignTool
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: dotnet tool install --global AzureSignTool
+
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17.0
+
+      - name: Install Webpack
+        run: npm install --save-dev webpack-cli --legacy-peer-deps
+
+      - name: Update locale
+        run: npm run update:locale
+        env:
+          GITHUB_TOKEN: ${{secrets.TOKEN}}
+
+      #- name: Update Deps
+      #  run: npm run build:deps
+
+      - name: Get anytype-heart nightly release info
+        uses: actions/github-script@v7
+        id: anytype-heart-nightly-info
+        with:
+          script: |
+            const owner = 'anyproto';
+            const repo = 'anytype-heart';
+
+            const releases = await github.paginate(
+              github.rest.repos.listReleases,
+              { owner, repo, per_page: 100 }
+            );
+
+            const nightly = releases.find(r =>
+              /nightly/i.test(r.tag_name || '') || /nightly/i.test(r.name || '')
+            );
+
+            if (!nightly) {
+              core.setFailed('Nightly release not found');
+              return;
+            }
+
+            core.setOutput('release_name', nightly.name);
+
+      - name: Nightly mode env settings
+        shell: bash
+        run: |
+          # choice channel name
+          if [[ -z "${{ github.event.inputs.channel }}" ]]; then
+            # default value
+            CHANNEL="alpha"
+          else
+            CHANNEL="${{ github.event.inputs.channel }}"
+          fi
+          echo "CHANNEL=$CHANNEL" >> $GITHUB_ENV
+          # choice s3 bucket for publishing {{
+          if [[ "$CHANNEL" == "beta" ]]; then
+            S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET_BETA}}"
+          else
+            S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET}}"
+          fi
+          echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_ENV
+          # }}
+          echo "MIDDLEWARE_VERSION=${{ steps.anytype-heart-nightly-info.outputs.release_name }}" >> $GITHUB_ENV
+
+      #- name: Print all environment variables
+      #  run: printenv
+
+      - name: Nightly mode edit package.json
+        shell: bash
+        run: |
+          jq \
+            --tab \
+            --arg date "$(TZ=Europe/Berlin date +%Y%m%d%H%M)" \
+            '
+            .name = "anytype-dev" |
+            .version |= (. | split(".") | .[0] + "." + .[1] + "." + $date + "-${{ env.CHANNEL }}") |
+            .description = "Anytype Nightly" |
+            .build.appId = "com.anytype.anytype-dev" |
+            .build.productName = "Anytype Nightly" |
+            .build.protocols[0].name = "Anytype Nightly" |
+            .build.mac.publish |= map(del(.url)) |
+            .build.mac.publish[0].provider = "s3" |
+            .build.mac.publish[0].bucket = "${{ env.S3_BUCKET }}" |
+            .build.mac.publish[0].region = "${{ secrets.NIGHTLY_AWS_REGION }}" |
+            .build.win.publish |= map(del(.url)) |
+            .build.win.publish[0].provider = "s3" |
+            .build.win.publish[0].bucket = "${{ env.S3_BUCKET }}" |
+            .build.win.publish[0].region = "${{ secrets.NIGHTLY_AWS_REGION }}" |
+            .build.linux.description = "Anytype Nightly" |
+            .build.linux.desktop.Name = "Anytype Nightly" |
+            .build.linux.publish |= map(del(.url)) |
+            .build.linux.publish[0].provider = "s3" |
+            .build.linux.publish[0].bucket = "${{ env.S3_BUCKET }}" |
+            .build.linux.publish[0].region = "${{ secrets.NIGHTLY_AWS_REGION }}"
+          ' package.json > tmp.json && mv tmp.json package.json
+
+      - name: debug cat package.json
+        shell: bash
+        run: cat package.json
+
+      - name: Install rsync on windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        shell: pwsh
+        run: |
+          choco install -y rsync
+
+      - name: Patches for the Nightly app
+        shell: bash
+        run: |
+          patch go/nativeMessagingHost.go < nightly/patches/nativeMessagingHost.go.patch
+          patch electron/js/lib/installNativeMessagingHost.js < nightly/patches/installNativeMessagingHost.js.patch
+          rsync -a nightly/electron/ electron/
+
+      - name: Update Addon only AMD
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        shell: bash
+        run: |
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="${{env.MIDDLEWARE_VERSION}}"
+
+      - name: Update Addon AMD and ARM
+        if: ${{ !startsWith(matrix.os, 'windows-') }}
+        shell: bash
+        run: |
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="${{env.MIDDLEWARE_VERSION}}" --arch="arm"
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="${{env.MIDDLEWARE_VERSION}}" --arch="amd"
+
+      - name: Build Native Messaging Host Windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: npm run build:nmh-win
+        env:
+          CGO_ENABLED: 0
+
+      - name: Build Native Messaging Host
+        if: ${{ !startsWith(matrix.os, 'windows-') }}
+        run: npm run build:nmh
+        env:
+          CGO_ENABLED: 0
+
+      - name: Build Front Mac OS
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{secrets.TOKEN}}
+          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
+          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
+          release: true
+          args: --arm64 --x64 --publish always --config.publish.provider=s3 --config.publish.bucket=${{ env.S3_BUCKET }} --config.publish.region=${{ secrets.NIGHTLY_AWS_REGION }}
+        env:
+          DEBUG: electron-builder
+          APPLEID: ${{ secrets.APPLEID }}
+          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+          APPLETEAM: ${{ secrets.APPLETEAM }}
+          USE_HARD_LINKS: false
+          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build Front Other
+        if: ${{ !startsWith(matrix.os, 'macos-') }}
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{secrets.TOKEN}}
+          release: true
+          args: --publish always --config.publish.provider=s3 --config.publish.bucket=${{ env.S3_BUCKET }} --config.publish.region=${{ secrets.NIGHTLY_AWS_REGION }}
+        env:
+          DEBUG: electron-builder
+          USE_HARD_LINKS: false
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
+
+      # FAILURE - send to alerts channel
+      - name: Notify Slack (failure → alerts)
+        if: ${{ failure() }}
+        uses: ravsamhq/notify-slack-action@v2
+        with:
+          status: ${{ job.status }}
+          notification_title: "❌ {workflow}"
+          message_format: "{emoji} *{job}* in *{workflow}* {status_message}"
+          footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_ALERTS }}
+
+      # SUCCESS - send to builds channel
+      - name: Notify Slack (ok → builds)
+        if: ${{ success() }}
+        uses: ravsamhq/notify-slack-action@v2
+        with:
+          status: ${{ job.status }}
+          notification_title: "✅ {workflow}"
+          message_format: "{emoji} *{job}* in *{workflow}* {status_message}"
+          footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
+
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}

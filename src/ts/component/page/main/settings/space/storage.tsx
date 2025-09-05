@@ -68,10 +68,13 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		const isRed = usagePercent >= 100;
 		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
-		if (isRed) {
+		if (isRed || notSyncedCounter) {
 			usageCn.push('red');
 			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={() => this.onUpgrade()} />;
-			label = translate('popupSettingsSpaceIndexStorageIsFullText');
+
+			if (notSyncedCounter) {
+				label = translate('popupSettingsSpaceIndexStorageIsFullText');
+			};
 		};
 
 		const Manager = (item: any) => {

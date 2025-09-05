@@ -98,17 +98,18 @@
 	> .body.isOnboardingHidden { visibility: visible; }
 	> .body.isListPreview { overflow: hidden; padding-bottom: 12px; padding-right: 12px; }
 
-	.spaceChatSidebarHeader { padding-bottom: 8px; }
-	.spaceChatSidebarHeader {
+	.spaceHeader { padding-bottom: 8px; }
+	.spaceHeader {
 		.spaceInfo { margin-bottom: 18px; display: flex; flex-direction: column; align-items: center; }
 		.spaceInfo {
 			.iconObject { margin-bottom: 8px; }
 			.name { @include text-header3; margin-bottom: 0px; }
 			.label { @include text-small; color: var(--color-text-secondary); }
 		}
-		.buttons { display: flex; justify-content: center; gap: 0px 24px; }
+
+		.buttons { display: flex; justify-content: center; }
 		.buttons {
-			.item { width: 48px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; }
+			.item { width: 72px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; align-items: center; }
 			.item {
 				.icon {
 					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
@@ -119,7 +120,7 @@
 				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
 				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
 				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
-				.label { @include text-small; }
+				.label { @include text-small; @include text-overflow-nw; width: 100%; padding: 0px 2px; }
 			}
 			.item:hover {
 				.icon { background-color: var(--color-shape-highlight-dark); }

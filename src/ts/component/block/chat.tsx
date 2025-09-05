@@ -382,7 +382,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {
-			className: 'chatMessage',
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onOpen: () => {
@@ -428,11 +427,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 						case 'delete': {
 							formRef.current.onDelete(item.id);
-							break;
-						};
-
-						case 'unread': {
-							C.ChatUnreadMessages(chatId, item.orderId);
 							break;
 						};
 					};
@@ -559,7 +553,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const getMessagesInViewport = () => {
 		const container = U.Common.getScrollContainer(isPopup);
-		const formHeight = $(formRef.current.getNode()).outerHeight();
+		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
 		const ch = container.outerHeight();
 		const max = ch - formHeight;
 		const ret = [];
@@ -579,30 +573,26 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		let options: any[] = [];
 
 		if (message.content.text) {
-			options.push({ id: 'copy', icon: 'copy', name: translate('blockChatCopyText') });
+			options.push({ id: 'copy', icon: 'chat-copy', name: translate('blockChatCopyText') });
+			if (config.experimental) {
+				options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
+			};
 		};
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
-				{ id: 'edit', icon: 'pencil', name: translate('commonEdit') },
-				{ id: 'delete', icon: 'remove', name: translate('commonDelete') },
+				{ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') },
+				{ isDiv: true },
+				{ id: 'delete', icon: 'chat-remove', name: translate('commonDelete'), color: 'red' },
 			]);
 		};
 
 		if (!noControls) {
 			options = ([
-				{ id: 'reaction', icon: 'reaction', name: translate('blockChatReactionAdd') },
-				{ id: 'reply', icon: 'reply', name: translate('blockChatReply') },
+				{ id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') },
+				{ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') },
 				options.length ? { isDiv: true } : null,
 			].filter(it => it)).concat(options);
-		};
-
-		if (config.experimental && options.length) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'link', icon: 'link', name: translate('commonCopyLink') },
-				{ id: 'unread', name: translate('blockChatMarkAsUnread') },
-			]);
 		};
 
 		return options;

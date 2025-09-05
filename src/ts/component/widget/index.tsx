@@ -29,27 +29,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, setEditing, onDragStart, onDragOver, onDrag, setPreview, canEdit, canRemove } = props;
+	const { block, isPreview, isEditing, className, canEdit, canRemove, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 	const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
 	const targetId = child ? child.getTargetObjectId() : '';
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
-
-	const getObject = () => {
-		if (!child) {
-			return null;
-		};
-
-		let object = null;
-		if (U.Menu.isSystemWidget(targetId)) {
-			object = U.Menu.getSystemWidgets().find(it => it.id == targetId);
-		} else {
-			object = S.Detail.get(widgets, targetId);
-		};
-		return object;
-	};
 
 	const getLimit = ({ limit, layout }): number => {
 		if (isPreview) {
@@ -65,7 +51,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return limit;
 	};
 
-	const object = getObject();
+	const object = getObject(targetId);
 	const limit = getLimit(block.content);
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const isChat = targetId == J.Constant.widgetId.chat;

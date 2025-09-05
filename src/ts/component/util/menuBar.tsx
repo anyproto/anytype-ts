@@ -9,14 +9,14 @@ const MenuBar = observer(forwardRef<{}, {}>((props, ref) => {
 
 	let content = null;
 	if (U.Common.isPlatformMac()) {
-		content = <div id="drag" />;
+		content = <div id="menuBar" />;
 	} else 
 	if (U.Common.isPlatformWindows()) {
 		if (!showMenuBar) {
-			content = <div id="drag" />;
+			content = <div id="menuBar" />;
 		} else {
 			content = (
-				<div id="drag" className="withButtons">
+				<div id="menuBar" className="withButtons">
 					<div className="side left">
 						<Icon 
 							className="window-menu withBackground" 

@@ -17,7 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space, updateVersion } = S.Common;
+	const { space, updateVersion, widgetSide } = S.Common;
 	const { isPopup, sidebarDirection } = props;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
@@ -229,9 +229,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
 		U.Menu.spaceContext(item, {
+			onOpen: () => {
+				unsetActive();
+				unsetHover();
+			},
+			onClose: () => setActive(spaceview),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `#sidebarPageVault #item-${item.id}`,
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
 		});
 	};
@@ -250,8 +254,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		if (item.targetSpaceId != S.Common.space) {
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
-			U.Space.openDashboard();
-			sidebar.panelSetState(isPopup, sidebarDirection, { page: U.Space.getDefaultSidebarPage(item.id) });
+			U.Space.openDashboard({ replace: false });
+			U.Router.onSpaceSwitch();
 		};
 	};
 
@@ -263,7 +267,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onOut = () => {
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
 			setActive(spaceview);
 		};

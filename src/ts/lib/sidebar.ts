@@ -246,7 +246,7 @@ class Sidebar {
 
 		this.initObjects();
 
-		let leftButtonX = 16;
+		let leftButtonX = 12;
 		let rightButtonX = 52;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
