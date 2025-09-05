@@ -106,7 +106,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							<ObjectName object={object} withPlural={true} />
 						</div>
 
-						<div className="side right" />
+						<div className="side right">
+							<Icon className="expand withBackground" onClick={this.onExpand} />
+							<Icon className="more withBackground" onClick={this.onMore} />
+						</div>
 					</div>
 				);
 
@@ -558,6 +561,42 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	onTypeCreate = () => {
 		U.Object.createType({}, false);
+	};
+
+	onExpand = (e: any) => {
+		const { previewId } = this.state;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, previewId);
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const targetId = child ? child.getTargetObjectId() : '';
+		const object = this.getObject(targetId);
+
+		if (!block) {
+			return;
+		};
+
+		let { viewId } = block.content;
+
+		if (!viewId) {
+			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
+
+			if (views.length) {
+				viewId = views[0].id;
+			};
+		};
+
+		U.Object.openEvent(e, {
+			...object,
+			_routeParam_: {
+				viewId,
+				additional: [ { key: 'ref', value: 'widget' } ],
+			}
+		});
+	};
+
+	onMore = () => {
+
 	};
 
 	initToggle (id: I.WidgetSection) {
