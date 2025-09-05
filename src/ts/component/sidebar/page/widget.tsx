@@ -58,11 +58,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
-		const chatSpaceHeaderButtons = [
-			{ id: 'chat', name: translate('commonChat') },
+		const headerButtons: any[] = [
 			{ id: 'add', name: translate('commonAdd') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
 		];
+
+		if (space.isChat) {
+			headerButtons.unshift({ id: 'chat', name: translate('commonChat') });
+			headerButtons.push({ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },);
+		};
 
 		if (isEditing) {
 			cnb.push('isEditing');
@@ -233,8 +236,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 											{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 										</div>
 										<div className="buttons">
-											{chatSpaceHeaderButtons.map((item, idx) => (
-												<div className="item" onClick={e => this.onChatSpaceButton(e, item)} key={idx}>
+											{headerButtons.map((item, idx) => (
+												<div className="item" onClick={e => this.onButton(e, item)} key={idx}>
 													<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
 													<Label text={item.name} />
 												</div>
@@ -704,7 +707,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 	};
 
-	onChatSpaceButton (e: any, item: any) {
+	onButton (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		const space = U.Space.getSpaceview();
