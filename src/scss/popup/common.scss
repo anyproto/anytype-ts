@@ -20,6 +20,22 @@
 		}
 
 		.dimmer { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0; transition: opacity 0.3s $easeInQuint; opacity: 0; }
+		.dimmer {
+			/* Dimmer with Graph styles for AI onboarding */
+			&.withGraph {
+				.graphOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: auto; z-index: 1; }
+
+				.popupBlocker {
+					position: absolute; top: calc(50% - 340px); left: calc(50% - 360px); width: 720px; height: 680px; pointer-events: auto; z-index: 2;
+				}
+
+				.onboardingGraphWorkerContainer { position: absolute; top: 0px; left: 0px; pointer-events: auto; opacity: 1.0; z-index: 0; }
+				.onboardingGraphWorkerContainer {
+					canvas { position: absolute; top: 0; left: 0; cursor: default; image-rendering: auto; backface-visibility: hidden; }
+				}
+			}
+		}
+
 		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px; background: var(--color-bg-loader); }
 	}
 }
@@ -55,3 +71,4 @@ html.platformWindows {
 @import "./logout";
 @import "./onboarding";
 @import "./apiCreate";
+@import "./aiOnboarding";

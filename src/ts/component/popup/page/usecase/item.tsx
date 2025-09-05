@@ -65,7 +65,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 
 	const onMenu = () => {
 		const cb = (spaceId: string, isNew: boolean) => {
-			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, (message: any) => {
+			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, false, (message: any) => {
 				if (!message.error.code) {
 					analytics.event('GalleryInstall', { name: object.name, route });
 				};

@@ -173,7 +173,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		setCanSave(!isRed);
 
 		if (show) {
-			el.text(counter)
+			el.text(counter);
 		};
 	};
 
@@ -220,6 +220,23 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 				<>
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+					<Button 
+						text={translate('popupSpaceCreateAIOnboarding')} 
+						color="blank" 
+						onClick={() => {
+							close(() => {
+								S.Popup.open('aiOnboarding', {
+									preventCloseByClick: true,
+									data: {
+										onComplete: (spaceId: string) => {
+											// Space is already created and switched to by import
+										}
+									}
+								});
+							});
+						}}
+						className="aiOnboarding"
+					/>
 				</>
 			</div>
 

@@ -9,6 +9,7 @@ import { Notification } from './notification';
 import { Extension } from './extension';
 import { Chat } from './chat';
 import { Progress } from './progress';
+import { SparkOnboarding } from './sparkOnboarding';
 
 export {
 	Common,
@@ -22,4 +23,5 @@ export {
 	Extension,
 	Chat,
 	Progress,
+	SparkOnboarding,
 };

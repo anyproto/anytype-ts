@@ -4,6 +4,7 @@ import raf from 'raf';
 import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
 import { Dimmer } from 'Component';
 import { observer } from 'mobx-react';
+import DimmerWithGraph from './dimmerWithGraph';
 
 import PopupSettingsOnboarding from './settings/onboarding';
 import PopupSearch from './search';
@@ -32,6 +33,7 @@ import PopupSpaceJoinByLink from './space/joinByLink';
 import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
 import PopupApiCreate from './api/create';
+import PopupAIOnboarding from './aiOnboarding';
 
 const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -169,6 +171,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		logout: 				 PopupLogout,
 		onboarding:				 PopupOnboarding,
 		apiCreate:				 PopupApiCreate,
+		aiOnboarding:			 PopupAIOnboarding,
 	};
 	
 	const popupId = getId();
@@ -185,6 +188,13 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	
 	if (!Component) {
 		return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+	};
+
+	let dimmer = null;
+	if (id == 'aiOnboarding') {
+		dimmer = <DimmerWithGraph onClick={onDimmer} />;
+	} else {
+		dimmer = <Dimmer onClick={onDimmer} />;
 	};
 
 	return (
@@ -206,7 +216,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					/>
 				</div>
 			</div>
-			<Dimmer onClick={onDimmer} />
+			{dimmer}
 		</div>
 	);
 	
