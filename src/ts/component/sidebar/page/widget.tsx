@@ -51,7 +51,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
 		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
@@ -177,14 +176,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				first = blocks[0];
 			};
 
-			if (isEditing) {
-				if (blocks.length <= J.Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
-				};
-
-				buttons.push({ id: 'widget-list-done', className: 'grey c28', text: translate('commonDone'), onMouseDown: this.onEdit });
-			};
-
 			subHead = isDirectionLeft ? (
 				<div className={cnsh.join(' ')}>
 					<div className="side left">
@@ -222,7 +213,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								className="firstTarget"
 								cacheKey="firstTarget"
 							>
-								{isDirectionRight ? (
+								{space.isChat ? (
 									<div className="spaceHeader">
 										<div className="spaceInfo">
 											<IconObject
@@ -321,7 +312,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		return (
 			<>
 				<div id="head" className="head">
-					{isDirectionRight ? (
+					{space.isChat ? (
 						<>
 							<div className="side left">
 								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
