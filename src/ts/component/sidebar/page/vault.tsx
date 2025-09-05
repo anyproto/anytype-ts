@@ -229,9 +229,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
 		U.Menu.spaceContext(item, {
+			onOpen: () => {
+				unsetActive();
+				unsetHover();
+			},
+			onClose: () => setActive(spaceview),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `#sidebarPageVault #item-${item.id}`,
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
 		});
 	};
@@ -263,7 +267,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onOut = () => {
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
 			setActive(spaceview);
 		};
