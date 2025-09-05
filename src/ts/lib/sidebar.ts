@@ -465,8 +465,6 @@ class Sidebar {
 	};
 
 	panelSetState (isPopup: boolean, direction: I.SidebarDirection, v: any) {
-		console.log('panelSetState', isPopup, direction, v);
-
 		switch (direction) {
 			case I.SidebarDirection.Left: {
 				this.leftPanelSetState(v);
