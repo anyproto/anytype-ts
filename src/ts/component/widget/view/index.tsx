@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Select, Label } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
+import { Select, Label, Filter, Button } from 'Component';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 
@@ -19,13 +19,17 @@ interface WidgetViewRefProps {
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, isPreview, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton } = props;
+	const { parent, block, isSystemTarget, isPreview, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, canCreate, onCreate } = props;
 	const { viewId, limit, layout } = parent.content;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nodeRef = useRef(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
+	const filterRef = useRef(null);
+	const searchIds = useRef([]);
+	const filter = useRef('');
+	const filterTimeout = useRef(0);
 	const rootId = block ? [ targetId, 'widget', block.id ].join('-') : '';
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = S.Detail.get(S.Block.widgets, targetId);
@@ -71,6 +75,11 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		selectRef.current?.setOptions(views);
 	};
 
+	const updateSearchIds = (ids: string[]) => {
+		searchIds.current = ids;
+		load(view.id);
+	};
+
 	const load = (viewId: string) => {
 		if (childRef.current?.load) {
 			childRef.current?.load();
@@ -108,6 +117,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		if (childRef.current?.getFilters) {
 			filters = filters.concat(childRef.current?.getFilters());
+		};
+
+		if (filter.current) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds.current });
 		};
 
 		return filters;
@@ -149,6 +162,41 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		};
 	};
 
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(filterTimeout.current);
+		filterTimeout.current = window.setTimeout(() => {
+			if (filter.current == v) {
+				return;
+			};
+
+			filter.current = v;
+
+			if (!filter.current) {
+				updateSearchIds([]);
+				return;
+			};
+
+			U.Subscription.search({
+				filters: [],
+				sorts: [],
+				fullText: filter.current,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				const ids = (message.records || []).map(it => it.id)
+
+				updateSearchIds(ids);
+			});
+		}, J.Constant.delay.keyboard);
+	};
+
+	const onFilterClear = () => {
+		updateSearchIds([]);
+	};
+
+	const onAdd = () => {
+		onCreate({ route: analytics.route.widget });
+	};
+
 	const records = getRecordIds();
 	const length = records.length;
 	const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
@@ -170,6 +218,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	let content = null;
 	let viewSelect = null;
+	let head = null;
 
 	if (!isSystemTarget && (views.length > 1)) {
 		if (isPreview) {
@@ -193,9 +242,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 							return (
 								<SwiperSlide key={it.id}>
-									<div 
-										key={it.id} 
-										className={cn.join(' ')} 
+									<div
+										key={it.id}
+										className={cn.join(' ')}
 										onClick={() => onChangeView(it.id)}
 									>
 										{it.name}
@@ -208,14 +257,14 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			);
 		} else {
 			viewSelect = (
-				<Select 
+				<Select
 					ref={selectRef}
-					id={`select-view-${rootId}`} 
-					value={viewId} 
-					options={views} 
+					id={`select-view-${rootId}`}
+					value={viewId}
+					options={views}
 					onChange={onChangeView}
 					arrowClassName="light"
-					menuParam={{ 
+					menuParam={{
 						width: 300,
 						className: 'fixed',
 						classNameWrap: 'fromSidebar',
@@ -223,6 +272,27 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				/>
 			);
 		};
+	};
+
+	if (isPreview) {
+		head = (
+			<div className="head">
+				<div className="filterWrapper">
+					<div className="side left">
+						<Filter
+							ref={filterRef}
+							icon="search"
+							placeholder={translate('commonSearch')}
+							onChange={onFilterChange}
+							onClear={onFilterClear}
+						/>
+					</div>
+					<div className="side right">
+						{canCreate ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={onAdd} /> : ''}
+					</div>
+				</div>
+			</div>
+		);
 	};
 
 	if (isEmpty) {
@@ -312,6 +382,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			className={cn.join(' ')}
 		>
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
+			{head}
 			{content}
 		</div>
 	);
