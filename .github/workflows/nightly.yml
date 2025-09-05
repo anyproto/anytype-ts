@@ -11,8 +11,8 @@ on:
         options:
           - alpha
           - beta
-#  schedule:
-#    - cron: '0 0 * * *' # every day at midnight
+  schedule:
+    - cron: '0 2 * * *' # every day at 2am (UTC)
 
 permissions:
   contents: 'write'
