@@ -20,6 +20,11 @@
 		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
 	}
 
+	> .subHead {
+		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
+		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
+	}
+
 	> .body {
 		padding: 0px 0px 68px 6px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 	}

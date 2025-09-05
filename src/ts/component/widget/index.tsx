@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject, Button, Filter } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';

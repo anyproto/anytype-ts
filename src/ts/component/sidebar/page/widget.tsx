@@ -109,7 +109,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							<ObjectName object={object} withPlural={true} />
 						</div>
 
-						<div className="side right" />
+						<div className="side right">
+							<Icon className="expand withBackground" onClick={this.onExpand} />
+							<Icon id="button-widget-more" className="more withBackground" onClick={this.onMore} />
+						</div>
 					</div>
 				);
 
@@ -561,6 +564,110 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	onTypeCreate = () => {
 		U.Object.createType({}, false);
+	};
+
+	onExpand = (e: any) => {
+		const { previewId } = this.state;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, previewId);
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const targetId = child ? child.getTargetObjectId() : '';
+		const object = this.getObject(targetId);
+
+		if (!block) {
+			return;
+		};
+
+		let { viewId } = block.content;
+
+		if (!viewId) {
+			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
+
+			if (views.length) {
+				viewId = views[0].id;
+			};
+		};
+
+		U.Object.openEvent(e, {
+			...object,
+			_routeParam_: {
+				viewId,
+				additional: [ { key: 'ref', value: 'widget' } ],
+			}
+		});
+	};
+
+	onMore = (e: any) => {
+		const { previewId } = this.state;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, previewId);
+		const { layout, viewId } = block.content;
+
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const targetId = child ? child.getTargetObjectId() : '';
+		const views = S.Record.getViews(targetId, J.Constant.blockId.dataview) || [];
+		const view = viewId ? views.find(it => it.id == viewId) : views[0];
+
+		let sort = view.sorts[0];
+		let isCompact = layout == I.WidgetLayout.Compact;
+		let relationKey = sort.relationKey;
+		let type = sort.type;
+		let options = this.getPreviewOptions(isCompact, relationKey, type);
+		let menuContext = null;
+
+		S.Menu.open('select', {
+			element: '#sidebarPageWidget #button-widget-more',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: context => menuContext = context,
+			data: {
+				options,
+				noClose: true,
+				onSelect: (e: any, item: any) => {
+					if (item.isLayout) {
+						isCompact = item.layout == I.WidgetLayout.Compact;
+						C.BlockWidgetSetLayout(widgets, block.id, item.layout);
+					} else
+					if (item.isSort) {
+						relationKey = item.relationKey;
+						type = item.type;
+
+						sort.relationKey = relationKey;
+						sort.type = type;
+
+						C.BlockDataviewSortReplace(targetId, J.Constant.blockId.dataview, view.id, sort.id, { ...sort });
+					};
+
+					options = this.getPreviewOptions(isCompact, relationKey, type);
+					menuContext.ref.updateOptions(options);
+				},
+			}
+		});
+	};
+
+	getPreviewOptions = (isCompact: boolean, relationKey: string, sortType: I.SortType) => {
+		const options: any[] = [
+			{ isSection: true, name: translate('commonAppearance') },
+			{ isLayout: true, layout: I.WidgetLayout.List, checkbox: !isCompact, name: translate('widget2Name') },
+			{ isLayout: true, layout: I.WidgetLayout.Compact, checkbox: isCompact, name: translate('widget3Name') },
+			{ isDiv: true },
+			{ isSection: true, name: translate('sidebarObjectSort') },
+			{ isSort: true, name: translate('sidebarObjectSortUpdated'), type: I.SortType.Asc, relationKey: 'lastModifiedDate', defaultType: I.SortType.Desc },
+			{ isSort: true, name: translate('sidebarObjectSortCreated'), type: I.SortType.Asc, relationKey: 'createdDate', defaultType: I.SortType.Desc },
+			{ isSort: true, name: translate('commonName'), type: I.SortType.Asc, relationKey: 'name', defaultType: I.SortType.Asc },
+		];
+
+		return options.map(it => {
+			if (it.relationKey == relationKey) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
 	};
 
 	initToggle (id: I.WidgetSection) {
