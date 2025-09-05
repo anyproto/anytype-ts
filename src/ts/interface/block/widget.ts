@@ -1,5 +1,10 @@
 import { I } from 'Lib';
 
+export enum WidgetSection {
+	Pin			 = 0,
+	Type		 = 1,
+};
+
 export enum WidgetLayout { 
 	Link	 	 = 0,
 	Tree	 	 = 1,
@@ -67,6 +72,7 @@ export interface ContentWidget {
 	limit: number;
 	viewId: string;
 	autoAdded: boolean;
+	section?: I.WidgetSection;
 };
 
 export interface BlockWidget extends I.Block {

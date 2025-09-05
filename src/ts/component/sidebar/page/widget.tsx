@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar } from 'Lib';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -31,7 +31,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onDrag = this.onDrag.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onArchive = this.onArchive.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -107,10 +106,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 						<div className="side center">
 							{icon}
-							<ObjectName object={object} />
+							<ObjectName object={object} withPlural={true} />
 						</div>
 
-						<div className="side right" />
+						<div className="side right">
+							<Icon className="expand withBackground" onClick={this.onExpand} />
+							<Icon id="button-widget-more" className="more withBackground" onClick={this.onMore} />
+						</div>
 					</div>
 				);
 
@@ -129,51 +131,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				);
 			};
 		} else {
-			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
-				if (!block.isWidget()) {
-					return false;
-				};
+			const blockWidgets = this.getBlockWidgets();
+			const sections = [
+				{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
+				{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
+			];
 
-				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-				if (!childrenIds.length) {
-					return false;
-				};
-
-				const child = S.Block.getLeaf(widgets, childrenIds[0]);
-				if (!child) {
-					return false;
-				};
-
-				const target = child.getTargetObjectId();
-
-				if (Object.values(J.Constant.widgetId).includes(target)) {
-					return true;
-				};
-
-				const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
-				if (object._empty_ || object.isArchived || object.isDeleted) {
-					return false;
-				};
-
-				return true;
-			}).sort((a: I.Block, b: I.Block) => {
-				const c1 = this.getChild(a.id);
-				const c2 = this.getChild(b.id);
-
-				const t1 = c1?.getTargetObjectId();
-				const t2 = c2?.getTargetObjectId();
-
-				const isBin1 = t1 == J.Constant.widgetId.bin;
-				const isBin2 = t2 == J.Constant.widgetId.bin;
-
-				if (isBin1 && !isBin2) return 1;
-				if (!isBin1 && isBin2) return -1;
-
-				return 0;
-			});
-
-			if (blocks.length) {
-				first = blocks[0];
+			if (blockWidgets.length) {
+				first = blockWidgets[0];
 			};
 
 			subHead = isDirectionLeft ? (
@@ -202,74 +167,104 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			content = (
 				<div className="content">
 					{space && !space._empty_ ? (
-						<>
-							<DropTarget 
-								{...this.props} 
-								isTargetTop={true}
-								rootId={S.Block.widgets} 
-								id={first?.id}
-								dropType={I.DropType.Widget} 
-								canDropMiddle={false}
-								className="firstTarget"
-								cacheKey="firstTarget"
-							>
-								{space.isChat ? (
-									<div className="spaceHeader">
-										<div className="spaceInfo">
-											<IconObject
-												id="spaceIcon"
-												size={80}
-												iconSize={80}
-												object={{ ...space, spaceId: S.Common.space }}
-											/>
-											<ObjectName object={{ ...space, spaceId: S.Common.space }} />
-
-											{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
-										</div>
-										<div className="buttons">
-											{headerButtons.map((item, idx) => (
-												<div className="item" onClick={e => this.onButton(e, item)} key={idx}>
-													<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
-													<Label text={item.name} />
-												</div>
-											))}
-										</div>
+						<DropTarget 
+							{...this.props} 
+							isTargetTop={true}
+							rootId={S.Block.widgets} 
+							id={first?.id}
+							dropType={I.DropType.Widget} 
+							canDropMiddle={false}
+							className="firstTarget"
+							cacheKey="firstTarget"
+						>
+							{isDirectionRight ? (
+								<div className="spaceHeader">
+									<div className="spaceInfo">
+										<IconObject
+											id="spaceIcon"
+											size={80}
+											iconSize={80}
+											object={{ ...space, spaceId: S.Common.space }}
+										/>
+										<ObjectName object={{ ...space, spaceId: S.Common.space }} />
+										{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 									</div>
-								) : (
-									<Widget
-										block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
-										disableContextMenu={true}
-										onDragStart={this.onDragStart}
-										onDragOver={this.onDragOver}
-										onDrag={this.onDrag}
-										isEditing={isEditing}
-										canEdit={false}
-										canRemove={false}
-										sidebarDirection={sidebarDirection}
-										getObject={this.getObject}
-									/>
-								)}
-							</DropTarget>
-						</>
+									<div className="buttons">
+										{headerButtons.map((item, idx) => (
+											<div className="item" onClick={e => this.onButton(e, item)} key={idx}>
+												<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
+												<Label text={item.name} />
+											</div>
+										))}
+									</div>
+								</div>
+							) : (
+								<Widget
+									block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
+									disableContextMenu={true}
+									onDragStart={this.onDragStart}
+									onDragOver={this.onDragOver}
+									onDrag={this.onDrag}
+									isEditing={isEditing}
+									canEdit={false}
+									canRemove={false}
+									sidebarDirection={sidebarDirection}
+									getObject={this.getObject}
+								/>
+							)}
+						</DropTarget>
 					) : ''}
 
-					{blocks.map((block, i) => {
+					{sections.map(section => {
+						const list = blockWidgets.filter(it => it.content.section == section.id);
+
+						let buttons = null;
+						if (section.id == I.WidgetSection.Type) {
+							if (canWrite) {
+								buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={this.onTypeCreate} />;
+							};
+
+							/*
+							const pinned = Storage.getPinnedTypes();
+							const items = U.Common.objectCopy(itemList.current || []).map(it => ({ ...it, object: it }));
+							const add = buttons.find(it => it.id == 'add');
+							
+							items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
+							*/
+						};
+
 						return (
-							<Widget
-								{...this.props}
-								key={`widget-${block.id}`}
-								block={block}
-								isEditing={isEditing}
-								canEdit={true}
-								canRemove={true}
-								onDragStart={this.onDragStart}
-								onDragOver={this.onDragOver}
-								onDrag={this.onDrag}
-								setPreview={this.setPreview}
-								setEditing={this.setEditing}
-								sidebarDirection={sidebarDirection}
-								getObject={this.getObject}
-							/>
+							<div id={`section-${section.id}`} className="widgetSection" key={section.id}>
+								<div className="nameWrap">
+									<div className="name" onClick={() => this.onToggle(section.id)}>
+										<Icon className="arrow" />
+										{section.name}
+									</div>
+									<div className="buttons">
+										{buttons}
+									</div>
+								</div>
+
+								<div className="items">
+									{list.map((block, i) => (
+										<Widget
+											{...this.props}
+											key={`widget-${block.id}`}
+											block={block}
+											isEditing={isEditing}
+											canEdit={true}
+											canRemove={true}
+											onDragStart={this.onDragStart}
+											onDragOver={this.onDragOver}
+											onDrag={this.onDrag}
+											setPreview={this.setPreview}
+											setEditing={this.setEditing}
+											sidebarDirection={sidebarDirection}
+											getObject={this.getObject}
+										/>
+									))}
+								</div>
+							</div>
 						);
 					})}
 				</div>
@@ -285,14 +280,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
 								<Label text={translate('commonDone')} />
 							</div>
-						</div>
-
-						<div className="side center">
-							<Button 
-								id="widget-list-add"
-								text={translate('menuWidgetAddWidget')}
-								onClick={this.onAdd}
-							/>
 						</div>
 
 						<div className="side right">
@@ -341,7 +328,20 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		);
 	};
 
+	componentDidMount(): void {
+		this.init();
+	};
+
 	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		S.Block.updateWidgetList();
+
+		const sections = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+
+		sections.forEach(id => this.initToggle(id));
 		this.onScroll();
 	};
 
@@ -396,167 +396,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		e.stopPropagation();
 
 		this.setEditing(!this.state.isEditing);
-	};
-
-	onAdd (e: any, route?: string): void {
-		e.stopPropagation();
-
-		analytics.event('ClickAddWidget', { route });
-
-		const { isEditing } = this.state;
-		const { widgets } = S.Block;
-		const space = U.Space.getSpaceview();
-		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => block.isWidget());
-		const targets = [];
-		const node = $('#sidebarPageWidget');
-		const nh = node.outerHeight();
-		const button = node.find('#widget-list-add');
-		const { top } = button.offset();
-		const position = top + 350 > nh ? I.MenuDirection.Top : I.MenuDirection.Bottom;
-
-		if (isEditing) {
-			this.onEdit(e);
-		};
-
-		blocks.forEach(block => {
-			const children = S.Block.getChildren(widgets, block.id);
-			if (children.length) {
-				targets.push(children[0].getTargetObjectId());
-			};
-		});
-
-		const onSelect = (target: any, isNew: boolean) => {
-			if (!target) {
-				return;
-			};
-
-			const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
-			const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
-			const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
-			const newBlock = { 
-				type: I.BlockType.Link,
-				content: { 
-					targetBlockId: target.id, 
-				},
-			};
-
-			C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				if (isNew) {
-					U.Object.openConfig(target);
-				};
-
-				analytics.createWidget(I.WidgetLayout.Link, route, analytics.widgetType.manual);
-				analytics.event('ChangeWidgetSource', {
-					layout,
-					route: analytics.route.addWidget,
-					params: { target },
-				});
-			});					
-		};
-
-		let menuContext = null;
-
-		S.Menu.open('searchObjectWidgetAdd', {
-			component: 'searchObject',
-			element: '#widget-list-add',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			offsetY: position == I.MenuDirection.Top ? -4 : 4,
-			horizontal: I.MenuDirection.Center,
-			vertical: position,
-			subIds: J.Menu.widgetAdd,
-			onOpen: context => menuContext = context,
-			data: {
-				route: analytics.route.addWidget,
-				withPlural: true,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-				],
-				canAdd: true,
-				addParam: {
-					name: translate('commonCreateNewObject'),
-					nameWithFilter: translate('commonCreateObjectWithName'),
-					arrow: true,
-					onClick: (details: any) => {
-						const types = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 1 });
-
-						if (!types.length) {
-							return;
-						};
-
-						C.ObjectCreate(details, [], '', types[0].uniqueKey, S.Common.space, (message: any) => {
-							onSelect(message.details, true);
-						});
-					},
-				},
-				onOver: (e, context: any, item: any) => {
-					if (!item.isAdd) {
-						S.Menu.closeAll(J.Menu.widgetAdd);
-						return;
-					};
-
-					U.Menu.typeSuggest({ 
-						element: `#${menuContext.getId()} #item-${item.id}`,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-						offsetX: menuContext.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-						data: {
-							onAdd: () => menuContext?.close(),
-						},
-					}, { name: context.filter }, {}, analytics.route.addWidget, object => {
-						onSelect(object, true);
-						menuContext?.close();
-					});
-				},
-				dataChange: (context: any, items: any[]) => {
-					const skipLayouts = U.Object.getSystemLayouts().concat(I.ObjectLayout.Type);
-					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
-					const types = S.Record.checkHiddenObjects(S.Record.getTypes()).
-						filter(it => {
-							const name = String(it.name || it.pluralName || '');
-
-							return !targets.includes(it.id) && 
-								!skipLayouts.includes(it.recommendedLayout) && 
-								!U.Object.isTemplateType(it.id) && 
-								name.match(reg);
-						}).
-						map(it => ({ ...it, caption: '' }));
-
-					const lists = [];
-					const system: any[] = U.Menu.getSystemWidgets().filter(it => !targets.includes(it.id) && it.name.match(reg) && !it.isHidden);
-
-					if (system.length) {
-						lists.push([ { name: translate('commonSystem'), isSection: true } ].concat(system));
-					};
-
-					if (types.length) {
-						lists.push([ { name: translate('commonSuggested'), isSection: true } ].concat(types));
-					};
-
-					if (items.length) {
-						lists.push([ { name: translate('commonExistingObjects'), isSection: true } ].concat(items));
-					};
-
-					let ret = [];
-					for (let i = 0; i < lists.length; ++i) {
-						if (i > 0) {
-							ret = ret.concat({ isDiv: true });
-						};
-						ret = ret.concat(lists[i]);
-					};
-
-					return ret;
-				},
-				onSelect,
-			},
-		});
 	};
 
 	onDragStart (e: React.DragEvent, blockId: string): void {
@@ -723,6 +562,136 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 	};
 
+	onTypeCreate = () => {
+		U.Object.createType({}, false);
+	};
+
+	onExpand = (e: any) => {
+		const { previewId } = this.state;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, previewId);
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const targetId = child ? child.getTargetObjectId() : '';
+		const object = this.getObject(targetId);
+
+		if (!block) {
+			return;
+		};
+
+		let { viewId } = block.content;
+
+		if (!viewId) {
+			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
+
+			if (views.length) {
+				viewId = views[0].id;
+			};
+		};
+
+		U.Object.openEvent(e, {
+			...object,
+			_routeParam_: {
+				viewId,
+				additional: [ { key: 'ref', value: 'widget' } ],
+			}
+		});
+	};
+
+	onMore = (e: any) => {
+		const { previewId } = this.state;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, previewId);
+		const { layout, viewId } = block.content;
+
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const targetId = child ? child.getTargetObjectId() : '';
+		const views = S.Record.getViews(targetId, J.Constant.blockId.dataview) || [];
+		const view = viewId ? views.find(it => it.id == viewId) : views[0];
+
+		let sort = view.sorts[0];
+		let isCompact = layout == I.WidgetLayout.Compact;
+		let relationKey = sort.relationKey;
+		let type = sort.type;
+		let options = this.getPreviewOptions(isCompact, relationKey, type);
+		let menuContext = null;
+
+		S.Menu.open('select', {
+			element: '#sidebarPageWidget #button-widget-more',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: context => menuContext = context,
+			data: {
+				options,
+				noClose: true,
+				onSelect: (e: any, item: any) => {
+					if (item.isLayout) {
+						isCompact = item.layout == I.WidgetLayout.Compact;
+						C.BlockWidgetSetLayout(widgets, block.id, item.layout);
+					} else
+					if (item.isSort) {
+						relationKey = item.relationKey;
+						type = item.type;
+
+						sort.relationKey = relationKey;
+						sort.type = type;
+
+						C.BlockDataviewSortReplace(targetId, J.Constant.blockId.dataview, view.id, sort.id, { ...sort });
+					};
+
+					options = this.getPreviewOptions(isCompact, relationKey, type);
+					menuContext.ref.updateOptions(options);
+				},
+			}
+		});
+	};
+
+	getPreviewOptions = (isCompact: boolean, relationKey: string, sortType: I.SortType) => {
+		const options: any[] = [
+			{ isSection: true, name: translate('commonAppearance') },
+			{ isLayout: true, layout: I.WidgetLayout.List, checkbox: !isCompact, name: translate('widget2Name') },
+			{ isLayout: true, layout: I.WidgetLayout.Compact, checkbox: isCompact, name: translate('widget3Name') },
+			{ isDiv: true },
+			{ isSection: true, name: translate('sidebarObjectSort') },
+			{ isSort: true, name: translate('sidebarObjectSortUpdated'), type: I.SortType.Asc, relationKey: 'lastModifiedDate', defaultType: I.SortType.Desc },
+			{ isSort: true, name: translate('sidebarObjectSortCreated'), type: I.SortType.Asc, relationKey: 'createdDate', defaultType: I.SortType.Desc },
+			{ isSort: true, name: translate('commonName'), type: I.SortType.Asc, relationKey: 'name', defaultType: I.SortType.Asc },
+		];
+
+		return options.map(it => {
+			if (it.relationKey == relationKey) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
+	};
+
+	initToggle (id: I.WidgetSection) {
+		const obj = $(`#sidebarPageWidget`);
+		const section = obj.find(`#section-${id}`);
+		const list = section.find('> .items');
+		const isClosed = Storage.checkToggle('widgetSection', String(id));
+
+		section.toggleClass('isOpen', !isClosed);
+		list.toggleClass('isOpen', !isClosed).css({ height: (!isClosed ? 'auto': 0) });
+	};
+
+	onToggle = (id: I.WidgetSection) => {
+		const obj = $(`#sidebarPageWidget`);
+		const section = obj.find(`#section-${id}`);
+		const list = section.find('> .items');
+		const isClosed = Storage.checkToggle('widgetSection', String(id));
+
+		U.Common.toggle(list, 200);
+		section.toggleClass('isOpen', isClosed);
+		list.toggleClass('isOpen', isClosed);
+		Storage.setToggle('widgetSection', String(id), !isClosed);
+	};
+
 	clear () {
 		const node = $('#sidebarPageWidget');
 
@@ -769,6 +738,57 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
+	};
+
+	getBlockWidgets = () => {
+		const { widgets } = S.Block;
+
+		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+
+			if (Object.values(J.Constant.widgetId).includes(target)) {
+				return true;
+			};
+
+			const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
+			if (object._empty_ || object.isArchived || object.isDeleted) {
+				return false;
+			};
+
+			return true;
+		});
+
+		blocks.sort((a: I.Block, b: I.Block) => {
+			const c1 = this.getChild(a.id);
+			const c2 = this.getChild(b.id);
+
+			const t1 = c1?.getTargetObjectId();
+			const t2 = c2?.getTargetObjectId();
+
+			const isBin1 = t1 == J.Constant.widgetId.bin;
+			const isBin2 = t2 == J.Constant.widgetId.bin;
+
+			if (isBin1 && !isBin2) return 1;
+			if (!isBin1 && isBin2) return -1;
+
+			return 0;
+		});
+
+		return blocks;
 	};
 
 	getChild (id: string): I.Block {

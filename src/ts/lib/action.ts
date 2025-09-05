@@ -897,6 +897,41 @@ class Action {
 		});
 	};
 
+	removeWidgetsForObjects (objectIds: string[], callBack?: (message: any) => void) {
+		const { widgets } = S.Block;
+		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+			return objectIds.includes(target);
+		});
+
+		C.BlockListDelete(widgets, list.map(it => it.id), callBack);
+	};
+
+	toggleWidgetsForObject (objectId: string, route?: string) {
+		const { widgets } = S.Block;
+		
+		if (S.Block.getWidgetsForTarget(objectId).length) {
+			this.removeWidgetsForObjects([ objectId ]);
+		} else {
+			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget());
+			this.createWidgetFromObject(objectId, objectId, first?.id, I.BlockPosition.Top, route);
+		};
+	};
+
 	membershipUpgrade (tier?: I.TierType) {
 		if (!U.Common.checkCanMembershipUpgrade()) {
 			this.membershipUpgradeViaEmail();

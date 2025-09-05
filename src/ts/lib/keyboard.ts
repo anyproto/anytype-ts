@@ -368,8 +368,7 @@ class Keyboard {
 				// Add to favorites
 				this.shortcut('addFavorite', e, () => {
 					e.preventDefault();
-
-					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, analytics.route.shortcut);
 				});
 			};
 

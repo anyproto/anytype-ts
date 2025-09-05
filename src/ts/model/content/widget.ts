@@ -7,12 +7,14 @@ class BlockContentWidget implements I.ContentWidget {
 	limit = 0;
 	viewId = '';
 	autoAdded = false;
+	section: I.WidgetSection = I.WidgetSection.Pin;
 
 	constructor (props: I.ContentWidget) {
 		this.layout = Number(props.layout) || I.WidgetLayout.Link;
 		this.limit = Number(props.limit) || 0;
 		this.viewId = String(props.viewId || '');
 		this.autoAdded = Boolean(props.autoAdded);
+		this.section = props.section || I.WidgetSection.Pin;
 
 		makeObservable(this, {
 			layout: observable,

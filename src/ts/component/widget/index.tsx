@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject, Button, Filter } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
@@ -36,6 +36,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
 	const targetId = child ? child.getTargetObjectId() : '';
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
+	const isSectionType = block.content.section == I.WidgetSection.Type;
 
 	const getLimit = ({ limit, layout }): number => {
 		if (isPreview) {
@@ -98,6 +99,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		win.on(`updateWidgetData.${block.id}`, () => childRef.current?.updateData && childRef.current?.updateData());
 		win.on(`updateWidgetViews.${block.id}`, () => childRef.current?.updateViews && childRef.current?.updateViews());
+		win.on(`widgetOpen.${block.id}`, (e, param) => {
+			if (isSectionType && (param.id != block.id)) {
+				close();
+			};
+		});
 	};
 
 	const onRemove = (e: MouseEvent): void => {
@@ -284,17 +290,21 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
+	const getIsOpen = () => {
+		return Storage.checkToggle('widget', block.id);
+	};
+
 	const initToggle = () => {
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		const icon = node.find('.icon.collapse');
-		const isClosed = Storage.checkToggle('widget', block.id);
+		const isOpen = getIsOpen();
 
 		if (!isPreview) {
-			node.toggleClass('isClosed', isClosed);
-			icon.toggleClass('isClosed', isClosed);
+			node.toggleClass('isClosed', !isOpen);
+			icon.toggleClass('isClosed', !isOpen);
 
-			isClosed ? innerWrap.hide() : innerWrap.show();
+			isOpen ? innerWrap.show() : innerWrap.hide();
 		};
 	};
 
@@ -302,19 +312,24 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const isClosed = Storage.checkToggle('widget', block.id);
+		const isOpen = getIsOpen();
 
-		isClosed ? open() : close();
-		Storage.setToggle('widget', block.id, !isClosed);
+		isOpen ? close() : open();
+		Storage.setToggle('widget', block.id, !isOpen);
 	};
 
 	const open = () => {
+		const win = $(window);
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
 		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = getMinHeight();
+
+		if (isSectionType) {
+			win.trigger('widgetOpen', { id: block.id });
+		};
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
@@ -331,9 +346,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => { 
-			const isClosed = Storage.checkToggle('widget', block.id);
+			const isOpen = getIsOpen();
 
-			if (!isClosed) {
+			if (isOpen) {
 				node.removeClass('isClosed');
 				wrapper.css({ height: 'auto' });
 			};
@@ -358,9 +373,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
-			const isClosed = Storage.checkToggle('widget', block.id);
+			const isOpen = getIsOpen();
 
-			if (isClosed) {
+			if (!isOpen) {
 				wrapper.css({ height: '' });
 				innerWrap.hide();
 			};
@@ -624,6 +639,39 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
+	const onExpandHandler = (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (targetId == J.Constant.widgetId.bin) {
+			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
+		} else 
+		if (targetId == J.Constant.widgetId.allObject) {
+			sidebar.leftPanelSetState({ page: 'allObject' });
+		} else 
+		if (targetId == J.Constant.widgetId.chat) {
+			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
+		} else
+		if (isSystemTarget) {
+			onSetPreview();
+		} else {
+			onClick(e);
+		};
+
+		analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
+	};
+
+	const onClickHandler = (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (block.isWidgetLink() || !isSectionType) {
+			onExpandHandler(e);
+		} else {
+			!getIsOpen() ? onToggle(e) : onSetPreview();
+		};
+	};
+
 	const buttons = [];
 	const canCreate = canCreateHandler();
 	const childProps = {
@@ -671,8 +719,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isPreview) {
 		isDraggable = false;
 	} else {
-		if (!(spaceview.isChat && isChat)) {
-			buttons.push({ id: 'more', icon: 'options', tooltip: translate('widgetOptions'), onClick: onOptions });
+		if (isSectionType) {
+			buttons.push({ id: 'expand', icon: 'expand', tooltip: translate('commonOpenObject'), onClick: onExpandHandler });
 		};
 
 		if (canCreate) {
@@ -691,28 +739,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
-		const onClickHandler = (e: any) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			if (targetId == J.Constant.widgetId.bin) {
-				U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-			} else 
-			if (targetId == J.Constant.widgetId.allObject) {
-				sidebar.leftPanelSetState({ page: 'allObject' });
-			} else 
-			if (targetId == J.Constant.widgetId.chat) {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-			} else
-			if (isSystemTarget) {
-				onSetPreview();
-			} else {
-				onClick(e);
-			};
-
-			analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
-		};
-
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {

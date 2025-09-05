@@ -435,6 +435,7 @@ class Storage {
 		list = [ ...new Set(list) ];
 
 		obj[rootId] = list;
+
 		this.set('toggle', obj, this.isLocal('toggle'));
 		return obj;
 	};
