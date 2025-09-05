@@ -171,6 +171,7 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 									<Filter 
 										ref={ref => this.refFilter = ref}
 										icon="search"
+										className="outlined"
 										placeholder={translate('commonSearch')}
 										onChange={this.onFilterChange}
 										onClear={this.onFilterClear}

@@ -792,16 +792,16 @@ class UtilMenu {
 		const options: any[] = [];
 
 		if (space.spaceOrder) {
-			options.push({ id: 'unpin', name: translate('commonUnpin') });
+			options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 		} else { 
-			options.push({ id: 'pin', name: translate('commonPin') });
+			options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
 		};
 
 		if (space.chatId) {
 			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-				options.push({ id: 'unmute', name: translate('commonUnmute') });
+				options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
 			} else {
-				options.push({ id: 'mute', name: translate('commonMute') });
+				options.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 			};
 		};
 
@@ -809,7 +809,7 @@ class UtilMenu {
 			options.push({ isDiv: true });
 		};
 
-		options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 
 		S.Menu.open('select', {
 			...param,

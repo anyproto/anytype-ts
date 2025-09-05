@@ -1440,7 +1440,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const margin = 32;
 
 		node.css({ width: cw - margin * 2, left: left + margin });
-		dummy.css({ height: node.height() });
+		dummy.css({ height: node.outerHeight() });
 		scrollToBottom();
 	};
 

@@ -2,14 +2,14 @@
 
 .filter { padding: 0px 14px; cursor: text; }
 .filter {
-	.inner { position: relative; width: 100%; height: 35px; display: flex; align-items: center; gap: 0px 8px; }
+	.inner { position: relative; width: 100%; height: 35px; display: flex; align-items: center; gap: 0px 2px; }
 	.filterInputWrap { position: relative; width: 100%; }
 	.input { padding: 0px !important; height: 28px; line-height: 28px; vertical-align: top; border: 0px !important; background: none; }
 
-	.icon { flex-shrink: 0; cursor: default; }
-	.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg') !important; opacity: 0; }
+	.icon { width: 20px; height: 20px; flex-shrink: 0; cursor: default; }
+	.icon.clear { background-image: url('~img/icon/clear0.svg') !important; opacity: 0; }
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg') !important; }
-	.icon.search { width: 20px; height: 20px; background-size: 18px; background-image: url('~img/icon/search.svg'); }
+	.icon.search { background-image: url('~img/icon/search.svg'); }
 
 	.line { height: 1px; margin: 0px !important; background: var(--color-shape-secondary); display: block; }
 }
@@ -21,7 +21,7 @@
 	.icon.clear { opacity: 1; } 
 }
 .filter.outlined {
-	.inner { height: 30px; padding: 0px 5px 0px 8px; gap: 0px 4px; box-shadow: inset 0 0 0 1px var(--color-shape-secondary); border-radius: 6px; }
+	.inner { height: 28px; padding: 0px 6px; gap: 0px 2px; box-shadow: inset 0 0 0 1px var(--color-shape-secondary); border-radius: 6px; }
 	.icon.clear { background-image: url('~img/icon/filter/clear0.svg') !important; }
 	.icon.clear:hover { background-image: url('~img/icon/filter/clear1.svg') !important; }
 	.line { display: none; }

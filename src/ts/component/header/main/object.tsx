@@ -9,6 +9,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
 	const [ dummy, setDummy ] = useState(0);
+	const { widgetSide } = S.Common;
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const root = S.Block.getLeaf(rootId, rootId);
@@ -25,9 +26,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
-	const spaceview = U.Space.getSpaceview();
-	const showWidget = spaceview.isChat && !isPopup;
 	const isFavorite = S.Block.getWidgetsForTarget(object.id).length;
+	const showWidget = !isPopup && (widgetSide == I.SidebarDirection.Right);
 
 	let center = null;
 	let label = '';

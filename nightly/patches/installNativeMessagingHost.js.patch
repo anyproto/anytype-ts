@@ -1,0 +1,11 @@
+--- electron/js/lib/installNativeMessagingHost.js	2025-09-03 19:06:25
++++ nightly/electron/js/lib/installNativeMessagingHost.js	2025-09-02 15:48:12
+@@ -15,7 +15,7 @@
+ const util = require('util');
+ const { fixPathForAsarUnpack, is } = require('electron-util');
+ 
+-const APP_NAME = 'com.anytype.desktop';
++const APP_NAME = 'com.anytype.desktop-dev';
+ const MANIFEST_FILENAME = `${APP_NAME}.json`;
+ const EXTENSION_IDS = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf', 'lcamkcmpcofgmbmloefimnelnjpcdpfn' ];
+ const USER_PATH = app.getPath('userData');

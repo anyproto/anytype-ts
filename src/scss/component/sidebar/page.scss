@@ -44,7 +44,7 @@
 
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
 		.side.right {
-			.icon.plus { background-image: url('~img/icon/widget/button/create.svg'); }
+			.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
 			.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 		}
 	}

@@ -5,7 +5,7 @@
 	.loaderWrapper { position: relative; }
 	.innerWrap { height: 100%; min-height: 36px; padding-bottom: 8px; display: flex; flex-direction: column; }
 	.contentWrapper { flex-grow: 1; min-height: 8px; }
-	.head { padding-bottom: 2px; }
+	.head { padding-bottom: 0px; }
 	.body { flex-grow: 1; }
 
 	#viewSelect { padding: 0px 16px; }

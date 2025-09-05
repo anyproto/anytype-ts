@@ -973,6 +973,10 @@ class BlockStore {
 		const types = S.Record.checkHiddenObjects(S.Record.getTypes());
 		const element = S.Block.getMapElement(widgets, widgets);
 
+		if (!element) {
+			return;
+		};
+
 		let update = false;
 
 		types.forEach(type => {

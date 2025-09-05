@@ -100,11 +100,12 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const renderImage = (withBlur?: boolean) => {
 		const { object } = props;
-		const node = $(nodeRef.current);
 
 		if (!src.current) {
 			if (object.isTmp && object.file) {
-				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
+				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 95, maxWidth: I.ImageSize.Large }, (image: string) => {
+					const node = $(nodeRef.current);
+
 					src.current = image;
 
 					node.find('#image').attr({ src: image });
@@ -219,28 +220,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 				break;
 			};
 		};
-	};
-
-	const onContextMenu = (e: any) => {
-		e.stopPropagation();
-
-		if (object.isTmp || object.isDeleted) {
-			return;
-		};
-
-		S.Menu.open('objectContext', {
-			classNameWrap: 'fromBlock',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
-			data: {
-				objectIds: [ object.id ],
-				subId,
-				allowedLinkTo: true,
-				allowedOpen: true,
-			}
-		});
 	};
 
 	const onOpenBookmark = () => {
@@ -419,7 +398,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		<div 
 			ref={nodeRef}
 			className={cn.join(' ')}
-			onContextMenu={onContextMenu}
 		>
 			{content}
 			<Icon className="remove" onClick={onRemoveHandler} />

@@ -17,7 +17,7 @@ body.eResize { cursor: e-resize !important; }
 
 body.grab, body.isDragging { cursor: grab !important; }
 body.isFullScreen {
-	#drag { display: none; }
+	#menuBar { display: none; }
 }
 
 :focus { outline: 0px; }
@@ -44,7 +44,7 @@ input, textarea, select { font-family: 'Inter'; }
 #appContainer { display: flex; flex-direction: column; height: 100%; }
 #selection { flex-grow: 1; overflow: hidden; }
 
-#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
+#menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
 
 #root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #060606; z-index: 1000; transition: opacity 0.3s ease-in-out; }
 #root-loader {
@@ -248,28 +248,28 @@ a { color: var(--color-text-primary); }
 @import "./theme/dark/common.scss";
 
 html.platformWindows:not(.noMenuBar) {
-	#drag { 
-		height: 40px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
-		flex-direction: row; padding: 0px 12px;
+	#menuBar { 
+		height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
+		flex-direction: row;
 	}
-	#drag {
-		.side { width: 50%; display: flex; align-items: center; }
-		.side.left { justify-content: flex-start; gap: 0px 22px; @include text-common; font-weight: 500; }
-		.side.right { justify-content: flex-end; gap: 0px 28px; }
+	#menuBar {
+		.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; @include text-small; font-weight: 500; }
+		.side.left { justify-content: flex-start; gap: 0px 2px; }
+		.side.right { justify-content: flex-end; }
 
-		.icon { -webkit-app-region: no-drag; }
+		.icon { width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; }
 		.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
 		.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
 		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }
 		.icon.window-close { background-image: url('~img/icon/window/close.svg'); }
 	}
 
-	.sidebar { margin-top: 40px; height: calc(100% - 40px); }
-	.sidebarHeadIcon { top: 52px; }
+	.sidebar { margin-top: 28px; height: calc(100% - 28px); }
+	.sidebarHeadIcon { top: 48px; }
 
 	.popups {
 		.popup.popupShortcut {
-			.innerWrap { top: 40px; height: calc(100% - 40px); }
+			.innerWrap { top: 28px; height: calc(100% - 28px); }
 		}
 	}
 }
