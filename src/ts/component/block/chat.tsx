@@ -429,11 +429,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 							formRef.current.onDelete(item.id);
 							break;
 						};
-
-						case 'unread': {
-							C.ChatUnreadMessages(chatId, item.orderId);
-							break;
-						};
 					};
 				},
 			},
