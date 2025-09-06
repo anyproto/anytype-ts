@@ -190,13 +190,7 @@ const App: FC = () => {
 		});
 
 		Renderer.on('power-event', (e: any, state: string) => {
-			const stateValue = state === 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground;
-			
-			C.AppSetDeviceState(stateValue, (response) => {
-				if (!response || !response.error) {
-					console.error(`[DeviceState] Failed to change to ${state}`, response?.error);
-				};
-			});
+			C.AppSetDeviceState(state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground);
 		});
 	};
 

@@ -57,9 +57,11 @@ export const AppGetVersion = (callBack?: (message: any) => void) => {
 	dispatcher.request(AppGetVersion.name, new Empty(), callBack);
 };
 
-export const AppSetDeviceState = (deviceState: I.AppDeviceState, callBack?: (message: any) => void) => {
+export const AppSetDeviceState = (state: I.AppDeviceState, callBack?: (message: any) => void) => {
 	const request = new Rpc.App.SetDeviceState.Request();
-	request.setDevicestate(deviceState as number);
+
+	request.setDevicestate(state as number);
+
 	dispatcher.request(AppSetDeviceState.name, request, callBack);
 };
 
