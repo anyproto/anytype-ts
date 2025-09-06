@@ -188,6 +188,16 @@ const App: FC = () => {
 		Renderer.on('reload', () => {
 			Renderer.send('reload', U.Router.getRoute());
 		});
+
+		Renderer.on('power-event', (e: any, state: string) => {
+			const stateValue = state === 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground;
+			
+			C.AppSetDeviceState(stateValue, (response) => {
+				if (!response || !response.error) {
+					console.error(`[DeviceState] Failed to change to ${state}`, response?.error);
+				};
+			});
+		});
 	};
 
 	const onInit = (e: any, data: any) => {

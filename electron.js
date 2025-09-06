@@ -60,11 +60,27 @@ if (process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
 };
 
-powerMonitor.on('suspend', () => {
-	Util.log('info', '[PowerMonitor] suspend');
+let lastPowerEvent = 'suspend';
+
+powerMonitor.on('suspend', () => {	
+	if (lastPowerEvent !== 'suspend') {
+		const firstWindow = WindowManager.list.values().next().value;
+		if (firstWindow) {
+			Util.send(firstWindow, 'power-event', 'suspend');
+			lastPowerEvent = 'suspend';
+		};
+	};
 });
 
-powerMonitor.on('resume', () => {
+powerMonitor.on('resume', () => {	
+	if (lastPowerEvent !== 'resume') {
+		const firstWindow = WindowManager.list.values().next().value;
+		if (firstWindow) {
+			Util.send(firstWindow, 'power-event', 'resume');
+			lastPowerEvent = 'resume';
+		};
+	};
+	
 	WindowManager.sendToAll('reload');
 	Util.log('info', '[PowerMonitor] resume');
 });
