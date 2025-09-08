@@ -46,6 +46,13 @@
 			}
 		}
 	}
+
+	&.spaceSpace {
+		> .sidebarPage {
+			> .subHead { margin-top: 12px; }
+			> .subHead { -webkit-app-region: no-drag; }
+		}
+	}
 }
 
 .sidebar {

@@ -126,13 +126,18 @@
 
 .widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; }
 .widget.isPreview {
+	.head { padding: 4px 16px; }
 	.contentWrapper, .innerWrap { height: 100%; }
+
 	.emptyWrap { padding: 16px 16px 8px 16px; }
 
 	.innerWrap { padding: 0px !important; }
 
-	&.widgetView {
-		#viewSelect { padding-top: 8px; }
+	.filterWrapper { display: flex; align-items: center; gap: 0px 8px; }
+	.filterWrapper {
+		.side.left { flex-grow: 1; }
+		.side.right { flex-shrink: 0; }
+		.filter { padding: 0px; width: 100%; }
 	}
 }
 

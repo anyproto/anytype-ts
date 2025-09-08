@@ -15,6 +15,8 @@ interface WidgetViewRefProps {
 	updateData: () => void;
 	updateViews: () => void;
 	onOpen: () => void;
+	getSearchIds: () => string[];
+	getFilter: () => string;
 };
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
@@ -23,11 +25,11 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const { viewId, limit, layout } = parent.content;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ searchIds, setSearchIds ] = useState<string[]>([]);
 	const nodeRef = useRef(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
 	const filterRef = useRef(null);
-	const searchIds = useRef([]);
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
 	const rootId = block ? [ targetId, 'widget', block.id ].join('-') : '';
@@ -75,11 +77,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		selectRef.current?.setOptions(views);
 	};
 
-	const updateSearchIds = (ids: string[]) => {
-		searchIds.current = ids;
-		load(view.id);
-	};
-
 	const load = (viewId: string) => {
 		if (childRef.current?.load) {
 			childRef.current?.load();
@@ -120,7 +117,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		};
 
 		if (filter.current) {
-			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds.current });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds });
 		};
 
 		return filters;
@@ -172,7 +169,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filter.current = v;
 
 			if (!filter.current) {
-				updateSearchIds([]);
+				setSearchIds([]);
 				return;
 			};
 
@@ -182,19 +179,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				fullText: filter.current,
 				keys: [ 'id' ],
 			}, (message: any) => {
-				const ids = (message.records || []).map(it => it.id)
-
-				updateSearchIds(ids);
+				setSearchIds((message.records || []).map(it => it.id));
 			});
 		}, J.Constant.delay.keyboard);
-	};
-
-	const onFilterClear = () => {
-		updateSearchIds([]);
-	};
-
-	const onAdd = () => {
-		onCreate({ route: analytics.route.widget });
 	};
 
 	const records = getRecordIds();
@@ -274,6 +261,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		};
 	};
 
+	if (viewSelect) {
+		cn.push('withViewSelect');
+	};
+
 	if (isPreview) {
 		head = (
 			<div className="head">
@@ -285,12 +276,20 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 							icon="search"
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
-							onClear={onFilterClear}
+							onClear={() => setSearchIds([])}
 						/>
 					</div>
-					<div className="side right">
-						{canCreate ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={onAdd} /> : ''}
-					</div>
+					{canCreate ? (
+						<div className="side right">
+							<Button 
+								id="button-object-create" 
+								color="blank" 
+								className="c28" 
+								text={translate('commonNew')} 
+								onClick={() => onCreate({ route: analytics.route.widget })} 
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
@@ -365,6 +364,10 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ viewId ]);
 
 	useEffect(() => {
+		load(viewId);
+	}, [ searchIds ]);
+
+	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
 
 		checkShowAllButton(subId);
@@ -374,6 +377,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		updateData,
 		updateViews,
 		onOpen,
+		getSearchIds: () => searchIds,
+		getFilter: () => filter.current,
 	}));
 
 	return (

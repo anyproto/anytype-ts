@@ -87,10 +87,18 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				const object = this.getObject(child?.getTargetObjectId());
 
 				let icon = null;
+				let buttons = null;
+
 				if (object.isSystem) {
 					icon = <Icon className={object.icon} />;
 				} else {
 					icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
+					buttons = (
+						<>
+							<Icon className="expand withBackground" onClick={this.onExpand} />
+							<Icon id="button-widget-more" className="more withBackground" onClick={this.onMore} />
+						</>
+					);
 				};
 
 				subHead = (
@@ -110,8 +118,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 
 						<div className="side right">
-							<Icon className="expand withBackground" onClick={this.onExpand} />
-							<Icon id="button-widget-more" className="more withBackground" onClick={this.onMore} />
+							{buttons}
 						</div>
 					</div>
 				);

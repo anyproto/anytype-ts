@@ -179,6 +179,6 @@
 		> .head {
 			&::after { display: none; }
 		}
-		> .body { padding-top: 12px; }
+		> .body:not(.isListPreview) { padding-top: 12px; }
 	}
 }

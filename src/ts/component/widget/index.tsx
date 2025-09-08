@@ -406,6 +406,15 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 		};
 
+		if (childRef.current?.getFilter && childRef.current?.getSearchIds) {
+			const filter = childRef.current?.getFilter();
+			const searchIds = childRef.current?.getSearchIds();
+
+			if (filter) {
+				filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds });
+			};
+		};
+
 		switch (targetId) {
 			case J.Constant.widgetId.favorite: {
 				filters.push({ relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
