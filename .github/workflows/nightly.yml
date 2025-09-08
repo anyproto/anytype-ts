@@ -18,7 +18,34 @@ permissions:
   contents: 'write'
 
 jobs:
+  diff-check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff_check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git fetch --tags --force --prune
+      - id: diff_check
+        run: |
+          LAST_TAG=$(git describe --tags --match 'v*-nightly.*' --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            # no nightly tag found in history
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet "${LAST_TAG}..HEAD"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: debug
+        run: |
+          echo "changed: ${{ steps.diff_check.outputs.changed }}"
   release:
+    needs:
+      - diff-check
+    if: needs.diff-check.outputs.changed == 'true' # run only if there is a diff
+
     runs-on: ${{ matrix.os }}
 
     strategy:
