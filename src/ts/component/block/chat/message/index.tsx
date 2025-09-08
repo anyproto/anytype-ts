@@ -8,7 +8,7 @@ import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
 
-const LINES_LIMIT = 10;
+const LINES_LIMIT = 16;
 
 interface ChatMessageRefProps {
 	highlight: () => void;
