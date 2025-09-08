@@ -373,7 +373,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,
-		}, analytics.route.widget, object => U.Object.openAuto(object));
+		}, analytics.route.navigation, object => U.Object.openAuto(object));
 	};
 
 	onBack = () => {
