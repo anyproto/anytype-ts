@@ -9,9 +9,15 @@
 	}
 
 	@keyframes dots-dark {
-		0% { background-color: #171717; }
-		32% { background-color: #171717; }
-		100% { background-color: #fff; }
+		0% { background-color: var(--color-bg-primary-inversion); }
+		32% { background-color: var(--color-bg-primary-inversion); }
+		100% { background-color: var(--color-bg-primary); }
+	}
+
+	@keyframes dots-accent {
+		0% { background-color: var(--color-system-accent); }
+		32% { background-color: var(--color-system-accent); }
+		100% { background-color: var(--color-bg-primary); }
 	}
 
 	.loader {
