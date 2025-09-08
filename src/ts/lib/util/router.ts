@@ -235,7 +235,7 @@ class UtilRouter {
 				delay: 100,
 				onRouteChange: () => {
 					analytics.removeContext();
-					S.Common.defaultType = null;
+					S.Common.nullifySpaceKeys();
 					Storage.set('spaceId', id);
 
 					U.Data.onInfo(message.info);
