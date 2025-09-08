@@ -79,9 +79,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		const lineHeight = parseInt(ref.css('line-height'));
 		const canExpand = textHeight / lineHeight > LINES_LIMIT;
 
-		if (canExpand) {
-			node.addClass('canExpand');
-		};
+		node.toggleClass('canExpand', canExpand);
 	};
 
 	const onReactionAdd = () => {
