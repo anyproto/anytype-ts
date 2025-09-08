@@ -227,7 +227,7 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('widgetSide');
 		};
-		return ret;
+		return ret || I.SidebarDirection.Right;
 	};
 
 	get emailConfirmationTime (): number {

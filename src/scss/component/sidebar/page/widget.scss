@@ -128,3 +128,13 @@
 		}
 	}
 }
+
+&.spaceSpace {
+	> .sidebarPage.pageWidget {
+		> .head { height: 0px; }
+		> .head {
+			&::after { display: none; }
+		}
+		> .body { padding-top: 12px; }
+	}
+}
