@@ -158,7 +158,7 @@
 	&.canExpand {
 		.bubbleInner {
 			.expand { display: flex; }
-			.text { -webkit-line-clamp: 10; }
+			.text { @include clamp; -webkit-line-clamp: 16; }
 		}
 	}
 
