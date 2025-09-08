@@ -163,10 +163,12 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 	};
 
-	onUpgrade (id?: I.TierType) {
-		Action.membershipUpgrade(id);
+	onUpgrade () {
+		const usage = Math.round(U.Common.calculateStorageUsage());
 
-		analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.settingsStorage });
+		Action.membershipUpgrade();
+
+		analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.settingsStorage });
 	};
 
 	onRemove (refId: string) {
