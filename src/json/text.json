@@ -773,8 +773,8 @@
 
 	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
 	"blockChatEmptyShareInviteLink": "Share invite link",
-	"blockChatMessageExpand": "Expand",
-	"blockChatMessageCollapse": "Collapse",
+	"blockChatMessageExpand": "Show more",
+	"blockChatMessageCollapse": "Show less",
 	"blockChatReactionAdd": "Add reaction",
 	"blockChatReply": "Reply",
 	"blockChatPlaceholder": "Enter your message",
