@@ -69,7 +69,8 @@
 
 /* PageMainSettings */
 .settingsPageContainer {
-	.pageSettingsSpaceIndex {
+	.pageSettingsSpaceIndex, 
+	.pageSettingsSpaceIndexEmpty {
 		.spaceButtons {
 			.btn {
 				.icon.invite { background-image: url('#{$themePath}/icon/settings/invite.svg'); }
