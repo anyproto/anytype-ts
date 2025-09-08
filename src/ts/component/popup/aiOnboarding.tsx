@@ -641,7 +641,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 								)}
 							</div>
 						))}
-						{/* Status appears as a message bubble when active */}
+
 						{showStatus && currentStatus && (
 							<div className="message ai">
 								<div className="bubble">
@@ -720,6 +720,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							</div>
 						</div>
 					)}
+
 					{showGoToSpace && (
 						<div className="inputArea ctaArea">
 							<button
@@ -736,6 +737,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	);
 }));
 
+/*
 // Typing Indicator Component
 const TypingIndicator = () => (
 	<div className="typingDots">
@@ -778,5 +780,6 @@ const CompactTypeBlock = ({ type, isSelected, onToggle }) => {
 		</div>
 	);
 };
+*/
 
 export default PopupAIOnboarding;
