@@ -189,7 +189,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		let page = '';
 		switch (id) {
 			case 'spaceIndexEmpty': {
-				page = 'vault';
+				page = U.Space.getDefaultSidebarPage();
 				break;
 			};
 

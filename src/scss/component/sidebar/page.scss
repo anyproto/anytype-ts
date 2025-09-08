@@ -182,3 +182,14 @@
 @import "./page/object/relation.scss";
 @import "./page/object/tableOfContents.scss";
 @import "./page/bottom.scss";
+
+&.right.spaceSpace {
+	> .sidebarPage.pageWidget, 
+	> .sidebarPage.pageAllObject {
+		> .head { height: 0px; padding: 0px; }
+		> .head {
+			&::after { display: none; }
+		}
+		> .subHead { height: 52px; margin: 0px; }
+	}
+}

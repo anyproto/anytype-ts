@@ -17,7 +17,6 @@ const SPACE_KEYS = [
 	'focus',
 	'openUrl',
 	'redirectInvite',
-	'widgetSide',
 ];
 
 const LOCAL_KEYS = [

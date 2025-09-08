@@ -5,10 +5,9 @@ import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, renderLeftIcons, isPopup } = props;
-	const { widgetSide } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const showWidget = !isPopup && (widgetSide == I.SidebarDirection.Right);
+	const showWidget = !isPopup && spaceview.isChat;
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);

@@ -6,14 +6,14 @@ import { Icon, Label } from 'Component';
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { menuOpen, isPopup } = props;
 	const { account } = S.Auth;
-	const { widgetSide } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
 	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const showWidget = !isPopup && (widgetSide == I.SidebarDirection.Right);
+	const showWidget = !isPopup && spaceview.isChat;
 
 	const onIdentity = () => {
 		if (globalName) {
