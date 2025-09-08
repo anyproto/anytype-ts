@@ -944,6 +944,11 @@ class CommonStore {
 		Storage.set('widgetSide', v);
 	};
 
+	nullifySpaceKeys () {
+		this.defaultType = null;
+		this.widgetSideValue = null;
+	};
+
 };
 
 export const Common: CommonStore = new CommonStore();

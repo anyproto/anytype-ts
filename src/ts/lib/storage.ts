@@ -17,6 +17,7 @@ const SPACE_KEYS = [
 	'focus',
 	'openUrl',
 	'redirectInvite',
+	'widgetSide',
 ];
 
 const LOCAL_KEYS = [
@@ -92,6 +93,7 @@ class Storage {
 		if (this.isSpaceKey(key)) {
 			if (o) {
 				localStorage.removeItem(key);
+				Api.delete(key, isLocal);
 				this.set(key, o, isLocal);
 			};
 
@@ -189,6 +191,7 @@ class Storage {
 		spaceId = spaceId || S.Common.space;
 
 		const obj = this.getSpace(isLocal, spaceId);
+
 		return obj[spaceId][key];
 	};
 

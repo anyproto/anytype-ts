@@ -154,8 +154,8 @@
 
 .formWrapper {
 	.readonly {
-		display: flex; justify-content: center; align-items: center; gap: 0px 8px; height: 40px; border-radius: 8px; @include text-small;
-		border: 1px solid var(--color-shape-primary); background: var(--color-shape-tertiary);
+		display: flex; justify-content: center; align-items: center; gap: 0px 8px; height: 32px; border-radius: 15px; @include text-small;
+		border: 1px solid var(--color-shape-primary); background: var(--color-shape-tertiary); width: 100%;
 	}
 	.readonly::before { content: ''; display: block; width: 8px; height: 12px; background: url('~img/icon/lock.svg'); }
 }

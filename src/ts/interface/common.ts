@@ -366,3 +366,8 @@ export enum ImageSize {
 	Medium		 = 320,
 	Large		 = 1920,
 };
+
+export enum AppDeviceState {
+	Background   = 0, // means app is suspended
+	Foreground	 = 1,
+};

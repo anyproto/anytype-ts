@@ -5,7 +5,6 @@ const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
 const port = process.env.SERVER_PORT;
 
-const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
@@ -253,6 +252,10 @@ class WindowManager {
 
 	reloadAll () {
 		this.sendToAll('reload');
+	};
+
+	getFirstWindow () {
+		return this.list.values().next().value;
 	};
 	
 };

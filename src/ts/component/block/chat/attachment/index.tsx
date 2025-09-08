@@ -103,7 +103,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		if (!src.current) {
 			if (object.isTmp && object.file) {
-				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 95, maxWidth: I.ImageSize.Large }, (image: string) => {
+				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
 					const node = $(nodeRef.current);
 
 					src.current = image;

@@ -234,9 +234,10 @@ class UtilRouter {
 				animate: routeParam.animate,
 				delay: 100,
 				onRouteChange: () => {
-					analytics.removeContext();
-					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
+
+					analytics.removeContext();
+					S.Common.nullifySpaceKeys();
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {

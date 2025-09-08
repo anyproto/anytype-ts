@@ -37,6 +37,7 @@ const csp = [];
 let deeplinkingUrl = '';
 let waitLibraryPromise = null;
 let mainWindow = null;
+let lastPowerEvent = 'suspend';
 
 MenuManager.store = store;
 
@@ -60,11 +61,29 @@ if (process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
 };
 
-powerMonitor.on('suspend', () => {
-	Util.log('info', '[PowerMonitor] suspend');
+powerMonitor.on('suspend', () => {	
+	if (lastPowerEvent == 'suspend') {
+		return;
+	};
+
+	const firstWindow = WindowManager.getFirstWindow();
+	if (firstWindow) {
+		Util.send(firstWindow, 'power-event', 'suspend');
+		lastPowerEvent = 'suspend';
+	};
 });
 
-powerMonitor.on('resume', () => {
+powerMonitor.on('resume', () => {	
+	if (lastPowerEvent == 'resume') {
+		return;
+	};
+
+	const firstWindow = WindowManager.getFirstWindow();
+	if (firstWindow) {
+		Util.send(firstWindow, 'power-event', 'resume');
+		lastPowerEvent = 'resume';
+	};
+	
 	WindowManager.sendToAll('reload');
 	Util.log('info', '[PowerMonitor] resume');
 });

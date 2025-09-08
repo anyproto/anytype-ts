@@ -282,6 +282,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							</div>
 						</div>
 
+						<div className="side center" />
+
 						<div className="side right">
 							<Button 
 								id="button-help"
