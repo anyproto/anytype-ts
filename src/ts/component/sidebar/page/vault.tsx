@@ -524,7 +524,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<div className="sides">
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
-							<IconObject object={settings} size={32} iconSize={32} param={{ userIcon: J.Theme[theme].textInversion }} />
+							<IconObject object={settings} size={32} iconSize={32} />
 							<ObjectName object={settings} />
 						</div>
 					</div>

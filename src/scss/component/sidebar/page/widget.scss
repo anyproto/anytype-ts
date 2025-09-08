@@ -116,10 +116,10 @@
 					background-position: 50% 50%; background-repeat: no-repeat; background-size: 28px; transition: background-color $transitionCommon;
 				}
 				.icon.add { background-image: url('~img/icon/sidebar/chatSpace/add.svg'); }
-				.icon.search { background-image: url('~img/icon/sidebar/chatSpace/search.svg'); }
 				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
 				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
 				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
+
 				.label { @include text-small; @include text-overflow-nw; width: 100%; padding: 0px 2px; }
 			}
 			.item:hover {

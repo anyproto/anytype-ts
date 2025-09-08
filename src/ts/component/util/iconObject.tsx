@@ -4,10 +4,6 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, S, U, J, Preview, translate, Relation, analytics } from 'Lib';
 
-interface IconParam {
-	userIcon?: string;
-};
-
 interface Props {
 	id?: string;
 	layout?: I.ObjectLayout;
@@ -26,7 +22,6 @@ interface Props {
 	menuParam?: Partial<I.MenuParam>;
 	tooltipParam?: Partial<I.TooltipParam>;
 	style?: any;
-	param?: IconParam;
 	getObject?(): any;
 	onSelect?(id: string): void;
 	onIconSelect?(id: string, color: number): void;
@@ -123,7 +118,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		menuParam = {},
 		tooltipParam = {},
 		style = {},
-		param = {},
 		getObject,
 		onSelect,
 		onIconSelect,
@@ -148,7 +142,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	const layout = Number(object.layout) || I.ObjectLayout.Page;
 	const { id, name, iconName, iconEmoji, iconImage, iconOption, done, relationFormat, relationKey, isDeleted, uxType } = object || {};
-	const { userIcon } = param;
 	const cn = [ 'iconObject', `c${size}`, className, U.Data.layoutClass(object.id, layout) ];
 	const iconSize = props.iconSize || IconSize[size];
 
@@ -277,7 +270,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const userSvg = (): string => {
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${userIcon || J.Theme[theme]?.iconUser}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${J.Theme[theme]?.iconUser}" font-family="Inter, Helvetica" font-weight="${fontWeight(size)}" font-size="${fontSize(size)}px">${nameString()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				${text}

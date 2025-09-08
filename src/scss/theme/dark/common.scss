@@ -451,9 +451,9 @@ html.themeDark {
 				.buttons {
 					.item {
 						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
-						.icon.search { background-image: url('#{$themePath}/icon/sidebar/chatSpace/search.svg'); }
-						.icon.mute.pushOn { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-						.icon.mute.pushOff { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
+						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
+						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
 					}
 				}
 			}
