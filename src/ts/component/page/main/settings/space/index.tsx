@@ -171,7 +171,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 											<div className="side right">
 												<Select
-													id="linkStyle"
+													id="uxType"
 													readonly={!canWrite}
 													ref={ref => this.refUxType = ref}
 													value={String(space.uxType)}
@@ -201,7 +201,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 											<div className="side right">
 												<Select
-													id="linkStyle"
+													id="notificationMode"
 													ref={ref => this.refMode = ref}
 													value={String(space.notificationMode)}
 													options={spaceModes}

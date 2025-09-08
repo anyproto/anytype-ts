@@ -291,7 +291,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	onUpload () {
 		Action.openFileDialog({}, paths => {
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, false, '', (message: any) => {
 				if (!message.error.code) {
 					this.onChange(message.objectId);
 					this.reload();

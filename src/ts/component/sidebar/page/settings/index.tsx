@@ -323,8 +323,8 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	onBack () {
-		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		U.Space.openDashboard();
+		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 	};
 
 });

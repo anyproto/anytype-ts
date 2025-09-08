@@ -51,18 +51,20 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const cnb = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const buttons: I.ButtonComponent[] = [];
 		const counters = S.Chat.getTotalCounters();
 		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
-		const chatSpaceHeaderButtons = [
-			{ id: 'chat', name: translate('commonChat') },
+		const headerButtons: any[] = [
 			{ id: 'add', name: translate('commonAdd') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
 		];
+
+		if (space.isChat) {
+			headerButtons.unshift({ id: 'chat', name: translate('commonChat') });
+			headerButtons.push({ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },);
+		};
 
 		if (isEditing) {
 			cnb.push('isEditing');
@@ -174,20 +176,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				first = blocks[0];
 			};
 
-			if (isEditing) {
-				if (blocks.length <= J.Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
-				};
-
-				buttons.push({ id: 'widget-list-done', className: 'grey c28', text: translate('commonDone'), onMouseDown: this.onEdit });
-			};
-
-			subHead = isDirectionLeft ? (
+			subHead = !space.isChat ? (
 				<div className={cnsh.join(' ')}>
-					<div className="side left">
-						<Icon className="back" onClick={this.onBack} />
-						{cnt ? <div className="cnt">{cnt}</div> : ''}
-					</div>
+					{isDirectionLeft || cnt ? (
+						<div className="side left">
+							{isDirectionLeft ? <Icon className="back" onClick={this.onBack} /> : ''}
+							{cnt ? <div className="cnt">{cnt}</div> : ''}
+						</div>
+					) : ''}
 
 					<div className="side center">
 						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
@@ -219,7 +215,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								className="firstTarget"
 								cacheKey="firstTarget"
 							>
-								{isDirectionRight ? (
+								{space.isChat ? (
 									<div className="spaceHeader">
 										<div className="spaceInfo">
 											<IconObject
@@ -233,8 +229,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 											{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 										</div>
 										<div className="buttons">
-											{chatSpaceHeaderButtons.map((item, idx) => (
-												<div className="item" onClick={e => this.onChatSpaceButton(e, item)} key={idx}>
+											{headerButtons.map((item, idx) => (
+												<div className="item" onClick={e => this.onButton(e, item)} key={idx}>
 													<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
 													<Label text={item.name} />
 												</div>
@@ -294,21 +290,25 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 
 						<div className="side center">
-							<Button 
-								id="widget-list-add"
-								text={translate('menuWidgetAddWidget')}
-								onClick={this.onAdd}
-							/>
+							{canWrite ? (
+								<Button 
+									id="widget-list-add"
+									text={translate('menuWidgetAddWidget')}
+									onClick={this.onAdd}
+								/>
+							) : ''}
 						</div>
 
 						<div className="side right">
-							<Button 
-								id="button-help"
-								className="help"
-								text="?"
-								tooltipParam={{ text: translate('commonHelp') }}
-								onClick={this.onHelp}
-							/>
+							{!space.isChat ? (
+								<Button 
+									id="button-help"
+									className="help"
+									text="?"
+									tooltipParam={{ text: translate('commonHelp') }}
+									onClick={this.onHelp}
+								/>
+							) : ''}
 						</div>
 					</div>
 				</div>
@@ -318,7 +318,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		return (
 			<>
 				<div id="head" className="head">
-					{isDirectionRight ? (
+					{space.isChat ? (
 						<>
 							<div className="side left">
 								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
@@ -377,7 +377,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,
-		}, analytics.route.widget, object => U.Object.openAuto(object));
+		}, analytics.route.navigation, object => U.Object.openAuto(object));
 	};
 
 	onBack = () => {
@@ -684,16 +684,24 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
+		const spaceview = U.Space.getSpaceview();
 		const { sidebarDirection } = this.props;
 		const node = $('#sidebarPageWidget');
 		const top = node.find('#body').scrollTop();
 		const isScrolled = top > 0;
 
+		let el = null;
+
 		if (sidebarDirection == I.SidebarDirection.Left) {
-			node.find('.dropTarget.firstTarget').toggleClass('isScrolled', isScrolled);
+			el = node.find('.dropTarget.firstTarget');
+		} else 
+		if (spaceview.isSpace) {
+			el = node.find('.subHead');
 		} else {
-			node.find('#head').toggleClass('isScrolled', isScrolled);
+			el = node.find('#head');
 		};
+
+		el.toggleClass('isScrolled', isScrolled);
 	};
 
 	onArchive (e: any) {
@@ -704,7 +712,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 	};
 
-	onChatSpaceButton (e: any, item: any) {
+	onButton (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		const space = U.Space.getSpaceview();

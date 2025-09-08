@@ -17,8 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space, updateVersion, widgetSide } = S.Common;
-	const { isPopup, sidebarDirection } = props;
+	const { space, updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -229,9 +228,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
 		U.Menu.spaceContext(item, {
+			onOpen: () => {
+				unsetActive();
+				unsetHover();
+			},
+			onClose: () => setActive(spaceview),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `#sidebarPageVault #item-${item.id}`,
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
 		});
 	};
@@ -251,7 +254,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard({ replace: false });
-			U.Router.onSpaceSwitch();
+			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		};
 	};
 
@@ -263,7 +266,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onOut = () => {
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
 			setActive(spaceview);
 		};
@@ -520,7 +523,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<div className="sides">
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
-							<IconObject object={settings} size={32} iconSize={32} param={{ userIcon: J.Theme[theme].textInversion }} />
+							<IconObject object={settings} size={32} iconSize={32} />
 							<ObjectName object={settings} />
 						</div>
 					</div>

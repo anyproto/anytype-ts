@@ -234,35 +234,19 @@ class UtilRouter {
 				animate: routeParam.animate,
 				delay: 100,
 				onRouteChange: () => {
-					analytics.removeContext();
-					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
+
+					analytics.removeContext();
+					S.Common.nullifySpaceKeys();
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 						this.isOpening = false;
-						this.onSpaceSwitch();
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					});
 				},
 			});
 		});
-	};
-
-	onSpaceSwitch () {
-		const { widgetSide } = S.Common;
-
-		switch (widgetSide) {
-			case I.SidebarDirection.Left: {
-				sidebar.leftPanelSetState({ page: 'widget' });
-				break;
-			};
-
-			case I.SidebarDirection.Right:
-				S.Common.setRightSidebarState(false, '', false);
-				sidebar.leftPanelSetState({ page: 'vault' });
-				sidebar.rightPanelToggle(false, false, 'widget', {});
-				break;
-		};
 	};
 
 	/**

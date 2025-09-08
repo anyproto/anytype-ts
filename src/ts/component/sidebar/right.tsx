@@ -40,6 +40,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const { isPopup } = props;
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const childRef = useRef(null);
+	const spaceview = U.Space.getSpaceview();
 	const [ state, setState ] = useState<State>({
 		page: '',
 		rootId: '',
@@ -54,7 +55,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cn = [ 'sidebar', 'right', 'customScrollbar' ];
+	const cn = [ 'sidebar', 'right', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = [ 'type' ].includes(page);
 

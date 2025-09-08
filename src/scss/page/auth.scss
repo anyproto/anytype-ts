@@ -58,19 +58,10 @@ html.bodyAuthDeleted {
 	.button.blank:not(.disabled):hover,
 	.button.blank:not(.disabled).hover { background: var(--color-shape-highlight-dark) !important; }
 
-	.button.accent {
-		.loaderWrapper {
-			.dots {
-				.dot { animation-name: dots-dark; border-color: #d4d4d4; }
-			}
-		}
-	}
-
 	.small { color: var(--color-text-secondary) !important; }
 	.small:hover { color: var(--color-text-primary) !important; }
 
-	.error { color: var(--color-error) !important; margin: 0.3em 0px; }
-	.withError { background: var(--color-error-background) !important; }
+	.error { margin: 0.3em 0px; }
 }
 
 

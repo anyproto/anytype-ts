@@ -100,11 +100,12 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const renderImage = (withBlur?: boolean) => {
 		const { object } = props;
-		const node = $(nodeRef.current);
 
 		if (!src.current) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
+					const node = $(nodeRef.current);
+
 					src.current = image;
 
 					node.find('#image').attr({ src: image });

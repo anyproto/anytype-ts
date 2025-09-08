@@ -6,7 +6,7 @@ import { I, S, U, translate, Action, analytics, Renderer } from 'Lib';
 const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends React.Component<I.PageSettingsComponent> {
 
 	render () {
-		const { config, linkStyle, fullscreenObject, hideSidebar, widgetSide } = S.Common;
+		const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
 		const { hideTray, showMenuBar } = config;
 		const { theme } = S.Common;
 
@@ -20,11 +20,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 		const linkStyles: I.Option[] = [
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
-		];
-
-		const widgetSides: I.Option[] = [
-			{ id: I.SidebarDirection.Left, name: translate('popupSettingsPersonalWidgetSideLeft') },
-			{ id: I.SidebarDirection.Right, name: translate('popupSettingsPersonalWidgetSideRight') },
 		];
 
 		return (
@@ -54,19 +49,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 				<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
 
 				<div className="actionItems">
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalWidgetSide')} />
-
-						<Select
-							id="linkStyle"
-							value={widgetSide}
-							options={widgetSides}
-							onChange={v => S.Common.widgetSideSet(v)}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />
 						<Switch

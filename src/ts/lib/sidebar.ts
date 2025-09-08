@@ -242,11 +242,10 @@ class Sidebar {
 		const isMain = keyboard.isMain();
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
-		const isMainChat = keyboard.isMainChat();
 
 		this.initObjects();
 
-		let leftButtonX = 16;
+		let leftButtonX = 12;
 		let rightButtonX = 52;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
@@ -292,9 +291,7 @@ class Sidebar {
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
 
-		if (isMainChat) {
-			this.page.toggleClass('sidebarAnimation', animate);
-		};
+		// this.page.toggleClass('sidebarAnimation', animate);
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
@@ -465,8 +462,6 @@ class Sidebar {
 	};
 
 	panelSetState (isPopup: boolean, direction: I.SidebarDirection, v: any) {
-		console.log('panelSetState', isPopup, direction, v);
-
 		switch (direction) {
 			case I.SidebarDirection.Left: {
 				this.leftPanelSetState(v);

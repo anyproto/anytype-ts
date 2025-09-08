@@ -388,11 +388,8 @@ html.themeDark {
 		> .sidebarPage {
 			> .subHead {
 				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-
-				.side.right {
-					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
-					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
-				}
+				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
+				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 			}
 
 			> .body {
@@ -451,9 +448,9 @@ html.themeDark {
 				.buttons {
 					.item {
 						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
-						.icon.search { background-image: url('#{$themePath}/icon/sidebar/chatSpace/search.svg'); }
-						.icon.mute.pushOn { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-						.icon.mute.pushOff { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
+						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
+						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
 					}
 				}
 			}
@@ -493,7 +490,7 @@ html.themeDark {
 		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
 	}
 
-	#drag {
+	#menuBar {
 		.icon.window-menu { background-image: url('#{$themePath}/icon/window/menu.svg') !important; }
 		.icon.window-min { background-image: url('#{$themePath}/icon/window/min.svg') !important; }
 		.icon.window-max { background-image: url('#{$themePath}/icon/window/max.svg') !important; }

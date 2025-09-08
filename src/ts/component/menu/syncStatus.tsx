@@ -307,8 +307,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 
 			case 'upgrade': {
+				const usage = Math.round(U.Common.calculateStorageUsage());
+
 				Action.membershipUpgrade();
-				analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.syncStatus });
+
+				analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.syncStatus });
 				break;
 			};
 		};
