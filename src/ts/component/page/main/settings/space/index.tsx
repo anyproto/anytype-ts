@@ -43,7 +43,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	render () {
 		const { error, isEditing } = this.state;
-		const { config } = S.Common;
+		const { config, widgetSide } = S.Common;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
@@ -68,6 +68,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			it.name = translate(`notificationMode${it.id}`);
 			return it;
 		});
+		const widgetSides: I.Option[] = [
+			{ id: I.SidebarDirection.Left, name: translate('popupSettingsPersonalWidgetSideLeft') },
+			{ id: I.SidebarDirection.Right, name: translate('popupSettingsPersonalWidgetSideRight') },
+		];
 
 		const spaceUxTypes = [
 			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
@@ -171,7 +175,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 											<div className="side right">
 												<Select
-													id="linkStyle"
+													id="uxType"
 													readonly={!canWrite}
 													ref={ref => this.refUxType = ref}
 													value={String(space.uxType)}
@@ -201,7 +205,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 											<div className="side right">
 												<Select
-													id="linkStyle"
+													id="notificationMode"
 													ref={ref => this.refMode = ref}
 													value={String(space.notificationMode)}
 													options={spaceModes}
@@ -289,6 +293,26 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 										</div>
 									</div>
 								</div>
+
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsPersonalWidgetSide')} />
+										</div>
+
+										<div className="side right">
+											<Select
+												id="widgetSide"
+												value={widgetSide}
+												options={widgetSides}
+												onChange={v => S.Common.widgetSideSet(v)}
+												arrowClassName="black"
+												menuParam={{ horizontal: I.MenuDirection.Right }}
+											/>
+										</div>
+									</div>
+								</div>
+
 							</div>
 						</div>
 					) : (
