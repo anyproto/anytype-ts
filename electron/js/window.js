@@ -254,6 +254,10 @@ class WindowManager {
 	reloadAll () {
 		this.sendToAll('reload');
 	};
+
+	getFirstWindow () {
+		return WindowManager.list.values().next().value;
+	};
 	
 };
 

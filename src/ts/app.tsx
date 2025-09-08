@@ -188,6 +188,10 @@ const App: FC = () => {
 		Renderer.on('reload', () => {
 			Renderer.send('reload', U.Router.getRoute());
 		});
+
+		Renderer.on('power-event', (e: any, state: string) => {
+			C.AppSetDeviceState(state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground);
+		});
 	};
 
 	const onInit = (e: any, data: any) => {
