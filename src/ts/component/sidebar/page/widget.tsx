@@ -300,13 +300,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 
 						<div className="side right">
-							<Button 
-								id="button-help"
-								className="help"
-								text="?"
-								tooltipParam={{ text: translate('commonHelp') }}
-								onClick={this.onHelp}
-							/>
+							{!space.isChat ? (
+								<Button 
+									id="button-help"
+									className="help"
+									text="?"
+									tooltipParam={{ text: translate('commonHelp') }}
+									onClick={this.onHelp}
+								/>
+							) : ''}
 						</div>
 					</div>
 				</div>
