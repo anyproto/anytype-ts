@@ -294,24 +294,26 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 									</div>
 								</div>
 
-								<div className="item">
-									<div className="sides">
-										<div className="side left">
-											<Title text={translate('popupSettingsPersonalWidgetSide')} />
-										</div>
+								{config.experimental ? (
+									<div className="item">
+										<div className="sides">
+											<div className="side left">
+												<Title text={translate('popupSettingsPersonalWidgetSide')} />
+											</div>
 
-										<div className="side right">
-											<Select
-												id="widgetSide"
-												value={widgetSide}
-												options={widgetSides}
-												onChange={v => S.Common.widgetSideSet(v)}
-												arrowClassName="black"
-												menuParam={{ horizontal: I.MenuDirection.Right }}
-											/>
+											<div className="side right">
+												<Select
+													id="widgetSide"
+													value={widgetSide}
+													options={widgetSides}
+													onChange={v => S.Common.widgetSideSet(v)}
+													arrowClassName="black"
+													menuParam={{ horizontal: I.MenuDirection.Right }}
+												/>
+											</div>
 										</div>
 									</div>
-								</div>
+								) : ''}
 
 							</div>
 						</div>
