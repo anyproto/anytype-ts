@@ -6,7 +6,7 @@
 	}
 	.bg { position: absolute; left: 0px; top: 44px; width: 100%; height: calc(100% - 44px); background: var(--color-bg-primary); z-index: 0; }
 
-	> .inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; }
+	> .inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; max-width: 1216px; }
 	> .inner {
 		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
 		> .icon:hover, .icon.hover { background-color: var(--color-shape-secondary); }
