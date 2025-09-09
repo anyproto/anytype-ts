@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
@@ -37,7 +37,7 @@ interface RefProps {
 	getMarks: () => I.Mark[];
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -1707,5 +1707,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	);
 
 }));
+
+const ChatForm = memo(ChatFormBase);
 
 export default ChatForm;
