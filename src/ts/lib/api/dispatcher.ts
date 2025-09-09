@@ -107,14 +107,11 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
-		const { config, space } = S.Common;
+		const { config, windowId, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const electron = U.Common.getElectron();
-		const currentWindow = electron.currentWindow();
-		const { windowId, windowIsFocused } = currentWindow;
-		const isMainWindow = windowId === 1;
+		const isMainWindow = windowId == '1';
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
 		
@@ -967,7 +964,7 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message);
+					const notification = getMessageByIdSimpleText(spaceId, message);
 
 					let showNotification = false;
 
@@ -994,6 +991,8 @@ class Dispatcher {
 
 						S.Chat.add(subId, idx, message);
 					});
+
+					console.log('windowIsFocused', windowIsFocused, notification);
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
@@ -1065,7 +1064,7 @@ class Dispatcher {
 
 				case 'ChatUpdateReactions': {
 					mapped.subIds.forEach((subId) => {
-						const message = S.Chat.getMessage(subId, mapped.id);
+						const message = getMessageById(subId, mapped.id);
 						if (message) {
 							set(message, { reactions: mapped.reactions });
 						};

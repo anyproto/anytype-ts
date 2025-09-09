@@ -802,7 +802,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 
 			if (editingId.current) {
-				const message = S.Chat.getMessage(subId, editingId.current);
+				const message = getMessageById(subId, editingId.current);
 				if (message) {
 					const update = U.Common.objectCopy(message);
 
@@ -817,7 +817,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			} else {
 				if (replyingId) {
-					const reply = S.Chat.getMessage(subId, replyingId);
+					const reply = getMessageById(subId, replyingId);
 					if (reply) {
 						S.Chat.setReply(subId, reply);
 					};
@@ -1107,8 +1107,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			case I.ChatReadType.Mention: {
 				const { mentionOrderId } = S.Chat.getState(subId);
-				const messages = getMessages();
-				const target = messages.find(it => it.orderId == mentionOrderId);
+				const target = S.Chat.getMessageByOrderId(subId, mentionOrderId);
 
 				if (target) {
 					scrollToMessage(target.id, true, true);
@@ -1382,7 +1381,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const message = S.Chat.getMessage(subId, replyingId);
+		const message = getMessageById(subId, replyingId);
 		if (!message) {
 			return;
 		};
@@ -1490,7 +1489,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onClear = () => onEditClear();
 	} else
 	if (replyingId) {
-		const message = S.Chat.getMessage(subId, replyingId);
+		const message = getMessageById(subId, replyingId);
 
 		if (message) {
 			const reply = getReplyContent(message);

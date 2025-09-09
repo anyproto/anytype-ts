@@ -182,7 +182,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
 
-			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
+			it.lastMessage = list.length ? getMessageByIdSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 			return it;
 		});

@@ -304,8 +304,18 @@ class ChatStore {
 	 * @param {string} id - The chat message ID.
 	 * @returns {I.ChatMessage} The chat message.
 	 */
-	getMessage (subId: string, id: string): I.ChatMessage {
+	getMessageById (subId: string, id: string): I.ChatMessage {
 		return this.getList(subId).find(it => it.id == id);
+	};
+
+	/**
+	 * Gets a chat message by order ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} orderId - The chat message order ID.
+	 * @returns {I.ChatMessage} The chat message.
+	 */
+	getMessageByOrderId (subId: string, orderId: string): I.ChatMessage {
+		return this.getList(subId).find(it => it.orderId == orderId);
 	};
 
 	/**

@@ -245,7 +245,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			const replyingId = formRef.current.getReplyingId();
 
 			if (replyingId) {
-				const message = S.Chat.getMessage(subId, replyingId);
+				const message = getMessageById(subId, replyingId);
 				if (message) {
 					list.push(message);
 				};
@@ -514,8 +514,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		const ids: string[] = [ ...scrolledItems.current ] as string[];
-		const first = S.Chat.getMessage(subId, ids[0]);
-		const last = S.Chat.getMessage(subId, ids[ids.length - 1]);
+		const first = getMessageById(subId, ids[0]);
+		const last = getMessageById(subId, ids[ids.length - 1]);
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 
@@ -618,7 +618,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const message = S.Chat.getMessage(subId, id);
+		const message = getMessageById(subId, id);
 
 		if (message) {
 			readMessage(id, message.orderId, lastStateId, I.ChatReadType.Message);
@@ -705,7 +705,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		isLoaded.current = false;
 		setIsBottom(false);
 
-		const message = S.Chat.getMessage(subId, item.replyToMessageId);
+		const message = getMessageById(subId, item.replyToMessageId);
 
 		analytics.event('ClickScrollToReply');
 
@@ -813,7 +813,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		let targetId = id;
 		if (!targetId) {
-			const target = messages.find(it => it.orderId == orderId);
+			const target = S.Chat.getMessageByOrderId(subId, orderId);
 
 			if (target) {
 				targetId = target.id;
@@ -849,7 +849,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				firstUnreadOrderId.current = orderId;
 
 				loadMessagesByOrderId(orderId, () => {
-					const target = messages.find(it => it.orderId == orderId);
+					const target = S.Chat.getMessageByOrderId(subId, orderId);
 
 					if (target) {
 						scrollToMessage(target.id);

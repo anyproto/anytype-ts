@@ -28,7 +28,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	const textRef = useRef(null);
 	const attachmentRefs = useRef({});
 	const [ isExpanded, setIsExpanded ] = useState(false);
-	const message = S.Chat.getMessage(subId, id);
+	const message = getMessageById(subId, id);
 
 	useEffect(() => {
 		init();
@@ -155,7 +155,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	};
 
 	const update = (param: Partial<I.ChatMessage>) => {
-		const message = Object.assign(S.Chat.getMessage(subId, id), param);
+		const message = Object.assign(getMessageById(subId, id), param);
 
 		C.ChatEditMessageContent(rootId, id, message);
 	};
@@ -188,7 +188,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	};
 
 	const canAddReaction = (): boolean => {
-		const message = S.Chat.getMessage(subId, id);
+		const message = getMessageById(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 
