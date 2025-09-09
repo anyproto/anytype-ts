@@ -630,7 +630,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		raf(() => {
+		raf.cancel(frameRef.current);
+		frameRef.current = raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const top = getMessageScrollPosition(id);
 			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
@@ -640,11 +641,12 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 			const cb = () => {
 				readScrolledMessages();
-				setAutoLoadDisabled(false);
 
 				if (highlight) {
 					highlightMessage(id);
 				};
+
+				window.setTimeout(() => setAutoLoadDisabled(false), 50);
 			};
 
 			if (animate) {
@@ -678,8 +680,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 			const cb = () => {
 				readScrolledMessages();
-				setAutoLoadDisabled(false);
 				setIsBottom(true);
+				window.setTimeout(() => setAutoLoadDisabled(false), 50);
 			};
 
 			if (animate) {
@@ -840,10 +842,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
 			const orderId = match.params.messageOrder || state.messageOrderId;
-
-			const cb = () => {
-				setDummy(dummy + 1);
-			};
+			const cb = () => setDummy(dummy + 1);
 
 			if (orderId) {
 				firstUnreadOrderId.current = orderId;
@@ -915,7 +914,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 										rootId={chatId}
 										blockId={block.id}
 										subId={subId}
-										isNew={item.orderId == firstUnreadOrderId}
+										isNew={item.orderId == firstUnreadOrderId.current}
 										hasMore={!!getMessageMenuOptions(item, true).length}
 										onContextMenu={e => onContextMenu(e, item)}
 										onMore={e => onContextMenu(e, item, true)}
