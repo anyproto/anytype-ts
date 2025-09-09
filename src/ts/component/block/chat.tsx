@@ -30,7 +30,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const frameRef = useRef(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-
 	const { chatId } = object;
 	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
 	const messages = S.Chat.getList(subId);
@@ -60,11 +59,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
 		loadReplies(getReplyIds(list), () => {
-			loadDeps(getDepsIds(list), () => {
-				if (callBack) {
-					callBack();
-				};
-			});
+			loadDeps(getDepsIds(list), callBack);
 		});
 	};
 
@@ -79,7 +74,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			isLoading.current = false;
 
 			if (message.state) {
-				S.Chat.setState(subId, message.state);
+				S.Chat.setState(subId, message.state, false);
 			};
 
 			if (callBack) {
@@ -106,7 +101,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			};
 
 			if (message.state) {
-				S.Chat.setState(subId, message.state);
+				S.Chat.setState(subId, message.state, false);
 			};
 
 			const messages = message.messages || [];

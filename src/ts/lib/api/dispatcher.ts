@@ -966,8 +966,8 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
-					const message = new M.ChatMessage(mapped.message);
-					const author = S.Detail.mapper(dependencies.find(it => it.identity == message.creator));
+					const message = new M.ChatMessage({ ...mapped.message, dependencies });
+					const notification = S.Chat.getMessageSimpleText(spaceId, message);
 
 					let showNotification = false;
 
@@ -992,14 +992,13 @@ class Dispatcher {
 							idx = list.length;
 						};
 
-						message.dependencies = dependencies || [];
-						S.Chat.add(subId, idx, new M.ChatMessage(message));
+						S.Chat.add(subId, idx, message);
 					});
 
-					if (showNotification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
 							title: space.name, 
-							text: `${author?.name}: ${message.content.text}`,
+							text: notification,
 						}, () => {
 							const { space } = S.Common;
 							const open = () => {
@@ -1033,7 +1032,7 @@ class Dispatcher {
 							subId = S.Chat.getSpaceSubId(spaceId);
 						};
 
-						S.Chat.setState(subId, mapped.state);
+						S.Chat.setState(subId, mapped.state, true);
 					});
 					break;
 				};

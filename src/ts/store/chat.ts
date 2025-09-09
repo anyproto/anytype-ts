@@ -1,5 +1,5 @@
 import { observable, action, makeObservable, set, intercept } from 'mobx';
-import { J, I, U, M, S, Renderer } from 'Lib';
+import { J, I, U, M, S, Renderer, Mark } from 'Lib';
 
 class ChatStore {
 
@@ -207,7 +207,7 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatState} state - The chat state.
 	 */
-	setState (subId: string, state: I.ChatState) {
+	setState (subId: string, state: I.ChatState, checkOrder: boolean) {
 		const param = this.getSubParam(subId);
 		const spaceMap = this.stateMap.get(param.spaceId) || new Map();
 		const current = spaceMap.get(param.chatId);
@@ -215,7 +215,7 @@ class ChatStore {
 		if (current) {
 			const { messages, mentions, lastStateId, order } = state;
 
-			if (order < current.order) {
+			if (checkOrder && (order < current.order)) {
 				return; // Ignore outdated state
 			};
 
@@ -353,8 +353,10 @@ class ChatStore {
 
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
-				ret.mentionCounter += Number(state.mentionCounter) || 0;
-				ret.messageCounter += Number(state.messageCounter) || 0;
+				if (!chatId) {
+					ret.mentionCounter += Number(state.mentionCounter) || 0;
+					ret.messageCounter += Number(state.messageCounter) || 0;
+				};
 			};
 		};
 
@@ -441,6 +443,44 @@ class ChatStore {
 	 */
 	setAttachments (list: any[]) {
 		this.attachmentsValue = list || [];
+	};
+
+	/**
+	 * Gets a simple text representation of a message.
+	 * @param {string} spaceId - The space ID.
+	 * @param {I.ChatMessage} message - The chat message.
+	 * @returns {string} The simple text representation.
+	 */
+	getMessageSimpleText (spaceId: string, message: I.ChatMessage): string {
+		if (!message) {
+			return '';
+		};
+
+		const { creator, content, attachments, dependencies } = message;
+		const { text, marks } = content || {};
+		const participantId = U.Space.getParticipantId(spaceId, creator);
+		const author = dependencies.find(it => it.id == participantId);
+		const ret = [];
+
+		if (author) {
+			ret.push(author.name);
+		};
+		if (text) {
+			let t = U.Common.sanitize(Mark.insertEmoji(text, marks));
+			t = t.replace(/\n\r?/g, ' ');
+
+			ret.push(t);
+		} else 
+		if (attachments.length) {
+			const names = attachments.map(item => {
+				const object = dependencies.find(it => it.id == item.target);
+				return object ? U.Object.name(object) : '';
+			}).filter(it => it).join(', ');
+
+			ret.push(names);
+		};
+
+		return ret.join(': ');
 	};
 
 };
