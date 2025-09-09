@@ -1466,16 +1466,18 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const node = $(nodeRef.current);
-		const dummy = $(dummyRef.current);
-		const cw = container.width();
-		const { isClosed, width } = sidebar.data;
-		const left = isClosed ? 0 : width;
-		const margin = 32;
+		raf(() => {
+			const container = U.Common.getScrollContainer(isPopup);
+			const node = $(nodeRef.current);
+			const dummy = $(dummyRef.current);
+			const cw = container.width();
+			const { isClosed, width } = sidebar.data;
+			const left = isClosed ? 0 : width;
+			const margin = 32;
 
-		node.css({ width: cw - margin * 2, left: left + margin });
-		dummy.css({ height: node.outerHeight() });
+			node.css({ width: cw - margin * 2, left: left + margin });
+			dummy.css({ height: node.outerHeight() });
+		});
 	};
 
 	let form = null;

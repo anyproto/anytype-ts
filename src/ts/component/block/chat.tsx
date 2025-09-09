@@ -660,8 +660,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			const y = U.Common.getMaxScrollHeight(isPopup);
 			const top = U.Common.getScrollContainerTop(isPopup);
 
-			console.log('scrollToBottom', y);
-
 			if (top >= y) {
 				return;
 			};
