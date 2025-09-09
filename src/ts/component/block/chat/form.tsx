@@ -1672,7 +1672,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	return (
 		<>
-			<div ref={dummyRef} />
+			<div ref={dummyRef} className="formDummy" />
 			<div 
 				ref={nodeRef}
 				id="formWrapper" 

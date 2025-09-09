@@ -331,6 +331,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 			onContextMenu={onContextMenu}
 			onDoubleClick={onReplyEdit}
 			style={style}
+			{...U.Common.dataProps({ orderId: message.orderId })}
 		>
 			{isNew ? (
 				<div className="newMessages">

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -21,13 +21,12 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const timeoutInterface = useRef(0);
 	const timeoutScrollStop = useRef(0);
 	const top = useRef(0);
-	const firstUnreadOrderId = useRef('');
 	const scrolledItems = useRef(new Set());
 	const isLoaded = useRef(false);
 	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
-	const [ dummy, setDummy ] = useState(0);
+	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const frameRef = useRef(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const { chatId } = object;
@@ -68,11 +67,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		isLoading.current = true;
-
-		C.ChatSubscribeLastMessages(chatId, 0, subId, (message: any) => {
-			isLoading.current = false;
-
+		C.ChatSubscribeLastMessages(chatId, 1, subId, (message: any) => {
 			if (message.state) {
 				S.Chat.setState(subId, message.state, false);
 			};
@@ -88,11 +83,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		isLoading.current = true;
-
 		C.ChatSubscribeLastMessages(chatId, J.Constant.limit.chat.messages, subId, (message: any) => {
-			isLoading.current = false;
-
 			if (message.error.code) {
 				if (callBack) {
 					callBack();
@@ -659,28 +650,29 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
+		setIsBottom(true);
+
 		if (!hasScroll()) {
 			readScrolledMessages();
-			setIsBottom(true);
 			return;
 		};
 
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
 			const y = U.Common.getMaxScrollHeight(isPopup);
+			const top = U.Common.getScrollContainerTop(isPopup);
 
-			if (container.scrollTop() == y) {
+			if (top >= y) {
 				return;
 			};
 
-			setAutoLoadDisabled(true);
-
+			const container = U.Common.getScrollContainer(isPopup);
 			const cb = () => {
 				readScrolledMessages();
-				setIsBottom(true);
 				window.setTimeout(() => setAutoLoadDisabled(false), 50);
 			};
+
+			setAutoLoadDisabled(true);
 
 			if (animate) {
 				container.stop(true, true).animate({ scrollTop: y }, 300, cb);
@@ -813,7 +805,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		let targetId = id;
-		if (!targetId) {
+		if (!targetId && orderId) {
 			const target = S.Chat.getMessageByOrderId(subId, orderId);
 
 			if (target) {
@@ -840,22 +832,20 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
 			const orderId = match.params.messageOrder || state.messageOrderId;
+			const cb = () => scrollToBottomCheck();
 
 			if (orderId) {
-				firstUnreadOrderId.current = orderId;
-
 				loadMessagesByOrderId(orderId, () => {
 					const target = S.Chat.getMessageByOrderId(subId, orderId);
 
 					if (target) {
-						scrollToMessage(target.id);
-						setDummy(dummy + 1);
+						setFirstUnreadOrderId(target.orderId);
 					} else {
-						loadMessages(1, true);
+						loadMessages(1, true, cb);
 					};
 				});
 			} else {
-				loadMessages(1, true);
+				loadMessages(1, true, cb);
 			};
 
 			analytics.event('ScreenChat');
@@ -869,9 +859,16 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		scrollToBottomCheck();
-	}, [ messages.length, dummy ]);
+	}, [ messages.length ]);
+
+	useLayoutEffect(() => {
+		const target = S.Chat.getMessageByOrderId(subId, firstUnreadOrderId);
+		if (target) {
+			scrollToMessage(target.id, false, true);
+		};
+	}, [ firstUnreadOrderId ]);
 
 	return (
 		<div 
@@ -910,7 +907,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 										rootId={chatId}
 										blockId={block.id}
 										subId={subId}
-										isNew={item.orderId == firstUnreadOrderId.current}
+										isNew={item.orderId == firstUnreadOrderId}
 										hasMore={!!getMessageMenuOptions(item, true).length}
 										onContextMenu={e => onContextMenu(e, item)}
 										onMore={e => onContextMenu(e, item, true)}
