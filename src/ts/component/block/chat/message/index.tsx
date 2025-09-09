@@ -31,6 +31,17 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	const message = S.Chat.getMessageById(subId, id);
 
 	useEffect(() => {
+		const node = $(nodeRef.current);
+
+		node.addClass('anim');
+		window.setTimeout(() => node.addClass('show'), 100);
+	}, []);
+
+	useEffect(() => {
+		$(nodeRef.current).addClass('show');
+	}, [ message ]);
+
+	useEffect(() => {
 		init();
 	});
 
@@ -322,10 +333,6 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 			cn.push(`mediaLayout-${attachments.length}`)
 		};
 	};
-
-	useEffect(() => {
-		window.setTimeout(() => $(nodeRef.current).addClass('show'), 50);
-	}, []);
 
 	return (
 		<div

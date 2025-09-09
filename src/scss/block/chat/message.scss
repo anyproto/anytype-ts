@@ -1,7 +1,9 @@
-.message { @include text-common; position: relative; opacity: 0; transition: opacity 0.1s ease-in-out; }
-.message.show { opacity: 1; }
+.message { @include text-common; position: relative; opacity: 0; }
 .message {
 	* { user-select: text !important; }
+
+	&.anim { transition: opacity 0.2s ease-in-out; }
+	&.show { opacity: 1; }
 
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
@@ -32,7 +34,7 @@
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
 
-		.textWrapper { min-width: 240px; max-width: 480px; }
+		.textWrapper { max-width: 480px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
@@ -93,7 +95,7 @@
 	}
 	.author * { user-select: text !important; }
 
-	.expand { display: none; align-items: center; color: var(--color-text-secondary); margin-top: 4px; white-space: nowrap; cursor: default; }
+	.expand { display: none; align-items: center; color: var(--color-text-secondary); white-space: nowrap; cursor: default; }
 
 	.sub { @include text-small; color: var(--color-text-secondary); display: none; }
 	.sub {
@@ -158,6 +160,7 @@
 
 	&.canExpand {
 		.bubbleInner {
+			.textWrapper { min-width: 200px; }
 			.expand { display: flex; }
 			.text { @include clamp; -webkit-line-clamp: 16; }
 		}
