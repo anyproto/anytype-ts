@@ -82,7 +82,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		unbind();
-		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+		$(window).on(`resize.${ns}`, () => resize());
+		$(window).on(`sidebarResize.${ns}`, () => resize());
 	};
 
 	const setAttachments = (list: any[]) => {
@@ -1466,18 +1467,16 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
-			const node = $(nodeRef.current);
-			const dummy = $(dummyRef.current);
-			const cw = container.width();
-			const { isClosed, width } = sidebar.data;
-			const left = isClosed ? 0 : width;
-			const margin = 32;
+		const container = U.Common.getScrollContainer(isPopup);
+		const node = $(nodeRef.current);
+		const dummy = $(dummyRef.current);
+		const cw = container.width();
+		const { isClosed, width } = sidebar.data;
+		const left = isClosed ? 0 : width;
+		const margin = 32;
 
-			node.css({ width: cw - margin * 2, left: left + margin });
-			dummy.css({ height: node.outerHeight() });
-		});
+		node.css({ width: cw - margin * 2, left: left + margin });
+		dummy.css({ height: node.outerHeight() });
 	};
 
 	let form = null;
