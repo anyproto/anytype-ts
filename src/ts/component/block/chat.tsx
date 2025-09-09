@@ -670,6 +670,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		frameRef.current = raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
+
+			if (container.scrollTop() == U.Common.getMaxScrollHeight(isPopup)) {
+				return;
+			};
+
 			const wrapper = $(scrollWrapperRef.current);
 			const y = wrapper.outerHeight() + 40;
 

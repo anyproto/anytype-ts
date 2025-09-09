@@ -53,6 +53,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
+	const loaderRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
@@ -268,6 +269,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || (twoSymbolBefore == ' '));
 
+		resize();
 		setMarks(parsed.marks);
 
 		let adjustMarks = false;
@@ -305,7 +307,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		keyboard.shortcut('backspace', e, () => {
-			resize();
 			scrollToBottom();
 		});
 
@@ -337,7 +338,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
-		resize();
 
 		window.clearTimeout(timeoutHistory.current);
 		timeoutHistory.current = window.setTimeout(() => {
@@ -781,9 +781,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const send = node.find('#send');
-		const loader = node.find('#form-loader');
+		const send = $(sendRef.current);
+		const loader = $(loaderRef.current);
 		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
@@ -817,6 +816,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					});
 				};
 			} else {
+				if (replyingId) {
+					const reply = S.Chat.getMessage(subId, replyingId);
+					if (reply) {
+						S.Chat.setReply(subId, reply);
+					};
+				};
+
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
@@ -909,20 +915,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clear = () => {
-		const node = $(nodeRef.current);
-		const send = node.find('#send');
-		const loader = node.find('#form-loader');
+		const send = $(sendRef.current);
+		const loader = $(loaderRef.current);
+
 		isSending.current = false;
-		checkSendButton();
+		send.removeClass('isLoading');
+		loader.removeClass('active');
 
 		onEditClear();
 		onReplyClear();
-		clearCounter();
 		checkSpeedLimit();
 		historyClearState();
-
-		send.removeClass('isLoading');
-		loader.removeClass('active');
 	};
 
 	const onEditClear = () => {
@@ -947,6 +950,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const length = text.length;
 
 		range.current = { from: length, to: length };
+
 		setRange(range.current);
 		setReplyingId(message.id);
 		resize();
@@ -1473,7 +1477,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		node.css({ width: cw - margin * 2, left: left + margin });
 		dummy.css({ height: node.outerHeight() });
-		scrollToBottom();
 	};
 
 	let form = null;
@@ -1537,7 +1540,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" />
+					<Loader id="form-loader" ref={loaderRef} />
 
 					{title ? (
 						<div className="head">
@@ -1646,6 +1649,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		checkSendButton();
 		resize();
+		scrollToBottom();
 	});
 
 	useEffect(() => {
