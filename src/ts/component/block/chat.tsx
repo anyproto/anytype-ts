@@ -663,6 +663,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
+		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 
@@ -842,7 +843,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 			const cb = () => {
 				setDummy(dummy + 1);
-				scrollToBottom();
 			};
 
 			if (orderId) {
@@ -917,7 +917,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 										subId={subId}
 										isNew={item.orderId == firstUnreadOrderId}
 										hasMore={!!getMessageMenuOptions(item, true).length}
-										scrollToBottom={scrollToBottomCheck}
 										onContextMenu={e => onContextMenu(e, item)}
 										onMore={e => onContextMenu(e, item, true)}
 										onReplyEdit={e => onReplyEdit(e, item)}
