@@ -621,8 +621,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		raf.cancel(frameRef.current);
-		frameRef.current = raf(() => {
+		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const top = getMessageScrollPosition(id);
 			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
@@ -657,10 +656,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		raf.cancel(frameRef.current);
-		frameRef.current = raf(() => {
+		raf(() => {
 			const y = U.Common.getMaxScrollHeight(isPopup);
 			const top = U.Common.getScrollContainerTop(isPopup);
+
+			console.log('scrollToBottom', y);
 
 			if (top >= y) {
 				return;
@@ -828,11 +828,17 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		initialRender.current = false;
 
+		const resizeObserver = new ResizeObserver(() => {
+			scrollToBottomCheck();
+		});
+
+		resizeObserver.observe(scrollWrapperRef.current);
+
 		loadState(() => {
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
 			const orderId = match.params.messageOrder || state.messageOrderId;
-			const cb = () => scrollToBottomCheck();
+			const cb = () => scrollToBottom();
 
 			if (orderId) {
 				loadMessagesByOrderId(orderId, () => {
@@ -853,6 +859,10 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		return () => {
 			unbind();
+
+			if (scrollWrapperRef.current) {
+				resizeObserver.unobserve(scrollWrapperRef.current);
+			};
 
 			window.clearTimeout(timeoutInterface.current);
 			window.clearTimeout(timeoutScrollStop.current);
