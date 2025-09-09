@@ -256,7 +256,7 @@ jobs:
             --arg date "$(TZ=Europe/Berlin date +%Y%m%d%H%M)" \
             '
             .name = "anytype-dev" |
-            .version |= (. | split(".") | .[0] + "." + .[1] + "." + .[2] + "-${{ env.CHANNEL }}+${{ needs.nightly-tag.outputs.app_version_suffix }}" ) |
+            .version |= ( ( . | sub("[-+].*"; "") ) + "-${{ env.CHANNEL }}+${{ needs.nightly-tag.outputs.app_version_suffix }}" ) |
             .description = "Anytype Nightly" |
             .build.appId = "com.anytype.anytype-dev" |
             .build.productName = "Anytype Nightly" |
@@ -365,13 +365,11 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-      # FAILURE - send to alerts channel
-      - name: Notify Slack (failure → alerts)
-        if: ${{ failure() }}
+      - name: Notify Slack (workflow result)
         uses: ravsamhq/notify-slack-action@v2
         with:
-          status: ${{ job.status }}
-          notification_title: "❌ {workflow}"
+          status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && 'failure' || 'success' }}
+          notification_title: "${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} {workflow}"
           message_format: |
             {emoji} *{job}* in *{workflow}* {status_message}
             *Tag:* ${{ needs.nightly-tag.outputs.tag }}
@@ -379,21 +377,4 @@ jobs:
             ${{ steps.changelog.outputs.body }}
           footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_ALERTS }}
-
-      # SUCCESS - send to builds channel
-      - name: Notify Slack (ok → builds)
-        if: ${{ success() }}
-        uses: ravsamhq/notify-slack-action@v2
-        with:
-          status: ${{ job.status }}
-          notification_title: "✅ {workflow}"
-          message_format: |
-            {emoji} *{job}* in *{workflow}* {status_message}
-            *Tag:* ${{ needs.nightly-tag.outputs.tag }}
-            *Description:*
-            ${{ steps.changelog.outputs.body }}
-          footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
-
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}
+          SLACK_WEBHOOK_URL: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.SLACK_WEBHOOK_URL_ALERTS || secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}
