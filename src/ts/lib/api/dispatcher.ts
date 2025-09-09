@@ -1054,7 +1054,13 @@ class Dispatcher {
 				};
 
 				case 'ChatDelete': {
-					mapped.subIds.forEach(subId => S.Chat.delete(subId, mapped.id));
+					mapped.subIds.forEach(subId => {
+						if (subId == J.Constant.subId.chatSpace) {
+							subId = S.Chat.getSpaceSubId(spaceId);
+						};
+
+						S.Chat.delete(subId, mapped.id);
+					});
 					break;
 				};
 
