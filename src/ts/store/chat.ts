@@ -64,7 +64,7 @@ class ChatStore {
 	 */
 	add (subId: string, idx: number, param: I.ChatMessage): void {
 		const list = this.getList(subId);
-		const item = this.getMessage(subId, param.id);
+		const item = this.getMessageById(subId, param.id);
 		
 		if (item) {
 			return;
@@ -81,7 +81,7 @@ class ChatStore {
 	 * @param {Partial<I.ChatMessage>} param - The chat message update.
 	 */
 	update (subId: string, param: Partial<I.ChatMessage>): void {
-		const item = this.getMessage(subId, param.id);
+		const item = this.getMessageById(subId, param.id);
 
 		if (item) {
 			set(item, param);

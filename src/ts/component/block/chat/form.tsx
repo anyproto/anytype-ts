@@ -802,7 +802,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 
 			if (editingId.current) {
-				const message = getMessageById(subId, editingId.current);
+				const message = S.Chat.getMessageById(subId, editingId.current);
 				if (message) {
 					const update = U.Common.objectCopy(message);
 
@@ -817,7 +817,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			} else {
 				if (replyingId) {
-					const reply = getMessageById(subId, replyingId);
+					const reply = S.Chat.getMessageById(subId, replyingId);
 					if (reply) {
 						S.Chat.setReply(subId, reply);
 					};
@@ -1381,7 +1381,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const message = getMessageById(subId, replyingId);
+		const message = S.Chat.getMessageById(subId, replyingId);
 		if (!message) {
 			return;
 		};
@@ -1489,7 +1489,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onClear = () => onEditClear();
 	} else
 	if (replyingId) {
-		const message = getMessageById(subId, replyingId);
+		const message = S.Chat.getMessageById(subId, replyingId);
 
 		if (message) {
 			const reply = getReplyContent(message);

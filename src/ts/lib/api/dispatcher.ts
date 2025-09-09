@@ -964,7 +964,7 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies });
-					const notification = getMessageByIdSimpleText(spaceId, message);
+					const notification = S.Chat.getMessageSimpleText(spaceId, message);
 
 					let showNotification = false;
 
@@ -1064,7 +1064,7 @@ class Dispatcher {
 
 				case 'ChatUpdateReactions': {
 					mapped.subIds.forEach((subId) => {
-						const message = getMessageById(subId, mapped.id);
+						const message = S.Chat.getMessageById(subId, mapped.id);
 						if (message) {
 							set(message, { reactions: mapped.reactions });
 						};
