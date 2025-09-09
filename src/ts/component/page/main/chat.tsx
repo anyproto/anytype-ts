@@ -13,7 +13,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
-	const [ isLoading, setIsLoading ] = useState(false);
 	const match = keyboard.getMatch(isPopup);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -25,13 +24,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		};
 
 		close();
-		setIsLoading(true);
 
 		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
-			setIsLoading(false);
-
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
@@ -42,6 +38,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			};
 
 			headerRef.current?.forceUpdate();
+			chatRef.current?.ref?.forceUpdate();
 			resize();
 		});
 	};
@@ -80,10 +77,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const resize = () => {
-		if (isLoading) {
-			return;
-		};
-
 		raf(() => {
 			const node = $(nodeRef.current);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
@@ -113,26 +106,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	}));
 
 	let content = null;
-	let inner = null;
-
-	if (!isLoading) {
-		inner = (
-			<div ref={blocksRef} className="blocks">
-				<Block
-					{...props}
-					ref={chatRef}
-					key={J.Constant.blockId.chat}
-					rootId={rootId}
-					iconSize={20}
-					block={new M.Block({ id: J.Constant.blockId.chat, type: I.BlockType.Chat, childrenIds: [], fields: {}, content: {} })}
-					className="noPlus"
-					isSelectionDisabled={true}
-					isContextMenuDisabled={true}
-					readonly={isReadonly()}
-				/>
-			</div>
-		);
-	};
 
 	if (object.isDeleted) {
 		content = <Deleted {...props} />;
@@ -153,7 +126,20 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 				<div id="bodyWrapper" className="wrapper">
 					<div className="editorWrapper isChat">
-						{inner}
+						<div ref={blocksRef} className="blocks">
+							<Block
+								{...props}
+								ref={chatRef}
+								key={J.Constant.blockId.chat}
+								rootId={rootId}
+								iconSize={20}
+								block={new M.Block({ id: J.Constant.blockId.chat, type: I.BlockType.Chat, childrenIds: [], fields: {}, content: {} })}
+								className="noPlus"
+								isSelectionDisabled={true}
+								isContextMenuDisabled={true}
+								readonly={isReadonly()}
+							/>
+						</div>
 					</div>
 				</div>
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState, useLayoutEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -8,9 +8,13 @@ import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Li
 import Form from './chat/form';
 import Message from './chat/message';
 
+interface RefProps {
+	forceUpdate: () => void;
+};
+
 const GROUP_TIME = 300;
 
-const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const { space, showRelativeDates, dateFormat, config, windowId } = S.Common;
 	const { rootId, block, isPopup, readonly } = props;
@@ -27,6 +31,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
+	const [ dummy, setDummy ] = useState(0);
 	const frameRef = useRef(0);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 	const { chatId } = object;
@@ -821,16 +826,8 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	const isEmpty = !initialRender.current && !isLoading.current && !messages.length;
 	const items = getItems();
 
-	useEffect(() => {
-		rebind();
-
-		initialRender.current = false;
-
-		const resizeObserver = new ResizeObserver(() => {
-			scrollToBottomCheck();
-		});
-
-		resizeObserver.observe(scrollWrapperRef.current);
+	const init = () => {
+		initialRender.current = true;
 
 		loadState(() => {
 			const match = keyboard.getMatch(isPopup);
@@ -851,9 +848,18 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			} else {
 				loadMessages(1, true, cb);
 			};
-
-			analytics.event('ScreenChat');
 		});
+
+		analytics.event('ScreenChat');
+	};
+
+	useEffect(() => {
+		rebind();
+
+		const resizeObserver = new ResizeObserver(() => scrollToBottomCheck());
+		resizeObserver.observe(scrollWrapperRef.current);
+
+		init();
 
 		return () => {
 			unbind();
@@ -867,7 +873,12 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 	}, []);
 
+	useEffect(() => {
+		init();
+	}, [ space, chatId ]);
+
 	useLayoutEffect(() => {
+		initialRender.current = false;
 		scrollToBottomCheck();
 	}, [ messages.length ]);
 
@@ -877,6 +888,10 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			scrollToMessage(target.id, false, true);
 		};
 	}, [ firstUnreadOrderId ]);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div 
