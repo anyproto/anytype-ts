@@ -443,7 +443,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const scrollWrapper = $(scrollWrapperRef.current);
 		const formWrapper = node.find('#formWrapper');
 		const container = U.Common.getScrollContainer(isPopup);
-		const st = container.scrollTop();
+		const st = Math.ceil(container.scrollTop());
 		const dates = node.find('.sectionDate');
 		const fh = formWrapper.outerHeight();
 		const ch = container.outerHeight();
@@ -452,7 +452,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 
-		setIsBottom(st == U.Common.getMaxScrollHeight(isPopup));
+		setIsBottom(st >= U.Common.getMaxScrollHeight(isPopup));
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
