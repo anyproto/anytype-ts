@@ -668,13 +668,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
+			const y = U.Common.getMaxScrollHeight(isPopup);
 
-			if (container.scrollTop() == U.Common.getMaxScrollHeight(isPopup)) {
+			if (container.scrollTop() == y) {
 				return;
 			};
-
-			const wrapper = $(scrollWrapperRef.current);
-			const y = wrapper.outerHeight() + 40;
 
 			setAutoLoadDisabled(true);
 
@@ -842,7 +840,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
 			const orderId = match.params.messageOrder || state.messageOrderId;
-			const cb = () => setDummy(dummy + 1);
 
 			if (orderId) {
 				firstUnreadOrderId.current = orderId;
@@ -854,11 +851,11 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 						scrollToMessage(target.id);
 						setDummy(dummy + 1);
 					} else {
-						loadMessages(1, true, cb);
+						loadMessages(1, true);
 					};
 				});
 			} else {
-				loadMessages(1, true, cb);
+				loadMessages(1, true);
 			};
 
 			analytics.event('ScreenChat');
@@ -870,7 +867,6 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutInterface.current);
 			window.clearTimeout(timeoutScrollStop.current);
 		};
-
 	}, []);
 
 	useEffect(() => {
