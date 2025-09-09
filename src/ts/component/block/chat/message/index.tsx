@@ -323,6 +323,10 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		};
 	};
 
+	useEffect(() => {
+		window.setTimeout(() => $(nodeRef.current).addClass('show'), 50);
+	}, []);
+
 	return (
 		<div
 			ref={nodeRef}

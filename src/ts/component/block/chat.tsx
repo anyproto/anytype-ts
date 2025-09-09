@@ -836,7 +836,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
 			const orderId = match.params.messageOrder || state.messageOrderId;
-			const cb = () => scrollToBottom();
+			const cb = () => scrollToBottom(false);
 
 			if (orderId) {
 				loadMessagesByOrderId(orderId, () => {
