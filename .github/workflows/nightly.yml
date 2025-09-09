@@ -369,12 +369,11 @@ jobs:
         uses: ravsamhq/notify-slack-action@v2
         with:
           status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && 'failure' || 'success' }}
-          notification_title: "${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} {workflow}"
+          notification_title: "${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} {workflow} {repo}"
           message_format: |
-            {emoji} *{job}* in *{workflow}* {status_message}
             *Tag:* ${{ needs.nightly-tag.outputs.tag }}
             *Description:*
-            ${{ steps.changelog.outputs.body }}
+            ${{ needs.changelog.outputs.body }}
           footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
         env:
           SLACK_WEBHOOK_URL: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.SLACK_WEBHOOK_URL_ALERTS || secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}
