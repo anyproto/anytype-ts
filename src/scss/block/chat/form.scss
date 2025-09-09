@@ -1,4 +1,4 @@
-.formWrapper.isFixed { padding: 0px 0px 12px 0px; position: fixed; z-index: 11; bottom: 0px; }
+.formWrapper { padding: 0px 0px 12px 0px; position: sticky; z-index: 11; bottom: 0px; }
 .formWrapper {
 	.grad {
 		position: absolute; left: 0px; top: -44px; width: 100%; height: 88px; pointer-events: none; z-index: 1;

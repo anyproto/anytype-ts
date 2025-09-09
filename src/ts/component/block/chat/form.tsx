@@ -71,21 +71,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	let { attachments } = S.Chat;
 
-	const unbind = () => {
-		const events = [ 'resize', 'sidebarResize' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-	};
-
-	const rebind = () => {
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
-		unbind();
-		$(window).on(`resize.${ns}`, () => resize());
-		$(window).on(`sidebarResize.${ns}`, () => resize());
-	};
-
 	const setAttachments = (list: any[]) => {
 		S.Chat.setAttachments(list);
 	};
@@ -234,7 +219,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut(`shift+enter`, e, () => {
-			resize();
 			scrollToBottom();
 		});
 
@@ -270,7 +254,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || (twoSymbolBefore == ' '));
 
-		resize();
 		setMarks(parsed.marks);
 
 		let adjustMarks = false;
@@ -954,7 +937,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		setRange(range.current);
 		setReplyingId(message.id);
-		resize();
 
 		analytics.event('ClickMessageMenuReply');
 	};
@@ -1462,23 +1444,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
-	const resize = () => {
-		if (isPopup) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		const node = $(nodeRef.current);
-		const dummy = $(dummyRef.current);
-		const cw = container.width();
-		const { isClosed, width } = sidebar.data;
-		const left = isClosed ? 0 : width;
-		const margin = 32;
-
-		node.css({ width: cw - margin * 2, left: left + margin });
-		dummy.css({ height: node.outerHeight() });
-	};
-
 	let form = null;
 	let title = '';
 	let text = '';
@@ -1630,12 +1595,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			historySaveState();
 		};
 
-		resize();
-		rebind();
-
 		return () => {
-			unbind();
-
 			window.clearTimeout(timeoutFilter.current);
 			keyboard.disableSelection(false);
 		};
@@ -1648,7 +1608,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		checkSendButton();
-		resize();
 		scrollToBottom();
 	});
 
@@ -1672,37 +1631,34 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<>
-			<div ref={dummyRef} className="formDummy" />
-			<div 
-				ref={nodeRef}
-				id="formWrapper" 
-				className="formWrapper"
-				onDragOver={onDragOver}
-				onDragLeave={onDragLeave}
-			>
-				<div className="grad" />
-				<div className="bg" />
+		<div 
+			ref={nodeRef}
+			id="formWrapper" 
+			className="formWrapper"
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+		>
+			<div className="grad" />
+			<div className="bg" />
 
-				<div className="dragOverlay">
-					<div className="inner">
-						<Icon />
-						<Label text={translate('commonDropFiles')} />
-					</div>
-				</div>
-
+			<div className="dragOverlay">
 				<div className="inner">
-					{!isEmpty ? (
-						<div className="navigation">
-							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-						</div>
-					) : ''}
-
-					{form}
+					<Icon />
+					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
-		</>
+
+			<div className="inner">
+				{!isEmpty ? (
+					<div className="navigation">
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
+					</div>
+				) : ''}
+
+				{form}
+			</div>
+		</div>
 	);
 
 }));

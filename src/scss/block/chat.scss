@@ -23,8 +23,6 @@
 			smile, .space { display: none; }
 		}
 
-		.formDummy { min-height: 44px; }
-
 		@import "./chat/attachment";
 		@import "./chat/message";
 		@import "./chat/form";
