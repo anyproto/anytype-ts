@@ -803,7 +803,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 
 			if (editingId.current) {
-				const message = S.Chat.getMessage(subId, editingId.current	);
+				const message = S.Chat.getMessage(subId, editingId.current);
 				if (message) {
 					const update = U.Common.objectCopy(message);
 

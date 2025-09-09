@@ -548,7 +548,18 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		};
 
 		const node = $(ref.getNode());
+
 		return node.length ? node.offset().top + node.outerHeight() : 0;
+	};
+
+	const getMessageScrollPosition = (id: string): number => {
+		const ref = messageRefs.current[id];
+		if (!ref) {
+			return 0;
+		};
+
+		const node = $(ref.getNode());
+		return node.length ? node.position().top + node.outerHeight() : 0;
 	};
 
 	const getMessagesInViewport = () => {
@@ -626,7 +637,7 @@ const BlockChat = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		raf(() => {
 			const container = U.Common.getScrollContainer(isPopup);
-			const top = getMessageScrollOffset(id);
+			const top = getMessageScrollPosition(id);
 			const y = Math.max(0, top - container.height() / 2 - J.Size.header);
 
 			setIsBottom(false);
