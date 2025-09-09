@@ -992,8 +992,6 @@ class Dispatcher {
 						S.Chat.add(subId, idx, message);
 					});
 
-					console.log('windowIsFocused', windowIsFocused, notification);
-
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
 							title: space.name, 
