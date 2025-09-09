@@ -460,14 +460,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 		};
 
-		let last = null;
-
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
+			let last = null;
+
 			dates.each((i, item: any) => {
 				item = $(item);
 
-				const y = item.offset().top - st;
+				const y = item.offset().top;
 				if (y <= hh + 8) {
 					last = item;
 				};

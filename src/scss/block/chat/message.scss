@@ -2,7 +2,7 @@
 .message {
 	* { user-select: text !important; }
 
-	&.anim { transition: opacity 0.2s ease-in-out; }
+	&.anim { transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease-in-out; }
 	&.show { opacity: 1; }
 
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
