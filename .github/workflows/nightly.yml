@@ -388,7 +388,6 @@ jobs:
         with:
           status: ${{ job.status }}
           notification_title: "✅ {workflow}"
-          message_format: "{emoji} *{job}* in *{workflow}* {status_message}"
           message_format: |
             {emoji} *{job}* in *{workflow}* {status_message}
             *Tag:* ${{ needs.nightly-tag.outputs.tag }}
