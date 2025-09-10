@@ -171,6 +171,7 @@ export interface ViewComponent {
 	getTypeId?(): string;
 	getTemplateId?(): string;
 	getEmpty?(type: string): any;
+	getEmptyView?(view: I.ViewType): any;
 	getSubId?(): string;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;

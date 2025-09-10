@@ -17,6 +17,7 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import { Icon, LayoutPlug } from 'Component';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -58,6 +59,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getTypeId = this.getTypeId.bind(this);
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
 		this.getSubId = this.getSubId.bind(this);
+		this.getEmptyView = this.getEmptyView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -170,6 +172,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTypeId: this.getTypeId,
 			getTemplateId: this.getDefaultTemplateId,
 			getEmpty: this.getEmpty,
+			getEmptyView: this.getEmptyView,
 			getSubId: this.getSubId,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
@@ -196,7 +199,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('target');
 		} else
 		if (!isCollection && !sources.length) {
-			body = this.getEmpty('source');
+			body = (
+				<LayoutPlug
+					layoutFormat={I.LayoutFormat.List}
+					recommendedLayout={I.ObjectLayout.Set}
+					viewType={view.type}
+					isPopup={isPopup}
+					onClick={this.onEmpty}
+				/>
+			);
 		} else {
 			body = (
 				<div className="content">
@@ -1292,18 +1303,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			};
 
-			case 'source': {
-				cn.push('withHead');
-
-				emptyProps = {
-					title: translate('blockDataviewEmptySourceTitle'),
-					description: translate('blockDataviewEmptySourceDescription'),
-					button: translate('blockDataviewEmptySourceButton'),
-					onClick: this.onEmpty,
-				};
-				break;
-			};
-
 			case 'view': {
 				if (view.type != I.ViewType.Grid) {
 					cn.push('withHead');
@@ -1327,6 +1326,64 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				className={cn.join(' ')}
 				withButton={emptyProps.button && !readonly ? true : false}
 			/>
+		);
+	};
+
+	getEmptyView (view: I.ViewType) {
+		if (!this.isAllowedObject()) {
+			return this.getEmpty('view');
+		};
+
+		const cn = [ 'viewContent', `view${I.ViewType[view]}` ];
+		const onAdd = (e: any) => {
+			if (!this.isCollection() && !this.getSources().length) {
+				this.onEmpty(e);
+			} else {
+				this.onRecordAdd(e, 1);
+			};
+		};
+
+		let inner: any = null;
+
+		switch (view) {
+			case I.ViewType.List: {
+				inner = (
+					<div className="row add">
+						<div className="cell add">
+							<div className="btn" onClick={onAdd}>
+								<Icon className="plus" />
+								<div className="name">{translate('commonNewObject')}</div>
+							</div>
+						</div>
+					</div>
+				);
+				break;
+			};
+
+			case I.ViewType.Grid: {
+				inner = <div className="row" onClick={onAdd} />;
+				break;
+			};
+
+			case I.ViewType.Gallery: {
+				inner = (
+					<div className="row empty">
+						<div className="card" onClick={onAdd} />
+						<div className="card add" onClick={onAdd}  />
+					</div>
+				);
+				break;
+			};
+
+			case I.ViewType.Board: {
+				break;
+			};
+		};
+
+		return (
+			<div className={cn.join(' ')}>
+				{inner}
+			</div>
 		);
 	};
 
