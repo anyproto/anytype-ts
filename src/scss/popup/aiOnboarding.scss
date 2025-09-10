@@ -1,18 +1,14 @@
 @import "~scss/_vars";
 @import "~scss/_mixins";
 
-// Color palette
-$ink-deep: #0F1115;
-$white-warm: #FAFAF8;
+// Legacy color variables for gradients and special effects
 $lavender-cool: #9B8ADB;
 $lavender-light: #E8E4F6;
 $lavender-very-light: #F5F3FB;
+$ink-deep: #0F1115;
 $amber-warm: #FFB74D;
 $amber-light: #FFE4C4;
-$teal-accent: #26D0CE;
-$glass-light: rgba(255, 255, 255, 0.85);
-$glass-border-light: rgba(147, 130, 219, 0.12);
-$backdrop-light: rgba(255, 255, 255, 0.92);
+$teal-accent: #FFB522; // Changed from cyan to orange/yellow to match spark
 
 // Animation curves
 $spring-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -22,7 +18,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 .statusMessage {
 	font-size: 14px;
 	line-height: 1.5;
-	color: $ink-deep;
+	color: var(--color-text-primary);
 	position: relative;
 	overflow: hidden;
 	
@@ -30,11 +26,11 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 		.statusText {
 			background: linear-gradient(
 				90deg,
-				$ink-deep 0%,
-				rgba(255, 255, 255, 0.4) 25%,
-				rgba(255, 255, 255, 0.4) 35%,
-				$ink-deep 60%,
-				$ink-deep 100%
+				var(--color-text-primary) 0%,
+				$lavender-cool 25%,
+				$lavender-cool 35%,
+				var(--color-text-primary) 60%,
+				var(--color-text-primary) 100%
 			);
 			background-size: 200% 100%;
 			background-clip: text;
@@ -62,11 +58,35 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .popups {
-	// Light mode backdrop - whited out without blur to save GPU
+	// Light mode backdrop - light gray
 	.popup.popupAiOnboarding.showDimmer {
 		.dimmer { 
-			background: rgba(255, 255, 255, 0.98); // More opaque to compensate for no blur
-			// Removed backdrop-filter to reduce GPU usage
+			background: rgba(248, 248, 250, 0.98); // Very light gray for light mode
+		}
+	}
+	
+	// Dark mode specific darker background
+	html.themeDark & .popup.popupAiOnboarding.showDimmer {
+		.dimmer {
+			background: rgba(0, 0, 0, 0.92);
+		}
+	}
+	
+	// Dark mode gradient for innerWrap - matching header background
+	html.themeDark & .popup.popupAiOnboarding {
+		.innerWrap {
+			// Dark mode: gradient matching header color scheme
+			background: radial-gradient(
+				ellipse at bottom right,
+				rgba(38, 38, 42, 0.95) 0%,    // Subtle dark gray matching header
+				rgba(32, 32, 36, 0.98) 50%,   // Transition to header background color
+				rgba(26, 26, 30, 1) 100%      // Slightly darker on outside for depth
+			);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			box-shadow: 
+				0 25px 50px -12px rgba(0, 0, 0, 0.5),
+				0 10px 10px -5px rgba(0, 0, 0, 0.3),
+				inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 		}
 	}
 
@@ -150,15 +170,18 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 			flex-direction: column;
 			z-index: 10; // Well above graph overlay
 			pointer-events: auto; // Ensure popup captures all events
-			// Make background more opaque to compensate for no blur
-			background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba($lavender-very-light, 0.95));
-			// Removed backdrop-filter to reduce GPU usage
-			border: 1px solid $glass-border-light;
+			// Light mode: clean gradient matching overall design
+			background: radial-gradient(
+				ellipse at bottom right,
+				rgba(252, 251, 254, 1) 0%,           // Very subtle cool tint
+				rgba(250, 250, 252, 1) 50%,          // Almost white
+				rgba(248, 248, 250, 1) 100%          // Slightly cooler white on outside
+			);
+			border: 1px solid var(--color-shape-tertiary);
 			border-radius: 24px;
 			box-shadow: 
-				0 25px 50px -12px rgba($lavender-cool, 0.15),
-				0 10px 10px -5px rgba(0, 0, 0, 0.04),
-				inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+				0 25px 50px -12px rgba(0, 0, 0, 0.25),
+				0 10px 10px -5px rgba(0, 0, 0, 0.1);
 			animation: modalEntrance 0.5s $spring-curve;
 			position: relative;
 			z-index: 10; // Above graph overlay
@@ -199,10 +222,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 			position: sticky; // Sticky positioning to stay at top
 			top: 0;
 			z-index: 100; // Above chat content
-			background: linear-gradient(to bottom, 
-				rgba(255, 255, 255, 0.95) 0%, 
-				rgba(255, 255, 255, 0.95) 85%, 
-				rgba(255, 255, 255, 0) 100%); // Gradient fade at bottom
+			background: var(--color-bg-primary);
 			// Removed backdrop-filter to reduce GPU usage
 			
 			.headerContent {
@@ -217,7 +237,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				padding: 6px 16px;
 				border-radius: 20px;
 				background: transparent;
-				border: 1px solid rgba($lavender-cool, 0.15);
+				border: 1px solid var(--color-shape-tertiary);
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -226,14 +246,14 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				z-index: 2;
 				font-size: 13px;
 				font-weight: 500;
-				color: rgba($ink-deep, 0.6);
+				color: var(--color-text-secondary);
 				font-family: 'Inter', -apple-system, sans-serif;
 
 				&:hover {
-					background: rgba(255, 255, 255, 0.8);
-					border-color: rgba($lavender-cool, 0.25);
-					color: rgba($ink-deep, 0.8);
-					box-shadow: 0 2px 8px rgba($lavender-cool, 0.1);
+					background: var(--color-shape-highlight-medium);
+					border-color: var(--color-shape-secondary);
+					color: var(--color-text-primary);
+					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 				}
 
 				&:active {
@@ -245,7 +265,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				font-family: 'Inter', -apple-system, sans-serif;
 				font-size: 20px;
 				font-weight: 600;
-				color: $ink-deep;
+				color: var(--color-text-primary);
 				letter-spacing: -0.02em;
 				margin-bottom: 4px;
 				display: flex;
@@ -253,7 +273,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				gap: 8px;
 
 				.sparkle {
-					color: $lavender-cool;
+					color: $lavender-cool; // Use lavender for spark in light theme
 					// Animation removed - was using 13% CPU even with GPU acceleration
 					// animation: sparkleRotate 3s linear infinite;
 				}
@@ -261,7 +281,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 			.subtitle {
 				font-size: 14px;
-				color: rgba($ink-deep, 0.6);
+				color: var(--color-text-secondary);
 				font-weight: 400;
 			}
 
@@ -368,16 +388,16 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				font-family: 'Inter', -apple-system, sans-serif;
 				font-size: 14px;
 				line-height: 1.5;
-				color: $ink-deep;
+				color: var(--color-text-primary);
 				margin-bottom: 12px;
 				padding: 10px 14px;
-				background: rgba(255, 255, 255, 0.4);
+				background: var(--color-shape-highlight-light);
 				border-radius: 10px;
-				border: 1px solid rgba($lavender-cool, 0.08);
+				border: 1px solid var(--color-shape-tertiary);
 				
 				strong {
 					font-weight: 600;
-					color: $lavender-cool;
+					color: var(--color-purple);
 					margin-right: 8px;
 				}
 			}
@@ -386,11 +406,11 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				justify-content: flex-start;
 
 				.bubble {
-					background: linear-gradient(135deg, rgba($lavender-very-light, 0.85), rgba($lavender-light, 0.45));
-					color: $ink-deep;
+					background: var(--color-bg-primary);
+					color: var(--color-text-primary);
 					border-radius: 20px 20px 20px 8px;
-					border: 1px solid rgba($lavender-cool, 0.12);
-					box-shadow: 0 2px 8px rgba($lavender-cool, 0.08);
+					border: 1px solid var(--color-shape-tertiary);
+					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 				}
 			}
 
@@ -398,10 +418,10 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				justify-content: flex-end;
 
 				.bubble {
-					background: linear-gradient(135deg, lighten($amber-warm, 5%), $amber-warm);
-					color: white;
+					background: linear-gradient(135deg, var(--color-orange), var(--color-yellow));
+					color: var(--color-text-inversion);
 					border-radius: 20px 20px 8px 20px;
-					box-shadow: 0 2px 12px rgba($amber-warm, 0.25);
+					box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 				}
 			}
 
@@ -455,7 +475,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				
 				.benefitContent {
 					font-size: 14px;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					line-height: 1.6;
 					padding: 14px 16px;
 					background: linear-gradient(135deg, rgba($lavender-very-light, 0.6), rgba($lavender-light, 0.3));
@@ -472,7 +492,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				.title {
 					font-size: 16px;
 					font-weight: 600;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					margin-bottom: 8px;
 					letter-spacing: -0.02em;
 					line-height: 1.4;
@@ -480,7 +500,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				
 				.description {
 					font-size: 14px;
-					color: rgba($ink-deep, 0.7);
+					color: var(--color-text-secondary);
 					margin-bottom: 16px;
 					line-height: 1.5;
 					letter-spacing: -0.01em;
@@ -510,14 +530,14 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				.title {
 					font-size: 18px;
 					font-weight: 600;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					margin-bottom: 16px;
 					letter-spacing: -0.02em;
 					line-height: 1.4;
 				}
 
 				.spaceInfo {
-					background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba($lavender-very-light, 0.5));
+					background: var(--color-bg-primary);
 					border-radius: 14px;
 					padding: 16px;
 					border: 1px solid rgba($lavender-cool, 0.12);
@@ -534,7 +554,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 					.stat {
 						font-size: 14px;
-						color: rgba($ink-deep, 0.8);
+						color: var(--color-text-primary);
 						padding: 6px 0;
 						display: flex;
 						align-items: center;
@@ -566,7 +586,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					
 					span {
 						font-size: 14px;
-						color: rgba($ink-deep, 0.7);
+						color: var(--color-text-secondary);
 						font-weight: 500;
 					}
 				}
@@ -593,13 +613,13 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 				.suggestionChip {
 					padding: 12px 16px;
-					background: rgba(255, 255, 255, 0.95);
-					border: 1px solid rgba($lavender-cool, 0.15);
+					background: var(--color-bg-primary);
+					border: 1px solid var(--color-shape-tertiary);
 					border-radius: 16px;
 					font-size: 13px;
 					font-weight: 400;
 					line-height: 1.4;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					cursor: pointer;
 					transition: all 0.2s $smooth-curve;
 					animation: chipFadeIn 0.3s $smooth-curve backwards;
@@ -618,10 +638,10 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					}
 
 					&:hover {
-						background: rgba(255, 255, 255, 1);
-						border-color: rgba($lavender-cool, 0.2);
+						background: var(--color-shape-highlight-light);
+						border-color: rgba($lavender-cool, 0.25);
 						transform: translateY(-2px) scale(1.05);
-						box-shadow: 0 8px 20px rgba($lavender-cool, 0.25);
+						box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 					}
 
 					&:active {
@@ -631,7 +651,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					// Add subtle icon or bullet
 					&:before {
 						content: '✦';
-						color: $lavender-cool;
+						color: var(--color-purple);
 						margin-right: 10px;
 						font-size: 14px;
 						opacity: 0.6;
@@ -644,15 +664,15 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 			.inputWrapper {
 				display: flex;
 				align-items: center;
-				background: rgba(255, 255, 255, 0.8);
-				border: 1px solid rgba($lavender-cool, 0.15);
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-tertiary);
 				border-radius: 28px;
 				padding: 6px 20px;
 				transition: all 0.2s $smooth-curve;
 				box-shadow: 0 2px 12px rgba($lavender-cool, 0.08);
 
 				&:focus-within {
-					background: white;
+					background: rgba(255, 255, 255, 1); // Pure white for light mode
 					border-color: rgba($lavender-cool, 0.3);
 					box-shadow: 0 4px 16px rgba($lavender-cool, 0.12);
 				}
@@ -668,12 +688,12 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					max-height: 80px;
 					padding: 10px 12px 10px 0;
 					font-size: 14px;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					line-height: 1.4;
 					font-family: 'Inter', -apple-system, sans-serif;
 
 					&::placeholder {
-						color: rgba($ink-deep, 0.35);
+						color: var(--color-text-tertiary);
 					}
 					
 					&:focus {
@@ -836,8 +856,8 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				align-items: center;
 				gap: 10px;
 				padding: 10px 14px;
-				background: rgba(255, 255, 255, 0.6);
-				border: 1px solid rgba($lavender-cool, 0.1);
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-tertiary);
 				border-radius: 12px;
 				cursor: pointer;
 				transition: all 0.2s $smooth-curve;
@@ -852,12 +872,12 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 				.name {
 					flex: 1;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					font-weight: 450;
 				}
 
 				&:hover {
-					background: rgba(255, 255, 255, 0.8);
+					background: var(--color-bg-primary);
 					border-color: rgba($lavender-cool, 0.2);
 					transform: translateX(2px);
 				}
@@ -869,7 +889,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					
 					.name {
 						font-weight: 500;
-						color: darken($ink-deep, 5%);
+						color: var(--color-text-primary);
 					}
 					
 					// Add a subtle checkmark on the right when selected
@@ -900,8 +920,8 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 			padding: 4px;
 
 			.typeCard {
-				background: rgba(255, 255, 255, 0.8);
-				border: 1px solid rgba($lavender-cool, 0.12);
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-tertiary);
 				border-radius: 16px;
 				padding: 14px;
 				cursor: pointer;
@@ -934,7 +954,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					.name {
 						font-size: 14px;
 						font-weight: 500;
-						color: $ink-deep;
+						color: var(--color-text-primary);
 					}
 				}
 			}
@@ -973,7 +993,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 			.progressCaption {
 				font-size: 13px;
-				color: rgba($ink-deep, 0.6);
+				color: var(--color-text-secondary);
 				text-align: center;
 			}
 		}
@@ -1026,7 +1046,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					font-family: 'Inter', -apple-system, sans-serif;
 					font-size: 24px;
 					font-weight: 600;
-					color: $ink-deep;
+					color: var(--color-text-primary);
 					margin-bottom: 12px;
 					letter-spacing: -0.02em;
 				}
@@ -1035,7 +1055,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					font-family: 'Inter', -apple-system, sans-serif;
 					font-size: 16px;
 					line-height: 1.6;
-					color: rgba($ink-deep, 0.7);
+					color: var(--color-text-secondary);
 					margin-bottom: 32px;
 					max-width: 400px;
 					margin-left: auto;
@@ -1073,14 +1093,14 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 						}
 						
 						&.secondary {
-							background: rgba(255, 255, 255, 0.8);
-							color: rgba($ink-deep, 0.7);
+							background: var(--color-shape-secondary);
+							color: var(--color-text-secondary);
 							border: 1px solid rgba($lavender-cool, 0.15);
 							
 							&:hover {
 								background: rgba(255, 255, 255, 1);
 								border-color: rgba($lavender-cool, 0.25);
-								color: $ink-deep;
+								color: var(--color-text-primary);
 							}
 							
 							&:active {
@@ -1096,7 +1116,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 		.reconnectingOverlay {
 			text-align: center;
 			margin-top: 20px;
-			color: rgba($ink-deep, 0.6);
+			color: var(--color-text-secondary);
 			font-family: 'Inter', -apple-system, sans-serif;
 			font-size: 14px;
 			font-weight: 500;
@@ -1144,6 +1164,28 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 		opacity: 1;
 	}
 }
+
+// Dark theme overrides
+html.themeDark {
+	.popup.popupAiOnboarding {
+		.header {
+			.titleWrapper {
+				.sparkle {
+					color: var(--color-orange); // Keep orange spark in dark theme
+				}
+			}
+		}
+		
+		.inputArea {
+			.inputWrapper {
+				&:focus-within {
+					background: var(--color-shape-primary) !important; // Use theme-appropriate background for dark mode
+				}
+			}
+		}
+	}
+}
+
 
 // Animations
 @keyframes modalEntrance {

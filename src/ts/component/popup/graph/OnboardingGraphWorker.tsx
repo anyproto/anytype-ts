@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
-import { S, U } from 'Lib';
+import { S, U, J } from 'Lib';
 
 interface OnboardingGraphWorkerProps {
 	width: number;
@@ -23,6 +23,8 @@ const OnboardingGraphWorker = observer(({
 	const { SparkOnboarding: sparkOnboarding } = S;
 	const [ isInitialized, setIsInitialized ] = useState(false);
 	const [ isDragging, setIsDragging ] = useState(false);
+	const theme = S.Common.getThemeClass();
+	const themeColors = J.Theme[theme].sparkOnboarding;
 
 	// Load icon images and send to worker
 	const loadIconImages = async (nodes: any[]) => {
@@ -43,11 +45,13 @@ const OnboardingGraphWorker = observer(({
 				console.log('[OnboardingGraphWorker] Loading icon for:', node.iconName);
 				
 				// Use the same pattern as in graph.ts - direct require without try/catch
-				// Use regular updateSvg with green fill matching the type gradient
+				// Use regular updateSvg with theme-appropriate fill matching node colors
 				const src = U.Common.updateSvg(require(`img/icon/type/default/${node.iconName}.svg`), { 
 					id: node.iconName, 
 					size: 70, // 30% smaller (was 100)
-					fill: 'hsla(155, 76%, 57%, 0.8)', // Green matching type gradient with good opacity
+					fill: theme === 'dark' 
+						? themeColors.node.type.fill // Use theme color for dark mode
+						: 'hsla(155, 76%, 57%, 1)', // Green matching type nodes for light mode
 				});
 				
 				if (!src) {
@@ -202,18 +206,19 @@ const OnboardingGraphWorker = observer(({
 			blockingAreas: [blockingArea],
 			nodeStyle: {
 				defaultRadius: 25,
-				centerColor: 'rgba(255, 255, 255, 1)', // White center to hide edges
-				edgeColor: 'hsla(155, 76%, 57%, 1)', // Default green gradient
-				glowColor: 'hsla(155, 76%, 74%, 0.3)',
+				centerColor: themeColors.canvas.nodeCenter,
+				edgeColor: themeColors.node.type.fill,
+				glowColor: themeColors.canvas.nodeGlow,
 			},
 			colors: {
 				bg: 'transparent',
-				text: 'rgba(0, 0, 0, 0.8)', // Always dark text
-				node: 'hsla(155, 76%, 57%, 1)',
-				link: 'rgba(160, 160, 160, 0.4)', // Lighter, more subtle gray edges
-				arrow: 'rgba(160, 160, 160, 0.4)',
-				highlight: 'rgba(120, 120, 120, 0.6)', // Slightly darker when highlighted
-				selected: 'hsla(201, 100%, 75%, 1)',
+				text: themeColors.node.type.text,
+				textShadow: themeColors.node.type.textShadow,
+				node: themeColors.node.type.fill,
+				link: themeColors.link.stroke,
+				arrow: themeColors.link.stroke,
+				highlight: themeColors.link.strokeHover,
+				selected: theme === 'dark' ? 'rgba(100, 140, 180, 0.7)' : J.Theme[theme].color.ice,
 			},
 			settings: {
 				icon: false,
@@ -224,7 +229,7 @@ const OnboardingGraphWorker = observer(({
 				orphan: true,
 				showBlockingAreas: false, // Set to true for debugging
 			},
-			theme: 'dark',
+			theme: theme || 'light',
 			rootId: '',
 		}, [ offscreen ]);
 
@@ -312,10 +317,17 @@ const OnboardingGraphWorker = observer(({
 						y: nodeY,
 						// Custom styling per node type
 						customRadius: node.type === 'space' ? 30 : (node.type === 'type' ? 25 : 20),
-						centerColor: 'rgba(255, 255, 255, 1)', // Always white center
+						centerColor: themeColors.canvas.nodeCenter,
 						edgeColor: node.type === 'type'
-							? 'hsla(155, 76%, 57%, 1)' // Green for types
-							: 'hsla(201, 100%, 75%, 1)', // Blue for objects
+							? themeColors.node.type.fill
+							: node.type === 'space'
+								? themeColors.node.space.fill
+								: themeColors.node.object.fill,
+						glowColor: node.type === 'type'
+							? themeColors.node.type.glow
+							: node.type === 'space'
+								? themeColors.node.space.glow
+								: themeColors.node.object.glow
 					};
 				});
 

@@ -81,28 +81,35 @@ export default {
 		sparkOnboarding: {
 			node: {
 				type: {
-					fill: '#4A90E2',
-					stroke: '#2E5C8A',
-					text: '#FFFFFF',
+					fill: 'hsla(155, 76%, 57%, 1)',  // Green for type nodes (original)
+					stroke: 'hsla(155, 76%, 47%, 1)',
+					text: 'rgba(0, 0, 0, 0.85)',  // Dark text for light mode
+					textShadow: 'rgba(255, 255, 255, 0.9)',  // White shadow for contrast
+					glow: 'hsla(155, 76%, 90%, 0.4)',  // Light green glow for types
 				},
 				object: {
-					fill: '#7ED321',
-					stroke: '#5CA116',
-					text: '#FFFFFF',
+					fill: 'hsla(201, 100%, 75%, 1)',  // Blue for object nodes (original)
+					stroke: 'hsla(201, 100%, 65%, 1)',
+					text: 'rgba(0, 0, 0, 0.85)',  // Dark text for light mode
+					textShadow: 'rgba(255, 255, 255, 0.9)',  // White shadow for contrast
+					glow: 'hsla(201, 100%, 92%, 0.4)',  // Light blue glow for objects
 				},
 				space: {
-					fill: '#9013FE',
-					stroke: '#6B0FBF',
-					text: '#FFFFFF',
+					fill: 'hsla(201, 100%, 75%, 1)',  // Blue for space nodes (same as objects in original)
+					stroke: 'hsla(201, 100%, 65%, 1)',
+					text: 'rgba(0, 0, 0, 0.85)',  // Dark text for light mode
+					textShadow: 'rgba(255, 255, 255, 0.9)',  // White shadow for contrast
+					glow: 'hsla(201, 100%, 92%, 0.4)',  // Light blue glow for spaces
 				},
 			},
 			link: {
-				stroke: '#CCCCCC',
-				strokeHover: '#888888',
+				stroke: 'rgba(160, 160, 160, 0.4)',  // Light gray
+				strokeHover: 'rgba(120, 120, 120, 0.6)',  // Darker gray on hover
 			},
 			canvas: {
-				background: '#F5F7FA',
-				grid: '#E1E4E8',
+				background: 'rgba(248, 248, 250, 0.98)',  // Light gray background
+				nodeCenter: 'rgba(255, 255, 255, 1)',  // White center for nodes
+				nodeGlow: 'hsla(155, 76%, 74%, 0.3)',  // Default green glow
 			},
 		}
 	},
@@ -164,28 +171,36 @@ export default {
 		sparkOnboarding: {
 			node: {
 				type: {
-					fill: '#5BA0F2',
-					stroke: '#3E6C9A',
-					text: '#FFFFFF',
+					fill: 'rgba(100, 180, 120, 0.85)',  // Bright vivid green like "Supply"
+					stroke: 'rgba(80, 160, 100, 0.9)',
+					text: 'rgba(220, 220, 220, 0.95)',  // Very bright text
+					textShadow: '0 2px 4px rgba(0, 0, 0, 1)',  // Strong shadow for contrast
+					glow: 'rgba(100, 180, 120, 0.15)',  // Weak green glow
 				},
 				object: {
-					fill: '#8EE331',
-					stroke: '#6CB126',
-					text: '#FFFFFF',
+					fill: 'rgba(100, 150, 200, 0.85)',  // Bright vivid blue like "Work"
+					stroke: 'rgba(80, 130, 180, 0.9)',
+					text: 'rgba(220, 220, 220, 0.95)',
+					textShadow: '0 2px 4px rgba(0, 0, 0, 1)',
+					glow: 'rgba(100, 150, 200, 0.15)',  // Weak blue glow
 				},
 				space: {
-					fill: '#A023FF',
-					stroke: '#7B1FCF',
-					text: '#FFFFFF',
+					fill: 'rgba(100, 150, 200, 0.85)',  // Same bright blue for spaces
+					stroke: 'rgba(80, 130, 180, 0.9)',
+					text: 'rgba(220, 220, 220, 0.95)',
+					textShadow: '0 2px 4px rgba(0, 0, 0, 1)',
+					glow: 'rgba(100, 150, 200, 0.15)',  // Weak blue glow
 				},
 			},
 			link: {
-				stroke: '#555555',
-				strokeHover: '#888888',
+				stroke: 'rgba(120, 120, 120, 0.5)',  // Brighter links
+				strokeHover: 'rgba(160, 160, 160, 0.7)',  // Brighter hover
 			},
 			canvas: {
 				background: '#1F1F1F',
 				grid: '#333333',
+				nodeCenter: 'rgba(40, 40, 40, 0.95)',  // Darker center for contrast
+				nodeGlow: 'rgba(80, 100, 140, 0.1)',  // Very weak general glow
 			},
 		}
 	}
