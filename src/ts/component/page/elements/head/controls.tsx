@@ -115,7 +115,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		keyboard.disableCommonDrop(true);
 		setIsLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
 			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			

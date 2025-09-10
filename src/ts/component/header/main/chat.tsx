@@ -7,6 +7,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const { rootId, renderLeftIcons, isPopup } = props;
 	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const showWidget = !isPopup && spaceview.isChat;
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
@@ -16,6 +17,10 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			U.Object.openRoute(object);
 			keyboard.disableClose(false);
 		});
+	};
+
+	const onClick = () => {
+		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 	};
 
 	let object = null;
@@ -29,13 +34,13 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		<>
 			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>
 			<div className="side center">
-				<div className="path">
+				<div className="path" onClick={onClick}>
 					<IconObject object={object} size={18} />
 					<ObjectName object={object} withPlural={true} />
 				</div>
 			</div>
 			<div className="side right">
-				{spaceview.isChat ? (
+				{showWidget ? (
 					<Icon 
 						id="button-header-widget" 
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}

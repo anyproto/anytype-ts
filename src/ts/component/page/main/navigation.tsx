@@ -140,7 +140,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				{loading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
 
 				<div key="sides" className="sides">
-					<div id={'panel-' + Panel.Left} className="items left">
+					<div id={`panel-${Panel.Left}`} className="items left customScrollbar">
 						<div className="sideName">{translate('popupNavigationLinkTo')}</div>
 						{!pagesIn.length ? (
 							<ItemEmpty name={translate('popupNavigationEmptyTo')} />
@@ -155,7 +155,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 										{({ width, height }) => (
 											<List
 												ref={ref => this.refList[Panel.Left] = ref}
-												width={width + 20}
+												width={width}
 												height={height - 35}
 												deferredMeasurmentCache={this.cacheIn}
 												rowCount={pagesIn.length}
@@ -175,11 +175,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						)}
 					</div>
 
-					<div id={'panel-' + Panel.Center} className="items center">
+					<div id={`panel-${Panel.Center}`} className="items center">
 						{info ? <Selected {...info} /> : <ItemEmpty name={translate('pageMainNavigationItemEmptyTitle')} />}
 					</div>
 
-					<div id={'panel-' + Panel.Right} className="items right">
+					<div id={`panel-${Panel.Right}`} className="items right customScrollbar">
 						<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
 						{!pagesOut.length ? (
 							<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
@@ -194,7 +194,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 										{({ width, height }) => (
 											<List
 												ref={ref => this.refList[Panel.Right] = ref}
-												width={width + 20}
+												width={width}
 												height={height - 35}
 												deferredMeasurmentCache={this.cacheOut}
 												rowCount={pagesOut.length}
@@ -227,6 +227,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		this.loadPage(rootId);
 		this.resize();
 		this.rebind();
+		S.Common.setRightSidebarState(false, '', false);
 
 		focus.clear(true);
 		keyboard.setFocus(true);

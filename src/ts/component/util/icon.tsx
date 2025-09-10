@@ -48,8 +48,6 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		style.backgroundImage = `url("${icon}")`;
 	};
 
-	useEffect(() => Preview.tooltipHide(false));
-
 	const onMouseEnterHandler = (e: MouseEvent) => {
 		const { text = '', caption = '' } = tooltipParam;
 		const t = Preview.tooltipCaption(text, caption);
@@ -86,6 +84,10 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			onContextMenu(e);
 		};
 	};
+
+	useEffect(() => {
+		return () => Preview.tooltipHide(false);
+	}, []);
 
 	return (
 		<div 

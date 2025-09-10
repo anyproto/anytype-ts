@@ -17,6 +17,13 @@
 
 .button.accent { background: var(--color-system-accent-100); color: var(--color-bg-primary); }
 .button.accent:not(.disabled):hover, .button.accent:not(.disabled).hover { background: var(--color-system-accent-125); }
+.button.accent {
+	.loaderWrapper {
+		.dots {
+			.dot { border-color: var(--color-bg-primary); animation-name: dots-accent; }
+		}
+	}
+}
 
 .button.pink { background: #ff6a7b; color: var(--color-text-inversion); }
 .button.pink:not(.disabled):hover { background: #e5374b; }

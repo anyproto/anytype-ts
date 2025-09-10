@@ -669,7 +669,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 								threshold={10}
 							>
 								{({ onRowsRendered }) => (
-									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+									<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
 										{({ height, isScrolling, registerChild, scrollTop }) => (
 											<AutoSizer>
 												{({ width }) => (

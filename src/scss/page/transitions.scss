@@ -1,7 +1,0 @@
-.page-transition-enter { opacity: 0; position: absolute; width: 100%; height: 100%; z-index: 2; }
-.page-transition-enter-active { opacity: 1; transition: all 100ms ease-in-out; transition-delay: 100ms; }
-.page-transition-exit { opacity: 1; position: absolute; width: 100%; height: 100%; z-index: 1; }
-.page-transition-exit-active { opacity: 0; transition: all 100ms ease-in-out; transition-delay: 100ms; }
-
-/* Ensure both routes are positioned correctly */
-.page.isFull { position: relative; min-height: 100vh; width: 100%; }

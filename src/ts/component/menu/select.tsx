@@ -223,10 +223,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		this.resize();
 	};
 	
-	componentWillUnmount () {
-		this.unbind();
-	};
-	
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));

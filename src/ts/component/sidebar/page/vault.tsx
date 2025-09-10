@@ -7,16 +7,17 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, ProgressText, EmptySearch } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
 import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
+
+import ItemProgress from './vault/update';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space } = S.Common;
-	const { isPopup, sidebarDirection } = props;
+	const { space, updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -30,6 +31,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const profile = U.Space.getProfile();
 	const theme = S.Common.getThemeClass();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
+	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -180,34 +182,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
 
-			let text = '';
-			if (list.length) {
-				const last = list[list.length - 1];
-
-				if (last) {
-					const participantId = U.Space.getParticipantId(it.targetSpaceId, last.creator);
-					const author = last.dependencies.find(it => it.id == participantId);
-
-					if (author) {
-						text = `${author.name}: `;
-					};
-
-					if (last.content.text) {
-						text += U.Common.sanitize(Mark.insertEmoji(last.content.text, last.content.marks));
-						text = text.replace(/\n\r?/g, ' ');
-					} else 
-					if (last.attachments.length) {
-						const names = last.attachments.map(item => {
-							const object = last.dependencies.find(it => it.id == item.target);
-							return object ? U.Object.name(object) : '';
-						}).filter(it => it).join(', ');
-
-						text += names;
-					};
-				};
-			};
-
-			it.lastMessage = text;
+			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 			return it;
 		});
@@ -217,14 +192,22 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
+		if (progress.length || updateVersion) {
+			items.unshift({ id: 'update-progress', isProgress: true, isUpdate: Boolean(updateVersion) });
+		};
+
 		return items;
 	};
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
 		U.Menu.spaceContext(item, {
+			onOpen: () => {
+				unsetActive();
+				unsetHover();
+			},
+			onClose: () => setActive(spaceview),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			element: `#sidebarPageVault #item-${item.id}`,
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
 		});
 	};
@@ -243,8 +226,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		if (item.targetSpaceId != S.Common.space) {
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
-			U.Space.openDashboard();
-			sidebar.panelSetState(isPopup, sidebarDirection, { page: U.Space.getDefaultSidebarPage(item.id) });
+			U.Space.openDashboard({ replace: false });
+			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		};
 	};
 
@@ -256,7 +239,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onOut = () => {
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
 			setActive(spaceview);
 		};
@@ -301,7 +284,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		setFilter('');
 	};
 
-	const Item = (item: any) => {
+	const ItemObject = (item: any) => {
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
@@ -391,11 +374,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<Item
-					{...item}
-					index={param.index}
-					style={param.style}
-				/>
+				{item.isProgress ? (
+					<ItemProgress
+						{...item}
+						index={param.index}
+						style={param.style}
+					/>
+				) : (
+					<ItemObject
+						{...item}
+						index={param.index}
+						style={param.style}
+					/>
+				)}
 			</CellMeasurer>
 		);
 	};
@@ -414,13 +405,17 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onHelp = () => {
 		S.Menu.open('help', {
-			element: '#button-widget-help',
+			element: '#sidebarPageVault #button-help',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
 			offsetY: -78,
 			subIds: J.Menu.help,
 		});
+	};
+
+	const getRowHeight = (item: any) => {
+		return HEIGHT_ITEM + (item.isUpdate ? 36 : 0);
 	};
 
 	useEffect(() => {
@@ -438,9 +433,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	return (
 		<>
-			<div id="head" className="head">
-				<ProgressText label={translate('progressUpdateDownloading')} type={I.ProgressType.Update} />
-			</div>
+			<div id="head" className="head" />
 			<div className="filterWrapper">
 				<Filter 
 					ref={filterRef}
@@ -483,7 +476,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 											height={height}
 											deferredMeasurmentCache={cache}
 											rowCount={items.length}
-											rowHeight={HEIGHT_ITEM}
+											rowHeight={({ index }) => getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
@@ -503,7 +496,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<div className="sides">
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
-							<IconObject object={settings} size={32} iconSize={32} param={{ userIcon: J.Theme[theme].textInversion }} />
+							<IconObject object={settings} size={32} iconSize={32} />
 							<ObjectName object={settings} />
 						</div>
 					</div>
@@ -516,7 +509,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						/>
 
 						<Button
-							id="button-widget-help"
+							id="button-help"
 							className="help"
 							text="?"
 							tooltipParam={{ text: translate('commonHelp') }}

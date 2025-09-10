@@ -5,7 +5,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow-x: hidden; overflow-y: auto; background: var(--color-bg-primary);
+	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
 	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
 }
 body.colResize { cursor: col-resize !important; }
@@ -17,7 +17,7 @@ body.eResize { cursor: e-resize !important; }
 
 body.grab, body.isDragging { cursor: grab !important; }
 body.isFullScreen {
-	#drag { display: none; }
+	#menuBar { display: none; }
 }
 
 :focus { outline: 0px; }
@@ -40,8 +40,16 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0s; }
 input, textarea, select { font-family: 'Inter'; }
 
-#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
-#root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #060606; z-index: 1000; transition: opacity 0.3s ease-in-out; }
+#root { height: 100%; }
+#appContainer { display: flex; flex-direction: column; height: 100%; }
+#selection { flex-grow: 1; overflow: hidden; }
+
+#menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
+
+#root-loader { 
+	position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: var(--color-shape-tertiary); z-index: 1000;
+	transition: opacity 0.3s ease-in-out; 
+}
 #root-loader {
 	.inner { 
 		width: 120px; text-align: center; position: absolute; transform: translate3d(-50%,-50%,0px); display: flex; flex-direction: column; gap: 6px 0px;
@@ -51,8 +59,8 @@ input, textarea, select { font-family: 'Inter'; }
 	.anim.from { opacity: 0; transform: scale3d(0.8,0.8,1); }
 	.anim.to { opacity: 0; transform: translate3d(0px,-20px,0px); }
 
-	.logo { width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100%; }
-	.version { @include text-small; color: var(--color-text-inversion); transition-delay: 0.15s; }
+	.logo { width: 120px; height: 24px; background: url('~img/logo/black.svg') no-repeat; background-size: 100%; }
+	.version { @include text-small; transition-delay: 0.15s; }
 }
 
 #globalFade { 
@@ -241,3 +249,30 @@ a { color: var(--color-text-primary); }
 
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
+
+html.platformWindows:not(.noMenuBar) {
+	#menuBar { 
+		height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
+		flex-direction: row;
+	}
+	#menuBar {
+		.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; @include text-small; font-weight: 500; }
+		.side.left { justify-content: flex-start; gap: 0px 2px; }
+		.side.right { justify-content: flex-end; }
+
+		.icon { width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; }
+		.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
+		.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
+		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }
+		.icon.window-close { background-image: url('~img/icon/window/close.svg'); }
+	}
+
+	.sidebar { margin-top: 28px; height: calc(100% - 28px); }
+	.sidebarHeadIcon { top: 48px; }
+
+	.popups {
+		.popup.popupShortcut {
+			.innerWrap { top: 28px; height: calc(100% - 28px); }
+		}
+	}
+}

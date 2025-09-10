@@ -109,7 +109,6 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		S.Common.setRightSidebarState(false, '', false);
 		focus.clear(true);
 
 		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
@@ -194,7 +193,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		S.Common.setRightSidebarState(false, '', false);
+		//S.Common.setRightSidebarState(false, '', false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -235,14 +234,14 @@ class UtilRouter {
 				animate: routeParam.animate,
 				delay: 100,
 				onRouteChange: () => {
-					analytics.removeContext();
-					S.Common.defaultType = null;
 					Storage.set('spaceId', id);
+
+					analytics.removeContext();
+					S.Common.nullifySpaceKeys();
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 						this.isOpening = false;
-
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					});
 				},

@@ -14,7 +14,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 	n = 0;
 	toggled = [];
 	items: any = null;
-	container = null;
 	timeout = 0;
 	
 	constructor (props: I.Menu) {
@@ -59,8 +58,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 	componentDidMount () {
 		const { param, storageGet } = this.props;
 		const { data } = param;
-
-		this.container = this.getSearchContainer();
 
 		window.setTimeout(() => { 
 			const value = String(data.value || storageGet().search || '');
@@ -139,10 +136,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	search () {
-		if (!this.container || !this.container.length) {
-			return;
-		};
-
 		const value = this.ref?.getValue();
 		if (value && (this.last == value)) {
 			return;
@@ -151,6 +144,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
+		const container = this.getContainer();
 		const node = $(this.node);
 		const switcher = node.find('#switcher').removeClass('active');
 		const tag = Mark.getTag(I.MarkType.Search);
@@ -167,7 +161,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		analytics.event('SearchWords', { length: value.length, route });
 
-		findAndReplaceDOMText(this.container.get(0), {
+		findAndReplaceDOMText(container.get(0), {
 			preset: 'prose',
 			find: new RegExp(U.Common.regexEscape(value), 'gi'),
 			wrap: tag,
@@ -194,7 +188,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = this.container.get(0).querySelectorAll(tag) || [];
+		this.items = container.get(0).querySelectorAll(tag) || [];
 		
 		switcher.toggleClass('active', !!this.items.length);
 
@@ -213,14 +207,11 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
-		if (!this.container || !this.container.length) {
-			return;
-		};
-
+		const container = this.getContainer();
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
 		const tag = Mark.getTag(I.MarkType.Search);
-		const items = this.container.get(0).querySelectorAll(tag) || [];
+		const items = container.get(0).querySelectorAll(tag) || [];
 
 		for (let i = 0; i < items.length; i++) {
 			const item = $(items[i]);
@@ -236,30 +227,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 		switcher.removeClass('active');
 	};
 
-	getScrollContainer () {
+	getContainer () {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
 
-		if (!isPopup) {
-			return $(window);
-		} else {
-			const scrollable = this.container.find('.scrollable');
-
-			return scrollable.length ? scrollable : this.container;
-		};
-	};
-
-	getSearchContainer () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
-
-		if (!isPopup) {
-			return $('#pageFlex.isFull');
-		} else {
-			return $('.popup').last().find('#pageFlex.isPopup');
-		};
+		return U.Common.getScrollContainer(isPopup);
 	};
 
 	focus () {
@@ -267,14 +240,11 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
-		const scrollContainer = this.getScrollContainer();
+		const container = this.getContainer();
 		const offset = J.Size.lastBlock + J.Size.header;
 		const tag = Mark.getTag(I.MarkType.Search);
 
-		this.container.find(`${tag}.active`).removeClass('active');
+		container.find(`${tag}.active`).removeClass('active');
 
 		const next = $(this.items[this.n]);
 
@@ -284,22 +254,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		next.addClass('active');
 		
-		const st = this.container.scrollTop();
+		const st = container.scrollTop();
 		const no = next.offset().top;
-
-		let wh = 0;
-		let y = 0;
-
-		if (isPopup) {
-			y = no - this.container.offset().top + st;
-			wh = scrollContainer.height();
-		} else {
-			y = no;
-			wh = $(window).height();
-		};
+		const wh = container.height();
+		const y = no - container.offset().top + st;
 
 		this.setCnt();
-		scrollContainer.scrollTop(y - wh + offset);
+		container.scrollTop(y - wh + offset);
 	};
 
 	setCnt () {

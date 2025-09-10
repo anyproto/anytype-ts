@@ -405,7 +405,6 @@ class UtilSubscription {
 			{
 				spaceId: techSpaceId,
 				subId: J.Constant.subId.profile,
-				keys: this.profileRelationKeys(),
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
@@ -626,14 +625,6 @@ class UtilSubscription {
 	 */
 	destroyAll (callBack?: () => void): void {
 		this.destroyList([ ...this.map.keys() ], true, callBack);
-	};
-
-	/**
-	 * Returns the relation keys for profile subscriptions.
-	 * @returns {string[]} The list of relation keys.
-	 */
-	profileRelationKeys () {
-		return J.Relation.default.concat('sharedSpacesLimit');
 	};
 
 	/**

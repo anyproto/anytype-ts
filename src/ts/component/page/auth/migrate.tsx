@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Error, ProgressBar, Button, Icon, Title, Label } from 'Component';
+import { Frame, ProgressBar, Button, Icon, Title, Label } from 'Component';
 import { I, C, S, U, Storage, translate } from 'Lib';
 
 const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
@@ -39,14 +39,6 @@ const PageAuthMigrate = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			};
 
 			U.Router.go('/auth/setup/init', { replace: true });
-		});
-	};
-
-	const onCancel = () => {
-		C.AccountMigrateCancel(accountId, (message: any) => {
-			if (message.error.code) {
-				setErrorText(message.error.description);
-			};
 		});
 	};
 

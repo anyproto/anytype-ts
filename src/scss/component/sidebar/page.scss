@@ -1,10 +1,13 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; transition: opacity 0.025s ease-in-out; }
+> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
 > .sidebarPage {
+	&.anim { transition: opacity 0.3s ease-in-out; }
+
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
 	> .head {
+		.side { position: relative; z-index: 1; }
 		.side.left { flex-grow: 1; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
 
@@ -16,15 +19,27 @@
 		.icon.close { background-image: url('~img/icon/close.svg'); }
 		.icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
 		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
+
+		&::after {
+			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; 
+			background: linear-gradient(to bottom, var(--color-shape-tertiary) 0px, var(--color-shape-tertiary) 52px, rgba(0, 0, 0, 0) 100%); 
+			opacity: 0; transition: opacity 0.2s ease-in-out;
+		}
+		&.isScrolled::after { opacity: 1; }
 	}
 
 	> .subHead { 
-		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 6px 12px; position: relative; 
-		margin: 0px 0px 4px 0px; height: 40px;
+		display: flex; flex-direction: row; align-items: center; gap: 0px 12px; justify-content: stretch; padding: 0px 12px; position: relative; 
+		margin: 0px 0px 4px 0px; height: 36px; flex-shrink: 0; z-index: 2;
 	}
+	> .subHead * { -webkit-app-region: no-drag; }
 	> .subHead {
 		.icon.back { background-size: 20px; }
 		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
+		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
+		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 
 		.cnt { 
 			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
@@ -32,19 +47,22 @@
 			padding: 0px 4px; cursor: default; flex-shrink: 0;
 		}
 
-		.side.left { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+		.side { flex-direction: row; display: flex; align-items: center; position: relative; z-index: 1; }
+		.side.left { justify-content: center; flex-shrink: 0; }
 
-		.side.center { flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
+		.side.center { flex-grow: 1; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
 		.side.center {
 			.iconObject { flex-shrink: 0; }
 			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 		}
 
-		.side.right { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; }
-		.side.right {
-			.icon.plus { background-image: url('~img/icon/widget/button/create.svg'); }
-			.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
+		.side.right { flex-shrink: 0; justify-content: flex-end; }
+
+		&::after {
+			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; 
+			background: linear-gradient(to bottom, var(--color-shape-tertiary) 0px, var(--color-shape-tertiary) 52px, rgba(0, 0, 0, 0) 100%); opacity: 0; transition: opacity 0.2s ease-in-out;
 		}
+		&.isScrolled::after { opacity: 1; }
 	}
 
 	> .body {
@@ -166,3 +184,14 @@
 @import "./page/object/relation.scss";
 @import "./page/object/tableOfContents.scss";
 @import "./page/bottom.scss";
+
+&.right.spaceSpace {
+	> .sidebarPage.pageWidget, 
+	> .sidebarPage.pageAllObject {
+		> .head { height: 0px; padding: 0px; }
+		> .head {
+			&::after { display: none; }
+		}
+		> .subHead { height: 52px; margin: 0px; }
+	}
+}

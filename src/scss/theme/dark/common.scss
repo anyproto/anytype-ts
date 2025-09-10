@@ -136,7 +136,7 @@ html.themeDark {
 	}
 
 	#root-loader {
-		.version { color: var(--color-text-primary); }
+		.logo { background-image: url('~img/logo/white.svg'); }
 	}
 
 	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
@@ -337,7 +337,7 @@ html.themeDark {
 	/* Header */
 
 	.header.authIndex {
-		.logo { background: url('~img/logo/white.svg'); }
+		.logo { background: url('#{$themePath}/icon/header/logo.svg'); }
 	}
 
 	.header.isCommon {
@@ -388,11 +388,8 @@ html.themeDark {
 		> .sidebarPage {
 			> .subHead {
 				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
-
-				.side.right {
-					.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
-					.icon.arrow {background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
-				}
+				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
+				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
 			}
 
 			> .body {
@@ -447,13 +444,13 @@ html.themeDark {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
-			.spaceChatSidebarHeader {
+			.spaceHeader {
 				.buttons {
 					.item {
 						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
-						.icon.search { background-image: url('#{$themePath}/icon/sidebar/chatSpace/search.svg'); }
-						.icon.mute.pushOn { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-						.icon.mute.pushOff { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
+						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
+						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
 					}
 				}
 			}
@@ -493,13 +490,25 @@ html.themeDark {
 		.icon { background-image: url('#{$themePath}/icon/chat/emptyState.svg'); }
 	}
 
+	#menuBar {
+		.icon.window-menu { background-image: url('#{$themePath}/icon/window/menu.svg') !important; }
+		.icon.window-min { background-image: url('#{$themePath}/icon/window/min.svg') !important; }
+		.icon.window-max { background-image: url('#{$themePath}/icon/window/max.svg') !important; }
+		.icon.window-close { background-image: url('#{$themePath}/icon/window/close.svg') !important; }
+	}
+
+	/* Key Phrase */
+	.phraseWrapper {
+		.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/hide1.svg'); }
+
+		&.isHidden {
+			.icon.show:hover { background-image: url('#{$themePath}/icon/keyphrase/see1.svg'); }
+		}
+	}
+
 	@import "./menu";
 	@import "./popup";
 	@import "./page";
 	@import "./block";
 	@import "./widget";
-}
-
-html.platformWindows.themeDark, html.platformLinux.themeDark {
-	::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 }

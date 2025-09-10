@@ -1,34 +1,36 @@
 $transitionSettings: all 0.25s $easeInQuint;
 
-.sidebarPage.pageVault,
-.sidebarPage.pageWidget {
-	> .bottom { 
-		position: absolute; bottom: 0px; left: 0px; width: 100%; height: 48px; display: flex; align-items: center; gap: 0px 8px; z-index: 2; 
-		overflow: hidden;
-	}
+.sidebarPage {
+	> .bottom { position: absolute; bottom: 0px; left: 0px; width: 100%; display: flex; align-items: center; gap: 0px 8px; z-index: 2; }
 	> .bottom {
-        .grad {
-            position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
-            background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 51.73%);
-        }
+    	.grad {
+			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
+			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-tertiary) 68.18%);
+		}
 
-        .sides { position: relative; z-index: 1; width: 100%; display: flex; padding: 0px 12px 12px 12px; align-items: center; justify-content: space-between; gap: 0px 6px; }
+        .sides { 
+			position: relative; z-index: 1; width: 100%; display: flex; padding: 12px; align-items: center; 
+			justify-content: space-between; gap: 0px 6px; overflow: hidden;
+		}
         .side.center { text-align: center; flex-grow: 1; flex-shrink: 0; width: auto; }
         .side.right { text-align: right; flex-shrink: 0; }
 
-        .widgetSettings { transition: $transitionSettings; position: relative; width: 32px; height: 32px; overflow: hidden; background-color: var(--color-shape-highlight-medium); border-radius: 16px; }
+        .widgetSettings { 
+			transition: $transitionSettings; position: relative; width: 32px; height: 32px; overflow: hidden; 
+			background-color: var(--color-shape-primary); border-radius: 16px; text-align: center;;
+		}
         .widgetSettings {
             .icon,
             .label { transition: $transitionSettings; position: absolute; }
             .icon {  left: 6px; top: 6px; width: 20px; height: 20px; background-image: url('~img/icon/widget/button/widgetSettings0.svg'); }
-            .label { left: 12px; top: 7px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; }
+            .label { top: 7px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; @include text-overflow-nw; width: 100%; padding: 0px 12px; }
         }
-        .widgetSettings:not(.isEditing):hover { background-color: var(--color-shape-highlight-dark); }
+        .widgetSettings:not(.isEditing):hover { background-color: var(--color-shape-secondary); }
         .widgetSettings:not(.isEditing):hover {
             .icon { background-image: url('~img/icon/widget/button/widgetSettings1.svg'); }
         }
 
-        .widgetSettings.isEditing { width: 55px; background-color: var(--color-system-accent-100); }
+        .widgetSettings.isEditing { width: 60px; background-color: var(--color-system-accent-100); }
         .widgetSettings.isEditing {
             .icon { opacity: 0; }
             .label { opacity: 1; }
@@ -37,7 +39,7 @@ $transitionSettings: all 0.25s $easeInQuint;
 
         .side {
             > .button,
-            > .icon { transition: $transitionSettings; height: 32px; min-width: 32px; border-radius: 16px; background-color: var(--color-shape-highlight-medium);  }
+            > .icon { transition: $transitionSettings; height: 32px; min-width: 32px; border-radius: 16px; background-color: var(--color-shape-primary);  }
 
             > .button { padding: 0px 12px; text-align: center; @include text-small; font-weight: 500; color: var(--color-text-secondary); overflow: visible; }
             > .button.help { font-size: 15px; padding: 0px; }
@@ -48,7 +50,7 @@ $transitionSettings: all 0.25s $easeInQuint;
             > .icon:hover,
             > .icon.hover,
             > .button:hover,
-            > .button.hover { background-color: var(--color-shape-highlight-dark) !important; }
+            > .button.hover { background-color: var(--color-shape-secondary) !important; }
             > .button {
                 .txt { @include text-overflow-nw; }
             }

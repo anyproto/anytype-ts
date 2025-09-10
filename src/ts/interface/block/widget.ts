@@ -30,6 +30,7 @@ export interface WidgetComponent {
 	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;
 	onCreate?: (param: any) => void;
+	getObject?: (id: string) => any;
 };
 
 export interface WidgetViewComponent extends I.WidgetComponent {

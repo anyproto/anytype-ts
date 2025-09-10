@@ -116,111 +116,118 @@ const SidebarPageObject = observer(class SidebarPageObject extends React.Compone
 
 		return (
 			<>
-				<div className="inner">
-					<div className="head">
-						<div className="titleWrap" onClick={() => sidebar.panelSetState(false, sidebarDirection, { page: 'widget' })}>
-							<div className="side left">
-								<Icon className="back" />
-								<Title text={translate('commonAllContent')} />
-							</div>
-							<div className="side right">
-								<Icon id="button-object-more" className="more" onClick={this.onMore} />
-							</div>
-						</div>
+				<div id="head" className="head" />
 
-						<div id="tabs" className="tabs">
-							<Swiper
-								onSwiper={swiper => this.refSwiper = swiper}
-								direction="horizontal"
-								slidesPerView="auto"
-								slidesPerGroupAuto={true}
-								spaceBetween={12}
-								mousewheel={true}
-								navigation={true}
-								modules={[ Mousewheel, Navigation ]}
-							>
-								{typeOptions.map((it: any, i: number) => {
-									const cn = [ 'tab' ];
-
-									if (this.type == it.id) {
-										cn.push('active');
-									};
-
-									return (
-										<SwiperSlide key={it.id}>
-											<div 
-												key={it.id} 
-												className={cn.join(' ')} 
-												onClick={() => this.onSwitchType(it.id)}
-											>
-												{it.name}
-											</div>
-										</SwiperSlide>
-									);
-								})}
-							</Swiper>
-						</div>
-
-						<div className="sides sidesFilter">
-							<div className="side left">
-								<Filter 
-									ref={ref => this.refFilter = ref}
-									icon="search"
-									placeholder={translate('commonSearch')}
-									onChange={this.onFilterChange}
-									onClear={this.onFilterClear}
-								/>
-							</div>
-							<div className="side right">
-								{isAllowedObject ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
-							</div>
-						</div>
-
-						{this.orphan ? <Label text={translate('sidebarObjectOrphanLabel')} /> : ''}
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back" onClick={() => sidebar.panelSetState(false, sidebarDirection, { page: 'widget' })} />
 					</div>
+					<div className="side center">
+						<div className="name">{translate('commonAllContent')}</div>
+					</div>
+					<div className="side right">
+						<Icon id="button-object-more" className="more" onClick={this.onMore} />
+					</div>
+				</div>
 
-					<div id="body" className="body">
-						{!items.length && !isLoading ? (
-							<EmptySearch filter={this.filter} text={isAllowedObject ? translate('sidebarObjectEmptyCreate') : translate('commonObjectEmpty')} />
-						) : ''}
-
-						{this.cache && items.length && !isLoading ? (
-							<div className="items">
-								<InfiniteLoader
-									rowCount={items.length + 1}
-									loadMoreRows={this.loadMoreRows}
-									isRowLoaded={({ index }) => !!items[index]}
-									threshold={LIMIT}
+				<div className="body">
+					<div className="list">
+						<div className="head">
+							<div id="tabs" className="tabs">
+								<Swiper
+									onSwiper={swiper => this.refSwiper = swiper}
+									direction="horizontal"
+									slidesPerView="auto"
+									slidesPerGroupAuto={true}
+									spaceBetween={12}
+									mousewheel={true}
+									navigation={true}
+									modules={[ Mousewheel, Navigation ]}
 								>
-									{({ onRowsRendered }) => (
-										<AutoSizer 
-											className="scrollArea" 
-											onResize={() => {
-												if (this.top) {
-													this.refList?.scrollToPosition(this.top);
-												};
-											}}
-										>
-											{({ width, height }) => (
-												<List
-													ref={ref => this.refList = ref}
-													width={width}
-													height={height}
-													deferredMeasurmentCache={this.cache}
-													rowCount={items.length}
-													rowHeight={({ index }) => this.getRowHeight(items[index])}
-													rowRenderer={rowRenderer}
-													onRowsRendered={onRowsRendered}
-													overscanRowCount={10}
-													scrollToAlignment="center"
-													onScroll={this.onScroll}
-												/>
-											)}
-										</AutoSizer>
-									)}
-								</InfiniteLoader>
+									{typeOptions.map((it: any, i: number) => {
+										const cn = [ 'tab' ];
+
+										if (this.type == it.id) {
+											cn.push('active');
+										};
+
+										return (
+											<SwiperSlide key={it.id}>
+												<div 
+													key={it.id} 
+													className={cn.join(' ')} 
+													onClick={() => this.onSwitchType(it.id)}
+												>
+													{it.name}
+												</div>
+											</SwiperSlide>
+										);
+									})}
+								</Swiper>
 							</div>
-						) : ''}
+
+							<div className="filterWrapper">
+								<div className="side left">
+									<Filter 
+										ref={ref => this.refFilter = ref}
+										icon="search"
+										className="outlined"
+										placeholder={translate('commonSearch')}
+										onChange={this.onFilterChange}
+										onClear={this.onFilterClear}
+									/>
+								</div>
+								<div className="side right">
+									{isAllowedObject ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
+								</div>
+							</div>
+
+							{this.orphan ? <Label text={translate('sidebarObjectOrphanLabel')} /> : ''}
+						</div>
+
+						<div className="items">
+							{!items.length && !isLoading ? (
+								<EmptySearch filter={this.filter} text={isAllowedObject ? translate('sidebarObjectEmptyCreate') : translate('commonObjectEmpty')} />
+							) : ''}
+
+							{this.cache && items.length && !isLoading ? (
+								<div className="items">
+									<InfiniteLoader
+										rowCount={items.length + 1}
+										loadMoreRows={this.loadMoreRows}
+										isRowLoaded={({ index }) => !!items[index]}
+										threshold={LIMIT}
+									>
+										{({ onRowsRendered }) => (
+											<AutoSizer 
+												className="scrollArea" 
+												onResize={() => {
+													if (this.top) {
+														this.refList?.scrollToPosition(this.top);
+													};
+												}}
+											>
+												{({ width, height }) => (
+													<List
+														ref={ref => this.refList = ref}
+														width={width}
+														height={height}
+														deferredMeasurmentCache={this.cache}
+														rowCount={items.length}
+														rowHeight={({ index }) => this.getRowHeight(items[index])}
+														rowRenderer={rowRenderer}
+														onRowsRendered={onRowsRendered}
+														overscanRowCount={10}
+														scrollToAlignment="center"
+														onScroll={this.onScroll}
+													/>
+												)}
+											</AutoSizer>
+										)}
+									</InfiniteLoader>
+								</div>
+							) : ''}
+						</div>
 					</div>
 				</div>
 			</>

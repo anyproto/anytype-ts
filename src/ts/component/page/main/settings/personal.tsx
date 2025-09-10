@@ -50,19 +50,6 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 
 				<div className="actionItems">
 					<div className="item">
-						<Label text={translate('popupSettingsPersonalLinkStyle')} />
-
-						<Select
-							id="linkStyle"
-							value={String(linkStyle)}
-							options={linkStyles}
-							onChange={v => S.Common.linkStyleSet(v)}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
-					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />
 						<Switch
 							className="big"
@@ -79,6 +66,18 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
 
 				<div className="actionItems">
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalLinkStyle')} />
+
+						<Select
+							id="linkStyle"
+							value={String(linkStyle)}
+							options={linkStyles}
+							onChange={v => S.Common.linkStyleSet(v)}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalSidebar')} />

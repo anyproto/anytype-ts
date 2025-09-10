@@ -64,7 +64,7 @@ npm ci               # or: pnpm i --frozen-lockfile
 
 # 3 – Build the core engine (outside this repo)
 git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
-make build && cd ..
+make install-dev-js && cd ../anytype-ts
 
 # 4 – Build the Electron desktop app
 npm run update:locale
@@ -81,7 +81,7 @@ npm run dist:mac      # or dist:win / dist:linux
 
 ## 🧑‍💻 Development Workflow
 
-Run the helper (from *anytype‑heart*) and launch the client with hot‑reload:
+You can either run the helper (from *anytype‑heart*) separately or just launch the client with hot‑reload:
 
 ```bash
 anytypeHelper &       # or ./bin/anytypeHelper

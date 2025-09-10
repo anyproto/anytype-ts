@@ -1,15 +1,14 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent } from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
 import Attachment from './attachment';
-import Buttons from './buttons';
 
 interface Props extends I.BlockComponent {
 	blockId: string;
@@ -38,7 +37,7 @@ interface RefProps {
 	getMarks: () => I.Mark[];
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -47,15 +46,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage,
 	} = props;
-	const [ attachments, setAttachments ] = useState<any[]>([]);
 	const [ replyingId, setReplyingId ] = useState<string>('');
-	const counters = S.Chat.getState(subId);
+	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const nodeRef = useRef(null);
-	const editableRef = useRef(null);
-	const buttonsRef = useRef(null);
-	const counterRef = useRef(null);
 	const dummyRef = useRef(null);
+	const editableRef = useRef(null);
+	const counterRef = useRef(null);
 	const sendRef = useRef(null);
+	const loaderRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
@@ -65,22 +63,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const marks = useRef<I.Mark[]>([]);
 	const editingId = useRef<string>('');
 	const speedLimit = useRef({ last: 0, counter: 0 });
+	const counters = S.Chat.getState(subId);
 	const mentionCounter = counters.mentionCounter;
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
+	const menuContext = useRef(null);
 
-	const unbind = () => {
-		const events = [ 'resize', 'sidebarResize' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+	let { attachments } = S.Chat;
 
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-	};
-
-	const rebind = () => {
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
-		unbind();
-		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+	const setAttachments = (list: any[]) => {
+		S.Chat.setAttachments(list);
 	};
 
 	const checkSendButton = () => {
@@ -91,7 +83,50 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onSelect = () => {
 		range.current = getRange();
-		updateButtons();
+		checkTextMenu();
+	};
+
+	const checkTextMenu = () => {
+		if (!hasSelection()) {
+			if (S.Menu.isOpen('chatText')) {
+				S.Menu.close('chatText');
+			};
+			return;
+		};
+
+		const win = $(window);
+
+		S.Common.setTimeout('chatText', 150, () => {
+			S.Menu.open('chatText', {
+				classNameWrap: 'fromBlock',
+				element: '#messageBox',
+				recalcRect: () => {
+					const rect = U.Common.getSelectionRect();
+					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				},
+				horizontal: I.MenuDirection.Left,
+				offsetY: 4,
+				offsetX: -8,
+				passThrough: true,
+				data: {
+					rootId,
+					blockId: block.id,
+					range: range.current,
+					marks: marks.current,
+					onTextButtonToggle: onTextButtonToggle,
+					removeBookmark: removeBookmark
+				}
+			});
+		});
+	};
+
+	const updateTextMenu = () => {
+		if (S.Menu.isOpen('chatText')) {
+			S.Menu.updateData('chatText', {
+				range: range.current,
+				marks: marks.current,
+			});
+		};
 	};
 
 	const onMouseDown = () => {
@@ -157,21 +192,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		keyboard.shortcut('chatObject', e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
-				buttonsRef.current?.onChatButton(e, I.ChatButton.Object);
+				onAttachment();
 			};
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
-				buttonsRef.current?.onChatButton(e, I.ChatButton.Emoji);
-			};
-		});
-
-		keyboard.shortcut('chatMention', e, () => {
-			if (!S.Menu.isOpen('mention')) {
-				e.preventDefault();
-				buttonsRef.current?.onChatButton(e, I.ChatButton.Mention);
+				onEmoji();
 			};
 		});
 
@@ -191,7 +219,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut(`shift+enter`, e, () => {
-			resize();
 			scrollToBottom();
 		});
 
@@ -205,7 +232,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			if (type !== null) {
 				e.preventDefault();
-				buttonsRef.current?.onTextButton(e, type, '');
+				onTextButtonToggle(type, '');
 			};
 		};
 
@@ -264,7 +291,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		keyboard.shortcut('backspace', e, () => {
-			resize();
 			scrollToBottom();
 		});
 
@@ -294,7 +320,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		*/
 
 		checkSendButton();
-		updateButtons();
 		removeBookmarks();
 		updateCounter();
 
@@ -512,15 +537,117 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		keyboard.disableCommonDrop(false);
 	};
 
+	const onEmoji = () => {
+		S.Menu.open('smile', {
+			element: `#button-${block.id}-emoji`,
+			horizontal: I.MenuDirection.Right,
+			...caretMenuParam(),
+			data: {
+				noHead: true,
+				noUpload: true,
+				value: '',
+				onSelect: icon => onChatButtonSelect(I.ChatButton.Emoji, icon),
+				route: analytics.route.message,
+			}
+		});
+	};
+
+	const onAttachmentOver = (e: any, item: any) => {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.chatForm);
+			return;
+		};
+
+		const context = menuContext.current;
+		if (!context) {
+			return;
+		};
+
+		switch (item.id) {
+			case 'create': {
+				U.Menu.typeSuggest({
+					element: `#${context.getId()} #item-${item.id}`,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					offsetX: context.getSize().width,
+					vertical: I.MenuDirection.Center,
+					isSub: true,
+					data: {
+						onAdd: () => context?.close(),
+					},
+				}, {}, { noButtons: true }, analytics.route.message, object => {
+					onChatButtonSelect(I.ChatButton.Object, object);
+
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.attachments) });
+
+					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
+					context?.close();
+				});
+				break;
+			};
+		};
+	};
+
+	const onAttachment = () => {
+		const options: any[] = [
+			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
+			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
+		];
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('select', {
+				element: `#block-${block.id} #button-${block.id}-attachment`,
+				className: 'chatAttachment fixed fromBlock',
+				offsetY: -8,
+				vertical: I.MenuDirection.Top,
+				noFlipX: true,
+				noFlipY: true,
+				subIds: J.Menu.chatForm,
+				onOpen: context => menuContext.current = context,
+				data: {
+					options,
+					noVirtualisation: true,
+					noScroll: true,
+					onOver: onAttachmentOver,
+					onSelect: (e: MouseEvent, option: any) => {
+						switch (option.id) {
+							case 'search': {
+								keyboard.onSearchPopup(analytics.route.message, {
+									data: {
+										skipIds: attachments.map(it => it.id),
+										onObjectSelect: item => {
+											addAttachments([ item ]);
+											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
+										},
+									},
+								});
+								break;
+							};
+
+							case 'upload': {
+								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
+									addAttachments(paths.map(path => getObjectFromPath(path)));
+
+									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
+								});
+
+								analytics.event('ClickChatAttach', { type: 'Upload' });
+								break;
+							};
+						};
+					},
+				},
+			});
+		});
+	};
+
 	const addAttachments = (list: any[]) => {
 		const limit = J.Constant.limit.chat.attachments;
 		const ids = attachments.map(it => it.id);
 
 		list = list.filter(it => !ids.includes(it.id));
-		list = list.map(it => {
-			it.timestamp = U.Date.now();
-			return it;
-		});
+		list = list.map(it => ({ ...it, timestamp: U.Date.now() }));
 
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
@@ -530,8 +657,31 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		setAttachments(list.concat(attachments));
+		list.forEach(item => {
+			if (item.isTmp && U.Object.isFileLayout(item.layout) && item.path) {
+				preloadFile(item);
+			};
+		});
+
+		saveState([ ...list, ...attachments ]);
 		historySaveState();
+	};
+
+	const preloadFile = (item: any) => {
+		if (preloading.has(item.id)) {
+			return;
+		};
+
+		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (message.preloadFileId) {
+				preloading.set(item.id, message.preloadFileId);
+				setPreloading(preloading);
+			};
+		});
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -602,7 +752,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		if (attachments.length != filtered.length) {
-			setAttachments(filtered);
+			saveState(filtered);
 		};
 	};
 
@@ -615,9 +765,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const send = node.find('#send');
-		const loader = node.find('#form-loader');
+		const send = $(sendRef.current);
+		const loader = $(loaderRef.current);
 		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
@@ -637,7 +786,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 
 			if (editingId.current) {
-				const message = S.Chat.getMessage(subId, editingId.current	);
+				const message = S.Chat.getMessageById(subId, editingId.current);
 				if (message) {
 					const update = U.Common.objectCopy(message);
 
@@ -651,6 +800,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					});
 				};
 			} else {
+				if (replyingId) {
+					const reply = S.Chat.getMessageById(subId, replyingId);
+					if (reply) {
+						S.Chat.setReply(subId, reply);
+					};
+				};
+
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
@@ -684,10 +840,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, (message: any) => {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, preloading.get(item.id), (message: any) => {
 					n++;
 
 					if (message.objectId) {
+						attachments = attachments.filter(it => it.id != item.id);
 						attachments.push({ id: message.objectId, type: I.AttachmentType.File });
 					};
 
@@ -710,6 +867,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					n++;
 
 					if (message.objectId) {
+						attachments = attachments.filter(it => it.id != item.id);
 						attachments.push({ id: message.objectId, type: I.AttachmentType.Link });
 					};
 
@@ -741,32 +899,30 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clear = () => {
-		const node = $(nodeRef.current);
-		const send = node.find('#send');
-		const loader = node.find('#form-loader');
+		const send = $(sendRef.current);
+		const loader = $(loaderRef.current);
+
 		isSending.current = false;
-		checkSendButton();
+		send.removeClass('isLoading');
+		loader.removeClass('active');
 
 		onEditClear();
 		onReplyClear();
-		clearCounter();
 		checkSpeedLimit();
 		historyClearState();
-
-		send.removeClass('isLoading');
-		loader.removeClass('active');
 	};
 
 	const onEditClear = () => {
 		editingId.current = '';
-		buttonsRef.current?.setButtons();
 
 		setRange({ from: 0, to: 0 });
 		setMarks([]);
 		updateMarkup('', { from: 0, to: 0 });
 		clearCounter();
 		checkSendButton();
-		setAttachments([]);
+		saveState([]);
+		setPreloading(new Map());
+		checkTextMenu();
 	};
 
 	const onReply = (message: I.ChatMessage) => {
@@ -778,9 +934,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const length = text.length;
 
 		range.current = { from: length, to: length };
+
 		setRange(range.current);
 		setReplyingId(message.id);
-		resize();
 
 		analytics.event('ClickMessageMenuReply');
 	};
@@ -886,10 +1042,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		history.current = { position: -1, states: [] };
 	};
 
-	const getMarksAndRange = (): { marks: I.Mark[], range: I.TextRange } => {
-		return { marks: marks.current, range: range.current };
-	};
-
 	const getTextValue = (): string => {
 		return String(editableRef.current?.getTextValue() || '');
 	};
@@ -910,10 +1062,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const value = getTextValue();
 		const list = (attachments || []).filter(it => it.id != id);
 
+		if (preloading.has(id)) {
+			C.FileDiscardPreload(preloading.get(id));
+			preloading.delete(id);
+		};
+
 		if (editingId.current && !value && !attachments.length) {
 			onDelete(editingId.current);
 		} else {
-			setAttachments(list);
+			saveState(list);
 			analytics.event('DetachItemChat');
 		};
 	};
@@ -929,8 +1086,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			case I.ChatReadType.Mention: {
 				const { mentionOrderId } = S.Chat.getState(subId);
-				const messages = getMessages();
-				const target = messages.find(it => it.orderId == mentionOrderId);
+				const target = S.Chat.getMessageByOrderId(subId, mentionOrderId);
 
 				if (target) {
 					scrollToMessage(target.id, true, true);
@@ -946,14 +1102,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
-	const updateButtons = () => {
-		buttonsRef.current?.setButtons();
-	};
-
 	const onChatButtonSelect = (type: I.ChatButton, item: any) => {
 		switch (type) {
 			case I.ChatButton.Object: {
-				setAttachments([ item ].concat(attachments));
+				addAttachments([ item ]);
 				break;
 			};
 
@@ -983,6 +1135,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		setMarks(Mark.toggle(marks.current, { type, param, range: { from, to } }));
 		updateMarkup(value, { from, to });
+		updateTextMenu();
 
 		switch (type) {
 			case I.MarkType.Link: {
@@ -997,14 +1150,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					object.isTmp = true;
 					object.timestamp = U.Date.now();
 
-					attachments.unshift(object);
-					setAttachments(attachments);
+					saveState([ object ]);
 				});
 				break;
 			};
 		};
 
-		updateButtons();
 		renderMarkup();
 	};
 
@@ -1108,48 +1259,55 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setRange(range.current);
 	};
 
-	const updateAttachments = () => {
-		const ids = attachments.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
+	const updateAttachments = (attachments: any[]) => {
+		const list = U.Common.objectCopy(attachments);
+		const ids = list.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
 
 		U.Object.getByIds(ids, {}, (objects: any[]) => {
 			objects.forEach(item => {	
-				const idx = attachments.findIndex(it => it.id == item.id);
+				const idx = list.findIndex(it => it.id == item.id);
 
 				if (idx >= 0) {
-					attachments[idx] = item;
+					list[idx] = item;
 				};
 			});
 
-			setAttachments(attachments);
-			saveState(attachments);
+			saveState(list);
 		});
 	};
 
 	const caretMenuParam = () => {
 		const win = $(window);
 		const rect = U.Common.getSelectionRect();
-
-		return {
+		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
-			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
 			onClose: () => setRange(range.current),
 			noFlipX: true,
 			noFlipY: true,
 			offsetY: -8,
 		};
+
+		if (rect) {
+			param.horizontal = I.MenuDirection.Center;
+		};
+
+		return param;
 	};
 
 	const canSend = (): boolean => {
-		return !isLoading.current.length && 
+		const v = getTextValue();
+		const isLimit = v.length > J.Constant.limit.chat.text;
+
+		return !isLoading.current.length && !isLimit &&
 		!!(
-			editingId.current || 
-			getTextValue().trim().length || 
+			editingId.current ||
+			v.trim().length ||
 			attachments.length || 
 			marks.current.length
 		);
@@ -1202,7 +1360,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const message = S.Chat.getMessage(subId, replyingId);
+		const message = S.Chat.getMessageById(subId, replyingId);
 		if (!message) {
 			return;
 		};
@@ -1226,15 +1384,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
-		if (l >= limit - 50) {
-			el.addClass('show').text(`${l} / ${limit}`);
+		el.toggleClass('red', l > limit);
+
+		if (l > limit - 50) {
+			el.addClass('show').text(limit - l);
 		} else {
 			el.removeClass('show');
 		};
 	};
 
 	const clearCounter = () => {
-		$(counterRef.current).text('').removeClass('show');
+		$(counterRef.current).text('').removeClass('show').removeClass('red');
 	};
 
 	const checkSpeedLimit = () => {
@@ -1272,39 +1432,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const saveState = (attachments?: any[]) => {
+		setAttachments(attachments);
 		Storage.setChat(rootId, {
 			text: getTextValue(),
 			marks: marks.current,
 			attachments,
 		});
-	};
-
-	const resize = () => {
-		if (isPopup) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		const node = $(nodeRef.current);
-		const dummy = $(dummyRef.current);
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-
-		let left = 0;
-		let width = container.width();
-
-		if (!sidebar.data.isClosed) {
-			width = container.width() - sidebar.data.width;
-			left = sidebar.data.width;
-		};
-
-		if (rightSidebar && rightSidebar.isOpen) {
-			width -= J.Size.sidebar.right;
-		};
-
-		node.css({ width, left });
-		dummy.css({ height: node.outerHeight() });
-
-		scrollToBottom();
 	};
 
 	let form = null;
@@ -1318,7 +1451,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onClear = () => onEditClear();
 	} else
 	if (replyingId) {
-		const message = S.Chat.getMessage(subId, replyingId);
+		const message = S.Chat.getMessageById(subId, replyingId);
 
 		if (message) {
 			const reply = getReplyContent(message);
@@ -1360,84 +1493,80 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		form = <div className="readonly">{translate('blockChatFormReadonly')}</div>;
 	} else {
 		form = (
-			<div className="form customScrollbar">
-				<Loader id="form-loader" />
+			<>
+				<Icon
+					id={`button-${block.id}-attachment`}
+					className="plus"
+					onClick={onAttachment}
+				/>
 
-				{title ? (
-					<div className="head">
-						<div className="side left">
-							{icon}
-							<div className="textWrapper">
-								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+				<div className="form customScrollbar">
+					<Loader id="form-loader" ref={loaderRef} />
+
+					{title ? (
+						<div className="head">
+							<div className="side left">
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
+							</div>
+							<div className="side right">
+								<Icon className="clear" onClick={onClear} />
 							</div>
 						</div>
-						<div className="side right">
-							<Icon className="clear" onClick={onClear} />
+					) : ''}
+
+					{attachments.length ? (
+						<div className="attachments">
+							<Swiper
+								slidesPerView={'auto'}
+								spaceBetween={8}
+								navigation={true}
+								mousewheel={true}
+								modules={[ Navigation, Mousewheel ]}
+							>
+								{attachments.map(item => (
+									<SwiperSlide key={item.id}>
+										<Attachment
+											object={item}
+											onRemove={onAttachmentRemove}
+											bookmarkAsDefault={true}
+											updateAttachments={() => updateAttachments(S.Chat.attachments)}
+										/>
+									</SwiperSlide>
+								))}
+							</Swiper>
 						</div>
-					</div>
-				) : ''}
+					) : ''}
 
-				<Editable 
-					ref={editableRef}
-					id="messageBox"
-					maxLength={J.Constant.limit.chat.text}
-					placeholder={translate('blockChatPlaceholder')}
-					onSelect={onSelect}
-					onFocus={onFocusInput}
-					onBlur={onBlurInput}
-					onKeyUp={onKeyUpInput} 
-					onKeyDown={onKeyDownInput}
-					onInput={onInput}
-					onPaste={onPaste}
-					onMouseDown={onMouseDown}
-					onMouseUp={onMouseUp}
+					<Editable
+						ref={editableRef}
+						id="messageBox"
+						maxLength={J.Constant.limit.chat.text}
+						placeholder={translate('blockChatPlaceholder')}
+						onSelect={onSelect}
+						onFocus={onFocusInput}
+						onBlur={onBlurInput}
+						onKeyUp={onKeyUpInput}
+						onKeyDown={onKeyDownInput}
+						onInput={onInput}
+						onPaste={onPaste}
+						onMouseDown={onMouseDown}
+						onMouseUp={onMouseUp}
+					/>
+
+					<div ref={counterRef} className="charCounter" />
+					<Icon ref={sendRef} className="send" onClick={onSend} />
+				</div>
+
+				<Icon
+					id={`button-${block.id}-emoji`}
+					className="emoji"
+					onClick={onEmoji}
 				/>
-
-				{attachments.length ? (
-					<div className="attachments">
-						<Swiper
-							slidesPerView={'auto'}
-							spaceBetween={8}
-							navigation={true}
-							mousewheel={true}
-							modules={[ Navigation, Mousewheel ]}
-						>
-							{attachments.map(item => (
-								<SwiperSlide key={item.id}>
-									<Attachment
-										object={item}
-										onRemove={onAttachmentRemove}
-										bookmarkAsDefault={true}
-										updateAttachments={updateAttachments}
-									/>
-								</SwiperSlide>
-							))}
-						</Swiper>
-					</div>
-				) : ''}
-
-				<Buttons
-					ref={buttonsRef}
-					{...props}
-					value={getTextValue()}
-					hasSelection={hasSelection}
-					getMarksAndRange={getMarksAndRange}
-					attachments={attachments}
-					caretMenuParam={caretMenuParam}
-					onMention={onMention}
-					onChatButtonSelect={onChatButtonSelect}
-					onTextButtonToggle={onTextButtonToggle}
-					getObjectFromPath={getObjectFromPath}
-					addAttachments={addAttachments}
-					onMenuClose={onMenuClose}
-					removeBookmark={removeBookmark}
-					updateAttachments={updateAttachments}
-				/>
-
-				<div ref={counterRef} className="charCounter" />
-				<Icon ref={sendRef} className="send" onClick={onSend} />
-			</div>
+			</>
 		);
 	};
 
@@ -1462,12 +1591,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			historySaveState();
 		};
 
-		resize();
-		rebind();
-
 		return () => {
-			unbind();
-
 			window.clearTimeout(timeoutFilter.current);
 			keyboard.disableSelection(false);
 		};
@@ -1480,11 +1604,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		checkSendButton();
-		resize();
+		scrollToBottom();
 	});
 
 	useEffect(() => {
-		scrollToBottom();		
+		scrollToBottom();
 		setRange(range.current);
 	}, [ attachments ]);
 
@@ -1503,38 +1627,38 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<>
-			<div ref={dummyRef} />
-			<div 
-				ref={nodeRef}
-				id="formWrapper" 
-				className="formWrapper"
-				onDragOver={onDragOver}
-				onDragLeave={onDragLeave}
-			>
+		<div 
+			ref={nodeRef}
+			id="formWrapper" 
+			className="formWrapper"
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+		>
+			<div className="grad" />
+			<div className="bg" />
+
+			<div className="dragOverlay">
 				<div className="inner">
-					<div className="dragOverlay">
-						<div className="inner">
-							<Icon />
-							<Label text={translate('commonDropFiles')} />
-						</div>
-					</div>
-
-					{!isEmpty ? (
-						<div className="navigation">
-							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-						</div>
-					) : ''}
-
-					{form}
-
-					<div className="bottom" />
+					<Icon />
+					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
-		</>
+
+			<div className="inner">
+				{!isEmpty ? (
+					<div className="navigation">
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
+					</div>
+				) : ''}
+
+				{form}
+			</div>
+		</div>
 	);
 
 }));
+
+const ChatForm = memo(ChatFormBase);
 
 export default ChatForm;
