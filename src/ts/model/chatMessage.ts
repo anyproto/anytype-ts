@@ -64,6 +64,7 @@ class ChatMessage implements I.ChatMessage {
 	isLast = false;
 	isReadMessage = false;
 	isReadMention = false;
+	hasMention = false;
 	isSynced = false;
 
 	constructor (props: I.ChatMessage) {
@@ -82,6 +83,7 @@ class ChatMessage implements I.ChatMessage {
 		this.isLast = Boolean(props.isLast);
 		this.isReadMessage = Boolean(props.isReadMessage);
 		this.isReadMention = Boolean(props.isReadMention);
+		this.hasMention = Boolean(props.hasMention);
 		this.isSynced = Boolean(props.isSynced);
 
 		this.reactions.sort((c1, c2) => {
@@ -107,6 +109,7 @@ class ChatMessage implements I.ChatMessage {
 			reactions: observable,
 			isReadMessage: observable,
 			isReadMention: observable,
+			hasMention: observable,
 			isSynced: observable,
 		});
 

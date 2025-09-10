@@ -657,6 +657,7 @@ export const Mapper = {
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
 				isReadMessage: obj.getRead(),
 				isReadMention: obj.getMentionread(),
+				hasMention: obj.getHasmention(),
 				isSynced: obj.getSynced(),
 			};
 		},

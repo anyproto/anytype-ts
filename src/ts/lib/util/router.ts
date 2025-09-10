@@ -231,8 +231,8 @@ class UtilRouter {
 
 			this.go('/main/blank', { 
 				replace: true, 
-				animate: routeParam.animate,
-				delay: 100,
+				animate: false,
+				delay: 0,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
 

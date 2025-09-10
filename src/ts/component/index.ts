@@ -104,6 +104,9 @@ import QR from './util/qr';
 
 import UpsellStorage from './util/upsell/storage';
 
+import EmptyNodes from './util/emptyNodes';
+import LayoutPlug from './util/layoutPlug';
+
 export {
 	Page,
 	EditorPage,
@@ -208,4 +211,7 @@ export {
 	QR,
 
 	UpsellStorage,
+
+	EmptyNodes,
+	LayoutPlug,
 };
