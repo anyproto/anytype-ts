@@ -1042,10 +1042,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		history.current = { position: -1, states: [] };
 	};
 
-	const getMarksAndRange = (): { marks: I.Mark[], range: I.TextRange } => {
-		return { marks: marks.current, range: range.current };
-	};
-
 	const getTextValue = (): string => {
 		return String(editableRef.current?.getTextValue() || '');
 	};
