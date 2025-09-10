@@ -42,14 +42,13 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, isPopup, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
+		rootId, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const [ preloading, setPreloading ] = useState(new Map<string, string>());
 	const nodeRef = useRef(null);
-	const dummyRef = useRef(null);
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
@@ -1255,10 +1254,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
-	const onMenuClose = () => {
-		setRange(range.current);
-	};
-
 	const updateAttachments = (attachments: any[]) => {
 		const list = U.Common.objectCopy(attachments);
 		const ids = list.filter(it => !it.isTmp).map(it => it.id).filter(it => it);
@@ -1440,6 +1435,33 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
+	const init = () => {
+		if (readonly) {
+			return;
+		};
+
+		const storage = Storage.getChat(rootId);
+
+		if (storage) {
+			const text = String(storage.text || '');
+			const attachments = (storage.attachments || []).filter(it => !it.isTmp);
+			const length = text.length;
+
+			setMarks(storage.marks || []);
+			updateMarkup(text, { from: length, to: length });
+			updateCounter(text);
+
+			if (attachments.length) {
+				setAttachments(attachments);
+			};
+
+			historySaveState();
+			checkSendButton();
+		} else {
+			editableRef.current?.setRange({ from: 0, to: 0 });
+		};
+	};
+
 	let form = null;
 	let title = '';
 	let text = '';
@@ -1571,31 +1593,17 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	useEffect(() => {
-		checkSendButton();
-
-		const storage = Storage.getChat(rootId);
-
-		if (!readonly && storage) {
-			const text = String(storage.text || '');
-			const attachments = (storage.attachments || []).filter(it => !it.isTmp);
-			const length = text.length;
-
-			setMarks(storage.marks || []);
-			updateMarkup(text, { from: length, to: length });
-			updateCounter(text);
-
-			if (attachments.length) {
-				setAttachments(attachments);
-			};
-
-			historySaveState();
-		};
+		init();
 
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
 			keyboard.disableSelection(false);
 		};
 	}, []);
+
+	useEffect(() => {
+		init();
+	}, [ rootId ]);
 
 	useEffect(() => {
 		loadDepsAndReplies([], () => {

@@ -92,8 +92,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	useEffect(() => {
-		S.Common.setRightSidebarState(false, '', false);
-
 		return () => close();
 	}, []);
 
