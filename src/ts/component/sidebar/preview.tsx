@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Title, Label, Checkbox, Icon, IconObject } from 'Component';
-import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
+import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
+import { I, S, U, J, Relation, translate, sidebar, keyboard } from 'Lib';
 
 const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.Component<I.SidebarPageComponent> {
 
@@ -83,7 +83,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 									if (item.relationKey == 'type') {
 										content = name || translate('defaultNamePage');
 									} else {
-										content = this.insertEmtpyNodes('item', 1);
+										content = <EmptyNodes className="item" count={1} />;
 									};
 
 									return (
@@ -108,7 +108,9 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 
 					{isList ? (
 						<div className="listHeader">
-							<div className="left">{this.insertEmtpyNodes('view', 3)}</div>
+							<div className="left">
+								<EmptyNodes className="view" count={3} />
+							</div>
 
 							<div className="right">
 								{[ 'search', 'filter', 'sort', 'settings' ].map((cn, i) => (
@@ -119,7 +121,14 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						</div>
 					) : ''}
 
-					{this.renderLayout()}
+					<LayoutPlug
+						layoutFormat={layoutFormat}
+						recommendedLayout={recommendedLayout}
+						recommendedFileRelations={this.object.recommendedFileRelations}
+						viewType={this.object.defaultViewType}
+						layoutWidth={this.object.layoutWidth}
+						isPopup={this.props.isPopup}
+					/>
 				</div>
 			</div>
 		);
@@ -179,75 +188,8 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		return Math.max(300, width);
 	};
 
-	renderLayout () {
-		const { layoutFormat, recommendedLayout } = this.object;
-		const viewType = this.getViewType();
-
-		let content = null;
-
-		if (U.Object.isInFileLayouts(recommendedLayout)) {
-			const fileRelations = Relation.getArrayValue(this.object.recommendedFileRelations).map(id => S.Record.getRelationById(id)).filter(it => it);
-
-			content = (
-				<div className="fileInfo">
-					<Title text={translate('commonFileInfo')} />
-
-					{fileRelations.map((relation, idx) => (
-						<dl key={idx}>
-							<dt>{relation.name}</dt>
-							<dd />
-						</dl>
-					))}
-				</div>
-			);
-		} else
-		if (layoutFormat == I.LayoutFormat.Page) {
-			content = this.insertEmtpyNodes('line', 5);
-		} else {
-			switch (Number(viewType)) {
-				case I.ViewType.Board: {
-					content = (
-						<>
-							<div className="group">
-								<div className="headerPlug" />
-								{this.insertEmtpyNodes('item', 1)}
-							</div>
-
-							<div className="group">
-								<div className="headerPlug" />
-								{this.insertEmtpyNodes('item', 3)}
-							</div>
-
-							<div className="group">
-								<div className="headerPlug" />
-								{this.insertEmtpyNodes('item', 2)}
-							</div>
-						</>
-					);
-					break;
-				};
-
-				case I.ViewType.Calendar: {
-					content = this.insertEmtpyNodes('day', 28, { height: this.getWidth() / 7 });
-					break;
-				};
-
-				default: {
-					content = this.insertEmtpyNodes('line', 5);
-					break;
-				};
-			};
-		};
-
-		return <div key={`layout-${I.LayoutFormat[layoutFormat]}-${viewType}`} className="layout">{content}</div>;
-	};
-
 	getFeatured () {
 		return Relation.getArrayValue(this.object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
-	};
-
-	insertEmtpyNodes (className, count, style?: any) {
-		return Array(count).fill(null).map((el, i) => <div style={style || {}} className={className} key={i} />);
 	};
 
 	getViewType () {
@@ -255,8 +197,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	getNodeWidth (): number {
-		const { isPopup } = this.props;
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Common.getPageFlexContainer(this.props.isPopup);
 
 		return container.width() - J.Size.sidebar.right;
 	};
