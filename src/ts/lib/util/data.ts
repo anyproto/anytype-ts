@@ -310,7 +310,7 @@ class UtilData {
 				S.Chat.setState(subId, { 
 					...state, 
 					lastMessageDate: Number(message?.createdAt || 0),
-				});
+				}, false);
 			};
 		});
 

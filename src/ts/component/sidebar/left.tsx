@@ -31,6 +31,7 @@ interface SidebarLeftRefProps {
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const ox = useRef(0);
@@ -42,6 +43,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const [ page, setPage ] = useState('');
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
+	const cn = [ 'sidebar', 'left', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const Component = Components[id];
 	const canCreate = U.Space.canCreateSpace() && (id == 'vault');
@@ -191,7 +193,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			<div 
 				ref={nodeRef}
 				id="sidebarLeft" 
-				className="sidebar left customScrollbar" 
+				className={cn.join(' ')} 
 			>
 				{Component ? (
 					<div id={pageId} className={cnp.join(' ')}>

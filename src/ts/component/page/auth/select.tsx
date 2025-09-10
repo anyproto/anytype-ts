@@ -13,9 +13,7 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 
 	const inflate = (callBack: () => void) => {
 		$(introBubbleRef.current).addClass('inflate');
-		window.setTimeout(() => {
-			callBack();
-		},1000);
+		window.setTimeout(callBack, 1000);
 	};
 
 	const onLogin = () => {
@@ -24,7 +22,7 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 
 	const onRegister = () => {
 		const { account } = S.Auth;
-		const cb = () => U.Router.go('/auth/onboard', {});
+		const cb = () => inflate(() => U.Router.go('/auth/onboard', {}));
 
 		if (account) {
 			cb();
@@ -36,7 +34,7 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 		U.Data.accountCreate(error => {
 			registerRef.current.setLoading(false);
 			setError(error);
-		}, () => inflate(cb));
+		}, cb);
 	};
 
 	useEffect(() => {

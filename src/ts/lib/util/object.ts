@@ -1,5 +1,7 @@
 import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
 
+const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
+
 class UtilObject {
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -149,7 +151,7 @@ class UtilObject {
 		const action = this.actionByLayout(object.layout);
 		const params = {
 			page: 'main',
-			action: action,
+			action,
 			id: object.id,
 		};
 
@@ -157,7 +159,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
 		};
 
 		keyboard.setSource(null);
@@ -516,20 +518,10 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
-	isAllowedChat (withSpace?: boolean): boolean {
+	isAllowedChat (): boolean {
 		const electron = U.Common.getElectron();
-		const space = U.Space.getSpaceview();
-
-		if (!space.isChat) {
-			return false;
-		};
-
 		const version = String(electron.version?.app || '');
 		const [ major, minor, patch ] = version.split('.');
-
-		if (withSpace && !space.isShared) {
-			return false;
-		};
 
 		return !electron.isPackaged || patch.match(/alpha|beta/) ? true : false;
 	};
@@ -792,7 +784,16 @@ class UtilObject {
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
 		const newColor = color || U.Common.iconBgByOption(option);
-		return U.Common.updateSvg(require(`img/icon/type/default/${id}.svg`), { id, size, fill: newColor });
+
+		let svg: any = '';
+		try {
+			svg = typeIcons(`./${id}.svg`);
+			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
+		} catch (e) {
+			svg = U.Common.updateSvg(require('img/icon/error.svg'), { id, size, fill: newColor });
+		};
+
+		return svg;
 	};
 
 };

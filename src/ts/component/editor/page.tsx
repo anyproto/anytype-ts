@@ -2411,16 +2411,27 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const pageContainer = U.Common.getPageContainer(isPopup);
 			const header = pageContainer.find('#header');
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const hh = isPopup ? header.height() : J.Size.header;
+			const hh = header.height();
 
 			this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks.length && last.length && scrollContainer.length) {
-				const ct = isPopup ? scrollContainer.offset().top : 0;
-				const ch = scrollContainer.height();
-				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
+				last.css({ height: '' });
 
-				last.css({ height: Math.max(J.Size.lastBlock, height) });
+				const ct = scrollContainer.offset().top;
+				const ch = scrollContainer.height();
+				const bt = blocks.offset().top;
+				const bh = blocks.outerHeight();
+
+				let height = ch - ct - bt - bh;
+
+				if (bh > ch) {
+					height = Math.max(ch / 2, height);
+				};
+
+				height = Math.max(J.Size.lastBlock, height);
+
+				last.css({ height });
 			};
 
 			if (note.length) {

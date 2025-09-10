@@ -10,7 +10,7 @@ export default {
 	},
 
 	sidebar: {
-		width: { min: 240, max: 500, default: 336, close: 180 },
+		width: { min: 240, max: 480, default: 336, close: 180 },
 		threshold: 72,
 		right: 348,
 	},

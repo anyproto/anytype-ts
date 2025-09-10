@@ -77,7 +77,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
-		const { noPreview } = this.props;
+		const { noPreview, } = this.props;
 
 		this.init();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
@@ -85,12 +85,15 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
-	componentWillUnmount (): void {
-		this.disableScroll(false);
-	}; 
+	componentDidUpdate(prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
+		if (this.props.rootId != prevProps.rootId) {
+			this.init();
+		};
+	};
 
 	init () {
 		const type = this.getObject();
+
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
@@ -105,7 +108,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.backup = U.Common.objectCopy(this.object);
 
 		this.updateSections();
-		this.disableScroll(true);
 		this.disableButton(true);
 	};
 
@@ -115,13 +117,6 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 	};
 
-	disableScroll (v: boolean) {
-		const { isPopup } = this.props;
-		const container = isPopup ? U.Common.getScrollContainer(isPopup) : $('body');
-
-		container.toggleClass('overPopup', v);
-	};
-	
 	getObject () {
 		const type = S.Record.getTypeById(this.props.rootId);
 		if (!type) {

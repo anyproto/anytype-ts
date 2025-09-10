@@ -106,6 +106,7 @@
 	"commonMoveTo": "Move to",
 	"commonLinkTo": "Add Link to Object",
 	"commonUpload": "Upload",
+	"commonUploadComputer": "Upload from computer",
 	"commonLoad": "Load",
 	"commonDownload": "Download",
 	"commonAscending": "Ascending",
@@ -423,6 +424,8 @@
 	"authSelectSignup": "I am new here",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
+	"authLoginTitle": "Welcome back",
+	"authLoginLabel": "Enter your key to access your vault",
 	"authLoginSubmit": "Enter my Vault",
 	"authLoginLostPhrase": "I've lost my Key",
 
@@ -461,7 +464,7 @@
 	"authOnboardOptionsResearcher": "Researcher / Academic",
 
 	"authOnboardOptionsMessaging": "Messaging & group chats",
-	"authOnboardOptionsKnowledge": "Personal knowledge management",
+	"authOnboardOptionsKnowledge": "Personal knowledge base / PKM",
 	"authOnboardOptionsNoteTaking": "Personal note-taking",
 	"authOnboardOptionsProjects": "Projects & tasks management",
 	"authOnboardOptionsLifePlanning": "Life planning",
@@ -770,8 +773,8 @@
 
 	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
 	"blockChatEmptyShareInviteLink": "Share invite link",
-	"blockChatMessageExpand": "Expand",
-	"blockChatMessageCollapse": "Collapse",
+	"blockChatMessageExpand": "Show more",
+	"blockChatMessageCollapse": "Show less",
 	"blockChatReactionAdd": "Add reaction",
 	"blockChatReply": "Reply",
 	"blockChatPlaceholder": "Enter your message",
@@ -2592,6 +2595,10 @@
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
 	"spaceUxType2": "Stream",
-	"spaceUxType3": "Chat"
+	"spaceUxType3": "Chat",
+
+	"windowMinimize": "Minimize",
+	"windowMaximize": "Maximize",
+	"windowClose": "Close"
 
 }

@@ -30,6 +30,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	sortId: I.SortId = I.SortId.LastUsed;
 	sortType: I.SortType = I.SortType.Desc;
 	searchIds: string[] = null;
+	savedRoute: any = {};
 
 	constructor (props: any) {
 		super(props);
@@ -106,18 +107,20 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			<>
 				<div id="head" className="head" />
 
+				<div className="subHead">
+					<div className="side left">
+						<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
+					</div>
+					<div className="side center">
+						<div className="name">{title}</div>
+					</div>
+					<div className="side right">
+						<Icon id="button-object-more" className="more" onClick={this.onMore} />
+					</div>
+				</div>
+
 				<div id="body" className="body">
 					<div className="list">
-						<div className="head">
-							<div className="side left">
-								<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
-								<div className="name">{title}</div>
-							</div>
-							<div className="side right">
-								<Icon id="button-object-more" className="more" onClick={this.onMore} />
-							</div>
-						</div>
-
 						<div className="filterWrapper">
 							<div className="side left">
 								<Filter
@@ -169,13 +172,16 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	componentDidMount () {
+		this.savedRoute = U.Common.objectCopy(keyboard.getMatch(false));
 		this.refFilter.focus();
+
 		this.initSort();
 		this.load(true, this.openFirst);
 	};
 
 	componentWillUnmount () {
 		U.Subscription.destroyList([ J.Constant.subId.library ]);
+		U.Router.go(`/${U.Router.build(this.savedRoute.params)}`, {});
 	};
 
 	initSort () {

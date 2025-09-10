@@ -177,7 +177,7 @@ class UtilFile {
 	loadPreviewBase64 (file: any, param: any, success?: (image: string, param: any) => void, error?: (error: string) => void) {
 		this.loadPreviewCanvas(file, param, (canvas: any) => {
 			const image = canvas.toDataURL(param.type, param.quality);
-			
+
 			if (image && success) {
 				success(image, { width: canvas.width, height: canvas.height });
 			};

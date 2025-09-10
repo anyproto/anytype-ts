@@ -65,6 +65,11 @@ else
 fi
 FILE="addon.$ARCHIVE_SUFFIX"
 
+# fix MIDDLEWARE_VERSION format if need
+if [[ $MIDDLEWARE_VERSION =~ ^v[0-9] ]]; then
+    MIDDLEWARE_VERSION="${MIDDLEWARE_VERSION#v}"
+fi
+
 # debug
 cat <<EOF
 OS_ARCH=$OS_ARCH

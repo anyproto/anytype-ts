@@ -246,13 +246,6 @@
 		}
 
 		.formWrapper {
-			.navigation {
-				.btn {
-					.icon.arrow { background-image: url('#{$themePath}/arrow/chat.svg'); }
-					.icon.mention { background-image: url('#{$themePath}/icon/chat/navigation/mention.svg'); }
-				}
-			}
-
 			.dragOverlay {
 				.icon { background-image: url('#{$themePath}/icon/chat/dragState.svg'); }
 			}

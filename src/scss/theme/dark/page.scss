@@ -1,5 +1,12 @@
 @import "~scss/_mixins";
 
+/* PageAuth */
+.pageAuth, .pageIndex {
+	.buttons {
+		.button.accent { color: var(--color-text-primary); }
+	}
+};
+
 /* PageAuthSelect */
 .pageIndexIndex, .pageAuthSelect {
 	.bubbleWrapper {
@@ -62,20 +69,21 @@
 
 /* PageMainSettings */
 .settingsPageContainer {
-	.pageSettingsSpaceIndex {
-		.sections {
-			.section {
-				.sectionContent {
-					.item {
-						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
-					}
-				}
+	.pageSettingsSpaceIndex, 
+	.pageSettingsSpaceIndexEmpty {
+		.spaceButtons {
+			.btn {
+				.icon.invite { background-image: url('#{$themePath}/icon/settings/invite.svg'); }
+				.icon.qr { background-image: url('#{$themePath}/icon/settings/qr.svg'); }
+				.icon.copyLink { background-image: url('#{$themePath}/icon/settings/copy.svg'); }
 			}
 		}
+
 		.sections {
 			.section {
 				.sectionContent {
-					.item {
+					> .item {
+						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
 						.icon.type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
 						.icon.home { background-image: url('#{$themePath}/icon/settings/home.svg'); }
 						.icon.push0 { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
@@ -167,26 +175,6 @@
 		.icon.drive { background-image: url('#{$themePath}/icon/settings/drive.svg'); }
 		.icon.sites { background-image: url('#{$themePath}/icon/settings/sites.svg'); }
 		.icon.location { background-image: url('#{$themePath}/icon/settings/location.svg'); }
-	}
-
-	.pageSettingsSpaceIndex {
-		.spaceButtons {
-			.btn {
-				.icon.invite { background-image: url('#{$themePath}/icon/settings/invite.svg'); }
-				.icon.qr { background-image: url('#{$themePath}/icon/settings/qr.svg'); }
-				.icon.copyLink { background-image: url('#{$themePath}/icon/settings/copy.svg'); }
-			}
-		}
-
-		.sections {
-			.section {
-				.sectionContent {
-					> .item {
-						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
-					}
-				}
-			}
-		}
 	}
 
 	.pageSettingsSpaceShare {
