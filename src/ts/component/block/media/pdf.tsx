@@ -6,8 +6,8 @@ import { observer } from 'mobx-react';
 
 const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
-	const [pages, setPages] = useState(0);
-	const [page, setPage] = useState(1);
+	const [ pages, setPages ] = useState(0);
+	const [ page, setPage ] = useState(1);
 	const nodeRef = useRef<any>(null);
 	const wrapRef = useRef<any>(null);
 	const mediaRef = useRef<any>(null);
