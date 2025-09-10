@@ -92,6 +92,9 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	useEffect(() => {
+		open();
+		resize();
+
 		return () => close();
 	}, []);
 

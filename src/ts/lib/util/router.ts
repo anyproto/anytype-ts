@@ -193,6 +193,7 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
+		//S.Common.setRightSidebarState(false, '', false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -228,15 +229,22 @@ class UtilRouter {
 				return;
 			};
 
-			Storage.set('spaceId', id);
+			this.go('/main/blank', { 
+				replace: true, 
+				animate: false,
+				delay: 0,
+				onRouteChange: () => {
+					Storage.set('spaceId', id);
 
-			analytics.removeContext();
-			S.Common.nullifySpaceKeys();
+					analytics.removeContext();
+					S.Common.nullifySpaceKeys();
 
-			U.Data.onInfo(message.info);
-			U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
-				this.isOpening = false;
-				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+					U.Data.onInfo(message.info);
+					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+						this.isOpening = false;
+						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+					});
+				},
 			});
 		});
 	};

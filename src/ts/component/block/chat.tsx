@@ -993,6 +993,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 										onReplyEdit={e => onReplyEdit(e, item)}
 										onReplyClick={e => onReplyClick(e, item)}
 										getReplyContent={getReplyContent}
+										scrollToBottom={scrollToBottomCheck}
 									/>
 								);
 							};
