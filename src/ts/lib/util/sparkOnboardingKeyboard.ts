@@ -1,4 +1,5 @@
-import { Key } from 'Lib';
+import { KeyboardEvent } from 'react';
+import { U, keyboard } from 'Lib';
 
 /**
  * Enhanced keyboard event handler with IME support
@@ -30,54 +31,27 @@ export function createKeyboardHandler(options: KeyboardHandlerOptions) {
 		isComposing = false;
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
+	const handleKeyDown = (e: KeyboardEvent) => {
 		// Early return if disabled
 		if (options.disabled) {
 			return;
-		}
+		};
 
 		// Handle IME composition - don't process keys during composition unless explicitly allowed
 		if (isComposing && !options.allowEnterDuringComposition) {
 			return;
-		}
+		};
 
-		const key = e.key.toLowerCase();
+		const keys = [ 'enter', 'escape', 'tab', 'arrowUp', 'arrowDown' ];
 
-		// Handle different keys
-		if ((key === Key.enter || key === 'enter') && options.onEnter && !e.shiftKey) {
-			e.preventDefault();
-			e.stopPropagation();
-			options.onEnter();
-			return;
-		}
+		keys.forEach(k => {
+			keyboard.shortcut(k.toLowerCase(), e, () => {
+				e.preventDefault();
+				e.stopPropagation();
 
-		if ((key === Key.escape || key === 'escape') && options.onEscape) {
-			e.preventDefault();
-			e.stopPropagation();
-			options.onEscape();
-			return;
-		}
-
-		if ((key === Key.tab || key === 'tab') && options.onTab) {
-			e.preventDefault();
-			e.stopPropagation();
-			options.onTab();
-			return;
-		}
-
-		if ((key === Key.up || key === 'arrowup') && options.onArrowUp) {
-			e.preventDefault();
-			e.stopPropagation();
-			options.onArrowUp();
-			return;
-		}
-
-		if ((key === Key.down || key === 'arrowdown') && options.onArrowDown) {
-			e.preventDefault();
-			e.stopPropagation();
-			options.onArrowDown();
-			return;
-		}
+				options[`on${U.Common.toUpperCamelCase(k)}`]?.();
+			});
+		});
 	};
 
 	return {
@@ -102,4 +76,4 @@ export function createFormKeyboardHandler(
 		disabled,
 		allowEnterDuringComposition: false,
 	});
-}
+};

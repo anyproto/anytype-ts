@@ -125,7 +125,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		const translationKey = errorTranslations[error.code];
 		if (translationKey) {
 			return translate(translationKey);
-		}
+		};
 		
 		return error.message || translate('popupAiOnboardingGenericError');
 	};
