@@ -2588,6 +2588,11 @@
 	"notificationMode1": "Mentions only",
 	"notificationMode2": "Disable all",
 
+	"filterTemplate0": "Value template",
+	"filterTemplate1": "Current User",
+	"filterTemplate2": "Current Object",
+	"filterTemplate3": "Space Member",
+
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
 	"spaceUxType2": "Stream",
