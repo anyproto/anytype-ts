@@ -1300,18 +1300,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			};
 
-			case 'source': {
-				cn.push('withHead');
-
-				emptyProps = {
-					title: translate('blockDataviewEmptySourceTitle'),
-					description: translate('blockDataviewEmptySourceDescription'),
-					button: translate('blockDataviewEmptySourceButton'),
-					onClick: this.onEmpty,
-				};
-				break;
-			};
-
 			case 'view': {
 				if (view.type != I.ViewType.Grid) {
 					cn.push('withHead');
