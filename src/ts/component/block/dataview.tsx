@@ -17,7 +17,7 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
-import { Icon } from 'Component';
+import { Icon, LayoutPlug } from 'Component';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -199,7 +199,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('target');
 		} else
 		if (!isCollection && !sources.length) {
-			body = this.getEmpty('source');
+			body = <LayoutPlug
+				layoutFormat={I.LayoutFormat.List}
+				recommendedLayout={I.ObjectLayout.Set}
+				viewType={view.type}
+				onClick={this.onEmpty}
+			/>;
 		} else {
 			body = (
 				<div className="content">
@@ -1340,7 +1345,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const cn = [ 'viewContent', `view${I.ViewType[view]}` ];
 		const onAdd = (e: any) => {
-			this.onRecordAdd(e, 1);
+			if (!this.isCollection() && !this.getSources().length) {
+				this.onEmpty(e);
+			} else {
+				this.onRecordAdd(e, 1);
+			};
 		};
 
 		let inner: any = null;

@@ -200,6 +200,10 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
+		if (this.props.details.isNew) {
+			return;
+		};
+
 		const rootId = keyboard.getRootId();
 		const current = S.Detail.get(rootId, rootId);
 
