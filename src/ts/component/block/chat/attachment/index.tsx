@@ -21,7 +21,7 @@ interface RefProps {
 
 const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
+	const { object, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
 	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];
@@ -100,11 +100,12 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const renderImage = (withBlur?: boolean) => {
 		const { object } = props;
-		const node = $(nodeRef.current);
 
 		if (!src.current) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
+					const node = $(nodeRef.current);
+
 					src.current = image;
 
 					node.find('#image').attr({ src: image });
@@ -118,17 +119,28 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const blur = withBlur ? <div id="blur" className="blur" style={{ backgroundImage: `url(${src.current})` }} /> : null;
-		const ratio = object.widthInPixels / object.heightInPixels;
-		
-		let width = 0;
-		let height = 0;
+		const style: any = {};
 
-		if (object.widthInPixels >= object.heightInPixels) {
-			width = Math.min(object.widthInPixels, 360);
-			height = width / ratio;
-		} else {
-			height = Math.min(object.heightInPixels, 360);
-			width = height * ratio;
+		if (object.widthInPixels && object.heightInPixels) {
+			const ratio = object.widthInPixels / object.heightInPixels;
+
+			let width = 0;
+			let height = 0;
+
+			if (object.widthInPixels >= object.heightInPixels) {
+				width = Math.min(object.widthInPixels, 360);
+				height = width / ratio;
+			} else {
+				height = Math.min(object.heightInPixels, 360);
+				width = height * ratio;
+			};
+
+			width = Number(width) || 0;
+			height = Number(height) || 0;
+
+			style.width = Number(width) || 0;
+			style.height = Number(height) || 0;		
+			style.aspectRatio = `${width}/${height}`;
 		};
 
 		return (
@@ -139,7 +151,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 					className="image"
 					src={src.current}
 					onDragStart={e => e.preventDefault()}
-					style={{ aspectRatio: `${width}/${height}`, width, height }}
+					style={style}
 				/>
 
 				<Icon onClick={onSyncStatusClick} className="syncStatus" />
@@ -208,28 +220,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 				break;
 			};
 		};
-	};
-
-	const onContextMenu = (e: any) => {
-		e.stopPropagation();
-
-		if (object.isTmp || object.isDeleted) {
-			return;
-		};
-
-		S.Menu.open('objectContext', {
-			classNameWrap: 'fromBlock',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
-			data: {
-				objectIds: [ object.id ],
-				subId,
-				allowedLinkTo: true,
-				allowedOpen: true,
-			}
-		});
 	};
 
 	const onOpenBookmark = () => {
@@ -408,7 +398,6 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		<div 
 			ref={nodeRef}
 			className={cn.join(' ')}
-			onContextMenu={onContextMenu}
 		>
 			{content}
 			<Icon className="remove" onClick={onRemoveHandler} />

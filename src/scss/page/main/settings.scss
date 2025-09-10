@@ -71,13 +71,6 @@
         .phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
         .word { @include text-small; font-weight: 500; margin: 0; }
         .bg { filter: blur(8px); opacity: 0.5; }
-
-        .icon { margin: 0px; top: 12px; right: 12px; z-index: 1; }
-        .icon.show { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
-
-		&.isHidden {
-			.icon.show { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); }
-		}
     }
 
     .select {
@@ -177,7 +170,7 @@
 
         .spaceButtons { display: flex; justify-content: center; margin-bottom: 36px; }
         .spaceButtons {
-            .btn { width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
+            .btn { width: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px 0px; text-align: center; }
             .btn {
                 .icon {
                     width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
@@ -187,7 +180,7 @@
                 .icon.qr { background-image: url('~img/icon/settings/qr.svg'); }
                 .icon.copyLink { background-image: url('~img/icon/settings/copy.svg'); }
 
-                .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; }
+                .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; padding: 0px 2px; }
 
                 &:hover, &.hover {
                     .icon { background-color: var(--color-shape-highlight-dark); }

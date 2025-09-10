@@ -136,7 +136,7 @@ class Onboarding {
 				let offset = { left: 0, top: 0 };
 				let rect: any = { x: 0, y: 0, width: 0, height: 0 };
 	
-				if (isPopup && container.length) {
+				if (container.length) {
 					offset = container.offset();
 				};
 	

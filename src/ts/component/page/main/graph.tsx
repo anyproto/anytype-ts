@@ -105,6 +105,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		rebind();
 		load();
 		initRootId(getRootId());
+		S.Common.setRightSidebarState(false, '', false);
 
 		return () => unbind();
 	}, []);

@@ -347,18 +347,20 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	onOptionClick (e, option) {
 		const object = this.getObject();
 		const { relationFormat } = object;
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		switch (relationFormat) {
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				if (!U.Space.canMyParticipantWrite()) {
+				if (!canWrite) {
 					break;
 				};
+
 				S.Menu.open('dataviewOptionEdit', {
 					element: `#page #item-${option.id}`,
 					offsetY: 4,
 					data: {
-						option: option,
+						option,
 					}
 				});
 				break;

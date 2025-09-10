@@ -1,3 +1,5 @@
+#page.isFull { overflow-x: hidden; overflow-y: auto; }
+
 @import "./auth";
 @import "./main/edit";
 @import "./main/graph";
@@ -16,4 +18,3 @@
 @import "./main/date";
 @import "./main/settings";
 @import "./main/relation";
-@import "./transitions";

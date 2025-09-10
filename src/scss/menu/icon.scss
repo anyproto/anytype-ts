@@ -40,6 +40,8 @@
 		.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 		.icon.pin { background-image: url('~img/icon/menu/action/pin0.svg'); }
 		.icon.unpin { background-image: url('~img/icon/menu/action/unpin0.svg'); }
+		.icon.mute { background-image: url('~img/icon/menu/action/mute0.svg'); }
+		.icon.unmute { background-image: url('~img/icon/menu/action/unmute0.svg'); }
 		.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
 		.icon.removeWidget { background-image: url('~img/icon/menu/action/removeWidget0.svg'); }
 		.icon.more,
@@ -52,7 +54,9 @@
 		.icon.object { background-image: url('~img/icon/menu/action/object0.svg'); }
 		.icon.folder { background-image: url('~img/icon/menu/action/folder0.svg'); }
 		.icon.folderBlank { background-image: url('~img/icon/menu/action/folderBlank0.svg'); }
-		
+		.icon.createObject { background-image: url('~img/icon/menu/action/createObject0.svg'); }
+		.icon.uploadComputer { background-image: url('~img/icon/menu/action/uploadComputer0.svg'); }
+
 		.icon.undo { background-image: url('~img/icon/menu/action/undo0.svg'); }
 		.icon.redo { background-image: url('~img/icon/menu/action/redo0.svg'); }
 		.icon.print { background-image: url('~img/icon/menu/action/print0.svg'); }
@@ -137,8 +141,21 @@
 		.icon.checkbox.c0 { background-image: url('~img/icon/menu/checkbox0.svg'); }
 		.icon.checkbox.c1 { background-image: url('~img/icon/menu/checkbox1.svg'); }
 
-		.icon.help-star { background-image: url('~img/icon/menu/help/star.svg'); }
+		.icon.help-bell { background-image: url('~img/icon/menu/help/bell.svg'); }
 		.icon.help-keyboard { background-image: url('~img/icon/menu/help/keyboard.svg'); }
+		.icon.help-share { background-image: url('~img/icon/menu/help/share.svg'); }
+		.icon.help-community { background-image: url('~img/icon/menu/help/community.svg'); }
+		.icon.help-tutorial { background-image: url('~img/icon/menu/help/tutorial.svg'); }
+		.icon.help-contact { background-image: url('~img/icon/menu/help/contact.svg'); }
+		.icon.help-developer { background-image: url('~img/icon/menu/help/developer.svg'); }
+		.icon.help-more { background-image: url('~img/icon/menu/help/more.svg'); }
+
+		.icon.chat-reaction { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
+		.icon.chat-reply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+		.icon.chat-copy { background-image: url('~img/icon/chat/buttons/copy0.svg'); }
+		.icon.chat-link { background-image: url('~img/icon/chat/buttons/link0.svg'); }
+		.icon.chat-pencil { background-image: url('~img/icon/chat/buttons/pencil0.svg'); }
+		.icon.chat-remove { background-image: url('~img/icon/chat/buttons/remove0.svg'); }
 
 		.icon.color { z-index: 1; }
 		.icon.color {

@@ -310,7 +310,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const { space } = S.Common;
 		const { id, param, getId, close } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { onChange } = data;
 		const { from } = S.Common.filter;
 
@@ -345,6 +345,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				horizontal: I.MenuDirection.Center,
 				rebind: this.rebind,
 				parentId: id,
+				className,
+				classNameWrap,
 				data: { 
 					canEdit: true,
 					canClear: false,

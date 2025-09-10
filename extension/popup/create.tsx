@@ -91,6 +91,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const getSpaces = () => {
 		return U.Space.getList()
+			.sort(U.Data.sortByName)
 			.filter(it => it && U.Space.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it }));
 	};

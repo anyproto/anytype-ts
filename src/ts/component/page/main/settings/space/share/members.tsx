@@ -37,6 +37,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 			return <Loader id="loader" />;
 		};
 
+		const { isPopup } = this.props;
 		const { membership } = S.Auth;
 		const tier = U.Data.getMembershipTier(membership.tier);
 		const space = U.Space.getSpaceview();
@@ -144,7 +145,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 				{this.cache ? (
 					<div id="list" className="rows">
-						<WindowScroller scrollElement={window}>
+						<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
 							{({ height, isScrolling, registerChild, scrollTop }) => (
 								<AutoSizer disableHeight={true} className="scrollArea">
 									{({ width }) => (

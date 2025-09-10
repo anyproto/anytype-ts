@@ -20,7 +20,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	cache: any = {};
 
 	render () {
-		const space = U.Space.getSpaceview();
 		const { page } = this.props;
 		const { membership } = S.Auth;
 		const profile = U.Space.getProfile();
@@ -319,12 +318,13 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 			sidebar.leftPanelSetState({ page: `settings/${item.id}`, });
 		} else {
 			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
+			this.forceUpdate();
 		};
 	};
 
 	onBack () {
-		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		U.Space.openDashboard();
+		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 	};
 
 });

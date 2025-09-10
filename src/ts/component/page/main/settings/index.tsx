@@ -159,6 +159,8 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	componentDidMount () {
 		this.init();
+
+		S.Common.setRightSidebarState(false, '', false);
 	};
 
 	componentDidUpdate () {
@@ -187,7 +189,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		let page = '';
 		switch (id) {
 			case 'spaceIndexEmpty': {
-				page = 'widget';
+				page = U.Space.getDefaultSidebarPage();
 				break;
 			};
 

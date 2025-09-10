@@ -5,7 +5,6 @@ const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
 const port = process.env.SERVER_PORT;
 
-const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
@@ -22,7 +21,6 @@ class WindowManager {
 
 	create (options, param) {
 		const Api = require('./api.js');
-		const { showMenuBar } = ConfigManager.config;
 		const isDark = Util.isDarkTheme();
 
 		param = Object.assign({
@@ -76,9 +74,6 @@ class WindowManager {
 			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
-		win.setMenuBarVisibility(showMenuBar);
-		win.setAutoHideMenuBar(!showMenuBar);
-
 		return win;
 	};
 
@@ -103,6 +98,8 @@ class WindowManager {
 			param.trafficLightPosition = { x: 10, y: 18 };
 		} else
 		if (is.windows) {
+			param.frame = false;
+			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icons', '256x256.ico');
 		} else
 		if (is.linux) {
@@ -204,18 +201,6 @@ class WindowManager {
 				MenuManager.menu.popup({ x: 16, y: 38 });
 				break;
 
-			case 'minimize':
-				win.minimize();
-				break;
-
-			case 'maximize':
-				win.isMaximized() ? win.unmaximize() : win.maximize();
-				break;
-
-			case 'close':
-				win.hide();
-				break;
-
 			case 'printHtml':
 			case 'printPdf':
 				const ext = cmd.replace(/print/, '').toLowerCase();
@@ -267,6 +252,10 @@ class WindowManager {
 
 	reloadAll () {
 		this.sendToAll('reload');
+	};
+
+	getFirstWindow () {
+		return this.list.values().next().value;
 	};
 	
 };
