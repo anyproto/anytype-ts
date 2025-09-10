@@ -532,7 +532,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				if (!it.isReadMessage) {
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
 				};
-				if (!it.isReadMention) {
+				if (!it.isReadMention && it.hasMention) {
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Mention);
 				};
 			});

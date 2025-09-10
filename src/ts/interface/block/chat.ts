@@ -69,6 +69,7 @@ export interface ChatMessage {
 	isLast: boolean;
 	isReadMessage: boolean;
 	isReadMention: boolean;
+	hasMention: boolean;
 };
 
 export interface ChatMessageContent {
