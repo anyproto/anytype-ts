@@ -199,12 +199,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('target');
 		} else
 		if (!isCollection && !sources.length) {
-			body = <LayoutPlug
-				layoutFormat={I.LayoutFormat.List}
-				recommendedLayout={I.ObjectLayout.Set}
-				viewType={view.type}
-				onClick={this.onEmpty}
-			/>;
+			body = (
+				<LayoutPlug
+					layoutFormat={I.LayoutFormat.List}
+					recommendedLayout={I.ObjectLayout.Set}
+					viewType={view.type}
+					onClick={this.onEmpty}
+				/>
+			);
 		} else {
 			body = (
 				<div className="content">
