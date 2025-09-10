@@ -4,11 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       channel:
-        description: electron.builder channel
+        description: electron.builder channel (beta uses a different s3 bucket)
         required: true
-        default: alpha
+        default: latest
         type: choice
         options:
+          - latest
           - alpha
           - beta
   schedule:
@@ -227,14 +228,25 @@ jobs:
       - name: Nightly mode env settings
         shell: bash
         run: |
-          # choice channel name
+          # choice channel name {{
           if [[ -z "${{ github.event.inputs.channel }}" ]]; then
             # default value
-            CHANNEL="alpha"
+            CHANNEL=latest
           else
             CHANNEL="${{ github.event.inputs.channel }}"
           fi
           echo "CHANNEL=$CHANNEL" >> $GITHUB_ENV
+          # }}
+
+          # version suffix {{
+          if [[ "$CHANNEL" == "latest" ]]; then
+            VERSION_SUFFIX="nightly.${{ needs.nightly-tag.outputs.app_version_suffix }}"
+          else
+            VERSION_SUFFIX="${CHANNEL}.${{ needs.nightly-tag.outputs.app_version_suffix }}"
+          fi
+          echo "VERSION_SUFFIX=$VERSION_SUFFIX" >> $GITHUB_ENV
+          # }}
+
           # choice s3 bucket for publishing {{
           if [[ "$CHANNEL" == "beta" ]]; then
             S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET_BETA}}"
@@ -243,6 +255,7 @@ jobs:
           fi
           echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_ENV
           # }}
+
           echo "MIDDLEWARE_VERSION=${{ steps.anytype-heart-nightly-info.outputs.release_name }}" >> $GITHUB_ENV
 
       #- name: Print all environment variables
@@ -256,7 +269,7 @@ jobs:
             --arg date "$(TZ=Europe/Berlin date +%Y%m%d%H%M)" \
             '
             .name = "anytype-dev" |
-            .version |= ( ( . | sub("[-+].*"; "") ) + "-${{ env.CHANNEL }}+${{ needs.nightly-tag.outputs.app_version_suffix }}" ) |
+            .version |= ( ( . | sub("[-+].*"; "") ) + "-${{ env.VERSION_SUFFIX }}" ) |
             .description = "Anytype Nightly" |
             .build.appId = "com.anytype.anytype-dev" |
             .build.productName = "Anytype Nightly" |
@@ -371,9 +384,9 @@ jobs:
           status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && 'failure' || 'success' }}
           notification_title: "${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} {workflow} {repo}"
           message_format: |
-            *Tag:* ${{ needs.nightly-tag.outputs.tag }}
+            *Tag:* ${{ needs.nightly-tag.outputs.tag || 'none' }}
             *Description:*
-            ${{ needs.changelog.outputs.body }}
+            ${{ needs.changelog.outputs.body || 'no changes, build skipped' }}
           footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
         env:
           SLACK_WEBHOOK_URL: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.SLACK_WEBHOOK_URL_ALERTS || secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}
