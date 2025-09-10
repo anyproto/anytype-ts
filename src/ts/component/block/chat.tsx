@@ -509,7 +509,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const dir = top.current > st ? -1 : 1;
 
 		setIsBottom(st >= U.Common.getMaxScrollHeight(isPopup));
 
