@@ -9,6 +9,7 @@ interface Props {
 	recommendedFileRelations?: string[];
 	viewType?: I.ViewType;
 	layoutWidth?: number;
+	isPopup?: boolean;
 	onClick?: (e: any) => void;
 };
 
@@ -18,11 +19,11 @@ const LayoutPlug = forwardRef<{}, Props>(({
 	recommendedFileRelations = [],
 	viewType= I.ViewType.Grid,
 	layoutWidth = 0,
+	isPopup = false,
 	onClick,
 }, ref) => {
 
 	const getNodeWidth = (): number => {
-		const isPopup = keyboard.isPopup();
 		const container = U.Common.getPageFlexContainer(isPopup);
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const right = rightSidebar.isOpen ? J.Size.sidebar.right : 0;

@@ -127,6 +127,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 						recommendedFileRelations={this.object.recommendedFileRelations}
 						viewType={this.object.defaultViewType}
 						layoutWidth={this.object.layoutWidth}
+						isPopup={this.props.isPopup}
 					/>
 				</div>
 			</div>
@@ -196,7 +197,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	};
 
 	getNodeWidth (): number {
-		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
+		const container = U.Common.getPageFlexContainer(this.props.isPopup);
 
 		return container.width() - J.Size.sidebar.right;
 	};

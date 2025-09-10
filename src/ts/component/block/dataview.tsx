@@ -204,6 +204,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					layoutFormat={I.LayoutFormat.List}
 					recommendedLayout={I.ObjectLayout.Set}
 					viewType={view.type}
+					isPopup={isPopup}
 					onClick={this.onEmpty}
 				/>
 			);
