@@ -923,7 +923,6 @@ class CommonStore {
 		this.windowIsFocused = Boolean(v);
 	};
 
-
 	nullifySpaceKeys () {
 		this.defaultType = null;
 	};

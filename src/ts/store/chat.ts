@@ -493,6 +493,19 @@ class ChatStore {
 		return ret.join(': ');
 	};
 
+	/**
+	 * Checks the vault subscription ID for a space and subId.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} subId - The subscription ID.
+	 * @returns {string} The vault subscription ID.
+	 */
+	checkVaultSubscriptionId (spaceId: string, subId: string): string {
+		if (subId == J.Constant.subId.chatSpace) {
+			subId = this.getSpaceSubId(spaceId);
+		};
+		return subId;
+	};
+
 };
 
 export const Chat: ChatStore = new ChatStore();

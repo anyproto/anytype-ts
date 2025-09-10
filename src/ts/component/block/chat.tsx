@@ -603,6 +603,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const getMessagesInViewport = () => {
+		const messages = getMessages();
 		const container = U.Common.getScrollContainer(isPopup);
 		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
 		const ch = container.outerHeight();
@@ -650,9 +651,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const readScrolledMessages = () => {
-		const viewport = getMessagesInViewport();
-
-		scrolledItems.current = new Set(viewport.map(it => it.id));
+		scrolledItems.current = new Set(getMessagesInViewport().map(it => it.id));
 		onReadStop();
 	};
 
