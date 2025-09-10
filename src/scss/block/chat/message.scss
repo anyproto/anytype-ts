@@ -1,6 +1,9 @@
-.message { @include text-common; position: relative; }
+.message { @include text-common; position: relative; opacity: 0; }
 .message {
 	* { user-select: text !important; }
+
+	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
+	&.show { opacity: 1; }
 
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
@@ -16,7 +19,7 @@
 
 	.bubbleOuter { display: flex; flex-direction: column; width: 100%; }
 
-	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; max-width: 480px; }
+	.bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
 	.bubbleInner {
 		> .controls { 
 			flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; 
@@ -30,6 +33,8 @@
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
+
+		.textWrapper { max-width: 480px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
@@ -90,11 +95,7 @@
 	}
 	.author * { user-select: text !important; }
 
-	.expand { 
-		display: none; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; 
-		white-space: nowrap;
-	}
-	.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
+	.expand { display: none; align-items: center; color: var(--color-text-secondary); white-space: nowrap; cursor: default; }
 
 	.sub { @include text-small; color: var(--color-text-secondary); display: none; }
 	.sub {
@@ -159,14 +160,14 @@
 
 	&.canExpand {
 		.bubbleInner {
+			.textWrapper { min-width: 200px; }
 			.expand { display: flex; }
-			.text { @include clamp10; }
+			.text { @include clamp; -webkit-line-clamp: 16; }
 		}
 	}
 
 	&.canExpand.isExpanded {
 		.bubbleInner {
-			.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 			.text { -webkit-line-clamp: unset; }
 		}
 	}

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
@@ -37,7 +37,7 @@ interface RefProps {
 	getMarks: () => I.Mark[];
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -53,6 +53,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
+	const loaderRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
@@ -69,20 +70,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const menuContext = useRef(null);
 
 	let { attachments } = S.Chat;
-
-	const unbind = () => {
-		const events = [ 'resize', 'sidebarResize' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-	};
-
-	const rebind = () => {
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
-		unbind();
-		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
-	};
 
 	const setAttachments = (list: any[]) => {
 		S.Chat.setAttachments(list);
@@ -232,7 +219,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut(`shift+enter`, e, () => {
-			resize();
 			scrollToBottom();
 		});
 
@@ -305,7 +291,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		keyboard.shortcut('backspace', e, () => {
-			resize();
 			scrollToBottom();
 		});
 
@@ -337,7 +322,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
-		resize();
 
 		window.clearTimeout(timeoutHistory.current);
 		timeoutHistory.current = window.setTimeout(() => {
@@ -782,9 +766,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const send = node.find('#send');
-		const loader = node.find('#form-loader');
+		const send = $(sendRef.current);
+		const loader = $(loaderRef.current);
 		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
@@ -804,7 +787,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 
 			if (editingId.current) {
-				const message = S.Chat.getMessage(subId, editingId.current	);
+				const message = S.Chat.getMessageById(subId, editingId.current);
 				if (message) {
 					const update = U.Common.objectCopy(message);
 
@@ -818,6 +801,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					});
 				};
 			} else {
+				if (replyingId) {
+					const reply = S.Chat.getMessageById(subId, replyingId);
+					if (reply) {
+						S.Chat.setReply(subId, reply);
+					};
+				};
+
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
@@ -910,20 +900,17 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clear = () => {
-		const node = $(nodeRef.current);
-		const send = node.find('#send');
-		const loader = node.find('#form-loader');
+		const send = $(sendRef.current);
+		const loader = $(loaderRef.current);
+
 		isSending.current = false;
-		checkSendButton();
+		send.removeClass('isLoading');
+		loader.removeClass('active');
 
 		onEditClear();
 		onReplyClear();
-		clearCounter();
 		checkSpeedLimit();
 		historyClearState();
-
-		send.removeClass('isLoading');
-		loader.removeClass('active');
 	};
 
 	const onEditClear = () => {
@@ -948,9 +935,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const length = text.length;
 
 		range.current = { from: length, to: length };
+
 		setRange(range.current);
 		setReplyingId(message.id);
-		resize();
 
 		analytics.event('ClickMessageMenuReply');
 	};
@@ -1056,10 +1043,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		history.current = { position: -1, states: [] };
 	};
 
-	const getMarksAndRange = (): { marks: I.Mark[], range: I.TextRange } => {
-		return { marks: marks.current, range: range.current };
-	};
-
 	const getTextValue = (): string => {
 		return String(editableRef.current?.getTextValue() || '');
 	};
@@ -1104,8 +1087,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			case I.ChatReadType.Mention: {
 				const { mentionOrderId } = S.Chat.getState(subId);
-				const messages = getMessages();
-				const target = messages.find(it => it.orderId == mentionOrderId);
+				const target = S.Chat.getMessageByOrderId(subId, mentionOrderId);
 
 				if (target) {
 					scrollToMessage(target.id, true, true);
@@ -1375,7 +1357,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const message = S.Chat.getMessage(subId, replyingId);
+		const message = S.Chat.getMessageById(subId, replyingId);
 		if (!message) {
 			return;
 		};
@@ -1455,24 +1437,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 	};
 
-	const resize = () => {
-		if (isPopup) {
-			return;
-		};
-
-		const container = U.Common.getScrollContainer(isPopup);
-		const node = $(nodeRef.current);
-		const dummy = $(dummyRef.current);
-		const cw = container.width();
-		const { isClosed, width } = sidebar.data;
-		const left = isClosed ? 0 : width;
-		const margin = 32;
-
-		node.css({ width: cw - margin * 2, left: left + margin });
-		dummy.css({ height: node.outerHeight() });
-		scrollToBottom();
-	};
-
 	let form = null;
 	let title = '';
 	let text = '';
@@ -1484,7 +1448,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onClear = () => onEditClear();
 	} else
 	if (replyingId) {
-		const message = S.Chat.getMessage(subId, replyingId);
+		const message = S.Chat.getMessageById(subId, replyingId);
 
 		if (message) {
 			const reply = getReplyContent(message);
@@ -1534,7 +1498,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" />
+					<Loader id="form-loader" ref={loaderRef} />
 
 					{title ? (
 						<div className="head">
@@ -1624,12 +1588,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			historySaveState();
 		};
 
-		resize();
-		rebind();
-
 		return () => {
-			unbind();
-
 			window.clearTimeout(timeoutFilter.current);
 			keyboard.disableSelection(false);
 		};
@@ -1642,7 +1601,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		checkSendButton();
-		resize();
+		scrollToBottom();
 	});
 
 	useEffect(() => {
@@ -1665,40 +1624,38 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<>
-			<div ref={dummyRef} />
-			<div 
-				ref={nodeRef}
-				id="formWrapper" 
-				className="formWrapper"
-				onDragOver={onDragOver}
-				onDragLeave={onDragLeave}
-			>
-				<div className="grad" />
-				<div className="bg" />
+		<div 
+			ref={nodeRef}
+			id="formWrapper" 
+			className="formWrapper"
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+		>
+			<div className="grad" />
+			<div className="bg" />
 
-				<div className="dragOverlay">
-					<div className="inner">
-						<Icon />
-						<Label text={translate('commonDropFiles')} />
-					</div>
-				</div>
-
+			<div className="dragOverlay">
 				<div className="inner">
-					{!isEmpty ? (
-						<div className="navigation">
-							{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-							<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-						</div>
-					) : ''}
-
-					{form}
-
+					<Icon />
+					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
-		</>
+
+			<div className="inner">
+				{!isEmpty ? (
+					<div className="navigation">
+						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
+					</div>
+				) : ''}
+
+				{form}
+			</div>
+		</div>
 	);
 
 }));
+
+const ChatForm = memo(ChatFormBase);
 
 export default ChatForm;

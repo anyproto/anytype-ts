@@ -429,6 +429,7 @@ class Sidebar {
 			};
 
 			this.objRight.css(cssStart);
+			this.objRight.find('.sidebarPage').css({ opacity: 0 });
 
 			raf(() => {
 				if (animate) {
@@ -444,7 +445,7 @@ class Sidebar {
 
 					const inner = this.objRight.find('.sidebarPage');
 
-					inner.css({ opacity: 0 });
+					inner.addClass('anim');
 					raf(() => inner.css({ opacity: 1 }));
 
 				}, animate ? J.Constant.delay.sidebar : 0);

@@ -53,7 +53,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const counters = S.Chat.getTotalCounters();
 		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
-		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
 		const headerButtons: any[] = [
@@ -148,12 +147,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				first = blockWidgets[0];
 			};
 
-			subHead = isDirectionLeft ? (
+			subHead = !space.isChat ? (
 				<div className={cnsh.join(' ')}>
-					<div className="side left">
-						<Icon className="back" onClick={this.onBack} />
-						{cnt ? <div className="cnt">{cnt}</div> : ''}
-					</div>
+					{isDirectionLeft || cnt ? (
+						<div className="side left">
+							{isDirectionLeft ? <Icon className="back" onClick={this.onBack} /> : ''}
+							{cnt ? <div className="cnt">{cnt}</div> : ''}
+						</div>
+					) : ''}
 
 					<div className="side center">
 						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
@@ -292,13 +293,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						<div className="side center" />
 
 						<div className="side right">
-							<Button 
-								id="button-help"
-								className="help"
-								text="?"
-								tooltipParam={{ text: translate('commonHelp') }}
-								onClick={this.onHelp}
-							/>
+							{!space.isChat ? (
+								<Button 
+									id="button-help"
+									className="help"
+									text="?"
+									tooltipParam={{ text: translate('commonHelp') }}
+									onClick={this.onHelp}
+								/>
+							) : ''}
 						</div>
 					</div>
 				</div>
@@ -380,7 +383,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			deleteEmpty: true,
 			selectTemplate: true,
 			withImport: true,
-		}, analytics.route.widget, object => U.Object.openAuto(object));
+		}, analytics.route.navigation, object => U.Object.openAuto(object));
 	};
 
 	onBack = () => {
@@ -526,16 +529,24 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
+		const spaceview = U.Space.getSpaceview();
 		const { sidebarDirection } = this.props;
 		const node = $('#sidebarPageWidget');
 		const top = node.find('#body').scrollTop();
 		const isScrolled = top > 0;
 
+		let el = null;
+
 		if (sidebarDirection == I.SidebarDirection.Left) {
-			node.find('.dropTarget.firstTarget').toggleClass('isScrolled', isScrolled);
+			el = node.find('.dropTarget.firstTarget');
+		} else 
+		if (spaceview.isSpace) {
+			el = node.find('.subHead');
 		} else {
-			node.find('#head').toggleClass('isScrolled', isScrolled);
+			el = node.find('#head');
 		};
+
+		el.toggleClass('isScrolled', isScrolled);
 	};
 
 	onArchive (e: any) {

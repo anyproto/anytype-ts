@@ -41,7 +41,6 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
-	public widgetSideValue: I.SidebarDirection = null;
 	public updateVersionValue = '';
 	public rightSidebarStateValue = { 
 		full: { page: null, isOpen: false }, 
@@ -120,7 +119,6 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
-			widgetSideValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -136,7 +134,6 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
-			widgetSide: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -157,7 +154,6 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
-			widgetSideSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -220,14 +216,6 @@ class CommonStore {
 			ret = Storage.get('pinTime');
 		};
 		return (Number(ret) || J.Constant.default.pinTime) * 1000;
-	};
-
-	get widgetSide (): I.SidebarDirection {
-		let ret = this.widgetSideValue;
-		if (ret === null) {
-			ret = Storage.get('widgetSide');
-		};
-		return ret || I.SidebarDirection.Right;
 	};
 
 	get emailConfirmationTime (): number {
@@ -935,18 +923,8 @@ class CommonStore {
 		this.windowIsFocused = Boolean(v);
 	};
 
-	/**
-	 * Sets the widget side value.
-	 * @param {I.SidebarDirection} v - The widget side value.
-	 */
-	widgetSideSet (v: I.SidebarDirection) {
-		this.widgetSideValue = v;
-		Storage.set('widgetSide', v);
-	};
-
 	nullifySpaceKeys () {
 		this.defaultType = null;
-		this.widgetSideValue = null;
 	};
 
 };

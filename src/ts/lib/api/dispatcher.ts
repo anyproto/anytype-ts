@@ -107,14 +107,11 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, isSync: boolean, skipDebug: boolean) {
-		const { config, space } = S.Common;
+		const { config, windowId, windowIsFocused } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const electron = U.Common.getElectron();
-		const currentWindow = electron.currentWindow();
-		const { windowId, windowIsFocused } = currentWindow;
-		const isMainWindow = windowId === 1;
+		const isMainWindow = windowId == '1';
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
 		
@@ -966,8 +963,8 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
-					const message = new M.ChatMessage(mapped.message);
-					const author = S.Detail.mapper(dependencies.find(it => it.identity == message.creator));
+					const message = new M.ChatMessage({ ...mapped.message, dependencies });
+					const notification = S.Chat.getMessageSimpleText(spaceId, message);
 
 					let showNotification = false;
 
@@ -981,9 +978,7 @@ class Dispatcher {
 					};
 
 					mapped.subIds.forEach(subId => {
-						if (subId == J.Constant.subId.chatSpace) {
-							subId = S.Chat.getSpaceSubId(spaceId);
-						};
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 
 						const list = S.Chat.getList(subId);
 
@@ -992,14 +987,13 @@ class Dispatcher {
 							idx = list.length;
 						};
 
-						message.dependencies = dependencies || [];
-						S.Chat.add(subId, idx, new M.ChatMessage(message));
+						S.Chat.add(subId, idx, message);
 					});
 
-					if (showNotification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
 							title: space.name, 
-							text: `${author?.name}: ${message.content.text}`,
+							text: notification,
 						}, () => {
 							const { space } = S.Common;
 							const open = () => {
@@ -1021,7 +1015,10 @@ class Dispatcher {
 				};
 
 				case 'ChatUpdate': {
-					mapped.subIds.forEach(subId => S.Chat.update(subId, mapped.message));
+					mapped.subIds.forEach(subId => {
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+						S.Chat.update(subId, mapped.message);
+					});
 
 					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
 					break;
@@ -1029,38 +1026,49 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds.forEach(subId => {
-						if (subId == J.Constant.subId.chatSpace) {
-							subId = S.Chat.getSpaceSubId(spaceId);
-						};
-
-						S.Chat.setState(subId, mapped.state);
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+						S.Chat.setState(subId, mapped.state, true);
 					});
 					break;
 				};
 
 				case 'ChatUpdateMessageReadStatus': {
-					mapped.subIds.forEach(subId => S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead));
-					break;
+					mapped.subIds.forEach(subId => {
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+						S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+					});
+					break;	
 				};
 
 				case 'ChatUpdateMentionReadStatus': {
-					mapped.subIds.forEach(subId => S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead));
+					mapped.subIds.forEach(subId => {
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+						S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+					});
 					break;
 				};
 
 				case 'ChatUpdateMessageSyncStatus': {
-					mapped.subIds.forEach(subId => S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced));
+					mapped.subIds.forEach(subId => {
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+						S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+					});
 					break;
 				};
 
 				case 'ChatDelete': {
-					mapped.subIds.forEach(subId => S.Chat.delete(subId, mapped.id));
+					mapped.subIds.forEach(subId => {
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+						S.Chat.delete(subId, mapped.id);
+					});
 					break;
 				};
 
 				case 'ChatUpdateReactions': {
 					mapped.subIds.forEach((subId) => {
-						const message = S.Chat.getMessage(subId, mapped.id);
+						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
+
+						const message = S.Chat.getMessageById(subId, mapped.id);
 						if (message) {
 							set(message, { reactions: mapped.reactions });
 						};

@@ -2,8 +2,4 @@
 
 .pageMainChat {
 	> #loader { position: fixed; top: 0px; width: 100%; height: 100%; }
-
-	&.sidebarAnimation { 
-		.formWrapper { transition-property: left, width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
-	}
 }

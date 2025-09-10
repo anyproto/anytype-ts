@@ -928,6 +928,15 @@ class UtilCommon {
 	};
 
 	/**
+	 * Returns the scroll top position of the scroll container.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {number} The scroll top position.
+	 */
+	getScrollContainerTop (isPopup: boolean) {
+		return Math.ceil(this.getScrollContainer(isPopup).scrollTop());
+	};
+
+	/**
 	 * Returns the page flex container jQuery object depending on popup state.
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 * @returns {JQuery<HTMLElement>} The page flex container.

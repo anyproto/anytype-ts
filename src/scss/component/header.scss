@@ -111,7 +111,7 @@ body.isFullScreen {
 		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }
 	}
 
-	.logo { width: 70px; height: 18px; background: url('~img/logo/black.svg'); }
+	.logo { width: 70px; height: 18px; background: url('~img/icon/header/logo.svg'); }
 }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {

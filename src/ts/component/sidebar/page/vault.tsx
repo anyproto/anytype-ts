@@ -17,8 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space, updateVersion, widgetSide } = S.Common;
-	const { isPopup, sidebarDirection } = props;
+	const { space, updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -183,34 +182,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
 
-			let text = '';
-			if (list.length) {
-				const last = list[list.length - 1];
-
-				if (last) {
-					const participantId = U.Space.getParticipantId(it.targetSpaceId, last.creator);
-					const author = last.dependencies.find(it => it.id == participantId);
-
-					if (author) {
-						text = `${author.name}: `;
-					};
-
-					if (last.content.text) {
-						text += U.Common.sanitize(Mark.insertEmoji(last.content.text, last.content.marks));
-						text = text.replace(/\n\r?/g, ' ');
-					} else 
-					if (last.attachments.length) {
-						const names = last.attachments.map(item => {
-							const object = last.dependencies.find(it => it.id == item.target);
-							return object ? U.Object.name(object) : '';
-						}).filter(it => it).join(', ');
-
-						text += names;
-					};
-				};
-			};
-
-			it.lastMessage = text;
+			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 			return it;
 		});
@@ -255,7 +227,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard({ replace: false });
-			U.Router.onSpaceSwitch();
+			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		};
 	};
 
@@ -524,7 +496,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<div className="sides">
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
-							<IconObject object={settings} size={32} iconSize={32} param={{ userIcon: J.Theme[theme].textInversion }} />
+							<IconObject object={settings} size={32} iconSize={32} />
 							<ObjectName object={settings} />
 						</div>
 					</div>

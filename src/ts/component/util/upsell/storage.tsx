@@ -54,7 +54,7 @@ const UpsellStorage: FC<Props> = ({
 	const onClick = () => {
 		Action.membershipUpgrade(tier.id);
 
-		analytics.event('ClickUpgradePlanTooltip', { type: `Storage${output}`, route });
+		analytics.event('ClickUpgradePlanTooltip', { type: `StorageWarning`, usage: Math.round(usagePercent), route });
 	};
 
 	return (
