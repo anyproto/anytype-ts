@@ -178,8 +178,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			subHead = !space.isChat ? (
 				<div className={cnsh.join(' ')}>
 					{isDirectionLeft || cnt ? (
-						<div className="side left">
-							{isDirectionLeft ? <Icon className="back" onClick={this.onBack} /> : ''}
+						<div className="side left" onClick={isDirectionLeft ? this.onBack : null}>
+							{isDirectionLeft ? <Icon className="back" /> : ''}
 							{cnt ? <div className="cnt">{cnt}</div> : ''}
 						</div>
 					) : ''}
