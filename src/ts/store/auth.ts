@@ -239,10 +239,10 @@ class AuthStore {
 	 * @returns {I.NotSyncedFiles}
 	 */
 	getNotSynced (): I.NotSyncedFiles {
-		let total = 0;
-		let files = [];
+		const files = [];
 
-		for (const [id, space] of this.syncStatusMap) {
+		let total = 0;
+		for (const [ id, space ] of this.syncStatusMap) {
 			const { id, notSyncedCounter } = space;
 
 			if (U.Space.isMyOwner(id) && notSyncedCounter) {
