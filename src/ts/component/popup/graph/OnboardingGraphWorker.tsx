@@ -39,7 +39,7 @@ const OnboardingGraphWorker = observer(({
 		};
 		
 		for (const node of nodes) {
-			if (node.iconName && node.type === 'type' && !loadedImages.current.has(node.iconName)) {
+			if (node.iconName && (node.type == 'type') && !loadedImages.current.has(node.iconName)) {
 				console.log('[OnboardingGraphWorker] Loading icon for:', node.iconName);
 				
 				// Use the same pattern as in graph.ts - direct require without try/catch
@@ -226,7 +226,7 @@ const OnboardingGraphWorker = observer(({
 			},
 			theme: 'dark',
 			rootId: '',
-		}, [offscreen]);
+		}, [ offscreen ]);
 
 		setIsInitialized(true);
 		
@@ -238,7 +238,7 @@ const OnboardingGraphWorker = observer(({
 				workerRef.current.postMessage({ id: 'destroy' });
 				workerRef.current.terminate();
 				workerRef.current = null;
-			}
+			};
 		};
 	}, []); // Only run once on mount
 

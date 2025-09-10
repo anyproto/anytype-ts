@@ -1,10 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import OnboardingGraphWorker from './graph/OnboardingGraphWorker';
 
 interface DimmerWithGraphProps {
 	onClick?: () => void;
-}
+};
 
 const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 
@@ -46,11 +47,11 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 		const handleResize = () => {
 			// Cancel any pending animation frame
 			if (animationFrame) {
-				cancelAnimationFrame(animationFrame);
+				raf.cancel(animationFrame);
 			};
 			
 			// Use requestAnimationFrame for smooth updates synchronized with browser repaints
-			animationFrame = requestAnimationFrame(() => {
+			animationFrame = raf(() => {
 				const newWidth = window.innerWidth;
 				const newHeight = window.innerHeight;
 				
@@ -71,7 +72,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 		// Cleanup
 		return () => {
 			if (animationFrame) {
-				cancelAnimationFrame(animationFrame);
+				raf.cancel(animationFrame);
 			};
 
 			window.removeEventListener('resize', handleResize);
