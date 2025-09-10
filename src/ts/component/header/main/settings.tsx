@@ -1,19 +1,16 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, Relation, analytics, Action, keyboard, sidebar } from 'Lib';
+import { I, S, U, translate, Relation, analytics, Action } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
-	const { menuOpen, isPopup } = props;
+	const { menuOpen } = props;
 	const { account } = S.Auth;
-	const spaceview = U.Space.getSpaceview();
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
 	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
-	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const showWidget = !isPopup && spaceview.isChat;
 
 	const onIdentity = () => {
 		if (globalName) {
@@ -96,21 +93,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		<>
 			<div className="side left" />
 			<div className="side center">{renderIdentity()}</div>
-			<div className="side right">
-				{renderMore()}
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget" 
-						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
-						onClick={() => {
-							sidebar.rightPanelToggle(true, isPopup, 'widget', {});
-							analytics.event('ScreenChatSidebar');
-						}} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
-			</div>
+			<div className="side right">{renderMore()}</div>
 		</>
 	);
 

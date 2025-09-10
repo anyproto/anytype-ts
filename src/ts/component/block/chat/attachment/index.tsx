@@ -21,7 +21,7 @@ interface RefProps {
 
 const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { object, subId, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
+	const { object, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
 	const syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	const mime = String(object.mime || '');
 	const cn = [ 'attachment', `is${I.SyncStatusObject[syncStatus]}` ];

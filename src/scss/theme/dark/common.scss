@@ -136,7 +136,7 @@ html.themeDark {
 	}
 
 	#root-loader {
-		.version { color: var(--color-text-primary); }
+		.logo { background-image: url('~img/logo/white.svg'); }
 	}
 
 	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
@@ -337,7 +337,7 @@ html.themeDark {
 	/* Header */
 
 	.header.authIndex {
-		.logo { background: url('~img/logo/white.svg'); }
+		.logo { background: url('#{$themePath}/icon/header/logo.svg'); }
 	}
 
 	.header.isCommon {

@@ -1,4 +1,4 @@
-.formWrapper.isFixed { padding: 0px 0px 12px 0px; position: fixed; z-index: 11; bottom: 0px; }
+.formWrapper { padding: 0px 0px 12px 0px; position: sticky; z-index: 11; bottom: 0px; }
 .formWrapper {
 	.grad {
 		position: absolute; left: 0px; top: -44px; width: 100%; height: 88px; pointer-events: none; z-index: 1;
@@ -6,7 +6,7 @@
 	}
 	.bg { position: absolute; left: 0px; top: 44px; width: 100%; height: calc(100% - 44px); background: var(--color-bg-primary); z-index: 0; }
 
-	> .inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; }
+	> .inner { display: flex; gap: 0px 8px; align-items: flex-end; margin: 0px auto; position: relative; z-index: 2; width: 100%; max-width: 960px; }
 	> .inner {
 		> .icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background-size: 20px; background-color: var(--color-shape-tertiary); }
 		> .icon:hover, .icon.hover { background-color: var(--color-shape-secondary); }
@@ -15,6 +15,12 @@
 
 		> .form { width: 100%; }
 	}
+
+	.readonly {
+		display: flex; justify-content: center; align-items: center; gap: 0px 8px; height: 32px; border-radius: 15px; @include text-small;
+		border: 1px solid var(--color-shape-primary); background: var(--color-shape-tertiary); width: 100%;
+	}
+	.readonly::before { content: ''; display: block; width: 8px; height: 12px; background: url('~img/icon/lock.svg'); }
 
 	.navigation { 
 		position: absolute; right: 0px; bottom: calc(100% + 8px); display: flex; flex-direction: column; align-items: flex-end; 
@@ -198,12 +204,4 @@
 
 	.icon.send { position: absolute; bottom: 6px; right: 10px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
 	.icon.send.isLoading { background: url('~img/icon/chat/buttons/loader.svg'); animation: rotate 1.2s infinite linear; animation-delay: 0.3s; }
-}
-
-.formWrapper {
-	.readonly {
-		display: flex; justify-content: center; align-items: center; gap: 0px 8px; height: 32px; border-radius: 15px; @include text-small;
-		border: 1px solid var(--color-shape-primary); background: var(--color-shape-tertiary); width: 100%;
-	}
-	.readonly::before { content: ''; display: block; width: 8px; height: 12px; background: url('~img/icon/lock.svg'); }
 }

@@ -123,7 +123,7 @@ const RoutePage: FC<RouteComponentProps> = (props) => {
 
 const App: FC = () => {
 
-	const [ isLoading, setIsLoading ] = useState(false);
+	const [ isLoading, setIsLoading ] = useState(true);
 	const nodeRef = useRef(null);
 
 	const init = () => {
@@ -136,6 +136,7 @@ const App: FC = () => {
 		keyboard.init();
 
 		registerIpcEvents();
+
 		Renderer.send('appOnLoad');
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);

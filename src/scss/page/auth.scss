@@ -147,6 +147,7 @@ html.bodyAuthDeleted {
 	.wrapper { transition: opacity 0.5s ease-in-out; }
 	.frame { width: 480px; }
 	.title.fromBackup { margin: 0px 0px 12px 0px; }
+	.title:not(.fromBackup) { @include text-header3; }
 
 	.buttons { margin: 24px 0px 0px 0px; gap: 14px; }
 	.button { min-width: 120px; }

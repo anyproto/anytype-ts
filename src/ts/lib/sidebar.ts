@@ -242,6 +242,7 @@ class Sidebar {
 		const isMain = keyboard.isMain();
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
+		const isMainChat = keyboard.isMainChat();
 
 		this.initObjects();
 
@@ -291,7 +292,9 @@ class Sidebar {
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
 
-		// this.page.toggleClass('sidebarAnimation', animate);
+		if (isMainChat) {
+			this.page.toggleClass('sidebarAnimation', animate);
+		};
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
@@ -426,6 +429,7 @@ class Sidebar {
 			};
 
 			this.objRight.css(cssStart);
+			this.objRight.find('.sidebarPage').css({ opacity: 0 });
 
 			raf(() => {
 				if (animate) {
@@ -441,7 +445,7 @@ class Sidebar {
 
 					const inner = this.objRight.find('.sidebarPage');
 
-					inner.css({ opacity: 0 });
+					inner.addClass('anim');
 					raf(() => inner.css({ opacity: 1 }));
 
 				}, animate ? J.Constant.delay.sidebar : 0);
