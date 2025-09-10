@@ -301,8 +301,6 @@ class Sidebar {
 		this.footer.css({ width: hw });
 		
 		if (!isPopup) {
-			const wh = U.Common.getAppContainerHeight();
-
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
@@ -310,7 +308,7 @@ class Sidebar {
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
-			this.page.css({ width: pageWidth, height: wh });
+			this.page.css({ width: pageWidth, height: U.Common.getAppContainerHeight() });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
 		};

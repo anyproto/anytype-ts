@@ -1977,7 +1977,7 @@ class UtilCommon {
 	};
 
 	getAppContainerHeight () {
-		return $('#appContainer').height() - Number($('#drag.withButtons').outerHeight() || 0);
+		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
 	};
 
 };
