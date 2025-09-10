@@ -3,7 +3,6 @@ import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
-import * as React from 'react';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
