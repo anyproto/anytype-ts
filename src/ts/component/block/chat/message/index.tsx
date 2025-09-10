@@ -34,7 +34,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		const node = $(nodeRef.current);
 
 		node.addClass('anim');
-		window.setTimeout(() => node.addClass('show'), 100);
+		window.setTimeout(() => node.addClass('show'), J.Constant.delay.chatMessage);
 	}, []);
 
 	useEffect(() => {

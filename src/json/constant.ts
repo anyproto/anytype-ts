@@ -83,6 +83,7 @@ export default {
 		sidebar:		 150,
 		highlight:  	 1000,
 		chatHistory:	 500,
+		chatMessage:	 150,
 	},
 
 	fileExtension: {

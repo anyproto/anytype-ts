@@ -39,6 +39,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
+
 			resize();
 		});
 	};
@@ -87,6 +88,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			const mh = scrollContainer.height() - J.Size.header - fh;
 
 			scrollWrapper.css({ minHeight: mh });
+
+			chatRef.current?.ref?.resize();
 		});
 	};
 
