@@ -823,8 +823,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					messageType = message.content?.text.length ? 'Mixed' : 'Attachment';
 				};
 
-				C.ChatAddMessage(rootId, message, () => {
-					scrollToBottom();
+				C.ChatAddMessage(rootId, message, (message: any) => {
+					scrollToMessage(message.messageId, true, true);
 					clear();
 
 					analytics.event('SentMessage', { type: messageType });
