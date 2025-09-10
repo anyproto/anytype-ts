@@ -429,6 +429,7 @@ class Sidebar {
 			};
 
 			this.objRight.css(cssStart);
+			this.objRight.find('.sidebarPage').css({ opacity: 0 });
 
 			raf(() => {
 				if (animate) {
@@ -441,11 +442,10 @@ class Sidebar {
 				window.setTimeout(() => {
 					this.rightPanelSetState(isPopup, { page, ...param });
 					this.objRight.removeClass('anim');
-					$(window).trigger('sidebarResize');
 
 					const inner = this.objRight.find('.sidebarPage');
 
-					inner.css({ opacity: 0 });
+					inner.addClass('anim');
 					raf(() => inner.css({ opacity: 1 }));
 
 				}, animate ? J.Constant.delay.sidebar : 0);
