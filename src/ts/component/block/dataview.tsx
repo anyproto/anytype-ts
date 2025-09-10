@@ -656,7 +656,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
-		
+
 		let typeId = '';
 		let templateId = '';
 

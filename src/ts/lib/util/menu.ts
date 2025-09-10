@@ -626,7 +626,7 @@ class UtilMenu {
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
-		const { spaceview } = S.Block;
+		const spaceview = U.Space.getSpaceview();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -635,7 +635,7 @@ class UtilMenu {
 					return;
 				};
 
-				S.Detail.update(J.Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
@@ -643,10 +643,21 @@ class UtilMenu {
 
 				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard();
+						U.Space.openDashboard({ replace: false });
 					};
 				});
 			});
+		};
+
+		let options = [];
+		if (spaceview.isChat) {
+			options.push({ id: I.HomePredefinedId.Chat, name: translate('commonChat') });
+		} else {
+			options = [
+				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+				{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
+				{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
+			];
 		};
 
 		analytics.event('ClickChangeSpaceDashboard');
@@ -658,12 +669,7 @@ class UtilMenu {
 			onOpen: context => this.setContext(context),
 			onClose: () => S.Menu.closeAll(subIds),
 			data: {
-				options: [
-					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-					(U.Object.isAllowedChat(true) ? { id: I.HomePredefinedId.Chat, name: translate('commonChat') } : null),
-					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-				].filter(it => it),
+				options,
 				onOver: (e: any, item: any) => {
 					if (!this.menuContext) {
 						return;
@@ -682,8 +688,9 @@ class UtilMenu {
 								vertical: I.MenuDirection.Center,
 								isSub: true,
 								data: {
+									withPlural: true,
 									filters: [
-										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant) },
+										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
 										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 									],
 									canAdd: true,
@@ -785,16 +792,16 @@ class UtilMenu {
 		const options: any[] = [];
 
 		if (space.spaceOrder) {
-			options.push({ id: 'unpin', name: translate('commonUnpin') });
+			options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 		} else { 
-			options.push({ id: 'pin', name: translate('commonPin') });
+			options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
 		};
 
 		if (space.chatId) {
 			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-				options.push({ id: 'unmute', name: translate('commonUnmute') });
+				options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
 			} else {
-				options.push({ id: 'mute', name: translate('commonMute') });
+				options.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 			};
 		};
 
@@ -802,7 +809,7 @@ class UtilMenu {
 			options.push({ isDiv: true });
 		};
 
-		options.push({ id: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 
 		S.Menu.open('select', {
 			...param,
@@ -906,11 +913,8 @@ class UtilMenu {
 			if (c1.spaceOrder > c2.spaceOrder) return 1;
 			if (c1.spaceOrder < c2.spaceOrder) return -1;
 
-			if (c1.counter && !c2.counter) return -1;
-			if (!c1.counter && c2.counter) return 1;
-
-			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
-			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
+			const d1 = c1.lastMessageDate || c1.spaceJoinDate || c1.counter;
+			const d2 = c2.lastMessageDate || c2.spaceJoinDate || c2.counter;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
@@ -928,8 +932,8 @@ class UtilMenu {
 
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}` },
-			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all' },
+			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}`, isHidden: true },
+			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all', isHidden: true },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
 			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },
@@ -1152,7 +1156,7 @@ class UtilMenu {
 		return a.map(it => ({ ...it, id: String(it.id) }));
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1294,24 +1298,28 @@ class UtilMenu {
 
 		const check = async () => {
 			const items = await getClipboardData();
-			const buttons: any[] = [
-				flags.withImport ? { id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true } : null,
-			].filter(it => it);
+			const buttons: any[] = [];
 
-			if (items.length) {
-				buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste });
+			if (!flags.noButtons) {
+				buttons.push({ 
+					id: 'add', icon: 'plus', onClick: () => {
+						U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
+						this.menuContext?.close();
+
+						if (param.data.onAdd) {
+							param.data.onAdd();
+						};
+					}, 
+				});
+
+				if (flags.withImport) {
+					buttons.push({ id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true });
+				};
+
+				if (items.length) {
+					buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
+				};
 			};
-
-			buttons.unshift({ 
-				id: 'add', icon: 'plus', onClick: () => {
-					U.Object.createType({ name: this.menuContext?.ref?.getData().filter }, keyboard.isPopup());
-					this.menuContext?.close();
-
-					if (param.data.onAdd) {
-						param.data.onAdd();
-					};
-				}, 
-			});
 
 			S.Menu.open('typeSuggest', {
 				...param,

@@ -216,7 +216,6 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown({ 
-			isWindow: !isPopup, 
 			container,
 			onMouseUp: () => onDragEnd(e),
 		});

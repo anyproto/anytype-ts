@@ -59,10 +59,15 @@ class Keyboard {
 				U.Data.getMembershipTiers(false);
 			};
 		});
+
+		win.on('focus.common', () => {
+			S.Common.windowIsFocusedSet(true);
+		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
+			S.Common.windowIsFocusedSet(false);
 
 			S.Menu.closeAll([ 'blockContext' ]);
 
@@ -209,7 +214,7 @@ class Keyboard {
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
 				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-				U.Space.openDashboard();
+				U.Space.openDashboard({ replace: false });
 			};
 			
 			Preview.previewHide(false);
@@ -265,7 +270,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('home', e, () => {
 				if (S.Auth.account && !S.Popup.isOpen('search')) {
-					U.Space.openDashboard();
+					U.Space.openDashboard({ replace: false });
 				};
 			});
 
@@ -281,7 +286,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#widget-space #widget-space-arrow').trigger('click');
+				$('#button-sidebar-select-type').trigger('click');
 			});
 
 			// Lock the app
@@ -382,7 +387,7 @@ class Keyboard {
 					if (item.targetSpaceId != S.Common.space) {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 					} else {
-						U.Space.openDashboard();
+						U.Space.openDashboard({ replace: false });
 						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
 					};
 				});
@@ -516,7 +521,7 @@ class Keyboard {
 				};
 
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
-					U.Space.openDashboard();
+					U.Space.openDashboard({ replace: false });
 				} else {
 					history.goBack();
 				};
@@ -1129,13 +1134,17 @@ class Keyboard {
 	 * Handles search popup action.
 	 * @param {string} route - The route context.
 	 */
-	onSearchPopup (route: string) {
+	onSearchPopup (route: string, param?: Partial<I.PopupParam>) {
+		param = param || {};
+		param.data = param.data || {};
+
 		if (S.Popup.isOpen('search')) {
 			S.Popup.close('search');
 		} else {
 			S.Popup.open('search', {
+				...param,
 				preventCloseByEscape: true,
-				data: { isPopup: this.isPopup(), route },
+				data: { ...param.data, isPopup: this.isPopup(), route },
 			});
 		};
 	};
@@ -1254,7 +1263,7 @@ class Keyboard {
 	 */
 	getMatch (isPopup?: boolean) {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
-
+		
 		let ret: any = { params: {} };
 		let data: any = {};
 

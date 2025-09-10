@@ -4,11 +4,12 @@ import { I, S, U, J, keyboard, analytics, Action, Highlight, translate } from 'L
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { setActive, close, getId, onKeyDown, param, getSize } = props;
+	const { id, param, setActive, close, getId, onKeyDown, getSize } = props;
 	const n = useRef(-1);
 
 	const rebind = () => {
 		unbind();
+
 		$(window).on('keydown.menu', e => onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 	};
@@ -17,17 +18,20 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		$(window).off('keydown.menu');
 	};
 
-	const optionMapper = (it: any) => ({ ...it, name: it.name || translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) });
+	const optionMapper = (it: any) => ({ 
+		...it, 
+		children: (it.children || []).map(optionMapper),
+		name: it.name || translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) 
+	});
 
 	const getItems = () => {
 		return [
 			{ 
-				id: 'whatsNew', icon: 'help-star', document: 'whatsNew', 
+				id: 'whatsNew', icon: 'help-bell', document: 'whatsNew', 
 				caption: <Button className="c16" text={U.Common.getElectron().version.app} /> 
 			},
 			{ id: 'shortcut', icon: 'help-keyboard', caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
-			//{ id: 'gallery' },
 			{ id: 'share' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
@@ -47,7 +51,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				],
 			},
 		].map(it => {
-			it.children = (it.children || []).map(optionMapper);
+			it.icon = it.icon || (it.id ? `help-${it.id}` : '');
 			return optionMapper(it);
 		});
 	};
@@ -75,6 +79,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			rebind,
+			parentId: id,
 			data: {
 				options: item.children,
 				onSelect: onClick,
@@ -124,9 +129,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				S.Popup.open('share', {});
 				break;
 			};
-
 		};
-
 	};
 
 	const items = getItems();
@@ -144,6 +147,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		onOver,
 	}), []);
 
 	return (
@@ -161,6 +165,10 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			<ShareTooltip
 				text={translate('shareTooltipLabel')}
+				onMouseEnter={() => {
+					n.current = -1;
+					S.Menu.closeAll([ 'select' ]);
+				}}
 				onClick={() => {
 					U.Router.go('/main/settings/membership', {});
 					analytics.event('ClickUpgradePlanTooltip', { type: 'help' });

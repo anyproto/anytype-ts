@@ -57,6 +57,14 @@ export const AppGetVersion = (callBack?: (message: any) => void) => {
 	dispatcher.request(AppGetVersion.name, new Empty(), callBack);
 };
 
+export const AppSetDeviceState = (state: I.AppDeviceState, callBack?: (message: any) => void) => {
+	const request = new Rpc.App.SetDeviceState.Request();
+
+	request.setDevicestate(state as number);
+
+	dispatcher.request(AppSetDeviceState.name, request, callBack);
+};
+
 // ---------------------- WALLET ---------------------- //
 
 export const WalletCreate = (path: string, callBack?: (message: any) => void) => {
@@ -308,8 +316,8 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, callBack?: (message: any) => void) => {
-	if (!url && !path) {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, callBack?: (message: any) => void) => {
+	if (!url && !path && !preloadFileId) {
 		return;
 	};
 
@@ -320,6 +328,8 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setLocalpath(path);
 	request.setType(type as number);
 	request.setDetails(Encode.struct(details));
+	request.setPreloadfileid(preloadFileId);
+	request.setPreloadonly(preloadOnly);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -349,6 +359,14 @@ export const FileNodeUsage = (callBack?: (message: any) => void) => {
 
 export const FileReconcile = (callBack?: (message: any) => void) => {
 	dispatcher.request(FileReconcile.name, new Empty(), callBack);
+};
+
+export const FileDiscardPreload = (fileId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.File.DiscardPreload.Request();
+
+	request.setFileid(fileId);
+
+	dispatcher.request(FileDiscardPreload.name, request, callBack);
 };
 
 // ---------------------- NAVIGATION ---------------------- //

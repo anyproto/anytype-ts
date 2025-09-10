@@ -19,7 +19,7 @@ class UtilSpace {
 			this.openFirstSpaceOrVoid(null, param);
 			return;
 		};
-		
+
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();
@@ -58,6 +58,10 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
+		if (space.isChat) {
+			return this.getChat();
+		};
+
 		const id = space.spaceDashboardId;
 
 		if (!id) {
@@ -65,16 +69,27 @@ class UtilSpace {
 		};
 
 		let ret = null;
-		if (id == I.HomePredefinedId.Graph) {
-			ret = this.getGraph();
-		} else
-		if (id == I.HomePredefinedId.Chat) {
-			ret = this.getChat();
-		} else
-		if (id == I.HomePredefinedId.Last) {
-			ret = this.getLastOpened();
-		} else {
-			ret = S.Detail.get(U.Space.getSubSpaceSubId(space.targetSpaceId), id);
+		switch (id) {
+			case I.HomePredefinedId.Graph: {
+				ret = this.getGraph();
+				break;
+			};
+
+			case I.HomePredefinedId.Chat: {
+				ret = this.getChat();
+				break;
+			};
+
+			case I.HomePredefinedId.Last: {
+				ret = this.getLastOpened();
+				break;
+			};
+
+			default: {
+				ret = S.Detail.get(U.Space.getSubSpaceSubId(space.targetSpaceId), id);
+				break;
+			};
+
 		};
 
 		if (!ret || ret._empty_ || ret.isDeleted) {

@@ -68,10 +68,13 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		const isRed = usagePercent >= 100;
 		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
-		if (isRed) {
+		if (isRed || notSyncedCounter) {
 			usageCn.push('red');
 			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={() => this.onUpgrade()} />;
-			label = translate('popupSettingsSpaceIndexStorageIsFullText');
+
+			if (notSyncedCounter) {
+				label = translate('popupSettingsSpaceIndexStorageIsFullText');
+			};
 		};
 
 		const Manager = (item: any) => {
@@ -160,10 +163,12 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		U.Subscription.destroyList([ J.Constant.subId.fileManagerSynced, J.Constant.subId.fileManagerNotSynced ]);
 	};
 
-	onUpgrade (id?: I.TierType) {
-		Action.membershipUpgrade(id);
+	onUpgrade () {
+		const usage = Math.round(U.Common.calculateStorageUsage());
 
-		analytics.event('ClickUpgradePlanTooltip', { type: `Storage100`, route: analytics.route.settingsStorage });
+		Action.membershipUpgrade();
+
+		analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.settingsStorage });
 	};
 
 	onRemove (refId: string) {

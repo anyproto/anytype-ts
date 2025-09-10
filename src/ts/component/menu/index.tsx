@@ -80,6 +80,8 @@ import MenuSyncStatusInfo from './syncStatus/info';
 
 import MenuIdentity from './identity';
 
+import MenuChatText from './chat/text';
+
 interface State {
 	tab: string;
 };
@@ -163,6 +165,8 @@ const Components: any = {
 	syncStatusInfo:			 MenuSyncStatusInfo,
 
 	identity:				 MenuIdentity,
+
+	chatText: 				 MenuChatText,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
@@ -488,7 +492,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			const win = $(window);
 			const node = $(this.node);
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
@@ -497,9 +500,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const borderLeft = this.getBorderLeft(isFixed);
 			const borderTop = this.getBorderTop();
 			const borderBottom = this.getBorderBottom();
-			const scrollTop = win.scrollTop();
 			const ww = winSize.ww;
-			const wh = winSize.wh + (!isFixed ? scrollTop : 0);
+			const wh = winSize.wh;
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
 
@@ -531,14 +533,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				};
 
 				const { left, top } = el.offset();
+
 				ew = el.outerWidth();
 				eh = el.outerHeight();
 				ox = left;
 				oy = top;
-			};
-
-			if (isFixed) {
-				oy -= scrollTop;
 			};
 
 			let x = ox;

@@ -13,7 +13,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
-	const [ isLoading, setIsLoading ] = useState(false);
 	const match = keyboard.getMatch(isPopup);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -25,13 +24,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		};
 
 		close();
-		setIsLoading(true);
 
 		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
-			setIsLoading(false);
-
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
@@ -42,6 +38,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			};
 
 			headerRef.current?.forceUpdate();
+			chatRef.current?.ref?.forceUpdate();
+
 			resize();
 		});
 	};
@@ -80,39 +78,22 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const resize = () => {
-		if (isLoading) {
-			return;
-		};
-
 		raf(() => {
 			const node = $(nodeRef.current);
-			const blocks = $(blocksRef.current);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const scrollWrapper = node.find('#scrollWrapper');
-			const formWrapper = node.find('#formWrapper').addClass('isFixed');
-			const controls = node.find('.editorControls');
-			const head = node.find('.headSimple');
-
+			const formWrapper = node.find('#formWrapper');
 			const fh = Number(formWrapper.outerHeight(true)) || 0;
-			const ch = Number(controls.outerHeight(true)) || 0;
-			const hh = Number(head.outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - J.Size.header - fh - ch - hh;
+			const mh = scrollContainer.height() - J.Size.header - fh;
 
 			scrollWrapper.css({ minHeight: mh });
-
-			if (type && type.layoutWidth) {
-				const pageContainer = U.Common.getPageContainer(isPopup);
-				const mw = pageContainer.width();
-				const size = mw * 0.6;
-				const w = (mw - 96 - size) * type.layoutWidth;
-				const width = Math.max(300, Math.max(size, Math.min(mw - 96, size + w)));
-
-				blocks.css({ maxWidth: width });
-			};
+			chatRef.current?.ref?.resize();
 		});
 	};
 
 	useEffect(() => {
+		S.Common.setRightSidebarState(false, '', false);
+
 		return () => close();
 	}, []);
 
@@ -126,26 +107,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	}));
 
 	let content = null;
-	let inner = null;
-
-	if (!isLoading) {
-		inner = (
-			<div ref={blocksRef} className="blocks">
-				<Block
-					{...props}
-					ref={chatRef}
-					key={J.Constant.blockId.chat}
-					rootId={rootId}
-					iconSize={20}
-					block={new M.Block({ id: J.Constant.blockId.chat, type: I.BlockType.Chat, childrenIds: [], fields: {}, content: {} })}
-					className="noPlus"
-					isSelectionDisabled={true}
-					isContextMenuDisabled={true}
-					readonly={isReadonly()}
-				/>
-			</div>
-		);
-	};
 
 	if (object.isDeleted) {
 		content = <Deleted {...props} />;
@@ -166,7 +127,20 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 				<div id="bodyWrapper" className="wrapper">
 					<div className="editorWrapper isChat">
-						{inner}
+						<div ref={blocksRef} className="blocks">
+							<Block
+								{...props}
+								ref={chatRef}
+								key={J.Constant.blockId.chat}
+								rootId={rootId}
+								iconSize={20}
+								block={new M.Block({ id: J.Constant.blockId.chat, type: I.BlockType.Chat, childrenIds: [], fields: {}, content: {} })}
+								className="noPlus"
+								isSelectionDisabled={true}
+								isContextMenuDisabled={true}
+								readonly={isReadonly()}
+							/>
+						</div>
 					</div>
 				</div>
 

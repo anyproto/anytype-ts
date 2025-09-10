@@ -99,11 +99,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const top = useRef(0);
 	const selected = useRef<string[]>([]);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: rowHeight || 64 }));
-	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const recordIds = S.Record.getRecordIds(subId, '');
 	const records = S.Record.getRecords(subId);
-	const scrollContainer = scrollElement || isPopup ? $('#popupPage-innerWrap').get(0) : window;
+	const scrollContainer = scrollElement || U.Common.getScrollContainer(isPopup).get(0);
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
@@ -200,8 +199,6 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			fl.push({ relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
 		};
 
-		setIsLoading(true);
-
 		U.Subscription.subscribe({
 			subId,
 			sorts,
@@ -212,8 +209,6 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			sources: sources || [],
 			collectionId: collectionId || ''
 		}, (message) => {
-			setIsLoading(false);
-
 			if (onAfterLoad) {
 				onAfterLoad(message);
 			};
@@ -374,56 +369,54 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 		content = (
 			<div className="items">
-				{isLoading ? <Loader /> : (
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => true}
-					>
-						{({ onRowsRendered }) => {
-							const Sizer = item => (
-								<AutoSizer {...autoSizerProps} className="scrollArea">
-									{({ width, height }) => {
-										let listProps: any = {};
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={({ index }) => true}
+				>
+					{({ onRowsRendered }) => {
+						const Sizer = item => (
+							<AutoSizer {...autoSizerProps} className="scrollArea">
+								{({ width, height }) => {
+									let listProps: any = {};
 
-										if (disableHeight) {
-											listProps = { ...item };
-											listProps.autoHeight = true;
-										} else {
-											listProps.height = height;
-										};
+									if (disableHeight) {
+										listProps = { ...item };
+										listProps.autoHeight = true;
+									} else {
+										listProps.height = height;
+									};
 
-										return (
-											<List
-												{...listProps}
-												ref={listRef}
-												width={Number(width) || 0}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={rowHeight || 64}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												onScroll={onScroll}
-												scrollToAlignment="start"
-											/>
-										);
-									}}
-								</AutoSizer>
+									return (
+										<List
+											{...listProps}
+											ref={listRef}
+											width={Number(width) || 0}
+											deferredMeasurmentCache={cache.current}
+											rowCount={items.length}
+											rowHeight={rowHeight || 64}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											onScroll={onScroll}
+											scrollToAlignment="start"
+										/>
+									);
+								}}
+							</AutoSizer>
+						);
+
+						if (disableHeight) {
+							return (
+								<WindowScroller scrollElement={scrollContainer}>
+									{props => <Sizer {...props} />}
+								</WindowScroller>
 							);
-
-							if (disableHeight) {
-								return (
-									<WindowScroller scrollElement={scrollContainer}>
-										{props => <Sizer {...props} />}
-									</WindowScroller>
-								);
-							} else {
-								return <Sizer />;
-							};
-						}}
-					</InfiniteLoader>
-				)}
+						} else {
+							return <Sizer />;
+						};
+					}}
+				</InfiniteLoader>
 			</div>
 		);
 	};
@@ -468,7 +461,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 				listRef.current.scrollToPosition(top.current);
 			};
 		};
-	});
+	}, [ records.length ]);
 
 	useImperativeHandle(ref, () => ({
 		getSelected: () => selected.current,

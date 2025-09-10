@@ -130,7 +130,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			);
 		} else {
 			content = (
-				<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+				<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
 					{({ height }) => (
 						<AutoSizer disableHeight={true} onResize={this.onResize}>
 							{({ width }) => (

@@ -7,7 +7,7 @@
 
 .header {
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; }
-	.side.left { padding: 0px 16px; flex-shrink: 0; gap: 0px 8px; }
+	.side.left { padding: 0px 12px; flex-shrink: 0; }
 	.side.center { flex-grow: 1; justify-content: center; max-width: 60%; }
 	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 	.side.right {
@@ -55,14 +55,19 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
+	.sync { -webkit-app-region: no-drag; }
+
+	.icon.back { margin-left: 8px; }
+	.icon.forward { margin-right: 8px; }
+
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
-	.icon.pin { background-image: url('~img/icon/menu/action/pin0.svg'); }
-	.icon.unpin { background-image: url('~img/icon/menu/action/unpin0.svg'); }
+	.icon.pin { background-image: url('~img/icon/header/pin.svg'); }
+	.icon.unpin { background-image: url('~img/icon/header/unpin.svg'); }
 	.icon.widgetPanel { background-image: url('~img/icon/header/widget.svg'); }
 	.icon.share { background-image: url('~img/icon/header/share.svg'); }
 }
@@ -80,13 +85,13 @@
 
 html:not(.platformMac) {
 	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 88px; }
+		.side.left { padding-left: 52px; }
 	}
 }
 
 body.isFullScreen {
 	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 88px; }
+		.side.left { padding-left: 52px; }
 	}
 }
 
@@ -106,7 +111,7 @@ body.isFullScreen {
 		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }
 	}
 
-	.logo { width: 70px; height: 18px; background: url('~img/logo/black.svg'); }
+	.logo { width: 70px; height: 18px; background: url('~img/icon/header/logo.svg'); }
 }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {

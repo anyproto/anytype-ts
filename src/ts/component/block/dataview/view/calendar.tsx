@@ -8,7 +8,7 @@ interface State {
 	value: number;
 };
 
-const PADDING = 46;
+const PADDING = 16;
 
 const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent, State> {
 
@@ -300,11 +300,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const mw = cw - PADDING * 2;
-		const margin = (cw - mw) / 2;
 		const day = node.find('.day').first();
 		const menu = S.Menu.get('calendarDay');
 
-		wrap.css({ width: cw, marginLeft: -margin - 2 });
+		wrap.css({ width: mw, marginLeft: -J.Size.blockMenu + PADDING });
 		win.trigger('resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {

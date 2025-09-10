@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-#selection { position: relative; user-select: none; }
+#selection { user-select: none; }
 #selection * { user-select: none; }
 #selection-rect { 
 	position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; display: none; z-index: 20; background: var(--color-system-selection); 

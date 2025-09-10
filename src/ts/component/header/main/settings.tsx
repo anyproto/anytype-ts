@@ -1,11 +1,10 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, translate, Relation, analytics, Action } from 'Lib';
-import { Icon, Label, Title, Button } from 'Component';
-import $ from 'jquery';
+import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
-	const { renderLeftIcons, menuOpen } = props;
+	const { menuOpen } = props;
 	const { account } = S.Auth;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;

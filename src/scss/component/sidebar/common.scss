@@ -18,11 +18,7 @@
 #sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
 #sidebarRightButton:not(.withSidebar) { display: none; }
 
-.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-.sidebarHeadIcon.toggle {
-	&:hover, &.hover { background-image: url('~img/icon/widget/toggle1.svg'); }
-}
-
+.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
 .sidebarHeadIcon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
@@ -43,8 +39,12 @@
 .sidebar.right {
 	@import "./preview";
 
-	.sidebarPage.pageWidget {
-		.body { padding-bottom: 12px; }
+	> .sidebarPage.pageWidget {
+		> .body {
+			> .content {
+				> .dropTarget.firstTarget { position: relative; }
+			}
+		}
 	}
 }
 
@@ -54,7 +54,7 @@
 
 	@import "./page";
 	
-	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; background: var(--color-bg-primary); }
+	.resize-h { width: 12px; height: calc(100% - 52px); cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 52px; background: var(--color-bg-primary); }
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;

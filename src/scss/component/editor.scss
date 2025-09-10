@@ -158,7 +158,7 @@
 	/* Chat */
 
 	&.isChat {
-		.blocks { max-width: 704px; width: calc(100% - 32px); margin: 0px auto; padding: 0px; user-select: none; }
+		.blocks { width: calc(100% - 64px); margin: 0px auto; padding: 0px; user-select: none; max-width: 960px; }
 		.blocks {
 			.block {
 				.wrapMenu { display: none; }

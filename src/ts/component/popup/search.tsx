@@ -14,7 +14,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
-	const { route } = data;
+	const { route, onObjectSelect, skipIds } = data;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ backlink, setBacklink ] = useState(null);
 	const nodeRef = useRef(null);
@@ -277,6 +277,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
 		};
 
+		if (skipIds && skipIds.length) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+		};
+
 		if (clear) {
 			setIsLoading(true);
 		};
@@ -339,14 +343,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		items = items.map(it => {
-			const type = S.Record.getTypeById(it.type);
-
-			return { 
-				...it,
-				caption: <ObjectType object={type} />,
-				isObject: true,
-			};
+			it.isObject = true;
+			return it;
 		});
+
+		if (onObjectSelect) {
+			return items;
+		};
 
 		/* Settings and pages */
 
@@ -473,6 +476,11 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		close(() => {
 			// Object
 			if (item.isObject) {
+				if (onObjectSelect) {
+					onObjectSelect(item);
+					return;
+				};
+
 				U.Object.openEvent(e, { ...item, id: item.id }, {
 					onRouteChange: () => {
 						if (!meta.blockId) {
@@ -681,6 +689,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (item.isObject) {
 			const { metaList } = item;
 			const meta = metaList[0] || {};
+			const type = S.Record.getTypeById(item.type);
 
 			let advanced = null;
 
@@ -711,7 +720,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="side left">
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
 						<Context {...meta} />
-						<div className="caption">{item.caption}</div>
+						<div className="caption">
+							<ObjectType object={type} />
+						</div>
 					</div>
 					<div className="side right">
 						{advanced}

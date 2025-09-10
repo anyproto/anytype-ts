@@ -84,7 +84,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			const nh = node.outerHeight();
 			const st = container.scrollTop();
 			const hh = J.Size.header;
-			const y = isPopup ? (no - container.offset().top + st) : no;
+			const y = no - container.offset().top + st;
 
 			if (y <= st + hh) {
 				container.scrollTop(y - nh - hh);
@@ -125,7 +125,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		keyboard.disablePreview(true);
 
-		if (isPopup && container.length) {
+		if (container.length) {
 			containerOffset.current = container.offset();
 			x.current -= containerOffset.current.left;
 			y.current -= containerOffset.current.top - top.current;
@@ -144,7 +144,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			};
 		};
 		
-		scrollOnMove.onMouseDown({ isWindow: !isPopup, container });
+		scrollOnMove.onMouseDown({ container });
 		unbindMouse();
 
 		win.on(`mousemove.selection`, e => onMouseMove(e));
@@ -204,7 +204,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		const st = container.scrollTop();
 		const d = st > top.current ? 1 : -1;
 		const cx = keyboard.mouse.page.x;
-		const cy = keyboard.mouse.page.y + (!isPopup ? Math.abs(st - top.current) * d : 0);
+		const cy = keyboard.mouse.page.y + Math.abs(st - top.current) * d;
 		const rect = getRect(x.current, y.current, cx, cy);
 		const wh = container.height();
 

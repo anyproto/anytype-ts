@@ -7,26 +7,11 @@
 
     > .body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 6px 12px 12px; position: relative; flex-grow: 1; overscroll-behavior: none; }
     > .body {
-        .list { display: flex; flex-direction: column; justify-content: space-between;  height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
+        .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
         .list {
-			> .head { 
-				display: flex; gap: 0px 6px; align-items: center; border-bottom: 1px solid var(--color-shape-secondary); @include text-paragraph;
-				font-weight: 600; padding: 4px 16px 11px 8px; 
-			}
-			> .head {
-				.icon { width: 24px !important; height: 24px !important; background-size: 20px !important; }
-				.icon.back { background-image: url('~img/icon/widget/back0.svg'); flex-shrink: 0; }
-				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-
-				.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
-				.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
-
-				.name, .title { @include text-overflow-nw; }
-			}
-
 			.ReactVirtualized__List { padding: 0px 8px; }
 
-            .inner { height: 100%; }
+            .inner { flex-grow: 1; }
             .row {
                 > .section { padding-top: 16px; }
                 > .section.isFirst { padding-top: 4px; }
@@ -82,7 +67,6 @@
     > .body {
         > .list { padding-bottom: 0px; }
         > .list {
-            .inner { height: calc(100% - 45px); }
             .ReactVirtualized__List { padding-bottom: 8px; }
         }
     }
@@ -92,7 +76,6 @@
     > .body {
         > .list { padding-bottom: 0px; justify-content: flex-start; }
         > .list {
-            .inner { height: calc(100% - 87px); }
             .ReactVirtualized__List { padding-bottom: 8px; padding-top: 2px; }
 
             > .head { justify-content: space-between; }
@@ -102,7 +85,7 @@
             }
         }
 
-        .filterWrapper { display: flex; gap: 0px 8px; padding: 16px 16px 0px; }
+        .filterWrapper { display: flex; gap: 0px 8px; padding: 8px 16px; }
         .filterWrapper {
 			.side.left { flex-grow: 1; }
 			.side.right { flex-shrink: 0; }
