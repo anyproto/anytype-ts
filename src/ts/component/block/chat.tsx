@@ -532,7 +532,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
 				};
 				if (!it.isReadMention) {
-					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
+					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Mention);
 				};
 			});
 		};
@@ -547,7 +547,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const readMessage = (id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
-		S.Chat.setReadMessageStatus(getSubId(), [ id ], true);
+		const chatId = getChatId();
+		const subId = getSubId();
+
+		if (type == I.ChatReadType.Message) {
+			S.Chat.setReadMessageStatus(subId, [ id ], true);
+		};
+		if (type == I.ChatReadType.Mention) {
+			S.Chat.setReadMentionStatus(subId, [ id ], true);
+		};
+
 		C.ChatReadMessages(chatId, orderId, orderId, lastStateId, type);
 	};
 
