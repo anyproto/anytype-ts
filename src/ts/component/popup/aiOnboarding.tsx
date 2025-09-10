@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, getSparkOnboardingService, keyboard } from 'Lib';
+import { I, S, U, J, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
 
@@ -112,6 +112,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const messagesEndRef = useRef(null);
 	const inputRef = useRef(null);
 	const { SparkOnboarding: sparkOnboarding } = S;
+	const theme = S.Common.getThemeClass();
 	
 	// Error message helper
 	const getErrorMessage = (error: I.OnboardingError): string => {

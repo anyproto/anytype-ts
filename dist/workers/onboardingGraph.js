@@ -875,18 +875,11 @@ drawRadialNode = (d) => {
 	// Draw outer glow for hover/selected states
 	if (io || isSelected || (root && d.id === root.id)) {
 		const glowGradient = ctx.createRadialGradient(x, y, radius, x, y, nodeStyle.glowRadius);
-		// Create a lighter version of the edge color for glow
-		let lightGlowColor;
-		if (d.type === 'type') {
-			// Light green glow for types
-			lightGlowColor = 'hsla(155, 76%, 90%, 0.4)'; // Very light green with some opacity
-		} else {
-			// Light blue glow for objects
-			lightGlowColor = 'hsla(201, 100%, 92%, 0.4)'; // Very light blue with some opacity
-		}
+		// Use the node's specific glow color if available, otherwise use default
+		const glowColor = d.glowColor || nodeStyle.glowColor;
 		
 		glowGradient.addColorStop(0, 'rgba(255, 255, 255, 0)'); // Transparent at center
-		glowGradient.addColorStop(0.3, lightGlowColor); // Light color
+		glowGradient.addColorStop(0.3, glowColor); // Use node's glow color
 		glowGradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Transparent at edge
 		
 		ctx.fillStyle = glowGradient;
@@ -983,13 +976,15 @@ drawRadialNode = (d) => {
 		lines.forEach((line, lineIndex) => {
 			const lineY = y + yOffset + (lineIndex * textHeight * 1.2);
 			
-			// White glow effect
-			ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-			ctx.lineWidth = 4 / transform.k;
-			ctx.strokeText(line, x, lineY);
+			// Use theme text shadow - always apply if provided
+			if (data.colors.textShadow && data.colors.textShadow !== 'none') {
+				ctx.strokeStyle = data.colors.textShadow;
+				ctx.lineWidth = 4 / transform.k;  // Slightly thicker for better visibility
+				ctx.strokeText(line, x, lineY);
+			}
 			
-			// Draw text
-			ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+			// Draw text with theme color
+			ctx.fillStyle = data.colors.text;
 			ctx.fillText(line, x, lineY);
 		});
 	}
@@ -1020,12 +1015,12 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	// Force full opacity for edges - they are ALWAYS visible
 	ctx.globalAlpha = 1;
 	
-	// Edge color - subtle gray
-	let colorLink = data.colors.link || 'rgba(160, 160, 160, 0.4)'; // Lighter gray edges
+	// Edge color - use theme colors
+	let colorLink = data.colors.link;
 	
 	if (io) {
-		// Highlight the edge if connected to hovered node - slightly darker
-		colorLink = data.colors.highlight || 'rgba(120, 120, 120, 0.6)'; // Slightly darker when highlighted
+		// Highlight the edge if connected to hovered node
+		colorLink = data.colors.highlight;
 	}
 	
 	// Draw the edge line - thin and subtle
