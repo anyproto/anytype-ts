@@ -491,13 +491,15 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			setMessages(prev => {
 				const newMessages = [...prev];
 				const lastMessage = newMessages[newMessages.length - 1];
+
 				if (lastMessage && lastMessage.type === 'ai') {
 					lastMessage.content = (
 						<div>
 							<Error text={error || translate('popupAiOnboardingErrorDefault')} />
 						</div>
 					);
-				}
+				};
+
 				return newMessages;
 			});
 		};
@@ -550,7 +552,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	};
 
 	// Render error state with better UI (but allow retry with loading)
-	if (sparkOnboarding.error && (!sparkOnboarding.isLoading || sparkOnboarding.error === 'Failed to connect to onboarding service')) {
+	if (sparkOnboarding.error && (!sparkOnboarding.isLoading || (sparkOnboarding.error === 'Failed to connect to onboarding service'))) {
 		// Show loading overlay during retry
 		if (sparkOnboarding.isLoading) {
 			return (
@@ -674,6 +676,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							</button>
 						</div>
 					)}
+
 					{showInput && (
 						<div className="inputArea">
 							{/* Smart Suggestions */}
@@ -701,7 +704,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 										if (e.key === 'Enter' && !e.shiftKey) {
 											e.preventDefault();
 											handleSubmit();
-										}
+										};
 									}}
 									placeholder={
 										sparkOnboarding.step === I.OnboardingStep.Questions 
