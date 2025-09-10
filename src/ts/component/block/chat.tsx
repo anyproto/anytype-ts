@@ -471,7 +471,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
-			dates.css({ position: 'relative', left: '', top: '', width: '' });
+			dates.css({ position: 'static', left: '', top: '', width: '' });
 
 			let last = null;
 
