@@ -1,0 +1,54 @@
+.layoutPlug {
+    &.isFile {
+        .fileInfo { display: flex; flex-direction: column; gap: 10px 0px; }
+        .fileInfo {
+            .title { @include text-paragraph; font-weight: 600; color: var(--color-text-secondary); }
+
+            dl { @include text-common; display: flex; align-items: center; justify-content: space-between; max-width: 284px; flex-wrap: nowrap; }
+            dl {
+                dt { @include text-overflow-nw; }
+                dd { width: 64px; height: 12px; border-radius: 2px; flex-shrink: 0; background: var(--color-shape-secondary); }
+            }
+        }
+    }
+
+    &.layoutFormatPage { display: flex; flex-direction: column; justify-content: flex-start; gap: 14px 0px; }
+    &.layoutFormatPage {
+        .line { width: 100%; height: 10px; background: var(--color-shape-secondary); }
+        .line:last-child { width: 75%; }
+    }
+
+    &.layoutFormatList {
+        &.viewGrid { display: flex; flex-direction: column; justify-content: flex-start; gap: 39px 0px; }
+        &.viewGrid {
+            .line { width: 100%; height: 1px; background: var(--color-shape-secondary); }
+            .line:last-child { width: 100%; }
+        }
+
+        &.viewList { display: flex; flex-direction: column; justify-content: flex-start; gap: 22px 0px; }
+        &.viewList {
+            .line { width: 60%; height: 12px; background: var(--color-shape-secondary); }
+            .line:nth-child(2),
+            .line:nth-child(4) { width: 50%; }
+        }
+
+        &.viewBoard { display: flex; justify-content: flex-start; gap: 0px 24px; }
+        &.viewBoard {
+            .group { width: 25%; }
+            .group {
+                .headerPlug { height: 12px; width: 96px; border-radius: 2px; background-color: var(--color-shape-secondary); margin-bottom: 14px; }
+                .item { width: 100%; height: 96px; border: 1px solid var(--color-shape-secondary); opacity: 0.8; border-radius: 8px; margin-bottom: 8px; box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05); }
+            }
+        }
+
+        &.viewGallery { display: flex; gap: 16px; flex-wrap: wrap; }
+        &.viewGallery {
+            .line { width: calc(33% - 9px); height: 96px; border: 1px solid var(--color-shape-secondary); opacity: 0.8; border-radius: 8px; }
+        }
+
+        &.viewCalendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-left: 1px solid var(--color-shape-secondary);  border-top: 1px solid var(--color-shape-secondary); }
+        &.viewCalendar {
+            .day { height: 136px; border-right: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary); }
+        }
+    }
+}

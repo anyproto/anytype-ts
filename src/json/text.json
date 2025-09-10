@@ -686,10 +686,6 @@
 	"blockDataviewEmptyTargetDescription": "Connect one of your %s or create a new<br/>one to continue",
 	"blockDataviewEmptyTargetButton": "Select Source",
 
-	"blockDataviewEmptySourceTitle": "No query selected",
-	"blockDataviewEmptySourceDescription": "Add search query to aggregate Objects with equal<br/>Types and Properties in a live mode",
-	"blockDataviewEmptySourceButton": "Select query",
-
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
 
 	"blockDataviewControlsFilters": "Filters",

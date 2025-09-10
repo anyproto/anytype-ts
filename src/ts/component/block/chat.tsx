@@ -509,7 +509,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const dir = top.current > st ? -1 : 1;
 
 		setIsBottom(st >= U.Common.getMaxScrollHeight(isPopup));
 
@@ -532,7 +531,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				if (!it.isReadMessage) {
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
 				};
-				if (!it.isReadMention) {
+				if (!it.isReadMention && it.hasMention) {
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Mention);
 				};
 			});
@@ -994,6 +993,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 										onReplyEdit={e => onReplyEdit(e, item)}
 										onReplyClick={e => onReplyClick(e, item)}
 										getReplyContent={getReplyContent}
+										scrollToBottom={scrollToBottomCheck}
 									/>
 								);
 							};
