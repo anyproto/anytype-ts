@@ -1,12 +1,13 @@
 import { observable, action, makeObservable, computed } from 'mobx';
 import { I, getSparkOnboardingService } from 'Lib';
 import { SparkOnboardingService } from 'Lib/service/sparkOnboarding';
+import { GRAPH_CONFIG, UI_CONFIG, VALIDATION_CONFIG } from 'Lib/constant/sparkOnboarding';
 
 class SparkOnboardingStore {
 	step: I.OnboardingStep = I.OnboardingStep.Goal;
 	isConnected: boolean = false;
 	isLoading: boolean = false;
-	error: string | null = null;
+	error: I.OnboardingError | null = null;
 	
 	userGoal: string = '';
 	questions: string[] = [];
@@ -25,8 +26,11 @@ class SparkOnboardingStore {
 	manifest: I.WorkspaceManifest | null = null;
 
 	// Graph visualization data - empty initially, will be populated by WebSocket events
-	graphNodes: any[] = [];
-	graphLinks: any[] = [];
+	graphNodes: I.GraphNode[] = [];
+	graphLinks: I.GraphLink[] = [];
+	
+	// Track animation timeouts for cleanup
+	private animationTimeouts: number[] = [];
 
 	private service: SparkOnboardingService | null = null;
 
@@ -88,7 +92,7 @@ class SparkOnboardingStore {
 		if (enableExamples && this.graphNodes.length === 0) {
 			const width = window.innerWidth;
 			const height = window.innerHeight;
-			const popupWidth = 720;
+			const popupWidth = UI_CONFIG.POPUP_WIDTH;
 			const popupLeft = (width - popupWidth) / 2;
 			const popupRight = popupLeft + popupWidth;
 			
@@ -188,8 +192,6 @@ class SparkOnboardingStore {
 				}
 			});
 			
-			console.log('SparkOnboarding: Adding sample nodes', sampleNodes);
-			
 			// Use push to trigger observable updates
 			sampleNodes.forEach(node => this.graphNodes.push(node));
 			sampleLinks.forEach(link => this.graphLinks.push(link));
@@ -197,6 +199,10 @@ class SparkOnboardingStore {
 	};
 
 	reset (): void {
+		// Clear all animation timeouts
+		this.animationTimeouts.forEach(id => clearTimeout(id));
+		this.animationTimeouts = [];
+		
 		this.step = I.OnboardingStep.Goal;
 		this.isConnected = false;
 		this.isLoading = false;
@@ -234,7 +240,10 @@ class SparkOnboardingStore {
 			this.isConnected = true;
 			this.error = null; // Clear error only on success
 		} catch (error) {
-			this.error = error.message || 'Failed to connect to onboarding service';
+			this.error = {
+				code: I.OnboardingErrorCode.ConnectionFailed,
+				message: error.message
+			};
 			this.isConnected = false;
 		} finally {
 			this.isLoading = false;
@@ -242,6 +251,10 @@ class SparkOnboardingStore {
 	};
 
 	disconnect (): void {
+		// Clear all animation timeouts
+		this.animationTimeouts.forEach(id => clearTimeout(id));
+		this.animationTimeouts = [];
+		
 		if (this.service) {
 			this.service.disconnect();
 			this.isConnected = false;
@@ -279,7 +292,10 @@ class SparkOnboardingStore {
 		try {
 			this.service.startOnboarding(this.userGoal);
 		} catch (error) {
-			this.error = error.message || 'Failed to start onboarding';
+			this.error = {
+				code: I.OnboardingErrorCode.Generic,
+				message: error.message
+			};
 		};
 	};
 
@@ -294,7 +310,10 @@ class SparkOnboardingStore {
 		try {
 			this.service.submitAnswers(this.answers);
 		} catch (error) {
-			this.error = error.message || 'Failed to submit answers';
+			this.error = {
+				code: I.OnboardingErrorCode.Generic,
+				message: error.message
+			};
 		};
 	};
 
@@ -309,7 +328,10 @@ class SparkOnboardingStore {
 		try {
 			this.service.confirmTypes(this.selectedTypes);
 		} catch (error) {
-			this.error = error.message || 'Failed to confirm types';
+			this.error = {
+				code: I.OnboardingErrorCode.Generic,
+				message: error.message
+			};
 		};
 	};
 
@@ -331,14 +353,16 @@ class SparkOnboardingStore {
 
 			await this.service.importWorkspace(this.downloadUrl, manifestWithGeneratedName);
 		} catch (error) {
-			this.error = error.message || 'Failed to import workspace';
+			this.error = {
+				code: I.OnboardingErrorCode.ImportFailed,
+				message: error.message
+			};
 			this.isLoading = false;
 		};
 	};
 
-	addGraphNode (node: any): void {
-		// Increase limit to handle more nodes - performance should be fine with modern browsers
-		const MAX_NODES = 50; // Increased from 20 to 50
+	addGraphNode (node: I.GraphNode): void {
+		const MAX_NODES = GRAPH_CONFIG.MAX_NODES;
 
 		if (this.graphNodes.find(n => n.id === node.id)) {
 			return;
@@ -350,12 +374,22 @@ class SparkOnboardingStore {
 			const objectIndex = this.graphNodes.findIndex(n => n.type === 'object');
 
 			if (objectIndex !== -1) {
+				const removedNode = this.graphNodes[objectIndex];
 				this.graphNodes.splice(objectIndex, 1);
+				// Also remove any links referencing the removed node
+				this.graphLinks = this.graphLinks.filter(
+					l => l.source !== removedNode.id && l.target !== removedNode.id
+				);
 			} else {
 				// If no objects, remove the oldest non-sample node
 				const nonSampleIndex = this.graphNodes.findIndex(n => !n.id.startsWith('sample-'));
 				if (nonSampleIndex !== -1) {
+					const removedNode = this.graphNodes[nonSampleIndex];
 					this.graphNodes.splice(nonSampleIndex, 1);
+					// Also remove any links referencing the removed node
+					this.graphLinks = this.graphLinks.filter(
+						l => l.source !== removedNode.id && l.target !== removedNode.id
+					);
 				};
 			};
 		};
@@ -363,7 +397,7 @@ class SparkOnboardingStore {
 		this.graphNodes.push(node);
 	};
 
-	addGraphLink (link: any): void {
+	addGraphLink (link: I.GraphLink): void {
 		const linkExists = this.graphLinks.some(l => (l.source === link.source) && (l.target === link.target));
 
 		if (!linkExists) {
@@ -376,9 +410,9 @@ class SparkOnboardingStore {
 		const height = typeof window !== 'undefined' ? window.innerHeight : 800;
 		
 		// Popup dimensions with extra margin
-		const popupWidth = 720;
-		const popupHeight = 680;
-		const safeMargin = 100; // Extra margin around popup
+		const popupWidth = UI_CONFIG.POPUP_WIDTH;
+		const popupHeight = UI_CONFIG.POPUP_HEIGHT;
+		const safeMargin = UI_CONFIG.SAFE_MARGIN;
 		
 		// Calculate available space on each side
 		const horizontalSpace = (width - popupWidth) / 2;
@@ -386,7 +420,7 @@ class SparkOnboardingStore {
 		
 		// Decide whether to use horizontal (left/right) or vertical (top/bottom) placement
 		// Use horizontal if there's enough space on the sides
-		const useHorizontal = horizontalSpace > 250; // Need at least 250px on each side
+		const useHorizontal = horizontalSpace > UI_CONFIG.MIN_HORIZONTAL_SPACE;
 		
 		if (useHorizontal) {
 			// Position nodes firmly on left and right edges
@@ -426,7 +460,6 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('sessionReconnected', (data: any) => {
-			console.log('[SparkOnboarding Store] Session reconnected, restoring state:', data);
 			this.isConnected = true;
 			
 			// Restore state from reconnection data
@@ -462,7 +495,10 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('error', (error: Error) => {
-			this.error = error.message;
+			this.error = {
+				code: I.OnboardingErrorCode.Generic,
+				message: error.message
+			};
 			this.isLoading = false;
 		});
 
@@ -492,14 +528,11 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('userBenefitGenerated', (benefit: string) => {
-			console.log('[SparkOnboarding Store] userBenefitGenerated received, changing step from', this.step, 'to UserBenefit');
 			this.userBenefit = benefit;
 			this.step = I.OnboardingStep.UserBenefit;
 		});
 
 		this.service.on('analysisComplete', (data: { spaceName: string; suggestedTypes: I.SuggestedType[] }) => {
-			console.log('[SparkOnboarding Store] Suggested types:', data.suggestedTypes);
-
 			this.spaceName = data.spaceName;
 			this.suggestedTypes = data.suggestedTypes;
 			// Pre-select all types by default
@@ -575,13 +608,14 @@ class SparkOnboardingStore {
 					// Extract icon from the type data (if available in the new structure)
 					const iconName = (type as any).icon || undefined;
 					
-					const node = {
+					const node: I.GraphNode = {
 						id: nodeId,
-						type: 'type',
+						type: 'type' as const,
 						label: type.name,
 						iconName: iconName, // Use icon from analysis_complete message
 						x: x || 100,
-						y: y || 100
+						y: y || 100,
+						opacity: 0.9
 					};
 
 					this.addGraphNode(node);
@@ -610,7 +644,7 @@ class SparkOnboardingStore {
 								objX = Math.max(margin, Math.min(window.innerWidth - margin, objX));
 								objY = Math.max(margin, Math.min(window.innerHeight - margin, objY));
 								
-								const objectNode = {
+								const objectNode: I.GraphNode = {
 									id: objectId,
 									type: 'object' as const,
 									label: title,
@@ -647,8 +681,14 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('typeGenerated', (typeName: string, icon: string, properties: string[]) => {
+			// Update generation progress
+			this.generationProgress.current = Math.min(
+				this.generationProgress.total,
+				this.generationProgress.current + 1
+			);
+			this.generationProgress.types?.push(typeName);
+			
 			// later on we will add type-to-type properties and handle them here
-			return;
 		});
 
 		// propertyGenerated is no longer sent - properties are included in typeGenerated
@@ -660,16 +700,31 @@ class SparkOnboardingStore {
 
 		this.service.on('generationProgress', (status: string, progress: number) => {
 			this.generationProgress.status = status;
+			
+			// Update current based on progress value
+			const total = this.generationProgress.total;
+			if (total > 0 && progress >= 0) {
+				// Assuming server sends progress as 0..1
+				const current = Math.round(progress * total);
+				// Only update if it's greater than our current value (in case events arrive out of order)
+				this.generationProgress.current = Math.max(this.generationProgress.current, current);
+			}
 		});
 
 		this.service.on('workspaceReady', (downloadUrl: string, spaceName: string) => {
 			this.downloadUrl = downloadUrl;
-			// Create a minimal manifest with just the space name
-			// The actual counts will be taken from generationProgress
+			
+			// Calculate manifest counts from reliable sources
+			// Use generationStarted total or suggestedTypes length for types count
+			const typesCount = this.generationProgress.total || this.suggestedTypes.length;
+			
+			// Count objects from graph nodes (this is a view concern but acceptable for now)
+			const objectsCount = this.graphNodes.filter(n => n.type === 'object').length;
+			
 			this.manifest = {
 				spaceName: spaceName,
-				typesCount: this.generationProgress.types.length,
-				objectsCount: this.graphNodes.filter(n => n.type === 'object').length,
+				typesCount: typesCount,
+				objectsCount: objectsCount,
 				createdAt: new Date().toISOString()
 			};
 			this.step = I.OnboardingStep.Complete;
@@ -686,7 +741,10 @@ class SparkOnboardingStore {
 		});
 
 		this.service.on('importError', (error: string) => {
-			this.error = error;
+			this.error = {
+				code: I.OnboardingErrorCode.ImportFailed,
+				message: error
+			};
 			this.isLoading = false;
 		});
 	};
@@ -694,7 +752,9 @@ class SparkOnboardingStore {
 	get isValid (): boolean {
 		switch (this.step) {
 			case I.OnboardingStep.Goal: {
-				return this.userGoal.trim().length > 10;
+				// Align with UI validation - UI allows submission at >=3 chars
+				// But for isValid we require more substantial input
+				return this.userGoal.trim().length >= VALIDATION_CONFIG.VALID_GOAL_LENGTH;
 			};
 
 			case I.OnboardingStep.Questions: {

@@ -597,16 +597,17 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					border: 1px solid rgba($lavender-cool, 0.15);
 					border-radius: 16px;
 					font-size: 13px;
+					font-weight: 400;
 					line-height: 1.4;
 					color: $ink-deep;
 					cursor: pointer;
 					transition: all 0.2s $smooth-curve;
 					animation: chipFadeIn 0.3s $smooth-curve backwards;
-					background: rgba(255, 255, 255, 0.95); // Solid background instead of blur
-					text-align: left;
 					min-height: 48px;
 					display: flex;
 					align-items: center;
+					text-align: left;
+					justify-content: flex-start;
 					word-wrap: break-word;
 					hyphens: auto;
 					
@@ -1091,6 +1092,16 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 			}
 		}
 
+		// Reconnecting overlay styles
+		.reconnectingOverlay {
+			text-align: center;
+			margin-top: 20px;
+			color: rgba($ink-deep, 0.6);
+			font-family: 'Inter', -apple-system, sans-serif;
+			font-size: 14px;
+			font-weight: 500;
+		}
+
 		// Responsive adjustments
 		@media (max-width: 1279px) {
 			.innerWrap {
@@ -1208,6 +1219,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 		transform: scale(1);
 	}
 }
+
 
 @keyframes shimmer {
 	to {

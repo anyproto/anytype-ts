@@ -112,11 +112,29 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	const messagesEndRef = useRef(null);
 	const inputRef = useRef(null);
 	const { SparkOnboarding: sparkOnboarding } = S;
+	
+	// Error message helper
+	const getErrorMessage = (error: I.OnboardingError): string => {
+		const errorTranslations: Record<I.OnboardingErrorCode, string> = {
+			[I.OnboardingErrorCode.ConnectionFailed]: 'popupAiOnboardingConnectionError',
+			[I.OnboardingErrorCode.WorkspaceCreateFailed]: 'popupAiOnboardingWorkspaceCreateError',
+			[I.OnboardingErrorCode.ImportFailed]: 'popupAiOnboardingImportError',
+			[I.OnboardingErrorCode.Generic]: 'popupAiOnboardingGenericError',
+		};
+		
+		const translationKey = errorTranslations[error.code];
+		if (translationKey) {
+			return translate(translationKey);
+		}
+		
+		return error.message || translate('popupAiOnboardingGenericError');
+	};
 
 	const [ messages, setMessages ] = useState<Message[]>([]);
 	const [ inputValue, setInputValue ] = useState('');
 	const [ selectedTypes, setSelectedTypes ] = useState<string[]>([]);
 	const [ currentQuestionIndex, setCurrentQuestionIndex ] = useState(0);
+	const [ waitingForResponse, setWaitingForResponse ] = useState(false);
 	const [ randomExamples, setRandomExamples ] = useState<string[]>([]);
 	const [ filteredExamples, setFilteredExamples ] = useState<string[]>([]);
 	const [ showExamples, setShowExamples ] = useState(true);
@@ -201,12 +219,13 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	};
 
 	const handleGoalSubmit = async () => {
-		if (!inputValue.trim() || (inputValue.trim().length < 3)) {
+		if (!inputValue.trim() || (inputValue.trim().length < 3) || waitingForResponse) {
 			return;
 		};
 
 		setShowExamples(false);
 		setIsSending(true);
+		setWaitingForResponse(true); // Disable immediately after sending
 		
 		addMessage('user', inputValue);
 
@@ -221,13 +240,15 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		// Start onboarding immediately
 		sparkOnboarding.startOnboarding();
 		setIsSending(false);
+		// Keep waitingForResponse true - will be cleared when questions appear
 	};
 
 	const handleQuestionAnswer = () => {
-		if (!inputValue.trim()) {
+		if (!inputValue.trim() || waitingForResponse) {
 			return;
 		};
 
+		setWaitingForResponse(true); // Disable immediately after sending
 		addMessage('user', inputValue);
 		
 		const answers = [...(sparkOnboarding.answers || [])];
@@ -238,11 +259,16 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		if (currentQuestionIndex < sparkOnboarding.questions.length - 1) {
 			// Show next question immediately - no delay
 			setCurrentQuestionIndex(currentQuestionIndex + 1);
-			addMessage('ai', <Label text={sparkOnboarding.questions[currentQuestionIndex + 1]} />);
+			setTimeout(() => {
+				addMessage('ai', <Label text={sparkOnboarding.questions[currentQuestionIndex + 1]} />);
+				setWaitingForResponse(false); // Re-enable for next question
+				inputRef.current?.focus();
+			}, 100);
 		} else {
-			// After last question, show status while waiting for server response
+			// After last question, keep disabled until benefit message
 			updateStatus(translate('aiOnboardingStatusUnderstanding'));
 			sparkOnboarding.submitAnswers();
+			// waitingForResponse stays true until benefit appears
 		};
 	};
 
@@ -318,6 +344,9 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		const initial = shuffled.slice(0, 6); // Show 6 examples for better coverage
 		setRandomExamples(initial);
 		setFilteredExamples(initial); // Initially show the random selection
+		
+		// Ensure input is enabled for initial goal step
+		setWaitingForResponse(false);
 	}, []);
 
 	// Filter examples based on input
@@ -402,6 +431,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				// Show first question right after
 				setTimeout(() => {
 					addMessage('ai', <Label text={sparkOnboarding.questions[0]} />);
+					setWaitingForResponse(false);
+					inputRef.current?.focus();
 					scrollToBottom();
 				}, 100);
 				break;
@@ -412,6 +443,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					// Show the benefit text
 					addMessage('ai', sparkOnboarding.userBenefit);
 					setBenefitShown(true);
+					// No need to clear waitingForResponse since input is hidden at this step
 					scrollToBottom();
 					
 					// Show status immediately for drafting types
@@ -531,6 +563,10 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 	// Handle submit
 	const handleSubmit = () => {
+		if (waitingForResponse) {
+			return;
+		};
+		
 		if (sparkOnboarding.step === I.OnboardingStep.Goal) {
 			handleGoalSubmit();
 		} else if (sparkOnboarding.step === I.OnboardingStep.Questions) {
@@ -538,7 +574,12 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		};
 	};
 
-	const showInput = sparkOnboarding.step === I.OnboardingStep.Goal || sparkOnboarding.step === I.OnboardingStep.Questions;
+	const allQuestionsAnswered = sparkOnboarding.step === I.OnboardingStep.Questions && 
+		sparkOnboarding.answers && 
+		sparkOnboarding.answers.length === sparkOnboarding.questions.length;
+	
+	const showInput = (sparkOnboarding.step === I.OnboardingStep.Goal) || 
+		(sparkOnboarding.step === I.OnboardingStep.Questions && !allQuestionsAnswered);
 	const showCreateSpace = sparkOnboarding.step === I.OnboardingStep.Complete && sparkOnboarding.manifest;
 	const showGoToSpace = newSpaceId && !isImporting;
 
@@ -552,13 +593,13 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 	};
 
 	// Render error state with better UI (but allow retry with loading)
-	if (sparkOnboarding.error && (!sparkOnboarding.isLoading || (sparkOnboarding.error === 'Failed to connect to onboarding service'))) {
+	if (sparkOnboarding.error && (!sparkOnboarding.isLoading || (sparkOnboarding.error.code === I.OnboardingErrorCode.ConnectionFailed))) {
 		// Show loading overlay during retry
 		if (sparkOnboarding.isLoading) {
 			return (
 				<div ref={nodeRef} className="wrap">
 					<Loader id="loader" />
-					<div style={{ textAlign: 'center', marginTop: '20px', color: 'rgba(0,0,0,0.6)' }}>
+					<div className="reconnectingOverlay">
 						Reconnecting...
 					</div>
 				</div>
@@ -573,14 +614,12 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					</div>
 					<div className="errorTitle">{translate('popupAiOnboardingConnectionIssueTitle')}</div>
 					<div className="errorMessage">
-						{sparkOnboarding.error === 'Failed to connect to onboarding service' 
-							? translate('popupAiOnboardingConnectionError')
-							: sparkOnboarding.error}
+						{getErrorMessage(sparkOnboarding.error)}
 					</div>
 					<div className="errorActions">
 						<Button 
 							className="c28 primary" 
-							text="Try Again" 
+							text={translate('commonRetry')} 
 							onClick={() => {
 								// Just trigger connect, don't reset error
 								// The error will be cleared on successful connection
@@ -590,7 +629,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 						<Button 
 							className="c28 secondary" 
-							text="Close" 
+							text={translate('commonClose')} 
 							onClick={() => onClose(true)} 
 						/>
 					</div>
@@ -624,7 +663,11 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							})}
 						</div>
 					</div>
-					<button className="closeButton" onClick={() => onClose()} title="Exit">Exit</button>
+					<Button 
+						className="closeButton" 
+						onClick={() => onClose()} 
+						text={translate('commonCancel')}
+					/>
 				</div>
 
 				{/* Chat Container */}
@@ -655,23 +698,16 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				{/* Input Area */}
 				{showCreateSpace ? (
 					<div className="inputArea ctaArea">
-						<button
-							className={`ctaButton ${isCreatingSpace ? 'loading' : ''}`}
+						<Button
+							className={`ctaButton ${isCreatingSpace ? 'loading' : ''} ${(sparkOnboarding.isLoading || isCreatingSpace) ? 'disabled' : ''}`}
 							onClick={() => {
-								setIsCreatingSpace(true);
-								sparkOnboarding.importWorkspace();
+								if (!sparkOnboarding.isLoading && !isCreatingSpace) {
+									setIsCreatingSpace(true);
+									sparkOnboarding.importWorkspace();
+								}
 							}}
-							disabled={sparkOnboarding.isLoading || isCreatingSpace}
-						>
-							{isCreatingSpace ? (
-								<>
-									<span className="loader"></span>
-									<span>Loading...</span>
-								</>
-							) : (
-								translate('popupAiOnboardingGoToSpace')
-							)}
-						</button>
+							text={isCreatingSpace ? 'Loading...' : translate('popupAiOnboardingGoToSpace')}
+						/>
 					</div>
 				) : ''}
 
@@ -681,13 +717,12 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						{showExamples && sparkOnboarding.step === I.OnboardingStep.Goal && filteredExamples.length > 0 && (
 							<div className="smartSuggestions">
 								{filteredExamples.map((example, i) => (
-									<button 
+									<Button 
 										key={i}
 										className="suggestionChip"
 										onClick={() => handleExampleClick(example)}
-									>
-										{example}
-									</button>
+										text={example}
+									/>
 								))}
 							</div>
 						)}
@@ -714,7 +749,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 							<Icon 
 								className={`send ${isSending ? 'thinking' : ''} ${
 									((sparkOnboarding.step === I.OnboardingStep.Goal && inputValue.trim().length < 3) ||
-									(sparkOnboarding.step === I.OnboardingStep.Questions && !inputValue.trim())) ? 'disabled' : ''
+									(sparkOnboarding.step === I.OnboardingStep.Questions && !inputValue.trim()) ||
+									waitingForResponse) ? 'disabled' : ''
 								}`}
 								onClick={handleSubmit}
 							/>
@@ -724,12 +760,11 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 				{showGoToSpace ? (
 					<div className="inputArea ctaArea">
-						<button
+						<Button
 							className="ctaButton"
 							onClick={handleGoToSpace}
-						>
-							Open Space →
-						</button>
+							text={translate('popupAiOnboardingOpenSpace')}
+						/>
 					</div>
 				) : ''}
 				</div>

@@ -76,6 +76,34 @@ export default {
 		progress: {
 			bg: '#ebebeb',
 			fg: '#ffd15b',
+		},
+
+		sparkOnboarding: {
+			node: {
+				type: {
+					fill: '#4A90E2',
+					stroke: '#2E5C8A',
+					text: '#FFFFFF',
+				},
+				object: {
+					fill: '#7ED321',
+					stroke: '#5CA116',
+					text: '#FFFFFF',
+				},
+				space: {
+					fill: '#9013FE',
+					stroke: '#6B0FBF',
+					text: '#FFFFFF',
+				},
+			},
+			link: {
+				stroke: '#CCCCCC',
+				strokeHover: '#888888',
+			},
+			canvas: {
+				background: '#F5F7FA',
+				grid: '#E1E4E8',
+			},
 		}
 	},
 
@@ -131,6 +159,34 @@ export default {
 		progress: {
 			bg: '#292929',
 			fg: '#ffd15b',
+		},
+
+		sparkOnboarding: {
+			node: {
+				type: {
+					fill: '#5BA0F2',
+					stroke: '#3E6C9A',
+					text: '#FFFFFF',
+				},
+				object: {
+					fill: '#8EE331',
+					stroke: '#6CB126',
+					text: '#FFFFFF',
+				},
+				space: {
+					fill: '#A023FF',
+					stroke: '#7B1FCF',
+					text: '#FFFFFF',
+				},
+			},
+			link: {
+				stroke: '#555555',
+				strokeHover: '#888888',
+			},
+			canvas: {
+				background: '#1F1F1F',
+				grid: '#333333',
+			},
 		}
 	}
 
