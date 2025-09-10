@@ -21,8 +21,8 @@ const OnboardingGraphWorker = observer(({
 	const workerRef = useRef<Worker | null>(null);
 	const loadedImages = useRef<Set<string>>(new Set());
 	const { SparkOnboarding: sparkOnboarding } = S;
-	const [isInitialized, setIsInitialized] = useState(false);
-	const [isDragging, setIsDragging] = useState(false);
+	const [ isInitialized, setIsInitialized ] = useState(false);
+	const [ isDragging, setIsDragging ] = useState(false);
 
 	// Load icon images and send to worker
 	const loadIconImages = async (nodes: any[]) => {

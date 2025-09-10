@@ -601,139 +601,137 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 	return (
 		<div ref={nodeRef} className="mainWrapper">
-				<div className="chatSection">
-					{/* Header */}
-					<div className="header">
-						<div className="headerContent">
-							<div className="title">
-								{translate('popupAiOnboardingTitle')} <span className="sparkle">✦</span> Anytype AI
-							</div>
-							<div className="subtitle">
-								{sparkOnboarding.spaceName || translate('popupAiOnboardingDefaultSubtitle')}
-							</div>
-							<div className="progressPills">
-								{[0, 1, 2, 3, 4, 5].map(i => {
-									const isActive = i === sparkOnboarding.stepIndex;
-									const isCompleted = i < sparkOnboarding.stepIndex;
-									const cn = ['pill'];
-									
-									if (isActive) cn.push('active');
-									if (isCompleted) cn.push('completed');
-									
-									return <div key={i} className={cn.join(' ')} />;
-								})}
-							</div>
+			<div className="chatSection">
+				{/* Header */}
+				<div className="header">
+					<div className="headerContent">
+						<div className="title">
+							{translate('popupAiOnboardingTitle')} <span className="sparkle">✦</span> Anytype AI
 						</div>
-						<button className="closeButton" onClick={() => onClose()} title="Exit">
-							Exit
-						</button>
+						<div className="subtitle">
+							{sparkOnboarding.spaceName || translate('popupAiOnboardingDefaultSubtitle')}
+						</div>
+						<div className="progressPills">
+							{[0, 1, 2, 3, 4, 5].map(i => {
+								const isActive = i === sparkOnboarding.stepIndex;
+								const isCompleted = i < sparkOnboarding.stepIndex;
+								const cn = ['pill'];
+								
+								if (isActive) cn.push('active');
+								if (isCompleted) cn.push('completed');
+								
+								return <div key={i} className={cn.join(' ')} />;
+							})}
+						</div>
 					</div>
+					<button className="closeButton" onClick={() => onClose()} title="Exit">Exit</button>
+				</div>
 
-					{/* Chat Container */}
-					<div className="chatContainer">
-						<div className="messagesWrapper" onScroll={handleScroll}>
-						{messages.map(message => (
-							<div key={message.id} className={`message ${message.type}`}>
-								{message.type === 'typing' ? (
-									message.content
-								) : (
-									<div className="bubble">
-										{message.content}
-									</div>
-								)}
-							</div>
-						))}
-
-						{showStatus && currentStatus && (
-							<div className="message ai">
+				{/* Chat Container */}
+				<div className="chatContainer">
+					<div className="messagesWrapper" onScroll={handleScroll}>
+					{messages.map(message => (
+						<div key={message.id} className={`message ${message.type}`}>
+							{message.type === 'typing' ? (
+								message.content
+							) : (
 								<div className="bubble">
-									<StatusMessage text={currentStatus} isActive={true} />
-								</div>
-							</div>
-						)}
-						<div ref={messagesEndRef} />
-					</div>
-
-					{/* Input Area */}
-					{showCreateSpace && (
-						<div className="inputArea ctaArea">
-							<button
-								className={`ctaButton ${isCreatingSpace ? 'loading' : ''}`}
-								onClick={() => {
-									setIsCreatingSpace(true);
-									sparkOnboarding.importWorkspace();
-								}}
-								disabled={sparkOnboarding.isLoading || isCreatingSpace}
-							>
-								{isCreatingSpace ? (
-									<>
-										<span className="loader"></span>
-										<span>Loading...</span>
-									</>
-								) : (
-									translate('popupAiOnboardingGoToSpace')
-								)}
-							</button>
-						</div>
-					)}
-
-					{showInput && (
-						<div className="inputArea">
-							{/* Smart Suggestions */}
-							{showExamples && sparkOnboarding.step === I.OnboardingStep.Goal && filteredExamples.length > 0 && (
-								<div className="smartSuggestions">
-									{filteredExamples.map((example, i) => (
-										<button 
-											key={i}
-											className="suggestionChip"
-											onClick={() => handleExampleClick(example)}
-										>
-											{example}
-										</button>
-									))}
+									{message.content}
 								</div>
 							)}
-							
-							<div className="inputWrapper">
-								<textarea
-									ref={inputRef}
-									className="textarea"
-									value={inputValue}
-									onChange={(e) => setInputValue(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key === 'Enter' && !e.shiftKey) {
-											e.preventDefault();
-											handleSubmit();
-										};
-									}}
-									placeholder={
-										sparkOnboarding.step === I.OnboardingStep.Questions 
-											? translate('popupAiOnboardingTypeAnswer')
-											: translate('popupAiOnboardingDescribeProject')
-									}
-									rows={1}
-								/>
-								<Icon 
-									className={`send ${isSending ? 'thinking' : ''} ${
-										((sparkOnboarding.step === I.OnboardingStep.Goal && inputValue.trim().length < 3) ||
-										(sparkOnboarding.step === I.OnboardingStep.Questions && !inputValue.trim())) ? 'disabled' : ''
-									}`}
-									onClick={handleSubmit}
-								/>
+						</div>
+					))}
+
+					{showStatus && currentStatus && (
+						<div className="message ai">
+							<div className="bubble">
+								<StatusMessage text={currentStatus} isActive={true} />
 							</div>
 						</div>
 					)}
+					<div ref={messagesEndRef} />
+				</div>
 
-					{showGoToSpace && (
-						<div className="inputArea ctaArea">
-							<button
-								className="ctaButton"
-								onClick={handleGoToSpace}
-							>
-								Open Space →
-							</button>
+				{/* Input Area */}
+				{showCreateSpace ? (
+					<div className="inputArea ctaArea">
+						<button
+							className={`ctaButton ${isCreatingSpace ? 'loading' : ''}`}
+							onClick={() => {
+								setIsCreatingSpace(true);
+								sparkOnboarding.importWorkspace();
+							}}
+							disabled={sparkOnboarding.isLoading || isCreatingSpace}
+						>
+							{isCreatingSpace ? (
+								<>
+									<span className="loader"></span>
+									<span>Loading...</span>
+								</>
+							) : (
+								translate('popupAiOnboardingGoToSpace')
+							)}
+						</button>
+					</div>
+				) : ''}
+
+				{showInput ? (
+					<div className="inputArea">
+						{/* Smart Suggestions */}
+						{showExamples && sparkOnboarding.step === I.OnboardingStep.Goal && filteredExamples.length > 0 && (
+							<div className="smartSuggestions">
+								{filteredExamples.map((example, i) => (
+									<button 
+										key={i}
+										className="suggestionChip"
+										onClick={() => handleExampleClick(example)}
+									>
+										{example}
+									</button>
+								))}
+							</div>
+						)}
+						
+						<div className="inputWrapper">
+							<textarea
+								ref={inputRef}
+								className="textarea"
+								value={inputValue}
+								onChange={(e) => setInputValue(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter' && !e.shiftKey) {
+										e.preventDefault();
+										handleSubmit();
+									};
+								}}
+								placeholder={
+									sparkOnboarding.step === I.OnboardingStep.Questions 
+										? translate('popupAiOnboardingTypeAnswer')
+										: translate('popupAiOnboardingDescribeProject')
+								}
+								rows={1}
+							/>
+							<Icon 
+								className={`send ${isSending ? 'thinking' : ''} ${
+									((sparkOnboarding.step === I.OnboardingStep.Goal && inputValue.trim().length < 3) ||
+									(sparkOnboarding.step === I.OnboardingStep.Questions && !inputValue.trim())) ? 'disabled' : ''
+								}`}
+								onClick={handleSubmit}
+							/>
 						</div>
-					)}
+					</div>
+				) : ''}
+
+				{showGoToSpace ? (
+					<div className="inputArea ctaArea">
+						<button
+							className="ctaButton"
+							onClick={handleGoToSpace}
+						>
+							Open Space →
+						</button>
+					</div>
+				) : ''}
 				</div>
 			</div>
 		</div>
