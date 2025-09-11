@@ -161,7 +161,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			for (let i = 0; i < list.length; i++) {
 				const item = items[i];
 				if (item) {
-					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { spaceOrder: list[i] }}, false);
+					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { orderId: list[i] }}, false);
 				};
 			};
 		});

@@ -20,7 +20,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
 	const { data } = param;
 	const { noFilter, skipIds, onMore, onClick, canAdd, noClose } = data;
-	const itemList = useRef([]);
+	const [ itemList, setItemList ] = useState([]);
 	const filter = String(data.filter || '');
 	const currentFilter = useRef('');
 	const filterRef = useRef(null);
@@ -39,17 +39,11 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getSections = () => {
 		const { filter } = data;
-		const pinned = Storage.getPinnedTypes();
-		const items = U.Common.objectCopy(itemList.current || []).map(it => ({ ...it, object: it }));
+		const items = S.Record.sortTypes(U.Common.objectCopy(itemList || [])).map(it => ({ ...it, object: it }));
 		const add = buttons.find(it => it.id == 'add');
 
-		items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
-
-		const library = items.filter(it => (it.spaceId == space));
-		const canWrite = U.Space.canMyParticipantWrite();
-
 		let sections: any[] = [
-			{ id: 'library', name: translate('commonMyTypes'), children: library },
+			{ id: 'library', name: translate('commonMyTypes'), children: items },
 		];
 
 		if (canWrite && filter && !add && canAdd) {
@@ -142,7 +136,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (clear) {
-			itemList.current = [];
+			setItemList([]);
 		};
 
 		U.Subscription.search({
@@ -153,8 +147,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
-			itemList.current = itemList.current.concat(message.records || []);
-			setDummy(dummy + 1);
+			setItemList(itemList.concat(message.records || []));
 
 			if (callBack) {
 				callBack(message);
@@ -270,7 +263,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
 
-		Storage.setPinnedTypes(arrayMove(ids, oldIndex, newIndex));
 		setDummy(dummy + 1);
 	};
 

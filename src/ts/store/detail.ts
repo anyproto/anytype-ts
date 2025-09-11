@@ -440,7 +440,7 @@ class DetailStore {
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
 		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
-		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
+		object.orderId = Relation.getStringValue(object.orderId || object.spaceOrder);
 		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
 
 		if (object.iconOption > 10) {
@@ -473,6 +473,7 @@ class DetailStore {
 
 		delete(object.spacePushNotificationMode);
 		delete(object.spaceUxType);
+		delete(object.spaceOrder);
 
 		return object;
 	};

@@ -58,11 +58,9 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		const routeParam = {
 			replace: true,
 			onRouteChange: () => {
-				S.Common.showRelativeDatesSet(true);
-				U.Space.initSpaceState();
-
 				const routeParam = { replace: true };
 
+				S.Common.showRelativeDatesSet(true);
 				Storage.set('primitivesOnboarding', true);
 				Storage.setOnboarding('objectDescriptionButton');
 				Storage.setOnboarding('typeResetLayout');

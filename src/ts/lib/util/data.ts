@@ -436,7 +436,6 @@ class UtilData {
 		const { space } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
-		const pinned = Storage.getPinnedTypes();
 
 		let items: any[] = [];
 
@@ -448,7 +447,7 @@ class UtilData {
 		}));
 
 		items = S.Record.checkHiddenObjects(items);
-		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
+		items.sort(U.Data.sortByOrderId);
 
 		if (limit) {
 			items = items.slice(0, limit);
@@ -587,6 +586,22 @@ class UtilData {
 		if ((n1 != dn) && (n2 == dn)) return -1;
 		if (n1 > n2) return 1;
 		if (n1 < n2) return -1;
+		return 0;
+	};
+
+	/**
+	 * Sorts two objects by their orderId and tmpOrder properties.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
+	sortByOrderId (c1: any, c2: any) {
+		if (c1.tmpOrder > c2.tmpOrder) return 1;
+		if (c1.tmpOrder < c2.tmpOrder) return -1;
+
+		if (c1.orderId > c2.orderId) return 1;
+		if (c1.orderId < c2.orderId) return -1;
+
 		return 0;
 	};
 

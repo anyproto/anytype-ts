@@ -225,21 +225,30 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					) : ''}
 
 					{sections.map(section => {
-						const list = blockWidgets.filter(it => it.content.section == section.id);
-
+						let list = blockWidgets.filter(it => it.content.section == section.id);
 						let buttons = null;
+
 						if (section.id == I.WidgetSection.Type) {
 							if (canWrite) {
 								buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={this.onTypeCreate} />;
 							};
 
-							/*
-							const pinned = Storage.getPinnedTypes();
-							const items = U.Common.objectCopy(itemList.current || []).map(it => ({ ...it, object: it }));
-							const add = buttons.find(it => it.id == 'add');
-							
-							items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
-							*/
+							list = list.sort((a, b) => {
+								const c1 = this.getChild(a.id);
+								const c2 = this.getChild(b.id);
+
+								const t1 = c1?.getTargetObjectId();
+								const t2 = c2?.getTargetObjectId();
+
+								if (!t1 || !t2) {
+									return 0;
+								};
+
+								const type1 = S.Record.getTypeById(t1);
+								const type2 = S.Record.getTypeById(t2);
+
+								return U.Data.sortByOrderId(type1, type2);
+							});
 						};
 
 						return (
@@ -769,12 +778,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return false;
 			};
 
-			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-			if (!childrenIds.length) {
-				return false;
-			};
-
-			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			const child = this.getChild(block.id);
 			if (!child) {
 				return false;
 			};

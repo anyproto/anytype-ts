@@ -253,15 +253,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			items = items.filter(filterMapper);
 		};
 
-		items.sort((c1, c2) => {
-			if (c1.tmpOrder > c2.tmpOrder) return 1;
-			if (c1.tmpOrder < c2.tmpOrder) return -1;
-
-			if (c1.orderId > c2.orderId) return 1;
-			if (c1.orderId < c2.orderId) return -1;
-
-			return U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc);
-		});
+		items.sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc));
 
 		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');

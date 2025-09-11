@@ -118,6 +118,7 @@ export default {
 		'pluralName',
 		'headerRelationsLayout',
 		'setOf',
+		'orderId',
 	],
 
 	graph: [
