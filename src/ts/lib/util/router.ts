@@ -182,6 +182,8 @@ class UtilRouter {
 	 * @param {boolean} useFallback - Whether to use fallback on error.
 	 */
 	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any, useFallback: boolean) {
+		routeParam = routeParam || {};
+
 		if (this.isOpening) {
 			return;
 		};
@@ -238,8 +240,7 @@ class UtilRouter {
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
 
-					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+					const onRouteChange = () => {
 						const spaceview = U.Space.getSpaceview();
 						if (!spaceview.isChat) {
 							S.Common.setRightSidebarState(false, '', false);
@@ -247,8 +248,13 @@ class UtilRouter {
 							sidebar.rightPanelRestore(false);
 						};
 
-						this.isOpening = false;
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+						routeParam.onRouteChange?.();
+					};
+
+					U.Data.onInfo(message.info);
+					U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
+						this.isOpening = false;
 					});
 				},
 			});

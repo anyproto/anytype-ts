@@ -734,7 +734,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			};
 
 			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })
+				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 				break;
 			};
 
