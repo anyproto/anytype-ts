@@ -106,7 +106,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											{...item} 
 											isToday={isToday}
 											className={cn.join(' ')}
-											items={items.filter(it => it._date == current)}
+											items={items[current] || []}
 											onCreate={this.onCreate}
 										/>
 									);
@@ -277,11 +277,22 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	getItems () {
 		const { getView, getSubId } = this.props;
 		const view = getView();
+		if (!view || !view.groupRelationKey) {
+			return {};
+		};
 
-		return S.Record.getRecords(getSubId(), [ view.groupRelationKey ]).map(it => {
-			it._date = U.Date.date('j-n-Y', it[view.groupRelationKey]);
-			return it;
+		const { groupRelationKey } = view;
+		const records = S.Record.getRecords(getSubId(), [ groupRelationKey ]);
+		const ret = {};
+
+		records.forEach(it => {
+			const date = U.Date.date('j-n-Y', it[groupRelationKey]);
+
+			ret[date] = ret[date] || [];
+			ret[date].push(it);
 		});
+
+		return ret;
 	};
 
 	resize () {
