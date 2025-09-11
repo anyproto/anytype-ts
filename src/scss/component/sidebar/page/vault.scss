@@ -23,6 +23,11 @@
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
 
+		&.noMessages {
+			.info { flex-direction: row; }
+			.messageWrapper { flex-grow: 1; }
+		}
+
 		.nameWrapper,
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
 		.nameInner { display: flex; flex-grow: 1; align-items: center; gap: 0px 4px; }
