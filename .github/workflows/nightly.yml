@@ -133,22 +133,18 @@ jobs:
 
       - name: Debug
         run: |
-          echo "----- CHANGELOG -----"
           echo "${{ steps.notes.outputs.body }}"
 
   build:
     needs:
       - nightly-tag
-
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os:
           - macos-13
           - ubuntu-22.04
           - windows-latest
-
     steps:
       - name: Setup
         run: |
