@@ -416,15 +416,11 @@ class ChatStore {
 	 * Sets the badge count in the UI based on message counters.
 	 */
 	setBadge () {
-		const { config } = S.Common;
+		const counters = this.getTotalCounters();
 
 		let t = 0;
-
-		if (config.experimental) {
-			const counters = this.getTotalCounters();
-			if (counters) {
-				t = counters.messageCounter;
-			};
+		if (counters) {
+			t = counters.messageCounter;
 		};
 
 		Renderer.send('setBadge', this.counterString(t));

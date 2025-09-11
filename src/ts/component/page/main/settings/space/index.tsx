@@ -156,7 +156,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{space.isShared && config.experimental ? (
+					{space.isShared ? (
 						<div className="section sectionSpaceManager">
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
 							<div className="sectionContent">
