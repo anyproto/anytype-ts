@@ -302,11 +302,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isLoading');
 		};
 
-		if (item.isMuted) {
-			cn.push('isMuted');
-			icons.push('muted');
-		};
-
 		if (item.isPinned) {
 			cn.push('isPinned');
 			icons.push('pin');
@@ -347,14 +342,22 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				</div>
 				<div className="info">
 					<div className="nameWrapper">
-						<ObjectName object={item} />
+						<div className="nameInner">
+							<ObjectName object={item} />
+
+							{item.isMuted ?  <Icon className="muted" /> : ''}
+						</div>
+
+						<div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>
+					</div>
+					<div className="messageWrapper">
+						<Label text={item.lastMessage} />
 
 						<div className="icons">
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 						{cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
-					<Label text={item.lastMessage} />
 				</div>
 			</div>
 		);
