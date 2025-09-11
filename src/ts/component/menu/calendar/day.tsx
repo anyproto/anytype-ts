@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, keyboard, translate } from 'Lib';
+import { I, S, U, J, keyboard, translate } from 'Lib';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
 	
@@ -91,7 +91,15 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { load } = data;
+
 		this.rebind();
+
+		if (load) {
+			load(this.getSubId(), J.Constant.limit.menuRecords);
+		};
 	};
 
 	componentDidUpdate () {
@@ -132,11 +140,19 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		};
 	};
 
+	getSubId () {
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { subId } = data;
+
+		return [ getId(), subId ].join('-');
+	};
+
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, d, m, y, relationKey, readonly, onCreate } = data;
-		const items = S.Record.getRecords(S.Record.getSubId(rootId, blockId), [ relationKey ]);
+		const { d, m, y, relationKey, readonly, onCreate } = data;
+		const items = S.Record.getRecords(this.getSubId(), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
 		const ret = items.filter(it => U.Date.date('j-n-Y', it[relationKey]) == current);
 		const relation = S.Record.getRelationByKey(relationKey);
