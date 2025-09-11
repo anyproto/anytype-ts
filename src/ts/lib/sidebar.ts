@@ -243,6 +243,7 @@ class Sidebar {
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
 		const isMainChat = keyboard.isMainChat();
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		this.initObjects();
 
@@ -253,7 +254,7 @@ class Sidebar {
 			widthLeft = this.objLeft.outerWidth();
 		};
 
-		if ((widthRight === null) && this.objRight && this.objRight.length) {
+		if ((widthRight === null) && this.objRight && this.objRight.length && rightSidebar.isOpen) {
 			widthRight = this.objRight.outerWidth();
 		};
 

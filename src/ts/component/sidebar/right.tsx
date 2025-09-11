@@ -80,7 +80,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		},
 	}));
 
-	return rightSidebar.isOpen ? (
+	return (
 		<div 
 			id="sidebarRight"
 			className={cn.join(' ')}
@@ -106,7 +106,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 				</div>
 			): ''}
 		</div>
-	) : null;
+	);
 
 }));
 
