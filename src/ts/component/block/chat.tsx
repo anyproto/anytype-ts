@@ -944,7 +944,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	useLayoutEffect(() => {
 		const target = S.Chat.getMessageByOrderId(subId, firstUnreadOrderId);
 		if (target) {
-			scrollToMessage(target.id, false, true);
+			scrollToMessage(target.id, false, false);
 		};
 	}, [ firstUnreadOrderId ]);
 
