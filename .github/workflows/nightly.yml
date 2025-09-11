@@ -236,7 +236,7 @@ jobs:
 
           # version suffix {{
           if [[ "$CHANNEL" == "latest" ]]; then
-            VERSION_SUFFIX="nightly.${{ needs.nightly-tag.outputs.app_version_suffix }}"
+            VERSION_SUFFIX="${{ needs.nightly-tag.outputs.app_version_suffix }}"
           else
             VERSION_SUFFIX="${CHANNEL}.${{ needs.nightly-tag.outputs.app_version_suffix }}"
           fi
