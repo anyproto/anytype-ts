@@ -177,8 +177,6 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		S.Menu.open('select', {
 			element: node,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			offsetY: -node.outerHeight() + 32,
 			offsetX: 16,
 			noFlipX: true,

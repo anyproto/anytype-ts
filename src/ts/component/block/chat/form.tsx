@@ -103,7 +103,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					const rect = U.Common.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
-				horizontal: I.MenuDirection.Left,
 				offsetY: 4,
 				offsetX: -8,
 				passThrough: true,

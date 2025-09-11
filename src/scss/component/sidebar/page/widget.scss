@@ -109,10 +109,10 @@
 					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
 					background-position: 50% 50%; background-repeat: no-repeat; background-size: 28px; transition: background-color $transitionCommon;
 				}
-				.icon.add { background-image: url('~img/icon/sidebar/chatSpace/add.svg'); }
 				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
 				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
 				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
+				.icon.settings { background-image: url('~img//icon/sidebar/chatSpace/settings.svg'); }
 
 				.label { @include text-small; @include text-overflow-nw; width: 100%; padding: 0px 2px; }
 			}

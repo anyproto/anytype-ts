@@ -1166,7 +1166,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					},
 					type: I.MenuType.Horizontal,
 					offsetY: 4,
-					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Center,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),

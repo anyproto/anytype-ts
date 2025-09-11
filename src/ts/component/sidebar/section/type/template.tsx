@@ -55,7 +55,6 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#sidebarRight #item-more-${item.id}`,
-				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				subIds: J.Menu.dataviewTemplate,
 				className: 'fixed',

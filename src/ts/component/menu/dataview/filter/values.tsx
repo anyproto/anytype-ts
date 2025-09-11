@@ -448,7 +448,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			classNameWrap,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
-			horizontal: I.MenuDirection.Left,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			noFlipY: true,
