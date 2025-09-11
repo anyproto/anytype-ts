@@ -914,7 +914,8 @@
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
-	"popupSettingsSpaceIndexUxTypeTitle": "Space UX Type",
+	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
+	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
 
 	"popupSettingsSpaceStorageEmptyLabel": "Your storage is empty",
 
