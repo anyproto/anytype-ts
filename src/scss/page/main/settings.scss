@@ -440,7 +440,7 @@
                 .bar {
                     .fill { border-radius: 8px; }
                     .fill.current { background-color: var(--color-orange); min-width: 32px; }
-                    .fill.other { background-color: var(--color-yellow); }
+                    .fill.other { background-color: var(--color-bg-tag-orange); }
                     .fill.empty { background-color: var(--color-bg-tag-grey); }
                 }
             }
@@ -458,7 +458,7 @@
 
                     .item:before { content: ''; width: 24px; height: 4px; border-radius: 100px; }
                     .item.current::before { background: var(--color-orange); }
-                    .item.other::before { background: var(--color-yellow); }
+                    .item.other::before { background: var(--color-bg-tag-orange); }
                     .item.free::before { background: var(--color-bg-tag-grey); }
                 }
             }
