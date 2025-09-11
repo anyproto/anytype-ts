@@ -18,7 +18,10 @@ const SORT_IDS = [
 	'ObjectDetailsAmend', 
 	'ObjectDetailsUnset', 
 	'SubscriptionCounters',
+	'BlockDataviewRelationSet',
+	'BlockDataviewRelationDelete',
 	'BlockDataviewViewSet',
+	'BlockDataviewViewUpdate',
 	'BlockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];

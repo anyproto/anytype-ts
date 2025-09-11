@@ -298,6 +298,7 @@ html.themeDark {
 	.icon.settings-type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
 	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/relation.svg'); }
 	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/bin.svg'); }
+	.icon.settings-replace { background-image: url('#{$themePath}/icon/settings/replace.svg'); }
 
 	/* Editor */
 
@@ -447,10 +448,10 @@ html.themeDark {
 			.spaceHeader {
 				.buttons {
 					.item {
-						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
 						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
 						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
 						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+						.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
 					}
 				}
 			}

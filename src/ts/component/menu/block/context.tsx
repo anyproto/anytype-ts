@@ -422,7 +422,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			className, 
 			classNameWrap,
 			offsetX: context.getSize().width,
-			horizontal: I.MenuDirection.Left,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			data: {

@@ -36,7 +36,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const days = U.Date.getWeekDays();
 		const months = U.Date.getMonths();
 		const years = U.Date.getYears(0, 3000);
-		const items = this.getItems();
 
 		return (
 			<div ref={node => this.node = node}>
@@ -101,12 +100,11 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 									return (
 										<Item 
-											key={i}
+											key={current}
 											{...this.props} 
 											{...item} 
 											isToday={isToday}
 											className={cn.join(' ')}
-											items={items.filter(it => it._date == current)}
 											onCreate={this.onCreate}
 										/>
 									);
@@ -121,7 +119,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	componentDidMount(): void {
 		this.init();
-		this.load();
 	};
 
 	componentDidUpdate (): void {
@@ -138,69 +135,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		this.refMonth?.setValue(m);
 		this.refYear?.setValue(y);
-	};
-
-	load () {
-		const { value } = this.state;
-		const { isCollection, getView, getKeys, getTarget, getSearchIds, getSubId } = this.props;
-		const object = getTarget();
-		const view = getView();
-
-		if (!view) {
-			return;
-		};
-
-		const relation = S.Record.getRelationByKey(view.groupRelationKey);
-		if (!relation) {
-			return;
-		};
-
-		const data = U.Date.getCalendarMonth(value);
-		if (!data.length) {
-			return;
-		};
-
-		const first = data[0];
-		const last = data[data.length - 1];
-		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
-		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
-		const filters: I.Filter[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
-		].concat(view.filters as any[]);
-		const sorts: I.Sort[] = [].concat(view.sorts);
-		const searchIds = getSearchIds();
-		const subId = getSubId();
-
-		filters.push({ 
-			relationKey: relation.relationKey, 
-			condition: I.FilterCondition.GreaterOrEqual, 
-			value: start, 
-			quickOption: I.FilterQuickOption.ExactDate,
-			format: relation.format,
-		});
-
-		filters.push({ 
-			relationKey: relation.relationKey, 
-			condition: I.FilterCondition.LessOrEqual, 
-			value: end, 
-			quickOption: I.FilterQuickOption.ExactDate,
-			format: relation.format,
-		});
-
-		if (searchIds) {
-			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
-		};
-
-		U.Subscription.subscribe({
-			subId,
-			filters: filters.map(Dataview.filterMapper),
-			sorts: sorts.map(Dataview.filterMapper),
-			keys: getKeys(view.id),
-			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
-			collectionId: (isCollection ? object.id : ''),
-		});
 	};
 
 	onArrow (dir: number) {
@@ -271,17 +205,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	setValue (value: number) {
-		this.setState({ value }, () => this.load());
-	};
-
-	getItems () {
-		const { getView, getSubId } = this.props;
-		const view = getView();
-
-		return S.Record.getRecords(getSubId(), [ view.groupRelationKey ]).map(it => {
-			it._date = U.Date.date('j-n-Y', it[view.groupRelationKey]);
-			return it;
-		});
+		this.setState({ value });
 	};
 
 	resize () {

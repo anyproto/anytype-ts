@@ -56,13 +56,14 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
-		const headerButtons: any[] = [
-			{ id: 'add', name: translate('commonAdd') },
-		];
 
+		let headerButtons: any[] = [];
 		if (space.isChat) {
-			headerButtons.unshift({ id: 'chat', name: translate('commonChat') });
-			headerButtons.push({ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },);
+			headerButtons = headerButtons.concat([
+				{ id: 'chat', name: translate('commonChat') },
+				{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
+				{ id: 'settings', name: translate('commonSettings') }
+			]);
 		};
 
 		if (isEditing) {
@@ -151,8 +152,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			subHead = !space.isChat ? (
 				<div className={cnsh.join(' ')}>
 					{isDirectionLeft || cnt ? (
-						<div className="side left">
-							{isDirectionLeft ? <Icon className="back" onClick={this.onBack} /> : ''}
+						<div className="side left" onClick={isDirectionLeft ? this.onBack : null}>
+							{isDirectionLeft ? <Icon className="back" /> : ''}
 							{cnt ? <div className="cnt">{cnt}</div> : ''}
 						</div>
 					) : ''}
@@ -326,9 +327,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							<div className="side left">
 								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
 							</div>
-							<div className="side right">
-								<Icon className="settings withBackground" onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })} />
-							</div>
+							<div className="side right" />
 						</>
 					) : ''}
 				</div>
@@ -589,6 +588,12 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				C.PushNotificationSetSpaceMode(S.Common.space, Number(isMuted ? I.NotificationMode.All : I.NotificationMode.Mentions));
 				break;
 			};
+
+			case 'settings': {
+				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+				break;
+			};
+
 		};
 	};
 

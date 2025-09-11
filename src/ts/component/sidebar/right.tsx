@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S } from 'Lib';
+import { Icon } from 'Component';
+import { I, U, S, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -63,6 +64,9 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		cn.push('withPreview');
 	};
 
+	const onToggleClick = () => {
+	};
+
 	useEffect(() => {
 		childRef.current?.forceUpdate();
 	});
@@ -84,6 +88,13 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			id="sidebarRight"
 			className={cn.join(' ')}
 		>
+			<Icon 
+				id="button-header-toggle" 
+				className="widgetPanel withBackground"
+				onClick={() => sidebar.rightPanelToggle(true, isPopup, page, {})} 
+				onDoubleClick={e => e.stopPropagation()}
+			/>
+
 			{Component ? (
 				<div id={pageId} className={cnp.join(' ')}>
 					<Component 

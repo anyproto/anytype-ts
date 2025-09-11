@@ -842,7 +842,7 @@ class UtilMenu {
 							case 'settings': {
 								const routeParam = { 
 									replace: true, 
-									onRouteChange: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
+									onFadeIn: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
 								};
 		
 								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);

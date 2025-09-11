@@ -181,7 +181,6 @@ export default {
 				cloneElementClassName: 'onboardingHeaderSync',
 				param: {
 					element: '#menuSyncStatus',
-					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Right,
 					stickToElementEdge: I.MenuDirection.None,
 					highlightElements: [ '#menuSyncStatus', '#sidebarRightButton' ],
@@ -217,8 +216,6 @@ export default {
 				cloneElementClassName: 'onboardingDataviewEmptyButton',
 				param: {
 					element: '#emptyButton',
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Left,
 					offsetY: 8,
 				}
 			}
@@ -344,8 +341,6 @@ export default {
 						element: '#popupUsecase #category-collaboration',
 						className: 'isSpace',
 						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
 						width,
 						offsetY: 14,
 					}
@@ -371,7 +366,6 @@ export default {
 			],
 			param: {
 				element: btn,
-				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				offsetY: 16,
@@ -392,7 +386,6 @@ export default {
 		param: {
 			element: '#pageFlex.isFull .headSimple .side.right',
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			offsetX: -304,
 			offsetY: 45,
 		},

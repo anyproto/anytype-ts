@@ -401,8 +401,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			onOpen: () => {
 				$(message).addClass('hover');
 				container.addClass('over');
@@ -944,7 +942,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	useLayoutEffect(() => {
 		const target = S.Chat.getMessageByOrderId(subId, firstUnreadOrderId);
 		if (target) {
-			scrollToMessage(target.id, false, true);
+			scrollToMessage(target.id);
 		};
 	}, [ firstUnreadOrderId ]);
 
