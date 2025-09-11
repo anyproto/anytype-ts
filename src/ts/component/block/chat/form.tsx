@@ -42,7 +42,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
+		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
 		highlightMessage,
 	} = props;
@@ -500,8 +500,9 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
+
 		window.clearTimeout(timeoutDrag.current);
-		$(nodeRef.current).addClass('isDraggingOver');
+		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Common.getScrollContainer(isPopup).height() });
 	};
 	
 	const onDragLeave = (e: any) => {
@@ -510,7 +511,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		window.clearTimeout(timeoutDrag.current);
 		timeoutDrag.current = window.setTimeout(() => {
-			$(nodeRef.current).removeClass('isDraggingOver');
+			$(nodeRef.current).removeClass('isDraggingOver').css({ height: '' });
 		}, 100);
 	};
 

@@ -386,6 +386,13 @@ class Sidebar {
 		return S.Common.getRef(`sidebarRight${namespace}`);
 	};
 
+	rightPanelRestore (isPopup: boolean) {
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		if (rightSidebar.isOpen) {
+			this.objRight.css({ right: 0 });
+		};
+	};
+
 	/**
 	 * Toggles the right panel open or closed with animation.
 	 * @param {boolean} v - Whether to open the panel.

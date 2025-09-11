@@ -193,7 +193,6 @@ class UtilRouter {
 
 		S.Menu.closeAllForced();
 		S.Progress.showSet(false);
-		//S.Common.setRightSidebarState(false, '', false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -241,6 +240,13 @@ class UtilRouter {
 
 					U.Data.onInfo(message.info);
 					U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+						const spaceview = U.Space.getSpaceview();
+						if (!spaceview.isChat) {
+							S.Common.setRightSidebarState(false, '', false);
+						} else {
+							sidebar.rightPanelRestore(false);
+						};
+
 						this.isOpening = false;
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 					});
