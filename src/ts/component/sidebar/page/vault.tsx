@@ -146,24 +146,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
 
-		let s = '';
-		newItems.forEach((it, i) => {
-			s = U.Common.lexString(s);
-			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
-		});
-
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id), (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const list = message.list;
-			for (let i = 0; i < list.length; i++) {
-				const item = items[i];
-				if (item) {
-					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { orderId: list[i] }}, false);
-				};
-			};
+		U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+			C.SpaceSetOrder(active.id, newItems.map(it => it.id), callBack);
 		});
 
 		analytics.event('ReorderSpace');

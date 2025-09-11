@@ -521,7 +521,7 @@ class RecordStore {
 	 */
 	getTypes () {
 		return this.sortTypes(this.getRecordIds(J.Constant.subId.type, '').
-			map(id => S.Detail.get(J.Constant.subId.type, id)).
+			map(id => S.Detail.get(J.Constant.subId.type, id, U.Subscription.typeRelationKeys(true))).
 			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted));
 	};
 
@@ -532,7 +532,7 @@ class RecordStore {
 	 * @returns {any[]} The sorted list of types.
 	 */
 	sortTypes (list: any[]) {
-		return (list || []).sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByName(c1, c2));
+		return (list || []).sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByLastUsedDate(c1, c2) || U.Data.sortByName(c1, c2));
 	};
 
 	/**

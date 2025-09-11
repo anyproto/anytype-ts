@@ -7,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
-import { I, C, S, U, J, analytics, keyboard, Action, translate, Storage } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -15,12 +15,11 @@ const LIMIT = 15;
 
 const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { space } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
 	const { data } = param;
 	const { noFilter, skipIds, onMore, onClick, canAdd, noClose } = data;
-	const [ itemList, setItemList ] = useState([]);
+	const itemList = useRef([]);
 	const filter = String(data.filter || '');
 	const currentFilter = useRef('');
 	const filterRef = useRef(null);
@@ -39,7 +38,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getSections = () => {
 		const { filter } = data;
-		const items = S.Record.sortTypes(U.Common.objectCopy(itemList || [])).map(it => ({ ...it, object: it }));
+		const items = S.Record.sortTypes(U.Common.objectCopy(itemList.current || [])).map(it => ({ ...it, object: it }));
 		const add = buttons.find(it => it.id == 'add');
 
 		let sections: any[] = [
@@ -68,7 +67,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			forceUpdate: () => setDummy(dummy + 1),
 			props,
 		};
-		
+
 		let items: any[] = [];
 
 		sections.forEach((section: any, i: number) => {
@@ -120,6 +119,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const sorts = [
+			{ relationKey: 'orderId', type: I.SortType.Asc },
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -136,18 +136,20 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (clear) {
-			setItemList([]);
+			offset.current = 0;
+			itemList.current = [];
 		};
 
 		U.Subscription.search({
 			filters,
 			sorts,
-			keys: U.Subscription.typeRelationKeys(),
+			keys: U.Subscription.typeRelationKeys(false),
 			fullText: filter,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
-			setItemList(itemList.concat(message.records || []));
+			itemList.current = itemList.current.concat(message.records || []);
+			setDummy(dummy + 1);
 
 			if (callBack) {
 				callBack(message);
@@ -262,12 +264,21 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const ids = items.map(it => it.id);
 		const oldIndex = ids.indexOf(active.id);
 		const newIndex = ids.indexOf(over.id);
+		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => !it.isSection);
 
-		setDummy(dummy + 1);
+		U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+			C.ObjectTypeSetOrder(active.id, newItems.map(it => it.id), message => {
+				callBack?.(message);
+				load(true);
+			});
+		});
 	};
 
 	const Item = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
+		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ 
+			id: item.id, 
+			disabled: item.isSection || !!filter.length,
+		});
 		const style = {
 			...item.style,
 			transform: CSS.Transform.toString(transform),
@@ -340,7 +351,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		n.current = 0;
-		offset.current = 0;
 		currentFilter.current = filter;
 		load(true);
 	}, [ filter ]);

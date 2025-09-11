@@ -145,8 +145,6 @@ class UtilMenu {
 			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
 		];
 
-		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
-
 		let i = 0;
 		for (const type of items) {
 			ret.push({ 

@@ -446,7 +446,6 @@ class UtilData {
 		}));
 
 		items = S.Record.checkHiddenObjects(items);
-		items.sort(U.Data.sortByOrderId);
 
 		if (limit) {
 			items = items.slice(0, limit);
@@ -461,7 +460,7 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		return items;
+		return S.Record.sortTypes(items);
 	};
 
 	countTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
@@ -1138,6 +1137,34 @@ class UtilData {
 
 			if (callBack) {
 				callBack(ids);
+			};
+		});
+	};
+
+	/**
+	 * Sorts the items by their temporary order ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {any[]} items - The items to sort.
+	 * @param {(callBack: (message: any) => void) => void} request - The request function to get the sorted order.
+	 */
+	sortByOrderIdRequest (subId: string, items: any[], request: (callBack: (message: any) => void) => void) {
+		let s = '';
+		items.forEach((it, i) => {
+			s = U.Common.lexString(s);
+			S.Detail.update(subId, { id: it.id, details: { tmpOrder: s }}, false);
+		});
+
+		request(message => {
+			if (message.error.code) {
+				return;
+			};
+
+			const list = message.list;
+			for (let i = 0; i < list.length; i++) {
+				const item = items[i];
+				if (item) {
+					S.Detail.update(subId, { id: item.id, details: { orderId: list[i] }}, false);
+				};
 			};
 		});
 	};
