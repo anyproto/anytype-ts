@@ -325,13 +325,23 @@ class UtilDate {
 		return ret;
 	};
 
-	isToday (t: number) {
+	/**
+	 * Returns if given timestamp is today.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {boolean}
+	 */
+	isToday (t: number): boolean {
 		const { d, m, y } = this.getCalendarDateParam(t);
 
 		return this.timestamp(y, m, d) == this.today();
 	};
 
-	isThisWeek (t: number) {
+	/**
+	 * Returns if given timestamp is current week.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {boolean}
+	 */
+	isThisWeek (t: number): boolean {
 		const now = new Date(this.now() * 1000);
 		const currentDay = now.getDay();
 		const startOfWeek = new Date(now);
