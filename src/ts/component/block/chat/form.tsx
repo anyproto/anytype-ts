@@ -794,7 +794,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 					update.content.marks = marks;
 
 					C.ChatEditMessageContent(rootId, editingId.current, update, () => {
-						scrollToMessage(editingId.current, true, true);
+						scrollToMessage(editingId.current, true);
 						clear();
 					});
 				};
@@ -823,7 +823,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 
 				C.ChatAddMessage(rootId, message, (message: any) => {
-					scrollToMessage(message.messageId, true, true);
+					scrollToMessage(message.messageId, true);
 					clear();
 
 					analytics.event('SentMessage', { type: messageType });
