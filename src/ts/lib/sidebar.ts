@@ -446,11 +446,13 @@ class Sidebar {
 				this.resizePage(null, shouldOpen ? null : 0, animate);
 
 				window.setTimeout(() => {
-					this.rightPanelSetState(isPopup, { page, ...param });
+					if (shouldOpen) {
+						this.rightPanelSetState(isPopup, { page, ...param });
+					};
+
 					this.objRight.removeClass('anim');
 
 					const inner = this.objRight.find('.sidebarPage');
-
 					inner.addClass('anim');
 					raf(() => inner.css({ opacity: 1 }));
 
