@@ -524,6 +524,8 @@ class Keyboard {
 				} else {
 					history.goBack();
 				};
+
+				U.Router.checkSidebarState();
 			};
 		};
 

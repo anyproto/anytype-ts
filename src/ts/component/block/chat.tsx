@@ -120,9 +120,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			const messages = message.messages || [];
 
+			if (messages.length < J.Constant.limit.chat.messages) {
+				setIsLoaded(true);
+			};
+
 			loadDepsAndReplies(messages, () => {
 				if (messages.length && clear) {
 					S.Chat.set(subId, messages);
+				} else {
+					setDummy(dummy + 1);
 				};
 
 				if (callBack) {
@@ -176,7 +182,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				isLoading.current = false;
 
 				if (message.error.code) {
-					isLoaded.current = true;
+					setIsLoaded(true);
 
 					if (callBack) {
 						callBack();
@@ -188,7 +194,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				if (dir > 0) {
 					if (messages.length < J.Constant.limit.chat.messages) {
-						isLoaded.current = true;
+						setIsLoaded(true);
 						setIsBottom(true);
 						subscribeMessages(false);
 					} else {
@@ -755,7 +761,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const onReplyClick = (e: MouseEvent, item: any) => {
 		const subId = getSubId();
 
-		isLoaded.current = false;
+		setIsLoaded(false);
 		setIsBottom(false);
 
 		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
@@ -852,6 +858,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		btn.toggleClass('active', !v);
 	};
 
+	const setIsLoaded = (v: boolean) => {
+		isLoaded.current = v;
+	};
+
 	const setAutoLoadDisabled = (v: boolean) => {
 		isAutoLoadDisabled.current = v;
 	};
@@ -915,7 +925,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const sections = getSections();
 	const spaceview = U.Space.getSpaceview();
-	const isEmpty = !initialRender.current && !isLoading.current && !messages.length;
+	const isEmpty = isLoaded.current && !messages.length;
 	const items = getItems();
 
 	useEffect(() => {

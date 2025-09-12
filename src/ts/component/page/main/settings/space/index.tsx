@@ -239,7 +239,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
-											<Icon className="settings-replace" />
+											<Icon className={`settings-ux${space.uxType}`} />
 
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />

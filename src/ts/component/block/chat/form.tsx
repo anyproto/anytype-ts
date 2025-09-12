@@ -499,7 +499,6 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-
 		window.clearTimeout(timeoutDrag.current);
 		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Common.getScrollContainer(isPopup).height() });
 	};
@@ -509,31 +508,33 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		timeoutDrag.current = window.setTimeout(() => {
-			$(nodeRef.current).removeClass('isDraggingOver').css({ height: '' });
-		}, 100);
+		timeoutDrag.current = window.setTimeout(clearDragState, 100);
 	};
 
 	const onDrop = (e: any) => {
 		if (!canDrop(e)) {
-			onDragLeave(e);
+			clearDragState();
 			return;
 		};
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
 		const electron = U.Common.getElectron();
 		const list = Array.from(e.dataTransfer.files).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
-		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
 		addAttachments(list);
+
 		keyboard.disableCommonDrop(false);
+		clearDragState();
+	};
+
+	const clearDragState = () => {
+		$(nodeRef.current).removeClass('isDraggingOver').css({ height: '' });
 	};
 
 	const onEmoji = () => {

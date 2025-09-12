@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard, translate, focus } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -101,6 +101,8 @@ class UtilRouter {
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
+		const spaceview = U.Space.getSpaceview();
+		const rightSidebar = S.Common.getRightSidebarState(false);
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
@@ -118,6 +120,8 @@ class UtilRouter {
 
 		const change = () => {
 			this.history.push(route); 
+			this.checkSidebarState();
+
 			if (onRouteChange) {
 				onRouteChange();
 			};
@@ -241,14 +245,9 @@ class UtilRouter {
 					S.Common.nullifySpaceKeys();
 
 					const onRouteChange = () => {
-						const spaceview = U.Space.getSpaceview();
-						if (!spaceview.isChat) {
-							S.Common.setRightSidebarState(false, '', false);
-						} else {
-							sidebar.rightPanelRestore(false);
-						};
-
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+
+						this.checkSidebarState();
 						routeParam.onRouteChange?.();
 					};
 
@@ -259,6 +258,17 @@ class UtilRouter {
 				},
 			});
 		});
+	};
+
+	checkSidebarState () {
+		const spaceview = U.Space.getSpaceview();
+		const rightSidebar = S.Common.getRightSidebarState(false);
+
+		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
+			sidebar.rightPanelClose(false);
+		} else {
+			sidebar.rightPanelRestore(false);
+		};
 	};
 
 	/**

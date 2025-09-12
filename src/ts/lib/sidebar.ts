@@ -511,10 +511,12 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	rightPanelSetState (isPopup: boolean, v: any) {
-		if (!v.page) {
-			v.page = S.Common.getRightSidebarState(isPopup).page;
-		};
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const { isOpen, page } = rightSidebar;
 
+		v.page = v.page || page;
+
+		S.Common.setRightSidebarState(isPopup, v.page, isOpen);
 		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
@@ -524,6 +526,11 @@ class Sidebar {
 	 */
 	rightPanelGetState (isPopup: boolean) {
 		return this.rightPanelRef(isPopup)?.getState() || {};
+	};
+
+	rightPanelClose (isPopup: boolean) {
+		S.Common.setRightSidebarState(isPopup, '', false);
+		this.rightPanelRestore(isPopup);
 	};
 
 };
