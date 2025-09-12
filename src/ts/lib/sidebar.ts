@@ -34,7 +34,7 @@ class Sidebar {
 	init () {
 		this.initObjects();
 
-		const stored = Storage.get('sidebar');
+		const stored = Storage.get('sidebar', Storage.isLocal('sidebar'));
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -318,13 +318,6 @@ class Sidebar {
 	};
 
 	/**
-	 * Saves the current sidebar state to storage.
-	 */
-	private save (): void {
-		Storage.set('sidebar', this.data);
-	};
-
-	/**
 	 * Sets the sidebar data and updates the style.
 	 * @param {Partial<SidebarData>} v - The new sidebar data.
 	 */
@@ -337,7 +330,7 @@ class Sidebar {
 			width: this.limitWidth(width),
 		});
 
-		this.save();
+		Storage.set('sidebar', this.data, Storage.isLocal('sidebar'));
 		this.setStyle(this.data);
 	};
 
