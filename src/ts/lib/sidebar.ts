@@ -277,6 +277,8 @@ class Sidebar {
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 
+		console.log(this.pageFlex.width(), widthLeft, widthRight, pageWidth);
+
 		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
 			rightButtonX = 120;
@@ -292,14 +294,12 @@ class Sidebar {
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
-
-		if (isMainChat) {
-			this.page.toggleClass('sidebarAnimation', animate);
-		};
+		this.page.toggleClass('sidebarAnimation', animate);
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
+		this.page.css({ width: pageWidth });
 		
 		if (!isPopup) {
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
@@ -309,9 +309,9 @@ class Sidebar {
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
-			this.page.css({ width: pageWidth, height: U.Common.getAppContainerHeight() });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
+			this.page.css({ height: U.Common.getAppContainerHeight() });
 		};
 
 		$(window).trigger('sidebarResize');
