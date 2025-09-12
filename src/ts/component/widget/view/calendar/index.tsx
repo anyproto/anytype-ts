@@ -120,6 +120,10 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		};
 
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		if (!relation) {
+			return;
+		};
+
 		const start = U.Date.timestamp(y, m, d, 0, 0, 0);
 		const end = U.Date.timestamp(y, m, d, 23, 59, 59);
 		const filters = [

@@ -277,8 +277,6 @@ class Sidebar {
 		const ho = isMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 
-		console.log(this.pageFlex.width(), widthLeft, widthRight, pageWidth);
-
 		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
 			rightButtonX = 120;
