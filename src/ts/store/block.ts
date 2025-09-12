@@ -981,7 +981,7 @@ class BlockStore {
 			id,
 			type: I.BlockType.Widget,
 			content: {
-				layout: I.WidgetLayout.Compact,
+				layout: I.WidgetLayout.Link,
 				section: I.WidgetSection.Type,
 			},
 		});
@@ -1051,8 +1051,6 @@ class BlockStore {
 			return;
 		};
 
-		let update = false;
-
 		types.forEach(type => {
 			const id = `type-${type.id}`;
 			if (element.childrenIds.includes(id)) {
@@ -1062,13 +1060,10 @@ class BlockStore {
 			this.createTypeWidget(type);
 
 			element.childrenIds.push(id);
-			update = true;
 		});
 
-		if (update) {
-			this.updateStructure(widgets, widgets, element.childrenIds);
-			this.updateStructureParents(widgets);
-		};
+		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructureParents(widgets);
 	};
 
 	getWidgetsForTarget (id: string) {

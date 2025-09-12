@@ -927,7 +927,7 @@ class Action {
 		if (S.Block.getWidgetsForTarget(objectId).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
-			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget());
+			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget() && (it.content.section == I.WidgetSection.Pin));
 			this.createWidgetFromObject(objectId, objectId, first?.id, I.BlockPosition.Top, route);
 		};
 	};
