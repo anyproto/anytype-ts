@@ -8,6 +8,7 @@ import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview
 type State = {
 	isEditing: boolean;
 	previewId: string;
+	sectionIds: I.WidgetSection[];
 };
 
 const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<I.SidebarPageComponent, State> {
@@ -15,6 +16,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	state: State = {
 		isEditing: false,
 		previewId: '',
+		sectionIds: [],
 	};
 
 	dropTargetId = '';
@@ -41,10 +43,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onArrow = this.onArrow.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.getObject = this.getObject.bind(this);
+		this.initToggle = this.initToggle.bind(this);
 	};
 
 	render (): React.ReactNode {
-		const { isEditing, previewId } = this.state;
+		const { isEditing, previewId, sectionIds } = this.state;
 		const { widgets } = S.Block;
 		const { sidebarDirection } = this.props;
 		const cnsh = [ 'subHead' ];
@@ -235,26 +238,28 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={this.onTypeCreate} />;
 							};
 
-							list = list.sort((a, b) => {
-								const c1 = this.getChild(a.id);
-								const c2 = this.getChild(b.id);
+							if (sectionIds.includes(section.id) && (list.length > 1)) {
+								list = list.sort((a, b) => {
+									const c1 = this.getChild(a.id);
+									const c2 = this.getChild(b.id);
 
-								const t1 = c1?.getTargetObjectId();
-								const t2 = c2?.getTargetObjectId();
+									const t1 = c1?.getTargetObjectId();
+									const t2 = c2?.getTargetObjectId();
 
-								if (!t1 || !t2) {
-									return 0;
-								};
+									if (!t1 || !t2) {
+										return 0;
+									};
 
-								const type1 = S.Record.getTypeById(t1);
-								const type2 = S.Record.getTypeById(t2);
+									const type1 = S.Record.getTypeById(t1);
+									const type2 = S.Record.getTypeById(t2);
 
-								if (!type1 || !type2) {
-									return 0;
-								};
+									if (!type1 || !type2) {
+										return 0;
+									};
 
-								return U.Data.sortByOrderId(type1, type2);
-							});
+									return U.Data.sortByOrderId(type1, type2);
+								});
+							};
 						};
 
 						return (
@@ -269,25 +274,27 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									</div>
 								</div>
 
-								<div className="items">
-									{list.map((block, i) => (
-										<Widget
-											{...this.props}
-											key={`widget-${block.id}`}
-											block={block}
-											isEditing={isEditing}
-											canEdit={true}
-											canRemove={true}
-											onDragStart={this.onDragStart}
-											onDragOver={this.onDragOver}
-											onDrag={this.onDrag}
-											setPreview={this.setPreview}
-											setEditing={this.setEditing}
-											sidebarDirection={sidebarDirection}
-											getObject={this.getObject}
-										/>
-									))}
-								</div>
+								{sectionIds.includes(section.id) ? (
+									<div className="items">
+										{list.map((block, i) => (
+											<Widget
+												{...this.props}
+												key={`widget-${block.id}`}
+												block={block}
+												isEditing={isEditing}
+												canEdit={true}
+												canRemove={true}
+												onDragStart={this.onDragStart}
+												onDragOver={this.onDragOver}
+												onDrag={this.onDrag}
+												setPreview={this.setPreview}
+												setEditing={this.setEditing}
+												sidebarDirection={sidebarDirection}
+												getObject={this.getObject}
+											/>
+										))}
+									</div>
+								) : ''}
 							</div>
 						);
 					})}
@@ -355,7 +362,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	componentDidMount(): void {
-		this.init();
+		const { sectionIds } = this.state;
+		[ 
+			I.WidgetSection.Pin, 
+			I.WidgetSection.Type,
+		].forEach(id => {
+			if (!this.isSectionClosed(id)) {
+				sectionIds.push(id);
+			};
+		});
+
+		if (sectionIds.length) {
+			this.setState({ sectionIds });
+		} else {
+			this.init();
+		};
 	};
 
 	componentDidUpdate (): void {
@@ -365,9 +386,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	init () {
 		S.Block.updateWidgetList();
 
-		const sections = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
-
-		sections.forEach(id => this.initToggle(id));
+		[ 
+			I.WidgetSection.Pin, 
+			I.WidgetSection.Type,
+		].forEach(this.initToggle);
 		this.onScroll();
 	};
 
@@ -746,11 +768,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		});
 	};
 
+	isSectionClosed (id: I.WidgetSection) {
+		return Storage.checkToggle('widgetSection', String(id));
+	};
+
 	initToggle (id: I.WidgetSection) {
 		const obj = $(`#sidebarPageWidget`);
 		const section = obj.find(`#section-${id}`);
 		const list = section.find('> .items');
-		const isClosed = Storage.checkToggle('widgetSection', String(id));
+		const isClosed = this.isSectionClosed(id);
 
 		section.toggleClass('isOpen', !isClosed);
 		list.toggleClass('isOpen', !isClosed).css({ height: (!isClosed ? 'auto': 0) });
@@ -760,12 +786,23 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const obj = $(`#sidebarPageWidget`);
 		const section = obj.find(`#section-${id}`);
 		const list = section.find('> .items');
-		const isClosed = Storage.checkToggle('widgetSection', String(id));
+		const isClosed = this.isSectionClosed(id);
+		const save = () => Storage.setToggle('widgetSection', String(id), !isClosed);
 
-		U.Common.toggle(list, 200);
-		section.toggleClass('isOpen', isClosed);
-		list.toggleClass('isOpen', isClosed);
-		Storage.setToggle('widgetSection', String(id), !isClosed);
+		let sectionIds = [ ...this.state.sectionIds ];
+		sectionIds = isClosed ? sectionIds.concat(id) : sectionIds.filter(it => it != id);
+
+		if (isClosed) {
+			save();
+			this.setState({ sectionIds }, () => {
+				U.Common.toggle(list, 200, false);
+			});
+		} else {
+			U.Common.toggle(list, 200, true, () => {
+				save();
+				this.setState({ sectionIds });
+			});
+		};
 	};
 
 	clear () {

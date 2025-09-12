@@ -1680,16 +1680,17 @@ class UtilCommon {
 	 * @param {any} obj - The jQuery object to toggle.
 	 * @param {number} delay - The animation delay in ms.
 	 */
-	toggle (obj: any, delay: number) {
-		const isOpen = obj.hasClass('isOpen');
-
+	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
 		if (isOpen) {
 			const height = obj.outerHeight();
 
 			obj.css({ height });
 
 			raf(() => obj.addClass('anim').css({ height: 0 }));
-			window.setTimeout(() => obj.removeClass('isOpen anim'), delay);
+			window.setTimeout(() => {
+				obj.removeClass('isOpen anim');
+				callBack?.();
+			}, delay);
 		} else {
 			obj.css({ height: 'auto' });
 
@@ -1698,7 +1699,10 @@ class UtilCommon {
 			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ height: 'auto' }), delay);
+			window.setTimeout(() => {
+				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto' });
+				callBack?.();
+			}, delay);
 		};
 	};
 
