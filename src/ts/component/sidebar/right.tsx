@@ -39,11 +39,10 @@ const Components = {
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
 	const { isPopup } = props;
-	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const childRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
 	const [ state, setState ] = useState<State>({
-		page: '',
+		page: spaceview.isChat ? 'widget' : '',
 		rootId: '',
 		details: {},
 		readonly: false,

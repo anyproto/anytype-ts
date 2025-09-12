@@ -389,9 +389,17 @@ class Sidebar {
 
 	rightPanelRestore (isPopup: boolean) {
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		if (rightSidebar.isOpen) {
-			this.objRight.css({ right: 0 });
+		const { isOpen } = rightSidebar;
+		const css: any = {};
+
+		if (isOpen) {
+			css.right = 0;
+		} else {
+			css.right = -J.Size.sidebar.right;
+			this.objRight.hide();
 		};
+		
+		this.objRight.css(css);
 	};
 
 	/**
@@ -434,8 +442,7 @@ class Sidebar {
 				cssEnd.right = -width;
 			};
 
-			this.objRight.css(cssStart);
-			this.objRight.find('.sidebarPage').css({ opacity: 0 });
+			this.objRight.show().css(cssStart);
 
 			raf(() => {
 				if (animate) {
@@ -448,14 +455,11 @@ class Sidebar {
 				window.setTimeout(() => {
 					if (shouldOpen) {
 						this.rightPanelSetState(isPopup, { page, ...param });
+					} else {
+						this.objRight.hide();
 					};
 
 					this.objRight.removeClass('anim');
-
-					const inner = this.objRight.find('.sidebarPage');
-					inner.addClass('anim');
-					raf(() => inner.css({ opacity: 1 }));
-
 				}, animate ? J.Constant.delay.sidebar : 0);
 			});
 		});
