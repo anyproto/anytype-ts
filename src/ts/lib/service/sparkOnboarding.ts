@@ -370,9 +370,6 @@ export class SparkOnboardingService extends EventEmitter {
 			// Switch to the new space
 			const routeParam = {
 				onRouteChange: () => {
-					// Initialize space state
-					U.Space.initSpaceState();
-
 					// Open dashboard
 					U.Space.openDashboard({ replace: true });
 

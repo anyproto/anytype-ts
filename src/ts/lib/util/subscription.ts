@@ -502,11 +502,12 @@ class UtilSubscription {
 			},
 			{
 				subId: J.Constant.subId.type,
-				keys: this.typeRelationKeys(),
+				keys: this.typeRelationKeys(false),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
+					{ relationKey: 'orderId', type: I.SortType.Asc },
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
@@ -659,8 +660,14 @@ class UtilSubscription {
 	 * Returns the relation keys for type subscriptions.
 	 * @returns {string[]} The list of relation keys.
 	 */
-	typeRelationKeys () {
-		return J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
+	typeRelationKeys (withTmpOrder: boolean) {
+		const ret = J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
+
+		if (withTmpOrder) {
+			ret.push('tmpOrder');
+		};
+
+		return ret;
 	};
 
 	/**

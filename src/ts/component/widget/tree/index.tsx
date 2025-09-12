@@ -3,8 +3,8 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { Label } from 'Component';
-import { I, C, S, U, J, analytics, Relation, Storage, translate, Action } from 'Lib';
+import { Label, Filter, Button } from 'Component';
+import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
@@ -14,11 +14,13 @@ const HEIGHT = 28; // Height of each row
 interface WidgetTreeRefProps {
 	updateData: () => void;
 	resize: () => void;
+	getSearchIds: () => string[];
+	getFilter: () => string;
 };
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, getLimit, getData, getTraceId, sortFavorite, addGroupLabels, checkShowAllButton } = props;
+	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, getTraceId, sortFavorite, addGroupLabels, checkShowAllButton, onCreate } = props;
 	const targetId = block ? block.getTargetObjectId() : '';
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -28,6 +30,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const links = useRef([]);
 	const top = useRef(0);
 	const branches = useRef([]);
+	const filterRef = useRef(null);
 	const subscriptionHashes = useRef({});
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
@@ -151,7 +154,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		if (withLimit) {
-			links = links.slice(0, getLimit(parent.content));
+			links = links.slice(0, getLimit());
 		};
 
 		const hash = sha1(U.Common.arrayUnique(links).join('-'));
@@ -212,7 +215,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		e.stopPropagation();
 
 		U.Object.openEvent(e, item);
-		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
+		analytics.event('OpenSidebarObject');
 	};
 
 	const getTotalHeight = () => {
@@ -225,6 +228,12 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			h += 12;
 		};
 		return h;
+	};
+
+	const onFilterChange = (v: string) => {
+	};
+
+	const onFilterClear = () => {
 	};
 
 	const resize = () => {
@@ -253,6 +262,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const nodes = loadTree();
 	const length = nodes.length;
 
+	let head = null;
 	let content = null;
 
 	if (!length) {
@@ -290,6 +300,36 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 						getSubKey={() => subKey}
 					/>
 				</CellMeasurer>
+			);
+		};
+
+		if (isPreview) {
+			head = (
+				<div className="head">
+					<div className="filterWrapper">
+						<div className="side left">
+							<Filter
+								ref={filterRef}
+								className="outlined"
+								icon="search"
+								placeholder={translate('commonSearch')}
+								onChange={onFilterChange}
+								onClear={onFilterClear}
+							/>
+						</div>
+						{canCreate ? (
+							<div className="side right">
+								<Button 
+									id="button-object-create" 
+									color="blank" 
+									className="c28" 
+									text={translate('commonNew')} 
+									onClick={() => onCreate({ route: analytics.route.widget })} 
+								/>
+							</div>
+						) : ''}
+					</div>
+				</div>
 			);
 		};
 
@@ -382,6 +422,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useImperativeHandle(ref, () => ({
 		updateData,
 		resize,
+		getSearchIds: () => [],
+		getFilter: () => '',
 	}));
 
 	return (
@@ -390,6 +432,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			id="innerWrap"
 			className="innerWrap"
 		>
+			{head}
 			{content}
 		</div>
 	);

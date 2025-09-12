@@ -435,7 +435,6 @@ class UtilData {
 		const { space } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
-		const pinned = Storage.getPinnedTypes();
 
 		let items: any[] = [];
 
@@ -447,7 +446,6 @@ class UtilData {
 		}));
 
 		items = S.Record.checkHiddenObjects(items);
-		items.sort((c1, c2) => this.sortByPinnedTypes(c1, c2, pinned));
 
 		if (limit) {
 			items = items.slice(0, limit);
@@ -462,7 +460,7 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-		return items;
+		return S.Record.sortTypes(items);
 	};
 
 	countTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
@@ -586,6 +584,22 @@ class UtilData {
 		if ((n1 != dn) && (n2 == dn)) return -1;
 		if (n1 > n2) return 1;
 		if (n1 < n2) return -1;
+		return 0;
+	};
+
+	/**
+	 * Sorts two objects by their orderId and tmpOrder properties.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
+	sortByOrderId (c1: any, c2: any) {
+		if (c1.tmpOrder > c2.tmpOrder) return 1;
+		if (c1.tmpOrder < c2.tmpOrder) return -1;
+
+		if (c1.orderId > c2.orderId) return 1;
+		if (c1.orderId < c2.orderId) return -1;
+
 		return 0;
 	};
 
@@ -1125,6 +1139,56 @@ class UtilData {
 				callBack(ids);
 			};
 		});
+	};
+
+	/**
+	 * Sorts the items by their temporary order ID.
+	 * @param {string} subId - The subscription ID.
+	 * @param {any[]} items - The items to sort.
+	 * @param {(callBack: (message: any) => void) => void} request - The request function to get the sorted order.
+	 */
+	sortByOrderIdRequest (subId: string, items: any[], request: (callBack: (message: any) => void) => void) {
+		let s = '';
+		items.forEach((it, i) => {
+			s = U.Common.lexString(s);
+			S.Detail.update(subId, { id: it.id, details: { tmpOrder: s }}, false);
+		});
+
+		request(message => {
+			if (message.error.code) {
+				return;
+			};
+
+			const list = message.list;
+			for (let i = 0; i < list.length; i++) {
+				const item = items[i];
+				if (item) {
+					S.Detail.update(subId, { id: item.id, details: { orderId: list[i] }}, false);
+				};
+			};
+		});
+	};
+
+	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+		let ret: any = {};
+
+		switch (block.content.section) {
+			case I.WidgetSection.Pin: {
+				ret = { ...block.content };
+				break;
+			};
+
+			case I.WidgetSection.Type: {
+				ret = { 
+					layout: object.widgetLayout, 
+					limit: object.widgetLimit, 
+					viewId: object.widgetViewId,
+				};
+				break;
+			};
+		};
+
+		return ret;
 	};
 
 };

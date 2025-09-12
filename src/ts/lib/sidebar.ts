@@ -34,7 +34,7 @@ class Sidebar {
 	init () {
 		this.initObjects();
 
-		const stored = Storage.get('sidebar');
+		const stored = Storage.get('sidebar', Storage.isLocal('sidebar'));
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -292,14 +292,12 @@ class Sidebar {
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
-
-		if (isMainChat) {
-			this.page.toggleClass('sidebarAnimation', animate);
-		};
+		this.page.toggleClass('sidebarAnimation', animate);
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
+		this.page.css({ width: pageWidth });
 		
 		if (!isPopup) {
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
@@ -309,19 +307,12 @@ class Sidebar {
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
-			this.page.css({ width: pageWidth, height: U.Common.getAppContainerHeight() });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
+			this.page.css({ height: U.Common.getAppContainerHeight() });
 		};
 
 		$(window).trigger('sidebarResize');
-	};
-
-	/**
-	 * Saves the current sidebar state to storage.
-	 */
-	private save (): void {
-		Storage.set('sidebar', this.data);
 	};
 
 	/**
@@ -337,7 +328,7 @@ class Sidebar {
 			width: this.limitWidth(width),
 		});
 
-		this.save();
+		Storage.set('sidebar', this.data, Storage.isLocal('sidebar'));
 		this.setStyle(this.data);
 	};
 

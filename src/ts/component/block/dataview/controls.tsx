@@ -419,7 +419,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		if (width + 16 > nw) {
 			node.addClass('small');
-		} else {
+		} else 
+		if (S.Menu.isOpen('dataviewViewList')) {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};

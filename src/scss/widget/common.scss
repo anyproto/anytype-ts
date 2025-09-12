@@ -63,16 +63,6 @@
 		}
 	}
 
-	&.isEmpty {
-		.head {
-			.buttons { display: flex; }
-
-			.sides:hover {
-				.iconWrap.more { display: flex; }
-			}
-		}
-	}
-
 	&.active, &:hover {
 		.head { padding-right: 8px; }
 	}
@@ -88,7 +78,7 @@
 
 	#button-show-all { padding: 0px 8px; }
 	#button-show-all {
-		.button { display: flex; align-items: center; justify-content: center; border: 0; @include text-small; font-weight: 500; }
+		.button { display: flex; align-items: center; justify-content: flex-start; border: 0; @include text-small; font-weight: 500; }
 		.button:after { content: ''; width: 8px; height: 8px; display: block; background-image: url('~img/arrow/showAll.svg'); margin: 0px -12px 0px 4px; }
 	}
 
@@ -136,13 +126,18 @@
 
 .widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; }
 .widget.isPreview {
+	.head { padding: 4px 16px; }
 	.contentWrapper, .innerWrap { height: 100%; }
+
 	.emptyWrap { padding: 16px 16px 8px 16px; }
 
 	.innerWrap { padding: 0px !important; }
 
-	&.widgetView {
-		#viewSelect { padding-top: 8px; }
+	.filterWrapper { display: flex; align-items: center; gap: 0px 8px; }
+	.filterWrapper {
+		.side.left { flex-grow: 1; }
+		.side.right { flex-shrink: 0; }
+		.filter { padding: 0px; width: 100%; }
 	}
 }
 

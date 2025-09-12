@@ -105,17 +105,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	}
 
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId } = data;
-		const { widgets } = S.Block;
-		const block = S.Block.getLeaf(widgets, blockId);
-
 		this.checkButton();
 		this.rebind();
 		this.getTargetId();
 
-		analytics.event('ScreenWidgetMenu', { widgetType: analytics.getWidgetType(block?.content.autoAdded) });
+		analytics.event('ScreenWidgetMenu');
 	};
 
 	componentDidUpdate () {
@@ -162,7 +156,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
 		const sections: any[] = [];
-		const canRemove = isEditing;
+		const canRemove = data.canRemove && isEditing;
 
 		if (layoutOptions.length > 1) {
 			sections.push({
@@ -247,8 +241,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	onOptionClick (e: React.MouseEvent, option: any, section: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, isEditing } = data;
+		const { blockId, isEditing, target } = data;
 		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, blockId);
+
+		if (!block) {
+			return;
+		};
+
+		const isSectionPin = block.content.section == I.WidgetSection.Pin;
+		const isSectionType = block.content.section == I.WidgetSection.Type;
 
 		switch (section.id) {
 			case 'layout': {
@@ -257,7 +259,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.forceUpdate();
 
 				if (isEditing) {
-					C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+					if (isSectionPin) {
+						C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+					} else
+					if (isSectionType) {
+						C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLayout', value: this.layout } ], () => close());
+					};
 				};
 
 				analytics.event('ChangeWidgetLayout', {
@@ -274,7 +281,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.forceUpdate();
 
 				if (isEditing) {
-					C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+					if (isSectionPin) {
+						C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+					} else
+					if (isSectionType) {
+						C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLimit', value: this.limit } ], () => close());
+					};
 				};
 
 				analytics.event('ChangeWidgetLimit', {
@@ -332,7 +344,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			if (!isEditing) {
-				analytics.createWidget(this.layout, analytics.route.addWidgetMenu, analytics.widgetType.manual);
+				analytics.createWidget(this.layout, analytics.route.addWidgetMenu);
 			};
 		});
 

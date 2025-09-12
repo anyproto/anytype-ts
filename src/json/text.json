@@ -908,8 +908,6 @@
 	"popupSettingsSpaceIndexNetworkIdTitle": "Network ID",
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
-	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
-	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 	"popupSettingsSpaceIndexPushTitle": "Message notifications",
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
@@ -2035,6 +2033,10 @@
 	"widget3Description": "Widget with a compact list view",
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
+
+	"widgetSectionPinned": "Pinned",
+	"widgetSectionType": "Objects",
+	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Pinned",
 	"widgetRecent": "Recently edited",

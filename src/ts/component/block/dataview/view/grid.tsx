@@ -414,7 +414,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		S.Menu.open('dataviewRelationList', { 
 			element,
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Right,
 			offsetY: 10,
 			className: isFixed ? 'fixed' : '',
 			onOpen: () => cellLast.addClass('hover'),

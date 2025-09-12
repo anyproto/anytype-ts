@@ -1336,6 +1336,15 @@ export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message
 	dispatcher.request(ObjectTypeResolveLayoutConflicts.name, request, callBack);
 };
 
+export const ObjectTypeSetOrder = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.SetOrder.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTypeidsList(ids);
+
+	dispatcher.request(ObjectTypeSetOrder.name, request, callBack);
+};
+
 // ---------------------- OBJECT ---------------------- //
 
 export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {

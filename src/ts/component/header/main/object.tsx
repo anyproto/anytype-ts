@@ -15,17 +15,17 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
 	const isLocked = root ? root.isLocked() : false;
-	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const isTemplate = U.Object.isTemplateType(object.type);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted && !object.isArchived;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isDeleted;
-	const showPin = canWrite && !isRelation && !isTemplate;
+	const showPin = canWrite && !isTypeOrRelation && !isTemplate;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
+	const isFavorite = object.isFavorite;
 	const spaceview = U.Space.getSpaceview();
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
 
@@ -104,7 +104,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	const onPin = () => {
-		Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.header);
+		Action.toggleWidgetsForObject(rootId, analytics.route.header);
 	};
 
 	const onRelation = () => {
@@ -169,11 +169,11 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-pin" 
 						tooltipParam={{ 
-							text: object.isFavorite ? translate('commonRemovePinned') : translate('commonAddPinned'), 
+							text: isFavorite ? translate('commonRemovePinned') : translate('commonAddPinned'), 
 							caption: keyboard.getCaption('addFavorite'), 
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={[ (object.isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
+						className={[ (isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/> 

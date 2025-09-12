@@ -51,7 +51,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
+		analytics.event('OpenSidebarObject');
 	};
 
 	const onContext = (e: React.MouseEvent) => {

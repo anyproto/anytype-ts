@@ -107,8 +107,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 				U.Router.switchSpace(message.objectId, '', true, { 
 					onRouteChange: () => {
-						U.Space.initSpaceState();
-
 						if (isChatSpace) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
 								if (message.error.code) {

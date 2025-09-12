@@ -2,12 +2,8 @@ import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { CSS } from '@dnd-kit/utilities';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
-import { I, C, S, U, J, analytics, keyboard, Action, translate, Storage } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -15,7 +11,6 @@ const LIMIT = 15;
 
 const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { space } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
 	const { data } = param;
@@ -32,24 +27,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const canWrite = U.Space.canMyParticipantWrite();
 	const addName = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
 	const buttons = (data.buttons || []).map(it => ({ ...it, isButton: true }));
-	const sensors = useSensors(
-		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
-		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-	);
 
 	const getSections = () => {
 		const { filter } = data;
-		const pinned = Storage.getPinnedTypes();
-		const items = U.Common.objectCopy(itemList.current || []).map(it => ({ ...it, object: it }));
+		const items = S.Record.sortTypes(U.Common.objectCopy(itemList.current || [])).map(it => ({ ...it, object: it }));
 		const add = buttons.find(it => it.id == 'add');
 
-		items.sort((c1, c2) => U.Data.sortByPinnedTypes(c1, c2, pinned));
-
-		const library = items.filter(it => (it.spaceId == space));
-		const canWrite = U.Space.canMyParticipantWrite();
-
 		let sections: any[] = [
-			{ id: 'library', name: translate('commonMyTypes'), children: library },
+			{ id: 'library', name: translate('commonMyTypes'), children: items },
 		];
 
 		if (canWrite && filter && !add && canAdd) {
@@ -74,7 +59,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			forceUpdate: () => setDummy(dummy + 1),
 			props,
 		};
-		
+
 		let items: any[] = [];
 
 		sections.forEach((section: any, i: number) => {
@@ -126,6 +111,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const sorts = [
+			{ relationKey: 'orderId', type: I.SortType.Asc },
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -142,13 +128,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (clear) {
+			offset.current = 0;
 			itemList.current = [];
 		};
 
 		U.Subscription.search({
 			filters,
 			sorts,
-			keys: U.Subscription.typeRelationKeys(),
+			keys: U.Subscription.typeRelationKeys(false),
 			fullText: filter,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
@@ -254,34 +241,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 	};
 
-	const onSortStart = () => {
-		keyboard.setDragging(true);
-	};
-
-	const onSortEnd = (result: any) => {
-		keyboard.setDragging(false);
-
-		const { active, over } = result;
-		if (!active || !over || (active.id == over.id)) {
-			return;
-		};
-
-		const ids = items.map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
-
-		Storage.setPinnedTypes(arrayMove(ids, oldIndex, newIndex));
-		setDummy(dummy + 1);
-	};
-
 	const Item = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
-		const style = {
-			...item.style,
-			transform: CSS.Transform.toString(transform),
-			transition,
-		};
-
 		let content = null;
 		if (item.id == 'add') {
 			content = (
@@ -290,6 +250,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className="item add" 
 					onMouseEnter={e => onMouseEnter(e, item)} 
 					onClick={e => onClickHandler(e, item)} 
+					style={item.style}
 				>
 					<Icon className="plus" />
 					<div className="name">{addName}</div>
@@ -299,7 +260,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			content = (
 				<MenuItemVertical 
 					{...item}
-					style={{}}
 					index={item.index}
 					className={item.isHidden ? 'isHidden' : ''}
 					onMouseEnter={e => onMouseEnter(e, item)} 
@@ -309,16 +269,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			);
 		};
 
-		return (
-			<div
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-			>
-				{content}
-			</div>
-		);
+		return content;
 	};
 
 	const rowRenderer = (param: any) => {
@@ -348,7 +299,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		n.current = 0;
-		offset.current = 0;
 		currentFilter.current = filter;
 		load(true);
 	}, [ filter ]);
@@ -381,46 +331,33 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			) : ''}
 
 			{items.length ? (
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragStart={onSortStart}
-					onDragEnd={onSortEnd}
-					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-				>
-					<SortableContext
-						items={items.map(item => item.id)}
-						strategy={verticalListSortingStrategy}
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length + 1}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={LIMIT}
 					>
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length + 1}
-								loadMoreRows={loadMoreRows}
-								isRowLoaded={({ index }) => !!items[index]}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={listRef}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={({ index }) => getRowHeight(items[index])}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={LIMIT}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
 								)}
-							</InfiniteLoader>
-						</div>
-					</SortableContext>
-				</DndContext>
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
 			) : <EmptySearch readonly={!canWrite} filter={filter} />}
 
 			{buttons.length ? (

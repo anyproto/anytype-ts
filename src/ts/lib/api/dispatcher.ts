@@ -868,6 +868,10 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
+
+						if (subId == J.Constant.subId.type) {
+							S.Block.removeTypeWidget(id);
+						};
 					};
 					break;
 				};
@@ -1124,8 +1128,7 @@ class Dispatcher {
 
 				case 'SpaceAutoWidgetAdded': {
 					Preview.toastShow({ objectId: mapped.targetId, action: I.ToastAction.Widget, icon: 'check' });
-
-					analytics.createWidget(0, '', analytics.widgetType.auto);
+					analytics.createWidget(0, '');
 					break;
 				};
 
@@ -1162,15 +1165,21 @@ class Dispatcher {
 		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
-		if (subIds.length && subIds.includes(J.Constant.subId.space)) {
-			const object = U.Space.getSpaceview(id);
+		if (subIds.length) {
+			if (subIds.includes(J.Constant.subId.space)) {
+				const object = U.Space.getSpaceview(id);
 
-			if (intersection.length && object.targetSpaceId) {
-				U.Subscription.createSubSpace([ object.targetSpaceId ]);
+				if (intersection.length && object.targetSpaceId) {
+					U.Subscription.createSubSpace([ object.targetSpaceId ]);
+				};
+
+				if (object.isAccountDeleted && (object.targetSpaceId == space)) {
+					U.Space.openFirstSpaceOrVoid(null, { replace: true });
+				};
 			};
 
-			if (object.isAccountDeleted && (object.targetSpaceId == space)) {
-				U.Space.openFirstSpaceOrVoid(null, { replace: true });
+			if (subIds.includes(J.Constant.subId.type)) {
+				S.Block.addTypeWidget(id);
 			};
 		};
 

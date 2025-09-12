@@ -145,8 +145,6 @@ class UtilMenu {
 			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
 		];
 
-		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
-
 		let i = 0;
 		for (const type of items) {
 			ret.push({ 
@@ -453,12 +451,12 @@ class UtilMenu {
 		let options = [];
 		switch (layout) {
 			default: {
-				options = [ 6, 10, 14 ];
+				options = [ 6, 10, 14, 30, 50 ];
 				break;
 			};
 
 			case I.WidgetLayout.List: {
-				options = [ 4, 6, 8 ];
+				options = [ 4, 6, 8, 30, 50 ];
 				break;
 			};
 		};
@@ -791,7 +789,7 @@ class UtilMenu {
 		const { targetSpaceId } = space;
 		const options: any[] = [];
 
-		if (space.spaceOrder) {
+		if (space.orderId) {
 			options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 		} else { 
 			options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
@@ -898,7 +896,7 @@ class UtilMenu {
 
 					it.counter = counters.mentionCounter || counters.messageCounter;
 					it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
-					it.isPinned = !!it.spaceOrder;
+					it.isPinned = !!it.orderId;
 				};
 				return it;
 			});
@@ -907,11 +905,10 @@ class UtilMenu {
 			if (c1.isPinned && !c2.isPinned) return -1;
 			if (!c1.isPinned && c2.isPinned) return 1;
 
-			if (c1.tmpOrder > c2.tmpOrder) return 1;
-			if (c1.tmpOrder < c2.tmpOrder) return -1;
-
-			if (c1.spaceOrder > c2.spaceOrder) return 1;
-			if (c1.spaceOrder < c2.spaceOrder) return -1;
+			const o = U.Data.sortByOrderId(c1, c2);
+			if (o) {
+				return o;
+			};
 
 			const d1 = c1.lastMessageDate || c1.spaceJoinDate || c1.counter;
 			const d2 = c2.lastMessageDate || c2.spaceJoinDate || c2.counter;

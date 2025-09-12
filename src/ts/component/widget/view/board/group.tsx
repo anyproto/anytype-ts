@@ -14,7 +14,8 @@ interface Props extends I.WidgetViewComponent {
 const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
-	const { rootId, block, parent, id, value, canCreate, onCreate, getView, getViewLimit, getObject } = props;
+	const { rootId, block, id, value, canCreate, onCreate, getView, getViewLimit, getObject, getContentParam } = props;
+	const { viewId } = getContentParam();
 	const view = getView();
 	const subId = S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
 	const object = getObject();
@@ -61,7 +62,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const applyObjectOrder = (groupId: string, ids: string[]): any[] => {
-		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, parent.content.viewId, groupId, ids);
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, viewId, groupId, ids);
 	};
 
 	const getToggleKey = () => {
@@ -130,7 +131,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onAll = (e: any) => {
-		U.Object.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
+		U.Object.openEvent(e, { ...object, _routeParam_: { viewId } });
 	};
 
 	useEffect(() => {

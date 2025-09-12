@@ -336,6 +336,10 @@ class DetailStore {
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 		object.pluralName = Relation.getStringValue(object.pluralName);
 		object.headerRelationsLayout = Number(object.headerRelationsLayout) || I.FeaturedRelationLayout.Inline;
+		object.orderId = Relation.getStringValue(object.orderId);
+		object.widgetLayout = Number(object.widgetLayout) || I.WidgetLayout.Link;
+		object.widgetLimit = Number(object.widgetLimit) || 0;
+		object.widgetViewId = Relation.getStringValue(object.widgetViewId);
 
 		if (object.name == translate('defaultNamePage')) {
 			object.name = '';
@@ -440,7 +444,7 @@ class DetailStore {
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
 		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
-		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
+		object.orderId = Relation.getStringValue(object.orderId || object.spaceOrder);
 		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
 
 		if (object.iconOption > 10) {
@@ -473,6 +477,7 @@ class DetailStore {
 
 		delete(object.spacePushNotificationMode);
 		delete(object.spaceUxType);
+		delete(object.spaceOrder);
 
 		return object;
 	};

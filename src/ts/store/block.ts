@@ -968,6 +968,133 @@ class BlockStore {
 		return list;
 	};
 
+	typeWidgetId (id: string) {
+		return `type-${id}`;
+	};
+
+	createTypeWidget (type: any) {
+		const { widgets } = this;
+		const id = this.typeWidgetId(type.id);
+
+		S.Detail.update(widgets, { id: type.id, details: type }, false);
+		const parent = new M.Block({
+			id,
+			type: I.BlockType.Widget,
+			content: {
+				layout: I.WidgetLayout.Compact,
+				section: I.WidgetSection.Type,
+			},
+		});
+
+		const child = new M.Block({
+			id: `type-child-${type.id}`,
+			type: I.BlockType.Link,
+			content: { targetBlockId: type.id },
+		});
+
+		S.Block.add(widgets, parent);
+		S.Block.add(widgets, child);
+		S.Block.updateStructure(widgets, parent.id, [ child.id ]);
+	};
+
+	addTypeWidget (typeId: string) {
+		const { widgets } = this;
+		const element = S.Block.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		const id = this.typeWidgetId(typeId);
+		if (element.childrenIds.includes(id)) {
+			return;
+		};
+
+		const type = S.Record.getTypeById(typeId);
+		if (!type) {
+			return;
+		};
+
+		this.createTypeWidget(type);
+		element.childrenIds.push(id);
+
+		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructureParents(widgets);
+	};
+
+	removeTypeWidget (typeId: string) {
+		const { widgets } = this;
+		const element = S.Block.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		const id = this.typeWidgetId(typeId);
+
+		this.delete(widgets, id);
+		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
+		this.updateStructureParents(widgets);
+	};
+
+	updateTypeWidgetList () {
+		const { widgets } = this;
+		const skipKeys = [ 
+			J.Constant.typeKey.type, 
+			J.Constant.typeKey.template, 
+			J.Constant.typeKey.participant,
+		];
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !skipKeys.includes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
+		const element = S.Block.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		let update = false;
+
+		types.forEach(type => {
+			const id = `type-${type.id}`;
+			if (element.childrenIds.includes(id)) {
+				return;
+			};
+
+			this.createTypeWidget(type);
+
+			element.childrenIds.push(id);
+			update = true;
+		});
+
+		if (update) {
+			this.updateStructure(widgets, widgets, element.childrenIds);
+			this.updateStructureParents(widgets);
+		};
+	};
+
+	getWidgetsForTarget (id: string) {
+		const { widgets } = this;
+		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+			return id == target;
+		});
+
+		return list;
+	};
+
 };
 
 export const Block: BlockStore = new BlockStore();

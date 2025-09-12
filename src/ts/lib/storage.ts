@@ -23,6 +23,7 @@ const LOCAL_KEYS = [
 	'toggle',
 	'scroll',
 	'focus',
+	'sidebar',
 ];
 
 const Api = {
@@ -437,6 +438,7 @@ class Storage {
 		list = [ ...new Set(list) ];
 
 		obj[rootId] = list;
+
 		this.set('toggle', obj, this.isLocal('toggle'));
 		return obj;
 	};
@@ -606,84 +608,6 @@ class Storage {
 		const obj = this.get('survey', this.isLocal('survey')) || {};
 		obj[type] = Object.assign(obj[type] || {}, param);
 		this.set('survey', obj, this.isLocal('survey'));
-	};
-
-	/**
-	 * Initializes pinned types in storage.
-	 */
-	initPinnedTypes () {
-		const list = this.getPinnedTypes();
-
-		if (list.length) {
-			return;
-		};
-
-		const keys = [
-			J.Constant.typeKey.page,
-			J.Constant.typeKey.task,
-			J.Constant.typeKey.collection,
-			J.Constant.typeKey.set,
-			J.Constant.typeKey.bookmark,
-			J.Constant.typeKey.note,
-			J.Constant.typeKey.project,
-			J.Constant.typeKey.human,
-		];
-
-		for (const key of keys) {
-			const type = S.Record.getTypeByKey(key);
-			if (type) {
-				list.push(type.id);
-			};
-		};
-
-		this.setPinnedTypes(list);
-	};
-
-	/**
-	 * Adds a pinned type by ID.
-	 * @param {string} id - The type ID to pin.
-	 */
-	addPinnedType (id: string) {
-		const list = this.getPinnedTypes();
-
-		if (!id) {
-			return list;
-		};
-
-		list.unshift(id);
-		this.setPinnedTypes(list);
-		return list;
-	};
-
-	/**
-	 * Removes a pinned type by ID.
-	 * @param {string} id - The type ID to remove.
-	 */
-	removePinnedType (id: string) {
-		const list = this.getPinnedTypes();
-
-		if (!id) {
-			return list;
-		};
-
-		this.setPinnedTypes(list.filter(it => it != id));
-		return list;
-	};
-
-	/**
-	 * Sets the list of pinned types.
-	 * @param {string[]} list - The list of type IDs to pin.
-	 */
-	setPinnedTypes (list: string[]) {
-		this.set('pinnedTypes', this.checkArray([ ...new Set(list) ]), this.isLocal('pinnedTypes'));
-	};
-
-	/**
-	 * Gets the list of pinned types.
-	 * @returns {string[]} The list of pinned type IDs.
-	 */
-	getPinnedTypes () {
-		return this.checkArray(this.get('pinnedTypes', this.isLocal('pinnedTypes')) || []);
 	};
 
 	/**
