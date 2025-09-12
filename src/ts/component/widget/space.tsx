@@ -1,11 +1,10 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, translate, sidebar, keyboard, analytics } from 'Lib';
+import { I, U, translate, keyboard, analytics } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
-	const { sidebarDirection } = props;
 	const space = U.Space.getSpaceview();
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining).length;
