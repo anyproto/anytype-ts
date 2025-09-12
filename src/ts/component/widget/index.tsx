@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button, Filter } from 'Component';
+import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
@@ -15,9 +15,9 @@ interface Props extends I.WidgetComponent {
 	icon?: string;
 	disableContextMenu?: boolean;
 	className?: string;
-	onDragStart?: (e: MouseEvent, blockId: string) => void;
-	onDragOver?: (e: MouseEvent, blockId: string) => void;
-	onDrag?: (e: MouseEvent, blockId: string) => void;
+	onDragStart?: (e: MouseEvent, block: I.Block) => void;
+	onDragOver?: (e: MouseEvent, block: I.Block) => void;
+	onDrag?: (e: MouseEvent, block: I.Block) => void;
 };
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
@@ -877,9 +877,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			id={`widget-${block.id}`}
 			className={cn.join(' ')}
 			draggable={isDraggable}
-			onDragStart={e => onDragStart ? onDragStart(e, block.id) : null}
-			onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
-			onDrag={e => onDrag ? onDrag(e, block.id) : null}
+			onDragStart={e => onDragStart ? onDragStart(e, block) : null}
+			onDragOver={e => onDragOver ? onDragOver(e, block) : null}
+			onDrag={e => onDrag ? onDrag(e, block) : null}
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>

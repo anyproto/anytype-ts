@@ -266,8 +266,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const newIndex = ids.indexOf(over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => !it.isSection);
 
-		U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
-			C.ObjectTypeSetOrder(active.id, newItems.map(it => it.id), message => {
+		U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {
+			C.ObjectTypeSetOrder(S.Common.space, newItems.map(it => it.id), message => {
 				callBack?.(message);
 				load(true);
 			});

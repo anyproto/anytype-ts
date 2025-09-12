@@ -1,6 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
+import { arrayMove } from '@dnd-kit/sortable';
 import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage } from 'Lib';
 
@@ -419,7 +420,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.setEditing(!this.state.isEditing);
 	};
 
-	onDragStart (e: React.DragEvent, blockId: string): void {
+	onDragStart (e: React.DragEvent, block: I.Block): void {
 		e.stopPropagation();
 
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -427,7 +428,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			return;
 		};
 
-		const child = this.getChild(blockId);
+		const child = this.getChild(block.id);
 		if (!child) {
 			return;
 		};
@@ -442,7 +443,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $('#sidebarPageWidget');
-		const obj = node.find(`#widget-${blockId}`);
+		const obj = node.find(`#widget-${block.id}`);
 		const clone = $('<div />').addClass('widget isClone').css({ 
 			zIndex: 10000, 
 			position: 'fixed', 
@@ -463,7 +464,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.isDragging = true;
 
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
-		e.dataTransfer.setData('text', blockId);
+		e.dataTransfer.setData('text', JSON.stringify({ blockId: block.id, section: block.content.section }));
 
 		win.off('dragend.widget').on('dragend.widget', () => {
 			this.onDragEnd();
@@ -473,11 +474,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		scrollOnMove.onMouseDown({ container: node.find('#body') });
 	};
 
-	onDrag (e: React.DragEvent, blockId: string): void {
-		scrollOnMove.onMouseMove(e.clientX, e.clientY);	
+	onDrag (e: React.DragEvent, block: I.Block): void {
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
-	onDragOver (e: React.DragEvent, blockId: string) {
+	onDragOver (e: React.DragEvent, block: I.Block) {
 		if (!this.isDragging) {
 			return;
 		};
@@ -490,11 +491,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		raf.cancel(this.frame);
 		this.frame = raf(() => {
 			this.clear();
-			this.dropTargetId = blockId;
+			this.dropTargetId = block.id;
 
 			const { top } = target.offset();
 			const height = target.height();
-			const child = this.getChild(blockId);
+			const child = this.getChild(block.id);
 
 			this.position = y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -516,11 +517,47 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		e.stopPropagation();
 
-		const { widgets } = S.Block;
-		const blockId = e.dataTransfer.getData('text');
+		let data: any = {};
+		try {
+			data = JSON.parse(e.dataTransfer.getData('text'));
+		} catch (err) {
+			return;
+		};
 
-		if (blockId != this.dropTargetId) {
-			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
+		const { widgets } = S.Block;
+		const { blockId, section } = data;
+
+		if (blockId == this.dropTargetId) {
+			this.onDragEnd();
+			return;
+		};
+
+		switch (section) {
+			case I.WidgetSection.Pin: {
+				C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
+				break;
+			};
+
+			case I.WidgetSection.Type: {
+				const child1 = this.getChild(blockId);
+				const targetId1 = child1?.getTargetObjectId();
+				const child2 = this.getChild(this.dropTargetId);
+				const targetId2 = child2?.getTargetObjectId();
+
+				if (!targetId1 || !targetId2 || (targetId1 == targetId2)) {
+					break;
+				};
+
+				const items = S.Record.checkHiddenObjects(S.Record.getTypes());
+				const oldIndex = items.findIndex(it => it.id == targetId1);
+				const newIndex = items.findIndex(it => it.id == targetId2) + (this.position == I.BlockPosition.Top ? 0 : 1);
+				const newItems = arrayMove(items, oldIndex, newIndex);
+
+				U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {
+					C.ObjectTypeSetOrder(S.Common.space, newItems.map(it => it.id), callBack);
+				});
+				break;
+			};
 		};
 
 		this.onDragEnd();
