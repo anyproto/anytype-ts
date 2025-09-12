@@ -166,13 +166,3 @@
 		}
 	}
 }
-
-&.right.spaceSpace {
-	> .sidebarPage.pageWidget {
-		> .head { height: 0px; }
-		> .head {
-			&::after { display: none; }
-		}
-		> .subHead { height: 52px; margin: 0px; }
-	}
-}

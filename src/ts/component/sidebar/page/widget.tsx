@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
-import { param } from 'jquery';
 
 type State = {
 	isEditing: boolean;

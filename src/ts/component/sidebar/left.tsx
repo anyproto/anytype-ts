@@ -43,7 +43,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const [ page, setPage ] = useState('');
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cn = [ 'sidebar', 'left', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const cn = [ 'sidebar', 'left', 'customScrollbar', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
 	const Component = Components[id];
 	const canCreate = U.Space.canCreateSpace() && (id == 'vault');
