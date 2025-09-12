@@ -152,7 +152,7 @@ class Dataview {
 		const { rootId, blockId, newViewId, keys, offset, limit, collectionId, clear, isInline } = param;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
-		
+
 		if (!view) {
 			return;
 		};

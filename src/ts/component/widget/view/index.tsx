@@ -23,7 +23,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	const { 
 		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, onCreate,
-		getContentParam
+		getContentParam, getObject
 	} = props;
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
@@ -35,12 +35,12 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const filterRef = useRef(null);
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
-	const rootId = block ? [ targetId, 'widget', block.id ].join('-') : '';
+	const traceId = getTraceId();
+	const rootId = block ? [ targetId, traceId ].join('-') : '';
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
-	const object = S.Detail.get(S.Block.widgets, targetId);
+	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
-	const traceId = getTraceId();
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -136,7 +136,15 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const onChangeView = (viewId: string) => {
-		C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
+		if (parent.content.section == I.WidgetSection.Pin) {
+			C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
+		};
+
+		if (parent.content.section == I.WidgetSection.Type) {
+			C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
+				S.Block.updateWidgetData(targetId);
+			});
+		};
 	};
 
 	const getRecordIds = () => {
