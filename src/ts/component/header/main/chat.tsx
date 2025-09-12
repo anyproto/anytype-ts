@@ -4,6 +4,7 @@ import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+
 	const { rootId, renderLeftIcons, isPopup } = props;
 	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);

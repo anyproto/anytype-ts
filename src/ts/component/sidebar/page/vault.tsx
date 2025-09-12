@@ -298,6 +298,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			icons.push('error');
 		};
 
+		if (!item.lastMessage) {
+			cn.push('noMessages');
+		};
+
 		let cnt = null;
 		if (item.counters) {
 			if (item.counters.mentionCounter) {
