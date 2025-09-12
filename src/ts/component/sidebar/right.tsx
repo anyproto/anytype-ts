@@ -59,6 +59,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const cn = [ 'sidebar', 'right', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = [ 'type' ].includes(page);
+	const showToggle = spaceview.isChat && [ 'widget' ].includes(page);
 
 	if (withPreview) {
 		cn.push('withPreview');
@@ -85,7 +86,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			id="sidebarRight"
 			className={cn.join(' ')}
 		>
-			{spaceview.isChat ? (
+			{showToggle ? (
 				<Icon 
 					id="button-header-toggle" 
 					className="widgetPanel withBackground"
