@@ -152,6 +152,7 @@ export default {
 		chat:			 'ot-chat',
 		project:		 'ot-project',
 		human:			 'ot-human',
+		participant:	 'ot-participant',
 	},
 
 	templateId: {

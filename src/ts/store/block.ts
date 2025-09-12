@@ -970,7 +970,12 @@ class BlockStore {
 
 	updateWidgetList () {
 		const { widgets } = this;
-		const types = S.Record.checkHiddenObjects(S.Record.getTypes());
+		const skipKeys = [ 
+			J.Constant.typeKey.type, 
+			J.Constant.typeKey.template, 
+			J.Constant.typeKey.participant,
+		];
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !skipKeys.includes(it.uniqueKey)));
 		const element = S.Block.getMapElement(widgets, widgets);
 
 		if (!element) {
