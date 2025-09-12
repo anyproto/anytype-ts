@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, keyboard, translate, focus } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -242,7 +242,9 @@ class UtilRouter {
 
 					const onRouteChange = () => {
 						const spaceview = U.Space.getSpaceview();
-						if (!spaceview.isChat) {
+						const rightSidebar = S.Common.getRightSidebarState(false);
+
+						if (!spaceview.isChat || (rightSidebar.page != 'widget')) {
 							S.Common.setRightSidebarState(false, '', false);
 						} else {
 							sidebar.rightPanelRestore(false);
