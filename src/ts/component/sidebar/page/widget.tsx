@@ -385,7 +385,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	init () {
-		S.Block.updateWidgetList();
+		S.Block.updateTypeWidgetList();
 
 		[ 
 			I.WidgetSection.Pin, 
