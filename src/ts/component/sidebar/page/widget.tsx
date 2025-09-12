@@ -892,6 +892,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			const target = child.getTargetObjectId();
 
+			if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
+				return false;
+			};
+
 			if (Object.values(J.Constant.widgetId).includes(target)) {
 				return true;
 			};
