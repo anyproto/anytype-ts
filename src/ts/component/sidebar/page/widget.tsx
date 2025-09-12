@@ -3,7 +3,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage } from 'Lib';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
+import { param } from 'jquery';
 
 type State = {
 	isEditing: boolean;
@@ -674,25 +675,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			return;
 		};
 
-		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-		const targetId = child ? child.getTargetObjectId() : '';
+		const child = this.getChild(block.id);
+		const targetId = child?.getTargetObjectId();
+		const rootId = this.getChildRootId(targetId, child.id);
 		const object = this.getObject(block, targetId);
-
-		let { viewId } = block.content;
-
-		if (!viewId) {
-			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
-
-			if (views.length) {
-				viewId = views[0].id;
-			};
-		};
+		const param = U.Data.windgetContentParam(object, block);
+		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
 
 		U.Object.openEvent(e, {
 			...object,
 			_routeParam_: {
-				viewId,
+				viewId: view?.id,
 				additional: [ { key: 'ref', value: 'widget' } ],
 			}
 		});
@@ -702,16 +695,20 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { previewId } = this.state;
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, previewId);
-		const { layout, viewId } = block.content;
 
-		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-		const targetId = child ? child.getTargetObjectId() : '';
-		const views = S.Record.getViews(targetId, J.Constant.blockId.dataview) || [];
-		const view = viewId ? views.find(it => it.id == viewId) : views[0];
-		const sort = view.sorts[0];
+		if (!block) {
+			return;
+		};
 
-		let isCompact = layout == I.WidgetLayout.Compact;
+		const child = this.getChild(block.id);
+		const targetId = child?.getTargetObjectId();
+		const object = this.getObject(block, targetId);
+		const rootId = this.getChildRootId(targetId, child.id);
+		const param = U.Data.windgetContentParam(object, block);
+		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
+		const sort: any = view.sorts.length ? view.sorts[0] : {};
+
+		let isCompact = param.layout == I.WidgetLayout.Compact;
 		let relationKey = sort.relationKey;
 		let type = sort.type;
 		let options = this.getPreviewOptions(isCompact, relationKey, type);
@@ -730,7 +727,18 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				onSelect: (e: any, item: any) => {
 					if (item.isLayout) {
 						isCompact = item.layout == I.WidgetLayout.Compact;
-						C.BlockWidgetSetLayout(widgets, block.id, item.layout);
+
+						switch (block.content.section) {
+							case I.WidgetSection.Pin: {
+								C.BlockWidgetSetLayout(widgets, block.id, item.layout);
+								break;
+							};
+
+							case I.WidgetSection.Type: {
+								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: item.layout } ]);
+								break;
+							};
+						};
 					} else
 					if (item.isSort) {
 						relationKey = item.relationKey;
@@ -762,6 +770,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		];
 
 		return options.map(it => {
+			if (it.isLayout) {
+				it.id = `layout-${it.layout}`;
+			};
+			if (it.isSort) {
+				it.id = `sort-${it.relationKey}-${it.type}`;
+			};
+
 			if (it.relationKey == relationKey) {
 				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
 				it.sortArrow = sortType;
@@ -910,6 +925,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 
 		return S.Block.getLeaf(widgets, childrenIds[0]);
+	};
+
+	getChildRootId (targetId: string, blockId: string): string {
+		return [ targetId, 'widget', blockId ].join('-');
 	};
 
 	getObject = (block: I.Block, id: string) => {

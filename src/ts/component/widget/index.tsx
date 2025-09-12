@@ -45,25 +45,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
-		let ret: any = {};
-
-		switch (block.content.section) {
-			case I.WidgetSection.Pin: {
-				ret = { ...block.content };
-				break;
-			};
-
-			case I.WidgetSection.Type: {
-				ret = { 
-					layout: object.widgetLayout, 
-					limit: object.widgetLimit, 
-					viewId: object.widgetViewId,
-				};
-				break;
-			};
-		};
-
-		return ret;
+		return U.Data.windgetContentParam(object, block);
 	};
 
 	const param = getContentParam();

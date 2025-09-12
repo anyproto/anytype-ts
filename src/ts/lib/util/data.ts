@@ -1169,6 +1169,28 @@ class UtilData {
 		});
 	};
 
+	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+		let ret: any = {};
+
+		switch (block.content.section) {
+			case I.WidgetSection.Pin: {
+				ret = { ...block.content };
+				break;
+			};
+
+			case I.WidgetSection.Type: {
+				ret = { 
+					layout: object.widgetLayout, 
+					limit: object.widgetLimit, 
+					viewId: object.widgetViewId,
+				};
+				break;
+			};
+		};
+
+		return ret;
+	};
+
 };
 
 export default new UtilData();
