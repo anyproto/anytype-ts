@@ -708,6 +708,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const rootId = this.getChildRootId(targetId, child.id);
 		const param = U.Data.windgetContentParam(object, block);
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
+
+		if (!view) {
+			return;
+		};
+
 		const sort: any = view.sorts.length ? view.sorts[0] : {};
 
 		let isCompact = param.layout == I.WidgetLayout.Compact;
