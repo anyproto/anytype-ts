@@ -231,10 +231,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					) : ''}
 
 					{sections.map(section => {
+						const isSectionPin = section.id == I.WidgetSection.Pin;
+						const isSectionType = section.id == I.WidgetSection.Type;
+
 						let list = blockWidgets.filter(it => it.content.section == section.id);
 						let buttons = null;
 
-						if (section.id == I.WidgetSection.Type) {
+						if (isSectionType) {
 							if (canWrite) {
 								buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={this.onTypeCreate} />;
 							};
@@ -284,7 +287,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 												block={block}
 												isEditing={isEditing}
 												canEdit={true}
-												canRemove={true}
+												canRemove={isSectionPin}
 												onDragStart={this.onDragStart}
 												onDragOver={this.onDragOver}
 												onDrag={this.onDrag}

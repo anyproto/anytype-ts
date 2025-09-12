@@ -139,20 +139,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		let id = viewId;
-
-		if (!id) {
-			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
-
-			if (views.length) {
-				id = views[0].id;
-			};
-		};
+		const rootId = getRootId();
+		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 
 		U.Object.openEvent(e, { 
 			...object, 
 			_routeParam_: { 
-				viewId: id,
+				viewId: view?.id,
 				additional: [ { key: 'ref', value: 'widget' } ],
 			} 
 		});
@@ -695,7 +688,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (block.isWidgetLink() || !isSectionType) {
+		if (!block.isWidgetLink() || !isSectionType) {
 			onExpandHandler(e);
 		} else {
 			!getIsOpen() ? onToggle(e) : onSetPreview();
