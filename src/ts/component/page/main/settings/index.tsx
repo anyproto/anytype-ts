@@ -159,8 +159,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	componentDidMount () {
 		this.init();
-
-		S.Common.setRightSidebarState(false, '', false);
 	};
 
 	componentDidUpdate () {
@@ -177,6 +175,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const { id } = U.Router.getParam(U.Router.getRoute());
 
 		let page = '';
@@ -203,6 +202,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		};
 
 		sidebar.leftPanelSetState({ page });
+		sidebar.rightPanelClose(isPopup);
 	};
 
 	onExport (type: I.ExportType, param: any) {

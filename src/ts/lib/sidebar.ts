@@ -537,6 +537,11 @@ class Sidebar {
 		return this.rightPanelRef(isPopup)?.getState() || {};
 	};
 
+	rightPanelClose (isPopup: boolean) {
+		S.Common.setRightSidebarState(isPopup, '', false);
+		this.rightPanelRestore(isPopup);
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();

@@ -265,10 +265,10 @@ class UtilRouter {
 		const rightSidebar = S.Common.getRightSidebarState(false);
 
 		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
-			S.Common.setRightSidebarState(false, '', false);
+			sidebar.rightPanelClose(false);
+		} else {
+			sidebar.rightPanelRestore(false);
 		};
-
-		sidebar.rightPanelRestore(false);
 	};
 
 	/**
