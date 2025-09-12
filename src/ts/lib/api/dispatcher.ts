@@ -1124,8 +1124,7 @@ class Dispatcher {
 
 				case 'SpaceAutoWidgetAdded': {
 					Preview.toastShow({ objectId: mapped.targetId, action: I.ToastAction.Widget, icon: 'check' });
-
-					analytics.createWidget(0, '', analytics.widgetType.auto);
+					analytics.createWidget(0, '');
 					break;
 				};
 

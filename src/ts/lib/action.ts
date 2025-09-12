@@ -231,7 +231,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
+		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	/**
@@ -889,7 +889,7 @@ class Action {
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
-			analytics.createWidget(layout, route, analytics.widgetType.manual);
+			analytics.createWidget(layout, route);
 
 			if (toggle) {
 				Storage.setToggle('widget', message.blockId, true);

@@ -2,10 +2,6 @@ import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { CSS } from '@dnd-kit/utilities';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
 import { I, C, S, U, J, analytics, keyboard, translate } from 'Lib';
 
@@ -31,10 +27,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const canWrite = U.Space.canMyParticipantWrite();
 	const addName = filter ? U.Common.sprintf(translate('menuTypeSuggestCreateTypeFilter'), filter) : translate('menuTypeSuggestCreateType');
 	const buttons = (data.buttons || []).map(it => ({ ...it, isButton: true }));
-	const sensors = useSensors(
-		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
-		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-	);
 
 	const getSections = () => {
 		const { filter } = data;
@@ -249,42 +241,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 	};
 
-	const onSortStart = () => {
-		keyboard.setDragging(true);
-	};
-
-	const onSortEnd = (result: any) => {
-		keyboard.setDragging(false);
-
-		const { active, over } = result;
-		if (!active || !over || (active.id == over.id)) {
-			return;
-		};
-
-		const ids = items.map(it => it.id);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
-		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => !it.isSection);
-
-		U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {
-			C.ObjectTypeSetOrder(S.Common.space, newItems.map(it => it.id), message => {
-				callBack?.(message);
-				load(true);
-			});
-		});
-	};
-
 	const Item = (item: any) => {
-		const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ 
-			id: item.id, 
-			disabled: item.isSection || !!filter.length,
-		});
-		const style = {
-			...item.style,
-			transform: CSS.Transform.toString(transform),
-			transition,
-		};
-
 		let content = null;
 		if (item.id == 'add') {
 			content = (
@@ -293,6 +250,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					className="item add" 
 					onMouseEnter={e => onMouseEnter(e, item)} 
 					onClick={e => onClickHandler(e, item)} 
+					style={item.style}
 				>
 					<Icon className="plus" />
 					<div className="name">{addName}</div>
@@ -302,7 +260,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			content = (
 				<MenuItemVertical 
 					{...item}
-					style={{}}
 					index={item.index}
 					className={item.isHidden ? 'isHidden' : ''}
 					onMouseEnter={e => onMouseEnter(e, item)} 
@@ -312,16 +269,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			);
 		};
 
-		return (
-			<div
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-			>
-				{content}
-			</div>
-		);
+		return content;
 	};
 
 	const rowRenderer = (param: any) => {
@@ -383,46 +331,33 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			) : ''}
 
 			{items.length ? (
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragStart={onSortStart}
-					onDragEnd={onSortEnd}
-					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
-				>
-					<SortableContext
-						items={items.map(item => item.id)}
-						strategy={verticalListSortingStrategy}
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length + 1}
+						loadMoreRows={loadMoreRows}
+						isRowLoaded={({ index }) => !!items[index]}
+						threshold={LIMIT}
 					>
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length + 1}
-								loadMoreRows={loadMoreRows}
-								isRowLoaded={({ index }) => !!items[index]}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={listRef}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={cache.current}
-												rowCount={items.length}
-												rowHeight={({ index }) => getRowHeight(items[index])}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={LIMIT}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={listRef}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={cache.current}
+										rowCount={items.length}
+										rowHeight={({ index }) => getRowHeight(items[index])}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
 								)}
-							</InfiniteLoader>
-						</div>
-					</SortableContext>
-				</DndContext>
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
 			) : <EmptySearch readonly={!canWrite} filter={filter} />}
 
 			{buttons.length ? (

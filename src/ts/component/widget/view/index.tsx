@@ -21,8 +21,11 @@ interface WidgetViewRefProps {
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, isPreview, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, canCreate, onCreate } = props;
-	const { viewId, limit, layout } = parent.content;
+	const { 
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, onCreate,
+		getContentParam
+	} = props;
+	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ searchIds, setSearchIds ] = useState<string[]>([]);
@@ -124,20 +127,12 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const getView = () => {
-		return Dataview.getView(rootId, J.Constant.blockId.dataview, parent.content.viewId);
+		return Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 	};
 
 	const getLimitHandler = (): number => {
 		const view = getView();
-		if (!view) {
-			return 0;
-		};
-
-		if ((layout == I.WidgetLayout.View) && (view.type == I.ViewType.Calendar)) {
-			return 1000;
-		};
-
-		return getLimit(parent.content);
+		return view ? getLimit() : 0;
 	};
 
 	const onChangeView = (viewId: string) => {
@@ -147,8 +142,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const getRecordIds = () => {
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
-		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, viewId, '', U.Common.objectCopy(records));
+		const id = viewId || (views.length ? views[0].id : '');
+		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 
 		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};

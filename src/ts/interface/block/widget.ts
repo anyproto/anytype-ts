@@ -28,7 +28,7 @@ export interface WidgetComponent {
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
-	getLimit?: (content: ContentWidget) => number;
+	getLimit?: () => number;
 	getTraceId?: () => string;
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
@@ -36,6 +36,7 @@ export interface WidgetComponent {
 	onContext?: (param: any) => void;
 	onCreate?: (param: any) => void;
 	getObject?: (id: string) => any;
+	getContentParam?: () => { layout: WidgetLayout; limit: number; viewId: string; };
 };
 
 export interface WidgetViewComponent extends I.WidgetComponent {

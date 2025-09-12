@@ -30,7 +30,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, canEdit, canRemove, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
-	const { viewId } = block.content;
 	const { root, widgets } = S.Block;
 	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 	const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
@@ -38,12 +37,34 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
 	const isSectionType = block.content.section == I.WidgetSection.Type;
 
-	const getLimit = ({ limit, layout }): number => {
+	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
+		let ret: any = {};
+
+		switch (block.content.section) {
+			case I.WidgetSection.Pin: {
+				ret = { ...block.content };
+				break;
+			};
+
+			case I.WidgetSection.Type: {
+				ret = { layout: I.WidgetLayout.View, limit: 6, viewId: '' };
+				break;
+			};
+		};
+
+		return ret;
+	};
+
+	const param = getContentParam();
+
+	const getLimit = (): number => {
 		if (isPreview) {
 			return 1000;
 		};
 
-		const options = U.Menu.getWidgetLimitOptions(layout).map(it => Number(it.id));
+		const options = U.Menu.getWidgetLimitOptions(param.layout).map(it => Number(it.id));
+
+		let { limit } = param;
 
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
@@ -52,14 +73,32 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return limit;
 	};
 
+	const getLayout = (): I.WidgetLayout => {
+		let layout = param.layout
+
+		const object = getObject(targetId);
+		if (!object) {
+			return layout;
+		};
+
+		const options = U.Menu.getWidgetLayoutOptions(object.id, object.layout).map(it => it.id);
+
+		if (options.length && !options.includes(layout)) {
+			layout = options[0];
+		};
+
+		return layout;
+	};
+
+	const { viewId } = param;
 	const object = getObject(targetId);
-	const limit = getLimit(block.content);
+	const limit = getLimit();
+	const layout = getLayout();
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
 	const isChat = targetId == J.Constant.widgetId.chat;
 
 	let cnt = 0;
 	let leftCnt = false;
-	let layout = block.content.layout;
 	let counters = { messageCounter: 0, mentionCounter: 0 };
 
 	if (isFavorite) {
@@ -69,14 +108,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (isChat) {
 		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	};
-
-	if (object) {
-		const layoutOptions = U.Menu.getWidgetLayoutOptions(object.id, object.layout).map(it => it.id);
-
-		if (layoutOptions.length && !layoutOptions.includes(layout)) {
-			layout = layoutOptions[0];
-		};
 	};
 
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
@@ -116,20 +147,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		let { viewId } = block.content;
+		let id = viewId;
 
-		if (!viewId) {
+		if (!id) {
 			const views = S.Record.getViews(targetId, J.Constant.blockId.dataview);
 
 			if (views.length) {
-				viewId = views[0].id;
+				id = views[0].id;
 			};
 		};
 
 		U.Object.openEvent(e, { 
 			...object, 
 			_routeParam_: { 
-				viewId,
+				viewId: id,
 				additional: [ { key: 'ref', value: 'widget' } ],
 			} 
 		});
@@ -383,7 +414,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getMinHeight = () => {
-		return [ I.WidgetLayout.List, I.WidgetLayout.Compact, I.WidgetLayout.Tree ].includes(block.content.layout) ? 8 : 0;
+		return [ I.WidgetLayout.List, I.WidgetLayout.Compact, I.WidgetLayout.Tree ].includes(layout) ? 8 : 0;
 	};
 
 	const getData = (subscriptionId: string, callBack?: () => void) => {
@@ -399,7 +430,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
-		let limit = getLimit(block.content);
+		let limit = getLimit();
 		let ignoreArchived = true;
 
 		if (targetId != J.Constant.widgetId.recentOpen) {
@@ -470,7 +501,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 
 		if (!isPreview) {
-			sorted = sorted.slice(0, getLimit(block.content));
+			sorted = sorted.slice(0, getLimit());
 		};
 
 		return sorted;
@@ -667,7 +698,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onClick(e);
 		};
 
-		analytics.event('ClickWidgetTitle', { widgetType: analytics.getWidgetType(block.content.autoAdded) });
+		analytics.event('ClickWidgetTitle');
 	};
 
 	const onClickHandler = (e: MouseEvent) => {
@@ -699,6 +730,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		checkShowAllButton,
 		onContext,
 		onCreate,
+		getContentParam,
 	};
 
 	if (className) {

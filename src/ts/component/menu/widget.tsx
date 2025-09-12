@@ -115,7 +115,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.rebind();
 		this.getTargetId();
 
-		analytics.event('ScreenWidgetMenu', { widgetType: analytics.getWidgetType(block?.content.autoAdded) });
+		analytics.event('ScreenWidgetMenu');
 	};
 
 	componentDidUpdate () {
@@ -332,7 +332,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			if (!isEditing) {
-				analytics.createWidget(this.layout, analytics.route.addWidgetMenu, analytics.widgetType.manual);
+				analytics.createWidget(this.layout, analytics.route.addWidgetMenu);
 			};
 		});
 
