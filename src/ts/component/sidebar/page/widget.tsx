@@ -249,6 +249,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								const type1 = S.Record.getTypeById(t1);
 								const type2 = S.Record.getTypeById(t2);
 
+								if (!type1 || !type2) {
+									return 0;
+								};
+
 								return U.Data.sortByOrderId(type1, type2);
 							});
 						};
