@@ -89,7 +89,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				cnb.push('isListPreview');
 
 				const child = this.getChild(block.id);
-				const object = this.getObject(child?.getTargetObjectId());
+				const object = this.getObject(block, child?.getTargetObjectId());
 
 				let icon = null;
 				let buttons = null;
@@ -138,12 +138,13 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						setEditing={this.setEditing}
 						canEdit={true}
 						canRemove={false}
-						getObject={this.getObject}
+						getObject={id => this.getObject(block, id)}
 					/>
 				);
 			};
 		} else {
 			const blockWidgets = this.getBlockWidgets();
+			const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 			const sections = [
 				{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 				{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
@@ -214,7 +215,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								</div>
 							) : (
 								<Widget
-									block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })}
+									block={spaceBlock}
 									disableContextMenu={true}
 									onDragStart={this.onDragStart}
 									onDragOver={this.onDragOver}
@@ -223,7 +224,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									canEdit={false}
 									canRemove={false}
 									sidebarDirection={sidebarDirection}
-									getObject={this.getObject}
+									getObject={id => this.getObject(spaceBlock, id)}
 								/>
 							)}
 						</DropTarget>
@@ -290,7 +291,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 												setPreview={this.setPreview}
 												setEditing={this.setEditing}
 												sidebarDirection={sidebarDirection}
-												getObject={this.getObject}
+												getObject={id => this.getObject(block, id)}
 											/>
 										))}
 									</div>
@@ -668,14 +669,15 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const { previewId } = this.state;
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, previewId);
-		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-		const targetId = child ? child.getTargetObjectId() : '';
-		const object = this.getObject(targetId);
 
 		if (!block) {
 			return;
 		};
+
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const targetId = child ? child.getTargetObjectId() : '';
+		const object = this.getObject(block, targetId);
 
 		let { viewId } = block.content;
 
@@ -707,8 +709,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const targetId = child ? child.getTargetObjectId() : '';
 		const views = S.Record.getViews(targetId, J.Constant.blockId.dataview) || [];
 		const view = viewId ? views.find(it => it.id == viewId) : views[0];
+		const sort = view.sorts[0];
 
-		let sort = view.sorts[0];
 		let isCompact = layout == I.WidgetLayout.Compact;
 		let relationKey = sort.relationKey;
 		let type = sort.type;
@@ -910,7 +912,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		return S.Block.getLeaf(widgets, childrenIds[0]);
 	};
 
-	getObject = (id: string) => {
+	getObject = (block: I.Block, id: string) => {
 		if (!id) {
 			return null;
 		};
@@ -920,6 +922,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		let object = null;
 		if (U.Menu.isSystemWidget(id)) {
 			object = U.Menu.getSystemWidgets().find(it => it.id == id);
+		} else 
+		if (block.content.section == I.WidgetSection.Type) {
+			object = S.Detail.get(J.Constant.subId.type, id);
 		} else {
 			object = S.Detail.get(widgets, id);
 		};

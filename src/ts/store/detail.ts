@@ -337,6 +337,9 @@ class DetailStore {
 		object.pluralName = Relation.getStringValue(object.pluralName);
 		object.headerRelationsLayout = Number(object.headerRelationsLayout) || I.FeaturedRelationLayout.Inline;
 		object.orderId = Relation.getStringValue(object.orderId);
+		object.widgetLayout = Number(object.widgetLayout) || I.WidgetLayout.Link;
+		object.widgetLimit = Number(object.widgetLimit) || 0;
+		object.widgetViewId = Relation.getStringValue(object.widgetViewId);
 
 		if (object.name == translate('defaultNamePage')) {
 			object.name = '';

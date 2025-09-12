@@ -31,11 +31,18 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, isEditing, className, canEdit, canRemove, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { root, widgets } = S.Block;
-	const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-	const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-	const targetId = child ? child.getTargetObjectId() : '';
+
+	const getChild = (): I.Block => {
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		return child;
+	};
+
+	const child = getChild();
+	const targetId = child?.getTargetObjectId();
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
 	const isSectionType = block.content.section == I.WidgetSection.Type;
+	const object = getObject(targetId);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		let ret: any = {};
@@ -47,7 +54,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 
 			case I.WidgetSection.Type: {
-				ret = { layout: I.WidgetLayout.View, limit: 6, viewId: '' };
+				ret = { 
+					layout: object.widgetLayout, 
+					limit: object.widgetLimit, 
+					viewId: object.widgetViewId,
+				};
 				break;
 			};
 		};
@@ -56,6 +67,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const param = getContentParam();
+	const { viewId } = param;
 
 	const getLimit = (): number => {
 		if (isPreview) {
@@ -90,8 +102,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		return layout;
 	};
 
-	const { viewId } = param;
-	const object = getObject(targetId);
 	const limit = getLimit();
 	const layout = getLayout();
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
@@ -301,6 +311,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
+		const canRemove = block.content.section == I.WidgetSection.Pin;
 
 		S.Menu.open('widget', {
 			element: `#widget-${block.id} .iconWrap.more`,
@@ -312,10 +323,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
-				...block.content,
+				...param,
 				target: object,
 				isEditing: true,
 				blockId: block.id,
+				canRemove,
 				setEditing,
 			}
 		});
@@ -608,10 +620,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		let show = false;
 
 		if (!isSystemTarget && block.isWidgetTree()) {
-			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-			const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
-			const targetId = child ? child.getTargetObjectId() : '';
-
 			if (!targetId) {
 				return;
 			};
