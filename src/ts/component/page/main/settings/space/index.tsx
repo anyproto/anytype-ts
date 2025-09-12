@@ -43,16 +43,13 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	render () {
 		const { error, isEditing } = this.state;
-		const { config } = S.Common;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const buttons = this.getButtons();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isOwner = U.Space.isMyOwner();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
@@ -195,31 +192,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							<div className="section sectionSpaceManager">
 								<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 								<div className="sectionContent">
-
-									{isOwner ? (
-										<div className="item">
-											<div className="sides">
-												<Icon className="widget" />
-
-												<div className="side left">
-													<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
-													<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
-												</div>
-
-												<div className="side right">
-													<Switch
-														value={!widgets.autoWidgetDisabled}
-														className="big"
-														onChange={(e: any, v: boolean) => {
-															C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
-
-															analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
-														}}
-													/>
-												</div>
-											</div>
-										</div>
-									) : ''}
 
 									<div className="item">
 										<div className="sides">

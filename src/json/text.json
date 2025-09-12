@@ -908,8 +908,6 @@
 	"popupSettingsSpaceIndexNetworkIdTitle": "Network ID",
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
-	"popupSettingsSpaceIndexAutoWidgetsTitle": "Auto Create Type Widgets",
-	"popupSettingsSpaceIndexAutoWidgetsText": "Add a widget when the first object of a type is created",
 	"popupSettingsSpaceIndexPushTitle": "Message notifications",
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
