@@ -405,6 +405,7 @@ class UtilSubscription {
 			{
 				spaceId: techSpaceId,
 				subId: J.Constant.subId.profile,
+				keys: [ ...J.Relation.default, 'sharedSpacesLimit' ],
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
