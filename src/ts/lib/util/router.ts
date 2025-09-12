@@ -101,6 +101,8 @@ class UtilRouter {
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
+		const spaceview = U.Space.getSpaceview();
+		const rightSidebar = S.Common.getRightSidebarState(false);
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
@@ -118,6 +120,8 @@ class UtilRouter {
 
 		const change = () => {
 			this.history.push(route); 
+			this.checkSidebarState();
+
 			if (onRouteChange) {
 				onRouteChange();
 			};
@@ -241,16 +245,9 @@ class UtilRouter {
 					S.Common.nullifySpaceKeys();
 
 					const onRouteChange = () => {
-						const spaceview = U.Space.getSpaceview();
-						const rightSidebar = S.Common.getRightSidebarState(false);
-
-						if (!spaceview.isChat || (rightSidebar.page != 'widget')) {
-							S.Common.setRightSidebarState(false, '', false);
-						} else {
-							sidebar.rightPanelRestore(false);
-						};
-
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+
+						this.checkSidebarState();
 						routeParam.onRouteChange?.();
 					};
 
@@ -261,6 +258,17 @@ class UtilRouter {
 				},
 			});
 		});
+	};
+
+	checkSidebarState () {
+		const spaceview = U.Space.getSpaceview();
+		const rightSidebar = S.Common.getRightSidebarState(false);
+
+		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
+			S.Common.setRightSidebarState(false, '', false);
+		};
+
+		sidebar.rightPanelRestore(false);
 	};
 
 	/**
