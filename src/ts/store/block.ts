@@ -972,6 +972,14 @@ class BlockStore {
 		return `type-${id}`;
 	};
 
+	checkSkippedTypes (key: string): boolean {
+		return [ 
+			J.Constant.typeKey.type, 
+			J.Constant.typeKey.template, 
+			J.Constant.typeKey.participant,
+		].includes(key);
+	};
+
 	createTypeWidget (type: any) {
 		const { widgets } = this;
 		const id = this.typeWidgetId(type.id);
@@ -1014,6 +1022,10 @@ class BlockStore {
 			return;
 		};
 
+		if (this.checkSkippedTypes(type.uniqueKey)) {
+			return;
+		};
+
 		this.createTypeWidget(type);
 		element.childrenIds.push(id);
 
@@ -1038,12 +1050,7 @@ class BlockStore {
 
 	updateTypeWidgetList () {
 		const { widgets } = this;
-		const skipKeys = [ 
-			J.Constant.typeKey.type, 
-			J.Constant.typeKey.template, 
-			J.Constant.typeKey.participant,
-		];
-		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !skipKeys.includes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
 		const element = S.Block.getMapElement(widgets, widgets);
 
 		if (!element) {

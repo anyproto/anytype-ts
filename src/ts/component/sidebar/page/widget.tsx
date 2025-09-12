@@ -311,10 +311,12 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 					<div className="sides">
 						<div className="side left">
-							<div className={[ 'widgetSettings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
-								<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
-								<Label text={translate('commonDone')} />
-							</div>
+							{canWrite ? (
+								<div className={[ 'widgetSettings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
+									<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
+									<Label text={translate('commonDone')} />
+								</div>
+							) : ''}
 						</div>
 
 						<div className="side center" />
@@ -901,6 +903,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			};
 
 			const object = this.getObject(block, target);
+
 			if (object._empty_ || object.isArchived || object.isDeleted) {
 				return false;
 			};
