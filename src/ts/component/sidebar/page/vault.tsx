@@ -278,6 +278,16 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const cn = [ 'item' ];
 		const icons = [];
 
+		let cnt = null;
+		if (item.counters) {
+			if (item.counters.mentionCounter) {
+				cnt = <Icon className="mention" />;
+			} else 
+			if (item.counters.messageCounter) {
+				cnt = S.Chat.counterString(item.counters.messageCounter);
+			};
+		};
+
 		if (isDragging) {
 			cn.push('isDragging');
 		};
@@ -286,7 +296,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isLoading');
 		};
 
-		if (item.isPinned) {
+		if (item.isPinned && !cnt) {
 			cn.push('isPinned');
 			icons.push('pin');
 		};
@@ -300,16 +310,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 		if (!item.lastMessage) {
 			cn.push('noMessages');
-		};
-
-		let cnt = null;
-		if (item.counters) {
-			if (item.counters.mentionCounter) {
-				cnt = <Icon className="mention" />;
-			} else 
-			if (item.counters.messageCounter) {
-				cnt = S.Chat.counterString(item.counters.messageCounter);
-			};
 		};
 
 		return (
@@ -333,7 +333,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						<div className="nameInner">
 							<ObjectName object={item} />
 
-							{item.isMuted ?  <Icon className="muted" /> : ''}
+							{item.isMuted ? <Icon className="muted" /> : ''}
 						</div>
 
 						<div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>
