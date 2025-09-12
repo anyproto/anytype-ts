@@ -896,7 +896,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return true;
 			};
 
-			const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
+			const object = this.getObject(block, target);
 			if (object._empty_ || object.isArchived || object.isDeleted) {
 				return false;
 			};

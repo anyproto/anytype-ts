@@ -976,7 +976,6 @@ class BlockStore {
 		const { widgets } = this;
 		const id = this.typeWidgetId(type.id);
 
-		S.Detail.update(widgets, { id: type.id, details: type }, false);
 		const parent = new M.Block({
 			id,
 			type: I.BlockType.Widget,
@@ -987,7 +986,7 @@ class BlockStore {
 		});
 
 		const child = new M.Block({
-			id: `type-child-${type.id}`,
+			id: `${id}-child`,
 			type: I.BlockType.Link,
 			content: { targetBlockId: type.id },
 		});
@@ -1052,13 +1051,12 @@ class BlockStore {
 		};
 
 		types.forEach(type => {
-			const id = `type-${type.id}`;
+			const id = this.typeWidgetId(type.id);
 			if (element.childrenIds.includes(id)) {
 				return;
 			};
 
 			this.createTypeWidget(type);
-
 			element.childrenIds.push(id);
 		});
 

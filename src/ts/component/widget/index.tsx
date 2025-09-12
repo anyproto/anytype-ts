@@ -44,6 +44,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const object = getObject(targetId);
 
+	console.log('Render Widget', targetId, object?.name);
+
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.windgetContentParam(object, block);
 	};
