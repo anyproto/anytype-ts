@@ -1246,7 +1246,7 @@ class Keyboard {
 	 */
 	getPopupMatch () {
 		const popup = S.Popup.get('page');
-		const match: any = popup && { ...popup?.param.data.matchPopup } || {};
+		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
 
 		match.params = match.params || {};
 
