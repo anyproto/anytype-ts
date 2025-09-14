@@ -1246,7 +1246,11 @@ class Keyboard {
 	 */
 	getPopupMatch () {
 		const popup = S.Popup.get('page');
-		return popup && popup?.param.data.matchPopup || {};
+		const match: any = popup && { ...popup?.param.data.matchPopup } || {};
+
+		match.params = match.params || {};
+
+		return match;
 	};
 
 	/**
@@ -1402,6 +1406,22 @@ class Keyboard {
 	 */
 	isAuthPinCheck () {
 		return this.isAuth() && (this.getRouteMatch().action == 'pin-check');
+	};
+
+	/**
+	 * Returns true if the current popup context is the main view.
+	 * @returns {boolean}
+	 */
+	isPopupMain () {
+		return (this.getPopupMatch().params.page == 'main');
+	};
+
+	/**
+	 * Returns true if the current popup context is the main history view.
+	 * @returns {boolean}
+	 */
+	isPopupMainHistory () {
+		return this.isPopupMain() && (this.getPopupMatch().params.action == 'history');
 	};
 	
 	/**

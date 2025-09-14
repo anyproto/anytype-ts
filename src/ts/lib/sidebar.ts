@@ -242,7 +242,7 @@ class Sidebar {
 		const isMain = keyboard.isMain();
 		const isMainVoid = keyboard.isMainVoid();
 		const isMainHistory = keyboard.isMainHistory();
-		const isMainChat = keyboard.isMainChat();
+		const isPopupMainHistory = keyboard.isPopupMainHistory();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		this.initObjects();
@@ -274,7 +274,7 @@ class Sidebar {
 
 		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
-		const ho = isMainHistory ? J.Size.history.panel : 0;
+		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
 
 		if (U.Common.isPlatformMac() && !isFullScreen) {
