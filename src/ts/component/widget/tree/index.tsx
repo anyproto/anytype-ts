@@ -296,35 +296,38 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const nodes = loadTree();
 	const length = nodes.length;
-	const previewFilter = (
-		<div className="head">
-			<div className="filterWrapper">
-				<div className="side left">
-					<Filter
-						ref={filterRef}
-						className="outlined"
-						icon="search"
-						placeholder={translate('commonSearch')}
-						onChange={onFilterChange}
-					/>
-				</div>
-				{canCreate ? (
-					<div className="side right">
-						<Button
-							id="button-object-create"
-							color="blank"
-							className="c28"
-							text={translate('commonNew')}
-							onClick={() => onCreate({ route: analytics.route.widget })}
+
+	let content = null;
+	let head = null;
+
+	if (isPreview) {
+		head = (
+			<div className="head">
+				<div className="filterWrapper">
+					<div className="side left">
+						<Filter
+							ref={filterRef}
+							className="outlined"
+							icon="search"
+							placeholder={translate('commonSearch')}
+							onChange={onFilterChange}
 						/>
 					</div>
-				) : ''}
+					{canCreate ? (
+						<div className="side right">
+							<Button
+								id="button-object-create"
+								color="blank"
+								className="c28"
+								text={translate('commonNew')}
+								onClick={() => onCreate({ route: analytics.route.widget })}
+							/>
+						</div>
+					) : ''}
+				</div>
 			</div>
-		</div>
-	);
-
-	let head = isPreview ? previewFilter : null;
-	let content = null;
+		);
+	};
 	
 	if (!length) {
 		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
