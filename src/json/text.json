@@ -2145,9 +2145,9 @@
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
 	"sidebarMenuSpaceCreateTitleChat": "Chat",
-	"sidebarMenuSpaceCreateDescriptionChat": "For real-time conversations",
+	"sidebarMenuSpaceCreateDescriptionChat": "Group chat with content organization",
 	"sidebarMenuSpaceCreateTitleSpace": "Space",
-	"sidebarMenuSpaceCreateDescriptionSpace": "For organized content and data",
+	"sidebarMenuSpaceCreateDescriptionSpace": "Hub for advanced data management",
 	"sidebarMenuSpaceCreateTitleImport": "Import Data",
 	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
 	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
