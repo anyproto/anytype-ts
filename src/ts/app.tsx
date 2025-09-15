@@ -129,6 +129,10 @@ const App: FC = () => {
 	const init = () => {
 		const { version, arch, getGlobal } = electron;
 
+		window.setTimeout(() => {
+			U.Router.go('/auth/onboard', {})
+		}, 2500)
+
 		U.Router.init(history);
 		U.Smile.init();
 
