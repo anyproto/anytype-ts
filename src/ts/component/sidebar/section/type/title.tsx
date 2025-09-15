@@ -34,7 +34,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 				placeholder = translate('sidebarTypeTitlePlaceholder');
 				icon = (
 					<IconObject 
-						id={`sidebar-icon-title-${object.id}`} 
+						id="sidebar-icon-title" 
 						object={object} 
 						size={24} 
 						canEdit={!readonly}

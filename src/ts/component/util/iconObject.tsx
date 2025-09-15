@@ -191,6 +191,8 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const isTask = U.Object.isTaskLayout(object.layout);
 		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
 
+		console.log('IconObject onMouseDown', { layout: object.layout, isTask, isEmoji });
+
 		if (onClick) {
 			onClick(e);
 		};
