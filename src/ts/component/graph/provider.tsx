@@ -523,9 +523,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'newObject': {
-							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-
-							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.graph, (message: any) => {
 								U.Object.openConfig(message.details, { onClose: () => addNewNode(message.targetId, '', data) });
 							});
 							break;

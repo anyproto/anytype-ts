@@ -685,7 +685,7 @@ class Keyboard {
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, route, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+				this.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 

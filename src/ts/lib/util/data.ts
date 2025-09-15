@@ -492,7 +492,6 @@ class UtilData {
 		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
@@ -540,10 +539,6 @@ class UtilData {
 
 		if (U.Object.isInFileLayouts(object.layout)) {
 			ret.withIcon = true;
-		};
-
-		if (checkType && !keyboard.isMainHistory()) {
-			className.push('noSystemBlocks');
 		};
 
 		if (featuredRelations.includes('description')) {

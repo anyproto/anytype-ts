@@ -271,10 +271,6 @@ class Dispatcher {
 
 					S.Block.updateStructure(rootId, id, childrenIds);
 
-					if (id == rootId) {
-						S.Block.checkBlockType(rootId);
-					};
-
 					updateParents = true;
 					updateNumbers = true;
 					break;
@@ -848,7 +844,6 @@ class Dispatcher {
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
 					S.Detail.delete(rootId, id, keys);
-					S.Block.checkBlockType(rootId);
 
 					updateMarkup = true;
 					break;
@@ -1199,8 +1194,6 @@ class Dispatcher {
 			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
 				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
 			};
-
-			S.Block.checkBlockType(rootId);
 		};
 
 		if (undefined !== details.setOf) {
@@ -1289,22 +1282,11 @@ class Dispatcher {
 			return new M.Block(it);
 		});
 
-		// BlockType
-		blocks.push(new M.Block({
-			id: J.Constant.blockId.type,
-			parentId: J.Constant.blockId.header,
-			type: I.BlockType.Type,
-			fields: {},
-			childrenIds: [],
-			content: {}
-		}));
-
 		S.Block.set(contextId, blocks);
 		S.Block.setStructure(contextId, structure);
 		S.Block.updateStructureParents(contextId);
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
-		S.Block.checkBlockType(contextId);
 
 		keyboard.setWindowTitle();
 	};
