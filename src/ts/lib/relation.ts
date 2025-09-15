@@ -938,7 +938,7 @@ class Relation {
 			type = null;
 		};
 
-		details.type = type ? type.id : S.Common.defaultType;
+		details.type = type ? type.id : S.Common.type;
 
 		return { flags, details };
 	};
