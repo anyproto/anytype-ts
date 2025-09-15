@@ -407,6 +407,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {
+			classNameWrap: 'fromBlock',
 			onOpen: () => {
 				$(message).addClass('hover');
 				container.addClass('over');
