@@ -348,8 +348,12 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			setIsLoading(true);
 
 			if (targetId) {
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), () => {
+				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
 					setIsLoading(false);
+
+					if (message.error.code) {
+						return;
+					};
 
 					const view = getView();
 					if (view) {

@@ -369,21 +369,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	componentDidMount(): void {
-		const { sectionIds } = this.state;
-		[ 
-			I.WidgetSection.Pin, 
-			I.WidgetSection.Type,
-		].forEach(id => {
-			if (!this.isSectionClosed(id)) {
-				sectionIds.push(id);
-			};
-		});
-
-		if (sectionIds.length) {
-			this.setState({ sectionIds });
-		} else {
-			this.init();
-		};
+		this.init();
 	};
 
 	componentDidUpdate (): void {
@@ -393,10 +379,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	init () {
 		S.Block.updateTypeWidgetList();
 
-		[ 
-			I.WidgetSection.Pin, 
-			I.WidgetSection.Type,
-		].forEach(this.initToggle);
+		const sectionIds = [];
+		const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+
+		ids.forEach(id => {
+			if (!this.isSectionClosed(id)) {
+				sectionIds.push(id);
+			};
+		});
+
+		if (!U.Common.objectCompare(sectionIds, this.state.sectionIds)) {
+			this.setState({ sectionIds });
+		} else {
+			ids.forEach(this.initToggle);
+		};
+
 		this.onScroll();
 	};
 
