@@ -25,10 +25,7 @@ const UpsellMembers: FC<Props> = ({
 		return null;
 	};
 
-	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-	const editors = participants.filter(it => it.isWriter || it.isOwner);
-	const readers = participants.filter(it => it.isReader);
-	
+	const editors = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
 	const limit = space.writersLimit;
 	const show = editors.length >= Math.round(limit / 2);
 	const isRed = editors.length >= limit;
