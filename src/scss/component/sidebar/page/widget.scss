@@ -109,28 +109,30 @@
 	}
 
 	> .body.isEditing {
-		.widget:not(.isEditable) { opacity: 0.5; }
-		.widget:not(.isEditable) {
-			.dimmer { cursor: default; }
-		}
-
-		.widget {
-			.icon.remove { display: block; }
-		}
-		.widget {
-			.dimmer { display: block; }
-		}
-
-		.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
-		.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
-		.widget.isEditable:hover {
-			.head {
-				> .buttons { display: flex; }
-				.iconWrap.options { display: none; }
+		.section-pin {
+			.widget:not(.isEditable) { opacity: 0.5; }
+			.widget:not(.isEditable) {
+				.dimmer { cursor: default; }
 			}
-		}
 
-		.widget.button { cursor: default; animation: none; }
+			.widget {
+				.icon.remove { display: block; }
+			}
+			.widget {
+				.dimmer { display: block; }
+			}
+
+			.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
+			.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
+			.widget.isEditable:hover {
+				.head {
+					> .buttons { display: flex; }
+					.iconWrap.options { display: none; }
+				}
+			}
+
+			.widget.button { cursor: default; animation: none; }
+		}
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }

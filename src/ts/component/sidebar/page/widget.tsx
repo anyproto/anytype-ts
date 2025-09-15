@@ -233,6 +233,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{sections.map(section => {
 						const isSectionPin = section.id == I.WidgetSection.Pin;
 						const isSectionType = section.id == I.WidgetSection.Type;
+						const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 
 						let list = blockWidgets.filter(it => it.content.section == section.id);
 						let buttons = null;
@@ -267,7 +268,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						};
 
 						return (
-							<div id={`section-${section.id}`} className="widgetSection" key={section.id}>
+							<div id={`section-${section.id}`} className={cns.join(' ')} key={section.id}>
 								<div className="nameWrap">
 									<div className="name" onClick={() => this.onToggle(section.id)}>
 										<Icon className="arrow" />
@@ -868,7 +869,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		window.setTimeout(() => {
 			win.on('mousedown.sidebar', e => {
-				if (!$(e.target).parents('.widget, .bottom').length) {
+				if (!$(e.target).parents('.widget, .bottom, .nameWrap').length) {
 					close(e);
 				};
 			});
