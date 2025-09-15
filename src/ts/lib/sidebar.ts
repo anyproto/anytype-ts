@@ -276,6 +276,11 @@ class Sidebar {
 		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
+		const pageCss: any = { pageWidth };
+
+		if (!isPopup) {
+			pageCss.height = U.Common.getAppContainerHeight();
+		};
 
 		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
@@ -297,8 +302,8 @@ class Sidebar {
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
-		this.page.css({ width: pageWidth });
-		
+		this.page.css(pageCss);
+
 		if (!isPopup) {
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
@@ -309,7 +314,6 @@ class Sidebar {
 			this.dummyLeft.css({ width: widthLeft });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
-			this.page.css({ height: U.Common.getAppContainerHeight() });
 		};
 
 		$(window).trigger('sidebarResize');
