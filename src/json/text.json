@@ -897,8 +897,7 @@
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
-	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
-	"popupSettingsSpaceIndexStorageIsFullText": "Some files couldn't be synced because your storage is full. Upgrade your plan or remove files to free up space.",
+	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. If you reach the limit, files will be stoped syncing and be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
 	"popupSettingsSpaceIndexImport": "Import to Space",
@@ -928,7 +927,16 @@
 
 	"upsellBannerStorageUsageText": "<b>%s of remote storage used. </b>",
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
-	"upsellBannerStorageUpsellText": "Get 128 GB for %s.",
+	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
+	"upsellBannerStorageUpsellText": "Get 128 GB for %s. ",
+	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
+
+	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
+	"upsellBannerSpaceUpsellText": "Upgrade to increase the limit. ",
+
+	"upsellBannerMembersUsageText": "%s of %s editor seats are used. ",
+	"upsellBannerMembersLimitUsageText": "You've reached the limit of %s editors. ",
+	"upsellBannerMembersUpsellText": "Upgrade to invite more editors. ",
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",

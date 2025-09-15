@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, Error } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics, J } from 'Lib';
+import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
+import { I, C, S, U, translate, Preview, Action, analytics } from 'Lib';
 import Members from './share/members';
 
 interface State {
@@ -43,6 +43,11 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 		return (
 			<div ref={node => this.node = node}>
+				<div>
+					<UpsellBanner component="space" route={analytics.route.settingsSpaceShare} />
+					<UpsellBanner component="members" route={analytics.route.settingsSpaceShare} />
+				</div>
+
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 				</div>
@@ -254,7 +259,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	isSharedSpacesLimit () {
-		const mySharedSpaces = U.Space.getList().filter(it => U.Space.isMyOwner(it.targetSpaceId) && it.isShared);
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
 		const { sharedSpacesLimit } = U.Space.getProfile();
 
 		return mySharedSpaces.length >= sharedSpacesLimit;

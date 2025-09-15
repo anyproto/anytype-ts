@@ -57,12 +57,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				memberUpgradeType = 'members';
 				showLimit = true;
-			} else
-			if (!U.Space.getWriterLimit()) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
-				memberUpgradeType = 'editors';
-				showLimit = true;
 			};
 		};
 
@@ -234,10 +228,10 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 		let items: any[] = [] as any[];
 
-		if (!tier?.price || (U.Space.getReaderLimit() - 1 >= 0)) {
+		if (U.Space.getReaderLimit() - 1 >= 0) {
 			items.push({ id: String(I.ParticipantPermissions.Reader) });
 		};
-		if (!tier?.price || (U.Space.getWriterLimit() - 1 >= 0)) {
+		if (U.Space.getWriterLimit() - 1 >= 0) {
 			items.push({ id: I.ParticipantPermissions.Writer });
 		};
 
