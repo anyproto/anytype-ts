@@ -30,7 +30,10 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const links = useRef([]);
 	const top = useRef(0);
 	const branches = useRef([]);
+	const searchIds = useRef([]);
 	const filterRef = useRef(null);
+	const filter = useRef('');
+	const filterTimeout = useRef(0);
 	const subscriptionHashes = useRef({});
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
@@ -72,10 +75,21 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
+			children = records.map(id => {
+				mapper(S.Detail.get(subId, id, J.Relation.sidebar));
+			});
 		} else {
+			let links = object.links;
+			if (filter.current) {
+				links = links.filter(it => searchIds.current.includes(it));
+			};
+
 			children = getChildNodesDetails(object.id);
-			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links), !isPreview);
+			subscribeToChildNodes(object.id, Relation.getArrayValue(links), !isPreview);
+		};
+
+		if (filter.current) {
+			children = children.filter(it => searchIds.current.includes(it.id));
 		};
 
 		if (isPreview && isRecent) {
@@ -231,9 +245,30 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const onFilterChange = (v: string) => {
-	};
+		window.clearTimeout(filterTimeout.current);
+		filterTimeout.current = window.setTimeout(() => {
+			if (filter.current == v) {
+				return;
+			};
 
-	const onFilterClear = () => {
+			filter.current = v;
+
+			if (!filter.current) {
+				searchIds.current = [];
+				initCache();
+				return;
+			};
+
+			U.Subscription.search({
+				filters: [],
+				sorts: [],
+				fullText: filter.current,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				searchIds.current = (message.records || []).map(it => it.id);
+				initCache();
+			});
+		}, J.Constant.delay.keyboard);
 	};
 
 	const resize = () => {
@@ -261,10 +296,36 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const nodes = loadTree();
 	const length = nodes.length;
+	const previewFilter = (
+		<div className="head">
+			<div className="filterWrapper">
+				<div className="side left">
+					<Filter
+						ref={filterRef}
+						className="outlined"
+						icon="search"
+						placeholder={translate('commonSearch')}
+						onChange={onFilterChange}
+					/>
+				</div>
+				{canCreate ? (
+					<div className="side right">
+						<Button
+							id="button-object-create"
+							color="blank"
+							className="c28"
+							text={translate('commonNew')}
+							onClick={() => onCreate({ route: analytics.route.widget })}
+						/>
+					</div>
+				) : ''}
+			</div>
+		</div>
+	);
 
-	let head = null;
+	let head = isPreview ? previewFilter : null;
 	let content = null;
-
+	
 	if (!length) {
 		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
 
@@ -273,7 +334,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				<Label className="empty" text={label} />
 			</div>
 		);
-	} else 
+	} else
 	if (isPreview) {
 		const rowRenderer = ({ index, parent, style }) => {
 			const node: I.WidgetTreeItem = nodes[index];
@@ -300,36 +361,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 						getSubKey={() => subKey}
 					/>
 				</CellMeasurer>
-			);
-		};
-
-		if (isPreview) {
-			head = (
-				<div className="head">
-					<div className="filterWrapper">
-						<div className="side left">
-							<Filter
-								ref={filterRef}
-								className="outlined"
-								icon="search"
-								placeholder={translate('commonSearch')}
-								onChange={onFilterChange}
-								onClear={onFilterClear}
-							/>
-						</div>
-						{canCreate ? (
-							<div className="side right">
-								<Button 
-									id="button-object-create" 
-									color="blank" 
-									className="c28" 
-									text={translate('commonNew')} 
-									onClick={() => onCreate({ route: analytics.route.widget })} 
-								/>
-							</div>
-						) : ''}
-					</div>
-				</div>
 			);
 		};
 
