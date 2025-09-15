@@ -999,14 +999,14 @@ class BlockStore {
 			content: { targetBlockId: type.id },
 		});
 
-		S.Block.add(widgets, parent);
-		S.Block.add(widgets, child);
-		S.Block.updateStructure(widgets, parent.id, [ child.id ]);
+		this.add(widgets, parent);
+		this.add(widgets, child);
+		this.updateStructure(widgets, parent.id, [ child.id ]);
 	};
 
 	addTypeWidget (typeId: string) {
 		const { widgets } = this;
-		const element = S.Block.getMapElement(widgets, widgets);
+		const element = this.getMapElement(widgets, widgets);
 
 		if (!element) {
 			return;
@@ -1035,7 +1035,7 @@ class BlockStore {
 
 	removeTypeWidget (typeId: string) {
 		const { widgets } = this;
-		const element = S.Block.getMapElement(widgets, widgets);
+		const element = this.getMapElement(widgets, widgets);
 
 		if (!element) {
 			return;
@@ -1051,7 +1051,7 @@ class BlockStore {
 	updateTypeWidgetList () {
 		const { widgets } = this;
 		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-		const element = S.Block.getMapElement(widgets, widgets);
+		const element = this.getMapElement(widgets, widgets);
 
 		if (!element) {
 			return;
@@ -1073,17 +1073,19 @@ class BlockStore {
 
 	getWidgetsForTarget (id: string) {
 		const { widgets } = this;
-		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
+		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
+
+		const list = this.getBlocks(widgets, (block: I.Block) => {
 			if (!block.isWidget()) {
 				return false;
 			};
 
-			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			const childrenIds = this.getChildrenIds(widgets, block.id);
 			if (!childrenIds.length) {
 				return false;
 			};
 
-			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			const child = this.getLeaf(widgets, childrenIds[0]);
 			if (!child) {
 				return false;
 			};

@@ -278,7 +278,6 @@ class DetailStore {
 		object.coverScale = Number(object.coverScale) || 0;
 		object.coverType = Number(object.coverType) || I.CoverType.None;
 		object.isArchived = Boolean(object.isArchived);
-		object.isFavorite = Boolean(object.isFavorite);
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);

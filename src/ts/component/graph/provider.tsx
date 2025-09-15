@@ -501,29 +501,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 							send('onRemoveNode', { ids: selected });
 							break;
 						};
-
-						case 'fav': {
-							selected.forEach(id => {
-								const node = getNode(id);
-								
-								if (node) {
-									node.isFavorite = true;
-								};
-							});
-							send('onSetEdges', { edges: edges.current });
-							break;
-						};
-
-						case 'unfav': {
-							selected.forEach(id => {
-								const node = getNode(id);
-								
-								if (node) {
-									node.isFavorite = false;
-								};
-							});
-							break;
-						};
 					};
 
 					setSelected(ids.current);

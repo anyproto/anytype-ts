@@ -167,7 +167,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 		const route = param.route || analytics.route.widget;
-		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
@@ -220,10 +219,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const cb = newObject => {
-			if (isFavorite) {
-				Action.setIsFavorite([ newObject.id ], true, route);
-			};
-
 			if (isCollection) {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};

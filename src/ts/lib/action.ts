@@ -835,27 +835,6 @@ class Action {
 	};
 
 	/**
-	 * Sets or unsets objects as favorites.
-	 * @param {string[]} objectIds - The object IDs to update.
-	 * @param {boolean} v - Whether to set as favorite.
-	 * @param {string} route - The route context for analytics.
-	 * @param {function} [callBack] - Optional callback after update.
-	 */
-	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
-		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	/**
 	 * Creates a widget from an object and adds it to the widgets block.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} objectId - The object ID to create a widget from.
