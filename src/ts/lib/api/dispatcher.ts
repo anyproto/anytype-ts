@@ -1126,12 +1126,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SpaceAutoWidgetAdded': {
-					Preview.toastShow({ objectId: mapped.targetId, action: I.ToastAction.Widget, icon: 'check' });
-					analytics.createWidget(0, '');
-					break;
-				};
-
 			};
 
 			if (needLog) {

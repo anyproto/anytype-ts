@@ -1230,8 +1230,6 @@ export const Mapper = {
 			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
 			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
 
-			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
-
 			return t;
 		},
 
@@ -1768,14 +1766,6 @@ export const Mapper = {
 				ids: obj.getIdsList(),
 				isSynced: obj.getIssynced(),
 				subIds: obj.getSubidsList(),
-			};
-		},
-
-		SpaceAutoWidgetAdded: (obj: Events.Event.Space.AutoWidgetAdded) => {
-			return {
-				widgetId: obj.getWidgetblockid(),
-				targetId: obj.getTargetid(),
-				targetName: obj.getTargetname(),
 			};
 		},
 
