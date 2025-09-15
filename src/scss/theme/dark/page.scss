@@ -83,13 +83,11 @@
 			.section {
 				.sectionContent {
 					> .item {
-						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
 						.icon.type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
 						.icon.home { background-image: url('#{$themePath}/icon/settings/home.svg'); }
 						.icon.push0 { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
 						.icon.push1,
 						.icon.push2 { background-image: url('#{$themePath}/icon/settings/pushOff.svg'); }
-						.icon.widget { background-image: url('#{$themePath}/icon/settings/widget.svg'); }
 						.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 					}
 				}

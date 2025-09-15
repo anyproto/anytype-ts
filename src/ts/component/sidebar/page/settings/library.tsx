@@ -356,7 +356,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.searchIds = null;
 		this.load(true);
 
-		analytics.event('SearchInput', { route: analytics.route.allObjects });
+		analytics.event('SearchInput', { route: analytics.route.settings });
 	};
 
 	onMore (e) {

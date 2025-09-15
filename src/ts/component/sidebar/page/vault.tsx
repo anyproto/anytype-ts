@@ -146,24 +146,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
 
-		let s = '';
-		newItems.forEach((it, i) => {
-			s = U.Common.lexString(s);
-			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
-		});
-
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id), (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const list = message.list;
-			for (let i = 0; i < list.length; i++) {
-				const item = items[i];
-				if (item) {
-					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { spaceOrder: list[i] }}, false);
-				};
-			};
+		U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+			C.SpaceSetOrder(active.id, newItems.map(it => it.id), callBack);
 		});
 
 		analytics.event('ReorderSpace');
@@ -294,6 +278,16 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const cn = [ 'item' ];
 		const icons = [];
 
+		let cnt = null;
+		if (item.counters) {
+			if (item.counters.mentionCounter) {
+				cnt = <Icon className="mention" />;
+			} else 
+			if (item.counters.messageCounter) {
+				cnt = S.Chat.counterString(item.counters.messageCounter);
+			};
+		};
+
 		if (isDragging) {
 			cn.push('isDragging');
 		};
@@ -302,7 +296,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isLoading');
 		};
 
-		if (item.isPinned) {
+		if (item.isPinned && !cnt) {
 			cn.push('isPinned');
 			icons.push('pin');
 		};
@@ -316,16 +310,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 		if (!item.lastMessage) {
 			cn.push('noMessages');
-		};
-
-		let cnt = null;
-		if (item.counters) {
-			if (item.counters.mentionCounter) {
-				cnt = <Icon className="mention" />;
-			} else 
-			if (item.counters.messageCounter) {
-				cnt = S.Chat.counterString(item.counters.messageCounter);
-			};
 		};
 
 		return (
@@ -349,7 +333,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						<div className="nameInner">
 							<ObjectName object={item} />
 
-							{item.isMuted ?  <Icon className="muted" /> : ''}
+							{item.isMuted ? <Icon className="muted" /> : ''}
 						</div>
 
 						<div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>

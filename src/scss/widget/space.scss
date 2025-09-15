@@ -41,6 +41,10 @@
 		}
 	}
 
+	&.isClosed {
+		.contentWrapper { overflow: visible; height: auto; }
+	}
+
 	&.withCnt {
 		.buttons {
 			.side.left { width: calc(100% - 30px); }

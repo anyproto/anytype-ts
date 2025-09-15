@@ -1,5 +1,10 @@
 import { I } from 'Lib';
 
+export enum WidgetSection {
+	Pin			 = 0,
+	Type		 = 1,
+};
+
 export enum WidgetLayout { 
 	Link	 	 = 0,
 	Tree	 	 = 1,
@@ -23,7 +28,7 @@ export interface WidgetComponent {
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
-	getLimit?: (content: ContentWidget) => number;
+	getLimit?: () => number;
 	getTraceId?: () => string;
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
@@ -31,6 +36,7 @@ export interface WidgetComponent {
 	onContext?: (param: any) => void;
 	onCreate?: (param: any) => void;
 	getObject?: (id: string) => any;
+	getContentParam?: () => { layout: WidgetLayout; limit: number; viewId: string; };
 };
 
 export interface WidgetViewComponent extends I.WidgetComponent {
@@ -67,6 +73,7 @@ export interface ContentWidget {
 	limit: number;
 	viewId: string;
 	autoAdded: boolean;
+	section?: I.WidgetSection;
 };
 
 export interface BlockWidget extends I.Block {

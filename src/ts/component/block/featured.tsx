@@ -515,7 +515,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
-					keys: U.Subscription.typeRelationKeys(),
 					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);

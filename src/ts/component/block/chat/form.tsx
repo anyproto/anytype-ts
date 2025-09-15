@@ -598,7 +598,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('select', {
 				element: `#block-${block.id} #button-${block.id}-attachment`,
-				className: 'chatAttachment fixed fromBlock',
+				className: 'chatAttachment fixed',
+				classNameWrap: 'fromBlock',
 				offsetY: -8,
 				vertical: I.MenuDirection.Top,
 				noFlipX: true,

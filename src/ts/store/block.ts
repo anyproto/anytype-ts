@@ -968,6 +968,135 @@ class BlockStore {
 		return list;
 	};
 
+	typeWidgetId (id: string) {
+		return `type-${id}`;
+	};
+
+	checkSkippedTypes (key: string): boolean {
+		return [ 
+			J.Constant.typeKey.type, 
+			J.Constant.typeKey.template, 
+			J.Constant.typeKey.participant,
+		].includes(key);
+	};
+
+	createTypeWidget (type: any) {
+		const { widgets } = this;
+		const id = this.typeWidgetId(type.id);
+
+		const parent = new M.Block({
+			id,
+			type: I.BlockType.Widget,
+			content: {
+				layout: I.WidgetLayout.Link,
+				section: I.WidgetSection.Type,
+			},
+		});
+
+		const child = new M.Block({
+			id: `${id}-child`,
+			type: I.BlockType.Link,
+			content: { targetBlockId: type.id },
+		});
+
+		this.add(widgets, parent);
+		this.add(widgets, child);
+		this.updateStructure(widgets, parent.id, [ child.id ]);
+	};
+
+	addTypeWidget (typeId: string) {
+		const { widgets } = this;
+		const element = this.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		const id = this.typeWidgetId(typeId);
+		if (element.childrenIds.includes(id)) {
+			return;
+		};
+
+		const type = S.Record.getTypeById(typeId);
+		if (!type) {
+			return;
+		};
+
+		if (this.checkSkippedTypes(type.uniqueKey)) {
+			return;
+		};
+
+		this.createTypeWidget(type);
+		element.childrenIds.push(id);
+
+		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructureParents(widgets);
+	};
+
+	removeTypeWidget (typeId: string) {
+		const { widgets } = this;
+		const element = this.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		const id = this.typeWidgetId(typeId);
+
+		this.delete(widgets, id);
+		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
+		this.updateStructureParents(widgets);
+	};
+
+	updateTypeWidgetList () {
+		const { widgets } = this;
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
+		const element = this.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		types.forEach(type => {
+			const id = this.typeWidgetId(type.id);
+			if (element.childrenIds.includes(id)) {
+				return;
+			};
+
+			this.createTypeWidget(type);
+			element.childrenIds.push(id);
+		});
+
+		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructureParents(widgets);
+	};
+
+	getWidgetsForTarget (id: string) {
+		const { widgets } = this;
+		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
+
+		const list = this.getBlocks(widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = this.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = this.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+			return id == target;
+		});
+
+		return list;
+	};
+
 };
 
 export const Block: BlockStore = new BlockStore();

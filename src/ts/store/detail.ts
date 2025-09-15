@@ -278,7 +278,6 @@ class DetailStore {
 		object.coverScale = Number(object.coverScale) || 0;
 		object.coverType = Number(object.coverType) || I.CoverType.None;
 		object.isArchived = Boolean(object.isArchived);
-		object.isFavorite = Boolean(object.isFavorite);
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);
@@ -336,6 +335,15 @@ class DetailStore {
 		object.layoutWidth = Number(object.layoutWidth) || 0;
 		object.pluralName = Relation.getStringValue(object.pluralName);
 		object.headerRelationsLayout = Number(object.headerRelationsLayout) || I.FeaturedRelationLayout.Inline;
+		object.orderId = Relation.getStringValue(object.orderId);
+		object.widgetLimit = Number(object.widgetLimit) || 0;
+		object.widgetViewId = Relation.getStringValue(object.widgetViewId);
+
+		if (undefined === object.widgetLayout) {
+			object.widgetLayout = I.WidgetLayout.Compact;
+		};
+
+		object.widgetLayout = Number(object.widgetLayout) || I.WidgetLayout.Link;
 
 		if (object.name == translate('defaultNamePage')) {
 			object.name = '';
@@ -440,7 +448,7 @@ class DetailStore {
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 		object.iconOption = Number(object.iconOption) || 1;
 		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
-		object.spaceOrder = Relation.getStringValue(object.spaceOrder);
+		object.orderId = Relation.getStringValue(object.orderId || object.spaceOrder);
 		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
 
 		if (object.iconOption > 10) {
@@ -463,7 +471,7 @@ class DetailStore {
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
 		// UX type
-		object.uxType = object.uxType || object.spaceUxType;
+		object.uxType = Number(object.uxType || object.spaceUxType) || I.SpaceUxType.Space;
 		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
 		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
@@ -473,6 +481,7 @@ class DetailStore {
 
 		delete(object.spacePushNotificationMode);
 		delete(object.spaceUxType);
+		delete(object.spaceOrder);
 
 		return object;
 	};

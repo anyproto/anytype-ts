@@ -520,8 +520,19 @@ class RecordStore {
 	 * @returns {any[]} The type objects.
 	 */
 	getTypes () {
-		return this.getRecordIds(J.Constant.subId.type, '').map(id => S.Detail.get(J.Constant.subId.type, id)).
-			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
+		return this.sortTypes(this.getRecordIds(J.Constant.subId.type, '').
+			map(id => S.Detail.get(J.Constant.subId.type, id, U.Subscription.typeRelationKeys(true))).
+			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted));
+	};
+
+	/**
+	 * Sorts a list of types by tmpOrder, orderId, and name.
+	 * @private
+	 * @param {any[]} list - The list of types to sort.
+	 * @returns {any[]} The sorted list of types.
+	 */
+	sortTypes (list: any[]) {
+		return (list || []).sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByLastUsedDate(c1, c2) || U.Data.sortByName(c1, c2));
 	};
 
 	/**

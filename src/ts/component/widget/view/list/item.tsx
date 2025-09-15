@@ -56,7 +56,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
+		analytics.event('OpenSidebarObject');
 	};
 
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean) => {

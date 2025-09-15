@@ -379,22 +379,6 @@ class UtilSpace {
 	};
 
 	/**
-	 * Initializes the space state.
-	 */
-	initSpaceState () {
-		const { widgets } = S.Block;
-		const blocks = S.Block.getChildren(widgets, widgets);
-
-		Storage.initPinnedTypes();
-
-		if (!blocks.length) {
-			return;
-		};
-
-		blocks.forEach(block => Storage.setToggle('widget', block.id, false));
-	};
-
-	/**
 	 * Gets an invite by ID and calls a callback with the result.
 	 * @param {string} id - The invite ID.
 	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.

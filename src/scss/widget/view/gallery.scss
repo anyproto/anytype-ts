@@ -3,7 +3,7 @@
 .viewGallery {
 	.body { padding: 4px 16px; position: relative; }
 
-	.items { height: 100%; display: flex; flex-direction: column; gap: 8px 0px; }
+	.items { height: 100%; display: flex; flex-direction: column; }
 	.items {
 		.row { display: grid; grid-gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px 0px; }
 

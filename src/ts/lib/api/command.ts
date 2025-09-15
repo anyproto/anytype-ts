@@ -1336,6 +1336,15 @@ export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message
 	dispatcher.request(ObjectTypeResolveLayoutConflicts.name, request, callBack);
 };
 
+export const ObjectTypeSetOrder = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.SetOrder.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTypeidsList(ids);
+
+	dispatcher.request(ObjectTypeSetOrder.name, request, callBack);
+};
+
 // ---------------------- OBJECT ---------------------- //
 
 export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
@@ -1804,15 +1813,6 @@ export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], 
 	dispatcher.request(ObjectRelationRemoveFeatured.name, request, callBack);
 };
 
-export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetIsFavorite.Request();
-
-	request.setContextid(contextId);
-	request.setIsfavorite(isFavorite);
-
-	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
-};
-
 export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], typeEdges: boolean = true, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
@@ -1943,14 +1943,6 @@ export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, call
 	dispatcher.request(ObjectListSetIsArchived.name, request, callBack);
 };
 
-export const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ListSetIsFavorite.Request();
-
-	request.setObjectidsList(ids);
-	request.setIsfavorite(isFavorite);
-
-	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
-};
 
 export const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetObjectType.Request();
