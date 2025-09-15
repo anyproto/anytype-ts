@@ -41,7 +41,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 		init();
 
 		$(nodeRef.current).addClass('show');
-	}, [ message ]);
+	});
 
 	useImperativeHandle(ref, () => ({
 		highlight,
