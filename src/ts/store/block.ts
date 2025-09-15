@@ -800,40 +800,6 @@ class BlockStore {
 	};
 
 	/**
-	 * Checks and updates the block type structure for a root.
-	 * @param {string} rootId - The root ID.
-	 */
-	checkBlockType (rootId: string) {
-		const { header, type } = J.Constant.blockId;
-		const element = this.getMapElement(rootId, header);
-		const canWrite = U.Space.canMyParticipantWrite();
-
-		if (!element || !canWrite) {
-			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
-		const exists = this.checkBlockTypeExists(rootId);
-		const change = (check && !exists) || (!check && exists);
-		
-		if (change) {
-			const childrenIds = exists ? element.childrenIds.filter(it => it != type) : [ type ].concat(element.childrenIds);
-			this.updateStructure(rootId, header, childrenIds);
-		};
-	};
-
-	/**
-	 * Checks if the block type exists in the header for a root.
-	 * @param {string} rootId - The root ID.
-	 * @returns {boolean} True if the block type exists, false otherwise.
-	 */
-	checkBlockTypeExists (rootId: string): boolean {
-		const header = this.getMapElement(rootId, J.Constant.blockId.header);
-		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
-	};
-
-	/**
 	 * Gets layout IDs for a list of block IDs.
 	 * @param {string} rootId - The root ID.
 	 * @param {string[]} ids - The block IDs.

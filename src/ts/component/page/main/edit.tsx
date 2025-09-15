@@ -21,7 +21,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			if (U.Object.isTemplateType(object.type)) {
 				key = 'template';
 			} else 
-			if (!S.Block.checkBlockTypeExists(rootId) && Onboarding.isCompleted('basics')) {
+			if (Onboarding.isCompleted('basics')) {
 				key = 'editor';
 			};
 			if (key) {

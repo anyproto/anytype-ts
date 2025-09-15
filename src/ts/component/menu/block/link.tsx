@@ -363,7 +363,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			};
 		} else
 		if (item.itemId == 'add') {
-			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
+			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
 				if (onChange) {
 					onChange(I.MarkType.Object, message.targetId);
 				};
