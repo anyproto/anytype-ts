@@ -383,6 +383,8 @@ class Sidebar {
 	};
 
 	rightPanelRestore (isPopup: boolean) {
+		this.initObjects();
+
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const { isOpen } = rightSidebar;
 		const css: any = {};
