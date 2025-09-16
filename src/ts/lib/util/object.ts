@@ -518,20 +518,6 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
-	isAllowedChat (): boolean {
-		const electron = U.Common.getElectron();
-		const version = String(electron.version?.app || '');
-		const [ major, minor, patch ] = version.split('.');
-
-		return !electron.isPackaged || patch.match(/alpha|beta/) ? true : false;
-	};
-
-	isAllowedMultiChat (): boolean {
-		const space = U.Space.getSpaceview();
-
-		return space.targetSpaceId == 'bafyreigryvrmerbtfswwz5kav2uq5dlvx3hl45kxn4nflg7lz46lneqs7m.2nvj2qik6ctdy';
-	};
-
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
 		method = method || 'auto';
 

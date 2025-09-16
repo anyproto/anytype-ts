@@ -142,7 +142,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: !U.Object.isAllowedMultiChat(),
+			ignoreChat: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -315,7 +315,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: !U.Object.isAllowedMultiChat(),
+			ignoreChat: true,
 			skipLayoutFormat: null,
 		}, param);
 
