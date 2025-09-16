@@ -737,12 +737,20 @@ class Action {
 
 		const isOwner = U.Space.isMyOwner(id);
 		const name = isOwner ? space.name : U.Common.shorten(space.name, 32);
-		const suffix = isOwner || forceDelete ? 'Delete' : 'Leave';
-		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
-		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
-		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
-		const confirm = isOwner || forceDelete ? translate('commonDelete') : translate('commonLeaveSpace');
+		const suffix = isOwner ? 'Delete' : 'Leave';
 		const confirmMessage = isOwner ? space.name : '';
+
+		let title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
+		let text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
+		let confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		let toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
+
+		if (forceDelete) {
+			title = U.Common.sprintf(translate('spaceDeleteWarningTitle'), name);
+			text = U.Common.sprintf(translate('spaceLeaveWarningText'), name);
+			toast = U.Common.sprintf(translate('spaceDeleteToast'), name);
+			confirm = translate('commonDelete');
+		};
 
 		analytics.event(`Click${suffix}Space`, { route });
 
