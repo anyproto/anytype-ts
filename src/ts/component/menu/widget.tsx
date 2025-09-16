@@ -191,7 +191,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			if (block.content.section == I.WidgetSection.Pin) {
 				children.push({ id: 'removeWidget', name: translate('commonUnpin'), icon: 'unpin' });
 			} else {
-				children.push({ id: 'removeType', name: translate('menuWidgetRemoveType'), icon: 'remove' });
+				//children.push({ id: 'removeType', name: translate('menuWidgetRemoveType'), icon: 'remove' });
 			};
 
 			if (sections.length) {

@@ -325,7 +325,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const open = () => {
-		const win = $(window);
 		const node = $(nodeRef.current);
 		const icon = node.find('.icon.collapse');
 		const innerWrap = node.find('#innerWrap').show().css({ height: '', opacity: 0 });
