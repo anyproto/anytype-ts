@@ -24,6 +24,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
+	const emptyRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
 	const object = S.Detail.get(S.Block.widgets, targetId);
 	const subKey = block ? `widget${block.id}` : '';
@@ -38,6 +39,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
+	const isOpen = Storage.checkToggle('widget', parent.id);
 
 	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
 
@@ -264,7 +266,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const length = nodes.length;
 		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
 		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
-		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
@@ -275,7 +276,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		if (!length) {
 			css.paddingBottom = 8;
-			css.height = emptyWrap.outerHeight() + css.paddingBottom;
+			css.height = $(emptyRef.current).outerHeight() + css.paddingBottom;
 		};
 
 		node.css(css);
@@ -320,7 +321,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
 
 		content = (
-			<div className="emptyWrap">
+			<div ref={emptyRef} className="emptyWrap">
 				<Label className="empty" text={label} />
 			</div>
 		);
@@ -444,6 +445,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			ref={nodeRef}
 			id="innerWrap"
 			className="innerWrap"
+			style={{ display: isOpen ? 'block' : 'none' }}
 		>
 			{head}
 			{content}
