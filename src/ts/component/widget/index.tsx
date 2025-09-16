@@ -281,7 +281,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
-		const canRemove = block.content.section == I.WidgetSection.Pin;
 
 		S.Menu.open('widget', {
 			element: `#widget-${block.id} .iconWrap.more`,
@@ -297,7 +296,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				target: object,
 				isEditing: true,
 				blockId: block.id,
-				canRemove,
 				setEditing,
 			}
 		});

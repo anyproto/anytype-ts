@@ -1281,6 +1281,9 @@
 
 	"popupConfirmSortRemoveTitle": "Would you like to remove sorting?",
 
+	"popupConfirmDeleteTypeTitle": "Delete Object Type?",
+	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1822,9 +1825,9 @@
 	"menuWidgetAddWidget": "Add Widget",
 	"menuWidgetWidgetType": "Widget type",
 	"menuWidgetNumberOfObjects": "Number of Objects",
-	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
 	"menuWidgetRecentOpenCaption": "On this device",
+	"menuWidgetRemoveType": "Delete Object Type",
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
