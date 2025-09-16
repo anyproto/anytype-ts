@@ -896,6 +896,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return false;
 			};
 
+			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+				return false;
+			};
+
 			if (Object.values(J.Constant.widgetId).includes(target)) {
 				return true;
 			};

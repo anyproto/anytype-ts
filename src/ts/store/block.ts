@@ -949,13 +949,17 @@ class BlockStore {
 		].includes(key);
 	};
 
-	createTypeWidget (type: any) {
+	createWidget (id: string) {
+		if (!id) {
+			return;
+		};
+
 		const { widgets } = this;
-		const id = this.typeWidgetId(type.id);
 
 		const parent = new M.Block({
 			id,
 			type: I.BlockType.Widget,
+			childrenIds: [],
 			content: {
 				layout: I.WidgetLayout.Link,
 				section: I.WidgetSection.Type,
@@ -965,15 +969,17 @@ class BlockStore {
 		const child = new M.Block({
 			id: `${id}-child`,
 			type: I.BlockType.Link,
-			content: { targetBlockId: type.id },
+			content: { targetBlockId: id },
 		});
+
+		parent.childrenIds = [ child.id ];
 
 		this.add(widgets, parent);
 		this.add(widgets, child);
 		this.updateStructure(widgets, parent.id, [ child.id ]);
 	};
 
-	addTypeWidget (typeId: string) {
+	addTypeWidget (id: string) {
 		const { widgets } = this;
 		const element = this.getMapElement(widgets, widgets);
 
@@ -981,12 +987,11 @@ class BlockStore {
 			return;
 		};
 
-		const id = this.typeWidgetId(typeId);
 		if (element.childrenIds.includes(id)) {
 			return;
 		};
 
-		const type = S.Record.getTypeById(typeId);
+		const type = S.Record.getTypeById(id);
 		if (!type) {
 			return;
 		};
@@ -995,22 +1000,20 @@ class BlockStore {
 			return;
 		};
 
-		this.createTypeWidget(type);
+		this.createWidget(type.id);
 		element.childrenIds.push(id);
 
 		this.updateStructure(widgets, widgets, element.childrenIds);
 		this.updateStructureParents(widgets);
 	};
 
-	removeTypeWidget (typeId: string) {
+	removeTypeWidget (id: string) {
 		const { widgets } = this;
 		const element = this.getMapElement(widgets, widgets);
 
 		if (!element) {
 			return;
 		};
-
-		const id = this.typeWidgetId(typeId);
 
 		this.delete(widgets, id);
 		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
@@ -1027,14 +1030,18 @@ class BlockStore {
 		};
 
 		types.forEach(type => {
-			const id = this.typeWidgetId(type.id);
-			if (element.childrenIds.includes(id)) {
+			if (element.childrenIds.includes(type.id)) {
 				return;
 			};
 
-			this.createTypeWidget(type);
-			element.childrenIds.push(id);
+			this.createWidget(type.id);
+			element.childrenIds.push(type.id);
 		});
+
+		if (!element.childrenIds.includes(J.Constant.widgetId.bin)) {
+			this.createWidget(J.Constant.widgetId.bin);
+			element.childrenIds.push(J.Constant.widgetId.bin);
+		};
 
 		this.updateStructure(widgets, widgets, element.childrenIds);
 		this.updateStructureParents(widgets);
