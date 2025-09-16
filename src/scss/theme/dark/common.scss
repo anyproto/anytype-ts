@@ -459,6 +459,12 @@ html.themeDark {
 				}
 			}
 		}
+
+		> .sidebarPage.pageVault {
+			.item {
+				.cnt { color: var(--color-text-primary); }
+			}
+		}
 	}
 
 	/* Notifications */
