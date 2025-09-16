@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Label, Filter, Button } from 'Component';
-import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
+import { I, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
@@ -20,8 +20,8 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, getTraceId, sortFavorite, addGroupLabels, checkShowAllButton, onCreate } = props;
-	const targetId = block ? block.getTargetObjectId() : '';
+	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, sortFavorite, addGroupLabels, checkShowAllButton, onCreate } = props;
+	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
@@ -30,7 +30,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const links = useRef([]);
 	const top = useRef(0);
 	const branches = useRef([]);
-	const searchIds = useRef([]);
+	const [ searchIds, setSearchIds ] = useState([]);
 	const filterRef = useRef(null);
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
@@ -38,7 +38,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
-	const traceId = getTraceId();
+
+	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
 
 	const clear = () => {
 		subscriptionHashes.current = {};
@@ -47,20 +48,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const updateData = () => {
 		if (isSystemTarget) {
-			getData(getSubId(), initCache);
+			getData(getSubId());
 		};
-	};
-
-	const initCache = () => {
-		const nodes = loadTree();
-
-		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => getRowHeight(nodes[i], i),
-			keyMapper: i => (nodes[i] || {}).id,
-		});
-
-		setDummy(dummy + 1);
 	};
 
 	const loadTree = (): I.WidgetTreeItem[] => {
@@ -81,7 +70,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		} else {
 			let links = object.links;
 			if (filter.current) {
-				links = links.filter(it => searchIds.current.includes(it));
+				links = links.filter(it => searchIds.includes(it));
 			};
 
 			children = getChildNodesDetails(object.id);
@@ -89,7 +78,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		if (filter.current) {
-			children = children.filter(it => searchIds.current.includes(it.id));
+			children = children.filter(it => searchIds.includes(it.id));
 		};
 
 		if (isPreview && isRecent) {
@@ -254,8 +243,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			filter.current = v;
 
 			if (!filter.current) {
-				searchIds.current = [];
-				initCache();
+				setSearchIds([]);
 				return;
 			};
 
@@ -265,8 +253,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				fullText: filter.current,
 				keys: [ 'id' ],
 			}, (message: any) => {
-				searchIds.current = (message.records || []).map(it => it.id);
-				initCache();
+				setSearchIds((message.records || []).map(it => it.id));
 			});
 		}, J.Constant.delay.keyboard);
 	};
@@ -423,13 +410,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		links.current = object.links;
 
 		if (isSystemTarget) {
-			getData(getSubId(), initCache);
-		} else {
-			initCache();
-
-			if (targetId) {
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId());
-			};
+			getData(getSubId());
 		};
 	}, []);
 
@@ -440,8 +421,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		// Reload the tree if the links have changed
 		if (!U.Common.compareJSON(links.current, object.links)) {
 			clear();
-			initCache();
-
 			links.current = object.links;
 		};
 
@@ -456,8 +435,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useImperativeHandle(ref, () => ({
 		updateData,
 		resize,
-		getSearchIds: () => [],
-		getFilter: () => '',
+		getSearchIds: () => searchIds,
+		getFilter: () => filter.current,
 	}));
 
 	return (
