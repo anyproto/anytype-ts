@@ -943,6 +943,9 @@ class BlockStore {
 			J.Constant.typeKey.type, 
 			J.Constant.typeKey.template, 
 			J.Constant.typeKey.participant,
+			J.Constant.typeKey.dashboard,
+			J.Constant.typeKey.spaceview,
+			J.Constant.typeKey.option,
 		].includes(key);
 	};
 
