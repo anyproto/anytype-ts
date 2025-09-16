@@ -47,8 +47,11 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const buttons = this.getButtons();
+		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const nonChats = U.Space.getList().filter(it => !it.isChat && (it.id != space.id));
+		const canChangeType = false;//canWrite && ((!space.isChat && (nonChats.length < profile.sharedSpacesLimit)) || !space.isChat);
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
@@ -57,6 +60,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
+		const tooltip = !canChangeType ? U.Common.sprintf(translate('popupSettingsSpaceIndexUxTypeTooltip'), profile.sharedSpacesLimit) : '';
+
 		const spaceModes = [
 			{ id: I.NotificationMode.All },
 			{ id: I.NotificationMode.Mentions },
@@ -249,13 +254,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 											<div className="side right">
 												<Select
 													id="uxType"
-													readonly={!canWrite}
+													readonly={!canChangeType}
 													ref={ref => this.refUxType = ref}
 													value={String(space.uxType)}
 													options={spaceUxTypes}
 													onChange={v => this.onSpaceUxType(v)}
 													arrowClassName="black"
 													menuParam={{ horizontal: I.MenuDirection.Right }}
+													tooltipParam={{ text: tooltip }} 
 												/>
 											</div>
 										</div>

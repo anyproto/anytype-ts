@@ -408,6 +408,7 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
+				keys: J.Relation.default.concat('sharedSpacesLimit'),
 				noDeps: true,
 				ignoreHidden: false,
 			},

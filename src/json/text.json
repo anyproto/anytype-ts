@@ -919,6 +919,7 @@
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
 	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
+	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d spaces. Upgrade to create more.",
 
 	"popupSettingsSpaceStorageEmptyLabel": "Your storage is empty",
 
