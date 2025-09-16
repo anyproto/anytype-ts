@@ -92,8 +92,7 @@ const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList ext
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
-			route: analytics.route.settings,
-		});
+		}, { route: analytics.route.settings });
 	};
 
 });
