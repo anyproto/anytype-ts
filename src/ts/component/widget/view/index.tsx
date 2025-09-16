@@ -41,6 +41,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
 	const isOpen = Storage.checkToggle('widget', parent.id);
+	const isShown = isOpen || isPreview;
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -397,7 +398,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		<div 
 			id="innerWrap"
 			className={cn.join(' ')}
-			style={{ display: isOpen ? 'block' : 'none' }}
+			style={{ display: isShown ? 'block' : 'none' }}
 		>
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 			{head}

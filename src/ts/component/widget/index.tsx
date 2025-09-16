@@ -503,6 +503,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			data.tab = isSystemTarget ? object.name : analytics.typeMapper(object.type);
 		};
 
+		console.log('setPreview', blockId, event, data);
+
 		setPreview(blockId);
 		analytics.event(event, data);
 	};
@@ -681,10 +683,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if ((layout == I.WidgetLayout.Link) || !isSectionType) {
-			onExpandHandler(e);
+		if (isSectionType && (layout != I.WidgetLayout.Link)) {
+			onSetPreview();
 		} else {
-			!getIsOpen() ? onToggle(e) : onSetPreview();
+			onExpandHandler(e);
 		};
 	};
 

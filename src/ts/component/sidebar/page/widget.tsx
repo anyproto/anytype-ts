@@ -85,6 +85,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (previewId) {
 			const block = S.Block.getLeaf(widgets, previewId);
+
+			console.log(block);
+
 			if (block) {
 				cnb.push('isListPreview');
 

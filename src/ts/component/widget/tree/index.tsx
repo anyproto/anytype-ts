@@ -40,6 +40,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
 	const isOpen = Storage.checkToggle('widget', parent.id);
+	const isShown = isOpen || isPreview;
 
 	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
 
@@ -445,7 +446,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			ref={nodeRef}
 			id="innerWrap"
 			className="innerWrap"
-			style={{ display: isOpen ? 'block' : 'none' }}
+			style={{ display: isShown ? 'block' : 'none' }}
 		>
 			{head}
 			{content}
