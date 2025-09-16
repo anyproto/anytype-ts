@@ -226,6 +226,7 @@
 	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
 	"commonWidgets": "Widgets",
+	"commonLearnMore": "Learn more",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -442,6 +443,10 @@
 
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
+
+	"authOnboardPhraseTitle": "This is you Key",
+	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — only you responsible for your data. You can find this Key later in app settings.",
+	"authOnboardPhraseRevealAndCopy": "Reveal and Copy",
 
 	"authOnboardEmailTitle": "Stay in the loop",
 	"authOnboardEmailLabel": "We'd love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won't share your data. Ever.",
@@ -998,7 +1003,6 @@
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
 	"popupSettingsMembershipPerGenericMany": "per %s %s",
-	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipValidUntil": "Valid until %s",
 	"popupSettingsMembershipForeverFree": "Forever free",
@@ -1538,13 +1542,13 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is the Key?",
-	"popupPhraseTitle2": "How to save my Key?",
-	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
-	"popupPhraseLabel2": "Whomever knows the combination of these words owns your vault. Right now, you are the only person in the world who knows it.",
-	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
-	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
-	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
+	"popupPhraseTitle1": "How the Key works",
+	"popupPhraseSubTitle1": "It’s your login and password",
+	"popupPhraseLabel1": "Your key is represented by a recovery phrase — 12 random words that generate your vault on this device.",
+	"popupPhraseSubTitle2": "Whoever has the key, has access",
+	"popupPhraseLabel2": "Anyone who knows these words can access your vault. Right now, you are the only person in the world who knows them.",
+	"popupPhraseSubTitle3": "Only you responsible for it",
+	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose your key, it cannot be recovered. Store it somewhere safe — in a password manager or written down on paper.",
 
 	"popupUsecaseAuthor": "Made by @%s",
 	"popupUsecaseAuthorShort": "By @%s",
