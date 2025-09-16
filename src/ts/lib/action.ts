@@ -741,7 +741,7 @@ class Action {
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
-		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		const confirm = isOwner || forceDelete ? translate('commonDelete') : translate('commonLeaveSpace');
 		const confirmMessage = isOwner ? space.name : '';
 
 		analytics.event(`Click${suffix}Space`, { route });
