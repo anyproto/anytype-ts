@@ -267,6 +267,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							};
 						};
 
+						if (isSectionPin && !list.length) {
+							return null;
+						};
+
 						return (
 							<div id={`section-${section.id}`} className={cns.join(' ')} key={section.id}>
 								<div className="nameWrap">
