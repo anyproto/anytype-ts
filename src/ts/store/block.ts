@@ -1047,12 +1047,12 @@ class BlockStore {
 		this.updateStructureParents(widgets);
 	};
 
-	getWidgetsForTarget (id: string) {
+	getWidgetsForTarget (id: string, section: I.WidgetSection): I.Block[] {
 		const { widgets } = this;
 		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
 
 		const list = this.getBlocks(widgets, (block: I.Block) => {
-			if (!block.isWidget()) {
+			if (!block.isWidget() || (block.content.section != section)) {
 				return false;
 			};
 

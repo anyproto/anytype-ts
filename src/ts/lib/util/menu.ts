@@ -857,7 +857,7 @@ class UtilMenu {
 							};
 
 							case 'remove': {
-								Action.removeSpace(space.targetSpaceId, param.route);
+								Action.removeSpace(space.targetSpaceId, param.route, true);
 								break;
 							};
 

@@ -728,7 +728,7 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 * @param {function} [callBack] - Optional callback after removal.
 	 */
-	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
+	removeSpace (id: string, route: string, forceDelete?: boolean, callBack?: (message: any) => void) {
 		const space = U.Space.getSpaceviewBySpaceId(id);
 
 		if (!space) {
@@ -737,7 +737,7 @@ class Action {
 
 		const isOwner = U.Space.isMyOwner(id);
 		const name = isOwner ? space.name : U.Common.shorten(space.name, 32);
-		const suffix = isOwner ? 'Delete' : 'Leave';
+		const suffix = isOwner || forceDelete ? 'Delete' : 'Leave';
 		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
 		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
 		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
@@ -903,7 +903,7 @@ class Action {
 	toggleWidgetsForObject (objectId: string, route?: string) {
 		const { widgets } = S.Block;
 		
-		if (S.Block.getWidgetsForTarget(objectId).length) {
+		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
 			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget() && (it.content.section == I.WidgetSection.Pin));
