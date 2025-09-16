@@ -16,8 +16,8 @@
 		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; opacity: 0; }
 		.sectionDate {
 			.label { 
-				@include text-small; padding: 3px 10px; background: var(--color-bg-primary-90); border: 1px solid var(--color-shape-tertiary); 
-				border-radius: 13px; color: var(--color-text-secondary); font-weight: 500; backdrop-filter: blur(5px);
+				@include text-small; padding: 3px 10px; background: var(--color-bg-primary-90); border-radius: 13px; color: var(--color-text-secondary); 
+				font-weight: 500; backdrop-filter: blur(5px);
 			}
 
 			&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
