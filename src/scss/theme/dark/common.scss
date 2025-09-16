@@ -394,6 +394,8 @@ html.themeDark {
 				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
 				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
+
+				.cnt { color: var(--color-text-primary); }
 			}
 
 			> .body {
