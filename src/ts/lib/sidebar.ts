@@ -276,7 +276,7 @@ class Sidebar {
 		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
-		const pageCss: any = { pageWidth };
+		const pageCss: any = { width: pageWidth };
 
 		if (!isPopup) {
 			pageCss.height = U.Common.getAppContainerHeight();
