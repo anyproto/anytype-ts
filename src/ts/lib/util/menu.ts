@@ -790,6 +790,7 @@ class UtilMenu {
 
 		const { targetSpaceId } = space;
 		const options: any[] = [];
+		const isLoading = space.isAccountLoading || space.isLocalLoading;
 
 		if (!param.noPin) {
 			if (space.orderId) {
@@ -811,7 +812,11 @@ class UtilMenu {
 			options.push({ isDiv: true });
 		};
 
-		options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		if (isLoading) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+		} else {
+			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		};
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -848,6 +853,11 @@ class UtilMenu {
 								};
 		
 								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+								break;
+							};
+
+							case 'remove': {
+								Action.removeSpace(space.targetSpaceId, param.route);
 								break;
 							};
 
