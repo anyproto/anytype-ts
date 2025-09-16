@@ -7,7 +7,7 @@ enum Stage {
 	Phrase 		= 0,
 	Email	 	= 1,
 	Persona 	= 2,
-	UseCase  	= 3,
+	UseCase		= 3,
 };
 
 const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
@@ -101,8 +101,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			return;
 		};
 
-		const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
-
 		switch (stage) {
 			case Stage.Phrase: {
 				Animation.from(() => setStage(stage + 1));
@@ -110,6 +108,13 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			};
 
 			case Stage.Email: {
+				const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
+
+				if (!needEmail) {
+					Animation.from(() => setStage(stage + 1));
+					break;
+				};
+
 				const email = emailRef.current?.getValue();
 
 				if (email) {
