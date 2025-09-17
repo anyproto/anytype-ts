@@ -31,7 +31,6 @@ export default {
 
 	limit: {
 		menuRecords:	 	 			 100,
-		widgets:		 	 			 20,
 		notification:	 	 			 20,
 		graphDepth:		 	 			 5,
 		cellEntry:		 	 			 320,
