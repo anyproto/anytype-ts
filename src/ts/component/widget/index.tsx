@@ -448,6 +448,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			limit,
 			keys: J.Relation.sidebar,
 			ignoreArchived,
+			noDeps: true,
 		}, () => {
 			if (callBack) {
 				callBack();

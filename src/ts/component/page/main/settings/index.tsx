@@ -166,6 +166,10 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	init () {
+		const { isPopup } = this.props;
+
+		sidebar.rightPanelClose(isPopup);
+
 		if (!this.isSpace()) {
 			sidebar.leftPanelSetState({ page: 'settings' });
 			return;
@@ -175,7 +179,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			return;
 		};
 
-		const { isPopup } = this.props;
 		const { id } = U.Router.getParam(U.Router.getRoute());
 
 		let page = '';
@@ -202,7 +205,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		};
 
 		sidebar.leftPanelSetState({ page });
-		sidebar.rightPanelClose(isPopup);
 	};
 
 	onExport (type: I.ExportType, param: any) {
