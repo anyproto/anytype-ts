@@ -911,6 +911,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			const object = this.getObject(block, target);
 
+			if (block.content.section == I.WidgetSection.Pin) {
+				console.log(JSON.stringify(object, null, 3));
+			};
+
 			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
 				return false;
 			};
