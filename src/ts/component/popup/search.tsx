@@ -205,7 +205,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
 		setBacklink(item);
-		resetSearch();
 		analytics.event('SearchBacklink', { route, type });
 
 		if (callBack) {
@@ -214,9 +213,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onClearSearch = () => {
+		offsetRef.current = 0;
+
 		storageSet({ backlink: '' });
 		setBacklink(null);
-		resetSearch();
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
@@ -305,10 +305,12 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			itemsRef.current = itemsRef.current.concat(records);
 
 			if (itemsRef.current.length) {
-				U.Subscription.subscribeIds({
-					subId: J.Constant.subId.search,
-					ids: itemsRef.current.map(it => it.id),
-					noDeps: true,
+				U.Subscription.destroyList([ J.Constant.subId.search ], true, () => {
+					U.Subscription.subscribeIds({
+						subId: J.Constant.subId.search,
+						ids: itemsRef.current.map(it => it.id),
+						noDeps: true,
+					});
 				});
 			};
 
@@ -605,6 +607,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 	});
+
+	useEffect(() => {
+		resetSearch();
+	}, [ backlink ]);
 
 	const items = getItems();
 	const shift = keyboard.shiftSymbol();

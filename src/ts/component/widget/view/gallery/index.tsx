@@ -88,7 +88,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 								height={height}
 								deferredMeasurmentCache={cache.current}
 								rowCount={length}
-								rowHeight={param => cache.current.rowHeight(param)}
+								rowHeight={param => cache.current.getHeight(param)}
 								rowRenderer={rowRenderer}
 								onRowsRendered={onRowsRendered}
 								overscanRowCount={LIMIT}
@@ -122,7 +122,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 	useEffect(() => {
 		cache.current.clearAll();
 		listRef.current?.recomputeRowHeights(0);
-	}, [ rows.length ]);
+	}, [ rows.length, block, view ]);
 
 	return (
 		<div className="body">

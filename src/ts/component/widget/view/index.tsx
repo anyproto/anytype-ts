@@ -399,7 +399,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		<div 
 			id="innerWrap"
 			className={cn.join(' ')}
-			style={{ display: isShown ? 'block' : 'none' }}
+			style={{ display: isShown ? 'flex' : 'none' }}
 		>
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 			{head}

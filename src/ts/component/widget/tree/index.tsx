@@ -446,7 +446,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			ref={nodeRef}
 			id="innerWrap"
 			className="innerWrap"
-			style={{ display: isShown ? 'block' : 'none' }}
+			style={{ display: isShown ? 'flex' : 'none' }}
 		>
 			{head}
 			{content}
