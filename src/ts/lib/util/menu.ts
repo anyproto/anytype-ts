@@ -842,13 +842,13 @@ class UtilMenu {
 									C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
 								});
 
-								analytics.event('PinSpace');
+								analytics.event('PinSpace', { route: param.route });
 								break;
 							};
 
 							case 'unpin': {
 								C.SpaceUnsetOrder(space.id);
-								analytics.event('UnpinSpace');
+								analytics.event('UnpinSpace', { route: param.route });
 								break;
 							};
 
