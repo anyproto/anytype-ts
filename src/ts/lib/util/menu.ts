@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import raf from 'raf';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
 
@@ -835,7 +835,13 @@ class UtilMenu {
 							};
 
 							case 'pin': {
-								C.SpaceSetOrder(space.id, [ space.id ]);
+								const items: any[] = this.getVaultItems().filter(it => it.isPinned);
+								const newItems = [ space ].concat(items);
+
+								U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+									C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
+								});
+
 								analytics.event('PinSpace');
 								break;
 							};
@@ -902,16 +908,11 @@ class UtilMenu {
 
 		const items = U.Common.objectCopy(U.Space.getList()).
 			map(it => {
-				it.counter = 0;
-				it.lastMessageDate = 0;
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 
-				if (!it.isButton) {
-					const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-
-					it.counter = counters.mentionCounter || counters.messageCounter;
-					it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
-					it.isPinned = !!it.orderId;
-				};
+				it.counter = counters.mentionCounter || counters.messageCounter;
+				it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
+				it.isPinned = !!it.orderId;
 				return it;
 			});
 
