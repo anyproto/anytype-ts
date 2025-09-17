@@ -227,6 +227,8 @@
 	"commonUpgrade": "✦ Upgrade",
 	"commonWidgets": "Widgets",
 	"commonLearnMore": "Learn more",
+	"commonSeeChanges": "See Changes",
+	"commonSeeUpdates": "See updates",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -2244,9 +2246,19 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
+	"onboardingChatsTitle": "Ideas need conversations",
+	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",
+
+	"onboardingChatsSlide0Title": "Your Vault just leveled up",
+	"onboardingChatsSlide0Text": "Spaces and Chats now show live previews and updates — one<br/>place to follow everything that matters.",
+	"onboardingChatsSlide1Title": "Chats work like Spaces",
+	"onboardingChatsSlide1Text": "A channel made for dialogue — where you can share, create, and<br/>edit together in real time.",
+	"onboardingChatsSlide2Title": "Everything in Its Right Place",
+	"onboardingChatsSlide2Text": "Objects, lists and files appear in the sidebar — structured,<br/>searchable, and always at hand.",
+	"onboardingChatsSlide3Title": "See all the latest updates and bug<br/>fixes in the release notes",
+
 	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
 	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",
-	"onboardingPrimitivesButton": "See Changes",
 
 	"onboardingPrimitivesTypesPages": "Pages",
 	"onboardingPrimitivesTypesBookmarks": "Bookmarks",
@@ -2272,7 +2284,6 @@
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
-	"onboardingPrimitivesSlide4Button": "See updates",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

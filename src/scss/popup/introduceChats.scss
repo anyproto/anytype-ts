@@ -1,0 +1,92 @@
+@import "~scss/_mixins";
+
+$elementsTransition: opacity 0.2s linear;
+
+.popups {
+    .popup.popupIntroduceChats {
+        .innerWrap { background: var(--color-bg-lime); width: 768px; height: 600px; border-radius: 20px; overflow: hidden; }
+
+        .steps { transition: margin-left 0.6s cubic-bezier(0.78, 0, 0.39, 1); display: flex; align-items: center; text-align: center; }
+        .steps.s1 { margin-left: -100%; }
+        .steps {
+            .step0 { display: flex; flex-direction: column; align-items: center; width: 768px; height: 600px; padding-top: 44px; flex-shrink: 0; }
+            .step0.init {
+                .title,
+                > .label,
+                .button { opacity: 0; }
+            }
+            .step0 {
+                .chat { height: 324px; width: 470px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 38px; }
+                .chat {
+
+                }
+
+                .title { @include text-title; margin-bottom: 5px; }
+                > .label { @include text-paragraph; font-weight: 500; margin-bottom: 14px; width: 544px; opacity: 0.7; }
+
+                .title,
+                > .label,
+                .button { transition: opacity 1s $easeInQuint; }
+            }
+
+            .step1 { height: 600px; width: 768px; flex-shrink: 0; position: relative; overflow: hidden; }
+            .step1.init {
+                .textWrapper,
+                .swiper-button-prev,
+                .swiper-button-next,
+                .slideBack { opacity: 0; }
+            }
+            .step1 {
+                .textWrapper { height: 184px; position: relative; width: 608px; margin: 0px auto; z-index: 1; }
+                .textWrapper {
+                    .text { position: absolute; left: 0px; top: 48px; width: 100%; }
+                    .text.hidden { opacity: 0; }
+                    .text {
+                        .title { @include text-header1; margin-bottom: 5px; }
+                        .label { @include text-paragraph; font-weight: 500; margin-bottom: 12px; opacity: 0.7; }
+                        .label.count { @include text-small; margin-bottom: 0px; }
+                    }
+                    .text4 {
+                        .title { margin-bottom: 16px; }
+                        .button { border-radius: 18px; }
+                    }
+                }
+
+                .swiper { width: 100%; z-index: 2; overflow: visible; }
+                .swiper-wrapper { transition-timing-function: cubic-bezier(0.78, 0, 0.39, 1); }
+                .swiper-slide { width: 100%; transition: opacity 0.3s linear; }
+                .swiper-button-prev,
+                .swiper-button-next,
+                .slideBack { position: absolute; z-index: 2; width: 36px; height: 36px; background: url('~img/icon/onboarding/primitives/arrow.svg'); }
+                .swiper-button-prev { left: 44px;  top: -93px; }
+                .swiper-button-next { right: 44px;  top: -93px; transform: rotateZ(180deg); }
+                .slideBack { left: 44px;  top: 91px; z-index: 3; }
+                .swiper-button-disabled { opacity: 0; }
+
+                .slide { display: flex; flex-direction: column; gap: 21px 0px; align-items: center; height: 425px; }
+                .slide {
+                    img { filter: drop-shadow(0 0 32px rgba(0, 0, 0, 0.15)); }
+                }
+                .slide.slide0 {
+                    img { width: 560px; height: 416.5px; position: absolute; right: 0px; bottom: 0px; }
+                }
+                .slide.slide1 {
+                    img { width: 640px; height: 400px; position: absolute; left: 50%; bottom: 0px; margin-left: -320px; }
+                }
+                .slide.slide2 {
+                    img { width: 552px; height: 414.5px; position: absolute; left: 0px; bottom: 0px; }
+                }
+                .slide.slide3 {
+                    img { width: 680px; height: 425px; }
+                }
+
+                // transitions
+                .textWrapper,
+                .textWrapper .text,
+                .swiper-button-prev,
+                .swiper-button-next,
+                .slideBack { transition: $elementsTransition; }
+            }
+        }
+    }
+}
