@@ -50,8 +50,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const nonChats = U.Space.getList().filter(it => !it.isChat && (it.id != space.id));
-		const canChangeType = canWrite && ((!space.isChat && (nonChats.length < profile.sharedSpacesLimit)) || !space.isChat);
+		//const nonChats = U.Space.getList().filter(it => !it.isChat && (it.id != space.id));
+		const canChangeType = canWrite; // && ((!space.isChat && (nonChats.length < profile.sharedSpacesLimit)) || !space.isChat);
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
