@@ -156,13 +156,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { widgets } = S.Block;
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
-		const sections: any[] = [];
 		const canRemove = isEditing;
 		const block = S.Block.getLeaf(widgets, blockId);
 
 		if (!block) {
 			return [];
 		};
+
+		let sections: any[] = [];
 
 		if (layoutOptions.length > 1) {
 			sections.push({
@@ -185,8 +186,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (canRemove) {
-			const children: any[] = [ 
-			];
+			const children: any[] = [];
 
 			if (block.content.section == I.WidgetSection.Pin) {
 				children.push({ id: 'removeWidget', name: translate('commonUnpin'), icon: 'unpin' });
@@ -194,11 +194,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				//children.push({ id: 'removeType', name: translate('menuWidgetRemoveType'), icon: 'remove' });
 			};
 
-			if (sections.length) {
+			if (sections.length && children.length) {
 				children.unshift({ isDiv: true });
 			};
 
-			sections.push({ children });
+			if (children.length) {
+				sections.push({ children });
+			};
 		};
 
 		return sections;
