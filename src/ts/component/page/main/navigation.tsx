@@ -157,7 +157,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												ref={ref => this.refList[Panel.Left] = ref}
 												width={width}
 												height={height - 35}
-												deferredMeasurmentCache={this.cacheIn}
+												deferredMeasurementCache={this.cacheIn}
 												rowCount={pagesIn.length}
 												rowHeight={HEIGHT}
 												rowRenderer={(param: any) => { 
@@ -196,7 +196,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												ref={ref => this.refList[Panel.Right] = ref}
 												width={width}
 												height={height - 35}
-												deferredMeasurmentCache={this.cacheOut}
+												deferredMeasurementCache={this.cacheOut}
 												rowCount={pagesOut.length}
 												rowHeight={HEIGHT}
 												rowRenderer={(param: any) => { 

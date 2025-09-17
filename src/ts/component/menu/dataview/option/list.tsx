@@ -430,7 +430,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 												ref={listRef}
 												width={width}
 												height={height}
-												deferredMeasurmentCache={cache.current}
+												deferredMeasurementCache={cache.current}
 												rowCount={items.length}
 												rowHeight={HEIGHT}
 												rowRenderer={rowRenderer}

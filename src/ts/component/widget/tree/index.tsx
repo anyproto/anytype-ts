@@ -370,7 +370,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 								ref={listRef}
 								width={width}
 								height={height}
-								deferredMeasurmentCache={cache.current}
+								deferredMeasurementCache={cache.current}
 								rowCount={nodes.length}
 								rowHeight={({ index }) => getRowHeight(nodes[index], index)}
 								rowRenderer={rowRenderer}

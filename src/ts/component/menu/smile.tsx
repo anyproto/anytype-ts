@@ -145,7 +145,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 												ref={ref => this.refList = ref}
 												width={width}
 												height={height}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowCount={items.length}
 												rowHeight={HEIGHT_SMILE_ITEM}
 												rowRenderer={rowRenderer}
@@ -251,7 +251,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 												ref={ref => this.refList = ref}
 												width={width}
 												height={height}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowCount={items.length}
 												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}
@@ -350,7 +350,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 												ref={ref => this.refList = ref}
 												width={width}
 												height={height}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowCount={items.length}
 												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}
