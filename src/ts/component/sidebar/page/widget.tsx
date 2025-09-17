@@ -85,6 +85,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (previewId) {
 			const block = S.Block.getLeaf(widgets, previewId);
+
 			if (block) {
 				cnb.push('isListPreview');
 
@@ -265,6 +266,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									return U.Data.sortByOrderId(type1, type2);
 								});
 							};
+						};
+
+						if (isSectionPin && !list.length) {
+							return null;
 						};
 
 						return (
@@ -896,13 +901,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return false;
 			};
 
+			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+				return false;
+			};
+
 			if (Object.values(J.Constant.widgetId).includes(target)) {
 				return true;
 			};
 
 			const object = this.getObject(block, target);
 
-			if (object._empty_ || object.isArchived || object.isDeleted) {
+			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
 				return false;
 			};
 

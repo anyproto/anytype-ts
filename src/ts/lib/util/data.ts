@@ -1167,6 +1167,8 @@ class UtilData {
 	};
 
 	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+		object = object || {};
+
 		let ret: any = {};
 
 		switch (block.content.section) {
@@ -1177,9 +1179,9 @@ class UtilData {
 
 			case I.WidgetSection.Type: {
 				ret = { 
-					layout: object.widgetLayout, 
-					limit: object.widgetLimit, 
-					viewId: object.widgetViewId,
+					layout: Number(object.widgetLayout) || I.WidgetLayout.Link, 
+					limit: Number(object.widgetLimit) || 6, 
+					viewId: String(object.widgetViewId) || '',
 				};
 				break;
 			};

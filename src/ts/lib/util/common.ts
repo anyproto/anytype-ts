@@ -1976,8 +1976,13 @@ class UtilCommon {
 	};
 
 	getMaxScrollHeight (isPopup: boolean): number {
-		const container = this.getScrollContainer(isPopup).get(0);
-		return container.scrollHeight - container.clientHeight;
+		const container = this.getScrollContainer(isPopup);
+		if (!container.length) {
+			return 0;
+		};
+
+		const el = container.get(0);
+		return el.scrollHeight - el.clientHeight;
 	};
 
 	getAppContainerHeight () {

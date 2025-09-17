@@ -1,6 +1,6 @@
-import React, { forwardRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
 import $ from 'jquery';
-import { I, S, U, Relation } from 'Lib';
+import { I, S, U, Relation, Preview } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
@@ -13,9 +13,10 @@ interface Props {
 	options: I.Option[];
 	noFilter?: boolean;
 	isMultiple?: boolean;
-	showOn?: string;
+	showOn?: 'click' | 'mouseDown' | 'mouseEnter';
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	tooltipParam?: I.TooltipParam;
 	onChange? (id: any): void;
 };
 
@@ -39,10 +40,13 @@ const Select = forwardRef<SelectRefProps, Props>(({
 	showOn = 'click',
 	readonly = false,
 	menuParam = {},
+	tooltipParam = {},
 	onChange,	
 }, ref) => {
+
 	const [ value, setValue ] = useState(initialValue);
 	const [ options, setOptions ] = useState(initialOptions);
+	const nodeRef = useRef(null);
 	const cn = [ 'select', className ];
 	const acn = [ 'arrow', arrowClassName ];
 	const current: any[] = [];
@@ -185,6 +189,23 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		onMouseEnter = show;
 	};
 
+	const onMouseEnterHandler = (e: any) => {
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
+
+		if (t) {
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+		};
+		
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+	};
+	
+	const onMouseLeaveHandler = (e: any) => {
+		Preview.tooltipHide(false);
+	};
+
 	useEffect(() => {
 		const options = getOptions();
 		
@@ -206,11 +227,13 @@ const Select = forwardRef<SelectRefProps, Props>(({
 
 	return (
 		<div 
+			ref={nodeRef}
 			id={`select-${id}`} 
 			className={cn.join(' ')} 
 			onClick={onClick} 
 			onMouseDown={onMouseDown}
-			onMouseEnter={onMouseEnter}
+			onMouseEnter={onMouseEnterHandler}
+			onMouseLeave={onMouseLeaveHandler}
 		>
 			{current ? (
 				<>

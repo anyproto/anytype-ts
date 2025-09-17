@@ -61,7 +61,7 @@ const IconSize = {
 	48: 24,
 	56: 32,
 	64: 32,
-	80: 48,
+	80: 56,
 	96: 56,
 	108: 64,
 	112: 64,
@@ -87,7 +87,7 @@ const FontSize = {
 	48: 28,
 	56: 40,
 	64: 40,
-	80: 64,
+	80: 48,
 	96: 64,
 	108: 64,
 	128: 72,
@@ -190,8 +190,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	const onMouseDown = (e: any) => {
 		const isTask = U.Object.isTaskLayout(object.layout);
 		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
-
-		console.log('IconObject onMouseDown', { layout: object.layout, isTask, isEmoji });
 
 		if (onClick) {
 			onClick(e);

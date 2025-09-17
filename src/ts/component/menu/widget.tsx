@@ -152,11 +152,18 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing } = data;
+		const { isEditing, blockId } = data;
+		const { widgets } = S.Block;
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
-		const sections: any[] = [];
-		const canRemove = data.canRemove && isEditing;
+		const canRemove = isEditing;
+		const block = S.Block.getLeaf(widgets, blockId);
+
+		if (!block) {
+			return [];
+		};
+
+		let sections: any[] = [];
 
 		if (layoutOptions.length > 1) {
 			sections.push({
@@ -179,15 +186,21 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (canRemove) {
-			const children: any[] = [ 
-				{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
-			];
+			const children: any[] = [];
 
-			if (sections.length) {
+			if (block.content.section == I.WidgetSection.Pin) {
+				children.push({ id: 'removeWidget', name: translate('commonUnpin'), icon: 'unpin' });
+			} else {
+				//children.push({ id: 'removeType', name: translate('menuWidgetRemoveType'), icon: 'remove' });
+			};
+
+			if (sections.length && children.length) {
 				children.unshift({ isDiv: true });
 			};
 
-			sections.push({ children });
+			if (children.length) {
+				sections.push({ children });
+			};
 		};
 
 		return sections;
@@ -310,8 +323,23 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { blockId, target } = data;
 
 		switch (item.id) {
-			case 'remove': {
+			case 'removeWidget': {
 				Action.removeWidget(blockId, target);
+				break;
+			};
+
+			case 'removeType': {
+				S.Popup.open('confirm', {
+					data: {
+						icon: 'confirm',
+						colorConfirm: 'red',
+						title: translate('popupConfirmDeleteTypeTitle'),
+						text: translate('popupConfirmDeleteTypeText'),
+						onConfirm: () => {
+							Action.archive([ target.id ], analytics.route.addWidgetMenu);
+						},
+					},
+				});
 				break;
 			};
 		};

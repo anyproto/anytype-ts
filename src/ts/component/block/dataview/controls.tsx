@@ -173,7 +173,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				onViewRemove,
 				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
 					sortOrFilterRelationSelect(component, {
-						classNameWrap: 'fromBlock',
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
@@ -194,6 +193,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const sortOrFilterRelationSelect = (component: string, menuParam: Partial<I.MenuParam>, callBack?: () => void) => {
+		menuParam.classNameWrap = String(menuParam.classNameWrap || '');
+		menuParam.classNameWrap = [ menuParam.classNameWrap, 'fromBlock' ].join(' ');
+
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId: block.id,

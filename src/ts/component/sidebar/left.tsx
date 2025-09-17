@@ -161,7 +161,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	useEffect(() => {
 		sidebar.resizePage(null, null, false);
-	}, [ page]);
+	}, [ page ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,

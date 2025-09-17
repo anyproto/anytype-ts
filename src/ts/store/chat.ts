@@ -232,6 +232,7 @@ class ChatStore {
 		};
 
 		this.stateMap.set(param.spaceId, spaceMap);
+		this.setBadge();
 	};
 
 	/**

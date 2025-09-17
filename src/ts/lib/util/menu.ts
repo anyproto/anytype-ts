@@ -785,14 +785,19 @@ class UtilMenu {
 		});
 	};
 
-	spaceContext (space: any, param: any) {
+	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: any) {
+		param = param || {};
+
 		const { targetSpaceId } = space;
 		const options: any[] = [];
+		const isLoading = space.isAccountLoading || space.isLocalLoading;
 
-		if (space.orderId) {
-			options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
-		} else { 
-			options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+		if (!param.noPin) {
+			if (space.orderId) {
+				options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+			} else { 
+				options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+			};
 		};
 
 		if (space.chatId) {
@@ -803,14 +808,18 @@ class UtilMenu {
 			};
 		};
 
-		if (options.length) {
+		if (options.length && !param.noDivider) {
 			options.push({ isDiv: true });
 		};
 
-		options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		if (isLoading) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+		} else {
+			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+		};
 
 		S.Menu.open('select', {
-			...param,
+			...menuParam,
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
@@ -821,7 +830,7 @@ class UtilMenu {
 								const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
 
 								C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-								analytics.event('ChangeMessageNotificationState', { type: mode, route: analytics.route.vault });
+								analytics.event('ChangeMessageNotificationState', { type: mode, route: param.route });
 								break;
 							};
 
@@ -844,6 +853,11 @@ class UtilMenu {
 								};
 		
 								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+								break;
+							};
+
+							case 'remove': {
+								Action.removeSpace(space.targetSpaceId, param.route, true);
 								break;
 							};
 
