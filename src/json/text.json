@@ -2249,6 +2249,13 @@
 	"onboardingChatsTitle": "Ideas need conversations",
 	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",
 
+	"onboardingChatsMockChatMessage0": "Good to have chat here now",
+	"onboardingChatsMockChatMessage1": "Yeah. Just created something from this",
+	"onboardingChatsMockChatMessage3": "Feels like part of the space \uD83E\uDEE7",
+
+	"onboardingChatsMockChatAttachmentTitle": "Project thoughts",
+	"onboardingChatsMockChatAttachmentType": "Page",
+
 	"onboardingChatsSlide0Title": "Your Vault just leveled up",
 	"onboardingChatsSlide0Text": "Spaces and Chats now show live previews and updates — one<br/>place to follow everything that matters.",
 	"onboardingChatsSlide1Title": "Chats work like Spaces",

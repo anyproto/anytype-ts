@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import { Title, Label, Button, Icon } from 'Component';
+import { Title, Label, Button, Icon, IconObject } from 'Component';
 import { I, U, S, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
@@ -47,6 +47,98 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 2 });
 	};
 
+	const Message = (item: any) => {
+		const { id, isSelf, isFirst, isLast, text, author, time, withAttachment, userpic } = item
+		const cn = [
+			'message',
+			isSelf ? 'isSelf' : '',
+			isFirst ? 'isFirst' : '',
+			isLast ? 'isLast' : '',
+			text ? 'withText' : '',
+		];
+
+		const attachment = { name: 'Project thoughts', type: 'Page' }
+
+		return (
+			<div className={cn.join(' ')}>
+				<div className="flex">
+					<div className="side left"><div className={`userpic ${userpic}`} /></div>
+					<div className="side right">
+						<Label className="author" text={author} />
+
+						<div className="bubbleOuter">
+							<div className="bubbleInner">
+								<div className="bubble">
+									{withAttachment ? (
+										<div className="attachment">
+											<IconObject size={56} iconSize={32} object={{ iconEmoji: '🗒️' }} />
+											<div className="info">
+												<Title text={translate('onboardingChatsMockChatAttachmentTitle')} />
+												<Label text={translate('onboardingChatsMockChatAttachmentType')} />
+											</div>
+										</div>
+									) : (
+										<div className="textWrapper">
+											<Label className="text" text={text} />
+											<Label className="time" text={U.Date.date('H:i', time)} />
+										</div>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	};
+
+	const now = U.Date.now();
+	const profile = U.Space.getProfile();
+
+	const chatMock = [
+		{
+			id: 'message0',
+			isSelf: false,
+			isFirst: true,
+			isLast: true,
+			text: translate('onboardingChatsMockChatMessage0'),
+			author: 'Alice',
+			userpic: 'alice',
+			time: now - 60, // sent 1 minute ago
+		},
+		{
+			id: 'message1',
+			isSelf: true,
+			isFirst: true,
+			isLast: false,
+			text: translate('onboardingChatsMockChatMessage1'),
+			author: profile.name,
+			userpic: 'self',
+			time: now,
+		},
+		{
+			id: 'message2',
+			isSelf: true,
+			isFirst: false,
+			isLast: true,
+			text: '',
+			author: profile.name,
+			userpic: 'self',
+			time: now,
+			withAttachment: true,
+		},
+		{
+			id: 'message3',
+			isSelf: false,
+			isFirst: true,
+			isLast: true,
+			text: translate('onboardingChatsMockChatMessage3'),
+			author: 'Bob',
+			userpic: 'bob',
+			time: now,
+		},
+	];
+
 	useEffect(() => {
 		onStepChange(0, initChat);
 
@@ -60,7 +152,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		<div ref={nodeRef} className={[ 'steps', `s${step}` ].join(' ')}>
 			<div className="step0 init">
 				<div className="chat">
-					chat
+					{chatMock.map(it => <Message key={it.id} {...it} />)}
 				</div>
 
 				<Title text={translate('onboardingChatsTitle')} />
