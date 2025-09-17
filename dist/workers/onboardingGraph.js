@@ -125,14 +125,10 @@ addEventListener('message', ({ data }) => {
  * @param {{src: string, bitmap: ImageBitmap}} param - Image source and bitmap.
  */
 image = ({ src, bitmap }) => {
-	console.log('[Worker] Received image (handler 1):', src, 'bitmap:', bitmap);
 	if (!images[src]) {
 		images[src] = bitmap;
-		console.log('[Worker] Stored image:', src, 'total images:', Object.keys(images).length);
 		redraw();
-	} else {
-		console.log('[Worker] Image already exists:', src);
-	}
+	};
 };
 
 /**
@@ -245,31 +241,11 @@ init = (param) => {
 		}
 	});
 	
-	simulation.on('end', () => {
-		// Ensure final redraw when simulation stops
-		console.log('Simulation ended, alpha reached minimum');
-		redraw();
-	});
+	simulation.on('end', () => redraw());
 	simulation.tick(50); // Fewer initial ticks to prevent drift buildup
 
 	root = getNodeById(rootId);
 	
-	// Add diagnostic watchdog to monitor simulation state
-	// Comment out in production to save CPU
-	/*
-	setInterval(() => {
-		if (!simulation) return;
-		const a = simulation.alpha().toFixed(3);
-		const at = simulation.alphaTarget().toFixed(3);
-		console.log('[sim]', { alpha: a, alphaTarget: at, isDragging });
-		// Auto-fix any stuck target
-		if (!isDragging && simulation.alphaTarget() > 0 && simulation.alpha() < 0.03) {
-			console.log('[sim] Fixing stuck alphaTarget:', at);
-			simulation.alphaTarget(0);
-		}
-	}, 500);
-	*/
-
 	const x = root ? root.x : width / 2;
 	const y = root ? root.y : height / 2;
 
@@ -297,7 +273,7 @@ setData = (param) => {
 	data.nodes = param.nodes || [];
 	data.edges = param.edges || [];
 	
-	console.log('[Worker setData] Received nodes:', data.nodes.length, 'edges:', data.edges.length);
+	console.log('[Worker].setData: Received nodes:', data.nodes.length, 'edges:', data.edges.length);
 	
 	// Keep existing node positions if they exist
 	const existingPositions = {};
@@ -317,13 +293,13 @@ setData = (param) => {
 		const targetId = typeof edge.target === 'object' ? edge.target.id : edge.target;
 		const isValid = nodeIds.has(sourceId) && nodeIds.has(targetId);
 		if (!isValid) {
-			console.log('Worker: Skipping invalid edge:', sourceId, '->', targetId);
+			console.log('[Worker].setData: Skipping invalid edge:', sourceId, '->', targetId);
 		}
 		return isValid;
 	}) : [];
 	edges = util.objectCopy(edges);
 	
-	console.log('[Worker setData] Valid edges after filtering:', edges.length);
+	console.log('[Worker].setData: Valid edges after filtering:', edges.length);
 	
 	// Restore positions for existing nodes
 	nodes.forEach(node => {
@@ -347,7 +323,7 @@ setData = (param) => {
 		const verticalSpace = Math.max(topSpace, bottomSpace);
 		const useHorizontal = horizontalSpace > verticalSpace;
 		
-		console.log('Worker: Using horizontal placement:', useHorizontal);
+		console.log('[Worker].setData: Using horizontal placement:', useHorizontal);
 		
 		// Calculate safe zones for node placement
 		const minSafeDistance = 50; // Minimum distance from popup edge
@@ -435,7 +411,7 @@ setData = (param) => {
 	if (simulation) {
 		// Update existing simulation with new nodes
 		simulation.nodes(nodes);
-		console.log('[Worker] Restarting simulation with alpha 0.3 for', nodes.length, 'nodes and', edges.length, 'edges');
+		console.log('[Worker].setData: Restarting simulation with alpha 0.3 for', nodes.length, 'nodes and', edges.length, 'edges');
 		simulation.alpha(0.3).restart(); // Moderate restart
 	} else {
 		// Create new simulation with the nodes
@@ -444,7 +420,7 @@ setData = (param) => {
 		simulation.alphaDecay(0.02); // Slower decay to give blocking force more time
 		simulation.alphaMin(0); // Don't auto-stop based on alpha, we control it via velocity
 		simulation.velocityDecay(0.4); // Default velocity decay
-		console.log('[Worker] Created new simulation for', nodes.length, 'nodes');
+		console.log('[Worker].setData: Created new simulation for', nodes.length, 'nodes');
 	}
 	
 	// Blocking forces are now handled by the custom force in initForces
@@ -496,15 +472,11 @@ setData = (param) => {
 			}
 		});
 		
-		simulation.on('end', () => {
-			// Ensure final redraw when simulation stops
-			console.log('Simulation ended in setData');
-			redraw();
-		});
+		simulation.on('end', () => redraw());
 	} else {
 		// Update the link force with new edges and ensure distance is set
 		if (simulation.force('link')) {
-			console.log('[Worker] Updating link force with', edges.length, 'edges');
+			console.log('[Worker].setData: Updating link force with', edges.length, 'edges');
 			simulation.force('link')
 				.links(edges)
 				.distance(100) // Original distance
@@ -513,11 +485,11 @@ setData = (param) => {
 			
 			// Restart simulation to apply the new forces
 			if (edges.length > 0) {
-				console.log('[Worker] Restarting simulation to apply link forces');
+				console.log('[Worker].setData: Restarting simulation to apply link forces');
 				simulation.alpha(0.3).restart(); // Moderate restart
 			}
 		} else {
-			console.log('[Worker] No link force found to update!');
+			console.log('[Worker].setData: No link force found to update!');
 		}
 	}
 	
@@ -708,8 +680,6 @@ function forceBlock(areas, buffer = 30, k = 0.1) { // Moderate force now that it
  * Custom force initialization with blocking area consideration
  */
 initForces = () => {
-	const { charge, link } = forceProps;
-	
 	updateOrphans();
 
 	nodes.forEach(d => {
@@ -743,11 +713,11 @@ initForces = () => {
 			.iterations(2); // Standard iterations
 		
 		simulation.force('link', linkForce);
-		console.log('[Worker initForces] Created link force with', edges.length, 'edges');
+		console.log('[Worker].initForces: Created link force with', edges.length, 'edges');
 	} else {
 		// Create empty link force that can be updated later
 		simulation.force('link', d3.forceLink([]).id(d => d.id));
-		console.log('[Worker initForces] Created empty link force (no edges yet)');
+		console.log('[Worker].initForces: Created empty link force (no edges yet)');
 	}
 
 	updateForces();
@@ -911,7 +881,7 @@ drawRadialNode = (d) => {
 	
 	// Draw icon if available (for type nodes with iconName)
 	// Check both d.type === 'type' and d.layout === 4 (Type layout)
-	if ((d.type === 'type' || d.layout === 4)) {
+	if ((d.type === 'type') || (d.layout === 4)) {
 		if (d.iconName) {
 			if (images[d.iconName]) {
 				const icon = images[d.iconName];
@@ -925,11 +895,9 @@ drawRadialNode = (d) => {
 				ctx.drawImage(icon, iconX, iconY, iconSize, iconSize);
 				ctx.restore();
 			} else {
-				console.log('[Worker] Icon not in images cache for node:', d.id, 'iconName:', d.iconName, 'available:', Object.keys(images));
-			}
-		} else {
-			//console.log('[Worker] Type node has no iconName:', d.id, d.label);
-		}
+				console.log('[Worker].drawRadialNode: Icon not in images cache for node:', d.id, 'iconName:', d.iconName, 'available:', Object.keys(images));
+			};
+		};
 	} else if (d.iconEmoji) {
 		// Draw emoji for nodes without iconName
 		ctx.save();
@@ -1621,8 +1589,6 @@ onMouseUp = ({ x, y }) => {
 onMouseLeave = () => {
 	// Called when mouse leaves the canvas (e.g., enters popup area)
 	if (isDragging && dragNode) {
-		console.log('Mouse left canvas, releasing node:', dragNode.id);
-		
 		// Release the fixed position
 		dragNode.fx = null;
 		dragNode.fy = null;

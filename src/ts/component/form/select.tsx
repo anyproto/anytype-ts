@@ -193,8 +193,6 @@ const Select = forwardRef<SelectRefProps, Props>(({
 		const { text = '', caption = '' } = tooltipParam;
 		const t = Preview.tooltipCaption(text, caption);
 
-		console.log(t);
-		
 		if (t) {
 			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
 		};

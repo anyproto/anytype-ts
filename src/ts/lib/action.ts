@@ -854,9 +854,6 @@ class Action {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
-		let toggle = false;
-
-		console.log('createWidgetFromObject', { rootId, objectId, targetId, position, object });
 
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {

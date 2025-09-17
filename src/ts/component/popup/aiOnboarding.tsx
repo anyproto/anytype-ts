@@ -401,7 +401,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 
 	// Handle step changes
 	useEffect(() => {
-		console.log('[AIOnboarding Component] Step changed to:', sparkOnboarding.step);
+		console.log('[PopupAIOnboarding]: Step changed to:', sparkOnboarding.step);
+
 		switch (sparkOnboarding.step) {
 			case I.OnboardingStep.Goal: {
 				if (!messages.length) {
@@ -439,7 +440,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				break;
 
 			case I.OnboardingStep.UserBenefit:
-				console.log('[AIOnboarding Component] UserBenefit case - userBenefit:', sparkOnboarding.userBenefit, 'benefitShown:', benefitShown);
+				console.log('[PopupAIOnboarding]: UserBenefit case - userBenefit:', sparkOnboarding.userBenefit, 'benefitShown:', benefitShown);
 				if (sparkOnboarding.userBenefit && !benefitShown) {
 					// Show the benefit text
 					addMessage('ai', sparkOnboarding.userBenefit);
