@@ -349,8 +349,15 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		} else {
 			if (targetId) {
 				const root = S.Block.getLeaf(rootId, targetId);
+				const cb = () => {
+					const view = getView();
+					if (view) {
+						load(view.id);
+					};
+				};
 
 				if (root) {
+					cb();
 					return;
 				};
 
@@ -358,13 +365,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
 					setIsLoading(false);
 
-					if (message.error.code) {
-						return;
-					};
-
-					const view = getView();
-					if (view) {
-						load(view.id);
+					if (!message.error.code) {
+						cb();
 					};
 				});
 			};
