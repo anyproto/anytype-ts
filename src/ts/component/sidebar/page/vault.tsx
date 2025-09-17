@@ -193,7 +193,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		});
+		}, { route: analytics.route.vault });
 	};
 
 	const items = getItems();
