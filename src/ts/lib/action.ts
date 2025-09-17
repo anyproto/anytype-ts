@@ -856,6 +856,8 @@ class Action {
 		let layout = I.WidgetLayout.Link;
 		let toggle = false;
 
+		console.log('createWidgetFromObject', { rootId, objectId, targetId, position, object });
+
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
@@ -865,7 +867,6 @@ class Action {
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
-				toggle = true;
 			};
 		};
 
@@ -877,10 +878,6 @@ class Action {
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
 			analytics.createWidget(layout, route);
-
-			if (toggle) {
-				Storage.setToggle('widget', message.blockId, true);
-			};
 		});
 	};
 
