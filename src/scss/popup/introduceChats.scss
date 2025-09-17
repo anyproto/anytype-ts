@@ -55,7 +55,7 @@ $elementsTransition: opacity 0.2s linear;
                                 display: flex; align-items: center; gap: 0px 4px;
                             }
 
-                            .attachment { padding: 16px; display: flex; gap: 0px 12px; width: 260px; }
+                            .attachment { padding: 16px; display: flex; align-items: center; gap: 0px 12px; width: 260px; }
                             .attachment {
                                 .iconObject { flex-shrink: 0; border-radius: 12px; background-color: var(--color-shape-highlight-dark); }
                                 .info { text-align: left; }
