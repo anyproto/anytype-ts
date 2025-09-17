@@ -10,87 +10,14 @@ const SLIDE_COUNT = 4;
 const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	const nodeRef = useRef(null);
+	const feedRef = useRef(null);
 	const [ step, setStep ] = useState(0);
 	const [ swiperControl, setSwiperControl ] = useState(null);
 	const [ activeSlide, setActiveSlide ] = useState(0);
 	const theme = S.Common.getThemeClass();
 	const interval = useRef(0);
 	const timeout = useRef(0);
-
-	const onStepChange = (idx: number, callBack?: () => void) => {
-		setStep(idx);
-		if (callBack) {
-			callBack();
-		};
-
-		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 1 });
-	};
-
-	const initChat = () => {
-		const wrapper = $(nodeRef.current).find('.step0');
-
-		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 300);
-	};
-
-	const initGallery = () => {
-		const wrapper = $(nodeRef.current).find('.step1');
-
-		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 600);
-	};
-
-	const onSlideChange = () => {
-		const idx = swiperControl?.activeIndex || 0;
-
-		setActiveSlide(idx);
-
-		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 2 });
-	};
-
-	const Message = (item: any) => {
-		const { id, isSelf, isFirst, isLast, text, author, time, withAttachment, userpic } = item
-		const cn = [
-			'message',
-			isSelf ? 'isSelf' : '',
-			isFirst ? 'isFirst' : '',
-			isLast ? 'isLast' : '',
-			text ? 'withText' : '',
-		];
-
-		const attachment = { name: 'Project thoughts', type: 'Page' }
-
-		return (
-			<div className={cn.join(' ')}>
-				<div className="flex">
-					<div className="side left"><div className={`userpic ${userpic}`} /></div>
-					<div className="side right">
-						<Label className="author" text={author} />
-
-						<div className="bubbleOuter">
-							<div className="bubbleInner">
-								<div className="bubble">
-									{withAttachment ? (
-										<div className="attachment">
-											<IconObject size={56} iconSize={32} object={{ iconEmoji: '🗒️' }} />
-											<div className="info">
-												<Title text={translate('onboardingChatsMockChatAttachmentTitle')} />
-												<Label text={translate('onboardingChatsMockChatAttachmentType')} />
-											</div>
-										</div>
-									) : (
-										<div className="textWrapper">
-											<Label className="text" text={text} />
-											<Label className="time" text={U.Date.date('H:i', time)} />
-										</div>
-									)}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	};
+	const feedHeight = useRef(0);
 
 	const now = U.Date.now();
 	const profile = U.Space.getProfile();
@@ -139,6 +66,110 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		},
 	];
 
+	const onStepChange = (idx: number, callBack?: () => void) => {
+		setStep(idx);
+		if (callBack) {
+			callBack();
+		};
+
+		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 1 });
+	};
+
+	const animateChatMessage = (idx: number) => {
+		if (!chatMock[idx]) {
+			return;
+		};
+
+		const message = chatMock[idx];
+		const messageNode = $(feedRef.current).find(`.${message.id}`);
+
+		feedHeight.current = messageNode.outerHeight(true) + feedHeight.current;
+		$(feedRef.current).css({ height: feedHeight.current });
+
+		window.setTimeout(() => {
+			messageNode.addClass('show');
+			if (idx > 0) {
+				const prev = chatMock[idx - 1];
+
+				if (prev.author == message.author) {
+					$(feedRef.current).find(`.${prev.id}`).addClass('stack');
+				};
+			};
+
+			window.setTimeout(() => {
+				animateChatMessage(idx + 1);
+			}, 300 + Math.random() * 200);
+		}, 200);
+	};
+
+	const initChat = () => {
+		const wrapper = $(nodeRef.current).find('.step0');
+
+		window.setTimeout(() => {
+			wrapper.removeClass('init');
+			animateChatMessage(0);
+		}, 300);
+	};
+
+	const initGallery = () => {
+		const wrapper = $(nodeRef.current).find('.step1');
+
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 600);
+	};
+
+	const onSlideChange = () => {
+		const idx = swiperControl?.activeIndex || 0;
+
+		setActiveSlide(idx);
+
+		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 2 });
+	};
+
+	const Message = (item: any) => {
+		const { id, isSelf, isFirst, isLast, text, author, time, withAttachment, userpic } = item
+		const cn = [
+			'message',
+			id,
+			isSelf ? 'isSelf' : '',
+			isFirst ? 'isFirst' : '',
+			isLast ? 'isLast' : '',
+			text ? 'withText' : '',
+		];
+
+		return (
+			<div className={cn.join(' ')}>
+				<div className="flex">
+					<div className="side left"><div className={`userpic ${userpic}`} /></div>
+					<div className="side right">
+						<Label className="author" text={author} />
+
+						<div className="bubbleOuter">
+							<div className="bubbleInner">
+								<div className="bubble">
+									{withAttachment ? (
+										<div className="attachment">
+											<IconObject size={56} iconSize={32} object={{ iconEmoji: '🗒️' }} />
+											<div className="info">
+												<Title text={translate('onboardingChatsMockChatAttachmentTitle')} />
+												<Label text={translate('onboardingChatsMockChatAttachmentType')} />
+											</div>
+										</div>
+									) : (
+										<div className="textWrapper">
+											<Label className="text" text={text} />
+											<Label className="time" text={U.Date.date('H:i', time)} />
+										</div>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	};
+
 	useEffect(() => {
 		onStepChange(0, initChat);
 
@@ -152,7 +183,9 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		<div ref={nodeRef} className={[ 'steps', `s${step}` ].join(' ')}>
 			<div className="step0 init">
 				<div className="chat">
-					{chatMock.map(it => <Message key={it.id} {...it} />)}
+					<div ref={feedRef} className="feed">
+						{chatMock.map(it => <Message key={it.id} {...it} />)}
+					</div>
 				</div>
 
 				<Title text={translate('onboardingChatsTitle')} />

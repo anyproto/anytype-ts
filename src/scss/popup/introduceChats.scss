@@ -16,19 +16,22 @@ $elementsTransition: opacity 0.2s linear;
                 .button { opacity: 0; }
             }
             .step0 {
-                .chat { height: 324px; width: 510px; margin-bottom: 38px; }
+                .chat { height: 324px; width: 510px; margin-bottom: 38px; display: flex; flex-direction: column; justify-content: flex-end; }
                 .chat {
-                    .message { @include text-common; position: relative; }
+                    .feed { overflow: hidden; height: 0px; transition: height linear 0.2s; }
+                    .message { @include text-common; position: relative; opacity: 0; transition: none; }
                     .message {
                         * { user-select: text !important; }
 
-                        &.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
                         &.show { opacity: 1; }
+                        &.show {
+                            .bubble { opacity: 1; }
+                        }
 
                         .label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
                         .label.small.withText { margin: 0px 0px 0px 4px; }
 
-                        > .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
+                        > .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; }
                         > .flex {
                             > .side.left { flex-shrink: 0; width: 40px; display: flex; align-items: flex-end; }
                             > .side.left {
@@ -45,7 +48,7 @@ $elementsTransition: opacity 0.2s linear;
 
                         .bubble {
                             border-radius: 16px; background-color: var(--color-bg-primary); display: flex; flex-direction: column;
-                            transition: background-color $easeInQuint 0.2s;
+                            transition: opacity $transitionChatMessageTime ease-in-out; opacity: 0;
                         }
                         .bubble {
                             .textWrapper { line-height: 20px; padding: 6px 12px; }
@@ -84,10 +87,6 @@ $elementsTransition: opacity 0.2s linear;
                             }
                         }
 
-                        &:hover, &.hover {
-                            .controls { opacity: 1; }
-                        }
-
                         &:first-child { margin-top: 0px; }
 
                         &.isFirst { margin: 20px 0px 0px 0px; }
@@ -96,7 +95,7 @@ $elementsTransition: opacity 0.2s linear;
                         }
 
                         &:not(.isLast) { margin-bottom: 8px; }
-                        &:not(.isLast) {
+                        &.stack {
                             .userpic { display: none; }
                         }
 
