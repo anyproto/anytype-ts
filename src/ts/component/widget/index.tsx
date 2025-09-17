@@ -41,6 +41,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
+	const isBin = targetId == J.Constant.widgetId.bin;
 	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const object = getObject(targetId);
 
@@ -271,6 +272,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		if (spaceview.isChat && isChat) {
+			return;
+		};
+
+		if (isBin) {
 			return;
 		};
 
