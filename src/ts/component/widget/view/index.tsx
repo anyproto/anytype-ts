@@ -380,7 +380,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ viewId ]);
 
 	useEffect(() => {
-		load(viewId);
+		if (view) {
+			load(view.id);
+		};
 	}, [ searchIds ]);
 
 	useEffect(() => {
