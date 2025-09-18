@@ -813,7 +813,7 @@ class UtilMenu {
 		};
 
 		if (isLoading) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+			options.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
 		} else {
 			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 		};

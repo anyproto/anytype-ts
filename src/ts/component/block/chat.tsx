@@ -646,7 +646,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			options = options.concat([
 				{ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') },
 				{ isDiv: true },
-				{ id: 'delete', icon: 'chat-remove', name: translate('commonDelete'), color: 'red' },
+				{ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' },
 			]);
 		};
 
