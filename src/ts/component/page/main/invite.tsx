@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, Preview, Onboarding, analytics } from 'Lib';
+import { I, C, S, U, J, translate, Preview, Onboarding, analytics, sidebar } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -50,6 +50,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	};
 
 	const init = () => {
+		const { account } = S.Auth;
 		const { cid, key, route } = U.Common.searchParam(location.search);
 
 		if ((cidRef.current == cid) && (keyRef.current == key)) {
@@ -59,16 +60,46 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 		cidRef.current = cid;
 		keyRef.current = key;
 
-		const request = (invite) => {
-			S.Popup.open('inviteRequest', { 
-				onClose: () => Onboarding.start('basics', isPopup),
-				data: { 
-					invite, 
-					cid, 
-					key, 
-					route,
-				},
-			});
+		const request = (message: any) => {
+			if (message.inviteType == I.InviteType.WithoutApprove) {
+				const spaceName = message.spaceName || translate('defaultNamePage');
+				const creatorName = message.creatorName || translate('defaultNamePage');
+
+				S.Popup.open('confirm', {
+					onClose: () => Onboarding.start('basics', isPopup),
+					data: {
+						icon: 'join',
+						title: U.Common.sprintf(translate('popupConfirmJoinSpaceTitle'), spaceName),
+						text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
+						textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
+						onConfirm: () => {
+							C.SpaceJoin(account.info.networkId, message.spaceId, cid, key, (message) => {
+								if (message.error.code) {
+									window.setTimeout(() => {
+										onError(message.error.code, 'SpaceJoin');
+									}, J.Constant.delay.popup);
+								} else {
+									Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
+								};
+
+								analytics.event('ClickJoinSpaceWithoutApproval');
+							});
+						},
+					},
+				});
+
+				analytics.event('ScreenInviteRequest', { route, type: I.InviteType.WithoutApprove });
+			} else {
+				S.Popup.open('inviteRequest', { 
+					onClose: () => Onboarding.start('basics', isPopup),
+					data: { 
+						invite: message, 
+						cid, 
+						key, 
+						route,
+					},
+				});
+			};
 		};
 
 		if (!cid || !key) {
@@ -102,38 +133,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 							request(message);
 						};
 					} else {
-						if (message.inviteType == I.InviteType.WithoutApprove) {
-							const { account } = S.Auth;
-							const spaceName = message.spaceName || translate('defaultNamePage');
-							const creatorName = message.creatorName || translate('defaultNamePage');
-
-							S.Popup.open('confirm', {
-								onClose: () => Onboarding.start('basics', isPopup),
-								data: {
-									icon: 'join',
-									title: U.Common.sprintf(translate('popupConfirmJoinSpaceTitle'), spaceName),
-									text: U.Common.sprintf(translate('popupConfirmJoinSpaceText'), spaceName, creatorName),
-									textConfirm: translate('popupConfirmJoinSpaceButtonConfirm'),
-									onConfirm: () => {
-										C.SpaceJoin(account.info.networkId, message.spaceId, cid, key, (message) => {
-											if (message.error.code) {
-												window.setTimeout(() => {
-													onError(message.error.code, 'SpaceJoin');
-												}, J.Constant.delay.popup);
-											} else {
-												Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
-											};
-
-											analytics.event('ClickJoinSpaceWithoutApproval');
-										});
-									},
-								},
-							});
-
-							analytics.event('ScreenInviteRequest', { route, type: I.InviteType.WithoutApprove });
-						} else {
-							request(message);
-						};
+						request(message);
 					};
 				});
 			});
@@ -149,6 +149,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 		node.css({ height: wh });
 		frameRef.current?.resize();
+		sidebar.resizePage(null, null, false);
 	};
 
 	useEffect(() => {

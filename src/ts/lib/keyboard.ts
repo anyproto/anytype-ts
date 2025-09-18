@@ -1248,7 +1248,7 @@ class Keyboard {
 		const popup = S.Popup.get('page');
 		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
 
-		match.params = match.params || {};
+		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
 
 		return match;
 	};
@@ -1258,7 +1258,47 @@ class Keyboard {
 	 * @returns {any} The route match object.
 	 */
 	getRouteMatch () {
-		return U.Router.getParam(U.Router.getRoute()) || {};
+		const route = U.Router.getRoute();
+		const params = Object.assign(U.Router.getParam(route), this.checkUniversalRoutes(route));
+
+		return { route, params };
+	};
+
+	checkUniversalRoutes (route: string) {
+		route = String(route || '');
+
+		const data = U.Common.searchParam(U.Router.getSearch());
+
+		let ret: any = {};
+
+		// Universal object route
+		if (route.match(/^\/object/)) {
+			ret = {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			};
+		};
+
+		// Invite route
+		if (route.match(/^\/invite/)) {
+			ret = {
+				page: 'main',
+				action: 'invite',
+				...data,
+			};
+		};
+
+		// Membership route
+		if (route.match(/^\/membership/)) {
+			ret = {
+				page: 'main',
+				action: 'membership',
+			};
+		};
+
+		return ret;
 	};
 
 	/**
@@ -1275,8 +1315,7 @@ class Keyboard {
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
-			ret.route = U.Router.getRoute();
-			ret.params = this.getRouteMatch();
+			ret = this.getRouteMatch();
 			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
@@ -1317,7 +1356,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMain () {
-		return this.getRouteMatch().page == 'main';
+		return this.getRouteMatch().params.page == 'main';
 	};
 	
 	/**
@@ -1325,7 +1364,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainEditor () {
-		return this.isMain() && (this.getRouteMatch().action == 'edit');
+		return this.isMain() && (this.getRouteMatch().params.action == 'edit');
 	};
 
 	/**
@@ -1333,7 +1372,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSet () {
-		return this.isMain() && (this.getRouteMatch().action == 'set');
+		return this.isMain() && (this.getRouteMatch().params.action == 'set');
 	};
 
 	/**
@@ -1341,7 +1380,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainGraph () {
-		return this.isMain() && (this.getRouteMatch().action == 'graph');
+		return this.isMain() && (this.getRouteMatch().params.action == 'graph');
 	};
 
 	/**
@@ -1349,7 +1388,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainChat () {
-		return this.isMain() && (this.getRouteMatch().action == 'chat');
+		return this.isMain() && (this.getRouteMatch().params.action == 'chat');
 	};
 
 	/**
@@ -1357,7 +1396,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainIndex () {
-		return this.isMain() && (this.getRouteMatch().action == 'index');
+		return this.isMain() && (this.getRouteMatch().params.action == 'index');
 	};
 
 	/**
@@ -1365,7 +1404,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainHistory () {
-		return this.isMain() && (this.getRouteMatch().action == 'history');
+		return this.isMain() && (this.getRouteMatch().params.action == 'history');
 	};
 
 	/**
@@ -1373,7 +1412,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainVoid () {
-		return this.isMain() && (this.getRouteMatch().action == 'void');
+		return this.isMain() && (this.getRouteMatch().params.action == 'void');
 	};
 
 	/**
@@ -1381,7 +1420,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainType () {
-		return this.isMain() && (this.getRouteMatch().action == 'type');
+		return this.isMain() && (this.getRouteMatch().params.action == 'type');
 	};
 
 	/**
@@ -1389,7 +1428,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSettings () {
-		return this.isMain() && (this.getRouteMatch().action == 'settings');
+		return this.isMain() && (this.getRouteMatch().params.action == 'settings');
 	};
 
 	/**
@@ -1397,7 +1436,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuth () {
-		return this.getRouteMatch().page == 'auth';
+		return this.getRouteMatch().params.page == 'auth';
 	};
 
 	/**
@@ -1405,7 +1444,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuthPinCheck () {
-		return this.isAuth() && (this.getRouteMatch().action == 'pin-check');
+		return this.isAuth() && (this.getRouteMatch().params.action == 'pin-check');
 	};
 
 	/**
