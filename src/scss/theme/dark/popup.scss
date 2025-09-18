@@ -109,7 +109,8 @@
 
 					.img.slide2,
 					.img.slide3 {
-						&:after { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
+						&:after,
+						&:before { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
 					}
 				}
 				.swiper-button-prev,

@@ -100,7 +100,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 			window.setTimeout(() => {
 				animateChatMessage(idx + 1);
 			}, 300 + Math.random() * 200);
-		}, 200);
+		}, 500);
 	};
 
 	const initChat = () => {
