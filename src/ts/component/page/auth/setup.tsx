@@ -60,6 +60,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const primitivesOnboarding = Storage.get('primitivesOnboarding');
+					const chatsOnboarding = Storage.get('chatsOnboarding');
 
 					[
 						I.SurveyType.Register, 
@@ -81,6 +82,14 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					};
 
 					const cb2 = () => {
+						if (!chatsOnboarding) {
+							S.Popup.open('introduceChats', {
+								onClose: () => {
+									Storage.set('chatsOnboarding', true);
+									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
+								},
+							});
+						} else
 						if (!primitivesOnboarding) {
 							S.Popup.open('onboarding', {
 								onClose: () => {

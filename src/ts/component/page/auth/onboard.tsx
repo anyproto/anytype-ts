@@ -65,6 +65,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 
 				S.Common.showRelativeDatesSet(true);
 				Storage.set('primitivesOnboarding', true);
+				Storage.set('chatsOnboarding', true);
 				Storage.setOnboarding('objectDescriptionButton');
 				Storage.setOnboarding('typeResetLayout');
 
