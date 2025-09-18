@@ -18,6 +18,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	const interval = useRef(0);
 	const timeout = useRef(0);
 	const feedHeight = useRef(0);
+	const animationDone = useRef(false);
 
 	const now = U.Date.now();
 	const profile = U.Space.getProfile();
@@ -107,6 +108,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 		window.setTimeout(() => {
 			wrapper.removeClass('init');
+			animationDone.current = true;
 			animateChatMessage(0);
 		}, 300);
 	};
@@ -182,7 +184,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	return (
 		<div ref={nodeRef} className={[ 'steps', `s${step}` ].join(' ')}>
 			<div className="step0 init">
-				<div className="chat">
+				<div className={[ 'chat', animationDone.current ? 'animationDone' : '' ].join(' ')}>
 					<div ref={feedRef} className="feed">
 						{chatMock.map(it => <Message key={it.id} {...it} />)}
 					</div>
@@ -208,27 +210,32 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 						</div>
 					))}
 				</div>
-				<Swiper
-					onSwiper={setSwiperControl}
-					speed={400}
-					spaceBetween={0}
-					slidesPerView={1}
-					keyboard={{ enabled: true }}
-					navigation={true}
-					modules={[ Keyboard, Navigation ]}
-					onRealIndexChange={onSlideChange}
-				>
-					{Array(SLIDE_COUNT).fill(null).map((_, idx: number) => (
-						<SwiperSlide key={idx}>
-							<div className={[ 'slide', `slide${idx}` ].join(' ')}>
-								<img
-									onClick={() => swiperControl.slideNext()}
-									src={`./img/help/onboarding/chats/${theme ? 'dark/' : ''}${idx}.png`}
-								/>
-							</div>
-						</SwiperSlide>
-					))}
-				</Swiper>
+				<div className="introWrapper">
+					<div className="intro">
+						<div className={[ 'img', `slide${activeSlide}` ].join(' ')} />
+					</div>
+
+					<Swiper
+						onSwiper={setSwiperControl}
+						speed={800}
+						spaceBetween={0}
+						slidesPerView={1}
+						keyboard={{ enabled: true }}
+						navigation={true}
+						modules={[ Keyboard, Navigation ]}
+						onRealIndexChange={onSlideChange}
+					>
+						{Array(SLIDE_COUNT).fill(null).map((_, idx: number) => (
+							<SwiperSlide key={idx}>
+								<div className={[ 'slide', `slide${idx}` ].join(' ')}>
+									{idx == 3 ? (
+										<img src={`./img/help/onboarding/chats/${theme ? 'dark/' : ''}${idx}.png`} />
+									) : ''}
+								</div>
+							</SwiperSlide>
+						))}
+					</Swiper>
+				</div>
 			</div>
 		</div>
 	);
