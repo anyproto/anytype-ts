@@ -263,7 +263,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				value: item.permissions,
 				options: this.getParticipantOptions(isNew),
 				onSelect: (e: any, el: any) => {
-					this.onChangePermissions(item, Number(el.id), isNew);
+					this.onChangePermissions(item, el.id, isNew);
 				},
 			},
 		});
