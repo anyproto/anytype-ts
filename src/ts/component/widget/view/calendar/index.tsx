@@ -16,6 +16,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 	const yearRef = useRef(null);
 	const view = getView();
 	const { groupRelationKey } = view;
+	const [ searchIds, setSearchIds ] = useState<string[]>([]);
 	const data = U.Date.getCalendarMonth(value);
 
 	const getDateParam = (t: number) => {
@@ -87,7 +88,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 					hideIcon: view.hideIcon,
 					fromWidget: true,
 					readonly: !canCreate,
-					load: (subId, limit) => loadDay(d, m, y, subId, limit),
+					load: (subId, limit) => loadDay(searchIds, d, m, y, subId, limit),
 					subId: getDaySubId(d, m, y),
 					onCreate: () => {
 						const details = {};
@@ -105,6 +106,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 	};
 
 	const load = (searchIds: string[]) => {
+		setSearchIds(searchIds);
+
 		U.Date.getCalendarMonth(value).forEach(it => {
 			loadDay(searchIds, it.d, it.m, it.y, getDaySubId(it.d, it.m, it.y), 1);
 		});
