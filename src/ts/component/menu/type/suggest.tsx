@@ -345,7 +345,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 										ref={listRef}
 										width={width}
 										height={height}
-										deferredMeasurmentCache={cache.current}
+										deferredMeasurementCache={cache.current}
 										rowCount={items.length}
 										rowHeight={({ index }) => getRowHeight(items[index])}
 										rowRenderer={rowRenderer}

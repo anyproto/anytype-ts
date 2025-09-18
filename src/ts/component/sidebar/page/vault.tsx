@@ -141,7 +141,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			return;
 		};
 
-		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
+		const items: any[] = U.Menu.getVaultItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
@@ -193,7 +193,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		});
+		}, { route: analytics.route.vault });
 	};
 
 	const items = getItems();
@@ -465,7 +465,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 											ref={listRef}
 											width={width}
 											height={height}
-											deferredMeasurmentCache={cache}
+											deferredMeasurementCache={cache}
 											rowCount={items.length}
 											rowHeight={({ index }) => getRowHeight(items[index])}
 											rowRenderer={rowRenderer}

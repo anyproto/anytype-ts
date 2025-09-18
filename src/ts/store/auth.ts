@@ -298,6 +298,7 @@ class AuthStore {
 			this.clearAll();
 			Storage.logout();
 
+			Renderer.send('setBadge', '');
 		});
 	};
 

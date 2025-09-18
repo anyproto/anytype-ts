@@ -109,7 +109,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 												ref={ref => this.refList = ref}
 												width={width}
 												height={height}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowCount={items.length}
 												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}
@@ -335,7 +335,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'add') {
 			const name = this.getFilter();
 
-			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
+			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.details);
 			});
 		} else 

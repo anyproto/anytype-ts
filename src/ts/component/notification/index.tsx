@@ -55,7 +55,7 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 			};
 
 			case 'spaceDelete': {
-				Action.removeSpace(payload.spaceId, 'Notification');
+				Action.removeSpace(payload.spaceId, analytics.route.notification, true);
 				break;
 			};
 

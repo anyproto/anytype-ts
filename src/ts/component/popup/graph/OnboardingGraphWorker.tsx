@@ -28,7 +28,7 @@ const OnboardingGraphWorker = observer(({
 
 	// Load icon images and send to worker
 	const loadIconImages = async (nodes: any[]) => {
-		console.log('[OnboardingGraphWorker] loadIconImages called with nodes:', nodes.map(n => ({ 
+		console.log('[OnboardingGraphWorker]: loadIconImages called with nodes:', nodes.map(n => ({ 
 			id: n.id, 
 			type: n.type, 
 			iconName: n.iconName,
@@ -36,13 +36,13 @@ const OnboardingGraphWorker = observer(({
 		})));
 		
 		if (!workerRef.current) {
-			console.log('[OnboardingGraphWorker] No worker ref, skipping icon loading');
+			console.log('[OnboardingGraphWorker]: No worker ref, skipping icon loading');
 			return;
 		};
 		
 		for (const node of nodes) {
 			if (node.iconName && (node.type == 'type') && !loadedImages.current.has(node.iconName)) {
-				console.log('[OnboardingGraphWorker] Loading icon for:', node.iconName);
+				console.log('[OnboardingGraphWorker]: Loading icon for:', node.iconName);
 				
 				// Use the same pattern as in graph.ts - direct require without try/catch
 				// Use regular updateSvg with theme-appropriate fill matching node colors
@@ -55,11 +55,11 @@ const OnboardingGraphWorker = observer(({
 				});
 				
 				if (!src) {
-					console.warn('[OnboardingGraphWorker] No src generated for icon:', node.iconName);
+					console.warn('[OnboardingGraphWorker]: No src generated for icon:', node.iconName);
 					continue;
 				}
 				
-				console.log('[OnboardingGraphWorker] Created src for icon:', node.iconName);
+				console.log('[OnboardingGraphWorker]: Created src for icon:', node.iconName);
 				
 				// Create image and convert to bitmap
 				const img = new Image();
@@ -68,7 +68,7 @@ const OnboardingGraphWorker = observer(({
 				
 				await new Promise((resolve) => {
 					img.onload = async () => {
-						console.log('[OnboardingGraphWorker] Icon image loaded:', node.iconName);
+						console.log('[OnboardingGraphWorker]: Icon image loaded:', node.iconName);
 						const bitmap = await createImageBitmap(img);
 						workerRef.current?.postMessage({
 							id: 'image',
@@ -77,17 +77,17 @@ const OnboardingGraphWorker = observer(({
 						}, [ bitmap ]);
 
 						loadedImages.current.add(node.iconName);
-						console.log('[OnboardingGraphWorker] Sent icon bitmap to worker:', node.iconName);
+						console.log('[OnboardingGraphWorker]: Sent icon bitmap to worker:', node.iconName);
 						resolve(true);
 					};
 					img.onerror = () => {
-						console.warn('[OnboardingGraphWorker] Failed to load icon image:', node.iconName);
+						console.warn('[OnboardingGraphWorker]: Failed to load icon image:', node.iconName);
 						resolve(false);
 					};
 				});
 			} else {
 				if (loadedImages.current.has(node.iconName)) {
-					console.log('[OnboardingGraphWorker] Icon already loaded:', node.iconName);
+					console.log('[OnboardingGraphWorker]: Icon already loaded:', node.iconName);
 				};
 			};
 		};
@@ -268,7 +268,7 @@ const OnboardingGraphWorker = observer(({
 				
 				// Reaction frequency tracking removed for production
 				
-				console.log('OnboardingGraphWorker: Sending nodes to worker:', data.nodesLength);
+				console.log('[OnboardingGraphWorker]: Sending nodes to worker:', data.nodesLength);
 		
 				// Calculate available space
 				const horizontalSpace = (width - popupWidth) / 2;
@@ -276,7 +276,7 @@ const OnboardingGraphWorker = observer(({
 				const useHorizontal = horizontalSpace > verticalSpace;
 		
 				// Convert sparkOnboarding nodes to worker format
-				console.log('[OnboardingGraphWorker] Nodes from store:', data.nodes.map(n => ({ id: n.id, type: n.type, iconName: n.iconName })));
+				console.log('[OnboardingGraphWorker]: Nodes from store:', data.nodes.map(n => ({ id: n.id, type: n.type, iconName: n.iconName })));
 				const nodes = data.nodes.map((node, index) => {
 					let nodeX, nodeY;
 			

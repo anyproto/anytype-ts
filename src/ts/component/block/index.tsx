@@ -15,7 +15,6 @@ import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
 import BlockFeatured from './featured';
-import BlockType from './type';
 import BlockTable from './table';
 import BlockTableOfContents from './tableOfContents';
 import BlockChat from './chat';
@@ -303,14 +302,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				canDrop = false;
 
 				blockComponent = <BlockFeatured key={key} ref={setRef} {...this.props} />;
-				break;
-			};
-
-			case I.BlockType.Type: {
-				canSelect = false;
-				canDrop = false;
-
-				blockComponent = <BlockType key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 

@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Filter, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics } from 'Lib';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Storage } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 
@@ -29,7 +29,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ searchIds, setSearchIds ] = useState<string[]>([]);
-	const nodeRef = useRef(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
 	const filterRef = useRef(null);
@@ -41,6 +40,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
 	const viewType = view ? view.type : I.ViewType.List;
+	const isOpen = Storage.checkToggle('widget', parent.id);
+	const isShown = isOpen || isPreview;
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -105,6 +106,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters: getFilters(),
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
+			noDeps: true,
 		});
 	};
 
@@ -345,15 +347,26 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (isSystemTarget) {
 			getData(subId);
 		} else {
-			setIsLoading(true);
-
 			if (targetId) {
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), () => {
-					setIsLoading(false);
-
+				const root = S.Block.getLeaf(rootId, targetId);
+				const cb = () => {
 					const view = getView();
 					if (view) {
 						load(view.id);
+					};
+				};
+
+				if (root) {
+					cb();
+					return;
+				};
+
+				setIsLoading(true);
+				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+					setIsLoading(false);
+
+					if (!message.error.code) {
+						cb();
 					};
 				});
 			};
@@ -367,7 +380,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ viewId ]);
 
 	useEffect(() => {
-		load(viewId);
+		if (view) {
+			load(view.id);
+		};
 	}, [ searchIds ]);
 
 	useEffect(() => {
@@ -386,9 +401,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	return (
 		<div 
-			ref={nodeRef}
 			id="innerWrap"
 			className={cn.join(' ')}
+			style={{ display: isShown ? 'flex' : 'none' }}
 		>
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 			{head}

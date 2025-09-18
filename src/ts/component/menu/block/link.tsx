@@ -120,7 +120,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
-									deferredMeasurmentCache={this.cache}
+									deferredMeasurementCache={this.cache}
 									rowCount={items.length}
 									rowHeight={({ index }) => this.getRowHeight(items[index])}
 									rowRenderer={rowRenderer}
@@ -363,7 +363,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			};
 		} else
 		if (item.itemId == 'add') {
-			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
+			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
 				if (onChange) {
 					onChange(I.MarkType.Object, message.targetId);
 				};

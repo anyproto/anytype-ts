@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Label, Filter, Button } from 'Component';
-import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
+import { I, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
@@ -20,8 +20,8 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, getTraceId, sortFavorite, addGroupLabels, checkShowAllButton, onCreate } = props;
-	const targetId = block ? block.getTargetObjectId() : '';
+	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, sortFavorite, addGroupLabels, checkShowAllButton, onCreate } = props;
+	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
@@ -30,12 +30,18 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const links = useRef([]);
 	const top = useRef(0);
 	const branches = useRef([]);
+	const [ searchIds, setSearchIds ] = useState([]);
 	const filterRef = useRef(null);
+	const filter = useRef('');
+	const filterTimeout = useRef(0);
 	const subscriptionHashes = useRef({});
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
-	const traceId = getTraceId();
+	const isOpen = Storage.checkToggle('widget', parent.id);
+	const isShown = isOpen || isPreview;
+
+	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: i => getRowHeight(nodes[i], i) });
 
 	const clear = () => {
 		subscriptionHashes.current = {};
@@ -44,20 +50,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const updateData = () => {
 		if (isSystemTarget) {
-			getData(getSubId(), initCache);
+			getData(getSubId());
 		};
-	};
-
-	const initCache = () => {
-		const nodes = loadTree();
-
-		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => getRowHeight(nodes[i], i),
-			keyMapper: i => (nodes[i] || {}).id,
-		});
-
-		setDummy(dummy + 1);
 	};
 
 	const loadTree = (): I.WidgetTreeItem[] => {
@@ -72,10 +66,21 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
+			children = records.map(id => {
+				mapper(S.Detail.get(subId, id, J.Relation.sidebar));
+			});
 		} else {
+			let links = object.links;
+			if (filter.current) {
+				links = links.filter(it => searchIds.includes(it));
+			};
+
 			children = getChildNodesDetails(object.id);
-			subscribeToChildNodes(object.id, Relation.getArrayValue(object.links), !isPreview);
+			subscribeToChildNodes(object.id, Relation.getArrayValue(links), !isPreview);
+		};
+
+		if (filter.current) {
+			children = children.filter(it => searchIds.includes(it.id));
 		};
 
 		if (isPreview && isRecent) {
@@ -88,11 +93,15 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	// Recursive function which returns the tree structure
 	const loadTreeRecursive = (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] => {
-		if (!childNodeList.length || depth >= MAX_DEPTH) {
+		if (!childNodeList.length || (depth >= MAX_DEPTH)) {
 			return treeNodeList;
 		};
 
 		for (const childNode of childNodeList) {
+			if (!childNode) {
+				continue;
+			};
+
 			const childBranch = [ branch, childNode.id ].join('-');
 
 			const links = filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
@@ -231,9 +240,28 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const onFilterChange = (v: string) => {
-	};
+		window.clearTimeout(filterTimeout.current);
+		filterTimeout.current = window.setTimeout(() => {
+			if (filter.current == v) {
+				return;
+			};
 
-	const onFilterClear = () => {
+			filter.current = v;
+
+			if (!filter.current) {
+				setSearchIds([]);
+				return;
+			};
+
+			U.Subscription.search({
+				filters: [],
+				sorts: [],
+				fullText: filter.current,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				setSearchIds((message.records || []).map(it => it.id));
+			});
+		}, J.Constant.delay.keyboard);
 	};
 
 	const resize = () => {
@@ -242,7 +270,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const length = nodes.length;
 		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
 		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
-		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
@@ -253,7 +280,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		if (!length) {
 			css.paddingBottom = 8;
-			css.height = emptyWrap.outerHeight() + css.paddingBottom;
+			css.height = 20 + css.paddingBottom;
 		};
 
 		node.css(css);
@@ -262,9 +289,38 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const nodes = loadTree();
 	const length = nodes.length;
 
-	let head = null;
 	let content = null;
+	let head = null;
 
+	if (isPreview) {
+		head = (
+			<div className="head">
+				<div className="filterWrapper">
+					<div className="side left">
+						<Filter
+							ref={filterRef}
+							className="outlined"
+							icon="search"
+							placeholder={translate('commonSearch')}
+							onChange={onFilterChange}
+						/>
+					</div>
+					{canCreate ? (
+						<div className="side right">
+							<Button
+								id="button-object-create"
+								color="blank"
+								className="c28"
+								text={translate('commonNew')}
+								onClick={() => onCreate({ route: analytics.route.widget })}
+							/>
+						</div>
+					) : ''}
+				</div>
+			</div>
+		);
+	};
+	
 	if (!length) {
 		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
 
@@ -273,7 +329,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 				<Label className="empty" text={label} />
 			</div>
 		);
-	} else 
+	} else
 	if (isPreview) {
 		const rowRenderer = ({ index, parent, style }) => {
 			const node: I.WidgetTreeItem = nodes[index];
@@ -303,36 +359,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			);
 		};
 
-		if (isPreview) {
-			head = (
-				<div className="head">
-					<div className="filterWrapper">
-						<div className="side left">
-							<Filter
-								ref={filterRef}
-								className="outlined"
-								icon="search"
-								placeholder={translate('commonSearch')}
-								onChange={onFilterChange}
-								onClear={onFilterClear}
-							/>
-						</div>
-						{canCreate ? (
-							<div className="side right">
-								<Button 
-									id="button-object-create" 
-									color="blank" 
-									className="c28" 
-									text={translate('commonNew')} 
-									onClick={() => onCreate({ route: analytics.route.widget })} 
-								/>
-							</div>
-						) : ''}
-					</div>
-				</div>
-			);
-		};
-
 		content = (
 			<InfiniteLoader
 				rowCount={nodes.length}
@@ -347,7 +373,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 								ref={listRef}
 								width={width}
 								height={height}
-								deferredMeasurmentCache={cache.current}
+								deferredMeasurementCache={cache.current}
 								rowCount={nodes.length}
 								rowHeight={({ index }) => getRowHeight(nodes[index], index)}
 								rowRenderer={rowRenderer}
@@ -389,13 +415,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		links.current = object.links;
 
 		if (isSystemTarget) {
-			getData(getSubId(), initCache);
-		} else {
-			initCache();
-
-			if (targetId) {
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId());
-			};
+			getData(getSubId());
 		};
 	}, []);
 
@@ -406,8 +426,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		// Reload the tree if the links have changed
 		if (!U.Common.compareJSON(links.current, object.links)) {
 			clear();
-			initCache();
-
 			links.current = object.links;
 		};
 
@@ -422,8 +440,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useImperativeHandle(ref, () => ({
 		updateData,
 		resize,
-		getSearchIds: () => [],
-		getFilter: () => '',
+		getSearchIds: () => searchIds,
+		getFilter: () => filter.current,
 	}));
 
 	return (
@@ -431,6 +449,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			ref={nodeRef}
 			id="innerWrap"
 			className="innerWrap"
+			style={{ display: isShown ? 'flex' : 'none' }}
 		>
 			{head}
 			{content}

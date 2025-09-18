@@ -800,40 +800,6 @@ class BlockStore {
 	};
 
 	/**
-	 * Checks and updates the block type structure for a root.
-	 * @param {string} rootId - The root ID.
-	 */
-	checkBlockType (rootId: string) {
-		const { header, type } = J.Constant.blockId;
-		const element = this.getMapElement(rootId, header);
-		const canWrite = U.Space.canMyParticipantWrite();
-
-		if (!element || !canWrite) {
-			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
-		const exists = this.checkBlockTypeExists(rootId);
-		const change = (check && !exists) || (!check && exists);
-		
-		if (change) {
-			const childrenIds = exists ? element.childrenIds.filter(it => it != type) : [ type ].concat(element.childrenIds);
-			this.updateStructure(rootId, header, childrenIds);
-		};
-	};
-
-	/**
-	 * Checks if the block type exists in the header for a root.
-	 * @param {string} rootId - The root ID.
-	 * @returns {boolean} True if the block type exists, false otherwise.
-	 */
-	checkBlockTypeExists (rootId: string): boolean {
-		const header = this.getMapElement(rootId, J.Constant.blockId.header);
-		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
-	};
-
-	/**
 	 * Gets layout IDs for a list of block IDs.
 	 * @param {string} rootId - The root ID.
 	 * @param {string[]} ids - The block IDs.
@@ -977,16 +943,28 @@ class BlockStore {
 			J.Constant.typeKey.type, 
 			J.Constant.typeKey.template, 
 			J.Constant.typeKey.participant,
+			J.Constant.typeKey.dashboard,
+			J.Constant.typeKey.option,
+			J.Constant.typeKey.date,
+			J.Constant.typeKey.relation,
+			J.Constant.typeKey.spaceview,
+			J.Constant.typeKey.space,
+			J.Constant.typeKey.chat,
+			J.Constant.typeKey.chatDerived,
 		].includes(key);
 	};
 
-	createTypeWidget (type: any) {
+	createWidget (id: string) {
+		if (!id) {
+			return;
+		};
+
 		const { widgets } = this;
-		const id = this.typeWidgetId(type.id);
 
 		const parent = new M.Block({
 			id,
 			type: I.BlockType.Widget,
+			childrenIds: [],
 			content: {
 				layout: I.WidgetLayout.Link,
 				section: I.WidgetSection.Type,
@@ -996,15 +974,17 @@ class BlockStore {
 		const child = new M.Block({
 			id: `${id}-child`,
 			type: I.BlockType.Link,
-			content: { targetBlockId: type.id },
+			content: { targetBlockId: id },
 		});
+
+		parent.childrenIds = [ child.id ];
 
 		this.add(widgets, parent);
 		this.add(widgets, child);
 		this.updateStructure(widgets, parent.id, [ child.id ]);
 	};
 
-	addTypeWidget (typeId: string) {
+	addTypeWidget (id: string) {
 		const { widgets } = this;
 		const element = this.getMapElement(widgets, widgets);
 
@@ -1012,12 +992,11 @@ class BlockStore {
 			return;
 		};
 
-		const id = this.typeWidgetId(typeId);
 		if (element.childrenIds.includes(id)) {
 			return;
 		};
 
-		const type = S.Record.getTypeById(typeId);
+		const type = S.Record.getTypeById(id);
 		if (!type) {
 			return;
 		};
@@ -1026,22 +1005,20 @@ class BlockStore {
 			return;
 		};
 
-		this.createTypeWidget(type);
+		this.createWidget(type.id);
 		element.childrenIds.push(id);
 
 		this.updateStructure(widgets, widgets, element.childrenIds);
 		this.updateStructureParents(widgets);
 	};
 
-	removeTypeWidget (typeId: string) {
+	removeTypeWidget (id: string) {
 		const { widgets } = this;
 		const element = this.getMapElement(widgets, widgets);
 
 		if (!element) {
 			return;
 		};
-
-		const id = this.typeWidgetId(typeId);
 
 		this.delete(widgets, id);
 		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
@@ -1058,25 +1035,29 @@ class BlockStore {
 		};
 
 		types.forEach(type => {
-			const id = this.typeWidgetId(type.id);
-			if (element.childrenIds.includes(id)) {
+			if (element.childrenIds.includes(type.id)) {
 				return;
 			};
 
-			this.createTypeWidget(type);
-			element.childrenIds.push(id);
+			this.createWidget(type.id);
+			element.childrenIds.push(type.id);
 		});
+
+		if (!element.childrenIds.includes(J.Constant.widgetId.bin)) {
+			this.createWidget(J.Constant.widgetId.bin);
+			element.childrenIds.push(J.Constant.widgetId.bin);
+		};
 
 		this.updateStructure(widgets, widgets, element.childrenIds);
 		this.updateStructureParents(widgets);
 	};
 
-	getWidgetsForTarget (id: string) {
+	getWidgetsForTarget (id: string, section: I.WidgetSection): I.Block[] {
 		const { widgets } = this;
 		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
 
 		const list = this.getBlocks(widgets, (block: I.Block) => {
-			if (!block.isWidget()) {
+			if (!block.isWidget() || (block.content.section != section)) {
 				return false;
 			};
 

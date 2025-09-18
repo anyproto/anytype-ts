@@ -492,7 +492,6 @@ class UtilData {
 		].concat(J.Relation.cover).concat(keys), true);
 		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, iconName, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
@@ -540,10 +539,6 @@ class UtilData {
 
 		if (U.Object.isInFileLayouts(object.layout)) {
 			ret.withIcon = true;
-		};
-
-		if (checkType && !keyboard.isMainHistory()) {
-			className.push('noSystemBlocks');
 		};
 
 		if (featuredRelations.includes('description')) {
@@ -1172,6 +1167,8 @@ class UtilData {
 	};
 
 	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+		object = object || {};
+
 		let ret: any = {};
 
 		switch (block.content.section) {
@@ -1182,9 +1179,9 @@ class UtilData {
 
 			case I.WidgetSection.Type: {
 				ret = { 
-					layout: object.widgetLayout, 
-					limit: object.widgetLimit, 
-					viewId: object.widgetViewId,
+					layout: Number(object.widgetLayout) || I.WidgetLayout.Link, 
+					limit: Number(object.widgetLimit) || 6, 
+					viewId: String(object.widgetViewId) || '',
 				};
 				break;
 			};

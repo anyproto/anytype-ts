@@ -83,15 +83,12 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		const scrollWrapper = node.find('#scrollWrapper');
 		const formWrapper = node.find('#formWrapper');
 
-		formWrapper.hide();
-
 		raf(() => {
 			const fh = Number(formWrapper.outerHeight(true)) || 0;
 			const mh = scrollContainer.height() - J.Size.header - fh;
 
 			scrollWrapper.css({ minHeight: mh });
 			chatRef.current?.ref?.resize();
-			formWrapper.show();
 		});
 	};
 

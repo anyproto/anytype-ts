@@ -154,6 +154,7 @@ class Dataview {
 		const view = S.Record.getView(rootId, blockId, newViewId);
 
 		if (!view) {
+			console.log('[Dataview].getData: No view', rootId, blockId, newViewId);
 			return;
 		};
 

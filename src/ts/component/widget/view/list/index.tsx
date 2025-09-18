@@ -28,15 +28,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-	const initCache = () => {
-		const items = getItems();
-
-		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => getRowHeight(items[i], i, isCompact),
-			keyMapper: i => items[i],
-		});
-	};
+	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_COMPACT });
 
 	const onSortStart = () => {
 		keyboard.disableSelection(true);
@@ -202,7 +194,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 											ref={listRef}
 											width={width}
 											height={height}
-											deferredMeasurmentCache={cache.current}
+											deferredMeasurementCache={cache.current}
 											rowCount={length}
 											rowHeight={({ index }) => getRowHeight(items[index], index, isCompact)}
 											rowRenderer={rowRenderer}
@@ -239,8 +231,6 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 	useEffect(() => {
 		listRef.current?.scrollToPosition(top.current);
-
-		initCache();
 		resize();
 	});
 

@@ -142,7 +142,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: !U.Object.isAllowedMultiChat(),
+			ignoreChat: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -315,7 +315,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: !U.Object.isAllowedMultiChat(),
+			ignoreChat: true,
 			skipLayoutFormat: null,
 		}, param);
 
@@ -409,6 +409,7 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
+				keys: J.Relation.default.concat('sharedSpacesLimit'),
 				noDeps: true,
 				ignoreHidden: false,
 			},

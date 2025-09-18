@@ -19,6 +19,12 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	cache: any = {};
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onBack = this.onBack.bind(this);	
+	};
+
 	render () {
 		const { page } = this.props;
 		const { membership } = S.Auth;
@@ -27,7 +33,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const param = keyboard.getMatch().params;
 		const isSpace = page == 'settingsSpace';
 		const items = this.getItems();
-		const theme = S.Common.getThemeClass();
 
 		const ItemSection = (item: any) => {
 			const cn = [ 'section' ];
@@ -160,7 +165,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 											<List
 												width={width}
 												height={height}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowCount={items.length}
 												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}
@@ -323,8 +328,11 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	onBack () {
+		const { page } = this.props;
+		const isSpace = page == 'settingsSpace';
+
 		U.Space.openDashboard();
-		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+		sidebar.leftPanelSetState({ page: isSpace ? U.Space.getDefaultSidebarPage() : 'vault' });
 	};
 
 });

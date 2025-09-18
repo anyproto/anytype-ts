@@ -31,7 +31,6 @@ export default {
 
 	limit: {
 		menuRecords:	 	 			 100,
-		widgets:		 	 			 20,
 		notification:	 	 			 20,
 		graphDepth:		 	 			 5,
 		cellEntry:		 	 			 320,
@@ -150,6 +149,7 @@ export default {
 		date:			 'ot-date',
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
+		chatDerived:	 'ot-chatDerived',
 		project:		 'ot-project',
 		human:			 'ot-human',
 		participant:	 'ot-participant',

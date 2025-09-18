@@ -30,6 +30,7 @@ html.themeDark {
 	/* Background */
 
 	--color-bg-primary: #171717;
+	--color-bg-primary-90: rgba(23, 23, 23, 0.9);
 	--color-bg-secondary: #191919;
 	--color-bg-loader: rgba(0,0,0,0.7);
 	--color-bg-grey: #232323;
@@ -393,6 +394,8 @@ html.themeDark {
 				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
 				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
+
+				.cnt { color: var(--color-text-primary); }
 			}
 
 			> .body {
@@ -447,6 +450,25 @@ html.themeDark {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
+
+			.widgetSection {
+				> .nameWrap {
+					.name {
+						&:hover {
+							.icon.arrow { background-image: url('#{$themePath}/arrow/widgetSection1.svg'); }
+						}
+					}
+
+					.buttons {
+						.button.blank {
+							&:hover {
+								.icon.plus { background-image: url('#{$themePath}/icon/plus/widgetSection1.svg'); }
+							}
+						}						
+					}
+				}
+			}
+
 			.spaceHeader {
 				.buttons {
 					.item {
@@ -456,6 +478,12 @@ html.themeDark {
 						.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
 					}
 				}
+			}
+		}
+
+		> .sidebarPage.pageVault {
+			.item {
+				.cnt { color: var(--color-text-primary); }
 			}
 		}
 	}

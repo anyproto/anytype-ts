@@ -911,6 +911,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onReplyClear();
 		checkSpeedLimit();
 		historyClearState();
+
+		$(window).trigger('resize');
 	};
 
 	const onEditClear = () => {

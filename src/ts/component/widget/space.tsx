@@ -52,9 +52,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	return (
-		<div 
-			className={cn.join(' ')}
-		>
+		<div className={cn.join(' ')}>
 			<div className="buttons">
 				{buttons.map((item, i) => {
 					let cnt = null;

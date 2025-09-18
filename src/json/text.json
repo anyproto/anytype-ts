@@ -226,6 +226,9 @@
 	"commonNewVersion": "Version <span class='hl'>%s</span> is ready to be installed",
 	"commonUpgrade": "✦ Upgrade",
 	"commonWidgets": "Widgets",
+	"commonLearnMore": "Learn more",
+	"commonSeeChanges": "See Changes",
+	"commonSeeUpdates": "See updates",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -442,6 +445,10 @@
 
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
+
+	"authOnboardPhraseTitle": "This is you Key",
+	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — only you responsible for your data. You can find this Key later in app settings.",
+	"authOnboardPhraseRevealAndCopy": "Reveal and Copy",
 
 	"authOnboardEmailTitle": "Stay in the loop",
 	"authOnboardEmailLabel": "We'd love to share tips, tricks and product updates with you. Your email is never linked to your identity. We won't share your data. Ever.",
@@ -913,6 +920,7 @@
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
 	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
+	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d spaces. Upgrade to create more.",
 
 	"popupSettingsSpaceStorageEmptyLabel": "Your storage is empty",
 
@@ -1006,7 +1014,6 @@
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
 	"popupSettingsMembershipPerGenericMany": "per %s %s",
-	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipValidUntil": "Valid until %s",
 	"popupSettingsMembershipForeverFree": "Forever free",
@@ -1284,6 +1291,9 @@
 
 	"popupConfirmSortRemoveTitle": "Would you like to remove sorting?",
 
+	"popupConfirmDeleteTypeTitle": "Delete Object Type?",
+	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1546,13 +1556,13 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is the Key?",
-	"popupPhraseTitle2": "How to save my Key?",
-	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
-	"popupPhraseLabel2": "Whomever knows the combination of these words owns your vault. Right now, you are the only person in the world who knows it.",
-	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
-	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
-	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
+	"popupPhraseTitle1": "How the Key works",
+	"popupPhraseSubTitle1": "It’s your login and password",
+	"popupPhraseLabel1": "Your key is represented by a recovery phrase — 12 random words that generate your vault on this device.",
+	"popupPhraseSubTitle2": "Whoever has the key, has access",
+	"popupPhraseLabel2": "Anyone who knows these words can access your vault. Right now, you are the only person in the world who knows them.",
+	"popupPhraseSubTitle3": "Only you responsible for it",
+	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose your key, it cannot be recovered. Store it somewhere safe — in a password manager or written down on paper.",
 
 	"popupUsecaseAuthor": "Made by @%s",
 	"popupUsecaseAuthorShort": "By @%s",
@@ -1825,9 +1835,9 @@
 	"menuWidgetAddWidget": "Add Widget",
 	"menuWidgetWidgetType": "Widget type",
 	"menuWidgetNumberOfObjects": "Number of Objects",
-	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
 	"menuWidgetRecentOpenCaption": "On this device",
+	"menuWidgetRemoveType": "Delete Object Type",
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
@@ -2153,9 +2163,9 @@
 	"sidebarRelationLocalRemoveFromObjects": "Remove from objects",
 
 	"sidebarMenuSpaceCreateTitleChat": "Chat",
-	"sidebarMenuSpaceCreateDescriptionChat": "For real-time conversations",
+	"sidebarMenuSpaceCreateDescriptionChat": "Group chat with content organization",
 	"sidebarMenuSpaceCreateTitleSpace": "Space",
-	"sidebarMenuSpaceCreateDescriptionSpace": "For organized content and data",
+	"sidebarMenuSpaceCreateDescriptionSpace": "Hub for advanced data management",
 	"sidebarMenuSpaceCreateTitleImport": "Import Data",
 	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
 	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
@@ -2244,9 +2254,26 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
+	"onboardingChatsTitle": "Ideas need conversations",
+	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",
+
+	"onboardingChatsMockChatMessage0": "Good to have chat here now",
+	"onboardingChatsMockChatMessage1": "Yeah. Just created something from this",
+	"onboardingChatsMockChatMessage3": "Feels like part of the space \uD83E\uDEE7",
+
+	"onboardingChatsMockChatAttachmentTitle": "Project thoughts",
+	"onboardingChatsMockChatAttachmentType": "Page",
+
+	"onboardingChatsSlide0Title": "Your Vault just leveled up",
+	"onboardingChatsSlide0Text": "Spaces and Chats now show live previews and updates — one<br/>place to follow everything that matters.",
+	"onboardingChatsSlide1Title": "Chats work like Spaces",
+	"onboardingChatsSlide1Text": "A channel made for dialogue — where you can share, create, and<br/>edit together in real time.",
+	"onboardingChatsSlide2Title": "Everything in Its Right Place",
+	"onboardingChatsSlide2Text": "Objects, lists and files appear in the sidebar — structured,<br/>searchable, and always at hand.",
+	"onboardingChatsSlide3Title": "See all the latest updates and bug<br/>fixes in the release notes",
+
 	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
 	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",
-	"onboardingPrimitivesButton": "See Changes",
 
 	"onboardingPrimitivesTypesPages": "Pages",
 	"onboardingPrimitivesTypesBookmarks": "Bookmarks",
@@ -2272,7 +2299,6 @@
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
-	"onboardingPrimitivesSlide4Button": "See updates",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

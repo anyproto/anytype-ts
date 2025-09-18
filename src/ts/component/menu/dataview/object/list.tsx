@@ -134,7 +134,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
-											deferredMeasurmentCache={this.cache}
+											deferredMeasurementCache={this.cache}
 											rowCount={items.length}
 											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}

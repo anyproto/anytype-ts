@@ -107,7 +107,7 @@ class MenuContext extends React.Component<I.Menu> {
 				return;
 			};
 
-			if (S.Block.getWidgetsForTarget(object.id).length) pinCnt++;
+			if (S.Block.getWidgetsForTarget(object.id, I.WidgetSection.Pin).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {

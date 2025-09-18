@@ -85,6 +85,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (previewId) {
 			const block = S.Block.getLeaf(widgets, previewId);
+
 			if (block) {
 				cnb.push('isListPreview');
 
@@ -233,6 +234,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{sections.map(section => {
 						const isSectionPin = section.id == I.WidgetSection.Pin;
 						const isSectionType = section.id == I.WidgetSection.Type;
+						const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 
 						let list = blockWidgets.filter(it => it.content.section == section.id);
 						let buttons = null;
@@ -266,8 +268,12 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							};
 						};
 
+						if (isSectionPin && !list.length) {
+							return null;
+						};
+
 						return (
-							<div id={`section-${section.id}`} className="widgetSection" key={section.id}>
+							<div id={`section-${section.id}`} className={cns.join(' ')} key={section.id}>
 								<div className="nameWrap">
 									<div className="name" onClick={() => this.onToggle(section.id)}>
 										<Icon className="arrow" />
@@ -368,21 +374,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	componentDidMount(): void {
-		const { sectionIds } = this.state;
-		[ 
-			I.WidgetSection.Pin, 
-			I.WidgetSection.Type,
-		].forEach(id => {
-			if (!this.isSectionClosed(id)) {
-				sectionIds.push(id);
-			};
-		});
-
-		if (sectionIds.length) {
-			this.setState({ sectionIds });
-		} else {
-			this.init();
-		};
+		this.init();
 	};
 
 	componentDidUpdate (): void {
@@ -392,10 +384,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	init () {
 		S.Block.updateTypeWidgetList();
 
-		[ 
-			I.WidgetSection.Pin, 
-			I.WidgetSection.Type,
-		].forEach(this.initToggle);
+		const sectionIds = [];
+		const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+
+		ids.forEach(id => {
+			if (!this.isSectionClosed(id)) {
+				sectionIds.push(id);
+			};
+		});
+
+		if (!U.Common.objectCompare(sectionIds, this.state.sectionIds)) {
+			this.setState({ sectionIds });
+		} else {
+			ids.forEach(this.initToggle);
+		};
+
 		this.onScroll();
 	};
 
@@ -868,7 +871,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		window.setTimeout(() => {
 			win.on('mousedown.sidebar', e => {
-				if (!$(e.target).parents('.widget, .bottom').length) {
+				if (!$(e.target).parents('.widget, .bottom, .nameWrap').length) {
 					close(e);
 				};
 			});
@@ -898,13 +901,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				return false;
 			};
 
+			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+				return false;
+			};
+
 			if (Object.values(J.Constant.widgetId).includes(target)) {
 				return true;
 			};
 
 			const object = this.getObject(block, target);
 
-			if (object._empty_ || object.isArchived || object.isDeleted) {
+			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
 				return false;
 			};
 

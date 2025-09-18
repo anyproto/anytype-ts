@@ -99,6 +99,27 @@
 		}
 	}
 
+	/* PopupIntroduceChats */
+
+	.popup.popupIntroduceChats {
+		.steps {
+			.step1 {
+				.intro {
+					.img { background-image: url('#{$themePath}/icon/onboarding/chats/intro.png'); }
+
+					.img.slide2,
+					.img.slide3 {
+						&:after,
+						&:before { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
+					}
+				}
+				.swiper-button-prev,
+				.swiper-button-next,
+				.slideBack { background-image: url('#{$themePath}/icon/onboarding/primitives/arrow.svg'); }
+			}
+		}
+	}
+
 	/* PopupSpaceJoinByLink */
 
 	.popup.popupSpaceJoinByLink {

@@ -9,6 +9,7 @@ const ANIMATION = 200;
 interface Props extends I.WidgetViewComponent {
 	id: string;
 	value: any;
+	searchIds: string[];
 };
 
 const Group = observer(forwardRef<{}, Props>((props, ref) => {

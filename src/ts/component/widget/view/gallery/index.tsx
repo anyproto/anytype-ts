@@ -6,19 +6,17 @@ import Item from './item';
 
 const LIMIT = 30;
 const LIMIT_ROW = 2;
-const HEIGHT = 60;
+const HEIGHT = 52;
 
 const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 	
 	const { block, subId, isPreview, getView, getRecordIds } = props;
 	const view = getView();
-	const items = getRecordIds().map(id => S.Detail.get(subId, id, J.Relation.sidebar));
-	const { total } = S.Record.getMeta(subId, '');
 	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
-	const length = Math.ceil(total / LIMIT_ROW);
 
 	const getItems = () => {
+		const items = getRecordIds().map(id => S.Detail.get(subId, id, J.Relation.sidebar));
 		const ret: any[] = [];
 
 		let n = 0;
@@ -45,6 +43,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 	};
 
 	const rows = getItems();
+	const length = rows.length;
 
 	let content = null;
 	if (isPreview) {
@@ -65,6 +64,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 								subId={subId}
 								id={item.id} 
 								hideIcon={view.hideIcon}
+								onResize={measure}
 							/>
 						))}
 					</div>
@@ -86,9 +86,9 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 								ref={listRef}
 								width={width}
 								height={height}
-								deferredMeasurmentCache={cache.current}
+								deferredMeasurementCache={cache.current}
 								rowCount={length}
-								rowHeight={param => cache.current.rowHeight(param)}
+								rowHeight={cache.current.rowHeight}
 								rowRenderer={rowRenderer}
 								onRowsRendered={onRowsRendered}
 								overscanRowCount={LIMIT}
@@ -122,7 +122,7 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 	useEffect(() => {
 		cache.current.clearAll();
 		listRef.current?.recomputeRowHeights(0);
-	}, [ rows.length ]);
+	}, [ rows.length, block, view ]);
 
 	return (
 		<div className="body">

@@ -39,7 +39,11 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		U.Menu.spaceContext(spaceview, menuParam);
+		U.Menu.spaceContext(spaceview, menuParam, { 
+			noPin: true, 
+			noDivider: true,
+			route: analytics.route.chat
+		});
 	};
 
 	let object = null;

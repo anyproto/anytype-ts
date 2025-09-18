@@ -197,7 +197,7 @@
                 .label { @include text-small; color: var(--color-text-secondary); }
                 .label.sub { font-weight: 500; margin-bottom: 8px; }
 
-                .sectionContent { border-radius: 12px; border: 1px solid var(--color-shape-secondary); overflow: hidden; }
+                .sectionContent { border-radius: 16px; border: 1px solid var(--color-shape-secondary); overflow: hidden; }
                 .sectionContent {
                     > .item { padding: 16px; border-bottom: 1px solid var(--color-shape-secondary); }
                     > .item:last-child { border-bottom: 0; }
@@ -224,7 +224,7 @@
                             .side.right { flex-shrink: 0; }
                         }
 
-                        .title { @include text-common; font-weight: 400; margin-bottom: 4px; }
+                        .title { @include text-common; font-weight: 400; margin-bottom: 0px; }
                         .title:last-child { margin-bottom: 0px; }
 
                         .button { max-width: 200px; }

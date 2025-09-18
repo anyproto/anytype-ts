@@ -77,7 +77,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
-		const { noPreview, } = this.props;
+		const { noPreview } = this.props;
 
 		this.init();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
@@ -86,7 +86,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidUpdate(prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
-		if (this.props.rootId != prevProps.rootId) {
+		if ((this.props.rootId != prevProps.rootId) || !U.Common.objectCompare(this.props.details, prevProps.details)) {
 			this.init();
 		};
 	};
@@ -200,7 +200,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
-		if (this.props.details.isNew) {
+		const details = this.props.details || {};
+
+		if (details.isNew) {
 			return;
 		};
 

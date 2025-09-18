@@ -12,7 +12,7 @@ let maxStdErrChunksBuffer = 10;
 class Server {
 
 	start (binPath, workingDir) {
-		console.log('[Server] start', binPath, workingDir);
+		console.log('[Server]: start', binPath, workingDir);
 
 		const logPath = Util.logPath();
 		const env = process.env;
@@ -90,7 +90,7 @@ class Server {
 					try {
 						fs.writeFileSync(log, this.lastErrors.join('\n'), 'utf-8');
 					} catch(e) {
-						console.log('[Server] Failed to save log file', log);
+						console.log('[Server]: Failed to save log file', log);
 					};
 					
 					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers by creating issue at https://community.anytype.io');

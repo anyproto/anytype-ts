@@ -268,6 +268,7 @@ class UtilRouter {
 			sidebar.rightPanelClose(false);
 		} else 
 		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
+			sidebar.rightPanelClose(false);
 		} else {
 			sidebar.rightPanelRestore(false);
 		};
