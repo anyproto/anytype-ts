@@ -73,7 +73,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 			callBack();
 		};
 
-		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 1 });
+		analytics.event('OnboardingPopup', { id: 'Chats', step: idx + 1 });
 	};
 
 	const animateChatMessage = (idx: number) => {
@@ -125,7 +125,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 		setActiveSlide(idx);
 
-		analytics.event('OnboardingPopup', { id: 'Primitives', step: idx + 2 });
+		analytics.event('OnboardingPopup', { id: 'Chats', step: idx + 2 });
 	};
 
 	const Message = (item: any) => {
