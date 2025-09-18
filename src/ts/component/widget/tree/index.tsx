@@ -24,7 +24,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
-	const emptyRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
 	const object = S.Detail.get(S.Block.widgets, targetId);
 	const subKey = block ? `widget${block.id}` : '';
@@ -277,7 +276,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		if (!length) {
 			css.paddingBottom = 8;
-			css.height = $(emptyRef.current).outerHeight() + css.paddingBottom;
+			css.height = 20 + css.paddingBottom;
 		};
 
 		node.css(css);
@@ -322,7 +321,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
 
 		content = (
-			<div ref={emptyRef} className="emptyWrap">
+			<div className="emptyWrap">
 				<Label className="empty" text={label} />
 			</div>
 		);
