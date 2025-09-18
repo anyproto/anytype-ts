@@ -16,7 +16,7 @@ $elementsTransition: opacity 0.2s linear;
                 .button { opacity: 0; }
             }
             .step0 {
-                .chat { height: 324px; width: 510px; margin-bottom: 38px; display: flex; flex-direction: column; justify-content: flex-end; }
+                .chat { height: 324px; width: 512px; margin-bottom: 38px; display: flex; flex-direction: column; justify-content: flex-end; }
                 .chat {
                     .feed { overflow: hidden; height: 0px; transition: height linear 0.2s; }
                     .message { @include text-common; position: relative; opacity: 0; transition: none; }
@@ -47,18 +47,18 @@ $elementsTransition: opacity 0.2s linear;
                         .bubbleInner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
 
                         .bubble {
-                            border-radius: 16px; background-color: var(--color-bg-primary); display: flex; flex-direction: column;
-                            transition: opacity $transitionChatMessageTime ease-in-out; opacity: 0;
+                            border-radius: 20px; background-color: var(--color-bg-primary); display: flex; flex-direction: column;
+                            transition: opacity $transitionChatMessageTime ease-in-out; opacity: 0; @include text-paragraph;
                         }
                         .bubble {
-                            .textWrapper { line-height: 20px; padding: 6px 12px; }
+                            .textWrapper { line-height: 20px; padding: 8px 16px; }
                             .text { user-select: text !important; display: inline; }
                             .time {
-                                @include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px;
+                                @include text-common; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 10px; padding-top: 4px;
                                 display: flex; align-items: center; gap: 0px 4px;
                             }
 
-                            .attachment { padding: 16px; display: flex; align-items: center; gap: 0px 12px; width: 260px; }
+                            .attachment { padding: 16px; display: flex; align-items: center; gap: 0px 12px; width: 366px; }
                             .attachment {
                                 .iconObject { flex-shrink: 0; border-radius: 12px; background-color: var(--color-shape-highlight-dark); }
                                 .info { text-align: left; }
@@ -181,7 +181,7 @@ $elementsTransition: opacity 0.2s linear;
                         overflow: hidden; border-radius: 12px;
                     }
                     .img.slide0 { left: 208px; top: 0px; }
-                    .img.slide1 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; }
+                    .img.slide1 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 4px; }
                     .img.slide2 { left: -888px; top: 0px; }
                     .img.slide2,
                     .img.slide3 {
