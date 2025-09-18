@@ -200,7 +200,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
-		if (this.props.details.isNew) {
+		const details = this.props.details || {};
+
+		if (details.isNew) {
 			return;
 		};
 
