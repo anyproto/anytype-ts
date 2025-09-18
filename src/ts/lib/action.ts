@@ -966,7 +966,9 @@ class Action {
 							return;
 						};
 
-						C.SpaceStopSharing(spaceId, callBack);
+						if (callBack) {
+							callBack();
+						};
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
