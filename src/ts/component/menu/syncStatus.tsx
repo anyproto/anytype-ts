@@ -166,7 +166,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
-											deferredMeasurementCache={this.cache}
+											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
 											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}

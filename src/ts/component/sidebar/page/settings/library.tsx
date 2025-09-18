@@ -151,7 +151,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 												<List
 													width={width}
 													height={height}
-													deferredMeasurementCache={this.cache}
+													deferredMeasurmentCache={this.cache}
 													rowCount={items.length}
 													rowHeight={({ index }) => this.getRowHeight(items[index])}
 													rowRenderer={rowRenderer}

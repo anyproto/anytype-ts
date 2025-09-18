@@ -139,7 +139,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 									ref={ref => this.refList = ref}
 									width={Number(width) || 0}
 									height={Number(height) || 0}
-									deferredMeasurementCache={this.cache}
+									deferredMeasurmentCache={this.cache}
 									rowCount={length}
 									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
 									rowRenderer={rowRenderer}

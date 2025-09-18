@@ -194,7 +194,7 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 											ref={listRef}
 											width={width}
 											height={height}
-											deferredMeasurementCache={cache.current}
+											deferredMeasurmentCache={cache.current}
 											rowCount={length}
 											rowHeight={({ index }) => getRowHeight(items[index], index, isCompact)}
 											rowRenderer={rowRenderer}

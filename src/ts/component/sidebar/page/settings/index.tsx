@@ -165,7 +165,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 											<List
 												width={width}
 												height={height}
-												deferredMeasurementCache={this.cache}
+												deferredMeasurmentCache={this.cache}
 												rowCount={items.length}
 												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}

@@ -837,7 +837,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 										ref={listRef}
 										width={width}
 										height={height}
-										deferredMeasurementCache={cacheRef.current}
+										deferredMeasurmentCache={cacheRef.current}
 										rowCount={items.length}
 										rowHeight={param => getRowHeight(items[param.index], param.index)}
 										rowRenderer={rowRenderer}

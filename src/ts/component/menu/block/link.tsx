@@ -120,7 +120,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
-									deferredMeasurementCache={this.cache}
+									deferredMeasurmentCache={this.cache}
 									rowCount={items.length}
 									rowHeight={({ index }) => this.getRowHeight(items[index])}
 									rowRenderer={rowRenderer}

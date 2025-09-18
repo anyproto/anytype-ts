@@ -392,7 +392,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 											{...listProps}
 											ref={listRef}
 											width={Number(width) || 0}
-											deferredMeasurementCache={cache.current}
+											deferredMeasurmentCache={cache.current}
 											rowCount={items.length}
 											rowHeight={rowHeight || 64}
 											rowRenderer={rowRenderer}

@@ -465,7 +465,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 											ref={listRef}
 											width={width}
 											height={height}
-											deferredMeasurementCache={cache}
+											deferredMeasurmentCache={cache}
 											rowCount={items.length}
 											rowHeight={({ index }) => getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
