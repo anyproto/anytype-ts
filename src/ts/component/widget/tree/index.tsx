@@ -93,11 +93,15 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	// Recursive function which returns the tree structure
 	const loadTreeRecursive = (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] => {
-		if (!childNodeList.length || depth >= MAX_DEPTH) {
+		if (!childNodeList.length || (depth >= MAX_DEPTH)) {
 			return treeNodeList;
 		};
 
 		for (const childNode of childNodeList) {
+			if (!childNode) {
+				continue;
+			};
+
 			const childBranch = [ branch, childNode.id ].join('-');
 
 			const links = filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
