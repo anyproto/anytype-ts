@@ -944,8 +944,13 @@ class BlockStore {
 			J.Constant.typeKey.template, 
 			J.Constant.typeKey.participant,
 			J.Constant.typeKey.dashboard,
-			J.Constant.typeKey.spaceview,
 			J.Constant.typeKey.option,
+			J.Constant.typeKey.date,
+			J.Constant.typeKey.relation,
+			J.Constant.typeKey.spaceview,
+			J.Constant.typeKey.space,
+			J.Constant.typeKey.chat,
+			J.Constant.typeKey.chatDerived,
 		].includes(key);
 	};
 

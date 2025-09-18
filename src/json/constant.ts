@@ -149,6 +149,7 @@ export default {
 		date:			 'ot-date',
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
+		chatDerived:	 'ot-chatDerived',
 		project:		 'ot-project',
 		human:			 'ot-human',
 		participant:	 'ot-participant',
