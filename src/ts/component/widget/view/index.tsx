@@ -182,6 +182,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				return;
 			};
 
+			U.Subscription.destroyList([ subId ]);
+
 			U.Subscription.search({
 				filters: [],
 				sorts: [],
