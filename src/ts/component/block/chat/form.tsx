@@ -1076,6 +1076,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			saveState(list);
 			analytics.event('DetachItemChat');
 		};
+
+		$(window).trigger('resize');
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {
