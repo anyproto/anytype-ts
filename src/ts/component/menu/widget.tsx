@@ -152,11 +152,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing, blockId } = data;
+		const { isEditing, blockId, isPreview } = data;
 		const { widgets } = S.Block;
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
 		const canRemove = isEditing;
+		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview));
 		const block = S.Block.getLeaf(widgets, blockId);
 
 		if (!block) {
@@ -170,7 +170,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				id: 'layout',
 				name: translate('commonAppearance'),
 				children: [],
-				options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
+				options: layoutOptions,
 				value: this.layout,
 			});
 		};

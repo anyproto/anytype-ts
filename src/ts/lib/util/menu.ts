@@ -463,7 +463,7 @@ class UtilMenu {
 		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
-	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
+	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout, isPreview?: boolean) {
 		const isSystem = this.isSystemWidget(id);
 		
 		let options = [
@@ -471,7 +471,7 @@ class UtilMenu {
 			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
-		if (!isSystem) {
+		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
 		} else
 		if (id == J.Constant.widgetId.bin) {
