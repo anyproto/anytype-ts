@@ -90,14 +90,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 								},
 							});
 						} else
-						if (!primitivesOnboarding) {
-							S.Popup.open('onboarding', {
-								onClose: () => {
-									Storage.set('primitivesOnboarding', true);
-									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
-								},
-							});
-						} else
 						if (whatsNew) {
 							U.Common.showWhatsNew();
 						};
