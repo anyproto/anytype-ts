@@ -16,7 +16,17 @@ class UtilSpace {
 		const space = this.getSpaceview();
 
 		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
-			this.openFirstSpaceOrVoid(null, param);
+			this.openFirstSpaceOrVoid(it => {
+				if (!it.isAccountActive || !it.isLocalOk) {
+					return false;
+				};
+
+				if (space) {
+					return (it.id != space.id);
+				};
+
+				return true;
+			}, param);
 			return;
 		};
 
