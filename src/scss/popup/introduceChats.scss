@@ -9,7 +9,7 @@ $elementsTransition: opacity 0.2s linear;
         .steps { transition: margin-left 0.6s cubic-bezier(0.78, 0, 0.39, 1); display: flex; align-items: center; text-align: center; }
         .steps.s1 { margin-left: -100%; }
         .steps {
-            .step0 { display: flex; flex-direction: column; align-items: center; width: 768px; height: 600px; padding-top: 44px; flex-shrink: 0; }
+            .step0 { display: flex; flex-direction: column; align-items: center; width: 768px; height: 600px; padding-top: 45px; flex-shrink: 0; }
             .step0.init {
                 .title,
                 > .label,
@@ -51,7 +51,7 @@ $elementsTransition: opacity 0.2s linear;
                             transition: opacity $transitionChatMessageTime ease-in-out; opacity: 0; @include text-paragraph;
                         }
                         .bubble {
-                            .textWrapper { line-height: 20px; padding: 8px 16px; }
+                            .textWrapper { padding: 8px 16px; }
                             .text { user-select: text !important; display: inline; }
                             .time {
                                 @include text-common; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 10px; padding-top: 4px;
@@ -67,7 +67,7 @@ $elementsTransition: opacity 0.2s linear;
                             }
                         }
 
-                        .author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; padding-left: 12px; font-weight: 500 }
+                        .author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 5px; padding-left: 16px; font-weight: 500 }
                         .author * { user-select: text !important; }
 
                         .expand { display: none; align-items: center; color: var(--color-text-secondary); white-space: nowrap; cursor: default; }
