@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key, Highlight } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -412,6 +412,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	useEffect(() => {
 		rebind();
 		analytics.event('ScreenVault');
+		Highlight.showAll();
 
 		return () => {
 			unbind();
