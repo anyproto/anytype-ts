@@ -36,9 +36,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const filterTimeout = useRef(0);
 	const traceId = getTraceId();
 	const rootId = block ? [ targetId, traceId ].join('-') : '';
-	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
+	const subId = [ S.Record.getSubId(rootId, J.Constant.blockId.dataview), viewId ].join('-');
 	const object = getObject(targetId);
-	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
+	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 	const viewType = view ? view.type : I.ViewType.List;
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
@@ -138,14 +138,18 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const onChangeView = (viewId: string) => {
-		if (parent.content.section == I.WidgetSection.Pin) {
-			C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
-		};
+		switch (parent.content.section) {
+			case I.WidgetSection.Pin: {
+				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
+				break;
+			};
 
-		if (parent.content.section == I.WidgetSection.Type) {
-			C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
-				S.Block.updateWidgetData(targetId);
-			});
+			case I.WidgetSection.Type: {
+				C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
+					S.Block.updateWidgetData(targetId);
+				});
+				break;
+			};
 		};
 	};
 
@@ -197,7 +201,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const isEmpty = !length && showEmpty;
 	const childProps = {
 		...props,
-		ref: childRef,
+		ref: childRef.current,
 		rootId,
 		subId,
 		reload: () => load(viewId),
@@ -377,13 +381,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (!isSystemTarget) {
 			load(viewId);
 		};
-	}, [ viewId ]);
-
-	useEffect(() => {
-		if (view) {
-			load(view.id);
-		};
-	}, [ searchIds ]);
+	}, [ viewId, searchIds ]);
 
 	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);

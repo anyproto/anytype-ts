@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
@@ -233,6 +233,8 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		listRef.current?.scrollToPosition(top.current);
 		resize();
 	});
+
+	useImperativeHandle(ref, () => ({}));
 
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>

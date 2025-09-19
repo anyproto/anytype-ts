@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import { I, S, J } from 'Lib';
@@ -123,6 +123,8 @@ const WidgetViewGallery = observer(forwardRef<{}, I.WidgetViewComponent>((props,
 		cache.current.clearAll();
 		listRef.current?.recomputeRowHeights(0);
 	}, [ rows.length, block, view ]);
+
+	useImperativeHandle(ref, () => ({}));
 
 	return (
 		<div className="body">

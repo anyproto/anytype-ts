@@ -10,7 +10,7 @@ interface WidgetViewCalendarRefProps {
 const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.WidgetViewComponent>((props, ref: any) => {
 
 	const [ value, setValue ] = useState(U.Date.now());
-	const { rootId, block, canCreate, subId, getView, reload, onCreate, getObject, getViewLimit } = props;
+	const { rootId, block, canCreate, subId, getView, reload, onCreate, getObject } = props;
 	const object = getObject();
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
