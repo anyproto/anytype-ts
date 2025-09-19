@@ -686,7 +686,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const targetId = child?.getTargetObjectId();
 		const rootId = this.getChildRootId(targetId, child.id);
 		const object = this.getObject(block, targetId);
-		const param = U.Data.windgetContentParam(object, block);
+		const param = U.Data.widgetContentParam(object, block);
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
 
 		U.Object.openEvent(e, {
@@ -711,7 +711,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const targetId = child?.getTargetObjectId();
 		const object = this.getObject(block, targetId);
 		const rootId = this.getChildRootId(targetId, child.id);
-		const param = U.Data.windgetContentParam(object, block);
+		const param = U.Data.widgetContentParam(object, block);
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
 
 		if (!view) {
@@ -720,10 +720,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		const sort: any = view.sorts.length ? view.sorts[0] : {};
 
-		let isCompact = param.layout == I.WidgetLayout.Compact;
 		let relationKey = sort.relationKey;
 		let type = sort.type;
-		let options = this.getPreviewOptions(isCompact, relationKey, type);
+		let options = this.getPreviewOptions(param, relationKey, type);
 		let menuContext = null;
 
 		S.Menu.open('select', {
@@ -737,17 +736,21 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				options,
 				noClose: true,
 				onSelect: (e: any, item: any) => {
-					if (item.isLayout) {
-						isCompact = item.layout == I.WidgetLayout.Compact;
+					const cb = () => {
+						const updatedParam = U.Data.widgetContentParam(object, block);
 
+						options = this.getPreviewOptions(updatedParam, relationKey, type);
+						menuContext.ref.updateOptions(options);
+					};
+					if (item.isLayout) {
 						switch (block.content.section) {
 							case I.WidgetSection.Pin: {
-								C.BlockWidgetSetLayout(widgets, block.id, item.layout);
+								C.BlockWidgetSetLayout(widgets, block.id, item.layout, cb);
 								break;
 							};
 
 							case I.WidgetSection.Type: {
-								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: item.layout } ]);
+								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: item.layout } ], cb);
 								break;
 							};
 						};
@@ -759,27 +762,31 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						sort.relationKey = relationKey;
 						sort.type = type;
 
-						C.BlockDataviewSortReplace(targetId, J.Constant.blockId.dataview, view.id, sort.id, { ...sort });
+						C.BlockDataviewSortReplace(targetId, J.Constant.blockId.dataview, view.id, sort.id, { ...sort }, cb);
 					};
-
-					options = this.getPreviewOptions(isCompact, relationKey, type);
-					menuContext.ref.updateOptions(options);
 				},
 			}
 		});
 	};
 
-	getPreviewOptions = (isCompact: boolean, relationKey: string, sortType: I.SortType) => {
-		const options: any[] = [
-			{ isSection: true, name: translate('commonAppearance') },
-			{ isLayout: true, layout: I.WidgetLayout.List, checkbox: !isCompact, name: translate('widget2Name') },
-			{ isLayout: true, layout: I.WidgetLayout.Compact, checkbox: isCompact, name: translate('widget3Name') },
+	getPreviewOptions = (param: any, relationKey: string, sortType: I.SortType) => {
+		const { previewId } = this.state;
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, previewId);
+		const child = this.getChild(block.id);
+		const object = this.getObject(block, child?.getTargetObjectId());
+		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(object?.id, object?.layout, true));
+		const appearance: any[] = layoutOptions.map(it => ({ isLayout: true, layout: it.id, name: it.name, checkbox: it.id == param.layout}))
+
+		appearance.unshift({ isSection: true, name: translate('commonAppearance') });
+
+		const options: any[] = appearance.concat([
 			{ isDiv: true },
 			{ isSection: true, name: translate('sidebarObjectSort') },
 			{ isSort: true, name: translate('sidebarObjectSortUpdated'), type: I.SortType.Asc, relationKey: 'lastModifiedDate', defaultType: I.SortType.Desc },
 			{ isSort: true, name: translate('sidebarObjectSortCreated'), type: I.SortType.Asc, relationKey: 'createdDate', defaultType: I.SortType.Desc },
 			{ isSort: true, name: translate('commonName'), type: I.SortType.Asc, relationKey: 'name', defaultType: I.SortType.Asc },
-		];
+		]);
 
 		return options.map(it => {
 			if (it.isLayout) {
