@@ -5,19 +5,20 @@ import { S, translate, U, I, Action, analytics } from 'Lib';
 interface Props {
 	tier: any;
 	route: string;
+	isRed: boolean;
 	className?: string;
 };
 
 const UpsellMembers: FC<Props> = ({
 	tier = {},
 	route = '',
+	isRed = false,
 	className = '',
 }) => {
 
 	const cn = [
 		'upsellBanner',
 		'upsellMembers',
-		'isRed',
 		className,
 	];
 	const space = U.Space.getSpaceview();
@@ -27,16 +28,11 @@ const UpsellMembers: FC<Props> = ({
 
 	const editors = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
 	const limit = space.writersLimit;
-	const show = editors.length >= Math.round(limit / 2);
-	const isRed = editors.length >= limit;
-
-	if (!show) {
-		return null;
-	};
 
 	let usageText = U.Common.sprintf(translate('upsellBannerMembersUsageText'), editors.length, limit);
 	if (isRed) {
 		usageText = U.Common.sprintf(translate('upsellBannerMembersLimitUsageText'), limit);
+		cn.push('isRed');
 	};
 
 	const onClick = () => {

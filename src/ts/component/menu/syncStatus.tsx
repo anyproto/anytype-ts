@@ -134,7 +134,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 				</div>
 
-				<UpsellBanner component="storage" className="fromSyncMenu" route={analytics.route.syncStatus} />
+				<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
 
 				{showIncentive ? (
 					<div className="incentiveBanner">

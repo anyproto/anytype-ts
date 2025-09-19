@@ -6,7 +6,7 @@ import UpsellSpace from './space';
 import UpsellMembers from './members';
 
 interface Props {
-	component: string;
+	components: string[];
 	route: string;
 	className?: string;
 };
@@ -18,30 +18,116 @@ const Components = {
 };
 
 const UpsellBanner: FC<Props> = ({
-	component = '',
+	components = [],
 	route = '',
 	className = '',
 }) => {
 
-	if (!component) {
+	if (!components.length) {
 		return null;
 	};
 
 	const { membershipTiers } = S.Common;
 	const tier: I.MembershipTier = membershipTiers[0];
 	const { membership } = S.Auth;
-	const Component = Components[component] || null;
+
+	const getConditions = (item) => {
+		let isShown = false;
+		let isRed = false;
+
+		switch (item) {
+			case 'storage': {
+				const { spaceStorage } = S.Common;
+				const { bytesLimit } = spaceStorage;
+				const bytesUsed = U.Common.calculateStorageUsage();
+				const notSyncedCounter = S.Auth.getNotSynced().total;
+				const usagePercent = bytesUsed / bytesLimit * 100;
+
+				isShown = usagePercent > 55;
+				isRed = usagePercent >= 100 || !!notSyncedCounter;
+
+				break;
+			};
+			case 'members': {
+				const space = U.Space.getSpaceview();
+				if (!space) {
+					return { isShown, isRed };
+				};
+
+				const editors = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
+				const limit = space.writersLimit;
+
+				isShown = editors.length >= Math.round(limit / 2);
+				isRed = editors.length >= limit;
+				break;
+			};
+			case 'space': {
+				const mySharedSpaces = U.Space.getMySharedSpacesList();
+				const { sharedSpacesLimit } = U.Space.getProfile();
+
+				isShown = mySharedSpaces.length >= sharedSpacesLimit;
+				isRed = isShown;
+				break;
+			};
+		};
+
+		return { isShown, isRed };
+	};
+
+	const getComponent = ():string => {
+		let component = '';
+
+		if (components.length == 1) {
+			const { isShown } = getConditions(components[0]);
+			if (!isShown) {
+				return '';
+			};
+
+			component = components[0];
+		} else {
+			const conditions = [];
+
+			components.forEach((item) => {
+				if (getConditions(item).isShown) {
+					conditions.push({ ...getConditions(item), component: item });
+				};
+			});
+
+			if (!conditions.length) {
+				return '';
+			};
+
+			const isRed = conditions.filter(it => it.isRed);
+
+			if (isRed.length) {
+				component = isRed[0].component;
+			} else {
+				component = conditions[0].component;
+			};
+		};
+
+		return component;
+	};
+
+	const c = getComponent();
+	if (!c) {
+		return null;
+	};
+
+	const Component = Components[c] || null;
+	const { isShown, isRed } = getConditions(c);
 	const canShow = U.Common.checkCanMembershipUpgrade()
 		&& U.Data.isAnytypeNetwork()
 		&& membershipTiers[0]
-		&& (membershipTiers[0].id != membership.tier);
+		&& (membershipTiers[0].id != membership.tier)
+		&& isShown;
 	const tierCanNotUpgrade = !tier.price || !tier.period || !tier.periodType;
 
 	if (!Component || !canShow || tierCanNotUpgrade) {
 		return null;
 	};
 
-	return <Component className={className} route={route} tier={tier} />;
+	return <Component className={className} route={route} tier={tier} isRed={isRed} />;
 
 };
 

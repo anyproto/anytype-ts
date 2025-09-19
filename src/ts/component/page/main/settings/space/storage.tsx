@@ -107,7 +107,7 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
-				<UpsellBanner component="storage" route={analytics.route.settingsStorage} />
+				<UpsellBanner components={[ 'storage' ]} route={analytics.route.settingsStorage} />
 
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 				<Label text={translate(`popupSettingsSpaceIndexStorageText`)} />

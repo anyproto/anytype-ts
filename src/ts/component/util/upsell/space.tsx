@@ -5,12 +5,14 @@ import { S, translate, U, I, Action, analytics } from 'Lib';
 interface Props {
 	tier: any;
 	route: string;
+	isRed: boolean;
 	className?: string;
 };
 
 const UpsellSpace: FC<Props> = ({
 	tier = {},
 	route = '',
+	isRed = false,
 	className = '',
 }) => {
 
@@ -21,12 +23,6 @@ const UpsellSpace: FC<Props> = ({
 		className,
 	];
 	const mySharedSpaces = U.Space.getMySharedSpacesList();
-	const { sharedSpacesLimit } = U.Space.getProfile();
-	const show = mySharedSpaces.length >= sharedSpacesLimit;
-
-	if (!show) {
-		return null;
-	};
 
 	const onClick = () => {
 		Action.membershipUpgrade(tier.id);

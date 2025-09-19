@@ -44,8 +44,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		return (
 			<div ref={node => this.node = node}>
 				<div>
-					<UpsellBanner component="space" route={analytics.route.settingsSpaceShare} />
-					<UpsellBanner component="members" route={analytics.route.settingsSpaceShare} />
+					<UpsellBanner components={[ 'members', 'space'  ]} route={analytics.route.settingsSpaceShare} />
 				</div>
 
 				<div id="titleWrapper" className="titleWrapper">

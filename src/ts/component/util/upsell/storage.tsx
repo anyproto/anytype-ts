@@ -5,12 +5,14 @@ import { S, translate, U, I, Action, analytics } from 'Lib';
 interface Props {
 	tier: any;
 	route: string;
+	isRed: boolean;
 	className?: string;
 };
 
 const UpsellStorage: FC<Props> = ({
 	tier = {},
 	route = '',
+	isRed = false,
 	className = '',
 }) => {
 
@@ -26,12 +28,6 @@ const UpsellStorage: FC<Props> = ({
 	const usagePercent = bytesUsed / bytesLimit * 100;
 	const roundedUsagePercent = Math.ceil(usagePercent / 5) * 5;
 	const output = usagePercent < 90 ? roundedUsagePercent : Math.round(usagePercent);
-	const show = usagePercent > 55;
-	const isRed = usagePercent >= 100 || notSyncedCounter;
-
-	if (!show) {
-		return null;
-	};
 
 	let incentiveText = '';
 	let upsellText = '';
