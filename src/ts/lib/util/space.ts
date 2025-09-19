@@ -179,6 +179,14 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the list of shared that user owns;
+	 * @returns {any[]} The list of active spaces.
+	 */
+	getMySharedSpacesList () {
+		return this.getList().filter(it => U.Space.isMyOwner(it.targetSpaceId) && it.isShared)
+	};
+
+	/**
 	 * Gets the spaceview object for a given ID or the current spaceview.
 	 * @param {string} [id] - The spaceview ID.
 	 * @returns {any} The spaceview object.

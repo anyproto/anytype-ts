@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, Error } from 'Component';
+import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
 import { I, C, S, U, translate, Preview, Action, analytics } from 'Lib';
 import Members from './share/members';
 
@@ -43,6 +43,10 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 		return (
 			<div ref={node => this.node = node}>
+				<div>
+					<UpsellBanner components={[ 'members', 'space'  ]} route={analytics.route.settingsSpaceShare} />
+				</div>
+
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 				</div>
@@ -50,7 +54,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				<div id="sectionInvite" className="section sectionInvite">
 					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 
-					<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', U.Space.isMyOwner() ? 'canEdit' : '' ].join(' ')} onClick={this.onInviteMenu}>
+					<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', this.canEdit() ? 'canEdit' : '' ].join(' ')} onClick={this.onInviteMenu}>
 						<Icon className={isLoading ? 'loading' : icon} />
 						<div className="info">
 							<Title text={name} />
@@ -125,7 +129,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	onInviteMenu () {
-		if (!U.Space.isMyOwner()) {
+		if (!this.canEdit()) {
 			return;
 		};
 
@@ -137,10 +141,17 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			I.InviteLinkType.Viewer
 		];
 		const ids: I.InviteLinkType[] = noApproveIds.concat([ I.InviteLinkType.Manual ]);
-		const options: any[] = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
+
+		let options: any[] = [];
+
+		if (!this.isSharedSpacesLimit()) {
+			options = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
+		};
 
 		if (isOnline && !isLocalNetwork) {
-			options.push({ isDiv: true });
+			if (options.length) {
+				options.push({ isDiv: true });
+			};
 			options.push(this.getOptionById(I.InviteLinkType.None));
 		};
 
@@ -246,6 +257,13 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		analytics.event('ScreenShareMenu');
 	};
 
+	isSharedSpacesLimit () {
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+
+		return mySharedSpaces.length >= sharedSpacesLimit;
+	};
+
 	getOptionById (id) {
 		const suffix = I.InviteLinkType[id];
 
@@ -286,6 +304,14 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 		this.setState({ error: error.description });
 		return true;
+	};
+
+	canEdit () {
+		const { cid, key } = this.state;
+		const hasLink = cid && key;
+		const isLimit = this.isSharedSpacesLimit();
+
+		return U.Space.isMyOwner() && (!isLimit || hasLink);
 	};
 
 });

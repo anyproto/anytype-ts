@@ -57,12 +57,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				memberUpgradeType = 'members';
 				showLimit = true;
-			} else
-			if (!U.Space.getWriterLimit()) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
-				memberUpgradeType = 'editors';
-				showLimit = true;
 			};
 		};
 
@@ -232,14 +226,10 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		const tier = U.Data.getMembershipTier(membership.tier);
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
 
-		let items: any[] = [] as any[];
-
-		if (!tier?.price || (U.Space.getReaderLimit() - 1 >= 0)) {
-			items.push({ id: String(I.ParticipantPermissions.Reader) });
-		};
-		if (!tier?.price || (U.Space.getWriterLimit() - 1 >= 0)) {
-			items.push({ id: I.ParticipantPermissions.Writer });
-		};
+		let items: any[] = [
+			{ id: String(I.ParticipantPermissions.Reader), disabled: U.Space.getReaderLimit() - 1 < 0 },
+			{ id: I.ParticipantPermissions.Writer, disabled: U.Space.getWriterLimit() - 1 < 0 },
+		] as any[];
 
 		items = items.map(it => {
 			it.name = translate(`participantPermissions${it.id}`);
