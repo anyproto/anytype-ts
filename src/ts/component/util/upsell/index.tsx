@@ -117,9 +117,10 @@ const UpsellBanner: FC<Props> = ({
 	const Component = Components[c] || null;
 	const { isShown, isRed } = getConditions(c);
 	const canShow = U.Common.checkCanMembershipUpgrade()
+		&& U.Space.isMyOwner()
 		&& U.Data.isAnytypeNetwork()
-		&& membershipTiers[0]
-		&& (membershipTiers[0].id != membership.tier)
+		&& tier
+		&& (tier.id != membership.tier)
 		&& isShown;
 	const tierCanNotUpgrade = !tier.price || !tier.period || !tier.periodType;
 
