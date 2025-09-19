@@ -5,6 +5,7 @@ const HIGHLIGHTS_MAP = {
 	whatsNew: [ '#button-widget-help', '#menuHelp #item-whatsNew' ],
 	shortcut: [ '#button-widget-help', '#menuHelp #item-shortcut' ],
 	hints: [ '#button-widget-help', '#menuHelp #item-hints' ],
+	createSpace: [ '#sidebarRightButton' ],
 };
 
 class Highlight {
