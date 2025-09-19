@@ -1168,7 +1168,7 @@ class UtilData {
 		});
 	};
 
-	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+	widgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
 		object = object || {};
 
 		let ret: any = {};

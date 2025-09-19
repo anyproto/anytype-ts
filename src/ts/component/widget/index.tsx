@@ -46,7 +46,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
-		return U.Data.windgetContentParam(object, block);
+		return U.Data.widgetContentParam(object, block);
 	};
 
 	const param = getContentParam();
@@ -297,6 +297,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				isEditing: true,
 				blockId: block.id,
 				setEditing,
+				isPreview,
 			}
 		});
 	};
