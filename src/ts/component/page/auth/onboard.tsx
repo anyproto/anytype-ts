@@ -68,6 +68,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 				Storage.set('chatsOnboarding', true);
 				Storage.setOnboarding('objectDescriptionButton');
 				Storage.setOnboarding('typeResetLayout');
+				Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 				if (redirect) {
 					U.Router.go(redirect, routeParam);
