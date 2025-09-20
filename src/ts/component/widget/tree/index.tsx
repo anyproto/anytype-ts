@@ -158,10 +158,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const subscribeToChildNodes = (nodeId: string, links: string[], withLimit: boolean): void => {
 		links = filterDeletedLinks(links);
 
-		if (!links.length) {
-			return;
-		};
-
 		if (withLimit) {
 			links = links.slice(0, getLimit());
 		};
@@ -175,11 +171,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		subscriptionHashes.current[nodeId] = hash;
-		U.Subscription.subscribeIds({
-			subId,
-			ids: links,
-			keys: J.Relation.sidebar,
-			noDeps: true,
+
+		U.Subscription.destroyList([ subId ], true, () => {
+			U.Subscription.subscribeIds({
+				subId,
+				ids: links,
+				keys: J.Relation.sidebar,
+				noDeps: true,
+			});
 		});
 	};
 
