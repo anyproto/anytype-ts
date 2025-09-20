@@ -472,19 +472,26 @@ class ChatStore {
 
 		const { creator, content, attachments, dependencies } = message;
 		const { text, marks } = content || {};
+
+		if (!text && !attachments.length) {
+			return '';
+		};
+
 		const participantId = U.Space.getParticipantId(spaceId, creator);
 		const author = dependencies.find(it => it.id == participantId);
 		const ret = [];
 
 		if (author) {
-			ret.push(author.name);
+			ret.push(`${author.name}:`);
 		};
+
 		if (text) {
 			let t = U.Common.sanitize(Mark.insertEmoji(text, marks));
 			t = t.replace(/\n\r?/g, ' ');
 
 			ret.push(t);
-		} else 
+		};
+
 		if (attachments.length) {
 			const names = attachments.map(item => {
 				const object = dependencies.find(it => it.id == item.target);
@@ -494,7 +501,7 @@ class ChatStore {
 			ret.push(names);
 		};
 
-		return ret.join(': ');
+		return ret.join(' ');
 	};
 
 	/**
