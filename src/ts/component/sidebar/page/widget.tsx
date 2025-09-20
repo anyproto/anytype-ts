@@ -91,6 +91,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				const child = this.getChild(block.id);
 				const object = this.getObject(block, child?.getTargetObjectId());
+				const param = U.Data.widgetContentParam(object, block);
+				const hasMenu = [ I.WidgetLayout.View, I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(param.layout);
 
 				let icon = null;
 				let buttons = null;
@@ -102,7 +104,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					buttons = (
 						<>
 							<Icon className="expand withBackground" onClick={this.onExpand} />
-							<Icon id="button-widget-more" className="more withBackground" onClick={this.onMore} />
+							{hasMenu ? <Icon id="button-widget-more" className="more withBackground" onClick={this.onMore} /> : ''}
 						</>
 					);
 				};
