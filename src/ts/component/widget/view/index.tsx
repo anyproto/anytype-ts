@@ -36,7 +36,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const filterTimeout = useRef(0);
 	const traceId = getTraceId();
 	const rootId = block ? [ targetId, traceId ].join('-') : '';
-	const subId = [ S.Record.getSubId(rootId, J.Constant.blockId.dataview), viewId ].join('-');
+	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 	const viewType = view ? view.type : I.ViewType.List;
@@ -83,7 +83,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	const load = (viewId: string) => {
 		if (childRef.current?.load) {
-			childRef.current?.load();
+			childRef.current?.load(searchIds);
 			S.Record.metaSet(subId, '', { viewId });
 			return;
 		};
@@ -203,7 +203,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const isEmpty = !length && showEmpty;
 	const childProps = {
 		...props,
-		ref: childRef.current,
+		ref: childRef,
 		rootId,
 		subId,
 		reload: () => load(viewId),

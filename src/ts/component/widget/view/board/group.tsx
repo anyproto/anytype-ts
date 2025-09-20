@@ -18,7 +18,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	const { rootId, block, id, value, canCreate, onCreate, getView, getViewLimit, getObject, getContentParam } = props;
 	const { viewId } = getContentParam();
 	const view = getView();
-	const subId = [ S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id), viewId ].join('-');
+	const subId = S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
 	const object = getObject();
 	const limit = getViewLimit();
 	const { total } = S.Record.getMeta(subId, '');

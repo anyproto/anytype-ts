@@ -42,8 +42,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(groupRelationKey, U.Date.timestamp(item.y, item.m, item.d), 'auto');
-				}
-			}
+				},
+			},
 		});
 	};
 

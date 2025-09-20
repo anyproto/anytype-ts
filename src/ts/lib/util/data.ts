@@ -252,8 +252,6 @@ class UtilData {
 				};
 
 				U.Subscription.createSpace(() => {
-					console.log('CREATE SPACE SUB');
-
 					S.Block.updateTypeWidgetList();
 
 					S.Common.pinInit(() => {
