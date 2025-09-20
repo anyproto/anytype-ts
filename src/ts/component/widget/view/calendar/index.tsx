@@ -146,7 +146,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 			}
 		];
 
-		if (searchIds.length) {
+		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 

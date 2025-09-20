@@ -28,7 +28,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ searchIds, setSearchIds ] = useState<string[]>([]);
+	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
 	const filterRef = useRef(null);
@@ -64,7 +64,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			getData(subId);
 		} else 
 		if (view) {
-			load(view.id);
+			load(view.id, true);
 		};
 	};
 
@@ -81,7 +81,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		selectRef.current?.setOptions(views);
 	};
 
-	const load = (viewId: string) => {
+	const load = (viewId: string, clear?: boolean) => {
 		if (childRef.current?.load) {
 			childRef.current?.load(searchIds);
 			S.Record.metaSet(subId, '', { viewId });
@@ -107,6 +107,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
 			noDeps: true,
+			clear,
 		});
 	};
 
@@ -121,7 +122,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters = filters.concat(childRef.current?.getFilters());
 		};
 
-		if (searchIds.length) {
+		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds });
 		};
 
@@ -178,7 +179,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filter.current = v;
 
 			if (!filter.current) {
-				setSearchIds([]);
+				setSearchIds(null);
 				return;
 			};
 
@@ -206,7 +207,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		ref: childRef,
 		rootId,
 		subId,
-		reload: () => load(viewId),
+		reload: () => load(viewId, true),
 		getRecordIds,
 		getView: () => view,
 		getViewType: () => viewType,
@@ -381,13 +382,13 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		if (!isSystemTarget) {
-			load(viewId);
+			load(viewId, true);
 		};
 	}, [ viewId ]);
 
 	useEffect(() => {
 		if (view) {
-			load(view.id);
+			load(view.id, true);
 		};
 	}, [ searchIds ]);
 

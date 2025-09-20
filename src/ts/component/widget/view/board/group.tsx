@@ -41,7 +41,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 
-		if (searchIds.length) {
+		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
