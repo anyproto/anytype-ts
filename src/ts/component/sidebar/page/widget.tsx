@@ -739,11 +739,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				noClose: true,
 				onSelect: (e: any, item: any) => {
 					const cb = () => {
-						const updatedParam = U.Data.widgetContentParam(object, block);
-
-						options = this.getPreviewOptions(updatedParam, relationKey, type);
-						menuContext.ref.updateOptions(options);
+						menuContext.close();
 					};
+
 					if (item.isLayout) {
 						switch (block.content.section) {
 							case I.WidgetSection.Pin: {
@@ -752,7 +750,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							};
 
 							case I.WidgetSection.Type: {
-								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: item.layout } ], cb);
+								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: Number(item.layout) } ], cb);
 								break;
 							};
 						};
@@ -778,7 +776,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const child = this.getChild(block.id);
 		const object = this.getObject(block, child?.getTargetObjectId());
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(object?.id, object?.layout, true));
-		const appearance: any[] = layoutOptions.map(it => ({ isLayout: true, layout: it.id, name: it.name, checkbox: it.id == param.layout}))
+		const appearance: any[] = layoutOptions.map(it => ({ isLayout: true, layout: it.id, name: it.name, checkbox: it.id == param.layout}));
 
 		appearance.unshift({ isSection: true, name: translate('commonAppearance') });
 
