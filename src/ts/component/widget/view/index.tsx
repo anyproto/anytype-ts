@@ -121,7 +121,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters = filters.concat(childRef.current?.getFilters());
 		};
 
-		if (filter.current) {
+		if (searchIds.length) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds });
 		};
 

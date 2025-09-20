@@ -146,6 +146,10 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 			}
 		];
 
+		if (searchIds.length) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
+
 		Dataview.getData({
 			rootId,
 			blockId: J.Constant.blockId.dataview,
