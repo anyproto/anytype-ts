@@ -760,12 +760,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onEmpty (e: any) {
-		const { isInline } = this.props;
+		const { isInline, block, rootId } = this.props;
 
+		let element = '';
 		if (isInline) {
-			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
+			element = `#block-${block.id} #head-source-select`;
+			this.onSourceSelect(element, { horizontal: I.MenuDirection.Center });
 		} else {
-			this.onSourceTypeSelect(e.currentTarget);
+			element = `#${Relation.cellId('blockFeatured', 'setOf', rootId)}`;
+			this.onSourceTypeSelect(element);
 		};
 	};
 
