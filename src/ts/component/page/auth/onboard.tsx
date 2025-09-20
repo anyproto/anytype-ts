@@ -275,11 +275,18 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')} color="accent" onClick={onPhraseCopy} />
+						<Button 
+							ref={nextRef} 
+							className={cnb.join(' ')}
+							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')} 
+							color="accent" 
+							onClick={phraseVisible ? onForward : onPhraseCopy}
+						/>
 					</div>
+
 					{!phraseVisible ? (
 						<div className="animation">
-							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 						</div>
 					) : ''}
 				</>
@@ -304,14 +311,9 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			);
 
 			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
-					</div>
-					{/*<div className="animation">*/}
-					{/*	<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />*/}
-					{/*</div>*/}
-				</>
+				<div className="animation">
+					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+				</div>
 			);
 			break;
 		};
@@ -330,10 +332,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 					</div>
 				</>
 			);
@@ -354,10 +356,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={onForward} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 					</div>
 				</>
 			);
