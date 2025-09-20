@@ -11,11 +11,6 @@
     /* PopupHelp */
 
     .popup.popupHelp {
-		.head {
-			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
-			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
-		}
-
 		.highlight { color: var(--color-system-accent-100); background: var(--color-shape-highlight-medium); }
 		a:hover { color: var(--color-system-accent-100); }
 	}

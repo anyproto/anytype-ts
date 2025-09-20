@@ -107,16 +107,6 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 			ref={nodeRef}
 			className="wrapper"
 		>
-			<div className="head">
-				<div className="side left">
-					{title ? <Label text={title.text} /> : ''}
-				</div>
-				<div className="side right">
-					<Label text={translate('popupHelpLabel')} />
-					<Icon onClick={() => Action.openUrl(J.Url.mail)} className="mail" />
-				</div>
-			</div>
-			
 			<div className={cn.join(' ')}>
 				{cover ? <Cover {...cover.param} /> : ''}
 

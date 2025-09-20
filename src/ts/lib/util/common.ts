@@ -1833,7 +1833,7 @@ class UtilCommon {
 	 * Shows the "What's New" popup and updates storage.
 	 */
 	showWhatsNew () {
-		S.Popup.open('help', { data: { document: 'whatsNew' }, className: 'popupWhatsNew' });
+		S.Popup.open('help', { data: { document: 'whatsNew' } });
 		Storage.set('whatsNew', false);
 	};
 
