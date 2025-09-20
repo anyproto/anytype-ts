@@ -33,15 +33,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const filter = String(storage.filter || '');
 	const filterValueRef = useRef(filter);
 
-	const initCache = () => {
-		const items = getItems();
-
-		cacheRef.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_SECTION,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
+	cacheRef.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION });
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -214,6 +206,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onClearSearch = () => {
 		offsetRef.current = 0;
+		filterInputRef.current?.setValue('');
 
 		storageSet({ backlink: '' });
 		setBacklink(null);
@@ -224,11 +217,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			offsetRef.current += J.Constant.limit.menuRecords;
 			load(false, () => resolve(null));
 		});
-	};
-
-	const resetSearch = () => {
-		filterInputRef.current?.setValue('');
-		reload();
 	};
 
 	const reload = () => {
@@ -563,7 +551,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const storage = storageGet();
-		const storageBacklink = storage.backlink;
 		const filter = String(storage.filter || '');
 
 		const setFilter = () => {
@@ -574,15 +561,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			rangeRef.current = { from: 0, to: filter.length };
 			filterInputRef.current.setValue(filter);
 			filterInputRef.current.setRange(rangeRef.current);
+
 			reload();
 		};
 
-		initCache();
 		focus.clear(true);
 		window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
-		if (storageBacklink) {
-			U.Object.getById(storageBacklink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
+		if (storage.backlink) {
+			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
 		} else {
 			setFilter();
 		};
@@ -599,7 +586,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		const items = getItems();
 
-		initCache();
 		setActive(items[nRef.current]);
 
 		if (listRef.current) {
@@ -607,10 +593,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 	});
-
-	useEffect(() => {
-		resetSearch();
-	}, [ backlink ]);
 
 	const items = getItems();
 	const shift = keyboard.shiftSymbol();
