@@ -40,6 +40,19 @@
 					}
 				}
 			}
+
+			&.textHeader4 {
+				.wrap > span { display: inline-block; vertical-align: top; position: relative; }
+				.wrap > span {
+					&:not(:first-child) { padding-left: 19px; }
+					&:not(:first-child) {
+						&:before {
+							content: ''; position: absolute; left: 8px; top: 10px; width: 3px; height: 3px;
+							background: var(--color-control-active); border-radius: 50%;
+						}
+					}
+				}
+			}
 		}
 		.block.blockDiv { margin: 30px 0px; }
 	}

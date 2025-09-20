@@ -129,6 +129,8 @@ const App: FC = () => {
 	const init = () => {
 		const { version, arch, getGlobal } = electron;
 
+		window.setTimeout(() => U.Common.showWhatsNew(), 2500);
+
 		U.Router.init(history);
 		U.Smile.init();
 
