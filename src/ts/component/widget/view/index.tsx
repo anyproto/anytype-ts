@@ -383,7 +383,13 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (!isSystemTarget) {
 			load(viewId);
 		};
-	}, [ viewId, searchIds ]);
+	}, [ viewId ]);
+
+	useEffect(() => {
+		if (view) {
+			load(view.id);
+		};
+	}, [ searchIds ]);
 
 	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
