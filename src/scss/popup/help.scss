@@ -24,4 +24,8 @@
 		.highlight { color: var(--color-red); background: var(--color-shape-tertiary); white-space: nowrap; }
 		.buttons { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0px 16px; }
 	}
+	.popup.popupHelp.popupWhatsNew {
+		.innerWrap { padding-top: 0px; }
+		.head { display: none; }
+	}
 }
