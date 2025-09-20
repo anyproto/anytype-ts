@@ -8,9 +8,13 @@ interface State {
 	isLoading: boolean;
 };
 
+interface Props extends I.PageSettingsComponent {
+	onStopSharing: () => void;
+};
+
 const HEIGHT = 64;
 
-const Members = observer(class Members extends React.Component<I.PageSettingsComponent, State> {
+const Members = observer(class Members extends React.Component<Props, State> {
 
 	node: any = null;
 	cache: any = null;
@@ -21,7 +25,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		isLoading: false,
 	};
 
-	constructor (props: I.PageSettingsComponent) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
@@ -262,6 +266,16 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 	onChangePermissions (item: any, v: any, isNew?: boolean) {
 		const { space } = S.Common;
 
+		const onAfterRemove = () => {
+			const my = U.Space.getParticipant();
+			const members = this.getParticipantList().filter(it => it.id != my.id);
+
+			if (!members.length) {
+				this.props.onStopSharing();
+				return;
+			};
+		};
+
 		let title = '';
 		let text = '';
 		let button = '';
@@ -275,9 +289,9 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 				onConfirm = () => {
 					if (isNew) {
-						C.SpaceRequestDecline(space, item.identity);
+						C.SpaceRequestDecline(space, item.identity, onAfterRemove);
 					} else {
-						C.SpaceParticipantRemove(space, [ item.identity ]);
+						C.SpaceParticipantRemove(space, [ item.identity ], onAfterRemove);
 					};
 
 					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');

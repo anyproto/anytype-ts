@@ -161,6 +161,10 @@
 	.block.blockText.textHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
 
+	/* Header4 */
+	.block.blockText.textHeader4 { padding: 8px 0px 0px 0px; }
+	.block.blockText.textHeader4 > .wrapContent > .selectionTarget > .dropTarget { @include text-common; font-weight: 500; color: var(--color-text-secondary); padding: 1px 0px 2px 0px; }
+
 	/* Quote */
 	
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }

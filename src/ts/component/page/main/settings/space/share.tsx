@@ -34,6 +34,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		this.onCopy = this.onCopy.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
 		this.onUpgrade = this.onUpgrade.bind(this);
+		this.onStopSharing = this.onStopSharing.bind(this);
 	};
 
 	render () {
@@ -73,7 +74,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 					) : ''}
 				</div>
 
-				<Members {...this.props} />
+				<Members {...this.props} onStopSharing={this.onStopSharing} />
 
 				<Error text={error} />
 			</div>
@@ -294,6 +295,24 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			containerId: getId(),
 			cid,
 			key,
+		});
+	};
+
+	onStopSharing () {
+		C.SpaceStopSharing(S.Common.space, (message) => {
+			if (!message.error.code) {
+				this.setInvite('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.Reader);
+				
+				S.Popup.open('confirm', {
+					data: {
+						icon: 'warning',
+						title: translate(`popupConfirmStopSharingSpaceTitle`),
+						text: translate(`popupConfirmStopSharingSpaceText`),
+						textConfirm: translate('commonOkay'),
+						canCancel: false,
+					}
+				});
+			};
 		});
 	};
 
