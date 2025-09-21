@@ -179,7 +179,17 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		return ret;
 	};
 
-	useEffect(() => setSelectsValue(), []);
+	useEffect(() => {
+		setSelectsValue();
+
+		return () => {
+			const subIds = [];
+			U.Date.getCalendarMonth(value).forEach(it => {
+				subIds.push(getDaySubId(it.d, it.m, it.y));
+			});
+			U.Subscription.destroyList(subIds);
+		};
+	}, []);
 	useEffect(() => {
 		setSelectsValue();
 		reload();
