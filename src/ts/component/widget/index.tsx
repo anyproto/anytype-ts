@@ -868,13 +868,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		rebind();
 		setDummy(dummy + 1);
 
+		const node = $(nodeRef.current);
+
+		node.addClass('anim');
+		window.setTimeout(() => node.addClass('show'), J.Constant.delay.widgetItem);
+
 		return () => {
 			unbind();
 			window.clearTimeout(timeout.current);
 		};
 	}, []);
 
-	useEffect(() => initToggle());
+	useEffect(() => {
+		initToggle();
+
+		$(nodeRef.current).addClass('show');
+	});
 
 	return (
 		<div

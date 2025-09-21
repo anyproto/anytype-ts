@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
+.widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; opacity: 0; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { padding: 8px; }
@@ -75,6 +75,9 @@
 			}
 		}
 	}
+
+	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
+	&.show { opacity: 1; }
 
 	#button-show-all { padding: 0px 8px; }
 	#button-show-all {
