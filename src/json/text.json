@@ -336,6 +336,7 @@
 	"electronMenuFlagAnalytics": "Analytics",
 	"electronMenuFlagMw": "Middleware",
 	"electronMenuFlagMwRequest": "Request/Response",
+	"electronMenuFlagMwSubscribe": "Subscriptions",
 	"electronMenuFlagMwEvent": "Common events",
 	"electronMenuFlagMwSync": "Sync events",
 	"electronMenuFlagMwFile": "File events",

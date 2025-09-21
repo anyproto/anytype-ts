@@ -152,7 +152,7 @@ class UtilSubscription {
 		const { config } = S.Common;
 		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
-		const debug = config.flagsMw.request;
+		const debug = config.flagsMw.subscribe;
 		const filters = this.defaultFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
@@ -226,7 +226,7 @@ class UtilSubscription {
 		const { spaceId, subId, noDeps, updateDetails } = param;
 		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 		const keys = this.mapKeys(param);
-		const debug = config.flagsMw.request;
+		const debug = config.flagsMw.subscribe;
 
 		if (!subId) {
 			if (debug) {
@@ -322,7 +322,7 @@ class UtilSubscription {
 		const { config } = S.Common;
 		const { spaceId, offset, limit, skipLayoutFormat, fullText } = param;
 		const keys = this.mapKeys(param);
-		const debug = config.flagsMw.request;
+		const debug = config.flagsMw.subscribe;
 		const filters = this.defaultFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 

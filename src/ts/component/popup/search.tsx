@@ -16,7 +16,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { route, onObjectSelect, skipIds } = data;
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ backlink, setBacklink ] = useState(null);
+	const backlinkRef = useRef(null);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -65,7 +65,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('escape', e, () => {
-			if (backlink) {
+			if (backlinkRef.current) {
 				onClearSearch();
 			} else {
 				close();
@@ -192,11 +192,14 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		e.stopPropagation();
 
 		storageSet({ backlink: item.id });
+		filterInputRef.current?.setValue('');
 		setBacklinkState(item, 'Empty');
 	};
 
 	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
-		setBacklink(item);
+		filterInputRef.current?.setValue('');
+		backlinkRef.current = item;
+
 		analytics.event('SearchBacklink', { route, type });
 
 		if (callBack) {
@@ -207,9 +210,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onClearSearch = () => {
 		offsetRef.current = 0;
 		filterInputRef.current?.setValue('');
+		backlinkRef.current = null;
 
 		storageSet({ backlink: '' });
-		setBacklink(null);
+		reload();
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
@@ -254,13 +258,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let limit = J.Constant.limit.menuRecords;
 
-		if (!filterValueRef.current && clear && !backlink) {
+		if (!filterValueRef.current && clear && !backlinkRef.current) {
 			limit = 8;
 		};
 
-		if (backlink) {
-			const links = Relation.getArrayValue(backlink.links);
-			const backlinks = Relation.getArrayValue(backlink.backlinks);
+		if (backlinkRef.current) {
+			const links = Relation.getArrayValue(backlinkRef.current.links);
+			const backlinks = Relation.getArrayValue(backlinkRef.current.backlinks);
 
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
 		};
@@ -325,8 +329,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
-		if (backlink) {
-			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
+		if (backlinkRef.current) {
+			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
 		} else 
 		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
