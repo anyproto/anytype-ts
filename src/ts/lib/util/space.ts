@@ -183,7 +183,7 @@ class UtilSpace {
 	 * @returns {any[]} The list of active spaces.
 	 */
 	getMySharedSpacesList () {
-		return this.getList().filter(it => U.Space.isMyOwner(it.targetSpaceId) && it.isShared)
+		return this.getList().filter(it => U.Space.isMyOwner(it.targetSpaceId) && it.isShared);
 	};
 
 	/**

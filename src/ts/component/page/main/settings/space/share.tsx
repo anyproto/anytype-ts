@@ -259,10 +259,10 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	isSharedSpacesLimit () {
-		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
 		const { sharedSpacesLimit } = U.Space.getProfile();
 
-		return mySharedSpaces.length >= sharedSpacesLimit;
+		return sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 	};
 
 	getOptionById (id) {

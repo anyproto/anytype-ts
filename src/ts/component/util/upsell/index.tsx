@@ -48,6 +48,7 @@ const UpsellBanner: FC<Props> = ({
 
 				break;
 			};
+
 			case 'members': {
 				const space = U.Space.getSpaceview();
 				if (!space) {
@@ -61,11 +62,12 @@ const UpsellBanner: FC<Props> = ({
 				isRed = editors.length >= limit;
 				break;
 			};
+
 			case 'space': {
-				const mySharedSpaces = U.Space.getMySharedSpacesList();
+				const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
 				const { sharedSpacesLimit } = U.Space.getProfile();
 
-				isShown = mySharedSpaces.length >= sharedSpacesLimit;
+				isShown = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 				isRed = isShown;
 				break;
 			};
