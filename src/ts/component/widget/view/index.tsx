@@ -129,6 +129,20 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		return filters;
 	};
 
+	const getSorts = () => {
+		if (!view) {
+			return [];
+		};
+
+		const sorts: I.Sort[] = U.Common.objectCopy(view.sorts || []);
+
+		if (!sorts.length) {
+			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
+		};
+
+		return sorts;
+	};
+
 	const getView = () => {
 		return Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 	};
@@ -183,15 +197,17 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				return;
 			};
 
-			U.Subscription.destroyList([ subId ]);
+			const view = getView();
 
-			U.Subscription.search({
-				filters: [],
-				sorts: [],
-				fullText: filter.current,
-				keys: [ 'id' ],
-			}, (message: any) => {
-				setSearchIds((message.records || []).map(it => it.id));
+			U.Subscription.destroyList([ subId ], false, () => {
+				U.Subscription.search({
+					filters: getFilters(),
+					sorts: getSorts(),
+					fullText: filter.current,
+					keys: [ 'id' ],
+				}, (message: any) => {
+					setSearchIds((message.records || []).map(it => it.id));
+				});
 			});
 		}, J.Constant.delay.keyboard);
 	};
