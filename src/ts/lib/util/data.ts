@@ -1,6 +1,12 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
 
+const TYPE_KEYS = [
+	J.Constant.typeKey.page,
+	J.Constant.typeKey.task,
+	J.Constant.typeKey.note,
+];
+
 /**
  * Utility class for data manipulation, formatting, and application-level helpers.
  * Provides methods for block styling, authentication, sorting, and more.
@@ -677,6 +683,16 @@ class UtilData {
 	 */
 	sortByLastUsedDate (c1: any, c2: any) {
 		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
+	};
+
+	/**
+	 * Sorts two objects by their type key.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
+	sortByTypeKey (c1: any, c2: any) {
+		return TYPE_KEYS.indexOf(c1.uniqueKey) - TYPE_KEYS.indexOf(c2.uniqueKey);
 	};
 
 	/**

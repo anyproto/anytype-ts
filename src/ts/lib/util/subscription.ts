@@ -510,6 +510,18 @@ class UtilSubscription {
 				sorts: [
 					{ relationKey: 'orderId', type: I.SortType.Asc },
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+					{ 
+						relationKey: 'uniqueKey', 
+						type: I.SortType.Custom, 
+						customOrder: [ 
+							J.Constant.typeKey.page, 
+							J.Constant.typeKey.task, 
+							J.Constant.typeKey.collection, 
+							J.Constant.typeKey.set, 
+							J.Constant.typeKey.bookmark,
+							J.Constant.typeKey.note, 
+						] 
+					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
