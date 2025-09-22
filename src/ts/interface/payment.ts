@@ -18,6 +18,12 @@ export enum TierType {
 	Starter					 = 21,
 	Pioneer					 = 22,
 	BuilderMonthly			 = 29,
+	Plus					 = 40,
+	PlusMonthly				 = 41,
+	Pro						 = 42,
+	ProMonthly				 = 43,
+	Ultra					 = 44,
+	UltraMonthly			 = 45,
 	Team					 = 1000,
 };
 
