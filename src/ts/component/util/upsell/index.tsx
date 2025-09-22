@@ -28,6 +28,10 @@ const UpsellBanner: FC<Props> = ({
 	};
 
 	const { membershipTiers } = S.Common;
+	if (!membershipTiers.length) {
+		return null;
+	};
+
 	const tier: I.MembershipTier = membershipTiers[0];
 	const { membership } = S.Auth;
 
