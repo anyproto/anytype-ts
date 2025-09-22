@@ -196,7 +196,7 @@ const App: FC = () => {
 				// Trigger reload after successfully setting device state to Foreground
 				if (deviceState == I.AppDeviceState.Foreground) {
 					window.location.reload();
-				}
+				};
 			});
 		});
 	};
