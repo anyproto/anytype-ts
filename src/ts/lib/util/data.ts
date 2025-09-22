@@ -2,8 +2,11 @@ import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
 
 const TYPE_KEYS = [
-	J.Constant.typeKey.page,
-	J.Constant.typeKey.task,
+	J.Constant.typeKey.page, 
+	J.Constant.typeKey.task, 
+	J.Constant.typeKey.collection, 
+	J.Constant.typeKey.set, 
+	J.Constant.typeKey.bookmark,
 	J.Constant.typeKey.note,
 ];
 
@@ -683,6 +686,13 @@ class UtilData {
 	 */
 	sortByLastUsedDate (c1: any, c2: any) {
 		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
+	};
+
+	/**
+	 * Returns the type sort keys.
+	 */
+	typeSortKeys () {
+		return TYPE_KEYS;
 	};
 
 	/**

@@ -513,14 +513,7 @@ class UtilSubscription {
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
-						customOrder: [ 
-							J.Constant.typeKey.page, 
-							J.Constant.typeKey.task, 
-							J.Constant.typeKey.collection, 
-							J.Constant.typeKey.set, 
-							J.Constant.typeKey.bookmark,
-							J.Constant.typeKey.note, 
-						] 
+						customOrder: U.Data.typeSortKeys(),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
