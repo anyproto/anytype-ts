@@ -226,13 +226,14 @@ const Members = observer(class Members extends React.Component<Props, State> {
 	};
 
 	getParticipantOptions (isNew?: boolean) {
-		const { membership } = S.Auth;
-		const tier = U.Data.getMembershipTier(membership.tier);
+		const space = U.Space.getSpaceview();
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
+		const isReaderLimit = !space.isChat && (U.Space.getReaderLimit() <= 0);
+		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
 
 		let items: any[] = [
-			{ id: String(I.ParticipantPermissions.Reader), disabled: U.Space.getReaderLimit() - 1 < 0 },
-			{ id: I.ParticipantPermissions.Writer, disabled: U.Space.getWriterLimit() - 1 < 0 },
+			{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
+			{ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit },
 		] as any[];
 
 		items = items.map(it => {
@@ -246,7 +247,7 @@ const Members = observer(class Members extends React.Component<Props, State> {
 
 		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
-		return items;
+		return U.Menu.prepareForSelect(items);
 	};
 
 	onPermissionsSelect (item: any, isNew?: boolean) {
