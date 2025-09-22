@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { I, S, U } from 'Lib';
 
 import UpsellStorage from './storage';
@@ -17,17 +18,18 @@ const Components = {
 	members: UpsellMembers,
 };
 
-const UpsellBanner: FC<Props> = ({
+const UpsellBanner = observer(forwardRef<{}, Props>(({
 	components = [],
 	route = '',
 	className = '',
-}) => {
+}, ref) => {
 
 	if (!components.length) {
 		return null;
 	};
 
 	const { membershipTiers } = S.Common;
+
 	if (!membershipTiers.length) {
 		return null;
 	};
@@ -35,7 +37,7 @@ const UpsellBanner: FC<Props> = ({
 	const tier: I.MembershipTier = membershipTiers[0];
 	const { membership } = S.Auth;
 
-	const getConditions = (item) => {
+	const getConditions = (item): { isShown: boolean; isRed: boolean } => {
 		let isShown = false;
 		let isRed = false;
 
@@ -55,7 +57,7 @@ const UpsellBanner: FC<Props> = ({
 
 			case 'members': {
 				const space = U.Space.getSpaceview();
-				if (!space) {
+				if (!space || space.isChat) {
 					return { isShown, isRed };
 				};
 
@@ -136,6 +138,6 @@ const UpsellBanner: FC<Props> = ({
 
 	return <Component className={className} route={route} tier={tier} isRed={isRed} />;
 
-};
+}));
 
 export default UpsellBanner;

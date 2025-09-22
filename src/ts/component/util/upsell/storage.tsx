@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 import { S, translate, U, I, Action, analytics } from 'Lib';
 
@@ -9,12 +10,12 @@ interface Props {
 	className?: string;
 };
 
-const UpsellStorage: FC<Props> = ({
+const UpsellStorage = observer(forwardRef<{}, Props>(({
 	tier = {},
 	route = '',
 	isRed = false,
 	className = '',
-}) => {
+}, ref) => {
 
 	const cn = [
 		'upsellBanner',
@@ -70,6 +71,6 @@ const UpsellStorage: FC<Props> = ({
 		</div>
 	);
 
-};
+}));
 
 export default UpsellStorage;

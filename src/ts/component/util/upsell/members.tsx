@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 import { S, translate, U, I, Action, analytics } from 'Lib';
 
@@ -9,18 +10,13 @@ interface Props {
 	className?: string;
 };
 
-const UpsellMembers: FC<Props> = ({
+const UpsellMembers = observer(forwardRef<{}, Props>(({
 	tier = {},
 	route = '',
 	isRed = false,
 	className = '',
-}) => {
+}, ref) => {
 
-	const cn = [
-		'upsellBanner',
-		'upsellMembers',
-		className,
-	];
 	const space = U.Space.getSpaceview();
 	if (!space) {
 		return null;
@@ -28,6 +24,11 @@ const UpsellMembers: FC<Props> = ({
 
 	const editors = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
 	const limit = space.writersLimit;
+	const cn = [
+		'upsellBanner',
+		'upsellMembers',
+		className,
+	];
 
 	let usageText = U.Common.sprintf(translate('upsellBannerMembersUsageText'), editors.length, limit);
 	if (isRed) {
@@ -51,6 +52,6 @@ const UpsellMembers: FC<Props> = ({
 		</div>
 	);
 
-};
+}));
 
 export default UpsellMembers;
