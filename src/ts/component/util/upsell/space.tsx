@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { S, translate, U, I, Action, analytics } from 'Lib';
+import { translate, U, Action, analytics } from 'Lib';
 
 interface Props {
 	tier: any;
@@ -9,12 +10,11 @@ interface Props {
 	className?: string;
 };
 
-const UpsellSpace: FC<Props> = ({
+const UpsellSpace = observer(forwardRef<{}, Props>(({
 	tier = {},
 	route = '',
-	isRed = false,
 	className = '',
-}) => {
+}, ref) => {
 
 	const cn = [
 		'upsellBanner',
@@ -22,8 +22,8 @@ const UpsellSpace: FC<Props> = ({
 		'isRed',
 		className,
 	];
-	const mySharedSpaces = U.Space.getMySharedSpacesList();
 
+	const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
 	const onClick = () => {
 		Action.membershipUpgrade(tier.id);
 
@@ -40,6 +40,6 @@ const UpsellSpace: FC<Props> = ({
 		</div>
 	);
 
-};
+}));
 
 export default UpsellSpace;
