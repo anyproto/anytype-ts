@@ -193,7 +193,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		storageSet({ backlink: item.id });
 		filterInputRef.current?.setValue('');
-		setBacklinkState(item, 'Empty');
+		setBacklinkState(item, 'Empty', () => reload());
 	};
 
 	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
