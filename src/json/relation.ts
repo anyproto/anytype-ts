@@ -50,9 +50,7 @@ export default {
 		'links',
 		'restrictions',
 		'source',
-		'lastModifiedDate',
-		'lastOpenedDate',
-		'timestamp'
+		'timestamp',
 	],
 
 	relation: [
