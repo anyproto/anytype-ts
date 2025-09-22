@@ -191,7 +191,13 @@ const App: FC = () => {
 		});
 
 		Renderer.on('power-event', (e: any, state: string) => {
-			C.AppSetDeviceState(state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground);
+			const deviceState = state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground;
+			C.AppSetDeviceState(deviceState, () => {
+				// Trigger reload after successfully setting device state to Foreground
+				if (deviceState == I.AppDeviceState.Foreground) {
+					window.location.reload();
+				}
+			});
 		});
 	};
 
