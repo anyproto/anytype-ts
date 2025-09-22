@@ -61,23 +61,30 @@ if (process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
 };
 
-powerMonitor.on('suspend', () => {
+powerMonitor.on('suspend', () => {	
 	if (lastPowerEvent == 'suspend') {
 		return;
 	};
 
-	WindowManager.sendToAll('power-event', 'suspend');
-	lastPowerEvent = 'suspend';
+	const firstWindow = WindowManager.getFirstWindow();
+	if (firstWindow) {
+		Util.send(firstWindow, 'power-event', 'suspend');
+		lastPowerEvent = 'suspend';
+	};
 });
 
-powerMonitor.on('resume', () => {
+powerMonitor.on('resume', () => {	
 	if (lastPowerEvent == 'resume') {
 		return;
 	};
 
-	WindowManager.sendToAll('power-event', 'resume');
-	lastPowerEvent = 'resume';
-
+	const firstWindow = WindowManager.getFirstWindow();
+	if (firstWindow) {
+		Util.send(firstWindow, 'power-event', 'resume');
+		lastPowerEvent = 'resume';
+	};
+	
+	WindowManager.sendToAll('reload');
 	Util.log('info', '[PowerMonitor] resume');
 });
 
