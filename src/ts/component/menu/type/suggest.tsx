@@ -76,7 +76,11 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (onMore) {
 			items = items.map((item: any) => {
-				item.onMore = e => onMore(e, context, item);
+				item.onMore = e => {
+					e.stopPropagation();
+
+					onMore(e, context, item);
+				};
 				return item;
 			});
 		};
