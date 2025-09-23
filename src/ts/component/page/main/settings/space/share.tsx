@@ -143,11 +143,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		];
 		const ids: I.InviteLinkType[] = noApproveIds.concat([ I.InviteLinkType.Manual ]);
 
-		let options: any[] = [];
-
-		if (!this.isSharedSpacesLimit()) {
-			options = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
-		};
+		const options: any[] = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
 
 		if (isOnline && !isLocalNetwork) {
 			if (options.length) {
@@ -265,7 +261,10 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		return sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 	};
 
-	getOptionById (id) {
+	getOptionById (id: I.InviteLinkType) {
+		const space = U.Space.getSpaceview();
+		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
+		const isDisabled = (id == I.InviteLinkType.Editor) && isWriterLimit;
 		const suffix = I.InviteLinkType[id];
 
 		return {
@@ -274,6 +273,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			name: translate(`popupSettingsSpaceShareMenuInvite${suffix}Title`),
 			description: translate(`popupSettingsSpaceShareMenuInvite${suffix}Description`),
 			withDescription: true,
+			disabled: isDisabled
 		};
 	};
 

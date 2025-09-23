@@ -51,7 +51,6 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 
 				isShown = usagePercent > 55;
 				isRed = usagePercent >= 100 || !!notSyncedCounter;
-
 				break;
 			};
 
