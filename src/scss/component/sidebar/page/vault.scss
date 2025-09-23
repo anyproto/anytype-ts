@@ -80,7 +80,7 @@
 		&.isProgress {
 			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
 
-			.icon { width: 48px; height: 48px; background-image: url('~img/logo/yellow.svg'); }
+			.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.svg'); }
 			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
 			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
