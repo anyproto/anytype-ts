@@ -328,8 +328,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { blockId, target } = data;
 		const isSystem = U.Menu.isSystemWidget(this.target?.id);
 
-		console.log(isSystem);
-
 		switch (item.id) {
 			case 'removeWidget': {
 				if (isSystem) {

@@ -35,6 +35,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		let iconMainElement = null;
 		let iconSideElement = null;
 		let nameElement = <div className="name">{name}</div>;
+		let hasClickable = false;
 
 		if (className) {
 			cn.push(className);
@@ -160,6 +161,8 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				);
 			};
 
+			hasClickable = true;
+
 			content = (
 				<>
 					<div 
@@ -181,10 +184,10 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				ref={node => this.node = node}
 				id={`item-${id}`} 
 				className={cn.join(' ')} 
-				onClick={hasClick ? onClick : undefined}
+				onClick={hasClick && !hasClickable ? onClick : undefined}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
-				onContextMenu={hasClick && withMore ? onMore : undefined}
+				onContextMenu={hasClick && !hasClickable && withMore ? onMore : undefined}
 				style={style}
 			>
 				{content}

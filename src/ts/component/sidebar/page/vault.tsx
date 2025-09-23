@@ -301,6 +301,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			icons.push('pin');
 		};
 
+		if (item.isMuted) {
+			cn.push('isMuted');
+		};
+
 		// placeholder for error logic
 		let withError = false;
 		if (withError) {
