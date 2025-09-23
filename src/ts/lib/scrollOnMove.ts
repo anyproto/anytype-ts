@@ -1,5 +1,3 @@
-import raf from 'raf';
-
 const BORDER = 100;
 const MAX_STEP = 10;
 const SPEED_DIV = 30; // bigger → slower overall
@@ -13,8 +11,8 @@ class ScrollOnMove {
 
 	x = 0;
 	y = 0;
-	frame = 0;
-	timeout = 0;
+	timeoutScroll = 0;
+	timeoutUp = 0;
 	isScrolling = false;
 	
 	onMouseDown (param: { isWindow?: boolean; container?: JQuery, onMouseUp?: () => void }) {
@@ -47,14 +45,14 @@ class ScrollOnMove {
 		this.x = x;
 		this.y = y;
 
-		if (this.isScrolling && !this.frame) {
-			this.frame = raf(this.loop);
+		if (this.isScrolling) {
+			this.timeoutScroll = window.setTimeout(this.loop, 50);
 		};
 
 		// Hack to fix events not being triggered on mouseup
 		if (isWindow) {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.onMouseUp(), 300);
+			window.clearTimeout(this.timeoutUp);
+			this.timeoutUp = window.setTimeout(() => this.onMouseUp(), 300);
 		};
 	};
 
@@ -65,10 +63,9 @@ class ScrollOnMove {
 			return;
 		};
 
-		// Only continue the loop if we actually scrolled this frame
 		const didScroll = this.adjustWindowScroll();
 		if (didScroll) {
-			this.frame = raf(this.loop);
+			this.timeoutScroll = window.setTimeout(this.loop, 50);
 		} else {
 			// Nothing to scroll (cursor left edges or we hit a limit) — stop the loop
 			this.clear();
@@ -148,10 +145,7 @@ class ScrollOnMove {
 	};
 
 	clear() {
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
-		};
+		window.clearTimeout(this.timeoutScroll);
 	};
 
 };
