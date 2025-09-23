@@ -338,7 +338,7 @@ class UtilSpace {
 			return 0;
 		};
 
-		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isReader);
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]);
 		return space.readersLimit - participants.length;
 	};
 
