@@ -29,6 +29,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
+	const prevIdsRef = useRef<string[]>(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
 	const filterRef = useRef(null);
@@ -196,8 +197,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				setSearchIds(null);
 				return;
 			};
-
-			const view = getView();
 
 			U.Subscription.destroyList([ subId ], false, () => {
 				U.Subscription.search({
@@ -403,9 +402,15 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ viewId ]);
 
 	useEffect(() => {
+		if (U.Common.objectCompare(searchIds, prevIdsRef.current)) {
+			return;
+		};
+
 		if (view) {
 			load(view.id, true);
 		};
+
+		prevIdsRef.current = searchIds;
 	}, [ searchIds ]);
 
 	useEffect(() => {
