@@ -10,7 +10,7 @@
 		}
 
 		.content { padding: 56px 150px 40px 150px; }
-		.highlight { background: var(--color-shape-tertiary); white-space: nowrap; border-radius: 4px; padding: 0px 4px; @include text-small; }
+		.highlight { background: var(--color-shape-tertiary); white-space: nowrap; border-radius: 4px; padding: 0px 4px; }
 		.buttons { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0px 16px; }
 	}
 }
