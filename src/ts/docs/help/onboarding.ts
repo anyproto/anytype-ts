@@ -12,7 +12,7 @@ export default {
 		],
 
 		param: {
-			element: '#button-widget-help',
+			element: '#button-help',
 			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
@@ -82,6 +82,7 @@ export default {
 
 	basics: () => ({
 		showDimmer: true,
+		category: translate('onboardingBasicsTitle'),
 		param: {
 			noArrow: true,
 			noClose: true,
@@ -90,52 +91,32 @@ export default {
 			width: 288,
 			offsetX: -312,
 			highlightElements: [],
-			hiddenElements: [ 
-				'#widget-buttons', 
-				'.widget', 
-				'#sidebarPageWidget #list > .buttons',
-				'#sidebarPageWidget #body',
-			],
-			/*
-			onClose: () => Onboarding.start('emailCollection', false),
-			*/
+			hiddenElements: [
+				'#widget-space',
+				'#sidebarPageWidget .section-pin',
+				'#sidebarPageWidget .section-type',
+				'#sidebarPageWidget > .bottom',
+			]
 		},
 		items: [
 			{
-				category: translate('onboardingSpacesTitle'),
 				description: translate('onboardingSpacesText'),
 				param: {
 					element: '#widget-space',
 				}
 			},
 			{
-				category: translate('onboardingWidgetsTitle'),
-				description: translate('onboardingWidgetsText'),
+				description: translate('onboardingPinnedText'),
+				cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
 				param: {
-					element: '.widgetView',
-					highlightElements: [ 
-						'#sidebarPageWidget .widget.widgetView', 
-						'#sidebarPageWidget .widget.widgetTree', 
-						'#sidebarPageWidget .widget.widgetLink',
-					]
+					element: '#sidebarPageWidget .section-pin',
 				}
 			},
 			{
-				category: translate('onboardingMultipleSpacesTitle'),
-				description: translate('onboardingMultipleSpacesText'),
-				cloneElementClassName: 'onboardingVaultItem',
+				description: translate('onboardingObjectsText'),
+				cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
 				param: {
-					element: '#vault #item-add',
-					offsetX: -318,
-				}
-			},
-			{
-				category: translate('onboardingGalleryTitle'),
-				description: translate('onboardingGalleryText'),
-				cloneElementClassName: 'onboardingVaultItem',
-				param: {
-					element: '#vault #item-gallery',
-					offsetX: -318,
+					element: '#sidebarPageWidget .section-type',
 				}
 			},
 		]
@@ -213,9 +194,9 @@ export default {
 				category: translate('onboardingCollectionsTitle'),
 				description: translate('onboardingCollectionsText'),
 				buttonText: translate('onboardingCollectionsButton'),
-				cloneElementClassName: 'onboardingDataviewEmptyButton',
+				cloneElementClassName: 'onboardingCollectionNewButton',
 				param: {
-					element: '#emptyButton',
+					element: '#button-dataview-add-record',
 					offsetY: 8,
 				}
 			}
