@@ -329,20 +329,6 @@ class UtilSpace {
 	};
 
 	/**
-	 * Gets the reader limit for the current space.
-	 * @returns {number} The reader limit.
-	 */
-	getReaderLimit () {
-		const space = this.getSpaceview();
-		if (!space) {
-			return 0;
-		};
-
-		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]);
-		return space.readersLimit - participants.length;
-	};
-
-	/**
 	 * Gets the writer limit for the current space.
 	 * @returns {number} The writer limit.
 	 */

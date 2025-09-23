@@ -42,27 +42,10 @@ const Members = observer(class Members extends React.Component<Props, State> {
 		};
 
 		const { isPopup } = this.props;
-		const { membership } = S.Auth;
-		const tier = U.Data.getMembershipTier(membership.tier);
-		const space = U.Space.getSpaceview();
 		const participant = U.Space.getParticipant();
 		const members = this.getParticipantList();
 		const length = members.length;
 		const isSpaceOwner = U.Space.isMyOwner();
-
-		let limitLabel = '';
-		let limitButton = '';
-		let showLimit = false;
-		let memberUpgradeType = '';
-
-		if (space.isShared) {
-			if (!U.Space.getReaderLimit() && tier?.price) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
-				memberUpgradeType = 'members';
-				showLimit = true;
-			};
-		};
 
 		const Member = (item: any) => {
 			const isCurrent = item.id == participant?.id;
@@ -133,13 +116,6 @@ const Members = observer(class Members extends React.Component<Props, State> {
 					<Title text={translate('commonMembers')} />
 					{length > 1 ? <Label text={String(length)} /> : ''}
 				</div>
-
-				{showLimit ? (
-					<div className="row payment">
-						<Label text={limitLabel} />
-						<Button className="payment" text={limitButton} onClick={() => this.onUpgrade(memberUpgradeType)} />
-					</div>
-				) : ''}
 
 				{this.cache ? (
 					<div id="list" className="rows">
@@ -228,11 +204,10 @@ const Members = observer(class Members extends React.Component<Props, State> {
 	getParticipantOptions (isNew?: boolean) {
 		const space = U.Space.getSpaceview();
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
-		const isReaderLimit = !space.isChat && (U.Space.getReaderLimit() <= 0);
 		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
 
 		let items: any[] = [
-			{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
+			{ id: I.ParticipantPermissions.Reader },
 			{ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit },
 		] as any[];
 
