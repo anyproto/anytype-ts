@@ -623,12 +623,8 @@ class UtilData {
 		if (c1.tmpOrder > c2.tmpOrder) return 1;
 		if (c1.tmpOrder < c2.tmpOrder) return -1;
 
-		if (c1.orderId && c2.orderId) {
-			if (c1.orderId > c2.orderId) return 1;
-			if (c1.orderId < c2.orderId) return -1;
-		} else {
-			return this.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc);
-		};
+		if (c1.orderId > c2.orderId) return 1;
+		if (c1.orderId < c2.orderId) return -1;
 
 		return 0;
 	};
