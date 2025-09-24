@@ -377,10 +377,16 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	componentDidMount(): void {
 		this.init();
+
+		$(window).off('checkWidgetToggles').on('checkWidgetToggles', () => this.init());
 	};
 
 	componentDidUpdate (): void {
 		this.init();
+	};
+
+	componentWillUnmount(): void {
+		$(window).off('checkWidgetToggles');
 	};
 
 	init () {
