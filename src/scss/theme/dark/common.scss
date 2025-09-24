@@ -153,7 +153,7 @@ html.themeDark {
 	markuphighlight { background: #044062 !important; }
 
 	.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
-	.onboardingElement { background-color: #000 !important; }
+	.onboardingElement:not(.onboardingCollectionNewButton) { background-color: #000 !important; }
 
 	/* Components */
 
