@@ -925,16 +925,29 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessageDate || c1.spaceJoinDate || c1.counter;
-			const d2 = c2.lastMessageDate || c2.spaceJoinDate || c2.counter;
+			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
+			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
+
+			if (c1.counter && !c2.counter) return -1;
+			if (!c1.counter && c2.counter) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
+
+		console.log(JSON.stringify(items.map(it => 
+			`${it.name} 
+			p: ${it.isPinned}
+			o: ${it.orderId}
+			lm: ${U.Date.dateWithFormat(I.DateFormat.European, it.lastMessageDate)} 
+			jd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)} 
+			c: ${it.counter} 
+			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
+		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
 
 		return items;
 	};

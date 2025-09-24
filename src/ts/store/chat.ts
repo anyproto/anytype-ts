@@ -389,6 +389,7 @@ class ChatStore {
 	 */
 	getSpaceLastMessageDate (spaceId: string): number {
 		const spaceMap = this.stateMap.get(spaceId);
+
 		let ret = 0;
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
