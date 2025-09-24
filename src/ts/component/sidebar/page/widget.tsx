@@ -590,6 +590,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				const newIndex = items.findIndex(it => it.id == targetId2) + (this.position == I.BlockPosition.Top ? 0 : 1);
 				const newItems = arrayMove(items, oldIndex, newIndex);
 
+				console.log('BEFORE', JSON.stringify(items.map(it => it.name), null, 3));
+				console.log('AFTER', JSON.stringify(newItems.map(it => it.name), null, 3));
+
 				U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {
 					C.ObjectTypeSetOrder(S.Common.space, newItems.map(it => it.id), callBack);
 				});

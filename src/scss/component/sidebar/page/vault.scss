@@ -61,7 +61,7 @@
 		&.isDragging { z-index: 1; }
 
 		&.isMuted {
-			.cnt { background-color: var(--color-text-secondary); }
+			.cnt { background-color: var(--color-text-tertiary); }
 		}
 
 		&.isLoading {
