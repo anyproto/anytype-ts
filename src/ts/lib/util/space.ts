@@ -15,13 +15,17 @@ class UtilSpace {
 
 		const space = this.getSpaceview();
 
-		let home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
+		let home = null;
 
 		if (space && !space._empty_ && !space.isAccountDeleted && space.isLocalOk) {
 			home = this.getDashboard();
 			if (home && (home.id == I.HomePredefinedId.Last)) {
 				home = this.getLastObject();
 			};
+		};
+
+		if (!home) {
+			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
 		};
 
 		U.Object.openRoute(home, param);
