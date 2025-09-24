@@ -587,7 +587,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 				const items = S.Record.checkHiddenObjects(S.Record.getTypes());
 				const oldIndex = items.findIndex(it => it.id == targetId1);
-				const newIndex = items.findIndex(it => it.id == targetId2) + (this.position == I.BlockPosition.Top ? 0 : 1);
+				const newIndex = Math.max(0, items.findIndex(it => it.id == targetId2) + (this.position == I.BlockPosition.Top ? -1 : 0));
 				const newItems = arrayMove(items, oldIndex, newIndex);
 
 				U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {

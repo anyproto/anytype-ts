@@ -76,7 +76,11 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (onMore) {
 			items = items.map((item: any) => {
-				item.onMore = e => onMore(e, context, item);
+				item.onMore = e => {
+					e.stopPropagation();
+
+					onMore(e, context, item);
+				};
 				return item;
 			});
 		};
@@ -110,9 +114,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
+		const spaceview = U.Space.getSpaceview();
 		const sorts = [
 			{ relationKey: 'orderId', type: I.SortType.Asc },
-			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+			{ 
+				relationKey: 'uniqueKey', 
+				type: I.SortType.Custom, 
+				customOrder: U.Data.typeSortKeys(spaceview.isChat),
+			},
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 

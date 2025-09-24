@@ -1110,10 +1110,12 @@
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",
 	"popupSpaceCreateAIOnboarding": "✦ Create with AI",
+
 	"popupConfirmCloseAIOnboardingTitle": "Exit AI Onboarding?",
 	"popupConfirmCloseAIOnboardingText": "Are you sure you want to exit? Your progress will be lost.",
 	"popupConfirmCloseAIOnboardingConfirm": "Yes, Exit",
 	"popupConfirmCloseAIOnboardingCancel": "Continue",
+
 	"popupAiOnboardingErrorDefault": "Something went wrong. Please try again.",
 	"popupAiOnboardingConnectionError": "Unable to connect to the AI service. Please check your internet connection and try again.",
 	"popupAiOnboardingConnectionIssueTitle": "Connection Issue",
@@ -1297,6 +1299,9 @@
 
 	"popupConfirmStopSharingSpaceTitle": "The space is now private",
 	"popupConfirmStopSharingSpaceText": "You've removed the last member, so this space is now private and only accessible to you",
+
+	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
+	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1835,6 +1840,7 @@
 	"menuTypeLayoutReset": "Reset to match the Type",
 
 	"menuWidgetAddWidget": "Add Widget",
+	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetWidgetType": "Widget type",
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetEditWidgets": "Edit Widgets",

@@ -163,7 +163,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			return [];
 		};
 
-		let sections: any[] = [];
+		const sections: any[] = [];
 
 		if (layoutOptions.length > 1) {
 			sections.push({
@@ -187,9 +187,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (canRemove) {
 			const children: any[] = [];
+			const isPinned = block.content.section == I.WidgetSection.Pin;
+			const isSystem = U.Menu.isSystemWidget(this.target?.id);
 
-			if (block.content.section == I.WidgetSection.Pin) {
-				children.push({ id: 'removeWidget', name: translate('commonUnpin'), icon: 'unpin' });
+			if (isPinned) {
+				const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
+				const icon = isSystem ? 'remove' : 'unpin';
+
+				children.push({ id: 'removeWidget', name, icon });
 			} else {
 				//children.push({ id: 'removeType', name: translate('menuWidgetRemoveType'), icon: 'remove' });
 			};
@@ -321,10 +326,26 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, target } = data;
+		const isSystem = U.Menu.isSystemWidget(this.target?.id);
 
 		switch (item.id) {
 			case 'removeWidget': {
-				Action.removeWidget(blockId, target);
+				if (isSystem) {
+					S.Popup.open('confirm', {
+						data: {
+							icon: 'warning-red',
+							title: translate('popupConfirmSystemWidgetRemoveTitle'),
+							text: translate('popupConfirmSystemWidgetRemoveText'),
+							textConfirm: translate('commonDelete'),
+							colorConfirm: 'red',
+							onConfirm: () => {
+								Action.removeWidget(blockId, target);
+							},
+						},
+					});
+				} else {
+					Action.removeWidget(blockId, target);
+				};
 				break;
 			};
 

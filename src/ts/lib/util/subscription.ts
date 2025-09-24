@@ -491,6 +491,8 @@ class UtilSubscription {
 	 * @param {() => void} [callBack] - Optional callback after creation.
 	 */
 	createSpace (callBack?: () => void): void {
+		const spaceview = U.Space.getSpaceview();
+
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.deleted,
@@ -509,11 +511,10 @@ class UtilSubscription {
 				],
 				sorts: [
 					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
-						customOrder: U.Data.typeSortKeys(),
+						customOrder: U.Data.typeSortKeys(spaceview.isChat),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
@@ -667,7 +668,7 @@ class UtilSubscription {
 	 * @returns {string[]} The list of relation keys.
 	 */
 	typeRelationKeys (withTmpOrder: boolean) {
-		const ret = J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
+		const ret = J.Relation.default.concat(J.Relation.type);
 
 		if (withTmpOrder) {
 			ret.push('tmpOrder');

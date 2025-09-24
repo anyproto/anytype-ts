@@ -81,6 +81,7 @@ class Api {
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
+		this.setBackground(win, theme);
 	};
 
 	setBackground (win, theme) {

@@ -19,6 +19,7 @@ interface SelectionRefProps {
 	isSelecting(): boolean;
 	setIsSelecting(v: boolean): void;
 	hide(): void;
+	rebind(): void;
 };
 
 const THRESHOLD = 20;
@@ -614,7 +615,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	useEffect(() => {
 		rebind();
 		return () => unbind();
-	});
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		get,
@@ -626,6 +627,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		isSelecting: () => isSelecting.current,
 		setIsSelecting,
 		hide,
+		rebind,
 	}));
 
 	return (

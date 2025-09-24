@@ -9,8 +9,8 @@
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}
 
-		.content { padding: 56px 80px 40px 80px; }
-		.highlight { color: var(--color-red); background: var(--color-shape-tertiary); white-space: nowrap; }
+		.content { padding: 56px 150px 40px 150px; }
+		.highlight { background: var(--color-shape-tertiary); white-space: nowrap; border-radius: 4px; padding: 0px 4px; }
 		.buttons { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0px 16px; }
 	}
 }
