@@ -326,11 +326,9 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	canEdit () {
-		const { cid, key } = this.state;
-		const hasLink = cid && key;
-		const isLimit = this.isSharedSpacesLimit();
+		const space = U.Space.getSpaceview();
 
-		return U.Space.isMyOwner() && (!isLimit || hasLink);
+		return U.Space.isMyOwner() && space.isShared;
 	};
 
 });
