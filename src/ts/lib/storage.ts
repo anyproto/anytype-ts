@@ -557,6 +557,13 @@ class Storage {
 	};
 
 	/**
+	 * Resets onboarding
+	 */
+	clearOnboarding () {
+		this.set('onboarding', [], this.isLocal('onboarding'))
+	};
+
+	/**
 	 * Gets onboarding state for a key.
 	 * @param {string} key - The onboarding key.
 	 * @returns {any} The onboarding state.

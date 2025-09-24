@@ -834,8 +834,7 @@ class Keyboard {
 			};
 
 			case 'resetOnboarding': {
-				Storage.delete('onboarding');
-				Storage.delete('primitivesOnboarding');
+				Storage.clearOnboarding();
 				Storage.delete('chatsOnboarding');
 				break;
 			};

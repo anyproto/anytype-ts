@@ -1905,7 +1905,7 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('chatsOnboarding') || !Storage.get('primitivesOnboarding')) {
+		if (!Storage.get('chatsOnboarding')) {
 			return;
 		};
 
