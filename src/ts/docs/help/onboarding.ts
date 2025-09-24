@@ -1,4 +1,4 @@
-import { I, U, translate, S, Onboarding } from 'Lib';
+import { I, U, translate, S, sidebar, keyboard, Storage } from 'Lib';
 
 export default {
 	mainGraph: () => ({
@@ -23,104 +23,63 @@ export default {
 		},
 	}),
 
-	emailCollection: () => ({
-		items: [ { noButton: true } ],
-		param: {
-			element: '#button-widget-help',
-			classNameWrap: 'fixed fromSidebar',
-			className: 'invertedColor',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			noArrow: true,
-			passThrough: true,
-			offsetY: -4,
-		},
-	}),
+	basics: () => {
+		const spaceview = U.Space.getSpaceview();
+		const elementHead = spaceview.isChat ? '#sidebarPageWidget .spaceHeader' : '#sidebarPageWidget #widget-space';
 
-	objectCreationStart: () => ({
-		category: translate('onboardingObjectCreationStart'),
-		items: [
-			{
-				description: `
-					<p>${translate('onboardingObjectCreationStart21')}</p>
-				`,
-				video: './img/help/onboarding/object-2-type-menu.mp4',
-				buttonText: translate('onboardingObjectCreationStart2Button'),
+		return {
+			showDimmer: true,
+			category: translate('onboardingBasicsTitle'),
+			param: {
+				noArrow: true,
+				noClose: true,
+				horizontal: I.MenuDirection.Right,
+				stickToElementEdge: I.MenuDirection.Top,
+				width: 288,
+				offsetX: -312,
+				highlightElements: [],
+				onOpen: (context) => {
+					if (spaceview.isChat) {
+						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
+					};
+
+					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+					Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+					$(window).trigger('checkWidgetToggles');
+					window.setTimeout(() => context.position(), 50);
+				},
+				hiddenElements: [
+					elementHead,
+					'#sidebarPageWidget .section-pin',
+					'#sidebarPageWidget .section-type',
+					'#sidebarPageWidget > .bottom',
+				]
 			},
-		],
-		param: {
-			element: '#block-type',
-			classNameWrap: 'fixed fromSidebar',
-			className: 'isWizard',
-			noArrow: true,
-			passThrough: true,
-		},
-	}),
-
-	objectCreationFinish: () => ({
-		category: translate('onboardingObjectCreationFinish'),
-		items: [
-			{
-				description: `
-					<p>${translate('onboardingObjectCreationFinish11')}</p>
-				`,
-				video: './img/help/onboarding/object-layout.mp4',
-				buttonText: translate('onboardingObjectCreationFinish1Button'),
-			},
-		],
-		param: {
-			element: '#button-widget-help',
-			classNameWrap: 'fixed fromSidebar',
-			className: 'isWizard',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			noArrow: true,
-			passThrough: true,
-			offsetY: -4,
-		},
-	}),
-
-	basics: () => ({
-		showDimmer: true,
-		category: translate('onboardingBasicsTitle'),
-		param: {
-			noArrow: true,
-			noClose: true,
-			horizontal: I.MenuDirection.Right,
-			stickToElementEdge: I.MenuDirection.Top,
-			width: 288,
-			offsetX: -312,
-			highlightElements: [],
-			hiddenElements: [
-				'#widget-space',
-				'#sidebarPageWidget .section-pin',
-				'#sidebarPageWidget .section-type',
-				'#sidebarPageWidget > .bottom',
+			items: [
+				{
+					description: translate('onboardingSpacesText'),
+					param: {
+						element: elementHead,
+					}
+				},
+				{
+					description: translate('onboardingPinnedText'),
+					cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
+					param: {
+						element: '#sidebarPageWidget .section-pin',
+					}
+				},
+				{
+					description: translate('onboardingObjectsText'),
+					cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
+					param: {
+						element: '#sidebarPageWidget .section-type',
+					}
+				},
 			]
-		},
-		items: [
-			{
-				description: translate('onboardingSpacesText'),
-				param: {
-					element: '#widget-space',
-				}
-			},
-			{
-				description: translate('onboardingPinnedText'),
-				cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
-				param: {
-					element: '#sidebarPageWidget .section-pin',
-				}
-			},
-			{
-				description: translate('onboardingObjectsText'),
-				cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
-				param: {
-					element: '#sidebarPageWidget .section-type',
-				}
-			},
-		]
-	}),
+		};
+	},
 
 	membership: () => ({
 		showDimmer: true,
@@ -365,10 +324,9 @@ export default {
 		],
 
 		param: {
-			element: '#pageFlex.isFull .headSimple .side.right',
-			vertical: I.MenuDirection.Center,
-			offsetX: -304,
-			offsetY: 45,
+			element: '#pageFlex.isFull .headSimple #button-edit',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 16,
 		},
 	}),
 

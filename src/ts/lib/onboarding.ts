@@ -22,7 +22,6 @@ class Onboarding {
 	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
 		options = options || {};
 
-		const space = U.Space.getSpaceview();
 		const section = this.getSection(key);
 		if (
 			!section
@@ -31,7 +30,6 @@ class Onboarding {
 			|| (!force && Storage.getOnboarding(key))
 			|| !Storage.get('primitivesOnboarding')
 			|| !Storage.get('chatsOnboarding')
-			|| (space.uxType != I.SpaceUxType.Space)
 		) {
 			return;
 		};
