@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
 
 enum Stage {
 	Phrase 		= 0,
@@ -58,44 +58,24 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = {
-			replace: true,
-			onRouteChange: () => {
-				const routeParam = { replace: true };
+		const routeParam = { replace: true };
 
-				S.Common.showRelativeDatesSet(true);
-				Storage.set('chatsOnboarding', true);
-				Storage.setOnboarding('objectDescriptionButton');
-				Storage.setOnboarding('typeResetLayout');
-				Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
-				if (redirect) {
-					U.Router.go(redirect, routeParam);
-					S.Common.redirectSet('');
-					return;
-				};
-
-				if (S.Auth.startingId) {
-					U.Object.getById(S.Auth.startingId, {}, object => {
-						if (object) {
-							U.Object.openRoute(object, routeParam);
-						} else {
-							U.Space.openDashboard(routeParam);
-						};
-					});
-				} else {
-					U.Space.openDashboard(routeParam);
-				};
-
-				window.setTimeout(() => {
-					Onboarding.start('basics', false);
-				}, 1);
-			},
-		};
+		S.Common.showRelativeDatesSet(true);
+		Storage.set('chatsOnboarding', true);
+		Storage.setOnboarding('objectDescriptionButton');
+		Storage.setOnboarding('typeResetLayout');
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 		U.Data.onInfo(account.info);
-		U.Data.onAuthWithoutSpace(routeParam);
 		U.Data.onAuthOnce(true);
+
+		S.Common.spaceSet('');
+
+		U.Subscription.createGlobal(() => {
+			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
+			S.Common.redirectSet('');
+		});
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible

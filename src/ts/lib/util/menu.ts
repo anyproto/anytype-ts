@@ -939,6 +939,7 @@ class UtilMenu {
 			return 0;
 		});
 
+		/*
 		console.log(JSON.stringify(items.map(it => 
 			`${it.name} 
 			p: ${it.isPinned}
@@ -948,6 +949,7 @@ class UtilMenu {
 			c: ${it.counter} 
 			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
 		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
+		*/
 
 		return items;
 	};
@@ -1420,6 +1422,76 @@ class UtilMenu {
 
 	setContext (context: any) {
 		this.menuContext = context;
+	};
+
+	spaceCreate (param: I.MenuParam, route) {
+		const ids = [ 'chat', 'space', 'join' ];
+		const options = ids.map(id => {
+			const suffix = U.Common.toUpperCamelCase(id);
+
+			let name = '';
+			let icon = '';
+			let description = '';
+			let withDescription = false;
+
+			if (id != 'join') {
+				name = translate(`sidebarMenuSpaceCreateTitle${suffix}`);
+				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
+				withDescription = true;
+				icon = id;
+			};
+
+			return {
+				id,
+				icon,
+				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
+				description,
+				withDescription,
+			};
+		});
+
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'chat': {
+							Action.createSpace(I.SpaceUxType.Chat, route);
+							break;
+						};
+
+						case 'space': {
+							Action.createSpace(I.SpaceUxType.Space, route);
+							break;
+						};
+
+						case 'join': {
+							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
+							break;
+						};
+					};
+
+					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+				},
+			}
+		});
+
+		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
 };

@@ -532,8 +532,9 @@
 	"pageMainHistoryCurrent": "Current version",
 	"pageMainHistoryRestore": "Restore",
 
-	"pageMainVoidTitle": "You're all out of spaces",
-	"pageMainVoidText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidErrorTitle": "You're all out of spaces",
+	"pageMainVoidErrorText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidSelectText": "No channels opened. Select one on the left panel or create new.",
 
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
 
@@ -2176,8 +2177,7 @@
 	"sidebarMenuSpaceCreateDescriptionSpace": "Hub for advanced data management",
 	"sidebarMenuSpaceCreateTitleImport": "Import Data",
 	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
-	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
-	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
+	"sidebarMenuSpaceCreateTitleJoin": "→ Join by invite link",
 
 	"sidebarTemplateEmpty": "There are no Templates yet",
 

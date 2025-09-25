@@ -59,7 +59,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const onCreate = () => {
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
-		Action.spaceCreateMenu({
+
+		U.Menu.spaceCreate({
 			element: `#sidebarRightButton`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',

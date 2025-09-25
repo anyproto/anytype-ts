@@ -17,6 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
+	const { getId } = props;
 	const { space, updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
@@ -160,7 +161,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const getItems = () => {
 		let items = U.Menu.getVaultItems().map(it => {
-			if (!it.chatId) {
+			if (!it.isChat) {
 				return it;
 			};
 
@@ -230,7 +231,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const getNode = () => {
-		return $('#sidebarPageVault');
+		return $(`#${getId()}`);
 	};
 
 	const setActive = (item: any) => {
@@ -400,7 +401,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onHelp = () => {
 		S.Menu.open('help', {
-			element: '#sidebarPageVault #button-help',
+			element: `#${getId()} #button-help`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,

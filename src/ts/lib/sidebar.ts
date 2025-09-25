@@ -240,7 +240,7 @@ class Sidebar {
 	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
 		const isPopup = keyboard.isPopup();
 		const isMain = keyboard.isMain();
-		const isMainVoid = keyboard.isMainVoid();
+		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
 		const isPopupMainHistory = keyboard.isPopupMainHistory();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
@@ -264,7 +264,7 @@ class Sidebar {
 			widthLeft = 0;
 		};
 
-		if (!isMain || isMainVoid) {
+		if (!isMain || isMainVoidError) {
 			widthLeft = 0;
 			widthRight = 0;
 		};

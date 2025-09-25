@@ -48,7 +48,7 @@ class UtilSpace {
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			U.Router.go('/main/void', param);
+			U.Router.go('/main/void/error', param);
 		};
 	};
 

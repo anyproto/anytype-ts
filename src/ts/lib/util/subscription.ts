@@ -525,7 +525,7 @@ class UtilSubscription {
 				ignoreChat: false,
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
-				}
+				},
 			},
 			{
 				subId: J.Constant.subId.relation,
@@ -572,6 +572,15 @@ class UtilSubscription {
 		this.createList(list, callBack);
 	};
 
+	fileTypeKeys () {
+		return [
+			J.Constant.typeKey.file,
+			J.Constant.typeKey.image,
+			J.Constant.typeKey.audio,
+			J.Constant.typeKey.video
+		];
+	};
+
 	/**
 	 * Creates a list of subscriptions from the provided list of parameters.
 	 * @param {I.SearchSubscribeParam[]} list - List of subscription parameters.
@@ -585,7 +594,6 @@ class UtilSubscription {
 			};
 
 			cnt++;
-
 			if ((cnt == list.length) && callBack) {
 				callBack();
 			};
@@ -625,6 +633,30 @@ class UtilSubscription {
 				callBack();
 			};
 		});
+	};
+
+	createTypeCheck (callBack?: () => void) {
+		const list = [];
+
+		for (const key of this.fileTypeKeys()) {
+			const type = S.Record.getTypeByKey(key);
+
+			if (!type) {
+				continue;
+			};
+
+			list.push({
+				subId: `typeCheck-${key}`,
+				filters: [
+					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type.id },
+				],
+				keys: [ 'id' ],
+				limit: 1,
+				noDeps: true,
+			});
+		};
+
+		this.createList(list, callBack);
 	};
 
 	/**

@@ -408,7 +408,7 @@ class Keyboard {
 					vertical = I.MenuDirection.Center;
 				};
 
-				Action.spaceCreateMenu({
+				U.Menu.spaceCreate({
 					element,
 					rect,
 					className: 'spaceCreate fixed',
@@ -834,7 +834,7 @@ class Keyboard {
 			};
 
 			case 'resetOnboarding': {
-				Storage.clearOnboarding();
+				Storage.delete('onboarding');
 				Storage.delete('chatsOnboarding');
 				break;
 			};
@@ -1411,8 +1411,9 @@ class Keyboard {
 	 * Returns true if the current context is the main void view.
 	 * @returns {boolean}
 	 */
-	isMainVoid () {
-		return this.isMain() && (this.getRouteMatch().params.action == 'void');
+	isMainVoidError () {
+		const match = this.getRouteMatch();
+		return this.isMain() && (match.params.action == 'void') && (match.params.id == 'error');
 	};
 
 	/**

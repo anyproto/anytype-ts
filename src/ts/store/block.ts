@@ -1039,6 +1039,14 @@ class BlockStore {
 				return;
 			};
 
+			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
+				const { total } = S.Record.getMeta(`typeCheck-${type.uniqueKey}`, '');
+
+				if (!total) {
+					return;
+				};
+			};
+
 			this.createWidget(type.id);
 			element.childrenIds.push(type.id);
 		});
