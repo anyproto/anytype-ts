@@ -61,7 +61,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		const routeParam = { replace: true };
 
 		S.Common.showRelativeDatesSet(true);
-
 		Storage.set('isNewUser', true);
 		Storage.set('chatsOnboarding', true);
 		Storage.setOnboarding('objectDescriptionButton');
