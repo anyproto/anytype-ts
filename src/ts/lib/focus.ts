@@ -122,6 +122,10 @@ class Focus {
 		};
 
 		const container = U.Common.getScrollContainer(isPopup);
+		if (isPopup && !container.length) {
+			return;
+		};
+
 		const ch = container.height();
 		const no = node.offset().top;
 		const hh = J.Size.header;
