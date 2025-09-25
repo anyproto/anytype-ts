@@ -113,7 +113,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				};
 
 				subHead = (
-					<div className="subHead">
+					<div className={cnsh.join(' ')}>
 						<div className="side left">
 							<Icon className="back" onClick={e => {
 								e.stopPropagation();
@@ -169,7 +169,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</div>
 					) : ''}
 
-					<div className="side center">
+					<div 
+						className="side center" 
+						onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })}
+					>
 						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
 						<ObjectName object={space} />
 					</div>
