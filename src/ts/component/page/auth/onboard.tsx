@@ -58,46 +58,24 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = {
-			replace: true,
-			onRouteChange: () => {
-				const routeParam = { replace: true };
+		const routeParam = { replace: true };
 
-				S.Common.showRelativeDatesSet(true);
-				Storage.set('primitivesOnboarding', true);
-				Storage.set('chatsOnboarding', true);
-				Storage.setOnboarding('objectDescriptionButton');
-				Storage.setOnboarding('typeResetLayout');
-				Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
+		S.Common.showRelativeDatesSet(true);
 
-				if (redirect) {
-					U.Router.go(redirect, routeParam);
-					S.Common.redirectSet('');
-					return;
-				};
-
-				sidebar.leftPanelSetState({ page: 'vault' });
-				U.Router.go('/main/void/select', routeParam);
-
-				/*
-				if (S.Auth.startingId) {
-					U.Object.getById(S.Auth.startingId, {}, object => {
-						if (object) {
-							U.Object.openRoute(object, routeParam);
-						} else {
-							U.Space.openDashboard(routeParam);
-						};
-					});
-				} else {
-					U.Space.openDashboard(routeParam);
-				};
-				*/
-			},
-		};
+		Storage.set('chatsOnboarding', true);
+		Storage.setOnboarding('objectDescriptionButton');
+		Storage.setOnboarding('typeResetLayout');
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 		U.Data.onInfo(account.info);
-		U.Data.onAuthWithoutSpace(routeParam);
 		U.Data.onAuthOnce(true);
+
+		S.Common.spaceSet('');
+
+		U.Subscription.createGlobal(() => {
+			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
+			S.Common.redirectSet('');
+		});
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible

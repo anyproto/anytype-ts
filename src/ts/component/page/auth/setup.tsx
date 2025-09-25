@@ -59,7 +59,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				replace: true,
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
-					const primitivesOnboarding = Storage.get('primitivesOnboarding');
 					const chatsOnboarding = Storage.get('chatsOnboarding');
 
 					[

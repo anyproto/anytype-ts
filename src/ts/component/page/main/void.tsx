@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, U, translate, analytics, keyboard } from 'Lib';
+import { I, U, translate, analytics, keyboard, sidebar } from 'Lib';
 
 const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -37,6 +37,12 @@ const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			break;
 		};
 	};
+
+	useEffect(() => {
+		if (id == 'select') {
+			sidebar.leftPanelSetState({ page: 'vault' });
+		};
+	}, []);
 
 	useEffect(() => {
 		if ((id == 'error') && spaces.length) {

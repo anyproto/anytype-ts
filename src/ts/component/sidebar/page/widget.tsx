@@ -396,32 +396,36 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	init () {
-		U.Subscription.createTypeCheck(() => S.Block.updateTypeWidgetList());
+		U.Subscription.createTypeCheck(() => {
+			S.Block.updateTypeWidgetList();
 
-		const { sidebarDirection, isPopup, getId } = this.props;
-		const top = Storage.getScroll('sidebarWidget', sidebarDirection, isPopup);
-		const sectionIds = [];
-		const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+			const { sidebarDirection, isPopup, getId } = this.props;
+			const top = Storage.getScroll('sidebarWidget', sidebarDirection, isPopup);
+			const sectionIds = [];
+			const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
 
-		this.node = $(`#${getId()}`);
-		this.body = this.node.find('#body');
+			this.node = $(`#${getId()}`);
+			this.body = this.node.find('#body');
 
-		ids.forEach(id => {
-			if (!this.isSectionClosed(id)) {
-				sectionIds.push(id);
+			ids.forEach(id => {
+				if (!this.isSectionClosed(id)) {
+					sectionIds.push(id);
+				};
+			});
+
+			if (!U.Common.objectCompare(sectionIds, this.state.sectionIds)) {
+				this.setState({ sectionIds });
+			} else {
+				ids.forEach(this.initToggle);
+			};
+
+			this.body.scrollTop(top);
+			this.onScroll();
+
+			if (!S.Menu.isOpen('onboarding')) {
+				window.setTimeout(() => Onboarding.start('basics', false), 1);
 			};
 		});
-
-		if (!U.Common.objectCompare(sectionIds, this.state.sectionIds)) {
-			this.setState({ sectionIds });
-		} else {
-			ids.forEach(this.initToggle);
-		};
-
-		this.body.scrollTop(top);
-		this.onScroll();
-
-		Onboarding.start('basics', false);
 	};
 
 	onPlusHover (e: any) {
