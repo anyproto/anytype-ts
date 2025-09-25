@@ -396,7 +396,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	init () {
-		S.Block.updateTypeWidgetList();
+		U.Subscription.createTypeCheck(() => S.Block.updateTypeWidgetList());
 
 		const { sidebarDirection, isPopup, getId } = this.props;
 		const top = Storage.getScroll('sidebarWidget', sidebarDirection, isPopup);
