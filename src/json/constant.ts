@@ -121,7 +121,6 @@ export default {
 		space:			 		'space',
 		participant:	 		'participant',
 		subSpace:		 		'subSpace',
-		allObject:		 		'allObject',
 		library: 		 		'library',
 		chatSpace:		 		'lastMessage',
 		template:		 		'template',
@@ -171,7 +170,7 @@ export default {
 	},
 
 	widgetId: {
-		allObject:		 'allObjects',
+		allObject:		 'allObject',
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',

@@ -47,7 +47,6 @@ class Analytics {
 		mention: 'Mention',
 		media: 'Media',
 		calendar: 'Calendar',
-		allObjects: 'AllObjects',
 		vault: 'Vault',
 		void: 'Void',
 		chat: 'Chat',

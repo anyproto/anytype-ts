@@ -12,7 +12,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const cn = [];
 	const buttons = [
 		{ id: 'search', name: translate('commonSearch') },
-		//{ id: 'all', name: translate('commonAllContent') },
 		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
 		{ id: 'settings', name: translate('commonSettings') },
 	].filter(it => it);
@@ -26,13 +25,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		e.stopPropagation();
 
 		switch (item.id) {
-			/*
-			case 'all': {
-				sidebar.panelSetState(false, sidebarDirection, { page: 'allObject' });
-				break;
-			};
-			*/
-
 			case 'member': {
 				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
