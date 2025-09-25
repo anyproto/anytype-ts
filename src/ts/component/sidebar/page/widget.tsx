@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview, Onboarding } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -420,6 +420,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		this.body.scrollTop(top);
 		this.onScroll();
+
+		Onboarding.start('basics', false);
 	};
 
 	onPlusHover (e: any) {

@@ -92,10 +92,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 					U.Space.openDashboard(routeParam);
 				};
 				*/
-
-				window.setTimeout(() => {
-					Onboarding.start('basics', false);
-				}, 1);
 			},
 		};
 
