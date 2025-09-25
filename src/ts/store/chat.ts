@@ -367,15 +367,22 @@ class ChatStore {
 	 * @returns {Counter} The counters for the space.
 	 */
 	getSpaceCounters (spaceId: string): I.ChatCounter {
-		const spaceMap = this.stateMap.get(spaceId);
 		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const spaceMap = this.stateMap.get(spaceId);
 
-		if (spaceMap) {
-			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
-					ret.mentionCounter += Number(state.mentionCounter) || 0;
-					ret.messageCounter += Number(state.messageCounter) || 0;
-				};
+		if (!spaceMap) {
+			return ret;
+		};
+
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		if (!spaceview.isChat) {
+			return ret;
+		};
+
+		for (const [ chatId, state ] of spaceMap) {
+			if (!chatId) {
+				ret.mentionCounter += Number(state.mentionCounter) || 0;
+				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
 		};
 

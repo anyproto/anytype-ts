@@ -88,19 +88,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const limit = getLimit();
 	const layout = getLayout();
 	const isFavorite = targetId == J.Constant.widgetId.favorite;
-	const isChat = targetId == J.Constant.widgetId.chat;
+	const isChat = spaceview.isChat && (targetId == J.Constant.widgetId.chat);
 
 	let cnt = 0;
 	let leftCnt = false;
-	let counters = { messageCounter: 0, mentionCounter: 0 };
 
 	if (isFavorite) {
 		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
 		leftCnt = cnt > limit;
-	};
-
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
 
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
@@ -271,7 +266,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		if (spaceview.isChat && isChat) {
+		if (isChat) {
 			return;
 		};
 
@@ -772,13 +767,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							{counters.messageCounter || counters.mentionCounter ? (
-								<div className="counters">
-									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
-									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
-								</div>
-							) : ''}
-
 							{buttons.length ? (
 								<div className="buttons">
 									{buttons.map(item => (
