@@ -1,11 +1,15 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, U, translate, analytics } from 'Lib';
+import { I, U, translate, analytics, keyboard } from 'Lib';
 
-const PageMainVoid = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
+	const { isPopup } = props;
 	const spaces = U.Space.getList().filter(it => it.isLocalOk);
+	const match = keyboard.getMatch(isPopup);
+	const { id } = match.params || {};
+	const cn = [ 'wrapper', U.Common.toCamelCase(`void-${id}`) ];
 
 	const onClick = () => {
 		U.Menu.spaceCreate({
@@ -16,23 +20,41 @@ const PageMainVoid = observer(forwardRef<{}, I.PageComponent>(() => {
 		}, analytics.route.void);
 	};
 
+	let title = '';
+	let text = '';
+	let button = null;
+
+	switch (id) {
+		case 'select': {
+			text = translate('pageMainVoidSelectText');
+			break;
+		};
+
+		case 'error': {
+			title = translate('pageMainVoidErrorTitle');
+			text = translate('pageMainVoidErrorText');
+			button = <Button id="void-button-create-space" onClick={onClick} className="c36" text={translate('commonCreateSpace')} />;
+			break;
+		};
+	};
+
 	useEffect(() => {
-		if (spaces.length) {
+		if ((id == 'error') && spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, { replace: true }, false);
 		};
 	}, [ spaces, spaces.length ]);
 
 	return (
-		<div className="wrapper">
+		<div className={cn.join(' ')}>
 			<div className="container">
 				<div className="iconWrapper">
 					<Icon />
 				</div>
 
-				<Title text={translate('pageMainVoidTitle')} />
-				<Label text={translate('pageMainVoidText')} />
+				<Title text={title} />
+				<Label text={text} />
 
-				<Button id="void-button-create-space" onClick={onClick} className="c36" text={translate('commonCreateSpace')} />
+				{button}
 			</div>
 		</div>
 	);

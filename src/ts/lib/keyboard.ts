@@ -1412,8 +1412,9 @@ class Keyboard {
 	 * Returns true if the current context is the main void view.
 	 * @returns {boolean}
 	 */
-	isMainVoid () {
-		return this.isMain() && (this.getRouteMatch().params.action == 'void');
+	isMainVoidError () {
+		const match = this.getRouteMatch();
+		return this.isMain() && (match.params.action == 'void') && (match.params.id == 'error');
 	};
 
 	/**

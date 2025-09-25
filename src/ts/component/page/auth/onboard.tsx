@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
 
 enum Stage {
 	Phrase 		= 0,
@@ -76,6 +76,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 					return;
 				};
 
+				sidebar.leftPanelSetState({ page: 'vault' });
+				U.Router.go('/main/void/select', routeParam);
+
+				/*
 				if (S.Auth.startingId) {
 					U.Object.getById(S.Auth.startingId, {}, object => {
 						if (object) {
@@ -87,6 +91,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 				} else {
 					U.Space.openDashboard(routeParam);
 				};
+				*/
 
 				window.setTimeout(() => {
 					Onboarding.start('basics', false);

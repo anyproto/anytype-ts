@@ -267,10 +267,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getClass (prefix: string) {
 		const { isPopup } = this.props;
-		const { page } = this.getMatchParams();
+		const { page, action, id } = this.getMatchParams();
 		
 		return [ 
 			U.Common.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
 			this.getId(prefix),
 			isPopup ? 'isPopup' : 'isFull',
 		].join(' ');

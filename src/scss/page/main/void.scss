@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.bodyMain.bodyMainVoid {
+.bodyMain.bodyMainVoidError {
 	#sidebarLeftButton,
 	#sidebarBack,
 	.sidebar,
@@ -11,16 +11,25 @@
 	.wrapper { width: 704px; height: 100vh; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
 		.container { text-align: center; }
-		.iconWrapper { display: flex; width: 72px; height: 72px; margin: 0px auto 10px; align-items: center; justify-content: space-around; }
-		.iconWrapper {
-			.icon { width: 72px; height: 72px; background-image: url('~img/icon/popup/confirm/error.svg'); }
-		}
+		.iconWrapper { display: flex; align-items: center; justify-content: space-around; }
+		.icon { width: 100%; height: 100%; }
 
 		.title { @include text-header3; margin-bottom: 4px; }
 		.label { margin-bottom: 24px; }
 
 		.buttons { display: flex; gap: 0px 8px; }
 		.button { width: 176px; }
+
+		&.voidError {
+			.iconWrapper { width: 72px; height: 72px; margin: 0px auto 10px; }
+			.icon { background-image: url('~img/icon/popup/confirm/error.svg'); }
+		}
+
+		&.voidSelect {
+			.iconWrapper { width: 56px; height: 56px; margin: 0px auto 16px; }
+			.icon { background-image: url('~img/icon/void/select.svg'); }
+			.label { width: 242px; color: var(--color-text-secondary); }
+		}
 	}
 
 	@media (max-width: 1128px) {
