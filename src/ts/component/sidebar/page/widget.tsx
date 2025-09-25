@@ -423,7 +423,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			this.onScroll();
 
 			if (!S.Menu.isOpen('onboarding')) {
-				window.setTimeout(() => Onboarding.start('basics', false), 1);
+				window.setTimeout(() => {
+					Onboarding.start('basics', false);
+					Onboarding.start('basicsOld', false);
+				}, 1);
 			};
 		});
 	};

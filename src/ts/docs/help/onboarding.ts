@@ -1,6 +1,6 @@
 import { I, U, translate, S, sidebar, keyboard, Storage } from 'Lib';
 
-export default {
+const Data = {
 	mainGraph: () => ({
 		category: translate('onboardingMainGraph'),
 		items: [
@@ -24,8 +24,14 @@ export default {
 	}),
 
 	basics: () => {
+		const isNewUser = Storage.get('isNewUser');
+		const theme = S.Common.getThemeClass();
 		const spaceview = U.Space.getSpaceview();
 		const elementHead = spaceview.isChat ? '#sidebarPageWidget .spaceHeader' : '#sidebarPageWidget #widget-space';
+		const isDark = theme == 'dark';
+		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
+		const pinnedText = isNewUser ? translate('onboardingPinnedNewText') : translate('onboardingPinnedOldText');
+		const objectsText = isNewUser ? translate('onboardingObjectsNewText') : translate('onboardingObjectsOldText');
 
 		return {
 			showDimmer: true,
@@ -64,21 +70,25 @@ export default {
 					}
 				},
 				{
-					description: translate('onboardingPinnedText'),
-					cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
+					description: pinnedText,
+					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-pin',
 					}
 				},
 				{
-					description: translate('onboardingObjectsText'),
-					cloneElementClassName: S.Common.getThemeClass() ? 'onboardingClonedSectionDark' : 'onboardingClonedSection',
+					description: objectsText,
+					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-type',
 					}
 				},
 			]
 		};
+	},
+
+	basicsOld: () => {
+		return Data.basics();
 	},
 
 	membership: () => ({
@@ -331,3 +341,5 @@ export default {
 	}),
 
 };
+
+export default Data;

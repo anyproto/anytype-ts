@@ -2230,8 +2230,10 @@
 
 	"onboardingBasicsTitle": "Widgets",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
-	"onboardingPinnedText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
-	"onboardingObjectsText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
+	"onboardingPinnedNewText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
+	"onboardingObjectsNewText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
+	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned’ Section</b> We’ve organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you’re ready.",
+	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It’s the new, unified place to see everything you’ve made.",
 
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
