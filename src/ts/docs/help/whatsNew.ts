@@ -37,6 +37,10 @@ export default () => {
 
 		h1(`Welcome to Chat`),
 		text(`Chat is a new type of channel in Anytype, designed for fast, conversational flow. It gives you the familiar rhythm of chatting – replying, reacting, sharing files – but with a powerful twist: you can create and edit objects together in real time.`),
+		text(`<b>Create Objects</b> right from your chat window – turn thoughts into Pages, Tasks, or any other Type.`),
+		text(`<b>Share existing Objects</b> – anything you drop into Chat can be opened and edited right away.`),
+		text(`<b>Keep things organized</b> – uploads are added to the relevant Types (Audio, Images) and everything stays searchable and structured in your sidebar.`),
+		text(`<b>Invite with ease</b> – bring new members into a conversation instantly with links that don’t require approval.`),
 		img(`50/1.png`),
 		text(``),
 
