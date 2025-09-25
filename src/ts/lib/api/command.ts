@@ -516,12 +516,13 @@ export const BlockSetFields = (contextId: string, blockId: string, fields: any, 
 	dispatcher.request(BlockSetFields.name, request, callBack);
 };
 
-export const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
+export const BlockMerge = (contextId: string, blockId1: string, blockId2: string, style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Merge.Request();
 
 	request.setContextid(contextId);
 	request.setFirstblockid(blockId1);
 	request.setSecondblockid(blockId2);
+	request.setStyle(style as number);
 
 	dispatcher.request(BlockMerge.name, request, callBack);
 };
