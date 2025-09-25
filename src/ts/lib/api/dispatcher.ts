@@ -970,7 +970,7 @@ class Dispatcher {
 
 					let showNotification = false;
 
-					if (space) {
+					if (space && space.isChat) {
 						if (space.notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
