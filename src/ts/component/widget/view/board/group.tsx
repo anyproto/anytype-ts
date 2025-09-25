@@ -9,12 +9,13 @@ const ANIMATION = 200;
 interface Props extends I.WidgetViewComponent {
 	id: string;
 	value: any;
+	searchIds: string[];
 };
 
 const Group = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
-	const { rootId, block, id, value, canCreate, onCreate, getView, getViewLimit, getObject, getContentParam } = props;
+	const { rootId, block, id, value, canCreate, searchIds, onCreate, getView, getViewLimit, getObject, getContentParam } = props;
 	const { viewId } = getContentParam();
 	const view = getView();
 	const subId = S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
@@ -39,6 +40,10 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
+
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
 
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({

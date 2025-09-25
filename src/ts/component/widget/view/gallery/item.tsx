@@ -9,16 +9,17 @@ interface Props extends I.WidgetViewComponent {
 	id: string;
 	isEditing?: boolean;
 	hideIcon?: boolean;
+	onResize?: () => void;
 };
 
 const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	subId = '',
 	id = '',
-	parent,
 	block,
 	isEditing = false,
 	hideIcon = false,
 	getView,
+	onResize,
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -80,6 +81,8 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		const node = $(nodeRef.current);
 
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
+
+		onResize?.();
 	};
 
 	let icon = null;

@@ -23,7 +23,13 @@ class Onboarding {
 		options = options || {};
 
 		const section = this.getSection(key);
-		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key)) || !Storage.get('primitivesOnboarding')) {
+		if (
+			!section
+			|| !section.items
+			|| !section.items.length
+			|| (!force && Storage.getOnboarding(key))
+			|| !Storage.get('chatsOnboarding')
+		) {
 			return;
 		};
 

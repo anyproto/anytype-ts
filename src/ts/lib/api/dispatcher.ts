@@ -151,7 +151,7 @@ class Dispatcher {
 				continue;
 			};
 
-			const needLog = this.checkLog(type) && !skipDebug;
+			const needLog = this.needEventLog(type) && !skipDebug;
 			const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
@@ -970,7 +970,7 @@ class Dispatcher {
 
 					let showNotification = false;
 
-					if (space) {
+					if (space && space.isChat) {
 						if (space.notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
@@ -1290,10 +1290,10 @@ class Dispatcher {
 
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
-		const debugRequest = config.flagsMw.request;
 		const debugJson = config.flagsMw.json;
 		const ct = U.Common.toCamelCase(type);
 		const t0 = performance.now();
+		const needLog = this.needRequestLog(type);
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
@@ -1304,7 +1304,7 @@ class Dispatcher {
 		let t2 = 0;
 		let d = null;
 
-		if (debugRequest && !SKIP_IDS.includes(type)) {
+		if (needLog) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
 			d = U.Common.objectClear(data.toObject());
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
@@ -1346,7 +1346,7 @@ class Dispatcher {
 					message.error.description = U.Common.translateError(type, message.error);
 				};
 
-				if (debugRequest && !SKIP_IDS.includes(type)) {
+				if (needLog) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
 					d = U.Common.objectClear(response.toObject());
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
@@ -1382,20 +1382,39 @@ class Dispatcher {
 		};
 	};
 
-	checkLog (type: string) {
+	needRequestLog (type: string) {
 		const { config } = S.Common;
-		const { event, sync, file } = config.flagsMw;
+		const debugRequest = config.flagsMw.request;
+		const debugSubscribe = config.flagsMw.subscribe;
+		const subscribeCommands = [ 'ObjectSearchSubscribe', 'ObjectSearchUnsubscribe', 'ObjectSubscribeIds' ];
+
+		if (debugSubscribe && subscribeCommands.includes(type)) {
+			return true;
+		};
+
+		if (debugRequest && !SKIP_IDS.includes(type) && !subscribeCommands.includes(type)) {
+			return true;
+		};
+	};
+
+	needEventLog (type: string) {
+		const { config } = S.Common;
+		const { event, sync, file, subscribe } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
 		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2PStatusUpdate', 'ThreadStatus' ];
+		const subscribeEvents = [ 'SubscriptionAdd', 'SubscriptionRemove', 'SubscriptionCounters', 'SubscriptionPosition' ];
 
 		let check = false;
-		if (event && !syncEvents.concat(fileEvents).includes(type)) {
+		if (event && !syncEvents.concat(fileEvents).concat(subscribeEvents).includes(type)) {
 			check = true;
 		};
 		if (sync && syncEvents.includes(type)) {
 			check = true;
 		};
 		if (file && fileEvents.includes(type)) {
+			check = true;
+		};
+		if (subscribe && subscribeEvents.includes(type)) {
 			check = true;
 		};
 		return check;

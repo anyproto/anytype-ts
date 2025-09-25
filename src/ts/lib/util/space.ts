@@ -15,15 +15,15 @@ class UtilSpace {
 
 		const space = this.getSpaceview();
 
-		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
-			this.openFirstSpaceOrVoid(null, param);
-			return;
+		let home = null;
+
+		if (space && !space._empty_ && !space.isAccountDeleted && space.isLocalOk) {
+			home = this.getDashboard();
+			if (home && (home.id == I.HomePredefinedId.Last)) {
+				home = this.getLastObject();
+			};
 		};
 
-		let home = this.getDashboard();
-		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = this.getLastObject();
-		};
 		if (!home) {
 			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
 		};
@@ -48,7 +48,7 @@ class UtilSpace {
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			U.Router.go('/main/void', param);
+			U.Router.go('/main/void/error', param);
 		};
 	};
 
@@ -166,6 +166,14 @@ class UtilSpace {
 	 */
 	getList () {
 		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys(true)).filter(it => it.isAccountActive);
+	};
+
+	/**
+	 * Gets the list of shared that user owns;
+	 * @returns {any[]} The list of active spaces.
+	 */
+	getMySharedSpacesList () {
+		return this.getList().filter(it => U.Space.isMyOwner(it.targetSpaceId) && it.isShared);
 	};
 
 	/**

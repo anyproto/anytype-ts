@@ -11,11 +11,6 @@
     /* PopupHelp */
 
     .popup.popupHelp {
-		.head {
-			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
-			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
-		}
-
 		.highlight { color: var(--color-system-accent-100); background: var(--color-shape-highlight-medium); }
 		a:hover { color: var(--color-system-accent-100); }
 	}
@@ -92,6 +87,27 @@
 			}
 
 			.step1 {
+				.swiper-button-prev,
+				.swiper-button-next,
+				.slideBack { background-image: url('#{$themePath}/icon/onboarding/primitives/arrow.svg'); }
+			}
+		}
+	}
+
+	/* PopupIntroduceChats */
+
+	.popup.popupIntroduceChats {
+		.steps {
+			.step1 {
+				.intro {
+					.img { background-image: url('#{$themePath}/icon/onboarding/chats/intro.png'); }
+
+					.img.slide2,
+					.img.slide3 {
+						&:after,
+						&:before { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
+					}
+				}
 				.swiper-button-prev,
 				.swiper-button-next,
 				.slideBack { background-image: url('#{$themePath}/icon/onboarding/primitives/arrow.svg'); }

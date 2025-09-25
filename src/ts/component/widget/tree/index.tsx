@@ -24,7 +24,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
-	const emptyRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
 	const object = S.Detail.get(S.Block.widgets, targetId);
 	const subKey = block ? `widget${block.id}` : '';
@@ -94,11 +93,15 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	// Recursive function which returns the tree structure
 	const loadTreeRecursive = (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] => {
-		if (!childNodeList.length || depth >= MAX_DEPTH) {
+		if (!childNodeList.length || (depth >= MAX_DEPTH)) {
 			return treeNodeList;
 		};
 
 		for (const childNode of childNodeList) {
+			if (!childNode) {
+				continue;
+			};
+
 			const childBranch = [ branch, childNode.id ].join('-');
 
 			const links = filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
@@ -155,10 +158,6 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const subscribeToChildNodes = (nodeId: string, links: string[], withLimit: boolean): void => {
 		links = filterDeletedLinks(links);
 
-		if (!links.length) {
-			return;
-		};
-
 		if (withLimit) {
 			links = links.slice(0, getLimit());
 		};
@@ -172,11 +171,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		subscriptionHashes.current[nodeId] = hash;
-		U.Subscription.subscribeIds({
-			subId,
-			ids: links,
-			keys: J.Relation.sidebar,
-			noDeps: true,
+
+		U.Subscription.destroyList([ subId ], true, () => {
+			U.Subscription.subscribeIds({
+				subId,
+				ids: links,
+				keys: J.Relation.sidebar,
+				noDeps: true,
+			});
 		});
 	};
 
@@ -277,7 +279,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		if (!length) {
 			css.paddingBottom = 8;
-			css.height = $(emptyRef.current).outerHeight() + css.paddingBottom;
+			css.height = 20 + css.paddingBottom;
 		};
 
 		node.css(css);
@@ -322,7 +324,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
 
 		content = (
-			<div ref={emptyRef} className="emptyWrap">
+			<div className="emptyWrap">
 				<Label className="empty" text={label} />
 			</div>
 		);
@@ -446,7 +448,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 			ref={nodeRef}
 			id="innerWrap"
 			className="innerWrap"
-			style={{ display: isShown ? 'block' : 'none' }}
+			style={{ display: isShown ? 'flex' : 'none' }}
 		>
 			{head}
 			{content}

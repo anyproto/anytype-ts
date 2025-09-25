@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import raf from 'raf';
+import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
 
@@ -463,7 +463,7 @@ class UtilMenu {
 		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
-	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
+	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout, isPreview?: boolean) {
 		const isSystem = this.isSystemWidget(id);
 		
 		let options = [
@@ -471,7 +471,7 @@ class UtilMenu {
 			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
-		if (!isSystem) {
+		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
 		} else
 		if (id == J.Constant.widgetId.bin) {
@@ -813,7 +813,7 @@ class UtilMenu {
 		};
 
 		if (isLoading) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+			options.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
 		} else {
 			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 		};
@@ -835,14 +835,20 @@ class UtilMenu {
 							};
 
 							case 'pin': {
-								C.SpaceSetOrder(space.id, [ space.id ]);
-								analytics.event('PinSpace');
+								const items: any[] = this.getVaultItems().filter(it => it.isPinned);
+								const newItems = [ space ].concat(items);
+
+								U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+									C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
+								});
+
+								analytics.event('PinSpace', { route: param.route });
 								break;
 							};
 
 							case 'unpin': {
 								C.SpaceUnsetOrder(space.id);
-								analytics.event('UnpinSpace');
+								analytics.event('UnpinSpace', { route: param.route });
 								break;
 							};
 
@@ -902,16 +908,11 @@ class UtilMenu {
 
 		const items = U.Common.objectCopy(U.Space.getList()).
 			map(it => {
-				it.counter = 0;
-				it.lastMessageDate = 0;
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 
-				if (!it.isButton) {
-					const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-
-					it.counter = counters.mentionCounter || counters.messageCounter;
-					it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
-					it.isPinned = !!it.orderId;
-				};
+				it.counter = counters.mentionCounter || counters.messageCounter;
+				it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
+				it.isPinned = !!it.orderId;
 				return it;
 			});
 
@@ -924,16 +925,31 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessageDate || c1.spaceJoinDate || c1.counter;
-			const d2 = c2.lastMessageDate || c2.spaceJoinDate || c2.counter;
+			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
+			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
+
+			if (c1.counter && !c2.counter) return -1;
+			if (!c1.counter && c2.counter) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
+
+		/*
+		console.log(JSON.stringify(items.map(it => 
+			`${it.name} 
+			p: ${it.isPinned}
+			o: ${it.orderId}
+			lm: ${U.Date.dateWithFormat(I.DateFormat.European, it.lastMessageDate)} 
+			jd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)} 
+			c: ${it.counter} 
+			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
+		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
+		*/
 
 		return items;
 	};
@@ -1405,6 +1421,76 @@ class UtilMenu {
 
 	setContext (context: any) {
 		this.menuContext = context;
+	};
+
+	spaceCreate (param: I.MenuParam, route) {
+		const ids = [ 'chat', 'space', 'join' ];
+		const options = ids.map(id => {
+			const suffix = U.Common.toUpperCamelCase(id);
+
+			let name = '';
+			let icon = '';
+			let description = '';
+			let withDescription = false;
+
+			if (id != 'join') {
+				name = translate(`sidebarMenuSpaceCreateTitle${suffix}`);
+				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
+				withDescription = true;
+				icon = id;
+			};
+
+			return {
+				id,
+				icon,
+				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
+				description,
+				withDescription,
+			};
+		});
+
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'chat': {
+							Action.createSpace(I.SpaceUxType.Chat, route);
+							break;
+						};
+
+						case 'space': {
+							Action.createSpace(I.SpaceUxType.Space, route);
+							break;
+						};
+
+						case 'join': {
+							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
+							break;
+						};
+					};
+
+					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+				},
+			}
+		});
+
+		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
 };

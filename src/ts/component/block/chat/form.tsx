@@ -596,7 +596,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		];
 
 		S.Menu.closeAll(null, () => {
-			S.Menu.open('select', {
+			S.Menu.open('chatFormOptions', {
+				component: 'select',
 				element: `#block-${block.id} #button-${block.id}-attachment`,
 				className: 'chatAttachment fixed',
 				classNameWrap: 'fromBlock',
@@ -1076,6 +1077,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 			saveState(list);
 			analytics.event('DetachItemChat');
 		};
+
+		$(window).trigger('resize');
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {

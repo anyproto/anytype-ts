@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, Action, analytics } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
@@ -55,7 +55,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onCreate = () => {
-		Action.spaceCreateMenu({
+		Storage.setHighlight('createSpace', false);
+		Highlight.hide('createSpace');
+
+		U.Menu.spaceCreate({
 			element: `#sidebarRightButton`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',

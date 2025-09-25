@@ -153,7 +153,7 @@ html.themeDark {
 	markuphighlight { background: #044062 !important; }
 
 	.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
-	.onboardingElement { background-color: #000 !important; }
+	.onboardingElement:not(.onboardingCollectionNewButton) { background-color: #000 !important; }
 
 	/* Components */
 
@@ -432,6 +432,25 @@ html.themeDark {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
+
+			.widgetSection {
+				> .nameWrap {
+					.name {
+						&:hover {
+							.icon.arrow { background-image: url('#{$themePath}/arrow/widgetSection1.svg'); }
+						}
+					}
+
+					.buttons {
+						.button.blank {
+							&:hover {
+								.icon.plus { background-image: url('#{$themePath}/icon/plus/widgetSection1.svg'); }
+							}
+						}						
+					}
+				}
+			}
+
 			.spaceHeader {
 				.buttons {
 					.item {

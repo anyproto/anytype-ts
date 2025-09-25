@@ -504,25 +504,22 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const onScroll = (e: any) => {
 		const subId = getSubId();
-		const node = $(nodeRef.current);
-		const scrollWrapper = $(scrollWrapperRef.current);
-		const formWrapper = node.find('#formWrapper');
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = Math.ceil(container.scrollTop());
-		const fh = formWrapper.outerHeight();
-		const ch = container.outerHeight();
+		const max = U.Common.getMaxScrollHeight(isPopup);
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
+		const isBottom = st >= max;
 
-		setIsBottom(st >= U.Common.getMaxScrollHeight(isPopup));
+		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
 				loadMessages(-1, false);
 			};
 
-			if (st - fh >= scrollWrapper.outerHeight() - ch) {
+			if (isBottom) {
 				loadMessages(1, false);
 			};
 		};
@@ -649,7 +646,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			options = options.concat([
 				{ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') },
 				{ isDiv: true },
-				{ id: 'delete', icon: 'chat-remove', name: translate('commonDelete'), color: 'red' },
+				{ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' },
 			]);
 		};
 
@@ -760,19 +757,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onReplyClick = (e: MouseEvent, item: any) => {
-		const subId = getSubId();
-
-		setIsLoaded(false);
-		setIsBottom(false);
-
-		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
-
 		analytics.event('ClickScrollToReply');
+
+		const subId = getSubId();
+		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
 
 		if (message) {
 			scrollToMessage(message.id, true, true);
 			return;
 		};
+
+		setIsLoaded(false);
+		setIsBottom(false);
 
 		C.ChatGetMessagesByIds(chatId, [ item.replyToMessageId ], (message: any) => {
 			if (message.error.code || !message.messages.length) {
@@ -780,10 +776,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			const reply = message.messages[0];
-			if (reply) {
-				S.Chat.clear(subId);
-				loadMessagesByOrderId(reply.orderId, () => scrollToMessage(reply.id, true, true));
-			};
+
+			S.Chat.clear(subId);
+			loadMessagesByOrderId(reply.orderId, () => scrollToMessage(reply.id, true, true));
 		});
 	};
 

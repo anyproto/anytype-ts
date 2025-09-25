@@ -262,6 +262,7 @@ class MenuManager {
 
 		const flagsMw = {
 			request: Util.translate('electronMenuFlagMwRequest'),
+			subscribe: Util.translate('electronMenuFlagMwSubscribe'),
 			event: Util.translate('electronMenuFlagMwEvent'),
 			sync: Util.translate('electronMenuFlagMwSync'),
 			file: Util.translate('electronMenuFlagMwFile'),

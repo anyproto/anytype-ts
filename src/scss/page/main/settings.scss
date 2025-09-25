@@ -503,6 +503,9 @@
     }
 
     > .pageSettingsSpaceShare {
+        .upsellBanner { margin-bottom: 8px; }
+        .upsellBanner:last-child { margin-bottom: 44px; }
+
         .titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; }
         .titleWrapper {
             .title { margin-bottom: 0px; }

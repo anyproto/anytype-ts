@@ -19,6 +19,55 @@
 		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
 	}
 
+	.widgetSection { display: flex; flex-direction: column; }
+	.widgetSection {
+		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; }
+		> .nameWrap {
+			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); }
+			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection0.svg'); }
+
+			.name { 
+				display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 6px; border-radius: 6px; 
+				transition: $transitionAllCommon;
+			}
+			.name {
+				&:hover { color: var(--color-text-primary); }
+				&:hover {
+					.icon.arrow { background-image: url('~img/arrow/widgetSection1.svg'); }
+				}
+			}
+
+			.buttons { 
+				display: flex; flex-direction: row; gap: 0px 4px; align-items: center; justify-content: flex-end; opacity: 0; 
+				transition: opacity $transitionCommon;
+			}
+			.buttons {
+				.button.blank { border: 0px; padding: 5px 6px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
+				.button.blank {
+					&:hover { background: none; color: var(--color-text-primary); }
+					&:hover {
+						.icon.plus { background-image: url('~img/icon/plus/widgetSection1.svg'); }
+					}
+				}						
+			}
+
+			&:hover {
+				.buttons { opacity: 1; }
+			}
+		}
+
+		> .items { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 6px; overflow: hidden; height: 0px; }
+		> .items {
+			&.anim { transition: height 0.2s $easeInQuint; }
+
+			.widget:first-child { margin-top: 7px; }
+		}
+
+		&.isOpen {
+			> .nameWrap .icon.arrow { transform: rotateZ(0deg); }
+		}
+	}
+
 	> .body {
 		padding: 0px 0px 68px 6px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 	}
@@ -35,43 +84,6 @@
 
 		> .content { display: flex; flex-direction: column; gap: 12px 0px; }
 		> .content {
-			.widgetSection { display: flex; flex-direction: column; }
-			.widgetSection {
-				> .nameWrap { display: flex; @include text-small; color: var(--color-text-secondary); justify-content: space-between; }
-				> .nameWrap {
-					.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection.svg'); transform: rotateZ(-90deg); }
-
-					.name { 
-						display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 6px; border-radius: 6px; 
-						transition: $transitionAllCommon;
-					}
-					.name:hover { background: var(--color-shape-highlight-medium); }
-
-					.buttons { 
-						display: flex; flex-direction: row; gap: 0px 4px; align-items: center; justify-content: flex-end; opacity: 0; 
-						transition: opacity $transitionCommon;
-					}
-					.buttons {
-						.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection.svg'); }
-
-						.button.blank { border: 0px; padding: 5px 6px; @include text-small; color: var(--color-text-secondary); }
-					}
-
-					&:hover .buttons { opacity: 1; }
-				}
-
-				> .items { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 6px; overflow: hidden; height: 0px; }
-				> .items {
-					&.anim { transition: height 0.2s $easeInQuint; }
-
-					.widget:first-child { margin-top: 7px; }
-				}
-
-				&.isOpen {
-					> .nameWrap .icon.arrow { transform: rotateZ(0deg); }
-				}
-			}
-
 
 			.dropTarget.firstTarget { 
 				position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); 

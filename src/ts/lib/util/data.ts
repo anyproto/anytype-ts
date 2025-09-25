@@ -1,6 +1,35 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
 
+const TYPE_KEYS = {
+	default: [
+		J.Constant.typeKey.page,
+		J.Constant.typeKey.note,
+		J.Constant.typeKey.task,
+		J.Constant.typeKey.collection,
+		J.Constant.typeKey.set,
+		J.Constant.typeKey.bookmark,
+		J.Constant.typeKey.project,
+		J.Constant.typeKey.image,
+		J.Constant.typeKey.file,
+		J.Constant.typeKey.video,
+		J.Constant.typeKey.audio,
+	],
+	chat: [ 
+		J.Constant.typeKey.image,
+		J.Constant.typeKey.bookmark,
+		J.Constant.typeKey.file,
+		J.Constant.typeKey.page,
+		J.Constant.typeKey.note,
+		J.Constant.typeKey.task,
+		J.Constant.typeKey.collection,
+		J.Constant.typeKey.set,
+		J.Constant.typeKey.project,
+		J.Constant.typeKey.video,
+		J.Constant.typeKey.audio,
+	]
+};
+
 /**
  * Utility class for data manipulation, formatting, and application-level helpers.
  * Provides methods for block styling, authentication, sorting, and more.
@@ -679,6 +708,22 @@ class UtilData {
 		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
 	};
 
+	typeSortKeys (isChat: boolean) {
+		return isChat ? TYPE_KEYS.chat : TYPE_KEYS.default;
+	};
+
+	/**
+	 * Sorts two objects by their type key.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
+	sortByTypeKey (c1: any, c2: any, isChat: boolean) {
+		const keys = this.typeSortKeys(isChat);
+
+		return keys.indexOf(c1.uniqueKey) - keys.indexOf(c2.uniqueKey);
+	};
+
 	/**
 	 * Checks for objects with a specific relation and type, limited by count.
 	 * @param {string} relationKey - The relation key to check.
@@ -1166,7 +1211,7 @@ class UtilData {
 		});
 	};
 
-	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+	widgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
 		object = object || {};
 
 		let ret: any = {};

@@ -1,6 +1,6 @@
-import { I, U, translate, S, Onboarding } from 'Lib';
+import { I, U, translate, S, sidebar, keyboard, Storage } from 'Lib';
 
-export default {
+const Data = {
 	mainGraph: () => ({
 		category: translate('onboardingMainGraph'),
 		items: [
@@ -12,7 +12,7 @@ export default {
 		],
 
 		param: {
-			element: '#button-widget-help',
+			element: '#button-help',
 			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
@@ -23,123 +23,73 @@ export default {
 		},
 	}),
 
-	emailCollection: () => ({
-		items: [ { noButton: true } ],
-		param: {
-			element: '#button-widget-help',
-			classNameWrap: 'fixed fromSidebar',
-			className: 'invertedColor',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			noArrow: true,
-			passThrough: true,
-			offsetY: -4,
-		},
-	}),
+	basics: () => {
+		const isNewUser = Storage.get('isNewUser');
+		const theme = S.Common.getThemeClass();
+		const spaceview = U.Space.getSpaceview();
+		const elementHead = spaceview.isChat ? '#sidebarPageWidget .spaceHeader' : '#sidebarPageWidget #widget-space';
+		const isDark = theme == 'dark';
+		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
+		const pinnedText = isNewUser ? translate('onboardingPinnedNewText') : translate('onboardingPinnedOldText');
+		const objectsText = isNewUser ? translate('onboardingObjectsNewText') : translate('onboardingObjectsOldText');
 
-	objectCreationStart: () => ({
-		category: translate('onboardingObjectCreationStart'),
-		items: [
-			{
-				description: `
-					<p>${translate('onboardingObjectCreationStart21')}</p>
-				`,
-				video: './img/help/onboarding/object-2-type-menu.mp4',
-				buttonText: translate('onboardingObjectCreationStart2Button'),
-			},
-		],
-		param: {
-			element: '#block-type',
-			classNameWrap: 'fixed fromSidebar',
-			className: 'isWizard',
-			noArrow: true,
-			passThrough: true,
-		},
-	}),
+		return {
+			showDimmer: true,
+			category: translate('onboardingBasicsTitle'),
+			param: {
+				noArrow: true,
+				noClose: true,
+				horizontal: I.MenuDirection.Right,
+				stickToElementEdge: I.MenuDirection.Top,
+				width: 288,
+				offsetX: -312,
+				highlightElements: [],
+				onOpen: (context) => {
+					if (spaceview.isChat) {
+						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
+					};
 
-	objectCreationFinish: () => ({
-		category: translate('onboardingObjectCreationFinish'),
-		items: [
-			{
-				description: `
-					<p>${translate('onboardingObjectCreationFinish11')}</p>
-				`,
-				video: './img/help/onboarding/object-layout.mp4',
-				buttonText: translate('onboardingObjectCreationFinish1Button'),
-			},
-		],
-		param: {
-			element: '#button-widget-help',
-			classNameWrap: 'fixed fromSidebar',
-			className: 'isWizard',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			noArrow: true,
-			passThrough: true,
-			offsetY: -4,
-		},
-	}),
+					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+					Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
-	basics: () => ({
-		showDimmer: true,
-		param: {
-			noArrow: true,
-			noClose: true,
-			horizontal: I.MenuDirection.Right,
-			stickToElementEdge: I.MenuDirection.Top,
-			width: 288,
-			offsetX: -312,
-			highlightElements: [],
-			hiddenElements: [ 
-				'#widget-buttons', 
-				'.widget', 
-				'#sidebarPageWidget #list > .buttons',
-				'#sidebarPageWidget #body',
-			],
-			/*
-			onClose: () => Onboarding.start('emailCollection', false),
-			*/
-		},
-		items: [
-			{
-				category: translate('onboardingSpacesTitle'),
-				description: translate('onboardingSpacesText'),
-				param: {
-					element: '#widget-space',
-				}
+					$(window).trigger('checkWidgetToggles');
+					window.setTimeout(() => context.position(), 50);
+				},
+				hiddenElements: [
+					elementHead,
+					'#sidebarPageWidget .section-pin',
+					'#sidebarPageWidget .section-type',
+					'#sidebarPageWidget > .bottom',
+				]
 			},
-			{
-				category: translate('onboardingWidgetsTitle'),
-				description: translate('onboardingWidgetsText'),
-				param: {
-					element: '.widgetView',
-					highlightElements: [ 
-						'#sidebarPageWidget .widget.widgetView', 
-						'#sidebarPageWidget .widget.widgetTree', 
-						'#sidebarPageWidget .widget.widgetLink',
-					]
-				}
-			},
-			{
-				category: translate('onboardingMultipleSpacesTitle'),
-				description: translate('onboardingMultipleSpacesText'),
-				cloneElementClassName: 'onboardingVaultItem',
-				param: {
-					element: '#vault #item-add',
-					offsetX: -318,
-				}
-			},
-			{
-				category: translate('onboardingGalleryTitle'),
-				description: translate('onboardingGalleryText'),
-				cloneElementClassName: 'onboardingVaultItem',
-				param: {
-					element: '#vault #item-gallery',
-					offsetX: -318,
-				}
-			},
-		]
-	}),
+			items: [
+				{
+					description: translate('onboardingSpacesText'),
+					param: {
+						element: elementHead,
+					}
+				},
+				{
+					description: pinnedText,
+					cloneElementClassName: scn,
+					param: {
+						element: '#sidebarPageWidget .section-pin',
+					}
+				},
+				{
+					description: objectsText,
+					cloneElementClassName: scn,
+					param: {
+						element: '#sidebarPageWidget .section-type',
+					}
+				},
+			]
+		};
+	},
+
+	basicsOld: () => {
+		return Data.basics();
+	},
 
 	membership: () => ({
 		showDimmer: true,
@@ -213,9 +163,9 @@ export default {
 				category: translate('onboardingCollectionsTitle'),
 				description: translate('onboardingCollectionsText'),
 				buttonText: translate('onboardingCollectionsButton'),
-				cloneElementClassName: 'onboardingDataviewEmptyButton',
+				cloneElementClassName: 'onboardingCollectionNewButton',
 				param: {
-					element: '#emptyButton',
+					element: '#button-dataview-add-record',
 					offsetY: 8,
 				}
 			}
@@ -384,11 +334,12 @@ export default {
 		],
 
 		param: {
-			element: '#pageFlex.isFull .headSimple .side.right',
-			vertical: I.MenuDirection.Center,
-			offsetX: -304,
-			offsetY: 45,
+			element: '#pageFlex.isFull .headSimple #button-edit',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 16,
 		},
 	}),
 
 };
+
+export default Data;

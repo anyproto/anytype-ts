@@ -532,7 +532,15 @@ class RecordStore {
 	 * @returns {any[]} The sorted list of types.
 	 */
 	sortTypes (list: any[]) {
-		return (list || []).sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByLastUsedDate(c1, c2) || U.Data.sortByName(c1, c2));
+		const space = U.Space.getSpaceview();
+
+		return (list || []).sort((c1, c2) => {
+			return (
+				U.Data.sortByOrderId(c1, c2) ||
+				U.Data.sortByTypeKey(c1, c2, space.isChat) ||
+				U.Data.sortByName(c1, c2)
+			);
+		});
 	};
 
 	/**

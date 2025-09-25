@@ -34,6 +34,7 @@ import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
 import PopupApiCreate from './api/create';
 import PopupAIOnboarding from './aiOnboarding';
+import PopupIntroduceChats from './introduceChats';
 
 const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -172,6 +173,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		onboarding:				 PopupOnboarding,
 		apiCreate:				 PopupApiCreate,
 		aiOnboarding:			 PopupAIOnboarding,
+		introduceChats:			 PopupIntroduceChats,
 	};
 	
 	const popupId = getId();

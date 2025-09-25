@@ -79,14 +79,6 @@ input, textarea, select { font-family: 'Inter'; }
 
 .ReactVirtualized__List { overscroll-behavior: none; }
 
-html.platformWindows {
-	body { overflow-y: overlay; }
-}
-
-html.platformLinux {
-	body { overflow-y: auto; }
-}
-
 .customScrollbar {
 	::-webkit-scrollbar, &::-webkit-scrollbar { width: 6px; height: 6px; }
 	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
@@ -95,13 +87,6 @@ html.platformLinux {
 }
 .customScrollbar:hover {
 	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: var(--color-control-active); }
-}
-
-html.platformWindows, html.platformLinux {
-	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
-	::-webkit-scrollbar-corner { background-color: transparent; }
-	::-webkit-scrollbar-button { display: none; }
 }
 
 .dn { display: none !important; }
@@ -249,6 +234,21 @@ a { color: var(--color-text-primary); }
 
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
+
+html.platformWindows {
+	body { overflow-y: overlay; }
+}
+
+html.platformLinux {
+	body { overflow-y: auto; }
+}
+
+html.platformWindows, html.platformLinux {
+	::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
+	::-webkit-scrollbar-corner { background-color: transparent; }
+	::-webkit-scrollbar-button { display: none; }
+}
 
 html.platformWindows:not(.noMenuBar) {
 	#menuBar { 

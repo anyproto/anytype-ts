@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, ListObjectManager, Label, Button, ProgressBar, UpsellStorage } from 'Component';
+import { Title, ListObjectManager, Label, Button, ProgressBar, UpsellBanner } from 'Component';
 import { I, J, U, S, translate, Action, analytics } from 'Lib';
 
 const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends React.Component<I.PageSettingsComponent, {}> {
@@ -32,8 +32,6 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		};
 
 		let bytesUsed = 0;
-		let buttonUpgrade = null;
-		let label = U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit));
 
 		(spaces || []).forEach((space) => {
 			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -65,16 +63,11 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 		});
 
 		const usagePercent = bytesUsed / bytesLimit;
-		const isRed = usagePercent >= 100;
+		const isRed = (usagePercent >= 100) || notSyncedCounter;
 		const legend = chunks.concat([ { name: translate('popupSettingsSpaceStorageProgressBarFree'), usage: bytesLimit - bytesUsed, className: 'free' } ]);
 
-		if (isRed || notSyncedCounter) {
+		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('commonUpgrade')} onClick={() => this.onUpgrade()} />;
-
-			if (notSyncedCounter) {
-				label = translate('popupSettingsSpaceIndexStorageIsFullText');
-			};
 		};
 
 		const Manager = (item: any) => {
@@ -114,12 +107,10 @@ const PageMainSettingsStorage = observer(class PageMainSettingsStorage extends R
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
-				{buttonUpgrade}
-
-				<UpsellStorage route={analytics.route.settingsStorage} />
+				<UpsellBanner components={[ 'storage' ]} route={analytics.route.settingsStorage} />
 
 				<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
-				<Label text={label} />
+				<Label text={translate(`popupSettingsSpaceIndexStorageText`)} />
 
 				<div className={usageCn.join(' ')}>
 					<ProgressBar segments={progressSegments} />

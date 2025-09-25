@@ -47,11 +47,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const buttons = this.getButtons();
-		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
-		//const nonChats = U.Space.getList().filter(it => !it.isChat && (it.id != space.id));
-		const canChangeType = canWrite; // && ((!space.isChat && (nonChats.length < profile.sharedSpacesLimit)) || !space.isChat);
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
@@ -60,7 +57,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
-		const tooltip = !canChangeType ? U.Common.sprintf(translate('popupSettingsSpaceIndexUxTypeTooltip'), profile.sharedSpacesLimit) : '';
 
 		const spaceModes = [
 			{ id: I.NotificationMode.All },
@@ -240,6 +236,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 								</div>
 							</div>
 
+							{/*
 							<div className="section sectionSpaceManager">
 								<div className="sectionContent">
 									<div className="item">
@@ -268,6 +265,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 									</div>
 								</div>
 							</div>
+							*/}
 						</>
 					) : (
 						<div className="membersList section">

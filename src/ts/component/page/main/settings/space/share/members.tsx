@@ -8,9 +8,13 @@ interface State {
 	isLoading: boolean;
 };
 
+interface Props extends I.PageSettingsComponent {
+	onStopSharing: () => void;
+};
+
 const HEIGHT = 64;
 
-const Members = observer(class Members extends React.Component<I.PageSettingsComponent, State> {
+const Members = observer(class Members extends React.Component<Props, State> {
 
 	node: any = null;
 	cache: any = null;
@@ -21,7 +25,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 		isLoading: false,
 	};
 
-	constructor (props: I.PageSettingsComponent) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
@@ -56,12 +60,6 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				memberUpgradeType = 'members';
-				showLimit = true;
-			} else
-			if (!U.Space.getWriterLimit()) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
-				memberUpgradeType = 'editors';
 				showLimit = true;
 			};
 		};
@@ -228,18 +226,15 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 	};
 
 	getParticipantOptions (isNew?: boolean) {
-		const { membership } = S.Auth;
-		const tier = U.Data.getMembershipTier(membership.tier);
+		const space = U.Space.getSpaceview();
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
+		const isReaderLimit = !space.isChat && (U.Space.getReaderLimit() <= 0);
+		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
 
-		let items: any[] = [] as any[];
-
-		if (!tier?.price || (U.Space.getReaderLimit() - 1 >= 0)) {
-			items.push({ id: String(I.ParticipantPermissions.Reader) });
-		};
-		if (!tier?.price || (U.Space.getWriterLimit() - 1 >= 0)) {
-			items.push({ id: I.ParticipantPermissions.Writer });
-		};
+		let items: any[] = [
+			{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
+			{ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit },
+		] as any[];
 
 		items = items.map(it => {
 			it.name = translate(`participantPermissions${it.id}`);
@@ -252,7 +247,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
-		return items;
+		return U.Menu.prepareForSelect(items);
 	};
 
 	onPermissionsSelect (item: any, isNew?: boolean) {
@@ -263,7 +258,7 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 				value: item.permissions,
 				options: this.getParticipantOptions(isNew),
 				onSelect: (e: any, el: any) => {
-					this.onChangePermissions(item, Number(el.id), isNew);
+					this.onChangePermissions(item, el.id, isNew);
 				},
 			},
 		});
@@ -271,6 +266,16 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 	onChangePermissions (item: any, v: any, isNew?: boolean) {
 		const { space } = S.Common;
+
+		const onAfterRemove = () => {
+			const my = U.Space.getParticipant();
+			const members = this.getParticipantList().filter(it => it.id != my.id);
+
+			if (!members.length) {
+				this.props.onStopSharing();
+				return;
+			};
+		};
 
 		let title = '';
 		let text = '';
@@ -285,9 +290,9 @@ const Members = observer(class Members extends React.Component<I.PageSettingsCom
 
 				onConfirm = () => {
 					if (isNew) {
-						C.SpaceRequestDecline(space, item.identity);
+						C.SpaceRequestDecline(space, item.identity, onAfterRemove);
 					} else {
-						C.SpaceParticipantRemove(space, [ item.identity ]);
+						C.SpaceParticipantRemove(space, [ item.identity ], onAfterRemove);
 					};
 
 					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');

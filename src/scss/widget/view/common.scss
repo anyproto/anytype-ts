@@ -21,7 +21,7 @@
 		}
 	}
 
-	.tabs { position: relative; font-weight: 500; color: var(--color-control-active); height: 22px; }
+	.tabs { position: relative; font-weight: 500; color: var(--color-control-active); height: 22px; overflow: hidden; }
 	.tabs {
 		.tab { white-space: nowrap; flex-shrink: 0; transition: $transitionAllCommon;  }
 		.tab.active, .tab:hover { color: var(--color-text-primary); }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, Error } from 'Component';
+import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
 import { I, C, S, U, translate, Preview, Action, analytics } from 'Lib';
 import Members from './share/members';
 
@@ -34,6 +34,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		this.onCopy = this.onCopy.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
 		this.onUpgrade = this.onUpgrade.bind(this);
+		this.onStopSharing = this.onStopSharing.bind(this);
 	};
 
 	render () {
@@ -43,6 +44,10 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 		return (
 			<div ref={node => this.node = node}>
+				<div>
+					<UpsellBanner components={[ 'members', 'space'  ]} route={analytics.route.settingsSpaceShare} />
+				</div>
+
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 				</div>
@@ -50,7 +55,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 				<div id="sectionInvite" className="section sectionInvite">
 					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 
-					<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', U.Space.isMyOwner() ? 'canEdit' : '' ].join(' ')} onClick={this.onInviteMenu}>
+					<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', this.canEdit() ? 'canEdit' : '' ].join(' ')} onClick={this.onInviteMenu}>
 						<Icon className={isLoading ? 'loading' : icon} />
 						<div className="info">
 							<Title text={name} />
@@ -69,7 +74,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 					) : ''}
 				</div>
 
-				<Members {...this.props} />
+				<Members {...this.props} onStopSharing={this.onStopSharing} />
 
 				<Error text={error} />
 			</div>
@@ -125,7 +130,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	onInviteMenu () {
-		if (!U.Space.isMyOwner()) {
+		if (!this.canEdit()) {
 			return;
 		};
 
@@ -137,10 +142,13 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			I.InviteLinkType.Viewer
 		];
 		const ids: I.InviteLinkType[] = noApproveIds.concat([ I.InviteLinkType.Manual ]);
+
 		const options: any[] = ids.map((id: I.InviteLinkType) => this.getOptionById(id));
 
 		if (isOnline && !isLocalNetwork) {
-			options.push({ isDiv: true });
+			if (options.length) {
+				options.push({ isDiv: true });
+			};
 			options.push(this.getOptionById(I.InviteLinkType.None));
 		};
 
@@ -246,7 +254,17 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		analytics.event('ScreenShareMenu');
 	};
 
-	getOptionById (id) {
+	isSharedSpacesLimit () {
+		const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
+		const { sharedSpacesLimit } = U.Space.getProfile();
+
+		return sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
+	};
+
+	getOptionById (id: I.InviteLinkType) {
+		const space = U.Space.getSpaceview();
+		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
+		const isDisabled = (id == I.InviteLinkType.Editor) && isWriterLimit;
 		const suffix = I.InviteLinkType[id];
 
 		return {
@@ -255,6 +273,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 			name: translate(`popupSettingsSpaceShareMenuInvite${suffix}Title`),
 			description: translate(`popupSettingsSpaceShareMenuInvite${suffix}Description`),
 			withDescription: true,
+			disabled: isDisabled
 		};
 	};
 
@@ -279,6 +298,24 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		});
 	};
 
+	onStopSharing () {
+		C.SpaceStopSharing(S.Common.space, (message) => {
+			if (!message.error.code) {
+				this.setInvite('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.Reader);
+				
+				S.Popup.open('confirm', {
+					data: {
+						icon: 'warning',
+						title: translate(`popupConfirmStopSharingSpaceTitle`),
+						text: translate(`popupConfirmStopSharingSpaceText`),
+						textConfirm: translate('commonOkay'),
+						canCancel: false,
+					}
+				});
+			};
+		});
+	};
+
 	setError (error: { description: string, code: number}) {
 		if (!error.code) {
 			return false;
@@ -286,6 +323,14 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 
 		this.setState({ error: error.description });
 		return true;
+	};
+
+	canEdit () {
+		const { cid, key } = this.state;
+		const hasLink = cid && key;
+		const space = U.Space.getSpaceview();
+
+		return U.Space.isMyOwner() && (!hasLink || space.isShared);
 	};
 
 });

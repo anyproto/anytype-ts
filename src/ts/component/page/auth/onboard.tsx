@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
 
 enum Stage {
 	Phrase 		= 0,
@@ -58,41 +58,25 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = {
-			replace: true,
-			onRouteChange: () => {
-				const routeParam = { replace: true };
+		const routeParam = { replace: true };
 
-				S.Common.showRelativeDatesSet(true);
-				Storage.set('primitivesOnboarding', true);
-				Storage.setOnboarding('objectDescriptionButton');
-				Storage.setOnboarding('typeResetLayout');
+		S.Common.showRelativeDatesSet(true);
 
-				if (redirect) {
-					U.Router.go(redirect, routeParam);
-					S.Common.redirectSet('');
-					return;
-				};
-
-				if (S.Auth.startingId) {
-					U.Object.getById(S.Auth.startingId, {}, object => {
-						if (object) {
-							U.Object.openRoute(object, routeParam);
-						} else {
-							U.Space.openDashboard(routeParam);
-						};
-					});
-				} else {
-					U.Space.openDashboard(routeParam);
-				};
-
-				Onboarding.start('basics', false);
-			},
-		};
+		Storage.set('isNewUser', true);
+		Storage.set('chatsOnboarding', true);
+		Storage.setOnboarding('objectDescriptionButton');
+		Storage.setOnboarding('typeResetLayout');
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 		U.Data.onInfo(account.info);
-		U.Data.onAuthWithoutSpace(routeParam);
 		U.Data.onAuthOnce(true);
+
+		S.Common.spaceSet('');
+
+		U.Subscription.createGlobal(() => {
+			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
+			S.Common.redirectSet('');
+		});
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
@@ -264,7 +248,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			);
 
 			additional = (
-				<div className="learnMore" onClick={onLearnMore}>
+				<div className="learnMore animation" onClick={onLearnMore}>
 					<Icon />
 					<Label text={translate('commonLearnMore')} />
 				</div>
@@ -273,11 +257,20 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('authOnboardPhraseRevealAndCopy')} color="accent" onClick={onPhraseCopy} />
+						<Button 
+							ref={nextRef} 
+							className={cnb.join(' ')}
+							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')} 
+							color="accent" 
+							onClick={phraseVisible ? onForward : onPhraseCopy}
+						/>
 					</div>
-					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
-					</div>
+
+					{!phraseVisible ? (
+						<div className="animation">
+							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						</div>
+					) : ''}
 				</>
 			);
 			break;
@@ -300,14 +293,9 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			);
 
 			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
-					</div>
-					{/*<div className="animation">*/}
-					{/*	<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />*/}
-					{/*</div>*/}
-				</>
+				<div className="animation">
+					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+				</div>
 			);
 			break;
 		};
@@ -326,10 +314,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 					</div>
 				</>
 			);
@@ -350,10 +338,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={onForward} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 					</div>
 				</>
 			);

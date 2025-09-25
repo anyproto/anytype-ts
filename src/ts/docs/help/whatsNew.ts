@@ -12,6 +12,7 @@ export default () => {
 	const h1 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header1, t, align);
 	const h2 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header2, t, align);
 	const h3 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header3, t, align);
+	const h4 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header4, t, align);
 	const text = (t: string) => block(I.TextStyle.Paragraph, t);
 	const callout = (t: string, icon: string) => block(I.TextStyle.Callout, t, I.BlockHAlign.Left, icon);
 	const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
@@ -22,8 +23,80 @@ export default () => {
 	const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 	return [
-		{ type: I.BlockType.IconPage, icon: '👋' },
+		//{ type: I.BlockType.IconPage, icon: '💬' },
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
+		//{ type: I.BlockType.IconPage, icon: '👋' },
+
+		title(`Now We're Talking!`),
+		h4(`<span>Release 0.50.0</span><span>September 22, 2025</span>`),
+		text(''),
+		text('We’ve always built Anytype around private, peer-to-peer collaboration. Spaces gave you a structured home for your notes, docs and databases. Now we’re taking the next step: introducing Chats, a new way to connect and collaborate while keeping your data fully in your hands.'),
+		text(``),
+
+		//video('50/1.mp4', 'c70 screen'),
+
+		h1(`Welcome to Chat`),
+		text(`Chat is a new type of channel in Anytype, designed for fast, conversational flow. It gives you the familiar rhythm of chatting – replying, reacting, sharing files – but with a powerful twist: you can create and edit objects together in real time.`),
+		text(`<b>Create Objects</b> right from your chat window – turn thoughts into Pages, Tasks, or any other Type.`),
+		text(`<b>Share existing Objects</b> – anything you drop into Chat can be opened and edited right away.`),
+		text(`<b>Keep things organized</b> – uploads are added to the relevant Types (Audio, Images) and everything stays searchable and structured in your sidebar.`),
+		text(`<b>Invite with ease</b> – bring new members into a conversation instantly with links that don’t require approval.`),
+		img(`50/1.png`),
+		text(``),
+
+		h1(`The Vault Update`),
+		text(`Your Vault now brings together Spaces and Chats with live previews and updates in one view. You can pin important chats or spaces so they’re always within reach.`),
+		text(`When you’re in a Chat, the Vault shows all your conversations at a glance, making it easy to switch between them and stay in the flow. Step into a Space, and the Vault shifts its focus so you can concentrate on it.`),
+		img(`50/2.png`),
+		text(``),
+
+		h1(`Widget Bar Restructure`),
+		text(`We’ve reworked the Sidebar to create a clearer navigation model. The goal was to clarify the difference between shortcuts and containers.`),
+		text(`The Sidebar now has two distinct collapsible sections:`),
+		bullet(`<b>Pinned</b> → All the widgets you had before, kept close at hand as shortcuts.`),
+		bullet(`<b>Objects</b> → Previously accessible only from Settings, these containers list all objects of a given Type and work just like widgets.`),
+		img(`50/3.png`),
+		text(``),
+		text(`Everything you had pinned before is preserved in the Pinned Widget. You can re-pin what's needed in a new way and delete “old” Pinned Widget. If you were using <i>Recently Opened</i> or <i>Recently Edited</i> Widgets, they have been converted into pinned Query objects. `),
+		text(`At the same time, we’ve removed duplicate flows like the <i>Edit Widgets</i> button and <i>All Objects</i>, so there’s now a single, unified way to pin and organize.`),
+		text(``),
+
+		h1(`Quality of Life Improvements`),
+		text(''),
+
+		text(`<b>Manual Sorting for Property Options</b>`),
+		text(`Options in ${hl('Select')}, ${hl('Multi-select')} formats – as well as a Tag property – no longer follow automatic alphabetical or creation order. You can now drag and drop them into a custom sequence, which is saved across devices and applied consistently in Queries and Collections. New options are added to the bottom of the list.`),
+		text(``),
+
+		text(`<b>App Menu Update on Windows</b>`),
+		text(`The top bar has been redesigned with a cleaner menu that feels more consistent: it now works seamlessly in Dark Mode and is better tuned to Anytype’s overall design.`),
+		text(``),
+
+		text(`<b>Enter Continues List, Backspace Removes Style</b>`),
+		text(`Pressing ${hl('Enter')} after an empty Bullet or Numbered block now continues the List. To remove the style, use ${hl('Backspace')} instead.`),
+		text(``),
+
+		h1(`Bug Fixes`),
+		text(''),
+
+		bullet(`<b>Chinese IME input before formatted content no longer causes unintended style changes.</b> Thanks to @${link('https://github.com/anyproto/anytype-ts/issues/1542', 'yudi-corgi')} for reporting and @${link('https://github.com/anyproto/anytype-ts/pull/1633', 'twinklestar03')} for contributing the fix!`),
+		bullet(`<b>Table of Contents correctly highlights the current position on a page.</b> Thanks to @${link('https://community.anytype.io/t/28532', 'VisualNotes')}!`),
+		bullet(`<b>Restored ${hl('Ctrl + Click')} support on macOS for opening object menus.</b> Thanks to @${link('https://community.anytype.io/t/can-t-right-click/28487', 'mkjohnnie')} for the report!`),
+		bullet(`<b>Shortcut ${hl('Ctrl + Click')} to open objects in a new window works correctly in Queries and Collections.</b> Thanks to @${link('', 'leblanclxd')}!`),
+		bullet(`<b>${hl('Right Click')} on the Graph view in Widgets works correctly.</b>`),
+		bullet(`<b>Options in Select and Multi-select properties are now created correctly.</b>`),
+		bullet(`<b>Code Snippet embed block now handles input correctly, including when typing in Python or HTML language mode.</b> Thanks to @${link('https://community.anytype.io/t/28613', 'Cash')}!`),
+		bullet(`<b>Deeplinks now work correctly and open the target object from outside Anytype.</b> Thanks to @${link('https://community.anytype.io/t/28651', 'siousu')}!`),
+		bullet(`<b>See All in Widgets has increased limits for displayed objects, making it possible to browse large lists in the sidebar.</b> Thanks to @${link('https://community.anytype.io/t/28654', 'wyn')}!`),
+		bullet(`<b>Improved drag-and-drop behavior in Kanban view.</b>`),
+		bullet(`<b>Improved Global Search performance, fixing freezes after creating objects with ${hl('Cmd+N')} and ensuring results display correctly.</b>`),
+		bullet(`<b>Pages with a cover image and minimal content no longer scroll unnecessarily.</b> Thanks to @${link('https://community.anytype.io/t/28453', 'VisualNotes')}`),
+		bullet(`<b>Fixed an issue where opening certain spaces created on mobile caused the desktop app to display a blank screen.</b> Thanks to @${link('https://community.anytype.io/t/28667', 'fei')} for the report!`),
+		bullet(`<b>Browsing history is preserved after hiding and reopening the Widget Sidebar.</b> Thanks to @${link('https://community.anytype.io/t/28727', 'Shampra')}!`),
+		bullet(`<b>The calendar pop-in when selecting a date via @date no longer appears behind the menu.</b> Thanks to @${link('https://community.anytype.io/t/28728', 'rphlm')}!`),
+
+		div(),
+		// --------------------------------------------//
 
 		title(`Desktop 0.49.0 Released!`),
 		text(''),

@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key, Highlight } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -17,6 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
+	const { getId } = props;
 	const { space, updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
@@ -141,7 +142,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			return;
 		};
 
-		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
+		const items: any[] = U.Menu.getVaultItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
@@ -160,7 +161,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const getItems = () => {
 		let items = U.Menu.getVaultItems().map(it => {
-			if (!it.chatId) {
+			if (!it.isChat) {
 				return it;
 			};
 
@@ -193,7 +194,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		});
+		}, { route: analytics.route.vault });
 	};
 
 	const items = getItems();
@@ -230,7 +231,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const getNode = () => {
-		return $('#sidebarPageVault');
+		return $(`#${getId()}`);
 	};
 
 	const setActive = (item: any) => {
@@ -299,6 +300,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		if (item.isPinned && !cnt) {
 			cn.push('isPinned');
 			icons.push('pin');
+		};
+
+		if (item.isMuted) {
+			cn.push('isMuted');
 		};
 
 		// placeholder for error logic
@@ -396,7 +401,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onHelp = () => {
 		S.Menu.open('help', {
-			element: '#sidebarPageVault #button-help',
+			element: `#${getId()} #button-help`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
@@ -412,6 +417,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	useEffect(() => {
 		rebind();
 		analytics.event('ScreenVault');
+		Highlight.showAll();
 
 		return () => {
 			unbind();

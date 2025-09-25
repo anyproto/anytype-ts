@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
+.widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; opacity: 0; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { padding: 8px; }
@@ -76,6 +76,9 @@
 		}
 	}
 
+	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
+	&.show { opacity: 1; }
+
 	#button-show-all { padding: 0px 8px; }
 	#button-show-all {
 		.button { display: flex; align-items: center; justify-content: flex-start; border: 0; @include text-small; font-weight: 500; }
@@ -85,9 +88,9 @@
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
-	.innerWrap { transition: opacity 0.4s $easeInQuint; }
+	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; }
 
-	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; justify-content: center; }
+	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; justify-content: center; width: 100%; }
 	.emptyWrap {
 		.label { text-align: center; @include text-common; @include clamp2; width: 100%; color: var(--color-text-secondary); }
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/widget/emptyMore.svg'); }
