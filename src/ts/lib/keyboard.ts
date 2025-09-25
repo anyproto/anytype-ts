@@ -408,7 +408,7 @@ class Keyboard {
 					vertical = I.MenuDirection.Center;
 				};
 
-				Action.spaceCreateMenu({
+				U.Menu.spaceCreate({
 					element,
 					rect,
 					className: 'spaceCreate fixed',

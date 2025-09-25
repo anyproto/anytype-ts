@@ -1,21 +1,19 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, U, translate, Action, analytics } from 'Lib';
+import { I, U, translate, analytics } from 'Lib';
 
 const PageMainVoid = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const spaces = U.Space.getList().filter(it => it.isLocalOk);
 
 	const onClick = () => {
-		const param = {
+		U.Menu.spaceCreate({
 			element: '#void-button-create-space',
 			className: 'spaceCreate',
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-		};
-
-		Action.spaceCreateMenu(param, analytics.route.void);
+		}, analytics.route.void);
 	};
 
 	useEffect(() => {

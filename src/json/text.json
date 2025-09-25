@@ -2176,8 +2176,7 @@
 	"sidebarMenuSpaceCreateDescriptionSpace": "Hub for advanced data management",
 	"sidebarMenuSpaceCreateTitleImport": "Import Data",
 	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
-	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
-	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
+	"sidebarMenuSpaceCreateTitleJoin": "→ Join by invite link",
 
 	"sidebarTemplateEmpty": "There are no Templates yet",
 
