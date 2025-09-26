@@ -405,6 +405,12 @@ html.themeDark {
 					}
 				}
 			}
+
+			> .bottom {
+				.widgetSettings:not(.isEditing):hover {
+					.icon { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
+				}
+			}
 		}
 		
 		> .sidebarPage.pageAllObject {
