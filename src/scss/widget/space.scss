@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.widget.widgetSpace { padding: 8px; z-index: 1; }
+.widget.widgetSpace { padding: 8px; z-index: 1; margin: 0px 0px 10px 0px; }
 .widget.widgetSpace * { -webkit-app-region: no-drag; }
 
 .widget.widgetSpace {
