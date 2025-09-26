@@ -27,7 +27,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	} = props;
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
-	const [ isLoading, setIsLoading ] = useState(false);
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const prevIdsRef = useRef<string[]>(null);
 	const selectRef = useRef(null);
@@ -327,7 +326,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		content = (
 			<div className="emptyWrap">
-				{!isLoading ? <Label className="empty" text={label} /> : ''}
+				<Label className="empty" text={label} />
 			</div>
 		);
 	} else {
@@ -368,30 +367,26 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		if (isSystemTarget) {
 			getData(subId);
-		} else {
-			if (targetId) {
-				const root = S.Block.getLeaf(rootId, targetId);
-				const cb = () => {
-					const view = getView();
-					if (view) {
-						load(view.id);
-					};
+		} else 
+		if (targetId) {
+			const root = S.Block.getLeaf(rootId, targetId);
+			const cb = () => {
+				const view = getView();
+				if (view) {
+					load(view.id);
 				};
-
-				if (root) {
-					cb();
-					return;
-				};
-
-				setIsLoading(true);
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
-					setIsLoading(false);
-
-					if (!message.error.code) {
-						cb();
-					};
-				});
 			};
+
+			if (root) {
+				cb();
+				return;
+			};
+
+			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+				if (!message.error.code) {
+					cb();
+				};
+			});
 		};
 	}, []);
 
