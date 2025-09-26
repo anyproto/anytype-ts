@@ -421,13 +421,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			this.body.scrollTop(top);
 			this.onScroll();
-
-			if (!S.Menu.isOpen('onboarding')) {
-				window.setTimeout(() => {
-					Onboarding.start('basics', false);
-					Onboarding.start('basicsOld', false);
-				}, 1);
-			};
 		});
 	};
 

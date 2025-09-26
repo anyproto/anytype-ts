@@ -102,8 +102,6 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
 
-		console.log('[UtilRouter].go:', route, param);
-
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
 			timeout = S.Popup.getTimeout();

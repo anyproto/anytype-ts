@@ -88,7 +88,59 @@ const Data = {
 	},
 
 	basicsOld: () => {
-		return Data.basics();
+		const isNewUser = Storage.get('isNewUser');
+		const theme = S.Common.getThemeClass();
+		const spaceview = U.Space.getSpaceview();
+		const isDark = theme == 'dark';
+		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
+		const pinnedText = isNewUser ? translate('onboardingPinnedNewText') : translate('onboardingPinnedOldText');
+		const objectsText = isNewUser ? translate('onboardingObjectsNewText') : translate('onboardingObjectsOldText');
+
+		return {
+			showDimmer: true,
+			category: translate('onboardingBasicsTitle'),
+			param: {
+				noArrow: true,
+				noClose: true,
+				horizontal: I.MenuDirection.Right,
+				stickToElementEdge: I.MenuDirection.Top,
+				width: 288,
+				offsetX: -312,
+				highlightElements: [],
+				onOpen: (context) => {
+					if (spaceview.isChat) {
+						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
+					};
+
+					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+					Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+					$(window).trigger('checkWidgetToggles');
+					window.setTimeout(() => context.position(), 50);
+				},
+				hiddenElements: [
+					'#sidebarPageWidget .section-pin',
+					'#sidebarPageWidget .section-type',
+					'#sidebarPageWidget > .bottom',
+				]
+			},
+			items: [
+				{
+					description: pinnedText,
+					cloneElementClassName: scn,
+					param: {
+						element: '#sidebarPageWidget .section-pin',
+					}
+				},
+				{
+					description: objectsText,
+					cloneElementClassName: scn,
+					param: {
+						element: '#sidebarPageWidget .section-type',
+					}
+				},
+			]
+		};
 	},
 
 	membership: () => ({
