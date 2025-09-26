@@ -1,5 +1,5 @@
 import * as Docs from 'Docs';
-import { I, S, U, Storage } from 'Lib';
+import { I, S, U, Storage, sidebar, keyboard } from 'Lib';
 
 class Onboarding {
 
@@ -69,7 +69,25 @@ class Onboarding {
 	};
 
 	startBasics (isPopup: boolean) {
+		const spaceview = U.Space.getSpaceview();
+
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+		if (spaceview.isChat) {
+			sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
+		} else {
+			sidebar.leftPanelSetState({ page: 'widget' });
+		};
+
+		$(window).trigger('checkWidgetToggles');
+
 		this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup);
+	};
+
+	completeBasics () {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
+		$(window).trigger('checkWidgetToggles');
 	};
 
 	/**

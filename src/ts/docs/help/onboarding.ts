@@ -1,4 +1,4 @@
-import { I, U, translate, S, sidebar, keyboard, Storage } from 'Lib';
+import { I, U, translate, S, Onboarding } from 'Lib';
 
 const Data = {
 	mainGraph: () => ({
@@ -33,25 +33,15 @@ const Data = {
 		return {
 			showDimmer: true,
 			category: translate('onboardingBasicsTitle'),
+			onComplete: Onboarding.completeBasics,
 			param: {
 				noArrow: true,
 				noClose: true,
-				horizontal: I.MenuDirection.Right,
+				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
 				stickToElementEdge: I.MenuDirection.Top,
 				width: 288,
 				offsetX: -312,
 				highlightElements: [],
-				onOpen: (context) => {
-					if (spaceview.isChat) {
-						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
-					};
-
-					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-					Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
-
-					$(window).trigger('checkWidgetToggles');
-					window.setTimeout(() => context.position(), 50);
-				},
 				hiddenElements: [
 					elementHead,
 					'#sidebarPageWidget .section-pin',
@@ -93,27 +83,15 @@ const Data = {
 		return {
 			showDimmer: true,
 			category: translate('onboardingBasicsTitle'),
+			onComplete: Onboarding.completeBasics,
 			param: {
 				noArrow: true,
 				noClose: true,
-				horizontal: I.MenuDirection.Right,
+				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
 				stickToElementEdge: I.MenuDirection.Top,
 				width: 288,
 				offsetX: -312,
 				highlightElements: [],
-				onOpen: (context) => {
-					if (spaceview.isChat) {
-						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
-					} else {
-						sidebar.leftPanelSetState({ page: 'widget' });
-					};
-
-					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-					Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
-
-					$(window).trigger('checkWidgetToggles');
-					window.setTimeout(() => context.position(), 50);
-				},
 				hiddenElements: [
 					'#sidebarPageWidget .section-pin',
 					'#sidebarPageWidget .section-type',
