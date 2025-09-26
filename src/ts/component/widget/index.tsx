@@ -133,13 +133,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const rootId = getRootId();
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 
-		U.Object.openEvent(e, { 
-			...object, 
-			_routeParam_: { 
-				viewId: view?.id,
-				additional: [ { key: 'ref', value: 'widget' } ],
-			} 
-		});
+		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
+		U.Object.openEvent(e, object);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {

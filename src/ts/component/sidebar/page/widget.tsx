@@ -721,13 +721,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const param = U.Data.widgetContentParam(object, block);
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, param.viewId);
 
-		U.Object.openEvent(e, {
-			...object,
-			_routeParam_: {
-				viewId: view?.id,
-				additional: [ { key: 'ref', value: 'widget' } ],
-			}
-		});
+		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
+		U.Object.openEvent(e, object);
 	};
 
 	onMore = (e: any) => {
