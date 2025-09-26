@@ -1513,18 +1513,25 @@ class UtilCommon {
 	 * @param {HTMLElement} dst - The destination element.
 	 */
 	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
-		const styles = document.defaultView.getComputedStyle(src, '');
-		const css: any = {};
+		const styles = window.getComputedStyle(src, '');
+
+		if (styles.display && (styles.getPropertyValue('display') == 'none')) {
+			return;
+		};
+
+		const css: any = [];
 
 		for (let i = 0; i < styles.length; i++) {
 			const name = styles[i];
 			const value = styles.getPropertyValue(name);
 
 			css[name] = value;
+			css.push(`${name}: ${value}`);
 		};
 
-		css.visibility = 'visible';
-		$(dst).css(css);
+		css.push('visibility: visible');
+
+		dst.style.cssText = css.join('; ');
 	};
 
 	/**

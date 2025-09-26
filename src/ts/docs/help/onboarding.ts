@@ -103,14 +103,14 @@ const Data = {
 					description: translate('onboardingPinnedOldText'),
 					cloneElementClassName: scn,
 					param: {
-						element: '#sidebarPageWidget .section-pin',
+						element: '#sidebarPageWidget .section-pin .nameWrap',
 					}
 				},
 				{
 					description: translate('onboardingObjectsOldText'),
 					cloneElementClassName: scn,
 					param: {
-						element: '#sidebarPageWidget .section-type',
+						element: '#sidebarPageWidget .section-type .nameWrap',
 					}
 				},
 			]
