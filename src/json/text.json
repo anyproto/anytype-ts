@@ -776,7 +776,10 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
+	"blockChatEmptyTitle": "You have just created a chat",
+	"blockChatEmptyItem1": "is yours forever",
+	"blockChatEmptyItem2": "Messages, docs & files work offline",
+	"blockChatEmptyItem3": "Fully private and encrypted",
 	"blockChatEmptyShareInviteLink": "Share invite link",
 	"blockChatMessageExpand": "Show more",
 	"blockChatMessageCollapse": "Show less",
