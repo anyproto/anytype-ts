@@ -55,6 +55,10 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const loadTree = (): I.WidgetTreeItem[] => {
+		if (!object) {
+			return [];
+		};
+
 		branches.current = [];
 
 		let children = [];
@@ -80,7 +84,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		};
 
 		if (filter.current) {
-			children = children.filter(it => searchIds.includes(it.id));
+			children = children.filter(it => it && searchIds.includes(it.id));
 		};
 
 		if (isPreview && isRecent) {
