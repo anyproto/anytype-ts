@@ -1306,6 +1306,8 @@
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
 	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
+	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
+	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",

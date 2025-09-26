@@ -331,7 +331,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		switch (item.id) {
 			case 'removeWidget': {
 				if (isSystem) {
-					S.Popup.open('confirm', {
+					const param: Partial<I.MenuParam> = {
 						data: {
 							icon: 'warning-red',
 							title: translate('popupConfirmSystemWidgetRemoveTitle'),
@@ -342,7 +342,17 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 								Action.removeWidget(blockId, target);
 							},
 						},
-					});
+					};
+
+
+					if (this.target?.id == J.Constant.widgetId.favorite) {
+						param.className = 'removeFavorite';
+						param.data.title = translate('popupConfirmSystemWidgetRemoveFavoriteTitle');
+						param.data.text = translate('popupConfirmSystemWidgetRemoveFavoriteText');
+						param.data.icon = 'screenshot';
+					};
+
+					S.Popup.open('confirm', param);
 				} else {
 					Action.removeWidget(blockId, target);
 				};
