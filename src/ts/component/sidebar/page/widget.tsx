@@ -64,6 +64,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = space.notificationMode != I.NotificationMode.All;
 
+		// Subscriptions
+		for (const key of U.Subscription.fileTypeKeys()) {
+			const { total } = S.Record.getMeta(`typeCheck-${key}`, '');
+		};
+
 		let headerButtons: any[] = [];
 		if (space.isChat) {
 			headerButtons = headerButtons.concat([
