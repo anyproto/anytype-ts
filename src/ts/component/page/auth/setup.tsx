@@ -83,8 +83,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					const cb2 = () => {
 						const whatsNewParam = {
 							onClose: () => {
-								Onboarding.start('basics', isPopup);
-								Onboarding.start('basicsOld', isPopup);
+								Onboarding.startBasics(isPopup);
 							},
 						};
 

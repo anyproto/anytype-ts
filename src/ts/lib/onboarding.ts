@@ -68,6 +68,10 @@ class Onboarding {
 		});
 	};
 
+	startBasics (isPopup: boolean) {
+		this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup);
+	};
+
 	/**
 	 * Gets the menu parameters for a section and item.
 	 * @param {any} section - The onboarding section.
@@ -181,6 +185,10 @@ class Onboarding {
 	 */
 	isCompleted (key: string): boolean {
 		return Storage.getOnboarding(key);
+	};
+
+	isCompletedBasics (): boolean {
+		return this.isCompleted('basicsNew') || this.isCompleted('basicsOld');
 	};
 	
 };

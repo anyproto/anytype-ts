@@ -23,15 +23,12 @@ const Data = {
 		},
 	}),
 
-	basics: () => {
-		const isNewUser = Storage.get('isNewUser');
+	basicsNew: () => {
 		const theme = S.Common.getThemeClass();
 		const spaceview = U.Space.getSpaceview();
 		const elementHead = spaceview.isChat ? '#sidebarPageWidget .spaceHeader' : '#sidebarPageWidget #widget-space';
 		const isDark = theme == 'dark';
 		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
-		const pinnedText = isNewUser ? translate('onboardingPinnedNewText') : translate('onboardingPinnedOldText');
-		const objectsText = isNewUser ? translate('onboardingObjectsNewText') : translate('onboardingObjectsOldText');
 
 		return {
 			showDimmer: true,
@@ -70,14 +67,14 @@ const Data = {
 					}
 				},
 				{
-					description: pinnedText,
+					description: translate('onboardingPinnedNewText'),
 					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-pin',
 					}
 				},
 				{
-					description: objectsText,
+					description: translate('onboardingObjectsNewText'),
 					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-type',
@@ -88,13 +85,10 @@ const Data = {
 	},
 
 	basicsOld: () => {
-		const isNewUser = Storage.get('isNewUser');
 		const theme = S.Common.getThemeClass();
 		const spaceview = U.Space.getSpaceview();
 		const isDark = theme == 'dark';
 		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
-		const pinnedText = isNewUser ? translate('onboardingPinnedNewText') : translate('onboardingPinnedOldText');
-		const objectsText = isNewUser ? translate('onboardingObjectsNewText') : translate('onboardingObjectsOldText');
 
 		return {
 			showDimmer: true,
@@ -110,6 +104,8 @@ const Data = {
 				onOpen: (context) => {
 					if (spaceview.isChat) {
 						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
+					} else {
+						sidebar.leftPanelSetState({ page: 'widget' });
 					};
 
 					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
@@ -126,14 +122,14 @@ const Data = {
 			},
 			items: [
 				{
-					description: pinnedText,
+					description: translate('onboardingPinnedOldText'),
 					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-pin',
 					}
 				},
 				{
-					description: objectsText,
+					description: translate('onboardingObjectsOldText'),
 					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-type',
