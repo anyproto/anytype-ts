@@ -51,26 +51,27 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	render (): React.ReactNode {
 		const { isEditing, previewId, sectionIds } = this.state;
+		const { space } = S.Common;
 		const { widgets } = S.Block;
 		const { sidebarDirection } = this.props;
 		const cnsh = [ 'subHead' ];
 		const cnb = [ 'body' ];
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const counters = S.Chat.getTotalCounters();
 		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-		const isMuted = space.notificationMode != I.NotificationMode.All;
+		const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 
 		// Subscriptions
 		for (const key of U.Subscription.fileTypeKeys()) {
-			const { total } = S.Record.getMeta(`typeCheck-${key}`, '');
+			const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(key), '');
 		};
 
 		let headerButtons: any[] = [];
-		if (space.isChat) {
+		if (spaceview.isChat) {
 			headerButtons = headerButtons.concat([
 				{ id: 'chat', name: translate('commonChat') },
 				{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
@@ -165,7 +166,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				first = blockWidgets[0];
 			};
 
-			subHead = !space.isChat ? (
+			subHead = !spaceview.isChat ? (
 				<div className={cnsh.join(' ')}>
 					{isDirectionLeft || cnt ? (
 						<div className="side left" onClick={isDirectionLeft ? this.onBack : null}>
@@ -195,7 +196,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			content = (
 				<div className="content">
-					{space && !space._empty_ ? (
+					{spaceview && !spaceview._empty_ ? (
 						<DropTarget 
 							{...this.props} 
 							isTargetTop={true}
@@ -213,9 +214,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 											id="spaceIcon"
 											size={80}
 											iconSize={80}
-											object={{ ...space, spaceId: S.Common.space }}
+											object={{ ...spaceview, spaceId: S.Common.space }}
 										/>
-										<ObjectName object={{ ...space, spaceId: S.Common.space }} />
+										<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
 										{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 									</div>
 									<div className="buttons">
@@ -341,7 +342,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						<div className="side center" />
 
 						<div className="side right">
-							{!space.isChat ? (
+							{!spaceview.isChat ? (
 								<Button 
 									id="button-help"
 									className="help"
@@ -359,7 +360,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		return (
 			<>
 				<div id="head" className="head">
-					{space.isChat ? (
+					{spaceview.isChat ? (
 						<>
 							<div className="side left">
 								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />

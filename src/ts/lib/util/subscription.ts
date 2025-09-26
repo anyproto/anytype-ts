@@ -635,7 +635,12 @@ class UtilSubscription {
 		});
 	};
 
+	typeCheckSubId (key: string) {
+		return [ 'typeCheck', S.Common.space, key ].join('-');
+	};
+
 	createTypeCheck (callBack?: () => void) {
+		const { space } = S.Common;
 		const list = [];
 
 		for (const key of this.fileTypeKeys()) {
@@ -646,7 +651,7 @@ class UtilSubscription {
 			};
 
 			list.push({
-				subId: `typeCheck-${key}`,
+				subId: this.typeCheckSubId(key),
 				filters: [
 					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type.id },
 				],

@@ -1040,7 +1040,7 @@ class BlockStore {
 			};
 
 			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
-				const { total } = S.Record.getMeta(`typeCheck-${type.uniqueKey}`, '');
+				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
 
 				if (!total) {
 					return;
