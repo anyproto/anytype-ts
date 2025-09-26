@@ -28,7 +28,7 @@ export default () => {
 		//{ type: I.BlockType.IconPage, icon: '👋' },
 
 		title(`Now We're Talking!`),
-		h4(`<span>Release 0.50.0</span><span>September 22, 2025</span>`),
+		h4(`<span>Release 0.50.0</span><span>September 29, 2025</span>`),
 		text(''),
 		text('We’ve always built Anytype around private, peer-to-peer collaboration. Spaces gave you a structured home for your notes, docs and databases. Now we’re taking the next step: introducing Chats, a new way to connect and collaborate while keeping your data fully in your hands.'),
 		text(``),
@@ -37,11 +37,11 @@ export default () => {
 
 		h1(`Welcome to Chat`),
 		text(`Chat is a new type of channel in Anytype, designed for fast, conversational flow. It gives you the familiar rhythm of chatting – replying, reacting, sharing files – but with a powerful twist: you can create and edit objects together in real time.`),
+		img(`50/1.png`),
 		text(`<b>Create Objects</b> right from your chat window – turn thoughts into Pages, Tasks, or any other Type.`),
 		text(`<b>Share existing Objects</b> – anything you drop into Chat can be opened and edited right away.`),
 		text(`<b>Keep things organized</b> – uploads are added to the relevant Types (Audio, Images) and everything stays searchable and structured in your sidebar.`),
 		text(`<b>Invite with ease</b> – bring new members into a conversation instantly with links that don’t require approval.`),
-		img(`50/1.png`),
 		text(``),
 
 		h1(`The Vault Update`),
@@ -57,7 +57,8 @@ export default () => {
 		bullet(`<b>Objects</b> → Previously accessible only from Settings, these containers list all objects of a given Type and work just like widgets.`),
 		img(`50/3.png`),
 		text(``),
-		text(`Everything you had pinned before is preserved in the Pinned Widget. You can re-pin what's needed in a new way and delete “old” Pinned Widget. If you were using <i>Recently Opened</i> or <i>Recently Edited</i> Widgets, they have been converted into pinned Query objects. `),
+		text(`Everything you had pinned before is preserved in the Pinned widget. You can re-pin what’s needed in a new way and remove the “old” widget.`),
+		text(`If you have been using <i>Recently Edited</i> or <i>Recently Opened</i>, those widgets remain, but once removed they can’t be added back. Instead, you can always create Queries to show objects by their creation or modification date.`),
 		text(`At the same time, we’ve removed duplicate flows like the <i>Edit Widgets</i> button and <i>All Objects</i>, so there’s now a single, unified way to pin and organize.`),
 		text(``),
 
