@@ -35,6 +35,15 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 		});
 	};
 
+	const onClick = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		U.Object.openConfig(item, {
+			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
+		});
+	};
+
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
 		const node = $(`#sidebarRight #preview-${item.id}`);
@@ -69,9 +78,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 					noToast: true,
 					route: '',
 					onDuplicate: object => U.Object.openConfig(object, {}),
-					onSetDefault: id => {
-						onChange({ defaultTemplateId: id });
-					},
+					onSetDefault: id => onChange({ defaultTemplateId: id }),
 				},
 			});
 		});
@@ -92,6 +99,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 				rootId={item.id}
 				className={cn.join(' ')}
 				size={I.PreviewSize.Small}
+				onClick={e => onClick(e, item)}
 				onMore={onMoreHandler}
 				onContextMenu={onMoreHandler}
 			/>
