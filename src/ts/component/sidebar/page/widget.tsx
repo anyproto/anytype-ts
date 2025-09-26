@@ -179,8 +179,8 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						className="side center" 
 						onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })}
 					>
-						<IconObject object={space} size={20} iconSize={20} canEdit={false} />
-						<ObjectName object={space} />
+						<IconObject object={spaceview} size={20} iconSize={20} canEdit={false} />
+						<ObjectName object={spaceview} />
 					</div>
 
 					<div className="side right">
