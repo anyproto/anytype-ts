@@ -306,11 +306,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isMuted');
 		};
 
-		if (!item.isLocalOk) {
-			cn.push('withError');
-			icons.push('error');
-		};
-
 		if (!item.lastMessage) {
 			cn.push('noMessages');
 		};
