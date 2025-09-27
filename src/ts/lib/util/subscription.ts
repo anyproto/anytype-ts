@@ -423,6 +423,11 @@ class UtilSubscription {
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreHidden: false,
+				onSubscribe: () => {
+					S.Record.getRecords(J.Constant.subId.space).forEach(it => S.Record.spaceMap.set(it.targetSpaceId, it.id));
+				},
+			},
+			{
 			},
 		];
 

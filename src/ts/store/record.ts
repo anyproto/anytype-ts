@@ -15,6 +15,7 @@ class RecordStore {
 	public recordMap: Map<string, string[]> = observable.map(new Map());
 	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
+	public spaceMap: Map<string, string> = new Map();
 
 	constructor() {
 		makeObservable(this, {

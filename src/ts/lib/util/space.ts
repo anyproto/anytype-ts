@@ -191,7 +191,7 @@ class UtilSpace {
 	 * @returns {any} The spaceview object.
 	 */
 	getSpaceviewBySpaceId (id: string) {
-		return S.Record.getRecords(J.Constant.subId.space).find(it => it.targetSpaceId == id);
+		return S.Detail.get(J.Constant.subId.space, S.Record.spaceMap.get(id));
 	};
 
 	/**
