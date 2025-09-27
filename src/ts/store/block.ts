@@ -1011,14 +1011,18 @@ class BlockStore {
 	updateTypeWidgetList () {
 		const { widgets } = this;
 		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-		const element = this.getMapElement(widgets, widgets);
-
+	
+		let element = this.getMapElement(widgets, widgets);
 		if (!element) {
 			return;
 		};
 
+		element = U.Common.objectCopy(element);
+
+		const childrenIds = element.childrenIds || [];
+
 		types.forEach(type => {
-			if (element.childrenIds.includes(type.id)) {
+			if (childrenIds.includes(type.id)) {
 				return;
 			};
 
@@ -1031,15 +1035,15 @@ class BlockStore {
 			};
 
 			this.createWidget(type.id);
-			element.childrenIds.push(type.id);
+			childrenIds.push(type.id);
 		});
 
-		if (!element.childrenIds.includes(J.Constant.widgetId.bin)) {
+		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
 			this.createWidget(J.Constant.widgetId.bin);
-			element.childrenIds.push(J.Constant.widgetId.bin);
+			childrenIds.push(J.Constant.widgetId.bin);
 		};
 
-		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructure(widgets, widgets, childrenIds);
 		this.updateStructureParents(widgets);
 	};
 
