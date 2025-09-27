@@ -399,6 +399,8 @@ class UtilSubscription {
 			};
 			return;
 		};
+
+		S.Record.spaceMap.clear();
 	
 		const { techSpaceId } = account.info;
 		const list: any[] = [
@@ -426,8 +428,6 @@ class UtilSubscription {
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.space).forEach(it => S.Record.spaceMap.set(it.targetSpaceId, it.id));
 				},
-			},
-			{
 			},
 		];
 
@@ -497,6 +497,9 @@ class UtilSubscription {
 	 */
 	createSpace (callBack?: () => void): void {
 		const spaceview = U.Space.getSpaceview();
+
+		S.Record.typeKeyMap.clear();
+		S.Record.relationKeyMap.clear();
 
 		const list: any[] = [
 			{

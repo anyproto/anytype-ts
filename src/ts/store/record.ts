@@ -51,6 +51,7 @@ class RecordStore {
 		this.recordMap.clear();
 		this.metaMap.clear();
 		this.groupMap.clear();
+		this.spaceMap.clear();
 	};
 
 	/**
