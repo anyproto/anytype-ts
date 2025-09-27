@@ -22,7 +22,7 @@ interface WidgetViewRefProps {
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
-		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, onCreate,
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
 		getContentParam, getObject
 	} = props;
 	const { viewId, limit, layout } = getContentParam();
@@ -172,9 +172,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
 		const id = viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 
-		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 	};
 
 	const onOpen = () => {

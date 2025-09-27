@@ -109,12 +109,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		content = <Deleted {...props} />;
 	} else {
 		content = (
-			<div 
-				ref={nodeRef}
-				onDragOver={onDragOver} 
-				onDragLeave={onDragLeave} 
-				onDrop={onDrop}
-			>
+			<> 
 				<Header 
 					{...props} 
 					component="mainChat" 
@@ -122,7 +117,13 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					rootId={rootId} 
 				/>
 
-				<div id="bodyWrapper" className="wrapper">
+				<div 
+					ref={nodeRef}
+					className="wrapper"
+					onDragOver={onDragOver} 
+					onDragLeave={onDragLeave} 
+					onDrop={onDrop}
+				>
 					<div className="editorWrapper isChat">
 						<div ref={blocksRef} className="blocks">
 							<Block
@@ -142,7 +143,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				</div>
 
 				<Footer component="mainObject" {...props} />
-			</div>
+			</>
 		);
 	};
 

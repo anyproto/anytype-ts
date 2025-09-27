@@ -2070,7 +2070,7 @@
 	"widgetSectionType": "Objects",
 	"widgetSectionNewType": "New Type",
 
-	"widgetFavorite": "Pinned",
+	"widgetFavorite": "Old Pinned",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Queries",
