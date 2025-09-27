@@ -76,6 +76,14 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const resize = () => {
+		const node = $(nodeRef.current);
+		const scrollContainer = U.Common.getScrollContainer(isPopup);
+		const scrollWrapper = node.find('#scrollWrapper');
+		const formWrapper = node.find('#formWrapper');
+		const fh = Number(formWrapper.outerHeight(true)) || 0;
+		const mh = scrollContainer.height() - J.Size.header - fh;
+
+		scrollWrapper.css({ minHeight: mh });
 		chatRef.current?.ref?.resize();
 	};
 
