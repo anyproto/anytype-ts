@@ -1966,8 +1966,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let to = 0;
 
 		keyboard.disablePaste(true);
+		
+		// Determine if we should treat this as part of the block
+		// For external content (data.anytype.range.to = 0), preserve block type when:
+		// - Pasting at beginning of block (range.from = 0)
+		// - Not replacing a selection (range.from === range.to)
+		// - Block exists and can contain text content
 
-		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
+		const isExternalContent = data.anytype.range.to === 0;
+		const isPastingAtStart = range.from === 0;
+		const isNotSelection = range.from === range.to;
+		const hasValidBlock = block && (block.isText() || block.canHaveChildren());
+		const isPartOfBlock = data.anytype.range.to > 0 || (isExternalContent && isPastingAtStart && isNotSelection && hasValidBlock);
+		
+		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], isPartOfBlock, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
 			keyboard.disablePaste(false);
 
 			if (message.error.code) {
