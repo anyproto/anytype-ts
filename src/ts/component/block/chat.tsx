@@ -497,8 +497,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				const width = last.outerWidth();
 				const { left } = last.offset();
 
-				console.log(last);
-
 				last.css({ position: 'fixed', width, left, top: top + offset });
 			};
 		});

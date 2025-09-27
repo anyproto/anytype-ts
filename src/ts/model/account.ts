@@ -3,7 +3,6 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
 	
-	homeObjectId = '';
 	profileObjectId = '';
 	gatewayUrl = '';
 	deviceId = '';
@@ -18,7 +17,6 @@ class AccountInfo implements I.AccountInfo {
 	ethereumAddress = '';
 	
 	constructor (props: I.AccountInfo) {
-		this.homeObjectId = String(props.homeObjectId || '');
 		this.profileObjectId = String(props.profileObjectId || '');
 		this.gatewayUrl = String(props.gatewayUrl || '');
 		this.deviceId = String(props.deviceId || '');
@@ -33,7 +31,6 @@ class AccountInfo implements I.AccountInfo {
 		this.ethereumAddress = String(props.ethereumAddress || '');
 
 		makeObservable(this, {
-			homeObjectId: observable,
 			profileObjectId: observable,
 			gatewayUrl: observable,
 			deviceId: observable,

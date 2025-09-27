@@ -83,7 +83,6 @@ export const Mapper = {
 
 		AccountInfo: (obj: Model.Account.Info): I.AccountInfo => {
 			return {
-				homeObjectId: obj.getHomeobjectid(),
 				profileObjectId: obj.getProfileobjectid(),
 				gatewayUrl: obj.getGatewayurl(),
 				deviceId: obj.getDeviceid(),

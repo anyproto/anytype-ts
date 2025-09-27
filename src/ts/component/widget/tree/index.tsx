@@ -20,7 +20,7 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, sortFavorite, addGroupLabels, checkShowAllButton, onCreate } = props;
+	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate } = props;
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -64,11 +64,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		let children = [];
 		if (isSystemTarget) {
 			const subId = getSubId(targetId);
-			
-			let records = S.Record.getRecordIds(subId, '');
-			if (targetId == J.Constant.widgetId.favorite) {
-				records = sortFavorite(records);
-			};
+			const records = S.Record.getRecordIds(subId, '');
 
 			children = records.map(id => {
 				mapper(S.Detail.get(subId, id, J.Relation.sidebar));

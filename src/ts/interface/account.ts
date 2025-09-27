@@ -13,7 +13,6 @@ export interface Account {
 };
 
 export interface AccountInfo {
-	homeObjectId: string;
 	profileObjectId: string;
 	gatewayUrl: string;
 	deviceId: string;

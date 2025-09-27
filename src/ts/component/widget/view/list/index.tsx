@@ -41,29 +41,6 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		if (!active || !over) {
 			return;
 		};
-
-		const targetId = block.getTargetObjectId();
-
-		if (targetId != J.Constant.widgetId.favorite) {
-			return;
-		};
-
-		const records = getRecordIds();
-		const oldIndex = records.indexOf(active.id);
-		const newIndex = records.indexOf(over.id);
-		const { root } = S.Block;
-		const children = S.Block.getChildren(root, root, it => it.isLink());
-		const ro = records[oldIndex];
-		const rn = records[newIndex];
-		const oidx = children.findIndex(it => it.getTargetObjectId() == ro);
-		const nidx = children.findIndex(it => it.getTargetObjectId() == rn);
-		const current = children[oidx];
-		const target = children[nidx];
-		const childrenIds = S.Block.getChildrenIds(root, root);
-		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
-		S.Block.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
-		Action.move(root, root, target.id, [ current.id ], position);
 	};
 
 	const getItems = () => {

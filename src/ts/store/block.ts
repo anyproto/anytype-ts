@@ -6,7 +6,6 @@ class BlockStore {
 
 	public profileId = '';
 	public widgetsId = '';
-	public rootId = '';
 	public spaceviewId = '';
 	public workspaceId = '';
 
@@ -17,19 +16,16 @@ class BlockStore {
 
 	constructor() {
 		makeObservable(this, {
-			rootId: observable,
 			profileId: observable,
 			spaceviewId: observable,
 			widgetsId: observable,
 			workspaceId: observable,
 
 			profile: computed,
-			root: computed,
 			spaceview: computed,
 			widgets: computed,
 			workspace: computed,
 
-			rootSet: action,
 			profileSet: action,
 			widgetsSet: action,
 			spaceviewSet: action,
@@ -54,10 +50,6 @@ class BlockStore {
 		return String(this.widgetsId || '');
 	};
 
-	get root (): string {
-		return String(this.rootId || '');
-	};
-
 	get spaceview (): string {
 		return String(this.spaceviewId || '');
 	};
@@ -80,14 +72,6 @@ class BlockStore {
 	 */
 	widgetsSet (id: string) {
 		this.widgetsId = String(id || '');
-	};
-
-	/**
-	 * Sets the root ID.
-	 * @param {string} id - The root ID.
-	 */
-	rootSet (id: string) {
-		this.rootId = String(id || '');
 	};
 
 	/**
@@ -178,7 +162,6 @@ class BlockStore {
 	clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
-		this.rootSet('');
 
 		this.blockMap.clear();
 		this.treeMap.clear();
