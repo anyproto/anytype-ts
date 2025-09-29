@@ -429,7 +429,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSpaceUxType (v) {
-
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'warning-red',
