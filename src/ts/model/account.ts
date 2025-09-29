@@ -6,7 +6,6 @@ class AccountInfo implements I.AccountInfo {
 	profileObjectId = '';
 	gatewayUrl = '';
 	deviceId = '';
-	localStoragePath = '';
 	accountSpaceId = '';
 	techSpaceId = '';
 	spaceViewId = '';
@@ -20,7 +19,6 @@ class AccountInfo implements I.AccountInfo {
 		this.profileObjectId = String(props.profileObjectId || '');
 		this.gatewayUrl = String(props.gatewayUrl || '');
 		this.deviceId = String(props.deviceId || '');
-		this.localStoragePath = String(props.localStoragePath || '');
 		this.accountSpaceId = String(props.accountSpaceId || '');
 		this.techSpaceId = String(props.techSpaceId || '');
 		this.spaceViewId = String(props.spaceViewId || '');
@@ -34,7 +32,6 @@ class AccountInfo implements I.AccountInfo {
 			profileObjectId: observable,
 			gatewayUrl: observable,
 			deviceId: observable,
-			localStoragePath: observable,
 			accountSpaceId: observable,
 			techSpaceId: observable,
 			spaceViewId: observable,

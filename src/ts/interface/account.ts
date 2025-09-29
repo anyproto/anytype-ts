@@ -16,7 +16,6 @@ export interface AccountInfo {
 	profileObjectId: string;
 	gatewayUrl: string;
 	deviceId: string;
-	localStoragePath: string;
 	accountSpaceId: string;
 	techSpaceId: string;
 	spaceViewId: string;

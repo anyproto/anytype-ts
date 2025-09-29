@@ -86,7 +86,6 @@ export const Mapper = {
 				profileObjectId: obj.getProfileobjectid(),
 				gatewayUrl: obj.getGatewayurl(),
 				deviceId: obj.getDeviceid(),
-				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
 				techSpaceId: obj.getTechspaceid(),
 				spaceViewId: obj.getSpaceviewid(),
