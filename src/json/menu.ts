@@ -70,7 +70,7 @@ export default {
 	table: [ 'select2', 'blockColor', 'blockBackground' ],
 	dataviewNew: [ 'searchObject', 'typeSuggest', 'dataviewTemplateList' ],
 	graphSettings: [ 'select' ],
-	syncStatus: [ 'syncStatusInfo' ],
+	syncStatus: [ 'syncStatusInfo', 'select' ],
 	help: [ 'select' ],
 	chatForm: [ 'typeSuggest', 'dataviewCreateBookmark' ],
 };
