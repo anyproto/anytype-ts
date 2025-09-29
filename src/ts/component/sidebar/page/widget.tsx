@@ -157,6 +157,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		} else {
 			const blockWidgets = this.getBlockWidgets();
 			const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
+			const chatBlock = blockWidgets.find(it => it.id == J.Constant.widgetId.chat);
 			const sections = [
 				{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 				{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
@@ -245,6 +246,18 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						</DropTarget>
 					) : ''}
 
+					{chatBlock ? (
+						<Widget
+							block={chatBlock}
+							disableContextMenu={true}
+							isEditing={false}
+							canEdit={false}
+							canRemove={false}
+							sidebarDirection={sidebarDirection}
+							getObject={id => this.getObject(chatBlock, id)}
+						/>
+					) : ''}
+
 					{sections.map(section => {
 						const isSectionPin = section.id == I.WidgetSection.Pin;
 						const isSectionType = section.id == I.WidgetSection.Type;
@@ -306,7 +319,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 												key={`widget-${block.id}`}
 												block={block}
 												isEditing={isEditing}
-												canEdit={true}
+												canEdit={block.id != J.Constant.widgetId.bin}
 												canRemove={isSectionPin}
 												onDragStart={this.onDragStart}
 												onDragOver={this.onDragOver}
@@ -926,11 +939,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			const target = child.getTargetObjectId();
 
-			if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
+			if ([ J.Constant.widgetId.allObject ].includes(target)) {
 				return false;
 			};
 
-			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+			if ([ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
 				return false;
 			};
 

@@ -87,13 +87,18 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const limit = getLimit();
 	const layout = getLayout();
-	const isChat = spaceview.isChat && (targetId == J.Constant.widgetId.chat);
+	const isChat = targetId == J.Constant.widgetId.chat;
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+
+	let counters = { messageCounter: 0, mentionCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
+	};
 
 	const unbind = () => {
 		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
@@ -243,7 +248,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!U.Space.canMyParticipantWrite() || !object || object._empty_ || isChat || isBin) {
+		if (!U.Space.canMyParticipantWrite() || !object || object._empty_ || !canEdit) {
 			return;
 		};
 
@@ -716,6 +721,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
+							{counters.messageCounter || counters.mentionCounter ? (
+								<div className="counters">
+									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
+									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
+								</div>
+							) : ''}
 							{buttons.length ? (
 								<div className="buttons">
 									{buttons.map(item => (
