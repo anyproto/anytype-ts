@@ -19,6 +19,7 @@ class Preview {
 	};
 	delayTooltip = 0;
 	isPreviewOpen = false;
+	isTooltipOpen = false;
 
 	/**
 	 * Displays a tooltip with the given parameters.
@@ -125,6 +126,8 @@ class Preview {
 			});
 
 		}, this.delayTooltip);
+
+		this.isTooltipOpen = true;
 	};
 
 	/**
@@ -132,6 +135,10 @@ class Preview {
 	 * @param {boolean} [force] - If true, hides the tooltip immediately.
 	 */
 	tooltipHide (force?: boolean) {
+		if (!this.isTooltipOpen) {
+			return;
+		};
+
 		const obj = $('.tooltip');
 
 		if (force) {
@@ -142,6 +149,8 @@ class Preview {
 
 		window.clearTimeout(this.timeout.tooltip);
 		window.clearTimeout(this.timeout.delay);
+
+		this.isTooltipOpen = false;
 	};
 
 	/**

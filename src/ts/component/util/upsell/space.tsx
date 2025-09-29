@@ -23,7 +23,7 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 		className,
 	];
 
-	const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
+	const mySharedSpaces = U.Space.getMySharedSpacesList();
 	const onClick = () => {
 		Action.membershipUpgrade(tier.id);
 

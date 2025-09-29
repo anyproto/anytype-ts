@@ -255,7 +255,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	isSharedSpacesLimit () {
-		const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
 		const { sharedSpacesLimit } = U.Space.getProfile();
 
 		return sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);

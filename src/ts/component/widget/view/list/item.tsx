@@ -27,7 +27,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-	const canDrag = isPreview && (block.getTargetObjectId() == J.Constant.widgetId.favorite);
+	const canDrag = false;
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !canDrag });
 	const hasMore = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);

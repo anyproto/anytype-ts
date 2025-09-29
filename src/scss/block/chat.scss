@@ -13,6 +13,25 @@
 			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px 0px; padding: 0px 0px 16px 0px; }
 		}
 
+		.chatEmptyState { 
+			display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; color: var(--color-text-secondary); 
+			margin: 64px 0px;
+		}
+		.chatEmptyState {
+			.inner { display: flex; flex-direction: column; gap: 10px 0px; }
+
+			.title { @include text-paragraph; text-align: center; }
+			.item { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+			.item {
+				.icon { width: 20px; height: 20px; flex-shrink: 0; }
+				.icon.infinity { background-image: url('~img/icon/chat/empty/infinity.svg'); }
+				.icon.wifi { background-image: url('~img/icon/chat/empty/wifi.svg'); }
+				.icon.key { background-image: url('~img/icon/chat/empty/key.svg'); }
+			}
+
+			.buttons { display: flex; justify-content: center; margin-top: 8px; }
+		}
+
 		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; opacity: 0; }
 		.sectionDate {
 			.label { 

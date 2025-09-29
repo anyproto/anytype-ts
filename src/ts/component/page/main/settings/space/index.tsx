@@ -236,7 +236,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 								</div>
 							</div>
 
-							{/*
 							<div className="section sectionSpaceManager">
 								<div className="sectionContent">
 									<div className="item">
@@ -251,21 +250,19 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 											<div className="side right">
 												<Select
 													id="uxType"
-													readonly={!canChangeType}
+													readonly={!canWrite}
 													ref={ref => this.refUxType = ref}
 													value={String(space.uxType)}
 													options={spaceUxTypes}
 													onChange={v => this.onSpaceUxType(v)}
 													arrowClassName="black"
 													menuParam={{ horizontal: I.MenuDirection.Right }}
-													tooltipParam={{ text: tooltip }} 
 												/>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							*/}
 						</>
 					) : (
 						<div className="membersList section">

@@ -69,7 +69,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 			};
 
 			case 'space': {
-				const mySharedSpaces = U.Space.getMySharedSpacesList().filter(it => !it.isChat);
+				const mySharedSpaces = U.Space.getMySharedSpacesList();
 				const { sharedSpacesLimit } = U.Space.getProfile();
 
 				isShown = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);

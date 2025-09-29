@@ -238,7 +238,6 @@ class UtilData {
 	 * @param {I.AccountInfo} info - The account info object.
 	 */
 	onInfo (info: I.AccountInfo) {
-		S.Block.rootSet(info.homeObjectId);
 		S.Block.widgetsSet(info.widgetsId);
 		S.Block.profileSet(info.profileObjectId);
 		S.Block.spaceviewSet(info.spaceViewId);
@@ -260,7 +259,7 @@ class UtilData {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
 
-		const { root, widgets } = S.Block;
+		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
@@ -270,41 +269,35 @@ class UtilData {
 			return;
 		};
 
-		C.ObjectOpen(root, '', space, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
+		C.ObjectOpen(widgets, '', space, (message: any) => {
+			if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
 				return;
 			};
 
-			C.ObjectOpen(widgets, '', space, (message: any) => {
-				if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
-					return;
-				};
+			U.Subscription.createSpace(() => {
+				S.Block.updateTypeWidgetList();
 
-				U.Subscription.createSpace(() => {
-					S.Block.updateTypeWidgetList();
+				S.Common.pinInit(() => {
+					keyboard.initPinCheck();
 
-					S.Common.pinInit(() => {
-						keyboard.initPinCheck();
+					const { pin } = S.Common;
 
-						const { pin } = S.Common;
-
-						// Redirect
-						if (pin && !keyboard.isPinChecked) {
-							U.Router.go('/auth/pin-check', routeParam);
+					// Redirect
+					if (pin && !keyboard.isPinChecked) {
+						U.Router.go('/auth/pin-check', routeParam);
+					} else {
+						if (route) {
+							U.Router.go(route, routeParam);
 						} else {
-							if (route) {
-								U.Router.go(route, routeParam);
-							} else {
-								U.Space.openDashboard(routeParam);
-							};
+							U.Space.openDashboard(routeParam);
 						};
+					};
 
-						S.Common.redirectSet('');
+					S.Common.redirectSet('');
 
-						if (callBack) {
-							callBack();
-						};
-					});
+					if (callBack) {
+						callBack();
+					};
 				});
 			});
 		});

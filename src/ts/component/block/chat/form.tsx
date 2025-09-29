@@ -778,6 +778,10 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		send.addClass('isLoading');
 		loader.addClass('active');
 		isSending.current = true;
+
+		raf(() => {
+			send.addClass('anim');
+		});
 		
 		const callBack = () => {
 			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
@@ -905,7 +909,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const loader = $(loaderRef.current);
 
 		isSending.current = false;
-		send.removeClass('isLoading');
+		send.removeClass('isLoading anim');
 		loader.removeClass('active');
 
 		onEditClear();

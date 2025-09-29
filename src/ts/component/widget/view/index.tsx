@@ -22,12 +22,11 @@ interface WidgetViewRefProps {
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
-		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, onCreate,
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
 		getContentParam, getObject
 	} = props;
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
-	const [ isLoading, setIsLoading ] = useState(false);
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const prevIdsRef = useRef<string[]>(null);
 	const selectRef = useRef(null);
@@ -173,9 +172,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
 		const id = viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 
-		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 	};
 
 	const onOpen = () => {
@@ -327,7 +325,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		content = (
 			<div className="emptyWrap">
-				{!isLoading ? <Label className="empty" text={label} /> : ''}
+				<Label className="empty" text={label} />
 			</div>
 		);
 	} else {
@@ -368,30 +366,26 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		if (isSystemTarget) {
 			getData(subId);
-		} else {
-			if (targetId) {
-				const root = S.Block.getLeaf(rootId, targetId);
-				const cb = () => {
-					const view = getView();
-					if (view) {
-						load(view.id);
-					};
+		} else 
+		if (targetId) {
+			const root = S.Block.getLeaf(rootId, targetId);
+			const cb = () => {
+				const view = getView();
+				if (view) {
+					load(view.id);
 				};
-
-				if (root) {
-					cb();
-					return;
-				};
-
-				setIsLoading(true);
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
-					setIsLoading(false);
-
-					if (!message.error.code) {
-						cb();
-					};
-				});
 			};
+
+			if (root) {
+				cb();
+				return;
+			};
+
+			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+				if (!message.error.code) {
+					cb();
+				};
+			});
 		};
 	}, []);
 

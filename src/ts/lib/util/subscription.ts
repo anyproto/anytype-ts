@@ -399,6 +399,8 @@ class UtilSubscription {
 			};
 			return;
 		};
+
+		S.Record.spaceMap.clear();
 	
 		const { techSpaceId } = account.info;
 		const list: any[] = [
@@ -423,6 +425,9 @@ class UtilSubscription {
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreHidden: false,
+				onSubscribe: () => {
+					S.Record.getRecords(J.Constant.subId.space).forEach(it => S.Record.spaceMap.set(it.targetSpaceId, it.id));
+				},
 			},
 		];
 
@@ -492,6 +497,9 @@ class UtilSubscription {
 	 */
 	createSpace (callBack?: () => void): void {
 		const spaceview = U.Space.getSpaceview();
+
+		S.Record.typeKeyMap.clear();
+		S.Record.relationKeyMap.clear();
 
 		const list: any[] = [
 			{
@@ -635,7 +643,12 @@ class UtilSubscription {
 		});
 	};
 
+	typeCheckSubId (key: string) {
+		return [ 'typeCheck', S.Common.space, key ].join('-');
+	};
+
 	createTypeCheck (callBack?: () => void) {
+		const { space } = S.Common;
 		const list = [];
 
 		for (const key of this.fileTypeKeys()) {
@@ -646,7 +659,7 @@ class UtilSubscription {
 			};
 
 			list.push({
-				subId: `typeCheck-${key}`,
+				subId: this.typeCheckSubId(key),
 				filters: [
 					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type.id },
 				],

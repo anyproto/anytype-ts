@@ -25,7 +25,8 @@
 
 		&.noMessages {
 			.info { flex-direction: row; }
-			.messageWrapper { flex-grow: 1; }
+			.nameWrapper { flex-grow: 1; }
+			.messageWrapper { flex-grow: 0; }
 		}
 
 		.nameWrapper,

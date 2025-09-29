@@ -7,8 +7,8 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key, Highlight } from 'Lib';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch } from 'Component';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -306,13 +306,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isMuted');
 		};
 
-		// placeholder for error logic
-		let withError = false;
-		if (withError) {
-			cn.push('withError');
-			icons.push('error');
-		};
-
 		if (!item.lastMessage) {
 			cn.push('noMessages');
 		};
@@ -338,18 +331,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						<div className="nameInner">
 							<ObjectName object={item} />
 
-							{item.isMuted ? <Icon className="muted" /> : ''}
+							{item.isChat && item.isMuted ? <Icon className="muted" /> : ''}
 						</div>
 
-						<div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>
+						{item.isChat ? <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div> : ''}
 					</div>
 					<div className="messageWrapper">
-						<Label text={item.lastMessage} />
+						{item.isChat ? <Label text={item.lastMessage} /> : ''}
 
 						<div className="icons">
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
-						{cnt ? <div className="cnt">{cnt}</div> : ''}
+
+						{item.isChat && cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
 				</div>
 			</div>

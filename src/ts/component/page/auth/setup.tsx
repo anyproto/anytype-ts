@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding } from 'Lib';
 
 const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -81,17 +81,24 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					};
 
 					const cb2 = () => {
+						const whatsNewParam = {
+							onClose: () => {
+								Onboarding.startBasics(isPopup);
+							},
+						};
+
 						if (!chatsOnboarding) {
 							S.Popup.open('introduceChats', {
 								onClose: () => {
 									Storage.set('chatsOnboarding', true);
 									Storage.setHighlight('createSpace', true);
-									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
+
+									window.setTimeout(() => U.Common.showWhatsNew(whatsNewParam), J.Constant.delay.popup * 2);
 								},
 							});
 						} else
 						if (whatsNew) {
-							U.Common.showWhatsNew();
+							U.Common.showWhatsNew(whatsNewParam);
 						};
 					};
 

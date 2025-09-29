@@ -1,4 +1,4 @@
-import { I, U, translate, S, sidebar, keyboard, Storage } from 'Lib';
+import { I, U, translate, S, Onboarding } from 'Lib';
 
 const Data = {
 	mainGraph: () => ({
@@ -23,38 +23,25 @@ const Data = {
 		},
 	}),
 
-	basics: () => {
-		const isNewUser = Storage.get('isNewUser');
+	basicsNew: () => {
 		const theme = S.Common.getThemeClass();
 		const spaceview = U.Space.getSpaceview();
 		const elementHead = spaceview.isChat ? '#sidebarPageWidget .spaceHeader' : '#sidebarPageWidget #widget-space';
 		const isDark = theme == 'dark';
 		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
-		const pinnedText = isNewUser ? translate('onboardingPinnedNewText') : translate('onboardingPinnedOldText');
-		const objectsText = isNewUser ? translate('onboardingObjectsNewText') : translate('onboardingObjectsOldText');
 
 		return {
 			showDimmer: true,
 			category: translate('onboardingBasicsTitle'),
+			onComplete: Onboarding.completeBasics,
 			param: {
 				noArrow: true,
 				noClose: true,
-				horizontal: I.MenuDirection.Right,
+				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
 				stickToElementEdge: I.MenuDirection.Top,
 				width: 288,
 				offsetX: -312,
 				highlightElements: [],
-				onOpen: (context) => {
-					if (spaceview.isChat) {
-						sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
-					};
-
-					Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-					Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
-
-					$(window).trigger('checkWidgetToggles');
-					window.setTimeout(() => context.position(), 50);
-				},
 				hiddenElements: [
 					elementHead,
 					'#sidebarPageWidget .section-pin',
@@ -70,14 +57,14 @@ const Data = {
 					}
 				},
 				{
-					description: pinnedText,
+					description: translate('onboardingPinnedNewText'),
 					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-pin',
 					}
 				},
 				{
-					description: objectsText,
+					description: translate('onboardingObjectsNewText'),
 					cloneElementClassName: scn,
 					param: {
 						element: '#sidebarPageWidget .section-type',
@@ -88,7 +75,46 @@ const Data = {
 	},
 
 	basicsOld: () => {
-		return Data.basics();
+		const theme = S.Common.getThemeClass();
+		const spaceview = U.Space.getSpaceview();
+		const isDark = theme == 'dark';
+		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
+
+		return {
+			showDimmer: true,
+			category: translate('onboardingBasicsTitle'),
+			onComplete: Onboarding.completeBasics,
+			param: {
+				noArrow: true,
+				noClose: true,
+				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
+				stickToElementEdge: I.MenuDirection.Top,
+				width: 288,
+				offsetX: -312,
+				highlightElements: [],
+				hiddenElements: [
+					'#sidebarPageWidget .section-pin',
+					'#sidebarPageWidget .section-type',
+					'#sidebarPageWidget > .bottom',
+				]
+			},
+			items: [
+				{
+					description: translate('onboardingPinnedOldText'),
+					cloneElementClassName: scn,
+					param: {
+						element: '#sidebarPageWidget .section-pin .nameWrap',
+					}
+				},
+				{
+					description: translate('onboardingObjectsOldText'),
+					cloneElementClassName: scn,
+					param: {
+						element: '#sidebarPageWidget .section-type .nameWrap',
+					}
+				},
+			]
+		};
 	},
 
 	membership: () => ({

@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallbac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Label, EmptyState } from 'Component';
+import { Label, Title, Icon, Button } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Form from './chat/form';
@@ -920,7 +920,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const sections = getSections();
-	const spaceview = U.Space.getSpaceview();
 	const isEmpty = isLoaded.current && !messages.length;
 	const items = getItems();
 
@@ -967,11 +966,31 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		>
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{isEmpty ? (
-					<EmptyState
-						text={translate('blockChatEmpty')}
-						buttonText={spaceview.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
-						onButton={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
-					/>
+					<div className="chatEmptyState">
+						<div className="inner">
+							<Title text={translate('blockChatEmptyTitle')} />
+							<div className="item">
+								<Icon className="infinity" />
+								<Label text={translate('blockChatEmptyItem1')} />
+							</div>
+							<div className="item">
+								<Icon className="wifi" />
+								<Label text={translate('blockChatEmptyItem2')} />
+							</div>
+							<div className="item">
+								<Icon className="key" />
+								<Label text={translate('blockChatEmptyItem3')} />
+							</div>
+							<div className="buttons">
+								<Button 
+									onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} 
+									text={translate('blockChatEmptyShareInviteLink')} 
+									className="c28" 
+									color="blank" 
+								/>
+							</div>
+						</div>
+					</div>
 				) : (
 					<div className="scroll">
 						{items.map(item => {

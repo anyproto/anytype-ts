@@ -14,11 +14,11 @@ class Action {
 			return;
 		};
 
-		const { root, widgets } = S.Block;
+		const { widgets } = S.Block;
 		const { space } = S.Common;
 
 		// Prevent closing of system objects
-		if ([ root, widgets ].includes(rootId)) {
+		if ([ widgets ].includes(rootId)) {
 			return;
 		};
 

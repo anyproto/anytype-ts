@@ -776,7 +776,10 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
+	"blockChatEmptyTitle": "You have just created a chat",
+	"blockChatEmptyItem1": "is yours forever",
+	"blockChatEmptyItem2": "Messages, docs & files work offline",
+	"blockChatEmptyItem3": "Fully private and encrypted",
 	"blockChatEmptyShareInviteLink": "Share invite link",
 	"blockChatMessageExpand": "Show more",
 	"blockChatMessageCollapse": "Show less",
@@ -1303,6 +1306,8 @@
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
 	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
+	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
+	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -2065,7 +2070,7 @@
 	"widgetSectionType": "Objects",
 	"widgetSectionNewType": "New Type",
 
-	"widgetFavorite": "Pinned",
+	"widgetFavorite": "Old Pinned",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Queries",

@@ -60,7 +60,8 @@
 		> .items {
 			&.anim { transition: height 0.2s $easeInQuint; }
 
-			.widget:first-child { margin-top: 7px; }
+			.widget:first-child { margin-top: 8px; }
+			.widget:last-child { margin-bottom: 8px; }
 		}
 
 		&.isOpen {
@@ -82,7 +83,7 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .content { display: flex; flex-direction: column; gap: 12px 0px; }
+		> .content { display: flex; flex-direction: column; gap: 2px 0px; }
 		> .content {
 
 			.dropTarget.firstTarget { 

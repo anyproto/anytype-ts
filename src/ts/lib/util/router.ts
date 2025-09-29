@@ -101,8 +101,6 @@ class UtilRouter {
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
-		const spaceview = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(false);
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {

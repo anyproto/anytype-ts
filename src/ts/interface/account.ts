@@ -13,11 +13,9 @@ export interface Account {
 };
 
 export interface AccountInfo {
-	homeObjectId: string;
 	profileObjectId: string;
 	gatewayUrl: string;
 	deviceId: string;
-	localStoragePath: string;
 	accountSpaceId: string;
 	techSpaceId: string;
 	spaceViewId: string;

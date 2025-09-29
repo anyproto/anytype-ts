@@ -94,4 +94,15 @@
 		.innerWrap { padding: 32px 32px 24px 32px; }
 		.buttons { flex-direction: column-reverse; gap: 8px 0px; }
 	}
+
+	.popup.popupConfirm.removeFavorite {
+		.innerWrap { width: 640px; padding: 0px; }
+
+		.iconWrapper { width: 100%; height: 320px; margin: 0px 0px 20px 0px; }
+		.icon { background-image: url('~img/help/pinned.png'); background-size: cover; background-position: top center; }
+		.icon { width: 100%; height: 100%; }
+		.title { padding: 0px 32px; margin: 0px 0px 4px 0px; }
+		.label { padding: 0px 32px; margin: 0px 0px 16px 0px; }
+		.buttons { display: flex; flex-direction: row-reverse; gap: 0px 8px; padding: 0px 32px 24px 32px; }
+	}
 }

@@ -13,15 +13,9 @@ class UtilSpace {
 			param.replace = true;
 		};
 
-		const space = this.getSpaceview();
-
-		let home = null;
-
-		if (space && !space._empty_ && !space.isAccountDeleted && space.isLocalOk) {
-			home = this.getDashboard();
-			if (home && (home.id == I.HomePredefinedId.Last)) {
-				home = this.getLastObject();
-			};
+		let home = this.getDashboard();
+		if (home && (home.id == I.HomePredefinedId.Last)) {
+			home = this.getLastObject();
 		};
 
 		if (!home) {
@@ -191,7 +185,7 @@ class UtilSpace {
 	 * @returns {any} The spaceview object.
 	 */
 	getSpaceviewBySpaceId (id: string) {
-		return S.Record.getRecords(J.Constant.subId.space).find(it => it.targetSpaceId == id);
+		return S.Detail.get(J.Constant.subId.space, S.Record.spaceMap.get(id));
 	};
 
 	/**

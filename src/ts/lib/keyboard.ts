@@ -836,6 +836,8 @@ class Keyboard {
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
 				Storage.delete('chatsOnboarding');
+
+				location.reload();
 				break;
 			};
 
