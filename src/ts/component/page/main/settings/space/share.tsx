@@ -262,8 +262,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 	};
 
 	getOptionById (id: I.InviteLinkType) {
-		const space = U.Space.getSpaceview();
-		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
+		const isWriterLimit = U.Space.getWriterLimit() <= 0;
 		const isDisabled = (id == I.InviteLinkType.Editor) && isWriterLimit;
 		const suffix = I.InviteLinkType[id];
 

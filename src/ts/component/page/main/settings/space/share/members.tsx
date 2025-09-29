@@ -226,10 +226,9 @@ const Members = observer(class Members extends React.Component<Props, State> {
 	};
 
 	getParticipantOptions (isNew?: boolean) {
-		const space = U.Space.getSpaceview();
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
-		const isReaderLimit = !space.isChat && (U.Space.getReaderLimit() <= 0);
-		const isWriterLimit = !space.isChat && (U.Space.getWriterLimit() <= 0);
+		const isReaderLimit = U.Space.getReaderLimit() <= 0;
+		const isWriterLimit = U.Space.getWriterLimit() <= 0;
 
 		let items: any[] = [
 			{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
