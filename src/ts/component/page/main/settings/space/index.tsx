@@ -429,15 +429,27 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSpaceUxType (v) {
-		v = Number(v);
 
-		const details: any = {
-			spaceUxType: v,
-			spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
-		};
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'warning-red',
+				title: translate('popupConfirmUxTypeChangeTitle'),
+				text: translate('popupConfirmUxTypeChangeText'),
+				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					v = Number(v);
 
-		C.WorkspaceSetInfo(S.Common.space, details);
-		analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+					const details: any = {
+						spaceUxType: v,
+						spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+					};
+
+					C.WorkspaceSetInfo(S.Common.space, details);
+					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+				}
+			},
+		});
 	};
 
 	checkName (v: string): string {

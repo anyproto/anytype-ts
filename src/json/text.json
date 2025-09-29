@@ -1309,6 +1309,10 @@
 	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
 	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
 
+	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
+	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
+	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
