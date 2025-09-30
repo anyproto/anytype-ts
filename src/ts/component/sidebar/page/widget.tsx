@@ -239,6 +239,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									isEditing={isEditing}
 									canEdit={false}
 									canRemove={false}
+									disableAnimation={true}
 									sidebarDirection={sidebarDirection}
 									getObject={id => this.getObject(spaceBlock, id)}
 								/>
@@ -253,6 +254,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							isEditing={false}
 							canEdit={false}
 							canRemove={false}
+							disableAnimation={true}
 							sidebarDirection={sidebarDirection}
 							getObject={id => this.getObject(chatBlock, id)}
 						/>

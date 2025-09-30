@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
@@ -14,6 +14,7 @@ interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
 	disableContextMenu?: boolean;
+	disableAnimation?: boolean;
 	className?: string;
 	onDragStart?: (e: MouseEvent, block: I.Block) => void;
 	onDragOver?: (e: MouseEvent, block: I.Block) => void;
@@ -23,13 +24,12 @@ interface Props extends I.WidgetComponent {
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
-	const [ dummy, setDummy ] = useState(0);
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, canEdit, canRemove, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, isEditing, className, canEdit, canRemove, disableAnimation, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
 
 	const getChild = (): I.Block => {
@@ -814,15 +814,27 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		setDummy(dummy + 1);
 
 		const node = $(nodeRef.current);
 
-		node.addClass('anim');
-		window.setTimeout(() => node.addClass('show'), J.Constant.delay.widgetItem);
+		let t1 = 0;
+		let t2 = 0;
+
+		if (!disableAnimation) {
+			node.addClass('anim');
+			t1 = window.setTimeout(() => {
+				node.addClass('show');
+				t2 = window.setTimeout(() => node.removeClass('anim'), 300);
+			}, J.Constant.delay.widgetItem);
+		} else {
+			node.addClass('show');
+		};
 
 		return () => {
 			unbind();
+
+			window.clearTimeout(t1);
+			window.clearTimeout(t2);
 			window.clearTimeout(timeout.current);
 		};
 	}, []);
