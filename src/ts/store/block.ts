@@ -1020,7 +1020,7 @@ class BlockStore {
 
 		element = U.Common.objectCopy(element);
 
-		const childrenIds = element.childrenIds || [];
+		let childrenIds = element.childrenIds || [];
 
 		types.forEach(type => {
 			if (childrenIds.includes(type.id)) {
@@ -1031,6 +1031,7 @@ class BlockStore {
 				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
 
 				if (!total) {
+					childrenIds = childrenIds.filter(it => it != type.id);
 					return;
 				};
 			};
