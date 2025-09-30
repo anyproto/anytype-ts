@@ -161,7 +161,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const getItems = () => {
 		let items = U.Menu.getVaultItems().map(it => {
-			if (!it.isChat) {
+			if (!it.chatId) {
 				return it;
 			};
 
