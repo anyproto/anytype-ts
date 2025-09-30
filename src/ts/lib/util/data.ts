@@ -998,6 +998,8 @@ class UtilData {
 							if (message.startingId) {
 								S.Auth.startingId = message.startingId;
 							};
+
+							callBack?.();
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
