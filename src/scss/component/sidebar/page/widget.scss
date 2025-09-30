@@ -26,10 +26,7 @@
 			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); }
 			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection0.svg'); }
 
-			.name { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 6px; border-radius: 6px; 
-				transition: $transitionAllCommon;
-			}
+			.name { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 0px; transition: color $transitionCommon; }
 			.name {
 				&:hover { color: var(--color-text-primary); }
 				&:hover {
@@ -42,7 +39,7 @@
 				transition: opacity $transitionCommon;
 			}
 			.buttons {
-				.button.blank { border: 0px; padding: 5px 6px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
+				.button.blank { border: 0px; padding: 5px 0px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 				.button.blank {
 					&:hover { background: none; color: var(--color-text-primary); }
 					&:hover {
@@ -56,7 +53,7 @@
 			}
 		}
 
-		> .items { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 6px; overflow: hidden; height: 0px; }
+		> .items { display: flex; flex-direction: column; gap: 12px 0px; overflow: hidden; height: 0px; }
 		> .items {
 			&.anim { transition: height 0.2s $easeInQuint; }
 
@@ -70,7 +67,7 @@
 	}
 
 	> .body {
-		padding: 0px 0px 68px 6px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
+		padding: 0px 6px 68px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 	}
 	> .body {
 		@keyframes shake1 {
@@ -86,10 +83,7 @@
 		> .content { display: flex; flex-direction: column; gap: 2px 0px; }
 		> .content {
 
-			.dropTarget.firstTarget { 
-				position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); 
-				padding: 0px 6px;
-			}
+			.dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); }
 			.dropTarget.firstTarget {
 				&::after {
 					content: ''; position: absolute; left: 0px; bottom: -45px; width: 100%; height: 55px; pointer-events: none; 
@@ -112,6 +106,8 @@
 			.dropTarget.firstTarget.isOver::before { bottom: -7px; }
 			.dropTarget.lastTarget.isOver::before { top: -7px; }
 		}
+
+		#widget-chat { margin: 0px 0px 8px 0px; }
 
 		.widget.isEditable.isOver::before { 
 			content: ""; position: absolute; background: var(--color-control-accent); height: 2px; width: calc(100% - 24px); border-radius: 2px; 
