@@ -937,7 +937,7 @@ class BlockStore {
 		].includes(key);
 	};
 
-	createWidget (id: string) {
+	createWidget (id: string, section: I.WidgetSection) {
 		if (!id) {
 			return;
 		};
@@ -950,7 +950,7 @@ class BlockStore {
 			childrenIds: [],
 			content: {
 				layout: I.WidgetLayout.Link,
-				section: I.WidgetSection.Type,
+				section,
 			},
 		});
 
@@ -988,7 +988,7 @@ class BlockStore {
 			return;
 		};
 
-		this.createWidget(type.id);
+		this.createWidget(type.id, I.WidgetSection.Type);
 		element.childrenIds.push(id);
 
 		this.updateStructure(widgets, widgets, element.childrenIds);
@@ -1035,17 +1035,17 @@ class BlockStore {
 				};
 			};
 
-			this.createWidget(type.id);
+			this.createWidget(type.id, I.WidgetSection.Type);
 			childrenIds.push(type.id);
 		});
 
 		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
-			this.createWidget(J.Constant.widgetId.bin);
+			this.createWidget(J.Constant.widgetId.bin, I.WidgetSection.Type);
 			childrenIds.push(J.Constant.widgetId.bin);
 		};
 
 		if (!spaceview.isChat && spaceview.chatId && !childrenIds.includes(J.Constant.widgetId.chat)) {
-			this.createWidget(J.Constant.widgetId.chat);
+			this.createWidget(J.Constant.widgetId.chat, I.WidgetSection.Button);
 			childrenIds.push(J.Constant.widgetId.chat);
 		};
 

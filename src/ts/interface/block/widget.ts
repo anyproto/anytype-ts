@@ -3,6 +3,7 @@ import { I } from 'Lib';
 export enum WidgetSection {
 	Pin			 = 0,
 	Type		 = 1,
+	Button		 = 2,
 };
 
 export enum WidgetLayout { 
