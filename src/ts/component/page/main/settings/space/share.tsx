@@ -254,13 +254,6 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		analytics.event('ScreenShareMenu');
 	};
 
-	isSharedSpacesLimit () {
-		const mySharedSpaces = U.Space.getMySharedSpacesList();
-		const { sharedSpacesLimit } = U.Space.getProfile();
-
-		return sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
-	};
-
 	getOptionById (id: I.InviteLinkType) {
 		const isWriterLimit = U.Space.getWriterLimit() <= 0;
 		const isDisabled = (id == I.InviteLinkType.Editor) && isWriterLimit;
