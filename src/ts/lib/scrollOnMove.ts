@@ -2,6 +2,14 @@ const BORDER = 100;
 const MAX_STEP = 10;
 const SPEED_DIV = 30; // bigger → slower overall
 
+interface Param {
+	speed?: number;
+	step?: number;
+	isWindow?: boolean; 
+	container?: JQuery;
+	onMouseUp?: () => void;
+};
+
 class ScrollOnMove {
 	viewportWidth = 0;
 	viewportHeight = 0;
@@ -15,7 +23,7 @@ class ScrollOnMove {
 	timeoutUp = 0;
 	isScrolling = false;
 	
-	onMouseDown (param: { isWindow?: boolean; container?: JQuery, onMouseUp?: () => void }) {
+	onMouseDown (param: Param) {
 		this.param = param || {};
 
 		const { isWindow, container } = this.param;
@@ -64,6 +72,7 @@ class ScrollOnMove {
 		};
 
 		const didScroll = this.adjustWindowScroll();
+
 		if (didScroll) {
 			this.timeoutScroll = window.setTimeout(this.loop, 50);
 		} else {
@@ -74,6 +83,8 @@ class ScrollOnMove {
 
 	private adjustWindowScroll(): boolean {
 		const { isWindow, container } = this.param;
+		const step = Number(this.param.step) || MAX_STEP;
+		const speed = Number(this.param.speed) || SPEED_DIV;
 
 		// Current pointer
 		const x = this.x;
@@ -105,12 +116,12 @@ class ScrollOnMove {
 		const maxY = Math.max(0, this.documentHeight - this.viewportHeight);
 
 		// Compute intended step based on proximity to the edge (closer → faster)
-		const dx = inLeftEdge ? -Math.min(MAX_STEP, Math.ceil((edgeLeft - x) / SPEED_DIV))
-				: inRightEdge ? Math.min(MAX_STEP, Math.ceil((x - edgeRight) / SPEED_DIV))
+		const dx = inLeftEdge ? -Math.min(step, Math.ceil((edgeLeft - x) / speed))
+				: inRightEdge ? Math.min(step, Math.ceil((x - edgeRight) / speed))
 				: 0;
 
-		const dy = inTopEdge ? -Math.min(MAX_STEP, Math.ceil((edgeTop - y) / SPEED_DIV))
-				: inBottomEdge? Math.min(MAX_STEP, Math.ceil((y - edgeBottom) / SPEED_DIV))
+		const dy = inTopEdge ? -Math.min(step, Math.ceil((edgeTop - y) / speed))
+				: inBottomEdge? Math.min(step, Math.ceil((y - edgeBottom) / speed))
 				: 0;
 
 		// Clamp to available range so we never “try” to scroll past the limits
