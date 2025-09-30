@@ -120,4 +120,10 @@
 	.popup.popupSpaceJoinByLink {
 		.icon { background-image: url('#{$themePath}/icon/menu/spaceCreate/join.svg'); }
 	}
+
+	/* PopupConfirm */
+
+	.popup.popupConfirm.removeFavorite {
+		.icon { background-image: url('#{$themePath}/help/pinned.png'); }
+	}
 }
