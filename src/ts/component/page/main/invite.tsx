@@ -113,6 +113,8 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 				S.Popup.closeAll(null, () => {
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
+					console.log(message.spaceId, space);
+
 					if (message.error.code) {
 						onError(message.error.code, 'SpaceInviteView');
 					} else 

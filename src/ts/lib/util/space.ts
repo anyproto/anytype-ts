@@ -185,7 +185,13 @@ class UtilSpace {
 	 * @returns {any} The spaceview object.
 	 */
 	getSpaceviewBySpaceId (id: string) {
-		return S.Detail.get(J.Constant.subId.space, S.Record.spaceMap.get(id));
+		const viewId = S.Record.spaceMap.get(id);
+		if (!viewId) {
+			return null;
+		};	
+
+		const ret = S.Detail.get(J.Constant.subId.space, viewId);
+		return ret._empty_ ? null : ret;
 	};
 
 	/**
