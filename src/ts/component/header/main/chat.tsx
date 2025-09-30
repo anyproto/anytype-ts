@@ -21,7 +21,11 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onClick = () => {
-		U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+		if (spaceview.isChat) {
+			sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+		} else {
+			U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+		};
 	};
 
 	const onMore = () => {
@@ -56,12 +60,14 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	return (
 		<>
 			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>
+
 			<div className="side center">
 				<div className="path" onClick={onClick}>
 					<IconObject object={object} size={18} />
 					<ObjectName object={object} withPlural={true} />
 				</div>
 			</div>
+
 			<div className="side right">
 				<Icon 
 					id="button-header-invite"
