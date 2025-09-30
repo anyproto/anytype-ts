@@ -236,33 +236,35 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 								</div>
 							</div>
 
-							<div className="section sectionSpaceManager">
-								<div className="sectionContent">
-									<div className="item">
-										<div className="sides">
-											<Icon className={`settings-ux${space.uxType}`} />
+							{space.isShared && !space.isPersonal ? (
+								<div className="section sectionSpaceManager">
+									<div className="sectionContent">
+										<div className="item">
+											<div className="sides">
+												<Icon className={`settings-ux${space.uxType}`} />
 
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
-											</div>
+												<div className="side left">
+													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+													<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
+												</div>
 
-											<div className="side right">
-												<Select
-													id="uxType"
-													readonly={!canWrite}
-													ref={ref => this.refUxType = ref}
-													value={String(space.uxType)}
-													options={spaceUxTypes}
-													onChange={v => this.onSpaceUxType(v)}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
+												<div className="side right">
+													<Select
+														id="uxType"
+														readonly={!canWrite}
+														ref={ref => this.refUxType = ref}
+														value={String(space.uxType)}
+														options={spaceUxTypes}
+														onChange={v => this.onSpaceUxType(v)}
+														arrowClassName="black"
+														menuParam={{ horizontal: I.MenuDirection.Right }}
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							) : ''}
 						</>
 					) : (
 						<div className="membersList section">
