@@ -272,6 +272,8 @@
             }
 
             .section.sectionSpaceManager {
+				.sectionContent { margin: 8px 0px 0px 0px; }
+				.sectionContent:first-child { margin: 0px; }
                 .sectionContent {
                     > .item {
                         .storageLabel { margin-bottom: 12px; line-height: 18px; }

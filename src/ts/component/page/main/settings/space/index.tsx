@@ -50,6 +50,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const isOwner = U.Space.isMyOwner();
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
@@ -192,8 +193,36 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						<>
 							<div className="section sectionSpaceManager">
 								<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
-								<div className="sectionContent">
 
+								{isOwner && space.isShared && !space.isPersonal ? (
+									<div className="sectionContent">
+										<div className="item">
+											<div className="sides">
+												<Icon className={`settings-ux${space.uxType}`} />
+
+												<div className="side left">
+													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+													<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
+												</div>
+
+												<div className="side right">
+													<Select
+														id="uxType"
+														readonly={!canWrite}
+														ref={ref => this.refUxType = ref}
+														value={String(space.uxType)}
+														options={spaceUxTypes}
+														onChange={v => this.onSpaceUxType(v)}
+														arrowClassName="black"
+														menuParam={{ horizontal: I.MenuDirection.Right }}
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+								) : ''}
+
+								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
 											<Icon className="home" />
@@ -235,36 +264,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 									</div>
 								</div>
 							</div>
-
-							{space.isShared && !space.isPersonal ? (
-								<div className="section sectionSpaceManager">
-									<div className="sectionContent">
-										<div className="item">
-											<div className="sides">
-												<Icon className={`settings-ux${space.uxType}`} />
-
-												<div className="side left">
-													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-													<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
-												</div>
-
-												<div className="side right">
-													<Select
-														id="uxType"
-														readonly={!canWrite}
-														ref={ref => this.refUxType = ref}
-														value={String(space.uxType)}
-														options={spaceUxTypes}
-														onChange={v => this.onSpaceUxType(v)}
-														arrowClassName="black"
-														menuParam={{ horizontal: I.MenuDirection.Right }}
-													/>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							) : ''}
 						</>
 					) : (
 						<div className="membersList section">
@@ -431,6 +430,8 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSpaceUxType (v) {
+		const spaceview = U.Space.getSpaceview();
+
 		S.Popup.open('confirm', {
 			data: {
 				icon: 'warning-red',
@@ -448,7 +449,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 					C.WorkspaceSetInfo(S.Common.space, details);
 					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
-				}
+				},
+				onCancel: () => {
+					this.refUxType.setValue(spaceview.uxType);
+				},
 			},
 		});
 	};
