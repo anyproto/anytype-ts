@@ -214,7 +214,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{...props}
 					key={item.id} 
 					{...item} 
-					subId={subId}
+					subId={rootId}
 					index={param.index} 
 					style={param.style} 
 					readonly={isReadonly}
