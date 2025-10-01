@@ -125,7 +125,7 @@ class Onboarding {
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = null;
-		param.recalcRect = null;
+		param.recalcRect = param.recalcRect || null;
 		param.force = force;
 		param.noAutoHover = true;
 		param.highlightElements = param.highlightElements || [];

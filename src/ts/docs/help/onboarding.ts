@@ -12,14 +12,12 @@ const Data = {
 		],
 
 		param: {
-			element: '.pageMainGraph',
 			recalcRect: () => {
 				const { ww, wh } = U.Common.getWindowDimensions();
-				return { x: ww, y: wh, width: ww, height: wh };
+				return { x: 0, y: 0, width: ww, height: wh };
 			},
 			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
 			passThrough: true,
