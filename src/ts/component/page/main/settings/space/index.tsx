@@ -402,6 +402,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 			case 'copyLink': {
 				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
+				analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceIndex });
 				break;
 			};
 		};
