@@ -124,7 +124,7 @@ class Onboarding {
 		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
-		param.rect = null;
+		param.rect = param.rect || null;
 		param.recalcRect = param.recalcRect || null;
 		param.force = force;
 		param.noAutoHover = true;
