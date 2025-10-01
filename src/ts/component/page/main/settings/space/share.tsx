@@ -276,7 +276,7 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		};
 
 		U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
-		analytics.event('ClickShareSpaceCopyLink');
+		analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceShare });
 	};
 
 	onMoreLink () {
