@@ -1023,10 +1023,6 @@ class BlockStore {
 		let childrenIds = element.childrenIds || [];
 
 		types.forEach(type => {
-			if (childrenIds.includes(type.id)) {
-				return;
-			};
-
 			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
 				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
 
@@ -1036,8 +1032,10 @@ class BlockStore {
 				};
 			};
 
-			this.createWidget(type.id, I.WidgetSection.Type);
-			childrenIds.push(type.id);
+			if (!childrenIds.includes(type.id)) {
+				this.createWidget(type.id, I.WidgetSection.Type);
+				childrenIds.push(type.id);
+			};
 		});
 
 		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
