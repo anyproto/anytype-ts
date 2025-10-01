@@ -321,8 +321,11 @@ const PageMainSettingsSpaceShare = observer(class PageMainSettingsSpaceShare ext
 		const { cid, key } = this.state;
 		const hasLink = cid && key;
 		const space = U.Space.getSpaceview();
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+		const limitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 
-		return U.Space.isMyOwner() && (!hasLink || space.isShared);
+		return U.Space.isMyOwner() && ((!hasLink && !limitReached) || space.isShared);
 	};
 
 });
