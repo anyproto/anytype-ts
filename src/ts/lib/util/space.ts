@@ -421,7 +421,8 @@ class UtilSpace {
 	 */
 	getDefaultSidebarPage (id?: string): string {
 		const space = this.getSpaceview(id);
-		return space?.isChat ? 'vault' : 'widget';
+
+		return space._empty_ || space?.isChat ? 'vault' : 'widget';
 	};
 
 };

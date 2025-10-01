@@ -57,6 +57,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			const spaceId = Storage.get('spaceId');
 			const routeParam = { 
 				replace: true,
+				animate,
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const chatsOnboarding = Storage.get('chatsOnboarding');
@@ -82,9 +83,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 					const cb2 = () => {
 						const whatsNewParam = {
-							onClose: () => {
-								Onboarding.startBasics(isPopup);
-							},
+							onClose: () => Onboarding.startBasics(isPopup),
 						};
 
 						if (!chatsOnboarding) {
@@ -109,7 +108,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
-				U.Data.onAuthWithoutSpace(routeParam);
+				U.Router.go('/main/void/select', routeParam);
 			};
 			
 			U.Data.onInfo(account.info);

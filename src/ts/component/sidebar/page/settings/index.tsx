@@ -336,9 +336,13 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	onBack () {
+		const { space } = S.Common;
 		const isSpace = this.isSpace();
 
-		U.Space.openDashboard();
+		if (space) {
+			U.Space.openDashboard();
+		};
+
 		sidebar.leftPanelSetState({ page: isSpace ? U.Space.getDefaultSidebarPage() : 'vault' });
 	};
 
