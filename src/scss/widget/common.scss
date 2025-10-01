@@ -52,14 +52,17 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
 
-		.counters { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
-		.counters {
+		.cnt { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+		.cnt {
 			.icon.count { 
-				min-width: 18px; width: auto; height: 20px; border-radius: 10px; background-color: var(--color-text-tertiary); display: flex; 
+				min-width: 18px; width: auto; height: 18px; border-radius: 10px; background: var(--color-system-accent-125); display: flex; 
 				align-items: center; justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-small; 
 				padding: 0px 4px;
 			}
 			.icon.count.mention { background-image: url('~img/icon/widget/mention.svg'); background-size: 12px; }
+		}
+		.cnt.isMuted {
+			.icon.count { background-color: var(--color-text-tertiary); }
 		}
 	}
 

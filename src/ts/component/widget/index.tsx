@@ -41,7 +41,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
 	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
-	const isBin = targetId == J.Constant.widgetId.bin;
 	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const object = getObject(targetId);
 
@@ -94,6 +93,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+	const cntCn = [ 'cnt' ];
+
+	if (spaceview.isMuted) {
+		cntCn.push('isMuted');
+	};
 
 	let counters = { messageCounter: 0, mentionCounter: 0 };
 	if (isChat) {
@@ -722,7 +726,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 						</div>
 						<div className="side right">
 							{counters.messageCounter || counters.mentionCounter ? (
-								<div className="counters">
+								<div className={cntCn.join(' ')}>
 									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
 									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
 								</div>
