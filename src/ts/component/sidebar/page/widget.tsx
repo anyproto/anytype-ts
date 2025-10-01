@@ -417,16 +417,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	init () {
+		const { sidebarDirection, isPopup, getId } = this.props;
+
+		this.node = $(`#${getId()}`);
+		this.body = this.node.find('#body');
+
 		U.Subscription.createTypeCheck(() => {
 			S.Block.updateTypeWidgetList();
 
-			const { sidebarDirection, isPopup, getId } = this.props;
 			const top = Storage.getScroll('sidebarWidget', sidebarDirection, isPopup);
 			const sectionIds = [];
 			const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
-
-			this.node = $(`#${getId()}`);
-			this.body = this.node.find('#body');
 
 			ids.forEach(id => {
 				if (!this.isSectionClosed(id)) {
