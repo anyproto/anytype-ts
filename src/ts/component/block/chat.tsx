@@ -372,13 +372,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			section.list[0].isFirst = true;
 			section.list[length - 1].isLast = true;
+
+			section.list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Asc));
 		});
 
-		sections.sort((c1, c2) => {
-			if (c1.createdAt > c2.createdAt) return 1;
-			if (c1.createdAt < c2.createdAt) return -1;
-			return 0;
-		});
+		sections.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Asc));
 
 		return sections;
 	};
