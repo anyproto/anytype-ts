@@ -424,7 +424,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 
 						case 'copy': {
-							U.Common.clipboardCopy({ text: item.content.text });
+							U.Common.clipboardCopy({ text: U.Common.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)) });
 
 							analytics.event('ClickMessageMenuCopy');
 							break;
