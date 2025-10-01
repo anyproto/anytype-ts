@@ -396,7 +396,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ viewId ]);
 
 	useEffect(() => {
-		if (U.Common.objectCompare(searchIds, prevIdsRef.current)) {
+		if (U.Common.compareJSON(searchIds, prevIdsRef.current)) {
 			return;
 		};
 

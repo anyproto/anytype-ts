@@ -434,7 +434,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				};
 			});
 
-			if (!U.Common.objectCompare(sectionIds, this.state.sectionIds)) {
+			if (!U.Common.compareJSON(sectionIds, this.state.sectionIds)) {
 				this.setState({ sectionIds });
 			} else {
 				ids.forEach(this.initToggle);
