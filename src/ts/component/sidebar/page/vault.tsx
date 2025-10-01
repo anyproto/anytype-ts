@@ -169,6 +169,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+
 			return it;
 		});
 
@@ -331,19 +332,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 						<div className="nameInner">
 							<ObjectName object={item} />
 
-							{item.isChat && item.isMuted ? <Icon className="muted" /> : ''}
+							{item.chatId && item.isMuted ? <Icon className="muted" /> : ''}
 						</div>
 
-						{item.isChat ? <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div> : ''}
+						{item.chatId ? <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div> : ''}
 					</div>
 					<div className="messageWrapper">
-						{item.isChat ? <Label text={item.lastMessage} /> : ''}
+						{item.chatId ? <Label text={item.lastMessage} /> : ''}
 
 						<div className="icons">
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 
-						{item.isChat && cnt ? <div className="cnt">{cnt}</div> : ''}
+						{item.chatId && cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
 				</div>
 			</div>

@@ -375,7 +375,7 @@ class ChatStore {
 		};
 
 		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		if (!spaceview.isChat) {
+		if (!spaceview.chatId) {
 			return ret;
 		};
 
