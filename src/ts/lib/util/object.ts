@@ -293,6 +293,8 @@ class UtilObject {
 		param = param || {};
 		param.limit = 1;
 
+		console.log(param);
+
 		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);

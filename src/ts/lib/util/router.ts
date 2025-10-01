@@ -242,6 +242,14 @@ class UtilRouter {
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
 
+					U.Data.onInfo(message.info);
+
+					const onStartingIdCheck = () => {
+						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
+							this.isOpening = false;
+						});
+					};
+
 					const onRouteChange = () => {
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 
@@ -249,10 +257,20 @@ class UtilRouter {
 						routeParam.onRouteChange?.();
 					};
 
-					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
-						this.isOpening = false;
-					});
+					const startingId = S.Auth.startingId.get(id);
+
+					if (startingId) {
+						U.Object.getById(startingId, {}, (object: any) => {
+							if (object) {
+								route = '/' + U.Object.route(object);
+							};
+							onStartingIdCheck();
+						});
+
+						S.Auth.startingId.delete(id);
+					} else {
+						onStartingIdCheck();
+					};
 				},
 			});
 		});
