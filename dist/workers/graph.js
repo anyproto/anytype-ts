@@ -315,10 +315,16 @@ updateForces = () => {
 	// Build edgeMap in a single pass over edges
 	const tmpEdgeMap = getEdgeMap();
 
+	console.log('tmpEdgeMap', tmpEdgeMap);
+	console.log(edges);
+
 	edgeMap.clear();
 	nodes.forEach(d => {
+		console.log(d.id, d.name, tmpEdgeMap.get(d.id) || []);
 		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
+
+	console.log('edgeMap', edgeMap);
 
 	simulation.alpha(0.5).restart();
 	nodeMap = getNodeMap();
@@ -385,17 +391,21 @@ getEdgeMap = () => {
 
 	for (let i = 0; i < edges.length; i++) {
 		const e = edges[i];
+		const sid = typeof(e.source) == 'object' ? e.source.id : e.source;
+		const tid = typeof(e.target) == 'object' ? e.target.id : e.target;
 
-		if (!map.has(e.source)) {
-			map.set(e.source, []);
+		if (!map.has(sid)) {
+			map.set(sid, []);
 		};
-		if (!map.has(e.target)) {
-			map.set(e.target, []);
+		if (!map.has(tid)) {
+			map.set(tid, []);
 		};
 
-		map.get(e.source).push(e);
-		map.get(e.target).push(e);
+		map.get(sid).push(e);
+		map.get(tid).push(e);
 	};
+
+	console.log(map);
 
 	return map;
 };
@@ -605,7 +615,7 @@ drawNode = (d) => {
 		const connections = edgeMap.get(d.id);
 		if (connections && connections.length) {
 			for (let i = 0; i < connections.length; i++) {
-				if (isOver == connections[i]) {
+				if ((isOver == connections[i].source.id) || (isOver == connections[i].target.id)) {
 					ctx.globalAlpha = 1;
 					break;
 				};
