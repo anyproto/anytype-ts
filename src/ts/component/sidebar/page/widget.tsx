@@ -148,7 +148,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						isPreview={true}
 						setPreview={this.setPreview}
 						setEditing={this.setEditing}
-						canEdit={true}
+						canEdit={canWrite}
 						canRemove={false}
 						getObject={id => this.getObject(block, id)}
 					/>
@@ -321,7 +321,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 												key={`widget-${block.id}`}
 												block={block}
 												isEditing={isEditing}
-												canEdit={block.id != J.Constant.widgetId.bin}
+												canEdit={canWrite}
 												canRemove={isSectionPin}
 												onDragStart={this.onDragStart}
 												onDragOver={this.onDragOver}

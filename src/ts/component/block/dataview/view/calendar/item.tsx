@@ -125,7 +125,11 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	componentDidMount (): void {
-		this.load(this.getSubId(), LIMIT);
+		this.load();
+	};
+
+	componentDidUpdate (): void {
+		this.load();
 	};
 
 	componentWillUnmount (): void {
@@ -137,10 +141,14 @@ const Item = observer(class Item extends React.Component<Props> {
 		return [ getSubId(), y, m, d ].join('-');
 	};
 
-	load (subId: string, limit: number) {
+	load () {
+		this.loadData(this.getSubId(), LIMIT);
+	};
+
+	loadData (subId: string, limit: number) {
 		const { d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const view = getView();
-	
+
 		if (!view) {
 			return;
 		};

@@ -17,7 +17,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onRemove = () => {
-		Action.delete(managerRef.current?.getSelected(), 'Bin', () => selectionClear());
+		Action.delete(managerRef.current?.getSelected(), analytics.route.archive, selectionClear);
 	};
 
 	const selectionClear = () => {
