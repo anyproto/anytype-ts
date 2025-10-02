@@ -561,11 +561,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		addShowAllButton();
-
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
-		const wrapper = node.find('#button-show-all');
 		
 		let total = 0;
 		let show = false;
@@ -593,7 +590,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		show ? wrapper.show() : wrapper.hide();
+		if (show) {
+			addShowAllButton();
+		} else {
+			node.find('#button-show-all').remove();
+		};
+
 		innerWrap.toggleClass('withShowAll', show);
 	};
 

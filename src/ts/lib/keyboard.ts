@@ -221,14 +221,11 @@ class Keyboard {
 		});
 
 		// Switch dark/light mode
-		this.shortcut('theme', e, () => {
-			Action.themeSet(!theme ? 'dark' : '');
-		});
+		this.shortcut('theme', e, () => Action.themeSet(!theme ? 'dark' : ''));
 
+		// Show/Hide menu bar on Windows
 		if (U.Common.isPlatformWindows()) {
-			this.shortcut('alt', e, () => {
-				S.Common.setShowMenuBar(!S.Common.showMenuBar);
-			});
+			this.shortcut('systemMenu', e, () => S.Common.setShowMenuBar(!S.Common.showMenuBar));
 		};
 
 		if (isMain) {

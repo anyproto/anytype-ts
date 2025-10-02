@@ -2,6 +2,7 @@ import { U, translate, keyboard, Storage } from 'Lib';
 
 const getSections = () => {
 	const isMac = U.Common.isPlatformMac();
+	const isWin = U.Common.isPlatformWindows();
 	const cmdKey = keyboard.cmdKey();
 	const or = translate('commonOr');
 	const storage = Storage.getShortcuts();
@@ -29,6 +30,7 @@ const getSections = () => {
 						{ id: 'createObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
 						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
 						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
+						isWin ? { id: 'systemMenu', name: translate('electronMenuShowMenu'), keys: [] } : null,
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
 						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
@@ -275,6 +277,7 @@ const getSections = () => {
 		},
 	].map(s => {
 		s.children = s.children.map(sub => {
+			sub.children = sub.children.filter(it => it)
 			sub.children = sub.children.map(mapper);
 			return sub;
 		});
