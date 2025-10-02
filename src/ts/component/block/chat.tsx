@@ -21,7 +21,7 @@ const GROUP_TIME = 300;
 
 const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
-	const { space, showRelativeDates, dateFormat, config, windowId } = S.Common;
+	const { space, config, windowId } = S.Common;
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
@@ -38,16 +38,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const frameRef = useRef(0);
-	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-	const { chatId } = object;
-	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
-	const messages = S.Chat.getList(subId);
 	const initialRender = useRef(true);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-		return object.chatId;
+		return object.chatId || rootId;
 	};
+
+	const chatId = getChatId();
+	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
+	const messages = S.Chat.getList(subId);
 
 	const getSubId = () => {
 		const chatId = getChatId();
@@ -442,8 +442,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 
 						case 'link': {
-							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
+							const object = S.Detail.get(rootId, rootId);
 
+							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
 							analytics.event('ClickMessageMenuLink');
 							break;
 						};
@@ -1007,9 +1008,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					<div className="scroll">
 						{items.map(item => {
 							if (item.isSection) {
-								const day = showRelativeDates ? U.Date.dayString(item.createdAt) : null;
-								const date = day ? day : U.Date.dateWithFormat(dateFormat, item.createdAt);
-
 								return <SectionDate key={item.key} date={item.createdAt} />;
 							} else {
 								return (

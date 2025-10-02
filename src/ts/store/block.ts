@@ -932,8 +932,6 @@ class BlockStore {
 			J.Constant.typeKey.relation,
 			J.Constant.typeKey.spaceview,
 			J.Constant.typeKey.space,
-			J.Constant.typeKey.chat,
-			J.Constant.typeKey.chatDerived,
 		].includes(key);
 	};
 
