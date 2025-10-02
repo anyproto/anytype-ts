@@ -382,12 +382,13 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const filters = view.filters.map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
-		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters.map(this.filterMapper), object.setOf || [], isCollection ? object.id : '', (message: any) => {
+		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};

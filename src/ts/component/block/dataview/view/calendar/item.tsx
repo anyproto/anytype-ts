@@ -128,6 +128,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.load(this.getSubId(), LIMIT);
 	};
 
+	componentDidUpdate (): void {
+		this.load(this.getSubId(), LIMIT);
+	};
+
 	componentWillUnmount (): void {
 		U.Subscription.destroyList([ this.getSubId() ]);
 	};
@@ -138,9 +142,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	load (subId: string, limit: number) {
-		const { d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+		const { rootId, d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const view = getView();
-	
+
 		if (!view) {
 			return;
 		};
@@ -182,7 +186,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		U.Subscription.subscribe({
 			subId,
 			limit,
-			filters: filters.map(Dataview.filterMapper),
+			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
 			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
