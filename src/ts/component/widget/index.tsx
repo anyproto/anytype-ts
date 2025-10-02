@@ -614,9 +614,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (targetId == J.Constant.widgetId.bin) {
 			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
 		} else 
-		if (targetId == J.Constant.widgetId.allObject) {
-			sidebar.leftPanelSetState({ page: 'allObject' });
-		} else 
 		if (targetId == J.Constant.widgetId.chat) {
 			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 		} else

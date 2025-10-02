@@ -477,7 +477,7 @@ class UtilMenu {
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
 		} else
-		if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(id)) {
+		if ([ J.Constant.widgetId.chat ].includes(id)) {
 			options = [ I.WidgetLayout.Link ];
 		};
 
@@ -960,7 +960,6 @@ class UtilMenu {
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
 			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}`, isHidden: true },
-			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all', isHidden: true },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
 			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },

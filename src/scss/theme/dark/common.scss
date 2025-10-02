@@ -413,24 +413,6 @@ html.themeDark {
 			}
 		}
 		
-		> .sidebarPage.pageAllObject {
-			> .inner {
-				> .head {
-					.titleWrap {
-						.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-						.icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
-						.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
-					}
-					.tabs {
-						.swiper-button-prev, .swiper-button-next {
-							&::before { background-image: url('#{$themePath}/arrow/sidebarObjectTab0.svg'); }
-							&:hover::before { background-image: url('#{$themePath}/arrow/sidebarObjectTab1.svg'); }
-						}
-					}
-				}
-			}
-		}
-
 		> .containerSettings {
 			> .body {
 				.list {

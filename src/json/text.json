@@ -2125,13 +2125,6 @@
 	"sidebarMenuFocus": "Focus mode",
 	"sidebarEdit": "Edit sidebar",
 
-	"sidebarObjectTypeObject": "Pages",
-	"sidebarObjectTypeList": "Lists",
-	"sidebarObjectTypeType": "Types",
-	"sidebarObjectTypeFile": "Files",
-	"sidebarObjectTypeMedia": "Media",
-	"sidebarObjectTypeBookmark": "Bookmarks",
-	"sidebarObjectTypeRelation": "Properties",
 	"sidebarObjectRelationEmpty": "No Properties yet. Add some to this type",
 
 	"sidebarObjectShow": "Show",

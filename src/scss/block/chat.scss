@@ -20,7 +20,7 @@
 		.chatEmptyState {
 			.inner { display: flex; flex-direction: column; gap: 10px 0px; }
 
-			.title { @include text-paragraph; text-align: center; }
+			.title { @include text-paragraph; font-weight: 600; text-align: center; }
 			.item { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 			.item {
 				.icon { width: 20px; height: 20px; flex-shrink: 0; }
