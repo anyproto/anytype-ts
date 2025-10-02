@@ -28,6 +28,10 @@ class ScrollOnMove {
 
 		const { isWindow, container } = this.param;
 		if (!isWindow) {
+			if (!container || !container.length) {
+				return;
+			};
+
 			const el = container.get(0);
 
 			this.viewportWidth = container.width();
