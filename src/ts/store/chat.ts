@@ -6,11 +6,10 @@ class ChatStore {
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
-	public attachmentsValue: any[] = [];
+	public attachmentsMap: Map<string, any[]> = observable(new Map());
 
 	constructor () {
 		makeObservable(this, {
-			attachmentsValue: observable,
 			add: action,
 			update: action,
 			delete: action,
@@ -18,10 +17,6 @@ class ChatStore {
 			setState: action,
 			setAttachments: action,
 		});
-	};
-
-	get attachments (): any[] {
-		return this.attachmentsValue || [];
 	};
 
 	/**
@@ -287,6 +282,7 @@ class ChatStore {
 	clear (subId: string) {
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
+		this.attachmentsMap.delete(subId);
 	};
 
 	/**
@@ -296,6 +292,7 @@ class ChatStore {
 		this.messageMap.clear();
 		this.replyMap.clear();
 		this.stateMap.clear();
+		this.attachmentsMap.clear();
 	};
 
 	/**
@@ -463,8 +460,15 @@ class ChatStore {
 	/**
 	 * Sets the attachments list.
 	 */
-	setAttachments (list: any[]) {
-		this.attachmentsValue = list || [];
+	setAttachments (id: string, list: any[]) {
+		this.attachmentsMap.set(id, list || []);
+	};
+
+	/**
+	 * Gets the attachments list.
+	 */
+	getAttachments (id: string): any[] {
+		return this.attachmentsMap.get(id) || [];
 	};
 
 	/**
