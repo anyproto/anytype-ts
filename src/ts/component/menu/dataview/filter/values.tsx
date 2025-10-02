@@ -713,6 +713,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
+		const { config } = S.Common;
 		const { id, param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
@@ -743,11 +744,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					canAdd: true,
 					canEdit: true,
 					dataChange: (context: any, items: any) => {
+						if (!config.experimental) {
+							return items;
+						};
+
 						const templates = Relation.filterTemplateOptions().map(it => ({ ...it, isSystem: true }));
 
 						if (items.length) {
 							templates.push({ isDiv: true });
-						};						
+						};
 
 						return templates.concat(items);
 					},
