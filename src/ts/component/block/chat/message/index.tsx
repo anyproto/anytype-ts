@@ -139,14 +139,15 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 	const onReactionSelect = (icon: string) => {
 		const { reactions } = message;
 		const limit = J.Constant.limit.chat.reactions;
+		const hasReaction = reactions.find(it => it.icon == icon);
 		const self = reactions.filter(it => it.authors.includes(account.id));
 
-		if ((self.length >= limit.self) || (reactions.length >= limit.all)) {
+		if (!hasReaction && ((self.length >= limit.self) || (reactions.length >= limit.all))) {
 			return;
 		};
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
-		analytics.event(self.find(it => it.icon == icon) ? 'RemoveReaction' : 'AddReaction');
+		analytics.event(hasReaction ? 'RemoveReaction' : 'AddReaction');
 	};
 
 	const onAttachmentRemove = (attachmentId: string) => {
