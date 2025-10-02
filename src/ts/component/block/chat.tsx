@@ -12,6 +12,9 @@ import SectionDate from './chat/message/date';
 interface RefProps {
 	forceUpdate: () => void;
 	resize: () => void;
+	onDragOver: (e: DragEvent) => void;
+	onDragLeave: (e: DragEvent) => void;
+	onDrop: (e: DragEvent) => void;
 };
 
 const GROUP_TIME = 300;
@@ -960,6 +963,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 		resize,
+		onDragOver,
+		onDragLeave,
+		onDrop,
 	}));
 
 	return (
