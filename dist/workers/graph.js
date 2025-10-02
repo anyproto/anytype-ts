@@ -315,16 +315,10 @@ updateForces = () => {
 	// Build edgeMap in a single pass over edges
 	const tmpEdgeMap = getEdgeMap();
 
-	console.log('tmpEdgeMap', tmpEdgeMap);
-	console.log(edges);
-
 	edgeMap.clear();
 	nodes.forEach(d => {
-		console.log(d.id, d.name, tmpEdgeMap.get(d.id) || []);
 		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
-
-	console.log('edgeMap', edgeMap);
 
 	simulation.alpha(0.5).restart();
 	nodeMap = getNodeMap();
@@ -404,8 +398,6 @@ getEdgeMap = () => {
 		map.get(sid).push(e);
 		map.get(tid).push(e);
 	};
-
-	console.log(map);
 
 	return map;
 };
