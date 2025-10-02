@@ -9,16 +9,17 @@ interface Props extends I.WidgetViewComponent {
 	id: string;
 	isEditing?: boolean;
 	hideIcon?: boolean;
+	onResize?: () => void;
 };
 
 const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	subId = '',
 	id = '',
-	parent,
 	block,
 	isEditing = false,
 	hideIcon = false,
 	getView,
+	onResize,
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -51,7 +52,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
+		analytics.event('OpenSidebarObject');
 	};
 
 	const onContext = (e: React.MouseEvent) => {
@@ -80,6 +81,8 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		const node = $(nodeRef.current);
 
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
+
+		onResize?.();
 	};
 
 	let icon = null;

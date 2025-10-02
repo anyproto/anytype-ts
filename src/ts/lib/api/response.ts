@@ -504,6 +504,12 @@ export const ObjectTypeListConflictingRelations = (response: Rpc.ObjectType.List
 	};
 };
 
+export const ObjectTypeSetOrder = (response: Rpc.ObjectType.SetOrder.Response) => {
+	return {
+		list: response.getOrderidsList() || [],
+	};
+};
+
 export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
 	const object = response.getObject();
 	const links = object.getLinks();

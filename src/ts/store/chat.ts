@@ -42,7 +42,11 @@ class ChatStore {
 	 * @param {I.ChatMessage[]} add - The chat messages to prepend.
 	 */
 	prepend (subId: string, add: I.ChatMessage[]): void {
+		const ids = this.getList(subId).map(it => it.id);
+
+		add = (add || []).filter(it => !ids.includes(it.id));
 		add = add.map(it => new M.ChatMessage(it));
+
 		this.getList(subId).unshift(...add);
 	};
 
@@ -52,7 +56,11 @@ class ChatStore {
 	 * @param {I.ChatMessage[]} add - The chat messages to append.
 	 */
 	append (subId: string, add: I.ChatMessage[]): void {
+		const ids = this.getList(subId).map(it => it.id);
+
+		add = (add || []).filter(it => !ids.includes(it.id));
 		add = add.map(it => new M.ChatMessage(it));
+
 		this.getList(subId).push(...add);
 	};
 
@@ -232,6 +240,7 @@ class ChatStore {
 		};
 
 		this.stateMap.set(param.spaceId, spaceMap);
+		this.setBadge();
 	};
 
 	/**
@@ -358,15 +367,22 @@ class ChatStore {
 	 * @returns {Counter} The counters for the space.
 	 */
 	getSpaceCounters (spaceId: string): I.ChatCounter {
-		const spaceMap = this.stateMap.get(spaceId);
 		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const spaceMap = this.stateMap.get(spaceId);
 
-		if (spaceMap) {
-			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
-					ret.mentionCounter += Number(state.mentionCounter) || 0;
-					ret.messageCounter += Number(state.messageCounter) || 0;
-				};
+		if (!spaceMap) {
+			return ret;
+		};
+
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		if (!spaceview.chatId) {
+			return ret;
+		};
+
+		for (const [ chatId, state ] of spaceMap) {
+			if (!chatId) {
+				ret.mentionCounter += Number(state.mentionCounter) || 0;
+				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
 		};
 
@@ -416,15 +432,11 @@ class ChatStore {
 	 * Sets the badge count in the UI based on message counters.
 	 */
 	setBadge () {
-		const { config } = S.Common;
+		const counters = this.getTotalCounters();
 
 		let t = 0;
-
-		if (config.experimental) {
-			const counters = this.getTotalCounters();
-			if (counters) {
-				t = counters.messageCounter;
-			};
+		if (counters) {
+			t = counters.messageCounter;
 		};
 
 		Renderer.send('setBadge', this.counterString(t));
@@ -468,19 +480,26 @@ class ChatStore {
 
 		const { creator, content, attachments, dependencies } = message;
 		const { text, marks } = content || {};
+
+		if (!text && !attachments.length) {
+			return '';
+		};
+
 		const participantId = U.Space.getParticipantId(spaceId, creator);
 		const author = dependencies.find(it => it.id == participantId);
 		const ret = [];
 
 		if (author) {
-			ret.push(author.name);
+			ret.push(`${author.name}:`);
 		};
+
 		if (text) {
 			let t = U.Common.sanitize(Mark.insertEmoji(text, marks));
 			t = t.replace(/\n\r?/g, ' ');
 
 			ret.push(t);
-		} else 
+		};
+
 		if (attachments.length) {
 			const names = attachments.map(item => {
 				const object = dependencies.find(it => it.id == item.target);
@@ -490,7 +509,7 @@ class ChatStore {
 			ret.push(names);
 		};
 
-		return ret.join(': ');
+		return ret.join(' ');
 	};
 
 	/**

@@ -4,13 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       channel:
-        description: electron.builder channel
+        description: electron.builder channel (beta uses a different s3 bucket)
         required: true
-        default: alpha
+        default: latest
         type: choice
         options:
+          - latest
           - alpha
           - beta
+      run-diff-check:
+        description: 'Run diff-check?'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
   schedule:
     - cron: '0 2 * * *' # every day at 2am (UTC)
 
@@ -30,31 +39,40 @@ jobs:
       - run: git fetch --tags --force --prune
       - id: diff_check
         run: |
-          LAST_TAG=$(git describe --tags --match 'v*-nightly.*' --abbrev=0 2>/dev/null || echo "")
+          LAST_TAG=$(git describe --tags --match 'v*-nightly' --abbrev=0 2>/dev/null || echo "")
           if [ -z "$LAST_TAG" ]; then
-            # no nightly tag found in history
-            echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "last_tag=false" >> "$GITHUB_OUTPUT"
-          elif git diff --quiet "${LAST_TAG}..HEAD"; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "last_tag=$LAST_TAG" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "last_tag=$LAST_TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [[ "${{ github.event.inputs.run-diff-check || 'true' }}" == "true" ]]; then
+            if [ -z "$LAST_TAG" ]; then
+              # no nightly tag found in history
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            elif git diff --quiet "${LAST_TAG}..HEAD"; then
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            # when disabled explicitly: always set changed=true
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
       - name: debug
         run: |
           echo "changed: ${{ steps.diff_check.outputs.changed }}"
           echo "last_tag: ${{ steps.diff_check.outputs.last_tag }}"
 
-  nightly-tag:
+  nightly-settings:
     needs:
       - diff-check
     if: needs.diff-check.outputs.changed == 'true' # run only if there is a diff
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.nightly_info.outputs.tag }}
-      app_version_suffix: ${{ steps.nightly_info.outputs.app_version_suffix }}
+      app_version: ${{ steps.nightly_info.outputs.app_version }}
+      channel: ${{ steps.nightly_info.outputs.channel }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,32 +81,54 @@ jobs:
 
       - run: git fetch --tags --force --prune
 
-      - name: Compute nightly version
+      - name: Compute nightly version and settings
         id: nightly_info
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh CLI to authenticate
         run: |
           set -euo pipefail
+
+          # choice channel name {{
+          if [[ -z "${{ github.event.inputs.channel }}" ]]; then
+            # default value
+            CHANNEL=latest
+          else
+            CHANNEL="${{ github.event.inputs.channel }}"
+          fi
+          echo "channel=${CHANNEL}" >> "$GITHUB_OUTPUT"
+          # }}
+
+          # version suffix {{
+          if [[ "$CHANNEL" == "latest" ]]; then
+            VERSION_SUFFIX=""
+          else
+            VERSION_SUFFIX="-${CHANNEL}"
+          fi
+          # }}
+
           DATE=$(date -u +'%Y%m%d')
-          BASE_VERSION=$( jq -r '.version' package.json | sed 's/-.*$//' )
-          PREFIX="v${BASE_VERSION}-nightly.${DATE}"
+          BASE_VERSION=$( jq -r '.version | split(".")[:2] | join(".")' package.json )
 
           # Get the number of existing tags for today
-          COUNT=$(gh api "repos/${{ github.repository }}/git/matching-refs/tags/$PREFIX" --jq 'length')
+          COUNT=$(gh api "repos/${{ github.repository }}/git/matching-refs/tags/v${BASE_VERSION}.${DATE}" --jq 'length')
           N=$((COUNT + 1))
 
-          # Build the final version string
-          echo "tag=${PREFIX}.${N}" >> "$GITHUB_OUTPUT"
+          APP_VERSION="${BASE_VERSION}.${DATE}${N}${VERSION_SUFFIX}"
 
-          # application version suffix
-          echo "app_version_suffix=${DATE}.${N}" >> "$GITHUB_OUTPUT"
+          # Build the final version string
+          echo "tag=v${APP_VERSION}-nightly" >> "$GITHUB_OUTPUT"
+
+          # application version
+          echo "app_version=${APP_VERSION}" >> "$GITHUB_OUTPUT"
+
 
       - name: Debug
         shell: bash
         run: |
           echo "nightly tag: ${{ steps.nightly_info.outputs.tag }}"
-          echo "nightly app_version_suffix: ${{ steps.nightly_info.outputs.app_version_suffix }}"
+          echo "nightly app_version: ${{ steps.nightly_info.outputs.app_version }}"
+          echo "nightly channel: ${{ steps.nightly_info.outputs.channel }}"
 
       - name: Create nightly tag
         run: |
@@ -100,7 +140,7 @@ jobs:
   changelog:
     needs:
       - diff-check
-      - nightly-tag
+      - nightly-settings
     runs-on: ubuntu-latest
     outputs:
       body: ${{ steps.notes.outputs.body }}
@@ -115,7 +155,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           LAST="${{ needs.diff-check.outputs.last_tag }}"
-          TO="${{ needs.nightly-tag.outputs.tag }}"
+          TO="${{ needs.nightly-settings.outputs.tag }}"
           if [[ -z "$LAST" || "$LAST" == "false" ]]; then
             BODY="none"
           else
@@ -132,22 +172,18 @@ jobs:
 
       - name: Debug
         run: |
-          echo "----- CHANGELOG -----"
           echo "${{ steps.notes.outputs.body }}"
 
   build:
     needs:
-      - nightly-tag
-
+      - nightly-settings
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os:
           - macos-13
           - ubuntu-22.04
           - windows-latest
-
     steps:
       - name: Setup
         run: |
@@ -227,22 +263,15 @@ jobs:
       - name: Nightly mode env settings
         shell: bash
         run: |
-          # choice channel name
-          if [[ -z "${{ github.event.inputs.channel }}" ]]; then
-            # default value
-            CHANNEL="alpha"
-          else
-            CHANNEL="${{ github.event.inputs.channel }}"
-          fi
-          echo "CHANNEL=$CHANNEL" >> $GITHUB_ENV
           # choice s3 bucket for publishing {{
-          if [[ "$CHANNEL" == "beta" ]]; then
+          if [[ "${{ needs.nightly-settings.outputs.channel }}" == "beta" ]]; then
             S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET_BETA}}"
           else
             S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET}}"
           fi
           echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_ENV
           # }}
+
           echo "MIDDLEWARE_VERSION=${{ steps.anytype-heart-nightly-info.outputs.release_name }}" >> $GITHUB_ENV
 
       #- name: Print all environment variables
@@ -253,10 +282,9 @@ jobs:
         run: |
           jq \
             --tab \
-            --arg date "$(TZ=Europe/Berlin date +%Y%m%d%H%M)" \
             '
             .name = "anytype-dev" |
-            .version |= ( ( . | sub("[-+].*"; "") ) + "-${{ env.CHANNEL }}+${{ needs.nightly-tag.outputs.app_version_suffix }}" ) |
+            .version = "${{ needs.nightly-settings.outputs.app_version }}" |
             .description = "Anytype Nightly" |
             .build.appId = "com.anytype.anytype-dev" |
             .build.productName = "Anytype Nightly" |
@@ -359,7 +387,7 @@ jobs:
 
   notify:
     needs:
-      - nightly-tag
+      - nightly-settings
       - changelog
       - build
     if: ${{ always() }}
@@ -371,9 +399,9 @@ jobs:
           status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && 'failure' || 'success' }}
           notification_title: "${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} {workflow} {repo}"
           message_format: |
-            *Tag:* ${{ needs.nightly-tag.outputs.tag }}
+            *Tag:* ${{ needs.nightly-settings.outputs.tag || 'none' }}
             *Description:*
-            ${{ needs.changelog.outputs.body }}
+            ${{ needs.changelog.outputs.body || 'no changes, build skipped' }}
           footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
         env:
           SLACK_WEBHOOK_URL: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.SLACK_WEBHOOK_URL_ALERTS || secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}

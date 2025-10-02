@@ -2,4 +2,7 @@
 
 .pageMainSet {
 	.editorWrapper > #loader { position: fixed; top: 0px; width: 100%; height: 100%; }
+
+	.layoutPlug.layoutFormatList.viewGrid { padding-top: 39px; }
+	.layoutPlug.layoutFormatList.viewList { padding-top: 22px; padding-left: 14px; }
 }

@@ -4,20 +4,27 @@
 	.popup.popupPhrase {
 		.innerWrap { width: 548px; padding: 32px; }
 
-		.title { @include text-header3; text-align: center; margin: 0px 0px 24px 0px; }
-		.title.c2::before {
-			content: ""; width: 18px; height: 18px; display: inline-block; vertical-align: middle; background-image: url('~img/icon/popup/phrase/lock.svg');
-			background-repeat: no-repeat; background-position: center; background-size: contain; margin: -2px 6px 0px 0px;
+		.icon.close {
+			position: absolute; right: 16px; top: 16px; width: 32px; height: 32px; border-radius: 50%;
+			background: var(--color-shape-highlight-medium) url('~img/icon/popup/phrase/close.svg') 50% 50% no-repeat;
 		}
+		.icon.close:hover { background-color: var(--color-shape-highlight-dark); }
 
-		.rows { display: flex; flex-direction: column; gap: 18px 0px; margin: 0px 0px 24px 0px; }
-		.row { display: flex; flex-direction: row; gap: 0px 24px; }
+		.title { @include text-header1; margin: 0px 0px 40px 0px; }
 
-		.columns { display: flex; flex-direction: row; gap: 0px 14px; margin: 0px 0px 16px 0px; }
-		.column { width: 50%; }
+		.rows { display: flex; flex-direction: column; gap: 32px 0px; }
+		.row { display: flex; flex-direction: row; gap: 0px 12px; }
+		.row {
+			.icon { width: 56px; height: 56px; background-size: 56px; flex-shrink: 0; }
+			.icon.gameDie {  background-image: url('~img/icon/popup/phrase/gameDie.png'); }
+			.icon.scan {  background-image: url('~img/icon/popup/phrase/scan.png'); }
+			.icon.safetyBox {  background-image: url('~img/icon/popup/phrase/safetyBox.png'); }
 
-		.button { width: 100%; }
-
-		li:before { content: ""; margin-left: -0.5rem; }
+			dl { display: flex; flex-direction: column; gap: 4px 0px; }
+			dl {
+				dt { @include text-paragraph; font-weight: 600; color: var(--color-text-primary); }
+				dd { color: var(--color-text-secondary); }
+			}
+		}
 	}
 }

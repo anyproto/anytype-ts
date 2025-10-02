@@ -501,29 +501,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 							send('onRemoveNode', { ids: selected });
 							break;
 						};
-
-						case 'fav': {
-							selected.forEach(id => {
-								const node = getNode(id);
-								
-								if (node) {
-									node.isFavorite = true;
-								};
-							});
-							send('onSetEdges', { edges: edges.current });
-							break;
-						};
-
-						case 'unfav': {
-							selected.forEach(id => {
-								const node = getNode(id);
-								
-								if (node) {
-									node.isFavorite = false;
-								};
-							});
-							break;
-						};
 					};
 
 					setSelected(ids.current);
@@ -546,9 +523,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'newObject': {
-							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-
-							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.graph, (message: any) => {
 								U.Object.openConfig(message.details, { onClose: () => addNewNode(message.targetId, '', data) });
 							});
 							break;

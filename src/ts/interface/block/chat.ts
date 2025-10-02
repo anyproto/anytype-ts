@@ -69,6 +69,7 @@ export interface ChatMessage {
 	isLast: boolean;
 	isReadMessage: boolean;
 	isReadMention: boolean;
+	hasMention: boolean;
 };
 
 export interface ChatMessageContent {
@@ -94,6 +95,7 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	onReplyEdit: (e: any) => void;
 	onReplyClick: (e: any) => void;
 	getReplyContent: (message: any) => any;
+	scrollToBottom: () => void;
 };
 
 export interface BlockChat extends I.Block {};

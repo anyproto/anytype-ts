@@ -39,6 +39,11 @@
 .sidebar.right {
 	@import "./preview";
 
+	> .icon.widgetPanel { 
+		background-image: url('~img/icon/header/widget.svg'); position: absolute; top: 12px; right: 12px; -webkit-app-region: no-drag; 
+		z-index: 3;
+	} 
+
 	> .sidebarPage.pageWidget {
 		> .body {
 			> .content {

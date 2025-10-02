@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Button, Icon, IconObject, ObjectName, Label } from 'Component';
+import { Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics, Action, sidebar } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
@@ -15,8 +15,8 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const object = S.Detail.get(rootId, rootId, J.Relation.template);
 	const isDeleted = object._empty_ || object.isDeleted;
 	const isLocked = root ? root.isLocked() : false;
-	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isDate = U.Object.isDateLayout(object.layout);
 	const isTemplate = U.Object.isTemplateType(object.type);
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted && !object.isArchived;
@@ -26,8 +26,9 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
+	const hasWidget = S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length ? true : false;
 	const spaceview = U.Space.getSpaceview();
-	const showWidget = !isPopup && spaceview.isChat;
+	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
 
 	let center = null;
 	let label = '';
@@ -104,7 +105,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	const onPin = () => {
-		Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.header);
+		Action.toggleWidgetsForObject(rootId, analytics.route.header);
 	};
 
 	const onRelation = () => {
@@ -169,11 +170,11 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-pin" 
 						tooltipParam={{ 
-							text: object.isFavorite ? translate('commonRemovePinned') : translate('commonAddPinned'), 
+							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'), 
 							caption: keyboard.getCaption('addFavorite'), 
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={[ (object.isFavorite ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
+						className={[ (hasWidget ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/> 

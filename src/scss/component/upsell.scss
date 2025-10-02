@@ -1,15 +1,19 @@
 @import "~scss/_mixins";
 
-.upsellBanner.upsellStorage {
+.upsellBanner {
     display: flex; justify-content: space-between; align-items: center; background: var(--color-system-selection);
     padding: 16px; border-radius: 8px; gap: 0px 8px;
 }
-.upsellBanner.upsellStorage {
+.upsellBanner.isRed { background: linear-gradient(90deg, var(--color-bg-red) 0%, #fff6f3 100%)}
+
+.upsellBanner {
     .label { margin-bottom: 0px; display: inline; }
     .button { flex-shrink: 0; }
+    .button.black { border-radius: 14px; }
 }
-.upsellBanner.upsellStorage.fromSyncMenu { align-items: flex-start; }
-.upsellBanner.upsellStorage.fromSyncMenu {
+.upsellBanner.fromSyncMenu { align-items: flex-start; }
+.upsellBanner.fromSyncMenu {
     .label { display: block; }
     .label.incentive { display: none; }
 }
+.upsellBanner.fromSyncMenu.isRed { display: none; }

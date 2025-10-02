@@ -1,11 +1,12 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, IconObject, Button, Loader, Error, Editable } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, analytics } from 'Lib';
 import $ from 'jquery';
 
 const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
+	const { config } = S.Common;
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
 	const [ error, setError ] = useState('');
@@ -106,8 +107,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 				U.Router.switchSpace(message.objectId, '', true, { 
 					onRouteChange: () => {
-						U.Space.initSpaceState();
-
 						if (isChatSpace) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
 								if (message.error.code) {
@@ -173,7 +172,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		setCanSave(!isRed);
 
 		if (show) {
-			el.text(counter)
+			el.text(counter);
 		};
 	};
 
@@ -220,6 +219,26 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 				<>
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
+
+					{config.experimental ? (
+						<Button 
+							text={translate('popupSpaceCreateAIOnboarding')} 
+							color="blank" 
+							onClick={() => {
+								close(() => {
+									S.Popup.open('aiOnboarding', {
+										preventCloseByClick: true,
+										data: {
+											onComplete: (spaceId: string) => {
+												// Space is already created and switched to by import
+											}
+										}
+									});
+								});
+							}}
+							className="aiOnboarding"
+						/>
+					) : ''}
 				</>
 			</div>
 

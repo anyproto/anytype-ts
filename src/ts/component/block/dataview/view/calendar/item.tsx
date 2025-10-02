@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
-import { I, S, U, C, translate, Preview } from 'Lib';
+import { I, S, U, C, translate, Preview, Dataview } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
 	m: number;
 	y: number;
-	items: any[];
 	isToday: boolean;
 	onCreate: (details: any) => void;
 };
@@ -29,14 +28,17 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onCreate = this.onCreate.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
+		this.load = this.load.bind(this);
 	};
 
 	render () {
-		const { rootId, items, className, d, m, y, getView, onContext } = this.props;
+		const { rootId, className, d, m, y, getView, onContext, getKeys } = this.props;
 		const view = getView();
 		const { hideIcon } = view;
-		const slice = items.slice(0, LIMIT);
-		const length = items.length;
+		const subId = this.getSubId();
+		const keys = getKeys(view.id);
+		const items = S.Record.getRecords(subId, keys);
+		const { total } = S.Record.getMeta(subId, '');
 		const cn = [ 'day' ];
 		const canCreate = this.canCreate();
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
@@ -47,10 +49,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		};
 
 		let more = null;
-		if (length > LIMIT) {
+		if (total > LIMIT) {
 			more = (
 				<div className="record more" onClick={this.onMore}>
-					+{length - LIMIT} {translate('commonMore')} {U.Common.plural(length, translate('pluralObject')).toLowerCase()}
+					+{total - LIMIT} {translate('commonMore')} {U.Common.plural(total, translate('pluralObject')).toLowerCase()}
 				</div>
 			);
 		};
@@ -112,9 +114,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				</div>
 
 				<div className="items">
-					{slice.map((item, i) => (
-						<Item key={[ y, m, d, item.id ].join('-')} {...item} />
-					))}
+					{items.map(item => <Item key={[ y, m, d, item.id ].join('-')} {...item} />)}
 
 					{more}
 
@@ -122,6 +122,74 @@ const Item = observer(class Item extends React.Component<Props> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount (): void {
+		this.load(this.getSubId(), LIMIT);
+	};
+
+	componentWillUnmount (): void {
+		U.Subscription.destroyList([ this.getSubId() ]);
+	};
+
+	getSubId(): string {
+		const { getSubId, d, m, y } = this.props;
+		return [ getSubId(), y, m, d ].join('-');
+	};
+
+	load (subId: string, limit: number) {
+		const { d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+		const view = getView();
+	
+		if (!view) {
+			return;
+		};
+	
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		if (!relation) {
+			return;
+		};
+	
+		const object = getTarget();
+		const start = U.Date.timestamp(y, m, d, 0, 0, 0);
+		const end = U.Date.timestamp(y, m, d, 23, 59, 59);
+		const filters: I.Filter[] = [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+		].concat(view.filters as any[]);
+		const sorts: I.Sort[] = [].concat(view.sorts);
+		const searchIds = getSearchIds();
+
+		filters.push({ 
+			relationKey: relation.relationKey, 
+			condition: I.FilterCondition.GreaterOrEqual, 
+			value: start, 
+			quickOption: I.FilterQuickOption.ExactDate,
+			format: relation.format,
+		});
+
+		filters.push({ 
+			relationKey: relation.relationKey, 
+			condition: I.FilterCondition.LessOrEqual, 
+			value: end, 
+			quickOption: I.FilterQuickOption.ExactDate,
+			format: relation.format,
+		});
+
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
+
+		U.Subscription.subscribe({
+			subId,
+			limit,
+			filters: filters.map(Dataview.filterMapper),
+			sorts: sorts.map(Dataview.filterMapper),
+			keys: getKeys(view.id),
+			sources: object.setOf || [],
+			ignoreHidden: true,
+			ignoreDeleted: true,
+			collectionId: (isCollection ? object.id : ''),
+		});
 	};
 
 	onOpen (record: any) {
@@ -155,6 +223,8 @@ const Item = observer(class Item extends React.Component<Props> {
 				noFlipX: true,
 				data: {
 					...this.props,
+					subId: this.getSubId(),
+					load: this.load,
 					blockId: block.id,
 					relationKey: view.groupRelationKey,
 					hideIcon: view.hideIcon,
@@ -177,8 +247,6 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		S.Menu.open('select', {
 			element: node,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			offsetY: -node.outerHeight() + 32,
 			offsetX: 16,
 			noFlipX: true,

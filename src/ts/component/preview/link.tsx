@@ -54,11 +54,12 @@ const PreviewLink = forwardRef<{}, Props>(({ url = '', position }, ref: any) => 
 
 	useEffect(() => {
 		load();
-
-		if (position) {
-			position();
-		};
+		position?.();
 	}, []);
+
+	useEffect(() => {
+		position?.();
+	}, [ object ]);
 	
 	return (
 		<div className={cn.join(' ')}>

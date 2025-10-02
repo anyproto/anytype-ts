@@ -191,7 +191,7 @@
 
 		.viewContent.viewGrid.isCollection {
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
-			.cell.isEditing.isName { 
+			.cell.isEditing:first-child { 
 				.cellContent { padding-left: 20px !important; }
 			}
 

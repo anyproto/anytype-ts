@@ -1,12 +1,13 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Icon, Input, Error, Header } from 'Component';
-import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage } from 'Lib';
+import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
 
 enum Stage {
-	Email	 = 0,
-	Persona 	 = 1,
-	UseCase  = 2,
+	Phrase 		= 0,
+	Email	 	= 1,
+	Persona 	= 2,
+	UseCase		= 3,
 };
 
 const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
@@ -16,10 +17,12 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const nextRef = useRef(null);
+	const phraseRef = useRef(null);
 	const emailRef = useRef(null);
 	const shuffled = useRef({ role: null, purpose: null });
 	const selected = useRef({ role: null, purpose: null });
-	const [ stage, setStage ] = useState(Stage.Email);
+	const [ stage, setStage ] = useState(Stage.Phrase);
+	const [ phraseVisible, setPhraseVisible ] = useState(false);
 	const [ error, setError ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const options = {
@@ -55,43 +58,25 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = {
-			replace: true,
-			onRouteChange: () => {
-				S.Common.showRelativeDatesSet(true);
-				U.Space.initSpaceState();
+		const routeParam = { replace: true };
 
-				const routeParam = { replace: true };
+		S.Common.showRelativeDatesSet(true);
 
-				Storage.set('primitivesOnboarding', true);
-				Storage.setOnboarding('objectDescriptionButton');
-				Storage.setOnboarding('typeResetLayout');
-
-				if (redirect) {
-					U.Router.go(redirect, routeParam);
-					S.Common.redirectSet('');
-					return;
-				};
-
-				if (S.Auth.startingId) {
-					U.Object.getById(S.Auth.startingId, {}, object => {
-						if (object) {
-							U.Object.openRoute(object, routeParam);
-						} else {
-							U.Space.openDashboard(routeParam);
-						};
-					});
-				} else {
-					U.Space.openDashboard(routeParam);
-				};
-
-				Onboarding.start('basics', false);
-			},
-		};
+		Storage.set('isNewUser', true);
+		Storage.set('chatsOnboarding', true);
+		Storage.setOnboarding('objectDescriptionButton');
+		Storage.setOnboarding('typeResetLayout');
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 		U.Data.onInfo(account.info);
-		U.Data.onAuthWithoutSpace(routeParam);
 		U.Data.onAuthOnce(true);
+
+		S.Common.spaceSet('');
+
+		U.Subscription.createGlobal(() => {
+			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
+			S.Common.redirectSet('');
+		});
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
@@ -100,10 +85,20 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			return;
 		};
 
-		const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
-
 		switch (stage) {
+			case Stage.Phrase: {
+				Animation.from(() => setStage(stage + 1));
+				break;
+			};
+
 			case Stage.Email: {
+				const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
+
+				if (!needEmail) {
+					Animation.from(() => setStage(stage + 1));
+					break;
+				};
+
 				const email = emailRef.current?.getValue();
 
 				if (email) {
@@ -160,11 +155,26 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			return;
 		};
 
-		if (stage == Stage.Email) {
+		if (stage == Stage.Phrase) {
 			Animation.from(() => U.Router.go('/', { replace: true }));
 		} else {
 			setStage(stage - 1);
 		};
+	};
+
+	const onPhraseCopy = () => {
+		if (!phraseVisible) {
+			phraseRef.current?.onToggle();
+			setPhraseVisible(true);
+		};
+
+		U.Common.copyToast(translate('commonPhrase'), phraseRef.current?.getValue());
+		analytics.event('KeychainCopy', { type: 'Onboarding' });
+	};
+
+	const onLearnMore = () => {
+		S.Popup.open('phrase', {});
+		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[stage] });
 	};
 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
@@ -220,9 +230,52 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	let content = null;
+	let additional = null;
 	let buttons = null;
 
 	switch (stage) {
+		case Stage.Phrase: {
+			content = (
+				<Phrase
+					ref={phraseRef}
+					className="animation"
+					isHidden={!phraseVisible}
+					onCopy={onPhraseCopy}
+					onClick={onPhraseCopy}
+					readonly={true}
+					tooltipCopy={translate('pageAuthOnboardCopyKey')}
+				/>
+			);
+
+			additional = (
+				<div className="learnMore animation" onClick={onLearnMore}>
+					<Icon />
+					<Label text={translate('commonLearnMore')} />
+				</div>
+			);
+
+			buttons = (
+				<>
+					<div className="animation">
+						<Button 
+							ref={nextRef} 
+							className={cnb.join(' ')}
+							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')} 
+							color="accent" 
+							onClick={phraseVisible ? onForward : onPhraseCopy}
+						/>
+					</div>
+
+					{!phraseVisible ? (
+						<div className="animation">
+							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						</div>
+					) : ''}
+				</>
+			);
+			break;
+		};
+
 		case Stage.Email: {
 			cnb.push('disabled');
 
@@ -240,14 +293,9 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			);
 
 			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
-					</div>
-					{/*<div className="animation">*/}
-					{/*	<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />*/}
-					{/*</div>*/}
-				</>
+				<div className="animation">
+					<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+				</div>
 			);
 			break;
 		};
@@ -266,10 +314,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 					</div>
 				</>
 			);
@@ -290,10 +338,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={() => onForward()} />
+						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={onForward} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={() => onForward()} />
+						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
 					</div>
 				</>
 			);
@@ -315,6 +363,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	useEffect(() => {
 		init();
 
+		if (account && (stage == Stage.Phrase)) {
+			Renderer.send('keytarGet', account.id).then(value => phraseRef.current?.setValue(value));
+		};
+
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
 	}, [ stage ]);
 
@@ -328,6 +380,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 			<Frame ref={frameRef}>
 				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 				<Label id="label" className="description animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
+				{additional}
 
 				{content}
 				<Error className="animation" text={error} />

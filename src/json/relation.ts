@@ -16,7 +16,6 @@ export default {
 		'isArchived',
 		'isReadonly',
 		'isDeleted',
-		'isFavorite',
 		'done',
 		'fileExt',
 		'fileMimeType',
@@ -44,7 +43,6 @@ export default {
 		'isHidden',
 		'isDeleted',
 		'isArchived',
-		'isFavorite',
 		'done',
 		'relationFormat',
 		'fileExt',
@@ -52,9 +50,7 @@ export default {
 		'links',
 		'restrictions',
 		'source',
-		'lastModifiedDate',
-		'lastOpenedDate',
-		'timestamp'
+		'timestamp',
 	],
 
 	relation: [
@@ -69,7 +65,6 @@ export default {
 		'isHidden',
 		'isDeleted',
 		'isArchived',
-		'isFavorite',
 		'restrictions',
 		'relationMaxCount',
 		'relationReadonlyValue',
@@ -117,6 +112,11 @@ export default {
 		'iconOption',
 		'pluralName',
 		'headerRelationsLayout',
+		'setOf',
+		'orderId',
+		'widgetLayout',
+		'widgetLimit',
+		'widgetViewId',
 	],
 
 	graph: [
@@ -138,7 +138,6 @@ export default {
 		'fileMimeType',
 		'isDeleted',
 		'isArchived',
-		'isFavorite',
 		'restrictions',
 		'timestamp',
 	],

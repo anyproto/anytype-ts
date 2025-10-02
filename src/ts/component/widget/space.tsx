@@ -1,11 +1,10 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, translate, sidebar, keyboard, analytics } from 'Lib';
+import { I, U, translate, keyboard, analytics } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
-	const { sidebarDirection } = props;
 	const space = U.Space.getSpaceview();
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining).length;
@@ -13,7 +12,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const cn = [];
 	const buttons = [
 		{ id: 'search', name: translate('commonSearch') },
-		{ id: 'all', name: translate('commonAllContent') },
 		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
 		{ id: 'settings', name: translate('commonSettings') },
 	].filter(it => it);
@@ -27,11 +25,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'all': {
-				sidebar.panelSetState(false, sidebarDirection, { page: 'allObject' });
-				break;
-			};
-
 			case 'member': {
 				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
@@ -51,9 +44,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	return (
-		<div 
-			className={cn.join(' ')}
-		>
+		<div className={cn.join(' ')}>
 			<div className="buttons">
 				{buttons.map((item, i) => {
 					let cnt = null;

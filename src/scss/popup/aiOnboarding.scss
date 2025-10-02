@@ -1,0 +1,1285 @@
+@import "~scss/_vars";
+@import "~scss/_mixins";
+
+// Legacy color variables for gradients and special effects
+$lavender-cool: #9B8ADB;
+$lavender-light: #E8E4F6;
+$lavender-very-light: #F5F3FB;
+$ink-deep: #0F1115;
+$amber-warm: #FFB74D;
+$amber-light: #FFE4C4;
+$teal-accent: #FFB522; // Changed from cyan to orange/yellow to match spark
+
+// Animation curves
+$spring-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
+$smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Status message with wave animation
+.statusMessage {
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--color-text-primary);
+	position: relative;
+	overflow: hidden;
+	
+	&.active {
+		.statusText {
+			background: linear-gradient(
+				90deg,
+				var(--color-text-primary) 0%,
+				$lavender-cool 25%,
+				$lavender-cool 35%,
+				var(--color-text-primary) 60%,
+				var(--color-text-primary) 100%
+			);
+			background-size: 200% 100%;
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			animation: waveAnimation 2s ease-in-out infinite;
+		}
+	}
+	
+	.statusText {
+		display: inline-block;
+		transition: all 0.3s ease;
+		font-weight: 600; // Make status text bold
+	}
+}
+
+
+@keyframes waveAnimation {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
+
+.popups {
+	// Light mode backdrop - light gray
+	.popup.popupAiOnboarding.showDimmer {
+		.dimmer { 
+			background: rgba(248, 248, 250, 0.98); // Very light gray for light mode
+		}
+	}
+	
+	// Dark mode specific darker background
+	html.themeDark & .popup.popupAiOnboarding.showDimmer {
+		.dimmer {
+			background: rgba(0, 0, 0, 0.92);
+		}
+	}
+	
+	// Dark mode gradient for innerWrap - matching header background
+	html.themeDark & .popup.popupAiOnboarding {
+		.innerWrap {
+			// Dark mode: gradient matching header color scheme
+			background: radial-gradient(
+				ellipse at bottom right,
+				rgba(38, 38, 42, 0.95) 0%,    // Subtle dark gray matching header
+				rgba(32, 32, 36, 0.98) 50%,   // Transition to header background color
+				rgba(26, 26, 30, 1) 100%      // Slightly darker on outside for depth
+			);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			box-shadow: 
+				0 25px 50px -12px rgba(0, 0, 0, 0.5),
+				0 10px 10px -5px rgba(0, 0, 0, 0.3),
+				inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+		}
+	}
+
+	.popup.popupAiOnboarding {
+		// Graph overlay - positioned on dimmer, behind popup
+		.graphOverlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 1; // Above dimmer but below innerWrap
+			pointer-events: auto; // Enable graph interactions
+			opacity: 1.0; // Full opacity for better visibility
+			// Removed GPU acceleration properties to reduce CPU usage
+			
+			// Ensure graph container and wrapper don't overflow
+			.onboardingGraphContainer {
+				width: 100%;
+				height: 100%;
+				max-height: 100vh;
+				overflow: hidden;
+				
+				.graphWrapperContainer {
+					width: 100%;
+					height: 100%;
+					max-height: 100vh;
+					overflow: hidden;
+					
+					.graphWrapper {
+						width: 100%;
+						height: 100%;
+						max-height: 100vh;
+						flex: 1;
+						position: relative;
+						overflow: hidden;
+						
+						canvas {
+							width: 100%;
+							height: 100%;
+							max-height: 100vh;
+							touch-action: none; // Disable touch scrolling
+							user-select: none; // Disable selection
+							pointer-events: none; // Disable direct canvas interactions
+						}
+					}
+				}
+			}
+			
+			svg {
+				width: 100%;
+				height: 100%;
+				// GPU acceleration for SVG
+				// Removed transform and will-change to reduce GPU usage
+				
+				// Simple node animations
+				.nodeCircle {
+					animation: nodePulse 4s ease-in-out infinite;
+				}
+				
+				// Stagger animation delays for visual interest
+				.node:nth-child(odd) .nodeCircle {
+					animation-delay: 0s;
+				}
+				
+				.node:nth-child(even) .nodeCircle {
+					animation-delay: 2s;
+				}
+			}
+		}
+
+		// Main container with glassmorphism - slightly transparent to show graph behind
+		.innerWrap {
+			width: 720px;
+			height: 680px;
+			max-height: 85vh;
+			padding: 0;
+			overflow: hidden; // Critical - only children should scroll
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			z-index: 10; // Well above graph overlay
+			pointer-events: auto; // Ensure popup captures all events
+			// Light mode: clean gradient matching overall design
+			background: radial-gradient(
+				ellipse at bottom right,
+				rgba(252, 251, 254, 1) 0%,           // Very subtle cool tint
+				rgba(250, 250, 252, 1) 50%,          // Almost white
+				rgba(248, 248, 250, 1) 100%          // Slightly cooler white on outside
+			);
+			border: 1px solid var(--color-shape-tertiary);
+			border-radius: 24px;
+			box-shadow: 
+				0 25px 50px -12px rgba(0, 0, 0, 0.25),
+				0 10px 10px -5px rgba(0, 0, 0, 0.1);
+			animation: modalEntrance 0.5s $spring-curve;
+			position: relative;
+			z-index: 10; // Above graph overlay
+		}
+
+		.content {
+			height: 100%;
+			overflow: hidden; // Changed from visible to hidden
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+		}
+
+		// Main wrapper - now just for the chat content
+		.mainWrapper {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			overflow: hidden; // Prevent wrapper from scrolling
+		}
+
+		// Chat container - now takes full width
+		.chatSection {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			width: 100%;
+			background: transparent;
+			min-height: 0; // Important for flex children to scroll properly
+		}
+
+		// Header - fixed at top
+		.header {
+			padding: 24px 32px 20px;
+			position: sticky; // Sticky positioning to stay at top
+			top: 0;
+			z-index: 100; // Above chat content
+			background: var(--color-bg-primary);
+			// Removed backdrop-filter to reduce GPU usage
+			
+			.headerContent {
+				position: relative;
+				z-index: 1;
+			}
+
+			.closeButton {
+				position: absolute;
+				top: 24px;
+				right: 32px;
+				padding: 6px 16px;
+				border-radius: 20px;
+				background: transparent;
+				border: 1px solid var(--color-shape-tertiary);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				transition: all 0.2s $smooth-curve;
+				z-index: 2;
+				font-size: 13px;
+				font-weight: 500;
+				color: var(--color-text-secondary);
+				font-family: 'Inter', -apple-system, sans-serif;
+
+				&:hover {
+					background: var(--color-shape-highlight-medium);
+					border-color: var(--color-shape-secondary);
+					color: var(--color-text-primary);
+					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+				}
+
+				&:active {
+					transform: scale(0.98);
+				}
+			}
+
+			.title {
+				font-family: 'Inter', -apple-system, sans-serif;
+				font-size: 20px;
+				font-weight: 600;
+				color: var(--color-text-primary);
+				letter-spacing: -0.02em;
+				margin-bottom: 4px;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+
+				.sparkle {
+					color: $lavender-cool; // Use lavender for spark in light theme
+					// Animation removed - was using 13% CPU even with GPU acceleration
+					// animation: sparkleRotate 3s linear infinite;
+				}
+			}
+
+			.subtitle {
+				font-size: 14px;
+				color: var(--color-text-secondary);
+				font-weight: 400;
+			}
+
+			// Progress pills
+			.progressPills {
+				display: flex;
+				gap: 6px;
+				margin-top: 16px;
+
+				.pill {
+					height: 3px;
+					flex: 1;
+					background: rgba($lavender-cool, 0.15);
+					border-radius: 100px;
+					position: relative;
+					overflow: hidden;
+					// Disabled transition to test CPU impact
+					// transition: all 0.3s $smooth-curve;
+
+					&.active {
+						background: $lavender-cool;
+						
+						// Disabled shimmer animation to test CPU impact
+						// &::after {
+						// 	content: '';
+						// 	position: absolute;
+						// 	top: 0;
+						// 	left: -100%;
+						// 	width: 100%;
+						// 	height: 100%;
+						// 	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+						// 	animation: shimmer 2s infinite;
+						// }
+					}
+
+					&.completed {
+						background: $teal-accent;
+						// No animation on completed state
+					}
+				}
+			}
+		}
+
+		// Chat messages area
+		.chatContainer {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			min-height: 0; // Critical for flex scrolling
+			overflow: hidden; // Container doesn't scroll, wrapper does
+		}
+
+		.messagesWrapper {
+			flex: 1;
+			overflow-y: auto;
+			overflow-x: hidden;
+			padding: 20px 32px 24px; // Added top padding since header is now sticky
+			min-height: 0;
+			scroll-behavior: smooth;
+			// Add some spacing at the top for better visual separation from header
+			&:before {
+				content: '';
+				display: block;
+				height: 10px; // Small spacer
+			}
+
+			// Custom scrollbar - hidden by default, only shows when scrolling
+			&::-webkit-scrollbar {
+				width: 6px;
+				transition: opacity 0.3s ease;
+			}
+
+			&::-webkit-scrollbar-track {
+				background: transparent;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background: rgba($lavender-cool, 0);
+				border-radius: 100px;
+				transition: background 0.3s ease;
+			}
+			
+			// Show scrollbar only when actively scrolling
+			&.isScrolling {
+				&::-webkit-scrollbar-thumb {
+					background: rgba($lavender-cool, 0.2);
+					
+					&:hover {
+						background: rgba($lavender-cool, 0.3);
+					}
+				}
+			}
+		}
+
+		// Message bubbles
+		.message {
+			display: flex;
+			margin-bottom: 16px;
+			animation: messageSlide 0.3s $smooth-curve;
+			
+			// Info sections within messages
+			.info {
+				font-family: 'Inter', -apple-system, sans-serif;
+				font-size: 14px;
+				line-height: 1.5;
+				color: var(--color-text-primary);
+				margin-bottom: 12px;
+				padding: 10px 14px;
+				background: var(--color-shape-highlight-light);
+				border-radius: 10px;
+				border: 1px solid var(--color-shape-tertiary);
+				
+				strong {
+					font-weight: 600;
+					color: var(--color-purple);
+					margin-right: 8px;
+				}
+			}
+
+			&.ai {
+				justify-content: flex-start;
+
+				.bubble {
+					background: var(--color-bg-primary);
+					color: var(--color-text-primary);
+					border-radius: 20px 20px 20px 8px;
+					border: 1px solid var(--color-shape-tertiary);
+					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+				}
+			}
+
+			&.user {
+				justify-content: flex-end;
+
+				.bubble {
+					background: linear-gradient(135deg, var(--color-orange), var(--color-yellow));
+					color: var(--color-text-inversion);
+					border-radius: 20px 20px 8px 20px;
+					box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+				}
+			}
+
+			.bubble {
+				max-width: 65%;
+				padding: 14px 18px;
+				font-size: 14px;
+				line-height: 1.5;
+				word-wrap: break-word;
+				position: relative;
+				animation: bubblePop 0.4s $spring-curve;
+			}
+
+			&.typing {
+				justify-content: flex-start;
+				
+				.typingDots {
+					display: flex;
+					gap: 4px;
+					padding: 0 18px;
+					height: 40px;
+					align-items: center;
+
+					.dot {
+						width: 8px;
+						height: 8px;
+						border-radius: 50%;
+						background: $lavender-cool;
+						animation: typingBounce 1.4s infinite;
+
+						&:nth-child(1) { animation-delay: 0s; }
+						&:nth-child(2) { animation-delay: 0.15s; }
+						&:nth-child(3) { animation-delay: 0.3s; }
+					}
+				}
+			}
+
+
+			// Benefit message styling
+			.benefitMessage {
+				font-family: 'Inter', -apple-system, sans-serif;
+				
+				.title {
+					font-size: 15px;
+					font-weight: 600;
+					color: $lavender-cool;
+					margin-bottom: 12px;
+					letter-spacing: -0.01em;
+					line-height: 1.4;
+				}
+				
+				.benefitContent {
+					font-size: 14px;
+					color: var(--color-text-primary);
+					line-height: 1.6;
+					padding: 14px 16px;
+					background: linear-gradient(135deg, rgba($lavender-very-light, 0.6), rgba($lavender-light, 0.3));
+					border-radius: 12px;
+					border: 1px solid rgba($lavender-cool, 0.15);
+					letter-spacing: -0.01em;
+				}
+			}
+
+			// Generation message styling
+			.generationMessage {
+				font-family: 'Inter', -apple-system, sans-serif;
+				
+				.title {
+					font-size: 16px;
+					font-weight: 600;
+					color: var(--color-text-primary);
+					margin-bottom: 8px;
+					letter-spacing: -0.02em;
+					line-height: 1.4;
+				}
+				
+				.description {
+					font-size: 14px;
+					color: var(--color-text-secondary);
+					margin-bottom: 16px;
+					line-height: 1.5;
+					letter-spacing: -0.01em;
+				}
+			}
+
+			// Completion message styling
+			.completionMessage {
+				font-family: 'Inter', -apple-system, sans-serif;
+				text-align: center;
+				padding: 8px 0;
+				
+				.icon.success {
+					width: 48px;
+					height: 48px;
+					margin: 0 auto 16px;
+					display: block;
+					color: $teal-accent;
+					
+					&.large {
+						background: url('~img/icon/popup/confirm/success.svg') no-repeat center;
+						background-size: contain;
+						filter: brightness(0) saturate(100%) invert(73%) sepia(44%) saturate(3462%) hue-rotate(133deg) brightness(95%) contrast(101%);
+					}
+				}
+
+				.title {
+					font-size: 18px;
+					font-weight: 600;
+					color: var(--color-text-primary);
+					margin-bottom: 16px;
+					letter-spacing: -0.02em;
+					line-height: 1.4;
+				}
+
+				.spaceInfo {
+					background: var(--color-bg-primary);
+					border-radius: 14px;
+					padding: 16px;
+					border: 1px solid rgba($lavender-cool, 0.12);
+					margin: 16px 0;
+
+					.spaceName {
+						font-size: 16px;
+						font-weight: 600;
+						color: $lavender-cool;
+						margin-bottom: 12px;
+						padding-bottom: 12px;
+						border-bottom: 1px solid rgba($lavender-cool, 0.1);
+					}
+
+					.stat {
+						font-size: 14px;
+						color: var(--color-text-primary);
+						padding: 6px 0;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						
+						&.success {
+							color: $teal-accent;
+							font-weight: 500;
+						}
+					}
+				}
+
+				.importingStatus {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					gap: 12px;
+					margin-top: 20px;
+					padding: 12px;
+					background: rgba($lavender-very-light, 0.3);
+					border-radius: 100px;
+					
+					#loader {
+						position: relative;
+						width: 20px;
+						height: 20px;
+						background: transparent;
+					}
+					
+					span {
+						font-size: 14px;
+						color: var(--color-text-secondary);
+						font-weight: 500;
+					}
+				}
+			}
+		}
+
+		// Input area
+		.inputArea {
+			padding: 20px 32px;
+			background: transparent;
+			position: relative;
+
+			// Smart suggestions (example chips)
+			.smartSuggestions {
+				position: absolute;
+				bottom: 100%;
+				left: 32px;
+				right: 32px;
+				padding-bottom: 12px;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 10px;
+				max-width: 100%;
+
+				.suggestionChip {
+					padding: 12px 16px;
+					background: var(--color-bg-primary);
+					border: 1px solid var(--color-shape-tertiary);
+					border-radius: 16px;
+					font-size: 13px;
+					font-weight: 400;
+					line-height: 1.4;
+					color: var(--color-text-primary);
+					cursor: pointer;
+					transition: all 0.2s $smooth-curve;
+					animation: chipFadeIn 0.3s $smooth-curve backwards;
+					min-height: 48px;
+					display: flex;
+					align-items: center;
+					text-align: left;
+					justify-content: flex-start;
+					word-wrap: break-word;
+					hyphens: auto;
+					
+					@for $i from 1 through 9 {
+						&:nth-child(#{$i}) {
+							animation-delay: #{$i * 0.03}s;
+						}
+					}
+
+					&:hover {
+						background: var(--color-shape-highlight-light);
+						border-color: rgba($lavender-cool, 0.25);
+						transform: translateY(-2px) scale(1.05);
+						box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+					}
+
+					&:active {
+						transform: translateY(0) scale(1);
+					}
+
+					// Add subtle icon or bullet
+					&:before {
+						content: '✦';
+						color: var(--color-purple);
+						margin-right: 10px;
+						font-size: 14px;
+						opacity: 0.6;
+						flex-shrink: 0;
+					}
+				}
+			}
+
+			// Pill-shaped input
+			.inputWrapper {
+				display: flex;
+				align-items: center;
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-tertiary);
+				border-radius: 28px;
+				padding: 6px 20px;
+				transition: all 0.2s $smooth-curve;
+				box-shadow: 0 2px 12px rgba($lavender-cool, 0.08);
+
+				&:focus-within {
+					background: rgba(255, 255, 255, 1); // Pure white for light mode
+					border-color: rgba($lavender-cool, 0.3);
+					box-shadow: 0 4px 16px rgba($lavender-cool, 0.12);
+				}
+
+				.textarea {
+					flex: 1;
+					background: transparent !important;
+					border: none !important;
+					outline: none !important;
+					box-shadow: none !important;
+					resize: none;
+					min-height: 40px;
+					max-height: 80px;
+					padding: 10px 12px 10px 0;
+					font-size: 14px;
+					color: var(--color-text-primary);
+					line-height: 1.4;
+					font-family: 'Inter', -apple-system, sans-serif;
+
+					&::placeholder {
+						color: var(--color-text-tertiary);
+					}
+					
+					&:focus {
+						outline: none !important;
+						border: none !important;
+						box-shadow: none !important;
+						background: transparent !important;
+					}
+					
+					&:focus-visible {
+						outline: none !important;
+						border: none !important;
+					}
+				}
+
+				// Send icon styles - matching chat implementation
+				.icon.send {
+					width: 20px;
+					height: 20px;
+					cursor: pointer;
+					flex-shrink: 0;
+					margin-left: 12px;
+					background: url('~img/icon/chat/buttons/send.svg');
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: center;
+					transition: all 0.2s $smooth-curve;
+					
+					// Apply purple filter to the SVG
+					filter: brightness(0) saturate(100%) invert(56%) sepia(11%) saturate(1831%) hue-rotate(210deg) brightness(95%) contrast(91%);
+
+					&:not(.disabled):hover {
+						transform: scale(1.1);
+						filter: brightness(0) saturate(100%) invert(46%) sepia(11%) saturate(1831%) hue-rotate(210deg) brightness(85%) contrast(91%);
+					}
+
+					&:not(.disabled):active {
+						transform: scale(0.95);
+					}
+
+					&.disabled {
+						opacity: 0.3;
+						cursor: not-allowed;
+						pointer-events: none;
+					}
+
+					&.thinking {
+						background: url('~img/icon/chat/buttons/loader.svg');
+						animation: rotate 1.2s infinite linear;
+						filter: brightness(0) saturate(100%) invert(56%) sepia(11%) saturate(1831%) hue-rotate(210deg) brightness(95%) contrast(91%);
+					}
+				}
+			}
+
+			// CTA buttons
+			&.ctaArea {
+				display: flex;
+				justify-content: center;
+				background: transparent;
+				padding: 24px;
+
+				.ctaButton {
+					padding: 14px 36px;
+					background: linear-gradient(135deg, $lavender-cool, lighten($lavender-cool, 8%));
+					color: white;
+					border: none;
+					border-radius: 28px;
+					font-size: 15px;
+					font-weight: 500;
+					cursor: pointer;
+					transition: all 0.2s $smooth-curve;
+					box-shadow: 0 4px 16px rgba($lavender-cool, 0.25);
+					font-family: 'Inter', -apple-system, sans-serif;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					min-width: 180px;
+
+					&:hover:not(.loading) {
+						transform: translateY(-2px);
+						box-shadow: 0 6px 20px rgba($lavender-cool, 0.4);
+					}
+
+					&:active:not(.loading) {
+						transform: translateY(0);
+					}
+					
+					&.loading {
+						pointer-events: none;
+						opacity: 0.9;
+						
+						.loader {
+							display: inline-block;
+							width: 16px;
+							height: 16px;
+							border: 2px solid rgba(255, 255, 255, 0.3);
+							border-top-color: white;
+							border-radius: 50%;
+							animation: rotate 1.2s infinite linear;
+							margin-right: 8px;
+						}
+					}
+					
+					&:disabled {
+						opacity: 0.6;
+						cursor: not-allowed;
+					}
+				}
+			}
+
+			// Go to Space button area
+			&.goToSpace {
+				display: flex;
+				justify-content: center;
+				padding: 20px 32px;
+				background: transparent;
+
+				.button.large.primary {
+					width: 100%;
+					max-width: 300px;
+					padding: 14px 36px;
+					background: linear-gradient(135deg, $teal-accent, lighten($teal-accent, 8%));
+					color: white;
+					border: none;
+					border-radius: 28px;
+					font-size: 15px;
+					font-weight: 500;
+					cursor: pointer;
+					transition: all 0.2s $smooth-curve;
+					box-shadow: 0 4px 16px rgba($teal-accent, 0.25);
+					text-align: center;
+
+					&:hover {
+						transform: translateY(-2px);
+						box-shadow: 0 6px 20px rgba($teal-accent, 0.4);
+						background: linear-gradient(135deg, lighten($teal-accent, 5%), lighten($teal-accent, 13%));
+					}
+
+					&:active {
+						transform: translateY(0);
+					}
+				}
+			}
+		}
+
+		// Graph panel removed - graph is now in background
+
+		// Compact types list for inline display in chat
+		.compactTypesList {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			margin: 12px 0;
+			max-height: 300px;
+			overflow-y: auto;
+			padding: 4px;
+
+			.compactTypeBlock {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 14px;
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-tertiary);
+				border-radius: 12px;
+				cursor: pointer;
+				transition: all 0.2s $smooth-curve;
+				font-size: 14px;
+				position: relative;
+
+				.icon {
+					width: 18px;
+					height: 18px;
+					flex-shrink: 0;
+				}
+
+				.name {
+					flex: 1;
+					color: var(--color-text-primary);
+					font-weight: 450;
+				}
+
+				&:hover {
+					background: var(--color-bg-primary);
+					border-color: rgba($lavender-cool, 0.2);
+					transform: translateX(2px);
+				}
+
+				&.selected {
+					background: linear-gradient(135deg, rgba($lavender-light, 0.4), rgba($lavender-very-light, 0.6));
+					border-color: rgba($lavender-cool, 0.3);
+					box-shadow: 0 2px 8px rgba($lavender-cool, 0.15);
+					
+					.name {
+						font-weight: 500;
+						color: var(--color-text-primary);
+					}
+					
+					// Add a subtle checkmark on the right when selected
+					&:after {
+						content: '✓';
+						position: absolute;
+						right: 14px;
+						color: $lavender-cool;
+						font-weight: 600;
+						font-size: 16px;
+					}
+				}
+
+				&:active {
+					transform: translateX(0);
+				}
+			}
+		}
+
+		// Type selection grid (keep for other uses)
+		.typesGrid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+			gap: 12px;
+			margin: 16px 0;
+			max-height: 240px;
+			overflow-y: auto;
+			padding: 4px;
+
+			.typeCard {
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-tertiary);
+				border-radius: 16px;
+				padding: 14px;
+				cursor: pointer;
+				transition: all 0.2s $smooth-curve;
+				animation: cardFadeIn 0.3s $smooth-curve backwards;
+
+				&:hover {
+					background: rgba($lavender-very-light, 0.8);
+					border-color: rgba($lavender-cool, 0.25);
+					transform: translateY(-2px);
+					box-shadow: 0 4px 12px rgba($lavender-cool, 0.12);
+				}
+
+				&.selected {
+					background: linear-gradient(135deg, rgba($lavender-light, 0.6), rgba($lavender-very-light, 0.9));
+					border-color: rgba($lavender-cool, 0.3);
+					box-shadow: 0 2px 8px rgba($lavender-cool, 0.15);
+				}
+
+				.header {
+					display: flex;
+					align-items: center;
+					gap: 8px;
+
+					.checkbox {
+						width: 18px;
+						height: 18px;
+					}
+
+					.name {
+						font-size: 14px;
+						font-weight: 500;
+						color: var(--color-text-primary);
+					}
+				}
+			}
+		}
+
+		// Progress visualization
+		.progressSection {
+			margin: 16px 0;
+
+			.progressBar {
+				height: 4px;
+				background: rgba($lavender-cool, 0.1);
+				border-radius: 100px;
+				overflow: hidden;
+				margin-bottom: 8px;
+
+				.progressFill {
+					height: 100%;
+					background: linear-gradient(90deg, $lavender-cool, $teal-accent);
+					border-radius: 100px;
+					transition: width 0.3s $smooth-curve;
+					position: relative;
+
+					&::after {
+						content: '';
+						position: absolute;
+						top: 0;
+						left: -100%;
+						width: 100%;
+						height: 100%;
+						background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+						animation: shimmer 2s infinite;
+					}
+				}
+			}
+
+			.progressCaption {
+				font-size: 13px;
+				color: var(--color-text-secondary);
+				text-align: center;
+			}
+		}
+
+		// Error state styling
+		.errorStateWrapper {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+			min-height: 400px;
+			padding: 40px;
+			
+			.errorContent {
+				text-align: center;
+				max-width: 500px;
+				background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba($lavender-very-light, 0.95));
+				border: 1px solid rgba($lavender-cool, 0.15);
+				border-radius: 24px;
+				padding: 48px 40px;
+				box-shadow: 
+					0 25px 50px -12px rgba($lavender-cool, 0.15),
+					0 10px 10px -5px rgba(0, 0, 0, 0.04),
+					inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+				
+				.errorIcon {
+					margin-bottom: 24px;
+					
+					.icon.warning.large {
+						width: 64px;
+						height: 64px;
+						margin: 0 auto;
+						background: linear-gradient(135deg, rgba($amber-warm, 0.15), rgba($amber-light, 0.1));
+						border-radius: 50%;
+						padding: 16px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						
+						&:before {
+							content: '⚠';
+							font-size: 32px;
+							color: $amber-warm;
+						}
+					}
+				}
+				
+				.errorTitle {
+					font-family: 'Inter', -apple-system, sans-serif;
+					font-size: 24px;
+					font-weight: 600;
+					color: var(--color-text-primary);
+					margin-bottom: 12px;
+					letter-spacing: -0.02em;
+				}
+				
+				.errorMessage {
+					font-family: 'Inter', -apple-system, sans-serif;
+					font-size: 16px;
+					line-height: 1.6;
+					color: var(--color-text-secondary);
+					margin-bottom: 32px;
+					max-width: 400px;
+					margin-left: auto;
+					margin-right: auto;
+				}
+				
+				.errorActions {
+					display: flex;
+					gap: 12px;
+					justify-content: center;
+					
+					.button {
+						padding: 12px 28px;
+						border-radius: 20px;
+						font-size: 14px;
+						font-weight: 500;
+						cursor: pointer;
+						transition: all 0.2s $smooth-curve;
+						font-family: 'Inter', -apple-system, sans-serif;
+						border: none;
+						
+						&.primary {
+							background: linear-gradient(135deg, $lavender-cool, lighten($lavender-cool, 8%));
+							color: white;
+							box-shadow: 0 4px 12px rgba($lavender-cool, 0.25);
+							
+							&:hover {
+								transform: translateY(-2px);
+								box-shadow: 0 6px 16px rgba($lavender-cool, 0.35);
+							}
+							
+							&:active {
+								transform: translateY(0);
+							}
+						}
+						
+						&.secondary {
+							background: var(--color-shape-secondary);
+							color: var(--color-text-secondary);
+							border: 1px solid rgba($lavender-cool, 0.15);
+							
+							&:hover {
+								background: rgba(255, 255, 255, 1);
+								border-color: rgba($lavender-cool, 0.25);
+								color: var(--color-text-primary);
+							}
+							
+							&:active {
+								transform: scale(0.98);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Reconnecting overlay styles
+		.reconnectingOverlay {
+			text-align: center;
+			margin-top: 20px;
+			color: var(--color-text-secondary);
+			font-family: 'Inter', -apple-system, sans-serif;
+			font-size: 14px;
+			font-weight: 500;
+		}
+
+		// Responsive adjustments
+		@media (max-width: 1279px) {
+			.innerWrap {
+				width: calc(100% - 48px);
+				max-width: 720px;
+			}
+		}
+
+		@media (max-width: 767px) {
+			.innerWrap {
+				width: calc(100% - 24px);
+				height: calc(100% - 48px);
+				max-height: none;
+				border-radius: 16px;
+			}
+
+			.header {
+				padding: 20px 20px 16px;
+
+				.title {
+					font-size: 18px;
+				}
+			}
+
+			.messagesWrapper,
+			.inputArea {
+				padding-left: 20px;
+				padding-right: 20px;
+			}
+		}
+	}
+}
+
+// Simple pulse animation for graph nodes
+@keyframes nodePulse {
+	0%, 100% {
+		opacity: 0.8;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+// Dark theme overrides
+html.themeDark {
+	.popup.popupAiOnboarding {
+		.header {
+			.titleWrapper {
+				.sparkle {
+					color: var(--color-orange); // Keep orange spark in dark theme
+				}
+			}
+		}
+		
+		.inputArea {
+			.inputWrapper {
+				&:focus-within {
+					background: var(--color-shape-primary) !important; // Use theme-appropriate background for dark mode
+				}
+			}
+		}
+	}
+}
+
+
+// Animations
+@keyframes modalEntrance {
+	from {
+		opacity: 0;
+		transform: scale(0.92) translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes sparkleRotate {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+@keyframes messageSlide {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes bubblePop {
+	0% {
+		transform: scale(0.8);
+		opacity: 0;
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes typingBounce {
+	0%, 60%, 100% {
+		transform: translateY(0);
+		opacity: 0.5;
+	}
+	30% {
+		transform: translateY(-8px);
+		opacity: 1;
+	}
+}
+
+@keyframes chipFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes cardFadeIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+
+@keyframes shimmer {
+	to {
+		left: 100%;
+	}
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.6;
+		transform: scale(1.05);
+	}
+}
+
+@keyframes rotate {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}

@@ -5,7 +5,7 @@ on:
     paths:
       - 'src/json/text.json'
     branches:
-      - main
+      - develop
   workflow_dispatch:
 
 jobs:

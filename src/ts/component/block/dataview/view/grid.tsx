@@ -38,7 +38,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmptyView, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
@@ -71,7 +71,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		let content = null;
 		if (!length) {
-			content = getEmpty('view');
+			content = getEmptyView(I.ViewType.Grid);
 		} else
 		if (isInline) {
 			content = (
@@ -433,7 +433,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		S.Menu.open('dataviewRelationList', { 
 			element,
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Right,
 			offsetY: 10,
 			className: isFixed ? 'fixed' : '',
 			onOpen: () => cellLast.addClass('hover'),

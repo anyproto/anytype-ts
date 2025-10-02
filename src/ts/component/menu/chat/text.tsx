@@ -33,7 +33,6 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: -4,
 			offsetX: -8,
 			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
 			data: {} as any,
 		};

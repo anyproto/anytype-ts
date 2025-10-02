@@ -3,12 +3,11 @@
 .viewGallery {
 	.body { padding: 4px 16px; position: relative; }
 
-	.items { height: 100%; display: flex; flex-direction: column; gap: 8px 0px; }
+	.items { height: 100%; display: flex; flex-direction: column; }
 	.items {
 		.row { display: grid; grid-gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px 0px; }
 
-		.item { flex-shrink: 0; flex-grow: 0; }
-
+		.item { flex-shrink: 0; flex-grow: 0; background-color: var(--color-bg-primary); }
 		.item {
 			.dropTarget { height: 100%; border-radius: 8px; }
 			.inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }

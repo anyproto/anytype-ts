@@ -168,10 +168,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const routeParam = { replace: true };
 		const refSidebar = sidebar.rightPanelRef(isPopup);
 		const state = S.Common.getRightSidebarState(isPopup);
+		const selection = S.Common.getRef('selectionProvider');
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
+		selection?.rebind();
 
 		if (!Component) {
 			return;
@@ -265,10 +267,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getClass (prefix: string) {
 		const { isPopup } = this.props;
-		const { page } = this.getMatchParams();
+		const { page, action, id } = this.getMatchParams();
 		
 		return [ 
 			U.Common.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
 			this.getId(prefix),
 			isPopup ? 'isPopup' : 'isFull',
 		].join(' ');

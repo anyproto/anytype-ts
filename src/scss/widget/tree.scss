@@ -2,7 +2,7 @@
 
 .widget.widgetTree {
 	#innerWrap { padding-bottom: 8px; }
-	.ReactVirtualized__List { padding: 0px 8px; }
+	.ReactVirtualized__List { padding: 0px 8px; width: 100%; }
 
 	.head { padding-bottom: 0px; }
 
@@ -17,6 +17,10 @@
 			border-radius: 6px; opacity: 0; transition: opacity $transitionCommon;
 		}
 		.inner:hover::before, .inner.hover::before { opacity: 1; }
+
+		&.isSection {
+			.inner { padding-left: 8px; }
+		}
 
 		.dropTarget { border-radius: 4px; }
 
@@ -65,7 +69,8 @@
 }
 
 .widget.widgetTree.isPreview {
-	.ReactVirtualized__List { padding: 8px 0px; }
+	.head { padding-top: 12px; }
+	.ReactVirtualized__List { padding: 8px; }
 }
 
 .widget.widgetTree.isClosed {

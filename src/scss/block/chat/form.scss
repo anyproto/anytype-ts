@@ -150,58 +150,11 @@
 		}
 	}
 
-	.buttons { display: flex; gap: 0px 8px; padding: 0px 16px; margin-left: -4px; }
-	.buttons {
-		.icon { margin: 0px; transition: none; }
-
-		/* Chat buttons */
-		.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
-		.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
-
-		/* Text buttons */
-		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
-		.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
-		.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
-		.icon.link { background-image: url('~img/icon/menu/action/mark/link0.svg'); }
-		.icon.kbd { background-image: url('~img/icon/menu/action/mark/code0.svg'); }
-		.icon.underline { background-image: url('~img/icon/menu/action/mark/underline0.svg'); }
-
-		.icon.isActive.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
-		.icon.isActive.kbd { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
-		.icon.isActive.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
-		.icon.isActive.link { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
-		.icon.isActive.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
-		.icon.isActive.underline { background-image: url('~img/icon/menu/action/mark/underline1.svg'); }
-
-		.icon.color { z-index: 1; }
-		.icon.color {
-			.inner { 
-				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
-				background: var(--color-text-primary); 
-			}
-			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; background: var(--color-bg-primary); }
-			
-			.inner.textColor-black { background: var(--color-text-primary); }
-			.inner.textColor-grey { background: var(--color-control-active); }
-			.inner.textColor-yellow { background: var(--color-yellow); }
-			.inner.textColor-orange { background: var(--color-orange); }
-			.inner.textColor-red { background: var(--color-red); }
-			.inner.textColor-pink { background: var(--color-pink); }
-			.inner.textColor-purple { background: var(--color-purple); }
-			.inner.textColor-blue { background: var(--color-blue); }
-			.inner.textColor-ice { background: var(--color-ice); }
-			.inner.textColor-teal { background: var(--color-teal); }
-			.inner.textColor-lime { background: var(--color-lime); }
-		}
-	}
-
-	.charCounter {
-		display: none; position: absolute; top: 4px; right: 4px; @include text-small; font-weight: 500; text-align: center;
-		min-width: 24px; padding: 3px 6px; border-radius: 12px; background: var(--color-bg-tag-red); color: var(--color-text-inversion);
-	}
+	.charCounter { display: none; position: absolute; bottom: 10px; right: 48px; @include text-small; line-height: 20px; color: var(--color-text-secondary); }
 	.charCounter.red { background: var(--color-red); }
 	.charCounter.show { display: block; }
 
 	.icon.send { position: absolute; bottom: 6px; right: 10px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
-	.icon.send.isLoading { background: url('~img/icon/chat/buttons/loader.svg'); animation: rotate 1.2s infinite linear; animation-delay: 0.3s; }
+	.icon.send.isLoading { background: url('~img/icon/chat/buttons/loader.svg'); }
+	.icon.send.anim { animation: rotate 1.2s infinite linear; animation-delay: 0.3s; }
 }

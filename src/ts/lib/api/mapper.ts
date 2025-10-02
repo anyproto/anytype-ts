@@ -83,11 +83,9 @@ export const Mapper = {
 
 		AccountInfo: (obj: Model.Account.Info): I.AccountInfo => {
 			return {
-				homeObjectId: obj.getHomeobjectid(),
 				profileObjectId: obj.getProfileobjectid(),
 				gatewayUrl: obj.getGatewayurl(),
 				deviceId: obj.getDeviceid(),
-				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
 				techSpaceId: obj.getTechspaceid(),
 				spaceViewId: obj.getSpaceviewid(),
@@ -657,6 +655,7 @@ export const Mapper = {
 				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
 				isReadMessage: obj.getRead(),
 				isReadMention: obj.getMentionread(),
+				hasMention: obj.getHasmention(),
 				isSynced: obj.getSynced(),
 			};
 		},
@@ -1229,8 +1228,6 @@ export const Mapper = {
 			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
 			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
 
-			if (v == V.SPACEAUTOWIDGETADDED)		 t = 'SpaceAutoWidgetAdded';
-
 			return t;
 		},
 
@@ -1767,14 +1764,6 @@ export const Mapper = {
 				ids: obj.getIdsList(),
 				isSynced: obj.getIssynced(),
 				subIds: obj.getSubidsList(),
-			};
-		},
-
-		SpaceAutoWidgetAdded: (obj: Events.Event.Space.AutoWidgetAdded) => {
-			return {
-				widgetId: obj.getWidgetblockid(),
-				targetId: obj.getTargetid(),
-				targetName: obj.getTargetname(),
 			};
 		},
 
