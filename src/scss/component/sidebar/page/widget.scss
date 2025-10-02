@@ -66,9 +66,7 @@
 		}
 	}
 
-	> .body {
-		padding: 0px 6px 68px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
-	}
+	> .body { padding: 0px 0px 68px 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body {
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }
@@ -80,7 +78,7 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .content { display: flex; flex-direction: column; gap: 2px 0px; }
+		> .content { display: flex; flex-direction: column; gap: 2px 0px; padding: 0px 6px 0px 12px; }
 		> .content {
 
 			.dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 1px var(--color-shape-tertiary); background: var(--color-shape-tertiary); }

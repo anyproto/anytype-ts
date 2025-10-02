@@ -856,7 +856,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const isClosed = this.isSectionClosed(id);
 
 		section.toggleClass('isOpen', !isClosed);
-		list.toggleClass('isOpen', !isClosed).css({ height: (!isClosed ? 'auto': 0) });
+		list.toggleClass('isOpen', !isClosed).css({ 
+			height: (isClosed ? 0 : 'auto'),
+			overflow: (isClosed ? 'hidden' : 'visible'),
+		});
 	};
 
 	onToggle = (id: I.WidgetSection) => {

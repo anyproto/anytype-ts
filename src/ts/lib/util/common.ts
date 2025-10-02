@@ -1691,7 +1691,7 @@ class UtilCommon {
 		if (isOpen) {
 			const height = obj.outerHeight();
 
-			obj.css({ height });
+			obj.css({ height, overflow: 'hidden' });
 
 			raf(() => obj.addClass('anim').css({ height: 0 }));
 			window.setTimeout(() => {
@@ -1707,7 +1707,7 @@ class UtilCommon {
 
 			raf(() => obj.css({ height }));
 			window.setTimeout(() => {
-				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto' });
+				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto', overflow: 'visible' });
 				callBack?.();
 			}, delay);
 		};
