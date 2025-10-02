@@ -5,7 +5,7 @@ import { I, S, U, Renderer, translate } from 'Lib';
 
 const MenuBar = observer(forwardRef<{}, {}>((props, ref) => {
 
-	const { showMenuBar } = S.Common.config;
+	const { showMenuBar } = S.Common;
 	const cn = [];
 
 	let inner = null;

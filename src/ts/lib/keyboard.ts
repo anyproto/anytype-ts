@@ -225,6 +225,12 @@ class Keyboard {
 			Action.themeSet(!theme ? 'dark' : '');
 		});
 
+		if (U.Common.isPlatformWindows()) {
+			this.shortcut('alt', e, () => {
+				S.Common.setShowMenuBar(!S.Common.showMenuBar);
+			});
+		};
+
 		if (isMain) {
 
 			// Print
