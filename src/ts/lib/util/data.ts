@@ -326,7 +326,7 @@ class UtilData {
 				const subId = S.Chat.getSpaceSubId(spaceId);
 
 				if (message) {
-					message.dependencies = dependencies || [];
+					message.dependencies = dependencies;
 					S.Chat.add(subId, 0, new M.ChatMessage(message));
 				};
 

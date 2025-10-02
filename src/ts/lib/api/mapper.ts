@@ -671,12 +671,17 @@ export const Mapper = {
 		},
 
 		ChatPreview: (obj: Rpc.Chat.SubscribeToMessagePreviews.Response.ChatPreview): any => {
+			const dependencies = new Map((obj.getDependenciesList() || []).map(dep => {
+				const decoded: any = Decode.struct(dep);
+				return [ decoded.id, decoded ];
+			}));
+
 			return {
 				spaceId: obj.getSpaceid(),
 				chatId: obj.getChatobjectid(),
 				message: obj.hasMessage() ? Mapper.From.ChatMessage(obj.getMessage()) : null,
 				state: obj.hasState() ? Mapper.From.ChatState(obj.getState()) : null,
-				dependencies: (obj.getDependenciesList() || []).map(Decode.struct),
+				dependencies,
 			};
 		},
 
@@ -1704,12 +1709,17 @@ export const Mapper = {
 		},
 
 		ChatAdd: (obj: Events.Event.Chat.Add) => {
+			const dependencies = new Map((obj.getDependenciesList() || []).map(dep => {
+				const decoded: any = Decode.struct(dep);
+				return [ decoded.id, decoded ];
+			}));
+
 			return {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
-				dependencies: obj.getDependenciesList().map(Decode.struct),
 				subIds: obj.getSubidsList(),
+				dependencies,
 			};
 		},
 

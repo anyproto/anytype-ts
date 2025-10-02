@@ -490,7 +490,7 @@ class ChatStore {
 		};
 
 		const participantId = U.Space.getParticipantId(spaceId, creator);
-		const author = dependencies.find(it => it.id == participantId);
+		const author = dependencies.get(participantId);
 		const ret = [];
 
 		if (author) {
@@ -506,7 +506,7 @@ class ChatStore {
 
 		if (attachments.length) {
 			const names = attachments.map(item => {
-				const object = dependencies.find(it => it.id == item.target);
+				const object = dependencies.get(item.target);
 				return object ? U.Object.name(object) : '';
 			}).filter(it => it).join(', ');
 
