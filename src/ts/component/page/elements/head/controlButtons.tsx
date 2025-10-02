@@ -170,13 +170,12 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 			return { allowedIcon, allowedLayout, allowedCover, allowedDescription };
 		};
 
-		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		allowedLayout = !checkType && allowedDetails && !isChat && !isType;
-		allowedIcon = !checkType && allowedDetails && !isTask && !isNote && !isBookmark && !isType;
-		allowedCover = !checkType && allowedDetails && !isNote && !isType;
-		allowedDescription = !checkType && allowedDetails && !isNote;
+		allowedLayout = allowedDetails && !isChat && !isType;
+		allowedIcon = allowedDetails && !isTask && !isNote && !isBookmark && !isType;
+		allowedCover = allowedDetails && !isNote && !isType;
+		allowedDescription = allowedDetails && !isNote;
 
 		if (isInSets && !hasConflict) {
 			allowedLayout = false;

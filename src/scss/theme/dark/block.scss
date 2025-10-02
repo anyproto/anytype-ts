@@ -215,9 +215,14 @@
 
 	/* BlockChat */
 	.block.blockChat {
-		.emptyState {
-			.img { background: none; }
+		.chatEmptyState {
+			.item {
+				.icon.infinity { background-image: url('#{$themePath}/icon/chat/empty/infinity.svg'); }
+				.icon.wifi { background-image: url('#{$themePath}/icon/chat/empty/wifi.svg'); }
+				.icon.key { background-image: url('#{$themePath}/icon/chat/empty/key.svg'); }
+			}
 		}
+
 		.message {
 			.bubble { background: var(--color-shape-tertiary); }
 

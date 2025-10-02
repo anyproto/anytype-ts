@@ -57,6 +57,7 @@ class CommonStore {
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
 	public windowIsFocused = true;
+	public routeParam: any = {};
 
 	public previewObj: I.Preview = { 
 		type: null, 

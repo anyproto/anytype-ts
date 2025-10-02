@@ -954,10 +954,6 @@ class Relation {
 
 			if (l) {
 				type = allowedTypes[0];
-
-				if (l > 1) {
-					flags.push(I.ObjectFlag.SelectType);
-				};
 			};
 		};
 
@@ -965,11 +961,7 @@ class Relation {
 			type = null;
 		};
 
-		if (type) {
-			details.type = type.id;
-		} else {
-			flags.push(I.ObjectFlag.SelectType);
-		};
+		details.type = type ? type.id : S.Common.type;
 
 		return { flags, details };
 	};

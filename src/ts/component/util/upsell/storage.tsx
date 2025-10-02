@@ -1,24 +1,28 @@
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 import { S, translate, U, I, Action, analytics } from 'Lib';
 
 interface Props {
+	tier: any;
 	route: string;
+	isRed: boolean;
 	className?: string;
 };
 
-const UpsellStorage: FC<Props> = ({
+const UpsellStorage = observer(forwardRef<{}, Props>(({
+	tier = {},
 	route = '',
+	isRed = false,
 	className = '',
-}) => {
+}, ref) => {
 
 	const cn = [
 		'upsellBanner',
 		'upsellStorage',
 		className,
 	];
-	const { membershipTiers, spaceStorage } = S.Common;
-	const { membership } = S.Auth;
+	const { spaceStorage } = S.Common;
 	const { bytesLimit } = spaceStorage;
 	const bytesUsed = U.Common.calculateStorageUsage();
 	const notSyncedCounter = S.Auth.getNotSynced().total;
@@ -26,29 +30,28 @@ const UpsellStorage: FC<Props> = ({
 	const roundedUsagePercent = Math.ceil(usagePercent / 5) * 5;
 	const output = usagePercent < 90 ? roundedUsagePercent : Math.round(usagePercent);
 
-	const show = (usagePercent > 55) && (usagePercent < 100)
-		&& U.Common.checkCanMembershipUpgrade()
-		&& U.Data.isAnytypeNetwork()
-		&& membershipTiers[0]
-		&& (membershipTiers[0].id != membership.tier)
-		&& !notSyncedCounter;
+	let incentiveText = '';
+	let upsellText = '';
 
-	if (!show) {
-		return null;
-	};
+	if (isRed) {
+		cn.push('isRed');
 
-	const tier: I.MembershipTier = membershipTiers[0];
-	if (!tier.price || !tier.period || !tier.periodType) {
-		return null;
-	};
-
-	const periodLabel = U.Common.getMembershipPeriodLabel(tier);
-
-	let period = '';
-	if (tier.period == 1) {
-		period = `/ ${U.Common.plural(tier.period, periodLabel)}`;
+		if (notSyncedCounter) {
+			incentiveText = U.Common.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
+		};
+		upsellText = translate('upsellBannerStorageFullUpsellText');
 	} else {
-		period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), tier.period, U.Common.plural(tier.period, periodLabel));
+		const periodLabel = U.Common.getMembershipPeriodLabel(tier);
+
+		let period = '';
+		if (tier.period == 1) {
+			period = `/ ${U.Common.plural(tier.period, periodLabel)}`;
+		} else {
+			period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), tier.period, U.Common.plural(tier.period, periodLabel));
+		};
+
+		incentiveText = translate('upsellBannerStorageIncentiveText');
+		upsellText = U.Common.sprintf(translate('upsellBannerStorageUpsellText'), `$${tier.price} ${period}`);
 	};
 
 	const onClick = () => {
@@ -61,13 +64,13 @@ const UpsellStorage: FC<Props> = ({
 		<div className={cn.join(' ')}>
 			<div className="text">
 				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} />
-				<Label className="incentive" text={translate('upsellBannerStorageIncentiveText')} />
-				<Label className="upsell" text={U.Common.sprintf(translate('upsellBannerStorageUpsellText'), `$${tier.price} ${period}`)} />
+				{incentiveText ? <Label className="incentive" text={incentiveText} /> : ''}
+				<Label className="upsell" text={upsellText} />
 			</div>
-			<Button text={translate('commonUpgrade')} color="accent" className="c28" onClick={onClick} />
+			<Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} />
 		</div>
 	);
 
-};
+}));
 
 export default UpsellStorage;

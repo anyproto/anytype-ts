@@ -305,32 +305,50 @@ class UtilDate {
 			return '';
 		};
 
-		let delta = this.now() - t;
-		const d = Math.floor(delta / 86400);
-
-		delta -= d * 86400;
-		const h = Math.floor(delta / 3600);
-
-		delta -= h * 3600;
-		const m = Math.floor(delta / 60);
-
-		delta -= m * 60;
-		const s = delta;
-
 		let ret = '';
-		if (d > 0) {
-			ret = U.Common.sprintf('%d days ago', d);
+
+		if (this.isToday(t)) {
+			ret = this.timeWithFormat(I.TimeFormat.H24, t);
 		} else
-		if (h > 0) {
-			ret = U.Common.sprintf('%d hours ago', h);
+		if (this.dayString(t)) {
+			ret = this.dayString(t);
 		} else
-		if (m > 0) {
-			ret = U.Common.sprintf('%d minutes ago', m);
-		} else
-		if (s > 0) {
-			ret = U.Common.sprintf('%d seconds ago', s);
+		if (this.isThisWeek(t)) {
+			ret = this.date('l', t);
+		} else {
+			const { y } = this.getCalendarDateParam(t)
+			const year = y != this.getCalendarDateParam(this.now()).y ? `/${y}` : '';
+
+			ret = `${this.date('d', t)}/${this.date('m', t)}${year}`;
 		};
+
 		return ret;
+	};
+
+	/**
+	 * Returns if given timestamp is today.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {boolean}
+	 */
+	isToday (t: number): boolean {
+		const { d, m, y } = this.getCalendarDateParam(t);
+
+		return this.timestamp(y, m, d) == this.today();
+	};
+
+	/**
+	 * Returns if given timestamp is current week.
+	 * @param {number} t - The Unix timestamp.
+	 * @returns {boolean}
+	 */
+	isThisWeek (t: number): boolean {
+		const now = new Date(this.now() * 1000);
+		const currentDay = now.getDay();
+		const startOfWeek = new Date(now);
+		startOfWeek.setDate(now.getDate() - currentDay);
+		startOfWeek.setHours(0, 0, 0, 0);
+
+		return t >= startOfWeek.getTime() / 1000;
 	};
 
 	/**

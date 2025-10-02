@@ -2,9 +2,10 @@ import $ from 'jquery';
 import { Storage } from 'Lib';
 
 const HIGHLIGHTS_MAP = {
-	whatsNew: [ '#button-widget-help', '#menuHelp #item-whatsNew' ],
-	shortcut: [ '#button-widget-help', '#menuHelp #item-shortcut' ],
-	hints: [ '#button-widget-help', '#menuHelp #item-hints' ],
+	whatsNew: [ '#button-help', '#menuHelp #item-whatsNew' ],
+	shortcut: [ '#button-help', '#menuHelp #item-shortcut' ],
+	hints: [ '#button-help', '#menuHelp #item-hints' ],
+	createSpace: [ '#sidebarRightButton' ],
 };
 
 class Highlight {

@@ -1,20 +1,22 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import { I, S, U, J, translate, Dataview, Relation } from 'Lib';
 
 interface WidgetViewCalendarRefProps {
-	getFilters: () => I.Filter[];
+	load: (searchIds: string[]) => void;
 };
 
 const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.WidgetViewComponent>((props, ref: any) => {
 
 	const [ value, setValue ] = useState(U.Date.now());
-	const { rootId, block, canCreate, subId, getView, reload, onCreate } = props;
+	const { rootId, block, canCreate, subId, getView, reload, onCreate, getObject } = props;
+	const object = getObject();
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
 	const view = getView();
 	const { groupRelationKey } = view;
+	const [ searchIds, setSearchIds ] = useState<string[]>([]);
 	const data = U.Date.getCalendarMonth(value);
 
 	const getDateParam = (t: number) => {
@@ -40,8 +42,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(groupRelationKey, U.Date.timestamp(item.y, item.m, item.d), 'auto');
-				}
-			}
+				},
+			},
 		});
 	};
 
@@ -86,6 +88,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 					hideIcon: view.hideIcon,
 					fromWidget: true,
 					readonly: !canCreate,
+					load: (subId, limit) => loadDay(searchIds, d, m, y, subId, limit),
+					subId: getDaySubId(d, m, y),
 					onCreate: () => {
 						const details = {};
 						details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
@@ -97,23 +101,35 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		});
 	};
 
-	const getFilters = (): I.Filter[] => {
-		const relation = S.Record.getRelationByKey(view.groupRelationKey);
-		if (!relation) {
-			return [];
-		};
+	const getDaySubId = (d: number, m: number, y: number) => {
+		return [ subId, d, m, y ].join('-');
+	};
 
-		const data = U.Date.getCalendarMonth(value);
-		if (!data.length) {
+	const load = (searchIds: string[]) => {
+		setSearchIds(searchIds);
+
+		U.Date.getCalendarMonth(value).forEach(it => {
+			loadDay(searchIds, it.d, it.m, it.y, getDaySubId(it.d, it.m, it.y), 1);
+		});
+	};
+
+	const loadDay = (searchIds: string[], d: number, m: number, y: number, subId: string, limit: number) => {
+		const setOf = Relation.getArrayValue(object.setOf);
+		const isCollection = U.Object.isCollectionLayout(object.layout);
+		const view = getView();
+
+		if (!view || (!setOf.length && !isCollection)) {
 			return;
 		};
 
-		const first = data[0];
-		const last = data[data.length - 1];
-		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
-		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		if (!relation) {
+			return;
+		};
 
-		return [
+		const start = U.Date.timestamp(y, m, d, 0, 0, 0);
+		const end = U.Date.timestamp(y, m, d, 23, 59, 59);
+		const filters: I.Filter[] = [
 			{ 
 				relationKey: relation.relationKey, 
 				condition: I.FilterCondition.GreaterOrEqual, 
@@ -129,17 +145,33 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				format: relation.format,
 			}
 		];
+
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
+
+		Dataview.getData({
+			rootId,
+			blockId: J.Constant.blockId.dataview,
+			subId,
+			newViewId: view.id,
+			sources: setOf,
+			limit,
+			filters,
+			collectionId: (isCollection ? object.id : ''),
+			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
+		});
 	};
 
-	const getDotMap = (relationKey: string): Map<string, boolean> => {
+	const getDotMap = (): Map<string, boolean> => {
 		const data = U.Date.getCalendarMonth(value);
-		const items = S.Record.getRecords(subId, [ relationKey ]);
 		const ret = new Map();
 
 		data.forEach(it => {
 			const current = [ it.d, it.m, it.y ].join('-');
+			const { total } = S.Record.getMeta(getDaySubId(it.d, it.m, it.y), '');
 
-			if (items.find(it => U.Date.date('j-n-Y', it[relationKey]) == current)) {
+			if (total) {
 				ret.set(current, true);
 			};
 		});
@@ -147,20 +179,30 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		return ret;
 	};
 
-	useEffect(() => setSelectsValue(), []);
+	useEffect(() => {
+		setSelectsValue();
+
+		return () => {
+			const subIds = [];
+			U.Date.getCalendarMonth(value).forEach(it => {
+				subIds.push(getDaySubId(it.d, it.m, it.y));
+			});
+			U.Subscription.destroyList(subIds);
+		};
+	}, []);
 	useEffect(() => {
 		setSelectsValue();
 		reload();
 	}, [ value ]);
 
 	useImperativeHandle(ref, () => ({
-		getFilters,
+		load,
 	}));
 
 	const days = U.Date.getWeekDays();
 	const months = U.Date.getMonths();
 	const years = U.Date.getYears(0, 3000);
-	const dotMap = getDotMap(groupRelationKey);
+	const dotMap = getDotMap();
 
 	return (
 		<div className="body">

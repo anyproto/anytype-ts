@@ -102,7 +102,10 @@ import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 import QR from './util/qr';
 
-import UpsellStorage from './util/upsell/storage';
+import UpsellBanner from './util/upsell/';
+
+import EmptyNodes from './util/emptyNodes';
+import LayoutPlug from './util/layoutPlug';
 
 export {
 	Page,
@@ -207,5 +210,8 @@ export {
 
 	QR,
 
-	UpsellStorage,
+	UpsellBanner,
+
+	EmptyNodes,
+	LayoutPlug,
 };

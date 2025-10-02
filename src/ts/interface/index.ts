@@ -14,6 +14,7 @@ export * from './history';
 export * from './syncStatus';
 export * from './publish';
 export * from './sidebar';
+export * from './sparkOnboarding';
 
 export * from './block';
 export * from './block/dataview';

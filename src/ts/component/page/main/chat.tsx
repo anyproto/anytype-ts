@@ -1,8 +1,7 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, DragEvent } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Deleted } from 'Component';
+import { Header, Footer, Block, Deleted } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -16,7 +15,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const match = keyboard.getMatch(isPopup);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-	const type = S.Record.getChatType();
 
 	const open = () => {
 		if (idRef.current == rootId) {
@@ -78,21 +76,20 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const resize = () => {
-		raf(() => {
-			const node = $(nodeRef.current);
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const scrollWrapper = node.find('#scrollWrapper');
-			const formWrapper = node.find('#formWrapper');
-			const fh = Number(formWrapper.outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - J.Size.header - fh;
+		const node = $(nodeRef.current);
+		const scrollContainer = U.Common.getScrollContainer(isPopup);
+		const scrollWrapper = node.find('#scrollWrapper');
+		const formWrapper = node.find('#formWrapper');
+		const fh = Number(formWrapper.outerHeight(true)) || 0;
+		const mh = scrollContainer.height() - J.Size.header - fh;
 
-			scrollWrapper.css({ minHeight: mh });
-			chatRef.current?.ref?.resize();
-		});
+		scrollWrapper.css({ minHeight: mh });
+		chatRef.current?.ref?.resize();
 	};
 
 	useEffect(() => {
-		S.Common.setRightSidebarState(false, '', false);
+		open();
+		resize();
 
 		return () => close();
 	}, []);
@@ -112,12 +109,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		content = <Deleted {...props} />;
 	} else {
 		content = (
-			<div 
-				ref={nodeRef}
-				onDragOver={onDragOver} 
-				onDragLeave={onDragLeave} 
-				onDrop={onDrop}
-			>
+			<> 
 				<Header 
 					{...props} 
 					component="mainChat" 
@@ -125,7 +117,13 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					rootId={rootId} 
 				/>
 
-				<div id="bodyWrapper" className="wrapper">
+				<div 
+					ref={nodeRef}
+					className="wrapper"
+					onDragOver={onDragOver} 
+					onDragLeave={onDragLeave} 
+					onDrop={onDrop}
+				>
 					<div className="editorWrapper isChat">
 						<div ref={blocksRef} className="blocks">
 							<Block
@@ -145,7 +143,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				</div>
 
 				<Footer component="mainObject" {...props} />
-			</div>
+			</>
 		);
 	};
 

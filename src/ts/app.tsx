@@ -169,11 +169,11 @@ const App: FC = () => {
 		Renderer.on('zoom', () => {
 			const resizable = $('.resizable');
 
-			sidebar.resizePage(null, null, false);
-
 			if (resizable.length) {
 				resizable.trigger('resizeInit');
 			};
+
+			sidebar.resizePage(null, null, false);
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {

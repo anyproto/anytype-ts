@@ -260,7 +260,7 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 			<div>
 				<Header
 					{...props}
-					component="mainChat"
+					component="mainObject"
 					ref={headerRef}
 					rootId={rootId}
 				/>
@@ -288,6 +288,8 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	};
 
 	useEffect(() => {
+		sidebar.rightPanelClose(isPopup);
+
 		return () => close();
 	}, []);
 

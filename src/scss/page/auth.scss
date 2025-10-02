@@ -179,6 +179,22 @@ html.bodyAuthDeleted {
 
 	.tooltipLink:hover { text-decoration: underline; }
 
+	.stagePhrase {
+		.label.description { margin-bottom: 8px; }
+
+		.learnMore { display: flex; align-items: center; gap: 0px 8px; margin-bottom: 32px; }
+		.learnMore {
+			.icon { width: 18px; height: 18px; background-image: url('~img/icon/onboarding/plus0.svg'); }
+			.label { @include text-paragraph; font-weight: 500;}
+		}
+		.learnMore:hover {
+			.icon { background-image: url('~img/icon/onboarding/plus1.svg'); }
+			.label { color: var(--color-text-primary) !important; }
+		}
+
+		.phraseWrapper { background-color: var(--color-shape-tertiary); margin: 0px 0px 32px 0px; }
+	}
+
 	.inputWrapper { margin: 0px 0px 24px 0px; }
 	.inputWrapper {
 		.input { @include text-paragraph; font-weight: 500; background-color: var(--color-shape-tertiary); border-radius: 20px; border: 0px; padding: 0px 26px; height: 64px; width: 480px; }

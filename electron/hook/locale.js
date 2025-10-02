@@ -23,7 +23,7 @@ const run = async () => {
 
 		if (content) {
 			fs.writeFileSync(fp, content);
-			console.log('Saved lang file:', fp);
+			console.log('[Locale]: Saved lang file:', fp);
 		};
 	};
 };
@@ -33,12 +33,12 @@ const requestWithRetry = async (lang, retries, delay) => {
 		try {
 			return await request(lang);
 		} catch (err) {
-			console.log(`Attempt ${attempt} failed for ${lang}: ${err}`);
+			console.log(`[Locale]: Attempt ${attempt} failed for ${lang}: ${err}`);
 			if (attempt < retries) {
 				await new Promise(res => setTimeout(res, delay));
-				console.log(`Retrying ${lang}...`);
+				console.log(`[Locale]: Retrying ${lang}...`);
 			} else {
-				console.log(`All ${retries} attempts failed for ${lang}`);
+				console.log(`[Locale]: All ${retries} attempts failed for ${lang}`);
 				return null;
 			};
 		};

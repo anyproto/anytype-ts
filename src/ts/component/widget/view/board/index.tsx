@@ -1,23 +1,26 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, J, Dataview } from 'Lib';
 import Group from './group';
 
-const WidgetViewBoard = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
+interface WidgetViewBoardRefProps {
+	load: (searchIds: string[]) => void;
+};
+
+const WidgetViewBoard = observer(forwardRef<WidgetViewBoardRefProps, I.WidgetViewComponent>((props, ref) => {
 
 	const { rootId, block, getView, getObject, getViewLimit, isPreview } = props;
 	const view = getView();
 	const object = getObject();
 	const blockId = J.Constant.blockId.dataview;
-	const [ dummy, setDummy ] = useState(0);
+	const [ searchIds, setSearchIds ] = useState<string[]>([]);
 	const limit = getViewLimit();
 
-	const load = () => {
+	const load = (searchIds: string[]) => {
 		if (view && view.groupRelationKey) {
 			Dataview.loadGroupList(rootId, blockId, view.id, object);
-		} else {
-			setDummy(dummy + 1);
 		};
+		setSearchIds(searchIds);
 	};
 
 	let groups = Dataview.getGroups(rootId, blockId, view.id, false);
@@ -25,8 +28,11 @@ const WidgetViewBoard = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 		groups = groups.slice(0, limit);
 	};
 
-	useEffect(() => load(), []);
-	useEffect(() => load(), [ view?.id ]);
+	useEffect(() => load(searchIds), [ view?.id ]);
+
+	useImperativeHandle(ref, () => ({
+		load,
+	}));
 
 	return (
 		<div className="body">
@@ -35,6 +41,7 @@ const WidgetViewBoard = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 					key={`widget-${view.id}-group-${block.id}-${group.id}`} 
 					{...props}
 					{...group}
+					searchIds={searchIds}
 				/>
 			))}
 		</div>

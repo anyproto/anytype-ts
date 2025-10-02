@@ -13,7 +13,7 @@ class AuthStore {
 	public token = '';
 	public appToken = '';
 	public appKey = '';
-	public startingId = '';
+	public startingId: Map<string, string> = new Map();
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	
@@ -239,10 +239,10 @@ class AuthStore {
 	 * @returns {I.NotSyncedFiles}
 	 */
 	getNotSynced (): I.NotSyncedFiles {
-		let total = 0;
-		let files = [];
+		const files = [];
 
-		for (const [id, space] of this.syncStatusMap) {
+		let total = 0;
+		for (const [ id, space ] of this.syncStatusMap) {
 			const { id, notSyncedCounter } = space;
 
 			if (U.Space.isMyOwner(id) && notSyncedCounter) {
@@ -298,6 +298,7 @@ class AuthStore {
 			this.clearAll();
 			Storage.logout();
 
+			Renderer.send('setBadge', '');
 		});
 	};
 

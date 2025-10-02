@@ -68,7 +68,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				if (item.isHidden) {
 					cn.push('isHidden');
 				};
-				if (disabled) {
+				if (disabled || item.disabled) {
 					cn.push('disabled');
 				};
 
@@ -320,7 +320,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { data } = param;
 		const { onSelect, canSelectInitial, noClose, disabled } = data;
 
-		if (item.isSection || (item.isInitial && !canSelectInitial)) {
+		if (item.isSection || item.disabled || (item.isInitial && !canSelectInitial)) {
 			return;
 		};
 

@@ -14,11 +14,11 @@ class Action {
 			return;
 		};
 
-		const { root, widgets } = S.Block;
+		const { widgets } = S.Block;
 		const { space } = S.Common;
 
 		// Prevent closing of system objects
-		if ([ root, widgets ].includes(rootId)) {
+		if ([ widgets ].includes(rootId)) {
 			return;
 		};
 
@@ -231,7 +231,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { layout, widgetType: analytics.getWidgetType(block.content.autoAdded), params: { target } });
+		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	/**
@@ -728,7 +728,7 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 * @param {function} [callBack] - Optional callback after removal.
 	 */
-	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
+	removeSpace (id: string, route: string, forceDelete?: boolean, callBack?: (message: any) => void) {
 		const space = U.Space.getSpaceviewBySpaceId(id);
 
 		if (!space) {
@@ -736,13 +736,21 @@ class Action {
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name =  isOwner ? space.name : U.Common.shorten(space.name, 32);
+		const name = isOwner ? space.name : U.Common.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
-		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
-		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
-		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
-		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
 		const confirmMessage = isOwner ? space.name : '';
+
+		let title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
+		let text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
+		let confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+		let toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
+
+		if (forceDelete) {
+			title = U.Common.sprintf(translate('spaceDeleteWarningTitle'), name);
+			text = U.Common.sprintf(translate('spaceLeaveWarningText'), name);
+			toast = U.Common.sprintf(translate('spaceDeleteToast'), name);
+			confirm = translate('commonDelete');
+		};
 
 		analytics.event(`Click${suffix}Space`, { route });
 
@@ -835,27 +843,6 @@ class Action {
 	};
 
 	/**
-	 * Sets or unsets objects as favorites.
-	 * @param {string[]} objectIds - The object IDs to update.
-	 * @param {boolean} v - Whether to set as favorite.
-	 * @param {string} route - The route context for analytics.
-	 * @param {function} [callBack] - Optional callback after update.
-	 */
-	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
-		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
-	};
-
-	/**
 	 * Creates a widget from an object and adds it to the widgets block.
 	 * @param {string} rootId - The root object ID.
 	 * @param {string} objectId - The object ID to create a widget from.
@@ -867,7 +854,6 @@ class Action {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
-		let toggle = false;
 
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
@@ -878,7 +864,6 @@ class Action {
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
-				toggle = true;
 			};
 		};
 
@@ -889,12 +874,43 @@ class Action {
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
-			analytics.createWidget(layout, route, analytics.widgetType.manual);
-
-			if (toggle) {
-				Storage.setToggle('widget', message.blockId, true);
-			};
+			analytics.createWidget(layout, route);
 		});
+	};
+
+	removeWidgetsForObjects (objectIds: string[], callBack?: (message: any) => void) {
+		const { widgets } = S.Block;
+		const list = S.Block.getBlocks(widgets, (block: I.Block) => {
+			if (!block.isWidget()) {
+				return false;
+			};
+
+			const childrenIds = S.Block.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = S.Block.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+			return objectIds.includes(target);
+		});
+
+		C.BlockListDelete(widgets, list.map(it => it.id), callBack);
+	};
+
+	toggleWidgetsForObject (objectId: string, route?: string) {
+		const { widgets } = S.Block;
+		
+		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
+			this.removeWidgetsForObjects([ objectId ]);
+		} else {
+			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget() && (it.content.section == I.WidgetSection.Pin));
+			this.createWidgetFromObject(objectId, objectId, first?.id, I.BlockPosition.Top, route);
+		};
 	};
 
 	membershipUpgrade (tier?: I.TierType) {
@@ -950,7 +966,9 @@ class Action {
 							return;
 						};
 
-						C.SpaceStopSharing(spaceId, callBack);
+						if (callBack) {
+							callBack();
+						};
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
@@ -1011,71 +1029,6 @@ class Action {
 		} else {
 			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
 		};
-	};
-
-	spaceCreateMenu (param: I.MenuParam, route) {
-		const ids = [ 'space', 'join' ];
-
-		if (U.Object.isAllowedChat()) {
-			ids.unshift('chat');
-		};
-
-		const options = ids.map(id => {
-			const suffix = U.Common.toUpperCamelCase(id);
-
-			return {
-				id,
-				icon: id,
-				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
-				description: translate(`sidebarMenuSpaceCreateDescription${suffix}`),
-				withDescription: true,
-			};
-		});
-
-		let prefix = '';
-		switch (route) {
-			case analytics.route.void: {
-				prefix = 'Void';
-				break;
-			};
-
-			case analytics.route.vault: {
-				prefix = 'Vault';
-				break;
-			};
-		};
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'chat': {
-							this.createSpace(I.SpaceUxType.Chat, route);
-							break;
-						};
-
-						case 'space': {
-							this.createSpace(I.SpaceUxType.Space, route);
-							break;
-						};
-
-						case 'join': {
-							S.Popup.closeAll(null, () => {
-								S.Popup.open('spaceJoinByLink', {});
-							});
-							break;
-						};
-					};
-
-					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
-				},
-			}
-		});
-
-		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
 	checkDiskSpace (callBack?: () => void) {

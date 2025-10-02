@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Dataview } from 'Lib';
 import { GraphProvider } from 'Component';
@@ -36,6 +36,7 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 
 	useEffect(() => load(), []);
 	useEffect(() => resize(), [ data ]);
+	useImperativeHandle(ref, () => ({}));
 
 	return (
 		<div className="wrap">

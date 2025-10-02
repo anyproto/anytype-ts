@@ -5,6 +5,7 @@
 		.viewContent.viewGallery { padding: 0px 0px 80px 0px; }
 		.viewContent.viewGallery {
 			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 14px; }
+			.row.empty { grid-template-columns: repeat(3, minmax(0px, 1fr)); }
 
 			.card { 
 				width: 100%; border: 1px solid var(--color-shape-highlight-medium); transition-property: border-color, background; transition-duration: 0.1s; 

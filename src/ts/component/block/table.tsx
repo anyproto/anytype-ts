@@ -464,6 +464,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						case 'color': {
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
+								value: current.content.color,
 								onChange: (id: string) => {
 									fill(() => C.BlockTextListSetColor(rootId, blockIds, id));
 									menuContext.close();
@@ -475,6 +476,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						case 'background': {
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
+								value: current.bgColor,
 								onChange: (id: string) => {
 									fill(() => C.BlockListSetBackgroundColor(rootId, blockIds, id));
 									menuContext.close();

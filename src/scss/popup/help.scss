@@ -3,25 +3,14 @@
 .popups {
 	.popup.popupHelp * { user-select: text !important; }
 	.popup.popupHelp {
-		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 40px 0px 0px 0px; }
+		.innerWrap { width: 1096px; height: calc(100% - 164px); }
 
 		@media (max-width: 1128px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}
 
-		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: var(--color-control-active); line-height: 24px; }
-		.head {
-			.side { width: 50%; }
-			.side.right { display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: flex-end; }
-			.label { display: inline-block; vertical-align: top; }
-
-			.icon { width: 20px; height: 20px; }
-			.icon.mail { background-image: url('~img/icon/social/mail0.svg'); }
-			.icon.mail:hover { background-image: url('~img/icon/social/mail1.svg'); }
-		}
-
-		.content { padding: 56px 80px 40px 80px; }
-		.highlight { color: var(--color-red); background: var(--color-shape-tertiary); white-space: nowrap; }
+		.content { padding: 56px 150px 40px 150px; }
+		.highlight { background: var(--color-shape-tertiary); white-space: nowrap; border-radius: 4px; padding: 0px 4px; }
 		.buttons { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0px 16px; }
 	}
 }

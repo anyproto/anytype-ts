@@ -90,8 +90,21 @@
 	}
 }
 
-.onboardingElement.onboardingDataviewEmptyButton { background-color: var(--color-shape-tertiary) !important; transition: none !important; }
+.onboardingElement { transition: none !important; }
 .onboardingElement.onboardingSettingsItem { background-color: var(--color-shape-tertiary) !important; }
+.onboardingElement.onboardingClonedSection {
+	.nameWrap > .name { -webkit-text-fill-color: var(--color-text-primary) !important; }
+	.nameWrap > .name {
+		.icon.arrow { background-image: url('~img/arrow/widgetSection1.svg') !important; }
+	}
+}
+.onboardingElement.onboardingClonedSectionDark { height: auto !important; padding-bottom: 8px !important; border-radius: 8px !important; }
+.onboardingElement.onboardingClonedSectionDark {
+	.nameWrap > .name { -webkit-text-fill-color: var(--color-text-primary) !important; }
+	.nameWrap > .name {
+		.icon.arrow { background-image: url('~img/theme/dark/arrow/widgetSection1.svg') !important; }
+	}
+}
 .onboardingElement.onboardingVaultItem {
 	.iconWrap { background-color: var(--color-shape-tertiary) !important; }
 }

@@ -7,8 +7,8 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch } from 'Component';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -17,6 +17,7 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
+	const { getId } = props;
 	const { space, updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
@@ -141,29 +142,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			return;
 		};
 
-		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
+		const items: any[] = U.Menu.getVaultItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
 
-		let s = '';
-		newItems.forEach((it, i) => {
-			s = U.Common.lexString(s);
-			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
-		});
-
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id), (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const list = message.list;
-			for (let i = 0; i < list.length; i++) {
-				const item = items[i];
-				if (item) {
-					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { spaceOrder: list[i] }}, false);
-				};
-			};
+		U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+			C.SpaceSetOrder(active.id, newItems.map(it => it.id), callBack);
 		});
 
 		analytics.event('ReorderSpace');
@@ -184,6 +169,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+
 			return it;
 		});
 
@@ -209,7 +195,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		});
+		}, { route: analytics.route.vault });
 	};
 
 	const items = getItems();
@@ -246,7 +232,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const getNode = () => {
-		return $('#sidebarPageVault');
+		return $(`#${getId()}`);
 	};
 
 	const setActive = (item: any) => {
@@ -294,31 +280,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const cn = [ 'item' ];
 		const icons = [];
 
-		if (isDragging) {
-			cn.push('isDragging');
-		};
-
-		if (item.isLocalLoading) {
-			cn.push('isLoading');
-		};
-
-		if (item.isMuted) {
-			cn.push('isMuted');
-			icons.push('muted');
-		};
-
-		if (item.isPinned) {
-			cn.push('isPinned');
-			icons.push('pin');
-		};
-
-		// placeholder for error logic
-		let withError = false;
-		if (withError) {
-			cn.push('withError');
-			icons.push('error');
-		};
-
 		let cnt = null;
 		if (item.counters) {
 			if (item.counters.mentionCounter) {
@@ -327,6 +288,27 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			if (item.counters.messageCounter) {
 				cnt = S.Chat.counterString(item.counters.messageCounter);
 			};
+		};
+
+		if (isDragging) {
+			cn.push('isDragging');
+		};
+
+		if (item.isLocalLoading) {
+			cn.push('isLoading');
+		};
+
+		if (item.isPinned && !cnt) {
+			cn.push('isPinned');
+			icons.push('pin');
+		};
+
+		if (item.isMuted) {
+			cn.push('isMuted');
+		};
+
+		if (!item.lastMessage) {
+			cn.push('noMessages');
 		};
 
 		return (
@@ -347,14 +329,23 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				</div>
 				<div className="info">
 					<div className="nameWrapper">
-						<ObjectName object={item} />
+						<div className="nameInner">
+							<ObjectName object={item} />
+
+							{item.chatId && item.isMuted ? <Icon className="muted" /> : ''}
+						</div>
+
+						{item.chatId ? <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div> : ''}
+					</div>
+					<div className="messageWrapper">
+						{item.chatId ? <Label text={item.lastMessage} /> : ''}
 
 						<div className="icons">
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
-						{cnt ? <div className="cnt">{cnt}</div> : ''}
+
+						{item.chatId && cnt ? <div className="cnt">{cnt}</div> : ''}
 					</div>
-					<Label text={item.lastMessage} />
 				</div>
 			</div>
 		);
@@ -405,7 +396,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onHelp = () => {
 		S.Menu.open('help', {
-			element: '#sidebarPageVault #button-help',
+			element: `#${getId()} #button-help`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
@@ -421,6 +412,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	useEffect(() => {
 		rebind();
 		analytics.event('ScreenVault');
+		Highlight.showAll();
 
 		return () => {
 			unbind();
