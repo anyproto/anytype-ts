@@ -163,9 +163,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => {
-					return Relation.getFilterTemplateOption(it) || S.Detail.get(rootId, it, []);
-				});
+				list = Relation.getArrayValue(item.value).map(it => Relation.getFilterTemplateOption(it) || S.Detail.get(rootId, it, []));
 				list = list.filter(it => !it._empty_);
 
 				value = (
