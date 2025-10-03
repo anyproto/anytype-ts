@@ -69,7 +69,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { config, theme, showMenuBar } = S.Common;
+		const { config, theme } = S.Common;
+		const { showMenuBar } = config;
 		const { account } = S.Auth;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
@@ -283,7 +284,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		const { config, showMenuBar } = S.Common;
+		const { config } = S.Common;
+		const { showMenuBar } = config;
 		const platform = U.Common.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 

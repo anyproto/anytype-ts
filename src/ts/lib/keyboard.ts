@@ -148,7 +148,7 @@ class Keyboard {
 	 * @param {any} e - The keyboard event.
 	 */
 	onKeyDown (e: any) {
-		const { theme, pin } = S.Common;
+		const { config, theme, pin } = S.Common;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -225,7 +225,7 @@ class Keyboard {
 
 		// Show/Hide menu bar on Windows
 		if (U.Common.isPlatformWindows()) {
-			this.shortcut('systemMenu', e, () => S.Common.setShowMenuBar(!S.Common.showMenuBar));
+			this.shortcut('systemMenu', e, () => Renderer.send('setMenuBarVisibility', !config.showMenuBar)) ;
 		};
 
 		if (isMain) {

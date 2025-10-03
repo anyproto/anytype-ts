@@ -40,7 +40,6 @@ class CommonStore {
 	public linkStyleValue = null;
 	public dateFormatValue = null;
 	public timeFormatValue = null;
-	public showMenuBarValue = false;
 	public isOnlineValue = false;
 	public updateVersionValue = '';
 	public rightSidebarStateValue = { 
@@ -121,7 +120,6 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
-			showMenuBarValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -137,7 +135,6 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
-			showMenuBar: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -158,7 +155,6 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
-			setShowMenuBar: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -326,10 +322,6 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
-	};
-
-	get showMenuBar (): boolean {
-		return this.showMenuBarValue || this.config.showMenuBar;
 	};
 
 	/**
@@ -934,10 +926,6 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
-	};
-
-	setShowMenuBar (v: boolean) {
-		this.showMenuBarValue = Boolean(v);
 	};
 
 };
