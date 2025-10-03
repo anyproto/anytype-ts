@@ -29,6 +29,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.load = this.load.bind(this);
+		this.loadData = this.loadData.bind(this);
 	};
 
 	render () {
@@ -232,7 +233,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				data: {
 					...this.props,
 					subId: this.getSubId(),
-					load: this.load,
+					load: this.loadData,
 					blockId: block.id,
 					relationKey: view.groupRelationKey,
 					hideIcon: view.hideIcon,
