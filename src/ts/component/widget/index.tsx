@@ -70,7 +70,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getLayout = (): I.WidgetLayout => {
-		let layout = param.layout
+		let layout = param.layout;
 
 		const object = getObject(targetId);
 		if (!object) {

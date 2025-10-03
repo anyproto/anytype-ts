@@ -337,7 +337,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 		if (attachmentsLayout) {
 			cn.push('withMedia');
-			cn.push(`mediaLayout-${attachments.length}`)
+			cn.push(`mediaLayout-${attachments.length}`);
 		};
 	};
 

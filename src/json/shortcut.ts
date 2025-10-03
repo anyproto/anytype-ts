@@ -277,7 +277,7 @@ const getSections = () => {
 		},
 	].map(s => {
 		s.children = s.children.map(sub => {
-			sub.children = sub.children.filter(it => it)
+			sub.children = sub.children.filter(it => it);
 			sub.children = sub.children.map(mapper);
 			return sub;
 		});
