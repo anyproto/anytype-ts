@@ -432,6 +432,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
+			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 10,
