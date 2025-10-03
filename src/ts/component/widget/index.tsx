@@ -300,6 +300,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			menuParam.subIds = J.Menu.widget;
 			menuParam.data = Object.assign(menuParam.data, {
 				...param,
+				target: object,
 				isEditing: true,
 				blockId: block.id,
 				setEditing,
