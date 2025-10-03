@@ -270,9 +270,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const isSectionPin = block.content.section == I.WidgetSection.Pin;
 		const isSectionType = block.content.section == I.WidgetSection.Type;
 
-		console.log('TARGET', target);
-		console.log('THIS TARGET', this.target);
-
 		switch (section.id) {
 			case 'layout': {
 				this.layout = Number(option.id);

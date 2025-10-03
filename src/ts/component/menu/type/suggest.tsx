@@ -115,8 +115,8 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const spaceview = U.Space.getSpaceview();
-		const sorts = [
-			{ relationKey: 'orderId', type: I.SortType.Asc },
+		const sorts: I.Sort[] = [
+			{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
 			{ 
 				relationKey: 'uniqueKey', 
 				type: I.SortType.Custom, 

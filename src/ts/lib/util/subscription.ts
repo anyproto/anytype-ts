@@ -518,7 +518,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc },
+					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
