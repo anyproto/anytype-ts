@@ -22,6 +22,7 @@ const GROUP_TIME = 300;
 const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const { space, showRelativeDates, dateFormat, config, windowId } = S.Common;
+	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
@@ -642,6 +643,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean): I.Option[] => {
+		const { reactions } = message;
+		const limit = J.Constant.limit.chat.reactions;
+		const self = reactions.filter(it => it.authors.includes(account.id));
+		const noReaction = (self.length >= limit.self) || (reactions.length >= limit.all);
+
 		let options: any[] = [];
 
 		if (message.content.text) {
@@ -661,7 +667,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (!noControls) {
 			options = ([
-				{ id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') },
+				!noReaction ? { id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') } : null,
 				{ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') },
 				options.length ? { isDiv: true } : null,
 			].filter(it => it)).concat(options);
