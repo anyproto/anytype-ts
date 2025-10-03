@@ -167,6 +167,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				};
 
 				const video = element.find('video');
+				if (!video.length) {
+					break;
+				};
+
 				const videoEl = video.get(0);
 
 				let w = WIDTH_VIDEO;
