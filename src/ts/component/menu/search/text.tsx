@@ -226,11 +226,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	getContainer () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
-
-		return U.Common.getScrollContainer(isPopup);
+		return U.Common.getScrollContainer(this.props.param.data.isPopup);
 	};
 
 	getItems () {
