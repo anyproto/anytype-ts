@@ -139,10 +139,6 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		Highlight.showAll();
 
-		if (showIncentive) {
-			$(`#${getId()}`).addClass('withBanner');
-		};
-
 		return () => unbind();
 	}, []);
 
