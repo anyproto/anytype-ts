@@ -553,8 +553,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const item = S.Detail.get(subId, id, keys, true);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
-		console.log(keys);
-
 		if (item.name == translate('defaultNamePage')) {
 			item.name = '';
 		};
@@ -705,14 +703,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
-			let records = this.getRecords(groupId);
-
 			const object = message.details;
-			const oldIndex = records.indexOf(message.objectId);
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
 			if (!isViewBoard && !isViewCalendar) {
+				let records = this.getRecords(groupId);
+
+				const oldIndex = records.indexOf(message.objectId);
+
 				// If idx present use idx otherwise use dir to add record to the beginning or end of the list
 				if (oldIndex < 0) {
 					if (idx >= 0) {
