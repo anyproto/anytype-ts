@@ -170,7 +170,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					{isDirectionLeft ? (
 						<div className="side left" onClick={isDirectionLeft ? this.onBack : null}>
 							{isDirectionLeft ? <Icon className="back" /> : ''}
-							<ChatCounter {...counters} />
+							<ChatCounter {...counters} mode={spaceview.notificationMode} />
 						</div>
 					) : ''}
 

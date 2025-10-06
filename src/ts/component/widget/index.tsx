@@ -276,7 +276,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					{ id: 'empty', icon: 'remove', name: translate('commonEmptyBin') },
 				],
 				onSelect: (e: any, item: any) => {
-					console.log(item);
 					switch (item.id) {
 						case 'open': {
 							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
@@ -751,7 +750,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							<ChatCounter {...counters} isMuted={spaceview.isMuted} />
+							<ChatCounter {...counters} mode={spaceview.notificationMode} />
 
 							{buttons.length ? (
 								<div className="buttons">

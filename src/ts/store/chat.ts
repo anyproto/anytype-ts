@@ -359,8 +359,6 @@ class ChatStore {
 		for (const space of spaces) {
 			const counters = this.getSpaceCounters(space.targetSpaceId);
 
-			console.log(space.name, counters, I.NotificationMode[space.notificationMode]);
-
 			if (counters) {
 				if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
 					ret.mentionCounter += counters.mentionCounter || 0;

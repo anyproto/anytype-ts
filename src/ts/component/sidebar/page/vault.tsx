@@ -331,7 +331,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 
-						{item.chatId ? <ChatCounter {...item.counters} isMuted={item.isMuted} /> : ''}
+						{item.chatId ? <ChatCounter {...item.counters} mode={item.notificationMode} /> : ''}
 					</div>
 				</div>
 			</div>

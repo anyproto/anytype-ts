@@ -321,24 +321,41 @@ class UtilData {
 		});
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			const spaceCounters = {};
+
 			for (const item of message.previews) {
 				const { spaceId, chatId, message, state, dependencies } = item;
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(spaceId, chatId);
+				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
+
+				obj.mentionCounter += state.mentions.counter || 0;
+				obj.messageCounter += state.messages.counter || 0;
+				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
+
+				spaceCounters[spaceId] = obj;
+
+				S.Chat.setState(chatSubId, { 
+					...state, 
+					lastMessageDate: Number(message?.createdAt || 0),
+				}, false);
 
 				if (message) {
 					message.dependencies = dependencies;
 					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
 				};
+			};
+
+			for (const spaceId in spaceCounters) {
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const obj = spaceCounters[spaceId];
 
 				S.Chat.setState(spaceSubId, { 
-					...state, 
+					mentions: { counter: obj.mentionCounter, orderId: '' }, 
+					messages: { counter: obj.messageCounter, orderId: '' },
 					lastMessageDate: Number(message?.createdAt || 0),
-				}, false);
-
-				S.Chat.setState(chatSubId, { 
-					...state, 
-					lastMessageDate: Number(message?.createdAt || 0),
+					lastStateId: '',
+					order: 0,
 				}, false);
 			};
 		});
