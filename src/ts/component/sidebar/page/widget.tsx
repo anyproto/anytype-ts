@@ -64,7 +64,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = spaceview.notificationMode != I.NotificationMode.All;
-		const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 
 		// Subscriptions
 		for (const key of U.Subscription.fileTypeKeys()) {
@@ -482,6 +481,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	onHelp () {
 		const { sidebarDirection, getId } = this.props;
+		const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 
 		S.Menu.open('help', {
 			element: `#${getId()} #button-help`,

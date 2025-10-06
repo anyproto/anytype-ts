@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Title, Icon, Button } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -428,14 +428,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 
 						case 'copy': {
+							const block = new M.Block({
+								type: I.BlockType.Text,
+								content: item.content,
+							});
+					
 							U.Common.clipboardCopy({ 
 								text: U.Common.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
-								/*
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],
 								},
-								*/
 							});
 
 							analytics.event('ClickMessageMenuCopy');
