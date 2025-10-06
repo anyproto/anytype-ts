@@ -553,6 +553,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const item = S.Detail.get(subId, id, keys, true);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
+		console.log(keys);
+
 		if (item.name == translate('defaultNamePage')) {
 			item.name = '';
 		};
@@ -662,6 +664,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
+		const isViewBoard = view.type == I.ViewType.Board;
 
 		let typeId = '';
 		let templateId = '';
@@ -709,26 +712,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			// If idx present use idx otherwise use dir to add record to the beginning or end of the list
-			if (oldIndex < 0) {
-				if (idx >= 0) {
-					records.splice(idx, 0, message.objectId);
-				} else {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+			if (!isViewBoard && !isViewCalendar) {
+				// If idx present use idx otherwise use dir to add record to the beginning or end of the list
+				if (oldIndex < 0) {
+					if (idx >= 0) {
+						records.splice(idx, 0, message.objectId);
+					} else {
+						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+					};
+				} else {	
+					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
+					records = arrayMove(records, oldIndex, newIndex);
 				};
-			} else {	
-				const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
-				records = arrayMove(records, oldIndex, newIndex);
+
+				S.Record.recordsSet(subId, '', records);
 			};
 
 			if (isCollection) {
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
-			};
-
-			if (groupId) {
-				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));
-			} else {
-				S.Record.recordsSet(subId, '', records);
 			};
 
 			if (isViewGraph) {
