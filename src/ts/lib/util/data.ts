@@ -478,16 +478,19 @@ class UtilData {
 	 * @returns {any[]} The list of object types.
 	 */
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withLists, limit } = param || {};
 		const { space } = S.Common;
-		const pageLayouts = U.Object.getPageLayouts();
-		const skipLayouts = U.Object.getSetLayouts();
+		const layouts = U.Object.getPageLayouts();
 
 		let items: any[] = [];
 
+		if (withLists) {
+			layouts.push(I.ObjectLayout.Set);
+			layouts.push(I.ObjectLayout.Collection);
+		};
+
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && 
-				!skipLayouts.includes(it.recommendedLayout) && 
+			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
 				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
@@ -496,14 +499,6 @@ class UtilData {
 
 		if (limit) {
 			items = items.slice(0, limit);
-		};
-
-		if (withSet) {
-			items.push(S.Record.getSetType());
-		};
-
-		if (withCollection) {
-			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
