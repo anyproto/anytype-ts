@@ -158,6 +158,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const showWidget = !isPopup && space.isChat;
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -339,6 +340,14 @@ class Keyboard {
 
 				S.Popup.open('logout', {});
 			});
+
+			// Chat widget panel
+			if (showWidget) {
+				this.shortcut('chatPanel', e, () => {
+					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+					analytics.event('ScreenChatSidebar');
+				});
+			};
 
 			if (canWrite) {
 				// Create new page

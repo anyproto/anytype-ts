@@ -150,14 +150,12 @@ const getSections = () => {
 					]
 				},
 
-				/*
 				{
 					name: translate('popupShortcutChat'), children: [
 						{ id: 'chatObject', name: translate('popupShortcutChat1'), keys: [ cmdKey, 't' ] },
-						{ id: 'chatMention', name: translate('popupShortcutChat3'), keys: [ cmdKey, 'm' ] },
+						{ id: 'chatPanel', name: translate('popupShortcutChat2'), keys: [ cmdKey, 'shift', 'p' ] },
 					]
 				},
-				*/
 
 				{
 					name: translate('popupShortcutMainTextStyle'), children: [
