@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
@@ -6,6 +6,7 @@ import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, renderLeftIcons, isPopup } = props;
+	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
@@ -56,6 +57,12 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	} else {
 		object = S.Detail.get(rootId, rootId, []);
 	};
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
+
+	console.log(rootId, object);
 
 	return (
 		<>
