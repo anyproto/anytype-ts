@@ -657,9 +657,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			options.push({ id: 'copy', icon: 'chat-copy', name: translate('blockChatCopyText') });
 		};
 
-		if (config.experimental) {
-			options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
-		};
+		options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([

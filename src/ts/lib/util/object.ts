@@ -313,6 +313,10 @@ class UtilObject {
 			param.ignoreArchived = false;
 		};
 
+		if (undefined === param.ignoreHidden) {
+			param.ignoreHidden = false;
+		};
+
 		U.Subscription.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
