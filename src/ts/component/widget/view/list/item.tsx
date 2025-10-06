@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
+import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
@@ -41,17 +41,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		transition,
 	};
 
-	let cnt = null;
+	let counters = { mentionCounter: 0, messageCounter: 0 };
 
 	if (isChat) {
-		const counters = S.Chat.getChatCounters(space, id);
-
-		if (counters.mentionCounter) {
-			cnt = <Icon className="mention" />;
-		} else 
-		if (counters.messageCounter) {
-			cnt = S.Chat.counterString(counters.messageCounter);
-		};
+		counters = S.Chat.getChatCounters(space, id);
 	};
 
 	if (canDrag) {
@@ -147,7 +140,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				{descr}
 			</div>
 
-			{cnt ? <div className="cnt">{cnt}</div> : ''}
+			<ChatCounter {...counters} />
 
 			<div className="buttons">
 				{more}

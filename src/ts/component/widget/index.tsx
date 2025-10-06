@@ -3,8 +3,8 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
+import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -94,13 +94,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-	const cntCn = [ 'cnt' ];
 
-	if (spaceview.isMuted) {
-		cntCn.push('isMuted');
-	};
-
-	let counters = { messageCounter: 0, mentionCounter: 0 };
+	let counters = { mentionCounter: 0, messageCounter: 0 };
 	if (isChat) {
 		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
@@ -756,12 +751,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							{counters.messageCounter || counters.mentionCounter ? (
-								<div className={cntCn.join(' ')}>
-									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
-									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
-								</div>
-							) : ''}
+							<ChatCounter {...counters} isMuted={spaceview.isMuted} />
+
 							{buttons.length ? (
 								<div className="buttons">
 									{buttons.map(item => (

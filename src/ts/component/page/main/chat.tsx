@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, DragEvent } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted, HeadSimple } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
@@ -78,16 +79,18 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const scrollContainer = U.Common.getScrollContainer(isPopup);
-		const scrollWrapper = node.find('#scrollWrapper');
-		const formWrapper = node.find('#formWrapper');
-		const fh = Number(formWrapper.outerHeight(true)) || 0;
-		const hh = Number($(headRef.current?.getNode()).outerHeight(true)) || 0;
-		const mh = scrollContainer.height() - J.Size.header - fh - hh;
+		raf(() => {
+			const node = $(nodeRef.current);
+			const scrollContainer = U.Common.getScrollContainer(isPopup);
+			const scrollWrapper = node.find('#scrollWrapper');
+			const formWrapper = node.find('#formWrapper');
+			const fh = Number(formWrapper.outerHeight(true)) || 0;
+			const hh = Number($(headRef.current?.getNode()).outerHeight(true)) || 0;
+			const mh = scrollContainer.height() - J.Size.header - fh - hh;
 
-		scrollWrapper.css({ minHeight: mh });
-		chatRef.current?.ref?.resize();
+			scrollWrapper.css({ minHeight: mh });
+			chatRef.current?.ref?.resize();
+		});
 	};
 
 	useEffect(() => {

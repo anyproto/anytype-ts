@@ -62,8 +62,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
-	console.log(rootId, object);
-
 	return (
 		<>
 			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>

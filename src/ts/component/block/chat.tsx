@@ -46,14 +46,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		return object.chatId || rootId;
 	};
 
-	const chatId = getChatId();
-	const subId = [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
-	const messages = S.Chat.getList(subId);
-
 	const getSubId = () => {
-		const chatId = getChatId();
-		return [ '', space, `${chatId}:${block.id}`, windowId ].join('-');
+		return S.Chat.getChatSubId(space, getChatId());
 	};
+
+	const chatId = getChatId();
+	const subId = getSubId();
+	const messages = S.Chat.getList(subId);
 
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];

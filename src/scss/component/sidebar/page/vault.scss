@@ -61,10 +61,6 @@
 
 		&.isDragging { z-index: 1; }
 
-		&.isMuted {
-			.cnt { background-color: var(--color-text-tertiary); }
-		}
-
 		&.isLoading {
 			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 48px; height: 48px; }
 			.iconWrap {

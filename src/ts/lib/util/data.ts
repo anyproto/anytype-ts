@@ -322,15 +322,21 @@ class UtilData {
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
 			for (const item of message.previews) {
-				const { spaceId, message, state, dependencies } = item;
-				const subId = S.Chat.getSpaceSubId(spaceId);
+				const { spaceId, chatId, message, state, dependencies } = item;
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const chatSubId = S.Chat.getChatSubId(spaceId, chatId);
 
 				if (message) {
 					message.dependencies = dependencies;
-					S.Chat.add(subId, 0, new M.ChatMessage(message));
+					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
 				};
 
-				S.Chat.setState(subId, { 
+				S.Chat.setState(spaceSubId, { 
+					...state, 
+					lastMessageDate: Number(message?.createdAt || 0),
+				}, false);
+
+				S.Chat.setState(chatSubId, { 
 					...state, 
 					lastMessageDate: Number(message?.createdAt || 0),
 				}, false);

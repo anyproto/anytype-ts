@@ -7,7 +7,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight } from 'Lib';
 
 import ItemProgress from './vault/update';
@@ -281,16 +281,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const cn = [ 'item' ];
 		const icons = [];
 
-		let cnt = null;
-		if (item.counters) {
-			if (item.counters.mentionCounter) {
-				cnt = <Icon className="mention" />;
-			} else 
-			if (item.counters.messageCounter) {
-				cnt = S.Chat.counterString(item.counters.messageCounter);
-			};
-		};
-
 		if (isDragging) {
 			cn.push('isDragging');
 		};
@@ -299,13 +289,9 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isLoading');
 		};
 
-		if (item.isPinned && !cnt) {
+		if (item.isPinned && !item.counters?.mentionCounter && !item.counters?.messageCounter) {
 			cn.push('isPinned');
 			icons.push('pin');
-		};
-
-		if (item.isMuted) {
-			cn.push('isMuted');
 		};
 
 		if (!item.lastMessage) {
@@ -345,7 +331,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 
-						{item.chatId && cnt ? <div className="cnt">{cnt}</div> : ''}
+						{item.chatId ? <ChatCounter {...item.counters} isMuted={item.isMuted} /> : ''}
 					</div>
 				</div>
 			</div>
