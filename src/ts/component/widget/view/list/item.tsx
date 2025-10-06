@@ -21,6 +21,7 @@ interface Props extends I.WidgetViewComponent {
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, id, parent, block, isCompact, isEditing, isPreview, isSection, hideIcon, onContext } = props;
+	const { space } = S.Common
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
@@ -33,10 +34,24 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
+	const isChat = U.Object.isChatLayout(object.layout);
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
 		transition,
+	};
+
+	let cnt = null;
+
+	if (isChat) {
+		const counters = S.Chat.getChatCounters(space, id);
+
+		if (counters.mentionCounter) {
+			cnt = <Icon className="mention" />;
+		} else 
+		if (counters.messageCounter) {
+			cnt = S.Chat.counterString(counters.messageCounter);
+		};
 	};
 
 	if (canDrag) {
@@ -131,6 +146,8 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				<ObjectName object={object} withPlural={true} />
 				{descr}
 			</div>
+
+			{cnt ? <div className="cnt">{cnt}</div> : ''}
 
 			<div className="buttons">
 				{more}
