@@ -10,7 +10,12 @@
 
 	> .body { padding: 0px; overflow: hidden; }
 
-	.ReactVirtualized__List { padding: 0px 2px 56px 8px; scrollbar-gutter: stable; }
+	> .bottom { position: relative; }
+	> .bottom {
+		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 100%); }
+	}
+
+	.ReactVirtualized__List { padding: 0px 2px 0px 8px; scrollbar-gutter: stable; }
 
 	.filterWrapper { padding: 4px 16px 8px 16px; overflow: hidden; }
 	.filter { padding: 0px; }
