@@ -25,9 +25,8 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				return;
 			};
 
-			U.Space.openDashboard({
+			U.Space.openDashboardOrVoid({
 				replace: true,
-				animate: true,
 				onFadeIn: () => {
 					if (data.code) {
 						S.Popup.open('membershipActivation', { data });
@@ -99,7 +98,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard()} 
+							onClick={() => U.Space.openDashboardOrVoid()} 
 						/>
 					</div>
 				) : <Loader />}
