@@ -448,7 +448,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			if (closeIfOpen) {
 				setOff();
 				S.Menu.closeAll(J.Menu.cell);
-				withMenu.current = false
+				withMenu.current = false;
 			};
 		} else {
 			setOn();

@@ -5,12 +5,12 @@ import { I, S, U, Renderer, translate } from 'Lib';
 
 const MenuBar = observer(forwardRef<{}, {}>((props, ref) => {
 
-	const { showMenuBar } = S.Common.config;
+	const { config } = S.Common;
 	const cn = [];
 
 	let inner = null;
 
-	if (U.Common.isPlatformWindows() && showMenuBar) {
+	if (U.Common.isPlatformWindows() && config.showMenuBar) {
 		cn.push('withButtons');
 		inner = (
 			<>

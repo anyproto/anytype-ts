@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Title, Icon, Button } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -21,7 +21,8 @@ const GROUP_TIME = 300;
 
 const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
-	const { space, config, windowId } = S.Common;
+	const { space, windowId } = S.Common;
+	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
@@ -427,14 +428,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 
 						case 'copy': {
+							const block = new M.Block({
+								type: I.BlockType.Text,
+								content: item.content,
+							});
+					
 							U.Common.clipboardCopy({ 
 								text: U.Common.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
-								/*
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],
 								},
-								*/
 							});
 
 							analytics.event('ClickMessageMenuCopy');
@@ -643,14 +647,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean): I.Option[] => {
+		const { reactions } = message;
+		const limit = J.Constant.limit.chat.reactions;
+		const self = reactions.filter(it => it.authors.includes(account.id));
+		const noReaction = (self.length >= limit.self) || (reactions.length >= limit.all);
+
 		let options: any[] = [];
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'chat-copy', name: translate('blockChatCopyText') });
-			if (config.experimental) {
-				options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
-			};
 		};
+
+		options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
@@ -662,7 +670,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (!noControls) {
 			options = ([
-				{ id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') },
+				!noReaction ? { id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') } : null,
 				{ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') },
 				options.length ? { isDiv: true } : null,
 			].filter(it => it)).concat(options);

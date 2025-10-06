@@ -350,8 +350,13 @@ class ChatStore {
 			const counters = this.getSpaceCounters(space.targetSpaceId);
 
 			if (counters) {
-				ret.mentionCounter += counters.mentionCounter || 0;
-				ret.messageCounter += counters.messageCounter || 0;
+				if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+					ret.mentionCounter += counters.mentionCounter || 0;
+				};
+
+				if (space.notificationMode == I.NotificationMode.All) {
+					ret.messageCounter += counters.messageCounter || 0;
+				};
 			};
 		};
 
@@ -372,7 +377,7 @@ class ChatStore {
 		};
 
 		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		if (!spaceview.chatId) {
+		if (!spaceview?.chatId) {
 			return ret;
 		};
 

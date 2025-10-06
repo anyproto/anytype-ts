@@ -148,7 +148,7 @@ class Keyboard {
 	 * @param {any} e - The keyboard event.
 	 */
 	onKeyDown (e: any) {
-		const { theme, pin } = S.Common;
+		const { config, theme, pin } = S.Common;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -158,6 +158,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const showWidget = !isPopup && space.isChat;
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -221,9 +222,12 @@ class Keyboard {
 		});
 
 		// Switch dark/light mode
-		this.shortcut('theme', e, () => {
-			Action.themeSet(!theme ? 'dark' : '');
-		});
+		this.shortcut('theme', e, () => Action.themeSet(!theme ? 'dark' : ''));
+
+		// Show/Hide menu bar on Windows
+		if (U.Common.isPlatformWindows()) {
+			this.shortcut('systemMenu', e, () => Renderer.send('setMenuBarVisibility', !config.showMenuBar)) ;
+		};
 
 		if (isMain) {
 
@@ -336,6 +340,14 @@ class Keyboard {
 
 				S.Popup.open('logout', {});
 			});
+
+			// Chat widget panel
+			if (showWidget) {
+				this.shortcut('chatPanel', e, () => {
+					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+					analytics.event('ScreenChatSidebar');
+				});
+			};
 
 			if (canWrite) {
 				// Create new page

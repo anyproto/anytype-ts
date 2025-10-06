@@ -285,6 +285,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const { config } = S.Common;
+		const { showMenuBar } = config;
 		const platform = U.Common.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
@@ -295,7 +296,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (!config.showMenuBar) {
+		if (!showMenuBar) {
 			cn.push('noMenuBar');
 		};
 

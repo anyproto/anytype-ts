@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, memo } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
@@ -337,7 +337,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 		if (attachmentsLayout) {
 			cn.push('withMedia');
-			cn.push(`mediaLayout-${attachments.length}`)
+			cn.push(`mediaLayout-${attachments.length}`);
 		};
 	};
 

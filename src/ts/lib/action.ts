@@ -1088,6 +1088,19 @@ class Action {
 		analytics.event('ScreenSpaceInfo');
 	};
 
+	emptyBin (route: string, callBack?: () => void) {
+		U.Subscription.search({
+			filters: [
+				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+			],
+			ignoreArchived: false,
+		}, (message: any) => {
+			if (!message.error.code) {
+				this.delete((message.records || []).map(it => it.id), route, callBack);
+			};
+		});
+	};
+
 };
 
 export default new Action();

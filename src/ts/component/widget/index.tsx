@@ -40,8 +40,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
-	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
+	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isSectionType = block.content.section == I.WidgetSection.Type;
+	const isChat = targetId == J.Constant.widgetId.chat;
+	const isBin = targetId == J.Constant.widgetId.bin;
 	const object = getObject(targetId);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
@@ -68,7 +70,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getLayout = (): I.WidgetLayout => {
-		let layout = param.layout
+		let layout = param.layout;
 
 		const object = getObject(targetId);
 		if (!object) {
@@ -86,7 +88,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const limit = getLimit();
 	const layout = getLayout();
-	const isChat = targetId == J.Constant.widgetId.chat;
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
@@ -252,31 +253,62 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!U.Space.canMyParticipantWrite() || !object || object._empty_ || !canEdit) {
+		if (!object || object._empty_ || !canEdit) {
 			return;
 		};
 
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
-
-		S.Menu.open('widget', {
+		
+		const menuParam: Partial<I.MenuParam> = {
 			element: `#widget-${block.id} .iconWrap.more`,
 			rect: { width: 0, height: 0, x, y: y + 14 },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
-			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
-			data: {
+			data: {},
+		};
+
+		let menuId = '';
+
+		if (isBin) {
+			menuId = 'select';
+			menuParam.data = Object.assign(menuParam.data, {
+				options: [
+					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
+					{ id: 'empty', icon: 'remove', name: translate('commonEmptyBin') },
+				],
+				onSelect: (e: any, item: any) => {
+					console.log(item);
+					switch (item.id) {
+						case 'open': {
+							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+							break;
+						};
+
+						case 'empty': {
+							Action.emptyBin(analytics.route.widget);
+							break;
+						};
+					};
+				},
+			});
+		} else {
+			menuId = 'widget';
+			menuParam.subIds = J.Menu.widget;
+			menuParam.data = Object.assign(menuParam.data, {
 				...param,
 				target: object,
 				isEditing: true,
 				blockId: block.id,
 				setEditing,
 				isPreview,
-			}
-		});
+			});
+		};
+
+		S.Menu.open(menuId, menuParam);
 	};
 
 	const getIsOpen = () => {
@@ -530,11 +562,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		addShowAllButton();
-
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
-		const wrapper = node.find('#button-show-all');
 		
 		let total = 0;
 		let show = false;
@@ -562,7 +591,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		show ? wrapper.show() : wrapper.hide();
+		if (show) {
+			addShowAllButton();
+		} else {
+			node.find('#button-show-all').remove();
+		};
+
 		innerWrap.toggleClass('withShowAll', show);
 	};
 

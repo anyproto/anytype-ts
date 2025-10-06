@@ -148,7 +148,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						isPreview={true}
 						setPreview={this.setPreview}
 						setEditing={this.setEditing}
-						canEdit={true}
+						canEdit={canWrite}
 						canRemove={false}
 						getObject={id => this.getObject(block, id)}
 					/>
@@ -321,7 +321,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 												key={`widget-${block.id}`}
 												block={block}
 												isEditing={isEditing}
-												canEdit={block.id != J.Constant.widgetId.bin}
+												canEdit={canWrite}
 												canRemove={isSectionPin}
 												onDragStart={this.onDragStart}
 												onDragOver={this.onDragOver}
@@ -481,6 +481,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	onHelp () {
 		const { sidebarDirection, getId } = this.props;
+		const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 
 		S.Menu.open('help', {
 			element: `#${getId()} #button-help`,
@@ -488,7 +489,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
 			horizontal: sidebarDirection == I.SidebarDirection.Left ? I.MenuDirection.Left : I.MenuDirection.Right,
-			offsetY: -78,
+			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 		});
 	};

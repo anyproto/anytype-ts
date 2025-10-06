@@ -951,7 +951,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
 		const ref = this.refCells.get(id);
 		const view = this.getView();
-		const isRecordEditing = (this.editingRecordId == recordId)
+		const isRecordEditing = (this.editingRecordId == recordId);
 
 		if (!relation || !ref || !record) {
 			return;
@@ -1367,7 +1367,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				inner = (
 					<div className="row empty">
 						<div className="card" onClick={onAdd} />
-						<div className="card add" onClick={onAdd}  />
+						<div className="card add" onClick={onAdd} />
 					</div>
 				);
 				break;

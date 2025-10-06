@@ -15,6 +15,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	node: any = null;
 	refMonth = null;
 	refYear = null;
+	refDays = {};
 	scroll = false;
 	state = {
 		value: U.Date.now(),
@@ -100,6 +101,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 									return (
 										<Item 
+											ref={ref => this.refDays[current] = ref}
 											key={current}
 											{...this.props} 
 											{...item} 
@@ -135,6 +137,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		this.refMonth?.setValue(m);
 		this.refYear?.setValue(y);
+	};
+
+	load () {
+		for (const key in this.refDays) {
+			this.refDays[key]?.load();
+		};
 	};
 
 	onArrow (dir: number) {

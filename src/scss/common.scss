@@ -260,7 +260,10 @@ html.platformWindows:not(.noMenuBar) {
 		.side.left { justify-content: flex-start; gap: 0px 2px; }
 		.side.right { justify-content: flex-end; }
 
-		.icon { width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; }
+		.icon { 
+			width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; 
+			transition: background-color $transitionCommon;
+		}
 		.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
 		.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
 		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }

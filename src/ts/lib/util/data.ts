@@ -1035,7 +1035,11 @@ class UtilData {
 		ids.forEach(id => groups[id] = []);
 
 		let ret = [];
-		records.forEach((record) => {
+		records.forEach(record => {
+			if (!record) {
+				return;
+			};
+
 			const diff = now - record[key];
 
 			let id = '';
@@ -1221,6 +1225,13 @@ class UtilData {
 		};
 
 		return ret;
+	};
+
+	isFreeMember (): boolean {
+		const { membership } = S.Auth;
+		const tier = this.getMembershipTier(membership.tier);
+
+		return !tier?.namesCount && this.isAnytypeNetwork();
 	};
 
 };
