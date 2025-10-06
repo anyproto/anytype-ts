@@ -264,7 +264,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			return;
 		};
 
-		cy = top - sy;
+		cy = top;
 		threshold = J.Size.header;
 		x = left + sx;
 		y = threshold;
