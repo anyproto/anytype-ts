@@ -55,13 +55,11 @@ const Members = observer(class Members extends React.Component<Props, State> {
 		let showLimit = false;
 		let memberUpgradeType = '';
 
-		if (space.isShared) {
-			if (!U.Space.getReaderLimit() && tier?.price) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
-				memberUpgradeType = 'members';
-				showLimit = true;
-			};
+		if (space.isShared && !U.Space.getReaderLimit() && tier?.price) {
+			limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+			limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
+			memberUpgradeType = 'members';
+			showLimit = true;
 		};
 
 		const Member = (item: any) => {

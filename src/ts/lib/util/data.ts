@@ -1227,6 +1227,13 @@ class UtilData {
 		return ret;
 	};
 
+	isFreeMember (): boolean {
+		const { membership } = S.Auth;
+		const tier = this.getMembershipTier(membership.tier);
+
+		return !tier?.namesCount && this.isAnytypeNetwork();
+	};
+
 };
 
 export default new UtilData();
