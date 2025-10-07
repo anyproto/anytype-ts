@@ -96,7 +96,7 @@ enableLogging({
 Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
-	dsn: electron.sentry,
+	dsn: electron.sentry || J.Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
 		e.request.url = '';
