@@ -16,25 +16,24 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	columnCount = 0;
 	length = 0;
 	timeout = 0;
+	top = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { height } = J.Size.dataview.gallery;
-
 		this.cache = new CellMeasurerCache({
-			defaultHeight: height,
+			defaultHeight: J.Size.dataview.gallery.height,
 			fixedWidth: true,
 		});
 
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
 		this.getCoverObject = this.getCoverObject.bind(this);
-		this.updateRowHeight = this.updateRowHeight.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords, onRefRecord } = this.props;
+		const { rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmptyView, getRecords, onRefRecord } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = getSubId();
@@ -46,7 +45,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const cardHeight = this.getCardHeight();
 
 		if (!records.length) {
-			return getEmpty('view');
+			return getEmptyView(I.ViewType.Gallery);
 		};
 
 		const items = this.getItems();
@@ -130,7 +129,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			);
 		} else {
 			content = (
-				<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+				<WindowScroller 
+					scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
+					onScroll={this.onScroll}
+					scrollTop={this.top}
+				>
 					{({ height }) => (
 						<AutoSizer disableHeight={true} onResize={this.onResize}>
 							{({ width }) => (
@@ -339,10 +342,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
-	updateRowHeight (index: number) {
-		this.setColumnCount();
-		this.cache.clearAll();
-		this.refList?.recomputeRowHeights(index);
+	onScroll ({ scrollTop }) {
+		this.top = scrollTop;
 	};
 
 });

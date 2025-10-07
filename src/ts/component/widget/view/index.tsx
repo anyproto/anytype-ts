@@ -1,7 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Select, Label } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
+import { Select, Label, Filter, Button } from 'Component';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Storage } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel, Navigation } from 'swiper/modules';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -13,23 +15,33 @@ interface WidgetViewRefProps {
 	updateData: () => void;
 	updateViews: () => void;
 	onOpen: () => void;
+	getSearchIds: () => string[];
+	getFilter: () => string;
 };
 
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const { parent, block, isSystemTarget, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton } = props;
-	const { viewId, limit, layout } = parent.content;
+	const { 
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
+		getContentParam, getObject
+	} = props;
+	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
-	const [ isLoading, setIsLoading ] = useState(false);
-	const nodeRef = useRef(null);
+	const [ searchIds, setSearchIds ] = useState<string[]>(null);
+	const prevIdsRef = useRef<string[]>(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
-	const rootId = block ? [ targetId, 'widget', block.id ].join('-') : '';
-	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
-	const object = S.Detail.get(S.Block.widgets, targetId);
-	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
-	const viewType = view ? view.type : I.ViewType.List;
+	const filterRef = useRef(null);
+	const filter = useRef('');
+	const filterTimeout = useRef(0);
 	const traceId = getTraceId();
+	const rootId = block ? [ targetId, traceId ].join('-') : '';
+	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
+	const object = getObject(targetId);
+	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+	const viewType = view ? view.type : I.ViewType.List;
+	const isOpen = Storage.checkToggle('widget', parent.id);
+	const isShown = isOpen || isPreview;
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -52,7 +64,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			getData(subId);
 		} else 
 		if (view) {
-			load(view.id);
+			load(view.id, true);
 		};
 	};
 
@@ -69,9 +81,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		selectRef.current?.setOptions(views);
 	};
 
-	const load = (viewId: string) => {
+	const load = (viewId: string, clear?: boolean) => {
 		if (childRef.current?.load) {
-			childRef.current?.load();
+			childRef.current?.load(searchIds);
 			S.Record.metaSet(subId, '', { viewId });
 			return;
 		};
@@ -94,6 +106,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters: getFilters(),
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
+			noDeps: true,
+			clear,
 		});
 	};
 
@@ -108,43 +122,91 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters = filters.concat(childRef.current?.getFilters());
 		};
 
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds });
+		};
+
 		return filters;
 	};
 
+	const getSorts = () => {
+		if (!view) {
+			return [];
+		};
+
+		const sorts: I.Sort[] = U.Common.objectCopy(view.sorts || []);
+
+		if (!sorts.length) {
+			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
+		};
+
+		return sorts;
+	};
+
 	const getView = () => {
-		return Dataview.getView(rootId, J.Constant.blockId.dataview, parent.content.viewId);
+		return Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 	};
 
 	const getLimitHandler = (): number => {
 		const view = getView();
-		if (!view) {
-			return 0;
-		};
-
-		if ((layout == I.WidgetLayout.View) && (view.type == I.ViewType.Calendar)) {
-			return 1000;
-		};
-
-		return getLimit(parent.content);
+		return view ? getLimit() : 0;
 	};
 
 	const onChangeView = (viewId: string) => {
-		C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
+		switch (parent.content.section) {
+			case I.WidgetSection.Pin: {
+				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
+				break;
+			};
+
+			case I.WidgetSection.Type: {
+				C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
+					S.Block.updateWidgetData(targetId);
+				});
+				break;
+			};
+		};
 	};
 
 	const getRecordIds = () => {
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
-		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, viewId, '', U.Common.objectCopy(records));
+		const id = viewId || (views.length ? views[0].id : '');
 
-		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 	};
 
 	const onOpen = () => {
 		if (childRef.current?.onOpen) {
 			childRef.current?.onOpen();
 		};
+	};
+
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(filterTimeout.current);
+		filterTimeout.current = window.setTimeout(() => {
+			if (filter.current == v) {
+				return;
+			};
+
+			filter.current = v;
+
+			if (!filter.current) {
+				setSearchIds(null);
+				return;
+			};
+
+			U.Subscription.destroyList([ subId ], false, () => {
+				U.Subscription.search({
+					filters: getFilters(),
+					sorts: getSorts(),
+					fullText: filter.current,
+					keys: [ 'id' ],
+				}, (message: any) => {
+					setSearchIds((message.records || []).map(it => it.id));
+				});
+			});
+		}, J.Constant.delay.keyboard);
 	};
 
 	const records = getRecordIds();
@@ -158,7 +220,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		ref: childRef,
 		rootId,
 		subId,
-		reload: () => load(viewId),
+		reload: () => load(viewId, true),
 		getRecordIds,
 		getView: () => view,
 		getViewType: () => viewType,
@@ -168,22 +230,93 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	let content = null;
 	let viewSelect = null;
+	let head = null;
 
 	if (!isSystemTarget && (views.length > 1)) {
-		viewSelect = (
-			<Select 
-				ref={selectRef}
-				id={`select-view-${rootId}`} 
-				value={viewId} 
-				options={views} 
-				onChange={onChangeView}
-				arrowClassName="light"
-				menuParam={{ 
-					width: 300,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-				}}
-			/>
+		if (isPreview) {
+			viewSelect = (
+				<div id="tabs" className="tabs">
+					<Swiper
+						direction="horizontal"
+						slidesPerView="auto"
+						slidesPerGroupAuto={true}
+						spaceBetween={12}
+						mousewheel={true}
+						navigation={true}
+						modules={[ Mousewheel, Navigation ]}
+					>
+						{views.map((it: any, i: number) => {
+							const cn = [ 'tab' ];
+
+							if (viewId == it.id) {
+								cn.push('active');
+							};
+
+							return (
+								<SwiperSlide key={it.id}>
+									<div
+										key={it.id}
+										className={cn.join(' ')}
+										onClick={() => onChangeView(it.id)}
+									>
+										{it.name}
+									</div>
+								</SwiperSlide>
+							);
+						})}
+					</Swiper>
+				</div>
+			);
+		} else {
+			viewSelect = (
+				<Select
+					ref={selectRef}
+					id={`select-view-${rootId}`}
+					value={viewId}
+					options={views}
+					onChange={onChangeView}
+					arrowClassName="light"
+					menuParam={{
+						width: 300,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+					}}
+				/>
+			);
+		};
+	};
+
+	if (viewSelect) {
+		cn.push('withViewSelect');
+	};
+
+	if (isPreview) {
+		head = (
+			<div className="head">
+				<div className="filterWrapper">
+					<div className="side left">
+						<Filter
+							ref={filterRef}
+							className="outlined"
+							icon="search"
+							placeholder={translate('commonSearch')}
+							onChange={onFilterChange}
+							onClear={() => setSearchIds([])}
+						/>
+					</div>
+					{canCreate ? (
+						<div className="side right">
+							<Button 
+								id="button-object-create" 
+								color="blank" 
+								className="c28" 
+								text={translate('commonNew')} 
+								onClick={() => onCreate({ route: analytics.route.widget })} 
+							/>
+						</div>
+					) : ''}
+				</div>
+			</div>
 		);
 	};
 
@@ -192,7 +325,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		content = (
 			<div className="emptyWrap">
-				{!isLoading ? <Label className="empty" text={label} /> : ''}
+				<Label className="empty" text={label} />
 			</div>
 		);
 	} else {
@@ -233,27 +366,46 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		if (isSystemTarget) {
 			getData(subId);
-		} else {
-			setIsLoading(true);
-
-			if (targetId) {
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), () => {
-					setIsLoading(false);
-
-					const view = getView();
-					if (view) {
-						load(view.id);
-					};
-				});
+		} else 
+		if (targetId) {
+			const root = S.Block.getLeaf(rootId, targetId);
+			const cb = () => {
+				const view = getView();
+				if (view) {
+					load(view.id);
+				};
 			};
+
+			if (root) {
+				cb();
+				return;
+			};
+
+			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+				if (!message.error.code) {
+					cb();
+				};
+			});
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!isSystemTarget) {
-			load(viewId);
+			load(viewId, true);
 		};
 	}, [ viewId ]);
+
+	useEffect(() => {
+		if (U.Common.compareJSON(searchIds, prevIdsRef.current)) {
+			return;
+		};
+
+		if (view) {
+			load(view.id, true);
+		};
+
+		prevIdsRef.current = searchIds;
+	}, [ searchIds ]);
 
 	useEffect(() => {
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
@@ -265,15 +417,18 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		updateData,
 		updateViews,
 		onOpen,
+		getSearchIds: () => searchIds,
+		getFilter: () => filter.current,
 	}));
 
 	return (
 		<div 
-			ref={nodeRef}
 			id="innerWrap"
 			className={cn.join(' ')}
+			style={{ display: isShown ? 'flex' : 'none' }}
 		>
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
+			{head}
 			{content}
 		</div>
 	);

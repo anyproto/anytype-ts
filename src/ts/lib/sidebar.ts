@@ -34,7 +34,7 @@ class Sidebar {
 	init () {
 		this.initObjects();
 
-		const stored = Storage.get('sidebar');
+		const stored = Storage.get('sidebar', Storage.isLocal('sidebar'));
 
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
@@ -240,9 +240,10 @@ class Sidebar {
 	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
 		const isPopup = keyboard.isPopup();
 		const isMain = keyboard.isMain();
-		const isMainVoid = keyboard.isMainVoid();
+		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
-		const isMainChat = keyboard.isMainChat();
+		const isPopupMainHistory = keyboard.isPopupMainHistory();
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
 		this.initObjects();
 
@@ -253,7 +254,7 @@ class Sidebar {
 			widthLeft = this.objLeft.outerWidth();
 		};
 
-		if ((widthRight === null) && this.objRight && this.objRight.length) {
+		if ((widthRight === null) && this.objRight && this.objRight.length && rightSidebar.isOpen) {
 			widthRight = this.objRight.outerWidth();
 		};
 
@@ -263,7 +264,7 @@ class Sidebar {
 			widthLeft = 0;
 		};
 
-		if (!isMain || isMainVoid) {
+		if (!isMain || isMainVoidError) {
 			widthLeft = 0;
 			widthRight = 0;
 		};
@@ -273,8 +274,13 @@ class Sidebar {
 
 		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
-		const ho = isMainHistory ? J.Size.history.panel : 0;
+		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
 		const hw = pageWidth - ho;
+		const pageCss: any = { width: pageWidth };
+
+		if (!isPopup) {
+			pageCss.height = U.Common.getAppContainerHeight();
+		};
 
 		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
@@ -291,18 +297,14 @@ class Sidebar {
 
 		this.header.toggleClass('sidebarAnimation', animate);
 		this.footer.toggleClass('sidebarAnimation', animate);
-
-		if (isMainChat) {
-			this.page.toggleClass('sidebarAnimation', animate);
-		};
+		this.page.toggleClass('sidebarAnimation', animate);
 
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
-		
-		if (!isPopup) {
-			const wh = U.Common.getAppContainerHeight();
+		this.page.css(pageCss);
 
+		if (!isPopup) {
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.rightButton.toggleClass('sidebarAnimation', animate);
@@ -310,19 +312,11 @@ class Sidebar {
 			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
-			this.page.css({ width: pageWidth, height: wh });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
 		};
 
 		$(window).trigger('sidebarResize');
-	};
-
-	/**
-	 * Saves the current sidebar state to storage.
-	 */
-	private save (): void {
-		Storage.set('sidebar', this.data);
 	};
 
 	/**
@@ -338,7 +332,7 @@ class Sidebar {
 			width: this.limitWidth(width),
 		});
 
-		this.save();
+		Storage.set('sidebar', this.data, Storage.isLocal('sidebar'));
 		this.setStyle(this.data);
 	};
 
@@ -388,6 +382,23 @@ class Sidebar {
 		return S.Common.getRef(`sidebarRight${namespace}`);
 	};
 
+	rightPanelRestore (isPopup: boolean) {
+		this.initObjects();
+
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const { isOpen } = rightSidebar;
+		const css: any = {};
+
+		if (isOpen) {
+			css.right = 0;
+		} else {
+			css.right = -J.Size.sidebar.right;
+			this.objRight.hide();
+		};
+		
+		this.objRight.css(css);
+	};
+
 	/**
 	 * Toggles the right panel open or closed with animation.
 	 * @param {boolean} v - Whether to open the panel.
@@ -412,44 +423,39 @@ class Sidebar {
 		};
 
 		this.rightPanelSetState(isPopup, { page: '' });
+		this.initObjects();
 
-		window.setTimeout(() => {
-			this.initObjects();
+		const width = this.objRight.outerWidth();
+		const cssStart: any = {};
+		const cssEnd: any = {};
 
-			const width = this.objRight.outerWidth();
-			const cssStart: any = {};
-			const cssEnd: any = {};
+		if (shouldOpen) {
+			cssStart.right = -width;
+			cssEnd.right = 0;
+		} else {
+			cssStart.right = 0;
+			cssEnd.right = -width;
+		};
 
-			if (shouldOpen) {
-				cssStart.right = -width;
-				cssEnd.right = 0;
-			} else {
-				cssStart.right = 0;
-				cssEnd.right = -width;
+		this.objRight.show().css(cssStart);
+
+		raf(() => {
+			if (animate) {
+				this.objRight.addClass('anim');
 			};
 
-			this.objRight.css(cssStart);
-			this.objRight.find('.sidebarPage').css({ opacity: 0 });
+			this.objRight.css(cssEnd);
+			this.resizePage(null, shouldOpen ? null : 0, animate);
 
-			raf(() => {
-				if (animate) {
-					this.objRight.addClass('anim');
+			window.setTimeout(() => {
+				if (shouldOpen) {
+					this.rightPanelSetState(isPopup, { page, ...param });
+				} else {
+					this.objRight.hide();
 				};
 
-				this.objRight.css(cssEnd);
-				this.resizePage(null, shouldOpen ? null : 0, animate);
-
-				window.setTimeout(() => {
-					this.rightPanelSetState(isPopup, { page, ...param });
-					this.objRight.removeClass('anim');
-
-					const inner = this.objRight.find('.sidebarPage');
-
-					inner.addClass('anim');
-					raf(() => inner.css({ opacity: 1 }));
-
-				}, animate ? J.Constant.delay.sidebar : 0);
-			});
+				this.objRight.removeClass('anim');
+			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 
 		window.setTimeout(() => {
@@ -508,10 +514,12 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	rightPanelSetState (isPopup: boolean, v: any) {
-		if (!v.page) {
-			v.page = S.Common.getRightSidebarState(isPopup).page;
-		};
+		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const { isOpen, page } = rightSidebar;
 
+		v.page = v.page || page;
+
+		S.Common.setRightSidebarState(isPopup, v.page, isOpen);
 		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
@@ -521,6 +529,11 @@ class Sidebar {
 	 */
 	rightPanelGetState (isPopup: boolean) {
 		return this.rightPanelRef(isPopup)?.getState() || {};
+	};
+
+	rightPanelClose (isPopup: boolean) {
+		S.Common.setRightSidebarState(isPopup, '', false);
+		this.rightPanelRestore(isPopup);
 	};
 
 };

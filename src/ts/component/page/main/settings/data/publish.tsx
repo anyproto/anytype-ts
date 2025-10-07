@@ -86,7 +86,6 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 
 		S.Menu.open('select', {
 			element,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),

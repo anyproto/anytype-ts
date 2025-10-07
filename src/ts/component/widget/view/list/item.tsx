@@ -27,7 +27,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
 	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-	const canDrag = isPreview && (block.getTargetObjectId() == J.Constant.widgetId.favorite);
+	const canDrag = false;
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !canDrag });
 	const hasMore = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
@@ -56,7 +56,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
+		analytics.event('OpenSidebarObject');
 	};
 
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean) => {

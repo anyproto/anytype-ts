@@ -20,7 +20,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmpty, getRecords, onRefRecord } = this.props;
+		const { rootId, block, className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmptyView, getRecords, onRefRecord } = this.props;
 		const view = getView();
 		const records = getRecords();
 		const subId = getSubId();
@@ -31,7 +31,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const cn = [ 'viewContent', className ];
 
 		if (!length) {
-			return getEmpty('view');
+			return getEmptyView(I.ViewType.List);
 		};
 
 		let content = null;

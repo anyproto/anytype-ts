@@ -67,7 +67,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onSync = () => {
-		menuOpen('syncStatus', '#headerSync', {});
+		menuOpen('syncStatus', '#headerSync', { subIds: J.Menu.syncStatus });
 	};
 
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {

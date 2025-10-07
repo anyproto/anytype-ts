@@ -67,7 +67,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			};
 
 			let period = '';
-			let buttonText = translate('popupSettingsMembershipLearnMore');
+			let buttonText = translate('commonLearnMore');
 			let offerLabel = null;
 
 			if (isCurrent) {

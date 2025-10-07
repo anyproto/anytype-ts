@@ -142,7 +142,7 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: !U.Object.isAllowedMultiChat(),
+			ignoreChat: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -152,7 +152,7 @@ class UtilSubscription {
 		const { config } = S.Common;
 		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
-		const debug = config.flagsMw.request;
+		const debug = config.flagsMw.subscribe;
 		const filters = this.defaultFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
@@ -226,7 +226,7 @@ class UtilSubscription {
 		const { spaceId, subId, noDeps, updateDetails } = param;
 		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 		const keys = this.mapKeys(param);
-		const debug = config.flagsMw.request;
+		const debug = config.flagsMw.subscribe;
 
 		if (!subId) {
 			if (debug) {
@@ -315,14 +315,14 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: !U.Object.isAllowedMultiChat(),
+			ignoreChat: true,
 			skipLayoutFormat: null,
 		}, param);
 
 		const { config } = S.Common;
 		const { spaceId, offset, limit, skipLayoutFormat, fullText } = param;
 		const keys = this.mapKeys(param);
-		const debug = config.flagsMw.request;
+		const debug = config.flagsMw.subscribe;
 		const filters = this.defaultFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
@@ -399,6 +399,8 @@ class UtilSubscription {
 			};
 			return;
 		};
+
+		S.Record.spaceMap.clear();
 	
 		const { techSpaceId } = account.info;
 		const list: any[] = [
@@ -408,6 +410,7 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
+				keys: J.Relation.default.concat('sharedSpacesLimit'),
 				noDeps: true,
 				ignoreHidden: false,
 			},
@@ -422,6 +425,9 @@ class UtilSubscription {
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreHidden: false,
+				onSubscribe: () => {
+					S.Record.getRecords(J.Constant.subId.space).forEach(it => S.Record.spaceMap.set(it.targetSpaceId, it.id));
+				},
 			},
 		];
 
@@ -490,6 +496,11 @@ class UtilSubscription {
 	 * @param {() => void} [callBack] - Optional callback after creation.
 	 */
 	createSpace (callBack?: () => void): void {
+		const spaceview = U.Space.getSpaceview();
+
+		S.Record.typeKeyMap.clear();
+		S.Record.relationKeyMap.clear();
+
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.deleted,
@@ -502,12 +513,17 @@ class UtilSubscription {
 			},
 			{
 				subId: J.Constant.subId.type,
-				keys: this.typeRelationKeys(),
+				keys: this.typeRelationKeys(false),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
-					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+					{ 
+						relationKey: 'uniqueKey', 
+						type: I.SortType.Custom, 
+						customOrder: U.Data.typeSortKeys(spaceview.isChat),
+					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -517,7 +533,7 @@ class UtilSubscription {
 				ignoreChat: false,
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
-				}
+				},
 			},
 			{
 				subId: J.Constant.subId.relation,
@@ -564,6 +580,15 @@ class UtilSubscription {
 		this.createList(list, callBack);
 	};
 
+	fileTypeKeys () {
+		return [
+			J.Constant.typeKey.file,
+			J.Constant.typeKey.image,
+			J.Constant.typeKey.audio,
+			J.Constant.typeKey.video
+		];
+	};
+
 	/**
 	 * Creates a list of subscriptions from the provided list of parameters.
 	 * @param {I.SearchSubscribeParam[]} list - List of subscription parameters.
@@ -577,7 +602,6 @@ class UtilSubscription {
 			};
 
 			cnt++;
-
 			if ((cnt == list.length) && callBack) {
 				callBack();
 			};
@@ -617,6 +641,35 @@ class UtilSubscription {
 				callBack();
 			};
 		});
+	};
+
+	typeCheckSubId (key: string) {
+		return [ 'typeCheck', S.Common.space, key ].join('-');
+	};
+
+	createTypeCheck (callBack?: () => void) {
+		const { space } = S.Common;
+		const list = [];
+
+		for (const key of this.fileTypeKeys()) {
+			const type = S.Record.getTypeByKey(key);
+
+			if (!type) {
+				continue;
+			};
+
+			list.push({
+				subId: this.typeCheckSubId(key),
+				filters: [
+					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type.id },
+				],
+				keys: [ 'id' ],
+				limit: 1,
+				noDeps: true,
+			});
+		};
+
+		this.createList(list, callBack);
 	};
 
 	/**
@@ -659,8 +712,14 @@ class UtilSubscription {
 	 * Returns the relation keys for type subscriptions.
 	 * @returns {string[]} The list of relation keys.
 	 */
-	typeRelationKeys () {
-		return J.Relation.default.concat(J.Relation.type).concat('lastUsedDate');
+	typeRelationKeys (withTmpOrder: boolean) {
+		const ret = J.Relation.default.concat(J.Relation.type);
+
+		if (withTmpOrder) {
+			ret.push('tmpOrder');
+		};
+
+		return ret;
 	};
 
 	/**

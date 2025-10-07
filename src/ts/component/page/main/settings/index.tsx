@@ -159,23 +159,18 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	componentDidMount () {
 		this.init();
-
-		S.Common.setRightSidebarState(false, '', false);
 	};
 
 	componentDidUpdate () {
 		this.init();
 	};
 
-	componentWillUnmount () {
-		const space = U.Space.getSpaceview();
-
-		S.Common.getRef('vault')?.setActive(space.id);
-	};
-
 	init () {
+		const { isPopup } = this.props;
+
+		sidebar.rightPanelClose(isPopup);
+
 		if (!this.isSpace()) {
-			S.Common.getRef('vault')?.setActive('settings');
 			sidebar.leftPanelSetState({ page: 'settings' });
 			return;
 		};

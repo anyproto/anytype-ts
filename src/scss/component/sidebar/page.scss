@@ -1,6 +1,6 @@
 > .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
 > .sidebarPage {
-	&.anim { transition: opacity 0.3s ease-in-out; }
+	&.anim { transition: opacity 0.1s ease-in-out; }
 
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
@@ -179,19 +179,7 @@
 @import "./page/type.scss";
 @import "./page/vault.scss";
 @import "./page/widget.scss";
-@import "./page/allObject.scss";
 @import "./page/settings.scss";
 @import "./page/object/relation.scss";
 @import "./page/object/tableOfContents.scss";
 @import "./page/bottom.scss";
-
-&.right.spaceSpace {
-	> .sidebarPage.pageWidget, 
-	> .sidebarPage.pageAllObject {
-		> .head { height: 0px; padding: 0px; }
-		> .head {
-			&::after { display: none; }
-		}
-		> .subHead { height: 52px; margin: 0px; }
-	}
-}

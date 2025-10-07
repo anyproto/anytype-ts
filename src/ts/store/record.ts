@@ -15,6 +15,7 @@ class RecordStore {
 	public recordMap: Map<string, string[]> = observable.map(new Map());
 	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
+	public spaceMap: Map<string, string> = new Map();
 
 	constructor() {
 		makeObservable(this, {
@@ -50,6 +51,7 @@ class RecordStore {
 		this.recordMap.clear();
 		this.metaMap.clear();
 		this.groupMap.clear();
+		this.spaceMap.clear();
 	};
 
 	/**
@@ -520,8 +522,27 @@ class RecordStore {
 	 * @returns {any[]} The type objects.
 	 */
 	getTypes () {
-		return this.getRecordIds(J.Constant.subId.type, '').map(id => S.Detail.get(J.Constant.subId.type, id)).
-			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
+		return this.sortTypes(this.getRecordIds(J.Constant.subId.type, '').
+			map(id => S.Detail.get(J.Constant.subId.type, id, U.Subscription.typeRelationKeys(true))).
+			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted));
+	};
+
+	/**
+	 * Sorts a list of types by tmpOrder, orderId, and name.
+	 * @private
+	 * @param {any[]} list - The list of types to sort.
+	 * @returns {any[]} The sorted list of types.
+	 */
+	sortTypes (list: any[]) {
+		const space = U.Space.getSpaceview();
+
+		return (list || []).sort((c1, c2) => {
+			return (
+				U.Data.sortByOrderId(c1, c2) ||
+				U.Data.sortByTypeKey(c1, c2, space.isChat) ||
+				U.Data.sortByName(c1, c2)
+			);
+		});
 	};
 
 	/**

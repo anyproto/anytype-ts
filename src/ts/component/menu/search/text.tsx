@@ -188,7 +188,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = container.get(0).querySelectorAll(tag) || [];
+		this.items = this.getItems();
 		
 		switcher.toggleClass('active', !!this.items.length);
 
@@ -207,11 +207,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
-		const container = this.getContainer();
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
-		const tag = Mark.getTag(I.MarkType.Search);
-		const items = container.get(0).querySelectorAll(tag) || [];
+		const items = this.getItems();
 
 		for (let i = 0; i < items.length; i++) {
 			const item = $(items[i]);
@@ -228,11 +226,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	getContainer () {
-		const { param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
+		return U.Common.getScrollContainer(this.props.param.data.isPopup);
+	};
 
-		return U.Common.getScrollContainer(isPopup);
+	getItems () {
+		const container = this.getContainer();
+		return container.length ? container.get(0).querySelectorAll(Mark.getTag(I.MarkType.Search)) : [];
 	};
 
 	focus () {

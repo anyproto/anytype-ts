@@ -1513,18 +1513,25 @@ class UtilCommon {
 	 * @param {HTMLElement} dst - The destination element.
 	 */
 	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
-		const styles = document.defaultView.getComputedStyle(src, '');
-		const css: any = {};
+		const styles = window.getComputedStyle(src, '');
+
+		if (styles.display && (styles.getPropertyValue('display') == 'none')) {
+			return;
+		};
+
+		const css: any = [];
 
 		for (let i = 0; i < styles.length; i++) {
 			const name = styles[i];
 			const value = styles.getPropertyValue(name);
 
 			css[name] = value;
+			css.push(`${name}: ${value}`);
 		};
 
-		css.visibility = 'visible';
-		$(dst).css(css);
+		css.push('visibility: visible');
+
+		dst.style.cssText = css.join('; ');
 	};
 
 	/**
@@ -1680,16 +1687,17 @@ class UtilCommon {
 	 * @param {any} obj - The jQuery object to toggle.
 	 * @param {number} delay - The animation delay in ms.
 	 */
-	toggle (obj: any, delay: number) {
-		const isOpen = obj.hasClass('isOpen');
-
+	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
 		if (isOpen) {
 			const height = obj.outerHeight();
 
-			obj.css({ height });
+			obj.css({ height, overflow: 'hidden' });
 
 			raf(() => obj.addClass('anim').css({ height: 0 }));
-			window.setTimeout(() => obj.removeClass('isOpen anim'), delay);
+			window.setTimeout(() => {
+				obj.removeClass('isOpen anim');
+				callBack?.();
+			}, delay);
 		} else {
 			obj.css({ height: 'auto' });
 
@@ -1698,7 +1706,10 @@ class UtilCommon {
 			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ heght: 'auto' }), delay);
+			window.setTimeout(() => {
+				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto', overflow: 'visible' });
+				callBack?.();
+			}, delay);
 		};
 	};
 
@@ -1828,8 +1839,12 @@ class UtilCommon {
 	/**
 	 * Shows the "What's New" popup and updates storage.
 	 */
-	showWhatsNew () {
-		S.Popup.open('help', { data: { document: 'whatsNew' } });
+	showWhatsNew (param?: Partial<I.PopupParam>) {
+		param = param || {};
+		param.data = param.data || {};
+		param.data.document = 'whatsNew';	
+
+		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
 	};
 
@@ -1901,7 +1916,7 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('primitivesOnboarding')) {
+		if (!Storage.get('chatsOnboarding')) {
 			return;
 		};
 
@@ -1972,12 +1987,17 @@ class UtilCommon {
 	};
 
 	getMaxScrollHeight (isPopup: boolean): number {
-		const container = this.getScrollContainer(isPopup).get(0);
-		return container.scrollHeight - container.clientHeight;
+		const container = this.getScrollContainer(isPopup);
+		if (!container.length) {
+			return 0;
+		};
+
+		const el = container.get(0);
+		return el.scrollHeight - el.clientHeight;
 	};
 
 	getAppContainerHeight () {
-		return $('#appContainer').height() - Number($('#drag.withButtons').outerHeight() || 0);
+		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
 	};
 
 };

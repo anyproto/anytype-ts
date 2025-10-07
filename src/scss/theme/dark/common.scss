@@ -30,6 +30,7 @@ html.themeDark {
 	/* Background */
 
 	--color-bg-primary: #171717;
+	--color-bg-primary-90: rgba(23, 23, 23, 0.9);
 	--color-bg-secondary: #191919;
 	--color-bg-loader: rgba(0,0,0,0.7);
 	--color-bg-grey: #232323;
@@ -152,7 +153,7 @@ html.themeDark {
 	markuphighlight { background: #044062 !important; }
 
 	.onboardingDimmer { background-color: var(--color-text-inversion); opacity: 0.8; }
-	.onboardingElement { background-color: #000 !important; }
+	.onboardingElement:not(.onboardingCollectionNewButton) { background-color: #000 !important; }
 
 	/* Components */
 
@@ -299,6 +300,9 @@ html.themeDark {
 	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/relation.svg'); }
 	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/bin.svg'); }
 
+	.icon.settings-ux1 { background-image: url('#{$themePath}/icon/settings/space/space.svg'); }
+	.icon.settings-ux3 { background-image: url('#{$themePath}/icon/settings/space/chat.svg'); }
+
 	/* Editor */
 
 	.editorWrapper {
@@ -390,6 +394,8 @@ html.themeDark {
 				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
 				.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
+
+				.cnt { color: var(--color-text-primary); }
 			}
 
 			> .body {
@@ -399,26 +405,14 @@ html.themeDark {
 					}
 				}
 			}
-		}
-		
-		> .sidebarPage.pageAllObject {
-			> .inner {
-				> .head {
-					.titleWrap {
-						.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
-						.icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
-						.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
-					}
-					.tabs {
-						.swiper-button-prev, .swiper-button-next {
-							&::before { background-image: url('#{$themePath}/arrow/sidebarObjectTab0.svg'); }
-							&:hover::before { background-image: url('#{$themePath}/arrow/sidebarObjectTab1.svg'); }
-						}
-					}
+
+			> .bottom {
+				.widgetSettings:not(.isEditing):hover {
+					.icon { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 				}
 			}
 		}
-
+		
 		> .containerSettings {
 			> .body {
 				.list {
@@ -444,15 +438,40 @@ html.themeDark {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
+
+			.widgetSection {
+				> .nameWrap {
+					.name {
+						&:hover {
+							.icon.arrow { background-image: url('#{$themePath}/arrow/widgetSection1.svg'); }
+						}
+					}
+
+					.buttons {
+						.button.blank {
+							&:hover {
+								.icon.plus { background-image: url('#{$themePath}/icon/plus/widgetSection1.svg'); }
+							}
+						}						
+					}
+				}
+			}
+
 			.spaceHeader {
 				.buttons {
 					.item {
-						.icon.add { background-image: url('#{$themePath}/icon/sidebar/chatSpace/add.svg'); }
 						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
 						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
 						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
+						.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
 					}
 				}
+			}
+		}
+
+		> .sidebarPage.pageVault {
+			.item {
+				.cnt { color: var(--color-text-primary); }
 			}
 		}
 	}

@@ -379,7 +379,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const param = {
 			element: `#page .relationData .options .add`,
 			className: 'single',
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 8,
 		};
@@ -457,7 +456,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const param = {
 			element: `#page .relationData .options .more`,
 			className: 'single',
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 8,
 		};

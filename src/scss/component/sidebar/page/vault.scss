@@ -23,9 +23,17 @@
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-		.nameWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
-		.name { @include clamp1; font-weight: 500; flex-grow: 1; }
-		.label { @include clamp1; @include text-small; color: var(--color-text-secondary); }
+		&.noMessages {
+			.info { flex-direction: row; }
+			.nameWrapper { flex-grow: 1; }
+			.messageWrapper { flex-grow: 0; }
+		}
+
+		.nameWrapper,
+		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
+		.nameInner { display: flex; flex-grow: 1; align-items: center; gap: 0px 4px; }
+		.name { @include text-overflow-nw; font-weight: 500; }
+		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
@@ -34,13 +42,13 @@
 		&.active::before, &.hover::before { background: var(--color-shape-highlight-medium); }
 		&.selected::before { background: var(--color-system-selection); }
 
+		.time { @include text-small; color: var(--color-text-secondary); }
+
 		.icons { display: flex; gap: 0px 6px; }
-		.icons {
-			.icon { width: 18px; height: 18px; }
-			.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
-			.icon.muted { background-image: url('~img/icon/vault/muted.svg'); }
-			.icon.error { display: block; margin: 0px; border-radius: 50%; background: var(--color-red) url('~img/icon/vault/error.svg') 50% 50% no-repeat; }
-		}
+		.icon { width: 18px; height: 18px; }
+		.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
+		.icon.muted { background-image: url('~img/icon/vault/muted.svg'); }
+		.icon.error { display: block; margin: 0px; border-radius: 50%; background: var(--color-red) url('~img/icon/vault/error.svg') 50% 50% no-repeat; }
 
 		.cnt { 
 			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
@@ -54,7 +62,7 @@
 		&.isDragging { z-index: 1; }
 
 		&.isMuted {
-			.cnt { background-color: var(--color-text-secondary); }
+			.cnt { background-color: var(--color-text-tertiary); }
 		}
 
 		&.isLoading {
@@ -73,7 +81,7 @@
 		&.isProgress {
 			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
 
-			.icon { width: 48px; height: 48px; background-image: url('~img/logo/yellow.svg'); }
+			.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.svg'); }
 			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
 			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }

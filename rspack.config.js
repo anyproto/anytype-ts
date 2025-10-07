@@ -177,6 +177,13 @@ module.exports = (env, argv) => {
 					{ from: cMapsDir, to: './cmaps/' },
 				],
 			}),
+
+			// Define environment variables for the browser with defaults
+			new rspack.DefinePlugin({
+				'SPARK_ONBOARDING_URL': JSON.stringify(process.env.SPARK_ONBOARDING_URL || 'wss://stage1-anytype-spark.anytype.io'),
+				'SPARK_ONBOARDING_TOKEN': JSON.stringify(process.env.SPARK_ONBOARDING_TOKEN || 'spark_92eabe0c7f006ff22b0d81f3974b355556756afd3262249e4a748076c4483869'),
+				'SPARK_ONBOARDING_NO_AUTH': JSON.stringify(process.env.SPARK_ONBOARDING_NO_AUTH || 'false'),
+			}),
 		].filter(Boolean),
 	};
 };

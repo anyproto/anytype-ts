@@ -21,7 +21,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			e.stopPropagation();
 			onClick(e);
 		});
@@ -30,25 +30,10 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onClick = (e: any) => {
 		e.preventDefault();
 
-		switch (type) {
-			case I.ObjectManagerPopup.Favorites: {
-				C.ObjectListSetIsFavorite(managerRef.current?.getSelected(), true);
-				break;
-			};
-		};
-
 		close();
 	};
 
 	const onAfterLoad = (message: any) => {
-		switch (type) {
-			case I.ObjectManagerPopup.Favorites: {
-				if (message.records && message.records.length) {
-					managerRef.current?.setSelection(message.records.filter(it => it.isFavorite).map(it => it.id));
-				};
-				break;
-			};
-		};
 	};
 
 	useEffect(() => {

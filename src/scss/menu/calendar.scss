@@ -81,7 +81,7 @@
 
 		.wrap { display: flex; flex-direction: column; }
 		.wrap {
-			.head { @include text-paragraph; flex-shrink: 0; display: flex; justify-content: flex-end; }
+			.head { @include text-paragraph; flex-shrink: 0; display: flex; justify-content: flex-end; padding: 0px 16px; }
 			.head {
 				.number { display: inline-block; }
 
@@ -107,7 +107,7 @@
 
 		.items { overflow-y: auto; flex-grow: 1; max-height: 250px; }
 		.items {
-			.item { display: flex; flex-direction: row; align-items: center; @include text-overflow-nw; }
+			.item { display: flex; flex-direction: row; align-items: center; @include text-overflow-nw; gap: 0px 4px; }
 			.item {
 				.iconObject, .icon { flex-shrink: 0; margin: 0px; }
 				.name { @include text-overflow-nw; }

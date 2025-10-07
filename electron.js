@@ -38,6 +38,7 @@ let deeplinkingUrl = '';
 let waitLibraryPromise = null;
 let mainWindow = null;
 let lastPowerEvent = 'suspend';
+let isReady = false;
 
 MenuManager.store = store;
 
@@ -134,6 +135,7 @@ function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
 		createWindow();
+		isReady = true;
 	}, (err) => {
 		dialog.showErrorBox('Error: failed to run server', err.toString());
 	});
@@ -281,7 +283,12 @@ app.on('before-quit', e => {
 });
 
 app.on('activate', () => { 
-	WindowManager.list.size ? mainWindow.show() : createWindow();
+	if (WindowManager.list.size && mainWindow) {
+		mainWindow.show();
+	} else 
+	if (isReady) {
+		createWindow();
+	};
 });
 
 app.on('open-url', (e, url) => {

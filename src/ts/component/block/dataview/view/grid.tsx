@@ -4,7 +4,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
+import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
@@ -12,10 +12,12 @@ import BodyRow from './grid/body/row';
 import FootRow from './grid/foot/row';
 
 const PADDING = 46;
+const HEIGHT = 48;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
 
 	node: any = null;
+	cache: any = null;
 	ox = 0;
 
 	constructor (props: I.ViewComponent) {
@@ -28,10 +30,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getColumnWidths = this.getColumnWidths.bind(this);
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+		});
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmptyView, getRecords, getLimit, getVisibleRelations, getSubId } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
@@ -41,9 +48,30 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
+		const rowRenderer = ({ key, index, parent, style }) => (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={this.cache}
+				columnIndex={0}
+				rowIndex={index}
+				hasFixedWidth={() => {}}
+			>
+				<BodyRow 
+					key={`grid-row-${view.id + index}`} 
+					{...this.props} 
+					recordId={records[index]}
+					recordIdx={index}
+					style={{ ...style, top: style.top + 2 }}
+					cellPosition={this.cellPosition}
+					getColumnWidths={this.getColumnWidths}
+				/>
+			</CellMeasurer>
+		);
+
 		let content = null;
 		if (!length) {
-			content = getEmpty('view');
+			content = getEmptyView(I.ViewType.Grid);
 		} else
 		if (isInline) {
 			content = (
@@ -81,17 +109,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 												rowCount={length}
 												rowHeight={this.getRowHeight()}
 												onRowsRendered={onRowsRendered}
-												rowRenderer={({ key, index, style }) => (
-													<BodyRow 
-														key={`grid-row-${view.id + index}`} 
-														{...this.props} 
-														recordId={records[index]}
-														recordIdx={index}
-														style={{ ...style, top: style.top + 2 }}
-														cellPosition={this.cellPosition}
-														getColumnWidths={this.getColumnWidths}
-													/>
-												)}
+												deferredMeasurmentCache={this.cache}
+												rowRenderer={rowRenderer}
 												scrollTop={scrollTop}
 											/>
 										</div>
@@ -413,8 +432,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
+			classNameWrap: 'fromBlock',
 			element,
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Right,
 			offsetY: 10,
 			className: isFixed ? 'fixed' : '',
 			onOpen: () => cellLast.addClass('hover'),

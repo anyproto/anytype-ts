@@ -110,7 +110,6 @@ const PageMainSettingsApi = observer(class PageMainSettingsApi extends React.Com
 
 		S.Menu.open('select', {
 			element,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),

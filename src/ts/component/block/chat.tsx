@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallbac
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Label, EmptyState } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Preview, Mark, analytics } from 'Lib';
+import { Label, Title, Icon, Button } from 'Component';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -12,6 +12,9 @@ import SectionDate from './chat/message/date';
 interface RefProps {
 	forceUpdate: () => void;
 	resize: () => void;
+	onDragOver: (e: DragEvent) => void;
+	onDragLeave: (e: DragEvent) => void;
+	onDrop: (e: DragEvent) => void;
 };
 
 const GROUP_TIME = 300;
@@ -19,6 +22,7 @@ const GROUP_TIME = 300;
 const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const { space, showRelativeDates, dateFormat, config, windowId } = S.Common;
+	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
@@ -120,9 +124,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			const messages = message.messages || [];
 
+			if (messages.length < J.Constant.limit.chat.messages) {
+				setIsLoaded(true);
+			};
+
 			loadDepsAndReplies(messages, () => {
 				if (messages.length && clear) {
 					S.Chat.set(subId, messages);
+				} else {
+					setDummy(dummy + 1);
 				};
 
 				if (callBack) {
@@ -176,7 +186,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				isLoading.current = false;
 
 				if (message.error.code) {
-					isLoaded.current = true;
+					setIsLoaded(true);
 
 					if (callBack) {
 						callBack();
@@ -188,7 +198,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				if (dir > 0) {
 					if (messages.length < J.Constant.limit.chat.messages) {
-						isLoaded.current = true;
+						setIsLoaded(true);
 						setIsBottom(true);
 						subscribeMessages(false);
 					} else {
@@ -366,13 +376,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			section.list[0].isFirst = true;
 			section.list[length - 1].isLast = true;
+
+			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
 		});
 
-		sections.sort((c1, c2) => {
-			if (c1.createdAt > c2.createdAt) return 1;
-			if (c1.createdAt < c2.createdAt) return -1;
-			return 0;
-		});
+		sections.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Asc));
 
 		return sections;
 	};
@@ -401,8 +409,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const container = U.Common.getScrollContainer(isPopup);
 
 		const menuParam: Partial<I.MenuParam> = {
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			classNameWrap: 'fromBlock',
 			onOpen: () => {
 				$(message).addClass('hover');
 				container.addClass('over');
@@ -421,7 +428,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 
 						case 'copy': {
-							U.Common.clipboardCopy({ text: item.content.text });
+							const block = new M.Block({
+								type: I.BlockType.Text,
+								content: item.content,
+							});
+					
+							U.Common.clipboardCopy({ 
+								text: U.Common.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								anytype: {
+									range: { from: 0, to: item.content.text.length },
+									blocks: [ block ],
+								},
+							});
 
 							analytics.event('ClickMessageMenuCopy');
 							break;
@@ -499,26 +517,22 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const onScroll = (e: any) => {
 		const subId = getSubId();
-		const node = $(nodeRef.current);
-		const scrollWrapper = $(scrollWrapperRef.current);
-		const formWrapper = node.find('#formWrapper');
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = Math.ceil(container.scrollTop());
-		const fh = formWrapper.outerHeight();
-		const ch = container.outerHeight();
+		const max = U.Common.getMaxScrollHeight(isPopup);
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const dir = top.current > st ? -1 : 1;
+		const isBottom = st >= max;
 
-		setIsBottom(st >= U.Common.getMaxScrollHeight(isPopup));
+		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
 			if (st <= 0) {
 				loadMessages(-1, false);
 			};
 
-			if (st - fh >= scrollWrapper.outerHeight() - ch) {
+			if (isBottom) {
 				loadMessages(1, false);
 			};
 		};
@@ -532,7 +546,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				if (!it.isReadMessage) {
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
 				};
-				if (!it.isReadMention) {
+				if (!it.isReadMention && it.hasMention) {
 					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Mention);
 				};
 			});
@@ -632,26 +646,30 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean): I.Option[] => {
+		const { reactions } = message;
+		const limit = J.Constant.limit.chat.reactions;
+		const self = reactions.filter(it => it.authors.includes(account.id));
+		const noReaction = (self.length >= limit.self) || (reactions.length >= limit.all);
+
 		let options: any[] = [];
 
 		if (message.content.text) {
 			options.push({ id: 'copy', icon: 'chat-copy', name: translate('blockChatCopyText') });
-			if (config.experimental) {
-				options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
-			};
 		};
+
+		options.push({ id: 'link', icon: 'chat-link', name: translate('commonCopyLink') });
 
 		if (message.creator == S.Auth.account.id) {
 			options = options.concat([
 				{ id: 'edit', icon: 'chat-pencil', name: translate('commonEdit') },
 				{ isDiv: true },
-				{ id: 'delete', icon: 'chat-remove', name: translate('commonDelete'), color: 'red' },
+				{ id: 'delete', icon: 'remove-red', name: translate('commonDelete'), color: 'red' },
 			]);
 		};
 
 		if (!noControls) {
 			options = ([
-				{ id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') },
+				!noReaction ? { id: 'reaction', icon: 'chat-reaction', name: translate('blockChatReactionAdd') } : null,
 				{ id: 'reply', icon: 'chat-reply', name: translate('blockChatReply') },
 				options.length ? { isDiv: true } : null,
 			].filter(it => it)).concat(options);
@@ -756,19 +774,18 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onReplyClick = (e: MouseEvent, item: any) => {
-		const subId = getSubId();
-
-		isLoaded.current = false;
-		setIsBottom(false);
-
-		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
-
 		analytics.event('ClickScrollToReply');
+
+		const subId = getSubId();
+		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
 
 		if (message) {
 			scrollToMessage(message.id, true, true);
 			return;
 		};
+
+		setIsLoaded(false);
+		setIsBottom(false);
 
 		C.ChatGetMessagesByIds(chatId, [ item.replyToMessageId ], (message: any) => {
 			if (message.error.code || !message.messages.length) {
@@ -776,10 +793,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			const reply = message.messages[0];
-			if (reply) {
-				S.Chat.clear(subId);
-				loadMessagesByOrderId(reply.orderId, () => scrollToMessage(reply.id, true, true));
-			};
+
+			S.Chat.clear(subId);
+			loadMessagesByOrderId(reply.orderId, () => scrollToMessage(reply.id, true, true));
 		});
 	};
 
@@ -855,6 +871,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		btn.toggleClass('active', !v);
 	};
 
+	const setIsLoaded = (v: boolean) => {
+		isLoaded.current = v;
+	};
+
 	const setAutoLoadDisabled = (v: boolean) => {
 		isAutoLoadDisabled.current = v;
 	};
@@ -917,8 +937,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const sections = getSections();
-	const spaceview = U.Space.getSpaceview();
-	const isEmpty = !initialRender.current && !isLoading.current && !messages.length;
+	const isEmpty = isLoaded.current && !messages.length;
 	const items = getItems();
 
 	useEffect(() => {
@@ -945,13 +964,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	useLayoutEffect(() => {
 		const target = S.Chat.getMessageByOrderId(subId, firstUnreadOrderId);
 		if (target) {
-			scrollToMessage(target.id, false, true);
+			scrollToMessage(target.id);
 		};
 	}, [ firstUnreadOrderId ]);
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 		resize,
+		onDragOver,
+		onDragLeave,
+		onDrop,
 	}));
 
 	return (
@@ -964,11 +986,31 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		>
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{isEmpty ? (
-					<EmptyState
-						text={translate('blockChatEmpty')}
-						buttonText={spaceview.isChat ? translate('blockChatEmptyShareInviteLink') : ''}
-						onButton={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
-					/>
+					<div className="chatEmptyState">
+						<div className="inner">
+							<Title text={translate('blockChatEmptyTitle')} />
+							<div className="item">
+								<Icon className="infinity" />
+								<Label text={translate('blockChatEmptyItem1')} />
+							</div>
+							<div className="item">
+								<Icon className="wifi" />
+								<Label text={translate('blockChatEmptyItem2')} />
+							</div>
+							<div className="item">
+								<Icon className="key" />
+								<Label text={translate('blockChatEmptyItem3')} />
+							</div>
+							<div className="buttons">
+								<Button 
+									onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} 
+									text={translate('blockChatEmptyShareInviteLink')} 
+									className="c28" 
+									color="blank" 
+								/>
+							</div>
+						</div>
+					</div>
 				) : (
 					<div className="scroll">
 						{items.map(item => {
@@ -994,6 +1036,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 										onReplyEdit={e => onReplyEdit(e, item)}
 										onReplyClick={e => onReplyClick(e, item)}
 										getReplyContent={getReplyContent}
+										scrollToBottom={scrollToBottomCheck}
 									/>
 								);
 							};

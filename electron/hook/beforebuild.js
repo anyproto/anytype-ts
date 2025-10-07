@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 exports.default = async function (context) {
     const { platform, arch } = context;
 
-    console.log('[BeforeBuild] platform:', platform.name, 'arch:', arch);
+    console.log('[BeforeBuild]: platform:', platform.name, 'arch:', arch);
 
 	let folder = '';
 	if (platform.name == 'mac') {
@@ -13,7 +13,7 @@ exports.default = async function (context) {
 		folder = `linux-${arch == 'arm64' ? 'arm' : 'amd'}`;
 	};
 
-	console.log('[BeforeBuild] folder:', folder);
+	console.log('[BeforeBuild]: folder:', folder);
 
 	if (!folder) {
 		return;
@@ -27,7 +27,7 @@ exports.default = async function (context) {
 
 		if (fs.existsSync(src)) {
 			fs.copySync(src, dst);
-			console.log('[BeforeBuild] copy', src, dst);
+			console.log('[BeforeBuild]: copy', src, dst);
 		};
 	});
 };

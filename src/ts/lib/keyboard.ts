@@ -148,7 +148,7 @@ class Keyboard {
 	 * @param {any} e - The keyboard event.
 	 */
 	onKeyDown (e: any) {
-		const { theme, pin } = S.Common;
+		const { config, theme, pin } = S.Common;
 		const isPopup = this.isPopup();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -158,6 +158,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const showWidget = !isPopup && space.isChat;
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -221,9 +222,12 @@ class Keyboard {
 		});
 
 		// Switch dark/light mode
-		this.shortcut('theme', e, () => {
-			Action.themeSet(!theme ? 'dark' : '');
-		});
+		this.shortcut('theme', e, () => Action.themeSet(!theme ? 'dark' : ''));
+
+		// Show/Hide menu bar on Windows
+		if (U.Common.isPlatformWindows()) {
+			this.shortcut('systemMenu', e, () => Renderer.send('setMenuBarVisibility', !config.showMenuBar)) ;
+		};
 
 		if (isMain) {
 
@@ -337,6 +341,14 @@ class Keyboard {
 				S.Popup.open('logout', {});
 			});
 
+			// Chat widget panel
+			if (showWidget) {
+				this.shortcut('chatPanel', e, () => {
+					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+					analytics.event('ScreenChatSidebar');
+				});
+			};
+
 			if (canWrite) {
 				// Create new page
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
@@ -368,8 +380,7 @@ class Keyboard {
 				// Add to favorites
 				this.shortcut('addFavorite', e, () => {
 					e.preventDefault();
-
-					Action.setIsFavorite([ rootId ], !object.isFavorite, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, analytics.route.shortcut);
 				});
 			};
 
@@ -409,7 +420,7 @@ class Keyboard {
 					vertical = I.MenuDirection.Center;
 				};
 
-				Action.spaceCreateMenu({
+				U.Menu.spaceCreate({
 					element,
 					rect,
 					className: 'spaceCreate fixed',
@@ -525,6 +536,8 @@ class Keyboard {
 				} else {
 					history.goBack();
 				};
+
+				U.Router.checkSidebarState();
 			};
 		};
 
@@ -684,7 +697,7 @@ class Keyboard {
 			};
 
 			case 'createObject': {
-				this.pageCreate({}, route, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+				this.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 
@@ -834,7 +847,9 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
-				Storage.delete('primitivesOnboarding');
+				Storage.delete('chatsOnboarding');
+
+				location.reload();
 				break;
 			};
 
@@ -1245,7 +1260,11 @@ class Keyboard {
 	 */
 	getPopupMatch () {
 		const popup = S.Popup.get('page');
-		return popup && popup?.param.data.matchPopup || {};
+		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
+
+		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
+
+		return match;
 	};
 
 	/**
@@ -1253,7 +1272,47 @@ class Keyboard {
 	 * @returns {any} The route match object.
 	 */
 	getRouteMatch () {
-		return U.Router.getParam(U.Router.getRoute()) || {};
+		const route = U.Router.getRoute();
+		const params = Object.assign(U.Router.getParam(route), this.checkUniversalRoutes(route));
+
+		return { route, params };
+	};
+
+	checkUniversalRoutes (route: string) {
+		route = String(route || '');
+
+		const data = U.Common.searchParam(U.Router.getSearch());
+
+		let ret: any = {};
+
+		// Universal object route
+		if (route.match(/^\/object/)) {
+			ret = {
+				page: 'main',
+				action: 'object',
+				...data,
+				id: data.objectId,
+			};
+		};
+
+		// Invite route
+		if (route.match(/^\/invite/)) {
+			ret = {
+				page: 'main',
+				action: 'invite',
+				...data,
+			};
+		};
+
+		// Membership route
+		if (route.match(/^\/membership/)) {
+			ret = {
+				page: 'main',
+				action: 'membership',
+			};
+		};
+
+		return ret;
 	};
 
 	/**
@@ -1270,8 +1329,7 @@ class Keyboard {
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
-			ret.route = U.Router.getRoute();
-			ret.params = this.getRouteMatch();
+			ret = this.getRouteMatch();
 			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
@@ -1312,7 +1370,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMain () {
-		return this.getRouteMatch().page == 'main';
+		return this.getRouteMatch().params.page == 'main';
 	};
 	
 	/**
@@ -1320,7 +1378,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainEditor () {
-		return this.isMain() && (this.getRouteMatch().action == 'edit');
+		return this.isMain() && (this.getRouteMatch().params.action == 'edit');
 	};
 
 	/**
@@ -1328,7 +1386,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSet () {
-		return this.isMain() && (this.getRouteMatch().action == 'set');
+		return this.isMain() && (this.getRouteMatch().params.action == 'set');
 	};
 
 	/**
@@ -1336,7 +1394,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainGraph () {
-		return this.isMain() && (this.getRouteMatch().action == 'graph');
+		return this.isMain() && (this.getRouteMatch().params.action == 'graph');
 	};
 
 	/**
@@ -1344,7 +1402,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainChat () {
-		return this.isMain() && (this.getRouteMatch().action == 'chat');
+		return this.isMain() && (this.getRouteMatch().params.action == 'chat');
 	};
 
 	/**
@@ -1352,7 +1410,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainIndex () {
-		return this.isMain() && (this.getRouteMatch().action == 'index');
+		return this.isMain() && (this.getRouteMatch().params.action == 'index');
 	};
 
 	/**
@@ -1360,15 +1418,16 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainHistory () {
-		return this.isMain() && (this.getRouteMatch().action == 'history');
+		return this.isMain() && (this.getRouteMatch().params.action == 'history');
 	};
 
 	/**
 	 * Returns true if the current context is the main void view.
 	 * @returns {boolean}
 	 */
-	isMainVoid () {
-		return this.isMain() && (this.getRouteMatch().action == 'void');
+	isMainVoidError () {
+		const match = this.getRouteMatch();
+		return this.isMain() && (match.params.action == 'void') && (match.params.id == 'error');
 	};
 
 	/**
@@ -1376,7 +1435,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainType () {
-		return this.isMain() && (this.getRouteMatch().action == 'type');
+		return this.isMain() && (this.getRouteMatch().params.action == 'type');
 	};
 
 	/**
@@ -1384,7 +1443,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isMainSettings () {
-		return this.isMain() && (this.getRouteMatch().action == 'settings');
+		return this.isMain() && (this.getRouteMatch().params.action == 'settings');
 	};
 
 	/**
@@ -1392,7 +1451,7 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuth () {
-		return this.getRouteMatch().page == 'auth';
+		return this.getRouteMatch().params.page == 'auth';
 	};
 
 	/**
@@ -1400,7 +1459,23 @@ class Keyboard {
 	 * @returns {boolean}
 	 */
 	isAuthPinCheck () {
-		return this.isAuth() && (this.getRouteMatch().action == 'pin-check');
+		return this.isAuth() && (this.getRouteMatch().params.action == 'pin-check');
+	};
+
+	/**
+	 * Returns true if the current popup context is the main view.
+	 * @returns {boolean}
+	 */
+	isPopupMain () {
+		return (this.getPopupMatch().params.page == 'main');
+	};
+
+	/**
+	 * Returns true if the current popup context is the main history view.
+	 * @returns {boolean}
+	 */
+	isPopupMainHistory () {
+		return this.isPopupMain() && (this.getPopupMatch().params.action == 'history');
 	};
 	
 	/**

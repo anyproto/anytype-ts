@@ -26,7 +26,6 @@ export enum BlockType {
 	Cover				 = 'cover',
 	Relation			 = 'relation',
 	Featured			 = 'featured',
-	Type				 = 'type',
 	Embed				 = 'latex',
 	Table				 = 'table',
 	TableColumn			 = 'tableColumn',
@@ -151,7 +150,6 @@ export interface Block {
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
 	isRelation?(): boolean;
-	isType?(): boolean;
 	isChat?(): boolean;
 	isCover?(): boolean;
 

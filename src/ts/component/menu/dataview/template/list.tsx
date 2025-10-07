@@ -240,7 +240,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				classNameWrap,
 				menuKey: item.id,
 				element: `#${getId()} #item-more-${item.id}`,
-				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				subIds: J.Menu.dataviewTemplate,
 				onOpen: () => node.addClass('active'),
