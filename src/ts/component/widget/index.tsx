@@ -40,11 +40,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
+	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isSectionType = block.content.section == I.WidgetSection.Type;
-	const isChat = targetId == J.Constant.widgetId.chat;
+	const isChat = (targetId == J.Constant.widgetId.chat) || U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
-	const object = getObject(targetId);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);

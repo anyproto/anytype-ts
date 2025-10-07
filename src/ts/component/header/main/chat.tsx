@@ -1,13 +1,16 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
+import { I, S, U, keyboard, sidebar, translate, analytics, Action } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, renderLeftIcons, isPopup } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
+	const canWrite = U.Space.canMyParticipantWrite();
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
 
 	let object = null;
 	if (rootId == S.Block.workspace) {
@@ -17,10 +20,14 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const isDeleted = object._empty_ || object.isDeleted;
-	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const showRelations = !isDeleted;
 	const readonly = object.isArchived;
+	const showRelations = !isDeleted;
+	const showPin = canWrite;
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
+
+	const onPin = () => {
+		Action.toggleWidgetsForObject(rootId, analytics.route.header);
+	};
 
 	const onRelation = () => {
 		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
@@ -96,6 +103,20 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
 						onClick={onRelation} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
+
+				{showPin ? (
+					<Icon 
+						id="button-header-pin" 
+						tooltipParam={{ 
+							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'), 
+							caption: keyboard.getCaption('addFavorite'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+						className={[ (hasWidget ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
+						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}

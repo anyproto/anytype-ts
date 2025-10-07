@@ -26,7 +26,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
-	const hasWidget = S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length ? true : false;
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
 	const spaceview = U.Space.getSpaceview();
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
 
