@@ -2,15 +2,14 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, DragEvent } 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Header, Footer, Block, Deleted, HeadSimple } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
+import { Header, Footer, Block, Deleted } from 'Component';
+import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
 	const headerRef = useRef(null);
-	const headRef = useRef(null);
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
@@ -38,7 +37,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			};
 
 			headerRef.current?.forceUpdate();
-			headRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
 
 			resize();
@@ -85,8 +83,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			const scrollWrapper = node.find('#scrollWrapper');
 			const formWrapper = node.find('#formWrapper');
 			const fh = Number(formWrapper.outerHeight(true)) || 0;
-			const hh = Number($(headRef.current?.getNode()).outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - J.Size.header - fh - hh;
+			const mh = scrollContainer.height() - J.Size.header - fh;
 
 			scrollWrapper.css({ minHeight: mh });
 			chatRef.current?.ref?.resize();
@@ -132,15 +129,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				>
 					<div className="editorWrapper isChat">
 						<div ref={blocksRef} className="blocks">
-							<HeadSimple 
-								{...props} 
-								ref={headRef} 
-								placeholder={translate('defaultNamePage')} 
-								rootId={rootId} 
-								isContextMenuDisabled={true}
-								noIcon={true}
-							/>
-
 							<Block
 								{...props}
 								ref={chatRef}

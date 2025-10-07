@@ -8,8 +8,23 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const { rootId, renderLeftIcons, isPopup } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
+
+	let object = null;
+	if (rootId == S.Block.workspace) {
+		object = spaceview;
+	} else {
+		object = S.Detail.get(rootId, rootId, []);
+	};
+
+	const isDeleted = object._empty_ || object.isDeleted;
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const showRelations = !isDeleted;
+	const readonly = object.isArchived;
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
+
+	const onRelation = () => {
+		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+	};
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
@@ -51,13 +66,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		});
 	};
 
-	let object = null;
-	if (rootId == S.Block.workspace) {
-		object = spaceview;
-	} else {
-		object = S.Detail.get(rootId, rootId, []);
-	};
-
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 	}));
@@ -81,6 +89,16 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					onClick={() => U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
+
+				{showRelations ? (
+					<Icon 
+						id="button-header-relation" 
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						onClick={onRelation} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
 
 				<Icon 
 					id="button-header-more"
