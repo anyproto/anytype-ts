@@ -21,7 +21,7 @@ const GROUP_TIME = 300;
 
 const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
-	const { space, windowId } = S.Common;
+	const { space } = S.Common;
 	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
 	const nodeRef = useRef(null);
@@ -32,12 +32,12 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const timeoutScrollStop = useRef(0);
 	const top = useRef(0);
 	const scrolledItems = useRef(new Set());
-	const isLoaded = useRef(false);
 	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
+	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
 	const initialRender = useRef(true);
 
@@ -149,7 +149,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		if (!clear && (dir > 0) && isLoaded.current) {
+		if (!clear && (dir > 0) && isLoaded) {
 			setIsBottom(true);
 			return;
 		};
@@ -871,10 +871,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		btn.toggleClass('active', !v);
 	};
 
-	const setIsLoaded = (v: boolean) => {
-		isLoaded.current = v;
-	};
-
 	const setAutoLoadDisabled = (v: boolean) => {
 		isAutoLoadDisabled.current = v;
 	};
@@ -937,8 +933,69 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const sections = getSections();
-	const isEmpty = isLoaded.current && !messages.length;
+	const isEmpty = isLoaded && !messages.length;
 	const items = getItems();
+
+	let content = null;
+	if (isEmpty) {
+		content = (
+			<div className="chatEmptyState">
+				<div className="inner">
+					<Title text={translate('blockChatEmptyTitle')} />
+					<div className="item">
+						<Icon className="infinity" />
+						<Label text={translate('blockChatEmptyItem1')} />
+					</div>
+					<div className="item">
+						<Icon className="wifi" />
+						<Label text={translate('blockChatEmptyItem2')} />
+					</div>
+					<div className="item">
+						<Icon className="key" />
+						<Label text={translate('blockChatEmptyItem3')} />
+					</div>
+					<div className="buttons">
+						<Button 
+							onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} 
+							text={translate('blockChatEmptyShareInviteLink')} 
+							className="c28" 
+							color="blank" 
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	} else {
+		content = (
+			<div className="scroll">
+				{items.map(item => {
+					if (item.isSection) {
+						return <SectionDate key={item.key} date={item.createdAt} />;
+					} else {
+						return (
+							<Message
+								ref={ref => messageRefs.current[item.id] = ref}
+								key={item.id}
+								{...props}
+								id={item.id}
+								rootId={chatId}
+								blockId={block.id}
+								subId={subId}
+								isNew={item.orderId == firstUnreadOrderId}
+								hasMore={!!getMessageMenuOptions(item, true).length}
+								onContextMenu={e => onContextMenu(e, item)}
+								onMore={e => onContextMenu(e, item, true)}
+								onReplyEdit={e => onReplyEdit(e, item)}
+								onReplyClick={e => onReplyClick(e, item)}
+								getReplyContent={getReplyContent}
+								scrollToBottom={scrollToBottomCheck}
+							/>
+						);
+					};
+				})}
+			</div>
+		);
+	};
 
 	useEffect(() => {
 		rebind();
@@ -985,61 +1042,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			onDrop={onDrop}
 		>
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
-				{isEmpty ? (
-					<div className="chatEmptyState">
-						<div className="inner">
-							<Title text={translate('blockChatEmptyTitle')} />
-							<div className="item">
-								<Icon className="infinity" />
-								<Label text={translate('blockChatEmptyItem1')} />
-							</div>
-							<div className="item">
-								<Icon className="wifi" />
-								<Label text={translate('blockChatEmptyItem2')} />
-							</div>
-							<div className="item">
-								<Icon className="key" />
-								<Label text={translate('blockChatEmptyItem3')} />
-							</div>
-							<div className="buttons">
-								<Button 
-									onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} 
-									text={translate('blockChatEmptyShareInviteLink')} 
-									className="c28" 
-									color="blank" 
-								/>
-							</div>
-						</div>
-					</div>
-				) : (
-					<div className="scroll">
-						{items.map(item => {
-							if (item.isSection) {
-								return <SectionDate key={item.key} date={item.createdAt} />;
-							} else {
-								return (
-									<Message
-										ref={ref => messageRefs.current[item.id] = ref}
-										key={item.id}
-										{...props}
-										id={item.id}
-										rootId={chatId}
-										blockId={block.id}
-										subId={subId}
-										isNew={item.orderId == firstUnreadOrderId}
-										hasMore={!!getMessageMenuOptions(item, true).length}
-										onContextMenu={e => onContextMenu(e, item)}
-										onMore={e => onContextMenu(e, item, true)}
-										onReplyEdit={e => onReplyEdit(e, item)}
-										onReplyClick={e => onReplyClick(e, item)}
-										getReplyContent={getReplyContent}
-										scrollToBottom={scrollToBottomCheck}
-									/>
-								);
-							};
-						})}
-					</div>
-				)}
+				{content}
 			</div>
 
 			<Form 
