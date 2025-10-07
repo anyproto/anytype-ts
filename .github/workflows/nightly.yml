@@ -360,7 +360,7 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           APPLETEAM: ${{ secrets.APPLETEAM }}
           USE_HARD_LINKS: false
-          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
@@ -380,7 +380,7 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
