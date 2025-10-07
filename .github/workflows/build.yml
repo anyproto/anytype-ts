@@ -112,6 +112,7 @@ jobs:
           APPLETEAM: ${{ secrets.APPLETEAM }}
           USE_HARD_LINKS: false
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_DSN: ${{ secrets.$SENTRY_DSN }}
 
       - name: Build Front Other
         if: ${{ !startsWith(matrix.os, 'macos-') }}
@@ -128,6 +129,7 @@ jobs:
           AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_DSN: ${{ secrets.$SENTRY_DSN }}
 
       - name: Make artifacts dir
         run: |
