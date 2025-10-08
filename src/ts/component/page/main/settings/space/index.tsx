@@ -326,6 +326,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		this.refMode?.setValue(String(space.notificationMode));
+		this.refUxType?.setValue(String(space.uxType));
 	};
 
 	setInvite (cid: string, key: string) {
