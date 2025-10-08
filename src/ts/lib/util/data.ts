@@ -355,7 +355,7 @@ class UtilData {
 				S.Chat.setState(spaceSubId, { 
 					mentions: { counter: obj.mentionCounter, orderId: '' }, 
 					messages: { counter: obj.messageCounter, orderId: '' },
-					lastMessageDate: Number(message?.createdAt || 0),
+					lastMessageDate: obj.lastMessageDate,
 					lastStateId: '',
 					order: 0,
 				}, false);

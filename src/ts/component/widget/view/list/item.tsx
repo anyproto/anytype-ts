@@ -125,8 +125,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			descr = <Label className="descr" text={U.Common.shortUrl(source)} />;
 		} else 
 		if (isChat) {
-			const list = S.Chat.getList(S.Chat.getChatSubId(J.Constant.subId.chatPreview, space, id));
-			const last = list.length ? list[list.length - 1] : null;
+			const list = S.Chat.getList(S.Chat.getChatSubId(J.Constant.subId.chatPreview, space, id)).slice(0).
+				sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+
+			const last = list.length ? list[0] : null;
 			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
 
 			descr = <Label className="descr" text={text} />;

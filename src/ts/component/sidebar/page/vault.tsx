@@ -168,9 +168,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			it.lastMessage = '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 
-			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
+			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId)).slice(0);
 			if (list.length) {
-				it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]);
+				list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+				it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, list[0]);
 			};
 
 			return it;
