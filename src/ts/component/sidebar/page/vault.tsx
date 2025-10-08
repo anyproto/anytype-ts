@@ -166,10 +166,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				return it;
 			};
 
-			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
-
-			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
+			it.lastMessage = '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+
+			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
+			if (list.length) {
+				it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]);
+			};
 
 			return it;
 		});

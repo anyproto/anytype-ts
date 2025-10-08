@@ -211,8 +211,8 @@ class ChatStore {
 	 * @param {string} chatId - The chat ID.
 	 * @returns {string} The subscription ID.
 	 */
-	getChatSubId (spaceId: string, chatId: string): string {
-		return [ '', spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.windowId ].join('-');
+	getChatSubId (prefix: string, spaceId: string, chatId: string): string {
+		return [ prefix, spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.windowId ].join('-');
 	};
 
 	/**
@@ -504,12 +504,12 @@ class ChatStore {
 			return '';
 		};
 
+		const ret = [];
 		const participantId = U.Space.getParticipantId(spaceId, creator);
 		const author = dependencies.get(participantId);
-		const ret = [];
 
 		if (author) {
-			ret.push(`${author.name}:`);
+			ret.push(`<b>${U.Object.name(author)}</b>:`);
 		};
 
 		if (text) {

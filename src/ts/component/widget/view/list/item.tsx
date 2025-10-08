@@ -35,6 +35,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
+	const isBookmark = U.Object.isBookmarkLayout(object.layout);
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
@@ -119,8 +120,14 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (!isCompact) {
-		if (U.Object.isBookmarkLayout(object.layout)) {
-			descr = <div className="descr">{U.Common.shortUrl(source)}</div>;
+		if (isBookmark) {
+			descr = <Label className="descr" text={U.Common.shortUrl(source)} />;
+		} else 
+		if (isChat) {
+			const list = S.Chat.getList(S.Chat.getChatSubId('preview', space, id));
+			const text = list.length ? S.Chat.getMessageSimpleText(space, list[list.length - 1]) : translate('widgetNoMessages');
+
+			descr = <Label className="descr" text={text} />;
 		} else {
 			descr = <ObjectDescription object={object} />;
 		};

@@ -326,7 +326,7 @@ class UtilData {
 			for (const item of message.previews) {
 				const { spaceId, chatId, message, state, dependencies } = item;
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
-				const chatSubId = S.Chat.getChatSubId(spaceId, chatId);
+				const chatSubId = S.Chat.getChatSubId('preview', spaceId, chatId);
 				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
 
 				obj.mentionCounter += state.mentions.counter || 0;
@@ -342,7 +342,9 @@ class UtilData {
 
 				if (message) {
 					message.dependencies = dependencies;
+
 					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
+					S.Chat.add(chatSubId, 0, new M.ChatMessage(message));
 				};
 			};
 

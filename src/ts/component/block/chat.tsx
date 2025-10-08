@@ -47,7 +47,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const getSubId = () => {
-		return S.Chat.getChatSubId(space, getChatId());
+		return S.Chat.getChatSubId('chat', space, getChatId());
 	};
 
 	const chatId = getChatId();
