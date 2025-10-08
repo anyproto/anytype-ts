@@ -1041,11 +1041,6 @@ class BlockStore {
 			childrenIds.push(J.Constant.widgetId.bin);
 		};
 
-		if (!spaceview.isChat && spaceview.chatId && !childrenIds.includes(J.Constant.widgetId.chat)) {
-			this.createWidget(J.Constant.widgetId.chat, I.WidgetSection.Button);
-			childrenIds.push(J.Constant.widgetId.chat);
-		};
-
 		this.updateStructure(widgets, widgets, childrenIds);
 		this.updateStructureParents(widgets);
 	};

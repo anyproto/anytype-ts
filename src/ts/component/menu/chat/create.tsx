@@ -10,18 +10,22 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const details = data.details || {};
 	const editableRef = useRef(null);
 	const buttonRef = useRef(null);
+	const nameRef = useRef(details.name || '');
 	const [ error, setError ] = useState('');
+	const isEditing = !!details.id;
 
 	const onKeyDown = (e: KeyboardEvent) => {
 		keyboard.shortcut('enter', e, () => onSubmit);
 	};
 
-	const onSubmit = () => {
-		const name = String(editableRef.current?.getTextValue() || '').trim();
+	const onKeyUp = (e: KeyboardEvent) => {
+		nameRef.current = String(editableRef.current?.getTextValue() || '').trim();
+	};
 
+	const onSubmit = () => {
 		buttonRef.current?.setLoading(true);
 
-		C.ObjectCreate({ ...details, name }, [], '', J.Constant.typeKey.chatDerived, S.Common.space, (message: any) => {
+		const cb = (message: any) => {
 			buttonRef.current?.setLoading(false);
 
 			if (message.error.code) {
@@ -29,14 +33,34 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			} else {
 				close();
 			};
-		});
+		};
+
+		console.log(isEditing);
+
+		if (isEditing) {
+			const keys = [ 'name', 'iconEmoji', 'iconImage' ];
+
+			details.name = nameRef.current;
+
+			if (details.iconImage) {
+				details.iconEmoji = '';
+			};
+
+			C.ObjectListSetDetails([ details.id ], keys.map(key => ({ key, value: details[key] })), cb);
+		} else {
+			C.ObjectCreate({ ...details, name: nameRef.current }, [], '', J.Constant.typeKey.chatDerived, S.Common.space, cb);
+		};
+	};
+
+	const setValue = (v: string) => {
+		editableRef.current?.setValue(v);
+		editableRef.current?.placeholderCheck();
+		editableRef.current?.setFocus();
 	};
 
 	useEffect(() => {
-		editableRef.current?.setValue(details.name);
-		editableRef.current?.placeholderCheck();
-		editableRef.current?.setFocus();
-	});
+		setValue(nameRef.current);
+	}, []);
 
 	return (
 		<>
@@ -46,7 +70,7 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				iconSize={48} 
 				object={{ ...details, layout: I.ObjectLayout.Chat }} 
 				canEdit={true} 
-				noUpload={true}
+				noUpload={!isEditing}
 				menuParam={{ 
 					horizontal: I.MenuDirection.Center,
 					className, 
@@ -54,6 +78,7 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					offsetY: 4,
 				}}
 				onSelect={icon => details.iconEmoji = icon}
+				onUpload={hash => details.iconImage = hash}
 			/>
 
 			<Editable 
@@ -61,11 +86,12 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				placeholder={translate('menuChatCreatePlaceholder')} 
 				focusOnMount={true}
 				onKeyDown={onKeyDown}
+				onKeyUp={onKeyUp}
 			/>
 
 			<Button 
 				ref={buttonRef}
-				text={translate('commonCreateChat')} 
+				text={isEditing ? translate('commonSaveChat') : translate('commonCreateChat')} 
 				color="accent" 
 				onClick={onSubmit} 
 			/>

@@ -155,7 +155,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		} else {
 			const blockWidgets = this.getBlockWidgets();
 			const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
-			const chatBlock = blockWidgets.find(it => it.id == J.Constant.widgetId.chat);
 			const sections = [
 				{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 				{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
@@ -243,19 +242,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								/>
 							)}
 						</DropTarget>
-					) : ''}
-
-					{chatBlock ? (
-						<Widget
-							block={chatBlock}
-							disableContextMenu={true}
-							isEditing={false}
-							canEdit={false}
-							canRemove={false}
-							disableAnimation={true}
-							sidebarDirection={sidebarDirection}
-							getObject={id => this.getObject(chatBlock, id)}
-						/>
 					) : ''}
 
 					{sections.map(section => {
@@ -953,11 +939,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			const target = child.getTargetObjectId();
 
-			if ([ J.Constant.widgetId.allObject ].includes(target)) {
+			if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
 				return false;
 			};
 
-			if ([ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
 				return false;
 			};
 

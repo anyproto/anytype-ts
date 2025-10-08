@@ -788,6 +788,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onObjectMenu (e: any, dir: number, layout: I.ObjectLayout, groupId?: string, param?: Partial<I.MenuParam>) {
+		param = param || {};
 		param.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 		param.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
 		param.offsetX = dir < 0 ? -24 : 0;

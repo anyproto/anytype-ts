@@ -1,11 +1,11 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, keyboard, sidebar, translate, analytics, Action } from 'Lib';
+import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, renderLeftIcons, isPopup } = props;
+	const { rootId, isPopup, menuOpen, renderLeftIcons } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -52,24 +52,15 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onMore = () => {
-		const element = $('#button-header-more');
-		const st = $(window).scrollTop();
-
-		const menuParam: I.MenuParam = {
-			element: '#button-header-more',
+		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			offsetY: 4,
-		};
-
-		if (!isPopup) {
-			menuParam.fixedY = element.offset().top + element.height() - st + 4;
-			menuParam.classNameWrap = 'fixed fromHeader';
-		};
-
-		U.Menu.spaceContext(spaceview, menuParam, { 
-			noPin: true, 
-			noDivider: true,
-			route: analytics.route.chat
+			subIds: J.Menu.object,
+			data: {
+				rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
+				isPopup,
+			}
 		});
 	};
 

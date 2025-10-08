@@ -43,7 +43,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isSectionType = block.content.section == I.WidgetSection.Type;
-	const isChat = (targetId == J.Constant.widgetId.chat) || U.Object.isChatLayout(object?.layout);
+	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
@@ -647,12 +647,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (targetId == J.Constant.widgetId.bin) {
-			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-		} else 
-		if (targetId == J.Constant.widgetId.chat) {
-			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-		} else
 		if (isSystemTarget) {
 			onSetPreview();
 		} else {
