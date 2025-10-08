@@ -200,7 +200,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
-		if (this.props.details.isNew) {
+		const details = this.props.details || {};
+
+		if (details.isNew) {
 			return;
 		};
 
@@ -220,7 +222,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const details: any = this.props.details || {};
 		const type = S.Record.getTypeType();
 
-		if (!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
+		if (!type || !U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
 			return;
 		};
 

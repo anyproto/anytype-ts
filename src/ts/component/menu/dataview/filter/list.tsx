@@ -214,7 +214,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{...props}
 					key={item.id} 
 					{...item} 
-					subId={subId}
+					subId={rootId}
 					index={param.index} 
 					style={param.style} 
 					readonly={isReadonly}
@@ -299,7 +299,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 												ref={listRef}
 												width={width}
 												height={height}
-												deferredMeasurementCache={cache.current}
+												deferredMeasurmentCache={cache.current}
 												rowCount={items.length}
 												rowHeight={HEIGHT}
 												rowRenderer={rowRenderer}

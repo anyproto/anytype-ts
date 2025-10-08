@@ -17,6 +17,7 @@ interface Props {
 
 interface PropsRef {
 	forceUpdate: () => void;
+	getNode: () => any;
 };
 
 const EDITORS = [ 
@@ -26,7 +27,7 @@ const EDITORS = [
 
 const SUB_ID_CHECK = 'headSimple-check';
 
-const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 
 	const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup, relationKey, getDotMap } = props;
 	const check = U.Data.checkDetails(rootId, '', []);
@@ -404,6 +405,7 @@ const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
+		getNode: () => nodeRef.current,
 	}));
 
 	if (object._empty_) {

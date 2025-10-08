@@ -8,7 +8,6 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 
 	const nodeRef = useRef(null);
 	const timeout = useRef(0);
-	const [ error, setError ] = useState('');
 	const { item, style, resize } = props;
 	const { space } = S.Common;
 	const { id, type, payload, title, text } = item;
@@ -117,7 +116,6 @@ const Notification: FC<I.NotificationComponent> = observer((props) => {
 			<div className="content">
 				{title ? <Title text={title} /> : ''}
 				{text ? <Label text={text} /> : ''}
-				<Error text={error} />
 
 				{buttons.length ? (
 					<div className="buttons">

@@ -2,17 +2,15 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, Mo
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, Banner } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, Renderer, translate, Action, analytics } from 'Lib';
+import { Icon } from 'Component';
+import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight } from 'Lib';
 
 import PageWidget from './page/widget';
-import PageAllObject from './page/allObject';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
 
 const Components = {
-	allObject:			 PageAllObject,
 	widget:				 PageWidget,
 	vault:				 PageVault,
 	settings:			 PageSettingsIndex,
@@ -57,7 +55,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onCreate = () => {
-		Action.spaceCreateMenu({
+		Storage.setHighlight('createSpace', false);
+		Highlight.hide('createSpace');
+
+		U.Menu.spaceCreate({
 			element: `#sidebarRightButton`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',

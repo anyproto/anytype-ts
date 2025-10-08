@@ -3,6 +3,7 @@ import { I } from 'Lib';
 export enum WidgetSection {
 	Pin			 = 0,
 	Type		 = 1,
+	Button		 = 2,
 };
 
 export enum WidgetLayout { 
@@ -30,7 +31,6 @@ export interface WidgetComponent {
 	getData?: (subId: string, callBack?: () => void) => void;
 	getLimit?: () => number;
 	getTraceId?: () => string;
-	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;

@@ -79,14 +79,6 @@ input, textarea, select { font-family: 'Inter'; }
 
 .ReactVirtualized__List { overscroll-behavior: none; }
 
-html.platformWindows {
-	body { overflow-y: overlay; }
-}
-
-html.platformLinux {
-	body { overflow-y: auto; }
-}
-
 .customScrollbar {
 	::-webkit-scrollbar, &::-webkit-scrollbar { width: 6px; height: 6px; }
 	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
@@ -95,13 +87,6 @@ html.platformLinux {
 }
 .customScrollbar:hover {
 	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: var(--color-control-active); }
-}
-
-html.platformWindows, html.platformLinux {
-	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
-	::-webkit-scrollbar-corner { background-color: transparent; }
-	::-webkit-scrollbar-button { display: none; }
 }
 
 .dn { display: none !important; }
@@ -250,6 +235,21 @@ a { color: var(--color-text-primary); }
 @import "./media/print.scss";
 @import "./theme/dark/common.scss";
 
+html.platformWindows {
+	body { overflow-y: overlay; }
+}
+
+html.platformLinux {
+	body { overflow-y: auto; }
+}
+
+html.platformWindows, html.platformLinux {
+	::-webkit-scrollbar { width: 6px; height: 6px; }
+	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
+	::-webkit-scrollbar-corner { background-color: transparent; }
+	::-webkit-scrollbar-button { display: none; }
+}
+
 html.platformWindows:not(.noMenuBar) {
 	#menuBar { 
 		height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
@@ -260,7 +260,10 @@ html.platformWindows:not(.noMenuBar) {
 		.side.left { justify-content: flex-start; gap: 0px 2px; }
 		.side.right { justify-content: flex-end; }
 
-		.icon { width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; }
+		.icon { 
+			width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; 
+			transition: background-color $transitionCommon;
+		}
 		.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
 		.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
 		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }

@@ -13,22 +13,30 @@ class UtilSpace {
 			param.replace = true;
 		};
 
-		const space = this.getSpaceview();
-
-		if (!space || space._empty_ || space.isAccountDeleted || !space.isLocalOk) {
-			this.openFirstSpaceOrVoid(null, param);
-			return;
-		};
-
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();
 		};
+
 		if (!home) {
 			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
 		};
 
 		U.Object.openRoute(home, param);
+	};
+
+	openDashboardOrVoid (param?: any) {
+		param = param || {};
+
+		if (undefined === param.replace) {
+			param.replace = true;
+		};
+		
+		if (S.Common.space) {
+			U.Space.openDashboard(param);
+		} else {
+			U.Router.go('/main/void/select', param);
+		};
 	};
 
 	/**
@@ -48,7 +56,7 @@ class UtilSpace {
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			U.Router.go('/main/void', param);
+			U.Router.go('/main/void/error', param);
 		};
 	};
 
@@ -169,6 +177,14 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the list of shared that user owns;
+	 * @returns {any[]} The list of active spaces.
+	 */
+	getMySharedSpacesList () {
+		return this.getList().filter(it => U.Space.isMyOwner(it.targetSpaceId) && it.isShared);
+	};
+
+	/**
 	 * Gets the spaceview object for a given ID or the current spaceview.
 	 * @param {string} [id] - The spaceview ID.
 	 * @returns {any} The spaceview object.
@@ -183,7 +199,13 @@ class UtilSpace {
 	 * @returns {any} The spaceview object.
 	 */
 	getSpaceviewBySpaceId (id: string) {
-		return S.Record.getRecords(J.Constant.subId.space).find(it => it.targetSpaceId == id);
+		const viewId = S.Record.spaceMap.get(id);
+		if (!viewId) {
+			return null;
+		};	
+
+		const ret = S.Detail.get(J.Constant.subId.space, viewId);
+		return ret._empty_ ? null : ret;
 	};
 
 	/**
@@ -413,7 +435,8 @@ class UtilSpace {
 	 */
 	getDefaultSidebarPage (id?: string): string {
 		const space = this.getSpaceview(id);
-		return space?.isChat ? 'vault' : 'widget';
+
+		return space._empty_ || space?.isChat ? 'vault' : 'widget';
 	};
 
 };

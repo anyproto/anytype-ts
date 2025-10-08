@@ -1,13 +1,13 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, J, U, S, C, translate, analytics } from 'Lib';
+import { I, J, U, S, C, translate, analytics, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 
 const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
-	const { rootId, object, readonly, onChange } = props;
+	const { rootId, object, readonly, isPopup, onChange } = props;
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
 	const templateId = object?.defaultTemplateId;
@@ -32,6 +32,17 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 
 			analytics.event('CreateTemplate', { objectType: rootId });
 			U.Object.openConfig(object);
+		});
+	};
+
+	const onClick = (e: any, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		sidebar.rightPanelClose(true);
+
+		U.Object.openConfig(item, {
+			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
 		});
 	};
 
@@ -69,9 +80,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 					noToast: true,
 					route: '',
 					onDuplicate: object => U.Object.openConfig(object, {}),
-					onSetDefault: id => {
-						onChange({ defaultTemplateId: id });
-					},
+					onSetDefault: id => onChange({ defaultTemplateId: id }),
 				},
 			});
 		});
@@ -92,6 +101,7 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 				rootId={item.id}
 				className={cn.join(' ')}
 				size={I.PreviewSize.Small}
+				onClick={e => onClick(e, item)}
 				onMore={onMoreHandler}
 				onContextMenu={onMoreHandler}
 			/>

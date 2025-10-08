@@ -138,7 +138,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
@@ -463,7 +463,7 @@ class UtilMenu {
 		return this.prepareForSelect(options.map(id => ({ id, name: id })));
 	};
 
-	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
+	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout, isPreview?: boolean) {
 		const isSystem = this.isSystemWidget(id);
 		
 		let options = [
@@ -471,14 +471,11 @@ class UtilMenu {
 			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
-		if (!isSystem) {
+		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
 		} else
 		if (id == J.Constant.widgetId.bin) {
 			options.unshift(I.WidgetLayout.Link);
-		} else
-		if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(id)) {
-			options = [ I.WidgetLayout.Link ];
 		};
 
 		if (id && !isSystem) {
@@ -813,7 +810,7 @@ class UtilMenu {
 		};
 
 		if (isLoading) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+			options.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
 		} else {
 			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 		};
@@ -925,16 +922,31 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessageDate || c1.spaceJoinDate || c1.counter;
-			const d2 = c2.lastMessageDate || c2.spaceJoinDate || c2.counter;
+			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
+			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
+
+			if (c1.counter && !c2.counter) return -1;
+			if (!c1.counter && c2.counter) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
+
+		/*
+		console.log(JSON.stringify(items.map(it => 
+			`${it.name} 
+			p: ${it.isPinned}
+			o: ${it.orderId}
+			lm: ${U.Date.dateWithFormat(I.DateFormat.European, it.lastMessageDate)} 
+			jd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)} 
+			c: ${it.counter} 
+			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
+		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
+		*/
 
 		return items;
 	};
@@ -944,8 +956,6 @@ class UtilMenu {
 
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.chat, name: translate('commonMainChat'), icon: `widget-chat${Number(!space?.isMuted)}`, isHidden: true },
-			{ id: J.Constant.widgetId.allObject, name: translate('commonAllContent'), icon: 'widget-all', isHidden: true },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
 			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },
@@ -1364,14 +1374,16 @@ class UtilMenu {
 							this.menuContext?.close();
 						};
 
-						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
+						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
 							window.setTimeout(() => {
-								this.onBookmarkMenu({
-									...param,
-									data: { details },
-								}, object => cb(object, 0));
+								if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
+									this.onBookmarkMenu({ ...param, data: { details }}, object => cb(object, 0));
+								} else
+								if (U.Object.isChatLayout(item.recommendedLayout)) {
+									this.onChatMenu({ ...param, data: { details }}, object => cb(object, 0));
+								};
 							}, S.Menu.getTimeout());
 						} else {
 							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
@@ -1405,8 +1417,95 @@ class UtilMenu {
 		});
 	};
 
+	onChatMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+		param = param || {};
+
+		const data = param.data || {};
+
+		delete(param.data);
+
+		S.Menu.open('chatCreate', {
+			horizontal: I.MenuDirection.Center,
+			data: {
+				onSubmit: callBack,
+				...data,
+			},
+			...param,
+		});
+	};
+
 	setContext (context: any) {
 		this.menuContext = context;
+	};
+
+	spaceCreate (param: I.MenuParam, route) {
+		const ids = [ 'chat', 'space', 'join' ];
+		const options = ids.map(id => {
+			const suffix = U.Common.toUpperCamelCase(id);
+
+			let name = '';
+			let icon = '';
+			let description = '';
+			let withDescription = false;
+
+			if (id != 'join') {
+				name = translate(`sidebarMenuSpaceCreateTitle${suffix}`);
+				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
+				withDescription = true;
+				icon = id;
+			};
+
+			return {
+				id,
+				icon,
+				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
+				description,
+				withDescription,
+			};
+		});
+
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'chat': {
+							Action.createSpace(I.SpaceUxType.Chat, route);
+							break;
+						};
+
+						case 'space': {
+							Action.createSpace(I.SpaceUxType.Space, route);
+							break;
+						};
+
+						case 'join': {
+							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
+							break;
+						};
+					};
+
+					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+				},
+			}
+		});
+
+		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
 };

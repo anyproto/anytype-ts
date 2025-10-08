@@ -1513,18 +1513,25 @@ class UtilCommon {
 	 * @param {HTMLElement} dst - The destination element.
 	 */
 	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
-		const styles = document.defaultView.getComputedStyle(src, '');
-		const css: any = {};
+		const styles = window.getComputedStyle(src, '');
+
+		if (styles.display && (styles.getPropertyValue('display') == 'none')) {
+			return;
+		};
+
+		const css: any = [];
 
 		for (let i = 0; i < styles.length; i++) {
 			const name = styles[i];
 			const value = styles.getPropertyValue(name);
 
 			css[name] = value;
+			css.push(`${name}: ${value}`);
 		};
 
-		css.visibility = 'visible';
-		$(dst).css(css);
+		css.push('visibility: visible');
+
+		dst.style.cssText = css.join('; ');
 	};
 
 	/**
@@ -1684,7 +1691,7 @@ class UtilCommon {
 		if (isOpen) {
 			const height = obj.outerHeight();
 
-			obj.css({ height });
+			obj.css({ height, overflow: 'hidden' });
 
 			raf(() => obj.addClass('anim').css({ height: 0 }));
 			window.setTimeout(() => {
@@ -1700,7 +1707,7 @@ class UtilCommon {
 
 			raf(() => obj.css({ height }));
 			window.setTimeout(() => {
-				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto' });
+				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto', overflow: 'visible' });
 				callBack?.();
 			}, delay);
 		};
@@ -1832,8 +1839,12 @@ class UtilCommon {
 	/**
 	 * Shows the "What's New" popup and updates storage.
 	 */
-	showWhatsNew () {
-		S.Popup.open('help', { data: { document: 'whatsNew' } });
+	showWhatsNew (param?: Partial<I.PopupParam>) {
+		param = param || {};
+		param.data = param.data || {};
+		param.data.document = 'whatsNew';	
+
+		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
 	};
 
@@ -1905,7 +1916,7 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('primitivesOnboarding')) {
+		if (!Storage.get('chatsOnboarding')) {
 			return;
 		};
 

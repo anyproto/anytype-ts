@@ -19,6 +19,7 @@ const DEFAULT_SHORTCUTS = {
 	zoomReset: [ 'CmdOrCtrl', '0' ],
 	toggleFullscreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
 	shortcut: [ 'Ctrl', 'Space' ],
+	close: [ 'CmdOrCtrl', 'Q' ],
 };
 
 class MenuManager {
@@ -98,7 +99,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: 'CmdOrCtrl+Q', click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, false) },
 				]
 			},
 			{
@@ -262,6 +263,7 @@ class MenuManager {
 
 		const flagsMw = {
 			request: Util.translate('electronMenuFlagMwRequest'),
+			subscribe: Util.translate('electronMenuFlagMwSubscribe'),
 			event: Util.translate('electronMenuFlagMwEvent'),
 			sync: Util.translate('electronMenuFlagMwSync'),
 			file: Util.translate('electronMenuFlagMwFile'),

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellStorage } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellBanner } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -134,7 +134,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 				</div>
 
-				<UpsellStorage className="fromSyncMenu" route={analytics.route.syncStatus} />
+				<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
 
 				{showIncentive ? (
 					<div className="incentiveBanner">
@@ -166,7 +166,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
-											deferredMeasurementCache={this.cache}
+											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
 											rowHeight={HEIGHT}
 											rowRenderer={rowRenderer}

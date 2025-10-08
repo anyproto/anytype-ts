@@ -93,10 +93,11 @@ enableLogging({
 });
 */
 
+
 Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
-	dsn: J.Constant.sentry,
+	dsn: SENTRY_DSN,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
 		e.request.url = '';

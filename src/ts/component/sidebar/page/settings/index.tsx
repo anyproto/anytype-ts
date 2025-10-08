@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, sidebar, translate, U } from 'Lib';
+import { I, keyboard, S, sidebar, translate, U, Onboarding } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -165,7 +165,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 											<List
 												width={width}
 												height={height}
-												deferredMeasurementCache={this.cache}
+												deferredMeasurmentCache={this.cache}
 												rowCount={items.length}
 												rowHeight={({ index }) => this.getRowHeight(items[index])}
 												rowRenderer={rowRenderer}
@@ -193,6 +193,10 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	componentDidMount () {
 		this.setCache();
+
+		if (!this.isSpace()) {
+			Onboarding.start('membership', false);
+		};
 	};
 
 	componentDidUpdate () {
@@ -209,8 +213,12 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		});
 	};
 
+	isSpace () {
+		return this.props.page == 'settingsSpace';
+	};
+
 	getSections (): any[] {
-		return this.props.page == 'settingsSpace' ? this.getSpaceSettings() : this.getAppSettings();
+		return this.isSpace() ? this.getSpaceSettings() : this.getAppSettings();
 	};
 
 	getSpaceSettings () {
@@ -328,10 +336,13 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 	};
 
 	onBack () {
-		const { page } = this.props;
-		const isSpace = page == 'settingsSpace';
+		const { space } = S.Common;
+		const isSpace = this.isSpace();
 
-		U.Space.openDashboard();
+		if (space) {
+			U.Space.openDashboard();
+		};
+
 		sidebar.leftPanelSetState({ page: isSpace ? U.Space.getDefaultSidebarPage() : 'vault' });
 	};
 

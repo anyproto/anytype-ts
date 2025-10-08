@@ -47,7 +47,6 @@ class Analytics {
 		mention: 'Mention',
 		media: 'Media',
 		calendar: 'Calendar',
-		allObjects: 'AllObjects',
 		vault: 'Vault',
 		void: 'Void',
 		chat: 'Chat',
@@ -829,7 +828,7 @@ class Analytics {
 	 * @param {any} [data] - Optional event data.
 	 */
 	stackAdd (code: string, data?: any) {
-		this.stack.push({ code, data })
+		this.stack.push({ code, data });
 	};
 
 	/**

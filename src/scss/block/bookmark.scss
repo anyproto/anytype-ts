@@ -31,7 +31,7 @@
 
 			.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; }
 			.descr { @include text-small; line-height: 16px; color: var(--color-text-secondary); @include clamp2; }
-			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
+			.archive { position: absolute; right: 16px; top: 16px; z-index: 1; }
 		}
 		
 		.inner.isVertical { display: flex; flex-direction: column; }
@@ -51,6 +51,8 @@
 			.side.right {
 				.img { width: 100%; height: 100%; position: static; left: auto; top: auto; border-radius: 4px; }
 			}
+
+			.archive { right: 0px; }
 		}
 		.inner.withImage:not(.isVertical) {
 			.side.left { display: flex; flex-direction: column; justify-content: center; }

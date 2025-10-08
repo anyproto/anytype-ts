@@ -178,7 +178,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				cellRef: childRef.current,
 				rootId,
 				subId,
-				blockId: block.id,
+				blockId: block?.id,
 				value, 
 				relation: observable.box(relation),
 				relationKey: relation.relationKey,
@@ -448,7 +448,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			if (closeIfOpen) {
 				setOff();
 				S.Menu.closeAll(J.Menu.cell);
-				withMenu.current = false
+				withMenu.current = false;
 			};
 		} else {
 			setOn();

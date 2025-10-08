@@ -1,10 +1,10 @@
-import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
+import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -14,6 +14,7 @@ interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
 	disableContextMenu?: boolean;
+	disableAnimation?: boolean;
 	className?: string;
 	onDragStart?: (e: MouseEvent, block: I.Block) => void;
 	onDragOver?: (e: MouseEvent, block: I.Block) => void;
@@ -23,14 +24,13 @@ interface Props extends I.WidgetComponent {
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { space } = S.Common;
-	const [ dummy, setDummy ] = useState(0);
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, canEdit, canRemove, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
-	const { root, widgets } = S.Block;
+	const { block, isPreview, isEditing, className, canEdit, canRemove, disableAnimation, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { widgets } = S.Block;
 
 	const getChild = (): I.Block => {
 		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -40,13 +40,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
-	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
-	const isBin = targetId == J.Constant.widgetId.bin;
-	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const object = getObject(targetId);
+	const isSystemTarget = U.Menu.isSystemWidget(targetId);
+	const isSectionType = block.content.section == I.WidgetSection.Type;
+	const isChat = U.Object.isChatLayout(object?.layout);
+	const isBin = targetId == J.Constant.widgetId.bin;
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
-		return U.Data.windgetContentParam(object, block);
+		return U.Data.widgetContentParam(object, block);
 	};
 
 	const param = getContentParam();
@@ -69,7 +70,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getLayout = (): I.WidgetLayout => {
-		let layout = param.layout
+		let layout = param.layout;
 
 		const object = getObject(targetId);
 		if (!object) {
@@ -87,28 +88,17 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const limit = getLimit();
 	const layout = getLayout();
-	const isFavorite = targetId == J.Constant.widgetId.favorite;
-	const isChat = targetId == J.Constant.widgetId.chat;
-
-	let cnt = 0;
-	let leftCnt = false;
-	let counters = { messageCounter: 0, mentionCounter: 0 };
-
-	if (isFavorite) {
-		cnt = S.Record.getRecords(subId.current).filter(it => !it.isArchived && !it.isDeleted).length;
-		leftCnt = cnt > limit;
-	};
-
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	};
-
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
+	};
 
 	const unbind = () => {
 		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
@@ -138,20 +128,15 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const rootId = getRootId();
 		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 
-		U.Object.openEvent(e, { 
-			...object, 
-			_routeParam_: { 
-				viewId: view?.id,
-				additional: [ { key: 'ref', value: 'widget' } ],
-			} 
-		});
+		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
+		U.Object.openEvent(e, object);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCreate({ route: analytics.route.widget });
+		onCreate({ element: '.iconWrap.create', route: analytics.route.widget });
 	};
 
 	const onCreate = (param?: any): void => {
@@ -231,15 +216,23 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			U.Menu.onBookmarkMenu({
-				element: `#widget-${block.id} .iconWrap.create`,
+		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
+			const menuParam = {
+				element: `#widget-${block.id} ${param.element}`,
 				onOpen: () => node.addClass('active'),
 				onClose: () => node.removeClass('active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
+				offsetY: 4,
 				data: { details },
-			}, cb);
+			};
+
+			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+			} else 
+			if (U.Object.isChatLayout(type.recommendedLayout)) {
+				U.Menu.onChatMenu(menuParam, cb);
+			}; 
 			return;
 		};
 
@@ -263,42 +256,61 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		if (!object || object._empty_) {
-			return;
-		};
-
-		if (spaceview.isChat && isChat) {
-			return;
-		};
-
-		if (isBin) {
+		if (!object || object._empty_ || !canEdit) {
 			return;
 		};
 
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
-
-		S.Menu.open('widget', {
+		
+		const menuParam: Partial<I.MenuParam> = {
 			element: `#widget-${block.id} .iconWrap.more`,
 			rect: { width: 0, height: 0, x, y: y + 14 },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
-			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
-			data: {
+			data: {},
+		};
+
+		let menuId = '';
+
+		if (isBin) {
+			menuId = 'select';
+			menuParam.data = Object.assign(menuParam.data, {
+				options: [
+					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
+					{ id: 'empty', icon: 'remove', name: translate('commonEmptyBin') },
+				],
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'open': {
+							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+							break;
+						};
+
+						case 'empty': {
+							Action.emptyBin(analytics.route.widget);
+							break;
+						};
+					};
+				},
+			});
+		} else {
+			menuId = 'widget';
+			menuParam.subIds = J.Menu.widget;
+			menuParam.data = Object.assign(menuParam.data, {
 				...param,
 				target: object,
 				isEditing: true,
 				blockId: block.id,
 				setEditing,
-			}
-		});
+				isPreview,
+			});
+		};
+
+		S.Menu.open(menuId, menuParam);
 	};
 
 	const getIsOpen = () => {
@@ -461,28 +473,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
-	const sortFavorite = (records: string[]): string[] => {
-		const ids = S.Block.getChildren(root, root, it => it.isLink()).
-			map(it => it.getTargetObjectId()).
-			map(id => S.Detail.get(root, id)).
-			filter(it => !it.isArchived && !it.isDeleted).map(it => it.id);
-
-		let sorted = U.Common.objectCopy(records || []).sort((c1: string, c2: string) => {
-			const i1 = ids.indexOf(c1);
-			const i2 = ids.indexOf(c2);
-
-			if (i1 > i2) return 1;
-			if (i1 < i2) return -1;
-			return 0;
-		});
-
-		if (!isPreview) {
-			sorted = sorted.slice(0, getLimit());
-		};
-
-		return sorted;
-	};
-
 	const onSetPreview = () => {
 		if (!child) {
 			return;
@@ -574,11 +564,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		addShowAllButton();
-
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
-		const wrapper = node.find('#button-show-all');
 		
 		let total = 0;
 		let show = false;
@@ -606,7 +593,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		show ? wrapper.show() : wrapper.hide();
+		if (show) {
+			addShowAllButton();
+		} else {
+			node.find('#button-show-all').remove();
+		};
+
 		innerWrap.toggleClass('withShowAll', show);
 	};
 
@@ -655,15 +647,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (targetId == J.Constant.widgetId.bin) {
-			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-		} else 
-		if (targetId == J.Constant.widgetId.allObject) {
-			sidebar.leftPanelSetState({ page: 'allObject' });
-		} else 
-		if (targetId == J.Constant.widgetId.chat) {
-			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-		} else
 		if (isSystemTarget) {
 			onSetPreview();
 		} else {
@@ -697,7 +680,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getData,
 		getLimit,
 		getTraceId,
-		sortFavorite,
 		addGroupLabels,
 		checkShowAllButton,
 		onContext,
@@ -767,16 +749,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 								{collapse}
 								{icon}
 								<ObjectName object={object} withPlural={true} />
-								{leftCnt ? <span className="count">{cnt}</span> : ''}
 							</div>
 						</div>
 						<div className="side right">
-							{counters.messageCounter || counters.mentionCounter ? (
-								<div className="counters">
-									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
-									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
-								</div>
-							) : ''}
+							<ChatCounter {...counters} mode={spaceview.notificationMode} />
 
 							{buttons.length ? (
 								<div className="buttons">
@@ -865,15 +841,36 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		setDummy(dummy + 1);
+
+		const node = $(nodeRef.current);
+
+		let t1 = 0;
+		let t2 = 0;
+
+		if (!disableAnimation) {
+			node.addClass('anim');
+			t1 = window.setTimeout(() => {
+				node.addClass('show');
+				t2 = window.setTimeout(() => node.removeClass('anim'), 300);
+			}, J.Constant.delay.widgetItem);
+		} else {
+			node.addClass('show');
+		};
 
 		return () => {
 			unbind();
+
+			window.clearTimeout(t1);
+			window.clearTimeout(t2);
 			window.clearTimeout(timeout.current);
 		};
 	}, []);
 
-	useEffect(() => initToggle());
+	useEffect(() => {
+		initToggle();
+
+		$(nodeRef.current).addClass('show');
+	});
 
 	return (
 		<div

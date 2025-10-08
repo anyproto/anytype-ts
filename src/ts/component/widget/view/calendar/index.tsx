@@ -4,18 +4,19 @@ import { Select, Icon } from 'Component';
 import { I, S, U, J, translate, Dataview, Relation } from 'Lib';
 
 interface WidgetViewCalendarRefProps {
-	load: (subId: string, limit: number) => void;
+	load: (searchIds: string[]) => void;
 };
 
 const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.WidgetViewComponent>((props, ref: any) => {
 
 	const [ value, setValue ] = useState(U.Date.now());
-	const { rootId, block, canCreate, subId, getView, reload, onCreate, getObject, getViewLimit } = props;
+	const { rootId, block, canCreate, subId, getView, reload, onCreate, getObject } = props;
 	const object = getObject();
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
 	const view = getView();
 	const { groupRelationKey } = view;
+	const [ searchIds, setSearchIds ] = useState<string[]>([]);
 	const data = U.Date.getCalendarMonth(value);
 
 	const getDateParam = (t: number) => {
@@ -41,8 +42,8 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				options: [ { id: 'open', icon: 'expand', name: translate('commonOpenObject') } ],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(groupRelationKey, U.Date.timestamp(item.y, item.m, item.d), 'auto');
-				}
-			}
+				},
+			},
 		});
 	};
 
@@ -87,7 +88,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 					hideIcon: view.hideIcon,
 					fromWidget: true,
 					readonly: !canCreate,
-					load: (subId, limit) => loadDay(d, m, y, subId, limit),
+					load: (subId, limit) => loadDay(searchIds, d, m, y, subId, limit),
 					subId: getDaySubId(d, m, y),
 					onCreate: () => {
 						const details = {};
@@ -104,13 +105,15 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		return [ subId, d, m, y ].join('-');
 	};
 
-	const load = () => {
+	const load = (searchIds: string[]) => {
+		setSearchIds(searchIds);
+
 		U.Date.getCalendarMonth(value).forEach(it => {
-			loadDay(it.d, it.m, it.y, getDaySubId(it.d, it.m, it.y), 1);
+			loadDay(searchIds, it.d, it.m, it.y, getDaySubId(it.d, it.m, it.y), 1);
 		});
 	};
 
-	const loadDay = (d: number, m: number, y: number, subId: string, limit: number) => {
+	const loadDay = (searchIds: string[], d: number, m: number, y: number, subId: string, limit: number) => {
 		const setOf = Relation.getArrayValue(object.setOf);
 		const isCollection = U.Object.isCollectionLayout(object.layout);
 		const view = getView();
@@ -126,7 +129,7 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 
 		const start = U.Date.timestamp(y, m, d, 0, 0, 0);
 		const end = U.Date.timestamp(y, m, d, 23, 59, 59);
-		const filters = [
+		const filters: I.Filter[] = [
 			{ 
 				relationKey: relation.relationKey, 
 				condition: I.FilterCondition.GreaterOrEqual, 
@@ -142,6 +145,10 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 				format: relation.format,
 			}
 		];
+
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
 
 		Dataview.getData({
 			rootId,
@@ -172,7 +179,17 @@ const WidgetViewCalendar = observer(forwardRef<WidgetViewCalendarRefProps, I.Wid
 		return ret;
 	};
 
-	useEffect(() => setSelectsValue(), []);
+	useEffect(() => {
+		setSelectsValue();
+
+		return () => {
+			const subIds = [];
+			U.Date.getCalendarMonth(value).forEach(it => {
+				subIds.push(getDaySubId(it.d, it.m, it.y));
+			});
+			U.Subscription.destroyList(subIds);
+		};
+	}, []);
 	useEffect(() => {
 		setSelectsValue();
 		reload();

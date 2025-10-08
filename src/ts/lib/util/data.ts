@@ -1,6 +1,35 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
 
+const TYPE_KEYS = {
+	default: [
+		J.Constant.typeKey.page,
+		J.Constant.typeKey.note,
+		J.Constant.typeKey.task,
+		J.Constant.typeKey.collection,
+		J.Constant.typeKey.set,
+		J.Constant.typeKey.bookmark,
+		J.Constant.typeKey.project,
+		J.Constant.typeKey.image,
+		J.Constant.typeKey.file,
+		J.Constant.typeKey.video,
+		J.Constant.typeKey.audio,
+	],
+	chat: [ 
+		J.Constant.typeKey.image,
+		J.Constant.typeKey.bookmark,
+		J.Constant.typeKey.file,
+		J.Constant.typeKey.page,
+		J.Constant.typeKey.note,
+		J.Constant.typeKey.task,
+		J.Constant.typeKey.collection,
+		J.Constant.typeKey.set,
+		J.Constant.typeKey.project,
+		J.Constant.typeKey.video,
+		J.Constant.typeKey.audio,
+	]
+};
+
 /**
  * Utility class for data manipulation, formatting, and application-level helpers.
  * Provides methods for block styling, authentication, sorting, and more.
@@ -209,7 +238,6 @@ class UtilData {
 	 * @param {I.AccountInfo} info - The account info object.
 	 */
 	onInfo (info: I.AccountInfo) {
-		S.Block.rootSet(info.homeObjectId);
 		S.Block.widgetsSet(info.widgetsId);
 		S.Block.profileSet(info.profileObjectId);
 		S.Block.spaceviewSet(info.spaceViewId);
@@ -231,7 +259,7 @@ class UtilData {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
 
-		const { root, widgets } = S.Block;
+		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
@@ -241,41 +269,35 @@ class UtilData {
 			return;
 		};
 
-		C.ObjectOpen(root, '', space, (message: any) => {
-			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
+		C.ObjectOpen(widgets, '', space, (message: any) => {
+			if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
 				return;
 			};
 
-			C.ObjectOpen(widgets, '', space, (message: any) => {
-				if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
-					return;
-				};
+			U.Subscription.createSpace(() => {
+				S.Block.updateTypeWidgetList();
 
-				U.Subscription.createSpace(() => {
-					S.Block.updateTypeWidgetList();
+				S.Common.pinInit(() => {
+					keyboard.initPinCheck();
 
-					S.Common.pinInit(() => {
-						keyboard.initPinCheck();
+					const { pin } = S.Common;
 
-						const { pin } = S.Common;
-
-						// Redirect
-						if (pin && !keyboard.isPinChecked) {
-							U.Router.go('/auth/pin-check', routeParam);
+					// Redirect
+					if (pin && !keyboard.isPinChecked) {
+						U.Router.go('/auth/pin-check', routeParam);
+					} else {
+						if (route) {
+							U.Router.go(route, routeParam);
 						} else {
-							if (route) {
-								U.Router.go(route, routeParam);
-							} else {
-								U.Space.openDashboard(routeParam);
-							};
+							U.Space.openDashboard(routeParam);
 						};
+					};
 
-						S.Common.redirectSet('');
+					S.Common.redirectSet('');
 
-						if (callBack) {
-							callBack();
-						};
-					});
+					if (callBack) {
+						callBack();
+					};
 				});
 			});
 		});
@@ -299,18 +321,43 @@ class UtilData {
 		});
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			const spaceCounters = {};
+
 			for (const item of message.previews) {
-				const { spaceId, message, state, dependencies } = item;
-				const subId = S.Chat.getSpaceSubId(spaceId);
+				const { spaceId, chatId, message, state, dependencies } = item;
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const chatSubId = S.Chat.getChatSubId('preview', spaceId, chatId);
+				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
 
-				if (message) {
-					message.dependencies = dependencies || [];
-					S.Chat.add(subId, 0, new M.ChatMessage(message));
-				};
+				obj.mentionCounter += state.mentions.counter || 0;
+				obj.messageCounter += state.messages.counter || 0;
+				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
 
-				S.Chat.setState(subId, { 
+				spaceCounters[spaceId] = obj;
+
+				S.Chat.setState(chatSubId, { 
 					...state, 
 					lastMessageDate: Number(message?.createdAt || 0),
+				}, false);
+
+				if (message) {
+					message.dependencies = dependencies;
+
+					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
+					S.Chat.add(chatSubId, 0, new M.ChatMessage(message));
+				};
+			};
+
+			for (const spaceId in spaceCounters) {
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const obj = spaceCounters[spaceId];
+
+				S.Chat.setState(spaceSubId, { 
+					mentions: { counter: obj.mentionCounter, orderId: '' }, 
+					messages: { counter: obj.messageCounter, orderId: '' },
+					lastMessageDate: Number(message?.createdAt || 0),
+					lastStateId: '',
+					order: 0,
 				}, false);
 			};
 		});
@@ -433,16 +480,19 @@ class UtilData {
 	 * @returns {any[]} The list of object types.
 	 */
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withLists, limit } = param || {};
 		const { space } = S.Common;
-		const pageLayouts = U.Object.getPageLayouts();
-		const skipLayouts = U.Object.getSetLayouts();
+		const layouts = U.Object.getPageLayouts();
 
 		let items: any[] = [];
 
+		if (withLists) {
+			layouts.push(I.ObjectLayout.Set);
+			layouts.push(I.ObjectLayout.Collection);
+		};
+
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && 
-				!skipLayouts.includes(it.recommendedLayout) && 
+			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
 				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
@@ -451,14 +501,6 @@ class UtilData {
 
 		if (limit) {
 			items = items.slice(0, limit);
-		};
-
-		if (withSet) {
-			items.push(S.Record.getSetType());
-		};
-
-		if (withCollection) {
-			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
@@ -677,6 +719,22 @@ class UtilData {
 	 */
 	sortByLastUsedDate (c1: any, c2: any) {
 		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
+	};
+
+	typeSortKeys (isChat: boolean) {
+		return isChat ? TYPE_KEYS.chat : TYPE_KEYS.default;
+	};
+
+	/**
+	 * Sorts two objects by their type key.
+	 * @param {any} c1 - The first object.
+	 * @param {any} c2 - The second object.
+	 * @returns {number} The sort order.
+	 */
+	sortByTypeKey (c1: any, c2: any, isChat: boolean) {
+		const keys = this.typeSortKeys(isChat);
+
+		return keys.indexOf(c1.uniqueKey) - keys.indexOf(c2.uniqueKey);
 	};
 
 	/**
@@ -958,15 +1016,10 @@ class UtilData {
 						Renderer.send('keytarSet', message.account.id, phrase);
 						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
-								S.Auth.startingId = message.startingId;
+								S.Auth.startingId.set(S.Common.space, message.startingId);
 							};
 
-							const details = { 
-								name: translate('commonEntrySpace'), 
-								iconOption: U.Common.rand(1, J.Constant.count.icon),
-							};
-							
-							C.WorkspaceSetInfo(S.Common.space, details, callBack);
+							callBack?.();
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
@@ -1002,7 +1055,11 @@ class UtilData {
 		ids.forEach(id => groups[id] = []);
 
 		let ret = [];
-		records.forEach((record) => {
+		records.forEach(record => {
+			if (!record) {
+				return;
+			};
+
 			const diff = now - record[key];
 
 			let id = '';
@@ -1166,7 +1223,7 @@ class UtilData {
 		});
 	};
 
-	windgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
+	widgetContentParam (object: any, block: I.Block): { layout: I.WidgetLayout, limit: number, viewId: string } {
 		object = object || {};
 
 		let ret: any = {};
@@ -1188,6 +1245,13 @@ class UtilData {
 		};
 
 		return ret;
+	};
+
+	isFreeMember (): boolean {
+		const { membership } = S.Auth;
+		const tier = this.getMembershipTier(membership.tier);
+
+		return !tier?.namesCount && this.isAnytypeNetwork();
 	};
 
 };

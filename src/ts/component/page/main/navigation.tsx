@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, keyboard, focus, translate, sidebar } from 'Lib';
 
-import Item from 'Component/sidebar/page/allObject/item';
+import Item from 'Component/page/main/navigation/item';
 
 interface State {
 	loading: boolean;
@@ -157,7 +157,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												ref={ref => this.refList[Panel.Left] = ref}
 												width={width}
 												height={height - 35}
-												deferredMeasurementCache={this.cacheIn}
+												deferredMeasurmentCache={this.cacheIn}
 												rowCount={pagesIn.length}
 												rowHeight={HEIGHT}
 												rowRenderer={(param: any) => { 
@@ -196,7 +196,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 												ref={ref => this.refList[Panel.Right] = ref}
 												width={width}
 												height={height - 35}
-												deferredMeasurementCache={this.cacheOut}
+												deferredMeasurmentCache={this.cacheOut}
 												rowCount={pagesOut.length}
 												rowHeight={HEIGHT}
 												rowRenderer={(param: any) => { 

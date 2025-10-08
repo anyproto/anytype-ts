@@ -66,7 +66,9 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 				const creatorName = message.creatorName || translate('defaultNamePage');
 
 				S.Popup.open('confirm', {
-					onClose: () => Onboarding.start('basics', isPopup),
+					onClose: () => {
+						Onboarding.startBasics(isPopup);
+					},
 					data: {
 						icon: 'join',
 						title: U.Common.sprintf(translate('popupConfirmJoinSpaceTitle'), spaceName),
@@ -91,7 +93,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 				analytics.event('ScreenInviteRequest', { route, type: I.InviteType.WithoutApprove });
 			} else {
 				S.Popup.open('inviteRequest', { 
-					onClose: () => Onboarding.start('basics', isPopup),
+					onClose: () => Onboarding.startBasics(isPopup),
 					data: { 
 						invite: message, 
 						cid, 
@@ -106,7 +108,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 			setError(translate('pageMainInviteErrorData'));
 		} else {
 			C.SpaceInviteView(cid, key, (message: any) => {
-				U.Space.openDashboard({ replace: true });
+				U.Space.openDashboardOrVoid();
 
 				S.Popup.closeAll(null, () => {
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
@@ -174,7 +176,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard()} 
+							onClick={() => U.Space.openDashboardOrVoid()} 
 						/>
 					</div>
 				) : <Loader />}

@@ -14,11 +14,11 @@ class Action {
 			return;
 		};
 
-		const { root, widgets } = S.Block;
+		const { widgets } = S.Block;
 		const { space } = S.Common;
 
 		// Prevent closing of system objects
-		if ([ root, widgets ].includes(rootId)) {
+		if ([ widgets ].includes(rootId)) {
 			return;
 		};
 
@@ -966,7 +966,9 @@ class Action {
 							return;
 						};
 
-						C.SpaceStopSharing(spaceId, callBack);
+						if (callBack) {
+							callBack();
+						};
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
@@ -1029,66 +1031,6 @@ class Action {
 		};
 	};
 
-	spaceCreateMenu (param: I.MenuParam, route) {
-		const ids = [ 'chat', 'space', 'join' ];
-		const options = ids.map(id => {
-			const suffix = U.Common.toUpperCamelCase(id);
-
-			return {
-				id,
-				icon: id,
-				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
-				description: translate(`sidebarMenuSpaceCreateDescription${suffix}`),
-				withDescription: true,
-			};
-		});
-
-		let prefix = '';
-		switch (route) {
-			case analytics.route.void: {
-				prefix = 'Void';
-				break;
-			};
-
-			case analytics.route.vault: {
-				prefix = 'Vault';
-				break;
-			};
-		};
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'chat': {
-							this.createSpace(I.SpaceUxType.Chat, route);
-							break;
-						};
-
-						case 'space': {
-							this.createSpace(I.SpaceUxType.Space, route);
-							break;
-						};
-
-						case 'join': {
-							S.Popup.closeAll(null, () => {
-								S.Popup.open('spaceJoinByLink', {});
-							});
-							break;
-						};
-					};
-
-					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
-				},
-			}
-		});
-
-		analytics.event(`Screen${prefix}CreateMenu`);
-	};
-
 	checkDiskSpace (callBack?: () => void) {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
 			if (!diskSpace) {
@@ -1144,6 +1086,19 @@ class Action {
 		});
 
 		analytics.event('ScreenSpaceInfo');
+	};
+
+	emptyBin (route: string, callBack?: () => void) {
+		U.Subscription.search({
+			filters: [
+				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+			],
+			ignoreArchived: false,
+		}, (message: any) => {
+			if (!message.error.code) {
+				this.delete((message.records || []).map(it => it.id), route, callBack);
+			};
+		});
 	};
 
 };

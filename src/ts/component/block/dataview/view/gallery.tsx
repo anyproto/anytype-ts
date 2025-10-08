@@ -16,21 +16,20 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	columnCount = 0;
 	length = 0;
 	timeout = 0;
+	top = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { height } = J.Size.dataview.gallery;
-
 		this.cache = new CellMeasurerCache({
-			defaultHeight: height,
+			defaultHeight: J.Size.dataview.gallery.height,
 			fixedWidth: true,
 		});
 
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
 		this.getCoverObject = this.getCoverObject.bind(this);
-		this.updateRowHeight = this.updateRowHeight.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
@@ -130,7 +129,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			);
 		} else {
 			content = (
-				<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+				<WindowScroller 
+					scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
+					onScroll={this.onScroll}
+					scrollTop={this.top}
+				>
 					{({ height }) => (
 						<AutoSizer disableHeight={true} onResize={this.onResize}>
 							{({ width }) => (
@@ -139,7 +142,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 									ref={ref => this.refList = ref}
 									width={Number(width) || 0}
 									height={Number(height) || 0}
-									deferredMeasurementCache={this.cache}
+									deferredMeasurmentCache={this.cache}
 									rowCount={length}
 									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
 									rowRenderer={rowRenderer}
@@ -339,10 +342,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
-	updateRowHeight (index: number) {
-		this.setColumnCount();
-		this.cache.clearAll();
-		this.refList?.recomputeRowHeights(index);
+	onScroll ({ scrollTop }) {
+		this.top = scrollTop;
 	};
 
 });

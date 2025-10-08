@@ -76,7 +76,11 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (onMore) {
 			items = items.map((item: any) => {
-				item.onMore = e => onMore(e, context, item);
+				item.onMore = e => {
+					e.stopPropagation();
+
+					onMore(e, context, item);
+				};
 				return item;
 			});
 		};
@@ -110,9 +114,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
-		const sorts = [
-			{ relationKey: 'orderId', type: I.SortType.Asc },
-			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+		const spaceview = U.Space.getSpaceview();
+		const sorts: I.Sort[] = [
+			{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+			{ 
+				relationKey: 'uniqueKey', 
+				type: I.SortType.Custom, 
+				customOrder: U.Data.typeSortKeys(spaceview.isChat),
+			},
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -345,7 +354,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 										ref={listRef}
 										width={width}
 										height={height}
-										deferredMeasurementCache={cache.current}
+										deferredMeasurmentCache={cache.current}
 										rowCount={items.length}
 										rowHeight={({ index }) => getRowHeight(items[index])}
 										rowRenderer={rowRenderer}

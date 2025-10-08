@@ -50,7 +50,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const isReadonly = this.isReadonly();
-		const subId = S.Record.getSubId(rootId, blockId);
 		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
@@ -157,7 +156,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => S.Detail.get(subId, it, []));
+				list = Relation.getArrayValue(item.value).map(it => S.Detail.get(rootId, it, []));
 				list = list.filter(it => !it._empty_);
 
 				value = (

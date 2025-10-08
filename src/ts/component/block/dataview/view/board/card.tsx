@@ -169,8 +169,10 @@ const Card = observer(class Card extends React.Component<Props> {
 			return;
 		};
 
-		const { groupId, id, onDragStartCard, getRecord } = this.props;
-		const record = getRecord(id);
+		const { rootId, block, groupId, id, onDragStartCard, getVisibleRelations } = this.props;
+		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
+		const relations = getVisibleRelations();
+		const record = S.Detail.get(subId, id, relations.map(it => it.relationKey));
 
 		if (onDragStartCard) {
 			onDragStartCard(e, groupId, record);

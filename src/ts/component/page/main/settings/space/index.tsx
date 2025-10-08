@@ -47,12 +47,10 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const buttons = this.getButtons();
-		const profile = U.Space.getProfile();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
-		//const nonChats = U.Space.getList().filter(it => !it.isChat && (it.id != space.id));
-		const canChangeType = canWrite; // && ((!space.isChat && (nonChats.length < profile.sharedSpacesLimit)) || !space.isChat);
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const isOwner = U.Space.isMyOwner();
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
@@ -60,7 +58,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
-		const tooltip = !canChangeType ? U.Common.sprintf(translate('popupSettingsSpaceIndexUxTypeTooltip'), profile.sharedSpacesLimit) : '';
 
 		const spaceModes = [
 			{ id: I.NotificationMode.All },
@@ -196,8 +193,36 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 						<>
 							<div className="section sectionSpaceManager">
 								<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
-								<div className="sectionContent">
 
+								{isOwner && space.isShared && !space.isPersonal ? (
+									<div className="sectionContent">
+										<div className="item">
+											<div className="sides">
+												<Icon className={`settings-ux${space.uxType}`} />
+
+												<div className="side left">
+													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+													<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
+												</div>
+
+												<div className="side right">
+													<Select
+														id="uxType"
+														readonly={!canWrite}
+														ref={ref => this.refUxType = ref}
+														value={String(space.uxType)}
+														options={spaceUxTypes}
+														onChange={v => this.onSpaceUxType(v)}
+														arrowClassName="black"
+														menuParam={{ horizontal: I.MenuDirection.Right }}
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+								) : ''}
+
+								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
 											<Icon className="home" />
@@ -234,35 +259,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 													</div>
 													<Icon className="arrow black" />
 												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div className="section sectionSpaceManager">
-								<div className="sectionContent">
-									<div className="item">
-										<div className="sides">
-											<Icon className={`settings-ux${space.uxType}`} />
-
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
-											</div>
-
-											<div className="side right">
-												<Select
-													id="uxType"
-													readonly={!canChangeType}
-													ref={ref => this.refUxType = ref}
-													value={String(space.uxType)}
-													options={spaceUxTypes}
-													onChange={v => this.onSpaceUxType(v)}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-													tooltipParam={{ text: tooltip }} 
-												/>
 											</div>
 										</div>
 									</div>
@@ -406,6 +402,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 			case 'copyLink': {
 				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
+				analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceIndex });
 				break;
 			};
 		};
@@ -436,13 +433,31 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	onSpaceUxType (v) {
 		v = Number(v);
 
-		const details: any = {
-			spaceUxType: v,
-			spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+		const spaceview = U.Space.getSpaceview();
+		const onCancel = () => {
+			this.refUxType.setValue(spaceview.uxType);
 		};
 
-		C.WorkspaceSetInfo(S.Common.space, details);
-		analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+		S.Popup.open('confirm', {
+			onClose: onCancel,
+			data: {
+				icon: 'warning-red',
+				title: translate('popupConfirmUxTypeChangeTitle'),
+				text: translate('popupConfirmUxTypeChangeText'),
+				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					const details: any = {
+						spaceUxType: v,
+						spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+					};
+
+					C.WorkspaceSetInfo(S.Common.space, details);
+					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+				},
+				onCancel,
+			},
+		});
 	};
 
 	checkName (v: string): string {

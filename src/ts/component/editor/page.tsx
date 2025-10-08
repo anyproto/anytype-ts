@@ -675,6 +675,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				if (type == I.MarkType.Link) {
 					S.Menu.open('blockLink', {
 						element: `#block-${ids[0]}`,
+						classNameWrap: 'fromBlock',
 						horizontal: I.MenuDirection.Center,
 						data: {
 							filter: '',
@@ -699,6 +700,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					S.Menu.open(menuId, {
 						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
+						classNameWrap: 'fromBlock',
 						data: {
 							blockId: ids[0],
 							blockIds: ids,
@@ -755,6 +757,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					S.Menu.open('blockAction', { 
 						element: `#block-${ids[0]}`,
+						classNameWrap: 'fromBlock',
 						offsetX: J.Size.blockMenu,
 						data: {
 							blockId: ids[0],
@@ -954,6 +957,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			S.Menu.close('blockContext', () => {
 				S.Menu.open('blockAction', { 
 					element: `#block-${block.id}`,
+					classNameWrap: 'fromBlock',
 					offsetX: J.Size.blockMenu,
 					data: {
 						blockId: block.id,
@@ -1391,6 +1395,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				S.Menu.open('blockLink', {
+					classNameWrap: 'fromBlock',
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
@@ -1424,6 +1429,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			S.Menu.close('blockContext', () => {
 				S.Menu.open(menuId, {
+					classNameWrap: 'fromBlock',
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,

@@ -79,7 +79,8 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
-		sidebar:		 150,
+		widgetItem:		 200,
+		sidebar:		 200,
 		highlight:  	 1000,
 		chatHistory:	 500,
 		chatMessage:	 200,
@@ -120,7 +121,6 @@ export default {
 		space:			 		'space',
 		participant:	 		'participant',
 		subSpace:		 		'subSpace',
-		allObject:		 		'allObject',
 		library: 		 		'library',
 		chatSpace:		 		'lastMessage',
 		template:		 		'template',
@@ -170,7 +170,7 @@ export default {
 	},
 
 	widgetId: {
-		allObject:		 'allObjects',
+		allObject:		 'allObject',
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',

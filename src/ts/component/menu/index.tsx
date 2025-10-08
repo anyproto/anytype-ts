@@ -12,7 +12,6 @@ import MenuPublish from './publish';
 import MenuTableOfContents from './tableOfContents';
 
 import MenuSelect from './select';
-import MenuButton from './button';
 
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
@@ -81,6 +80,7 @@ import MenuSyncStatusInfo from './syncStatus/info';
 import MenuIdentity from './identity';
 
 import MenuChatText from './chat/text';
+import MenuChatCreate from './chat/create';
 
 interface State {
 	tab: string;
@@ -98,7 +98,6 @@ const Components: any = {
 	tableOfContents:		 MenuTableOfContents,
 
 	select:					 MenuSelect,
-	button:					 MenuButton,
 
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
@@ -167,6 +166,7 @@ const Components: any = {
 	identity:				 MenuIdentity,
 
 	chatText: 				 MenuChatText,
+	chatCreate: 			 MenuChatCreate,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {

@@ -16,6 +16,19 @@
 	}
 }
 
+/* PageAuthOnboard */
+.pageAuthOnboard {
+	.stagePhrase {
+		.learnMore {
+			.icon { background-image: url('#{$themePath}/icon/onboarding/plus0.svg'); }
+
+			&:hover {
+				.icon { background-image: url('#{$themePath}/icon/onboarding/plus1.svg'); }
+			}
+		}
+	}
+}
+
 /* PageMainGraph */
 
 .pageMainGraph {

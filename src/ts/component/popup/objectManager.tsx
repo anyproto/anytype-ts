@@ -21,7 +21,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			e.stopPropagation();
 			onClick(e);
 		});

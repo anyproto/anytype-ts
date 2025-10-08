@@ -173,6 +173,7 @@
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonEditType" : "Edit Type",
+	"commonEditChat" : "Change Info",
 	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don't show this again",
 	"commonObject": "Object",
@@ -227,6 +228,10 @@
 	"commonUpgrade": "✦ Upgrade",
 	"commonWidgets": "Widgets",
 	"commonLearnMore": "Learn more",
+	"commonSeeChanges": "See Changes",
+	"commonSeeUpdates": "See updates",
+	"commonEmptyBin": "Empty Bin",
+	"commonSaveChat": "Save chat",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -334,6 +339,7 @@
 	"electronMenuFlagAnalytics": "Analytics",
 	"electronMenuFlagMw": "Middleware",
 	"electronMenuFlagMwRequest": "Request/Response",
+	"electronMenuFlagMwSubscribe": "Subscriptions",
 	"electronMenuFlagMwEvent": "Common events",
 	"electronMenuFlagMwSync": "Sync events",
 	"electronMenuFlagMwFile": "File events",
@@ -444,8 +450,8 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardPhraseTitle": "This is you Key",
-	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — only you responsible for your data. You can find this Key later in app settings.",
+	"authOnboardPhraseTitle": "This is your Key",
+	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — only you are responsible for your data. You can find this Key later in app settings.",
 	"authOnboardPhraseRevealAndCopy": "Reveal and Copy",
 
 	"authOnboardEmailTitle": "Stay in the loop",
@@ -529,8 +535,9 @@
 	"pageMainHistoryCurrent": "Current version",
 	"pageMainHistoryRestore": "Restore",
 
-	"pageMainVoidTitle": "You're all out of spaces",
-	"pageMainVoidText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidErrorTitle": "You're all out of spaces",
+	"pageMainVoidErrorText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidSelectText": "No channels opened. Select one on the left panel or create new.",
 
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
 
@@ -772,7 +779,10 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmpty": "There are no messages yet.<br/>Be the first to start a discussion",
+	"blockChatEmptyTitle": "You have just created a chat",
+	"blockChatEmptyItem1": "Yours forever",
+	"blockChatEmptyItem2": "Messages, docs & files available offline",
+	"blockChatEmptyItem3": "Fully private and encrypted",
 	"blockChatEmptyShareInviteLink": "Share invite link",
 	"blockChatMessageExpand": "Show more",
 	"blockChatMessageCollapse": "Show less",
@@ -902,8 +912,7 @@
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
-	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
-	"popupSettingsSpaceIndexStorageIsFullText": "Some files couldn't be synced because your storage is full. Upgrade your plan or remove files to free up space.",
+	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. If you reach the limit, files will be stoped syncing and be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
 	"popupSettingsSpaceIndexImport": "Import to Space",
@@ -932,7 +941,16 @@
 
 	"upsellBannerStorageUsageText": "<b>%s of remote storage used. </b>",
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
-	"upsellBannerStorageUpsellText": "Get 128 GB for %s.",
+	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
+	"upsellBannerStorageUpsellText": "Get 128 GB for %s. ",
+	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
+
+	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
+	"upsellBannerSpaceUpsellText": "Upgrade to increase the limit. ",
+
+	"upsellBannerMembersUsageText": "%s of %s editor seats are used. ",
+	"upsellBannerMembersLimitUsageText": "You've reached the limit of %s editors. ",
+	"upsellBannerMembersUpsellText": "Upgrade to invite more editors. ",
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
@@ -1099,10 +1117,12 @@
 	"popupSpaceCreateCreate": "Create from scratch",
 	"popupSpaceCreateImport": "Import my data",
 	"popupSpaceCreateAIOnboarding": "✦ Create with AI",
+
 	"popupConfirmCloseAIOnboardingTitle": "Exit AI Onboarding?",
 	"popupConfirmCloseAIOnboardingText": "Are you sure you want to exit? Your progress will be lost.",
 	"popupConfirmCloseAIOnboardingConfirm": "Yes, Exit",
 	"popupConfirmCloseAIOnboardingCancel": "Continue",
+
 	"popupAiOnboardingErrorDefault": "Something went wrong. Please try again.",
 	"popupAiOnboardingConnectionError": "Unable to connect to the AI service. Please check your internet connection and try again.",
 	"popupAiOnboardingConnectionIssueTitle": "Connection Issue",
@@ -1284,6 +1304,18 @@
 	"popupConfirmDeleteTypeTitle": "Delete Object Type?",
 	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
 
+	"popupConfirmStopSharingSpaceTitle": "The space is now private",
+	"popupConfirmStopSharingSpaceText": "You've removed the last member, so this space is now private and only accessible to you",
+
+	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
+	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
+	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
+	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
+
+	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
+	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
+	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1302,8 +1334,6 @@
 	"popupInviteConfirmButtonReject": "Reject",
 
 	"popupInviteQrTitle": "QR code for joining a Space",
-
-	"popupHelpLabel": "Stay tuned for Anytype's news",
 
 	"popupNavigationOpen": "Open",
 	"popupNavigationMove": "Move to",
@@ -1425,7 +1455,7 @@
 
 	"popupShortcutChat": "Chat",
 	"popupShortcutChat1": "Attach an object",
-	"popupShortcutChat2": "Mention",
+	"popupShortcutChat2": "Open right panel",
 
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutObject": "Object Actions",
@@ -1823,6 +1853,7 @@
 	"menuTypeLayoutReset": "Reset to match the Type",
 
 	"menuWidgetAddWidget": "Add Widget",
+	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetWidgetType": "Widget type",
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetEditWidgets": "Edit Widgets",
@@ -1831,6 +1862,8 @@
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
+
+	"menuChatCreatePlaceholder": "e.g. feature-chat",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
@@ -2046,7 +2079,7 @@
 	"widgetSectionType": "Objects",
 	"widgetSectionNewType": "New Type",
 
-	"widgetFavorite": "Pinned",
+	"widgetFavorite": "Old Pinned",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Queries",
@@ -2060,6 +2093,7 @@
 	"widgetShowAll": "See all Objects",
 	"widgetItemClipboard": "Create from clipboard",
 	"widgetSeeAll": "See All",
+	"widgetNoMessages": "No messages yet",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2097,13 +2131,6 @@
 	"sidebarMenuFocus": "Focus mode",
 	"sidebarEdit": "Edit sidebar",
 
-	"sidebarObjectTypeObject": "Pages",
-	"sidebarObjectTypeList": "Lists",
-	"sidebarObjectTypeType": "Types",
-	"sidebarObjectTypeFile": "Files",
-	"sidebarObjectTypeMedia": "Media",
-	"sidebarObjectTypeBookmark": "Bookmarks",
-	"sidebarObjectTypeRelation": "Properties",
 	"sidebarObjectRelationEmpty": "No Properties yet. Add some to this type",
 
 	"sidebarObjectShow": "Show",
@@ -2158,8 +2185,7 @@
 	"sidebarMenuSpaceCreateDescriptionSpace": "Hub for advanced data management",
 	"sidebarMenuSpaceCreateTitleImport": "Import Data",
 	"sidebarMenuSpaceCreateDescriptionImport": "Transfer your data from another app",
-	"sidebarMenuSpaceCreateTitleJoin": "Join by Link",
-	"sidebarMenuSpaceCreateDescriptionJoin": "For those with an invite link",
+	"sidebarMenuSpaceCreateTitleJoin": "→ Join by invite link",
 
 	"sidebarTemplateEmpty": "There are no Templates yet",
 
@@ -2188,14 +2214,6 @@
 	"onboardingStoreRelation21": "<b>Establishing relations helps you to understand the graph</b> and its structure better. You can also create Collections or Sets based on the relationships for quick access.",
 	"onboardingStoreRelation2Button": "Great!",
 
-	"onboardingObjectCreationStart": "Creating Objects",
-	"onboardingObjectCreationStart21": "<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu.",
-	"onboardingObjectCreationStart2Button": "I got it!",
-
-	"onboardingObjectCreationFinish": "Creating Objects",
-	"onboardingObjectCreationFinish11": "<b>For the Object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.",
-	"onboardingObjectCreationFinish1Button": "Ok! I like it",
-
 	"onboardingTypeDeleted1Title": "This Type has been deleted",
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
@@ -2218,14 +2236,12 @@
 	"onboardingTemplateSelectTitle": "Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpacesTitle": "Spaces",
+	"onboardingBasicsTitle": "Widgets",
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
-	"onboardingWidgetsTitle": "Widgets",
-	"onboardingWidgetsText": "<b>Use Widgets</b> to create custom views of your data. Add and adjust them to suit your workflow.",
-	"onboardingMultipleSpacesTitle": "Multiple Spaces",
-	"onboardingMultipleSpacesText": "<b>Use the sidebar to create more spaces.</b> Spaces allow you to collaborate seamlessly. They also help you focus on specific projects, teams or areas of your life.",
-	"onboardingGalleryTitle": "Gallery",
-	"onboardingGalleryText": "<b>Find use cases that match your needs.</b> Import them from the Gallery created by the Anytype Team and Community.",
+	"onboardingPinnedNewText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
+	"onboardingObjectsNewText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
+	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned’ Section</b> We’ve organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you’re ready.",
+	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It’s the new, unified place to see everything you’ve made.",
 
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
@@ -2244,9 +2260,26 @@
 	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
 	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
+	"onboardingChatsTitle": "Ideas need conversations",
+	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",
+
+	"onboardingChatsMockChatMessage0": "Good to have chat here now",
+	"onboardingChatsMockChatMessage1": "Yeah. Just created something from this",
+	"onboardingChatsMockChatMessage3": "Feels like part of the space \uD83E\uDEE7",
+
+	"onboardingChatsMockChatAttachmentTitle": "Project thoughts",
+	"onboardingChatsMockChatAttachmentType": "Page",
+
+	"onboardingChatsSlide0Title": "Your Vault just leveled up",
+	"onboardingChatsSlide0Text": "Spaces and Chats now show live previews and updates — one<br/>place to follow everything that matters.",
+	"onboardingChatsSlide1Title": "Chats work like Spaces",
+	"onboardingChatsSlide1Text": "A channel made for dialogue — where you can share, create, and<br/>edit together in real time.",
+	"onboardingChatsSlide2Title": "Everything in Its Right Place",
+	"onboardingChatsSlide2Text": "Objects, lists and files appear in the sidebar — structured,<br/>searchable, and always at hand.",
+	"onboardingChatsSlide3Title": "See all the latest updates and bug<br/>fixes in the release notes",
+
 	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
 	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",
-	"onboardingPrimitivesButton": "See Changes",
 
 	"onboardingPrimitivesTypesPages": "Pages",
 	"onboardingPrimitivesTypesBookmarks": "Bookmarks",
@@ -2272,7 +2305,6 @@
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
-	"onboardingPrimitivesSlide4Button": "See updates",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

@@ -316,7 +316,7 @@ class UtilDate {
 		if (this.isThisWeek(t)) {
 			ret = this.date('l', t);
 		} else {
-			const { y } = this.getCalendarDateParam(t)
+			const { y } = this.getCalendarDateParam(t);
 			const year = y != this.getCalendarDateParam(this.now()).y ? `/${y}` : '';
 
 			ret = `${this.date('d', t)}/${this.date('m', t)}${year}`;

@@ -8,6 +8,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	refName = null;
 	range: I.TextRange = null;
 	timeout = 0;
+	value = '';
 
 	constructor (props: I.SidebarSectionComponent) {
 		super(props);
@@ -79,6 +80,12 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
     };
 
 	componentDidMount(): void {
+		const { id } = this.props;
+
+		if (id == 'title') {
+			this.range = { from: 0, to: 0 };
+		};
+
 		this.setValue();
 	};
 
@@ -108,6 +115,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 
 		this.refName?.setValue(text);
 		this.refName?.placeholderCheck();
+		this.value = text;
 
 		if (this.range) {
 			this.refName?.setRange(this.range);
@@ -125,9 +133,15 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onChange () {
+		const { disableButton, onChange } = this.props;
 		const value = this.getValue();
 
-		this.props.onChange({ [this.getRelationKey()]: value });
+		if (value != this.value) {
+			this.value = value;
+			disableButton(!value);
+			onChange({ [this.getRelationKey()]: value });
+		};
+
 		window.clearTimeout(this.timeout);
 	};
 
@@ -156,10 +170,6 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	onKeyUp (e: any) {
-		const value = this.getValue();
-
-		this.props.disableButton(!value);
-
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => this.onChange(), J.Constant.delay.keyboard);
 	};

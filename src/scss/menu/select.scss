@@ -89,6 +89,8 @@
 			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }
 			.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
 		}
+
+		#item-join { height: 28px; text-align: center; color: var(--color-text-secondary); @include text-small; }
 	}
 
 	/* Type layout conflict */

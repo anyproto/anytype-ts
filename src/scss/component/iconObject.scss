@@ -122,6 +122,8 @@
 .iconObject.c128,
 .iconObject.c160 {
 	border-radius: 12px;
+
+	&.isChat { border-radius: 100% !important; }	
 }
 
 .iconObject.c36, 
@@ -136,6 +138,8 @@
 .iconObject.c128
 .iconObject.c160 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
+
+	&.isChat { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
 }
 
 .iconObject.isFile,

@@ -101,8 +101,6 @@ class UtilRouter {
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
-		const spaceview = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(false);
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
@@ -228,7 +226,7 @@ class UtilRouter {
 					if (spaces.length) {
 						this.switchSpace(spaces[0].targetSpaceId, route, false, routeParam, useFallback);
 					} else {
-						U.Router.go('/main/void', routeParam);
+						U.Router.go('/main/void/error', routeParam);
 					};
 				};
 				return;
@@ -244,6 +242,14 @@ class UtilRouter {
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
 
+					U.Data.onInfo(message.info);
+
+					const onStartingIdCheck = () => {
+						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
+							this.isOpening = false;
+						});
+					};
+
 					const onRouteChange = () => {
 						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 
@@ -251,10 +257,20 @@ class UtilRouter {
 						routeParam.onRouteChange?.();
 					};
 
-					U.Data.onInfo(message.info);
-					U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
-						this.isOpening = false;
-					});
+					const startingId = S.Auth.startingId.get(id);
+
+					if (startingId) {
+						U.Object.getById(startingId, {}, (object: any) => {
+							if (object) {
+								route = '/' + U.Object.route(object);
+							};
+							onStartingIdCheck();
+						});
+
+						S.Auth.startingId.delete(id);
+					} else {
+						onStartingIdCheck();
+					};
 				},
 			});
 		});
@@ -264,7 +280,7 @@ class UtilRouter {
 		const spaceview = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(false);
 
-		if (!spaceview.isChat && (rightSidebar.page == 'widget')) {
+		if (!spaceview.isChat && [ 'object/relation', 'widget' ].includes(rightSidebar.page)) {
 			sidebar.rightPanelClose(false);
 		} else 
 		if (spaceview.isChat && (rightSidebar.page != 'widget')) {

@@ -1,11 +1,10 @@
 const { ipcRenderer, contextBridge, webUtils } = require('electron');
-const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@electron/remote');
+const { app, getCurrentWindow, getGlobal, dialog } = require('@electron/remote');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
-const focused = BrowserWindow.getFocusedWindow();
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {

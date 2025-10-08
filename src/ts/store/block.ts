@@ -6,7 +6,6 @@ class BlockStore {
 
 	public profileId = '';
 	public widgetsId = '';
-	public rootId = '';
 	public spaceviewId = '';
 	public workspaceId = '';
 
@@ -17,19 +16,16 @@ class BlockStore {
 
 	constructor() {
 		makeObservable(this, {
-			rootId: observable,
 			profileId: observable,
 			spaceviewId: observable,
 			widgetsId: observable,
 			workspaceId: observable,
 
 			profile: computed,
-			root: computed,
 			spaceview: computed,
 			widgets: computed,
 			workspace: computed,
 
-			rootSet: action,
 			profileSet: action,
 			widgetsSet: action,
 			spaceviewSet: action,
@@ -54,10 +50,6 @@ class BlockStore {
 		return String(this.widgetsId || '');
 	};
 
-	get root (): string {
-		return String(this.rootId || '');
-	};
-
 	get spaceview (): string {
 		return String(this.spaceviewId || '');
 	};
@@ -80,14 +72,6 @@ class BlockStore {
 	 */
 	widgetsSet (id: string) {
 		this.widgetsId = String(id || '');
-	};
-
-	/**
-	 * Sets the root ID.
-	 * @param {string} id - The root ID.
-	 */
-	rootSet (id: string) {
-		this.rootId = String(id || '');
 	};
 
 	/**
@@ -178,7 +162,6 @@ class BlockStore {
 	clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
-		this.rootSet('');
 
 		this.blockMap.clear();
 		this.treeMap.clear();
@@ -949,12 +932,10 @@ class BlockStore {
 			J.Constant.typeKey.relation,
 			J.Constant.typeKey.spaceview,
 			J.Constant.typeKey.space,
-			J.Constant.typeKey.chat,
-			J.Constant.typeKey.chatDerived,
 		].includes(key);
 	};
 
-	createWidget (id: string) {
+	createWidget (id: string, section: I.WidgetSection) {
 		if (!id) {
 			return;
 		};
@@ -967,7 +948,7 @@ class BlockStore {
 			childrenIds: [],
 			content: {
 				layout: I.WidgetLayout.Link,
-				section: I.WidgetSection.Type,
+				section,
 			},
 		});
 
@@ -1005,7 +986,7 @@ class BlockStore {
 			return;
 		};
 
-		this.createWidget(type.id);
+		this.createWidget(type.id, I.WidgetSection.Type);
 		element.childrenIds.push(id);
 
 		this.updateStructure(widgets, widgets, element.childrenIds);
@@ -1027,28 +1008,40 @@ class BlockStore {
 
 	updateTypeWidgetList () {
 		const { widgets } = this;
+		const spaceview = U.Space.getSpaceview();
 		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-		const element = this.getMapElement(widgets, widgets);
-
+	
+		let element = this.getMapElement(widgets, widgets);
 		if (!element) {
 			return;
 		};
 
+		element = U.Common.objectCopy(element);
+
+		let childrenIds = element.childrenIds || [];
+
 		types.forEach(type => {
-			if (element.childrenIds.includes(type.id)) {
-				return;
+			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
+				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
+
+				if (!total) {
+					childrenIds = childrenIds.filter(it => it != type.id);
+					return;
+				};
 			};
 
-			this.createWidget(type.id);
-			element.childrenIds.push(type.id);
+			if (!childrenIds.includes(type.id)) {
+				this.createWidget(type.id, I.WidgetSection.Type);
+				childrenIds.push(type.id);
+			};
 		});
 
-		if (!element.childrenIds.includes(J.Constant.widgetId.bin)) {
-			this.createWidget(J.Constant.widgetId.bin);
-			element.childrenIds.push(J.Constant.widgetId.bin);
+		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
+			this.createWidget(J.Constant.widgetId.bin, I.WidgetSection.Type);
+			childrenIds.push(J.Constant.widgetId.bin);
 		};
 
-		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructure(widgets, widgets, childrenIds);
 		this.updateStructureParents(widgets);
 	};
 

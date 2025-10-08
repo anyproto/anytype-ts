@@ -240,7 +240,7 @@ class Sidebar {
 	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
 		const isPopup = keyboard.isPopup();
 		const isMain = keyboard.isMain();
-		const isMainVoid = keyboard.isMainVoid();
+		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
 		const isPopupMainHistory = keyboard.isPopupMainHistory();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
@@ -264,7 +264,7 @@ class Sidebar {
 			widthLeft = 0;
 		};
 
-		if (!isMain || isMainVoid) {
+		if (!isMain || isMainVoidError) {
 			widthLeft = 0;
 			widthRight = 0;
 		};
@@ -423,42 +423,39 @@ class Sidebar {
 		};
 
 		this.rightPanelSetState(isPopup, { page: '' });
+		this.initObjects();
 
-		window.setTimeout(() => {
-			this.initObjects();
+		const width = this.objRight.outerWidth();
+		const cssStart: any = {};
+		const cssEnd: any = {};
 
-			const width = this.objRight.outerWidth();
-			const cssStart: any = {};
-			const cssEnd: any = {};
+		if (shouldOpen) {
+			cssStart.right = -width;
+			cssEnd.right = 0;
+		} else {
+			cssStart.right = 0;
+			cssEnd.right = -width;
+		};
 
-			if (shouldOpen) {
-				cssStart.right = -width;
-				cssEnd.right = 0;
-			} else {
-				cssStart.right = 0;
-				cssEnd.right = -width;
+		this.objRight.show().css(cssStart);
+
+		raf(() => {
+			if (animate) {
+				this.objRight.addClass('anim');
 			};
 
-			this.objRight.show().css(cssStart);
+			this.objRight.css(cssEnd);
+			this.resizePage(null, shouldOpen ? null : 0, animate);
 
-			raf(() => {
-				if (animate) {
-					this.objRight.addClass('anim');
+			window.setTimeout(() => {
+				if (shouldOpen) {
+					this.rightPanelSetState(isPopup, { page, ...param });
+				} else {
+					this.objRight.hide();
 				};
 
-				this.objRight.css(cssEnd);
-				this.resizePage(null, shouldOpen ? null : 0, animate);
-
-				window.setTimeout(() => {
-					if (shouldOpen) {
-						this.rightPanelSetState(isPopup, { page, ...param });
-					} else {
-						this.objRight.hide();
-					};
-
-					this.objRight.removeClass('anim');
-				}, animate ? J.Constant.delay.sidebar : 0);
-			});
+				this.objRight.removeClass('anim');
+			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 
 		window.setTimeout(() => {

@@ -21,6 +21,8 @@
 				.screen { box-shadow: 0px 0px 25px rgba(0,0,0,0.2); }
 
 				img.mention { margin-left: -18px; }
+
+				b { font-weight: 600; }
 			}
 		}
 
@@ -37,6 +39,19 @@
 				> .wrapContent {
 					> .selectionTarget {
 						> .dropTarget { padding: 16px; }
+					}
+				}
+			}
+
+			&.textHeader4 {
+				.wrap > span { display: inline-block; vertical-align: top; position: relative; }
+				.wrap > span {
+					&:not(:first-child) { padding-left: 19px; }
+					&:not(:first-child) {
+						&:before {
+							content: ''; position: absolute; left: 8px; top: 10px; width: 3px; height: 3px;
+							background: var(--color-control-active); border-radius: 50%;
+						}
 					}
 				}
 			}

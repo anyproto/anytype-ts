@@ -13,7 +13,7 @@ class AuthStore {
 	public token = '';
 	public appToken = '';
 	public appKey = '';
-	public startingId = '';
+	public startingId: Map<string, string> = new Map();
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	

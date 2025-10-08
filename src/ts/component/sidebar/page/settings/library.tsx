@@ -151,7 +151,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 												<List
 													width={width}
 													height={height}
-													deferredMeasurementCache={this.cache}
+													deferredMeasurmentCache={this.cache}
 													rowCount={items.length}
 													rowHeight={({ index }) => this.getRowHeight(items[index])}
 													rowRenderer={rowRenderer}
@@ -204,6 +204,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const spaceview = U.Space.getSpaceview();
 		const type = this.getType();
 		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
 		const option = options.find(it => it.id == this.sortId);
@@ -215,8 +216,13 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			sorts.push({ relationKey: option.relationKey, type: this.sortType });
 		} else {
 			sorts = sorts.concat([
-				{ type: I.SortType.Desc, relationKey: 'lastUsedDate' },
-				{ type: I.SortType.Asc, relationKey: 'name' },
+				{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+				{ 
+					relationKey: 'uniqueKey', 
+					type: I.SortType.Custom, 
+					customOrder: U.Data.typeSortKeys(spaceview.isChat),
+				},
+				{ relationKey: 'name', type: I.SortType.Asc },
 			]);
 		};
 

@@ -125,12 +125,15 @@ class DetailStore {
 			map.set(item.id, list);
 		};
 
-		// Update relationKeyMap and typeKeyMap in S.Record to keep consistency
+		// Update fast key maps in S.Record to keep consistency
 		if (U.Object.isRelationLayout(item.details.layout)) {
 			S.Record.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
 		if (U.Object.isTypeLayout(item.details.layout)) {
 			S.Record.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
+		};
+		if (U.Object.isSpaceViewLayout(item.details.layout)) {
+			S.Record.spaceMap.set(item.details.targetSpaceId, item.details.id);
 		};
 
 		if (createMap) {

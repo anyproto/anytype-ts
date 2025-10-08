@@ -6,11 +6,10 @@ class ChatStore {
 	public messageMap: Map<string, any[]> = observable(new Map());
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
-	public attachmentsValue: any[] = [];
+	public attachmentsMap: Map<string, any[]> = observable(new Map());
 
 	constructor () {
 		makeObservable(this, {
-			attachmentsValue: observable,
 			add: action,
 			update: action,
 			delete: action,
@@ -18,10 +17,6 @@ class ChatStore {
 			setState: action,
 			setAttachments: action,
 		});
-	};
-
-	get attachments (): any[] {
-		return this.attachmentsValue || [];
 	};
 
 	/**
@@ -211,6 +206,16 @@ class ChatStore {
 	};
 
 	/**
+	 * Gets the subscription ID for a space and chat.
+	 * @param {string} spaceId - The space ID.	
+	 * @param {string} chatId - The chat ID.
+	 * @returns {string} The subscription ID.
+	 */
+	getChatSubId (prefix: string, spaceId: string, chatId: string): string {
+		return [ prefix, spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.windowId ].join('-');
+	};
+
+	/**
 	 * Sets the chat state for a subId.
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatState} state - The chat state.
@@ -287,6 +292,7 @@ class ChatStore {
 	clear (subId: string) {
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
+		this.attachmentsMap.delete(subId);
 	};
 
 	/**
@@ -296,6 +302,7 @@ class ChatStore {
 		this.messageMap.clear();
 		this.replyMap.clear();
 		this.stateMap.clear();
+		this.attachmentsMap.clear();
 	};
 
 	/**
@@ -353,8 +360,13 @@ class ChatStore {
 			const counters = this.getSpaceCounters(space.targetSpaceId);
 
 			if (counters) {
-				ret.mentionCounter += counters.mentionCounter || 0;
-				ret.messageCounter += counters.messageCounter || 0;
+				if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+					ret.mentionCounter += counters.mentionCounter || 0;
+				};
+
+				if (space.notificationMode == I.NotificationMode.All) {
+					ret.messageCounter += counters.messageCounter || 0;
+				};
 			};
 		};
 
@@ -367,15 +379,22 @@ class ChatStore {
 	 * @returns {Counter} The counters for the space.
 	 */
 	getSpaceCounters (spaceId: string): I.ChatCounter {
-		const spaceMap = this.stateMap.get(spaceId);
 		const ret = { mentionCounter: 0, messageCounter: 0 };
+		const spaceMap = this.stateMap.get(spaceId);
 
-		if (spaceMap) {
-			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
-					ret.mentionCounter += Number(state.mentionCounter) || 0;
-					ret.messageCounter += Number(state.messageCounter) || 0;
-				};
+		if (!spaceMap) {
+			return ret;
+		};
+
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		if (!spaceview?.chatId) {
+			return ret;
+		};
+
+		for (const [ chatId, state ] of spaceMap) {
+			if (!chatId) {
+				ret.mentionCounter += Number(state.mentionCounter) || 0;
+				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
 		};
 
@@ -389,6 +408,7 @@ class ChatStore {
 	 */
 	getSpaceLastMessageDate (spaceId: string): number {
 		const spaceMap = this.stateMap.get(spaceId);
+
 		let ret = 0;
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
@@ -455,8 +475,15 @@ class ChatStore {
 	/**
 	 * Sets the attachments list.
 	 */
-	setAttachments (list: any[]) {
-		this.attachmentsValue = list || [];
+	setAttachments (id: string, list: any[]) {
+		this.attachmentsMap.set(id, list || []);
+	};
+
+	/**
+	 * Gets the attachments list.
+	 */
+	getAttachments (id: string): any[] {
+		return this.attachmentsMap.get(id) || [];
 	};
 
 	/**
@@ -472,29 +499,36 @@ class ChatStore {
 
 		const { creator, content, attachments, dependencies } = message;
 		const { text, marks } = content || {};
-		const participantId = U.Space.getParticipantId(spaceId, creator);
-		const author = dependencies.find(it => it.id == participantId);
+
+		if (!text && !attachments.length) {
+			return '';
+		};
+
 		const ret = [];
+		const participantId = U.Space.getParticipantId(spaceId, creator);
+		const author = dependencies.get(participantId);
 
 		if (author) {
-			ret.push(author.name);
+			ret.push(`<b>${U.Object.name(author)}</b>:`);
 		};
+
 		if (text) {
 			let t = U.Common.sanitize(Mark.insertEmoji(text, marks));
 			t = t.replace(/\n\r?/g, ' ');
 
 			ret.push(t);
-		} else 
+		};
+
 		if (attachments.length) {
 			const names = attachments.map(item => {
-				const object = dependencies.find(it => it.id == item.target);
+				const object = dependencies.get(item.target);
 				return object ? U.Object.name(object) : '';
 			}).filter(it => it).join(', ');
 
 			ret.push(names);
 		};
 
-		return ret.join(': ');
+		return ret.join(' ');
 	};
 
 	/**

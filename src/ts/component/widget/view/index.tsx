@@ -22,13 +22,13 @@ interface WidgetViewRefProps {
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
-		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, sortFavorite, checkShowAllButton, onCreate,
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
 		getContentParam, getObject
 	} = props;
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
-	const [ isLoading, setIsLoading ] = useState(false);
-	const [ searchIds, setSearchIds ] = useState<string[]>([]);
+	const [ searchIds, setSearchIds ] = useState<string[]>(null);
+	const prevIdsRef = useRef<string[]>(null);
 	const selectRef = useRef(null);
 	const childRef = useRef(null);
 	const filterRef = useRef(null);
@@ -38,7 +38,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const rootId = block ? [ targetId, traceId ].join('-') : '';
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = getObject(targetId);
-	const view = Dataview.getView(rootId, J.Constant.blockId.dataview);
+	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
 	const viewType = view ? view.type : I.ViewType.List;
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
@@ -64,7 +64,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			getData(subId);
 		} else 
 		if (view) {
-			load(view.id);
+			load(view.id, true);
 		};
 	};
 
@@ -81,9 +81,9 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		selectRef.current?.setOptions(views);
 	};
 
-	const load = (viewId: string) => {
+	const load = (viewId: string, clear?: boolean) => {
 		if (childRef.current?.load) {
-			childRef.current?.load();
+			childRef.current?.load(searchIds);
 			S.Record.metaSet(subId, '', { viewId });
 			return;
 		};
@@ -107,6 +107,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
 			noDeps: true,
+			clear,
 		});
 	};
 
@@ -121,11 +122,25 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters = filters.concat(childRef.current?.getFilters());
 		};
 
-		if (filter.current) {
+		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds });
 		};
 
 		return filters;
+	};
+
+	const getSorts = () => {
+		if (!view) {
+			return [];
+		};
+
+		const sorts: I.Sort[] = U.Common.objectCopy(view.sorts || []);
+
+		if (!sorts.length) {
+			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
+		};
+
+		return sorts;
 	};
 
 	const getView = () => {
@@ -138,14 +153,18 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	};
 
 	const onChangeView = (viewId: string) => {
-		if (parent.content.section == I.WidgetSection.Pin) {
-			C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
-		};
+		switch (parent.content.section) {
+			case I.WidgetSection.Pin: {
+				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
+				break;
+			};
 
-		if (parent.content.section == I.WidgetSection.Type) {
-			C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
-				S.Block.updateWidgetData(targetId);
-			});
+			case I.WidgetSection.Type: {
+				C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
+					S.Block.updateWidgetData(targetId);
+				});
+				break;
+			};
 		};
 	};
 
@@ -153,9 +172,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
 		const id = viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 
-		return (targetId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, id, '', U.Common.objectCopy(records));
 	};
 
 	const onOpen = () => {
@@ -174,17 +192,19 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filter.current = v;
 
 			if (!filter.current) {
-				setSearchIds([]);
+				setSearchIds(null);
 				return;
 			};
 
-			U.Subscription.search({
-				filters: [],
-				sorts: [],
-				fullText: filter.current,
-				keys: [ 'id' ],
-			}, (message: any) => {
-				setSearchIds((message.records || []).map(it => it.id));
+			U.Subscription.destroyList([ subId ], false, () => {
+				U.Subscription.search({
+					filters: getFilters(),
+					sorts: getSorts(),
+					fullText: filter.current,
+					keys: [ 'id' ],
+				}, (message: any) => {
+					setSearchIds((message.records || []).map(it => it.id));
+				});
 			});
 		}, J.Constant.delay.keyboard);
 	};
@@ -200,7 +220,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		ref: childRef,
 		rootId,
 		subId,
-		reload: () => load(viewId),
+		reload: () => load(viewId, true),
 		getRecordIds,
 		getView: () => view,
 		getViewType: () => viewType,
@@ -291,7 +311,13 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 								color="blank" 
 								className="c28" 
 								text={translate('commonNew')} 
-								onClick={() => onCreate({ route: analytics.route.widget })} 
+								onClick={() => onCreate({ 
+									element: '#button-object-create', 
+									route: analytics.route.widget,
+									details: {
+										name: String(filterRef.current?.getValue() || ''),
+									},
+								})} 
 							/>
 						</div>
 					) : ''}
@@ -305,7 +331,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 		content = (
 			<div className="emptyWrap">
-				{!isLoading ? <Label className="empty" text={label} /> : ''}
+				<Label className="empty" text={label} />
 			</div>
 		);
 	} else {
@@ -346,41 +372,45 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		if (isSystemTarget) {
 			getData(subId);
-		} else {
-			if (targetId) {
-				const root = S.Block.getLeaf(rootId, targetId);
-				const cb = () => {
-					const view = getView();
-					if (view) {
-						load(view.id);
-					};
+		} else 
+		if (targetId) {
+			const root = S.Block.getLeaf(rootId, targetId);
+			const cb = () => {
+				const view = getView();
+				if (view) {
+					load(view.id);
 				};
-
-				if (root) {
-					cb();
-					return;
-				};
-
-				setIsLoading(true);
-				C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
-					setIsLoading(false);
-
-					if (!message.error.code) {
-						cb();
-					};
-				});
 			};
+
+			if (root) {
+				cb();
+				return;
+			};
+
+			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+				if (!message.error.code) {
+					cb();
+				};
+			});
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!isSystemTarget) {
-			load(viewId);
+			load(viewId, true);
 		};
 	}, [ viewId ]);
 
 	useEffect(() => {
-		load(viewId);
+		if (U.Common.compareJSON(searchIds, prevIdsRef.current)) {
+			return;
+		};
+
+		if (view) {
+			load(view.id, true);
+		};
+
+		prevIdsRef.current = searchIds;
 	}, [ searchIds ]);
 
 	useEffect(() => {

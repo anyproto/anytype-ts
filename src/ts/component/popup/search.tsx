@@ -16,7 +16,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { route, onObjectSelect, skipIds } = data;
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ backlink, setBacklink ] = useState(null);
+	const backlinkRef = useRef(null);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -33,15 +33,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const filter = String(storage.filter || '');
 	const filterValueRef = useRef(filter);
 
-	const initCache = () => {
-		const items = getItems();
-
-		cacheRef.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_SECTION,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
+	cacheRef.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION });
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -73,7 +65,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('escape', e, () => {
-			if (backlink) {
+			if (backlinkRef.current) {
 				onClearSearch();
 			} else {
 				close();
@@ -200,11 +192,14 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		e.stopPropagation();
 
 		storageSet({ backlink: item.id });
-		setBacklinkState(item, 'Empty');
+		filterInputRef.current?.setValue('');
+		setBacklinkState(item, 'Empty', () => reload());
 	};
 
 	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
-		setBacklink(item);
+		filterInputRef.current?.setValue('');
+		backlinkRef.current = item;
+
 		analytics.event('SearchBacklink', { route, type });
 
 		if (callBack) {
@@ -214,9 +209,11 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onClearSearch = () => {
 		offsetRef.current = 0;
+		filterInputRef.current?.setValue('');
+		backlinkRef.current = null;
 
 		storageSet({ backlink: '' });
-		setBacklink(null);
+		reload();
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
@@ -224,11 +221,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			offsetRef.current += J.Constant.limit.menuRecords;
 			load(false, () => resolve(null));
 		});
-	};
-
-	const resetSearch = () => {
-		filterInputRef.current?.setValue('');
-		reload();
 	};
 
 	const reload = () => {
@@ -266,13 +258,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let limit = J.Constant.limit.menuRecords;
 
-		if (!filterValueRef.current && clear && !backlink) {
+		if (!filterValueRef.current && clear && !backlinkRef.current) {
 			limit = 8;
 		};
 
-		if (backlink) {
-			const links = Relation.getArrayValue(backlink.links);
-			const backlinks = Relation.getArrayValue(backlink.backlinks);
+		if (backlinkRef.current) {
+			const links = Relation.getArrayValue(backlinkRef.current.links);
+			const backlinks = Relation.getArrayValue(backlinkRef.current.backlinks);
 
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
 		};
@@ -337,8 +329,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
-		if (backlink) {
-			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
+		if (backlinkRef.current) {
+			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
 		} else 
 		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
@@ -563,7 +555,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const storage = storageGet();
-		const storageBacklink = storage.backlink;
 		const filter = String(storage.filter || '');
 
 		const setFilter = () => {
@@ -574,15 +565,15 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			rangeRef.current = { from: 0, to: filter.length };
 			filterInputRef.current.setValue(filter);
 			filterInputRef.current.setRange(rangeRef.current);
+
 			reload();
 		};
 
-		initCache();
 		focus.clear(true);
 		window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
-		if (storageBacklink) {
-			U.Object.getById(storageBacklink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
+		if (storage.backlink) {
+			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
 		} else {
 			setFilter();
 		};
@@ -599,7 +590,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		const items = getItems();
 
-		initCache();
 		setActive(items[nRef.current]);
 
 		if (listRef.current) {
@@ -607,10 +597,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 	});
-
-	useEffect(() => {
-		resetSearch();
-	}, [ backlink ]);
 
 	const items = getItems();
 	const shift = keyboard.shiftSymbol();
@@ -837,7 +823,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 										ref={listRef}
 										width={width}
 										height={height}
-										deferredMeasurementCache={cacheRef.current}
+										deferredMeasurmentCache={cacheRef.current}
 										rowCount={items.length}
 										rowHeight={param => getRowHeight(items[param.index], param.index)}
 										rowRenderer={rowRenderer}
