@@ -128,7 +128,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
 		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
-		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editType' };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
