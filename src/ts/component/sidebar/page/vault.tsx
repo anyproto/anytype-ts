@@ -18,7 +18,7 @@ const HEIGHT_ITEM = 64;
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { space, updateVersion } = S.Common;
+	const { updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -30,7 +30,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 	const profile = U.Space.getProfile();
-	const theme = S.Common.getThemeClass();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
@@ -284,6 +283,11 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const cn = [ 'item' ];
 		const icons = [];
 
+		let iconMute = null;
+		let time = null;
+		let last = null;
+		let counter = null;
+
 		if (isDragging) {
 			cn.push('isDragging');
 		};
@@ -299,6 +303,16 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 		if (!item.lastMessage) {
 			cn.push('noMessages');
+		};
+
+		if (item.chatId) {
+			if (item.isMuted) {
+				iconMute = <Icon className="muted" />;
+			};
+
+			time = <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>;
+			last = <Label text={item.lastMessage} />;
+			counter = <ChatCounter {...item.counters} mode={item.notificationMode} />;
 		};
 
 		return (
@@ -321,20 +335,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 					<div className="nameWrapper">
 						<div className="nameInner">
 							<ObjectName object={item} />
-
-							{item.chatId && item.isMuted ? <Icon className="muted" /> : ''}
+							{iconMute}
 						</div>
 
-						{item.chatId ? <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div> : ''}
+						{time}
 					</div>
 					<div className="messageWrapper">
-						{item.chatId ? <Label text={item.lastMessage} /> : ''}
+						{last}
 
 						<div className="icons">
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
 
-						{item.chatId ? <ChatCounter {...item.counters} mode={item.notificationMode} /> : ''}
+						{counter}
 					</div>
 				</div>
 			</div>

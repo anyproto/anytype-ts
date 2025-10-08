@@ -101,6 +101,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let descr = null;
 	let more = null;
 	let icon = null;
+	let time = null;
 
 	if (!hideIcon) {
 		icon = (
@@ -125,9 +126,11 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		} else 
 		if (isChat) {
 			const list = S.Chat.getList(S.Chat.getChatSubId('preview', space, id));
-			const text = list.length ? S.Chat.getMessageSimpleText(space, list[list.length - 1]) : translate('widgetNoMessages');
+			const last = list.length ? list[list.length - 1] : null;
+			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
 
 			descr = <Label className="descr" text={text} />;
+			time = last ? <div className="time">{U.Date.timeAgo(last.createdAt)}</div> : '';
 		} else {
 			descr = <ObjectDescription object={object} />;
 		};
@@ -146,9 +149,15 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				{descr}
 			</div>
 
-			<ChatCounter {...counters} />
+			{isChat ? (
+				<div className="chatInfo">
+					{time}
+					<ChatCounter {...counters} />
+				</div>
+			) : ''}
 
 			<div className="buttons">
+
 				{more}
 			</div>
 		</div>
