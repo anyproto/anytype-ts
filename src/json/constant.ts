@@ -125,7 +125,8 @@ export default {
 		chatSpace:		 		'lastMessage',
 		template:		 		'template',
 		fileManagerSynced: 		'fileManagerSynced',
-		fileManagerNotSynced: 	'fileManagerNotSynced'
+		fileManagerNotSynced: 	'fileManagerNotSynced',
+		chatPreview:	 		'chatPreview',
 	},
 
 	typeKey: {

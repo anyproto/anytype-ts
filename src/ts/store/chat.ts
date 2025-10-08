@@ -532,16 +532,26 @@ class ChatStore {
 	};
 
 	/**
-	 * Checks the vault subscription ID for a space and subId.
+	 * Mutates subscriptionIds array and adds chat preview and vault subscription ids properly.
 	 * @param {string} spaceId - The space ID.
 	 * @param {string} subId - The subscription ID.
 	 * @returns {string} The vault subscription ID.
 	 */
-	checkVaultSubscriptionId (spaceId: string, subId: string): string {
-		if (subId == J.Constant.subId.chatSpace) {
-			subId = this.getSpaceSubId(spaceId);
+	checkVaultSubscriptionIds (subIds: string[], spaceId: string, chatId: string): string[] {
+		const ret = [];
+
+		for (let i = 0; i < subIds.length; i++) {
+			const subId = subIds[i];
+
+			if (subId == J.Constant.subId.chatSpace) {
+				ret.push(this.getSpaceSubId(spaceId));
+				ret.push(this.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId));
+			} else {
+				ret.push(subId);
+			};
 		};
-		return subId;
+
+		return ret;
 	};
 
 };

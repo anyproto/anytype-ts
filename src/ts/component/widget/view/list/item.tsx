@@ -125,7 +125,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			descr = <Label className="descr" text={U.Common.shortUrl(source)} />;
 		} else 
 		if (isChat) {
-			const list = S.Chat.getList(S.Chat.getChatSubId('preview', space, id));
+			const list = S.Chat.getList(S.Chat.getChatSubId(J.Constant.subId.chatPreview, space, id));
 			const last = list.length ? list[list.length - 1] : null;
 			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
 
