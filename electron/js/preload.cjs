@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	},
 	platform: os.platform(),
 	arch: process.arch,
+	sentry: process.env.SENTRY_DSN,
 
 	storeGet: key => ipcRenderer.sendSync('storeGet', key),
 	storeSet: (key, value) => ipcRenderer.sendSync('storeSet', key, value),
