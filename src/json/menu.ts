@@ -1,7 +1,6 @@
 export default {
 	cell: [
 		'select',
-		'button',
 		'dataviewText',
 		'dataviewRelationEdit',
 		'dataviewObjectList',

@@ -2,8 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview, Onboarding } from 'Lib';
+import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName, ChatCounter } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -51,7 +51,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	render (): React.ReactNode {
 		const { isEditing, previewId, sectionIds } = this.state;
-		const { space } = S.Common;
 		const { widgets } = S.Block;
 		const { sidebarDirection } = this.props;
 		const cnsh = [ 'subHead' ];
@@ -59,7 +58,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const spaceview = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const counters = S.Chat.getTotalCounters();
-		const cnt = S.Chat.counterString(counters.messageCounter);
 		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
 		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -68,6 +66,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		// Subscriptions
 		for (const key of U.Subscription.fileTypeKeys()) {
 			const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(key), '');
+		};
+
+		if (counters.messageCounter) {
+			cnsh.push('withCounter');
 		};
 
 		let headerButtons: any[] = [];
@@ -81,10 +83,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (isEditing) {
 			cnb.push('isEditing');
-		};
-
-		if (cnt) {
-			cnsh.push('withCounter');
 		};
 
 		let content = null;
@@ -157,7 +155,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		} else {
 			const blockWidgets = this.getBlockWidgets();
 			const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
-			const chatBlock = blockWidgets.find(it => it.id == J.Constant.widgetId.chat);
 			const sections = [
 				{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 				{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
@@ -169,10 +166,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			subHead = !spaceview.isChat ? (
 				<div className={cnsh.join(' ')}>
-					{isDirectionLeft || cnt ? (
+					{isDirectionLeft ? (
 						<div className="side left" onClick={isDirectionLeft ? this.onBack : null}>
 							{isDirectionLeft ? <Icon className="back" /> : ''}
-							{cnt ? <div className="cnt">{cnt}</div> : ''}
+							<ChatCounter {...counters} mode={spaceview.notificationMode} />
 						</div>
 					) : ''}
 
@@ -245,19 +242,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 								/>
 							)}
 						</DropTarget>
-					) : ''}
-
-					{chatBlock ? (
-						<Widget
-							block={chatBlock}
-							disableContextMenu={true}
-							isEditing={false}
-							canEdit={false}
-							canRemove={false}
-							disableAnimation={true}
-							sidebarDirection={sidebarDirection}
-							getObject={id => this.getObject(chatBlock, id)}
-						/>
 					) : ''}
 
 					{sections.map(section => {
@@ -955,11 +939,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			const target = child.getTargetObjectId();
 
-			if ([ J.Constant.widgetId.allObject ].includes(target)) {
+			if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
 				return false;
 			};
 
-			if ([ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
 				return false;
 			};
 

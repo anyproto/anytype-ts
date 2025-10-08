@@ -3,8 +3,8 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
+import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -40,11 +40,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
+	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isSectionType = block.content.section == I.WidgetSection.Type;
-	const isChat = targetId == J.Constant.widgetId.chat;
+	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
-	const object = getObject(targetId);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);
@@ -94,13 +94,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-	const cntCn = [ 'cnt' ];
 
-	if (spaceview.isMuted) {
-		cntCn.push('isMuted');
-	};
-
-	let counters = { messageCounter: 0, mentionCounter: 0 };
+	let counters = { mentionCounter: 0, messageCounter: 0 };
 	if (isChat) {
 		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
@@ -141,7 +136,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCreate({ route: analytics.route.widget });
+		onCreate({ element: '.iconWrap.create', route: analytics.route.widget });
 	};
 
 	const onCreate = (param?: any): void => {
@@ -221,15 +216,23 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			U.Menu.onBookmarkMenu({
-				element: `#widget-${block.id} .iconWrap.create`,
+		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
+			const menuParam = {
+				element: `#widget-${block.id} ${param.element}`,
 				onOpen: () => node.addClass('active'),
 				onClose: () => node.removeClass('active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
+				offsetY: 4,
 				data: { details },
-			}, cb);
+			};
+
+			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+			} else 
+			if (U.Object.isChatLayout(type.recommendedLayout)) {
+				U.Menu.onChatMenu(menuParam, cb);
+			}; 
 			return;
 		};
 
@@ -281,7 +284,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					{ id: 'empty', icon: 'remove', name: translate('commonEmptyBin') },
 				],
 				onSelect: (e: any, item: any) => {
-					console.log(item);
 					switch (item.id) {
 						case 'open': {
 							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
@@ -645,12 +647,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (targetId == J.Constant.widgetId.bin) {
-			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-		} else 
-		if (targetId == J.Constant.widgetId.chat) {
-			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-		} else
 		if (isSystemTarget) {
 			onSetPreview();
 		} else {
@@ -756,12 +752,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							{counters.messageCounter || counters.mentionCounter ? (
-								<div className={cntCn.join(' ')}>
-									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
-									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
-								</div>
-							) : ''}
+							<ChatCounter {...counters} mode={spaceview.notificationMode} />
+
 							{buttons.length ? (
 								<div className="buttons">
 									{buttons.map(item => (

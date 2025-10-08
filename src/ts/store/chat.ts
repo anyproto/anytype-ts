@@ -206,6 +206,16 @@ class ChatStore {
 	};
 
 	/**
+	 * Gets the subscription ID for a space and chat.
+	 * @param {string} spaceId - The space ID.	
+	 * @param {string} chatId - The chat ID.
+	 * @returns {string} The subscription ID.
+	 */
+	getChatSubId (spaceId: string, chatId: string): string {
+		return [ '', spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.windowId ].join('-');
+	};
+
+	/**
 	 * Sets the chat state for a subId.
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatState} state - The chat state.

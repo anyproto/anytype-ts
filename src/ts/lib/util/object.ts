@@ -155,7 +155,13 @@ class UtilObject {
 			id: object.id,
 		};
 
+		const onClose = param.onClose || null;
+
 		param = param || {};
+		param.onClose = () => {
+			sidebar.rightPanelClose(true);
+			onClose?.();
+		};
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
@@ -442,7 +448,7 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {

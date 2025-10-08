@@ -280,7 +280,7 @@ class UtilRouter {
 		const spaceview = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(false);
 
-		if (!spaceview.isChat && (rightSidebar.page == 'widget')) {
+		if (!spaceview.isChat && [ 'object/relation', 'widget' ].includes(rightSidebar.page)) {
 			sidebar.rightPanelClose(false);
 		} else 
 		if (spaceview.isChat && (rightSidebar.page != 'widget')) {

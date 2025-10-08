@@ -173,6 +173,7 @@
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonEditType" : "Edit Type",
+	"commonEditChat" : "Change Info",
 	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don't show this again",
 	"commonObject": "Object",
@@ -230,6 +231,7 @@
 	"commonSeeChanges": "See Changes",
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
+	"commonSaveChat": "Save chat",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1860,6 +1862,8 @@
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
+
+	"menuChatCreatePlaceholder": "e.g. feature-chat",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",

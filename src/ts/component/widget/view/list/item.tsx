@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
+import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
@@ -21,6 +21,7 @@ interface Props extends I.WidgetViewComponent {
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, id, parent, block, isCompact, isEditing, isPreview, isSection, hideIcon, onContext } = props;
+	const { space } = S.Common;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
@@ -33,10 +34,16 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
+	const isChat = U.Object.isChatLayout(object.layout);
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
 		transition,
+	};
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, id);
 	};
 
 	if (canDrag) {
@@ -131,6 +138,8 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				<ObjectName object={object} withPlural={true} />
 				{descr}
 			</div>
+
+			<ChatCounter {...counters} />
 
 			<div className="buttons">
 				{more}

@@ -197,7 +197,14 @@ const Members = observer(class Members extends React.Component<Props, State> {
 	};
 
 	getParticipantList () {
-		let records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
+		const isSpaceOwner = U.Space.isMyOwner();
+		const statuses = [ I.ParticipantStatus.Active ];
+
+		if (isSpaceOwner) {
+			statuses.push(I.ParticipantStatus.Joining);
+		};
+
+		let records = U.Space.getParticipantsList(statuses);
 
 		records = records.sort((c1, c2) => {
 			const isRequest1 = c1.isJoining;

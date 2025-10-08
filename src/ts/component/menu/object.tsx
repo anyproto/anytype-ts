@@ -127,7 +127,8 @@ class MenuObject extends React.Component<I.Menu> {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
-		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' }
+		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -163,21 +164,22 @@ class MenuObject extends React.Component<I.Menu> {
 		);
 
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !isFilePreview && !isInSet;
-		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !object.templateIsBundled;
+		const allowedSearch = !isFilePreview && !isInSet && !isChat;
+		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
-		const allowedLinkTo = canWrite && !isRelation &&!object.isArchived;
+		const allowedLinkTo = canWrite && !isRelation && !object.isArchived;
 		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;
 		const allowedPageLink = !isRelation && !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelation;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
-		const allowedPrint = !isFilePreview;
+		const allowedPrint = !isFilePreview && !isChat;
 		const allowedDownloadFile = isInFile;
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
 		const allowedEditType = isType && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
+		const allowedEditChat = isChat;
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -199,6 +201,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedOpenFile)		 openFile = null;
 		if (!allowedOpenObject)		 openObject = null;
 		if (!allowedEditType) 		 editType = null;
+		if (!allowedEditChat) 		 editChat = null;
 
 		if (!canWrite) {
 			template = null;
@@ -256,8 +259,8 @@ class MenuObject extends React.Component<I.Menu> {
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		};
 
-		sections = sections.concat([ { children: [ advanced ] } ]);
-		sections = [ { children: [ editType ] } ].concat(sections);
+		sections.push({ children: [ advanced ] });
+		sections.unshift({ children: [ editType, editChat ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -398,7 +401,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect, onArchive, onDelete } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -552,6 +555,16 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'editType': {
 				sidebar.rightPanelToggle(true, keyboard.isPopup(), 'type', { rootId })
+				break;
+			};
+
+			case 'editChat': {
+				U.Menu.onChatMenu({
+					element: `#button-header-more`,
+					data: {
+						details: object,
+					},
+				});
 				break;
 			};
 		};

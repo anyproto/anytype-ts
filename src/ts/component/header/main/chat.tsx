@@ -1,14 +1,37 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, keyboard, sidebar, translate, analytics } from 'Lib';
+import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, renderLeftIcons, isPopup } = props;
+	const { rootId, isPopup, menuOpen, renderLeftIcons } = props;
+	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
+	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
+
+	let object = null;
+	if (rootId == S.Block.workspace) {
+		object = spaceview;
+	} else {
+		object = S.Detail.get(rootId, rootId, []);
+	};
+
+	const isDeleted = object._empty_ || object.isDeleted;
+	const readonly = object.isArchived;
+	const showRelations = !isDeleted;
+	const showPin = canWrite;
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
+
+	const onPin = () => {
+		Action.toggleWidgetsForObject(rootId, analytics.route.header);
+	};
+
+	const onRelation = () => {
+		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+	};
 	
 	const onOpen = () => {
 		const object = S.Detail.get(rootId, rootId, []);
@@ -29,33 +52,21 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onMore = () => {
-		const element = $('#button-header-more');
-		const st = $(window).scrollTop();
-
-		const menuParam: I.MenuParam = {
-			element: '#button-header-more',
+		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			offsetY: 4,
-		};
-
-		if (!isPopup) {
-			menuParam.fixedY = element.offset().top + element.height() - st + 4;
-			menuParam.classNameWrap = 'fixed fromHeader';
-		};
-
-		U.Menu.spaceContext(spaceview, menuParam, { 
-			noPin: true, 
-			noDivider: true,
-			route: analytics.route.chat
+			subIds: J.Menu.object,
+			data: {
+				rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
+				isPopup,
+			}
 		});
 	};
 
-	let object = null;
-	if (rootId == S.Block.workspace) {
-		object = spaceview;
-	} else {
-		object = S.Detail.get(rootId, rootId, []);
-	};
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<>
@@ -76,6 +87,30 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					onClick={() => U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
+
+				{showRelations ? (
+					<Icon 
+						id="button-header-relation" 
+						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						onClick={onRelation} 
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
+
+				{showPin ? (
+					<Icon 
+						id="button-header-pin" 
+						tooltipParam={{ 
+							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'), 
+							caption: keyboard.getCaption('addFavorite'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+						className={[ (hasWidget ? 'unpin' : 'pin'), 'withBackground' ].join(' ')}
+						onClick={onPin}
+						onDoubleClick={e => e.stopPropagation()}
+					/> 
+				) : ''}
 
 				<Icon 
 					id="button-header-more"

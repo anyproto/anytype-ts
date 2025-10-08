@@ -19,7 +19,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 		U.Object.getById(id, { spaceId }, object => {
 			if (!object) {
-				U.Space.openDashboard();
+				U.Space.openDashboardOrVoid();
 				return;
 			};
 

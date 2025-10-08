@@ -25,6 +25,20 @@ class UtilSpace {
 		U.Object.openRoute(home, param);
 	};
 
+	openDashboardOrVoid (param?: any) {
+		param = param || {};
+
+		if (undefined === param.replace) {
+			param.replace = true;
+		};
+		
+		if (S.Common.space) {
+			U.Space.openDashboard(param);
+		} else {
+			U.Router.go('/main/void/select', param);
+		};
+	};
+
 	/**
 	 * Opens the first available space or a void page if none exist.
 	 * @param {(it: any) => boolean} [filter] - Optional filter function for spaces.

@@ -51,19 +51,6 @@
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
-
-		.cnt { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
-		.cnt {
-			.icon.count { 
-				min-width: 18px; width: auto; height: 18px; border-radius: 10px; background: var(--color-system-accent-125); display: flex; 
-				align-items: center; justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-small; 
-				padding: 0px 4px;
-			}
-			.icon.count.mention { background-image: url('~img/icon/widget/mention.svg'); background-size: 12px; }
-		}
-		.cnt.isMuted {
-			.icon.count { background-color: var(--color-text-tertiary); }
-		}
 	}
 
 	&.active, &:hover {
@@ -93,7 +80,7 @@
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; justify-content: center; }
 
-	.emptyWrap { padding: 0px 16px; display: flex; align-items: center; justify-content: center; width: 100%; }
+	.emptyWrap { padding: 0px 16px; display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-grow: 1; }
 	.emptyWrap {
 		.label { text-align: center; @include text-common; @include clamp2; width: 100%; color: var(--color-text-secondary); }
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/widget/emptyMore.svg'); }
