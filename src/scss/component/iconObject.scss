@@ -122,6 +122,8 @@
 .iconObject.c128,
 .iconObject.c160 {
 	border-radius: 12px;
+
+	&.isChat { border-radius: 100% !important; }	
 }
 
 .iconObject.c36, 

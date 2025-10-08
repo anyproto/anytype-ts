@@ -1378,14 +1378,16 @@ class UtilMenu {
 							this.menuContext?.close();
 						};
 
-						if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
+						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
 							window.setTimeout(() => {
-								this.onBookmarkMenu({
-									...param,
-									data: { details },
-								}, object => cb(object, 0));
+								if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
+									this.onBookmarkMenu({ ...param, data: { details }}, object => cb(object, 0));
+								} else
+								if (U.Object.isChatLayout(item.recommendedLayout)) {
+									this.onChatMenu({ ...param, data: { details }}, object => cb(object, 0));
+								};
 							}, S.Menu.getTimeout());
 						} else {
 							C.ObjectCreate(details, objectFlags, item.defaultTemplateId, item.uniqueKey, S.Common.space, (message: any) => {
@@ -1410,6 +1412,23 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
+			horizontal: I.MenuDirection.Center,
+			data: {
+				onSubmit: callBack,
+				...data,
+			},
+			...param,
+		});
+	};
+
+	onChatMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+		param = param || {};
+
+		const data = param.data || {};
+
+		delete(param.data);
+
+		S.Menu.open('chatCreate', {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,

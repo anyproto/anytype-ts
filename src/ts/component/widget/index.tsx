@@ -136,7 +136,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCreate({ route: analytics.route.widget });
+		onCreate({ element: '.iconWrap.create', route: analytics.route.widget });
 	};
 
 	const onCreate = (param?: any): void => {
@@ -216,15 +216,23 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			U.Menu.onBookmarkMenu({
-				element: `#widget-${block.id} .iconWrap.create`,
+		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
+			const menuParam = {
+				element: `#widget-${block.id} ${param.element}`,
 				onOpen: () => node.addClass('active'),
 				onClose: () => node.removeClass('active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
+				offsetY: 4,
 				data: { details },
-			}, cb);
+			};
+
+			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+			} else 
+			if (U.Object.isChatLayout(type.recommendedLayout)) {
+				U.Menu.onChatMenu(menuParam, cb);
+			}; 
 			return;
 		};
 

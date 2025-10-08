@@ -780,41 +780,44 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			groupId = 'empty';
 		};
 
-		if (type && U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			this.onBookmarkMenu(e, dir, groupId, menuParam);
+		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
+			this.onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
 		};
 	};
 
-	onBookmarkMenu (e: any, dir: number, groupId?: string, param?: any) {
-		param = param || {};
+	onObjectMenu (e: any, dir: number, layout: I.ObjectLayout, groupId?: string, param?: Partial<I.MenuParam>) {
+		param.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+		param.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
+		param.offsetX = dir < 0 ? -24 : 0;
+		param.offsetY = 4 * -dir;
+
+		param.data = param.data || {};
+		param.data.details = this.getDetails(groupId);
 
 		const objectId = this.getObjectId();
-		const details = this.getDetails(groupId);
-		const menuParam = this.getMenuParam(e, dir);
-
-		U.Menu.onBookmarkMenu({
-			...menuParam,
-			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-			offsetX: dir < 0 ? -24 : 0,
-			offsetY: 4 * -dir,
-			data: {
-				route: analytics.route.type,
-				details,
-				onSubmit: (bookmark) => {
-					if (this.isCollection()) {
-						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
-					};
-				},
-			},
+		const menuParam = {
+			...this.getMenuParam(e, dir),
 			...param,
-		}, (bookmark) => {
+		};
+		const cb = object => {
 			if (this.isCollection()) {
-				C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
-		});
+		};
+
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+				break;
+			};
+
+			case I.ObjectLayout.Chat: {
+				U.Menu.onChatMenu(menuParam, cb);
+				break;
+			};
+		};
 	};
 
 	onTemplateMenu (e: any, dir: number) {
@@ -881,9 +884,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const typeId = this.getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
-					if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
-						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
+						this.onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${block.id}-add-record` });
 					} else
 					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);

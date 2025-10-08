@@ -1861,6 +1861,8 @@
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
 
+	"menuChatCreatePlaceholder": "e.g. feature-chat",
+
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
 	"syncButtonNameError3": "No access",
