@@ -66,7 +66,17 @@ class UtilSubscription {
 		const { config } = S.Common;
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = U.Common.objectCopy(param.filters || []);
-		const skipLayouts = [];
+		
+		let skipLayouts = [];
+
+		if (!config.experimental) {
+			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+		};
+
+		if (skipLayouts.length) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+			filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+		};
 
 		if (skipLayouts.length) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
