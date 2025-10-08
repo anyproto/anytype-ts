@@ -111,7 +111,7 @@ class UtilRouter {
 		S.Popup.closeAll();
 		focus.clear(true);
 
-		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && (routeParam.spaceId != space)) {
 			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};

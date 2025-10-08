@@ -996,18 +996,8 @@ class Dispatcher {
 							title: space.name, 
 							text: notification,
 						}, () => {
-							const { space } = S.Common;
-							const open = () => {
-								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-
-								analytics.event('OpenChatFromNotification');
-							};
-
-							if (spaceId != space) {
-								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open }, false);
-							} else {
-								open();
-							};
+							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
+							analytics.event('OpenChatFromNotification');
 						});
 					};
 
