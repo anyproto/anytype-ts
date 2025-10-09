@@ -168,7 +168,7 @@
 
 	&.canExpand.isExpanded {
 		.bubbleInner {
-			.text { -webkit-line-clamp: unset; }
+			.text { -webkit-line-clamp: 1000; }
 		}
 	}
 
