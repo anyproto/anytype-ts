@@ -410,17 +410,17 @@ jobs:
           | sort -n | head -n -10 | cut -d' ' -f2- \
           | xargs -r -I{} echo gh api -X DELETE repos/${GITHUB_REPOSITORY}/git/refs/tags/{}
 
-      #- name: Clean old nightly tags
-      #  env:
-      #    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh CLI to authenticate
-      #  run: |
-      #    # list -> filter -> delete via API
-      #    gh api repos/${GITHUB_REPOSITORY}/git/matching-refs/tags \
-      #    | jq -r '.[].ref' | sed 's#^refs/tags/##' \
-      #    | grep -E '^v.*-nightly.*$' \
-      #    | while read -r t; do echo "$(git log -1 --format=%ct "refs/tags/$t") $t"; done \
-      #    | sort -n | head -n -10 | cut -d' ' -f2- \
-      #    | xargs -r -I{} gh api -X DELETE repos/${GITHUB_REPOSITORY}/git/refs/tags/{}
+      - name: Clean old nightly tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh CLI to authenticate
+        run: |
+          # list -> filter -> delete via API
+          gh api repos/${GITHUB_REPOSITORY}/git/matching-refs/tags \
+          | jq -r '.[].ref' | sed 's#^refs/tags/##' \
+          | grep -E '^v.*-nightly.*$' \
+          | while read -r t; do echo "$(git log -1 --format=%ct "refs/tags/$t") $t"; done \
+          | sort -n | head -n -10 | cut -d' ' -f2- \
+          | xargs -r -I{} gh api -X DELETE repos/${GITHUB_REPOSITORY}/git/refs/tags/{}
 
 
   notify:
