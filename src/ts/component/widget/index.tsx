@@ -130,6 +130,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
 		U.Object.openEvent(e, object);
+
+		console.log(object);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
@@ -647,7 +649,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (isSystemTarget) {
+		if (isSystemTarget && !isBin) {
 			onSetPreview();
 		} else {
 			onClick(e);

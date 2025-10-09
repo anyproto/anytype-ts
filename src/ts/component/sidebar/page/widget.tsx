@@ -36,7 +36,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrag = this.onDrag.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onArchive = this.onArchive.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -668,14 +667,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		if (!previewId) {
 			Storage.setScroll('sidebarWidget', sidebarDirection, top, isPopup);
-		};
-	};
-
-	onArchive (e: any) {
-		const { isEditing } = this.state;
-
-		if (!isEditing && !e.button) {
-			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
