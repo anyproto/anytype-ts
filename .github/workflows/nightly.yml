@@ -20,8 +20,9 @@ on:
         options:
           - 'true'
           - 'false'
-  schedule:
-    - cron: '0 2 * * *' # every day at 2am (UTC)
+  # schedule is no longer needed
+  # the workflow is triggered from https://github.com/anyproto/anytype-heart/blob/develop/.github/workflows/nightly.yml
+
 
 permissions:
   contents: 'write'
