@@ -1940,6 +1940,11 @@ class UtilCommon {
 			I.TierType.Explorer,
 			I.TierType.Starter,
 			I.TierType.Pioneer,
+			I.TierType.Free,
+			I.TierType.Pro,
+			I.TierType.Plus,
+			I.TierType.Ultra,
+			I.TierType.CoCreator,
 		].includes(membership.tier);
 	};
 
