@@ -35,8 +35,6 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 
-		console.log(isEditing);
-
 		if (isEditing) {
 			const keys = [ 'name', 'iconEmoji', 'iconImage' ];
 
@@ -53,6 +51,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setValue = (v: string) => {
+		if (v == translate('defaultNamePage')) {
+			v = '';
+		};
+
 		editableRef.current?.setValue(v);
 		editableRef.current?.placeholderCheck();
 		editableRef.current?.setFocus();

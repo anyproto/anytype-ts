@@ -26,7 +26,7 @@ const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
 			const routeParam = { additional: [] };
 
 			if (messageOrder) {
-				routeParam.additional.push({ key: 'messageOrder', value: decodeURIComponent(messageOrder) });
+				routeParam.additional.push({ key: 'messageOrder', value: messageOrder ? decodeURIComponent(messageOrder) : '' });
 			};
 
 			U.Object.openRoute({ ...object, _routeParam_: routeParam });
