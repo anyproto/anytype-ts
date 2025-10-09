@@ -1934,14 +1934,13 @@ class UtilCommon {
 
 	checkCanMembershipUpgrade (): boolean {
 		const { membership } = S.Auth;
-		const canUpgradeTiers = [
+
+		return [
 			I.TierType.None,
 			I.TierType.Explorer,
 			I.TierType.Starter,
 			I.TierType.Pioneer,
-		];
-
-		return canUpgradeTiers.includes(membership.tier);
+		].includes(membership.tier);
 	};
 
 	getMembershipPeriodLabel (tier: I.MembershipTier): string {
