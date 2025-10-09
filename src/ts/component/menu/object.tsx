@@ -295,7 +295,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
 
 		const menuParam: I.MenuParam = {
@@ -304,8 +304,8 @@ class MenuObject extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			className: param.className,
-			classNameWrap: param.classNameWrap,
+			className,
+			classNameWrap,
 			rebind: this.rebind,
 			data: {
 				rootId,
@@ -401,8 +401,8 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, getId } = this.props;
-		const { data } = param;
+		const { param } = this.props;
+		const { data, className, classNameWrap } = param;
 		const { blockId, rootId, onSelect, onArchive, onDelete } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
@@ -561,6 +561,8 @@ class MenuObject extends React.Component<I.Menu> {
 			case 'editChat': {
 				U.Menu.onChatMenu({
 					element: `#button-header-more`,
+					className,
+					classNameWrap,
 					data: {
 						details: object,
 					},
