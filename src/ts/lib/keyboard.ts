@@ -890,8 +890,8 @@ class Keyboard {
 							icon: 'warning',
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
-							canCancel: false,
 							onConfirm: () => cb(),
+							onCancel: () => Renderer.send('initMenu')
 						},
 					});
 				};
