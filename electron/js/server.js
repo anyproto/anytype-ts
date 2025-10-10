@@ -5,6 +5,7 @@ const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const { app, dialog, shell } = require('electron');
 const Util = require('./util.js');
+const windowsJob = process.platform === 'win32' ? require('./winJob.js') : null;
 const winShutdownStdinMessage = 'shutdown\n';
 
 let maxStdErrChunksBuffer = 10;
@@ -22,6 +23,7 @@ class Server {
 			// stop will resolve immediately in case child process is not running
 			this.stop().then(() => {
 				this.isRunning = false;
+				this.stopTriggered = false;
 
 				try {
 					if (!process.stdout.isTTY) {
@@ -29,17 +31,22 @@ class Server {
 					};
 					
 					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], { windowsHide: false, env });
+
+					if (process.platform === 'win32' && windowsJob) {
+						try {
+							this.jobHandle = windowsJob.createJob();
+							if (this.jobHandle) {
+								windowsJob.assignProcess(this.jobHandle, this.cp.pid);
+							};
+						} catch (err) {
+							this._cleanupJobHandle();
+							console.error('[Server] Failed to assign server process to job object:', err.toString());
+						};
+					};
 				} catch (err) {
 					console.error('[Server] Process start error: ', err.toString());
 					reject(err);
 				};
-				
-				this.cp.on('error', err => {
-					this.isRunning = false;
-					console.error('[Server] Failed to start server: ', err.toString());
-					reject(err);
-				});
-				
 				this.cp.stdout.on('data', data => {
 					const str = data.toString();
 
@@ -78,13 +85,15 @@ class Server {
 					this.lastErrors.push(chunk);
 					console.log(chunk);
 				});
-				
+
 				this.cp.on('exit', () => {
 					if (this.stopTriggered) {
+						this._cleanupJobHandle();
 						return;
 					};
 					
 					this.isRunning = false;
+					this._cleanupJobHandle();
 					
 					const log = path.join(logPath, `crash_${Util.dateForFile()}.log`);
 					try {
@@ -97,6 +106,13 @@ class Server {
 					shell.showItemInFolder(log);
 					
 					app.exit(0);
+				});
+
+				this.cp.on('error', err => {
+					this._cleanupJobHandle();
+					this.isRunning = false;
+					console.error('[Server] Failed to start server: ', err.toString());
+					reject(err);
 				});
 			});
 		});
@@ -122,6 +138,7 @@ class Server {
 					this.cp.kill(signal);
 				};
 			} else {
+				this._cleanupJobHandle();
 				resolve();
 			};
 		});
@@ -133,6 +150,18 @@ class Server {
 	
 	setAddress (address) {
 		this.address = address;
+	};
+
+	_cleanupJobHandle () {
+		if (this.jobHandle && windowsJob) {
+			try {
+				windowsJob.closeJob(this.jobHandle);
+			} catch (jobErr) {
+				console.error('[Server] Failed to close job handle:', jobErr.toString());
+			} finally {
+				this.jobHandle = null;
+			};
+		};
 	};
 	
 };

@@ -163,6 +163,9 @@
 		"swiper": "^11.0.3",
 		"systeminformation": "^5.23.5"
 	},
+	"optionalDependencies": {
+		"@anytype/win32-job": "file:electron/native/win32-job"
+	},
 	"build": {
 		"npmRebuild": true,
 		"buildDependenciesFromSource": true,
@@ -203,6 +206,7 @@
 			"electron/js/preload.cjs",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
+			"node_modules/@anytype/win32-job/build/Release/win32_job.node",
 			"node_modules/lodash.isequal",
 			"node_modules/read-chunk",
 			"node_modules/@electron/remote",
