@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Icon } from 'Component';
+import { Title, Label, Button, Icon, Switch } from 'Component';
 import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay, Mousewheel, Navigation } from 'swiper/modules';
+import { Pagination, Mousewheel } from 'swiper/modules';
 
 const PageMainSettingsMembership = observer(class PageMainSettingsMembership extends React.Component<I.PageSettingsComponent> {
 
 	swiper = null;
+	showAnnual = true;
 
 	constructor (props: I.PageSettingsComponent) {
 		super(props);
@@ -19,11 +20,17 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 	render () {
 		const { membership } = S.Auth;
-		const { membershipTiers, interfaceLang } = S.Common;
+		const { interfaceLang } = S.Common;
 		const { status } = membership;
 		const tier = U.Data.getMembershipTier(membership.tier);
-		const length = membershipTiers.length;
 		const cnt = [];
+
+		// DEV: Filter out monthly tiers
+		const allowedPeriod = [
+			I.MembershipTierDataPeriodType.PeriodTypeUnlimited,
+			I.MembershipTierDataPeriodType.PeriodTypeYears,
+		];
+		const membershipTiers = S.Common.membershipTiers.filter(it => it.periodType && allowedPeriod.includes(it.periodType));
 
 		if (interfaceLang == J.Constant.default.interfaceLang) {
 			cnt.push('riccione');
@@ -35,30 +42,11 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
-		const SlideItem = (slide) => {
-			const { id } = slide;
-			const title = translate(`popupSettingsMembershipSlide${id}Title`);
-
-			let text = translate(`popupSettingsMembershipSlide${id}Text`);
-			if (id == 2) {
-				text = U.Common.sprintf(text, J.Url.vision);
-			};
-
-			return (
-				<div className={[ 'slide', `c${id}` ].join(' ')}>
-					<div className="illustration" />
-					<div className="text">
-						<Title text={title} />
-						<Label text={text} />
-					</div>
-				</div>
-			);
-		};
-
 		const TierItem = (props: any) => {
 			const { item } = props;
 			const isCurrent = item.id == membership.tier;
-			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
+			const periodPrice = this.showAnnual ? item.price : item.priceMonthly;
+			const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
 			const cn = [ 'tier', `c${item.id}`, item.color ];
 			const offer = isCurrent ? translate('popupSettingsMembershipCurrent') : item.offer;
 
@@ -83,7 +71,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				buttonText = translate('commonManage');
 			} else 
 			if (item.period) {
-				const periodLabel = U.Common.getMembershipPeriodLabel(item);
+				const periodLabel = this.showAnnual ? translate('pluralYear') : translate('pluralMonth');
 
 				if (item.period == 1) {
 					period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));
@@ -99,7 +87,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			return (
 				<div 
 					className={cn.join(' ')}
-					onClick={() => S.Popup.open('membership', { data: { tier: item.id } })}
+					onClick={() => S.Popup.open('membership', { data: { tier: item.id, isMonthly: !this.showAnnual } })}
 				>
 					<div className="top">
 						<div className="iconWrapper">
@@ -127,35 +115,14 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 					text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
 				/>
 
-				{!tier?.price ? (
-					<>
-						<Label className="description" text={translate('popupSettingsMembershipText')} />
-
-						<Swiper
-							className="featuresList"
-							spaceBetween={16}
-							slidesPerView={1}
-							pagination={{ clickable: true }}
-							autoplay={{
-								waitForTransition: true,
-								delay: 4000,
-								disableOnInteraction: true,
-							}}
-							mousewheel={{ forceToAxis: true }}
-							navigation={true}
-							modules={[ Pagination, Autoplay, Mousewheel, Navigation ]}
-							centeredSlides={true}
-							loop={true}
-							onSwiper={this.onSwiper}
-						>
-							{Array(4).fill(null).map((item: any, i: number) => (
-								<SwiperSlide key={i}>
-									<SlideItem key={i} id={i} />
-								</SwiperSlide>
-							))}
-						</Swiper>
-					</>
-				) : ''}
+				<div className="switchWrapper">
+					<Label text={translate('popupSettingsMembershipSwitchMonthly')} />
+					<Switch
+						value={this.showAnnual}
+						onChange={(e, v) => this.onSwitch(e, v)}
+					/>
+					<Label text={translate('popupSettingsMembershipSwitchAnnual')} />
+				</div>
 
 				<div className="tiers">
 					<Swiper
@@ -196,6 +163,11 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={this.onContact} />
 			</>
 		);
+	};
+
+	onSwitch (e: any, v: boolean) {
+		this.showAnnual = v;
+		this.forceUpdate();
 	};
 
 	onSwiper (swiper) {

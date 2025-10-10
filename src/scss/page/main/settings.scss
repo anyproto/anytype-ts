@@ -894,6 +894,11 @@
         .title.riccione { font-family: 'RiccioneExtraLight'; letter-spacing: -0.518px; }
         .description { text-align: center; margin-bottom: 26px !important; }
 
+        .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; padding: 16px 0px; }
+        .switchWrapper {
+            .label { font-weight: 500; }
+        }
+
         .label.special {
             span { text-decoration: underline; }
         }

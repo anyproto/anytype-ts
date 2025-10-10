@@ -594,6 +594,7 @@ export const Mapper = {
 				periodType: obj.getPeriodtype() as number,
 				period: obj.getPeriodvalue(),
 				priceCents: obj.getPricestripeusdcents(),
+				priceCentsMonthly: obj.getPricestripeusdcentsmonthly(),
 				colorStr: obj.getColorstr(),
 				features: obj.getFeaturesList(),
 				namesCount: obj.getAnynamescountincluded(),

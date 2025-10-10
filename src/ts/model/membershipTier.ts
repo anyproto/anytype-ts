@@ -18,6 +18,7 @@ class MembershipTier implements I.MembershipTier {
 	periodType = 0;
 	period = 0;
 	priceCents = 0;
+	priceCentsMonthly = 0;
 	features = [];
 	namesCount = 0;
 	offer = '';
@@ -32,6 +33,7 @@ class MembershipTier implements I.MembershipTier {
 		this.periodType = Number(props.periodType) || 0;
 		this.period = Number(props.period) || 0;
 		this.priceCents = Number(props.priceCents) || 0;
+		this.priceCentsMonthly = Number(props.priceCentsMonthly) || 0;
 		this.features = Array.isArray(props.features) ? props.features : [];
 		this.namesCount = Number(props.namesCount) || 0;
 		this.offer = String(props.offer || '');
@@ -43,6 +45,10 @@ class MembershipTier implements I.MembershipTier {
 
 	get price (): number {
 		return U.Common.round(this.priceCents / 100, 2);
+	};
+
+	get priceMonthly (): number {
+		return U.Common.round(this.priceCentsMonthly / 100, 2);
 	};
 
 	get isNone (): boolean {

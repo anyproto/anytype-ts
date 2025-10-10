@@ -1010,6 +1010,9 @@
 	"popupSettingsMembershipTitle2": "Let's build together",
 	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
 
+	"popupSettingsMembershipSwitchMonthly": "Monthly",
+	"popupSettingsMembershipSwitchAnnual": "Annual (-20%)",
+
 	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
 	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
 	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",

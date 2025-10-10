@@ -14,7 +14,7 @@ const PopupMembership = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const [ isEditing, setIsEditing ] = useState(false);
 	const { membership } = S.Auth;
 	const { data } = param;
-	const { tier, success } = data;
+	const { tier, success, isMonthly } = data;
 	const tierItem = U.Data.getMembershipTier(tier);
 	const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
@@ -29,7 +29,7 @@ const PopupMembership = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	if (!tierItem.price) {
 		content = <PageFree {...props} />;
 	} else {
-		content = <PagePaid {...props} />;
+		content = <PagePaid {...props} isMonthly={isMonthly} />;
 	};
 
 	useEffect(() => {

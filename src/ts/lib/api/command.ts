@@ -2116,6 +2116,7 @@ export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: 
 
 	request.setNocache(noCache);
 	request.setLocale(locale);
+	request.setVersion('1.1')
 
 	dispatcher.request(MembershipGetTiers.name, request, callBack);
 };
@@ -2130,12 +2131,13 @@ export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?:
 	dispatcher.request(MembershipIsNameValid.name, request, callBack);
 };
 
-export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, isMonthly: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
 
 	request.setRequestedtier(tier as number);
 	request.setPaymentmethod(method as number);
 	request.setNsname(name);
+	request.setIsmonthly(isMonthly);
 	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);

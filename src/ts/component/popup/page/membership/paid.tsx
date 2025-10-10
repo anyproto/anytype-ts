@@ -3,9 +3,13 @@ import { observer } from 'mobx-react';
 import { Title, Label, Input, Button, FooterAuthDisclaimer } from 'Component';
 import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
 
-const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) => {
+interface Props extends I.Popup {
+	isMonthly?: boolean;
+};
 
-	const { param } = props;
+const PopupMembershipPagePaid = observer(forwardRef<{}, Props>((props, ref) => {
+
+	const { param, isMonthly } = props;
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 
@@ -123,7 +127,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		const name = globalName || !tierItem.namesCount ? '' : getName();
 		const refButton = method == I.PaymentMethod.Stripe ? buttonCardRef.current : buttonCryptoRef.current;
 		const cb = () => {
-			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
+			C.MembershipRegisterPaymentRequest(tier, method, name, isMonthly, (message) => {
 				refButton?.setLoading(false);
 
 				if (message.error.code) {
@@ -199,6 +203,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	const { membership } = S.Auth;
 	const { name, nameType, paymentMethod } = membership;
 	const canPayCrypto = (membership.status != I.MembershipStatus.Active) || membership.isStarter;
+	const periodLabel = isMonthly ? translate('pluralMonth') : translate('pluralYear');
 
 	let platformText = '';
 	let withContactButton = false;
@@ -223,26 +228,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	};
 
 	let labelText = translate('popupMembershipPaidTextUnlimited');
-
-	let periodLabel = translate('pluralYear');
 	let periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
-
-	if (periodType) {
-		switch (periodType) {
-			case I.MembershipTierDataPeriodType.PeriodTypeDays: {
-				periodLabel = translate('pluralDay');
-				break;
-			};
-			case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
-				periodLabel = translate('pluralWeek');
-				break;
-			};
-			case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
-				periodLabel = translate('pluralMonth');
-				break;
-			};
-		};
-	};
 
 	if (period) {
 		if (period == 1) {
@@ -252,6 +238,11 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 			periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), period, U.Common.plural(period, periodLabel));
 			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
 		};
+	};
+
+	let price = 0;
+	if (tierItem.price) {
+		price = isMonthly ? tierItem.priceMonthly : tierItem.price;
 	};
 
 	return (
@@ -278,7 +269,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 				{code ? '' : (
 					<div className="priceWrapper">
-						{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
+						<span className="price">{`$${price}`}</span>
 						{periodText}
 					</div>
 				)}

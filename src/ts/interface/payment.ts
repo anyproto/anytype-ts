@@ -91,11 +91,13 @@ export interface MembershipTier {
 	periodType: MembershipTierDataPeriodType;
 	period: number;
 	priceCents: number;
+	priceCentsMonthly: number;
 	features: string[];
 	namesCount: number;
 	offer?: string;
 	color?: string;
 	price?: number;
+	priceMonthly?: number;
 	isStarter?: boolean;
 	isBuilder?: boolean;
 	isCreator?: boolean;
