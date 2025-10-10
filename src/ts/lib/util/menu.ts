@@ -1488,7 +1488,7 @@ class UtilMenu {
 						};
 
 						case 'space': {
-							Action.createSpace(I.SpaceUxType.Space, route);
+							Action.createSpace(I.SpaceUxType.Data, route);
 							break;
 						};
 

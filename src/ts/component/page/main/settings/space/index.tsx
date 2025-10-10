@@ -69,7 +69,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		});
 
 		const spaceUxTypes = [
-			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
 			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
 		].map((it: any) => {
 			it.name = translate(`spaceUxType${it.id}`);

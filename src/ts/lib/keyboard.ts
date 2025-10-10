@@ -702,7 +702,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Space, route);
+				Action.createSpace(I.SpaceUxType.Data, route);
 				break;
 			};
 
