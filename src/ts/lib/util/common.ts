@@ -726,7 +726,10 @@ class UtilCommon {
 	 */
 	clearSelection () {
 		$(document.activeElement).trigger('blur');
-		window.getSelection().removeAllRanges();
+		const selection = window.getSelection();
+		if (selection) {
+			selection.removeAllRanges();
+		}
 	};
 
 	/**

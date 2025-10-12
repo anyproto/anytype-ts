@@ -7,10 +7,11 @@ const INDEX_AUTH = '/auth/index.html';
 class Util {
 
 	isExtension () {
-		return (
-			(location.protocol == 'chrome-extension:') && 
-			J.Extension.clipper.ids.includes(location.hostname)
-		);
+		const proto = location.protocol;
+		if ((proto === 'chrome-extension:') || (proto === 'moz-extension:')) {
+			return true;
+		};
+		return false;
 	};
 
 	isPopup () {
