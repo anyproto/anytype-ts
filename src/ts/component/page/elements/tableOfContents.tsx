@@ -79,11 +79,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 				continue;
 			};
 
-			const t = el.offset().top - co;
-			const h = el.outerHeight();
-			const check = 0;
-
-			if ((t >= check) && (t + h <= check + ch)) {
+			if (el.offset().top - co >= 0) {
 				blockId = block.id;
 				break;
 			};
