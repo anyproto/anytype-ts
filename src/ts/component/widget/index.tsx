@@ -130,8 +130,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
 		U.Object.openEvent(e, object);
-
-		console.log(object);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
