@@ -8,7 +8,7 @@ import { I, S, U, J, Relation, keyboard } from 'Lib';
 
 const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
-	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuClassName, menuClassNameWrap } = props;
+	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam } = props;
 	const entryRef = useRef(null);
 	const listRef = useRef(null);
 	const placeholderRef = useRef(null);
@@ -155,8 +155,8 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 		S.Menu.open('dataviewOptionEdit', { 
 			element: `#${id} #item-${item.id}`,
-			className: menuClassName,
-			classNameWrap: menuClassNameWrap,
+			className: menuParam.className,
+			classNameWrap: menuParam.classNameWrap,
 			offsetY: 4,
 			data: {
 				option: item,
