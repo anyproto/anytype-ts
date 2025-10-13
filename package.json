@@ -34,8 +34,8 @@
 		"postinstall": "npx patch-package && electron-builder install-app-deps",
 		"prepare": "husky install",
 		"update:locale": "node ./electron/hook/locale.js",
-		"ext:manifest:firefox": "node -e \"require('fs').copyFileSync('dist/extension/manifest.firefox.json','dist/extension/manifest.json')\"",
-		"ext:manifest:chromium": "git checkout -- dist/extension/manifest.json"
+		"ext:manifest:firefox": "node electron/hook/switch-manifest.js firefox",
+		"ext:manifest:chromium": "node electron/hook/switch-manifest.js chromium"
 	},
 	"repository": {
 		"type": "git",
