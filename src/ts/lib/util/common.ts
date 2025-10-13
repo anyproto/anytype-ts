@@ -729,7 +729,7 @@ class UtilCommon {
 		const selection = window.getSelection();
 		if (selection) {
 			selection.removeAllRanges();
-		}
+		};
 	};
 
 	/**

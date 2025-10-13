@@ -38,33 +38,17 @@ const getHomeDir = () => {
 const installNativeMessagingHost = () => {
 	const { platform } = process;
 
-	const chromiumManifest = {
-		name: APP_NAME,
-		description: 'Anytype desktop <-> web clipper bridge',
-		type: 'stdio',
-		allowed_origins: EXTENSION_IDS.map(id => `chrome-extension://${id}/`),
-		path: getManifestPath(),
-	};
-
-	const firefoxManifest = {
-		name: APP_NAME,
-		description: 'Anytype desktop <-> web clipper bridge',
-		type: 'stdio',
-		allowed_extensions: [ GECKO_ID ],
-		path: getManifestPath(),
-	};
-
 	switch (platform) {
 		case 'win32': {
-			installToWindows(chromiumManifest, firefoxManifest);
+			installToWindows();
 			break;
 		}
 		case 'darwin': {
-			installToMacOS(chromiumManifest, firefoxManifest);
+			installToMacOS();
 			break;
 		}
 		case 'linux':
-			installToLinux(chromiumManifest, firefoxManifest);
+			installToLinux();
 			break;
 		default:
 			console.log('[InstallNativeMessaging] Unsupported platform:', platform);
@@ -72,49 +56,78 @@ const installNativeMessagingHost = () => {
 	};
 };
 
-const installToMacOS = (chromiumManifest, firefoxManifest) => {
+// Firefox uses allowed_extensions, Chromium-based browsers use allowed_origins
+const buildManifestForBrowserKey = (key) => {
+	const base = {
+		name: APP_NAME,
+		description: 'Anytype desktop <-> web clipper bridge',
+		type: 'stdio',
+		path: getManifestPath(),
+	};
+
+	if (key === 'Firefox') {
+		base.allowed_extensions = [ GECKO_ID ];
+	} else {
+		base.allowed_origins = EXTENSION_IDS.map(id => `chrome-extension://${id}/`);
+	};
+
+	return base;
+};
+
+const installToMacOS = () => {
 	const dirs = getDarwinDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
 		if (fs.existsSync(value)) {
 			const dst = path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME);
-			writeManifest(dst, key === 'Firefox' ? firefoxManifest : chromiumManifest);
+			writeManifest(dst, buildManifestForBrowserKey(key));
 		} else {
 			console.log('[InstallNativeMessaging] Manifest skipped:', key);
 		};
 	};
 };
 
-const installToLinux = (chromiumManifest, firefoxManifest) => {
+const getLinuxNativeMessagingDirName = (key) => {
+	if (key === 'Firefox') {
+		return 'native-messaging-hosts';
+	} else {
+		return 'NativeMessagingHosts';
+	};
+};
+
+const installToLinux = () => {
 	const dirs = getLinuxDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
 		if (fs.existsSync(value)) {
-			const nmDir = (key === 'Firefox') ? 'native-messaging-hosts' : 'NativeMessagingHosts';
+			const nmDir = getLinuxNativeMessagingDirName(key);
 			const dst = path.join(value, nmDir, MANIFEST_FILENAME);
-			writeManifest(dst, key === 'Firefox' ? firefoxManifest : chromiumManifest);
+			writeManifest(dst, buildManifestForBrowserKey(key));
 		} else {
 			console.log('[InstallNativeMessaging] Manifest skipped:', key);
 		};
 	};
 };
 
-const installToWindows = (chromiumManifest, firefoxManifest) => {
+const installToWindows = () => {
 	const dir = path.join(USER_PATH, 'browsers');
 
-	writeManifest(path.join(dir, 'chrome.json'), chromiumManifest);
-	writeManifest(path.join(dir, 'firefox.json'), firefoxManifest);
+	const chromeManifestPath = path.join(dir, 'chrome.json');
+	const firefoxManifestPath = path.join(dir, 'firefox.json');
+
+	writeManifest(chromeManifestPath, buildManifestForBrowserKey('Chrome'));
+	writeManifest(firefoxManifestPath, buildManifestForBrowserKey('Firefox'));
 
 	createWindowsRegistry(
 		'HKCU\\SOFTWARE\\Google\\Chrome',
 		`HKCU\\SOFTWARE\\Google\\Chrome\\NativeMessagingHosts\\${APP_NAME}`,
-		path.join(dir, 'chrome.json')
+		chromeManifestPath
 	);
 
 	createWindowsRegistry(
 		'HKCU\\SOFTWARE\\Mozilla',
 		`HKCU\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\${APP_NAME}`,
-		path.join(dir, 'firefox.json')
+		firefoxManifestPath
 	);
 };
 

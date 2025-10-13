@@ -7,11 +7,7 @@ const INDEX_AUTH = '/auth/index.html';
 class Util {
 
 	isExtension () {
-		const proto = location.protocol;
-		if ((proto === 'chrome-extension:') || (proto === 'moz-extension:')) {
-			return true;
-		};
-		return false;
+		return [ 'chrome-extension:', 'moz-extension:' ].includes(location.protocol);
 	};
 
 	isPopup () {
