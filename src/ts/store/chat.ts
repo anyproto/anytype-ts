@@ -412,7 +412,9 @@ class ChatStore {
 		let ret = 0;
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
-				ret = Math.max(ret, Number(state.lastMessageDate) || 0);
+				if (!chatId) {
+					ret = Math.max(ret, Number(state.lastMessageDate) || 0);
+				};
 			};
 		};
 
@@ -544,8 +546,14 @@ class ChatStore {
 			const subId = subIds[i];
 
 			if (subId == J.Constant.subId.chatSpace) {
+				const isArchived = U.Data.checkIsArchived(chatId);
+				const isDeleted = U.Data.checkIsDeleted(chatId);
+
 				ret.push(this.getSpaceSubId(spaceId));
-				ret.push(this.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId));
+
+				if (!isArchived && !isDeleted) {
+					ret.push(this.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId));
+				};
 			} else {
 				ret.push(subId);
 			};

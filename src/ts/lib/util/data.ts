@@ -1254,6 +1254,14 @@ class UtilData {
 		return !tier?.namesCount && this.isAnytypeNetwork();
 	};
 
+	checkIsArchived (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.archived, '').includes(id);
+	};
+
+	checkIsDeleted (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
+	};
+
 };
 
 export default new UtilData();
