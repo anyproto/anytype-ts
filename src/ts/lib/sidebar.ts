@@ -279,7 +279,7 @@ class Sidebar {
 		const pageCss: any = { width: pageWidth };
 
 		if (!isPopup) {
-			pageCss.height = U.Common.getAppContainerHeight();
+			pageCss.height = U.Common.getAppContainerHeight() - 16;
 		};
 
 		if (U.Common.isPlatformMac() && !isFullScreen) {
@@ -291,7 +291,6 @@ class Sidebar {
 			rightButtonX = widthLeft - 40;
 		};
 
-		this.objRight.css({ height: container.height() });
 		this.header.css({ width: '' });
 		this.footer.css({ width: '' });
 
@@ -304,6 +303,9 @@ class Sidebar {
 		this.footer.css({ width: hw });
 		this.page.css(pageCss);
 
+		this.pageFlex.toggleClass('withSidebarLeft', !!widthLeft);
+		this.pageFlex.toggleClass('withSidebarRight', !!widthRight);
+
 		if (!isPopup) {
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
@@ -314,6 +316,8 @@ class Sidebar {
 			this.dummyLeft.css({ width: widthLeft });
 			this.leftButton.css({ left: leftButtonX });
 			this.rightButton.css({ left: rightButtonX });
+		} else {
+			this.objRight.css({ height: container.height() });
 		};
 
 		$(window).trigger('sidebarResize');

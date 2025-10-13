@@ -236,7 +236,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	const Item = (item: any) => {
 		const list = item.list;
-		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, data: item, disabled: item.disabled });
+		const { attributes, listeners, transform, transition, isDragging, setNodeRef} = useSortable({ id: item.id, data: item, disabled: item.disabled });
 		const canDrag = !item.disabled;
 		const cn = [ 'item' ];
 		const style = {
@@ -248,6 +248,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		if (item.isEmpty) {
 			cn.push('empty');
 			onClick = e => onAdd(e, list);
+		};
+
+		if (isDragging) {
+			cn.push('isDragging');
 		};
 
 		return (

@@ -1,4 +1,4 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
+> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; flex-grow: 1; }
 > .sidebarPage {
 	&.anim { transition: opacity 0.1s ease-in-out; }
 
@@ -110,7 +110,7 @@
 		}
 	}
 
-	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
+	.section { background: var(--color-shape-highlight-light); border-radius: 12px; padding: 8px 0px; }
 	.section {
 		.titleWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 8px 0px; padding: 0px 8px 0px 16px; }
 		.titleWrap {
@@ -137,9 +137,9 @@
 
 		.item { 
 			padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
-			background-color: var(--color-bg-primary); border-radius: 6px;
+			border-radius: 6px;
 		}
-		.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+		.item.isDragging { opacity: 0; }
 
 		.item {
 			.name { flex-shrink: 0; }
