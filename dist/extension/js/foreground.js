@@ -33,7 +33,7 @@
 				const sel = window.getSelection();
 				if (sel && sel.rangeCount) {
 					const container = document.createElement('div');
-					for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+					for (let i = 0, len = sel.rangeCount; i < len; ++i) {
 						container.appendChild(sel.getRangeAt(i).cloneContents());
 					};
 					html = container.innerHTML;
