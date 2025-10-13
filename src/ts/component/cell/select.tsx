@@ -117,16 +117,16 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const focus = () => {
-		const entry = $(entryRef.current);
-
-		if (entry.length) {
-			window.setTimeout(() => {
-				entry.focus();
-				setRange(entry.get(0), { start: 0, end: 0 });
-
-				scrollToBottom();
-			});
+		if (!entryRef.current) {
+			return;
 		};
+
+		window.setTimeout(() => {
+			entryRef.current.focus();
+			setRange(entryRef.current, { start: 0, end: 0 });
+
+			scrollToBottom();
+		});
 	};
 
 	const scrollToBottom = () => {
