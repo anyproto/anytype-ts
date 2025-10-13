@@ -113,7 +113,7 @@
 			&.isMulti { gap: 0px 2px; }
 			&.isMe { background-color: var(--color-bg-tag-lime); }
 
-			.count { min-width: 18px; text-align: center; }
+			.count { min-width: 18px; text-align: center; user-select: none !important; cursor: default; }
 		}
 		.reactionAdd { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 	}
