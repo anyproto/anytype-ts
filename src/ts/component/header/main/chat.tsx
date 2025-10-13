@@ -21,7 +21,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted;
+	const showRelations = !isDeleted && !spaceview.isChat;
 	const showPin = canWrite;
 	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
 
