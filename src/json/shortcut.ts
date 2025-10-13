@@ -35,7 +35,7 @@ const getSections = () => {
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
 						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
 						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, 'shift', 'z' ] },
-						{ id: 'createWidget', name: translate('menuObjectCreateWidget'), keys: [] },
+						{ id: 'pin', name: translate('commonTogglePin'), keys: [] },
 						{ id: 'copyPageLink', name: translate('commonCopyLink'), keys: [] },
 						{ id: 'copyDeepLink', name: translate('commonCopyDeeplink'), keys: [] },
 						{ id: 'moveToBin', name: translate('popupShortcutMainBasics25'), keys: [] },

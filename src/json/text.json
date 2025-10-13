@@ -96,9 +96,9 @@
 	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
-	"commonRemoveFromFavorites": "Unpin",
 	"commonPin": "Pin",
 	"commonUnpin": "Unpin",
+	"commonTogglePin": "Pin/Unpin",
 	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
@@ -1834,7 +1834,6 @@
 	"menuObjectUnlockPage": "Unlock Object",
 	"menuObjectLockPage": "Lock Object",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
-	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
 

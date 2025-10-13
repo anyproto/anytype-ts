@@ -358,13 +358,11 @@ class Keyboard {
 					});
 				};
 
-				// Create new widget
-				this.shortcut('createWidget', e, () => {
+				// Pin/Unpin
+				this.shortcut('pin', e, () => {
 					e.preventDefault();
 
-					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
-
-					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, analytics.route.header);
 				});
 
 				// Lock/Unlock
