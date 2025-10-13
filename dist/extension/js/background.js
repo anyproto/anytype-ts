@@ -98,9 +98,7 @@
 			const tab = await getActiveTab();
 
 			chrome.tabs.sendMessage(tab.id, { type: 'getSelectionHTML' }, (html) => {
-				if (html) {
-					sendToTab(tab, { type: 'clickMenu', html });
-				};
+				sendToTab(tab, { type: 'clickMenu', html });
 			});
 		});
 	};

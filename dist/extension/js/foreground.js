@@ -38,6 +38,12 @@
 					};
 					html = container.innerHTML;
 				};
+
+				// Avoid sending an empty html back to the background script
+				if (!html) {
+					return false;
+				};
+
 				sendResponse(html);
 				return true;
 			};
