@@ -251,8 +251,6 @@ class UtilRouter {
 					};
 
 					const onRouteChange = () => {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-
 						this.checkSidebarState();
 						routeParam.onRouteChange?.();
 					};

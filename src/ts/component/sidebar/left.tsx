@@ -41,7 +41,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
-	const [ page, setPage ] = useState('');
+	const [ page, setPage ] = useState('vault');
 	const [ subPage, setSubPage ] = useState('');
 	const cn = [ 'sidebar', 'left', 'customScrollbar', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
 

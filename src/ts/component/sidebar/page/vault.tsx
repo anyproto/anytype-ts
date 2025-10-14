@@ -217,7 +217,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard({ replace: false });
-			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		};
 	};
 

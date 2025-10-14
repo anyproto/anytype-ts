@@ -214,7 +214,6 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				U.Space.openDashboard({ replace: false });
 			};
 			
@@ -394,7 +393,6 @@ class Keyboard {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 					} else {
 						U.Space.openDashboard({ replace: false });
-						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
 					};
 				});
 			};
@@ -517,13 +515,6 @@ class Keyboard {
 				if (substitute) {
 					U.Router.go(substitute, {});
 					return;
-				};
-
-				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
-					const state = sidebar.leftPanelGetState();
-					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-					};
 				};
 
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
