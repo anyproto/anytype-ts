@@ -52,29 +52,13 @@
 	.sidebarPage { 
 		background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px;
 	}
-
-	> .icon.widgetPanel { 
-		background-image: url('~img/icon/header/widget.svg'); position: absolute; top: 12px; right: 12px; -webkit-app-region: no-drag; 
-		z-index: 3;
-	} 
-
-	.sidebarPage.pageWidget {
-		> .body {
-			> .content {
-				> .dropTarget.firstTarget { position: relative; }
-			}
-		}
-	}
 }
 
 .sidebar {
-	.icon { width: 20px; height: 20px; flex-shrink: 0; }
-	.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
-
 	@import "./page/common";
 
 	.pageWrapper, .subPageWrapper { flex-grow: 1; position: relative; display: flex; flex-direction: column; }
-	.subPageWrapper { padding: 8px 0px; }
+	.subPageWrapper { padding: 8px; width: 336px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; }
 	}

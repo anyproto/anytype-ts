@@ -7,8 +7,8 @@
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
 	> .head {
-		.side { position: relative; z-index: 1; }
-		.side.left { flex-grow: 1; }
+		.side { position: relative; z-index: 1; display: flex; align-items: center; }
+		.side.left { flex-grow: 1; justify-content: flex-start; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
 
 		.button, .icon { -webkit-app-region: no-drag; }
@@ -26,6 +26,8 @@
 			opacity: 0; transition: opacity 0.2s ease-in-out;
 		}
 		&.isScrolled::after { opacity: 1; }
+
+		.sync { -webkit-app-region: no-drag; }
 	}
 
 	> .subHead { 

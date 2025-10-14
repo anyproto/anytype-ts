@@ -23,7 +23,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const readonly = object.isArchived;
 	const showRelations = !isDeleted && !spaceview.isChat;
 	const showPin = canWrite;
-	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
 
 	const onPin = () => {
 		Action.toggleWidgetsForObject(rootId, analytics.route.header);
@@ -119,20 +118,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					onClick={onMore} 
 					onDoubleClick={e => e.stopPropagation()}
 				/>
-
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget" 
-						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('chatPanel'), typeY: I.MenuDirection.Bottom }}
-						className="widgetPanel withBackground"
-						onClick={() => {
-							//sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-							sidebar.leftPanelSetState({ subPage: 'widget' });
-							analytics.event('ScreenChatSidebar');
-						}} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
 			</div>
 		</>
 	);

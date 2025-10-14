@@ -16,7 +16,9 @@
 
 		.pageFlex { padding: 0px; }
 		.page { padding: 0px; }
+
 		.header {
+			.side.left { padding-left: 12px !important; }
 			.icon.toggle { display: none; }
 		}
 		.footer { display: none; }

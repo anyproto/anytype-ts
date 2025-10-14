@@ -508,16 +508,25 @@ class Sidebar {
 		};
 	};
 
+	leftPanelSubPageToggle (id: string) {
+		const component = S.Common.getRef('sidebarLeft');
+
+		if (component) {
+			component.setSubPage(component.getSubPage() == id ? '' : id);
+		};
+	};
+
 	/**
 	 * Gets the state of the left panel.
 	 * @returns {any} The state of the left panel.
 	 */
 	leftPanelGetState () {
-		const panel = S.Common.getRef('sidebarLeft');
+		const component = S.Common.getRef('sidebarLeft');
 		const ret: any = {};
 
-		if (panel) {
-			ret.page = panel.getPage();
+		if (component) {
+			ret.page = component.getPage();
+			ret.subPage = component.getSubPage();
 		};
 
 		return ret;

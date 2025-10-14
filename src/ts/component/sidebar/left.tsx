@@ -193,12 +193,16 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
 		setPage: id => {
-			if (id && (id != page)) {
+			id = String(id || '');
+
+			if (id != page) {
 				setPage(id);
 			};
 		},
 		setSubPage: id => {
-			if (id && (id != subPage)) {
+			id = String(id || '');
+
+			if (id != subPage) {
 				setSubPage(id);
 			};
 		},

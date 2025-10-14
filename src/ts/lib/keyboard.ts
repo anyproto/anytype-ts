@@ -341,13 +341,10 @@ class Keyboard {
 				S.Popup.open('logout', {});
 			});
 
-			// Chat widget panel
-			if (showWidget) {
-				this.shortcut('chatPanel', e, () => {
-					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-					analytics.event('ScreenChatSidebar');
-				});
-			};
+			// Widget panel
+			this.shortcut('widget', e, () => {
+				sidebar.leftPanelSubPageToggle('widget');
+			});
 
 			if (canWrite) {
 				// Create new page

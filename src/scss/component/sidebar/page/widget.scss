@@ -64,7 +64,7 @@
 		}
 	}
 
-	> .body { padding: 0px 0px 68px 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
+	> .body { padding: 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body {
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }
@@ -79,7 +79,7 @@
 		> .content { display: flex; flex-direction: column; }
 		> .content {
 
-			.dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; }
+			.dropTarget.firstTarget { position: relative; left: 0px; top: 0px; z-index: 1; background-color: var(--color-bg-primary); }
 			.dropTarget.firstTarget {
 				&::after {
 					content: ''; position: absolute; left: 0px; bottom: -45px; width: 100%; height: 55px; pointer-events: none; 

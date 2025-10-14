@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName, ChatCounter } from 'Component';
+import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName, ChatCounter, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
 
 type State = {
@@ -86,7 +86,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 		let content = null;
 		let first = null;
-		let bottom = null;
 		let subHead = null;
 
 		if (previewId) {
@@ -193,7 +192,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			content = (
 				<div className="content">
-					{spaceview && !spaceview._empty_ ? (
+					{spaceview ? (
 						<DropTarget 
 							{...this.props} 
 							isTargetTop={true}
@@ -204,7 +203,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 							className="firstTarget"
 							cacheKey="firstTarget"
 						>
-							{isDirectionRight ? (
+							{spaceview.isChat ? (
 								<div className="spaceHeader">
 									<div className="spaceInfo">
 										<IconObject
@@ -322,50 +321,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 					})}
 				</div>
 			);
-
-			bottom = (
-				<div className="bottom">
-					<div className="grad" />
-
-					<div className="sides">
-						<div className="side left">
-							{canWrite ? (
-								<div className={[ 'widgetSettings', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
-									<Icon tooltipParam={{ text: translate('sidebarEdit') }} />
-									<Label text={translate('commonDone')} />
-								</div>
-							) : ''}
-						</div>
-
-						<div className="side center" />
-
-						<div className="side right">
-							{!spaceview.isChat ? (
-								<Button 
-									id="button-help"
-									className="help"
-									text="?"
-									tooltipParam={{ text: translate('commonHelp') }}
-									onClick={this.onHelp}
-								/>
-							) : ''}
-						</div>
-					</div>
-				</div>
-			);
 		};
 
 		return (
 			<>
 				<div id="head" className="head">
-					{spaceview.isChat ? (
-						<>
-							<div className="side left">
-								<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
-							</div>
-							<div className="side right" />
-						</>
-					) : ''}
+					<div className="side left">
+						<Sync id="headerSync" onClick={this.onSync} />
+					</div>
+					<div className="side right">
+						<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
+					</div>
 				</div>
 
 				{subHead}
@@ -379,8 +345,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				>
 					{content}
 				</div>
-
-				{bottom}
 			</>
 		);
 	};
@@ -441,6 +405,17 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	onCreate = (e: any) => {
 		e.stopPropagation();
 		keyboard.pageCreate({}, analytics.route.navigation, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+	};
+
+	onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
 	};
 
 	onArrow = (e: any) => {
