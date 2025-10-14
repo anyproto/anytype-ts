@@ -35,7 +35,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const items = this.getItems();
 
 		const ItemSection = (item: any) => {
-			const cn = [ 'section' ];
+			const cn = [ 'itemSection' ];
 
 			if (item.isFirst) {
 				cn.push('isFirst');
@@ -138,8 +138,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 		return (
 			<>
-				<div id="head" className="head" />
-
 				<div className="subHead">
 					<div className="side left">
 						<Icon className="back" onClick={this.onBack} />
@@ -328,7 +326,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	onClick (item) {
 		if ([ 'types', 'relations' ].includes(item.id)) {
-			sidebar.leftPanelSetState({ page: `settings/${item.id}`, });
+			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
 			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
 			this.forceUpdate();
@@ -341,6 +339,8 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		if (space) {
 			U.Space.openDashboard();
 		};
+
+		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 });

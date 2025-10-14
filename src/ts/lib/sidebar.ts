@@ -475,61 +475,10 @@ class Sidebar {
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
-	panelSetState (isPopup: boolean, direction: I.SidebarDirection, v: any) {
-		switch (direction) {
-			case I.SidebarDirection.Left: {
-				this.leftPanelSetState(v);
-				break;
-			};
-
-			case I.SidebarDirection.Right: {
-				this.rightPanelSetState(isPopup, v);
-				break;
-			};
-		};
-	};
-
-	/**
-	 * Sets the state of the left panel.
-	 * @param {any} v - The state to set.
-	 */
-	leftPanelSetState (v: any) {
-		const component = S.Common.getRef('sidebarLeft');
-
-		if (!component) {
-			return;
-		};
-
-		if (v.page) {
-			component.setPage(v.page);
-		};
-		if (v.subPage) {
-			component.setSubPage(v.subPage);
-		};
-	};
-
 	leftPanelSubPageToggle (id: string) {
-		const component = S.Common.getRef('sidebarLeft');
+		const state = S.Common.getLeftSidebarState();
 
-		if (component) {
-			component.setSubPage(component.getSubPage() == id ? '' : id);
-		};
-	};
-
-	/**
-	 * Gets the state of the left panel.
-	 * @returns {any} The state of the left panel.
-	 */
-	leftPanelGetState () {
-		const component = S.Common.getRef('sidebarLeft');
-		const ret: any = {};
-
-		if (component) {
-			ret.page = component.getPage();
-			ret.subPage = component.getSubPage();
-		};
-
-		return ret;
+		S.Common.setLeftSidebarState(state.page, state.subPage == id ? '' : id);
 	};
 
 	/**

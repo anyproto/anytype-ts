@@ -36,6 +36,7 @@
 	}
 	> .subHead * { -webkit-app-region: no-drag; }
 	> .subHead {
+		.icon { width: 20px; height: 20px; }
 		.icon.back { background-size: 20px; }
 		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
 		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }

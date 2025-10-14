@@ -370,7 +370,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onBack = () => {
-		sidebar.leftPanelSetState({ page: 'vault' });
+		S.Common.setLeftSidebarState('vault', '');
 	};
 
 	onHelp () {

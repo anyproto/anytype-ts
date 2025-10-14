@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, keyboard, Preview, sidebar, analytics, Storage, Highlight } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
@@ -20,10 +20,6 @@ const Components = {
 };
 
 interface SidebarLeftRefProps {
-	setPage: (page: string) => void;
-	setSubPage: (page: string) => void;
-	getPage: () => string;
-	getSubPage: () => string;
 	getComponentRef: () => any;
 	getSubComponentRef: () => any;
 	getNode: () => HTMLElement | null;
@@ -41,8 +37,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
-	const [ page, setPage ] = useState('vault');
-	const [ subPage, setSubPage ] = useState('');
+	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left', 'customScrollbar', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
 
 	const getComponentId = (id: string) => {
@@ -192,22 +187,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
-		setPage: id => {
-			id = String(id || '');
-
-			if (id != page) {
-				setPage(id);
-			};
-		},
-		setSubPage: id => {
-			id = String(id || '');
-
-			if (id != subPage) {
-				setSubPage(id);
-			};
-		},
-		getPage: () => page,
-		getSubPage: () => subPage,
 		getComponentRef: () => pageRef.current,
 		getSubComponentRef: () => subPageRef.current,
 	}));

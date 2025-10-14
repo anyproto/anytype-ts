@@ -167,7 +167,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 
 	init () {
 		if (!this.isSpace()) {
-			sidebar.leftPanelSetState({ page: 'settings' });
+			S.Common.setLeftSidebarState('vault', 'settings');
 			return;
 		};
 
@@ -180,7 +180,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		let page = '';
 		switch (id) {
 			case 'spaceIndexEmpty': {
-				page = 'vault';
+				page = '';
 				break;
 			};
 
@@ -200,7 +200,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			};
 		};
 
-		sidebar.leftPanelSetState({ page });
+		S.Common.setLeftSidebarState('vault', page);
 	};
 
 	onExport (type: I.ExportType, param: any) {

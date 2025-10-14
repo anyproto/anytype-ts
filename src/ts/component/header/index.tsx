@@ -72,7 +72,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		if (isPopup) {
 			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
 		} else {
-			const subPage = sidebar.leftPanelGetState().subPage;
+			const subPage = S.Common.getLeftSidebarState().subPage;
 			const cn = [];
 
 			if (subPage == 'widget') {
