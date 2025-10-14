@@ -166,10 +166,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	init () {
-		const { isPopup } = this.props;
-
-		sidebar.rightPanelClose(isPopup);
-
 		if (!this.isSpace()) {
 			sidebar.leftPanelSetState({ page: 'settings' });
 			return;

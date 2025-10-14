@@ -276,15 +276,9 @@ class UtilRouter {
 
 	checkSidebarState () {
 		const spaceview = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(false);
 
 		if (!spaceview.isChat) {
-			sidebar.rightPanelClose(false);
-		} else 
-		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
-			sidebar.rightPanelClose(false);
 		} else {
-			sidebar.rightPanelRestore(false);
 		};
 	};
 
