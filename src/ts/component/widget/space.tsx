@@ -1,7 +1,7 @@
-import React, { forwardRef } from 'react';
+import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, translate, keyboard, analytics } from 'Lib';
+import { I, U, translate, analytics } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -9,9 +9,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining).length;
 	const isSpaceOwner = U.Space.isMyOwner();
+	const canWrite = U.Space.canMyParticipantWrite();
+	const nodeRef = useRef(null);
 	const cn = [];
 	const buttons = [
-		{ id: 'search', name: translate('commonSearch') },
+		canWrite ? { id: 'create', name: translate('commonNewObject') } : null,
 		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
 		{ id: 'settings', name: translate('commonSettings') },
 	].filter(it => it);
@@ -31,20 +33,30 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 
-			case 'search': {
-				keyboard.onSearchPopup(analytics.route.widget);
+			case 'settings': {
+				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
 				break;
 			};
 
-			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+			case 'create': {
+				U.Menu.typeSuggest({ 
+					element: '#widget-space #item-create',
+					offsetX: $(nodeRef.current).width() + 4,
+					className: 'fixed',
+					classNameWrap: 'fromSidebar',
+					vertical: I.MenuDirection.Center,
+				}, {}, { 
+					deleteEmpty: true,
+					selectTemplate: true,
+					withImport: true,
+				}, analytics.route.navigation, object => U.Object.openAuto(object));
 				break;
 			};
 		};
 	};
 
 	return (
-		<div className={cn.join(' ')}>
+		<div ref={nodeRef} className={cn.join(' ')}>
 			<div className="buttons">
 				{buttons.map((item, i) => {
 					let cnt = null;

@@ -41,8 +41,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		this.setPreview = this.setPreview.bind(this);
 		this.onHelp = this.onHelp.bind(this);
 		this.onPlusHover = this.onPlusHover.bind(this);
-		this.onCreate = this.onCreate.bind(this);
-		this.onArrow = this.onArrow.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.getObject = this.getObject.bind(this);
 		this.initToggle = this.initToggle.bind(this);
@@ -57,8 +55,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		const spaceview = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const counters = S.Chat.getTotalCounters();
-		const isDirectionLeft = sidebarDirection == I.SidebarDirection.Left;
-		const isDirectionRight = sidebarDirection == I.SidebarDirection.Right;
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 
@@ -161,34 +157,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			if (blockWidgets.length) {
 				first = blockWidgets[0];
 			};
-
-			subHead = !spaceview.isChat ? (
-				<div className={cnsh.join(' ')}>
-					{isDirectionLeft ? (
-						<div className="side left" onClick={isDirectionLeft ? this.onBack : null}>
-							{isDirectionLeft ? <Icon className="back" /> : ''}
-							<ChatCounter {...counters} mode={spaceview.notificationMode} />
-						</div>
-					) : ''}
-
-					<div 
-						className="side center" 
-						onClick={() => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings })}
-					>
-						<IconObject object={spaceview} size={20} iconSize={20} canEdit={false} />
-						<ObjectName object={spaceview} />
-					</div>
-
-					<div className="side right">
-						{canWrite ? (
-							<div className="plusWrapper" onMouseEnter={this.onPlusHover} onMouseLeave={() => Preview.tooltipHide()}>
-								<Icon className="create withBackground" onClick={this.onCreate} />
-								<Icon id="button-sidebar-select-type" className="arrow withBackground" onClick={this.onArrow} />
-							</div>
-						) : ''}
-					</div>
-				</div>
-			) : '';
 
 			content = (
 				<div className="content">
@@ -402,11 +370,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		Preview.tooltipShow({ text: t, element: $(e.currentTarget) });
 	};
 
-	onCreate = (e: any) => {
-		e.stopPropagation();
-		keyboard.pageCreate({}, analytics.route.navigation, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-	};
-
 	onSync = () => {
 		S.Menu.closeAllForced(null, () => {
 			S.Menu.open('syncStatus', {
@@ -416,21 +379,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				subIds: J.Menu.syncStatus,
 			});
 		});
-	};
-
-	onArrow = (e: any) => {
-		e.stopPropagation();
-
-		U.Menu.typeSuggest({ 
-			element: '#button-sidebar-select-type',
-			offsetY: 2,
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-		}, {}, { 
-			deleteEmpty: true,
-			selectTemplate: true,
-			withImport: true,
-		}, analytics.route.navigation, object => U.Object.openAuto(object));
 	};
 
 	onBack = () => {
