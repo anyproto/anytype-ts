@@ -1,9 +1,10 @@
 @import "~scss/_mixins";
 
-.widget.widgetSpace { padding: 8px; z-index: 1; margin: 0px 0px 10px 0px; }
-.widget.widgetSpace * { -webkit-app-region: no-drag; }
-
+.widget.widgetSpace { z-index: 1; margin: 0px 0px 12px 0px; }
 .widget.widgetSpace {
+	.head:hover { background: none; }
+
+	.buttons { padding: 0px 8px; }
 	.buttons {
 		.item { 
 			padding: 3px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 

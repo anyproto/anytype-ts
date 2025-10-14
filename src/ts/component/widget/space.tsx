@@ -1,6 +1,6 @@
 import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, IconObject, ObjectName } from 'Component';
 import { I, U, translate, analytics } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
@@ -57,6 +57,17 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>
+			<div className="head">
+				<div className="sides">
+					<div className="side left">
+						<div className="clickable">
+							<IconObject object={space} />
+							<ObjectName object={space} />
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div className="buttons">
 				{buttons.map((item, i) => {
 					let cnt = null;

@@ -277,9 +277,7 @@ class UtilRouter {
 	checkSidebarState () {
 		const spaceview = U.Space.getSpaceview();
 
-		if (!spaceview.isChat) {
-		} else {
-		};
+		S.Common.setLeftSidebarState('vault', spaceview.isChat ? '' : 'widget');
 	};
 
 	/**
