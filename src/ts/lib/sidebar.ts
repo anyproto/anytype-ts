@@ -494,7 +494,18 @@ class Sidebar {
 	 * @param {any} v - The state to set.
 	 */
 	leftPanelSetState (v: any) {
-		S.Common.getRef('sidebarLeft')?.setPage(v.page);
+		const component = S.Common.getRef('sidebarLeft');
+
+		if (!component) {
+			return;
+		};
+
+		if (v.page) {
+			component.setPage(v.page);
+		};
+		if (v.subPage) {
+			component.setSubPage(v.subPage);
+		};
 	};
 
 	/**

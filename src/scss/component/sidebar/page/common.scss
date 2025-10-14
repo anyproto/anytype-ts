@@ -1,5 +1,5 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; flex-grow: 1; }
-> .sidebarPage {
+.sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; flex-grow: 1; }
+.sidebarPage {
 	&.anim { transition: opacity 0.1s ease-in-out; }
 
 	> .head { 

@@ -126,7 +126,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('chatPanel'), typeY: I.MenuDirection.Bottom }}
 						className="widgetPanel withBackground"
 						onClick={() => {
-							sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+							//sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
+							sidebar.leftPanelSetState({ subPage: 'widget' });
 							analytics.event('ScreenChatSidebar');
 						}} 
 						onDoubleClick={e => e.stopPropagation()}
