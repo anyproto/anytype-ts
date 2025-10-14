@@ -48,13 +48,15 @@
 				return true;
 			};
 
-			case 'clickMenu':
+			case 'clickMenu': {
 				container.style.display = 'block';
 				break;
+			};
 
-			case 'hide':
+			case 'hide': {
 				container.style.display = 'none';
 				break;
+			};
 		};
 		
 		sendResponse({});

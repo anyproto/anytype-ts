@@ -42,17 +42,19 @@ const installNativeMessagingHost = () => {
 		case 'win32': {
 			installToWindows();
 			break;
-		}
+		};
 		case 'darwin': {
 			installToMacOS();
 			break;
-		}
-		case 'linux':
+		};
+		case 'linux': {
 			installToLinux();
 			break;
-		default:
+		};
+		default: {
 			console.log('[InstallNativeMessaging] Unsupported platform:', platform);
 			break;
+		};
 	};
 };
 
