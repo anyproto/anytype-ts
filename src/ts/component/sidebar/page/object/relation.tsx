@@ -38,7 +38,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 					{allowTypeDetails ? (
 						<div className="side right">
-							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={this.onSetUp} />
+							<Button color="dark" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={this.onSetUp} />
 						</div>
 					) : ''}
 				</div>
