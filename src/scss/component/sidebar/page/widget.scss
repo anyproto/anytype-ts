@@ -21,7 +21,7 @@
 
 	.widgetSection { display: flex; flex-direction: column; }
 	.widgetSection {
-		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; }
+		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 16px; }
 		> .nameWrap {
 			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); display: none; }
 			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection0.svg'); }
@@ -54,12 +54,9 @@
 			}
 		}
 
-		> .items { display: flex; flex-direction: column; gap: 12px 0px; overflow: hidden; height: 0px; }
+		> .items { display: flex; flex-direction: column; overflow: hidden; height: 0px; }
 		> .items {
 			&.anim { transition: height 0.2s $easeInQuint; }
-
-			.widget:first-child { margin-top: 8px; }
-			.widget:last-child { margin-bottom: 8px; }
 		}
 
 		&.isOpen {
@@ -79,14 +76,14 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .content { display: flex; flex-direction: column; gap: 2px 0px; padding: 0px 6px 0px 12px; }
+		> .content { display: flex; flex-direction: column; }
 		> .content {
 
 			.dropTarget.firstTarget { position: sticky; left: 0px; top: 0px; z-index: 1; }
 			.dropTarget.firstTarget {
 				&::after {
 					content: ''; position: absolute; left: 0px; bottom: -45px; width: 100%; height: 55px; pointer-events: none; 
-					background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, var(--color-shape-tertiary) 68.18%); opacity: 0; transition: opacity 0.2s ease-in-out;
+					background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 68.18%); opacity: 0; transition: opacity 0.2s ease-in-out;
 				}
 				&.isScrolled::after { opacity: 1; }
 			}

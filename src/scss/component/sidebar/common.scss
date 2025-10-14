@@ -71,7 +71,7 @@
 	.icon { width: 20px; height: 20px; flex-shrink: 0; }
 	.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
 
-	@import "./page";
+	@import "./page/common";
 	
 	.resize-h { width: 8px; height: calc(100% - 60px); cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -8px; top: 52px; background: var(--color-shape-highlight-light-solid); }
 	.resize-h {
