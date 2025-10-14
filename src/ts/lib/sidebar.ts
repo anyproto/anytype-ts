@@ -15,6 +15,8 @@ class Sidebar {
 	};
 
 	objLeft: JQuery<HTMLElement> = null;
+	pageWrapperLeft: JQuery<HTMLElement> = null;
+	subPageWrapperLeft: JQuery<HTMLElement> = null;
 	objRight: JQuery<HTMLElement> = null;
 	dummyLeft: JQuery<HTMLElement> = null;
 
@@ -43,12 +45,8 @@ class Sidebar {
 
 			this.set(stored);
 		} else {
-			this.set({
-				width: J.Size.sidebar.width.default,
-				isClosed: false,
-			});
-
-			this.resizePage(J.Size.sidebar.width.default, null, false);
+			this.set({ width: J.Size.sidebar.width.default, isClosed: false });
+			this.resizePage(null, null, false);
 		};
 
 		this.objLeft.toggleClass('isClosed', this.data.isClosed);
@@ -61,6 +59,8 @@ class Sidebar {
 		const isPopup = keyboard.isPopup();
 
 		this.objLeft = $(S.Common.getRef('sidebarLeft')?.getNode());
+		this.pageWrapperLeft = this.objLeft.find('#pageWrapper');
+		this.subPageWrapperLeft = this.objLeft.find('#subPageWrapper');
 		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
 		this.page = U.Common.getPageContainer(isPopup);
 		this.header = this.page.find('#header');
@@ -353,8 +353,8 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The style data.
 	 */
 	private setStyle (v: Partial<SidebarData>): void {
-		if (this.objLeft && this.objLeft.length) {
-			this.objLeft.css({ width: v.isClosed ? 0 : v.width });
+		if (this.pageWrapperLeft && this.pageWrapperLeft.length) {
+			this.pageWrapperLeft.css({ width: v.isClosed ? 0 : v.width });
 		};
 	};
 

@@ -188,7 +188,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	useEffect(() => {
 		sidebar.resizePage(null, null, false);
-	}, [ page ]);
+	}, [ page, subPage ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
@@ -236,7 +236,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				className={cn.join(' ')} 
 			>
 				{Component ? (
-					<div className="pageWrapper">
+					<div id="pageWrapper" className="pageWrapper">
 						<div id={pageId} className={getClassName(componentId)}>
 							<Component 
 								ref={pageRef} 
@@ -253,7 +253,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				) : ''}
 
 				{SubComponent ? (
-					<div className="subPageWrapper">
+					<div id="subPageWrapper" className="subPageWrapper">
 						<div id={subPageId} className={getClassName(subComponentId)}>
 							<SubComponent 
 								ref={subPageRef} 

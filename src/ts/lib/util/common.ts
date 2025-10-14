@@ -938,12 +938,21 @@ class UtilCommon {
 	};
 
 	/**
+	 * Returns the container class name based on popup state.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {string} The container class name.
+	 */
+	getContainerClassName (isPopup: boolean): string {
+		return isPopup ? 'isPopup' : 'isFull';
+	};
+
+	/**
 	 * Returns the page flex container jQuery object depending on popup state.
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 * @returns {JQuery<HTMLElement>} The page flex container.
 	 */
 	getPageFlexContainer (isPopup: boolean) {
-		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
+		return $(`#pageFlex.${this.getContainerClassName(isPopup)}`);
 	};
 
 	/**
@@ -952,7 +961,7 @@ class UtilCommon {
 	 * @returns {JQuery<HTMLElement>} The page container.
 	 */
 	getPageContainer (isPopup: boolean) {
-		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
+		return $(`#page.${this.getContainerClassName(isPopup)}`);
 	};
 
 	/**

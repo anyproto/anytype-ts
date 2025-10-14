@@ -5,7 +5,7 @@ $transitionSettings: all 0.25s $easeInQuint;
 	> .bottom {
     	.grad {
 			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
-			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-tertiary) 68.18%);
+			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-highlight-light-solid) 68.18%);
 		}
 
         .sides { 
