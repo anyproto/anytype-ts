@@ -7,7 +7,6 @@ interface Props extends I.WidgetTreeItem {
 	index: number;
 	treeKey: string;
 	style?: any;
-	isEditing?: boolean;
 	isSection?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
@@ -19,7 +18,7 @@ interface Props extends I.WidgetTreeItem {
 
 const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { id, parentId, treeKey, depth, style, numChildren, isEditing, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
+	const { id, parentId, treeKey, depth, style, numChildren, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
@@ -30,7 +29,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const { isReadonly, isArchived, isHidden, type, restrictions, done, layout } = object;
 	const cn = [ 'item', `c${id}`, `depth${depth}` ];
 	const rootId = keyboard.getRootId();
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 	const hasMore = U.Space.canMyParticipantWrite();

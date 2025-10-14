@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { MenuItemVertical, Button, Icon } from 'Component';
+import { MenuItemVertical, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
@@ -17,24 +17,21 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing, layout, limit, target } = data;
+		const { layout, limit, target } = data;
 
 		this.save = this.save.bind(this);
 		this.rebind = this.rebind.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 
-		if (isEditing) {
-			this.layout = layout;
-			this.limit = limit;
-			this.target = target;
-			this.checkState();
-		};
-	};
+		this.layout = layout;
+		this.limit = limit;
+		this.target = target;
+		this.checkState();
+};
 
 	render(): React.ReactNode {
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing } = data;
 		const sections = this.getSections();
 
 		const Section = item => (
@@ -88,18 +85,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<Section key={i} index={i} {...item} />
 					))}
 				</div>
-
-				{!isEditing ? (
-					<div className="buttons">
-						<Button 
-							id="button-save"
-							className="c28"
-							text={translate('menuWidgetAddWidget')}
-							onClick={this.save} 
-							onMouseEnter={() => S.Menu.closeAll(J.Menu.widget)} 
-						/>
-					</div>
-				) : ''}
 			</div>
 		);
 	}
@@ -107,7 +92,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	componentDidMount () {
 		this.checkButton();
 		this.rebind();
-		this.getTargetId();
 
 		analytics.event('ScreenWidgetMenu');
 	};
@@ -152,10 +136,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing, blockId, isPreview } = data;
+		const { blockId, isPreview } = data;
 		const { widgets } = S.Block;
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
-		const canRemove = isEditing;
+		const canRemove = U.Space.canMyParticipantWrite();
 		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview));
 		const block = S.Block.getLeaf(widgets, blockId);
 
@@ -259,7 +243,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	onOptionClick (e: React.MouseEvent, option: any, section: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, isEditing, target } = data;
+		const { blockId, target } = data;
 		const { widgets } = S.Block;
 		const block = S.Block.getLeaf(widgets, blockId);
 
@@ -276,18 +260,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.checkState();
 				this.forceUpdate();
 
-				if (isEditing) {
-					if (isSectionPin) {
-						C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
-					} else
-					if (isSectionType) {
-						C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLayout', value: this.layout } ], () => close());
-					};
+				if (isSectionPin) {
+					C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+				} else
+				if (isSectionType) {
+					C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLayout', value: this.layout } ], () => close());
 				};
 
 				analytics.event('ChangeWidgetLayout', {
 					layout: this.layout,
-					route: isEditing ? 'Inner' : 'AddWidget',
+					route: 'Inner',
 					params: { target: this.target },
 				});
 				break;
@@ -298,19 +280,17 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.checkState();
 				this.forceUpdate();
 
-				if (isEditing) {
-					if (isSectionPin) {
-						C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
-					} else
-					if (isSectionType) {
-						C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLimit', value: this.limit } ], () => close());
-					};
+				if (isSectionPin) {
+					C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+				} else
+				if (isSectionType) {
+					C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLimit', value: this.limit } ], () => close());
 				};
 
 				analytics.event('ChangeWidgetLimit', {
 					limit: this.limit,
 					layout: this.layout,
-					route: isEditing ? 'Inner' : 'AddWidget',
+					route: 'Inner',
 					params: { target: this.target },
 				});
 				break;
@@ -381,15 +361,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	save (): void {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { isEditing, onSave } = data;
+		const { blockId, onSave } = data;
 		const { widgets } = S.Block;
 
 		if (!this.target || (this.layout === null)) {
 			return;
 		};
 
-		const targetId = this.getTargetId();
-		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Top;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
@@ -397,56 +375,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 		};
 
-		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, this.limit, () => {
-			if (onSave) {
-				onSave();
-			};
-
-			if (!isEditing) {
-				analytics.createWidget(this.layout, analytics.route.addWidgetMenu);
-			};
-		});
-
+		C.BlockCreateWidget(widgets, blockId, newBlock, I.BlockPosition.Replace, this.layout, this.limit, onSave);
 		close(); 
-	};
-
-	getTargetId (): string {
-		const { param } = this.props;
-		const { data } = param;
-		const { isEditing, blockId, coords } = data;
-
-		let targetId = '';
-
-		if (isEditing) {
-			targetId = blockId;
-		} else  
-		if (coords) {
-			const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
-
-			if (!widgetIds.length) {
-				return '';
-			};
-
-			let prevY = 0;
-			for (const id of widgetIds) {
-				const item = $(`#widget-${id}`);
-				if (!item || !item.length) {
-					continue;
-				};
-
-				const { top } = item.offset();
-				const height = item.outerHeight();
-				
-				if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
-					targetId = id;
-					break;
-				};
-
-				prevY = top;
-			};
-		};
-
-		return targetId;
 	};
 
 });

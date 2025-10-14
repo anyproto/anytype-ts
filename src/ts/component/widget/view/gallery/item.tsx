@@ -7,7 +7,6 @@ import { I, S, U, J, keyboard, analytics, Dataview } from 'Lib';
 interface Props extends I.WidgetViewComponent {
 	subId: string;
 	id: string;
-	isEditing?: boolean;
 	hideIcon?: boolean;
 	onResize?: () => void;
 };
@@ -16,7 +15,6 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	subId = '',
 	id = '',
 	block,
-	isEditing = false,
 	hideIcon = false,
 	getView,
 	onResize,
@@ -29,7 +27,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	const { isReadonly, isArchived, restrictions } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const cn = [ 'item' ];
 	const cover = view ? Dataview.getCoverObject(subId, object, view.coverRelationKey) : null;
 	const nameRelation = view.getRelation('name');

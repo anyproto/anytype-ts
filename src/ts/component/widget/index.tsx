@@ -29,7 +29,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, canEdit, canRemove, disableAnimation, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, canRemove, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
 
 	const getChild = (): I.Block => {
@@ -93,7 +93,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
-	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 	let counters = { mentionCounter: 0, messageCounter: 0 };
 	if (isChat) {
@@ -303,9 +303,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			menuParam.data = Object.assign(menuParam.data, {
 				...param,
 				target: object,
-				isEditing: true,
 				blockId: block.id,
-				setEditing,
 				isPreview,
 			});
 		};
@@ -503,7 +501,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const canCreateHandler = (): boolean => {
-		if (!object || isEditing || !U.Space.canMyParticipantWrite()) {
+		if (!object || !U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 

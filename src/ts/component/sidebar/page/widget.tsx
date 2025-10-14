@@ -2,11 +2,10 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName, ChatCounter, Sync } from 'Component';
+import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
 
 type State = {
-	isEditing: boolean;
 	previewId: string;
 	sectionIds: I.WidgetSection[];
 };
@@ -14,7 +13,6 @@ type State = {
 const SidebarPageWidget = observer(class SidebarPageWidget extends React.Component<I.SidebarPageComponent, State> {
 		
 	state: State = {
-		isEditing: false,
 		previewId: '',
 		sectionIds: [],
 	};
@@ -31,13 +29,11 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	constructor (props: I.SidebarPageComponent) {
 		super(props);
 
-		this.onEdit = this.onEdit.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrag = this.onDrag.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
-		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.onHelp = this.onHelp.bind(this);
 		this.onPlusHover = this.onPlusHover.bind(this);
@@ -47,7 +43,7 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	render (): React.ReactNode {
-		const { isEditing, previewId, sectionIds } = this.state;
+		const { previewId, sectionIds } = this.state;
 		const { widgets } = S.Block;
 		const { sidebarDirection } = this.props;
 		const cnsh = [ 'subHead' ];
@@ -74,10 +70,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 				{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
 				{ id: 'settings', name: translate('commonSettings') }
 			]);
-		};
-
-		if (isEditing) {
-			cnb.push('isEditing');
 		};
 
 		let content = null;
@@ -139,7 +131,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 						block={block}
 						isPreview={true}
 						setPreview={this.setPreview}
-						setEditing={this.setEditing}
 						canEdit={canWrite}
 						canRemove={false}
 						getObject={id => this.getObject(block, id)}
@@ -199,7 +190,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 									onDragStart={this.onDragStart}
 									onDragOver={this.onDragOver}
 									onDrag={this.onDrag}
-									isEditing={isEditing}
 									canEdit={false}
 									canRemove={false}
 									disableAnimation={true}
@@ -270,14 +260,12 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 												{...this.props}
 												key={`widget-${block.id}`}
 												block={block}
-												isEditing={isEditing}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
 												onDragStart={this.onDragStart}
 												onDragOver={this.onDragOver}
 												onDrag={this.onDrag}
 												setPreview={this.setPreview}
-												setEditing={this.setEditing}
 												sidebarDirection={sidebarDirection}
 												getObject={id => this.getObject(block, id)}
 											/>
@@ -398,12 +386,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 		});
-	};
-
-	onEdit (e: any): void {
-		e.stopPropagation();
-
-		this.setEditing(!this.state.isEditing);
 	};
 
 	onDragStart (e: React.DragEvent, block: I.Block): void {
@@ -804,38 +786,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 	setPreview (previewId: string) {
 		this.setState({ previewId });
-	};
-
-	setEditing (isEditing: boolean) {
-		this.setState({ isEditing });
-
-		if (!isEditing) {
-			return;
-		};
-
-		const win = $(window);
-		const unbind = () => win.off('mousedown.sidebar keydown.sidebar');
-		const close = e => {
-			e.stopPropagation();
-
-			this.setEditing(false);
-			unbind();
-		};
-
-		unbind();
-		analytics.event('EditWidget');
-
-		window.setTimeout(() => {
-			win.on('mousedown.sidebar', e => {
-				if (!$(e.target).parents('.widget, .bottom, .nameWrap').length) {
-					close(e);
-				};
-			});
-
-			win.on('keydown.sidebar', e => {
-				keyboard.shortcut('escape', e, () => close(e));
-			});
-		}, S.Menu.getTimeout());
 	};
 
 	getBlockWidgets = () => {
