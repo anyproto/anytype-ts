@@ -109,6 +109,8 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
+		sidebar.rightPanelClose(false);
+
 		focus.clear(true);
 
 		if (routeParam.spaceId && (routeParam.spaceId != space)) {
@@ -244,8 +246,6 @@ class UtilRouter {
 					U.Data.onInfo(message.info);
 
 					const spaceview = U.Space.getSpaceview();
-
-					console.log(spaceview.name);
 
 					S.Common.setLeftSidebarState('vault', spaceview.isChat ? '' : 'widget');
 

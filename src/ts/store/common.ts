@@ -587,9 +587,7 @@ class CommonStore {
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
 	setRightSidebarState (isPopup: boolean, page: string, isOpen: boolean) {
-		const key = this.getStateKey(isPopup);
-
-		set(this.rightSidebarStateValue, { [ key ]: { page, isOpen } });
+		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page, isOpen } });
 	};
 
 	/**

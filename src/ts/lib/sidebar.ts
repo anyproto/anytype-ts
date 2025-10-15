@@ -506,6 +506,15 @@ class Sidebar {
 		return this.rightPanelRef(isPopup)?.getState() || {};
 	};
 
+	/**
+	 * Closes the right panel for the given context.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	rightPanelClose (isPopup: boolean) {
+		S.Common.setRightSidebarState(isPopup, '', false);
+		this.rightPanelRestore(isPopup);
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();
