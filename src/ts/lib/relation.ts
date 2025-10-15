@@ -631,7 +631,13 @@ class Relation {
 	 * @returns {any} The group option.
 	 */
 	public getGroupOption (rootId: string, blockId: string, type: I.ViewType, relationKey: string) {
-		const groupOptions = this.getGroupOptions(rootId, blockId, type);
+		const setOf = this.getSetOfObjects(rootId, rootId, I.ObjectLayout.Relation).map(it => ({
+			id: it.relationKey,
+			icon: 'relation ' + this.className(it.format),
+			name: it.name,
+		}));
+		const groupOptions = setOf.concat(this.getGroupOptions(rootId, blockId, type));
+
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
