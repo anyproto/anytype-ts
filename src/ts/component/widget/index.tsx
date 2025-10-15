@@ -721,8 +721,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		collapse = (
-			<div className="iconWrap collapse">
-				<Icon className="collapse" onClick={onToggle} />
+			<div className="iconWrap collapse" onClick={onToggle}>
+				<Icon className="collapse" />
 			</div>
 		);
 	};
@@ -744,8 +744,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="sides">
 						<div className="side left">
 							<div className="clickable">
-								{collapse}
-								{icon}
+								<div className="iconAnimationWrapper">
+									{collapse}
+									{icon}
+								</div>
 								<ObjectName object={object} withPlural={true} />
 							</div>
 						</div>

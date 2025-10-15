@@ -26,12 +26,17 @@
 			.count { color: var(--color-text-secondary); }
 		}
 		.clickable:hover {
-			.iconWrap.collapse { display: flex; }
-			.headerIcon { display: none; }
+			.iconWrap.collapse { opacity: 1; }
+			.headerIcon { opacity: 0; }
 		}
 
 		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-		.iconWrap.collapse { display: none; width: 20px; height: 20px; }
+		.iconWrap.collapse { opacity: 0; width: 20px; height: 20px; z-index: 2; }
+
+		.iconAnimationWrapper { position: relative; width: 20px; height: 20px; }
+		.iconWrap.collapse, .headerIcon { 
+			transition: opacity 0.1s ease-in-out; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px);
+		}
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
