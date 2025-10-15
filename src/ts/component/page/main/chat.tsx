@@ -63,8 +63,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		const root = S.Block.getLeaf(rootId, rootId);
 		const object = S.Detail.get(rootId, rootId, []);
 
-		console.log(object);
-
 		return !U.Space.canMyParticipantWrite() || object.isArchived || root?.isLocked();
 	};
 
