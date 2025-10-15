@@ -30,6 +30,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const messageRefs = useRef({});
 	const timeoutInterface = useRef(0);
 	const timeoutScrollStop = useRef(0);
+	const timeoutResize = useRef(0);
 	const top = useRef(0);
 	const scrolledItems = useRef(new Set());
 	const isLoading = useRef(false);
@@ -122,7 +123,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			const messages = message.messages || [];
-
 			if (messages.length < J.Constant.limit.chat.messages) {
 				setIsLoaded(true);
 			};
@@ -930,6 +930,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const resize = () => {
 		renderDates();
+
+		const container = U.Common.getScrollContainer(isPopup);
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
+
+		container.off(`scroll.${ns}`);
+
+		window.clearTimeout(timeoutResize.current);
+		timeoutResize.current = window.setTimeout(() => {
+			container.on(`scroll.${ns}`, e => onScroll(e));
+		}, 50);
 	};
 
 	const sections = getSections();
