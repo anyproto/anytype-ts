@@ -85,7 +85,7 @@
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; justify-content: center; }
 
-	.emptyWrap { padding: 0px 16px; display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-grow: 1; }
+	.emptyWrap { padding: 0px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-grow: 1; }
 	.emptyWrap {
 		.label { text-align: center; @include text-common; @include clamp2; width: 100%; color: var(--color-text-secondary); }
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/widget/emptyMore.svg'); }
@@ -124,11 +124,11 @@
 
 .widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; }
 .widget.isPreview {
-	.head { padding: 4px 16px; }
+	.head { padding: 0px 16px; }
+	.body { overflow: visible; }
 	.contentWrapper, .innerWrap { height: 100%; }
 
-	.emptyWrap { padding: 16px 16px 8px 16px; }
-
+	.emptyWrap { padding: 16px; justify-content: flex-start; }
 	.innerWrap { padding: 0px !important; }
 
 	.filterWrapper { display: flex; align-items: center; gap: 0px 8px; }

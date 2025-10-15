@@ -77,11 +77,10 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		let subHead = null;
 
 		if (previewId) {
+			cnb.push('isPreview');
 			const block = S.Block.getLeaf(widgets, previewId);
 
 			if (block) {
-				cnb.push('isListPreview');
-
 				const child = this.getChild(block.id);
 				const object = this.getObject(block, child?.getTargetObjectId());
 				const param = U.Data.widgetContentParam(object, block);

@@ -27,7 +27,6 @@ interface SidebarLeftRefProps {
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
-	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
@@ -38,7 +37,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
-	const cn = [ 'sidebar', 'left', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
+	const cn = [ 'sidebar', 'left' ];
 
 	const getComponentId = (id: string) => {
 		id = String(id || '');

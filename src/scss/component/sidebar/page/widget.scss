@@ -65,6 +65,7 @@
 	}
 
 	> .body { padding: 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
+	> .body.isPreview { overflow: hidden; }
 	> .body {
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }
@@ -114,7 +115,6 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
-	> .body.isListPreview { overflow: hidden; padding: 0px 12px 12px 12px; }
 
 	.spaceHeader { padding-bottom: 8px; }
 	.spaceHeader {
