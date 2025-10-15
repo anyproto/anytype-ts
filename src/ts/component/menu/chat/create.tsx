@@ -15,7 +15,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const isEditing = !!details.id;
 
 	const onKeyDown = (e: KeyboardEvent) => {
-		keyboard.shortcut('enter', e, () => onSubmit);
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			onSubmit();
+		});
 	};
 
 	const onKeyUp = (e: KeyboardEvent) => {
@@ -72,7 +75,6 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				iconSize={48} 
 				object={{ ...details, layout: I.ObjectLayout.Chat }} 
 				canEdit={true} 
-				noUpload={!isEditing}
 				menuParam={{ 
 					horizontal: I.MenuDirection.Center,
 					className, 
