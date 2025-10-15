@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -33,6 +33,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
+	const canCreate = U.Space.canCreateSpace();
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -414,6 +415,17 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		});
 	};
 
+	const onCreate = () => {
+		Storage.setHighlight('createSpace', false);
+		Highlight.hide('createSpace');
+
+		U.Menu.spaceCreate({
+			element: `#sidebarRightButton`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		}, analytics.route.vault);
+	};
+
 	const getRowHeight = (item: any) => {
 		return HEIGHT_ITEM + (item.isUpdate ? 36 : 0);
 	};
@@ -434,7 +446,18 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	return (
 		<>
-			<div id="head" className="head" />
+			<div id="head" className="head">
+				<div className="side left" />
+				<div className="side right">
+					{canCreate ? (
+						<Icon 
+							className="plus withBackground"
+							tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+							onClick={onCreate}
+						/>
+					) : ''}
+				</div>
+			</div>
 			<div className="filterWrapper">
 				<Filter 
 					ref={filterRef}

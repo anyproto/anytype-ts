@@ -71,8 +71,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
-	const canCreate = U.Space.canCreateSpace() && (componentId == 'vault');
-
 	const onCreate = () => {
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
@@ -199,15 +197,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
 			/>
-
-			{canCreate ? (
-				<Icon 
-					id="sidebarRightButton"
-					className="plus sidebarHeadIcon withBackground"
-					tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
-					onClick={onCreate}
-				/>
-			) : ''}
 
 			<div 
 				ref={nodeRef}

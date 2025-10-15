@@ -82,12 +82,16 @@ class Sidebar {
 			return;
 		};
 
-		this.objLeft.addClass('anim');
-		this.setElementsWidth(width);
-		this.setAnimating(true);
-		this.setStyle({ width: 0 });
-		this.set({ isClosed: true });
-		this.resizePage(0, null, true);
+		S.Common.setLeftSidebarState('vault', '');
+
+		window.setTimeout(() => {
+			this.objLeft.addClass('anim');
+			this.setElementsWidth(width);
+			this.setAnimating(true);
+			this.setStyle({ width: 0 });
+			this.set({ isClosed: true });
+			this.resizePage(0, null, true);
+		}, 10);
 
 		this.removeAnimation(() => {
 			this.objLeft.addClass('isClosed');
@@ -161,7 +165,7 @@ class Sidebar {
 		w = this.limitWidth(w);
 
 		this.set({ width: w, isClosed: false });
-		this.resizePage(w, null, false);
+		this.resizePage(null, null, false);
 	};
 
 	private removeAnimation (callBack?: () => void): void {

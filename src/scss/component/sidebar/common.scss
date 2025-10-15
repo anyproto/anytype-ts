@@ -2,15 +2,21 @@
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; transition: transform 0.2s $easeInQuint;
-	padding: 8px; background-color: var(--color-shape-highlight-light-solid);
+	background-color: var(--color-shape-highlight-light-solid);
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative; border-radius: 12px; background-color: var(--color-bg-primary); }
-}
-.pageFlex.withSidebarRight { padding-right: 0px; }
-.pageFlex.withSidebarRight {
-	#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
+	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); }
+
+	&.withSidebarLeft { padding: 8px 8px 8px 0px; }
+	&.withSidebarLeft {
+		#page { border-radius: 12px;  }
+	}
+
+	&.withSidebarRight { padding-right: 0px; }
+	&.withSidebarRight {
+		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
+	}
 }
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
@@ -26,7 +32,6 @@
 #sidebarRightButton:not(.withSidebar) { display: none; }
 
 .sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
-.sidebarHeadIcon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
@@ -58,12 +63,12 @@
 	@import "./page/common";
 
 	.pageWrapper, .subPageWrapper { flex-grow: 1; position: relative; display: flex; flex-direction: column; }
-	.subPageWrapper { padding: 8px; width: 336px; }
+	.subPageWrapper { padding: 8px 8px 8px 0px; width: 336px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; }
 	}
 	
-	.resize-h { width: 8px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -8px; top: 0px; }
+	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; }
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
