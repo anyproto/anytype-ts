@@ -1,8 +1,8 @@
 @import "~scss/_mixins";
 
 .pageFlex { 
-	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; transition: transform 0.2s $easeInQuint;
-	background-color: var(--color-shape-highlight-light-solid);
+	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; 
+	background-color: var(--color-shape-highlight-light-solid); transition: padding $transitionSidebarTime linear;
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }

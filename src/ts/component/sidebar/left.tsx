@@ -180,7 +180,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	}, []);
 
 	useEffect(() => {
-		sidebar.resizePage(null, null, false);
+		if (!sidebar.isAnimating) {
+			sidebar.resizePage(null, null, false);
+		};
 	}, [ page, subPage ]);
 
 	useImperativeHandle(ref, () => ({

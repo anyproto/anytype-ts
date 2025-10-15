@@ -21,13 +21,6 @@
 		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
-		&::after {
-			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; 
-			background: linear-gradient(to bottom, var(--color-bg-primary) 0px, var(--color-bg-primary) 52px, rgba(0, 0, 0, 0) 100%); 
-			opacity: 0; transition: opacity 0.2s ease-in-out;
-		}
-		&.isScrolled::after { opacity: 1; }
-
 		.sync { -webkit-app-region: no-drag; }
 	}
 
