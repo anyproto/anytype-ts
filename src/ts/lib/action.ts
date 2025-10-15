@@ -903,13 +903,10 @@ class Action {
 	};
 
 	toggleWidgetsForObject (objectId: string, route?: string) {
-		const { widgets } = S.Block;
-		
 		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
-			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget() && (it.content.section == I.WidgetSection.Pin));
-			this.createWidgetFromObject(objectId, objectId, first?.id, I.BlockPosition.Top, route);
+			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
 		};
 	};
 

@@ -41,6 +41,7 @@ const getSections = () => {
 						{ id: 'moveToBin', name: translate('popupShortcutMainBasics25'), keys: [] },
 						{ id: 'addFavorite', name: translate('popupShortcutMainBasics26'), keys: [] },
 						{ id: 'tableOfContents', name: translate('sidebarToc'), keys: [] },
+						{ id: 'widget', name: translate('popupShortcutMainBasics28'), keys: [] },
 						{ id: 'createSpace', name: translate('commonCreateSpace'), keys: [] },
 						{ id: 'logout', name: translate('commonLogout'), keys: [] },
 					]
@@ -153,7 +154,6 @@ const getSections = () => {
 				{
 					name: translate('popupShortcutChat'), children: [
 						{ id: 'chatObject', name: translate('popupShortcutChat1'), keys: [ cmdKey, 't' ] },
-						{ id: 'chatPanel', name: translate('popupShortcutChat2'), keys: [ cmdKey, 'shift', 'p' ] },
 					]
 				},
 

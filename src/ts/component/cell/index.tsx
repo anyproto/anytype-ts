@@ -22,7 +22,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const { 
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
-		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
+		isInline, menuParam = {}, block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 		noInplace, editModeOn, viewType,
 	} = props;
@@ -78,16 +78,12 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const className = [];
 		const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
 
-		if (menuClassName) {
-			className.push(menuClassName);
+		if (menuParam.className) {
+			className.push(menuParam.className);
 		};
 
 		if (isInline) {
 			className.push('isInline');
-		};
-
-		if (noInplace) {
-			className.push('fromFeatured');
 		};
 
 		let width = Math.max(J.Size.dataview.cell.edit, cell.outerWidth());
@@ -162,9 +158,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
-			className: className.join(' '),
-			classNameWrap: menuClassNameWrap,
-			noBorder: true,
+			...menuParam,
 			onOpen: () => {
 				$(element).addClass('withMenu');
 				setOn();

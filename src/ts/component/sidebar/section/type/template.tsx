@@ -39,8 +39,6 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 		e.preventDefault();
 		e.stopPropagation();
 
-		sidebar.rightPanelClose(true);
-
 		U.Object.openConfig(item, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
 		});

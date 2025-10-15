@@ -90,7 +90,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return (
 			<div 
 				id="pageFlex" 
-				className={[ 'pageFlex', (isPopup ? 'isPopup' : 'isFull') ].join(' ')}
+				className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
 			>
 				{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
 				<div id="page" className={`page ${this.getClass('page')}`}>
@@ -273,7 +273,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			U.Common.toCamelCase([ prefix, page ].join('-')),
 			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
 			this.getId(prefix),
-			isPopup ? 'isPopup' : 'isFull',
+			U.Common.getContainerClassName(isPopup),
 		].join(' ');
 	};
 	

@@ -214,7 +214,6 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				U.Space.openDashboard({ replace: false });
 			};
 			
@@ -341,13 +340,10 @@ class Keyboard {
 				S.Popup.open('logout', {});
 			});
 
-			// Chat widget panel
-			if (showWidget) {
-				this.shortcut('chatPanel', e, () => {
-					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-					analytics.event('ScreenChatSidebar');
-				});
-			};
+			// Widget panel
+			this.shortcut('widget', e, () => {
+				sidebar.leftPanelSubPageToggle('widget');
+			});
 
 			if (canWrite) {
 				// Create new page
@@ -397,7 +393,6 @@ class Keyboard {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 					} else {
 						U.Space.openDashboard({ replace: false });
-						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
 					};
 				});
 			};
@@ -522,20 +517,11 @@ class Keyboard {
 					return;
 				};
 
-				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
-					const state = sidebar.leftPanelGetState();
-					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-					};
-				};
-
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
 					U.Space.openDashboard({ replace: false });
 				} else {
 					history.goBack();
 				};
-
-				U.Router.checkSidebarState();
 			};
 		};
 

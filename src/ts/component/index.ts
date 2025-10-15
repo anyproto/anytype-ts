@@ -22,6 +22,7 @@ import ListObjectManager from './list/objectManager';
 import ListBanner from './list/banner';
 
 import Header from './header';
+import HeaderBanner from './header/banner';
 import Footer from './footer';
 import Widget from './widget';
 
@@ -132,6 +133,7 @@ export {
 	ListBanner,
 
 	Header,
+	HeaderBanner,
 	Footer,
 	Pager,
 	Dimmer,

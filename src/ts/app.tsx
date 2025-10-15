@@ -135,7 +135,7 @@ const App: FC = () => {
 
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
-
+		
 		registerIpcEvents();
 
 		Renderer.send('appOnLoad');
@@ -213,6 +213,7 @@ const App: FC = () => {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
+		S.Common.setLeftSidebarState('vault', '');
 
 		Action.checkDefaultSpellingLang();
 

@@ -7,6 +7,7 @@ class ChatStore {
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
+	private badgeValue = '';
 
 	constructor () {
 		makeObservable(this, {
@@ -447,13 +448,12 @@ class ChatStore {
 	 */
 	setBadge () {
 		const counters = this.getTotalCounters();
+		const t = this.counterString(counters.messageCounter);
 
-		let t = 0;
-		if (counters) {
-			t = counters.messageCounter;
+		if (t != this.badgeValue) {
+			this.badgeValue = t;
+			Renderer.send('setBadge', t);
 		};
-
-		Renderer.send('setBadge', this.counterString(t));
 	};
 
 	/**

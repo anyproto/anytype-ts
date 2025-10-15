@@ -2,7 +2,7 @@
 
 .button { 
 	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; text-align: center;
-	height: 40px; padding: 0px 16px; border-radius: 8px; transition: $transitionAllCommon;
+	height: 40px; padding: 0px 16px; border-radius: 20px; transition: $transitionAllCommon;
 	vertical-align: middle; position: relative; overflow: hidden; align-items: center; justify-content: center; 
 	@include text-common; cursor: default; -webkit-app-region: no-drag;
 }
@@ -43,20 +43,20 @@
 .button.red:not(.disabled):hover,
 .button.red:not(.disabled).hover { background: var(--color-bg-red); border-color: #fcd1c3; }
 
-.button.dark { background: var(--color-shape-highlight-light); color: var(--color-bg-primary); }
+.button.dark { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
 .button.dark:not(.disabled):hover,
-.button.dark:not(.disabled).hover { background: rgba(0,0,0,0.4); }
+.button.dark:not(.disabled).hover { background: var(--color-shape-highlight-dark); }
 
 .button.blank { background: none; border: solid 1px var(--color-shape-primary); font-weight: 400; }
 .button.blank:not(.disabled) {
 	&:hover, &.hover, &.active { background: var(--color-shape-highlight-medium); }
 }
 
-.button.c48 { @include text-paragraph; height: 48px; border-radius: 8px; padding: 0px 16px; }
-.button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
-.button.c32 { @include text-small; height: 32px; border-radius: 6px; padding: 0px 10px; }
-.button.c28 { @include text-common; height: 28px; border-radius: 6px; padding: 0px 10px; }
-.button.c16 { @include text-9; height: 16px; border-radius: 4px; padding: 0px 4px; }
+.button.c48 { @include text-paragraph; height: 48px; border-radius: 24px; padding: 0px 16px; }
+.button.c36 { @include text-common; height: 36px; border-radius: 18px; padding: 0px 12px; }
+.button.c32 { @include text-small; height: 32px; border-radius: 16px; padding: 0px 10px; }
+.button.c28 { @include text-common; height: 28px; border-radius: 14px; padding: 0px 10px; }
+.button.c16 { @include text-9; height: 16px; border-radius: 8px; padding: 0px 4px; }
 
 input.button { line-height: 1; }
 

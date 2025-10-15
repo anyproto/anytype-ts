@@ -16,11 +16,10 @@
 		"contextMenus",
 		"nativeMessaging",
 		"tabs",
-		"scripting",
 		"activeTab"
 	],
 	"background": {
-		"service_worker": "js/background.js"
+		"scripts": ["js/background.js"]
 	},
 	"content_scripts": [
 		{
@@ -34,5 +33,11 @@
 			"resources": [ "iframe/index.html" ],
 			"matches": [ "<all_urls>" ]
 		}
-	]
+	],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "anytype@anytype.io",
+			"strict_min_version": "109.0"
+		}
+	}
 }

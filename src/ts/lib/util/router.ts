@@ -109,6 +109,8 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
+		sidebar.rightPanelClose(false);
+
 		focus.clear(true);
 
 		if (routeParam.spaceId && (routeParam.spaceId != space)) {
@@ -118,7 +120,6 @@ class UtilRouter {
 
 		const change = () => {
 			this.history.push(route); 
-			this.checkSidebarState();
 
 			if (onRouteChange) {
 				onRouteChange();
@@ -244,6 +245,10 @@ class UtilRouter {
 
 					U.Data.onInfo(message.info);
 
+					const spaceview = U.Space.getSpaceview();
+
+					S.Common.setLeftSidebarState('vault', spaceview.isChat ? '' : 'widget');
+
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
 							this.isOpening = false;
@@ -251,9 +256,6 @@ class UtilRouter {
 					};
 
 					const onRouteChange = () => {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-
-						this.checkSidebarState();
 						routeParam.onRouteChange?.();
 					};
 
@@ -274,20 +276,6 @@ class UtilRouter {
 				},
 			});
 		});
-	};
-
-	checkSidebarState () {
-		const spaceview = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(false);
-
-		if (!spaceview.isChat && [ 'object/relation', 'widget' ].includes(rightSidebar.page)) {
-			sidebar.rightPanelClose(false);
-		} else 
-		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
-			sidebar.rightPanelClose(false);
-		} else {
-			sidebar.rightPanelRestore(false);
-		};
 	};
 
 	/**

@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { Icon, IconObject, ObjectName, HeaderBanner } from 'Component';
 import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib';
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
@@ -21,9 +21,15 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted;
+	const showRelations = !isDeleted && !spaceview.isChat;
 	const showPin = canWrite;
-	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
+	const bannerProps = { type: I.BannerType.None, isPopup, object };
+
+	let center = null;
+
+	if (object.isArchived) {
+		bannerProps.type = I.BannerType.IsArchived;
+	};
 
 	const onPin = () => {
 		Action.toggleWidgetsForObject(rootId, analytics.route.header);
@@ -64,6 +70,21 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		});
 	};
 
+	if (bannerProps.type != I.BannerType.None) {
+		center = <HeaderBanner {...bannerProps} />;
+	};
+
+	if (bannerProps.type == I.BannerType.None) {
+		center = (
+			<div className="path" onClick={onClick}>
+			<IconObject object={object} size={18} />
+			<ObjectName object={object} withPlural={true} />
+		</div>
+		);
+	} else {
+		center = <HeaderBanner {...bannerProps} />;
+	};
+
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 	}));
@@ -73,10 +94,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>
 
 			<div className="side center">
-				<div className="path" onClick={onClick}>
-					<IconObject object={object} size={18} />
-					<ObjectName object={object} withPlural={true} />
-				</div>
+				{center}
 			</div>
 
 			<div className="side right">
@@ -119,19 +137,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					onClick={onMore} 
 					onDoubleClick={e => e.stopPropagation()}
 				/>
-
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget" 
-						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('chatPanel'), typeY: I.MenuDirection.Bottom }}
-						className="widgetPanel withBackground"
-						onClick={() => {
-							sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-							analytics.event('ScreenChatSidebar');
-						}} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
 			</div>
 		</>
 	);

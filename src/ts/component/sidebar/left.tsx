@@ -20,39 +20,55 @@ const Components = {
 };
 
 interface SidebarLeftRefProps {
-	setPage: (page: string) => void;
-	getPage: () => string;
-	getChild: () => any;
+	getComponentRef: () => any;
+	getSubComponentRef: () => any;
 	getNode: () => HTMLElement | null;
 };
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
-	const { space } = S.Common;
-	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
-	const childRef = useRef(null);
+	const pageRef = useRef(null);
+	const subPageRef = useRef(null);
 	const ox = useRef(0);
 	const oy = useRef(0);
 	const sx = useRef(0);
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
-	const [ page, setPage ] = useState('');
-	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
-	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cn = [ 'sidebar', 'left', 'customScrollbar', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
-	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
-	const Component = Components[id];
-	const canCreate = U.Space.canCreateSpace() && (id == 'vault');
+	const { page, subPage } = S.Common.getLeftSidebarState();
+	const cn = [ 'sidebar', 'left' ];
 
-	if (id.match(/settings/)) {
-		cnp.push('containerSettings');
+	const getComponentId = (id: string) => {
+		id = String(id || '');
+		return U.Common.toCamelCase(id.replace(/\//g, '-'));
 	};
 
-	if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
-		cnp.push('spaceSettingsLibrary');
+	const getPageId = (id: string) => {
+		return U.Common.toCamelCase(`sidebarPage-${getComponentId(id)}`);
 	};
+
+	const getClassName = (id: string): string => {
+		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
+
+		if (id.match(/settings/)) {
+			cn.push('containerSettings');
+		};
+
+		if ([ 'settingsTypes', 'settingsRelations' ].includes(id)) {
+			cn.push('spaceSettingsLibrary');
+		};
+
+		return cn.join(' ');
+	};
+
+	const componentId = getComponentId(page);
+	const pageId = getPageId(page);
+	const Component = Components[componentId];
+
+	const subComponentId = getComponentId(subPage);
+	const subPageId = getPageId(subPage);
+	const SubComponent = Components[subComponentId];
 
 	const onCreate = () => {
 		Storage.setHighlight('createSpace', false);
@@ -127,8 +143,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			width.current = w;
 
-			if (childRef.current && childRef.current.resize) {
-				childRef.current.resize();
+			if (pageRef.current && pageRef.current.resize) {
+				pageRef.current.resize();
 			};
 		});
 	};
@@ -163,14 +179,15 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	}, []);
 
 	useEffect(() => {
-		sidebar.resizePage(null, null, false);
-	}, [ page ]);
+		if (!sidebar.isAnimating) {
+			sidebar.resizePage(null, null, false);
+		};
+	}, [ page, subPage ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
-		setPage,
-		getPage: () => page,
-		getChild: () => childRef.current
+		getComponentRef: () => pageRef.current,
+		getSubComponentRef: () => subPageRef.current,
 	}));
 
 	return (
@@ -182,35 +199,41 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				onClick={onToggleClick}
 			/>
 
-			{canCreate ? (
-				<Icon 
-					id="sidebarRightButton"
-					className="plus sidebarHeadIcon withBackground"
-					tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
-					onClick={onCreate}
-				/>
-			) : ''}
-
 			<div 
 				ref={nodeRef}
 				id="sidebarLeft" 
 				className={cn.join(' ')} 
 			>
 				{Component ? (
-					<div id={pageId} className={cnp.join(' ')}>
-						<Component 
-							ref={childRef} 
-							page={id}
-							{...props} 
-							getId={() => pageId}
-							sidebarDirection={I.SidebarDirection.Left}
-						/> 
+					<div id="pageWrapper" className="pageWrapper">
+						<div id={pageId} className={getClassName(componentId)}>
+							<Component 
+								ref={pageRef} 
+								page={componentId}
+								{...props} 
+								getId={() => pageId}
+								sidebarDirection={I.SidebarDirection.Left}
+							/> 
+						</div>
+						<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
+							<div className="resize-handle" onClick={onHandleClick} />
+						</div>
 					</div>
 				) : ''}
 
-				<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
-					<div className="resize-handle" onClick={onHandleClick} />
-				</div>
+				{SubComponent ? (
+					<div id="subPageWrapper" className="subPageWrapper">
+						<div id={subPageId} className={getClassName(subComponentId)}>
+							<SubComponent 
+								ref={subPageRef} 
+								page={subComponentId}
+								{...props} 
+								getId={() => subPageId}
+								sidebarDirection={I.SidebarDirection.Left}
+							/> 
+						</div>
+					</div>
+				) : ''}
 			</div>
 		</>
 	);
