@@ -150,54 +150,18 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 
 			content = (
 				<div className="content">
-					{spaceview ? (
-						<DropTarget 
-							{...this.props} 
-							isTargetTop={true}
-							rootId={S.Block.widgets} 
-							id={first?.id}
-							dropType={I.DropType.Widget} 
-							canDropMiddle={false}
-							className="firstTarget"
-							cacheKey="firstTarget"
-						>
-							{spaceview.isChat ? (
-								<div className="spaceHeader">
-									<div className="spaceInfo">
-										<IconObject
-											id="spaceIcon"
-											size={80}
-											iconSize={80}
-											object={{ ...spaceview, spaceId: S.Common.space }}
-										/>
-										<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
-										{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
-									</div>
-									<div className="buttons">
-										{headerButtons.map((item, idx) => (
-											<div className="item" onClick={e => this.onButton(e, item)} key={idx}>
-												<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
-												<Label text={item.name} />
-											</div>
-										))}
-									</div>
-								</div>
-							) : (
-								<Widget
-									block={spaceBlock}
-									disableContextMenu={true}
-									onDragStart={this.onDragStart}
-									onDragOver={this.onDragOver}
-									onDrag={this.onDrag}
-									canEdit={false}
-									canRemove={false}
-									disableAnimation={true}
-									sidebarDirection={sidebarDirection}
-									getObject={id => this.getObject(spaceBlock, id)}
-								/>
-							)}
-						</DropTarget>
-					) : ''}
+					<Widget
+						block={spaceBlock}
+						disableContextMenu={true}
+						onDragStart={this.onDragStart}
+						onDragOver={this.onDragOver}
+						onDrag={this.onDrag}
+						canEdit={false}
+						canRemove={false}
+						disableAnimation={true}
+						sidebarDirection={sidebarDirection}
+						getObject={id => this.getObject(spaceBlock, id)}
+					/>
 
 					{sections.map(section => {
 						const isSectionPin = section.id == I.WidgetSection.Pin;

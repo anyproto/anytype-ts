@@ -78,23 +78,6 @@
 		}
 
 		> .content { display: flex; flex-direction: column; }
-		> .content {
-
-			.dropTarget.firstTarget { position: relative; left: 0px; top: 0px; z-index: 1; background-color: var(--color-bg-primary); }
-			.dropTarget.lastTarget { position: relative; display: flex; flex-direction: column; gap: 12px 0px; }
-
-			.dropTarget.firstTarget.isOver, 
-			.dropTarget.lastTarget.isOver 
-			{ box-shadow: 0px 0px !important; }
-
-			.dropTarget.firstTarget.isOver::before, 
-			.dropTarget.lastTarget.isOver::before { 
-				content: ""; position: absolute; background: var(--color-control-accent); width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 12px;
-			}
-
-			.dropTarget.firstTarget.isOver::before { bottom: -7px; }
-			.dropTarget.lastTarget.isOver::before { top: -7px; }
-		}
 
 		#widget-chat { margin: 0px 0px 8px 0px; }
 
@@ -107,34 +90,4 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
-
-	.spaceHeader { padding-bottom: 8px; }
-	.spaceHeader {
-		.spaceInfo { margin-bottom: 18px; display: flex; flex-direction: column; align-items: center; }
-		.spaceInfo {
-			.iconObject { margin-bottom: 8px; }
-			.name { @include text-header3; margin-bottom: 0px; }
-			.label { @include text-small; color: var(--color-text-secondary); }
-		}
-
-		.buttons { display: flex; justify-content: center; }
-		.buttons {
-			.item { width: 72px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; align-items: center; }
-			.item {
-				.icon {
-					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
-					background-position: 50% 50%; background-repeat: no-repeat; background-size: 28px; transition: background-color $transitionCommon;
-				}
-				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
-				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
-				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
-				.icon.settings { background-image: url('~img//icon/sidebar/chatSpace/settings.svg'); }
-
-				.label { @include text-small; @include text-overflow-nw; width: 100%; padding: 0px 2px; }
-			}
-			.item:hover {
-				.icon { background-color: var(--color-shape-highlight-dark); }
-			}
-		}
-	}
 }
