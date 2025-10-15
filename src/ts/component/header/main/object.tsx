@@ -1,8 +1,7 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName, Label } from 'Component';
+import { Icon, IconObject, ObjectName, Label, HeaderBanner } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics, Action, sidebar } from 'Lib';
-import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
