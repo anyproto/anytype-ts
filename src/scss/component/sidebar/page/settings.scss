@@ -8,7 +8,10 @@
         gap: 0px 8px; overflow: hidden;
     }
 
-    > .body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px; position: relative; flex-grow: 1; overscroll-behavior: none; }
+    > .body { 
+		display: flex; flex-direction: column; justify-content: space-between; padding: 0px; position: relative; flex-grow: 1; overscroll-behavior: none; 
+		overflow: hidden;
+	}
     > .body {
         .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-bottom: 8px; }
         .list {
