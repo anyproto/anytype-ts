@@ -81,14 +81,6 @@
 		> .content {
 
 			.dropTarget.firstTarget { position: relative; left: 0px; top: 0px; z-index: 1; background-color: var(--color-bg-primary); }
-			.dropTarget.firstTarget {
-				&::after {
-					content: ''; position: absolute; left: 0px; bottom: -45px; width: 100%; height: 55px; pointer-events: none; 
-					background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 68.18%); opacity: 0; transition: opacity 0.2s ease-in-out;
-				}
-				&.isScrolled::after { opacity: 1; }
-			}
-
 			.dropTarget.lastTarget { position: relative; display: flex; flex-direction: column; gap: 12px 0px; }
 
 			.dropTarget.firstTarget.isOver, 

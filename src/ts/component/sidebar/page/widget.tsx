@@ -550,24 +550,9 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 	};
 
 	onScroll () {
-		const spaceview = U.Space.getSpaceview();
 		const { sidebarDirection, isPopup } = this.props;
 		const { previewId } = this.state;
 		const top = this.body.scrollTop();
-		const isScrolled = top > 0;
-
-		let el = null;
-
-		if (sidebarDirection == I.SidebarDirection.Left) {
-			el = this.node.find('.dropTarget.firstTarget');
-		} else 
-		if (spaceview.isSpace) {
-			el = this.node.find('.subHead');
-		} else {
-			el = this.node.find('#head');
-		};
-
-		el.toggleClass('isScrolled', isScrolled);
 
 		if (!previewId) {
 			Storage.setScroll('sidebarWidget', sidebarDirection, top, isPopup);
