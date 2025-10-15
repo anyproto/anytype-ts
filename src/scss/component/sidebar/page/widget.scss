@@ -85,8 +85,8 @@
 			content: ""; position: absolute; background: var(--color-control-accent); height: 2px; width: calc(100% - 24px); border-radius: 2px; 
 			left: 12px; 
 		} 
-		.widget.isEditable.isOver.top::before { top: -7px; }
-		.widget.isEditable.isOver.bottom::before { bottom: -7px; }
+		.widget.isEditable.isOver.top::before { top: 0px; }
+		.widget.isEditable.isOver.bottom::before { bottom: 0px; }
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
