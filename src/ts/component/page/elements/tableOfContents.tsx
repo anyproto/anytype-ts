@@ -18,14 +18,15 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const containerOffset = useRef({ top: 0, left: 0 });
 	const containerWidth = useRef(0);
 	const containerHeight = useRef(0);
+	const ns = U.Common.getEventNamespace(isPopup);
 
 	const rebind = () => {
 		unbind();
-		$(window).on('resize.tableOfContents', () => resize());
+		$(window).on(`resize.tableOfContents${ns}`, () => resize());
 	};
 
 	const unbind = () => {
-		$(window).off('resize.tableOfContents');
+		$(window).off(`resize.tableOfContents${ns}`);
 	};
 
 	const setBlock = (id: string) => {
