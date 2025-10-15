@@ -8,9 +8,9 @@
         gap: 0px 8px; overflow: hidden;
     }
 
-    > .body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 6px 12px 12px; position: relative; flex-grow: 1; overscroll-behavior: none; }
+    > .body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px; position: relative; flex-grow: 1; overscroll-behavior: none; }
     > .body {
-        .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
+        .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-bottom: 8px; }
         .list {
 			.ReactVirtualized__List { padding: 0px 8px; }
 
@@ -68,7 +68,7 @@
 
 .containerSettings.spaceSettings {
     > .body {
-        > .list { padding-bottom: 0px; }
+		> .list { padding: 0px; }
         > .list {
             .ReactVirtualized__List { padding-bottom: 8px; }
         }
@@ -77,7 +77,7 @@
 
 .containerSettings.spaceSettingsLibrary {
     > .body {
-        > .list { padding-bottom: 0px; justify-content: flex-start; }
+        > .list { justify-content: flex-start; padding: 0px; }
         > .list {
             .ReactVirtualized__List { padding-bottom: 8px; padding-top: 2px; }
 

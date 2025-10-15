@@ -2,6 +2,7 @@
 
 .widget.widgetSpace { z-index: 1; margin: 0px 0px 12px 0px; }
 .widget.widgetSpace {
+	.head { padding-top: 0px; }
 	.head:hover { background: none; }
 
 	.buttons { padding: 0px 8px; }

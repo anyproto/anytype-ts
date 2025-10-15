@@ -243,6 +243,12 @@ class UtilRouter {
 
 					U.Data.onInfo(message.info);
 
+					const spaceview = U.Space.getSpaceview();
+
+					console.log(spaceview.name);
+
+					S.Common.setLeftSidebarState('vault', spaceview.isChat ? '' : 'widget');
+
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
 							this.isOpening = false;
@@ -250,12 +256,6 @@ class UtilRouter {
 					};
 
 					const onRouteChange = () => {
-						const spaceview = U.Space.getSpaceview();
-
-						if (!spaceview.isChat) {
-							S.Common.setLeftSidebarState('vault', 'widget');
-						};
-
 						routeParam.onRouteChange?.();
 					};
 

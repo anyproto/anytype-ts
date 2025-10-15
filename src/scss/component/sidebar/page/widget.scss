@@ -64,7 +64,7 @@
 		}
 	}
 
-	> .body { padding: 0px 0px 16px 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
+	> .body { padding: 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body {
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }

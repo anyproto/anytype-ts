@@ -214,17 +214,11 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	});
 
 	const onClick = (item: any) => {
-		if (item.isChat) {
-			S.Common.setLeftSidebarState('vault', '');
+		if (item.targetSpaceId != S.Common.space) {
+			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+		} else {
+			U.Space.openDashboard({ replace: false });
 		};
-
-		window.setTimeout(() => {
-			if (item.targetSpaceId != S.Common.space) {
-				U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
-			} else {
-				U.Space.openDashboard({ replace: false });
-			};
-		}, 50);
 	};
 
 	const onOver = (item: any) => {

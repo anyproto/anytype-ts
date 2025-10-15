@@ -85,13 +85,11 @@ class Sidebar {
 		this.setAnimating(true);
 		S.Common.setLeftSidebarState('vault', '');
 
-		window.setTimeout(() => {
-			this.objLeft.addClass('anim');
-			this.setElementsWidth(width);
-			this.setStyle({ width: 0 });
-			this.set({ isClosed: true });
-			this.resizePage(0, null, true);
-		}, 10);
+		this.objLeft.addClass('anim');
+		this.setElementsWidth(width);
+		this.setStyle({ width: 0 });
+		this.set({ isClosed: true });
+		this.resizePage(0, null, true);
 
 		this.removeAnimation(() => {
 			this.objLeft.addClass('isClosed');
