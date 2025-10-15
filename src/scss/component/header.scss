@@ -71,7 +71,7 @@
 	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
 }
 .header.isSmall {
-	.path { visibility: hidden; overflow: hidden; width: 0px; }
+	.path, .headerBanner { visibility: hidden; overflow: hidden; width: 0px; }
 }
 
 .header.sidebarAnimation {
