@@ -38,7 +38,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
-	const cn = [ 'sidebar', 'left', 'customScrollbar', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
+	const cn = [ 'sidebar', 'left', `spaceUx${I.SpaceUxType[spaceview.uxType]}` ];
 
 	const getComponentId = (id: string) => {
 		id = String(id || '');
