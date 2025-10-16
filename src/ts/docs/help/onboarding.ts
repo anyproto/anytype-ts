@@ -160,7 +160,7 @@ const Data = {
 				param: {
 					element: '#menuSyncStatus',
 					horizontal: I.MenuDirection.Right,
-					highlightElements: [ '#menuSyncStatus', '#sidebarRightButton' ],
+					highlightElements: [ '#menuSyncStatus' ],
 					offsetY: 14,
 				}
 			},

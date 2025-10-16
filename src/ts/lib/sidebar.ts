@@ -26,7 +26,6 @@ class Sidebar {
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
 	leftButton: JQuery<HTMLElement> = null;
-	rightButton: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
 
@@ -67,7 +66,6 @@ class Sidebar {
 		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
 		this.leftButton = $('#sidebarLeftButton');
-		this.rightButton = $('#sidebarRightButton');
 	};
 
 	/**
@@ -247,7 +245,6 @@ class Sidebar {
 		this.initObjects(isPopup);
 
 		let leftButtonX = 12;
-		let rightButtonX = 52;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -283,11 +280,6 @@ class Sidebar {
 
 		if (U.Common.isPlatformMac() && !isFullScreen) {
 			leftButtonX = 84;
-			rightButtonX = 120;
-		};
-
-		if (widthLeft) {
-			rightButtonX = widthLeft - 40;
 		};
 
 		this.header.css({ width: '' });
@@ -306,15 +298,13 @@ class Sidebar {
 		this.pageFlex.toggleClass('withSidebarRight', !!widthRight);
 
 		if (!isPopup) {
+			this.pageFlex.toggleClass('sidebarAnimation', animate);
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
-			this.rightButton.toggleClass('sidebarAnimation', animate);
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
-			this.rightButton.toggleClass('withSidebar', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
 			this.leftButton.css({ left: leftButtonX });
-			this.rightButton.css({ left: rightButtonX });
 		} else {
 			this.objRight.css({ height: container.height() });
 		};

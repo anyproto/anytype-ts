@@ -399,7 +399,7 @@ class Keyboard {
 
 
 			keyboard.shortcut('createSpace', e, () => {
-				const element = `#sidebarRightButton`;
+				const element = `#button-create-space`;
 
 				let rect = null;
 				let horizontal = I.MenuDirection.Left;

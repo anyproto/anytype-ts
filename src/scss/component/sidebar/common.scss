@@ -2,7 +2,6 @@
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
-	transition: padding $transitionSidebarTime linear;
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
@@ -17,6 +16,8 @@
 	&.withSidebarRight {
 		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
 	}
+
+	&.sidebarAnimation { transition-property: padding; }
 }
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
@@ -24,15 +25,12 @@
 .sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
 .sidebarHeadIcon
 .sidebarHeadIcon {
-	&.sidebarAnimation { transition: left $transitionSidebarTime linear; }
+	&.sidebarAnimation { transition-property: left; }
 	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
 }
-
-#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
-#sidebarRightButton:not(.withSidebar) { display: none; }
-
 .sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
 
+#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
