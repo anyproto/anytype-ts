@@ -414,7 +414,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		Highlight.hide('createSpace');
 
 		U.Menu.spaceCreate({
-			element: `#sidebarRightButton`,
+			element: `#button-create-space`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
 		}, analytics.route.vault);
@@ -444,7 +444,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<div className="side left" />
 				<div className="side right">
 					{canCreate ? (
-						<Icon 
+						<Icon
+							id="button-create-space"
 							className="plus withBackground"
 							tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
 							onClick={onCreate}

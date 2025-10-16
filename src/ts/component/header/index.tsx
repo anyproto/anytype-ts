@@ -73,19 +73,22 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
 		} else {
 			const subPage = S.Common.getLeftSidebarState().subPage;
+			const match = keyboard.getMatch(isPopup);
 			const cn = [];
 
 			if (subPage == 'widget') {
 				cn.push('active');
 			};
 
-			buttons.push({ 
-				id: 'widgetPanel', 
-				name: translate('commonWidgets'), 
-				className: cn.join(' '), 
-				caption: keyboard.getCaption('widget'),
-				onClick: () => sidebar.leftPanelSubPageToggle('widget'),
-			});
+			if (match.params.action != 'settings') {
+				buttons.push({ 
+					id: 'widgetPanel', 
+					name: translate('commonWidgets'), 
+					className: cn.join(' '), 
+					caption: keyboard.getCaption('widget'),
+					onClick: () => sidebar.leftPanelSubPageToggle('widget'),
+				});
+			};
 		};
 
 		if (withNavigation) {
