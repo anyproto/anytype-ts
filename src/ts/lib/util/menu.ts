@@ -473,15 +473,14 @@ class UtilMenu {
 		];
 		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
-		} else
-		if (id == J.Constant.widgetId.bin) {
-			options.unshift(I.WidgetLayout.Link);
 		};
 
 		if (id && !isSystem) {
 			const isSet = U.Object.isInSetLayouts(layout);
 			const setLayouts = U.Object.getSetLayouts();
-			const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
+			const treeSkipLayouts = setLayouts.
+				concat(U.Object.getFileAndSystemLayouts()).
+				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat ]);
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipLayouts.includes(layout)) {
