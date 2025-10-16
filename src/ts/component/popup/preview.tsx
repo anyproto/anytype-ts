@@ -33,7 +33,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		const win = $(window);
 		win.on('resize.popupPreview', () => reload());
-		win.on('keydown.menu', e => onKeyDown(e));
 	};
 
 	const setCurrentItem = (idx?: number) => {
@@ -48,10 +47,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (item && item.object) {
 			setCurrent(item.object);
 		};
-	};
-
-	const onKeyDown = (e: any) => {
-		keyboard.shortcut('escape', e, () => close());
 	};
 
 	const onMore = (e: any) => {
@@ -204,6 +199,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			if (!galleryMapRef.current.get(idx)) {
 				galleryMapRef.current.set(idx, { src, type, isLoaded: false });
 			};
+
 			resize(idx);
 		});
 	};
@@ -288,11 +284,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					{gallery.map((item: any, i: number) => (
 						<SwiperSlide key={i}>
 							{getContent(item, i)}
+							<div className="innerDimmer" onClick={() => close()} />
 						</SwiperSlide>
 					))}
 				</Swiper>
-
-				<div className="innerDimmer" onClick={() => close()} />
 			</div>
 
 			<div className="galleryFooter">
