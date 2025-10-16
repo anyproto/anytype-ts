@@ -180,7 +180,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		let page = '';
 		switch (id) {
 			case 'spaceIndexEmpty': {
-				page = '';
+				page = 'widget';
 				break;
 			};
 
