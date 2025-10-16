@@ -119,8 +119,9 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							key={item.id} 
 							tooltipParam={{ text: item.name, caption: item.caption, typeY: I.MenuDirection.Bottom }} 
 							className={cn.join(' ')} 
-							onClick={e => item.onClick(e)} 
+							onClick={item.onClick} 
 							onDoubleClick={e => e.stopPropagation()}
+							onMouseDown={e => e.stopPropagation()}
 						/>
 					);
 				})}

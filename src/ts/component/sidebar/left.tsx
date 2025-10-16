@@ -190,6 +190,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				className="toggle sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				onClick={onToggleClick}
+				onMouseDown={e => e.stopPropagation()}
 			/>
 
 			<div 
