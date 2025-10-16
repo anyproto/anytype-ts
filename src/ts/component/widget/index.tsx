@@ -204,6 +204,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
+			if (childRef.current && childRef.current?.appendSearchIds) {
+				childRef.current?.appendSearchIds([ newObject.id ]);
+			};
+
 			U.Object.openConfig(newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 

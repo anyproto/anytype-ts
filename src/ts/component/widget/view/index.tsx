@@ -15,6 +15,8 @@ interface WidgetViewRefProps {
 	updateData: () => void;
 	updateViews: () => void;
 	onOpen: () => void;
+	setSearchIds: (ids: string[]) => void;
+	appendSearchIds?: (ids: string[]) => void;
 	getSearchIds: () => string[];
 	getFilter: () => string;
 };
@@ -423,6 +425,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		updateData,
 		updateViews,
 		onOpen,
+		setSearchIds,
+		appendSearchIds: (ids: string[]) => setSearchIds((searchIds || []).concat(ids || [])),
 		getSearchIds: () => searchIds,
 		getFilter: () => filter.current,
 	}));

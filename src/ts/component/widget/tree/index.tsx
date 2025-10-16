@@ -14,6 +14,8 @@ const HEIGHT = 28; // Height of each row
 interface WidgetTreeRefProps {
 	updateData: () => void;
 	resize: () => void;
+	setSearchIds: (ids: string[]) => void;
+	appendSearchIds?: (ids: string[]) => void;
 	getSearchIds: () => string[];
 	getFilter: () => string;
 };
@@ -446,6 +448,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useImperativeHandle(ref, () => ({
 		updateData,
 		resize,
+		setSearchIds,
+		appendSearchIds: (ids: string[]) => setSearchIds((searchIds || []).concat(ids || [])),
 		getSearchIds: () => searchIds,
 		getFilter: () => filter.current,
 	}));
