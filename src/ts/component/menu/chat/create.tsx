@@ -81,8 +81,14 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					classNameWrap,
 					offsetY: 4,
 				}}
-				onSelect={icon => details.iconEmoji = icon}
-				onUpload={hash => details.iconImage = hash}
+				onSelect={icon => {
+					details.iconEmoji = icon;
+					details.iconImage = '';
+				}}
+				onUpload={hash => {
+					details.iconImage = hash;
+					details.iconEmoji = '';
+				}}
 			/>
 
 			<Editable 

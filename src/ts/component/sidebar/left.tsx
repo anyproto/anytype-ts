@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -39,6 +39,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
 
+	if (subPage) {
+		cn.push('withSubPage');
+	};
+
 	const getComponentId = (id: string) => {
 		id = String(id || '');
 		return U.Common.toCamelCase(id.replace(/\//g, '-'));
@@ -69,17 +73,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subComponentId = getComponentId(subPage);
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
-
-	const onCreate = () => {
-		Storage.setHighlight('createSpace', false);
-		Highlight.hide('createSpace');
-
-		U.Menu.spaceCreate({
-			element: `#sidebarRightButton`,
-			className: 'spaceCreate fixed',
-			classNameWrap: 'fromSidebar',
-		}, analytics.route.vault);
-	};
 
 	const onResizeStart = (e: MouseEvent) => {
 		e.preventDefault();
@@ -204,8 +197,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				id="sidebarLeft" 
 				className={cn.join(' ')} 
 			>
-				{Component ? (
-					<div id="pageWrapper" className="pageWrapper">
+				<div id="pageWrapper" className="pageWrapper">
+					{Component ? (
 						<div id={pageId} className={getClassName(componentId)}>
 							<Component 
 								ref={pageRef} 
@@ -215,14 +208,14 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 								sidebarDirection={I.SidebarDirection.Left}
 							/> 
 						</div>
-						<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
-							<div className="resize-handle" onClick={onHandleClick} />
-						</div>
+					) : ''}
+					<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
+						<div className="resize-handle" onClick={onHandleClick} />
 					</div>
-				) : ''}
-
-				{SubComponent ? (
-					<div id="subPageWrapper" className="subPageWrapper">
+				</div>
+				
+				<div id="subPageWrapper" className="subPageWrapper">
+					{SubComponent ? (
 						<div id={subPageId} className={getClassName(subComponentId)}>
 							<SubComponent 
 								ref={subPageRef} 
@@ -232,8 +225,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 								sidebarDirection={I.SidebarDirection.Left}
 							/> 
 						</div>
-					</div>
-				) : ''}
+					) : ''}
+				</div>
 			</div>
 		</>
 	);

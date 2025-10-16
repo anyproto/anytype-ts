@@ -2,6 +2,7 @@
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
+	transition: padding $transitionSidebarTime linear;
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
@@ -35,15 +36,13 @@
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
-	position: fixed; z-index: 24; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-highlight-light-solid); 
+	position: fixed; z-index: 24; user-select: none; top: 0px; height: 100%; background-color: var(--color-shape-highlight-light-solid); 
 	display: flex; flex-direction: column;
 }
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.isClosed { left: 0px !important; overflow: hidden; }
 
 .sidebar.left { left: 0px; flex-direction: row; }
-.sidebar.left.withVault { left: $vaultWidthCollapsed; }
-.sidebar.left.anim { transition-property: width; }
 
 .sidebar.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; flex-shrink: 0; padding: 8px 8px 8px 0px; }
 .sidebar.right.anim { transition-property: right; }
@@ -61,10 +60,22 @@
 .sidebar {
 	@import "./page/common";
 
-	.pageWrapper, .subPageWrapper { flex-grow: 1; position: relative; display: flex; flex-direction: column; }
-	.subPageWrapper { padding: 8px 8px 8px 0px; width: 336px; }
+	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
+
+	.pageWrapper { z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
+	.pageWrapper {
+		&.anim { transition: width $transitionSidebarTime linear; }
+	}
+
+	.subPageWrapper { padding: 8px 8px 8px 0px; width: 336px; display: none; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; }
+
+		&.sidebarAnimation { transition-property: transform; }
+	}
+
+	&.withSubPage { 
+		.subPageWrapper { display: flex; } 
 	}
 	
 	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; }

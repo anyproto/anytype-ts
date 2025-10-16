@@ -83,7 +83,7 @@ class Sidebar {
 		this.setAnimating(true);
 		S.Common.setLeftSidebarState('vault', '');
 
-		this.objLeft.addClass('anim');
+		this.pageWrapperLeft.addClass('anim');
 		this.setElementsWidth(width);
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
@@ -111,7 +111,7 @@ class Sidebar {
 		this.setAnimating(true);
 
 		this.objLeft.removeClass('isClosed');
-		this.objLeft.addClass('anim');
+		this.pageWrapperLeft.addClass('anim');
 
 		this.setStyle({ width });
 		this.set({ isClosed: false });
@@ -171,7 +171,7 @@ class Sidebar {
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
-			this.objLeft.removeClass('anim');
+			this.pageWrapperLeft.removeClass('anim');
 			this.setElementsWidth('');
 
 			if (callBack) {
@@ -334,10 +334,8 @@ class Sidebar {
 	set (v: Partial<SidebarData>): void {
 		v = Object.assign(this.data, v);
 
-		const { width } = v;
-
 		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, { 
-			width: this.limitWidth(width),
+			width: this.limitWidth(v.width),
 		});
 
 		Storage.set('sidebar', this.data, Storage.isLocal('sidebar'));
@@ -480,9 +478,50 @@ class Sidebar {
 	};
 
 	leftPanelSubPageToggle (id: string) {
-		const state = S.Common.getLeftSidebarState();
+		this.initObjects(false);
 
-		S.Common.setLeftSidebarState(state.page, state.subPage ? '' : id);
+		const state = S.Common.getLeftSidebarState();
+		const open = id && !state.subPage;
+		const { width, isClosed } = this.data;
+
+		if (open) {
+			S.Common.setLeftSidebarState(state.page, id);
+
+			const width = isClosed ? 0 : this.data.width;
+			const newWidth = width + J.Size.sidebar.sub;
+
+			this.setStyle({ width });
+			this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
+			this.objLeft.css({ width });
+			this.dummyLeft.css({ width });
+
+			raf(() => {
+				this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
+				this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
+				this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
+				this.resizePage(newWidth, null, true);
+
+				window.setTimeout(() => {
+					this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+					this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+					this.dummyLeft.removeClass('sidebarAnimation');
+				}, J.Constant.delay.sidebar);
+			});
+		} else {
+			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
+			this.objLeft.addClass('sidebarAnimation').css({ width });
+			this.dummyLeft.addClass('sidebarAnimation').css({ width });
+			this.resizePage(width, null, true);
+
+			window.setTimeout(() => {
+				S.Common.setLeftSidebarState(state.page, '');
+
+				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+				this.dummyLeft.removeClass('sidebarAnimation');
+
+			}, J.Constant.delay.sidebar);
+		};
 	};
 
 	/**
