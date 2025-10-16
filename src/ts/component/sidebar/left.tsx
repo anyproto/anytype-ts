@@ -53,7 +53,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const getClassName = (id: string): string => {
-		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`), 'customScrollbar' ];
+		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`) ];
+
+		if (!U.Common.isPlatformMac()) {
+			cn.push('customScrollbar');
+		};
 
 		if (id.match(/settings/)) {
 			cn.push('containerSettings');
