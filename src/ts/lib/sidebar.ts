@@ -34,7 +34,7 @@ class Sidebar {
 	 * Initializes sidebar objects and state from storage.
 	 */
 	init () {
-		this.initObjects();
+		this.initObjects(false);
 
 		const stored = Storage.get('sidebar', Storage.isLocal('sidebar'));
 
@@ -55,9 +55,7 @@ class Sidebar {
 	/**
 	 * Initializes DOM object references for sidebar elements.
 	 */
-	initObjects () {
-		const isPopup = keyboard.isPopup();
-
+	initObjects (isPopup: boolean) {
 		this.objLeft = $(S.Common.getRef('sidebarLeft')?.getNode());
 		this.pageWrapperLeft = this.objLeft.find('#pageWrapper');
 		this.subPageWrapperLeft = this.objLeft.find('#subPageWrapper');
@@ -239,15 +237,14 @@ class Sidebar {
 	 * @param {number} widthRight - The width of the right sidebar.
 	 * @param {boolean} animate - Whether to animate the resize.
 	 */
-	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
-		const isPopup = keyboard.isPopup();
+	resizePageInner (isPopup: boolean, widthLeft: number, widthRight: number, animate: boolean): void {
 		const isMain = keyboard.isMain();
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
 		const isPopupMainHistory = keyboard.isPopupMainHistory();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 
-		this.initObjects();
+		this.initObjects(isPopup);
 
 		let leftButtonX = 12;
 		let rightButtonX = 52;
@@ -325,6 +322,11 @@ class Sidebar {
 		$(window).trigger('sidebarResize');
 	};
 
+	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
+		this.resizePageInner(false, widthLeft, widthRight, animate);
+		this.resizePageInner(true, widthLeft, widthRight, animate);
+	};
+
 	/**
 	 * Sets the sidebar data and updates the style.
 	 * @param {Partial<SidebarData>} v - The new sidebar data.
@@ -389,7 +391,7 @@ class Sidebar {
 	};
 
 	rightPanelRestore (isPopup: boolean) {
-		this.initObjects();
+		this.initObjects(isPopup);
 
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const { isOpen } = rightSidebar;
@@ -429,7 +431,7 @@ class Sidebar {
 		};
 
 		this.rightPanelSetState(isPopup, { page: '' });
-		this.initObjects();
+		this.initObjects(isPopup);
 
 		const width = this.objRight.outerWidth();
 		const cssStart: any = {};
@@ -451,7 +453,7 @@ class Sidebar {
 			};
 
 			this.objRight.css(cssEnd);
-			this.resizePage(null, shouldOpen ? null : 0, animate);
+			this.resizePageInner(isPopup, null, shouldOpen ? null : 0, animate);
 
 			window.setTimeout(() => {
 				if (shouldOpen) {

@@ -210,20 +210,20 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	rebind () {
 		const { isPopup } = this.props;
 		const { history } = U.Router;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
 		this.unbind();
-		$(window).on(`resize.page${namespace}${key}`, () => this.resize());
+		$(window).on(`resize.page${ns}${key}`, () => this.resize());
 	};
 
 	unbind () {
 		const { isPopup } = this.props;
 		const { history } = U.Router;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
-		$(window).off(`resize.page${namespace}${key}`);
+		$(window).off(`resize.page${ns}${key}`);
 	};
 
 	event () {
