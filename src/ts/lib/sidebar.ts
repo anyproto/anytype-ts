@@ -482,7 +482,7 @@ class Sidebar {
 	leftPanelSubPageToggle (id: string) {
 		const state = S.Common.getLeftSidebarState();
 
-		S.Common.setLeftSidebarState(state.page, state.subPage == id ? '' : id);
+		S.Common.setLeftSidebarState(state.page, state.subPage ? '' : id);
 	};
 
 	/**
