@@ -5,7 +5,7 @@ import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib
 
 const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { rootId, isPopup, menuOpen, renderLeftIcons } = props;
+	const { rootId, isPopup, onSearch, menuOpen, renderLeftIcons } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -49,14 +49,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		});
 	};
 
-	const onClick = () => {
-		if (spaceview.isChat) {
-			sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-		} else {
-			U.Object.openAuto({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
-		};
-	};
-
 	const onMore = () => {
 		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
@@ -76,10 +68,10 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	if (bannerProps.type == I.BannerType.None) {
 		center = (
-			<div className="path" onClick={onClick}>
-			<IconObject object={object} size={18} />
-			<ObjectName object={object} withPlural={true} />
-		</div>
+			<div className="path" onClick={onSearch}>
+				<IconObject object={object} size={18} />
+				<ObjectName object={object} withPlural={true} />
+			</div>
 		);
 	} else {
 		center = <HeaderBanner {...bannerProps} />;
