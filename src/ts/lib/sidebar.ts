@@ -209,7 +209,7 @@ class Sidebar {
 		if (x <= 10) {
 			show = true;
 		} else
-		if (x >= width + vw + 30) {
+		if (x >= width + vw + 30 + J.Size.sidebar.sub) {
 			hide = true;
 		};
 
