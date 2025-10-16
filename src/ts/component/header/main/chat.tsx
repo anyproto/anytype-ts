@@ -22,7 +22,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
 	const showRelations = !isDeleted && !spaceview.isChat;
-	const showPin = canWrite;
+	const showPin = canWrite && !spaceview.isChat;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	let center = null;
