@@ -1098,6 +1098,18 @@ class Action {
 		});
 	};
 
+	openSpaceShare (route: string) {
+		U.Object.openRoute({ 
+			id: 'spaceShare', 
+			layout: I.ObjectLayout.Settings,
+			_routeParam_: { 
+				additional: [ 
+					{ key: 'route', value: route },
+				],
+			},
+		});
+	};
+
 };
 
 export default new Action();

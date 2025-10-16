@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Title, Icon, Button } from 'Component';
-import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -966,7 +966,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					</div>
 					<div className="buttons">
 						<Button 
-							onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} 
+							onClick={() => Action.openSpaceShare(analytics.route.chat)} 
 							text={translate('blockChatEmptyShareInviteLink')} 
 							className="c28" 
 							color="blank" 

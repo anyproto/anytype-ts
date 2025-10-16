@@ -523,37 +523,6 @@ const SidebarPageWidget = observer(class SidebarPageWidget extends React.Compone
 		};
 	};
 
-	onButton (e: any, item: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		const space = U.Space.getSpaceview();
-		const isMuted = space.notificationMode != I.NotificationMode.All;
-
-		switch (item.id) {
-			case 'chat': {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-				break;
-			};
-
-			case 'add': {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
-				break;
-			};
-
-			case 'mute': {
-				C.PushNotificationSetSpaceMode(S.Common.space, Number(isMuted ? I.NotificationMode.All : I.NotificationMode.Mentions));
-				break;
-			};
-
-			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
-				break;
-			};
-
-		};
-	};
-
 	onTypeCreate = () => {
 		U.Object.createType({}, false);
 	};

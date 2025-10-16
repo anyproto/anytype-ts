@@ -1,7 +1,7 @@
 import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, C, translate, analytics } from 'Lib';
+import { I, U, S, C, translate, analytics, Action } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -29,7 +29,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				Action.openSpaceShare(analytics.route.navigation);
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};

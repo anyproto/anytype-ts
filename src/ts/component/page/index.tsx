@@ -138,12 +138,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatchParams () {
 		const { isPopup } = this.props;
 		const match = keyboard.getMatch(isPopup);
-		const page = String(match?.params?.page || 'index');
-		const action = String(match?.params?.action || 'index');
-		const id = String(match?.params?.id || '');
-		const spaceId = String(match?.params?.spaceId || '');
 
-		return { page, action, id, spaceId };
+		match.params.page = String(match.params.page || 'index');
+		match.params.action = String(match.params.action || 'index');
+		match.params.id = String(match.params.id || '');
+		match.params.spaceId = String(match.params.spaceId || '');
+
+		return match.params;
 	};
 
 	getRootId () {

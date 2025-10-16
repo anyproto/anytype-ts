@@ -94,7 +94,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 					id="button-header-invite"
 					tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
 					className="invite withBackground"
-					onClick={() => U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings })}
+					onClick={() => Action.openSpaceShare(analytics.route.chat)}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
 
