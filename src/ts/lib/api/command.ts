@@ -1238,11 +1238,6 @@ export const BlockDataviewSetSource = (contextId: string, blockId: string, sourc
 
 export const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
-	const target = block.content.targetBlockId;
-
-	if (!block.id && [ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target)) {
-		block.id = target;
-	};
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
@@ -1334,6 +1329,15 @@ export const ObjectTypeResolveLayoutConflicts = (id: string, callBack?: (message
 	request.setTypeobjectid(id);
 
 	dispatcher.request(ObjectTypeResolveLayoutConflicts.name, request, callBack);
+};
+
+export const ObjectTypeSetOrder = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.SetOrder.Request();
+
+	request.setSpaceid(spaceId);
+	request.setTypeidsList(ids);
+
+	dispatcher.request(ObjectTypeSetOrder.name, request, callBack);
 };
 
 // ---------------------- OBJECT ---------------------- //
@@ -1614,13 +1618,14 @@ export const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?:
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-export const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, callBack?: (message: any) => void) => {
+export const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, isAI: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
 	request.setUrl(url);
 	request.setTitle(title);
 	request.setIsnewspace(isNewSpace);
+	request.setIsai(isAI);
 
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
@@ -1803,15 +1808,6 @@ export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], 
 	dispatcher.request(ObjectRelationRemoveFeatured.name, request, callBack);
 };
 
-export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetIsFavorite.Request();
-
-	request.setContextid(contextId);
-	request.setIsfavorite(isFavorite);
-
-	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
-};
-
 export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], typeEdges: boolean = true, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
@@ -1942,14 +1938,6 @@ export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, call
 	dispatcher.request(ObjectListSetIsArchived.name, request, callBack);
 };
 
-export const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.ListSetIsFavorite.Request();
-
-	request.setObjectidsList(ids);
-	request.setIsfavorite(isFavorite);
-
-	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
-};
 
 export const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetObjectType.Request();

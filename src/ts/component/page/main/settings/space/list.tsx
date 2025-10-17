@@ -88,13 +88,11 @@ const PageMainSettingsSpacesList = observer(class PageMainSettingsSpacesList ext
 
 		U.Menu.spaceContext(space, {
 			element,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
-			route: analytics.route.settings,
-		});
+		}, { route: analytics.route.settings });
 	};
 
 });

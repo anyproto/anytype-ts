@@ -297,7 +297,6 @@ export interface SearchSubscribeParam {
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
 	ignoreArchived: boolean;
-	ignoreChat: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
 };
@@ -368,6 +367,6 @@ export enum ImageSize {
 };
 
 export enum AppDeviceState {
-	Background   = 0, // means app is suspended
+	Background	 = 0, // means app is suspended
 	Foreground	 = 1,
 };

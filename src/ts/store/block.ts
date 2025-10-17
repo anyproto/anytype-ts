@@ -6,7 +6,6 @@ class BlockStore {
 
 	public profileId = '';
 	public widgetsId = '';
-	public rootId = '';
 	public spaceviewId = '';
 	public workspaceId = '';
 
@@ -17,19 +16,16 @@ class BlockStore {
 
 	constructor() {
 		makeObservable(this, {
-			rootId: observable,
 			profileId: observable,
 			spaceviewId: observable,
 			widgetsId: observable,
 			workspaceId: observable,
 
 			profile: computed,
-			root: computed,
 			spaceview: computed,
 			widgets: computed,
 			workspace: computed,
 
-			rootSet: action,
 			profileSet: action,
 			widgetsSet: action,
 			spaceviewSet: action,
@@ -54,10 +50,6 @@ class BlockStore {
 		return String(this.widgetsId || '');
 	};
 
-	get root (): string {
-		return String(this.rootId || '');
-	};
-
 	get spaceview (): string {
 		return String(this.spaceviewId || '');
 	};
@@ -80,14 +72,6 @@ class BlockStore {
 	 */
 	widgetsSet (id: string) {
 		this.widgetsId = String(id || '');
-	};
-
-	/**
-	 * Sets the root ID.
-	 * @param {string} id - The root ID.
-	 */
-	rootSet (id: string) {
-		this.rootId = String(id || '');
 	};
 
 	/**
@@ -178,7 +162,6 @@ class BlockStore {
 	clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
-		this.rootSet('');
 
 		this.blockMap.clear();
 		this.treeMap.clear();
@@ -800,40 +783,6 @@ class BlockStore {
 	};
 
 	/**
-	 * Checks and updates the block type structure for a root.
-	 * @param {string} rootId - The root ID.
-	 */
-	checkBlockType (rootId: string) {
-		const { header, type } = J.Constant.blockId;
-		const element = this.getMapElement(rootId, header);
-		const canWrite = U.Space.canMyParticipantWrite();
-
-		if (!element || !canWrite) {
-			return;
-		};
-
-		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
-		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
-		const exists = this.checkBlockTypeExists(rootId);
-		const change = (check && !exists) || (!check && exists);
-		
-		if (change) {
-			const childrenIds = exists ? element.childrenIds.filter(it => it != type) : [ type ].concat(element.childrenIds);
-			this.updateStructure(rootId, header, childrenIds);
-		};
-	};
-
-	/**
-	 * Checks if the block type exists in the header for a root.
-	 * @param {string} rootId - The root ID.
-	 * @returns {boolean} True if the block type exists, false otherwise.
-	 */
-	checkBlockTypeExists (rootId: string): boolean {
-		const header = this.getMapElement(rootId, J.Constant.blockId.header);
-		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
-	};
-
-	/**
 	 * Gets layout IDs for a list of block IDs.
 	 * @param {string} rootId - The root ID.
 	 * @param {string[]} ids - The block IDs.
@@ -964,6 +913,160 @@ class BlockStore {
 				return it;
 			});
 		};
+
+		return list;
+	};
+
+	typeWidgetId (id: string) {
+		return `type-${id}`;
+	};
+
+	checkSkippedTypes (key: string): boolean {
+		return [ 
+			J.Constant.typeKey.type, 
+			J.Constant.typeKey.template, 
+			J.Constant.typeKey.participant,
+			J.Constant.typeKey.dashboard,
+			J.Constant.typeKey.option,
+			J.Constant.typeKey.date,
+			J.Constant.typeKey.relation,
+			J.Constant.typeKey.spaceview,
+			J.Constant.typeKey.space,
+		].includes(key);
+	};
+
+	createWidget (id: string, section: I.WidgetSection) {
+		if (!id) {
+			return;
+		};
+
+		const { widgets } = this;
+
+		const parent = new M.Block({
+			id,
+			type: I.BlockType.Widget,
+			childrenIds: [],
+			content: {
+				layout: I.WidgetLayout.Link,
+				section,
+			},
+		});
+
+		const child = new M.Block({
+			id: `${id}-child`,
+			type: I.BlockType.Link,
+			content: { targetBlockId: id },
+		});
+
+		parent.childrenIds = [ child.id ];
+
+		this.add(widgets, parent);
+		this.add(widgets, child);
+		this.updateStructure(widgets, parent.id, [ child.id ]);
+	};
+
+	addTypeWidget (id: string) {
+		const { widgets } = this;
+		const element = this.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		if (element.childrenIds.includes(id)) {
+			return;
+		};
+
+		const type = S.Record.getTypeById(id);
+		if (!type) {
+			return;
+		};
+
+		if (this.checkSkippedTypes(type.uniqueKey)) {
+			return;
+		};
+
+		this.createWidget(type.id, I.WidgetSection.Type);
+		element.childrenIds.push(id);
+
+		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructureParents(widgets);
+	};
+
+	removeTypeWidget (id: string) {
+		const { widgets } = this;
+		const element = this.getMapElement(widgets, widgets);
+
+		if (!element) {
+			return;
+		};
+
+		this.delete(widgets, id);
+		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
+		this.updateStructureParents(widgets);
+	};
+
+	updateTypeWidgetList () {
+		const { widgets } = this;
+		const spaceview = U.Space.getSpaceview();
+		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
+	
+		let element = this.getMapElement(widgets, widgets);
+		if (!element) {
+			return;
+		};
+
+		element = U.Common.objectCopy(element);
+
+		let childrenIds = element.childrenIds || [];
+
+		types.forEach(type => {
+			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
+				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
+
+				if (!total) {
+					childrenIds = childrenIds.filter(it => it != type.id);
+					return;
+				};
+			};
+
+			if (!childrenIds.includes(type.id)) {
+				this.createWidget(type.id, I.WidgetSection.Type);
+				childrenIds.push(type.id);
+			};
+		});
+
+		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
+			this.createWidget(J.Constant.widgetId.bin, I.WidgetSection.Type);
+			childrenIds.push(J.Constant.widgetId.bin);
+		};
+
+		this.updateStructure(widgets, widgets, childrenIds);
+		this.updateStructureParents(widgets);
+	};
+
+	getWidgetsForTarget (id: string, section: I.WidgetSection): I.Block[] {
+		const { widgets } = this;
+		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
+
+		const list = this.getBlocks(widgets, (block: I.Block) => {
+			if (!block.isWidget() || (block.content.section != section)) {
+				return false;
+			};
+
+			const childrenIds = this.getChildrenIds(widgets, block.id);
+			if (!childrenIds.length) {
+				return false;
+			};
+
+			const child = this.getLeaf(widgets, childrenIds[0]);
+			if (!child) {
+				return false;
+			};
+
+			const target = child.getTargetObjectId();
+			return id == target;
+		});
 
 		return list;
 	};

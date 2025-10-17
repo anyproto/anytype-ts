@@ -124,7 +124,7 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isPage() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
+		return !this.isPage() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isTableRow();
 	};
 
 	canBecomeWidget (): boolean {
@@ -140,7 +140,7 @@ class Block implements I.Block {
 	};
 
 	isIndentable (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode() && !this.isType();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
 	
 	isFocusable (): boolean {
@@ -148,15 +148,15 @@ class Block implements I.Block {
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isType();
+		return !this.isSystem() && !this.isIcon();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured();
 	};
 
 	isDeletable (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured();
 	};
 
 	isPage (): boolean { 
@@ -181,10 +181,6 @@ class Block implements I.Block {
 
 	isRelation (): boolean {
 		return this.type == I.BlockType.Relation;
-	};
-
-	isType (): boolean {
-		return this.type == I.BlockType.Type;
 	};
 
 	isWidget (): boolean {

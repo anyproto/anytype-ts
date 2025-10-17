@@ -59,7 +59,6 @@ export enum RelationScope {
 
 export enum ObjectFlag {
 	DeleteEmpty		 = 0,
-	SelectType		 = 1,
 	SelectTemplate	 = 2,
 };
 

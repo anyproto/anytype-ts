@@ -313,6 +313,10 @@ class UtilObject {
 			param.ignoreArchived = false;
 		};
 
+		if (undefined === param.ignoreHidden) {
+			param.ignoreHidden = false;
+		};
+
 		U.Subscription.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
@@ -438,7 +442,7 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
@@ -516,20 +520,6 @@ class UtilObject {
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
 		return this.getPageLayouts().includes(layout);
-	};
-
-	isAllowedChat (): boolean {
-		const electron = U.Common.getElectron();
-		const version = String(electron.version?.app || '');
-		const [ major, minor, patch ] = version.split('.');
-
-		return !electron.isPackaged || patch.match(/alpha|beta/) ? true : false;
-	};
-
-	isAllowedMultiChat (): boolean {
-		const space = U.Space.getSpaceview();
-
-		return space.targetSpaceId == 'bafyreigryvrmerbtfswwz5kav2uq5dlvx3hl45kxn4nflg7lz46lneqs7m.2nvj2qik6ctdy';
 	};
 
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {

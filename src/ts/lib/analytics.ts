@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status', 'sort', 'widgetType', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
+	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
 	'uxType', 'usage',
 ];
 const URL = 'amplitude.anytype.io';
@@ -47,7 +47,6 @@ class Analytics {
 		mention: 'Mention',
 		media: 'Media',
 		calendar: 'Calendar',
-		allObjects: 'AllObjects',
 		vault: 'Vault',
 		void: 'Void',
 		chat: 'Chat',
@@ -70,6 +69,7 @@ class Analytics {
 		menuContext: 'MenuContext',
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
+		menuPublish: 'MenuPublish',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -97,11 +97,6 @@ class Analytics {
 		reaction: 'Reaction',
 		icon: 'Icon',
 		editor: 'Editor',
-	};
-
-	public widgetType = {
-		manual: 'Manual',
-		auto: 'Auto',
 	};
 
 	/**
@@ -286,7 +281,7 @@ class Analytics {
 			param.spaceType = Number(space.spaceAccessType) || 0;
 			param.spaceType = I.SpaceType[param.spaceType];
 
-			let uxType = I.SpaceUxType.Space;
+			let uxType = I.SpaceUxType.Data;
 			if (undefined !== data.uxType) {
 				uxType = data.uxType;
 			};
@@ -307,6 +302,10 @@ class Analytics {
 		switch (code) {
 			case 'page': {
 				code = this.pageMapper(data.params);
+
+				if (data.params.route) {
+					data.route = data.params.route;
+				};
 				break;
 			};
 
@@ -620,6 +619,11 @@ class Analytics {
 				break;
 			};
 
+			case 'CreateSpace' : {
+				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -671,17 +675,8 @@ class Analytics {
 	 * @param {string} route - The route context for analytics.
 	 * @param {string} type - The widget type.
 	 */
-	createWidget (layout: I.WidgetLayout, route: string, type: string) {
-		analytics.event('AddWidget', { type: layout, route, widgetType: type });
-	};
-
-	/**
-	 * Returns the widget type as a string.
-	 * @param {boolean} isAuto - Whether the widget is auto-created.
-	 * @returns {string} The widget type string.
-	 */
-	getWidgetType (isAuto: boolean) {
-		return isAuto ? this.widgetType.auto : this.widgetType.manual;
+	createWidget (layout: I.WidgetLayout, route: string) {
+		analytics.event('AddWidget', { type: layout, route });
 	};
 
 	/**

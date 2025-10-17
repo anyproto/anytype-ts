@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, S } from 'Lib';
+import { I, U } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 import PageObjectTableOfContents from './page/object/tableOfContents';
 import PageWidget from './page/widget';
-import PageAllObject from './page/allObject';
 
 interface Props {
 	isPopup?: boolean;
@@ -32,17 +31,14 @@ const Components = {
 	objectRelation:			 PageObjectRelation,
 	objectTableOfContents:	 PageObjectTableOfContents,
 	widget:					 PageWidget,
-	allObject:				 PageAllObject,
 };
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
-	const { isPopup } = props;
-	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const childRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
 	const [ state, setState ] = useState<State>({
-		page: '',
+		page: spaceview.isChat ? 'widget' : '',
 		rootId: '',
 		details: {},
 		readonly: false,
@@ -79,7 +75,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		},
 	}));
 
-	return rightSidebar.isOpen ? (
+	return (
 		<div 
 			id="sidebarRight"
 			className={cn.join(' ')}
@@ -96,7 +92,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 				</div>
 			): ''}
 		</div>
-	) : null;
+	);
 
 }));
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
@@ -14,28 +14,21 @@ const HEIGHT_LIST = 64;
 
 const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 
-	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView } = props;
+	const { parent, block, isPreview, subId, getRecordIds, addGroupLabels, getView, getContentParam } = props;
+	const { layout } = getContentParam();
 	const cache = useRef({});
 	const nodeRef =	useRef(null);
 	const listRef = useRef(null);
 	const top = useRef(0);
 	const view = getView();
 	const { total } = S.Record.getMeta(subId, '');
-	const isCompact = [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
+	const isCompact = [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(layout);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
-	const initCache = () => {
-		const items = getItems();
-
-		cache.current = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => getRowHeight(items[i], i, isCompact),
-			keyMapper: i => items[i],
-		});
-	};
+	cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_COMPACT });
 
 	const onSortStart = () => {
 		keyboard.disableSelection(true);
@@ -48,29 +41,6 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 		if (!active || !over) {
 			return;
 		};
-
-		const targetId = block.getTargetObjectId();
-
-		if (targetId != J.Constant.widgetId.favorite) {
-			return;
-		};
-
-		const records = getRecordIds();
-		const oldIndex = records.indexOf(active.id);
-		const newIndex = records.indexOf(over.id);
-		const { root } = S.Block;
-		const children = S.Block.getChildren(root, root, it => it.isLink());
-		const ro = records[oldIndex];
-		const rn = records[newIndex];
-		const oidx = children.findIndex(it => it.getTargetObjectId() == ro);
-		const nidx = children.findIndex(it => it.getTargetObjectId() == rn);
-		const current = children[oidx];
-		const target = children[nidx];
-		const childrenIds = S.Block.getChildrenIds(root, root);
-		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
-		S.Block.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
-		Action.move(root, root, target.id, [ current.id ], position);
 	};
 
 	const getItems = () => {
@@ -238,10 +208,10 @@ const WidgetViewList = observer(forwardRef<{}, I.WidgetViewComponent>((props, re
 
 	useEffect(() => {
 		listRef.current?.scrollToPosition(top.current);
-
-		initCache();
 		resize();
 	});
+
+	useImperativeHandle(ref, () => ({}));
 
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>

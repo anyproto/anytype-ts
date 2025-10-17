@@ -1166,7 +1166,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					},
 					type: I.MenuType.Horizontal,
 					offsetY: 4,
-					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Center,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),
@@ -1194,13 +1193,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onMouseDown (e: any) {
-		const { block } = this.props;
-		const selection = S.Common.getRef('selectionProvider');
-
-		if (!selection) {
-			return;
-		};
-
 		window.clearTimeout(this.timeoutClick);
 
 		this.clicks++;
@@ -1210,12 +1202,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			S.Menu.closeAll([ 'blockContext' ], () => {
 				this.clicks = 0;
-				//this.refEditable?.setRange({ from: 0, to: block.getLength() });
+
+				const { block } = this.props;
 
 				focus.set(block.id, { from: 0, to: block.getLength() });
 				focus.apply();
-
-				//this.onSelect();
 			});
 		};
 	};

@@ -29,10 +29,10 @@ const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => 
 			return;
 		};
 
-		registerRef.current.setLoading(true);
+		registerRef.current?.setLoading(true);
 
 		U.Data.accountCreate(error => {
-			registerRef.current.setLoading(false);
+			registerRef.current?.setLoading(false);
 			setError(error);
 		}, cb);
 	};

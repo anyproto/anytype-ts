@@ -15,7 +15,6 @@ import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
 import BlockFeatured from './featured';
-import BlockType from './type';
 import BlockTable from './table';
 import BlockTableOfContents from './tableOfContents';
 import BlockChat from './chat';
@@ -303,14 +302,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				canDrop = false;
 
 				blockComponent = <BlockFeatured key={key} ref={setRef} {...this.props} />;
-				break;
-			};
-
-			case I.BlockType.Type: {
-				canSelect = false;
-				canDrop = false;
-
-				blockComponent = <BlockType key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 
@@ -1033,13 +1024,15 @@ const Block = observer(class Block extends React.Component<Props> {
 		items.each((i: number, item: any) => {
 			item = $(item);
 			
-			const param = item.attr('data-param');
-			const object = S.Detail.get(subId, param, []);
+			const id = item.attr('data-param');
+			const object = S.Detail.get(subId, id, []);
 			const range = String(item.attr('data-range') || '').split('-');
 
-			if (!param) {
+			if (!id) {
 				return;
 			};
+
+			item.removeClass('disabled');
 
 			if (object._empty_ || object.isDeleted) {
 				item.addClass('disabled');
@@ -1101,7 +1094,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		items.each((i: number, item: any) => {
 			item = $(item);
 
-			const param = item.attr('data-param');
+			const id = item.attr('data-param');
 			const smile = item.find('smile');
 
 			if (smile.length) {
@@ -1109,7 +1102,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
-				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: param }} />);
+				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />);
 			};
 		});
 	};

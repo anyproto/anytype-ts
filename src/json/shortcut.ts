@@ -2,6 +2,7 @@ import { U, translate, keyboard, Storage } from 'Lib';
 
 const getSections = () => {
 	const isMac = U.Common.isPlatformMac();
+	const isWin = U.Common.isPlatformWindows();
 	const cmdKey = keyboard.cmdKey();
 	const or = translate('commonOr');
 	const storage = Storage.getShortcuts();
@@ -29,16 +30,18 @@ const getSections = () => {
 						{ id: 'createObject', name: translate('popupShortcutMainBasics1'), keys: [ cmdKey, 'n' ] },
 						{ id: 'selectType', name: translate('popupShortcutMainBasics19'), keys: [ cmdKey, 'alt', 'n' ] },
 						{ id: 'newWindow', name: translate('popupShortcutMainBasics2'), keys: [ cmdKey, 'shift', 'n' ] },
+						isWin ? { id: 'systemMenu', name: translate('electronMenuShowMenu'), keys: [] } : null,
 						{ id: 'close', name: translate('popupShortcutMainBasics10'), keys: [ cmdKey, 'q' ] },
 						{ id: 'lock', name: translate('popupShortcutMainBasics22'), keys: [ cmdKey, 'alt', 'l' ] },
 						{ id: 'undo', name: translate('popupShortcutMainBasics6'), keys: [ cmdKey, 'z' ] },
 						{ id: 'redo', name: translate('popupShortcutMainBasics7'), keys: [ cmdKey, 'shift', 'z' ] },
-						{ id: 'createWidget', name: translate('menuObjectCreateWidget'), keys: [] },
+						{ id: 'pin', name: translate('commonTogglePin'), keys: [] },
 						{ id: 'copyPageLink', name: translate('commonCopyLink'), keys: [] },
 						{ id: 'copyDeepLink', name: translate('commonCopyDeeplink'), keys: [] },
 						{ id: 'moveToBin', name: translate('popupShortcutMainBasics25'), keys: [] },
 						{ id: 'addFavorite', name: translate('popupShortcutMainBasics26'), keys: [] },
 						{ id: 'tableOfContents', name: translate('sidebarToc'), keys: [] },
+						{ id: 'widget', name: translate('popupShortcutMainBasics28'), keys: [] },
 						{ id: 'createSpace', name: translate('commonCreateSpace'), keys: [] },
 						{ id: 'logout', name: translate('commonLogout'), keys: [] },
 					]
@@ -148,14 +151,11 @@ const getSections = () => {
 					]
 				},
 
-				/*
 				{
 					name: translate('popupShortcutChat'), children: [
 						{ id: 'chatObject', name: translate('popupShortcutChat1'), keys: [ cmdKey, 't' ] },
-						{ id: 'chatMention', name: translate('popupShortcutChat3'), keys: [ cmdKey, 'm' ] },
 					]
 				},
-				*/
 
 				{
 					name: translate('popupShortcutMainTextStyle'), children: [
@@ -275,6 +275,7 @@ const getSections = () => {
 		},
 	].map(s => {
 		s.children = s.children.map(sub => {
+			sub.children = sub.children.filter(it => it);
 			sub.children = sub.children.map(mapper);
 			return sub;
 		});

@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Button } from 'Component';
+import { Icon } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics, sidebar } from 'Lib';
 
 interface HeaderMainHistoryRefProps {
@@ -76,12 +76,12 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 
 			<div className="side right">
 				{showShare ? (
-					<Button 
+					<Icon 
 						id="button-header-share" 
-						text={translate('commonShare')} 
-						color="blank" 
-						className="c28" 
-						onClick={onShare}
+						tooltipParam={{ text: translate('commonShare'), typeY: I.MenuDirection.Bottom }}
+						className={[ 'share', 'withBackground' ].join(' ')}
+						onClick={onShare} 
+						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}
 

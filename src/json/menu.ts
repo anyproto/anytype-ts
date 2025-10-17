@@ -1,7 +1,6 @@
 export default {
 	cell: [
 		'select',
-		'button',
 		'dataviewText',
 		'dataviewRelationEdit',
 		'dataviewObjectList',
@@ -70,7 +69,7 @@ export default {
 	table: [ 'select2', 'blockColor', 'blockBackground' ],
 	dataviewNew: [ 'searchObject', 'typeSuggest', 'dataviewTemplateList' ],
 	graphSettings: [ 'select' ],
-	syncStatus: [ 'syncStatusInfo' ],
+	syncStatus: [ 'syncStatusInfo', 'select' ],
 	help: [ 'select' ],
-	chatForm: [ 'typeSuggest' ],
+	chatForm: [ 'typeSuggest', 'dataviewCreateBookmark', 'chatCreate' ],
 };

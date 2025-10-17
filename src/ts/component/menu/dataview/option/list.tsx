@@ -216,24 +216,8 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		let s = '';
-		newItems.forEach((it, i) => {
-			s = U.Common.lexString(s);
-			S.Detail.update(J.Constant.subId.option, { id: it.id, details: { tmpOrder: s }}, false);
-		});
-
-		C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const list = message.list;
-			for (let i = 0; i < list.length; i++) {
-				const item = newItems[i];
-				if (item) {
-					S.Detail.update(J.Constant.subId.option, { id: item.id, details: { orderId: list[i] }}, false);
-				};
-			};
+		U.Data.sortByOrderIdRequest(J.Constant.subId.option, newItems, callBack => {
+			C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), callBack);
 		});
 
 		keyboard.disableSelection(false);
@@ -253,15 +237,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			items = items.filter(filterMapper);
 		};
 
-		items.sort((c1, c2) => {
-			if (c1.tmpOrder > c2.tmpOrder) return 1;
-			if (c1.tmpOrder < c2.tmpOrder) return -1;
-
-			if (c1.orderId > c2.orderId) return 1;
-			if (c1.orderId < c2.orderId) return -1;
-
-			return U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc);
-		});
+		items.sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc));
 
 		if (data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');

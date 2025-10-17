@@ -598,7 +598,8 @@ class Relation {
 	 */
 	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType): any[] {
 		const types = this.getGroupTypes(type);
-		const options: any[] = S.Record.getDataviewRelations(rootId, blockId).filter(it => types.includes(it.format) && !it.isHidden);
+		const setOf = this.getSetOfObjects(rootId, rootId, I.ObjectLayout.Relation);
+		const options: any[] = setOf.concat(S.Record.getDataviewRelations(rootId, blockId)).filter(it => types.includes(it.format) && !it.isHidden);
 		
 		options.sort((c1: any, c2: any) => {
 			const f1 = c1.format;
@@ -615,7 +616,7 @@ class Relation {
 			return 0;
 		});
 
-		return options.map(it => ({
+		return U.Common.arrayUniqueObjects(options, 'relationKey').map(it => ({
 			id: it.relationKey, 
 			icon: 'relation ' + this.className(it.format),
 			name: it.name, 
@@ -632,6 +633,7 @@ class Relation {
 	 */
 	public getGroupOption (rootId: string, blockId: string, type: I.ViewType, relationKey: string) {
 		const groupOptions = this.getGroupOptions(rootId, blockId, type);
+
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
@@ -931,10 +933,6 @@ class Relation {
 
 			if (l) {
 				type = allowedTypes[0];
-
-				if (l > 1) {
-					flags.push(I.ObjectFlag.SelectType);
-				};
 			};
 		};
 
@@ -942,11 +940,7 @@ class Relation {
 			type = null;
 		};
 
-		if (type) {
-			details.type = type.id;
-		} else {
-			flags.push(I.ObjectFlag.SelectType);
-		};
+		details.type = type ? type.id : S.Common.type;
 
 		return { flags, details };
 	};

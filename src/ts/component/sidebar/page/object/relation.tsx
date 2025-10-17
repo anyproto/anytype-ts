@@ -38,7 +38,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 
 					{allowTypeDetails ? (
 						<div className="side right">
-							<Button color="blank" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={this.onSetUp} />
+							<Button color="dark" text={translate('sidebarObjectRelationSetUp')} className="c28" onClick={this.onSetUp} />
 						</div>
 					) : ''}
 				</div>
@@ -289,7 +289,7 @@ const SidebarPageObjectRelation = observer(class SidebarPageObjectRelation exten
 		const list = obj.find('> .list');
 		const isOpen = list.hasClass('isOpen');
 
-		U.Common.toggle(list, 200);
+		U.Common.toggle(list, 200, isOpen);
 		title.toggleClass('isOpen', !isOpen);
 		Storage.setToggle(page, id, !isOpen);
 

@@ -5,7 +5,7 @@ $transitionSettings: all 0.25s $easeInQuint;
 	> .bottom {
     	.grad {
 			position: absolute; left: 0px; bottom: 0px; width: 100%; height: 88px; pointer-events: none;
-			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-tertiary) 68.18%);
+			background: linear-gradient(180deg, rgba(242, 242, 242, 0.00) 3.62%, var(--color-shape-highlight-light-solid) 68.18%);
 		}
 
         .sides { 
@@ -26,9 +26,9 @@ $transitionSettings: all 0.25s $easeInQuint;
             .label { top: 7px; @include text-small; color: var(--color-text-inversion); font-weight: 500; opacity: 0; @include text-overflow-nw; width: 100%; padding: 0px 12px; }
         }
         .widgetSettings:not(.isEditing):hover { background-color: var(--color-shape-secondary); }
-        .widgetSettings:not(.isEditing):hover {
-            .icon { background-image: url('~img/icon/widget/button/widgetSettings1.svg'); }
-        }
+		.widgetSettings:not(.isEditing):hover {
+			.icon { background-image: url('~img/icon/widget/button/widgetSettings1.svg'); }
+		}
 
         .widgetSettings.isEditing { width: 60px; background-color: var(--color-system-accent-100); }
         .widgetSettings.isEditing {

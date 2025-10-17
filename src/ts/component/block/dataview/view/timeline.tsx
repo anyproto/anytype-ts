@@ -42,7 +42,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 	const months = [];
 
 	const getItems = () => {
-		return getRecords().map(id => S.Detail.get(subId, id))
+		return getRecords().map(id => S.Detail.get(subId, id));
 	};
 
 	const rebind = () => {

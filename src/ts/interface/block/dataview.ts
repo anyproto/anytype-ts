@@ -171,6 +171,7 @@ export interface ViewComponent {
 	getTypeId?(): string;
 	getTemplateId?(): string;
 	getEmpty?(type: string): any;
+	getEmptyView?(view: I.ViewType): any;
 	getSubId?(): string;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
@@ -256,8 +257,7 @@ export interface Cell {
 	textLimit?: number;
 	arrayLimit?: number;
 	shortUrl?: boolean;
-	menuClassName?: string;
-	menuClassNameWrap?: string;
+	menuParam?: Partial<I.MenuParam>;
 	recordId?: string;
 	recordIdx?: number;
 	groupId?: string;

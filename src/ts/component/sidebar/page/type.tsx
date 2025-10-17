@@ -77,7 +77,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidMount (): void {
-		const { noPreview, } = this.props;
+		const { noPreview } = this.props;
 
 		this.init();
 		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
@@ -86,7 +86,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	componentDidUpdate(prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
-		if (this.props.rootId != prevProps.rootId) {
+		if ((this.props.rootId != prevProps.rootId) || !U.Common.objectCompare(this.props.details, prevProps.details)) {
 			this.init();
 		};
 	};
@@ -200,6 +200,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	updateLayout (layout: I.ObjectLayout) {
+		const details = this.props.details || {};
+
+		if (details.isNew) {
+			return;
+		};
+
 		const rootId = keyboard.getRootId();
 		const current = S.Detail.get(rootId, rootId);
 
@@ -216,7 +222,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const details: any = this.props.details || {};
 		const type = S.Record.getTypeType();
 
-		if (!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
+		if (!type || !U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
 			return;
 		};
 
@@ -250,7 +256,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					const format = I.LayoutFormat[this.object.layoutFormat];
 
 					U.Object.openRoute(message.details);
-					S.Common.getRef('sidebarLeft')?.getChild()?.refFilter?.setValue('');
+					S.Common.getRef('sidebarLeft')?.getComponentRef()?.refFilter?.setValue('');
 
 					analytics.event('CreateObject', { objectType: J.Constant.typeKey.type, route, format });
 				};
@@ -285,9 +291,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 	};
 
 	close () {
-		const { isPopup, page } = this.props;
+		const { isPopup, page, noPreview } = this.props;
 
-		this.previewRef?.show(false);
+		if (!noPreview) {
+			this.previewRef?.show(false);
+		};
 		sidebar.rightPanelToggle(true, isPopup, page);
 	};
 

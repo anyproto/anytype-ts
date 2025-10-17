@@ -18,7 +18,10 @@ const SORT_IDS = [
 	'ObjectDetailsAmend', 
 	'ObjectDetailsUnset', 
 	'SubscriptionCounters',
+	'BlockDataviewRelationSet',
+	'BlockDataviewRelationDelete',
 	'BlockDataviewViewSet',
+	'BlockDataviewViewUpdate',
 	'BlockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
@@ -148,7 +151,7 @@ class Dispatcher {
 				continue;
 			};
 
-			const needLog = this.checkLog(type) && !skipDebug;
+			const needLog = this.needEventLog(type) && !skipDebug;
 			const space = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
@@ -267,10 +270,6 @@ class Dispatcher {
 					const { id, childrenIds } = mapped;
 
 					S.Block.updateStructure(rootId, id, childrenIds);
-
-					if (id == rootId) {
-						S.Block.checkBlockType(rootId);
-					};
 
 					updateParents = true;
 					updateNumbers = true;
@@ -845,7 +844,6 @@ class Dispatcher {
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
 					S.Detail.delete(rootId, id, keys);
-					S.Block.checkBlockType(rootId);
 
 					updateMarkup = true;
 					break;
@@ -865,6 +863,10 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
+
+						if (subId == J.Constant.subId.type) {
+							S.Block.removeTypeWidget(id);
+						};
 					};
 					break;
 				};
@@ -968,7 +970,7 @@ class Dispatcher {
 
 					let showNotification = false;
 
-					if (space) {
+					if (space && space.chatId) {
 						if (space.notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
@@ -977,9 +979,8 @@ class Dispatcher {
 						};
 					};
 
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
-
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
@@ -995,18 +996,8 @@ class Dispatcher {
 							title: space.name, 
 							text: notification,
 						}, () => {
-							const { space } = S.Common;
-							const open = () => {
-								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-
-								analytics.event('OpenChatFromNotification');
-							};
-
-							if (spaceId != space) {
-								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open }, false);
-							} else {
-								open();
-							};
+							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
+							analytics.event('OpenChatFromNotification');
 						});
 					};
 
@@ -1015,8 +1006,8 @@ class Dispatcher {
 				};
 
 				case 'ChatUpdate': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.update(subId, mapped.message);
 					});
 
@@ -1025,49 +1016,48 @@ class Dispatcher {
 				};
 
 				case 'ChatStateUpdate': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setState(subId, mapped.state, true);
 					});
 					break;
 				};
 
 				case 'ChatUpdateMessageReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
 					});
 					break;	
 				};
 
 				case 'ChatUpdateMentionReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
 					});
 					break;
 				};
 
 				case 'ChatUpdateMessageSyncStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
 					});
 					break;
 				};
 
 				case 'ChatDelete': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.delete(subId, mapped.id);
 					});
 					break;
 				};
 
 				case 'ChatUpdateReactions': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach((subId) => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
-
 						const message = S.Chat.getMessageById(subId, mapped.id);
 						if (message) {
 							set(message, { reactions: mapped.reactions });
@@ -1119,13 +1109,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SpaceAutoWidgetAdded': {
-					Preview.toastShow({ objectId: mapped.targetId, action: I.ToastAction.Widget, icon: 'check' });
-
-					analytics.createWidget(0, '', analytics.widgetType.auto);
-					break;
-				};
-
 			};
 
 			if (needLog) {
@@ -1159,15 +1142,21 @@ class Dispatcher {
 		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
-		if (subIds.length && subIds.includes(J.Constant.subId.space)) {
-			const object = U.Space.getSpaceview(id);
+		if (subIds.length) {
+			if (subIds.includes(J.Constant.subId.space)) {
+				const object = U.Space.getSpaceview(id);
 
-			if (intersection.length && object.targetSpaceId) {
-				U.Subscription.createSubSpace([ object.targetSpaceId ]);
+				if (intersection.length && object.targetSpaceId) {
+					U.Subscription.createSubSpace([ object.targetSpaceId ]);
+				};
+
+				if (object.isAccountDeleted && (object.targetSpaceId == space)) {
+					U.Space.openFirstSpaceOrVoid(null, { replace: true });
+				};
 			};
 
-			if (object.isAccountDeleted && (object.targetSpaceId == space)) {
-				U.Space.openFirstSpaceOrVoid(null, { replace: true });
+			if (subIds.includes(J.Constant.subId.type)) {
+				S.Block.addTypeWidget(id);
 			};
 		};
 
@@ -1187,8 +1176,6 @@ class Dispatcher {
 			if ((undefined !== details.resolvedLayout) && (root.layout != details.resolvedLayout)) {
 				S.Block.update(rootId, rootId, { layout: details.resolvedLayout });
 			};
-
-			S.Block.checkBlockType(rootId);
 		};
 
 		if (undefined !== details.setOf) {
@@ -1277,22 +1264,11 @@ class Dispatcher {
 			return new M.Block(it);
 		});
 
-		// BlockType
-		blocks.push(new M.Block({
-			id: J.Constant.blockId.type,
-			parentId: J.Constant.blockId.header,
-			type: I.BlockType.Type,
-			fields: {},
-			childrenIds: [],
-			content: {}
-		}));
-
 		S.Block.set(contextId, blocks);
 		S.Block.setStructure(contextId, structure);
 		S.Block.updateStructureParents(contextId);
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
-		S.Block.checkBlockType(contextId);
 
 		keyboard.setWindowTitle();
 	};
@@ -1302,10 +1278,10 @@ class Dispatcher {
 
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
-		const debugRequest = config.flagsMw.request;
 		const debugJson = config.flagsMw.json;
 		const ct = U.Common.toCamelCase(type);
 		const t0 = performance.now();
+		const needLog = this.needRequestLog(type);
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
@@ -1316,7 +1292,7 @@ class Dispatcher {
 		let t2 = 0;
 		let d = null;
 
-		if (debugRequest && !SKIP_IDS.includes(type)) {
+		if (needLog) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
 			d = U.Common.objectClear(data.toObject());
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
@@ -1358,7 +1334,7 @@ class Dispatcher {
 					message.error.description = U.Common.translateError(type, message.error);
 				};
 
-				if (debugRequest && !SKIP_IDS.includes(type)) {
+				if (needLog) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
 					d = U.Common.objectClear(response.toObject());
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
@@ -1394,20 +1370,39 @@ class Dispatcher {
 		};
 	};
 
-	checkLog (type: string) {
+	needRequestLog (type: string) {
 		const { config } = S.Common;
-		const { event, sync, file } = config.flagsMw;
+		const debugRequest = config.flagsMw.request;
+		const debugSubscribe = config.flagsMw.subscribe;
+		const subscribeCommands = [ 'ObjectSearchSubscribe', 'ObjectSearchUnsubscribe', 'ObjectSubscribeIds' ];
+
+		if (debugSubscribe && subscribeCommands.includes(type)) {
+			return true;
+		};
+
+		if (debugRequest && !SKIP_IDS.includes(type) && !subscribeCommands.includes(type)) {
+			return true;
+		};
+	};
+
+	needEventLog (type: string) {
+		const { config } = S.Common;
+		const { event, sync, file, subscribe } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
 		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2PStatusUpdate', 'ThreadStatus' ];
+		const subscribeEvents = [ 'SubscriptionAdd', 'SubscriptionRemove', 'SubscriptionCounters', 'SubscriptionPosition' ];
 
 		let check = false;
-		if (event && !syncEvents.concat(fileEvents).includes(type)) {
+		if (event && !syncEvents.concat(fileEvents).concat(subscribeEvents).includes(type)) {
 			check = true;
 		};
 		if (sync && syncEvents.includes(type)) {
 			check = true;
 		};
 		if (file && fileEvents.includes(type)) {
+			check = true;
+		};
+		if (subscribe && subscribeEvents.includes(type)) {
 			check = true;
 		};
 		return check;

@@ -33,7 +33,6 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: -4,
 			offsetX: -8,
 			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
 			data: {} as any,
 		};
@@ -58,7 +57,7 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onChange: onTextButtonToggle,
 					onClear: (before) => {
 						if (before) {
-							removeBookmark(before)
+							removeBookmark(before);
 						};
 					},
 				});
@@ -101,7 +100,7 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						tooltipParam={{ text: action.name, caption: action.caption }}
 						onMouseDown={e => onButton(e, action.type)}
 					/>
-				)
+				);
 			})}
 		</div>
 	);

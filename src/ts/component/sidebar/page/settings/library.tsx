@@ -53,7 +53,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const title = this.getTitle();
 
 		const ItemSection = (item: any) => {
-			const cn = [ 'section' ];
+			const cn = [ 'itemSection' ];
 
 			if (item.isFirst) {
 				cn.push('isFirst');
@@ -105,11 +105,9 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 		return (
 			<>
-				<div id="head" className="head" />
-
 				<div className="subHead">
 					<div className="side left">
-						<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
+						<Icon className="back" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
 					</div>
 					<div className="side center">
 						<div className="name">{title}</div>
@@ -204,6 +202,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const spaceview = U.Space.getSpaceview();
 		const type = this.getType();
 		const options = U.Menu.getLibrarySortOptions(this.sortId, this.sortType);
 		const option = options.find(it => it.id == this.sortId);
@@ -215,8 +214,13 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			sorts.push({ relationKey: option.relationKey, type: this.sortType });
 		} else {
 			sorts = sorts.concat([
-				{ type: I.SortType.Desc, relationKey: 'lastUsedDate' },
-				{ type: I.SortType.Asc, relationKey: 'name' },
+				{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+				{ 
+					relationKey: 'uniqueKey', 
+					type: I.SortType.Custom, 
+					customOrder: U.Data.typeSortKeys(spaceview.isChat),
+				},
+				{ relationKey: 'name', type: I.SortType.Asc },
 			]);
 		};
 
@@ -356,7 +360,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		this.searchIds = null;
 		this.load(true);
 
-		analytics.event('SearchInput', { route: analytics.route.allObjects });
+		analytics.event('SearchInput', { route: analytics.route.settings });
 	};
 
 	onMore (e) {

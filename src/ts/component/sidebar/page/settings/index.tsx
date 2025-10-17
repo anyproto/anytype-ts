@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, sidebar, translate, U } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -19,6 +19,12 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	cache: any = {};
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onBack = this.onBack.bind(this);	
+	};
+
 	render () {
 		const { page } = this.props;
 		const { membership } = S.Auth;
@@ -27,10 +33,9 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const param = keyboard.getMatch().params;
 		const isSpace = page == 'settingsSpace';
 		const items = this.getItems();
-		const theme = S.Common.getThemeClass();
 
 		const ItemSection = (item: any) => {
-			const cn = [ 'section' ];
+			const cn = [ 'itemSection' ];
 
 			if (item.isFirst) {
 				cn.push('isFirst');
@@ -134,8 +139,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 		return (
 			<>
-				<div id="head" className="head" />
-
 				<div className="subHead">
 					<div className="side left">
 						<Icon className="back" onClick={this.onBack} />
@@ -189,6 +192,10 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	componentDidMount () {
 		this.setCache();
+
+		if (!this.isSpace()) {
+			Onboarding.start('membership', false);
+		};
 	};
 
 	componentDidUpdate () {
@@ -205,8 +212,12 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		});
 	};
 
+	isSpace () {
+		return this.props.page == 'settingsSpace';
+	};
+
 	getSections (): any[] {
-		return this.props.page == 'settingsSpace' ? this.getSpaceSettings() : this.getAppSettings();
+		return this.isSpace() ? this.getSpaceSettings() : this.getAppSettings();
 	};
 
 	getSpaceSettings () {
@@ -316,16 +327,21 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	onClick (item) {
 		if ([ 'types', 'relations' ].includes(item.id)) {
-			sidebar.leftPanelSetState({ page: `settings/${item.id}`, });
+			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
-			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
+			Action.openSettings(item.id, analytics.route.settings);
 			this.forceUpdate();
 		};
 	};
 
 	onBack () {
-		U.Space.openDashboard();
-		sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
+		const { space } = S.Common;
+
+		if (space) {
+			U.Space.openDashboard();
+		};
+
+		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 });

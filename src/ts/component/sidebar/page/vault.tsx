@@ -7,8 +7,8 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ProgressBar } from 'Component';
-import { I, U, S, J, C, keyboard, translate, Mark, analytics, sidebar, Key } from 'Lib';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -17,7 +17,8 @@ const HEIGHT_ITEM = 64;
 
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { space, updateVersion } = S.Common;
+	const { getId } = props;
+	const { updateVersion } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -29,9 +30,10 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 	const profile = U.Space.getProfile();
-	const theme = S.Common.getThemeClass();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
+	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
+	const canCreate = U.Space.canCreateSpace();
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -50,7 +52,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onKeyDown = (e: any) => {
 		const key = e.key.toLowerCase();
-		const { isClosed, width } = sidebar.data;
+		const { isClosed, width } = sidebar.getData(I.SidebarPanel.Left);
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -66,7 +68,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.open(width);
+				sidebar.leftPanelOpen(width);
 			};
 		});
 	};
@@ -99,7 +101,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.close();
+			sidebar.leftPanelClose();
 			closeSidebar.current = false;
 		};
 	};
@@ -141,29 +143,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			return;
 		};
 
-		const items: any[] = U.Menu.getVaultItems().filter(it => !it.isButton);
+		const items: any[] = U.Menu.getVaultItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.isPinned);
 
-		let s = '';
-		newItems.forEach((it, i) => {
-			s = U.Common.lexString(s);
-			S.Detail.update(J.Constant.subId.space, { id: it.id, details: { tmpOrder: s }}, false);
-		});
-
-		C.SpaceSetOrder(active.id, newItems.map(it => it.id), (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const list = message.list;
-			for (let i = 0; i < list.length; i++) {
-				const item = items[i];
-				if (item) {
-					S.Detail.update(J.Constant.subId.space, { id: item.id, details: { spaceOrder: list[i] }}, false);
-				};
-			};
+		U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+			C.SpaceSetOrder(active.id, newItems.map(it => it.id), callBack);
 		});
 
 		analytics.event('ReorderSpace');
@@ -180,10 +166,15 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				return it;
 			};
 
-			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId));
-
-			it.lastMessage = list.length ? S.Chat.getMessageSimpleText(it.targetSpaceId, list[list.length - 1]) : '';
+			it.lastMessage = '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+
+			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId)).slice(0);
+			if (list.length) {
+				list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+				it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, list[0]);
+			};
+
 			return it;
 		});
 
@@ -209,7 +200,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		});
+		}, { route: analytics.route.vault });
 	};
 
 	const items = getItems();
@@ -227,7 +218,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard({ replace: false });
-			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		};
 	};
 
@@ -246,7 +236,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const getNode = () => {
-		return $('#sidebarPageVault');
+		return $(`#${getId()}`);
 	};
 
 	const setActive = (item: any) => {
@@ -294,6 +284,11 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		const cn = [ 'item' ];
 		const icons = [];
 
+		let iconMute = null;
+		let time = null;
+		let last = null;
+		let counter = null;
+
 		if (isDragging) {
 			cn.push('isDragging');
 		};
@@ -302,31 +297,23 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			cn.push('isLoading');
 		};
 
-		if (item.isMuted) {
-			cn.push('isMuted');
-			icons.push('muted');
-		};
-
-		if (item.isPinned) {
+		if (item.isPinned && !item.counters?.mentionCounter && !item.counters?.messageCounter) {
 			cn.push('isPinned');
 			icons.push('pin');
 		};
 
-		// placeholder for error logic
-		let withError = false;
-		if (withError) {
-			cn.push('withError');
-			icons.push('error');
+		if (!item.lastMessage) {
+			cn.push('noMessages');
 		};
 
-		let cnt = null;
-		if (item.counters) {
-			if (item.counters.mentionCounter) {
-				cnt = <Icon className="mention" />;
-			} else 
-			if (item.counters.messageCounter) {
-				cnt = S.Chat.counterString(item.counters.messageCounter);
+		if (item.chatId) {
+			if (item.isMuted) {
+				iconMute = <Icon className="muted" />;
 			};
+
+			time = <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>;
+			last = <Label text={item.lastMessage} />;
+			counter = <ChatCounter {...item.counters} mode={item.notificationMode} />;
 		};
 
 		return (
@@ -347,14 +334,22 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				</div>
 				<div className="info">
 					<div className="nameWrapper">
-						<ObjectName object={item} />
+						<div className="nameInner">
+							<ObjectName object={item} />
+							{iconMute}
+						</div>
+
+						{time}
+					</div>
+					<div className="messageWrapper">
+						{last}
 
 						<div className="icons">
 							{icons.map(icon => <Icon key={icon} className={icon} />)}
 						</div>
-						{cnt ? <div className="cnt">{cnt}</div> : ''}
+
+						{counter}
 					</div>
-					<Label text={item.lastMessage} />
 				</div>
 			</div>
 		);
@@ -392,7 +387,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onSettings = () => {
-		U.Router.go('/main/settings/index', {});
+		Action.openSettings('index', analytics.route.vault);
 	};
 
 	const onGallery = () => {
@@ -405,13 +400,24 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onHelp = () => {
 		S.Menu.open('help', {
-			element: '#sidebarPageVault #button-help',
+			element: `#${getId()} #button-help`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			vertical: I.MenuDirection.Top,
-			offsetY: -78,
+			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 		});
+	};
+
+	const onCreate = () => {
+		Storage.setHighlight('createSpace', false);
+		Highlight.hide('createSpace');
+
+		U.Menu.spaceCreate({
+			element: `#button-create-space`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		}, analytics.route.vault);
 	};
 
 	const getRowHeight = (item: any) => {
@@ -421,6 +427,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	useEffect(() => {
 		rebind();
 		analytics.event('ScreenVault');
+		Highlight.showAll();
 
 		return () => {
 			unbind();
@@ -433,7 +440,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	return (
 		<>
-			<div id="head" className="head" />
+			<div id="head" className="head">
+				<div className="side left" />
+				<div className="side right">
+					{canCreate ? (
+						<Icon
+							id="button-create-space"
+							className="plus withBackground"
+							tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+							onClick={onCreate}
+						/>
+					) : ''}
+				</div>
+			</div>
 			<div className="filterWrapper">
 				<Filter 
 					ref={filterRef}

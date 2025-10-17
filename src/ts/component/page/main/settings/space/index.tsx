@@ -43,16 +43,14 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	render () {
 		const { error, isEditing } = this.state;
-		const { config } = S.Common;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const buttons = this.getButtons();
 		const participant = U.Space.getParticipant();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isOwner = U.Space.isMyOwner();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-		const widgets = S.Detail.get(S.Block.widgets, S.Block.widgets, [ 'autoWidgetDisabled' ], true);
+		const isOwner = U.Space.isMyOwner();
 		const headerButtons = isEditing ? [
 			{ color: 'blank', text: translate('commonCancel'), onClick: this.onCancel },
 			{ color: 'black', text: translate('commonSave'), onClick: this.onSave, className: 'buttonSave' },
@@ -60,6 +58,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 			{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: this.onEdit },
 		];
 		const cnh = [ 'spaceHeader' ];
+
 		const spaceModes = [
 			{ id: I.NotificationMode.All },
 			{ id: I.NotificationMode.Mentions },
@@ -70,7 +69,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		});
 
 		const spaceUxTypes = [
-			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
 			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
 		].map((it: any) => {
 			it.name = translate(`spaceUxType${it.id}`);
@@ -156,141 +155,116 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				<div className="sections">
 					<Error text={error} />
 
-					{space.isShared && config.experimental ? (
-						<>
+					{space.isShared ? (
+						<div className="section sectionSpaceManager">
+							<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
+							<div className="sectionContent">
 
-							<div className="section sectionSpaceManager">
-								<Label className="sub" text={translate(`electronMenuDebug`)} />
-								<div className="sectionContent">
+								<div className="item">
+									<div className="sides">
+										<Icon className={[ 'push', `push${space.notificationMode}` ].join(' ')} />
 
-									<div className="item">
-										<div className="sides">
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-											</div>
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
+											<Label text={translate(`popupSettingsSpaceIndexPushText${space.notificationMode}`)} />
+										</div>
 
-											<div className="side right">
-												<Select
-													id="uxType"
-													readonly={!canWrite}
-													ref={ref => this.refUxType = ref}
-													value={String(space.uxType)}
-													options={spaceUxTypes}
-													onChange={v => this.onSpaceUxType(v)}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
-											</div>
+										<div className="side right">
+											<Select
+												id="notificationMode"
+												ref={ref => this.refMode = ref}
+												value={String(space.notificationMode)}
+												options={spaceModes}
+												onChange={v => {
+													C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+													analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
+												}}
+												arrowClassName="black"
+												menuParam={{ horizontal: I.MenuDirection.Right }}
+											/>
 										</div>
 									</div>
 								</div>
 							</div>
+						</div>
+					) : ''}
 
+					{canWrite ? (
+						<>
 							<div className="section sectionSpaceManager">
-								<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-								<div className="sectionContent">
+								<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
+								{isOwner && space.isShared && !space.isPersonal ? (
+									<div className="sectionContent">
+										<div className="item">
+											<div className="sides">
+												<Icon className={`settings-ux${space.uxType}`} />
+
+												<div className="side left">
+													<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
+													<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
+												</div>
+
+												<div className="side right">
+													<Select
+														id="uxType"
+														readonly={!canWrite}
+														ref={ref => this.refUxType = ref}
+														value={String(space.uxType)}
+														options={spaceUxTypes}
+														onChange={v => this.onSpaceUxType(v)}
+														arrowClassName="black"
+														menuParam={{ horizontal: I.MenuDirection.Right }}
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+								) : ''}
+
+								<div className="sectionContent">
 									<div className="item">
 										<div className="sides">
-											<Icon className={[ 'push', `push${space.notificationMode}` ].join(' ')} />
+											<Icon className="home" />
 
 											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-												<Label text={translate(`popupSettingsSpaceIndexPushText${space.notificationMode}`)} />
+												<Title text={translate('commonHomepage')} />
+												<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
 											</div>
 
 											<div className="side right">
-												<Select
-													id="notificationMode"
-													ref={ref => this.refMode = ref}
-													value={String(space.notificationMode)}
-													options={spaceModes}
-													onChange={v => {
-														C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-														analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-													}}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
+												<div id="empty-dashboard-select" className={[ 'select', (space.isChat ? 'isReadonly' : '') ].join(' ')} onClick={this.onDashboard}>
+													<div className="item">
+														<div className="name">{home ? home.name : translate('commonSelect')}</div>
+													</div>
+													<Icon className="arrow black" />
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div className="item">
+										<div className="sides">
+											<Icon className="type" />
+
+											<div className="side left">
+												<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
+												<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
+											</div>
+
+											<div className="side right">
+												<div id="defaultType" className="select" onClick={this.onType}>
+													<div className="item">
+														<div className="name">{type?.name || translate('commonSelect')}</div>
+													</div>
+													<Icon className="arrow black" />
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</>
-					) : ''}
-
-					{canWrite ? (
-						<div className="section sectionSpaceManager">
-							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
-							<div className="sectionContent">
-
-								{isOwner ? (
-									<div className="item">
-										<div className="sides">
-											<Icon className="widget" />
-
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexAutoWidgetsTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexAutoWidgetsText')} />
-											</div>
-
-											<div className="side right">
-												<Switch
-													value={!widgets.autoWidgetDisabled}
-													className="big"
-													onChange={(e: any, v: boolean) => {
-														C.ObjectListSetDetails([ S.Block.widgets ], [ { key: 'autoWidgetDisabled', value: !v } ]);
-
-														analytics.event('AutoCreateTypeWidgetToggle', { type: v ? 'true' : 'false' });
-													}}
-												/>
-											</div>
-										</div>
-									</div>
-								) : ''}
-
-								<div className="item">
-									<div className="sides">
-										<Icon className="home" />
-
-										<div className="side left">
-											<Title text={translate('commonHomepage')} />
-											<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
-										</div>
-
-										<div className="side right">
-											<div id="empty-dashboard-select" className={[ 'select', (space.isChat ? 'isReadonly' : '') ].join(' ')} onClick={this.onDashboard}>
-												<div className="item">
-													<div className="name">{home ? home.name : translate('commonSelect')}</div>
-												</div>
-												<Icon className="arrow black" />
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<div className="item">
-									<div className="sides">
-										<Icon className="type" />
-
-										<div className="side left">
-											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
-											<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
-										</div>
-
-										<div className="side right">
-											<div id="defaultType" className="select" onClick={this.onType}>
-												<div className="item">
-													<div className="name">{type?.name || translate('commonSelect')}</div>
-												</div>
-												<Icon className="arrow black" />
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
 					) : (
 						<div className="membersList section">
 							<Label className="sub" text={translate(`pageSettingsSpaceIndexSpaceMembers`)} />
@@ -352,6 +326,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		this.refMode?.setValue(String(space.notificationMode));
+		this.refUxType?.setValue(String(space.uxType));
 	};
 
 	setInvite (cid: string, key: string) {
@@ -414,8 +389,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		switch (item.id) {
 			case 'invite': {
-				this.props.onPage('spaceShare');
-
+				Action.openSpaceShare(analytics.route.settingsSpace);
 				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};
@@ -428,6 +402,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 			case 'copyLink': {
 				U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
+				analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceIndex });
 				break;
 			};
 		};
@@ -458,13 +433,31 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	onSpaceUxType (v) {
 		v = Number(v);
 
-		const details: any = {
-			spaceUxType: v,
-			spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+		const spaceview = U.Space.getSpaceview();
+		const onCancel = () => {
+			this.refUxType.setValue(spaceview.uxType);
 		};
 
-		C.WorkspaceSetInfo(S.Common.space, details);
-		analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+		S.Popup.open('confirm', {
+			onClose: onCancel,
+			data: {
+				icon: 'warning-red',
+				title: translate('popupConfirmUxTypeChangeTitle'),
+				text: translate('popupConfirmUxTypeChangeText'),
+				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					const details: any = {
+						spaceUxType: v,
+						spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+					};
+
+					C.WorkspaceSetInfo(S.Common.space, details);
+					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
+				},
+				onCancel,
+			},
+		});
 	};
 
 	checkName (v: string): string {

@@ -7,6 +7,7 @@ import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } fr
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
+const ALLOWED_KATEX = ['\\url', '\\href', '\\includegraphics'];
 const TEST_HTML = /<[^>]*>/;
 const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -725,7 +726,10 @@ class UtilCommon {
 	 */
 	clearSelection () {
 		$(document.activeElement).trigger('blur');
-		window.getSelection().removeAllRanges();
+		const selection = window.getSelection();
+		if (selection) {
+			selection.removeAllRanges();
+		};
 	};
 
 	/**
@@ -937,12 +941,21 @@ class UtilCommon {
 	};
 
 	/**
+	 * Returns the container class name based on popup state.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {string} The container class name.
+	 */
+	getContainerClassName (isPopup: boolean): string {
+		return isPopup ? 'isPopup' : 'isFull';
+	};
+
+	/**
 	 * Returns the page flex container jQuery object depending on popup state.
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 * @returns {JQuery<HTMLElement>} The page flex container.
 	 */
 	getPageFlexContainer (isPopup: boolean) {
-		return $(`#pageFlex.${isPopup ? 'isPopup' : 'isFull'}`);
+		return $(`#pageFlex.${this.getContainerClassName(isPopup)}`);
 	};
 
 	/**
@@ -951,7 +964,7 @@ class UtilCommon {
 	 * @returns {JQuery<HTMLElement>} The page container.
 	 */
 	getPageContainer (isPopup: boolean) {
-		return $(`#page.${isPopup ? 'isPopup' : 'isFull'}`);
+		return $(`#page.${this.getContainerClassName(isPopup)}`);
 	};
 
 	/**
@@ -1513,18 +1526,25 @@ class UtilCommon {
 	 * @param {HTMLElement} dst - The destination element.
 	 */
 	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
-		const styles = document.defaultView.getComputedStyle(src, '');
-		const css: any = {};
+		const styles = window.getComputedStyle(src, '');
+
+		if (styles.display && (styles.getPropertyValue('display') == 'none')) {
+			return;
+		};
+
+		const css: any = [];
 
 		for (let i = 0; i < styles.length; i++) {
 			const name = styles[i];
 			const value = styles.getPropertyValue(name);
 
 			css[name] = value;
+			css.push(`${name}: ${value}`);
 		};
 
-		css.visibility = 'visible';
-		$(dst).css(css);
+		css.push('visibility: visible');
+
+		dst.style.cssText = css.join('; ');
 	};
 
 	/**
@@ -1610,69 +1630,71 @@ class UtilCommon {
 	 * @param {string} html - The HTML string containing LaTeX.
 	 * @returns {string} The HTML with rendered LaTeX.
 	 */
-	getLatex (html: string): string {
-		if (!/\$[^\$]+\$/.test(html)) {
-			return html;
+	getLatex (input: string) {
+		if (!input || (input.indexOf('$') < 0)) {
+			return input;
 		};
 
-		const reg = /(^|[^\d<\$]+)?\$((?:[^$<]|\.)*?)\$([^\d>\$]+|$)/gi;
-		const tag = Mark.getTag(I.MarkType.Latex);
-		const code = Mark.getTag(I.MarkType.Code);
-		const regCode = new RegExp(`^${code}>|</${code}$`, 'i');
-		const match = html.matchAll(reg);
-		const render = (s: string) => {
-			s = this.fromHtmlSpecialChars(s);
-
-			let ret = s;
-			try {
-				ret = katex.renderToString(s, { 
-					displayMode: false, 
-					throwOnError: false,
-					output: 'html',
-					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
-				});
-
-				ret = ret ? ret : s;
-			} catch (e) {};
-			return ret;
-		};
-
-		let text = html;
+		const regex = new RegExp(`\\$([^$<>]+?)\\$`, 'g');
+		const match = input.match(regex);
 
 		if (!match) {
-			return text;
+			return input;
 		};
 
-		Array.from(match).forEach((m: any) => {
-			const m0 = String(m[0] || '');
-			const m1 = String(m[1] || '');
-			const m2 = String(m[2] || '');
-			const m3 = String(m[3] || '');
+		const tag = Mark.getTag(I.MarkType.Latex);
+		const code = Mark.getTag(I.MarkType.Code);
+		const cl = code.length;
+		const regCode = new RegExp(`^${code}>|</${code}$`, 'i');
+		const render = (s) => {
+			try {
+				const rendered = katex.renderToString(this.fromHtmlSpecialChars(s), {
+					displayMode: false,
+					throwOnError: false,
+					output: 'html',
+					trust: ctx => ALLOWED_KATEX.includes(ctx.command),
+				});
 
-			// Skip inline code marks
-			if (regCode.test(m1) || regCode.test(m3)) {
-				return;
+				return rendered || s;
+			} catch {
+				return s;
 			};
+		};
 
-			// Skip first or last space
-			if (/^\s/.test(m2) || /\s$/.test(m2)) {
-				return;
+		let res = input;
+
+		for (let i = 0; i < match.length; ++i) {
+			const m = String(match[i] || '');
+			const idx = input.indexOf(m);
+			const bl = m.length;
+			const body = m.substring(1, bl - 1);
+			const before = input.substring(idx - cl - 1, idx) || '';
+			const after = input.substring(idx + bl + 1, idx + bl + cl + 3) || '';
+
+			// Skip inline code regions
+			if (regCode.test(before) || regCode.test(after)) {
+				continue;
 			};
 
 			// Skip Brazilian Real
-			if (!/^\\/.test(m2) && (/R$/.test(m1) || /R$/.test(m2))) {
-				return;
+			if (!/^\\/.test(body) && (/R$/.test(before) || /R$/.test(body))) {
+				continue;
 			};
 
-			// Escaped $ sign
-			if (/\\$/.test(m1) || /\\$/.test(m2)) {
-				return;
+			// Skip if expression starts/ends with space
+			if (/^\s/.test(body) || /\s$/.test(body)) {
+				continue;
 			};
 
-			text = text.replace(m0, `${m1}<${tag}>${render(m2)}</${tag}>${m3}`);
-		});
+			// Skip escaped \$ signs
+			if (/\\$/.test(before) || /\\$/.test(body)) {
+				continue;
+			};
 
-		return text;
+			res = res.replace(m, `<${tag}>${render(body)}</${tag}>`);
+		};
+
+		return res;
 	};
 
 	/**
@@ -1680,16 +1702,17 @@ class UtilCommon {
 	 * @param {any} obj - The jQuery object to toggle.
 	 * @param {number} delay - The animation delay in ms.
 	 */
-	toggle (obj: any, delay: number) {
-		const isOpen = obj.hasClass('isOpen');
-
+	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
 		if (isOpen) {
 			const height = obj.outerHeight();
 
-			obj.css({ height });
+			obj.css({ height, overflow: 'hidden' });
 
 			raf(() => obj.addClass('anim').css({ height: 0 }));
-			window.setTimeout(() => obj.removeClass('isOpen anim'), delay);
+			window.setTimeout(() => {
+				obj.removeClass('isOpen anim');
+				callBack?.();
+			}, delay);
 		} else {
 			obj.css({ height: 'auto' });
 
@@ -1698,7 +1721,10 @@ class UtilCommon {
 			obj.css({ height: 0 }).addClass('anim');
 
 			raf(() => obj.css({ height }));
-			window.setTimeout(() => obj.removeClass('anim').addClass('isOpen').css({ heght: 'auto' }), delay);
+			window.setTimeout(() => {
+				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto', overflow: 'visible' });
+				callBack?.();
+			}, delay);
 		};
 	};
 
@@ -1828,8 +1854,12 @@ class UtilCommon {
 	/**
 	 * Shows the "What's New" popup and updates storage.
 	 */
-	showWhatsNew () {
-		S.Popup.open('help', { data: { document: 'whatsNew' } });
+	showWhatsNew (param?: Partial<I.PopupParam>) {
+		param = param || {};
+		param.data = param.data || {};
+		param.data.document = 'whatsNew';	
+
+		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
 	};
 
@@ -1901,7 +1931,7 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('primitivesOnboarding')) {
+		if (!Storage.get('chatsOnboarding')) {
 			return;
 		};
 
@@ -1919,14 +1949,18 @@ class UtilCommon {
 
 	checkCanMembershipUpgrade (): boolean {
 		const { membership } = S.Auth;
-		const canUpgradeTiers = [
+
+		return [
 			I.TierType.None,
 			I.TierType.Explorer,
 			I.TierType.Starter,
 			I.TierType.Pioneer,
-		];
-
-		return canUpgradeTiers.includes(membership.tier);
+			I.TierType.Free,
+			I.TierType.Pro,
+			I.TierType.Plus,
+			I.TierType.Ultra,
+			I.TierType.CoCreator,
+		].includes(membership.tier);
 	};
 
 	getMembershipPeriodLabel (tier: I.MembershipTier): string {
@@ -1972,12 +2006,17 @@ class UtilCommon {
 	};
 
 	getMaxScrollHeight (isPopup: boolean): number {
-		const container = this.getScrollContainer(isPopup).get(0);
-		return container.scrollHeight - container.clientHeight;
+		const container = this.getScrollContainer(isPopup);
+		if (!container.length) {
+			return 0;
+		};
+
+		const el = container.get(0);
+		return el.scrollHeight - el.clientHeight;
 	};
 
 	getAppContainerHeight () {
-		return $('#appContainer').height() - Number($('#drag.withButtons').outerHeight() || 0);
+		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
 	};
 
 };

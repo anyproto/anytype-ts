@@ -4,7 +4,7 @@
 	.popup.popupPage {
 		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 0px; }
 
-		#sidebarRight { position: sticky; }
+		#sidebarRight { position: sticky; margin-top: 0px; height: 100%; }
 
 		@media (max-width: 1128px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
@@ -14,13 +14,17 @@
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
+		.pageFlex { padding: 0px; }
 		.page { padding: 0px; }
+
 		.header {
+			.side.left { padding-left: 12px !important; }
 			.icon.toggle { display: none; }
 		}
 		.footer { display: none; }
 
 		#bodyWrapper > #loader { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+		.sidebar.right { padding: 0px; }
 
 		.pageMainEdit {
 			.content { height: 100%; }
@@ -49,7 +53,7 @@
 
 		.pageMainHistory { height: 100%; overflow: hidden; }
 		.pageMainHistory {
-			.header { position: absolute; }
+			.header { position: absolute; right: 0px; }
 		}
 
 		.pageMainMedia {

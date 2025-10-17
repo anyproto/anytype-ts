@@ -17,6 +17,7 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import { Icon, LayoutPlug } from 'Component';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -58,6 +59,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getTypeId = this.getTypeId.bind(this);
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
 		this.getSubId = this.getSubId.bind(this);
+		this.getEmptyView = this.getEmptyView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -170,6 +172,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTypeId: this.getTypeId,
 			getTemplateId: this.getDefaultTemplateId,
 			getEmpty: this.getEmpty,
+			getEmptyView: this.getEmptyView,
 			getSubId: this.getSubId,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
@@ -196,7 +199,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('target');
 		} else
 		if (!isCollection && !sources.length) {
-			body = this.getEmpty('source');
+			body = (
+				<LayoutPlug
+					layoutFormat={I.LayoutFormat.List}
+					recommendedLayout={I.ObjectLayout.Set}
+					viewType={view.type}
+					isPopup={isPopup}
+					onClick={this.onEmpty}
+				/>
+			);
 		} else {
 			body = (
 				<div className="content">
@@ -298,18 +309,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
-		const match = keyboard.getMatch(isPopup);
-		const params = U.Common.objectCopy(match.params);
-		const ref = params.ref;
-
+		const { routeParam } = S.Common;
+	
 		let viewId = S.Record.getMeta(this.getSubId(), '').viewId;
 
-		if ((ref == 'widget') && params.viewId) {
-			delete(params.ref);
-
-			viewId = params.viewId;
-			U.Router.go(U.Router.build(params), {});
+		if ((routeParam.ref == 'widget') && routeParam.viewId) {
+			viewId = routeParam.viewId;
+			S.Common.routeParam = {};
 		};
 
 		if (viewId && (viewId != this.viewId)) {
@@ -656,6 +662,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
+		const isViewBoard = view.type == I.ViewType.Board;
 
 		let typeId = '';
 		let templateId = '';
@@ -696,33 +703,32 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
-			let records = this.getRecords(groupId);
-
 			const object = message.details;
-			const oldIndex = records.indexOf(message.objectId);
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			// If idx present use idx otherwise use dir to add record to the beginning or end of the list
-			if (oldIndex < 0) {
-				if (idx >= 0) {
-					records.splice(idx, 0, message.objectId);
-				} else {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+			if (!isViewBoard && !isViewCalendar) {
+				let records = this.getRecords(groupId);
+
+				const oldIndex = records.indexOf(message.objectId);
+
+				// If idx present use idx otherwise use dir to add record to the beginning or end of the list
+				if (oldIndex < 0) {
+					if (idx >= 0) {
+						records.splice(idx, 0, message.objectId);
+					} else {
+						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+					};
+				} else {	
+					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
+					records = arrayMove(records, oldIndex, newIndex);
 				};
-			} else {	
-				const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
-				records = arrayMove(records, oldIndex, newIndex);
+
+				S.Record.recordsSet(subId, '', records);
 			};
 
 			if (isCollection) {
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
-			};
-
-			if (groupId) {
-				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));
-			} else {
-				S.Record.recordsSet(subId, '', records);
 			};
 
 			if (isViewGraph) {
@@ -749,12 +755,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onEmpty (e: any) {
-		const { isInline } = this.props;
+		const { isInline, block, rootId } = this.props;
 
+		let element = '';
 		if (isInline) {
-			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
+			element = `#block-${block.id} #head-source-select`;
+			this.onSourceSelect(element, { horizontal: I.MenuDirection.Center });
 		} else {
-			this.onSourceTypeSelect(e.currentTarget);
+			element = `#${Relation.cellId('blockFeatured', 'setOf', rootId)}`;
+			this.onSourceTypeSelect(element);
 		};
 	};
 
@@ -771,41 +780,45 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			groupId = 'empty';
 		};
 
-		if (type && U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			this.onBookmarkMenu(e, dir, groupId, menuParam);
+		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
+			this.onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
 		};
 	};
 
-	onBookmarkMenu (e: any, dir: number, groupId?: string, param?: any) {
+	onObjectMenu (e: any, dir: number, layout: I.ObjectLayout, groupId?: string, param?: Partial<I.MenuParam>) {
 		param = param || {};
+		param.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+		param.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
+		param.offsetX = dir < 0 ? -24 : 0;
+		param.offsetY = 4 * -dir;
+
+		param.data = param.data || {};
+		param.data.details = this.getDetails(groupId);
 
 		const objectId = this.getObjectId();
-		const details = this.getDetails(groupId);
-		const menuParam = this.getMenuParam(e, dir);
-
-		U.Menu.onBookmarkMenu({
-			...menuParam,
-			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-			offsetX: dir < 0 ? -24 : 0,
-			offsetY: 4 * -dir,
-			data: {
-				route: analytics.route.type,
-				details,
-				onSubmit: (bookmark) => {
-					if (this.isCollection()) {
-						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
-					};
-				},
-			},
+		const menuParam = {
+			...this.getMenuParam(e, dir),
 			...param,
-		}, (bookmark) => {
+		};
+		const cb = object => {
 			if (this.isCollection()) {
-				C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
-		});
+		};
+
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+				break;
+			};
+
+			case I.ObjectLayout.Chat: {
+				U.Menu.onChatMenu(menuParam, cb);
+				break;
+			};
+		};
 	};
 
 	onTemplateMenu (e: any, dir: number) {
@@ -872,9 +885,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const typeId = this.getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
-					if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
-						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
+						this.onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${block.id}-add-record` });
 					} else
 					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
@@ -942,7 +955,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
 		const ref = this.refCells.get(id);
 		const view = this.getView();
-		const isRecordEditing = (this.editingRecordId == recordId)
+		const isRecordEditing = (this.editingRecordId == recordId);
 
 		if (!relation || !ref || !record) {
 			return;
@@ -1292,18 +1305,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			};
 
-			case 'source': {
-				cn.push('withHead');
-
-				emptyProps = {
-					title: translate('blockDataviewEmptySourceTitle'),
-					description: translate('blockDataviewEmptySourceDescription'),
-					button: translate('blockDataviewEmptySourceButton'),
-					onClick: this.onEmpty,
-				};
-				break;
-			};
-
 			case 'view': {
 				if (view.type != I.ViewType.Grid) {
 					cn.push('withHead');
@@ -1327,6 +1328,64 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				className={cn.join(' ')}
 				withButton={emptyProps.button && !readonly ? true : false}
 			/>
+		);
+	};
+
+	getEmptyView (view: I.ViewType) {
+		if (!this.isAllowedObject()) {
+			return this.getEmpty('view');
+		};
+
+		const cn = [ 'viewContent', `view${I.ViewType[view]}` ];
+		const onAdd = (e: any) => {
+			if (!this.isCollection() && !this.getSources().length) {
+				this.onEmpty(e);
+			} else {
+				this.onRecordAdd(e, 1);
+			};
+		};
+
+		let inner: any = null;
+
+		switch (view) {
+			case I.ViewType.List: {
+				inner = (
+					<div className="row add">
+						<div className="cell add">
+							<div className="btn" onClick={onAdd}>
+								<Icon className="plus" />
+								<div className="name">{translate('commonNewObject')}</div>
+							</div>
+						</div>
+					</div>
+				);
+				break;
+			};
+
+			case I.ViewType.Grid: {
+				inner = <div className="row" onClick={onAdd} />;
+				break;
+			};
+
+			case I.ViewType.Gallery: {
+				inner = (
+					<div className="row empty">
+						<div className="card" onClick={onAdd} />
+						<div className="card add" onClick={onAdd} />
+					</div>
+				);
+				break;
+			};
+
+			case I.ViewType.Board: {
+				break;
+			};
+		};
+
+		return (
+			<div className={cn.join(' ')}>
+				{inner}
+			</div>
 		);
 	};
 

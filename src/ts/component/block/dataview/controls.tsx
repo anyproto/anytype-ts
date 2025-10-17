@@ -173,7 +173,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				onViewRemove,
 				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
 					sortOrFilterRelationSelect(component, {
-						classNameWrap: 'fromBlock',
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
@@ -194,6 +193,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const sortOrFilterRelationSelect = (component: string, menuParam: Partial<I.MenuParam>, callBack?: () => void) => {
+		menuParam.classNameWrap = String(menuParam.classNameWrap || '');
+		menuParam.classNameWrap = [ menuParam.classNameWrap, 'fromBlock' ].join(' ');
+
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId: block.id,
@@ -254,8 +256,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			id: '',
 			name: translate(`viewName${viewType}`),
 			type: viewType,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
-			endRelationKey: view.endRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
+			groupRelationKey: Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
+			endRelationKey: Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 			filters: [],
 			sorts: [],
@@ -419,7 +421,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 		if (width + 16 > nw) {
 			node.addClass('small');
-		} else {
+		} else 
+		if (S.Menu.isOpen('dataviewViewList')) {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};
@@ -569,6 +572,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						<div className={buttonWrapCn.join(' ')}>
 							<Button
 								id={`button-${block.id}-add-record`}
+								color="accent"
 								className="addRecord c28"
 								tooltipParam={{ text: tooltip }}
 								text={translate('commonNew')}
@@ -577,6 +581,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 							{isAllowedTemplate ? (
 								<Button
 									id={`button-${block.id}-add-record-select`}
+									color="accent"
 									className="select c28"
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 									onClick={e => onTemplateMenu(e, -1)}

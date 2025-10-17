@@ -38,6 +38,7 @@ let deeplinkingUrl = '';
 let waitLibraryPromise = null;
 let mainWindow = null;
 let lastPowerEvent = 'suspend';
+let isReady = false;
 
 MenuManager.store = store;
 
@@ -47,6 +48,8 @@ for (let i in Cors) {
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.commandLine.appendSwitch('gtk-version', '3');
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
+
 app.removeAsDefaultProtocolClient(protocol);
 
 if (process.defaultApp) {
@@ -134,6 +137,7 @@ function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
 		createWindow();
+		isReady = true;
 	}, (err) => {
 		dialog.showErrorBox('Error: failed to run server', err.toString());
 	});
@@ -281,7 +285,12 @@ app.on('before-quit', e => {
 });
 
 app.on('activate', () => { 
-	WindowManager.list.size ? mainWindow.show() : createWindow();
+	if (WindowManager.list.size && mainWindow) {
+		mainWindow.show();
+	} else 
+	if (isReady) {
+		createWindow();
+	};
 });
 
 app.on('open-url', (e, url) => {

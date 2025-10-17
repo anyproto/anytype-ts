@@ -1,5 +1,5 @@
 import * as Docs from 'Docs';
-import { I, S, U, Storage } from 'Lib';
+import { I, S, U, Storage, sidebar, keyboard } from 'Lib';
 
 class Onboarding {
 
@@ -23,7 +23,13 @@ class Onboarding {
 		options = options || {};
 
 		const section = this.getSection(key);
-		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key)) || !Storage.get('primitivesOnboarding')) {
+		if (
+			!section
+			|| !section.items
+			|| !section.items.length
+			|| (!force && Storage.getOnboarding(key))
+			|| !Storage.get('chatsOnboarding')
+		) {
 			return;
 		};
 
@@ -62,6 +68,21 @@ class Onboarding {
 		});
 	};
 
+	startBasics (isPopup: boolean) {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+		S.Common.setLeftSidebarState('vault', 'widget');
+		$(window).trigger('checkWidgetToggles');
+
+		this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup);
+	};
+
+	completeBasics () {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
+		$(window).trigger('checkWidgetToggles');
+	};
+
 	/**
 	 * Gets the menu parameters for a section and item.
 	 * @param {any} section - The onboarding section.
@@ -96,8 +117,8 @@ class Onboarding {
 		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
-		param.rect = null;
-		param.recalcRect = null;
+		param.rect = param.rect || null;
+		param.recalcRect = param.recalcRect || null;
 		param.force = force;
 		param.noAutoHover = true;
 		param.highlightElements = param.highlightElements || [];
@@ -175,6 +196,10 @@ class Onboarding {
 	 */
 	isCompleted (key: string): boolean {
 		return Storage.getOnboarding(key);
+	};
+
+	isCompletedBasics (): boolean {
+		return this.isCompleted('basicsNew') || this.isCompleted('basicsOld');
 	};
 	
 };

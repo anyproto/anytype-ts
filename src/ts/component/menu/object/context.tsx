@@ -82,7 +82,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
 		let archive = null;
@@ -98,7 +97,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedOpen = data.allowedOpen;
 		let allowedCollection = true;
 		let allowedUnlink = isCollection;
-		let allowedWidget = true;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
 
@@ -109,7 +107,7 @@ class MenuContext extends React.Component<I.Menu> {
 				return;
 			};
 
-			if (object.isFavorite) pinCnt++;
+			if (S.Block.getWidgetsForTarget(object.id, I.WidgetSection.Pin).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
@@ -133,7 +131,6 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 			if (U.Object.isRelationLayout(object.layout)) {
 				allowedRelation = false;
-				allowedWidget = false;
 				allowedLinkTo = false;
 				allowedCopy	= false;
 				allowedCollection = false;
@@ -150,8 +147,8 @@ class MenuContext extends React.Component<I.Menu> {
 		if (length > 1) {
 			allowedOpen = false;
 			allowedLinkTo = false;
-			allowedWidget = false;
-			allowedLink = false;			
+			allowedLink = false;
+			allowedPin = false;		
 		};
 
 		if (!canWrite) {
@@ -161,7 +158,6 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedType = false;
 			allowedLinkTo = false;
 			allowedUnlink = false;
-			allowedWidget = false;
 			allowedRelation = false;
 			allowedCollection = false;
 		};
@@ -185,13 +181,12 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedOpen)		 open = null;
 		if (!allowedUnlink)		 unlink = null;
-		if (!allowedWidget)		 createWidget = null;
 		if (!allowedRelation)	 relation = null;
 		if (!allowedCollection)	 addCollection = null;
 		if (!allowedLink)		 pageLink = null;
 
 		let sections = [
-			{ children: [ createWidget, open, changeType, relation, pageLink ] },
+			{ children: [ open, changeType, relation, pageLink ] },
 			{ children: [ pin, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
@@ -355,6 +350,7 @@ class MenuContext extends React.Component<I.Menu> {
 			return;
 		};
 
+		const { widgets } = S.Block;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
@@ -420,12 +416,12 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'pin': {
-				Action.setIsFavorite(objectIds, true, route);
+				Action.createWidgetFromObject(subId, first.id, '', I.BlockPosition.InnerFirst, route);
 				break;
 			};
 
 			case 'unpin': {
-				Action.setIsFavorite(objectIds, false, route);
+				Action.removeWidgetsForObjects([ first.id ]);
 				break;
 			};
 
@@ -434,17 +430,6 @@ class MenuContext extends React.Component<I.Menu> {
 					cb();
 					analytics.event('UnlinkFromCollection', { count: length, route });
 				});
-				break;
-			};
-
-			case 'createWidget': {
-				if (!first) {
-					break;
-				};
-
-				const firstBlock = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
-
-				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);
 				break;
 			};
 

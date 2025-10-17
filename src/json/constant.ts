@@ -31,7 +31,6 @@ export default {
 
 	limit: {
 		menuRecords:	 	 			 100,
-		widgets:		 	 			 20,
 		notification:	 	 			 20,
 		graphDepth:		 	 			 5,
 		cellEntry:		 	 			 320,
@@ -80,10 +79,11 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
-		sidebar:		 150,
+		widgetItem:		 200,
+		sidebar:		 200,
 		highlight:  	 1000,
 		chatHistory:	 500,
-		chatMessage:	 150,
+		chatMessage:	 200,
 	},
 
 	fileExtension: {
@@ -110,6 +110,7 @@ export default {
 		search:			 		'search',
 		profile:		 		'profile',
 		deleted:		 		'deleted',
+		archived:		 		'archived',
 		type:			 		'type',
 		typeStore:		 		'typeStore',
 		relation:		 		'relation',
@@ -121,12 +122,12 @@ export default {
 		space:			 		'space',
 		participant:	 		'participant',
 		subSpace:		 		'subSpace',
-		allObject:		 		'allObject',
 		library: 		 		'library',
 		chatSpace:		 		'lastMessage',
 		template:		 		'template',
 		fileManagerSynced: 		'fileManagerSynced',
-		fileManagerNotSynced: 	'fileManagerNotSynced'
+		fileManagerNotSynced: 	'fileManagerNotSynced',
+		chatPreview:	 		'chatPreview',
 	},
 
 	typeKey: {
@@ -150,8 +151,10 @@ export default {
 		date:			 'ot-date',
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
+		chatDerived:	 'ot-chatDerived',
 		project:		 'ot-project',
 		human:			 'ot-human',
+		participant:	 'ot-participant',
 	},
 
 	templateId: {
@@ -169,7 +172,7 @@ export default {
 	},
 
 	widgetId: {
-		allObject:		 'allObjects',
+		allObject:		 'allObject',
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',

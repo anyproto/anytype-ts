@@ -17,6 +17,7 @@ interface Props {
 
 interface PropsRef {
 	forceUpdate: () => void;
+	getNode: () => any;
 };
 
 const EDITORS = [ 
@@ -26,7 +27,7 @@ const EDITORS = [
 
 const SUB_ID_CHECK = 'headSimple-check';
 
-const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 
 	const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup, relationKey, getDotMap } = props;
 	const check = U.Data.checkDetails(rootId, '', []);
@@ -307,8 +308,9 @@ const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
 			const isTemplate = U.Object.isTemplateType(object.id);
 			const canShowTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 			const allowEdit = allowDetails && !isTemplate && !U.Object.isParticipantLayout(object.recommendedLayout);
+			const allowedReset = allowEdit && !U.Object.isChatLayout(object.recommendedLayout);
 
-			if (isOwner && total) {
+			if (isOwner && total && allowedReset) {
 				buttonLayout = (
 					<Button
 						id="button-layout"
@@ -404,6 +406,7 @@ const HeadSimple = observer(forwardRef<{}, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
+		getNode: () => nodeRef.current,
 	}));
 
 	if (object._empty_) {

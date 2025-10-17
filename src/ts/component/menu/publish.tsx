@@ -23,7 +23,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ isStatusLoading, setIsStatusLoading ] = useState(false);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
 	const [ error, setError ] = useState('');
-	const showIncentive = !tier?.namesCount && U.Data.isAnytypeNetwork();
+	const showIncentive = U.Data.isFreeMember();
 
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
@@ -33,7 +33,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
 			onClick: () => {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				Action.openSpaceShare(analytics.route.menuPublish);
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });

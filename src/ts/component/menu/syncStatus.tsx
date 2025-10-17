@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellStorage } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellBanner } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -134,14 +134,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 				</div>
 
-				<UpsellStorage className="fromSyncMenu" route={analytics.route.syncStatus} />
+				<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
 
 				{showIncentive ? (
 					<div className="incentiveBanner">
 						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
 						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
 						<div className="buttons">
-							<Button className="c28" text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" onClick={() => this.onIncentiveButtonClick('storage')} />
+							<Button text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" className="c28" onClick={() => this.onIncentiveButtonClick('storage')} />
 							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
 						</div>
 					</div>

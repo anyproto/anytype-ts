@@ -81,6 +81,7 @@ class Api {
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
+		this.setBackground(win, theme);
 	};
 
 	setBackground (win, theme) {
@@ -223,7 +224,9 @@ class Api {
 
 	setChannel (win, id) {
 		UpdateManager.setChannel(id); 
-		this.setConfig(win, { channel: id });
+		this.setConfig(win, { channel: id }, () => {
+			this.initMenu(win);
+		});
 	};
 
 	setInterfaceLang (win, lang) {

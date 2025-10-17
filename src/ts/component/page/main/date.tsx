@@ -260,7 +260,7 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 			<div>
 				<Header
 					{...props}
-					component="mainChat"
+					component="mainObject"
 					ref={headerRef}
 					rootId={rootId}
 				/>

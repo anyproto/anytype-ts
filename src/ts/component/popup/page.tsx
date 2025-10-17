@@ -24,7 +24,6 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-
 		historyPopup.pushMatch(matchPopup);
 
 		return () => {

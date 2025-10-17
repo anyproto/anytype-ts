@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { MenuItemVertical, Button, Icon } from 'Component';
+import { MenuItemVertical, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
@@ -17,24 +17,21 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing, layout, limit, target } = data;
+		const { layout, limit, target } = data;
 
 		this.save = this.save.bind(this);
 		this.rebind = this.rebind.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 
-		if (isEditing) {
-			this.layout = layout;
-			this.limit = limit;
-			this.target = target;
-			this.checkState();
-		};
-	};
+		this.layout = layout;
+		this.limit = limit;
+		this.target = target;
+		this.checkState();
+};
 
 	render(): React.ReactNode {
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing } = data;
 		const sections = this.getSections();
 
 		const Section = item => (
@@ -88,34 +85,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<Section key={i} index={i} {...item} />
 					))}
 				</div>
-
-				{!isEditing ? (
-					<div className="buttons">
-						<Button 
-							id="button-save"
-							className="c28"
-							text={translate('menuWidgetAddWidget')}
-							onClick={this.save} 
-							onMouseEnter={() => S.Menu.closeAll(J.Menu.widget)} 
-						/>
-					</div>
-				) : ''}
 			</div>
 		);
 	}
 
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId } = data;
-		const { widgets } = S.Block;
-		const block = S.Block.getLeaf(widgets, blockId);
-
 		this.checkButton();
 		this.rebind();
-		this.getTargetId();
 
-		analytics.event('ScreenWidgetMenu', { widgetType: analytics.getWidgetType(block?.content.autoAdded) });
+		analytics.event('ScreenWidgetMenu');
 	};
 
 	componentDidUpdate () {
@@ -158,18 +136,25 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing } = data;
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout));
+		const { blockId, isPreview } = data;
+		const { widgets } = S.Block;
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
+		const canRemove = U.Space.canMyParticipantWrite();
+		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview));
+		const block = S.Block.getLeaf(widgets, blockId);
+
+		if (!block) {
+			return [];
+		};
+
 		const sections: any[] = [];
-		const canRemove = isEditing;
 
 		if (layoutOptions.length > 1) {
 			sections.push({
 				id: 'layout',
 				name: translate('commonAppearance'),
 				children: [],
-				options: U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout)),
+				options: layoutOptions,
 				value: this.layout,
 			});
 		};
@@ -185,15 +170,26 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (canRemove) {
-			const children: any[] = [ 
-				{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
-			];
+			const children: any[] = [];
+			const isPinned = block.content.section == I.WidgetSection.Pin;
+			const isSystem = U.Menu.isSystemWidget(this.target?.id);
 
-			if (sections.length) {
+			if (isPinned) {
+				const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
+				const icon = isSystem ? 'remove' : 'unpin';
+
+				children.push({ id: 'removeWidget', name, icon });
+			} else {
+				//children.push({ id: 'removeType', name: translate('menuWidgetRemoveType'), icon: 'remove' });
+			};
+
+			if (sections.length && children.length) {
 				children.unshift({ isDiv: true });
 			};
 
-			sections.push({ children });
+			if (children.length) {
+				sections.push({ children });
+			};
 		};
 
 		return sections;
@@ -205,7 +201,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (U.Menu.isSystemWidget(id)) {
 			if ((id != J.Constant.widgetId.bin) && [ null, I.WidgetLayout.Link ].includes(this.layout)) {
-				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
+				this.layout = I.WidgetLayout.Compact;
 			};
 		} else {
 			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isInSetLayouts(layout)) {
@@ -247,8 +243,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	onOptionClick (e: React.MouseEvent, option: any, section: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, isEditing } = data;
+		const { blockId, target } = data;
 		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, blockId);
+
+		if (!block) {
+			return;
+		};
+
+		const isSectionPin = block.content.section == I.WidgetSection.Pin;
+		const isSectionType = block.content.section == I.WidgetSection.Type;
 
 		switch (section.id) {
 			case 'layout': {
@@ -256,13 +260,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.checkState();
 				this.forceUpdate();
 
-				if (isEditing) {
+				if (isSectionPin) {
 					C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+				} else
+				if (isSectionType) {
+					C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLayout', value: this.layout } ], () => close());
 				};
 
 				analytics.event('ChangeWidgetLayout', {
 					layout: this.layout,
-					route: isEditing ? 'Inner' : 'AddWidget',
+					route: 'Inner',
 					params: { target: this.target },
 				});
 				break;
@@ -273,14 +280,17 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.checkState();
 				this.forceUpdate();
 
-				if (isEditing) {
+				if (isSectionPin) {
 					C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+				} else
+				if (isSectionType) {
+					C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLimit', value: this.limit } ], () => close());
 				};
 
 				analytics.event('ChangeWidgetLimit', {
 					limit: this.limit,
 					layout: this.layout,
-					route: isEditing ? 'Inner' : 'AddWidget',
+					route: 'Inner',
 					params: { target: this.target },
 				});
 				break;
@@ -296,10 +306,51 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, target } = data;
+		const isSystem = U.Menu.isSystemWidget(this.target?.id);
 
 		switch (item.id) {
-			case 'remove': {
-				Action.removeWidget(blockId, target);
+			case 'removeWidget': {
+				if (isSystem) {
+					const param: Partial<I.MenuParam> = {
+						data: {
+							icon: 'warning-red',
+							title: translate('popupConfirmSystemWidgetRemoveTitle'),
+							text: translate('popupConfirmSystemWidgetRemoveText'),
+							textConfirm: translate('commonDelete'),
+							colorConfirm: 'red',
+							onConfirm: () => {
+								Action.removeWidget(blockId, target);
+							},
+						},
+					};
+
+
+					if (this.target?.id == J.Constant.widgetId.favorite) {
+						param.className = 'removeFavorite';
+						param.data.title = translate('popupConfirmSystemWidgetRemoveFavoriteTitle');
+						param.data.text = translate('popupConfirmSystemWidgetRemoveFavoriteText');
+						param.data.icon = 'screenshot';
+					};
+
+					S.Popup.open('confirm', param);
+				} else {
+					Action.removeWidget(blockId, target);
+				};
+				break;
+			};
+
+			case 'removeType': {
+				S.Popup.open('confirm', {
+					data: {
+						icon: 'confirm',
+						colorConfirm: 'red',
+						title: translate('popupConfirmDeleteTypeTitle'),
+						text: translate('popupConfirmDeleteTypeText'),
+						onConfirm: () => {
+							Action.archive([ target.id ], analytics.route.addWidgetMenu);
+						},
+					},
+				});
 				break;
 			};
 		};
@@ -310,15 +361,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	save (): void {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { isEditing, onSave } = data;
+		const { blockId, onSave } = data;
 		const { widgets } = S.Block;
 
 		if (!this.target || (this.layout === null)) {
 			return;
 		};
 
-		const targetId = this.getTargetId();
-		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Top;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
@@ -326,56 +375,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 		};
 
-		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, this.limit, () => {
-			if (onSave) {
-				onSave();
-			};
-
-			if (!isEditing) {
-				analytics.createWidget(this.layout, analytics.route.addWidgetMenu, analytics.widgetType.manual);
-			};
-		});
-
+		C.BlockCreateWidget(widgets, blockId, newBlock, I.BlockPosition.Replace, this.layout, this.limit, onSave);
 		close(); 
-	};
-
-	getTargetId (): string {
-		const { param } = this.props;
-		const { data } = param;
-		const { isEditing, blockId, coords } = data;
-
-		let targetId = '';
-
-		if (isEditing) {
-			targetId = blockId;
-		} else  
-		if (coords) {
-			const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
-
-			if (!widgetIds.length) {
-				return '';
-			};
-
-			let prevY = 0;
-			for (const id of widgetIds) {
-				const item = $(`#widget-${id}`);
-				if (!item || !item.length) {
-					continue;
-				};
-
-				const { top } = item.offset();
-				const height = item.outerHeight();
-				
-				if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
-					targetId = id;
-					break;
-				};
-
-				prevY = top;
-			};
-		};
-
-		return targetId;
 	};
 
 });

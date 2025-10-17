@@ -90,7 +90,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return (
 			<div 
 				id="pageFlex" 
-				className={[ 'pageFlex', (isPopup ? 'isPopup' : 'isFull') ].join(' ')}
+				className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
 			>
 				{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
 				<div id="page" className={`page ${this.getClass('page')}`}>
@@ -138,12 +138,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatchParams () {
 		const { isPopup } = this.props;
 		const match = keyboard.getMatch(isPopup);
-		const page = String(match?.params?.page || 'index');
-		const action = String(match?.params?.action || 'index');
-		const id = String(match?.params?.id || '');
-		const spaceId = String(match?.params?.spaceId || '');
 
-		return { page, action, id, spaceId };
+		match.params.page = String(match.params.page || 'index');
+		match.params.action = String(match.params.action || 'index');
+		match.params.id = String(match.params.id || '');
+		match.params.spaceId = String(match.params.spaceId || '');
+
+		return match.params;
 	};
 
 	getRootId () {
@@ -168,10 +169,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const routeParam = { replace: true };
 		const refSidebar = sidebar.rightPanelRef(isPopup);
 		const state = S.Common.getRightSidebarState(isPopup);
+		const selection = S.Common.getRef('selectionProvider');
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 		keyboard.setWindowTitle();
+		selection?.rebind();
 
 		if (!Component) {
 			return;
@@ -208,20 +211,20 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	rebind () {
 		const { isPopup } = this.props;
 		const { history } = U.Router;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
 		this.unbind();
-		$(window).on(`resize.page${namespace}${key}`, () => this.resize());
+		$(window).on(`resize.page${ns}${key}`, () => this.resize());
 	};
 
 	unbind () {
 		const { isPopup } = this.props;
 		const { history } = U.Router;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
-		$(window).off(`resize.page${namespace}${key}`);
+		$(window).off(`resize.page${ns}${key}`);
 	};
 
 	event () {
@@ -265,12 +268,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getClass (prefix: string) {
 		const { isPopup } = this.props;
-		const { page } = this.getMatchParams();
+		const { page, action, id } = this.getMatchParams();
 		
 		return [ 
 			U.Common.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
 			this.getId(prefix),
-			isPopup ? 'isPopup' : 'isFull',
+			U.Common.getContainerClassName(isPopup),
 		].join(' ');
 	};
 	
@@ -282,6 +286,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const { config } = S.Common;
+		const { showMenuBar } = config;
 		const platform = U.Common.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
@@ -292,7 +297,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (!config.showMenuBar) {
+		if (!showMenuBar) {
 			cn.push('noMenuBar');
 		};
 

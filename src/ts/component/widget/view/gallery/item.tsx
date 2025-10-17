@@ -7,18 +7,17 @@ import { I, S, U, J, keyboard, analytics, Dataview } from 'Lib';
 interface Props extends I.WidgetViewComponent {
 	subId: string;
 	id: string;
-	isEditing?: boolean;
 	hideIcon?: boolean;
+	onResize?: () => void;
 };
 
 const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	subId = '',
 	id = '',
-	parent,
 	block,
-	isEditing = false,
 	hideIcon = false,
 	getView,
+	onResize,
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -28,7 +27,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 	const { isReadonly, isArchived, restrictions } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const cn = [ 'item' ];
 	const cover = view ? Dataview.getCoverObject(subId, object, view.coverRelationKey) : null;
 	const nameRelation = view.getRelation('name');
@@ -51,7 +50,7 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		e.stopPropagation();
 
 		U.Object.openEvent(e, object);
-		analytics.event('OpenSidebarObject', { widgetType: analytics.getWidgetType(parent.content.autoAdded) });
+		analytics.event('OpenSidebarObject');
 	};
 
 	const onContext = (e: React.MouseEvent) => {
@@ -80,6 +79,8 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		const node = $(nodeRef.current);
 
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
+
+		onResize?.();
 	};
 
 	let icon = null;

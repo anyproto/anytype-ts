@@ -112,7 +112,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		if (!targetObjectId) {
-			onSourceSelect(element, { horizontal: I.MenuDirection.Left });
+			onSourceSelect(element, {});
 			return;
 		};
 
