@@ -166,41 +166,41 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	init () {
-		if (!this.isSpace()) {
-			S.Common.setLeftSidebarState('vault', 'settings');
-			return;
-		};
-
-		if (!U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		const { id } = U.Router.getParam(U.Router.getRoute());
-
 		let page = '';
-		switch (id) {
-			case 'spaceIndexEmpty': {
-				page = 'widget';
-				break;
+
+		if (!this.isSpace()) {
+			page = 'settings';
+		} else {
+			if (!U.Space.canMyParticipantWrite()) {
+				return;
 			};
 
-			case 'set': {
-				page = 'settings/types';
-				break;
-			};
+			const { id } = U.Router.getParam(U.Router.getRoute());
 
-			case 'relation': {
-				page = 'settings/relations';
-				break;
-			};
+			switch (id) {
+				case 'spaceIndexEmpty': {
+					page = 'widget';
+					break;
+				};
 
-			default: {
-				page = 'settings/space';
-				break;
+				case 'set': {
+					page = 'settings/types';
+					break;
+				};
+
+				case 'relation': {
+					page = 'settings/relations';
+					break;
+				};
+
+				default: {
+					page = 'settings/space';
+					break;
+				};
 			};
 		};
 
-		S.Common.setLeftSidebarState('vault', page);
+		sidebar.leftPanelSubPageOpen(page, false);
 	};
 
 	onExport (type: I.ExportType, param: any) {

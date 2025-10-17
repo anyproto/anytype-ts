@@ -400,13 +400,13 @@ class Sidebar {
 		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
 
 		if (isClosed) {
-			this.leftPanelSubPageOpen(id);
+			this.leftPanelSubPageOpen(id, true);
 		} else {
-			this.leftPanelSubPageClose();
+			this.leftPanelSubPageClose(true);
 		};
 	};
 
-	leftPanelSubPageClose () {
+	leftPanelSubPageClose (save?: boolean) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -419,7 +419,10 @@ class Sidebar {
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
 		this.resizePage(width, null, true);
 		this.setAnimating(true);
-		this.set(I.SidebarPanel.SubLeft, { isClosed: true });
+
+		if (save) {
+			this.set(I.SidebarPanel.SubLeft, { isClosed: true });
+		};
 
 		window.setTimeout(() => {
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
@@ -430,7 +433,7 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
-	leftPanelSubPageOpen (id: string) {
+	leftPanelSubPageOpen (id: string, save?: boolean) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -447,8 +450,11 @@ class Sidebar {
 		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
 		this.objLeft.css({ width });
 		this.dummyLeft.css({ width });
-		this.set(I.SidebarPanel.SubLeft, { isClosed: false });
 		this.setAnimating(true);
+
+		if (save) {
+			this.set(I.SidebarPanel.SubLeft, { isClosed: false });
+		};
 
 		raf(() => {
 			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
