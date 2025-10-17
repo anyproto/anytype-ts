@@ -1,4 +1,4 @@
-import { I, S, U, J, keyboard } from 'Lib';
+import { I, S, U, keyboard } from 'Lib';
 
 const electron = U.Common.getElectron();
 
@@ -560,7 +560,7 @@ class Storage {
 	 * Resets onboarding
 	 */
 	clearOnboarding () {
-		this.set('onboarding', [], this.isLocal('onboarding'))
+		this.set('onboarding', [], this.isLocal('onboarding'));
 	};
 
 	/**

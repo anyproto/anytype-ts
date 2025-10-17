@@ -80,11 +80,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								getRecord={() => S.Detail.get(rootId, rootId, [ item.relationKey ])}
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
-								menuClassNameWrap="fromBlock"
 								pageContainer={U.Common.getCellContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
 								placeholder={translate('placeholderCellCommon')}
+								menuParam={{ classNameWrap: 'fromBlock' }}
 							/>
 						</div>
 					</div>

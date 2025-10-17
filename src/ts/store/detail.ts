@@ -474,9 +474,9 @@ class DetailStore {
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
 		// UX type
-		object.uxType = Number(object.uxType || object.spaceUxType) || I.SpaceUxType.Space;
+		object.uxType = Number(object.uxType || object.spaceUxType) || I.SpaceUxType.Data;
 		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
-		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
+		object.isSpace = object.spaceUxType == I.SpaceUxType.Data;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
 
 		// Chat

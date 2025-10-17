@@ -1,0 +1,13 @@
+@import "~scss/_mixins";
+
+.chatCounter { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+.chatCounter {
+	.icon { 
+		min-width: 18px; width: auto !important; height: 18px !important; border-radius: 9px !important; background-color: var(--color-system-accent-125); 
+		display: flex; align-items: center; justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-small; 
+		padding: 0px 4px;
+	}
+	.icon.mention { background-image: url('~img/icon/widget/mention.svg'); background-size: 12px; }
+
+	.icon.isMuted { background-color: var(--color-text-tertiary); }
+}

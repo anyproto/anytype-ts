@@ -95,6 +95,14 @@ Optional env vars:
 | `SERVER_PORT`| Local gRPC port of *anytype‑heart*        |
 | `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`   |
 
+### Web Clipper extension Development
+
+Switch manifest before testing/packaging the addon for different browsers using the following scripts:
+
+```bash
+npm run ext:manifest:firefox
+npm run ext:manifest:chromium
+```
 
 ## 🌍 Localisation
 

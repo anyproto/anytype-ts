@@ -416,9 +416,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'pin': {
-				const target = S.Block.getFirstBlock(widgets, 1, it => it.isWidget() && (it.content.section == I.WidgetSection.Pin));
-
-				Action.createWidgetFromObject(subId, first.id, target?.id, I.BlockPosition.Top, route);
+				Action.createWidgetFromObject(subId, first.id, '', I.BlockPosition.InnerFirst, route);
 				break;
 			};
 

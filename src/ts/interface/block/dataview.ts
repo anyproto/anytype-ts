@@ -264,8 +264,7 @@ export interface Cell {
 	textLimit?: number;
 	arrayLimit?: number;
 	shortUrl?: boolean;
-	menuClassName?: string;
-	menuClassNameWrap?: string;
+	menuParam?: Partial<I.MenuParam>;
 	recordId?: string;
 	recordIdx?: number;
 	groupId?: string;

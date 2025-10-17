@@ -29,6 +29,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.load = this.load.bind(this);
+		this.loadData = this.loadData.bind(this);
 	};
 
 	render () {
@@ -125,11 +126,11 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	componentDidMount (): void {
-		this.load(this.getSubId(), LIMIT);
+		this.load();
 	};
 
 	componentDidUpdate (): void {
-		this.load(this.getSubId(), LIMIT);
+		this.load();
 	};
 
 	componentWillUnmount (): void {
@@ -141,8 +142,12 @@ const Item = observer(class Item extends React.Component<Props> {
 		return [ getSubId(), y, m, d ].join('-');
 	};
 
-	load (subId: string, limit: number) {
-		const { rootId, d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+	load () {
+		this.loadData(this.getSubId(), LIMIT);
+	};
+
+	loadData (subId: string, limit: number) {
+		const { d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const view = getView();
 
 		if (!view) {
@@ -228,7 +233,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				data: {
 					...this.props,
 					subId: this.getSubId(),
-					load: this.load,
+					load: this.loadData,
 					blockId: block.id,
 					relationKey: view.groupRelationKey,
 					hideIcon: view.hideIcon,

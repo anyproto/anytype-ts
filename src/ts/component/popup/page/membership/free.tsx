@@ -62,10 +62,10 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 			return;
 		};
 
-		buttonRef.current.setLoading(true);
+		buttonRef.current?.setLoading(true);
 
 		C.MembershipGetVerificationEmail(emailRef.current.getValue(), checkboxRef.current?.getValue(), false, false, (message) => {
-			buttonRef.current.setLoading(false);
+			buttonRef.current?.setLoading(false);
 
 			if (message.error.code) {
 				setStatusFunc('error', message.error.description);

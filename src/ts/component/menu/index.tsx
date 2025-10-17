@@ -12,7 +12,6 @@ import MenuPublish from './publish';
 import MenuTableOfContents from './tableOfContents';
 
 import MenuSelect from './select';
-import MenuButton from './button';
 
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
@@ -81,6 +80,7 @@ import MenuSyncStatusInfo from './syncStatus/info';
 import MenuIdentity from './identity';
 
 import MenuChatText from './chat/text';
+import MenuChatCreate from './chat/create';
 
 interface State {
 	tab: string;
@@ -98,7 +98,6 @@ const Components: any = {
 	tableOfContents:		 MenuTableOfContents,
 
 	select:					 MenuSelect,
-	button:					 MenuButton,
 
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
@@ -167,6 +166,7 @@ const Components: any = {
 	identity:				 MenuIdentity,
 
 	chatText: 				 MenuChatText,
+	chatCreate: 			 MenuChatCreate,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
@@ -481,7 +481,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	position () {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, noBorder } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, noBorderX, noBorderY } = param;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -603,10 +603,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 			};
 
-			if (!noBorder) {
+			if (!noBorderX) {
 				x = Math.max(borderLeft, x);
 				x = Math.min(ww - width - J.Size.menuBorder, x);
+			};
 
+			if (!noBorderY) {
 				y = Math.max(borderTop, y);
 				y = Math.min(wh - height - borderBottom, y);
 			};

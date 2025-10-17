@@ -321,18 +321,43 @@ class UtilData {
 		});
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			const spaceCounters = {};
+
 			for (const item of message.previews) {
-				const { spaceId, message, state, dependencies } = item;
-				const subId = S.Chat.getSpaceSubId(spaceId);
+				const { spaceId, chatId, message, state, dependencies } = item;
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
+				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
+
+				obj.mentionCounter += state.mentions.counter || 0;
+				obj.messageCounter += state.messages.counter || 0;
+				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
+
+				spaceCounters[spaceId] = obj;
+
+				S.Chat.setState(chatSubId, { 
+					...state, 
+					lastMessageDate: Number(message?.createdAt || 0),
+				}, false);
 
 				if (message) {
 					message.dependencies = dependencies;
-					S.Chat.add(subId, 0, new M.ChatMessage(message));
-				};
 
-				S.Chat.setState(subId, { 
-					...state, 
-					lastMessageDate: Number(message?.createdAt || 0),
+					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
+					S.Chat.add(chatSubId, 0, new M.ChatMessage(message));
+				};
+			};
+
+			for (const spaceId in spaceCounters) {
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const obj = spaceCounters[spaceId];
+
+				S.Chat.setState(spaceSubId, { 
+					mentions: { counter: obj.mentionCounter, orderId: '' }, 
+					messages: { counter: obj.messageCounter, orderId: '' },
+					lastMessageDate: obj.lastMessageDate,
+					lastStateId: '',
+					order: 0,
 				}, false);
 			};
 		});
@@ -455,16 +480,19 @@ class UtilData {
 	 * @returns {any[]} The list of object types.
 	 */
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withLists, limit } = param || {};
 		const { space } = S.Common;
-		const pageLayouts = U.Object.getPageLayouts();
-		const skipLayouts = U.Object.getSetLayouts();
+		const layouts = U.Object.getPageLayouts();
 
 		let items: any[] = [];
 
+		if (withLists) {
+			layouts.push(I.ObjectLayout.Set);
+			layouts.push(I.ObjectLayout.Collection);
+		};
+
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && 
-				!skipLayouts.includes(it.recommendedLayout) && 
+			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
 				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
@@ -473,14 +501,6 @@ class UtilData {
 
 		if (limit) {
 			items = items.slice(0, limit);
-		};
-
-		if (withSet) {
-			items.push(S.Record.getSetType());
-		};
-
-		if (withCollection) {
-			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
@@ -1003,7 +1023,7 @@ class UtilData {
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
-						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Data });
 					});
 				});
 			});
@@ -1035,7 +1055,11 @@ class UtilData {
 		ids.forEach(id => groups[id] = []);
 
 		let ret = [];
-		records.forEach((record) => {
+		records.forEach(record => {
+			if (!record) {
+				return;
+			};
+
 			const diff = now - record[key];
 
 			let id = '';
@@ -1221,6 +1245,21 @@ class UtilData {
 		};
 
 		return ret;
+	};
+
+	isFreeMember (): boolean {
+		const { membership } = S.Auth;
+		const tier = this.getMembershipTier(membership.tier);
+
+		return !tier?.namesCount && this.isAnytypeNetwork();
+	};
+
+	checkIsArchived (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.archived, '').includes(id);
+	};
+
+	checkIsDeleted (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
 	};
 
 };

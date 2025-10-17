@@ -14,13 +14,17 @@
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
+		.pageFlex { padding: 0px; }
 		.page { padding: 0px; }
+
 		.header {
+			.side.left { padding-left: 12px !important; }
 			.icon.toggle { display: none; }
 		}
 		.footer { display: none; }
 
 		#bodyWrapper > #loader { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+		.sidebar.right { padding: 0px; }
 
 		.pageMainEdit {
 			.content { height: 100%; }

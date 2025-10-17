@@ -288,8 +288,6 @@ const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) 
 	};
 
 	useEffect(() => {
-		sidebar.rightPanelClose(isPopup);
-
 		return () => close();
 	}, []);
 

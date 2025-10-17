@@ -228,7 +228,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		this.loadPage(rootId);
 		this.resize();
 		this.rebind();
-		sidebar.rightPanelClose(isPopup);
 
 		focus.clear(true);
 		keyboard.setFocus(true);

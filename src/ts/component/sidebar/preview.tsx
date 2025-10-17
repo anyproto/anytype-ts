@@ -173,7 +173,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 	getWidth () {
 		const { layoutWidth, layoutFormat } = this.object;
 
-		let mw = this.getNodeWidth();
+		let { width: mw } = this.getNodeSize();
 		let width = 0;
 
 		if (layoutFormat == I.LayoutFormat.List) {
@@ -196,10 +196,13 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		return Number(this.object.defaultViewType) || I.ViewType.Grid;
 	};
 
-	getNodeWidth (): number {
+	getNodeSize (): { width: number; height: number } {
 		const container = U.Common.getPageFlexContainer(this.props.isPopup);
 
-		return container.width() - J.Size.sidebar.right;
+		return {
+			width: container.width() - J.Size.sidebar.right - 9,
+			height: container.height(),
+		};
 	};
 
 	resize () {
@@ -209,7 +212,7 @@ const SidebarLayoutPreview = observer(class SidebarLayoutPreview extends React.C
 		};
 
 		this.frame = raf(() => {
-			$(this.node).css({ width: this.getNodeWidth() });
+			$(this.node).css(this.getNodeSize());
 			$(this.refPreview).css({ width: this.getWidth() });
 		});
 	};

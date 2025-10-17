@@ -93,10 +93,11 @@ enableLogging({
 });
 */
 
+
 Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
-	dsn: J.Constant.sentry,
+	dsn: SENTRY_DSN,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
 		e.request.url = '';
@@ -134,7 +135,7 @@ const App: FC = () => {
 
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
-
+		
 		registerIpcEvents();
 
 		Renderer.send('appOnLoad');
@@ -212,6 +213,7 @@ const App: FC = () => {
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
+		S.Common.setLeftSidebarState('vault', '');
 
 		Action.checkDefaultSpellingLang();
 

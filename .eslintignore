@@ -18,3 +18,4 @@ windows/
 !/dist/css
 !/dist/index.html
 !/dist/index.web.html
+*.d.ts

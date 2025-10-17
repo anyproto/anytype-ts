@@ -1,4 +1,4 @@
-> .sidebarPage.pageObjectRelation {
+.sidebarPage.pageObjectRelation {
 	.section.objectRelation { padding: 12px 16px; }
 	.section.objectRelation {
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
@@ -42,8 +42,9 @@
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
-				.cellContent { position: relative; height: auto !important; box-shadow: 0px 0px; }
+				.cellContent { position: relative; height: auto !important; box-shadow: 0px 0px; background-color: unset; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; }
+
 				.icon.clear { right: 8px; }
 				.input { height: 22px; }
 			}

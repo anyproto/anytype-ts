@@ -166,45 +166,41 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 	};
 
 	init () {
-		const { isPopup } = this.props;
-
-		sidebar.rightPanelClose(isPopup);
+		let page = '';
 
 		if (!this.isSpace()) {
-			sidebar.leftPanelSetState({ page: 'settings' });
-			return;
-		};
-
-		if (!U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		const { id } = U.Router.getParam(U.Router.getRoute());
-
-		let page = '';
-		switch (id) {
-			case 'spaceIndexEmpty': {
-				page = U.Space.getDefaultSidebarPage();
-				break;
+			page = 'settings';
+		} else {
+			if (!U.Space.canMyParticipantWrite()) {
+				return;
 			};
 
-			case 'set': {
-				page = 'settings/types';
-				break;
-			};
+			const { id } = U.Router.getParam(U.Router.getRoute());
 
-			case 'relation': {
-				page = 'settings/relations';
-				break;
-			};
+			switch (id) {
+				case 'spaceIndexEmpty': {
+					page = 'widget';
+					break;
+				};
 
-			default: {
-				page = 'settings/space';
-				break;
+				case 'set': {
+					page = 'settings/types';
+					break;
+				};
+
+				case 'relation': {
+					page = 'settings/relations';
+					break;
+				};
+
+				default: {
+					page = 'settings/space';
+					break;
+				};
 			};
 		};
 
-		sidebar.leftPanelSetState({ page });
+		sidebar.leftPanelSubPageOpen(page);
 	};
 
 	onExport (type: I.ExportType, param: any) {

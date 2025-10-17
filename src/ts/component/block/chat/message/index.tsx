@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, memo } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
@@ -92,9 +92,9 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 	const initExpand = () => {
 		const node = $(nodeRef.current);
-		const ref = $(textRef.current);
-		const textHeight = ref.outerHeight();
-		const lineHeight = parseInt(ref.css('line-height'));
+		const wrapper = node.find('.textWrapper');
+		const textHeight = wrapper.height();
+		const lineHeight = parseInt(wrapper.css('line-height'));
 		const canExpand = textHeight / lineHeight > LINES_LIMIT;
 
 		node.toggleClass('canExpand', canExpand);
@@ -337,7 +337,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 		if (attachmentsLayout) {
 			cn.push('withMedia');
-			cn.push(`mediaLayout-${attachments.length}`)
+			cn.push(`mediaLayout-${attachments.length}`);
 		};
 	};
 

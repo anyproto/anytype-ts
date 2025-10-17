@@ -114,11 +114,16 @@
 						.button { margin-left: 0; }
 					}
 					.buttonWrap.withSelect {
-						.button.addRecord { border-radius: 6px 0 0 6px; }
+						.button.addRecord { border-radius: 14px 0 0 14px; padding: 0px 4px 0px 12px; }
 						.button.select {
-							width: 24px; height: 28px; border: 0 solid; border-left: 1px solid rgba(255, 255, 255, .1); border-radius: 0 6px 6px 0;
+							height: 28px; border: 0px; border-radius: 0px 14px 14px 0px; padding: 0px 12px 0px 4px; display: flex; align-items: center; justify-content: center; 
 						}
-						.button.select:after { content: ''; position: absolute; left: 1px; top: 4px; width: 20px; height: 20px; background: url('~img/arrow/button/white.svg') 50% 50% no-repeat; }
+						.button.select {
+							.txt { display: none; }
+							&:after { 
+								content: ''; display: block; width: 8px; height: 100%; background: url('~img/arrow/button/white.svg') center no-repeat; flex-shrink: 0;
+							}
+						}
 					}
 				}
 			}

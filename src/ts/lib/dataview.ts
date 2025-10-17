@@ -631,7 +631,7 @@ class Dataview {
 			return details;
 		};
 
-		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
+		if (view.groupRelationKey) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
 				if (group) {
@@ -650,7 +650,7 @@ class Dataview {
 		};
 
 		for (const filter of view.filters) {
-			if (!conditions.includes(filter.condition)) {
+			if (!conditions.includes(filter.condition) || (filter.relationKey == view.groupRelationKey)) {
 				continue;
 			};
 

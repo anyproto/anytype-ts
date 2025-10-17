@@ -224,7 +224,9 @@ class Api {
 
 	setChannel (win, id) {
 		UpdateManager.setChannel(id); 
-		this.setConfig(win, { channel: id });
+		this.setConfig(win, { channel: id }, () => {
+			this.initMenu(win);
+		});
 	};
 
 	setInterfaceLang (win, lang) {

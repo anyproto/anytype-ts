@@ -313,6 +313,10 @@ class UtilObject {
 			param.ignoreArchived = false;
 		};
 
+		if (undefined === param.ignoreHidden) {
+			param.ignoreHidden = false;
+		};
+
 		U.Subscription.search(param, (message: any) => {
 			if (callBack) {
 				callBack((message.records || []).filter(it => !it._empty_));
@@ -438,7 +442,7 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {

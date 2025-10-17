@@ -2,7 +2,7 @@ html.printMedia {
 	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	body { margin: 0px; -webkit-print-color-adjust: exact; caret-color: transparent; }
+	body { margin: 0px; -webkit-print-color-adjust: exact; caret-color: transparent; overflow: visible; }
 
 	#selection * { user-select: text; }
 	.overPopup { overflow: visible !important; }
@@ -21,12 +21,12 @@ html.printMedia {
 	.focusable.isFocused::before,
 	#vault,
 	#sidebarLeftButton,
-	#sidebarRightButton,
 	.tableOfContents
 	{ display: none !important; }
 
+	#selection { overflow: visible; }
 	#pageFlex.isFull {
-		#page { width: 100% !important; }
+		#page { width: 100% !important; overflow: visible; }
 	}
 
 	.focusable.isFocused { background: none !important; }

@@ -932,8 +932,6 @@ class BlockStore {
 			J.Constant.typeKey.relation,
 			J.Constant.typeKey.spaceview,
 			J.Constant.typeKey.space,
-			J.Constant.typeKey.chat,
-			J.Constant.typeKey.chatDerived,
 		].includes(key);
 	};
 
@@ -1041,11 +1039,6 @@ class BlockStore {
 		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
 			this.createWidget(J.Constant.widgetId.bin, I.WidgetSection.Type);
 			childrenIds.push(J.Constant.widgetId.bin);
-		};
-
-		if (!spaceview.isChat && spaceview.chatId && !childrenIds.includes(J.Constant.widgetId.chat)) {
-			this.createWidget(J.Constant.widgetId.chat, I.WidgetSection.Button);
-			childrenIds.push(J.Constant.widgetId.chat);
 		};
 
 		this.updateStructure(widgets, widgets, childrenIds);

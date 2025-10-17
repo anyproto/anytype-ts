@@ -1,23 +1,29 @@
-> .containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
-> .containerSettings {
+.containerSettings { 
+	height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; 
+	padding: 8px 0px 0px 0px;
+}
+.containerSettings {
     > .head {
         display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
         gap: 0px 8px; overflow: hidden;
     }
 
-    > .body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 6px 12px 12px; position: relative; flex-grow: 1; overscroll-behavior: none; }
+    > .body { 
+		display: flex; flex-direction: column; justify-content: space-between; padding: 0px; position: relative; flex-grow: 1; overscroll-behavior: none; 
+		overflow: hidden;
+	}
     > .body {
-        .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; border-radius: 12px; background: var(--color-bg-primary); padding: 8px 0px; }
+        .list { display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding-bottom: 8px; }
         .list {
 			.ReactVirtualized__List { padding: 0px 8px; }
 
             .inner { flex-grow: 1; }
             .row {
-                > .section { padding-top: 16px; }
-                > .section.isFirst { padding-top: 4px; }
+                > .itemSection { padding-top: 16px; }
+                > .itemSection.isFirst { padding-top: 4px; }
             }
 
-            .section {
+            .itemSection {
                 > .name { @include text-small; font-weight: 500; color: var(--color-text-secondary); margin: 0px; padding: 0px 8px; }
             }
 
@@ -63,18 +69,18 @@
     }
 }
 
-> .containerSettings.spaceSettings {
+.containerSettings.spaceSettings {
     > .body {
-        > .list { padding-bottom: 0px; }
+		> .list { padding: 0px; }
         > .list {
             .ReactVirtualized__List { padding-bottom: 8px; }
         }
     }
 }
 
-> .containerSettings.spaceSettingsLibrary {
+.containerSettings.spaceSettingsLibrary {
     > .body {
-        > .list { padding-bottom: 0px; justify-content: flex-start; }
+        > .list { justify-content: flex-start; padding: 0px; }
         > .list {
             .ReactVirtualized__List { padding-bottom: 8px; padding-top: 2px; }
 

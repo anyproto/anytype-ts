@@ -55,13 +55,11 @@ const Members = observer(class Members extends React.Component<Props, State> {
 		let showLimit = false;
 		let memberUpgradeType = '';
 
-		if (space.isShared) {
-			if (!U.Space.getReaderLimit() && tier?.price) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
-				memberUpgradeType = 'members';
-				showLimit = true;
-			};
+		if (space.isShared && !U.Space.getReaderLimit() && tier?.price) {
+			limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+			limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
+			memberUpgradeType = 'members';
+			showLimit = true;
 		};
 
 		const Member = (item: any) => {
@@ -199,7 +197,14 @@ const Members = observer(class Members extends React.Component<Props, State> {
 	};
 
 	getParticipantList () {
-		let records = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
+		const isSpaceOwner = U.Space.isMyOwner();
+		const statuses = [ I.ParticipantStatus.Active ];
+
+		if (isSpaceOwner) {
+			statuses.push(I.ParticipantStatus.Joining);
+		};
+
+		let records = U.Space.getParticipantsList(statuses);
 
 		records = records.sort((c1, c2) => {
 			const isRequest1 = c1.isJoining;

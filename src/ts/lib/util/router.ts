@@ -109,16 +109,17 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
+		sidebar.rightPanelClose(false);
+
 		focus.clear(true);
 
-		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && (routeParam.spaceId != space)) {
 			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};
 
 		const change = () => {
 			this.history.push(route); 
-			this.checkSidebarState();
 
 			if (onRouteChange) {
 				onRouteChange();
@@ -241,6 +242,7 @@ class UtilRouter {
 
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
+					S.Common.setLeftSidebarState('vault', 'widget');
 
 					U.Data.onInfo(message.info);
 
@@ -251,9 +253,6 @@ class UtilRouter {
 					};
 
 					const onRouteChange = () => {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-
-						this.checkSidebarState();
 						routeParam.onRouteChange?.();
 					};
 
@@ -274,20 +273,6 @@ class UtilRouter {
 				},
 			});
 		});
-	};
-
-	checkSidebarState () {
-		const spaceview = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(false);
-
-		if (!spaceview.isChat && (rightSidebar.page == 'widget')) {
-			sidebar.rightPanelClose(false);
-		} else 
-		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
-			sidebar.rightPanelClose(false);
-		} else {
-			sidebar.rightPanelRestore(false);
-		};
 	};
 
 	/**

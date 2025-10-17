@@ -6,6 +6,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, setActive, close, getId, onKeyDown, getSize } = props;
 	const n = useRef(-1);
+	const showIncentive = U.Data.isFreeMember();
 
 	const rebind = () => {
 		unbind();
@@ -137,6 +138,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		Highlight.showAll();
+
 		return () => unbind();
 	}, []);
 
@@ -163,17 +165,19 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				))}
 			</div>
 
-			<ShareTooltip
-				text={translate('shareTooltipLabel')}
-				onMouseEnter={() => {
-					n.current = -1;
-					S.Menu.closeAll([ 'select' ]);
-				}}
-				onClick={() => {
-					U.Router.go('/main/settings/membership', {});
-					analytics.event('ClickUpgradePlanTooltip', { type: 'help' });
-				}}
-			/>
+			{showIncentive ? (
+				<ShareTooltip
+					text={translate('shareTooltipLabel')}
+					onMouseEnter={() => {
+						n.current = -1;
+						S.Menu.closeAll([ 'select' ]);
+					}}
+					onClick={() => {
+						U.Router.go('/main/settings/membership', {});
+						analytics.event('ClickUpgradePlanTooltip', { type: 'help' });
+					}}
+				/>
+			) : ''}
 		</>
 	);
 

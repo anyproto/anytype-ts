@@ -3,8 +3,8 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName, DropTarget, IconObject, Button } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, sidebar, scrollOnMove } from 'Lib';
+import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -29,7 +29,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, canEdit, canRemove, disableAnimation, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, canRemove, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
 
 	const getChild = (): I.Block => {
@@ -40,9 +40,11 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const child = getChild();
 	const targetId = child?.getTargetObjectId();
-	const isSystemTarget = child ? U.Menu.isSystemWidget(child.getTargetObjectId()) : false;
-	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const object = getObject(targetId);
+	const isSystemTarget = U.Menu.isSystemWidget(targetId);
+	const isSectionType = block.content.section == I.WidgetSection.Type;
+	const isChat = U.Object.isChatLayout(object?.layout);
+	const isBin = targetId == J.Constant.widgetId.bin;
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);
@@ -68,7 +70,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getLayout = (): I.WidgetLayout => {
-		let layout = param.layout
+		let layout = param.layout;
 
 		const object = getObject(targetId);
 		if (!object) {
@@ -86,20 +88,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const limit = getLimit();
 	const layout = getLayout();
-	const isChat = targetId == J.Constant.widgetId.chat;
 	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
-	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-	const cntCn = [ 'cnt' ];
+	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
-	if (spaceview.isMuted) {
-		cntCn.push('isMuted');
-	};
-
-	let counters = { messageCounter: 0, mentionCounter: 0 };
+	let counters = { mentionCounter: 0, messageCounter: 0 };
 	if (isChat) {
 		counters = S.Chat.getChatCounters(space, spaceview.chatId);
 	};
@@ -140,7 +136,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCreate({ route: analytics.route.widget });
+		onCreate({ element: '.iconWrap.create', route: analytics.route.widget });
 	};
 
 	const onCreate = (param?: any): void => {
@@ -208,6 +204,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
+			if (childRef.current && childRef.current?.appendSearchIds) {
+				childRef.current?.appendSearchIds([ newObject.id ]);
+			};
+
 			U.Object.openConfig(newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
@@ -220,15 +220,23 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
-			U.Menu.onBookmarkMenu({
-				element: `#widget-${block.id} .iconWrap.create`,
+		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
+			const menuParam = {
+				element: `#widget-${block.id} ${param.element}`,
 				onOpen: () => node.addClass('active'),
 				onClose: () => node.removeClass('active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
+				offsetY: 4,
 				data: { details },
-			}, cb);
+			};
+
+			if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
+				U.Menu.onBookmarkMenu(menuParam, cb);
+			} else 
+			if (U.Object.isChatLayout(type.recommendedLayout)) {
+				U.Menu.onChatMenu(menuParam, cb);
+			}; 
 			return;
 		};
 
@@ -252,31 +260,59 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!U.Space.canMyParticipantWrite() || !object || object._empty_ || !canEdit) {
+		if (!object || object._empty_ || !canEdit) {
 			return;
 		};
 
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
-
-		S.Menu.open('widget', {
+		
+		const menuParam: Partial<I.MenuParam> = {
 			element: `#widget-${block.id} .iconWrap.more`,
 			rect: { width: 0, height: 0, x, y: y + 14 },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
-			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
-			data: {
+			data: {},
+		};
+
+		let menuId = '';
+
+		if (isBin) {
+			menuId = 'select';
+			menuParam.data = Object.assign(menuParam.data, {
+				options: [
+					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
+					{ id: 'empty', icon: 'remove', name: translate('commonEmptyBin') },
+				],
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'open': {
+							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+							break;
+						};
+
+						case 'empty': {
+							Action.emptyBin(analytics.route.widget);
+							break;
+						};
+					};
+				},
+			});
+		} else {
+			menuId = 'widget';
+			menuParam.subIds = J.Menu.widget;
+			menuParam.data = Object.assign(menuParam.data, {
 				...param,
 				target: object,
-				isEditing: true,
 				blockId: block.id,
-				setEditing,
 				isPreview,
-			}
-		});
+			});
+		};
+
+		S.Menu.open(menuId, menuParam);
 	};
 
 	const getIsOpen = () => {
@@ -469,7 +505,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const canCreateHandler = (): boolean => {
-		if (!object || isEditing || !U.Space.canMyParticipantWrite()) {
+		if (!object || !U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 
@@ -530,11 +566,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		addShowAllButton();
-
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
-		const wrapper = node.find('#button-show-all');
 		
 		let total = 0;
 		let show = false;
@@ -562,7 +595,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		show ? wrapper.show() : wrapper.hide();
+		if (show) {
+			addShowAllButton();
+		} else {
+			node.find('#button-show-all').remove();
+		};
+
 		innerWrap.toggleClass('withShowAll', show);
 	};
 
@@ -611,13 +649,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (targetId == J.Constant.widgetId.bin) {
-			U.Object.openAuto({ layout: I.ObjectLayout.Archive });
-		} else 
-		if (targetId == J.Constant.widgetId.chat) {
-			U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-		} else
-		if (isSystemTarget) {
+		if (isSystemTarget && !isBin) {
 			onSetPreview();
 		} else {
 			onClick(e);
@@ -693,8 +725,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		collapse = (
-			<div className="iconWrap collapse">
-				<Icon className="collapse" onClick={onToggle} />
+			<div className="iconWrap collapse" onClick={onToggle}>
+				<Icon className="collapse" />
 			</div>
 		);
 	};
@@ -716,18 +748,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="sides">
 						<div className="side left">
 							<div className="clickable">
-								{collapse}
-								{icon}
+								<div className="iconAnimationWrapper">
+									{collapse}
+									{icon}
+								</div>
 								<ObjectName object={object} withPlural={true} />
 							</div>
 						</div>
 						<div className="side right">
-							{counters.messageCounter || counters.mentionCounter ? (
-								<div className={cntCn.join(' ')}>
-									{counters.mentionCounter ? <Icon className="count mention" /> : ''}
-									{counters.messageCounter ? <Icon className="count" inner={counters.messageCounter} /> : ''}
-								</div>
-							) : ''}
+							<ChatCounter {...counters} mode={spaceview.notificationMode} />
+
 							{buttons.length ? (
 								<div className="buttons">
 									{buttons.map(item => (
