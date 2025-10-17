@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, translate, U, Onboarding } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -328,7 +328,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		if ([ 'types', 'relations' ].includes(item.id)) {
 			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
-			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
+			Action.openSettings(item.id, analytics.route.settings);
 			this.forceUpdate();
 		};
 	};
@@ -345,4 +345,4 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 });
 
-export default SidebarSettingsIndex
+export default SidebarSettingsIndex;

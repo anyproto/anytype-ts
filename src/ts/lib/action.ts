@@ -1098,9 +1098,9 @@ class Action {
 		});
 	};
 
-	openSpaceShare (route: string) {
+	openSettings (id: string, route: string) {
 		U.Object.openRoute({ 
-			id: 'spaceShare', 
+			id, 
 			layout: I.ObjectLayout.Settings,
 			_routeParam_: { 
 				additional: [ 
@@ -1108,6 +1108,10 @@ class Action {
 				],
 			},
 		});
+	};
+
+	openSpaceShare (route: string) {
+		this.openSettings('spaceShare', route);
 	};
 
 };
