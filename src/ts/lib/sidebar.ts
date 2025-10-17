@@ -409,8 +409,6 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The style data.
 	 */
 	private setStyle (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
-		console.log('setStyle', panel, v);
-
 		const obj = this.getWrapper(panel);
 
 		if (obj && obj.length) {
