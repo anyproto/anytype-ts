@@ -483,10 +483,16 @@ class Sidebar {
 		const state = S.Common.getLeftSidebarState();
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
-		const width = dataLeft.isClosed ? 0 : dataLeft.width;
-		const newWidth = width + dataSubLeft.width;
 
 		S.Common.setLeftSidebarState(state.page, id);
+
+		if (!dataSubLeft.isClosed) {
+			return;
+		};
+
+
+		const width = dataLeft.isClosed ? 0 : dataLeft.width;
+		const newWidth = width + dataSubLeft.width;
 
 		this.setStyle(I.SidebarPanel.Left, { width });
 		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
