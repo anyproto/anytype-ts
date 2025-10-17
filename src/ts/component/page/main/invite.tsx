@@ -108,7 +108,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 			setError(translate('pageMainInviteErrorData'));
 		} else {
 			C.SpaceInviteView(cid, key, (message: any) => {
-				U.Space.openDashboard({ replace: true });
+				U.Space.openDashboardOrVoid();
 
 				S.Popup.closeAll(null, () => {
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
@@ -176,7 +176,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard()} 
+							onClick={() => U.Space.openDashboardOrVoid()} 
 						/>
 					</div>
 				) : <Loader />}

@@ -68,7 +68,7 @@ input, textarea, select { font-family: 'Inter'; }
 	transition: opacity 0.3s ease-in-out;
 }
 #globalFade {
-	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: calc(100% - $vaultWidthCollapsed); }
+	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: 100%; }
 }
 #globalFade.show { opacity: 1; }
 #graphPreview { position: fixed; z-index: 1000; }
@@ -260,7 +260,10 @@ html.platformWindows:not(.noMenuBar) {
 		.side.left { justify-content: flex-start; gap: 0px 2px; }
 		.side.right { justify-content: flex-end; }
 
-		.icon { width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; }
+		.icon { 
+			width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; 
+			transition: background-color $transitionCommon;
+		}
 		.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
 		.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
 		.icon.window-max { background-image: url('~img/icon/window/max.svg'); }

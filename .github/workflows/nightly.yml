@@ -20,8 +20,9 @@ on:
         options:
           - 'true'
           - 'false'
-  schedule:
-    - cron: '0 2 * * *' # every day at 2am (UTC)
+  # schedule is no longer needed
+  # the workflow is triggered from https://github.com/anyproto/anytype-heart/blob/develop/.github/workflows/nightly.yml
+
 
 permissions:
   contents: 'write'
@@ -64,15 +65,16 @@ jobs:
           echo "changed: ${{ steps.diff_check.outputs.changed }}"
           echo "last_tag: ${{ steps.diff_check.outputs.last_tag }}"
 
+
   nightly-settings:
     needs:
       - diff-check
     if: needs.diff-check.outputs.changed == 'true' # run only if there is a diff
     runs-on: ubuntu-latest
     outputs:
+      channel: ${{ steps.nightly_info.outputs.channel }}
       tag: ${{ steps.nightly_info.outputs.tag }}
       app_version: ${{ steps.nightly_info.outputs.app_version }}
-      channel: ${{ steps.nightly_info.outputs.channel }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -89,7 +91,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # choice channel name {{
+          # choice channel name
           if [[ -z "${{ github.event.inputs.channel }}" ]]; then
             # default value
             CHANNEL=latest
@@ -97,15 +99,13 @@ jobs:
             CHANNEL="${{ github.event.inputs.channel }}"
           fi
           echo "channel=${CHANNEL}" >> "$GITHUB_OUTPUT"
-          # }}
 
-          # version suffix {{
+          # version suffix
           if [[ "$CHANNEL" == "latest" ]]; then
             VERSION_SUFFIX=""
           else
             VERSION_SUFFIX="-${CHANNEL}"
           fi
-          # }}
 
           DATE=$(date -u +'%Y%m%d')
           BASE_VERSION=$( jq -r '.version | split(".")[:2] | join(".")' package.json )
@@ -122,13 +122,12 @@ jobs:
           # application version
           echo "app_version=${APP_VERSION}" >> "$GITHUB_OUTPUT"
 
-
       - name: Debug
         shell: bash
         run: |
+          echo "nightly channel: ${{ steps.nightly_info.outputs.channel }}"
           echo "nightly tag: ${{ steps.nightly_info.outputs.tag }}"
           echo "nightly app_version: ${{ steps.nightly_info.outputs.app_version }}"
-          echo "nightly channel: ${{ steps.nightly_info.outputs.channel }}"
 
       - name: Create nightly tag
         run: |
@@ -174,6 +173,7 @@ jobs:
         run: |
           echo "${{ steps.notes.outputs.body }}"
 
+
   build:
     needs:
       - nightly-settings
@@ -181,7 +181,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-13
+          - macos-14
           - ubuntu-22.04
           - windows-latest
     steps:
@@ -263,14 +263,13 @@ jobs:
       - name: Nightly mode env settings
         shell: bash
         run: |
-          # choice s3 bucket for publishing {{
+          # choice s3 bucket for publishing
           if [[ "${{ needs.nightly-settings.outputs.channel }}" == "beta" ]]; then
             S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET_BETA}}"
           else
             S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET}}"
           fi
           echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_ENV
-          # }}
 
           echo "MIDDLEWARE_VERSION=${{ steps.anytype-heart-nightly-info.outputs.release_name }}" >> $GITHUB_ENV
 
@@ -362,7 +361,8 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           APPLETEAM: ${{ secrets.APPLETEAM }}
           USE_HARD_LINKS: false
-          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
 
@@ -381,18 +381,81 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
+
+
+  clean-nightly-tags:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - run: git fetch --tags --force --prune
+
+      - name: Clean old nightly tags DEBUG
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh CLI to authenticate
+        run: |
+          # list -> filter -> delete via API
+          gh api repos/${GITHUB_REPOSITORY}/git/matching-refs/tags \
+          | jq -r '.[].ref' | sed 's#^refs/tags/##' \
+          | grep -E '^v.*-nightly.*$' \
+          | while read -r t; do echo "$(git log -1 --format=%ct "refs/tags/$t") $t"; done \
+          | sort -n | head -n -10 | cut -d' ' -f2- \
+          | xargs -r -I{} echo gh api -X DELETE repos/${GITHUB_REPOSITORY}/git/refs/tags/{}
+
+      - name: Clean old nightly tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for gh CLI to authenticate
+        run: |
+          # list -> filter -> delete via API
+          gh api repos/${GITHUB_REPOSITORY}/git/matching-refs/tags \
+          | jq -r '.[].ref' | sed 's#^refs/tags/##' \
+          | grep -E '^v.*-nightly.*$' \
+          | while read -r t; do echo "$(git log -1 --format=%ct "refs/tags/$t") $t"; done \
+          | sort -n | head -n -10 | cut -d' ' -f2- \
+          | xargs -r -I{} gh api -X DELETE repos/${GITHUB_REPOSITORY}/git/refs/tags/{}
+
 
   notify:
     needs:
       - nightly-settings
       - changelog
       - build
+      - clean-nightly-tags
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Nightly mode env settings
+        shell: bash
+        run: |
+          # choice s3 bucket for publishing
+          if [[ "${{ needs.nightly-settings.outputs.channel }}" == "beta" ]]; then
+            S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET_BETA}}"
+          else
+            S3_BUCKET="${{secrets.NIGHTLY_AWS_S3_BUCKET}}"
+          fi
+          echo "S3_BUCKET=$S3_BUCKET" >> $GITHUB_ENV
+
+      - name: Collect download URLs
+        id: urls
+        run: |
+          python .github/scripts/parse_all_latest_urls.py \
+            --base-url "https://${{ env.S3_BUCKET }}.s3.${{ secrets.NIGHTLY_AWS_REGION }}.amazonaws.com" \
+            --channel "${{ needs.nightly-settings.outputs.channel }}"
+
       - name: Notify Slack (workflow result)
         uses: ravsamhq/notify-slack-action@v2
         with:
@@ -402,6 +465,8 @@ jobs:
             *Tag:* ${{ needs.nightly-settings.outputs.tag || 'none' }}
             *Description:*
             ${{ needs.changelog.outputs.body || 'no changes, build skipped' }}
+            *Download URL:*
+            ${{ steps.urls.outputs.message }}
           footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
         env:
           SLACK_WEBHOOK_URL: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.SLACK_WEBHOOK_URL_ALERTS || secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}

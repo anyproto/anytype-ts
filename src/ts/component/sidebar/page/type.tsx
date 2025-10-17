@@ -222,7 +222,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const details: any = this.props.details || {};
 		const type = S.Record.getTypeType();
 
-		if (!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
+		if (!type || !U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName)) {
 			return;
 		};
 
@@ -256,7 +256,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 					const format = I.LayoutFormat[this.object.layoutFormat];
 
 					U.Object.openRoute(message.details);
-					S.Common.getRef('sidebarLeft')?.getChild()?.refFilter?.setValue('');
+					S.Common.getRef('sidebarLeft')?.getComponentRef()?.refFilter?.setValue('');
 
 					analytics.event('CreateObject', { objectType: J.Constant.typeKey.type, route, format });
 				};

@@ -3,6 +3,12 @@ export enum SidebarDirection {
 	Right	 = 'right',
 };
 
+export enum SidebarPanel {
+	Left = 'left',
+	SubLeft = 'subLeft',
+	Right = 'right',
+};
+
 export interface SidebarPageComponent {
 	page?: string;
 	rootId?: string;

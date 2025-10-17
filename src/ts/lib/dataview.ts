@@ -312,7 +312,7 @@ class Dataview {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
-		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
+		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters.map(this.filterMapper), object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -555,7 +555,7 @@ class Dataview {
 			return details;
 		};
 
-		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
+		if (view.groupRelationKey) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
 				if (group) {
@@ -574,7 +574,7 @@ class Dataview {
 		};
 
 		for (const filter of view.filters) {
-			if (!conditions.includes(filter.condition)) {
+			if (!conditions.includes(filter.condition) || (filter.relationKey == view.groupRelationKey)) {
 				continue;
 			};
 

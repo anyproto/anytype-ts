@@ -64,13 +64,18 @@ class UtilSubscription {
 	 */
 	defaultFilters (param: any) {
 		const { config } = S.Common;
-		const { ignoreHidden, ignoreDeleted, ignoreArchived, ignoreChat } = param;
+		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = U.Common.objectCopy(param.filters || []);
 		
 		let skipLayouts = [];
 
-		if (ignoreChat) {
+		if (!config.experimental) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+		};
+
+		if (skipLayouts.length) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
+			filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		};
 
 		if (skipLayouts.length) {
@@ -142,7 +147,6 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: true,
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
@@ -315,7 +319,6 @@ class UtilSubscription {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			ignoreArchived: true,
-			ignoreChat: true,
 			skipLayoutFormat: null,
 		}, param);
 
@@ -512,13 +515,22 @@ class UtilSubscription {
 				noDeps: true,
 			},
 			{
+				subId: J.Constant.subId.archived,
+				keys: [],
+				filters: [
+					{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+				],
+				ignoreArchived: false,
+				noDeps: true,
+			},
+			{
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(false),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc },
+					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
@@ -530,7 +542,6 @@ class UtilSubscription {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
-				ignoreChat: false,
 				onSubscribe: () => {
 					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				},

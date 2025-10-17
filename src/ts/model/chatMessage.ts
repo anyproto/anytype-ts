@@ -1,5 +1,5 @@
 import { I, U } from 'Lib';
-import { observable, intercept, makeObservable } from 'mobx';
+import { observable, intercept, makeObservable, isObservableMap } from 'mobx';
 import { Mark } from './content/text';
 
 class ChatMessageContent implements I.ChatMessageContent {
@@ -57,7 +57,7 @@ class ChatMessage implements I.ChatMessage {
 	replyToMessageId = '';
 	content: I.ChatMessageContent = null;
 	attachments: I.ChatMessageAttachment[] = [];
-	dependencies: any[] = [];
+	dependencies: Map<string, any> = new Map();
 	reactions = [];
 
 	isFirst = false;
@@ -77,7 +77,7 @@ class ChatMessage implements I.ChatMessage {
 		this.replyToMessageId = String(props.replyToMessageId || '');
 		this.content = new ChatMessageContent(props.content || {} as ChatMessageContent);
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
-		this.dependencies = Array.isArray(props.dependencies) ? props.dependencies : [];
+		this.dependencies = props.dependencies || new Map();
 		this.reactions = props.reactions || [];
 		this.isFirst = Boolean(props.isFirst);
 		this.isLast = Boolean(props.isLast);

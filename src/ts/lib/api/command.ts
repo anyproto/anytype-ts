@@ -1238,11 +1238,6 @@ export const BlockDataviewSetSource = (contextId: string, blockId: string, sourc
 
 export const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
-	const target = block.content.targetBlockId;
-
-	if (!block.id && [ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target)) {
-		block.id = target;
-	};
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);

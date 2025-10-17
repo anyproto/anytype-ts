@@ -4,7 +4,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
+import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
@@ -12,10 +12,12 @@ import BodyRow from './grid/body/row';
 import FootRow from './grid/foot/row';
 
 const PADDING = 46;
+const HEIGHT = 48;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
 
 	node: any = null;
+	cache: any = null;
 	ox = 0;
 
 	constructor (props: I.ViewComponent) {
@@ -28,6 +30,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getColumnWidths = this.getColumnWidths.bind(this);
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+		});
 	};
 
 	render () {
@@ -40,6 +47,27 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
+
+		const rowRenderer = ({ key, index, parent, style }) => (
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={this.cache}
+				columnIndex={0}
+				rowIndex={index}
+				hasFixedWidth={() => {}}
+			>
+				<BodyRow 
+					key={`grid-row-${view.id + index}`} 
+					{...this.props} 
+					recordId={records[index]}
+					recordIdx={index}
+					style={{ ...style, top: style.top + 2 }}
+					cellPosition={this.cellPosition}
+					getColumnWidths={this.getColumnWidths}
+				/>
+			</CellMeasurer>
+		);
 
 		let content = null;
 		if (!length) {
@@ -81,17 +109,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 												rowCount={length}
 												rowHeight={this.getRowHeight()}
 												onRowsRendered={onRowsRendered}
-												rowRenderer={({ key, index, style }) => (
-													<BodyRow 
-														key={`grid-row-${view.id + index}`} 
-														{...this.props} 
-														recordId={records[index]}
-														recordIdx={index}
-														style={{ ...style, top: style.top + 2 }}
-														cellPosition={this.cellPosition}
-														getColumnWidths={this.getColumnWidths}
-													/>
-												)}
+												deferredMeasurmentCache={this.cache}
+												rowRenderer={rowRenderer}
 												scrollTop={scrollTop}
 											/>
 										</div>
@@ -219,7 +238,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	onScrollVertical () {
 		const { isPopup, isInline } = this.props;
 
-		if (isInline) {
+		if (isInline || isPopup) {
 			return;
 		};
 
@@ -230,26 +249,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
 		const scroll = node.find('#scroll');
 		const { left, top } = rowHead.offset();
-		const sy = container.scrollTop();
 		const sx = scroll.scrollLeft();
 		
-		let cy = 0;
-		let threshold = 0;
-		let x = 0;
-		let y = 0;
-
-		if (isPopup) {
-			return;
-		};
-
-		cy = top - sy;
-		threshold = J.Size.header;
-		x = left + sx;
-		y = threshold;
-
 		let clone = node.find('#rowHeadClone');
 
 		if (!clone.length) {
@@ -271,13 +274,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			clone.find('.rowHead').attr({ id: '' });
 		};
 
-		if (cy <= threshold) {
-			clone.css({ left: x, top: y, width: rowHead.outerWidth() + 2, transform: `translate3d(${-sx}px,0px,0px)`	});
+		if (top <= J.Size.header) {
+			clone.css({ 
+				left: left + sx, 
+				top: J.Size.header, 
+				width: rowHead.outerWidth() + 2, 
+				transform: `translate3d(${-sx}px,0px,0px)`,	
+			});
 		} else {
 			clone.remove();
 		};
 
-		rowHead.toggleClass('fixed', cy <= threshold);
+		rowHead.toggleClass('fixed', top <= J.Size.header);
 	};
 
 	resizeColumns (relationKey: string, width: number) {
@@ -413,6 +421,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
 
 		S.Menu.open('dataviewRelationList', { 
+			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 10,

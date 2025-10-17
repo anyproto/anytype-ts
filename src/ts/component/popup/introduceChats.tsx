@@ -129,7 +129,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const Message = (item: any) => {
-		const { id, isSelf, isFirst, isLast, text, author, time, withAttachment, userpic } = item
+		const { id, isSelf, isFirst, isLast, text, author, time, withAttachment, userpic } = item;
 		const cn = [
 			'message',
 			id,

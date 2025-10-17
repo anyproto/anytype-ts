@@ -266,37 +266,6 @@ export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) =
 	};
 };
 
-/*
-export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
-	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
-	const hashes = new Set<string>();
-	const edges: any[] = (response.getEdgesList() || []).map(Mapper.From.GraphEdge).filter(d => {
-		if (d.source == d.target) {
-			return false;
-		};
-
-		const hash = `${d.source}-${d.target}`;
-
-		hashes.add(hash);
-		return !hashes.has(hash);
-	});
-
-	// Find backlinks
-	for (const edge of edges) {
-		const idx = edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
-		const double = edges[idx];
-
-		if (idx >= 0) {
-			edge.isDouble = true;
-			edge.types = [ edge.type, double.type ];
-			edges.splice(idx, 1);
-		};
-	};
-
-	return { edges, nodes };
-};
-*/
-
 export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
 	const edgesRaw = response.getEdgesList() || [];

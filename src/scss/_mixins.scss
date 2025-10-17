@@ -1,10 +1,9 @@
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
 $transitionCommon: 0.1s $easeInQuint;
 $transitionAllCommon: all $transitionCommon;
-$transitionSidebarTime: 0.20s;
+$transitionSidebarTime: 0.2s;
 $transitionChatMessageTime: 0.3s;
 $sidebarRightWidth: 348px;
-$vaultWidthCollapsed: 72px;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

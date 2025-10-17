@@ -20,7 +20,7 @@ export enum SpaceType {
 
 export enum SpaceUxType {
 	None 					 = 0,
-	Space 					 = 1,
+	Data 					 = 1,
 	Stream					 = 2,
 	Chat 					 = 3,
 };

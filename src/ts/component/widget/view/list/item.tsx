@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
+import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
@@ -11,7 +11,6 @@ interface Props extends I.WidgetViewComponent {
 	id: string;
 	index?: number;
 	style?: any;
-	isEditing?: boolean;
 	isCompact?: boolean;
 	isPreview?: boolean;
 	isSection?: boolean;
@@ -20,23 +19,31 @@ interface Props extends I.WidgetViewComponent {
 
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, parent, block, isCompact, isEditing, isPreview, isSection, hideIcon, onContext } = props;
+	const { subId, id, block, isCompact, isSection, hideIcon, onContext } = props;
+	const { space } = S.Common;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const canDrag = false;
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !canDrag });
 	const hasMore = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
+	const isChat = U.Object.isChatLayout(object.layout);
+	const isBookmark = U.Object.isBookmarkLayout(object.layout);
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
 		transition,
+	};
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, id);
 	};
 
 	if (canDrag) {
@@ -93,6 +100,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	let descr = null;
 	let more = null;
 	let icon = null;
+	let time = null;
 
 	if (!hideIcon) {
 		icon = (
@@ -112,8 +120,18 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (!isCompact) {
-		if (U.Object.isBookmarkLayout(object.layout)) {
-			descr = <div className="descr">{U.Common.shortUrl(source)}</div>;
+		if (isBookmark) {
+			descr = <Label className="descr" text={U.Common.shortUrl(source)} />;
+		} else 
+		if (isChat) {
+			const list = S.Chat.getList(S.Chat.getChatSubId(J.Constant.subId.chatPreview, space, id)).slice(0).
+				sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+
+			const last = list.length ? list[0] : null;
+			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
+
+			descr = <Label className="descr" text={text} />;
+			time = last ? <div className="time">{U.Date.timeAgo(last.createdAt)}</div> : '';
 		} else {
 			descr = <ObjectDescription object={object} />;
 		};
@@ -132,7 +150,15 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				{descr}
 			</div>
 
+			{isChat ? (
+				<div className="chatInfo">
+					{time}
+					<ChatCounter {...counters} />
+				</div>
+			) : ''}
+
 			<div className="buttons">
+
 				{more}
 			</div>
 		</div>

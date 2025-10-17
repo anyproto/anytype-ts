@@ -67,11 +67,11 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
-
-	let { attachments } = S.Chat;
+	
+	let attachments = S.Chat.getAttachments(subId);
 
 	const setAttachments = (list: any[]) => {
-		S.Chat.setAttachments(list);
+		S.Chat.setAttachments(subId, list);
 	};
 
 	const checkSendButton = () => {
@@ -250,7 +250,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const oneSymbolBefore = range.current ? value[range.current.from - 1] : '';
 		const twoSymbolBefore = range.current ? value[range.current.from - 2] : '';
 		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || (twoSymbolBefore == ' '));
+		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
 
 		setMarks(parsed.marks);
 
@@ -474,7 +474,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			marks.current = Mark.adjust(marks.current, from - 1, value.length + 1);
+			marks.current = Mark.adjust(marks.current, from, value.length);
 			marks.current.push({ 
 				type: I.MarkType.Link, 
 				range: { from, to }, 
@@ -578,7 +578,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
-					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.attachments) });
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.getAttachments(subId)) });
 
 					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
 					context?.close();
@@ -1566,7 +1566,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 											object={item}
 											onRemove={onAttachmentRemove}
 											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.attachments)}
+											updateAttachments={() => updateAttachments(S.Chat.getAttachments(subId))}
 										/>
 									</SwiperSlide>
 								))}

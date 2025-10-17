@@ -293,8 +293,6 @@ class UtilObject {
 		param = param || {};
 		param.limit = 1;
 
-		console.log(param);
-
 		this.getByIds([ id ], param, objects => {
 			if (callBack) {
 				callBack(objects[0]);
@@ -313,6 +311,10 @@ class UtilObject {
 
 		if (undefined === param.ignoreArchived) {
 			param.ignoreArchived = false;
+		};
+
+		if (undefined === param.ignoreHidden) {
+			param.ignoreHidden = false;
 		};
 
 		U.Subscription.search(param, (message: any) => {
@@ -440,7 +442,7 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {

@@ -8,6 +8,10 @@
 .header {
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; }
 	.side.left { padding: 0px 12px; flex-shrink: 0; }
+	.side.left {
+		.icon:first-child { margin-left: 0px; }
+		.icon:last-child { margin-right: 0px; }
+	}
 	.side.center { flex-grow: 1; justify-content: center; max-width: 60%; }
 	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 	.side.right {
@@ -55,15 +59,13 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
-	.sync { -webkit-app-region: no-drag; }
-
 	.icon.back { margin-left: 8px; }
 	.icon.forward { margin-right: 8px; }
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
-	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
+	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
 	.icon.pin { background-image: url('~img/icon/header/pin.svg'); }
@@ -73,7 +75,7 @@
 	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
 }
 .header.isSmall {
-	.path { visibility: hidden; overflow: hidden; width: 0px; }
+	.path, .headerBanner { visibility: hidden; overflow: hidden; width: 0px; }
 }
 
 .header.sidebarAnimation {
@@ -171,16 +173,5 @@ html.bodyAuthSelect {
 		.icon.anyName { width: 20px; height: 20px; background: url('~img/icon/header/anyName.svg'); }
 		.icon.info { width: 16px; height: 16px; background: url('~img/icon/header/info.svg'); }
 		.label { @include text-very-small; font-weight: 500; color: var(--color-text-primary); }
-	}
-}
-
-.popup {
-	.header { position: sticky; padding: 0px; top: 0px !important; }
-	.header {
-		.side.left { padding-left: 14px !important; }
-		.side.left {
-			.icon.sidebar { display: none; }
-			.icon.expand { display: inline-block; }
-		}
 	}
 }

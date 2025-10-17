@@ -69,7 +69,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		});
 
 		const spaceUxTypes = [
-			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
 			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
 		].map((it: any) => {
 			it.name = translate(`spaceUxType${it.id}`);
@@ -326,6 +326,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		this.refMode?.setValue(String(space.notificationMode));
+		this.refUxType?.setValue(String(space.uxType));
 	};
 
 	setInvite (cid: string, key: string) {
@@ -388,8 +389,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		switch (item.id) {
 			case 'invite': {
-				this.props.onPage('spaceShare');
-
+				Action.openSpaceShare(analytics.route.settingsSpace);
 				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};
@@ -431,9 +431,15 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 	};
 
 	onSpaceUxType (v) {
+		v = Number(v);
+
 		const spaceview = U.Space.getSpaceview();
+		const onCancel = () => {
+			this.refUxType.setValue(spaceview.uxType);
+		};
 
 		S.Popup.open('confirm', {
+			onClose: onCancel,
 			data: {
 				icon: 'warning-red',
 				title: translate('popupConfirmUxTypeChangeTitle'),
@@ -441,8 +447,6 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					v = Number(v);
-
 					const details: any = {
 						spaceUxType: v,
 						spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
@@ -451,9 +455,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 					C.WorkspaceSetInfo(S.Common.space, details);
 					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
 				},
-				onCancel: () => {
-					this.refUxType.setValue(spaceview.uxType);
-				},
+				onCancel,
 			},
 		});
 	};

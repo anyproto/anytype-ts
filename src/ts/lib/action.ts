@@ -903,13 +903,10 @@ class Action {
 	};
 
 	toggleWidgetsForObject (objectId: string, route?: string) {
-		const { widgets } = S.Block;
-		
 		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
-			const first = S.Block.getFirstBlock(widgets, 1, it => it.isWidget() && (it.content.section == I.WidgetSection.Pin));
-			this.createWidgetFromObject(objectId, objectId, first?.id, I.BlockPosition.Top, route);
+			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
 		};
 	};
 
@@ -1086,6 +1083,35 @@ class Action {
 		});
 
 		analytics.event('ScreenSpaceInfo');
+	};
+
+	emptyBin (route: string, callBack?: () => void) {
+		U.Subscription.search({
+			filters: [
+				{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+			],
+			ignoreArchived: false,
+		}, (message: any) => {
+			if (!message.error.code) {
+				this.delete((message.records || []).map(it => it.id), route, callBack);
+			};
+		});
+	};
+
+	openSettings (id: string, route: string) {
+		U.Object.openRoute({ 
+			id, 
+			layout: I.ObjectLayout.Settings,
+			_routeParam_: { 
+				additional: [ 
+					{ key: 'route', value: route },
+				],
+			},
+		});
+	};
+
+	openSpaceShare (route: string) {
+		this.openSettings('spaceShare', route);
 	};
 
 };
