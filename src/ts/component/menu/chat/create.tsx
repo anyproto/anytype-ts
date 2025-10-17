@@ -34,6 +34,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
+				if (data.onSubmit) {
+					data.onSubmit(message.details);
+				};
+
 				close();
 			};
 		};
