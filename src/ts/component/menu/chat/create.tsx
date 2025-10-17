@@ -5,7 +5,7 @@ import { I, C, J, S, translate, keyboard } from 'Lib';
 
 const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close } = props;
+	const { param, close, position } = props;
 	const { data, className, classNameWrap } = param;
 	const details = data.details || {};
 	const editableRef = useRef(null);
@@ -66,6 +66,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		setValue(nameRef.current);
 	}, []);
+
+	useEffect(() => {
+		position();
+	});
 
 	return (
 		<>
