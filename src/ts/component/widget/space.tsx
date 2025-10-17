@@ -50,7 +50,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					deleteEmpty: true,
 					selectTemplate: true,
 					withImport: true,
-				}, analytics.route.navigation, object => U.Object.openAuto(object));
+				}, analytics.route.navigation, object => U.Object.openConfig(object));
 				break;
 			};
 
