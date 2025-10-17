@@ -463,9 +463,10 @@ class Sidebar {
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
 		this.resizePage(width, null, true);
 		this.setAnimating(true);
-		this.set(I.SidebarPanel.SubLeft, { isClosed: true });
 
 		window.setTimeout(() => {
+			this.set(I.SidebarPanel.SubLeft, { isClosed: true });
+
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
