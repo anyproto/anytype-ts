@@ -140,7 +140,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			if (d < 0) {
 				if (w <= J.Size.sidebar.width.close) {
-					sidebar.close();
+					sidebar.close(panel);
 				} else {
 					sidebar.setWidth(panel, w);
 				};
@@ -148,7 +148,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			if (d > 0) {
 				if (data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
-					sidebar.open(J.Size.sidebar.width.min);
+					sidebar.open(panel, '', J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {
 					sidebar.setWidth(panel, w);
@@ -181,7 +181,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onToggleClick = () => {
-		sidebar.toggleOpenClose();
+		sidebar.leftPanelToggle();
 	};
 
 	useEffect(() => {

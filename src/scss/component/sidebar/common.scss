@@ -58,6 +58,9 @@
 	@import "./page/common";
 
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
+	.pageWrapper, .subPageWrapper {
+		&.isClosed { overflow: hidden; }
+	}
 
 	.pageWrapper { z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
 	.pageWrapper {

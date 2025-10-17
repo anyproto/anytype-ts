@@ -68,7 +68,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.open(width);
+				sidebar.leftPanelOpen(width);
 			};
 		});
 	};
@@ -101,7 +101,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.close();
+			sidebar.leftPanelClose();
 			closeSidebar.current = false;
 		};
 	};

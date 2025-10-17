@@ -242,6 +242,7 @@ class UtilRouter {
 
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
+					S.Common.setLeftSidebarState('vault', 'widget');
 
 					U.Data.onInfo(message.info);
 

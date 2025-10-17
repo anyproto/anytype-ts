@@ -81,10 +81,42 @@ class Sidebar {
 		return this.panelData[panel] || { width: J.Size.sidebar.width.default, isClosed: false };
 	};
 
+	open (panel: I.SidebarPanel, subPage?: string, width?: number): void {
+		switch (panel) {
+			case I.SidebarPanel.Left: {
+				this.leftPanelOpen(width);
+				break;
+			};
+
+			case I.SidebarPanel.SubLeft: {
+				if (!subPage) {
+					subPage = S.Common.getLeftSidebarState().subPage;
+				};
+
+				this.leftPanelSubPageOpen(subPage, true);
+				break;
+			};
+		};
+	};
+
+	close (panel: I.SidebarPanel): void {
+		switch (panel) {
+			case I.SidebarPanel.Left: {
+				this.leftPanelClose();
+				break;
+			};
+
+			case I.SidebarPanel.SubLeft: {
+				this.leftPanelSubPageClose(true);
+				break;
+			};
+		};
+	};
+
 	/**
 	 * Closes the sidebar with animation and updates state.
 	 */
-	close (): void {
+	leftPanelClose (): void {
 		const { width, isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || isClosed) {
@@ -111,7 +143,7 @@ class Sidebar {
 	 * Opens the sidebar to the specified width with animation.
 	 * @param {number} [width] - The width to open the sidebar to.
 	 */
-	open (width?: number): void {
+	leftPanelOpen (width?: number): void {
 		const { isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !isClosed) {
@@ -137,7 +169,7 @@ class Sidebar {
 	/**
 	 * Toggles the sidebar open/close state.
 	 */
-	toggleOpenClose () {
+	leftPanelToggle () {
 		if (this.isAnimating) {
 			return;
 		};
@@ -145,10 +177,10 @@ class Sidebar {
 		const { width, isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (isClosed) {
-			this.open(width);
+			this.leftPanelOpen(width);
 			analytics.event('ExpandSidebar');
 		} else {
-			this.close();
+			this.leftPanelClose();
 			analytics.event('CollapseSidebar');
 		};
 
@@ -233,11 +265,11 @@ class Sidebar {
 		};
 
 		if (show) {
-			this.open(dataLeft.width);
+			this.leftPanelOpen(dataLeft.width);
 		};
 
 		if (hide && !dataLeft.isClosed) {
-			this.close();
+			this.leftPanelClose();
 		};
 	};
 
@@ -352,11 +384,7 @@ class Sidebar {
 		this.isAnimating = v;
 	};
 
-	/**
-	 * Sets the style of the sidebar elements.
-	 * @param {Partial<SidebarData>} v - The style data.
-	 */
-	private setStyle (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
+	private getWrapper (panel: I.SidebarPanel): JQuery<HTMLElement> {
 		let obj = null;
 
 		switch (panel) {
@@ -371,8 +399,22 @@ class Sidebar {
 			};
 		};
 
+		return obj;
+	};
+
+	/**
+	 * Sets the style of the sidebar elements.
+	 * @param {Partial<SidebarData>} v - The style data.
+	 */
+	private setStyle (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
+		const obj = this.getWrapper(panel);
+
 		if (obj && obj.length) {
 			obj.css({ width: v.isClosed ? 0 : v.width });
+		};
+
+		if (undefined !== v.isClosed) {
+			obj.toggleClass('isClosed', v.isClosed);
 		};
 	};
 
