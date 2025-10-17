@@ -72,13 +72,8 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		if (isPopup) {
 			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
 		} else {
-			const subPage = S.Common.getLeftSidebarState().subPage;
 			const match = keyboard.getMatch(isPopup);
 			const cn = [];
-
-			if (subPage == 'widget') {
-				cn.push('active');
-			};
 
 			if (match.params.action != 'settings') {
 				buttons.push({ 

@@ -92,8 +92,6 @@ class Sidebar {
 		};
 
 		this.setAnimating(true);
-		S.Common.setLeftSidebarState('vault', '');
-
 		this.pageWrapperLeft.addClass('anim');
 		this.setElementsWidth(width);
 		this.setStyle(I.SidebarPanel.Left, { width: 0 });
@@ -162,8 +160,8 @@ class Sidebar {
 	 * @param {any} width - The width to set.
 	 */
 	setElementsWidth (width: any): void {
-		this.objLeft.find('#head').css({ width });
-		this.objLeft.find('#body').css({ width });
+		this.pageWrapperLeft.find('#head').css({ width });
+		this.pageWrapperLeft.find('#body').css({ width });
 	};
 
 	/**
@@ -250,13 +248,17 @@ class Sidebar {
 	 * @param {boolean} animate - Whether to animate the resize.
 	 */
 	resizePageInner (isPopup: boolean, widthLeft: number, widthRight: number, animate: boolean): void {
+		this.initObjects(isPopup);
+
+		if (!this.pageFlex || !this.pageFlex.length) {
+			return;
+		};
+
 		const isMain = keyboard.isMain();
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
 		const isPopupMainHistory = keyboard.isPopupMainHistory();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-
-		this.initObjects(isPopup);
 
 		let leftButtonX = 12;
 
@@ -267,8 +269,6 @@ class Sidebar {
 		if ((widthRight === null) && this.objRight && this.objRight.length && rightSidebar.isOpen) {
 			widthRight = this.objRight.outerWidth();
 		};
-
-		const { isFullScreen } = S.Common;
 
 		if (isPopup) {
 			widthLeft = 0;
@@ -282,6 +282,7 @@ class Sidebar {
 		widthLeft = Number(widthLeft) || 0;
 		widthRight = Number(widthRight) || 0;
 
+		const { isFullScreen } = S.Common;
 		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
@@ -393,6 +394,77 @@ class Sidebar {
 		return Number($('#sidebarDummyLeft').outerWidth()) || 0;
 	};
 
+	leftPanelSubPageToggle (id: string) {
+		this.initObjects(false);
+
+		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
+
+		if (isClosed) {
+			this.leftPanelSubPageOpen(id);
+		} else {
+			this.leftPanelSubPageClose();
+		};
+	};
+
+	leftPanelSubPageClose () {
+		if (this.isAnimating) {
+			return;
+		};
+
+		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const width = dataLeft.isClosed ? 0 : dataLeft.width;
+
+		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.objLeft.addClass('sidebarAnimation').css({ width });
+		this.dummyLeft.addClass('sidebarAnimation').css({ width });
+		this.resizePage(width, null, true);
+		this.setAnimating(true);
+		this.set(I.SidebarPanel.SubLeft, { isClosed: true });
+
+		window.setTimeout(() => {
+			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+			this.dummyLeft.removeClass('sidebarAnimation');
+			this.setAnimating(false);
+			this.resizePage(null, null, false);
+		}, J.Constant.delay.sidebar);
+	};
+
+	leftPanelSubPageOpen (id: string) {
+		if (this.isAnimating) {
+			return;
+		};
+
+		const state = S.Common.getLeftSidebarState();
+		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+		const width = dataLeft.isClosed ? 0 : dataLeft.width;
+		const newWidth = width + dataSubLeft.width;
+
+		S.Common.setLeftSidebarState(state.page, id);
+
+		this.setStyle(I.SidebarPanel.Left, { width });
+		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.objLeft.css({ width });
+		this.dummyLeft.css({ width });
+		this.set(I.SidebarPanel.SubLeft, { isClosed: false });
+		this.setAnimating(true);
+
+		raf(() => {
+			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
+			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
+			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
+			this.resizePage(newWidth, null, true);
+
+			window.setTimeout(() => {
+				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+				this.dummyLeft.removeClass('sidebarAnimation');
+				this.setAnimating(false);
+			}, J.Constant.delay.sidebar);
+		});
+	};
+
 	/**
 	 * Gets the reference to the right panel for the given context.
 	 * @param {boolean} isPopup - Whether the context is a popup.
@@ -490,65 +562,6 @@ class Sidebar {
 
 			$(window).trigger('resize');
 		}, animate ? J.Constant.delay.sidebar : 0);
-	};
-
-	leftPanelSubPageToggle (id: string) {
-		this.initObjects(false);
-
-		const state = S.Common.getLeftSidebarState();
-		const open = id && !state.subPage;
-
-		if (open) {
-			this.leftPanelSubPageOpen(id);
-		} else {
-			this.leftPanelSubPageClose();
-		};
-	};
-
-	leftPanelSubPageClose () {
-		const state = S.Common.getLeftSidebarState();
-		const { width } = this.getData(I.SidebarPanel.Left);
-
-		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
-		this.objLeft.addClass('sidebarAnimation').css({ width });
-		this.dummyLeft.addClass('sidebarAnimation').css({ width });
-		this.resizePage(width, null, true);
-
-		window.setTimeout(() => {
-			S.Common.setLeftSidebarState(state.page, '');
-
-			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
-			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
-			this.dummyLeft.removeClass('sidebarAnimation');
-		}, J.Constant.delay.sidebar);
-	};
-
-	leftPanelSubPageOpen (id: string) {
-		const state = S.Common.getLeftSidebarState();
-		const dataLeft = this.getData(I.SidebarPanel.Left);
-		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
-		const width = dataLeft.isClosed ? 0 : dataLeft.width;
-		const newWidth = width + dataSubLeft.width;
-
-		S.Common.setLeftSidebarState(state.page, id);
-
-		this.setStyle(I.SidebarPanel.Left, { width });
-		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
-		this.objLeft.css({ width });
-		this.dummyLeft.css({ width });
-
-		raf(() => {
-			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
-			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
-			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
-			this.resizePage(newWidth, null, true);
-
-			window.setTimeout(() => {
-				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
-				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
-				this.dummyLeft.removeClass('sidebarAnimation');
-			}, J.Constant.delay.sidebar);
-		});
 	};
 
 	/**

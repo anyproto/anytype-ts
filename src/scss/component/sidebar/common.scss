@@ -64,9 +64,9 @@
 		&.anim { transition: width $transitionSidebarTime linear; }
 	}
 
-	.subPageWrapper { padding: 8px 8px 8px 0px; width: 336px; display: none; }
+	.subPageWrapper { padding: 8px 0px; width: 336px; display: none; }
 	.subPageWrapper {
-		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; }
+		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
 
 		&.sidebarAnimation { transition-property: transform; }
 	}
