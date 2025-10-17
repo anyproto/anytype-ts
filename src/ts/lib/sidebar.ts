@@ -535,6 +535,7 @@ class Sidebar {
 
 		if (isOpen) {
 			css.right = 0;
+			this.objRight.show();
 		} else {
 			css.right = -J.Size.sidebar.right;
 			this.objRight.hide();
