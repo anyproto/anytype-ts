@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -52,7 +52,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onKeyDown = (e: any) => {
 		const key = e.key.toLowerCase();
-		const { isClosed, width } = sidebar.data;
+		const { isClosed, width } = sidebar.getData(I.SidebarPanel.Left);
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -68,7 +68,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.open(width);
+				sidebar.leftPanelOpen(width);
 			};
 		});
 	};
@@ -101,7 +101,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.close();
+			sidebar.leftPanelClose();
 			closeSidebar.current = false;
 		};
 	};
@@ -387,7 +387,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onSettings = () => {
-		U.Router.go('/main/settings/index', {});
+		Action.openSettings('index', analytics.route.vault);
 	};
 
 	const onGallery = () => {

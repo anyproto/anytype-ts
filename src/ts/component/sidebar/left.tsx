@@ -30,6 +30,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
+	const pageWrapperRef = useRef(null);
+	const subPageWrapperRef = useRef(null);
 	const ox = useRef(0);
 	const oy = useRef(0);
 	const sx = useRef(0);
@@ -78,17 +80,31 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
-	const onResizeStart = (e: MouseEvent) => {
+	const onResizeStart = (e: MouseEvent, panel: I.SidebarPanel) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
 		const win = $(window);
 		const body = $('body');
-		const { left, top } = node.offset();
 
-		ox.current = left;
-		oy.current = top;
+		switch (panel) {
+			case I.SidebarPanel.Left: {
+				const o = $(pageWrapperRef.current).offset();
+
+				ox.current = o.left;
+				oy.current = o.top;
+				break;
+			};
+
+			case I.SidebarPanel.SubLeft: {
+				const o = $(subPageWrapperRef.current).offset();
+
+				ox.current = o.left;
+				oy.current = o.top;
+				break;
+			};
+		};
+
 		sx.current = e.pageX;
 
 		keyboard.disableSelection(true);
@@ -96,11 +112,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		body.addClass('colResize');
 
 		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
-		win.on('mousemove.sidebar', e => onResizeMove(e));
+		win.on('mousemove.sidebar', e => onResizeMove(e, panel));
 		win.on('mouseup.sidebar blur.sidebar', e => onResizeEnd());
 	};
 
-	const onResizeMove = (e: any) => {
+	const onResizeMove = (e: any, panel: I.SidebarPanel) => {
 		if (frame.current) {
 			raf.cancel(frame.current);
 		};
@@ -116,6 +132,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			const w = Math.max(0, (e.pageX - ox.current));
 			const d = w - width.current;
+			const data = sidebar.getData(panel);
 
 			if (!d) {
 				return;
@@ -123,18 +140,18 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			if (d < 0) {
 				if (w <= J.Size.sidebar.width.close) {
-					sidebar.close();
+					sidebar.close(panel);
 				} else {
-					sidebar.setWidth(w);
+					sidebar.setWidth(panel, w);
 				};
 			};
 
 			if (d > 0) {
-				if (sidebar.data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
-					sidebar.open(J.Size.sidebar.width.min);
+				if (data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
+					sidebar.open(panel, '', J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {
-					sidebar.setWidth(w);
+					sidebar.setWidth(panel, w);
 				};
 			};
 
@@ -164,7 +181,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onToggleClick = () => {
-		sidebar.toggleOpenClose();
+		sidebar.leftPanelToggle();
 	};
 
 	useEffect(() => {
@@ -202,7 +219,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				id="sidebarLeft" 
 				className={cn.join(' ')} 
 			>
-				<div id="pageWrapper" className="pageWrapper">
+				<div id="pageWrapper" ref={pageWrapperRef} className="pageWrapper">
 					{Component ? (
 						<div id={pageId} className={getClassName(componentId)}>
 							<Component 
@@ -214,12 +231,12 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							/> 
 						</div>
 					) : ''}
-					<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
+					<div className="resize-h" draggable={true} onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}>
 						<div className="resize-handle" onClick={onHandleClick} />
 					</div>
 				</div>
 				
-				<div id="subPageWrapper" className="subPageWrapper">
+				<div id="subPageWrapper" ref={subPageWrapperRef} className="subPageWrapper">
 					{SubComponent ? (
 						<div id={subPageId} className={getClassName(subComponentId)}>
 							<SubComponent 
@@ -231,6 +248,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							/> 
 						</div>
 					) : ''}
+					<div className="resize-h" draggable={true} onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}>
+						<div className="resize-handle" />
+					</div>
 				</div>
 			</div>
 		</>

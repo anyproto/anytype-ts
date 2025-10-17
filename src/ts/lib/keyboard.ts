@@ -158,12 +158,11 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const showWidget = !isPopup && space.isChat;
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
 
-			sidebar.toggleOpenClose();
+			sidebar.leftPanelToggle();
 		});
 
 		if (this.isMainEditor()) {
