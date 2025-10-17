@@ -2,15 +2,11 @@
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
+	padding: 8px 8px 8px 0px;
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); }
-
-	&.withSidebarLeft { padding: 8px 8px 8px 0px; }
-	&.withSidebarLeft {
-		#page { border-radius: 12px;  }
-	}
+	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); border-radius: 12px; }
 
 	&.withSidebarRight { padding-right: 0px; }
 	&.withSidebarRight {
@@ -22,7 +18,7 @@
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-.sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
 .sidebarHeadIcon
 .sidebarHeadIcon {
 	&.sidebarAnimation { transition-property: left; }
@@ -57,7 +53,7 @@
 .sidebar {
 	@import "./page/common";
 
-	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
+	.pageWrapper, .subPageWrapper { padding: 8px 0px; flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
 		&.isClosed { overflow: hidden; }
 	}
@@ -67,17 +63,13 @@
 		&.anim { transition: width $transitionSidebarTime linear; }
 	}
 
-	.subPageWrapper { padding: 8px 0px; width: 336px; display: none; }
+	.subPageWrapper { width: 336px; display: flex; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
 
 		&.sidebarAnimation { transition-property: transform; }
 	}
 
-	&.withSubPage { 
-		.subPageWrapper { display: flex; } 
-	}
-	
 	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; }
 	.resize-h {
 		.resize-handle {

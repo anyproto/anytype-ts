@@ -133,7 +133,7 @@ class Sidebar {
 		this.resizePage(0, null, true);
 
 		this.removeAnimation(() => {
-			this.objLeft.addClass('isClosed');
+			this.pageWrapperLeft.addClass('isClosed');
 
 			window.clearTimeout(this.timeoutAnim);
 			$(window).trigger('resize');
@@ -154,9 +154,7 @@ class Sidebar {
 
 		this.setElementsWidth(width);
 		this.setAnimating(true);
-
-		this.objLeft.removeClass('isClosed');
-		this.pageWrapperLeft.addClass('anim');
+		this.pageWrapperLeft.addClass('anim').removeClass('isClosed');
 
 		this.setStyle(I.SidebarPanel.Left, { width });
 		this.set(I.SidebarPanel.Left, { isClosed: false });

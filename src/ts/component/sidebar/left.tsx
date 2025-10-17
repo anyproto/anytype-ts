@@ -41,10 +41,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
 
-	if (subPage) {
-		cn.push('withSubPage');
-	};
-
 	const getComponentId = (id: string) => {
 		id = String(id || '');
 		return U.Common.toCamelCase(id.replace(/\//g, '-'));
