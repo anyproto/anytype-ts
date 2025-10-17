@@ -147,7 +147,7 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	loadData (subId: string, limit: number) {
-		const { d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+		const { rootId, d, m, y, isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const view = getView();
 
 		if (!view) {
