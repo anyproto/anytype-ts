@@ -25,7 +25,10 @@
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
-		video { width: 100%; object-fit: contain; max-height: 704px; }
+		.mediaVideo {
+			.controls { display: none; }
+			video { width: 100%; object-fit: contain; max-height: 704px; }
+		}
 
 		.pdfWrapper { 
 			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary);

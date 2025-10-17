@@ -256,8 +256,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			id: '',
 			name: translate(`viewName${viewType}`),
 			type: viewType,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
-			endRelationKey: view.endRelationKey || Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
+			groupRelationKey: Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
+			endRelationKey: Relation.getGroupOption(rootId, block.id, viewType, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 			filters: [],
 			sorts: [],
@@ -572,6 +572,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						<div className={buttonWrapCn.join(' ')}>
 							<Button
 								id={`button-${block.id}-add-record`}
+								color="accent"
 								className="addRecord c28"
 								tooltipParam={{ text: tooltip }}
 								text={translate('commonNew')}
@@ -580,6 +581,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 							{isAllowedTemplate ? (
 								<Button
 									id={`button-${block.id}-add-record-select`}
+									color="accent"
 									className="select c28"
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 									onClick={e => onTemplateMenu(e, -1)}

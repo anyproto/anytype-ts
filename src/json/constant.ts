@@ -110,6 +110,7 @@ export default {
 		search:			 		'search',
 		profile:		 		'profile',
 		deleted:		 		'deleted',
+		archived:		 		'archived',
 		type:			 		'type',
 		typeStore:		 		'typeStore',
 		relation:		 		'relation',

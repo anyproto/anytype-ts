@@ -4,5 +4,6 @@
 		.content { padding: 0px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px 0px; justify-content: center; }
 		.editableWrap { @include text-header1; width: 100%; text-align: center; margin: 0px 0px 4px 0px; }
 		.button { width: 100%; }
+		.error { margin: 0px; }
     }
 }

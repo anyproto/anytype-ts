@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Title, Icon, Button } from 'Component';
-import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -30,6 +30,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const messageRefs = useRef({});
 	const timeoutInterface = useRef(0);
 	const timeoutScrollStop = useRef(0);
+	const timeoutResize = useRef(0);
 	const top = useRef(0);
 	const scrolledItems = useRef(new Set());
 	const isLoading = useRef(false);
@@ -122,7 +123,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			const messages = message.messages || [];
-
 			if (messages.length < J.Constant.limit.chat.messages) {
 				setIsLoaded(true);
 			};
@@ -930,6 +930,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const resize = () => {
 		renderDates();
+
+		const container = U.Common.getScrollContainer(isPopup);
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
+
+		container.off(`scroll.${ns}`);
+
+		window.clearTimeout(timeoutResize.current);
+		timeoutResize.current = window.setTimeout(() => {
+			container.on(`scroll.${ns}`, e => onScroll(e));
+		}, 50);
 	};
 
 	const sections = getSections();
@@ -956,7 +966,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					</div>
 					<div className="buttons">
 						<Button 
-							onClick={() => U.Object.openAuto({ id: 'spaceShare', layout: I.ObjectLayout.Settings })} 
+							onClick={() => Action.openSpaceShare(analytics.route.chat)} 
 							text={translate('blockChatEmptyShareInviteLink')} 
 							className="c28" 
 							color="blank" 

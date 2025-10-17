@@ -14,6 +14,8 @@ const HEIGHT = 28; // Height of each row
 interface WidgetTreeRefProps {
 	updateData: () => void;
 	resize: () => void;
+	setSearchIds: (ids: string[]) => void;
+	appendSearchIds?: (ids: string[]) => void;
 	getSearchIds: () => string[];
 	getFilter: () => string;
 };
@@ -25,6 +27,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
 	const deletedIds = new Set(S.Record.getRecordIds(J.Constant.subId.deleted, ''));
+	const archivedIds = new Set(S.Record.getRecordIds(J.Constant.subId.archived, ''));
 	const object = S.Detail.get(S.Block.widgets, targetId);
 	const subKey = block ? `widget${block.id}` : '';
 	const links = useRef([]);
@@ -141,7 +144,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const filterDeletedLinks = (ids: string[]): string[] => {
-		return ids.filter(id => !deletedIds.has(id));
+		return ids.filter(id => !deletedIds.has(id) && !archivedIds.has(id));
 	};
 
 	// return the child nodes details for the given subId
@@ -445,6 +448,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useImperativeHandle(ref, () => ({
 		updateData,
 		resize,
+		setSearchIds,
+		appendSearchIds: (ids: string[]) => setSearchIds((searchIds || []).concat(ids || [])),
 		getSearchIds: () => searchIds,
 		getFilter: () => filter.current,
 	}));

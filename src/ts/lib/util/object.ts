@@ -155,13 +155,7 @@ class UtilObject {
 			id: object.id,
 		};
 
-		const onClose = param.onClose || null;
-
 		param = param || {};
-		param.onClose = () => {
-			sidebar.rightPanelClose(true);
-			onClose?.();
-		};
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {

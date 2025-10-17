@@ -2,6 +2,8 @@
 
 .mediaVideo { width: 100%; }
 .mediaVideo {
+	video { display: block; }
+
     .controls {
         .icon.play {
 			width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;

@@ -11,7 +11,10 @@
 	#body {
 		> #historySideLeft { width: calc(100% - $sidebarRightWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
 
-		> #historySideRight { width: $sidebarRightWidth; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
+		> #historySideRight { 
+			width: $sidebarRightWidth; z-index: 20; background: var(--color-bg-primary); display: flex; flex-direction: column; 
+			position: relative; border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px;
+		}
 		> #historySideRight {
 			> .head { 
 				display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
@@ -27,7 +30,7 @@
 				> .scroll { display: flex; flex-direction: column; gap: 12px 0px; padding: 0px 12px 12px 12px; }
 			}
 
-			.section { background: var(--color-bg-primary); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
+			.section { background: var(--color-shape-highlight-light); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
 			.section {
 				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; gap: 0px 6px; }
 				.head {
@@ -102,7 +105,7 @@
 			.scroll { padding-bottom: 68px; }
 		}
 
-		> #historySideRight.withSidebar { border-right: 1px solid var(--color-shape-highlight-light); }
+		> #historySideRight.withSidebar { border-radius: 0px; }
 	}
 
 	.blockLast { height: 100px; }

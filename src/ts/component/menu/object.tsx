@@ -148,9 +148,9 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (object.isArchived) {
 			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
-			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
+			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin'), caption: keyboard.getCaption('moveToBin') };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
+			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin'), caption: keyboard.getCaption('moveToBin') };
 		};
 
 		// Restrictions
@@ -163,6 +163,7 @@ class MenuObject extends React.Component<I.Menu> {
 			isChat
 		);
 
+		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !isFilePreview && !isInSet && !isChat;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
@@ -178,7 +179,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedDownloadFile = isInFile;
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
-		const allowedEditType = isType && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
+		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
 		const allowedEditChat = isChat;
 
 		if (!allowedPageLink) {
