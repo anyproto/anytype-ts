@@ -245,10 +245,6 @@ class UtilRouter {
 
 					U.Data.onInfo(message.info);
 
-					const spaceview = U.Space.getSpaceview();
-
-					S.Common.setLeftSidebarState('vault', spaceview.isChat ? '' : 'widget');
-
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
 							this.isOpening = false;
