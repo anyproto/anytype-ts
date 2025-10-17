@@ -7,6 +7,8 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
+const STORAGE_KEY = 'sidebarData';
+
 class Sidebar {
 	
 	panelData = {
@@ -36,7 +38,7 @@ class Sidebar {
 	init () {
 		this.initObjects(false);
 
-		const stored = Storage.get('sidebar', Storage.isLocal('sidebar'));
+		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
 		if (stored) {
 			const keys = [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft ];
@@ -93,7 +95,7 @@ class Sidebar {
 					subPage = S.Common.getLeftSidebarState().subPage;
 				};
 
-				this.leftPanelSubPageOpen(subPage, true);
+				this.leftPanelSubPageOpen(subPage);
 				break;
 			};
 		};
@@ -107,7 +109,7 @@ class Sidebar {
 			};
 
 			case I.SidebarPanel.SubLeft: {
-				this.leftPanelSubPageClose(true);
+				this.leftPanelSubPageClose();
 				break;
 			};
 		};
@@ -372,8 +374,8 @@ class Sidebar {
 		this.panelData[panel] = Object.assign(this.panelData[panel], v);
 		this.setStyle(panel, this.panelData[panel]);
 
-		Storage.delete('sidebar', Storage.isLocal('sidebar'));
-		Storage.set('sidebar', this.panelData, Storage.isLocal('sidebar'));
+		Storage.delete(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
+		Storage.set(STORAGE_KEY, this.panelData, Storage.isLocal(STORAGE_KEY));
 	};
 
 	/**
@@ -407,6 +409,8 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The style data.
 	 */
 	private setStyle (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
+		console.log('setStyle', panel, v);
+
 		const obj = this.getWrapper(panel);
 
 		if (obj && obj.length) {
@@ -437,21 +441,21 @@ class Sidebar {
 	};
 
 	leftPanelSubPageToggle (id: string) {
-		this.initObjects(false);
-
 		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
 
 		if (isClosed) {
-			this.leftPanelSubPageOpen(id, true);
+			this.leftPanelSubPageOpen(id);
 		} else {
-			this.leftPanelSubPageClose(true);
+			this.leftPanelSubPageClose();
 		};
 	};
 
-	leftPanelSubPageClose (save?: boolean) {
+	leftPanelSubPageClose () {
 		if (this.isAnimating) {
 			return;
 		};
+
+		this.initObjects(false);
 
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const width = dataLeft.isClosed ? 0 : dataLeft.width;
@@ -461,10 +465,7 @@ class Sidebar {
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
 		this.resizePage(width, null, true);
 		this.setAnimating(true);
-
-		if (save) {
-			this.set(I.SidebarPanel.SubLeft, { isClosed: true });
-		};
+		this.set(I.SidebarPanel.SubLeft, { isClosed: true });
 
 		window.setTimeout(() => {
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
@@ -475,10 +476,12 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
-	leftPanelSubPageOpen (id: string, save?: boolean) {
+	leftPanelSubPageOpen (id: string) {
 		if (this.isAnimating) {
 			return;
 		};
+
+		this.initObjects(false);
 
 		const state = S.Common.getLeftSidebarState();
 		const dataLeft = this.getData(I.SidebarPanel.Left);
@@ -493,10 +496,7 @@ class Sidebar {
 		this.objLeft.css({ width });
 		this.dummyLeft.css({ width });
 		this.setAnimating(true);
-
-		if (save) {
-			this.set(I.SidebarPanel.SubLeft, { isClosed: false });
-		};
+		this.set(I.SidebarPanel.SubLeft, { isClosed: false });
 
 		raf(() => {
 			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });

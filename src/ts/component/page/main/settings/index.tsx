@@ -200,7 +200,7 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 			};
 		};
 
-		sidebar.leftPanelSubPageOpen(page, false);
+		sidebar.leftPanelSubPageOpen(page);
 	};
 
 	onExport (type: I.ExportType, param: any) {
