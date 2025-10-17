@@ -9,9 +9,10 @@ interface SidebarData {
 
 class Sidebar {
 	
-	data: SidebarData = {
-		width: 0,
-		isClosed: false,
+	panelData = {
+		[I.SidebarPanel.Left]: { width: 0, isClosed: false } as SidebarData,
+		[I.SidebarPanel.SubLeft]: { width: 0, isClosed: false } as SidebarData,
+		[I.SidebarPanel.Right]: { width: 0, isClosed: false } as SidebarData,
 	};
 
 	objLeft: JQuery<HTMLElement> = null;
@@ -38,17 +39,25 @@ class Sidebar {
 		const stored = Storage.get('sidebar', Storage.isLocal('sidebar'));
 
 		if (stored) {
-			if ('undefined' == typeof(stored.isClosed)) {
-				stored.isClosed = !stored.width;
-			};
+			const keys = [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft ];
+			for (const key of keys) {
+				const data = stored[key];
 
-			this.set(stored);
+				if (!data) {
+					continue;
+				};
+
+				if ('undefined' == typeof(data.isClosed)) {
+					data.isClosed = !data.width;
+				};
+
+				this.set(key, data);
+			};
 		} else {
-			this.set({ width: J.Size.sidebar.width.default, isClosed: false });
+			this.set(I.SidebarPanel.Left, { width: J.Size.sidebar.width.default, isClosed: false });
+			this.set(I.SidebarPanel.SubLeft, { width: J.Size.sidebar.width.default, isClosed: false });
 			this.resizePage(null, null, false);
 		};
-
-		this.objLeft.toggleClass('isClosed', this.data.isClosed);
 	};
 
 	/**
@@ -68,11 +77,15 @@ class Sidebar {
 		this.leftButton = $('#sidebarLeftButton');
 	};
 
+	getData (panel: I.SidebarPanel): SidebarData {
+		return this.panelData[panel] || { width: J.Size.sidebar.width.default, isClosed: false };
+	};
+
 	/**
 	 * Closes the sidebar with animation and updates state.
 	 */
 	close (): void {
-		const { width, isClosed } = this.data;
+		const { width, isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || isClosed) {
 			return;
@@ -83,8 +96,8 @@ class Sidebar {
 
 		this.pageWrapperLeft.addClass('anim');
 		this.setElementsWidth(width);
-		this.setStyle({ width: 0 });
-		this.set({ isClosed: true });
+		this.setStyle(I.SidebarPanel.Left, { width: 0 });
+		this.set(I.SidebarPanel.Left, { isClosed: true });
 		this.resizePage(0, null, true);
 
 		this.removeAnimation(() => {
@@ -101,7 +114,9 @@ class Sidebar {
 	 * @param {number} [width] - The width to open the sidebar to.
 	 */
 	open (width?: number): void {
-		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !this.data.isClosed) {
+		const { isClosed } = this.getData(I.SidebarPanel.Left);
+
+		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !isClosed) {
 			return;
 		};
 
@@ -111,8 +126,8 @@ class Sidebar {
 		this.objLeft.removeClass('isClosed');
 		this.pageWrapperLeft.addClass('anim');
 
-		this.setStyle({ width });
-		this.set({ isClosed: false });
+		this.setStyle(I.SidebarPanel.Left, { width });
+		this.set(I.SidebarPanel.Left, { isClosed: false });
 		this.resizePage(width, null, true);
 
 		this.removeAnimation(() => {
@@ -129,7 +144,7 @@ class Sidebar {
 			return;
 		};
 		
-		const { width, isClosed } = this.data;
+		const { width, isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (isClosed) {
 			this.open(width);
@@ -155,10 +170,8 @@ class Sidebar {
 	 * Sets the sidebar width and updates layout.
 	 * @param {number} w - The width to set.
 	 */
-	setWidth (w: number): void {
-		w = this.limitWidth(w);
-
-		this.set({ width: w, isClosed: false });
+	setWidth (panel: I.SidebarPanel, w: number): void {
+		this.set(panel, { width: this.limitWidth(w), isClosed: false });
 		this.resizePage(null, null, false);
 	};
 
@@ -196,8 +209,9 @@ class Sidebar {
 		};
 
 		const { x } = keyboard.mouse.page;
-		const { width, isClosed } = this.data;
-		const vw = isClosed ? 0 : J.Size.sidebar.threshold;
+		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+		const vw = dataLeft.isClosed ? 0 : J.Size.sidebar.threshold;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -207,7 +221,7 @@ class Sidebar {
 		if (x <= 10) {
 			show = true;
 		} else
-		if (x >= width + vw + 30 + J.Size.sidebar.sub) {
+		if (x >= dataLeft.width + dataSubLeft.width + vw + 30) {
 			hide = true;
 		};
 
@@ -221,10 +235,10 @@ class Sidebar {
 		};
 
 		if (show) {
-			this.open(width);
+			this.open(dataLeft.width);
 		};
 
-		if (hide && !isClosed) {
+		if (hide && !dataLeft.isClosed) {
 			this.close();
 		};
 	};
@@ -321,15 +335,12 @@ class Sidebar {
 	 * Sets the sidebar data and updates the style.
 	 * @param {Partial<SidebarData>} v - The new sidebar data.
 	 */
-	set (v: Partial<SidebarData>): void {
-		v = Object.assign(this.data, v);
+	set (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
+		this.panelData[panel] = Object.assign(this.panelData[panel], v);
+		this.setStyle(panel, this.panelData[panel]);
 
-		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, { 
-			width: this.limitWidth(v.width),
-		});
-
-		Storage.set('sidebar', this.data, Storage.isLocal('sidebar'));
-		this.setStyle(this.data);
+		Storage.delete('sidebar', Storage.isLocal('sidebar'));
+		Storage.set('sidebar', this.panelData, Storage.isLocal('sidebar'));
 	};
 
 	/**
@@ -344,9 +355,23 @@ class Sidebar {
 	 * Sets the style of the sidebar elements.
 	 * @param {Partial<SidebarData>} v - The style data.
 	 */
-	private setStyle (v: Partial<SidebarData>): void {
-		if (this.pageWrapperLeft && this.pageWrapperLeft.length) {
-			this.pageWrapperLeft.css({ width: v.isClosed ? 0 : v.width });
+	private setStyle (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
+		let obj = null;
+
+		switch (panel) {
+			case I.SidebarPanel.Left: {
+				obj = this.pageWrapperLeft;
+				break;
+			};
+
+			case I.SidebarPanel.SubLeft: {
+				obj = this.subPageWrapperLeft;
+				break;
+			};
+		};
+
+		if (obj && obj.length) {
+			obj.css({ width: v.isClosed ? 0 : v.width });
 		};
 	};
 
@@ -472,46 +497,58 @@ class Sidebar {
 
 		const state = S.Common.getLeftSidebarState();
 		const open = id && !state.subPage;
-		const { width, isClosed } = this.data;
 
 		if (open) {
-			S.Common.setLeftSidebarState(state.page, id);
-
-			const width = isClosed ? 0 : this.data.width;
-			const newWidth = width + J.Size.sidebar.sub;
-
-			this.setStyle({ width });
-			this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
-			this.objLeft.css({ width });
-			this.dummyLeft.css({ width });
-
-			raf(() => {
-				this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
-				this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
-				this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
-				this.resizePage(newWidth, null, true);
-
-				window.setTimeout(() => {
-					this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
-					this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
-					this.dummyLeft.removeClass('sidebarAnimation');
-				}, J.Constant.delay.sidebar);
-			});
+			this.leftPanelSubPageOpen(id);
 		} else {
-			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
-			this.objLeft.addClass('sidebarAnimation').css({ width });
-			this.dummyLeft.addClass('sidebarAnimation').css({ width });
-			this.resizePage(width, null, true);
+			this.leftPanelSubPageClose();
+		};
+	};
+
+	leftPanelSubPageClose () {
+		const state = S.Common.getLeftSidebarState();
+		const { width } = this.getData(I.SidebarPanel.Left);
+
+		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.objLeft.addClass('sidebarAnimation').css({ width });
+		this.dummyLeft.addClass('sidebarAnimation').css({ width });
+		this.resizePage(width, null, true);
+
+		window.setTimeout(() => {
+			S.Common.setLeftSidebarState(state.page, '');
+
+			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+			this.dummyLeft.removeClass('sidebarAnimation');
+		}, J.Constant.delay.sidebar);
+	};
+
+	leftPanelSubPageOpen (id: string) {
+		const state = S.Common.getLeftSidebarState();
+		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+		const width = dataLeft.isClosed ? 0 : dataLeft.width;
+		const newWidth = width + dataSubLeft.width;
+
+		S.Common.setLeftSidebarState(state.page, id);
+
+		this.setStyle(I.SidebarPanel.Left, { width });
+		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.objLeft.css({ width });
+		this.dummyLeft.css({ width });
+
+		raf(() => {
+			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
+			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
+			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
+			this.resizePage(newWidth, null, true);
 
 			window.setTimeout(() => {
-				S.Common.setLeftSidebarState(state.page, '');
-
-				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.dummyLeft.removeClass('sidebarAnimation');
-
 			}, J.Constant.delay.sidebar);
-		};
+		});
 	};
 
 	/**

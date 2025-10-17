@@ -52,7 +52,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onKeyDown = (e: any) => {
 		const key = e.key.toLowerCase();
-		const { isClosed, width } = sidebar.data;
+		const { isClosed, width } = sidebar.getData(I.SidebarPanel.Left);
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
