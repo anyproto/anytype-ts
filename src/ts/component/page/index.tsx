@@ -137,7 +137,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getMatchParams () {
 		const { isPopup } = this.props;
-		const match = keyboard.getMatch(isPopup);
+		const match = U.Common.objectCopy(keyboard.getMatch(isPopup));
 
 		match.params.page = String(match.params.page || 'index');
 		match.params.action = String(match.params.action || 'index');
