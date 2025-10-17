@@ -129,13 +129,14 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			const w = Math.max(0, (e.pageX - ox.current));
 			const d = w - width.current;
 			const data = sidebar.getData(panel);
+			const closeWidth = J.Size.sidebar.width.min * 0.75;
 
 			if (!d) {
 				return;
 			};
 
 			if (d < 0) {
-				if (w <= J.Size.sidebar.width.close) {
+				if (w <= closeWidth) {
 					sidebar.close(panel);
 				} else {
 					sidebar.setWidth(panel, w);
@@ -143,10 +144,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			};
 
 			if (d > 0) {
-				if (data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
+				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
 					sidebar.open(panel, '', J.Size.sidebar.width.min);
 				} else 
-				if (w > J.Size.sidebar.width.close) {
+				if (w > closeWidth) {
 					sidebar.setWidth(panel, w);
 				};
 			};
