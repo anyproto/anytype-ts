@@ -53,7 +53,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 		const title = this.getTitle();
 
 		const ItemSection = (item: any) => {
-			const cn = [ 'section' ];
+			const cn = [ 'itemSection' ];
 
 			if (item.isFirst) {
 				cn.push('isFirst');
@@ -105,11 +105,9 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 
 		return (
 			<>
-				<div id="head" className="head" />
-
 				<div className="subHead">
 					<div className="side left">
-						<Icon className="back" onClick={() => sidebar.leftPanelSetState({ page: 'settingsSpace' })} />
+						<Icon className="back" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
 					</div>
 					<div className="side center">
 						<div className="name">{title}</div>

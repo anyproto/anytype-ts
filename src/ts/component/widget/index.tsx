@@ -29,7 +29,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, isEditing, className, canEdit, canRemove, disableAnimation, getObject, setEditing, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, canRemove, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
 
 	const getChild = (): I.Block => {
@@ -93,7 +93,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
-	const canDrop = object && !isSystemTarget && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 	let counters = { mentionCounter: 0, messageCounter: 0 };
 	if (isChat) {
@@ -204,6 +204,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
+			if (childRef.current && childRef.current?.appendSearchIds) {
+				childRef.current?.appendSearchIds([ newObject.id ]);
+			};
+
 			U.Object.openConfig(newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
@@ -303,9 +307,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			menuParam.data = Object.assign(menuParam.data, {
 				...param,
 				target: object,
-				isEditing: true,
 				blockId: block.id,
-				setEditing,
 				isPreview,
 			});
 		};
@@ -503,7 +505,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const canCreateHandler = (): boolean => {
-		if (!object || isEditing || !U.Space.canMyParticipantWrite()) {
+		if (!object || !U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 
@@ -647,7 +649,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (isSystemTarget) {
+		if (isSystemTarget && !isBin) {
 			onSetPreview();
 		} else {
 			onClick(e);
@@ -723,8 +725,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		collapse = (
-			<div className="iconWrap collapse">
-				<Icon className="collapse" onClick={onToggle} />
+			<div className="iconWrap collapse" onClick={onToggle}>
+				<Icon className="collapse" />
 			</div>
 		);
 	};
@@ -746,8 +748,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="sides">
 						<div className="side left">
 							<div className="clickable">
-								{collapse}
-								{icon}
+								<div className="iconAnimationWrapper">
+									{collapse}
+									{icon}
+								</div>
 								<ObjectName object={object} withPlural={true} />
 							</div>
 						</div>

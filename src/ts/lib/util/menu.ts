@@ -473,15 +473,14 @@ class UtilMenu {
 		];
 		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
-		} else
-		if (id == J.Constant.widgetId.bin) {
-			options.unshift(I.WidgetLayout.Link);
 		};
 
 		if (id && !isSystem) {
 			const isSet = U.Object.isInSetLayouts(layout);
 			const setLayouts = U.Object.getSetLayouts();
-			const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
+			const treeSkipLayouts = setLayouts.
+				concat(U.Object.getFileAndSystemLayouts()).
+				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat ]);
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipLayouts.includes(layout)) {
@@ -952,13 +951,11 @@ class UtilMenu {
 	};
 
 	getSystemWidgets () {
-		const space = U.Space.getSpaceview();
-
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
-			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin' },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', layout: I.ObjectLayout.Archive },
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
@@ -1267,7 +1264,7 @@ class UtilMenu {
 			const { props } = context;
 			const { className, classNameWrap } = props.param;
 			const type = S.Record.getTypeById(item.id);
-			const canDefault = !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
+			const canDefault = !U.Object.isInSetLayouts(item.recommendedLayout) && !U.Object.isChatLayout(item.recommendedLayout) && (type.id != S.Common.type);
 			const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const route = '';
 
@@ -1490,7 +1487,7 @@ class UtilMenu {
 						};
 
 						case 'space': {
-							Action.createSpace(I.SpaceUxType.Space, route);
+							Action.createSpace(I.SpaceUxType.Data, route);
 							break;
 						};
 

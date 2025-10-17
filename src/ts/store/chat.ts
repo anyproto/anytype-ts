@@ -7,6 +7,7 @@ class ChatStore {
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
+	private badgeValue = '';
 
 	constructor () {
 		makeObservable(this, {
@@ -412,7 +413,9 @@ class ChatStore {
 		let ret = 0;
 		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
-				ret = Math.max(ret, Number(state.lastMessageDate) || 0);
+				if (!chatId) {
+					ret = Math.max(ret, Number(state.lastMessageDate) || 0);
+				};
 			};
 		};
 
@@ -445,13 +448,12 @@ class ChatStore {
 	 */
 	setBadge () {
 		const counters = this.getTotalCounters();
+		const t = this.counterString(counters.messageCounter);
 
-		let t = 0;
-		if (counters) {
-			t = counters.messageCounter;
+		if (t != this.badgeValue) {
+			this.badgeValue = t;
+			Renderer.send('setBadge', t);
 		};
-
-		Renderer.send('setBadge', this.counterString(t));
 	};
 
 	/**
@@ -532,16 +534,32 @@ class ChatStore {
 	};
 
 	/**
-	 * Checks the vault subscription ID for a space and subId.
+	 * Mutates subscriptionIds array and adds chat preview and vault subscription ids properly.
 	 * @param {string} spaceId - The space ID.
 	 * @param {string} subId - The subscription ID.
 	 * @returns {string} The vault subscription ID.
 	 */
-	checkVaultSubscriptionId (spaceId: string, subId: string): string {
-		if (subId == J.Constant.subId.chatSpace) {
-			subId = this.getSpaceSubId(spaceId);
+	checkVaultSubscriptionIds (subIds: string[], spaceId: string, chatId: string): string[] {
+		const ret = [];
+
+		for (let i = 0; i < subIds.length; i++) {
+			const subId = subIds[i];
+
+			if (subId == J.Constant.subId.chatSpace) {
+				const isArchived = U.Data.checkIsArchived(chatId);
+				const isDeleted = U.Data.checkIsDeleted(chatId);
+
+				ret.push(this.getSpaceSubId(spaceId));
+
+				if (!isArchived && !isDeleted) {
+					ret.push(this.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId));
+				};
+			} else {
+				ret.push(subId);
+			};
 		};
-		return subId;
+
+		return ret;
 	};
 
 };

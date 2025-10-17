@@ -7,7 +7,7 @@
 .viewList, 
 .viewGrid, 
 .viewTimeline {
-	.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
+	.ReactVirtualized__List { padding: 8px 8px 16px 8px; }
 
 	.body { display: flex; flex-direction: column; }
 	.body {
@@ -79,7 +79,7 @@
 	.body.isCompact {
 		.item { height: 28px; }
 		.item {
-			.inner { gap: 0px 6px; padding: 0px 4px 0px 8px; }
+			.inner { gap: 0px 6px; padding: 0px 8px; }
 		}
 	}
 }

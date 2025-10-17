@@ -11,7 +11,6 @@ interface Props extends I.WidgetViewComponent {
 	id: string;
 	index?: number;
 	style?: any;
-	isEditing?: boolean;
 	isCompact?: boolean;
 	isPreview?: boolean;
 	isSection?: boolean;
@@ -20,14 +19,14 @@ interface Props extends I.WidgetViewComponent {
 
 const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, parent, block, isCompact, isEditing, isPreview, isSection, hideIcon, onContext } = props;
+	const { subId, id, block, isCompact, isSection, hideIcon, onContext } = props;
 	const { space } = S.Common;
 	const rootId = keyboard.getRootId();
 	const object = S.Detail.get(subId, id, J.Relation.sidebar);
 	const { isReadonly, isArchived, isHidden, restrictions, source } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const canDrag = false;
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !canDrag });
 	const hasMore = U.Space.canMyParticipantWrite();
@@ -125,8 +124,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			descr = <Label className="descr" text={U.Common.shortUrl(source)} />;
 		} else 
 		if (isChat) {
-			const list = S.Chat.getList(S.Chat.getChatSubId('preview', space, id));
-			const last = list.length ? list[list.length - 1] : null;
+			const list = S.Chat.getList(S.Chat.getChatSubId(J.Constant.subId.chatPreview, space, id)).slice(0).
+				sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+
+			const last = list.length ? list[0] : null;
 			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
 
 			descr = <Label className="descr" text={text} />;

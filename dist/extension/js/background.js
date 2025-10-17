@@ -97,26 +97,8 @@
 		chrome.contextMenus.onClicked.addListener(async () => {
 			const tab = await getActiveTab();
 
-			chrome.scripting.executeScript({
-				target: { tabId: tab.id },
-				function: () => {
-					const sel = window.getSelection();
-
-					let html = '';
-					if (sel.rangeCount) {
-						const container = document.createElement('div');
-						for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-							container.appendChild(sel.getRangeAt(i).cloneContents());
-						};
-						html = container.innerHTML;
-					};
-
-					return html;
-				}
-			}, res => {
-				if (res.length) {
-					sendToTab(tab, { type: 'clickMenu', html: res[0].result });
-				};
+			chrome.tabs.sendMessage(tab.id, { type: 'getSelectionHTML' }, (html) => {
+				sendToTab(tab, { type: 'clickMenu', html });
 			});
 		});
 	};

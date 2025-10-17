@@ -5,7 +5,7 @@ import { I, C, J, S, translate, keyboard } from 'Lib';
 
 const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close } = props;
+	const { param, close, position } = props;
 	const { data, className, classNameWrap } = param;
 	const details = data.details || {};
 	const editableRef = useRef(null);
@@ -15,7 +15,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const isEditing = !!details.id;
 
 	const onKeyDown = (e: KeyboardEvent) => {
-		keyboard.shortcut('enter', e, () => onSubmit);
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			onSubmit();
+		});
 	};
 
 	const onKeyUp = (e: KeyboardEvent) => {
@@ -31,11 +34,13 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
+				if (data.onSubmit) {
+					data.onSubmit(message.details);
+				};
+
 				close();
 			};
 		};
-
-		console.log(isEditing);
 
 		if (isEditing) {
 			const keys = [ 'name', 'iconEmoji', 'iconImage' ];
@@ -53,6 +58,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setValue = (v: string) => {
+		if (v == translate('defaultNamePage')) {
+			v = '';
+		};
+
 		editableRef.current?.setValue(v);
 		editableRef.current?.placeholderCheck();
 		editableRef.current?.setFocus();
@@ -62,6 +71,10 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setValue(nameRef.current);
 	}, []);
 
+	useEffect(() => {
+		position();
+	});
+
 	return (
 		<>
 			<IconObject 
@@ -70,15 +83,20 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				iconSize={48} 
 				object={{ ...details, layout: I.ObjectLayout.Chat }} 
 				canEdit={true} 
-				noUpload={!isEditing}
 				menuParam={{ 
 					horizontal: I.MenuDirection.Center,
 					className, 
 					classNameWrap,
 					offsetY: 4,
 				}}
-				onSelect={icon => details.iconEmoji = icon}
-				onUpload={hash => details.iconImage = hash}
+				onSelect={icon => {
+					details.iconEmoji = icon;
+					details.iconImage = '';
+				}}
+				onUpload={hash => {
+					details.iconImage = hash;
+					details.iconEmoji = '';
+				}}
 			/>
 
 			<Editable 

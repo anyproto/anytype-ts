@@ -326,7 +326,7 @@ class UtilData {
 			for (const item of message.previews) {
 				const { spaceId, chatId, message, state, dependencies } = item;
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
-				const chatSubId = S.Chat.getChatSubId('preview', spaceId, chatId);
+				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
 
 				obj.mentionCounter += state.mentions.counter || 0;
@@ -355,7 +355,7 @@ class UtilData {
 				S.Chat.setState(spaceSubId, { 
 					mentions: { counter: obj.mentionCounter, orderId: '' }, 
 					messages: { counter: obj.messageCounter, orderId: '' },
-					lastMessageDate: Number(message?.createdAt || 0),
+					lastMessageDate: obj.lastMessageDate,
 					lastStateId: '',
 					order: 0,
 				}, false);
@@ -1023,7 +1023,7 @@ class UtilData {
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
-						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Data });
 					});
 				});
 			});
@@ -1252,6 +1252,14 @@ class UtilData {
 		const tier = this.getMembershipTier(membership.tier);
 
 		return !tier?.namesCount && this.isAnytypeNetwork();
+	};
+
+	checkIsArchived (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.archived, '').includes(id);
+	};
+
+	checkIsDeleted (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
 	};
 
 };

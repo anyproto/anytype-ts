@@ -92,9 +92,9 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 	const initExpand = () => {
 		const node = $(nodeRef.current);
-		const ref = $(textRef.current);
-		const textHeight = ref.outerHeight();
-		const lineHeight = parseInt(ref.css('line-height'));
+		const wrapper = node.find('.textWrapper');
+		const textHeight = wrapper.height();
+		const lineHeight = parseInt(wrapper.css('line-height'));
 		const canExpand = textHeight / lineHeight > LINES_LIMIT;
 
 		node.toggleClass('canExpand', canExpand);

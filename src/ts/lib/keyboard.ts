@@ -158,12 +158,11 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const showWidget = !isPopup && space.isChat;
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
 
-			sidebar.toggleOpenClose();
+			sidebar.leftPanelToggle();
 		});
 
 		if (this.isMainEditor()) {
@@ -214,7 +213,6 @@ class Keyboard {
 				};
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 				U.Space.openDashboard({ replace: false });
 			};
 			
@@ -341,13 +339,10 @@ class Keyboard {
 				S.Popup.open('logout', {});
 			});
 
-			// Chat widget panel
-			if (showWidget) {
-				this.shortcut('chatPanel', e, () => {
-					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-					analytics.event('ScreenChatSidebar');
-				});
-			};
+			// Widget panel
+			this.shortcut('widget', e, () => {
+				sidebar.leftPanelSubPageToggle('widget');
+			});
 
 			if (canWrite) {
 				// Create new page
@@ -358,13 +353,11 @@ class Keyboard {
 					});
 				};
 
-				// Create new widget
-				this.shortcut('createWidget', e, () => {
+				// Pin/Unpin
+				this.shortcut('pin', e, () => {
 					e.preventDefault();
 
-					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
-
-					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, analytics.route.header);
 				});
 
 				// Lock/Unlock
@@ -399,14 +392,13 @@ class Keyboard {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 					} else {
 						U.Space.openDashboard({ replace: false });
-						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
 					};
 				});
 			};
 
 
 			keyboard.shortcut('createSpace', e, () => {
-				const element = `#sidebarRightButton`;
+				const element = `#button-create-space`;
 
 				let rect = null;
 				let horizontal = I.MenuDirection.Left;
@@ -524,20 +516,11 @@ class Keyboard {
 					return;
 				};
 
-				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
-					const state = sidebar.leftPanelGetState();
-					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-					};
-				};
-
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
 					U.Space.openDashboard({ replace: false });
 				} else {
 					history.goBack();
 				};
-
-				U.Router.checkSidebarState();
 			};
 		};
 
@@ -702,7 +685,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Space, route);
+				Action.createSpace(I.SpaceUxType.Data, route);
 				break;
 			};
 
@@ -891,6 +874,7 @@ class Keyboard {
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),
+							onCancel: () => Renderer.send('initMenu')
 						},
 					});
 				};

@@ -96,9 +96,9 @@
 	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
-	"commonRemoveFromFavorites": "Unpin",
 	"commonPin": "Pin",
 	"commonUnpin": "Unpin",
+	"commonTogglePin": "Pin/Unpin",
 	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
@@ -1421,6 +1421,7 @@
 	"popupShortcutMainBasics25": "Move to / restore from Bin",
 	"popupShortcutMainBasics26": "Pin / Unpin",
 	"popupShortcutMainBasics27": "Space %d",
+	"popupShortcutMainBasics28": "Toggle Widget panel",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
@@ -1834,7 +1835,6 @@
 	"menuObjectUnlockPage": "Unlock Object",
 	"menuObjectLockPage": "Lock Object",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
-	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
 

@@ -7,13 +7,12 @@ import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 interface Props extends I.WidgetViewComponent {
 	subId: string;
 	id: string;
-	isEditing?: boolean;
 	hideIcon?: boolean;
 };
 
 const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { subId, id, parent, block, isEditing, hideIcon, onContext, getView } = props;
+	const { subId, id, block, hideIcon, onContext, getView } = props;
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const rootId = keyboard.getRootId();
@@ -22,7 +21,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const { isReadonly, isArchived, restrictions } = object;
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const iconKey = `widget-icon-${block.id}-${id}`;
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const hasMore = U.Space.canMyParticipantWrite();
 
 	const onClick = (e: MouseEvent) => {

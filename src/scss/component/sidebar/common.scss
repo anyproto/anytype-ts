@@ -1,37 +1,43 @@
 @import "~scss/_mixins";
 
-.pageFlex { display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; transition: transform 0.2s $easeInQuint; }
+.pageFlex { 
+	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
+	padding: 8px 8px 8px 0px;
+}
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative; }
+	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); border-radius: 12px; }
+
+	&.withSidebarRight { padding-right: 0px; }
+	&.withSidebarRight {
+		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
+	}
+
+	&.sidebarAnimation { transition-property: padding; }
 }
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-.sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
 .sidebarHeadIcon
 .sidebarHeadIcon {
-	&.sidebarAnimation { transition: left $transitionSidebarTime linear; }
+	&.sidebarAnimation { transition-property: left; }
 	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
 }
+.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
 
 #sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
-#sidebarRightButton:not(.withSidebar) { display: none; }
-
-.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
-.sidebarHeadIcon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
-
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
-.sidebar { position: fixed; z-index: 24; user-select: none; transition: none; top: 0px; height: 100%; background-color: var(--color-shape-tertiary); }
+.sidebar { 
+	position: fixed; z-index: 24; user-select: none; top: 0px; height: 100%; background-color: var(--color-shape-highlight-light-solid); 
+	display: flex; flex-direction: column;
+}
 .sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
-.sidebar.isClosed { left: 0px !important; overflow: hidden; }
 
-.sidebar.left { left: 0px; }
-.sidebar.left.withVault { left: $vaultWidthCollapsed; }
-.sidebar.left.anim { transition-property: width; }
+.sidebar.left { left: 0px; flex-direction: row; }
 
-.sidebar.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; flex-shrink: 0; }
+.sidebar.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; flex-shrink: 0; padding: 8px 8px 8px 0px; }
 .sidebar.right.anim { transition-property: right; }
 
 .sidebar.withPreview { z-index: 31; }
@@ -39,44 +45,51 @@
 .sidebar.right {
 	@import "./preview";
 
-	> .icon.widgetPanel { 
-		background-image: url('~img/icon/header/widget.svg'); position: absolute; top: 12px; right: 12px; -webkit-app-region: no-drag; 
-		z-index: 3;
-	} 
-
-	> .sidebarPage.pageWidget {
-		> .body {
-			> .content {
-				> .dropTarget.firstTarget { position: relative; }
-			}
-		}
+	.sidebarPage { 
+		background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px;
 	}
 }
 
 .sidebar {
-	.icon { width: 20px; height: 20px; flex-shrink: 0; }
-	.icon.back { background-image: url('~img/icon/widget/back0.svg'); }
+	@import "./page/common";
 
-	@import "./page";
-	
-	.resize-h { width: 12px; height: calc(100% - 52px); cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 52px; background: var(--color-bg-primary); }
+	.pageWrapper, .subPageWrapper { padding: 8px 0px; flex-shrink: 0; position: relative; flex-direction: column; }
+	.pageWrapper, .subPageWrapper {
+		&.isClosed { overflow: hidden; }
+	}
+
+	.pageWrapper { z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
+	.pageWrapper {
+		&.anim { transition: width $transitionSidebarTime linear; }
+	}
+
+	.subPageWrapper { width: 336px; display: flex; }
+	.subPageWrapper {
+		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
+
+		&.sidebarAnimation { transition-property: transform; }
+	}
+
+	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; }
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
-			width: 12px; height: 32px;
+			width: 100%; height: 32px;
 		}
 		.resize-handle::after {
-			content: ''; position: absolute; left: 6px; top: 0px; width: 6px; height: 100%; background-color: var(--color-shape-secondary);
-			border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
+			content: ''; position: absolute; left: 50%; top: 0px; width: 6px; height: 100%; background-color: var(--color-shape-secondary);
+			border-radius: 3px; opacity: 0; transition: $transitionAllCommon; margin-left: -3px;
 		}
+
+		&:hover, &:active {
+			.resize-handle::after { opacity: 1; }
+		}
+
+		&:active {
+			.resize-handle { height: 64px; margin-top: -32px; }
+		}
+		.resize-handle:hover::after, .resize-handle:active::after { background-color: var(--color-shape-primary); }
 	}
-	.resize-h:hover, .resize-h:active {
-		.resize-handle::after { opacity: 1; }
-	}
-	.resize-h:active {
-		.resize-handle { height: 64px; margin-top: -32px; }
-	}
-	.resize-handle:hover::after, .resize-handle:active::after { background-color: var(--color-shape-primary); }
 
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 

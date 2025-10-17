@@ -87,6 +87,7 @@ const BodyCell: FC<Props> = observer((props, ref) => {
 				idPrefix={idPrefix}
 				onCellChange={onCellChange}
 				maxWidth={J.Size.dataview.cell.edit}
+				menuParam={{ noBorderY: true }}
 			/>
 			{iconEdit}
 		</div>
