@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
 import { I, S, J, U, keyboard, sidebar, translate } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Keyboard, Mousewheel, Thumbs, Navigation } from 'swiper/modules';
+import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
 
 const BORDER = 16;
 const WIDTH_VIDEO = 1040;
@@ -33,7 +33,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		const win = $(window);
 		win.on('resize.popupPreview', () => reload());
-		win.on('keydown.menu', e => onKeyDown(e));
 	};
 
 	const setCurrentItem = (idx?: number) => {
@@ -48,10 +47,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (item && item.object) {
 			setCurrent(item.object);
 		};
-	};
-
-	const onKeyDown = (e: any) => {
-		keyboard.shortcut('escape', e, () => close());
 	};
 
 	const onMore = (e: any) => {
@@ -204,6 +199,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			if (!galleryMapRef.current.get(idx)) {
 				galleryMapRef.current.set(idx, { src, type, isLoaded: false });
 			};
+
 			resize(idx);
 		});
 	};
@@ -228,7 +224,11 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} onDragStart={e => e.preventDefault()} />;
+				content = (
+					<div className="swiper-zoom-container">
+						<img className="media" src={src} onDragStart={e => e.preventDefault()} />
+					</div>
+				);
 				break;
 			};
 
@@ -245,7 +245,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				<div className="mediaContainer">
 					{content}
 				</div>
-				<div className="innerDimmer" onClick={() => close()} />
 			</div>
 		);
 	};
@@ -276,14 +275,16 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					keyboard={{ enabled: true }}
 					mousewheel={true}
 					thumbs={{ swiper: thumbsRef.current }}
+					zoom={true}
 					navigation={true}
 					loop={false}
-					modules={[ Mousewheel, Keyboard, Thumbs, Navigation ]}
+					modules={[ Mousewheel, Keyboard, Thumbs, Navigation, Zoom ]}
 					onTransitionEnd={data => setCurrentItem(data.activeIndex)}
 				>
 					{gallery.map((item: any, i: number) => (
-						<SwiperSlide key={i} onClick={() => close()}>
+						<SwiperSlide key={i}>
 							{getContent(item, i)}
+							<div className="innerDimmer" onClick={() => close()} />
 						</SwiperSlide>
 					))}
 				</Swiper>

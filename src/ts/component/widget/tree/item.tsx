@@ -1,13 +1,12 @@
 import React, { forwardRef, useRef, useState, MouseEvent, SyntheticEvent } from 'react';
 import { observer } from 'mobx-react';
-import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
+import { DropTarget, Icon, IconObject, ObjectName, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, Storage, translate } from 'Lib';
 
 interface Props extends I.WidgetTreeItem {
 	index: number;
 	treeKey: string;
 	style?: any;
-	isEditing?: boolean;
 	isSection?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
@@ -19,7 +18,8 @@ interface Props extends I.WidgetTreeItem {
 
 const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { id, parentId, treeKey, depth, style, numChildren, isEditing, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
+	const { id, parentId, treeKey, depth, style, numChildren, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
+	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const moreRef = useRef(null);
 	const subKey = getSubKey();
@@ -29,10 +29,11 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const { isReadonly, isArchived, isHidden, type, restrictions, done, layout } = object;
 	const cn = [ 'item', `c${id}`, `depth${depth}` ];
 	const rootId = keyboard.getRootId();
-	const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 	const hasMore = U.Space.canMyParticipantWrite();
+	const isChat = U.Object.isChatLayout(object.layout);
 	const [ dummy, setDummy ] = useState(0);
 
 	if (isOpen) {
@@ -45,6 +46,11 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 	if (isSection) {
 		cn.push('isSection');
+	};
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, id);
 	};
 
 	const onContextHandler = (e: SyntheticEvent, withElement: boolean): void => {
@@ -117,6 +123,8 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 					/>
 					<ObjectName object={object} withPlural={true} />
 				</div>
+
+				<ChatCounter {...counters} />
 
 				<div className="buttons">{more}</div>
 			</div>

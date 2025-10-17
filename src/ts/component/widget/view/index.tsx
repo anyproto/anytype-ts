@@ -15,6 +15,8 @@ interface WidgetViewRefProps {
 	updateData: () => void;
 	updateViews: () => void;
 	onOpen: () => void;
+	setSearchIds: (ids: string[]) => void;
+	appendSearchIds?: (ids: string[]) => void;
 	getSearchIds: () => string[];
 	getFilter: () => string;
 };
@@ -311,7 +313,13 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 								color="blank" 
 								className="c28" 
 								text={translate('commonNew')} 
-								onClick={() => onCreate({ route: analytics.route.widget })} 
+								onClick={() => onCreate({ 
+									element: '#button-object-create', 
+									route: analytics.route.widget,
+									details: {
+										name: String(filterRef.current?.getValue() || ''),
+									},
+								})} 
 							/>
 						</div>
 					) : ''}
@@ -417,6 +425,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		updateData,
 		updateViews,
 		onOpen,
+		setSearchIds,
+		appendSearchIds: (ids: string[]) => setSearchIds((searchIds || []).concat(ids || [])),
 		getSearchIds: () => searchIds,
 		getFilter: () => filter.current,
 	}));

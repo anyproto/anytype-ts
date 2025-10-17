@@ -96,9 +96,9 @@
 	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
-	"commonRemoveFromFavorites": "Unpin",
 	"commonPin": "Pin",
 	"commonUnpin": "Unpin",
+	"commonTogglePin": "Pin/Unpin",
 	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
@@ -173,6 +173,7 @@
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonEditType" : "Edit Type",
+	"commonEditChat" : "Change Info",
 	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don't show this again",
 	"commonObject": "Object",
@@ -230,6 +231,7 @@
 	"commonSeeChanges": "See Changes",
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
+	"commonSaveChat": "Save chat",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1419,6 +1421,7 @@
 	"popupShortcutMainBasics25": "Move to / restore from Bin",
 	"popupShortcutMainBasics26": "Pin / Unpin",
 	"popupShortcutMainBasics27": "Space %d",
+	"popupShortcutMainBasics28": "Toggle Widget panel",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
@@ -1832,7 +1835,6 @@
 	"menuObjectUnlockPage": "Unlock Object",
 	"menuObjectLockPage": "Lock Object",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
-	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
 
@@ -1860,6 +1862,8 @@
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
+
+	"menuChatCreatePlaceholder": "e.g. feature-chat",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
@@ -2089,6 +2093,7 @@
 	"widgetShowAll": "See all Objects",
 	"widgetItemClipboard": "Create from clipboard",
 	"widgetSeeAll": "See All",
+	"widgetNoMessages": "No messages yet",
 
 	"phrasePlaceholder": "Please enter your Key",
 

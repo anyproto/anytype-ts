@@ -1,7 +1,6 @@
 export default {
 	cell: [
 		'select',
-		'button',
 		'dataviewText',
 		'dataviewRelationEdit',
 		'dataviewObjectList',
@@ -72,5 +71,5 @@ export default {
 	graphSettings: [ 'select' ],
 	syncStatus: [ 'syncStatusInfo', 'select' ],
 	help: [ 'select' ],
-	chatForm: [ 'typeSuggest', 'dataviewCreateBookmark' ],
+	chatForm: [ 'typeSuggest', 'dataviewCreateBookmark', 'chatCreate' ],
 };

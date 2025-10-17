@@ -49,8 +49,7 @@
 
 .widget.widgetView.isPreview { padding: 0px; height: 100%; }
 .widget.widgetView.isPreview {
-	#viewSelect { padding-top: 12px; }
-	.head { padding-top: 12px; padding-bottom: 0px; }
+	#viewSelect { padding-bottom: 4px; }
 
 	.body { height: 100%; }
 	.body {
@@ -60,7 +59,7 @@
 	}
 
 	.innerWrap { padding: 0px; }
-	.innterWrap.withViewSelect {
+	.innerWrap.withViewSelect {
 		.head { padding-top: 4px; }
 	}
 	.innerWrap:not(.viewBoard) {

@@ -42,6 +42,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public updateVersionValue = '';
+	public leftSidebarStateValue = { page: '', subPage: '' };
 	public rightSidebarStateValue = { 
 		full: { page: null, isOpen: false }, 
 		popup: { page: null, isOpen: false },
@@ -113,6 +114,7 @@ class CommonStore {
 			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
@@ -151,6 +153,7 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			membershipTiersListSet: action,
+			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
@@ -570,14 +573,21 @@ class CommonStore {
 	};
 
 	/**
+	 * Sets the show sidebar left value.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 * @param {string} page - The page to set, null if no page is shown
+	 */
+	setLeftSidebarState (page: string, subPage: string) {
+		set(this.leftSidebarStateValue, { page, subPage });
+	};
+
+	/**
 	 * Sets the show sidebar right value.
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
 	setRightSidebarState (isPopup: boolean, page: string, isOpen: boolean) {
-		const key = this.getStateKey(isPopup);
-
-		set(this.rightSidebarStateValue, { [ key ]: { page, isOpen } });
+		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page, isOpen } });
 	};
 
 	/**
@@ -870,6 +880,14 @@ class CommonStore {
 	 */
 	getStateKey (isPopup: boolean): string {
 		return isPopup ? 'popup' : 'full';
+	};
+
+	/**
+	 * Gets the current state of the left sidebar.
+	 * @returns {page: string; subPage: string;} The current state shown in the sidebar
+	 */
+	getLeftSidebarState (): { page: string; subPage: string; } {
+		return this.leftSidebarStateValue || { page: '', subPage: '' };
 	};
 
 	/**

@@ -1,5 +1,5 @@
-> .sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
-> .sidebarPage {
+.sidebarPage { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; flex-grow: 1; }
+.sidebarPage {
 	&.anim { transition: opacity 0.1s ease-in-out; }
 
 	> .head { 
@@ -7,8 +7,8 @@
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px;
 	}
 	> .head {
-		.side { position: relative; z-index: 1; }
-		.side.left { flex-grow: 1; }
+		.side { position: relative; z-index: 1; display: flex; align-items: center; }
+		.side.left { flex-grow: 1; justify-content: flex-start; }
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
 
 		.button, .icon { -webkit-app-region: no-drag; }
@@ -19,13 +19,9 @@
 		.icon.close { background-image: url('~img/icon/close.svg'); }
 		.icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
 		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
+		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 
-		&::after {
-			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; 
-			background: linear-gradient(to bottom, var(--color-shape-tertiary) 0px, var(--color-shape-tertiary) 52px, rgba(0, 0, 0, 0) 100%); 
-			opacity: 0; transition: opacity 0.2s ease-in-out;
-		}
-		&.isScrolled::after { opacity: 1; }
+		.sync { -webkit-app-region: no-drag; }
 	}
 
 	> .subHead { 
@@ -34,18 +30,11 @@
 	}
 	> .subHead * { -webkit-app-region: no-drag; }
 	> .subHead {
+		.icon { width: 20px; height: 20px; }
 		.icon.back { background-size: 20px; }
 		.icon.back:hover { background-image: url('~img/icon/widget/back1.svg'); }
 		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
-		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
-		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
-
-		.cnt { 
-			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
-			color: var(--color-text-inversion); text-align: center; display: flex; align-items: center; justify-content: center;
-			padding: 0px 4px; cursor: default; flex-shrink: 0;
-		}
 
 		.side { flex-direction: row; display: flex; align-items: center; position: relative; z-index: 1; }
 		.side.left { justify-content: center; flex-shrink: 0; }
@@ -57,12 +46,6 @@
 		}
 
 		.side.right { flex-shrink: 0; justify-content: flex-end; }
-
-		&::after {
-			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 88px; pointer-events: none; 
-			background: linear-gradient(to bottom, var(--color-shape-tertiary) 0px, var(--color-shape-tertiary) 52px, rgba(0, 0, 0, 0) 100%); opacity: 0; transition: opacity 0.2s ease-in-out;
-		}
-		&.isScrolled::after { opacity: 1; }
 	}
 
 	> .body {
@@ -110,7 +93,7 @@
 		}
 	}
 
-	.section { background: var(--color-bg-primary); border-radius: 12px; padding: 8px 0px; }
+	.section { background: var(--color-shape-highlight-light); border-radius: 12px; padding: 8px 0px; }
 	.section {
 		.titleWrap { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 8px 0px; padding: 0px 8px 0px 16px; }
 		.titleWrap {
@@ -137,9 +120,9 @@
 
 		.item { 
 			padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
-			background-color: var(--color-bg-primary); border-radius: 6px;
+			border-radius: 6px;
 		}
-		.item.isDragging { z-index: 2; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+		.item.isDragging { opacity: 0; }
 
 		.item {
 			.name { flex-shrink: 0; }
@@ -176,10 +159,10 @@
 
 }
 
-@import "./page/type.scss";
-@import "./page/vault.scss";
-@import "./page/widget.scss";
-@import "./page/settings.scss";
-@import "./page/object/relation.scss";
-@import "./page/object/tableOfContents.scss";
-@import "./page/bottom.scss";
+@import "./type.scss";
+@import "./vault.scss";
+@import "./widget.scss";
+@import "./settings.scss";
+@import "./object/relation.scss";
+@import "./object/tableOfContents.scss";
+@import "./bottom.scss";

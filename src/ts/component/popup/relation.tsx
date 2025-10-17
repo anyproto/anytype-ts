@@ -303,10 +303,10 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							viewType={I.ViewType.Grid}
 							readonly={readonly}
 							idPrefix={ID_PREFIX}
-							menuClassNameWrap="fromPopup"
 							onCellChange={onCellChange}
 							getView={view ? (() => view): null}
 							pageContainer={U.Common.getCellContainer('popupRelation')}
+							menuParam={{ classNameWrap: 'fromPopup' }}
 						/>
 					</div>
 				</div>

@@ -69,7 +69,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		});
 
 		const spaceUxTypes = [
-			{ id: I.SpaceUxType.Space, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
 			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
 		].map((it: any) => {
 			it.name = translate(`spaceUxType${it.id}`);
@@ -326,6 +326,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 		};
 
 		this.refMode?.setValue(String(space.notificationMode));
+		this.refUxType?.setValue(String(space.uxType));
 	};
 
 	setInvite (cid: string, key: string) {
@@ -388,8 +389,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		switch (item.id) {
 			case 'invite': {
-				this.props.onPage('spaceShare');
-
+				Action.openSpaceShare(analytics.route.settingsSpace);
 				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};

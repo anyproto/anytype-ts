@@ -20,7 +20,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 	onPause = () => {},
 	onClick = () => {},
 	onLoad = () => {},
-  	onSyncStatusClick = () => {},
+	onSyncStatusClick = () => {},
 }, ref: any) => {
 
 	const nodeRef = useRef(null);

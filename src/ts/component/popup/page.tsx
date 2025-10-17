@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, history as historyPopup, keyboard, sidebar } from 'Lib';
+import { I, S, history as historyPopup, keyboard } from 'Lib';
 import { Page } from 'Component';
 
 interface Props extends I.Popup {};
@@ -25,7 +25,6 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		historyPopup.pushMatch(matchPopup);
-		sidebar.rightPanelRestore(true);
 
 		return () => {
 			unbind();

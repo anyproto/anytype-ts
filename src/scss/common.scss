@@ -68,7 +68,7 @@ input, textarea, select { font-family: 'Inter'; }
 	transition: opacity 0.3s ease-in-out;
 }
 #globalFade {
-	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: calc(100% - $vaultWidthCollapsed); }
+	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: 100%; }
 }
 #globalFade.show { opacity: 1; }
 #graphPreview { position: fixed; z-index: 1000; }

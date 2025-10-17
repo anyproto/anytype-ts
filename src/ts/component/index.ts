@@ -22,6 +22,7 @@ import ListObjectManager from './list/objectManager';
 import ListBanner from './list/banner';
 
 import Header from './header';
+import HeaderBanner from './header/banner';
 import Footer from './footer';
 import Widget from './widget';
 
@@ -73,6 +74,7 @@ import Toast from './util/toast';
 import Marker from './util/marker';
 import Sync from './util/sync';
 import LoadMore from './util/loadMore';
+import ChatCounter from './util/chatCounter';
 
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
@@ -131,6 +133,7 @@ export {
 	ListBanner,
 
 	Header,
+	HeaderBanner,
 	Footer,
 	Pager,
 	Dimmer,
@@ -158,6 +161,7 @@ export {
 	DotIndicator,
 	Phrase,
 	TabSwitch,
+	ChatCounter,
 
 	EmptySearch,
 	EmptyState,

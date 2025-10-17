@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, sidebar, translate, U, Onboarding } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -35,7 +35,7 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 		const items = this.getItems();
 
 		const ItemSection = (item: any) => {
-			const cn = [ 'section' ];
+			const cn = [ 'itemSection' ];
 
 			if (item.isFirst) {
 				cn.push('isFirst');
@@ -138,8 +138,6 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 		return (
 			<>
-				<div id="head" className="head" />
-
 				<div className="subHead">
 					<div className="side left">
 						<Icon className="back" onClick={this.onBack} />
@@ -328,24 +326,23 @@ const SidebarSettingsIndex = observer(class SidebarSettingsIndex extends React.C
 
 	onClick (item) {
 		if ([ 'types', 'relations' ].includes(item.id)) {
-			sidebar.leftPanelSetState({ page: `settings/${item.id}`, });
+			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
-			U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
+			Action.openSettings(item.id, analytics.route.settings);
 			this.forceUpdate();
 		};
 	};
 
 	onBack () {
 		const { space } = S.Common;
-		const isSpace = this.isSpace();
 
 		if (space) {
 			U.Space.openDashboard();
 		};
 
-		sidebar.leftPanelSetState({ page: isSpace ? U.Space.getDefaultSidebarPage() : 'vault' });
+		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 });
 
-export default SidebarSettingsIndex
+export default SidebarSettingsIndex;

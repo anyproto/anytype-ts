@@ -80,12 +80,6 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
     };
 
 	componentDidMount(): void {
-		const { id } = this.props;
-
-		if (id == 'title') {
-			this.range = { from: 0, to: 0 };
-		};
-
 		this.setValue();
 	};
 
@@ -106,7 +100,7 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 	};
 
 	setValue () {
-		const { object } = this.props;
+		const { id, object } = this.props;
 
 		let text = String(object[this.getRelationKey()] || '');
 		if (text == translate('defaultNameType')) {
@@ -116,6 +110,12 @@ const SidebarSectionTypeTitle = observer(class SidebarSectionTypeTitle extends R
 		this.refName?.setValue(text);
 		this.refName?.placeholderCheck();
 		this.value = text;
+
+		if (!this.range && (id == 'title') && object.id) {
+			const l = text.length;
+
+			this.range = { from: l, to: l };
+		};
 
 		if (this.range) {
 			this.refName?.setRange(this.range);

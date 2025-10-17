@@ -19,18 +19,18 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 
     render () {
 		const { rootId, isPopup, item: relation } = this.props;
-		const root = S.Block.getLeaf(rootId, rootId);
 
-		if (!relation || !root) {
+		if (!relation) {
 			return null;
 		};
 
+		const root = S.Block.getLeaf(rootId, rootId);
 		const object = S.Detail.get(rootId, rootId, [ relation.relationKey ]);
 		const id = Relation.cellId(PREFIX, relation.relationKey, rootId);
 		const rc = Relation.className(relation.format);
 		const cw = [ 'wrap', rc ];
 		const cn = [ 'cell', rc ];
-		const readonly = this.props.readonly || root.isLocked();
+		const readonly = this.props.readonly || root?.isLocked();
 		const canEdit = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const hasMore = canEdit && relation.onMore;
 		const container = [ 
@@ -61,10 +61,9 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						viewType={I.ViewType.Grid}
 						readonly={!canEdit}
 						idPrefix={PREFIX}
-						menuClassNameWrap="fromSidebar"
-						menuClassName="fromSidebar fixed"
 						onCellChange={this.onCellChange}
 						pageContainer={container}
+						menuParam={{ className: 'fromSidebar fixed', classNameWrap: 'fromSidebar' }}
 					/>
 				</div>
 

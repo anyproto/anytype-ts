@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon, Sync } from 'Component';
+import { Icon } from 'Component';
 import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
@@ -66,14 +66,25 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
-	const onSync = () => {
-		menuOpen('syncStatus', '#headerSync', { subIds: J.Menu.syncStatus });
-	};
-
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
-		let buttons: any[] = [
-			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
-		];
+		let buttons: any[] = [];
+
+		if (isPopup) {
+			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
+		} else {
+			const match = keyboard.getMatch(isPopup);
+			const cn = [];
+
+			if (match.params.action != 'settings') {
+				buttons.push({ 
+					id: 'widgetPanel', 
+					name: translate('commonWidgets'), 
+					className: cn.join(' '), 
+					caption: keyboard.getCaption('widget'),
+					onClick: () => sidebar.leftPanelSubPageToggle('widget'),
+				});
+			};
+		};
 
 		if (withNavigation) {
 			buttons = buttons.concat([
@@ -88,13 +99,14 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 		return (
 			<>
-				<Sync id="headerSync" onClick={onSync} />
-
 				{buttons.map(item => {
 					const cn = [ item.id, 'withBackground' ];
 
 					if (item.disabled) {
 						cn.push('disabled');
+					};
+					if (item.className) {
+						cn.push(item.className);
 					};
 
 					return (
@@ -102,8 +114,9 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							key={item.id} 
 							tooltipParam={{ text: item.name, caption: item.caption, typeY: I.MenuDirection.Bottom }} 
 							className={cn.join(' ')} 
-							onClick={e => item.onClick(e)} 
+							onClick={item.onClick} 
 							onDoubleClick={e => e.stopPropagation()}
+							onMouseDown={e => e.stopPropagation()}
 						/>
 					);
 				})}
@@ -156,7 +169,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
 		const st = $(window).scrollTop();
-		const element = $(`${getContainer()} ${elementId}`);
+		const element = U.Common.getScrollContainer(isPopup).find(`.header ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -168,10 +181,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
-	};
-
-	const getContainer = () => {
-		return (isPopup ? '.popup' : '') + ' .header';
 	};
 
 	const resize = () => {

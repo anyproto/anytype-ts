@@ -1,13 +1,13 @@
 <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="3.25" y="2.92383" width="5.5" height="5.5" rx="1.25" stroke="#252525" stroke-width="1.5"/>
-<rect x="3.25" y="11.9238" width="5.5" height="5.5" rx="1.25" stroke="#252525" stroke-width="1.5"/>
-<rect x="12.25" y="2.92383" width="5.5" height="5.5" rx="1.25" stroke="#252525" stroke-width="1.5"/>
-<rect x="5" y="4.67383" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="5" y="13.6738" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="14" y="4.67383" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="14" y="13.6738" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="11.5" y="11.1738" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="11.5" y="16.1738" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="16.5" y="11.1738" width="2" height="2" rx="0.5" fill="#252525"/>
-<rect x="16.5" y="16.1738" width="2" height="2" rx="0.5" fill="#252525"/>
+<rect x="3.25" y="2.92383" width="5.5" height="5.5" rx="1.25" stroke="#9B9B9B" stroke-width="1.5"/>
+<rect x="3.25" y="11.9238" width="5.5" height="5.5" rx="1.25" stroke="#9B9B9B" stroke-width="1.5"/>
+<rect x="12.25" y="2.92383" width="5.5" height="5.5" rx="1.25" stroke="#9B9B9B" stroke-width="1.5"/>
+<rect x="5" y="4.67383" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="5" y="13.6738" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="14" y="4.67383" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="14" y="13.6738" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="11.5" y="11.1738" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="11.5" y="16.1738" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="16.5" y="11.1738" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
+<rect x="16.5" y="16.1738" width="2" height="2" rx="0.5" fill="#9B9B9B"/>
 </svg>

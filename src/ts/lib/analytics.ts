@@ -69,6 +69,7 @@ class Analytics {
 		menuContext: 'MenuContext',
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
+		menuPublish: 'MenuPublish',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -280,7 +281,7 @@ class Analytics {
 			param.spaceType = Number(space.spaceAccessType) || 0;
 			param.spaceType = I.SpaceType[param.spaceType];
 
-			let uxType = I.SpaceUxType.Space;
+			let uxType = I.SpaceUxType.Data;
 			if (undefined !== data.uxType) {
 				uxType = data.uxType;
 			};
@@ -301,6 +302,10 @@ class Analytics {
 		switch (code) {
 			case 'page': {
 				code = this.pageMapper(data.params);
+
+				if (data.params.route) {
+					data.route = data.params.route;
+				};
 				break;
 			};
 
@@ -611,6 +616,11 @@ class Analytics {
 			case 'ScreenInviteRequest' : {
 				data.type = Number(data.type) || 0;
 				data.type = I.InviteType[data.type];
+				break;
+			};
+
+			case 'CreateSpace' : {
+				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
 				break;
 			};
 

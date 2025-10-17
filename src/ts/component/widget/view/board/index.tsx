@@ -13,13 +13,14 @@ const WidgetViewBoard = observer(forwardRef<WidgetViewBoardRefProps, I.WidgetVie
 	const view = getView();
 	const object = getObject();
 	const blockId = J.Constant.blockId.dataview;
-	const [ searchIds, setSearchIds ] = useState<string[]>([]);
+	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const limit = getViewLimit();
 
 	const load = (searchIds: string[]) => {
 		if (view && view.groupRelationKey) {
 			Dataview.loadGroupList(rootId, blockId, view.id, object);
 		};
+
 		setSearchIds(searchIds);
 	};
 
@@ -28,6 +29,7 @@ const WidgetViewBoard = observer(forwardRef<WidgetViewBoardRefProps, I.WidgetVie
 		groups = groups.slice(0, limit);
 	};
 
+	useEffect(() => load(searchIds), []);
 	useEffect(() => load(searchIds), [ view?.id ]);
 
 	useImperativeHandle(ref, () => ({

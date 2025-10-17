@@ -51,8 +51,6 @@
 		.incentiveBanner {
 			.buttons { padding-top: 12px; display: flex; gap: 8px; justify-content: flex-end; }
 			.button { @include text-small; }
-			.button.dark { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
-			.button.dark:hover { background: var(--color-shape-highlight-dark); }
 		}
 
 		.items { height: 100%; }
