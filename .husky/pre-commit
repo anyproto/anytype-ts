@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+huskydir=$(dirname -- "$0")
+if [ -f "$huskydir/_/husky.sh" ]; then
+  . "$huskydir/_/husky.sh"
+fi
 
 npx lint-staged --concurrent false
 # npm run typecheck
