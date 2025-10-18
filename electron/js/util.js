@@ -67,6 +67,10 @@ class Util {
 	getBgColor (theme) {
 		theme = String(theme || '');
 
+		if (is.linux && !!process.env.XDG_SESSION_TYPE && process.env.XDG_SESSION_TYPE.toLowerCase() === 'wayland') {
+			return '#00000000'; // ARGB, transparent on Wayland
+		};
+
 		const bg = {
 			'': '#f2f2f2',
 			dark: '#232323',
