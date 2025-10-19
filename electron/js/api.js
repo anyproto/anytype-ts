@@ -85,7 +85,13 @@ class Api {
 	};
 
 	setBackground (win, theme) {
-		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(Util.getBgColor(theme)));
+		var bgColor;
+		if (is.linux && (process.env.XDG_SESSION_TYPE === 'wayland')) {
+			bgColor = '#00000000'; // ARGB, transparent (Wayland workaround)
+		} else {
+			bgColor = Util.getBgColor(theme);
+		};
+		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
 	};
 
 	setZoom (win, zoom) {
