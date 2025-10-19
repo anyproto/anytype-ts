@@ -2,8 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Button, Icon, Widget, DropTarget, Label, IconObject, ObjectName, Sync } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, sidebar, Storage, Dataview } from 'Lib';
+import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Preview, Storage, Dataview } from 'Lib';
 
 type State = {
 	previewId: string;
