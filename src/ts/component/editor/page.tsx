@@ -169,7 +169,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage(null, null, false);
+		sidebar.resizePage(isPopup, null, null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -235,8 +235,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
-
-		S.Block.clear(this.props.rootId);
 
 		C.ObjectOpen(this.id, '', U.Router.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);

@@ -157,7 +157,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -169,7 +169,7 @@ class Keyboard {
 			this.shortcut('tableOfContents', e, () => {
 				e.preventDefault();
 
-				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId });
 			});
 		};
 
@@ -186,8 +186,8 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (rightSidebar.isOpen) {
-				sidebar.rightPanelToggle(true, isPopup, rightSidebar.page);
+			if (!data.isClosed) {
+				sidebar.rightPanelClose(isPopup);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
