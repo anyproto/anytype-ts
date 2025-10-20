@@ -228,6 +228,8 @@ class Sidebar {
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
+			this.rightPanelSetState(isPopup, { page: '' });
+
 			$(window).trigger('resize');
 			this.setAnimating(false);
 		}, J.Constant.delay.sidebar);
@@ -244,18 +246,25 @@ class Sidebar {
 			return;
 		};
 
+		this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
+
+		this.rightPanelSetState(isPopup, state);
 		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: false });
-		this.resizePageInner(isPopup, null, width, true);
+		this.resizePageInner(isPopup, null, width + 8, true);
 
-		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => {
-			this.rightPanelSetState(isPopup, state);
+		raf(() => {
+			this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
 
-			$(window).trigger('resize');
-			this.setAnimating(false);
-		}, J.Constant.delay.sidebar);
+			window.clearTimeout(this.timeoutAnim);
+			this.timeoutAnim = window.setTimeout(() => {
+				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
+
+				$(window).trigger('resize');
+				this.setAnimating(false);
+			}, J.Constant.delay.sidebar);
+		});
 	};
 
 	/**
@@ -458,8 +467,6 @@ class Sidebar {
 			widthRight = this.objRight.outerWidth();
 		};
 
-		console.log(this.objRight, widthRight);
-
 		if (isPopup) {
 			widthLeft = 0;
 		};
@@ -590,11 +597,7 @@ class Sidebar {
 	};
 
 	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const namespace = U.Common.getEventNamespace(isPopup);
-		const { page } = rightSidebar;
-
-		v.page = v.page || page;
 
 		S.Common.setRightSidebarState(isPopup, v.page);
 		S.Common.getRef(`sidebarRight${namespace}`)?.setState(v);

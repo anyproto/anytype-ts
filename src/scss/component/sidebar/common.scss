@@ -79,17 +79,15 @@
 	.banner.update { position: absolute; bottom: 45px; z-index: 10; left: 12px; width: 312px; }
 
 	&.withPreview { z-index: 31; }
-	&.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
-
 	&.left { left: 0px; flex-direction: row; }
 	&.left {
 		.resize-h { right: -12px; }
 	}
 
 	&.right { right: 0px; flex-shrink: 0; padding: 8px 8px 8px 0px; }
-	&.right.anim { transition-property: right; }
 	&.right {
 		.resize-h { left: -12px; }
+		&.sidebarAnimation { transition-property: transform; }
 
 		@import "./preview";
 
