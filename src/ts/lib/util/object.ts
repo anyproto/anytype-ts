@@ -159,7 +159,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup.params = { ...param.data.matchPopup.params, ...object._routeParam_ };
 		};
 
 		keyboard.setSource(null);
@@ -743,12 +743,13 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
-		const newDetails: any = {
-			...this.getNewTypeDetails(),
-			...details,
-		};
-
-		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+		sidebar.rightPanelToggle(isPopup, { 
+			page: 'type', 
+			details: {
+				...this.getNewTypeDetails(),
+				...details,
+			},
+		});
 	};
 
 	getNewTypeDetails (): any {

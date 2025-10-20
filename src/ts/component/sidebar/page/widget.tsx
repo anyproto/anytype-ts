@@ -9,7 +9,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const [ previewId, setPreviewId ] = useState('');
 	const [ sectionIds, setSectionIds ] = useState([]);
+	const [ dummy, setDummy ] = useState(0);
 	const { widgets } = S.Block;
+	const types = S.Record.getTypes();
+	const childrenIds = S.Block.getChildrenIds(widgets, widgets);
+	const length = childrenIds.length;
 	const { sidebarDirection, isPopup } = props;
 	const { space } = S.Common;
 	const cnsh = [ 'subHead' ];
@@ -45,31 +49,36 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	let content = null;
 	let subHead = null;
 
-	const init = () => {
-		const body = $(bodyRef.current);
-
+	const initBlocks = () => {
 		U.Subscription.createTypeCheck(() => {
 			S.Block.updateTypeWidgetList();
-
-			const top = Storage.getScroll('sidebarWidget', '', isPopup);
-			const newSectionIds = [];
-			const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
-
-			ids.forEach(id => {
-				if (!isSectionClosed(id)) {
-					newSectionIds.push(id);
-				};
-			});
-
-			if (!U.Common.compareJSON(newSectionIds, sectionIds)) {
-				setSectionIds(newSectionIds);
-			} else {
-				ids.forEach(initToggle);
-			};
-
-			body.scrollTop(top);
-			onScroll();
+			setDummy(dummy + 1);
 		});
+	};
+
+	const initSections = () => {
+		const newSectionIds = [];
+		const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+
+		ids.forEach(id => {
+			if (!isSectionClosed(id)) {
+				newSectionIds.push(id);
+			};
+		});
+
+		if (!U.Common.compareJSON(newSectionIds, sectionIds)) {
+			setSectionIds(newSectionIds);
+		} else {
+			ids.forEach(initToggle);
+		};
+	};
+
+	const initScroll = () => {
+		const body = $(bodyRef.current);
+		const top = Storage.getScroll('sidebarWidget', '', isPopup);
+
+		body.scrollTop(top);
+		onScroll();
 	};
 
 	const onSync = () => {
@@ -677,8 +686,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	useEffect(() => {
 		const win = $(window);
 
-		win.off('checkWidgetToggles').on('checkWidgetToggles', () => init());
-		init();
+		win.off('checkWidgetToggles').on('checkWidgetToggles', () => initBlocks());
 
 		return () => {
 			win.off('checkWidgetToggles');
@@ -686,12 +694,17 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	}, []);
 
 	useEffect(() => {
-		init();
+		initSections();
+		initScroll();
 	});
 
 	useEffect(() => {
 		setPreviewId('');
 	}, [ space ]);
+
+	useEffect(() => {
+		initBlocks();
+	}, [ space, types.length ]);
 
 	return (
 		<>
