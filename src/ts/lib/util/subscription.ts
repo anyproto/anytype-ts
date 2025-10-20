@@ -659,7 +659,6 @@ class UtilSubscription {
 	};
 
 	createTypeCheck (callBack?: () => void) {
-		const { space } = S.Common;
 		const list = [];
 
 		for (const key of this.fileTypeKeys()) {
@@ -680,7 +679,11 @@ class UtilSubscription {
 			});
 		};
 
-		this.createList(list, callBack);
+		if (list.length) {
+			this.createList(list, callBack);
+		} else {
+			callBack?.();
+		};
 	};
 
 	/**

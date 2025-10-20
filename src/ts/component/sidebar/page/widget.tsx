@@ -678,6 +678,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const win = $(window);
 
 		win.off('checkWidgetToggles').on('checkWidgetToggles', () => init());
+		init();
 
 		return () => {
 			win.off('checkWidgetToggles');
