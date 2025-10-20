@@ -895,8 +895,8 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
 	 */
-	getRightSidebarState (isPopup: boolean): { page: string; isOpen: boolean; } {
-		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '', isOpen: false };
+	getRightSidebarState (isPopup: boolean): { page: string; } {
+		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '' };
 	};
 
 	/**
