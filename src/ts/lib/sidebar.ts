@@ -609,6 +609,8 @@ class Sidebar {
 			};
 
 			if (!shouldOpen) {
+				console.log('CLOSE RIGHT PANEL');
+				$(window).trigger('sidebarRightPanelClose');
 				S.Common.setRightSidebarState(isPopup, '', false);
 			};
 

@@ -91,9 +91,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 	};
 
+	componentWillUnmount(): void {
+		this.onCancel();
+		analytics.stackClear();
+	};
+
 	init () {
 		const type = this.getObject();
-
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,

@@ -53,7 +53,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
 	const cn = [ 'sidebar', 'right', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
-	const withPreview = [ 'type' ].includes(page);
+	const withPreview = !state.noPreview && [ 'type' ].includes(page);
 
 	if (withPreview) {
 		cn.push('withPreview');
