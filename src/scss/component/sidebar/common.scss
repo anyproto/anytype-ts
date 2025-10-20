@@ -2,7 +2,7 @@
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
-	padding: 8px 8px 8px 0px;
+	padding: 8px 0px;
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
@@ -84,7 +84,7 @@
 		.resize-h { right: -12px; }
 	}
 
-	&.right { right: 0px; flex-shrink: 0; padding: 8px 8px 8px 0px; }
+	&.right { right: 0px; flex-shrink: 0; padding: 8px 0px; }
 	&.right {
 		.resize-h { left: -12px; }
 		&.sidebarAnimation { transition-property: transform; }
@@ -92,7 +92,8 @@
 		@import "./preview";
 
 		.sidebarPage { 
-			background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px;
+			background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px; 
+			margin-right: 8px;
 		}
 	}
 }

@@ -90,7 +90,10 @@ class Sidebar {
 	};
 
 	getData (panel: I.SidebarPanel, isPopup?: boolean): SidebarData {
-		return this.panelData[panel] || { width: J.Size.sidebar.width.default, isClosed: false };
+		const ns = U.Common.getEventNamespace(isPopup);
+		const key = [ panel, ns ].join('');
+
+		return this.panelData[key] || { width: J.Size.sidebar.width.default, isClosed: false };
 	};
 
 	/**
@@ -102,10 +105,10 @@ class Sidebar {
 		const ns = U.Common.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
 
-		this.panelData[key] = Object.assign(this.panelData[panel], v);
-		this.setStyle(panel, isPopup, this.panelData[key]);
+		this.panelData = Storage.get(STORAGE_KEY, isLocal) || {};
+		this.panelData[key] = Object.assign(this.panelData[panel] || {}, v);
 
-		Storage.delete(STORAGE_KEY, isLocal);
+		this.setStyle(panel, isPopup, this.panelData[key]);
 		Storage.set(STORAGE_KEY, this.panelData, isLocal);
 	};
 
@@ -153,7 +156,6 @@ class Sidebar {
 			return;
 		};
 
-		this.setAnimating(true);
 		this.pageWrapperLeft.addClass('anim');
 		this.setElementsWidth(width);
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
@@ -166,7 +168,6 @@ class Sidebar {
 			this.setElementsWidth('');
 
 			$(window).trigger('resize');
-			this.setAnimating(false);
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -184,7 +185,6 @@ class Sidebar {
 		};
 
 		this.setElementsWidth(width);
-		this.setAnimating(true);
 		this.pageWrapperLeft.addClass('anim').removeClass('isClosed');
 
 		this.setStyle(I.SidebarPanel.Left, false, { width });
@@ -195,8 +195,8 @@ class Sidebar {
 		this.timeoutAnim = window.setTimeout(() => {
 			this.pageWrapperLeft.removeClass('anim');
 			this.setElementsWidth('');
+
 			$(window).trigger('resize');
-			this.setAnimating(false);
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -233,23 +233,19 @@ class Sidebar {
 			return;
 		};
 
-		this.objRight.addClass('sidebarAnimation');
+		this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(100%,0px,0px)' });
 
-		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width: 0 });
-		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
 		this.resizePage(isPopup, null, 0, true);
 
 		raf(() => {
-			this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
-
 			window.clearTimeout(this.timeoutAnim);
 			this.timeoutAnim = window.setTimeout(() => {
+				this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
 				this.rightPanelSetState(isPopup, { page: '' });
 				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
 				$(window).trigger('resize');
-				this.setAnimating(false);
 			}, J.Constant.delay.sidebar);
 		});
 	};
@@ -270,10 +266,9 @@ class Sidebar {
 		this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
 
 		this.rightPanelSetState(isPopup, state);
-		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: false });
-		this.resizePage(isPopup, null, width + 8, true);
+		this.resizePage(isPopup, null, width, true);
 
 		raf(() => {
 			this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
@@ -283,7 +278,6 @@ class Sidebar {
 				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
 				$(window).trigger('resize');
-				this.setAnimating(false);
 			}, J.Constant.delay.sidebar);
 		});
 	};
@@ -323,7 +317,6 @@ class Sidebar {
 		this.objLeft.addClass('sidebarAnimation').css({ width });
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
 		this.resizePage(false, width, null, true);
-		this.setAnimating(true);
 
 		window.setTimeout(() => {
 			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true });
@@ -331,8 +324,6 @@ class Sidebar {
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
-			this.setAnimating(false);
-			this.resizePage(false, null, null, false);
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -360,20 +351,18 @@ class Sidebar {
 		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
 		this.objLeft.css({ width });
 		this.dummyLeft.css({ width });
-		this.setAnimating(true);
+		this.resizePage(false, newWidth, null, true);
 		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false });
 
 		raf(() => {
 			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
 			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
 			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
-			this.resizePage(false, newWidth, null, true);
 
 			window.setTimeout(() => {
 				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.dummyLeft.removeClass('sidebarAnimation');
-				this.setAnimating(false);
 			}, J.Constant.delay.sidebar);
 		});
 	};
@@ -473,6 +462,11 @@ class Sidebar {
 
 		if (!this.pageFlex || !this.pageFlex.length) {
 			return;
+		};
+
+		if (animate) {
+			this.setAnimating(true);
+			window.setTimeout(() => this.setAnimating(false), J.Constant.delay.sidebar);
 		};
 
 		const isMain = keyboard.isMain();
