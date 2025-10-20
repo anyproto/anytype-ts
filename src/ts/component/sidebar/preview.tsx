@@ -40,14 +40,6 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	const timeoutRef = useRef<number>(0);
 	const ns = `sidebarPreview${U.Common.getEventNamespace(isPopup)}`;
 
-	const onClose = () => {
-		sidebar.rightPanelToggle(true, isPopup);
-	};
-
-	const update = (object: any) => {
-		setObject(object);
-	};
-
 	const show = (v: boolean) => {
 		resize();
 
