@@ -58,7 +58,10 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = { replace: true };
+		const routeParam = { 
+			replace: true, 
+			onRouteChange: () => sidebar.init(false),
+		};
 
 		S.Common.showRelativeDatesSet(true);
 

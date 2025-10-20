@@ -151,7 +151,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 		node.css({ height: wh });
 		frameRef.current?.resize();
-		sidebar.resizePage(null, null, false);
+		sidebar.resizePage(isPopup, null, null, false);
 	};
 
 	useEffect(() => {

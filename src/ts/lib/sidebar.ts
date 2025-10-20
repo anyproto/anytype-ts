@@ -55,14 +55,19 @@ class Sidebar {
 					data.isClosed = !data.width;
 				};
 
+				if ((key == I.SidebarPanel.SubLeft) && !space) {
+					data.isClosed = true;
+				};
+
 				this.setData(key, isPopup, data);
 			};
 		} else {
 			this.setData(I.SidebarPanel.Left, isPopup, { width: defaultWidth, isClosed: false });
 			this.setData(I.SidebarPanel.SubLeft, isPopup, { width: defaultWidth, isClosed: space ? false : true });
 			this.setData(I.SidebarPanel.Right, isPopup, { width: defaultWidth, isClosed: true });
-			this.resizePage(null, null, false);
 		};
+
+		this.resizePage(isPopup, null, null, false);
 	};
 
 	/**
@@ -140,6 +145,8 @@ class Sidebar {
 	 * Closes the sidebar with animation and updates state.
 	 */
 	leftPanelClose (): void {
+		this.initObjects(false);
+
 		const { width, isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || isClosed) {
@@ -151,7 +158,7 @@ class Sidebar {
 		this.setElementsWidth(width);
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true });
-		this.resizePage(0, null, true);
+		this.resizePage(false, 0, null, true);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -168,6 +175,8 @@ class Sidebar {
 	 * @param {number} [width] - The width to open the sidebar to.
 	 */
 	leftPanelOpen (width?: number): void {
+		this.initObjects(false);
+
 		const { isClosed } = this.getData(I.SidebarPanel.Left);
 
 		if (!this.objLeft || !this.objLeft.length || this.isAnimating || !isClosed) {
@@ -180,7 +189,7 @@ class Sidebar {
 
 		this.setStyle(I.SidebarPanel.Left, false, { width });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false });
-		this.resizePage(width, null, true);
+		this.resizePage(false, width, null, true);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -229,7 +238,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width: 0 });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
-		this.resizePageInner(isPopup, null, 0, true);
+		this.resizePage(isPopup, null, 0, true);
 
 		raf(() => {
 			this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
@@ -264,7 +273,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: false });
-		this.resizePageInner(isPopup, null, width + 8, true);
+		this.resizePage(isPopup, null, width + 8, true);
 
 		raf(() => {
 			this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
@@ -313,7 +322,7 @@ class Sidebar {
 		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
 		this.objLeft.addClass('sidebarAnimation').css({ width });
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
-		this.resizePage(width, null, true);
+		this.resizePage(false, width, null, true);
 		this.setAnimating(true);
 
 		window.setTimeout(() => {
@@ -323,7 +332,7 @@ class Sidebar {
 			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
 			this.setAnimating(false);
-			this.resizePage(null, null, false);
+			this.resizePage(false, null, null, false);
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -344,7 +353,6 @@ class Sidebar {
 			return;
 		};
 
-
 		const width = dataLeft.isClosed ? 0 : dataLeft.width;
 		const newWidth = width + dataSubLeft.width;
 
@@ -359,7 +367,7 @@ class Sidebar {
 			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
 			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
 			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
-			this.resizePage(newWidth, null, true);
+			this.resizePage(false, newWidth, null, true);
 
 			window.setTimeout(() => {
 				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
@@ -395,7 +403,7 @@ class Sidebar {
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number): void {
 		this.setData(panel, isPopup, { width: this.limitWidth(width), isClosed: false });
-		this.resizePage(null, null, false);
+		this.resizePage(isPopup, null, null, false);
 	};
 
 	/**
@@ -456,7 +464,11 @@ class Sidebar {
 	 * @param {number} widthRight - The width of the right sidebar.
 	 * @param {boolean} animate - Whether to animate the resize.
 	 */
-	resizePageInner (isPopup: boolean, widthLeft: number, widthRight: number, animate: boolean): void {
+	resizePage (isPopup: boolean, widthLeft: number, widthRight: number, animate: boolean): void {
+		if (this.isAnimating) {
+			return;
+		};
+
 		this.initObjects(isPopup);
 
 		if (!this.pageFlex || !this.pageFlex.length) {
@@ -534,11 +546,6 @@ class Sidebar {
 		};
 
 		$(window).trigger('sidebarResize');
-	};
-
-	resizePage (widthLeft: number, widthRight: number, animate: boolean): void {
-		this.resizePageInner(false, widthLeft, widthRight, animate);
-		this.resizePageInner(true, widthLeft, widthRight, animate);
 	};
 
 	/**

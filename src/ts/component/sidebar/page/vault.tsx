@@ -18,7 +18,7 @@ const HEIGHT_ITEM = 64;
 const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion } = S.Common;
+	const { updateVersion, space } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -214,10 +214,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	});
 
 	const onClick = (item: any) => {
-		if (item.targetSpaceId != S.Common.space) {
-			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+		const routeParam = {
+			replace: true,
+			onRouteChange: () => {
+				if (!space) {
+					sidebar.leftPanelSubPageOpen('widget');
+				};
+			},
+		};
+
+		if (item.targetSpaceId != space) {
+			U.Router.switchSpace(item.targetSpaceId, '', true, routeParam, false);
 		} else {
-			U.Space.openDashboard({ replace: false });
+			U.Space.openDashboard(routeParam);
 		};
 	};
 

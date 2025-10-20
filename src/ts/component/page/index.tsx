@@ -336,7 +336,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				this.refChild.resize();			
 			};
 
-			sidebar.resizePage(null, null, false);
+			sidebar.resizePage(this.props.isPopup, null, null, false);
 		});
 	};
 	
