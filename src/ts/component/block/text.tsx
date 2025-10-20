@@ -600,7 +600,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
 
-		if (!skipTwinPairs && range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinPairs).includes(key)) {
+		if (
+			!skipTwinPairs && 
+			range && 
+			(key != oneSymbolBefore) && 
+			(
+				(range.from != range.to) || 
+				block.isTextCode()
+			) && 
+			Object.keys(twinPairs).includes(key)
+		) {
 			e.preventDefault();
 
 			let length = 0;
