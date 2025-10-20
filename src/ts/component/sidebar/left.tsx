@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -40,6 +40,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
+	const closeWidth = J.Size.sidebar.width.min * 0.75;
 
 	const getComponentId = (id: string) => {
 		id = String(id || '');
@@ -76,7 +77,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
-	const onResizeStart = (e: MouseEvent, panel: I.SidebarPanel) => {
+	const onResizeStart = (e: DragEvent, panel: I.SidebarPanel) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -135,19 +136,19 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			};
 
 			if (d < 0) {
-				if (w <= J.Size.sidebar.width.close) {
+				if (w <= closeWidth) {
 					sidebar.close(panel);
 				} else {
-					sidebar.setWidth(panel, w);
+					sidebar.setWidth(panel, false, w);
 				};
 			};
 
 			if (d > 0) {
-				if (data.isClosed || ((w >= 0) && (w <= J.Size.sidebar.width.close))) {
+				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
 					sidebar.open(panel, '', J.Size.sidebar.width.min);
 				} else 
-				if (w > J.Size.sidebar.width.close) {
-					sidebar.setWidth(panel, w);
+				if (w > closeWidth) {
+					sidebar.setWidth(panel, false, w);
 				};
 			};
 
@@ -172,16 +173,12 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	const onHandleClick = () => {
 		if (!movedX.current) {
-			onToggleClick();
+			sidebar.leftPanelToggle();
 		};
 	};
 
-	const onToggleClick = () => {
-		sidebar.leftPanelToggle();
-	};
-
 	useEffect(() => {
-		sidebar.init();
+		sidebar.init(false);
 
 		return () => {
 			Preview.tooltipHide(true);
@@ -206,7 +203,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				id="sidebarLeftButton"
 				className="toggle sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
-				onClick={onToggleClick}
+				onClick={() => sidebar.leftPanelToggle()}
 				onMouseDown={e => e.stopPropagation()}
 			/>
 

@@ -246,6 +246,10 @@ class Util {
 		return path.join(app.getPath('appData'), app.getName());
 	};
 
+	isWayland () {
+		return is.linux && (process.env.XDG_SESSION_TYPE === 'wayland');
+	};
+
 };
 
 module.exports = new Util();

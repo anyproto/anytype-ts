@@ -91,9 +91,13 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 	};
 
+	componentWillUnmount(): void {
+		this.restore();
+		analytics.stackClear();
+	};
+
 	init () {
 		const type = this.getObject();
-
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
@@ -273,20 +277,27 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
 	onCancel () {
 		const { isPopup, previous } = this.props;
-		const rootId = keyboard.getRootId();
 
-		if (U.Common.objectLength(this.update)) {
-			S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
-
-			if ((rootId != this.backup.id) && !U.Object.isTypeLayout(this.backup.layout)) {
-				this.updateLayout(this.backup.recommendedLayout);
-			};
-		};
+		this.restore();
 
 		if (previous && previous.page) {
 			sidebar.rightPanelSetState(isPopup, previous);
 		} else {
 			this.close();
+		};
+	};
+
+	restore () {
+		if (!U.Common.objectLength(this.update)) {
+			return;
+		};
+
+		const rootId = keyboard.getRootId();
+
+		S.Detail.update(J.Constant.subId.type, { id: this.backup.id, details: this.backup }, false);
+
+		if ((rootId != this.backup.id) && !U.Object.isTypeLayout(this.backup.layout)) {
+			this.updateLayout(this.backup.recommendedLayout);
 		};
 	};
 
@@ -296,7 +307,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		if (!noPreview) {
 			this.previewRef?.show(false);
 		};
-		sidebar.rightPanelToggle(true, isPopup, page);
+
+		sidebar.rightPanelToggle(isPopup, { page });
 	};
 
 	updateSections () {

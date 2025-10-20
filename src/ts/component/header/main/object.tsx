@@ -106,7 +106,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	};
 
 	const onRelation = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
 	};
 
 	const updateTemplatesCnt = () => {

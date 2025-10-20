@@ -85,7 +85,9 @@ class Api {
 	};
 
 	setBackground (win, theme) {
-		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(Util.getBgColor(theme)));
+		const bgColor = Util.isWayland() ? '#00000000' : Util.getBgColor(theme);
+
+		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
 	};
 
 	setZoom (win, zoom) {

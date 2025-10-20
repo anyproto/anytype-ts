@@ -47,7 +47,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 	};
 
 	const onRelation = () => {
-		sidebar.rightPanelToggle(true, isPopup, 'object/relation', { rootId, readonly });
+		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
 	};
 
 	const onShare = () => {

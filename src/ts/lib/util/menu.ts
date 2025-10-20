@@ -473,6 +473,9 @@ class UtilMenu {
 		];
 		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.bin) {
+			options.unshift(I.WidgetLayout.Link);
 		};
 
 		if (id && !isSystem) {
