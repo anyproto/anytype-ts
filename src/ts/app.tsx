@@ -174,7 +174,8 @@ const App: FC = () => {
 				resizable.trigger('resizeInit');
 			};
 
-			sidebar.resizePage(null, null, false);
+			sidebar.resizePage(false, null, null, false);
+			sidebar.resizePage(true, null, null, false);
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {

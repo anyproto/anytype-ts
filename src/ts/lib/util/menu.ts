@@ -938,18 +938,6 @@ class UtilMenu {
 			return 0;
 		});
 
-		/*
-		console.log(JSON.stringify(items.map(it => 
-			`${it.name} 
-			p: ${it.isPinned}
-			o: ${it.orderId}
-			lm: ${U.Date.dateWithFormat(I.DateFormat.European, it.lastMessageDate)} 
-			jd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)} 
-			c: ${it.counter} 
-			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
-		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
-		*/
-
 		return items;
 	};
 

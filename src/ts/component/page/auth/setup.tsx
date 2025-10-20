@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding } from 'Lib';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding, sidebar } from 'Lib';
 
 const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
@@ -58,6 +58,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			const routeParam = { 
 				replace: true,
 				animate,
+				onRouteChange: () => sidebar.init(false),
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const chatsOnboarding = Storage.get('chatsOnboarding');
