@@ -74,10 +74,8 @@ class Sidebar {
 	 * Initializes DOM object references for sidebar elements.
 	 */
 	initObjects (isPopup: boolean) {
-		const ns = U.Common.getEventNamespace(isPopup);
-
 		this.objLeft = $(S.Common.getRef('sidebarLeft')?.getNode());
-		this.objRight = $(S.Common.getRef(`sidebarRight${ns}`)?.getNode());
+		this.objRight = this.rightPanelGetNode(isPopup);
 		this.pageWrapperLeft = this.objLeft.find('#pageWrapper');
 		this.subPageWrapperLeft = this.objLeft.find('#subPageWrapper');
 		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
@@ -609,11 +607,17 @@ class Sidebar {
 		return Number($('#sidebarDummyLeft').outerWidth()) || 0;
 	};
 
-	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
-		const ns = U.Common.getEventNamespace(isPopup);
+	rightPanelGetRef (isPopup: boolean) {
+		return S.Common.getRef(`sidebarRight${U.Common.getEventNamespace(isPopup)}`);
+	};
 
+	rightPanelGetNode (isPopup: boolean): JQuery<HTMLElement> | null {
+		return $(this.rightPanelGetRef(isPopup)?.getNode());
+	};
+
+	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
 		S.Common.setRightSidebarState(isPopup, v.page);
-		S.Common.getRef(`sidebarRight${ns}`)?.setState(v);
+		this.rightPanelGetRef(isPopup)?.setState(v);
 	};
 
 };
