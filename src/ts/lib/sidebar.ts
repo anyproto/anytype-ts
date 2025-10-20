@@ -232,20 +232,16 @@ class Sidebar {
 		};
 
 		this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(100%,0px,0px)' });
-
-		this.setStyle(I.SidebarPanel.Right, isPopup, { width: 0 });
 		this.resizePage(isPopup, null, 0, true);
 
-		raf(() => {
-			window.clearTimeout(this.timeoutAnim);
-			this.timeoutAnim = window.setTimeout(() => {
-				this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
-				this.rightPanelSetState(isPopup, { page: '' });
-				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
+		window.clearTimeout(this.timeoutAnim);
+		this.timeoutAnim = window.setTimeout(() => {
+			this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
+			this.rightPanelSetState(isPopup, { page: '' });
+			this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
-				$(window).trigger('resize');
-			}, J.Constant.delay.sidebar);
-		});
+			$(window).trigger('resize');
+		}, J.Constant.delay.sidebar);
 	};
 
 	/**
