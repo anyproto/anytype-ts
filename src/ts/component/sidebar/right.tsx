@@ -55,8 +55,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const sx = useRef(0);
 	const frame = useRef(0);
 	const width = useRef(0);
-	const movedX = useRef(false);
-	const closeWidth = J.Size.sidebar.width.min * 0.75;
 
 	if (withPreview) {
 		cn.push('withPreview');
@@ -72,11 +70,14 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 		const win = $(window);
 		const body = $('body');
-		const o = $(nodeRef.current).offset();
+		const node = $(nodeRef.current);
+		const o = node.offset();
+		const data = sidebar.getData(I.SidebarPanel.Right);
 
 		ox.current = o.left;
 		oy.current = o.top;
 		sx.current = e.pageX;
+		width.current = node.outerWidth();
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
@@ -88,7 +89,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	};
 
 	const onResizeMove = (e: any) => {
-
 		if (frame.current) {
 			raf.cancel(frame.current);
 		};
@@ -98,44 +98,15 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 				return;
 			};
 
-			console.log('X diff', Math.abs(sx.current - e.pageX));
-
-			if (Math.abs(sx.current - e.pageX) >= 10) {
-				movedX.current = true;
-			};
-
-			const w = Math.max(0, (ox.current - e.pageX));
+			const w = width.current + ox.current - e.pageX;
 			const d = w - width.current;
-			const data = sidebar.getData(I.SidebarPanel.Right);
-			const closeWidth = J.Size.sidebar.width.min * 0.75;
 
-			console.log('W', w, 'D', d);
+			if (d) {
+				sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
 
-			if (!d) {
-				return;
-			};
-
-			if (d > 0) {
-				if (w <= closeWidth) {
-					sidebar.close(I.SidebarPanel.Right);
-				} else {
-					sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
+				if (pageRef.current && pageRef.current.resize) {
+					pageRef.current.resize();
 				};
-			};
-
-			if (d < 0) {
-				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
-					sidebar.open(I.SidebarPanel.Right, '', J.Size.sidebar.width.min);
-				} else 
-				if (w > closeWidth) {
-					sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
-				};
-			};
-
-			width.current = w;
-
-			if (pageRef.current && pageRef.current.resize) {
-				pageRef.current.resize();
 			};
 		});
 	};
@@ -147,13 +118,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
-
-		window.setTimeout(() => movedX.current = false, 15);
-	};
-
-	const onHandleClick = () => {
-		if (!movedX.current) {
-		};
 	};
 
 	useEffect(() => {
@@ -192,7 +156,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			): ''}
 
 			<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
-				<div className="resize-handle" onClick={onHandleClick} />
+				<div className="resize-handle" />
 			</div>
 		</div>
 	);
