@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, Dr
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, U, J, keyboard, sidebar } from 'Lib';
+import { I, U, J, S, keyboard, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -15,18 +15,8 @@ interface Props {
 
 interface SidebarRightRefProps {
 	getNode: () => HTMLElement | null;
-	setState: (state: State) => void;
-	getState: () => State;
-};
-
-interface State {
-	page: string;
-	rootId: string;
-	details: any;
-	readonly: boolean;
-	noPreview: boolean;
-	blockId: string;
-	previous: State;
+	setState: (state: I.SidebarRightState) => void;
+	getState: () => I.SidebarRightState;
 };
 
 const Components = {
@@ -38,20 +28,22 @@ const Components = {
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
+	const { isPopup } = props;
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
-	const [ state, setState ] = useState<State>({
-		page: '',
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const [ state, setState ] = useState<I.SidebarRightState>({
 		rootId: '',
 		details: {},
 		readonly: false,
 		noPreview: false,
 		previous: null,
 		blockId: '',
+		back: '',
 	});
 
-	const page = String(state.page || '');
+	const page = String(rightSidebar.page || '');
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
@@ -64,6 +56,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const frame = useRef(0);
 	const width = useRef(0);
 	const movedX = useRef(false);
+	const closeWidth = J.Size.sidebar.width.min * 0.75;
 
 	if (withPreview) {
 		cn.push('withPreview');
@@ -95,6 +88,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	};
 
 	const onResizeMove = (e: any) => {
+
 		if (frame.current) {
 			raf.cancel(frame.current);
 		};
@@ -103,6 +97,8 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			if (sidebar.isAnimating) {
 				return;
 			};
+
+			console.log('X diff', Math.abs(sx.current - e.pageX));
 
 			if (Math.abs(sx.current - e.pageX) >= 10) {
 				movedX.current = true;
@@ -113,11 +109,13 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			const data = sidebar.getData(I.SidebarPanel.Right);
 			const closeWidth = J.Size.sidebar.width.min * 0.75;
 
+			console.log('W', w, 'D', d);
+
 			if (!d) {
 				return;
 			};
 
-			if (d < 0) {
+			if (d > 0) {
 				if (w <= closeWidth) {
 					sidebar.close(I.SidebarPanel.Right);
 				} else {
@@ -125,7 +123,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 				};
 			};
 
-			if (d > 0) {
+			if (d < 0) {
 				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
 					sidebar.open(I.SidebarPanel.Right, '', J.Size.sidebar.width.min);
 				} else 
@@ -160,12 +158,18 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 	useEffect(() => {
 		pageRef.current?.forceUpdate();
+
+		const data = sidebar.getData(I.SidebarPanel.Right);
+
+		console.log(data);
+
+		$(nodeRef.current).css({ width: data.isClosed ? 0 : data.width });
 	});
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
 		getState: () => U.Common.objectCopy(state),
-		setState: (newState: State) => {
+		setState: (newState: I.SidebarRightState) => {
 			if (newState.page !== state.page) {
 				delete(state.previous);
 				newState.previous = U.Common.objectCopy(state);

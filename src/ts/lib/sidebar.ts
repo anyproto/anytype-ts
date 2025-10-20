@@ -39,9 +39,10 @@ class Sidebar {
 		this.initObjects(false);
 
 		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
+		const keys = [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft ];
+		const { default: defaultWidth } = J.Size.sidebar.width;
 
 		if (stored) {
-			const keys = [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft ];
 			for (const key of keys) {
 				const data = stored[key];
 
@@ -56,8 +57,11 @@ class Sidebar {
 				this.set(key, data);
 			};
 		} else {
-			this.set(I.SidebarPanel.Left, { width: J.Size.sidebar.width.default, isClosed: false });
-			this.set(I.SidebarPanel.SubLeft, { width: J.Size.sidebar.width.default, isClosed: false });
+			for (const key of keys) {
+				this.set(key, { width: defaultWidth, isClosed: false });
+			};
+
+			this.set(I.SidebarPanel.Right, { width: defaultWidth, isClosed: true });
 			this.resizePage(null, null, false);
 		};
 	};
@@ -185,6 +189,120 @@ class Sidebar {
 		};
 
 		S.Menu.closeAll();
+	};
+
+	/**
+	 * Closes the sidebar with animation and updates state.
+	 */
+	rightPanelClose (isPopup: boolean): void {
+	};
+
+	/**
+	 * Opens the sidebar to the specified width with animation.
+	 * @param {number} [width] - The width to open the sidebar to.
+	 */
+	rightPanelOpen (isPopup: boolean, state: Partial<I.SidebarRightState>, width?: number): void {
+	};
+
+	/**
+	 * Toggles the sidebar open/close state.
+	 */
+	rightPanelToggle (isPopup: boolean, state: Partial<I.SidebarRightState>) {
+		if (this.isAnimating) {
+			return;
+		};
+		
+		const { width, isClosed } = this.getData(I.SidebarPanel.Right);
+
+		if (isClosed) {
+			this.rightPanelOpen(isPopup, state, width);
+			analytics.event('ExpandSidebar');
+		} else {
+			this.rightPanelClose(isPopup);
+			analytics.event('CollapseSidebar');
+		};
+
+		S.Menu.closeAll();
+	};
+
+	leftPanelSubPageClose () {
+		if (this.isAnimating) {
+			return;
+		};
+
+		this.initObjects(false);
+
+		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const width = dataLeft.isClosed ? 0 : dataLeft.width;
+
+		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.objLeft.addClass('sidebarAnimation').css({ width });
+		this.dummyLeft.addClass('sidebarAnimation').css({ width });
+		this.resizePage(width, null, true);
+		this.setAnimating(true);
+
+		window.setTimeout(() => {
+			this.set(I.SidebarPanel.SubLeft, { isClosed: true });
+
+			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+			this.dummyLeft.removeClass('sidebarAnimation');
+			this.setAnimating(false);
+			this.resizePage(null, null, false);
+		}, J.Constant.delay.sidebar);
+	};
+
+	leftPanelSubPageOpen (id: string) {
+		if (this.isAnimating) {
+			return;
+		};
+
+		this.initObjects(false);
+
+		const state = S.Common.getLeftSidebarState();
+		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+
+		S.Common.setLeftSidebarState(state.page, id);
+
+		if (!dataSubLeft.isClosed) {
+			return;
+		};
+
+
+		const width = dataLeft.isClosed ? 0 : dataLeft.width;
+		const newWidth = width + dataSubLeft.width;
+
+		this.setStyle(I.SidebarPanel.Left, { width });
+		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.objLeft.css({ width });
+		this.dummyLeft.css({ width });
+		this.setAnimating(true);
+		this.set(I.SidebarPanel.SubLeft, { isClosed: false });
+
+		raf(() => {
+			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
+			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
+			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
+			this.resizePage(newWidth, null, true);
+
+			window.setTimeout(() => {
+				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
+				this.dummyLeft.removeClass('sidebarAnimation');
+				this.setAnimating(false);
+			}, J.Constant.delay.sidebar);
+		});
+	};
+
+	leftPanelSubPageToggle (id: string) {
+		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
+
+		if (isClosed) {
+			this.leftPanelSubPageOpen(id);
+		} else {
+			this.leftPanelSubPageClose();
+		};
 	};
 
 	/**
@@ -369,11 +487,13 @@ class Sidebar {
 	 * @param {Partial<SidebarData>} v - The new sidebar data.
 	 */
 	set (panel: I.SidebarPanel, v: Partial<SidebarData>): void {
+		const isLocal = Storage.isLocal(STORAGE_KEY);
+
 		this.panelData[panel] = Object.assign(this.panelData[panel], v);
 		this.setStyle(panel, this.panelData[panel]);
 
-		Storage.delete(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
-		Storage.set(STORAGE_KEY, this.panelData, Storage.isLocal(STORAGE_KEY));
+		Storage.delete(STORAGE_KEY, isLocal);
+		Storage.set(STORAGE_KEY, this.panelData, isLocal);
 	};
 
 	/**
@@ -441,86 +561,6 @@ class Sidebar {
 		return Number($('#sidebarDummyLeft').outerWidth()) || 0;
 	};
 
-	leftPanelSubPageToggle (id: string) {
-		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
-
-		if (isClosed) {
-			this.leftPanelSubPageOpen(id);
-		} else {
-			this.leftPanelSubPageClose();
-		};
-	};
-
-	leftPanelSubPageClose () {
-		if (this.isAnimating) {
-			return;
-		};
-
-		this.initObjects(false);
-
-		const dataLeft = this.getData(I.SidebarPanel.Left);
-		const width = dataLeft.isClosed ? 0 : dataLeft.width;
-
-		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
-		this.objLeft.addClass('sidebarAnimation').css({ width });
-		this.dummyLeft.addClass('sidebarAnimation').css({ width });
-		this.resizePage(width, null, true);
-		this.setAnimating(true);
-
-		window.setTimeout(() => {
-			this.set(I.SidebarPanel.SubLeft, { isClosed: true });
-
-			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
-			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
-			this.dummyLeft.removeClass('sidebarAnimation');
-			this.setAnimating(false);
-			this.resizePage(null, null, false);
-		}, J.Constant.delay.sidebar);
-	};
-
-	leftPanelSubPageOpen (id: string) {
-		if (this.isAnimating) {
-			return;
-		};
-
-		this.initObjects(false);
-
-		const state = S.Common.getLeftSidebarState();
-		const dataLeft = this.getData(I.SidebarPanel.Left);
-		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
-
-		S.Common.setLeftSidebarState(state.page, id);
-
-		if (!dataSubLeft.isClosed) {
-			return;
-		};
-
-
-		const width = dataLeft.isClosed ? 0 : dataLeft.width;
-		const newWidth = width + dataSubLeft.width;
-
-		this.setStyle(I.SidebarPanel.Left, { width });
-		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
-		this.objLeft.css({ width });
-		this.dummyLeft.css({ width });
-		this.setAnimating(true);
-		this.set(I.SidebarPanel.SubLeft, { isClosed: false });
-
-		raf(() => {
-			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
-			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
-			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
-			this.resizePage(newWidth, null, true);
-
-			window.setTimeout(() => {
-				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
-				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
-				this.dummyLeft.removeClass('sidebarAnimation');
-				this.setAnimating(false);
-			}, J.Constant.delay.sidebar);
-		});
-	};
-
 	/**
 	 * Gets the reference to the right panel for the given context.
 	 * @param {boolean} isPopup - Whether the context is a popup.
@@ -531,6 +571,7 @@ class Sidebar {
 		return S.Common.getRef(`sidebarRight${namespace}`);
 	};
 
+	/*
 	rightPanelRestore (isPopup: boolean) {
 		this.initObjects(isPopup);
 
@@ -549,17 +590,10 @@ class Sidebar {
 		this.objRight.css(css);
 	};
 
-	/**
-	 * Toggles the right panel open or closed with animation.
-	 * @param {boolean} v - Whether to open the panel.
-	 * @param {boolean} animate - Whether to animate the toggle.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @param {string} [page] - The page to show in the panel.
-	 * @param {any} [param] - Additional parameters for the panel.
-	 */
 	rightPanelToggle (animate: boolean, isPopup: boolean, page?: string, param?: any) {
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const shouldOpen = !rightSidebar.isOpen || (rightSidebar.page != page);
+		const data = this.getData(I.SidebarPanel.Right);
 
 		if (rightSidebar.isOpen && (page != rightSidebar.page)) {
 			animate = false;
@@ -575,7 +609,7 @@ class Sidebar {
 		this.rightPanelSetState(isPopup, { page: '' });
 		this.initObjects(isPopup);
 
-		const width = this.objRight.outerWidth();
+		const width = data.width;
 		const cssStart: any = {};
 		const cssEnd: any = {};
 
@@ -598,6 +632,8 @@ class Sidebar {
 			this.resizePageInner(isPopup, null, shouldOpen ? null : 0, animate);
 
 			window.setTimeout(() => {
+				this.set(I.SidebarPanel.Right, { isClosed: !shouldOpen });
+
 				if (shouldOpen) {
 					this.rightPanelSetState(isPopup, { page, ...param });
 				} else {
@@ -621,38 +657,24 @@ class Sidebar {
 			$(window).trigger('resize');
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
+	*/
 
-	/**
-	 * Sets the state of the right panel for the given context.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @param {any} v - The state to set.
-	 */
-	rightPanelSetState (isPopup: boolean, v: any) {
+	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
 		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const { isOpen, page } = rightSidebar;
+		const { page } = rightSidebar;
 
 		v.page = v.page || page;
 
-		S.Common.setRightSidebarState(isPopup, v.page, isOpen);
+		S.Common.setRightSidebarState(isPopup, v.page);
 		this.rightPanelRef(isPopup)?.setState(v);
 	};
 
-	/**
-	 * Gets the state of the right panel for the given context.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 */
-	rightPanelGetState (isPopup: boolean) {
-		return this.rightPanelRef(isPopup)?.getState() || {};
-	};
-
-	/**
-	 * Closes the right panel for the given context.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 */
+	/*
 	rightPanelClose (isPopup: boolean) {
 		S.Common.setRightSidebarState(isPopup, '', false);
 		this.rightPanelRestore(isPopup);
 	};
+	*/
 
 };
 

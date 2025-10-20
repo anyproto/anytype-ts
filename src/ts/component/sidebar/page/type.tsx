@@ -307,7 +307,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		if (!noPreview) {
 			this.previewRef?.show(false);
 		};
-		sidebar.rightPanelToggle(true, isPopup, page);
+
+		sidebar.rightPanelToggle(isPopup, { page });
 	};
 
 	updateSections () {

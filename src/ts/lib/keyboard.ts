@@ -169,7 +169,7 @@ class Keyboard {
 			this.shortcut('tableOfContents', e, () => {
 				e.preventDefault();
 
-				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId });
 			});
 		};
 
@@ -187,7 +187,7 @@ class Keyboard {
 				S.Menu.closeLast();
 			} else 
 			if (rightSidebar.isOpen) {
-				sidebar.rightPanelToggle(true, isPopup, rightSidebar.page);
+				sidebar.rightPanelClose(isPopup);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;

@@ -743,12 +743,13 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
-		const newDetails: any = {
-			...this.getNewTypeDetails(),
-			...details,
-		};
-
-		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+		sidebar.rightPanelToggle(isPopup, { 
+			page: 'type', 
+			details: {
+				...this.getNewTypeDetails(),
+				...details,
+			},
+		});
 	};
 
 	getNewTypeDetails (): any {
