@@ -215,24 +215,33 @@ class Sidebar {
 	 * Closes the sidebar with animation and updates state.
 	 */
 	rightPanelClose (isPopup: boolean): void {
+		this.initObjects(isPopup);
+
 		const { isClosed } = this.getData(I.SidebarPanel.Right);
 
 		if (!this.objRight || !this.objRight.length || this.isAnimating || isClosed) {
 			return;
 		};
 
+		this.objRight.addClass('sidebarAnimation');
+
 		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width: 0 });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
 		this.resizePage(null, 0, true);
 
-		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => {
-			this.rightPanelSetState(isPopup, { page: '' });
+		raf(() => {
+			this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
 
-			$(window).trigger('resize');
-			this.setAnimating(false);
-		}, J.Constant.delay.sidebar);
+			window.clearTimeout(this.timeoutAnim);
+			this.timeoutAnim = window.setTimeout(() => {
+				this.rightPanelSetState(isPopup, { page: '' });
+				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
+
+				$(window).trigger('resize');
+				this.setAnimating(false);
+			}, J.Constant.delay.sidebar);
+		});
 	};
 
 	/**
@@ -240,6 +249,8 @@ class Sidebar {
 	 * @param {number} [width] - The width to open the sidebar to.
 	 */
 	rightPanelOpen (isPopup: boolean, state: Partial<I.SidebarRightState>, width?: number): void {
+		this.initObjects(isPopup);
+
 		const { isClosed } = this.getData(I.SidebarPanel.Right);
 
 		if (!this.objRight || !this.objRight.length || this.isAnimating || !isClosed) {
