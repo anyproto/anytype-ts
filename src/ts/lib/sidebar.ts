@@ -70,8 +70,10 @@ class Sidebar {
 	 * Initializes DOM object references for sidebar elements.
 	 */
 	initObjects (isPopup: boolean) {
+		const ns = U.Common.getEventNamespace(isPopup);
+
 		this.objLeft = $(S.Common.getRef('sidebarLeft')?.getNode());
-		this.objRight = $(S.Common.getRef('sidebarRight')?.getNode());
+		this.objRight = $(S.Common.getRef(`sidebarRight${ns}`)?.getNode());
 		this.pageWrapperLeft = this.objLeft.find('#pageWrapper');
 		this.subPageWrapperLeft = this.objLeft.find('#subPageWrapper');
 		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
@@ -217,7 +219,7 @@ class Sidebar {
 	rightPanelClose (isPopup: boolean): void {
 		this.initObjects(isPopup);
 
-		const { isClosed } = this.getData(I.SidebarPanel.Right);
+		const { isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
 
 		if (!this.objRight || !this.objRight.length || this.isAnimating || isClosed) {
 			return;
@@ -228,7 +230,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width: 0 });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
-		this.resizePage(null, 0, true);
+		this.resizePageInner(isPopup, null, 0, true);
 
 		raf(() => {
 			this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
@@ -251,7 +253,7 @@ class Sidebar {
 	rightPanelOpen (isPopup: boolean, state: Partial<I.SidebarRightState>, width?: number): void {
 		this.initObjects(isPopup);
 
-		const { isClosed } = this.getData(I.SidebarPanel.Right);
+		const { isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
 
 		if (!this.objRight || !this.objRight.length || this.isAnimating || !isClosed) {
 			return;
@@ -286,7 +288,7 @@ class Sidebar {
 			return;
 		};
 		
-		const { width, isClosed } = this.getData(I.SidebarPanel.Right);
+		const { width, isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
 
 		if (isClosed) {
 			this.rightPanelOpen(isPopup, state, width);
@@ -608,10 +610,10 @@ class Sidebar {
 	};
 
 	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = U.Common.getEventNamespace(isPopup);
 
 		S.Common.setRightSidebarState(isPopup, v.page);
-		S.Common.getRef(`sidebarRight${namespace}`)?.setState(v);
+		S.Common.getRef(`sidebarRight${ns}`)?.setState(v);
 	};
 
 };
