@@ -8,7 +8,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -33,6 +33,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
+	const canCreate = U.Space.canCreateSpace();
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -51,7 +52,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onKeyDown = (e: any) => {
 		const key = e.key.toLowerCase();
-		const { isClosed, width } = sidebar.data;
+		const { isClosed, width } = sidebar.getData(I.SidebarPanel.Left);
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			pressed.current.add(key);
@@ -67,7 +68,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.open(width);
+				sidebar.leftPanelOpen(width);
 			};
 		});
 	};
@@ -100,7 +101,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.close();
+			sidebar.leftPanelClose();
 			closeSidebar.current = false;
 		};
 	};
@@ -217,7 +218,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 		} else {
 			U.Space.openDashboard({ replace: false });
-			sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
 		};
 	};
 
@@ -387,7 +387,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onSettings = () => {
-		U.Router.go('/main/settings/index', {});
+		Action.openSettings('index', analytics.route.vault);
 	};
 
 	const onGallery = () => {
@@ -407,6 +407,17 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 		});
+	};
+
+	const onCreate = () => {
+		Storage.setHighlight('createSpace', false);
+		Highlight.hide('createSpace');
+
+		U.Menu.spaceCreate({
+			element: `#button-create-space`,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		}, analytics.route.vault);
 	};
 
 	const getRowHeight = (item: any) => {
@@ -429,7 +440,19 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	return (
 		<>
-			<div id="head" className="head" />
+			<div id="head" className="head">
+				<div className="side left" />
+				<div className="side right">
+					{canCreate ? (
+						<Icon
+							id="button-create-space"
+							className="plus withBackground"
+							tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+							onClick={onCreate}
+						/>
+					) : ''}
+				</div>
+			</div>
 			<div className="filterWrapper">
 				<Filter 
 					ref={filterRef}

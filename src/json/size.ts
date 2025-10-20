@@ -13,6 +13,7 @@ export default {
 		width: { min: 240, max: 480, default: 336, close: 180 },
 		threshold: 72,
 		right: 348,
+		sub: 336,
 	},
 
 	table: {

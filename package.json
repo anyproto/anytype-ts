@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.50.7-alpha",
+	"version": "0.50.11-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -33,7 +33,9 @@
 		"publish:win": "rspack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
 		"postinstall": "npx patch-package && electron-builder install-app-deps",
 		"prepare": "husky install",
-		"update:locale": "node ./electron/hook/locale.js"
+		"update:locale": "node ./electron/hook/locale.js",
+		"ext:manifest:firefox": "node electron/hook/switch-manifest.js firefox",
+		"ext:manifest:chromium": "node electron/hook/switch-manifest.js chromium"
 	},
 	"repository": {
 		"type": "git",
@@ -69,7 +71,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^38.2.1",
+		"electron": "^37.6.1",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",

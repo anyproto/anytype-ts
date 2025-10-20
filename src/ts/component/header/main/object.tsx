@@ -1,8 +1,7 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName, Label } from 'Component';
+import { Icon, IconObject, ObjectName, Label, HeaderBanner } from 'Component';
 import { I, S, U, J, keyboard, translate, analytics, Action, sidebar } from 'Lib';
-import HeaderBanner from 'Component/page/elements/head/banner';
 
 const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
@@ -27,8 +26,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
-	const spaceview = U.Space.getSpaceview();
-	const showWidget = !isPopup && spaceview.isChat && !rightSidebar.isOpen;
 
 	let center = null;
 	let label = '';
@@ -186,19 +183,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
 						className="more withBackground"
 						onClick={onMore} 
-						onDoubleClick={e => e.stopPropagation()}
-					/> 
-				) : ''}
-
-				{showWidget ? (
-					<Icon 
-						id="button-header-widget" 
-						tooltipParam={{ text: translate('commonWidgets'), caption: keyboard.getCaption('widget'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'widgetPanel', 'withBackground', (rightSidebar.page == 'widget' ? 'active' : '') ].join(' ')}
-						onClick={() => {
-							sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-							analytics.event('ScreenChatSidebar');
-						}} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 
 				) : ''}

@@ -69,6 +69,7 @@ class Analytics {
 		menuContext: 'MenuContext',
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
+		menuPublish: 'MenuPublish',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -301,6 +302,10 @@ class Analytics {
 		switch (code) {
 			case 'page': {
 				code = this.pageMapper(data.params);
+
+				if (data.params.route) {
+					data.route = data.params.route;
+				};
 				break;
 			};
 

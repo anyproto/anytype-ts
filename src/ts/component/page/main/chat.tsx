@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, DragEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -14,6 +14,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
 	const match = keyboard.getMatch(isPopup);
+	const [ dummy, setDummy ] = useState(0);
 	const rootId = props.rootId ? props.rootId : match?.params?.id;
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
@@ -38,6 +39,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
+			setDummy(dummy + 1);
 
 			resize();
 		});

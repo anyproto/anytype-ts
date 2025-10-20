@@ -12,10 +12,10 @@
 
 	> .bottom { position: relative; }
 	> .bottom {
-		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-tertiary) 100%); }
+		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-highlight-light-solid) 100%); }
 	}
 
-	.ReactVirtualized__List { padding: 0px 2px 0px 8px; scrollbar-gutter: stable; }
+	.ReactVirtualized__List { padding: 0px 8px; scrollbar-gutter: stable; }
 
 	.filterWrapper { padding: 4px 16px 8px 16px; overflow: hidden; }
 	.filter { padding: 0px; }
@@ -23,7 +23,7 @@
 		.inner { background-color: var(--color-shape-highlight-medium); border-radius: 15px; }
 	}
 
-	.item { display: flex; align-items: center; gap: 0px 10px; padding: 8px; background-color: var(--color-shape-tertiary); }
+	.item { display: flex; align-items: center; gap: 0px 10px; padding: 8px; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -83,7 +83,7 @@
 		&.isProgress {
 			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
 
-			.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.png'); }
+			.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.png'); flex-shrink: 0; }
 			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
 			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }

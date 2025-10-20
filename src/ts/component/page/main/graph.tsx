@@ -105,7 +105,6 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		rebind();
 		load();
 		initRootId(getRootId());
-		sidebar.rightPanelClose(isPopup);
 
 		return () => unbind();
 	}, []);

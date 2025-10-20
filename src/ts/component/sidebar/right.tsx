@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, U, S, sidebar } from 'Lib';
+import { I, U } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -36,7 +35,6 @@ const Components = {
 
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
-	const { isPopup } = props;
 	const childRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
 	const [ state, setState ] = useState<State>({
@@ -56,7 +54,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const cn = [ 'sidebar', 'right', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = [ 'type' ].includes(page);
-	const showToggle = spaceview.isChat && [ 'widget' ].includes(page);
 
 	if (withPreview) {
 		cn.push('withPreview');
@@ -83,15 +80,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			id="sidebarRight"
 			className={cn.join(' ')}
 		>
-			{showToggle ? (
-				<Icon 
-					id="button-header-toggle" 
-					className="widgetPanel withBackground"
-					onClick={() => sidebar.rightPanelToggle(true, isPopup, page, {})} 
-					onDoubleClick={e => e.stopPropagation()}
-				/>
-			) : ''}
-
 			{Component ? (
 				<div id={pageId} className={cnp.join(' ')}>
 					<Component 

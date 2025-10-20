@@ -389,8 +389,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 		switch (item.id) {
 			case 'invite': {
-				this.props.onPage('spaceShare');
-
+				Action.openSpaceShare(analytics.route.settingsSpace);
 				analytics.event('ClickSettingsSpaceInvite', { route: analytics.route.settingsSpace });
 				break;
 			};

@@ -61,10 +61,9 @@ const SidebarSectionObjectRelation = observer(class SidebarSectionObjectRelation
 						viewType={I.ViewType.Grid}
 						readonly={!canEdit}
 						idPrefix={PREFIX}
-						menuClassNameWrap="fromSidebar"
-						menuClassName="fromSidebar fixed"
 						onCellChange={this.onCellChange}
 						pageContainer={container}
+						menuParam={{ className: 'fromSidebar fixed', classNameWrap: 'fromSidebar' }}
 					/>
 				</div>
 

@@ -18,6 +18,7 @@ const { fixPathForAsarUnpack, is } = require('electron-util');
 const APP_NAME = 'com.anytype.desktop';
 const MANIFEST_FILENAME = `${APP_NAME}.json`;
 const EXTENSION_IDS = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf', 'lcamkcmpcofgmbmloefimnelnjpcdpfn' ];
+const GECKO_ID = 'anytype@anytype.io';
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 
@@ -37,66 +38,98 @@ const getHomeDir = () => {
 const installNativeMessagingHost = () => {
 	const { platform } = process;
 
-	// TODO make sure this is idempotent
-
-	const manifest = {
-		name: APP_NAME,
-		description: 'Anytype desktop <-> web clipper bridge',
-		type: 'stdio',
-		allowed_origins: EXTENSION_IDS.map(id => `chrome-extension://${id}/`),
-		path: getManifestPath(),
-	};
-
 	switch (platform) {
 		case 'win32': {
-			installToWindows(manifest);
+			installToWindows();
 			break;
-		}
+		};
 		case 'darwin': {
-			installToMacOS(manifest);
+			installToMacOS();
 			break;
-		}
-		case 'linux':
-			installToLinux(manifest);
+		};
+		case 'linux': {
+			installToLinux();
 			break;
-		default:
+		};
+		default: {
 			console.log('[InstallNativeMessaging] Unsupported platform:', platform);
 			break;
+		};
 	};
 };
 
-const installToMacOS = (manifest) => {
+// Firefox uses allowed_extensions, Chromium-based browsers use allowed_origins
+const buildManifestForBrowserKey = (key) => {
+	const base = {
+		name: APP_NAME,
+		description: 'Anytype desktop <-> web clipper bridge',
+		type: 'stdio',
+		path: getManifestPath(),
+	};
+
+	if (key === 'Firefox') {
+		base.allowed_extensions = [ GECKO_ID ];
+	} else {
+		base.allowed_origins = EXTENSION_IDS.map(id => `chrome-extension://${id}/`);
+	};
+
+	return base;
+};
+
+const installToMacOS = () => {
 	const dirs = getDarwinDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
 		if (fs.existsSync(value)) {
-			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
+			const dst = path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME);
+			writeManifest(dst, buildManifestForBrowserKey(key));
 		} else {
 			console.log('[InstallNativeMessaging] Manifest skipped:', key);
 		};
 	};
 };
 
-const installToLinux = (manifest) => {
+const getLinuxNativeMessagingDirName = (key) => {
+	if (key === 'Firefox') {
+		return 'native-messaging-hosts';
+	} else {
+		return 'NativeMessagingHosts';
+	};
+};
+
+const installToLinux = () => {
 	const dirs = getLinuxDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
 		if (fs.existsSync(value)) {
-			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
+			const nmDir = getLinuxNativeMessagingDirName(key);
+			const dst = path.join(value, nmDir, MANIFEST_FILENAME);
+			writeManifest(dst, buildManifestForBrowserKey(key));
 		} else {
 			console.log('[InstallNativeMessaging] Manifest skipped:', key);
 		};
 	};
 };
 
-const installToWindows = (manifest) => {
+const installToWindows = () => {
 	const dir = path.join(USER_PATH, 'browsers');
 
-	writeManifest(path.join(dir, 'chrome.json'), manifest);
+	const chromeManifestPath = path.join(dir, 'chrome.json');
+	const firefoxManifestPath = path.join(dir, 'firefox.json');
+
+	writeManifest(chromeManifestPath, buildManifestForBrowserKey('Chrome'));
+	writeManifest(firefoxManifestPath, buildManifestForBrowserKey('Firefox'));
+
 	createWindowsRegistry(
 		'HKCU\\SOFTWARE\\Google\\Chrome',
 		`HKCU\\SOFTWARE\\Google\\Chrome\\NativeMessagingHosts\\${APP_NAME}`,
-		path.join(dir, 'chrome.json')
+		chromeManifestPath
+	);
+
+	createWindowsRegistry(
+		'HKCU\\SOFTWARE\\Mozilla',
+		`HKCU\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\${APP_NAME}`,
+		firefoxManifestPath
 	);
 };
 
@@ -153,6 +186,7 @@ const getLinuxDirectory = () => {
 		'Chromium': path.join(home, 'chromium'),
 		'Brave': path.join(home, 'BraveSoftware', 'Brave-Browser'),
 		'BraveFlatpak': path.join('.var', 'app', 'com.brave.Browser', 'config', 'BraveSoftware', 'Brave-Browser'),
+		'Firefox': path.join(getHomeDir(), '.mozilla'),
 	};
 };
 
@@ -180,7 +214,7 @@ const getDarwinDirectory = () => {
 const writeManifest = (dst, data) => {
 	try {
 		if (!fs.existsSync(path.dirname(dst))) {
-			fs.mkdirSync(path.dirname(dst));
+			fs.mkdirSync(path.dirname(dst), { recursive: true });
 		};
 
 		fs.writeFileSync(dst, JSON.stringify(data, null, 2), {});

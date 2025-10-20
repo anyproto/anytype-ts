@@ -1,8 +1,9 @@
 @import "~scss/_mixins";
 
 .layoutPreviewWrapper {
-    position: absolute; top: 0px; right: 100%; opacity: 0; transition-property: opacity; transition-duration: 0.1s;
+    position: absolute; top: 0px; right: calc(100% + 1px); opacity: 0; transition-property: opacity; transition-duration: 0.1s;
 	transition-timing-function: linear; height: 100vh; background-color: var(--color-bg-primary); text-align: center; overflow: hidden;
+	border-top-left-radius: 12px; border-bottom-left-radius: 12px;
 }
 
 .layoutPreviewWrapper.in { opacity: 0; }

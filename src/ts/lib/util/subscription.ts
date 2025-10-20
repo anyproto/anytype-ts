@@ -515,6 +515,15 @@ class UtilSubscription {
 				noDeps: true,
 			},
 			{
+				subId: J.Constant.subId.archived,
+				keys: [],
+				filters: [
+					{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+				],
+				ignoreArchived: false,
+				noDeps: true,
+			},
+			{
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(false),
 				filters: [
