@@ -44,8 +44,8 @@ class CommonStore {
 	public updateVersionValue = '';
 	public leftSidebarStateValue = { page: '', subPage: '' };
 	public rightSidebarStateValue = { 
-		full: { page: null, isOpen: false }, 
-		popup: { page: null, isOpen: false },
+		full: { page: '' }, 
+		popup: { page: '' },
 	};
 	public hideSidebarValue = null;
 	public pinValue = null;
@@ -586,8 +586,8 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	setRightSidebarState (isPopup: boolean, page: string, isOpen: boolean) {
-		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page, isOpen } });
+	setRightSidebarState (isPopup: boolean, page: string) {
+		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page } });
 	};
 
 	/**
@@ -895,8 +895,8 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
 	 */
-	getRightSidebarState (isPopup: boolean): { page: string; isOpen: boolean; } {
-		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '', isOpen: false };
+	getRightSidebarState (isPopup: boolean): { page: string; } {
+		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '' };
 	};
 
 	/**

@@ -26,7 +26,7 @@
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
 		.mediaVideo {
-			.controls { display: none; }
+			.icon.syncStatus { display: none; }
 			video { width: 100%; object-fit: contain; max-height: 704px; }
 		}
 

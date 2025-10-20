@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
-import { I, J, keyboard, Relation, S, translate, U, sidebar } from 'Lib';
-import $ from 'jquery';
+import { I, J, Relation, S, translate, U, sidebar } from 'Lib';
 import { EmptyNodes, Title } from 'Component';
 
 interface Props {
@@ -24,9 +23,10 @@ const LayoutPlug = forwardRef<{}, Props>(({
 }, ref) => {
 
 	const getNodeWidth = (): number => {
+		sidebar.initObjects(isPopup);
+
 		const container = U.Common.getPageFlexContainer(isPopup);
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const right = rightSidebar.isOpen ? J.Size.sidebar.right : 0;
+		const right = sidebar.objRight.outerWidth();
 
 		return container.width() - right - sidebar.getDummyWidth();
 	};

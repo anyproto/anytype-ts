@@ -158,7 +158,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = S.Auth;
 		const { pin } = S.Common;
 		const { isPopup } = this.props;
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
@@ -167,7 +166,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };
-		const refSidebar = sidebar.rightPanelRef(isPopup);
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const state = S.Common.getRightSidebarState(isPopup);
 		const selection = S.Common.getRef('selectionProvider');
 
@@ -195,8 +194,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (refSidebar && rightSidebar.isOpen) {
-			refSidebar.setState({ rootId: this.getRootId(), page: state.page });
+		if (!data.isClosed) {
+			sidebar.rightPanelSetState(isPopup, { rootId: this.getRootId(), page: state.page });
 		};
 
 		this.setBodyClass();

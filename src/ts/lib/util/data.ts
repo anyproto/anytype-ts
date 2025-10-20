@@ -275,8 +275,6 @@ class UtilData {
 			};
 
 			U.Subscription.createSpace(() => {
-				S.Block.updateTypeWidgetList();
-
 				S.Common.pinInit(() => {
 					keyboard.initPinCheck();
 

@@ -44,7 +44,7 @@
 		.element:nth-child(n + 3) { display: none; }
 
 		.element {
-			.inner { width: 100%; display: flex; }
+			.inner { width: 100%; display: flex; align-items: center; }
 			.inner {
 				.icon { width: 16px; height: 16px; margin-right: 4px; flex-shrink: 0; vertical-align: top; }
 				.icon.check { background-image: url('~img/icon/object/preview/check0.svg'); }

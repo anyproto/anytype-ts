@@ -852,6 +852,10 @@ class Analytics {
 		this.stack = [];
 	};
 
+	stackClear () {
+		this.stack = [];
+	};
+
 	/**
 	 * Logs analytics messages to the console.
 	 * @param {...any[]} args - Arguments to log.

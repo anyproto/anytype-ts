@@ -426,9 +426,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+/` },
 		];
-		const twinePairs = {
+		const twinPairs = {
 			'{': '}',
 			'(': ')',
+			'[': ']',
 			'`':'`',
 			'\'':'\'',
 			'\"':'\"',
@@ -597,15 +598,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
-		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
+		const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
+
+		if (!skipTwinPairs && range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinPairs).includes(key)) {
 			e.preventDefault();
+
+			let length = 0;
 
 			if ((key == '`') && !block.isTextCode()) {
 				this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
 			} else {
-				const length = key.length;
+				length = key.length;
+
 				const cut = value.slice(range.from, range.to);
-				const closing = twinePairs[key] || key;
+				const closing = twinPairs[key] || key;
 
 				value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
 				this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
