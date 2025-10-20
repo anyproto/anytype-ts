@@ -20,17 +20,12 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 	render () {
 		const { membership } = S.Auth;
-		const { interfaceLang } = S.Common;
+		const { interfaceLang, membershipTiers } = S.Common;
 		const { status } = membership;
 		const tier = U.Data.getMembershipTier(membership.tier);
 		const cnt = [];
 
-		// DEV: Filter out monthly tiers
-		const allowedPeriod = [
-			I.MembershipTierDataPeriodType.PeriodTypeUnlimited,
-			I.MembershipTierDataPeriodType.PeriodTypeYears,
-		];
-		const membershipTiers = S.Common.membershipTiers.filter(it => it.periodType && allowedPeriod.includes(it.periodType));
+		console.log('TIERS: ', membershipTiers)
 
 		if (interfaceLang == J.Constant.default.interfaceLang) {
 			cnt.push('riccione');

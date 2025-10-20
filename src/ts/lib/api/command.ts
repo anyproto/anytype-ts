@@ -2116,7 +2116,7 @@ export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: 
 
 	request.setNocache(noCache);
 	request.setLocale(locale);
-	request.setVersion('1.1')
+	request.setVersion('2.0')
 
 	dispatcher.request(MembershipGetTiers.name, request, callBack);
 };
