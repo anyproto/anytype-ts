@@ -51,12 +51,16 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cn = [ 'sidebar', 'right', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const cn = [ 'sidebar', 'right', `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = !state.noPreview && [ 'type' ].includes(page);
 
 	if (withPreview) {
 		cn.push('withPreview');
+	};
+
+	if (!U.Common.isPlatformMac()) {
+		cn.push('customScrollbar');
 	};
 
 	useEffect(() => {
