@@ -109,7 +109,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	};
 
 	const unbind = () => {
-		$(window).off(`resize.${ns}`);
+		$(window).off(`resize.${ns} sidebarResize.${ns}`);
 	};
 
 	const rebind = () => {
