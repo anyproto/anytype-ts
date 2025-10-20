@@ -86,7 +86,7 @@
 		.resize-h { right: -12px; }
 	}
 
-	&.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; flex-shrink: 0; padding: 8px 8px 8px 0px; }
+	&.right { right: 0px; flex-shrink: 0; padding: 8px 8px 8px 0px; }
 	&.right.anim { transition-property: right; }
 	&.right {
 		.resize-h { left: -12px; }

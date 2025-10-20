@@ -76,6 +76,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
+	console.log(page, pageId, componentId, Component);
+
 	const onResizeStart = (e: DragEvent, panel: I.SidebarPanel) => {
 		e.preventDefault();
 		e.stopPropagation();

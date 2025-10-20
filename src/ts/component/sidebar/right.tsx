@@ -42,7 +42,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const pageRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
 	const [ state, setState ] = useState<State>({
-		page: spaceview.isChat ? 'widget' : '',
+		page: '',
 		rootId: '',
 		details: {},
 		readonly: false,
