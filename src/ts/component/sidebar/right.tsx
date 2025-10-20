@@ -119,7 +119,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 				if (w <= closeWidth) {
 					sidebar.close(I.SidebarPanel.Right);
 				} else {
-					sidebar.setWidth(I.SidebarPanel.Right, w);
+					sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
 				};
 			};
 
@@ -128,7 +128,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 					sidebar.open(I.SidebarPanel.Right, '', J.Size.sidebar.width.min);
 				} else 
 				if (w > closeWidth) {
-					sidebar.setWidth(I.SidebarPanel.Right, w);
+					sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
 				};
 			};
 
@@ -158,12 +158,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 	useEffect(() => {
 		pageRef.current?.forceUpdate();
-
-		const data = sidebar.getData(I.SidebarPanel.Right);
-
-		console.log(data);
-
-		$(nodeRef.current).css({ width: data.isClosed ? 0 : data.width });
 	});
 
 	useImperativeHandle(ref, () => ({

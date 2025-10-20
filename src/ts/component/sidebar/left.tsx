@@ -139,7 +139,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				if (w <= closeWidth) {
 					sidebar.close(panel);
 				} else {
-					sidebar.setWidth(panel, w);
+					sidebar.setWidth(panel, false, w);
 				};
 			};
 
@@ -148,7 +148,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 					sidebar.open(panel, '', J.Size.sidebar.width.min);
 				} else 
 				if (w > closeWidth) {
-					sidebar.setWidth(panel, w);
+					sidebar.setWidth(panel, false, w);
 				};
 			};
 
@@ -178,7 +178,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	useEffect(() => {
-		sidebar.init();
+		sidebar.init(false);
 
 		return () => {
 			Preview.tooltipHide(true);
