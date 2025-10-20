@@ -38,6 +38,7 @@ class Sidebar {
 	init (isPopup: boolean) {
 		this.initObjects(isPopup);
 
+		const { space } = S.Common;
 		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 		const keys = [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft ];
 		const { default: defaultWidth } = J.Size.sidebar.width;
@@ -57,10 +58,8 @@ class Sidebar {
 				this.setData(key, isPopup, data);
 			};
 		} else {
-			for (const key of keys) {
-				this.setData(key, isPopup, { width: defaultWidth, isClosed: false });
-			};
-
+			this.setData(I.SidebarPanel.Left, isPopup, { width: defaultWidth, isClosed: false });
+			this.setData(I.SidebarPanel.SubLeft, isPopup, { width: defaultWidth, isClosed: space ? false : true });
 			this.setData(I.SidebarPanel.Right, isPopup, { width: defaultWidth, isClosed: true });
 			this.resizePage(null, null, false);
 		};
