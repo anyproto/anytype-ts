@@ -67,6 +67,7 @@ class Sidebar {
 	 */
 	initObjects (isPopup: boolean) {
 		this.objLeft = $(S.Common.getRef('sidebarLeft')?.getNode());
+		this.objRight = $(S.Common.getRef('sidebarRight')?.getNode());
 		this.pageWrapperLeft = this.objLeft.find('#pageWrapper');
 		this.subPageWrapperLeft = this.objLeft.find('#subPageWrapper');
 		this.pageFlex = U.Common.getPageFlexContainer(isPopup);
@@ -74,7 +75,6 @@ class Sidebar {
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
-		this.objRight = this.pageFlex.find('#sidebarRight');
 		this.dummyLeft = $('#sidebarDummyLeft');
 		this.leftButton = $('#sidebarLeftButton');
 	};
@@ -395,6 +395,11 @@ class Sidebar {
 
 			case I.SidebarPanel.SubLeft: {
 				obj = this.subPageWrapperLeft;
+				break;
+			};
+
+			case I.SidebarPanel.Right: {
+				obj = this.objRight;
 				break;
 			};
 		};

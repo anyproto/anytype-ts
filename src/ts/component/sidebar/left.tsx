@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -76,7 +76,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
-	const onResizeStart = (e: MouseEvent, panel: I.SidebarPanel) => {
+	const onResizeStart = (e: DragEvent, panel: I.SidebarPanel) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -173,12 +173,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	const onHandleClick = () => {
 		if (!movedX.current) {
-			onToggleClick();
+			sidebar.leftPanelToggle();
 		};
-	};
-
-	const onToggleClick = () => {
-		sidebar.leftPanelToggle();
 	};
 
 	useEffect(() => {
@@ -207,7 +203,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				id="sidebarLeftButton"
 				className="toggle sidebarHeadIcon withBackground"
 				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
-				onClick={onToggleClick}
+				onClick={() => sidebar.leftPanelToggle()}
 				onMouseDown={e => e.stopPropagation()}
 			/>
 
