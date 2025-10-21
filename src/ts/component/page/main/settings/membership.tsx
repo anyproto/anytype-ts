@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Switch } from 'Component';
-import { I, S, U, J, Action, translate, analytics, keyboard } from 'Lib';
+import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
 
@@ -37,6 +37,24 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
+		const onPay = (item: I.MembershipTier) => {
+			if (item.id == membership.tier) {
+				C.MembershipGetPortalLinkUrl((message: any) => {
+					if (message.url) {
+						Action.openUrl(message.url);
+					};
+				});
+			} else {
+				C.MembershipRegisterPaymentRequest(item.id, null, '', !this.showAnnual, (message) => {
+					if (message.url) {
+						Action.openUrl(message.url);
+					};
+
+					analytics.event('ClickMembership', { params: { tier }});
+				});
+			};
+		};
+
 		const TierItem = (props: any) => {
 			const { item } = props;
 			const isCurrent = item.id == membership.tier;
@@ -50,7 +68,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			};
 
 			let period = '';
-			let buttonText = translate('commonLearnMore');
+			let buttonText = translate('popupSettingsMembershipSelectPlan');
 			let offerLabel = null;
 
 			if (isCurrent) {
@@ -82,7 +100,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 			return (
 				<div 
 					className={cn.join(' ')}
-					onClick={() => S.Popup.open('membership', { data: { tier: item.id, isMonthly: !this.showAnnual } })}
+					onClick={() => onPay(item)}
 				>
 					<div className="top">
 						<div className="iconWrapper">

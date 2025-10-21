@@ -1009,6 +1009,7 @@
 	"popupSettingsMembershipTitle1": "Membership",
 	"popupSettingsMembershipTitle2": "Let's build together",
 	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
+	"popupSettingsMembershipSelectPlan": "Select plan",
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual (-20%)",
