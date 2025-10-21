@@ -26,7 +26,7 @@ export enum TierType {
 	ProMonthly				 = 43,
 	Ultra					 = 44,
 	UltraMonthly			 = 45,
-	Team					 = 1000,
+	Custom					 = 1000,
 };
 
 export enum MembershipStatus {
