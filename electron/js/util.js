@@ -206,11 +206,11 @@ class Util {
 	printPdf (win, exportPath, name, options) {
 		win.webContents.printToPDF(options).then(data => {
 			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
-				if (error) throw error;
-
-				shell.openPath(exportPath).catch(err => {
-					this.log('info', err);
-				});
+				if (!error) {
+					shell.openPath(exportPath).catch(err => this.log('info', err));
+				} else {
+					this.log('info', error);
+				};
 
 				this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			});
