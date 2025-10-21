@@ -144,20 +144,22 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			className={cn.join(' ')}
 		>
 			{Component ? (
-				<div id={pageId} className={cnp.join(' ')}>
-					<Component 
-						ref={pageRef} 
-						{...props} 
-						{...state}
-						sidebarDirection={I.SidebarDirection.Right}
-						getId={() => pageId}
-					/> 
-				</div>
-			): ''}
+				<>
+					<div id={pageId} className={cnp.join(' ')}>
+						<Component 
+							ref={pageRef} 
+							{...props} 
+							{...state}
+							sidebarDirection={I.SidebarDirection.Right}
+							getId={() => pageId}
+						/> 
+					</div>
 
-			<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
-				<div className="resize-handle" />
-			</div>
+					<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
+						<div className="resize-handle" />
+					</div>
+				</>
+			): ''}
 		</div>
 	);
 
