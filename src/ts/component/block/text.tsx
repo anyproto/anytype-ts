@@ -80,7 +80,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Subscriptions
 		for (const mark of marks) {
-			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
+			if ([ I.MarkType.Mention ].includes(mark.type)) {
 				const object = S.Detail.get(rootId, mark.param, []);
 			};
 		};
