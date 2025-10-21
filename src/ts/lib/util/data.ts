@@ -257,11 +257,10 @@ class UtilData {
 	 */
 	onAuth (param?: any, callBack?: () => void) {
 		param = param || {};
-		param.routeParam = param.routeParam || {};
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
 
 		if (!widgets) {
