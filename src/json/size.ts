@@ -12,7 +12,6 @@ export default {
 	sidebar: {
 		width: { min: 240, max: 480, default: 336 },
 		threshold: 72,
-		right: 348,
 	},
 
 	table: {

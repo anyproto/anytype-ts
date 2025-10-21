@@ -1,21 +1,5 @@
 @import "~scss/_mixins";
 
-.pageFlex { 
-	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
-	padding: 8px 0px;
-}
-.pageFlex {
-	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); border-radius: 12px; }
-
-	&.withSidebarRight { padding-right: 0px; }
-	&.withSidebarRight {
-		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
-	}
-
-	&.sidebarAnimation { transition-property: padding; }
-}
-
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
 .sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }

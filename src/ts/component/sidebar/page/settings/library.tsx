@@ -214,7 +214,7 @@ const SidebarSettingsLibrary = observer(class SidebarSettingsLibrary extends Rea
 			sorts.push({ relationKey: option.relationKey, type: this.sortType });
 		} else {
 			sorts = sorts.concat([
-				{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+				{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
 				{ 
 					relationKey: 'uniqueKey', 
 					type: I.SortType.Custom, 
