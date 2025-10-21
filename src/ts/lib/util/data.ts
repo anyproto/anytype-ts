@@ -633,6 +633,9 @@ class UtilData {
 		if (c1.tmpOrder > c2.tmpOrder) return 1;
 		if (c1.tmpOrder < c2.tmpOrder) return -1;
 
+		if (!c1.orderId && c2.orderId) return 1;
+		if (c1.orderId && !c2.orderId) return -1;
+
 		if (c1.orderId > c2.orderId) return 1;
 		if (c1.orderId < c2.orderId) return -1;
 
