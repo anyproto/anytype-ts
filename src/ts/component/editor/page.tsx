@@ -1021,7 +1021,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Backspace
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
 				if (!readonly) {
 					this.onBackspaceBlock(e, range, pressed, length, props);
 				};
@@ -2226,7 +2226,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (next.isText()) {
-			C.BlockMerge(rootId, blockId, targetId, dir < 0 ? next.content.style : focused.content.style, cb);
+			C.BlockMerge(rootId, blockId, targetId, cb);
 		} else 
 		if (!length) {
 			focus.clear(true);

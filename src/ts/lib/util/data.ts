@@ -653,26 +653,6 @@ class UtilData {
 	};
 
 	/**
-	 * Sorts two objects by their pinned status and last used date.
-	 * @param {any} c1 - The first object.
-	 * @param {any} c2 - The second object.
-	 * @param {string[]} ids - The list of pinned IDs.
-	 * @returns {number} The sort order.
-	 */
-	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
-		const idx1 = ids.indexOf(c1.id);
-		const idx2 = ids.indexOf(c2.id);
-		const isPinned1 = idx1 >= 0;
-		const isPinned2 = idx2 >= 0;
-
-		if (isPinned1 && !isPinned2) return -1;
-		if (!isPinned1 && isPinned2) return 1;
-		if (idx1 > idx2) return 1;
-		if (idx1 < idx2) return -1;
-		return this.sortByLastUsedDate(c1, c2);
-	};
-
-	/**
 	 * Sorts two objects by a numeric key.
 	 * @param {string} key - The key to sort by.
 	 * @param {any} c1 - The first object.
