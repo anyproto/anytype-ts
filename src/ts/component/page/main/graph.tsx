@@ -15,7 +15,7 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const key = J.Constant.graphId.global;
 
 	const unbind = () => {
-		const events = [ 'keydown', 'updateGraphRoot', 'removeGraphNode', 'sidebarResize' ];
+		const events = [ 'keydown', 'updateGraphRoot', 'sidebarResize' ];
 		$(window).off(events.map(it => `${it}.${key}`).join(' '));
 	};
 

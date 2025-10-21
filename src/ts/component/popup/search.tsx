@@ -16,6 +16,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { route, onObjectSelect, skipIds } = data;
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const backlinkRef = useRef(null);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
@@ -43,11 +44,20 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.search', e => onKeyDown(e));
+
+		const win = $(window);
+
+		win.on('keydown.search', e => onKeyDown(e));
+		win.on('archiveObject.search', (e: any, data: any) => {
+			const ids = U.Common.objectCopy(data.ids);
+			itemsRef.current = itemsRef.current.filter(it => !ids.includes(it.id));
+
+			setDummy(dummy + 1);
+		});
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.search');
+		$(window).off('keydown.search archiveObject.search');
 	};
 
 	const onKeyDown = (e: any) => {
