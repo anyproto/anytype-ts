@@ -19,7 +19,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 		let newTier = data.tier;
 
-		U.Data.getMembershipStatus((membership: I.Membership) => {
+		U.Data.getMembershipStatus(true, (membership: I.Membership) => {
 			if (!membership || membership.isNone) {
 				setError(translate('pageMainMembershipError'));
 				return;
@@ -49,7 +49,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 	const finalise = () => {
 		S.Popup.closeAll(null, () => {
-			U.Data.getMembershipStatus((membership: I.Membership) => {
+			U.Data.getMembershipStatus(true, (membership: I.Membership) => {
 				const { status, tier } = membership;
 
 				if (status == I.MembershipStatus.Finalization) {

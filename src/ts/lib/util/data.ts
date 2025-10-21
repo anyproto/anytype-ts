@@ -360,7 +360,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
+		this.getMembershipTiers(false, () => this.getMembershipStatus(false));
 		U.Subscription.createGlobal(() => {
 			Storage.clearDeletedSpaces(false);
 			Storage.clearDeletedSpaces(true);
@@ -864,14 +864,15 @@ class UtilData {
 
 	/**
 	 * Gets the membership status for the current account.
+	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
-	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
+	getMembershipStatus (noCache?: boolean, callBack?: (membership: I.Membership) => void) {
 		if (!this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetStatus(true, (message: any) => {
+		C.MembershipGetStatus(noCache || false, (message: any) => {
 			if (!message.membership) {
 				return;
 			};

@@ -948,7 +948,11 @@ class Dispatcher {
 
 				case 'MembershipUpdate': {
 					S.Auth.membershipUpdate(mapped.membership);
-					U.Data.getMembershipTiers(true);
+					break;
+				};
+
+				case 'membershipTiersUpdate': {
+					S.Common.membershipTiersListSet(mapped.tiers);
 					break;
 				};
 

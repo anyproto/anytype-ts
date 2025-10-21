@@ -90,7 +90,7 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 				return;
 			};
 
-			U.Data.getMembershipStatus();
+			U.Data.getMembershipStatus(true);
 			S.Popup.updateData('membership', { success: true, emailVerified: true });
 			position();
 		});
