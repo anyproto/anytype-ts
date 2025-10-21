@@ -460,18 +460,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		U.Subscription.subscribe({
-			subId: subId.current,
-			filters,
-			sorts,
-			limit,
-			keys: J.Relation.sidebar,
-			ignoreArchived,
-			noDeps: true,
-		}, () => {
-			if (callBack) {
-				callBack();
-			};
+		U.Subscription.destroyList([ subId.current ], false, () => {
+			U.Subscription.subscribe({
+				subId: subId.current,
+				filters,
+				sorts,
+				limit,
+				keys: J.Relation.sidebar,
+				ignoreArchived,
+				noDeps: true,
+			}, () => {
+				if (callBack) {
+					callBack();
+				};
+			});
 		});
 	};
 

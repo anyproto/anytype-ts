@@ -25,6 +25,8 @@ html.printMedia {
 	{ display: none !important; }
 
 	#selection { overflow: visible; }
+
+	.pageFlex { padding: 0px; }
 	#pageFlex.isFull {
 		#page { width: 100% !important; overflow: visible; }
 	}
@@ -109,6 +111,10 @@ html.printMedia {
 					}
 				}
 			}
+		}
+
+		.block.blockMedia.isPdf {
+			.react-pdf__Page__canvas { width: 100% !important; height: auto !important; }
 		}
 
 		.block.blockDataview.isInline {

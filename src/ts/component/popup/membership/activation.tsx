@@ -37,18 +37,15 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 				return;
 			};
 
-			if (message.tier == I.TierType.Team) {
-				C.MembershipCodeRedeem(code, '', () => {
-					if (message.error.code) {
-						setError(message.error.description);
-						return;
-					};
+			C.MembershipCodeRedeem(code, '', () => {
+				if (message.error.code) {
+					setError(message.error.description);
+					return;
+				};
 
-					close();
-				});
-			} else {
-				S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, code } });
-			};
+				S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, success: true } });
+				close();
+			});
 		});
 	};
 

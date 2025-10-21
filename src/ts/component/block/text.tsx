@@ -80,7 +80,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Subscriptions
 		for (const mark of marks) {
-			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
+			if ([ I.MarkType.Mention ].includes(mark.type)) {
 				const object = S.Detail.get(rootId, mark.param, []);
 			};
 		};
@@ -598,31 +598,41 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
-		const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
+		if (
+			range && 
+			(
+				(range.from != range.to) || 
+				block.isTextCode()
+			) && 
+			Object.keys(twinPairs).includes(key)
+		) {
+			const count = value.split(key).length - 1;
+			const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
 
-		if (!skipTwinPairs && range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinPairs).includes(key)) {
-			e.preventDefault();
+			if ((count % 2 === 0) && !skipTwinPairs) {
+				e.preventDefault();
 
-			let length = 0;
+				let length = 0;
 
-			if ((key == '`') && !block.isTextCode()) {
-				this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
-			} else {
-				length = key.length;
+				if ((key == '`') && !block.isTextCode()) {
+					this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
+				} else {
+					length = key.length;
 
-				const cut = value.slice(range.from, range.to);
-				const closing = twinPairs[key] || key;
+					const cut = value.slice(range.from, range.to);
+					const closing = twinPairs[key] || key;
 
-				value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
-				this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+					value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+					this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+				};
+
+				this.setValue(value);
+
+				focus.set(block.id, { from: range.from + length, to: range.to + length });
+				focus.apply();
+
+				ret = true;
 			};
-
-			this.setValue(value);
-
-			focus.set(block.id, { from: range.from + length, to: range.to + length });
-			focus.apply();
-
-			ret = true;
 		};
 
 		if (ret) {
