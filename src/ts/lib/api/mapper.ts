@@ -1214,7 +1214,7 @@ export const Mapper = {
 			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
 
 			if (v == V.MEMBERSHIPUPDATE)			 t = 'MembershipUpdate';
-			if (v == V.MEMBERSHIPTIERSUPDATE)		 t = 'membershipTiersUpdate';
+			if (v == V.MEMBERSHIPTIERSUPDATE)		 t = 'MembershipTiersUpdate';
 
 			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
@@ -1665,7 +1665,7 @@ export const Mapper = {
 			};
 		},
 
-		membershipTiersUpdate: (obj: Events.Event.Membership.TiersUpdate) => {
+		MembershipTiersUpdate: (obj: Events.Event.Membership.TiersUpdate) => {
 			return {
 				tiers: (obj.getTiersList() || []).map(Mapper.From.MembershipTierData),
 			};

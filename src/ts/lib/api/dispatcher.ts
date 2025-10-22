@@ -951,7 +951,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'membershipTiersUpdate': {
+				case 'MembershipTiersUpdate': {
 					S.Common.membershipTiersListSet(mapped.tiers);
 					break;
 				};
