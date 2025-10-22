@@ -224,7 +224,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 
 		if (item.targetSpaceId != space) {
-			U.Router.switchSpace(item.targetSpaceId, '', true, routeParam, false);
+			U.Router.switchSpace(item.targetSpaceId, '', !!space, routeParam, false);
 		} else {
 			U.Space.openDashboard(routeParam);
 		};

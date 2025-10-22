@@ -124,7 +124,7 @@
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
 		"findandreplacedomtext": "^0.4.6",
-		"google-protobuf": "^3.21.4",
+		"google-protobuf": "^4.0.0",
 		"grpc-web": "^2.0.2",
 		"history": "^4.10.1",
 		"inputmask": "^5.0.5",

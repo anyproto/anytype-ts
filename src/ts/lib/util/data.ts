@@ -257,11 +257,10 @@ class UtilData {
 	 */
 	onAuth (param?: any, callBack?: () => void) {
 		param = param || {};
-		param.routeParam = param.routeParam || {};
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
 
 		if (!widgets) {
@@ -633,6 +632,9 @@ class UtilData {
 	sortByOrderId (c1: any, c2: any) {
 		if (c1.tmpOrder > c2.tmpOrder) return 1;
 		if (c1.tmpOrder < c2.tmpOrder) return -1;
+
+		if (!c1.orderId && c2.orderId) return 1;
+		if (c1.orderId && !c2.orderId) return -1;
 
 		if (c1.orderId > c2.orderId) return 1;
 		if (c1.orderId < c2.orderId) return -1;

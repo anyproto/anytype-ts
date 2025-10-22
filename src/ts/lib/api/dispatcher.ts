@@ -1307,6 +1307,11 @@ class Dispatcher {
 
 		try {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
+				if (error) {
+					console.error('GRPC Error', type, error);
+					return;
+				};
+
 				if (!response) {
 					return;
 				};

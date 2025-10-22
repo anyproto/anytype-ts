@@ -41,6 +41,7 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
+	public chatCmdSendValue = null;
 	public updateVersionValue = '';
 	public leftSidebarStateValue = { page: '', subPage: '' };
 	public rightSidebarStateValue = { 
@@ -239,6 +240,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get chatCmdSend (): boolean {
+		return this.boolGet('chatCmdSend');
 	};
 
 	get theme (): string {
@@ -570,6 +575,14 @@ class CommonStore {
 	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	/**
+	 * Sets the hide chat send option value.
+	 * @param {boolean} v - Value.
+	 */
+	chatCmdSendSet (v: boolean) {
+		this.boolSet('chatCmdSend', v);
 	};
 
 	/**
