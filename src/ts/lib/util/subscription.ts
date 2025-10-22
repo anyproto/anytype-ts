@@ -62,20 +62,16 @@ class UtilSubscription {
 	 * @param {any} param - Parameters for filter construction.
 	 * @returns {any[]} The array of filter objects.
 	 */
-	defaultFilters (param: any) {
+	getBaseFilters (param: Partial<I.SearchSubscribeParam>) {
 		const { config } = S.Common;
+		const spaceview = U.Space.getSpaceview();
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = U.Common.objectCopy(param.filters || []);
 		
 		let skipLayouts = [];
 
-		if (!config.experimental) {
+		if (!config.experimental || spaceview.isChat) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
-		};
-
-		if (skipLayouts.length) {
-			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
-			filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		};
 
 		if (skipLayouts.length) {
@@ -157,7 +153,7 @@ class UtilSubscription {
 		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
 		const debug = config.flagsMw.subscribe;
-		const filters = this.defaultFilters(param);
+		const filters = this.getBaseFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!subId) {
@@ -326,7 +322,7 @@ class UtilSubscription {
 		const { spaceId, offset, limit, skipLayoutFormat, fullText } = param;
 		const keys = this.mapKeys(param);
 		const debug = config.flagsMw.subscribe;
-		const filters = this.defaultFilters(param);
+		const filters = this.getBaseFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!spaceId) {
