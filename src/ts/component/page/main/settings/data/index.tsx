@@ -9,7 +9,6 @@ interface State {
 
 interface Props extends I.PageSettingsComponent {
 	onPage: (id: string) => void;
-	setLoading: (v: boolean) => void;
 };
 
 const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex extends React.Component<Props, State> {
@@ -77,7 +76,6 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 	};
 
 	onOffload (e: any) {
-		const { setLoading } = this.props;
 		const suffix = this.getSuffix();
 		const isLocalNetwork = U.Data.isLocalNetwork();
 
@@ -90,12 +88,9 @@ const PageMainSettingsDataIndex = observer(class PageMainSettingsDataIndex exten
 				textConfirm: isLocalNetwork ? translate('popupSettingsDataRemoveFiles') : translate('commonConfirm'),
 				textCancel: isLocalNetwork ? translate('popupSettingsDataKeepFiles') : translate('commonCancel'),
 				onConfirm: () => {
-					setLoading(true);
 					analytics.event('SettingsStorageOffload');
 
 					C.FileListOffload([], false, (message: any) => {
-						setLoading(false);
-
 						if (message.error.code) {
 							return;
 						};
