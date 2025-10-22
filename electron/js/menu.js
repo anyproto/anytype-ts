@@ -374,16 +374,6 @@ class MenuManager {
 
 				Separator,
 
-				{
-					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
-					click: () => {
-						Api.setConfig(this.win, { testPayment: !config.testPayment });
-						this.win.reload();
-					}
-				},
-
-				Separator,
-
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
 				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
 				{ label: 'Export localstore', click: () => Util.send(this.win, 'commandGlobal', 'exportLocalstore') },

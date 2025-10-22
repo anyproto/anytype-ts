@@ -897,8 +897,7 @@ class UtilData {
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
 	getMembershipTiers (noCache: boolean, callBack?: () => void) {
-		const { config, interfaceLang, isOnline } = S.Common;
-		const { testPayment } = config;
+		const { interfaceLang, isOnline } = S.Common;
 
 		if (!isOnline || !this.isAnytypeNetwork()) {
 			return;
@@ -909,8 +908,7 @@ class UtilData {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
-			S.Common.membershipTiersListSet(tiers);
+			S.Common.membershipTiersListSet(message.tiers);
 
 			if (callBack) {
 				callBack();
