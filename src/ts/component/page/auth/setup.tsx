@@ -105,6 +105,9 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					Action.checkDiskSpace(cb1);
 				},
 			};
+
+			U.Data.onInfo(account.info);
+			U.Data.onAuthOnce(false);
 		
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
@@ -112,9 +115,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				U.Router.go('/main/void/select', routeParam);
 			};
 			
-			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(false);
-
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
