@@ -43,6 +43,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 
 	render () {
 		const { error, isEditing } = this.state;
+		const { config } = S.Common;
 		const space = U.Space.getSpaceview();
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
@@ -194,7 +195,7 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 							<div className="section sectionSpaceManager">
 								<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
-								{isOwner && space.isShared && !space.isPersonal ? (
+								{isOwner && space.isShared && !space.isPersonal && config.sudo ? (
 									<div className="sectionContent">
 										<div className="item">
 											<div className="sides">
@@ -223,25 +224,27 @@ const PageMainSettingsSpaceIndex = observer(class PageMainSettingsSpaceIndex ext
 								) : ''}
 
 								<div className="sectionContent">
-									<div className="item">
-										<div className="sides">
-											<Icon className="home" />
+									{!space.isChat ? (
+										<div className="item">
+											<div className="sides">
+												<Icon className="home" />
 
-											<div className="side left">
-												<Title text={translate('commonHomepage')} />
-												<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
-											</div>
+												<div className="side left">
+													<Title text={translate('commonHomepage')} />
+													<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
+												</div>
 
-											<div className="side right">
-												<div id="empty-dashboard-select" className={[ 'select', (space.isChat ? 'isReadonly' : '') ].join(' ')} onClick={this.onDashboard}>
-													<div className="item">
-														<div className="name">{home ? home.name : translate('commonSelect')}</div>
+												<div className="side right">
+													<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+														<div className="item">
+															<div className="name">{home ? home.name : translate('commonSelect')}</div>
+														</div>
+														<Icon className="arrow black" />
 													</div>
-													<Icon className="arrow black" />
 												</div>
 											</div>
 										</div>
-									</div>
+									) : ''}
 
 									<div className="item">
 										<div className="sides">
