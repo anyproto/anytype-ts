@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
-import { Title, Label, Button, Switch } from 'Component';
-import { I, S, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
+import { Title, Label, Button, Switch } from 'Component';
+import { I, translate, Storage } from 'Lib';
 
 const PageMainSettingsExportMarkdown = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
