@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { I, U } from 'Lib';
 
@@ -25,75 +25,66 @@ interface Props extends I.SidebarSectionComponent {
 	withState?: boolean;
 };
 
-interface State {
-	object: any;
+interface Ref extends I.SidebarSectionRef {
+	setObject(object: any): void;
+	getObject(): any;
 };
 
-const SidebarSectionIndex = observer(class SidebarSectionIndex extends React.Component<Props, State> {
+const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 	
-	state = {
-		object: null,
+	const { component, item, onDragStart, withState } = props;
+	const [ stateObject, setStateObject ] = useState(null);
+	const [ dummy, setDummy ] = useState(0);
+	const object = stateObject || props.object;
+
+	if (!object) {
+		return null;
 	};
-	ref = null;
 
-    render () {
-		const { component, item, onDragStart } = this.props;
-		const object = this.getObject();
-		if (!object) {
-			return null;
-		};
+	const childRef = useRef(null);
+	const Component = Components[component];
+	const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
+	const readonly = props.readonly || object?.isArchived;
+	const id = [ 'section' ].concat(component.split('/'));
 
-		const Component = Components[component];
-		const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
-		const readonly = this.isReadonly();
-		const id = [ 'section' ].concat(component.split('/'));
+	if (item) {
+		id.push(item.id);
+	};
 
-		if (item) {
-			id.push(item.id);
-		};
-
-        return (
-			<div 
-				id={id.join('-')}
-				className={cn.join(' ')}
-				draggable={!readonly && !!onDragStart}
-				onDragStart={onDragStart}
-			>
-				{Component ? (
-					<Component 
-						ref={ref => this.ref = ref} 
-						{...this.props} 
-						object={object} 
-						readonly={readonly}
-					/> 
-				): component}
-			</div>
-		);
-    };
-
-	componentDidMount (): void {
-		const { withState } = this.props;
-
+	useEffect(() => {
 		if (withState) {
-			this.setObject(this.props.object);
+			setStateObject(props.object);
 		};
-	};
+	}, []);
 
-	getObject (): any {
-		return this.state.object || this.props.object;
-	};
+	useEffect(() => {
+		childRef.current?.forceUpdate();
+	}, [ object ]);
 
-	setObject (object: any): void {
-		this.setState({ object }, () => this.ref?.forceUpdate());
-	};
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+		getObject: () => object,
+		setObject: setStateObject,
+	}));
 
-	isReadonly (): boolean {
-		const { readonly } = this.props;
-		const object = this.getObject();
+	return (
+		<div 
+			id={id.join('-')}
+			className={cn.join(' ')}
+			draggable={!readonly && !!onDragStart}
+			onDragStart={onDragStart}
+		>
+			{Component ? (
+				<Component 
+					ref={childRef} 
+					{...props} 
+					object={object} 
+					readonly={readonly}
+				/> 
+			): component}
+		</div>
+	);
 
-		return readonly || object?.isArchived;
-	};
-
-});
+}));
 
 export default SidebarSectionIndex;

@@ -26,7 +26,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 
     render () {
 		const { noPreview } = this.props;
-		const type = this.getObject();
+		const type = this.getType();
 		const sections = this.getSections();
 		const readonly = this.props.readonly || !S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
 
@@ -62,7 +62,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 							key={item.id} 
 							id={item.id}
 							component={item.component}
-							object={this.object} 
+							object={this.getObject()} 
 							withState={true}
 							onChange={this.onChange}
 							disableButton={this.disableButton}
@@ -80,12 +80,12 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		const { noPreview } = this.props;
 
 		this.init();
-		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 
+		window.setTimeout(() => this.previewRef?.show(true), J.Constant.delay.sidebar);
 		analytics.event('ScreenEditType', { route: noPreview ? analytics.route.object : analytics.route.type });
 	};
 
-	componentDidUpdate(prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
+	componentDidUpdate (prevProps: Readonly<I.SidebarPageComponent>, prevState: Readonly<{}>, snapshot?: any): void {
 		if ((this.props.rootId != prevProps.rootId) || !U.Common.objectCompare(this.props.details, prevProps.details)) {
 			this.init();
 		};
@@ -96,8 +96,8 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		analytics.stackClear();
 	};
 
-	init () {
-		const type = this.getObject();
+	getObject () {
+		const type = this.getType();
 		const details: any = this.props.details || {};
 		const newType = Object.assign({
 			recommendedLayout: I.ObjectLayout.Page,
@@ -108,7 +108,11 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 			defaultViewType: I.ViewType.List,
 		}, details);
 
-		this.object = U.Common.objectCopy(details.isNew ? newType : type || newType);
+		return U.Common.objectCopy(details.isNew ? newType : type || newType);
+	};
+
+	init () {
+		this.object = this.getObject();
 		this.backup = U.Common.objectCopy(this.object);
 
 		this.updateSections();
@@ -121,7 +125,7 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		};
 	};
 
-	getObject () {
+	getType () {
 		const type = S.Record.getTypeById(this.props.rootId);
 		if (!type) {
 			return null;
