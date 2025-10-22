@@ -1,66 +1,48 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Title, Pin, Error } from 'Component';
 import { I, S, translate } from 'Lib';
 
-type State = {
-	pin: string | null;
-	error: string;
-};
+const PageMainSettingsPinSelect = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-const PageMainSettingsPinSelect = observer(class PageMainSettingsPinSelect extends React.Component<I.PageSettingsComponent, State> {
+	const [ pin, setPin ] = useState('');
+	const [ error, setError ] = useState('');
+	const { onPage } = props;
+	const pinRef = useRef(null);
 
-	state = {
-		pin: null,
-		error: '',
-	};
-	ref = null;
-
-	render () {
-		const { pin, error } = this.state;
-
-		return (
-			<div>
-				<Title text={translate(pin ? 'popupSettingsPinSelectRepeat' : 'popupSettingsPinSelect')} />
-				<Pin 
-					ref={ref => this.ref = ref} 
-					expectedPin={pin ? sha1(pin) : null} 
-					isNumeric={true}
-					onSuccess={this.onSuccess} 
-					onError={this.onError}
-				/>
-				<Error text={error} />
-			</div>
-		);
-	};
-
-	componentDidUpdate (): void {
-		this.ref.reset();	
-	};
-
-	componentWillUnmount () {
-	};
-
-	onSuccess = (pin: string) => {
-		const { onPage } = this.props;
-		const { pin: prevPin } = this.state;
-
-		if (!prevPin) {
-			this.setState({ pin });
-			return;
+	const onSuccess = (value: string) => {
+		if (!pin) {
+			setPin(value);
+		} else {
+			S.Common.pinSet(sha1(pin));
+			onPage('pinIndex');
 		};
-
-		S.Common.pinSet(sha1(pin));
-		onPage('pinIndex');
 	};
 
-	/** Triggered when pins mismatch */
-	onError = () => {
-		this.ref.reset();
-		this.setState({ error: translate('popupSettingsPinSelectError') });
+	const onError = () => {
+		pinRef.current?.reset();
+		setError(translate('popupSettingsPinSelectError'));
 	};
 
-});
+	useEffect(() => {
+		pinRef.current?.reset();
+	});
+
+	return (
+		<div>
+			<Title text={translate(pin ? 'popupSettingsPinSelectRepeat' : 'popupSettingsPinSelect')} />
+			<Pin 
+				ref={pinRef} 
+				expectedPin={pin ? sha1(pin) : null} 
+				isNumeric={true}
+				onSuccess={onSuccess} 
+				onError={onError}
+			/>
+			<Error text={error} />
+		</div>
+	);
+
+}));
 
 export default PageMainSettingsPinSelect;
