@@ -1334,7 +1334,7 @@ class UtilCommon {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	triggerResizeEditor (isPopup: boolean) {
-		$(window).trigger('resize.editor' + this.getEventNamespace(isPopup));
+		$(window).trigger(`resize.editor${this.getEventNamespace(isPopup)}`);
 	};
 
 	/**
