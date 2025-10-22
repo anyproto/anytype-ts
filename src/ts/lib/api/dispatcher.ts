@@ -948,7 +948,11 @@ class Dispatcher {
 
 				case 'MembershipUpdate': {
 					S.Auth.membershipUpdate(mapped.membership);
-					U.Data.getMembershipTiers(true);
+					break;
+				};
+
+				case 'MembershipTiersUpdate': {
+					S.Common.membershipTiersListSet(mapped.tiers);
 					break;
 				};
 
@@ -1307,6 +1311,11 @@ class Dispatcher {
 
 		try {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
+				if (error) {
+					console.error('GRPC Error', type, error);
+					return;
+				};
+
 				if (!response) {
 					return;
 				};

@@ -406,7 +406,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 			case 'archive': {
 				Action.archive(objectIds, route, cb);
-				win.trigger('removeGraphNode', { ids: objectIds });
+				win.trigger('archiveObject', { ids: objectIds });
 				break;
 			};
 

@@ -15,7 +15,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		const data = U.Common.searchParam(location.search);
 
 		U.Data.getMembershipTiers(true, () => {
-			U.Data.getMembershipStatus((membership: I.Membership) => {
+			U.Data.getMembershipStatus(true, (membership: I.Membership) => {
 				if (!membership || membership.isNone) {
 					setError(translate('pageMainMembershipError'));
 					return;

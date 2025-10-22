@@ -29,7 +29,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const timeout = useRef(0);
 	const spaceview = U.Space.getSpaceview();
-	const { block, isPreview, className, canEdit, canRemove, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
 
 	const getChild = (): I.Block => {
@@ -890,8 +890,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			onDragEnd={onDragEnd}
 			onContextMenu={onOptions}
 		>
-			{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
-
 			{head}
 
 			<div id="wrapper" className="contentWrapper">
