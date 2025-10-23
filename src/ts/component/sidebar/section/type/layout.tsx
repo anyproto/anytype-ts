@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
 import { I, U, translate } from 'Lib';
@@ -35,7 +35,6 @@ const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.Side
 		};
 
 		onChange({ layoutFormat: id, recommendedLayout: layoutOptions[0].id });
-		setDummy(dummy + 1);
 	};
 
 	const getLayoutOptions = (format: I.LayoutFormat): any[] => {
@@ -78,6 +77,10 @@ const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.Side
 	useEffect(() => {
 		setValue();
 	});
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div ref={nodeRef} className="wrap">

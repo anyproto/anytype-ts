@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, J, U, S, C, translate, analytics, sidebar } from 'Lib';
+import { I, J, U, S, C, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 
-const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, object, readonly, isPopup, onChange } = props;
 	const subId = [ J.Constant.subId.template, rootId ].join('-');

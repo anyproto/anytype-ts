@@ -64,7 +64,10 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 		getObject: () => object,
-		setObject: setStateObject,
+		setObject: (o: any) => {
+			setStateObject(o);
+			childRef.current?.forceUpdate();
+		},
 	}));
 
 	return (
