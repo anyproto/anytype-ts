@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - v*
+  push
+#    tags:
+#      - v*
 
 permissions:
   contents: 'write'
