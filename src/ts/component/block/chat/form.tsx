@@ -173,7 +173,9 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 				marks.current = Mark.adjust(marks.current, range.current.from, 1);
 				value = U.Common.stringInsert(value, '\n', range.current.from, range.current.from);
+
 				updateMarkup(value, { from: range.current.from + 1, to: range.current.from + 1 });
+				scrollToBottom();
 			});
 		};
 
