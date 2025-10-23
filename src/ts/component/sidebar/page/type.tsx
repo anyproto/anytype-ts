@@ -193,7 +193,9 @@ const SidebarPageType = observer(class SidebarPageType extends React.Component<I
 		this.updateSections();
 		this.disableButton(!U.Common.objectLength(this.update) || (!this.object.name && !this.object.pluralName));
 
-		C.BlockDataviewRelationSet(this.object.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(this.object.id)));
+		if (this.object.id) {
+			C.BlockDataviewRelationSet(this.object.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(this.object.id)));
+		};
 
 		// analytics
 		let eventId = '';
