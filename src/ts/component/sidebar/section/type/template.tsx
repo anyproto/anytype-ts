@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { I, J, U, S, C, translate, analytics } from 'Lib';
@@ -8,6 +8,7 @@ import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, object, readonly, isPopup, onChange } = props;
+	const [ dummy, setDummy ] = useState(0);
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
 	const templateId = object?.defaultTemplateId;
@@ -129,6 +130,10 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 	useEffect(() => {
 		load();
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div 
