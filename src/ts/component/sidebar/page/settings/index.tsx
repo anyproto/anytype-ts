@@ -4,10 +4,6 @@ import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.SidebarPageComponent {
-	page: string;
-};
-
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
@@ -15,7 +11,7 @@ const HEIGHT_SECTION_FIRST = 28;
 const HEIGHT_ACCOUNT = 56;
 const HEIGHT_DIV = 12;
 
-const SidebarPageSettingsIndex = observer(forwardRef<{}, Props>((props, ref) => {
+const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
 	const { membership } = S.Auth;

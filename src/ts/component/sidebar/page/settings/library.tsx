@@ -4,18 +4,14 @@ import { analytics, I, J, keyboard, S, Storage, translate, U } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.SidebarPageComponent {
-	page: string;
-};
-
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 
-const SidebarPageSettingsLibrary = observer(forwardRef<{}, Props>((props, ref) => {
+const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { isPopup } = props;
+	const { page, isPopup } = props;
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const pathname = U.Router.getRoute();
 	const param = U.Router.getParam(pathname);
@@ -31,7 +27,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, Props>((props, ref) =
 	let type = '';
 	let title = '';
 
-	switch (props.page) {
+	switch (page) {
 		case 'settingsTypes': {
 			type = I.ObjectContainerType.Type;
 			title = U.Common.plural(10, translate('pluralObjectType'));
