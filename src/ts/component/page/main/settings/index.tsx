@@ -40,10 +40,6 @@ import PageMainArchive from '../archive';
 
 import PageMembership from './membership';
 
-interface State {
-	loading: boolean;
-};
-
 const Components: any = {
 	index: 				 PageAccount,
 	account:			 PageAccount,
@@ -92,14 +88,10 @@ const SPACE_PAGES = [
 
 const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
-const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
+const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent> {
 
 	ref: any = null;
 	onConfirmPin: any = null;
-
-	state = {
-		loading: false,
-	};
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -109,7 +101,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		this.onExport = this.onExport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
-		this.setLoading = this.setLoading.bind(this);
 		this.storageGet = this.storageGet.bind(this);
 		this.storageSet = this.storageSet.bind(this);
 	};
@@ -134,7 +125,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 					onExport={this.onExport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}
-					setLoading={this.setLoading}
 					onSpaceTypeTooltip={this.onSpaceTypeTooltip}
 					storageGet={this.storageGet}
 					storageSet={this.storageSet}
@@ -224,10 +214,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		});
 	};
 
-	setLoading (v: boolean) {
-		this.setState({ loading: v });
-	};
-
 	storageGet () {
 		return Storage.get(this.getId()) || {};
 	};
@@ -250,12 +236,6 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		const id = param.id || 'account';
 
 		return SPACE_PAGES.includes(id);
-	};
-
-	resize () {
-		if (this.ref && this.ref.resize) {
-			this.ref.resize();
-		};
 	};
 
 });

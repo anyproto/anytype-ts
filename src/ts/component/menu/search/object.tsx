@@ -71,10 +71,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				withPlural,
 			};
 
+			let name = item.name;
 			if (item.isAdd) {
 				cn.push('add');
 				props.isAdd = true;
+			} else {
+				name = <ObjectName object={item} withPlural={withPlural} />;
 			};
+
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
@@ -107,7 +111,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					<MenuItemVertical
 						{...props}
 						index={param.index}
-						name={<ObjectName object={item} withPlural={withPlural} />}
+						name={name}
 						onMouseEnter={e => this.onMouseEnter(e, item)}
 						onClick={e => this.onClick(e, item)}
 						onMore={onMore ? e => onMore(e, item) : undefined}

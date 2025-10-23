@@ -247,7 +247,7 @@ class UtilRouter {
 					U.Data.onInfo(message.info);
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
+						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false, onRouteChange } }, () => {
 							this.isOpening = false;
 						});
 					};

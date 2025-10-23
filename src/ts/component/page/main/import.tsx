@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Loader, Title, Error, Frame, Button } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
-const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { isPopup } = props;

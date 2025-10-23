@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
 import { I, U, translate } from 'Lib';
@@ -11,32 +11,30 @@ const Components = [
 	FormatList,
 ];
 
-const SidebarSectionTypeLayout = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
-
+const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+	
 	const { object, readonly, onChange } = props;
 	const formatOptions: I.Option[] = [
 		{ id: I.LayoutFormat.Page, name: translate('sidebarSectionLayoutFormatPage') },
 		{ id: I.LayoutFormat.List, name: translate('sidebarSectionLayoutFormatList') },
 	];
-	const Component = Components[object.layoutFormat];
-	const nodeRef = useRef<HTMLDivElement>(null);
+	const nodeRef = useRef(null);
 	const formatRef = useRef(null);
-
-	useEffect(() => {
-		setValue();
-	});
+	const [ dummy, setDummy ] = useState(0);
+	const Component = Components[object.layoutFormat];
 
 	const setValue = () => {
 		formatRef.current?.setValue(object.layoutFormat);
 	};
 
-	const onLayout = (id: I.LayoutFormat): void => {
+	const onLayout = (id: I.LayoutFormat) => {
 		const layoutOptions = getLayoutOptions(id);
 
-		onChange({ 
-			layoutFormat: id, 
-			recommendedLayout: layoutOptions[0].id,
-		});
+		if (!layoutOptions.length) {
+			return;
+		};
+
+		onChange({ layoutFormat: id, recommendedLayout: layoutOptions[0].id });
 	};
 
 	const getLayoutOptions = (format: I.LayoutFormat): any[] => {
@@ -75,6 +73,14 @@ const SidebarSectionTypeLayout = observer(forwardRef<{}, I.SidebarSectionCompone
 			};
 		}));
 	};
+
+	useEffect(() => {
+		setValue();
+	});
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div ref={nodeRef} className="wrap">

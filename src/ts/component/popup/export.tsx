@@ -1,17 +1,79 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { I, S, Action, keyboard, analytics, translate } from 'Lib';
-import { Title, Select, Button, Switch } from 'Component';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
+import { Title, Select, Button, Switch } from 'Component';
+import { I, S, Action, keyboard, analytics, translate } from 'Lib';
 
 const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { space } = S.Common;
-	const { param, close, position, storageGet, storageSet } = props;
+	const { param, close, storageGet, storageSet, position } = props;
 	const { data } = param;
 	const { allowHtml, objectIds, route } = data;
-	const [ dummy, setDummy ] = useState(0);
+	const { config, space } = S.Common;
+	const [ stateData, setStateData ] = useState<any>({});
+	const format = Number(stateData.format) || I.ExportType.Markdown;
+
+	const init = () => {
+		const options = storageGet();
+		const formats = getFormats();
+
+		let format = Number(options.format);
+		if (!formats.map(it => it.id).includes(format)) {
+			format = formats[0].id;
+		};
+
+		setStateData({
+			format,
+			zip:				 Boolean(options.zip),
+			nested:				 Boolean(options.nested),
+			files:				 Boolean(options.files),
+			archived:			 Boolean(options.archived),
+			json:				 (undefined === options.json) ? true : Boolean(options.json),
+			landscape:			 Boolean(options.landscape),
+			printBackground:	 Boolean(options.printBackground),
+			pageSize:			 String(options.pageSize || 'A4'),
+		});
+	};
+
+	const getFormats = () => {
+		return [
+			{ id: I.ExportType.Markdown, name: 'Markdown' },
+			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
+			allowHtml ? { id: I.ExportType.Pdf, name: 'PDF' } : null,
+			allowHtml && config.experimental ? { id: I.ExportType.Html, name: 'HTML' } : null,
+		].filter(it => it);
+	};
+
+	const save = (newData) => {
+
+		storageSet(newData);
+		setStateData(newData);
+
+		console.log('NEW DATA', JSON.stringify(newData, null, 3));
+	};
+
+	const onConfirm = () => {
+		analytics.event('ClickExport', { type: format, route });
+
+		switch (format) {
+			default:
+				Action.export(space, objectIds, format, { ...stateData, route });
+				close();
+				break;
+
+			case I.ExportType.Html:
+				keyboard.onSaveAsHTML();
+				analytics.event('Export', { type: format, route });
+				break;
+
+			case I.ExportType.Pdf:
+				keyboard.onPrintToPDF(stateData);
+				analytics.event('Export', { type: format, route });
+				break;
+		};
+	};
+
 	const theme = S.Common.getThemeClass();
-	const update = useRef<any>({});
+	const formats = getFormats();
 
 	const pageSize = [
 		{ id: 'A3', name: 'A3'},
@@ -35,18 +97,15 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				control = (
 					<Switch
 						className="big"
-						value={update.current[item.id]}
-						onChange={(e: any, v: boolean) => {
-							update.current[item.id] = v;
-							save();
-						}}
+						value={stateData[item.id]}
+						onChange={(e: any, v: boolean) => save({ ...stateData, [item.id]: v })}
 					/>
 				);
 				break;
 			};
 
 			case 'select': {
-				let value = update.current[item.id];
+				let value = stateData[item.id];
 				if (item.id == 'json') {
 					value = value ? 'json' : 'pb';
 				};
@@ -61,9 +120,7 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 								v = (v == 'json') ? true : false;
 							};
 
-							update.current[item.id] = v;
-							save();
-							setDummy(dummy + 1);
+							save({ ...stateData, [item.id]: v });
 						}}
 						arrowClassName="light"
 						isMultiple={false}
@@ -83,73 +140,6 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 		);
 	};
-
-	const init = () => {
-		const options = storageGet();
-		const formats = getFormats();
-
-		let format = Number(options.format);
-		if (!formats.map(it => it.id).includes(format)) {
-			format = formats[0].id;
-		};
-
-		update.current = {
-			format,
-			zip:				 Boolean(options.zip),
-			nested:				 Boolean(options.nested),
-			files:				 Boolean(options.files),
-			archived:			 Boolean(options.archived),
-			json:				 (undefined === options.json) ? true : Boolean(options.json),
-			landscape:			 Boolean(options.landscape),
-			printBackground:	 Boolean(options.printBackground),
-			pageSize:			 String(options.pageSize || 'A4'),
-		};
-	};
-
-	const getFormats = () => {
-		const { config } = S.Common;
-
-		return [
-			{ id: I.ExportType.Markdown, name: 'Markdown' },
-			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
-			allowHtml ? { id: I.ExportType.Pdf, name: 'PDF' } : null,
-			allowHtml && config.experimental ? { id: I.ExportType.Html, name: 'HTML' } : null,
-		].filter(it => it);
-	};
-
-	const save = () => {
-		storageSet(update.current);
-	};
-
-	const onConfirm = (e: any) => {
-		const { format } = update.current;
-
-		analytics.event('ClickExport', { type: format, route });
-
-		switch (format) {
-			default:
-				Action.export(space, objectIds, format, { ...update.current, route });
-				close();
-				break;
-
-			case I.ExportType.Html:
-				keyboard.onSaveAsHTML();
-				analytics.event('Export', { type: format, route });
-				break;
-
-			case I.ExportType.Pdf:
-				keyboard.onPrintToPDF({ ...update.current });
-				analytics.event('Export', { type: format, route });
-				break;
-		};
-		
-		save();
-	};
-
-	init();
-
-	const { format } = update.current;
-	const formats = getFormats();
 
 	let items: any[] = [
 		{ id: 'format', name: translate('popupExportFormat'), control: 'select', options: formats },

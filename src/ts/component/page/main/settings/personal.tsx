@@ -1,14 +1,20 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer } from 'Lib';
+import { I, S, U, translate, Action, analytics, Renderer, keyboard, } from 'Lib';
+
+enum ChatKey {
+	Enter 	 = 'enter',
+	CmdEnter = 'cmdEnter',
+};
 
 const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends React.Component<I.PageSettingsComponent> {
 
 	render () {
 		const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
 		const { hideTray, showMenuBar } = config;
-		const { theme } = S.Common;
+		const { theme, chatCmdSend } = S.Common;
+		const cmd = keyboard.cmdSymbol();
 
 		const themes: any[] = [
 			{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
@@ -20,6 +26,11 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 		const linkStyles: I.Option[] = [
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+		];
+
+		const chatKeys: I.Option[] = [
+			{ id: ChatKey.Enter, name: 'Enter' },
+			{ id: ChatKey.CmdEnter, name: `${cmd} + Enter` },
 		];
 
 		return (
@@ -60,7 +71,21 @@ const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends
 							}}
 						/>
 					</div>
+				</div>
 
+				<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
+
+				<div className="actionItems">
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalChatSend')} />
+						<Select
+							id="chatSend"
+							value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+							options={chatKeys}
+							onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
 				</div>
 
 				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />

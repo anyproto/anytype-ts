@@ -1236,36 +1236,43 @@ class Dispatcher {
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
+		const check = S.Block.getLeaf(contextId, rootId);
 
-		if (root && root.fields.analyticsContext) {
-			analytics.setContext(root.fields.analyticsContext);
-		} else {
-			analytics.removeContext();
-		};
+		// Block structure already exists
+		if (!check) {
+			S.Block.clear(contextId);
 
-		S.Detail.set(contextId, details);
-		S.Block.restrictionsSet(contextId, restrictions);
-		S.Block.participantsSet(contextId, participants);
-
-		if (root) {
-			const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
-
-			root.type = I.BlockType.Page;
-			root.layout = object.layout;
-		};
-
-		const blocks = objectView.blocks.map(it => {
-			if (it.type == I.BlockType.Dataview) {
-				S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
-				S.Record.viewsSet(contextId, it.id, it.content.views);
+			if (root && root.fields.analyticsContext) {
+				analytics.setContext(root.fields.analyticsContext);
+			} else {
+				analytics.removeContext();
 			};
 
-			structure.push({ id: it.id, childrenIds: it.childrenIds });
-			return new M.Block(it);
-		});
+			S.Detail.set(contextId, details);
+			S.Block.restrictionsSet(contextId, restrictions);
+			S.Block.participantsSet(contextId, participants);
 
-		S.Block.set(contextId, blocks);
-		S.Block.setStructure(contextId, structure);
+			if (root) {
+				const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
+
+				root.type = I.BlockType.Page;
+				root.layout = object.layout;
+			};
+
+			const blocks = objectView.blocks.map(it => {
+				if (it.type == I.BlockType.Dataview) {
+					S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
+					S.Record.viewsSet(contextId, it.id, it.content.views);
+				};
+
+				structure.push({ id: it.id, childrenIds: it.childrenIds });
+				return new M.Block(it);
+			});
+
+			S.Block.set(contextId, blocks);
+			S.Block.setStructure(contextId, structure);
+		};
+
 		S.Block.updateStructureParents(contextId);
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
@@ -1300,6 +1307,11 @@ class Dispatcher {
 
 		try {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
+				if (error) {
+					console.error('GRPC Error', type, error);
+					return;
+				};
+
 				if (!response) {
 					return;
 				};

@@ -184,7 +184,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		};
 
 		const { param, getId, getSize } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { isTemplate } = data;
 
 		if (isTemplate) {
@@ -196,6 +196,8 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			offsetX: getSize().width - (isTemplate ? 14 : 0),
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			className,
+			classNameWrap,
 			data: {
 				text: item.comment || item.symbol,
 				example: item.comment ? true : false,

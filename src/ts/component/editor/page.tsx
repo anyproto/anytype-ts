@@ -169,7 +169,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage(null, null, false);
+		sidebar.resizePage(isPopup, null, null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -235,8 +235,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
-
-		S.Block.clear(this.props.rootId);
 
 		C.ObjectOpen(this.id, '', U.Router.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
@@ -419,7 +417,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.resizePage();
 		this.onScroll();
 
-		win.on(`resize.${ns}`, () => this.resizePage());
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resizePage());
 		container.on(`scroll.${ns}`, () => this.onScroll());
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
@@ -1023,7 +1021,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			// Backspace
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			keyboard.shortcut(`backspace, delete`, e, (pressed: string) => {
 				if (!readonly) {
 					this.onBackspaceBlock(e, range, pressed, length, props);
 				};

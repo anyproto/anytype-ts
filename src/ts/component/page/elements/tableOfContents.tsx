@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo } fr
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, J, sidebar } from 'Lib';
+import { I, S, U, J, sidebar, keyboard } from 'Lib';
 
 interface TableOfContentsRefProps {
 	setBlock: (v: string) => void;
@@ -18,15 +18,15 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const containerOffset = useRef({ top: 0, left: 0 });
 	const containerWidth = useRef(0);
 	const containerHeight = useRef(0);
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = `tableOfContents${U.Common.getEventNamespace(isPopup)}`;
 
 	const rebind = () => {
 		unbind();
-		$(window).on(`resize.tableOfContents${ns}`, () => resize());
+		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
 	};
 
 	const unbind = () => {
-		$(window).off(`resize.tableOfContents${ns}`);
+		$(window).off(`resize.${ns} sidebarResize.${ns}`);
 	};
 
 	const setBlock = (id: string) => {
@@ -68,7 +68,6 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const co = containerOffset.current.top;
-		const ch = containerHeight.current - J.Size.header;
 
 		let blockId = '';
 
@@ -94,7 +93,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	};
 
 	const onMouseEnter = () => {
-		if (S.Menu.isAnimating('tableOfContents')) {
+		if (S.Menu.isAnimating('tableOfContents') || keyboard.isResizing) {
 			return;
 		};
 

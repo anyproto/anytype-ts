@@ -23,7 +23,7 @@ const LOCAL_KEYS = [
 	'toggle',
 	'scroll',
 	'focus',
-	'sidebar',
+	'sidebarData',
 ];
 
 const Api = {

@@ -34,7 +34,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		let hasClick = true;
 		let iconMainElement = null;
 		let iconSideElement = null;
-		let nameElement = <div className="name">{name}</div>;
+		let nameElement = <div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />;
 
 		if (className) {
 			cn.push(className);
