@@ -2,20 +2,33 @@
 
 .popups {
     .popup.popupMembershipFinalization {
-        .anyNameForm { padding: 28px 34px 32px; width: 360px; }
+        .anyNameForm { padding: 32px 56px; width: 540px; }
         .anyNameForm {
-            .title { margin-bottom: 10px; @include text-header2; }
-            .label { margin-bottom: 14px; }
-
-            .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
-            .inputWrapper {
-                .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
-                .ns { flex-shrink: 0; width: 27px; }
+            .icon.color { width: 120px; height: 120px; background-size: contain; margin-bottom: 24px; }
+            .icon.color {
+                &.green { background-image: url('~img/icon/payment/green.svg'); }
+                &.blue { background-image: url('~img/icon/payment/blue.svg'); }
+                &.red { background-image: url('~img/icon/payment/red.svg'); }
+                &.ice { background-image: url('~img/icon/payment/ice.svg'); }
+                &.default { background-image: url('~img/icon/payment/purple.svg'); }
             }
 
-            .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 4px; color: var(--color-text-secondary);  }
+            .text { display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 16px; }
+            .title { margin-bottom: 0px; @include text-header1; }
+            .label { margin-bottom: 0px; color: var(--color-text-secondary); }
+
+            .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 6px; color: var(--color-text-secondary);  }
             .statusBar.error { color: var(--color-red); }
             .statusBar.ok { color: var(--color-lime); }
+
+            .inputWrapper {
+                display: flex; padding: 0px 16px; align-items: center; height: 40px; margin-bottom: 8px; border-radius: 20px;
+                border: 1px solid var(--color-shape-primary); background-color: var(--color-shape-highlight-medium);
+            }
+            .inputWrapper {
+                .input { @include text-common; border: 0; height: 40px; line-height: 40px; padding: 6px 0px; }
+                .ns { flex-shrink: 0; width: 27px; }
+            }
 
             .button { width: 100%; }
         }

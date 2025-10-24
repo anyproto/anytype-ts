@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Input, Loader } from 'Component';
+import { Title, Label, Button, Input, Loader, Icon } from 'Component';
 import { I, C, S, U, J, translate } from 'Lib';
 
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
@@ -103,41 +103,20 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	};
 
 	const { membership } = S.Auth;
-	const { period, periodType } = tierItem;
 	const { name, nameType } = membership;
-	
-	let labelText = translate('popupMembershipPaidTextUnlimited');
-	let periodLabel = translate('pluralYear');
 
-	if (periodType) {
-		switch (periodType) {
-			case I.MembershipTierDataPeriodType.PeriodTypeDays: {
-				periodLabel = translate('pluralDay');
-				break;
-			};
-			case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
-				periodLabel = translate('pluralWeek');
-				break;
-			};
-			case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
-				periodLabel = translate('pluralMonth');
-				break;
-			};
-		};
-	};
-
-	if (period) {
-		if (period == 1) {
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
-		} else {
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
-		};
-	};
+	const title = tierItem.name ? U.Common.sprintf(translate(`popupMembershipFinalizationTitleWithName`), tierItem.name) : translate(`popupMembershipFinalizationTitle`);
 
 	return (
 		<div className="anyNameForm">
-			<Title text={translate(`popupMembershipPaidTitle`)} />
-			<Label text={labelText} />
+			{tierItem.color ? <Icon className={[ 'color', tierItem.color ].join(' ')} /> : ''}
+			<div className="text">
+				<Title text={title} />
+				<Label text={translate('popupMembershipFinalizationText1')} />
+				<Label text={translate('popupMembershipFinalizationText2')} />
+			</div>
+
+			<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 			<div className="inputWrapper">
 				<Input
@@ -146,13 +125,11 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 					onKeyUp={onKeyUp}
 					readonly={!!name}
 					className={name ? 'disabled' : ''}
-					placeholder={translate(`popupMembershipPaidPlaceholder`)}
+					placeholder={translate(`popupMembershipFinalizationPlaceholder`)}
 				/>
 				<div className="ns">{J.Constant.namespace[nameType]}</div>
 			</div>
-
-			<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-			<Button ref={buttonRef} onClick={onConfirm} text={translate('commonConfirm')} />
+			<Button ref={buttonRef} onClick={onConfirm} color="accent" text={translate('popupMembershipFinalizationClaimName')} />
 			{isLoading ? <Loader /> : ''}
 		</div>
 	);
