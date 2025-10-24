@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
 import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
 
-const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const spaces = U.Space.getList().filter(it => it.isLocalOk);
@@ -39,9 +39,7 @@ const PageMainVoid = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		if (id == 'select') {
-			S.Common.setLeftSidebarState('vault', '');
-		};
+		sidebar.leftPanelSubPageClose();
 	}, []);
 
 	useEffect(() => {

@@ -473,6 +473,9 @@ class UtilMenu {
 		];
 		if (!isSystem && !isPreview) {
 			options.push(I.WidgetLayout.Link);
+		} else
+		if (id == J.Constant.widgetId.bin) {
+			options.unshift(I.WidgetLayout.Link);
 		};
 
 		if (id && !isSystem) {
@@ -934,18 +937,6 @@ class UtilMenu {
 			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
-		/*
-		console.log(JSON.stringify(items.map(it => 
-			`${it.name} 
-			p: ${it.isPinned}
-			o: ${it.orderId}
-			lm: ${U.Date.dateWithFormat(I.DateFormat.European, it.lastMessageDate)} 
-			jd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)} 
-			c: ${it.counter} 
-			cd: ${U.Date.dateWithFormat(I.DateFormat.European, it.spaceJoinDate)}
-		`), null, 2).replace(/\\n/g, ' ').replace(/\\t/g, ''));
-		*/
 
 		return items;
 	};

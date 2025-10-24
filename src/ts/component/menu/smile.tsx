@@ -33,7 +33,6 @@ const ID_RECENT = 'recent';
 
 const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
 	state = {
 		filter: '',
 		page: 0,
@@ -427,8 +426,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
-
 		const { storageGet, param } = this.props;
 		const { data } = param;
 		const items = this.getItems();
@@ -471,8 +468,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
-
 		window.clearTimeout(this.timeoutMenu);
 		window.clearTimeout(this.timeoutFilter);
 
@@ -1187,7 +1182,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -1195,7 +1190,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -1203,7 +1198,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		

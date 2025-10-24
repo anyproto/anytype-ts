@@ -79,15 +79,11 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 				return;
 			};
 
-			U.Data.getMembershipTiers(true, () => {
-				U.Data.getMembershipStatus((membership) => {
-					if (!membership || membership.isNone) {
-						setError(translate('pageMainMembershipError'));
-						return;
-					};
-
-					S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
-				});
+			U.Data.getMembershipStatus(true, (membership) => {
+				if (!membership || membership.isNone) {
+					setError(translate('pageMainMembershipError'));
+					return;
+				};
 			});
 		});
 	};

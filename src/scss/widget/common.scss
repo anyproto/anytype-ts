@@ -83,7 +83,7 @@
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
-	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; justify-content: center; }
+	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; }
 
 	.emptyWrap { padding: 0px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-grow: 1; }
 	.emptyWrap {

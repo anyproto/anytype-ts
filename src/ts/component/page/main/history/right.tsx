@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { I, C, S, U, translate, analytics, dispatcher } from 'Lib';
+import { I, C, S, U, translate, analytics, dispatcher, sidebar } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -50,10 +50,10 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const year = U.Date.date('Y', U.Date.now());
 		const canWrite = U.Space.canMyParticipantWrite();
 		const showButtons = this.showButtons();
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const cn = [];
 
-		if (rightSidebar.isOpen) {
+		if (!data.isClosed) {
 			cn.push('withSidebar');
 		};
 

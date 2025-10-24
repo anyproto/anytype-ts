@@ -1,9 +1,9 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding } from 'Lib';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding, sidebar } from 'Lib';
 
-const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
 	const cn = [ 'animation' ];
@@ -58,6 +58,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			const routeParam = { 
 				replace: true,
 				animate,
+				onRouteChange: () => sidebar.init(false),
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const chatsOnboarding = Storage.get('chatsOnboarding');
@@ -69,7 +70,7 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					].forEach(it => Survey.check(it));
 
 					const cb1 = () => {
-						U.Data.getMembershipStatus(membership => {
+						U.Data.getMembershipStatus(false, membership => {
 							if (membership.status == I.MembershipStatus.Finalization) {
 								S.Popup.open('membershipFinalization', { 
 									onClose: cb2,
@@ -104,6 +105,9 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					Action.checkDiskSpace(cb1);
 				},
 			};
+
+			U.Data.onInfo(account.info);
+			U.Data.onAuthOnce(false);
 		
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
@@ -111,9 +115,6 @@ const PageAuthSetup = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 				U.Router.go('/main/void/select', routeParam);
 			};
 			
-			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(false);
-
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

@@ -1,198 +1,85 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar, Onboarding } from 'Lib';
 
-interface State {
-	isLoading: boolean;
-	isDeleted: boolean;
-};
+const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-const PageMainSet = observer(class PageMainSet extends React.Component<I.PageComponent, State> {
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ isDeleted, setIsDeleted ] = useState(false);
+	const { isPopup } = props;
+	const nodeRef = useRef(null);
+	const headerRef = useRef(null);
+	const headRef = useRef(null);
+	const controlsRef = useRef(null);
+	const blockRefs = useRef<any>({});
+	const rootId = keyboard.getRootId(isPopup);
+	const check = U.Data.checkDetails(rootId, rootId, [ 'layout' ]);
+	const idRef = useRef('');
 
-	_isMounted = false;
-	node: any = null;
-	id = '';
-	refHeader: any = null;
-	refHead: any = null;
-	refControls: any = null;
-	loading = false;
-	timeout = 0;
-	blockRefs: any = {};
-
-	state = {
-		isLoading: false,
-		isDeleted: false,
-	};
-
-	constructor (props: I.PageComponent) {
-		super(props);
-		
-		this.resize = this.resize.bind(this);
-	};
-
-	render () {
-		const { isLoading, isDeleted } = this.state;
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const check = U.Data.checkDetails(rootId, rootId, [ 'layout' ]);
-
-		let content = null;
-		if (isDeleted) {
-			content = <Deleted {...this.props} />;
-		} else
-		if (isLoading) {
-			content = <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
-		} else {
-			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
-			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
-			const readonly = this.isReadonly();
-			const placeholder = Dataview.namePlaceholder(check.layout);
-
-			content = (
-				<>
-					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} readonly={readonly} /> : ''}
-
-					<div className="blocks wrapper">
-						<EditorControls 
-							ref={ref => this.refControls = ref} 
-							key="editorControls" 
-							{...this.props} 
-							rootId={rootId} 
-							resize={this.resize} 
-							readonly={readonly}
-						/>
-
-						<HeadSimple 
-							{...this.props} 
-							ref={ref => this.refHead = ref} 
-							placeholder={placeholder} 
-							rootId={rootId} 
-							readonly={readonly}
-						/>
-
-						{children.map((block: I.Block, i: number) => (
-							<Block
-								{...this.props}
-								ref={ref => this.blockRefs[block.id] = ref}
-								key={block.id}
-								rootId={rootId}
-								iconSize={20}
-								block={block}
-								className="noPlus"
-								isSelectionDisabled={true}
-								readonly={readonly}
-							/>
-						))}
-					</div>
-				</>
-			);
-		};
-
-		return (
-			<div ref={node => this.node = node}>
-				<Header 
-					{...this.props} 
-					component="mainObject" 
-					ref={ref => this.refHeader = ref} 
-					rootId={rootId} 
-				/>
-
-				<div id="bodyWrapper" className="wrapper">
-					<div className={[ 'editorWrapper', check.className ].join(' ')}>
-						{content}
-					</div>
-				</div>
-
-				<Footer component="mainObject" {...this.props} />
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-		this.open();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.open();
-		this.resize();
-		this.checkDeleted();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.close();
-		this.unbind();
-	};
-
-	unbind () {
-		const { isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
+	const unbind = () => {
+		const ns = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
-		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
+		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
 	};
 
-	rebind () {
-		const { isPopup } = this.props;
+	const rebind = () => {
 		const win = $(window);
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = U.Common.getEventNamespace(isPopup);
 		const container = U.Common.getScrollContainer(isPopup);
 
-		this.unbind();
+		unbind();
 
-		win.on(`keydown.set${namespace}`, e => this.onKeyDown(e));
-		container.on(`scroll.set${namespace}`, () => this.onScroll());
+		win.on(`keydown.set${ns}`, e => onKeyDown(e));
+		container.on(`scroll.set${ns}`, () => onScroll());
 	};
 
-	checkDeleted () {
-		const { isDeleted } = this.state;
+	const checkDeleted = (): boolean => {
 		if (isDeleted) {
-			return;
+			return true;
 		};
 
-		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, []);
 
 		if (object.isDeleted) {
-			this.setState({ isDeleted: true });
+			setIsDeleted(true);
+			return true;
 		};
+
+		return false;
 	};
 
-	open () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-
-		if (this.id == rootId) {
+	const open = () => {
+		if (idRef.current == rootId) {
 			return;
 		};
 
-		this.close();
-		this.id = rootId;
-		this.setState({ isDeleted: false, isLoading: true });
+		close();
+		idRef.current = rootId;
+		setIsDeleted(false);
+		setIsLoading(true);
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			setIsLoading(false);
+
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
 			const object = S.Detail.get(rootId, rootId, []);
-			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+			if (checkDeleted()) {
 				return;
 			};
 
-			this.refHeader?.forceUpdate();
-			this.refHead?.forceUpdate();
-			this.refControls?.forceUpdate();
+			headRef.current?.forceUpdate();
+			headRef.current?.forceUpdate();
+			controlsRef.current?.forceUpdate();
 
 			sidebar.rightPanelSetState(isPopup, { rootId });
-			this.setState({ isLoading: false });
-			this.resize();
+			resize();
 
 			if (U.Object.isTypeLayout(object.layout)) {
 				window.setTimeout(() => Onboarding.start('typeResetLayout', isPopup), 50);
@@ -202,53 +89,40 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		});
 	};
 
-	close () {
-		if (!this.id) {
+	const close = () => {
+		if (!idRef.current) {
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const close = !isPopup || (this.getRootId() == this.id);
+		const close = !isPopup || (rootId == idRef.current);
 
 		if (close) {
-			Action.pageClose(this.id, true);
+			Action.pageClose(idRef.current, true);
 		};
 	};
 
-	getRootId () {
-		return keyboard.getRootId(this.props.isPopup);
-	};
-
-	onScroll () {
-		const { isPopup } = this.props;
-		const selection = S.Common.getRef('selectionProvider');
-
+	const onScroll = () => {
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
-		selection?.renderSelection();
+		S.Common.getRef('selectionProvider')?.renderSelection();
 	};
 
-	onKeyDown (e: any): void {
-		const { isPopup } = this.props;
-
+	const onKeyDown = (e: any) => {
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
-		const node = $(this.node);
 		const selection = S.Common.getRef('selectionProvider');
-		const cmd = keyboard.cmdKey();
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
-		const rootId = this.getRootId();
-		const ref = this.blockRefs[J.Constant.blockId.dataview];
+		const ref = blockRefs[J.Constant.blockId.dataview];
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			node.find('#dataviewControls .filter .icon.search').trigger('click');
+			$(controlsRef.current).find('.filter .icon.search').trigger('click');
 		});
 
 		keyboard.shortcut('createObject', e, () => {
@@ -289,8 +163,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		});
 	};
 
-	isReadonly () {
-		const rootId = this.getRootId();
+	const isReadonly = () => {
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (root && root.isLocked()) {
@@ -305,16 +178,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		return !U.Space.canMyParticipantWrite();
 	};
 
-	resize () {
-		const { isLoading } = this.state;
-		const { isPopup } = this.props;
-
-		if (!this._isMounted || isLoading) {
+	const resize = () => {
+		if (isLoading) {
 			return;
 		};
 
 		raf(() => {
-			const node = $(this.node);
+			const node = $(nodeRef.current);
 			const cover = node.find('.block.blockCover');
 			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
@@ -326,6 +196,97 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		});
 	};
 
-});
+	let content = null;
+	if (isDeleted) {
+		content = <Deleted {...props} />;
+	} else
+	if (isLoading) {
+		content = <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
+	} else {
+		const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
+		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+		const readonly = isReadonly();
+		const placeholder = Dataview.namePlaceholder(check.layout);
+
+		content = (
+			<>
+				{check.withCover ? <Block {...props} key={cover.id} rootId={rootId} block={cover} readonly={readonly} /> : ''}
+
+				<div className="blocks wrapper">
+					<EditorControls 
+						ref={controlsRef} 
+						key="editorControls" 
+						{...props} 
+						rootId={rootId} 
+						resize={resize} 
+						readonly={readonly}
+					/>
+
+					<HeadSimple 
+						{...props} 
+						ref={headRef} 
+						placeholder={placeholder} 
+						rootId={rootId} 
+						readonly={readonly}
+					/>
+
+					{children.map((block: I.Block, i: number) => (
+						<Block
+							{...props}
+							ref={ref => blockRefs.current[block.id] = ref}
+							key={block.id}
+							rootId={rootId}
+							iconSize={20}
+							block={block}
+							className="noPlus"
+							isSelectionDisabled={true}
+							readonly={readonly}
+						/>
+					))}
+				</div>
+			</>
+		);
+	};
+
+	useEffect(() => {
+		open();
+		rebind();
+
+		return () => {
+			close();
+			unbind();
+		};
+	}, []);
+
+	useEffect(() => {
+		open();
+		resize();
+		checkDeleted();
+	});
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
+
+	return (
+		<div ref={nodeRef}>
+			<Header 
+				{...props} 
+				component="mainObject" 
+				ref={headerRef} 
+				rootId={rootId} 
+			/>
+
+			<div id="bodyWrapper" className="wrapper">
+				<div className={[ 'editorWrapper', check.className ].join(' ')}>
+					{content}
+				</div>
+			</div>
+
+			<Footer component="mainObject" {...props} />
+		</div>
+	);
+
+}));
 
 export default PageMainSet;

@@ -62,20 +62,16 @@ class UtilSubscription {
 	 * @param {any} param - Parameters for filter construction.
 	 * @returns {any[]} The array of filter objects.
 	 */
-	defaultFilters (param: any) {
+	getBaseFilters (param: Partial<I.SearchSubscribeParam>) {
 		const { config } = S.Common;
+		const spaceview = U.Space.getSpaceview();
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
 		const filters = U.Common.objectCopy(param.filters || []);
 		
 		let skipLayouts = [];
 
-		if (!config.experimental) {
+		if (!config.experimental || spaceview.isChat) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
-		};
-
-		if (skipLayouts.length) {
-			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
-			filters.push({ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts });
 		};
 
 		if (skipLayouts.length) {
@@ -90,13 +86,15 @@ class UtilSubscription {
 
 		if (ignoreDeleted) {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		} else {
+		} else 
+		if (!filters.find(it => it.relationKey == 'isDeleted')) {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.None, value: null });
 		};
 
 		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		} else {
+		} else 
+		if (!filters.find(it => it.relationKey == 'isArchived')) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.None, value: null });
 		};
 
@@ -157,7 +155,7 @@ class UtilSubscription {
 		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys = this.mapKeys(param);
 		const debug = config.flagsMw.subscribe;
-		const filters = this.defaultFilters(param);
+		const filters = this.getBaseFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!subId) {
@@ -326,7 +324,7 @@ class UtilSubscription {
 		const { spaceId, offset, limit, skipLayoutFormat, fullText } = param;
 		const keys = this.mapKeys(param);
 		const debug = config.flagsMw.subscribe;
-		const filters = this.defaultFilters(param);
+		const filters = this.getBaseFilters(param);
 		const sorts = (param.sorts || []).map(this.sortMapper);
 
 		if (!spaceId) {
@@ -530,7 +528,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
-					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
@@ -659,7 +657,6 @@ class UtilSubscription {
 	};
 
 	createTypeCheck (callBack?: () => void) {
-		const { space } = S.Common;
 		const list = [];
 
 		for (const key of this.fileTypeKeys()) {
@@ -680,7 +677,11 @@ class UtilSubscription {
 			});
 		};
 
-		this.createList(list, callBack);
+		if (list.length) {
+			this.createList(list, callBack);
+		} else {
+			callBack?.();
+		};
 	};
 
 	/**

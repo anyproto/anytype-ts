@@ -204,7 +204,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						setIsBottom(false);
 					};
 				} else {
-					setIsBottom(false);
+					const y = U.Common.getMaxScrollHeight(isPopup);
+					const top = U.Common.getScrollContainerTop(isPopup);
+
+					setIsBottom(!(top < y));
 				};
 
 				loadDepsAndReplies(messages, () => {

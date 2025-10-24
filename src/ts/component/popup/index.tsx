@@ -24,7 +24,6 @@ import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
-import PopupMembership from './membership';
 import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
@@ -163,7 +162,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		inviteRequest:			 PopupInviteRequest,
 		inviteConfirm:			 PopupInviteConfirm,
 		inviteQr:				 PopupInviteQr,
-		membership: 		 	 PopupMembership,
 		membershipActivation: 	 PopupMembershipActivation,
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,
@@ -196,7 +194,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	if (id == 'aiOnboarding') {
 		dimmer = <DimmerWithGraph onClick={onDimmer} />;
 	} else {
-		dimmer = <Dimmer onClick={onDimmer} />;
+		dimmer = <Dimmer onMouseDown={onDimmer} />;
 	};
 
 	return (

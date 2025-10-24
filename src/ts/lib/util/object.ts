@@ -159,7 +159,7 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup.params = { ...param.data.matchPopup.params, ...object._routeParam_ };
 		};
 
 		keyboard.setSource(null);
@@ -264,6 +264,14 @@ class UtilObject {
 
 	setLastUsedDate (rootId: string, timestamp: number, callBack?: (message: any) => void) {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
+	};
+
+	setObjectTypes (rootId: string, ids: string[], callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(ids) } ], callBack);
+	};
+
+	setOptionColor (rootId: string, color: string, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationOptionColor', value: color } ], callBack);
 	};
 
 	name (object: any, withPlural?: boolean): string {
@@ -446,7 +454,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -743,12 +751,13 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
-		const newDetails: any = {
-			...this.getNewTypeDetails(),
-			...details,
-		};
-
-		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+		sidebar.rightPanelToggle(isPopup, { 
+			page: 'type', 
+			details: {
+				...this.getNewTypeDetails(),
+				...details,
+			},
+		});
 	};
 
 	getNewTypeDetails (): any {

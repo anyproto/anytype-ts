@@ -205,7 +205,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		sidebar.resizePage(null, null, false);
+		sidebar.resizePage(isPopup, null, null, false);
 	});
 
 	useImperativeHandle(ref, () => ({

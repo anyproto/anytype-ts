@@ -80,7 +80,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Subscriptions
 		for (const mark of marks) {
-			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
+			if ([ I.MarkType.Mention ].includes(mark.type)) {
 				const object = S.Detail.get(rootId, mark.param, []);
 			};
 		};
@@ -426,9 +426,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+/` },
 		];
-		const twinePairs = {
+		const twinPairs = {
 			'{': '}',
 			'(': ')',
+			'[': ']',
 			'`':'`',
 			'\'':'\'',
 			'\"':'\"',
@@ -597,26 +598,41 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
-		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
-			e.preventDefault();
+		if (
+			range && 
+			(
+				(range.from != range.to) || 
+				block.isTextCode()
+			) && 
+			Object.keys(twinPairs).includes(key)
+		) {
+			const count = value.split(key).length - 1;
+			const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
 
-			if ((key == '`') && !block.isTextCode()) {
-				this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
-			} else {
-				const length = key.length;
-				const cut = value.slice(range.from, range.to);
-				const closing = twinePairs[key] || key;
+			if ((count % 2 === 0) && !skipTwinPairs) {
+				e.preventDefault();
 
-				value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
-				this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+				let length = 0;
+
+				if ((key == '`') && !block.isTextCode()) {
+					this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
+				} else {
+					length = key.length;
+
+					const cut = value.slice(range.from, range.to);
+					const closing = twinPairs[key] || key;
+
+					value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+					this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+				};
+
+				this.setValue(value);
+
+				focus.set(block.id, { from: range.from + length, to: range.to + length });
+				focus.apply();
+
+				ret = true;
 			};
-
-			this.setValue(value);
-
-			focus.set(block.id, { from: range.from + length, to: range.to + length });
-			focus.apply();
-
-			ret = true;
 		};
 
 		if (ret) {

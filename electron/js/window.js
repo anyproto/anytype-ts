@@ -221,6 +221,8 @@ class WindowManager {
 					} else {
 						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
 					};
+				}).catch(() => {
+					Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 				});
 				break;
 		};

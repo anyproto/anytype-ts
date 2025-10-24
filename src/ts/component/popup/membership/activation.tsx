@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
 import { I, C, S, translate } from 'Lib';
@@ -8,6 +9,7 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 	const { close, param } = props;
 	const { data } = param;
 	const { code } = data;
+	const inputWrapperRef = useRef(null);
 	const inputRef = useRef(null);
 	const buttonRef = useRef(null);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -18,10 +20,18 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		setError('');
 	};
 
+	const onClear = () => {
+		inputRef.current?.setValue('');
+		setError('');
+		buttonRef.current?.setDisabled(true);
+		$(inputWrapperRef.current).removeClass('canClear');
+	};
+
 	const checkButton = () => {
 		const v = inputRef.current?.getValue();
 
 		buttonRef.current?.setDisabled(!v.length);
+		$(inputWrapperRef.current).toggleClass('canClear', v.length > 0);
 	};
 
 	const onSubmit = () => {
@@ -37,18 +47,14 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 				return;
 			};
 
-			if (message.tier == I.TierType.Team) {
-				C.MembershipCodeRedeem(code, '', () => {
-					if (message.error.code) {
-						setError(message.error.description);
-						return;
-					};
+			C.MembershipCodeRedeem(code, '', () => {
+				if (message.error.code) {
+					setError(message.error.description);
+					return;
+				};
 
-					close();
-				});
-			} else {
-				S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, code } });
-			};
+				close();
+			});
 		});
 	};
 
@@ -64,15 +70,18 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		<>
 			{isLoading ? <Loader id="loader" /> : ''}
 
-			<Icon />
+			<Icon className="activation" />
 
 			<Title text={translate('popupMembershipActivationTitle')} />
 			<Label text={translate('popupMembershipActivationText')} />
 
-			<Input type="text" ref={inputRef} onKeyUp={onKeyUp} placeholder={translate('popupMembershipActivationPlaceholder')} />
+			<div ref={inputWrapperRef} className="inputWrapper">
+				<Input type="text" ref={inputRef} onKeyUp={onKeyUp} placeholder={translate('popupMembershipActivationPlaceholder')} />
+				<Icon className="clear" onClick={onClear} />
+			</div>
 
 			<div className="buttons">
-				<Button ref={buttonRef} className="c36" text={translate('commonContinue')} onClick={onSubmit} />
+				<Button ref={buttonRef} className="c36" color="accent" text={translate('popupMembershipActivationActivate')} onClick={onSubmit} />
 				<Button className="c36" color="blank" text={translate('commonCancel')} onClick={() => close()} />
 			</div>
 

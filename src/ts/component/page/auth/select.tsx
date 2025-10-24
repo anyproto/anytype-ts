@@ -4,7 +4,7 @@ import { Frame, Button, Header, Footer, Error, Label } from 'Component';
 import { I, U, S, translate, Animation, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageAuthSelect = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const registerRef = useRef(null);
