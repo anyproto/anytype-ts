@@ -196,7 +196,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onLayout () {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
 		
@@ -206,7 +206,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			onClose: () => elements.removeClass('hover'),
 			subIds: J.Menu.layout,
 			data: {
-				rootId: rootId,
+				rootId,
+				isPopup,
 			}
 		});
 	};

@@ -17,7 +17,7 @@ interface RefProps {
 
 const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 
-	const { rootId, readonly, resize, onLayoutSelect } = props;
+	const { rootId, readonly, isPopup, resize, onLayoutSelect } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const object = S.Detail.get(rootId, rootId, J.Relation.cover);
@@ -85,6 +85,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 			subIds: J.Menu.layout,
 			data: {
 				rootId,
+				isPopup,
 				onLayoutSelect,
 			}
 		});
