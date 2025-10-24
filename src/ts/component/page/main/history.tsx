@@ -311,7 +311,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const resize = () => {
 		const node = $(nodeRef.current);
 		const sideLeft = $(leftRef.current?.getNode());
-		const sideRight = node.find('#historySideRight');
+		const sideRight = $(rightRef.current?.getNode());
 		const editorWrapper = node.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
 		const container = U.Common.getPageContainer(isPopup);
