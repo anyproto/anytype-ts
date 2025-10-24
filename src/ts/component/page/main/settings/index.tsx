@@ -38,7 +38,7 @@ import PageMainSet from '../set';
 import PageMainRelation from '../relation';
 import PageMainArchive from '../archive';
 
-import PageMembership from './membership';
+import PageMembership from './membership/index';
 
 const Components: any = {
 	index: 				 PageAccount,

@@ -888,13 +888,15 @@
         .actionItems { margin: 32px 0px 24px 0px; }
     }
 
-    > .pageSettingsMembership { display: flex; flex-direction: column; }
+    > .pageSettingsMembership { display: flex; flex-direction: column; padding-bottom: 0px; }
     > .pageSettingsMembership {
-        .title { text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.64px; margin: 0px 0px 2px 0px; }
-        .title.riccione { font-family: 'RiccioneExtraLight'; letter-spacing: -0.518px; }
-        .description { text-align: center; margin-bottom: 26px !important; }
+        > .title { @include text-title; text-align: center; margin: 0px 0px 8px 0px; }
 
-        .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; padding: 16px 0px; }
+        .membershipFree {
+            > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
+        }
+
+        .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin-bottom: 32px; }
         .switchWrapper {
             .label { font-weight: 500; }
         }
@@ -982,6 +984,28 @@
         .actionItems { margin-bottom: 29px !important; }
         .actionItems {
             .icon { width: 16px; height: 16px; background: url('~img/icon/payment/hyperlink.svg'); }
+        }
+
+        .actions { margin-bottom: 58px; display: flex; gap: 0px 16px; justify-content: center; align-items: stretch; }
+        .actions {
+            .action { width: 312px; padding: 16px; border-radius: 24px; border: 1px solid var(--color-shape-secondary); }
+            .action {
+                .icon {
+                    width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px;
+                    background-position: 50% 50%; background-repeat: no-repeat; background-color: var(--color-shape-highlight-medium);
+                }
+                .icon.activation { background-size: 20px; background-image: url('~img/icon/membership/activation.svg'); }
+                .icon.contact { background-size: 28px; background-image: url('~img/icon/membership/contact.svg'); }
+
+                .title { @include text-paragraph; font-weight: 500; margin-bottom: 2px; }
+                .label { color: var(--color-text-secondary); margin-bottom: 12px; }
+                .button { width: 100%; font-weight: 500; }
+            }
+        }
+
+        .links { margin-bottom: 16px; display: flex; justify-content: center; gap: 0px 32px; }
+        .links {
+            .label { @include text-small; color: var(--color-text-secondary); }
         }
     }
 }

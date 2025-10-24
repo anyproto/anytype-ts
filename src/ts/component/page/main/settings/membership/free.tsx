@@ -5,18 +5,13 @@ import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
 
-const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
 	const { interfaceLang, membershipTiers } = S.Common;
 	const { status } = membership;
 	const [ showAnnual, setShowAnnual ] = useState(true);
 	const tier = U.Data.getMembershipTier(membership.tier);
-	const cnt = [];
-
-	if (interfaceLang == J.Constant.default.interfaceLang) {
-		cnt.push('riccione');
-	};
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -33,10 +28,28 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const links = [
-		{ url: J.Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
-		{ url: J.Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
+		{ url: J.Url.pricing, name: translate('popupSettingsMembershipFAQ'), type: 'MenuHelpMembershipFAQ' },
 		{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
+		{ url: J.Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
 	];
+
+	const actions = [
+		{ id: 'activation', button: translate('commonActivate'), title: translate('popupSettingsMembershipActionsActivationTitle'), text: translate('popupSettingsMembershipActionsActivationText') },
+		{ id: 'contact', button: translate('popupSettingsMembershipActionsContactReachUs'), title: translate('popupSettingsMembershipActionsContactTitle'), text: translate('popupSettingsMembershipActionsContactText') }
+	];
+
+	const onAction = (item: any) => {
+		switch (item.id) {
+			case 'activation': {
+				onCode();
+				break;
+			};
+			case 'contact': {
+				onContact();
+				break;
+			};
+		};
+	};
 
 	const onPay = (item: I.MembershipTier) => {
 		if (item.id == membership.tier) {
@@ -83,7 +96,7 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 			};
 
 			buttonText = translate('commonManage');
-		} else 
+		} else
 		if (item.period) {
 			const periodLabel = showAnnual ? translate('pluralYear') : translate('pluralMonth');
 
@@ -99,7 +112,7 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		return (
-			<div 
+			<div
 				className={cn.join(' ')}
 				onClick={() => onPay(item)}
 			>
@@ -123,11 +136,8 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	return (
-		<>
-			<Title 
-				className={cnt.join(' ')} 
-				text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
-			/>
+		<div className="membershipFree">
+			<Label text={translate('popupSettingsMembershipText')} />
 
 			<div className="switchWrapper">
 				<Label text={translate('popupSettingsMembershipSwitchMonthly')} />
@@ -155,28 +165,23 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 				</Swiper>
 			</div>
 
-			{!tier?.price ? (
-				<div className="actionItems">
-					<div onClick={onCode} className="item redeemCode">
-						<Label text={translate('popupSettingsMembershipRedeemCode')} />
-						<Icon className="arrow" />
-					</div>
-				</div>
-			) : ''}
-
-			<div className="actionItems">
-				{links.map((item, i) => (
-					<div key={i} onClick={() => onLink(item)} className="item">
-						<Label text={item.name} />
-						<Icon />
+			<div className="actions">
+				{actions.map((item, idx) => (
+					<div className="action">
+						<Icon className={item.id} />
+						<Title text={item.title} />
+						<Label text={item.text} />
+						<Button text={item.button} color="blank" onClick={() => onAction(item)} />
 					</div>
 				))}
 			</div>
 
-			<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={onContact} />
-		</>
+			<div className="links">
+				{links.map((item, i) => <Label key={i} onClick={() => onLink(item)} text={item.name} />)}
+			</div>
+		</div>
 	);
 
 }));
 
-export default PageMainSettingsMembership;
+export default PageMainSettingsMembershipFree;
