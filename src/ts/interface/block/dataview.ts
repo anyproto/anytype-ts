@@ -148,6 +148,10 @@ export interface ViewRef {
 	resize?(): void;
 };
 
+export interface RowRef {
+	setIsEditing: (v: boolean) => void;
+};
+
 export interface ViewComponent {
 	rootId?: string;
 	block?: I.Block;

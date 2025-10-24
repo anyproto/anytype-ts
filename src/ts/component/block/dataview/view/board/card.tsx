@@ -9,11 +9,7 @@ interface Props extends I.ViewComponent {
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
-interface Ref {
-	setIsEditing: (v: boolean) => void;
-};
-
-const BoardCard = observer(forwardRef<Ref, Props>((props, ref) => {
+const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, groupId, id, isPopup, isInline, getView, onContext, onRefCell, getIdPrefix, getVisibleRelations, getCoverObject, onEditModeClick, canCellEdit,

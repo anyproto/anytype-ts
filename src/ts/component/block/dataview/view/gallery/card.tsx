@@ -8,11 +8,7 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-interface Ref {
-	setIsEditing: (v: boolean) => void;
-};
-
-const GalleryCard = observer(forwardRef<Ref, Props>((props, ref) => {
+const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, recordId, isPopup, style, isInline, isCollection, getRecord, getView, onRefCell, onContext, getIdPrefix, getVisibleRelations, 
