@@ -30,7 +30,13 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	let hasClick = true;
 	let iconMainElement = null;
 	let iconSideElement = null;
-	let nameElement = <div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />;
+	let nameElement = null;
+
+	if ('string' == typeof name) {
+		nameElement = <div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />;
+	} else {
+		nameElement = <div className="name">{name}</div>;
+	};
 
 	if (className) {
 		cn.push(className);

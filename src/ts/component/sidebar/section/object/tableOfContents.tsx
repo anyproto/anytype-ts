@@ -36,7 +36,7 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 	};
 
 	useImperativeHandle(ref, () => ({
-		forceUpdate: setDummy(dummy + 1),
+		forceUpdate: () => setDummy(dummy + 1),
 		getItems,
 	}));
 

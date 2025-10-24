@@ -51,6 +51,10 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 		id.push(item.id);
 	};
 
+	const updateChild = () => {
+		childRef.current?.forceUpdate?.();
+	};
+
 	useEffect(() => {
 		if (withState) {
 			setStateObject(props.object);
@@ -58,7 +62,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		childRef.current?.forceUpdate();
+		updateChild();
 	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({
@@ -66,7 +70,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 		getObject: () => object,
 		setObject: (o: any) => {
 			setStateObject(o);
-			childRef.current?.forceUpdate();
+			updateChild();
 		},
 	}));
 
