@@ -63,7 +63,6 @@ const Components = {
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
 
-	_isMounted = false;
 	refChild: any = null;
 	frame = 0;
 
@@ -112,7 +111,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.init();
 	};
 
@@ -123,7 +121,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	componentWillUnmount () {
 		const { isPopup } = this.props;
 
-		this._isMounted = false;
 		this.unbind();
 
 		if (!isPopup) {
@@ -328,10 +325,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		this.frame = raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
 			};

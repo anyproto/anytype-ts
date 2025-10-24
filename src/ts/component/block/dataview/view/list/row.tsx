@@ -10,7 +10,6 @@ interface Props extends I.ViewComponent {
 
 const Row = observer(class Row extends React.Component<Props> {
 
-	_isMounted = false;
 	isEditing = false;
 	node: any = null;
 
@@ -154,16 +153,11 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.resize();
 	};
 
 	componentDidUpdate () {
 		this.resize();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 
 	onClick (e: any) {
@@ -210,10 +204,6 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		const first = node.find('.cellContent:not(.isEmpty)').first();
 

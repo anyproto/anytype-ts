@@ -11,7 +11,6 @@ interface Props extends I.ViewComponent {
 
 const Card = observer(class Card extends React.Component<Props> {
 
-	_isMounted = false;
 	isEditing = false;
 	node: any = null;
 	rowIndex: number = this.props.rowIndex;
@@ -126,7 +125,6 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.resize();
 	};
 
@@ -134,15 +132,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		this.resize();
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		const last = node.find('.cellContent:not(.isEmpty)').last();
 

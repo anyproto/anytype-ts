@@ -12,7 +12,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	state = {
 		isEditing: false,
 	};
-	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
 	ref = null;
@@ -77,7 +76,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.setValue();
 	};
 
@@ -94,7 +92,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	componentWillUnmount () {
 		this.save();
-		this._isMounted = false;
 	};
 
 	onTitle () {
@@ -291,7 +288,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	setValue () {
-		if (!this._isMounted || !this.ref) {
+		if (!this.ref) {
 			return;
 		};
 

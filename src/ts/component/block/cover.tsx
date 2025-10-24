@@ -11,7 +11,6 @@ interface State {
 
 const BlockCover = observer(class BlockCover extends React.Component<I.BlockComponent, State> {
 	
-	_isMounted = false;
 	node: any = null;
 	state = {
 		isEditing: false,
@@ -153,7 +152,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.resize();
 
 		U.Common.renderLinks($(this.node));
@@ -167,7 +165,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		$(window).off('resize.cover');
 	};
 
@@ -215,10 +212,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	onCoverOpen () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		node.find('#elements').addClass('hover');
 
@@ -226,10 +219,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	onCoverClose () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		node.find('#elements').removeClass('hover');
 	};
@@ -253,10 +242,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	setLoading (v: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		const loader = node.find('#cover-loader');
 
@@ -300,10 +285,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	resize () {
-		if (!this._isMounted) {
-			return false;
-		};
-		
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const { coverId, coverType } = object;
@@ -355,7 +336,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		const { isEditing } = this.state;
 		
-		if (!this._isMounted || !isEditing) {
+		if (!isEditing) {
 			return false;
 		};
 		
@@ -375,7 +356,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onDragMove (e: any) {
-		if (!this._isMounted || !this.rect) {
+		if (!this.rect) {
 			return false;
 		};
 		
@@ -385,10 +366,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onDragEnd (e: any) {
-		if (!this._isMounted) {
-			return false;
-		};
-		
 		const win = $(window);
 		const node = $(this.node);
 		
@@ -407,7 +384,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onScaleMove (e: any, v: number) {
-		if (!this._isMounted || !this.cover || !this.cover.length) {
+		if (!this.cover || !this.cover.length) {
 			return false;
 		};
 
@@ -438,7 +415,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	canDrop (e: any) {
-		return this._isMounted && !this.props.readonly && U.File.checkDropFiles(e);
+		return !this.props.readonly && U.File.checkDropFiles(e);
 	};
 	
 	onDragOver (e: any) {
@@ -462,7 +439,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 
 		const { rootId, readonly } = this.props;
 
-		if (!this._isMounted || !U.File.checkDropFiles(e) || readonly) {
+		if (!U.File.checkDropFiles(e) || readonly) {
 			return;
 		};
 

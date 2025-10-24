@@ -12,7 +12,6 @@ const SNAP = 10;
 
 const BlockTable = observer(class BlockTable extends React.Component<I.BlockComponent> {
 
-	_isMounted = false;
 	node = null;
 	refScroll = null;
 	refTable = null;
@@ -140,8 +139,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
-
 		this.data = this.getData();
 		this.initSize();
 		this.resize();
@@ -159,7 +156,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 	};
 
@@ -253,10 +249,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onOptions (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -600,10 +592,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onOptionsOpen (type: I.BlockType, rowId: string, columnId: string, cellId: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		this.onOptionsClose();
 
 		const table = $(this.refTable);
@@ -640,10 +628,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onOptionsClose () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const table = $(this.refTable);
 	
 		table.find('.isHighlightedColumn').removeClass('isHighlightedColumn isFirst isLast');
@@ -829,10 +813,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	setEditing (id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		this.cellId = id;
 
 		const node = $(this.node);
@@ -849,10 +829,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onResizeStart (e: any, id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -915,10 +891,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	setColumnWidths (widths: number[]) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		const rows = node.find('.row');
 		const gridTemplateColumns = widths.map(it => `${it}px`).join(' ');
@@ -967,10 +939,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onDragMoveColumn (e: any, id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { columns } = this.getData();
 		const current = this.cache[id];
 
@@ -1061,10 +1029,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onDragMoveRow (e: any, id: string) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { rows } = this.getData();
 		const current = this.cache[id];
 
@@ -1130,16 +1094,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onScroll (e: any) {
-		if (this._isMounted) {
-			this.scrollX = $(this.refScroll).scrollLeft();
-		};
+		this.scrollX = $(this.refScroll).scrollLeft();
 	};
 
 	initCache (type: I.BlockType) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		this.cache = {};
 
 		const { rows, columns } = this.getData();
@@ -1547,10 +1505,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const { rows } = this.getData();
