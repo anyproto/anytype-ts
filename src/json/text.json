@@ -192,7 +192,6 @@
 	"commonRelations": "Properties",
 	"commonSelectType": "Select Type",
 	"commonOpenType": "Open Type",
-	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
 	"commonShowMore": "Show more",
@@ -1012,6 +1011,7 @@
 	"popupSettingsMembershipTitle": "Membership",
 	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
 	"popupSettingsMembershipSelectPlan": "Select plan",
+	"popupSettingsMembershipCurrentPlan": "Current plan",
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual (-20%)",

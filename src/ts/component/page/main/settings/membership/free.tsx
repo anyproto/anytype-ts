@@ -8,10 +8,11 @@ import { Pagination, Mousewheel } from 'swiper/modules';
 const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const { interfaceLang, membershipTiers } = S.Common;
+	const { interfaceLang } = S.Common;
 	const { status } = membership;
 	const [ showAnnual, setShowAnnual ] = useState(true);
 	const tier = U.Data.getMembershipTier(membership.tier);
+	const membershipTiers = S.Common.membershipTiers.filter(it => !it.isTest);
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -75,7 +76,8 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 		const periodPrice = showAnnual ? item.price : item.priceMonthly;
 		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
 		const cn = [ 'tier', `c${item.id}`, item.color ];
-		const offer = isCurrent ? translate('popupSettingsMembershipCurrent') : item.offer;
+
+		console.log('ITEM: ', item)
 
 		if (isCurrent) {
 			cn.push('isCurrent');
@@ -83,7 +85,6 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 
 		let period = '';
 		let buttonText = translate('popupSettingsMembershipSelectPlan');
-		let offerLabel = null;
 
 		if (isCurrent) {
 			if (membership.status == I.MembershipStatus.Pending) {
@@ -95,7 +96,7 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 				period = translate('popupSettingsMembershipForeverFree');
 			};
 
-			buttonText = translate('commonManage');
+			buttonText = translate('popupSettingsMembershipCurrentPlan');
 		} else
 		if (item.period) {
 			const periodLabel = showAnnual ? translate('pluralYear') : translate('pluralMonth');
@@ -107,10 +108,6 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 			};
 		};
 
-		if (offer) {
-			offerLabel = <div className="offerLabel">{offer}</div>;
-		};
-
 		return (
 			<div
 				className={cn.join(' ')}
@@ -119,17 +116,19 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 				<div className="top">
 					<div className="iconWrapper">
 						<Icon />
-						{offerLabel}
 					</div>
 
 					<Title text={item.name} />
-					<Label text={item.description} />
+
+					<div className="features">
+						{item.features.map((el, idx) => <Label key={idx} text={el} />)}
+					</div>
 				</div>
 				<div className="bottom">
 					<div className="priceWrapper">
 						<span className="price">{price}</span>{period}
 					</div>
-					<Button className="c28" text={buttonText} />
+					<Button color={isCurrent ? 'blank' : 'accent'} text={buttonText} />
 				</div>
 			</div>
 		);
@@ -150,8 +149,6 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 
 			<div className="tiers">
 				<Swiper
-					className="tiersList"
-					spaceBetween={16}
 					slidesPerView={3}
 					mousewheel={{ forceToAxis: true }}
 					pagination={membershipTiers.length > 3 ? { clickable: true } : false}
@@ -167,7 +164,7 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 
 			<div className="actions">
 				{actions.map((item, idx) => (
-					<div className="action">
+					<div key={idx} className="action">
 						<Icon className={item.id} />
 						<Title text={item.title} />
 						<Label text={item.text} />
