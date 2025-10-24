@@ -53,21 +53,11 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 	};
 
 	const onPay = (item: I.MembershipTier) => {
-		if (item.id == membership.tier) {
-			C.MembershipGetPortalLinkUrl((message: any) => {
-				if (message.url) {
-					Action.openUrl(message.url);
-				};
-			});
-		} else {
-			C.MembershipRegisterPaymentRequest(item.id, null, '', !showAnnual, (message) => {
-				if (message.url) {
-					Action.openUrl(message.url);
-				};
-
-				analytics.event('ClickMembership', { params: { tier }});
-			});
-		};
+		C.MembershipGetPortalLinkUrl((message: any) => {
+			if (message.url) {
+				Action.openUrl(message.url);
+			};
+		});
 	};
 
 	const TierItem = (props: any) => {
@@ -77,14 +67,11 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
 		const cn = [ 'tier', `c${item.id}`, item.color ];
 
-		console.log('ITEM: ', item)
-
 		if (isCurrent) {
 			cn.push('isCurrent');
 		};
 
 		let period = '';
-		let buttonText = translate('popupSettingsMembershipSelectPlan');
 
 		if (isCurrent) {
 			if (membership.status == I.MembershipStatus.Pending) {
@@ -95,8 +82,6 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 			} else {
 				period = translate('popupSettingsMembershipForeverFree');
 			};
-
-			buttonText = translate('popupSettingsMembershipCurrentPlan');
 		} else
 		if (item.period) {
 			const periodLabel = showAnnual ? translate('pluralYear') : translate('pluralMonth');
@@ -109,10 +94,7 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 		};
 
 		return (
-			<div
-				className={cn.join(' ')}
-				onClick={() => onPay(item)}
-			>
+			<div className={cn.join(' ')}>
 				<div className="top">
 					<div className="iconWrapper">
 						<Icon />
@@ -128,7 +110,18 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 					<div className="priceWrapper">
 						<span className="price">{price}</span>{period}
 					</div>
-					<Button color={isCurrent ? 'blank' : 'accent'} text={buttonText} />
+					{isCurrent ? (
+						<Button
+							className="disabled"
+							text={translate('popupSettingsMembershipCurrentPlan')}
+						/>
+					) : (
+						<Button
+							onClick={() => onPay(item)}
+							color="accent"
+							text={translate('popupSettingsMembershipSelectPlan')}
+						/>
+					)}
 				</div>
 			</div>
 		);
