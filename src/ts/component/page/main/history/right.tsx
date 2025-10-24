@@ -504,7 +504,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 				</div>
 			</div>
 
-			{showButtons ? (
+			{showButtons() ? (
 				<div className="buttons">
 					<Button text={translate('commonCancel')} onClick={onClose} />
 					<Button text={translate('pageMainHistoryRestore')} className={!canWrite ? 'disabled' : ''} onClick={onRestore} />

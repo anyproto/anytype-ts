@@ -80,6 +80,7 @@ export interface MenuRef {
 	onOver?: (e: any, item: any) => void,
 	getData?: () => any,
 	getListRef?: () => any,
+	beforePosition?: () => void,
 };
 
 export interface MenuItem {
