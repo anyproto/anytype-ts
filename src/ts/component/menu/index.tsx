@@ -171,7 +171,6 @@ const Components: any = {
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
 	node: any = null;
 	timeoutPoly = 0;
 	ref = null;
@@ -320,7 +319,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { id, param } = this.props;
 		const { initialTab, onOpen, noAutoHover } = param;
 
-		this._isMounted = true;
 		this.poly = $('#menu-polygon');
 
 		this.setClass();
@@ -372,7 +370,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { isSub } = param;
 		const el = this.getElement();
 
-		this._isMounted = false;
 		this.unbind();
 
 		if (el && el.length) {
@@ -410,10 +407,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	setClass () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { param } = this.props;
 		const { classNameWrap } = param;
 		const node = $(this.node);
@@ -454,10 +447,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.isAnimating = true;
 
 			raf(() => {
-				if (!this._isMounted) {
-					return;
-				};
-				
 				menu.addClass('show');
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
@@ -488,10 +477,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			const node = $(this.node);
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
@@ -1021,10 +1006,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 	
 	setHover (item?: any, scroll?: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		const menu = node.find('.menu');
 		

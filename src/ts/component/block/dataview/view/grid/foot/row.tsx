@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { I, Dataview } from 'Lib';
 import Cell from './cell';
@@ -7,45 +7,15 @@ interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
-const FootRow = observer(class FootRow extends React.Component<Props> {
+const FootRow = observer(forwardRef<{}, Props>((props, ref) => {
 
-	cellRefs = {};
+	const { rootId, block, isInline, isCollection, getView, getKeys, getSources, getVisibleRelations, getColumnWidths } = props;
+	const widths = getColumnWidths('', 0);
+	const relations = getVisibleRelations();
+	const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+	const cellRefs = useRef({});
 
-	render () {
-		const { getVisibleRelations, getColumnWidths } = this.props;
-		const widths = getColumnWidths('', 0);
-		const relations = getVisibleRelations();
-		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
-
-		return (
-			<div 
-				id="rowFoot"
-				className="rowFoot"
-				style={{ gridTemplateColumns: str }}
-			>
-				{relations.map((relation: any, i: number) => (
-					<Cell
-						{...this.props}
-						ref={ref => this.cellRefs[relation.relationKey] = ref}
-						key={`grid-foot-${relation.relationKey}`}
-						relationKey={relation.relationKey}
-					/>
-				))}
-				<div className="cellFoot last" />
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.init();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
-	};
-
-	init () {
-		const { rootId, block, isInline, isCollection, getView, getKeys, getSources, getVisibleRelations } = this.props;
+	const init = () => {
 		const relations = getVisibleRelations();
 		const check = relations.filter(it => it.formulaType != I.FormulaType.None);
 
@@ -72,13 +42,31 @@ const FootRow = observer(class FootRow extends React.Component<Props> {
 			collectionId,
 		}, () => {
 			relations.forEach(relation => {
-				if (this.cellRefs[relation.relationKey]) {
-					this.cellRefs[relation.relationKey].calculate();
-				};
+				cellRefs.current[relation.relationKey]?.calculate();
 			});
 		});
 	};
 
-});
+	useEffect(() => init());
+
+	return (
+		<div 
+			id="rowFoot"
+			className="rowFoot"
+			style={{ gridTemplateColumns: str }}
+		>
+			{relations.map((relation: any, i: number) => (
+				<Cell
+					{...props}
+					ref={ref => cellRefs.current[relation.relationKey] = ref}
+					key={`grid-foot-${relation.relationKey}`}
+					relationKey={relation.relationKey}
+				/>
+			))}
+			<div className="cellFoot last" />
+		</div>
+	);
+
+}));
 
 export default FootRow;

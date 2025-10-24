@@ -413,6 +413,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		let newSectionIds = [ ...sectionIds ];
 		newSectionIds = isClosed ? sectionIds.concat(id) : sectionIds.filter(it => it != id);
 
+		section.toggleClass('isOpen', isClosed);
+
 		if (isClosed) {
 			save();
 			setSectionIds(newSectionIds);

@@ -20,7 +20,6 @@ const LIMIT = 36;
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
 	node: any = null;
 	state = {
 		filter: '',
@@ -150,7 +149,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.load();
 		this.rebind();
 
@@ -167,7 +165,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		keyboard.disablePaste(false);
@@ -346,7 +343,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -357,7 +354,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -368,7 +365,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		

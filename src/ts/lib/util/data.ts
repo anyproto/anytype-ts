@@ -833,15 +833,17 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		return [
-			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+		const filters = U.Subscription.getBaseFilters({
+			ignoreHidden: true,
+			ignoreArchived: true,
+			ignoreDeleted: true,	 
+		});
+
+		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
-		];
+		]);
 	};
 
 	/**

@@ -21,7 +21,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		isLoading: false,
 	};
 
-	_isMounted = false;	
 	filter = '';
 	index: any = null;
 	cache: any = {};
@@ -71,10 +70,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				withPlural,
 			};
 
+			let name = item.name;
 			if (item.isAdd) {
 				cn.push('add');
 				props.isAdd = true;
+			} else {
+				name = <ObjectName object={item} withPlural={withPlural} />;
 			};
+
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
@@ -107,7 +110,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					<MenuItemVertical
 						{...props}
 						index={param.index}
-						name={<ObjectName object={item} withPlural={withPlural} />}
+						name={name}
 						onMouseEnter={e => this.onMouseEnter(e, item)}
 						onClick={e => this.onClick(e, item)}
 						onMore={onMore ? e => onMore(e, item) : undefined}
@@ -172,7 +175,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -202,7 +204,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -278,10 +279,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { isLoading } = this.state;
 		if (isLoading) {
 			return;
@@ -332,10 +329,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;

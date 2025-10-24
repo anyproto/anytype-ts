@@ -3,7 +3,7 @@ import { Frame, Title, Error, Pin } from 'Component';
 import { I, S, U, Storage, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const pinRef = useRef(null);
 	const { pin } = S.Common;

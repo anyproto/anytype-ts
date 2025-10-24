@@ -247,24 +247,20 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: () => void) => {
-		const { space, config } = S.Common;
+		const { space } = S.Common;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
-		const filters: any[] = [
-			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+		const filters: any[] = U.Subscription.getBaseFilters({
+			ignoreArchived: true,
+			ignoreDeleted: true,
+		}).concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-		];
+		]);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		].map(U.Subscription.sortMapper);
-
-		if (!config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
 
 		let limit = J.Constant.limit.menuRecords;
 

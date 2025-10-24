@@ -10,7 +10,7 @@ enum Stage {
 	UseCase		= 3,
 };
 
-const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { redirect } = S.Common;
