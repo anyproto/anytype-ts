@@ -23,7 +23,6 @@ const BUTTON_OFFSET = 10;
 
 const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
 	
-	_isMounted = false;
 	node: any = null;
 	id = '';
 	hoverId = '';
@@ -150,8 +149,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
-
 		this.rebind();
 		this.open();
 		this.initNodes();
@@ -179,7 +176,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
 		this.close();
@@ -425,7 +421,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onMouseMove (e: any) {
 		if (
-			!this._isMounted || 
 			!this.buttonAdd.length || 
 			!this.container.length
 		) {
@@ -2396,7 +2391,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	resizePage (callBack?: () => void) {
 		const { isLoading } = this.state;
 
-		if (isLoading || !this._isMounted) {
+		if (isLoading) {
 			return;
 		};
 

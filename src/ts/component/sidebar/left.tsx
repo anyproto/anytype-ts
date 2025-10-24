@@ -178,8 +178,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	useEffect(() => {
-		sidebar.init(false);
-
 		return () => {
 			Preview.tooltipHide(true);
 		};

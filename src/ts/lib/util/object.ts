@@ -266,6 +266,14 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
 	};
 
+	setObjectTypes (rootId: string, ids: string[], callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(ids) } ], callBack);
+	};
+
+	setOptionColor (rootId: string, color: string, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationOptionColor', value: color } ], callBack);
+	};
+
 	name (object: any, withPlural?: boolean): string {
 		if (!object) {
 			return '';

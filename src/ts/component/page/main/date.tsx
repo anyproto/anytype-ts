@@ -6,7 +6,7 @@ import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
 
 const SUB_ID = 'dateListObject';
 
-const PageMainDate = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
+const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
 	const { space, config } = S.Common;
 	const { isPopup } = props;

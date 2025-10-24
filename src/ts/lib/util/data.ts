@@ -833,15 +833,17 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		return [
-			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+		const filters = U.Subscription.getBaseFilters({
+			ignoreHidden: true,
+			ignoreArchived: true,
+			ignoreDeleted: true,	 
+		});
+
+		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
-		];
+		]);
 	};
 
 	/**
@@ -897,8 +899,7 @@ class UtilData {
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
 	getMembershipTiers (noCache: boolean, callBack?: () => void) {
-		const { config, interfaceLang, isOnline } = S.Common;
-		const { testPayment } = config;
+		const { interfaceLang, isOnline } = S.Common;
 
 		if (!isOnline || !this.isAnytypeNetwork()) {
 			return;
@@ -909,8 +910,7 @@ class UtilData {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
-			S.Common.membershipTiersListSet(tiers);
+			S.Common.membershipTiersListSet(message.tiers);
 
 			if (callBack) {
 				callBack();

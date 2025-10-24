@@ -421,7 +421,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewId = '';
 			};
 		} else 
-		if ([ I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type)) {
+		if ([ I.ViewType.Calendar, I.ViewType.Timeline, I.ViewType.Graph ].includes(view.type)) {
 			if (this.refView && this.refView.load) {
 				this.refView.load();
 			} else {
@@ -1597,8 +1597,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id));
 			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id));
 		});
-
-		this.editModeCheckRowHeight(id);
 	};
 
 	setRecordEditingOff (id: string) {
@@ -1617,16 +1615,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (nameRef) {
 			nameRef.onBlur();
-		};
-
-		this.editModeCheckRowHeight(id);
-	};
-
-	editModeCheckRowHeight (id: string) {
-		const ref = this.refRecords.get(id);
-
-		if (ref && (ref.rowIndex || (ref.rowIndex == 0)) && this.refView && this.refView.updateRowHeight) {
-			this.refView.updateRowHeight(ref.rowIndex);
 		};
 	};
 

@@ -1,60 +1,30 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, S, U, keyboard } from 'Lib';
 
-class MenuBlockHAlign extends React.Component<I.Menu> {
-	
-	n = -1;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-	};
+const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const value = Number(data.value || I.BlockHAlign.Left);
-		const items = this.getItems();
-
-		return (
-			<div>
-				{items.map((action: any, i: number) => (
-					<MenuItemVertical 
-						key={i} 
-						{...action} 
-						onClick={e => this.onClick(e, action)} 
-						onMouseEnter={e => this.onOver(e, action)} 
-						checkbox={action.id == value}
-					/>
-				))}
-			</div>
-		);
+	const { param, setActive, onKeyDown, close } = props;
+	const { data } = param;
+	const { rootId, onSelect } = data;
+	const blockIds = data.blockIds || [];
+	const restricted = [].concat(data.restricted || []);
+	const value = Number(data.value || I.BlockHAlign.Left);
+	const n = useRef(-1);
+	
+	const rebind = () => {
+		unbind();
+		$(window).on('keydown.menu', e => onKeyDown(e));
+		window.setTimeout(() => setActive(), 15);
 	};
 	
-	componentDidMount () {
-		this.rebind();
-	};
-	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
+	const unbind = () => {
 		$(window).off('keydown.menu');
 	};
 	
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const blockIds = data.blockIds || [];
-		const restricted = [].concat(data.restricted || []);
-		
+	const getItems = () => {
 		for (const id of blockIds) {
 			const block = S.Block.getLeaf(rootId, id);
 			if (!block) {
@@ -72,21 +42,51 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 		return U.Menu.prepareForSelect(U.Menu.getHAlign(restricted));
 	};
 	
-	onOver (e: any, item: any) {
+	const onOver = (e: any, item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+			setActive(item, false);
 		};
 	};
 	
-	onClick (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onSelect } = data;
-		
+	const onClick = (e: any, item: any) => {
 		close();
-		onSelect(Number(item.id));
+		onSelect?.(Number(item.id));
 	};
+
+	const items = getItems();
+
+	useEffect(() => {
+		rebind();
+
+		return () => {
+			unbind();
+		};
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		rebind,
+		unbind,
+		getItems,
+		getIndex: () => n.current,
+		setIndex: (i: number) => n.current = i,
+		onClick,
+		onOver,
+	}), []);
+
+	return (
+		<div>
+			{items.map((action: any, i: number) => (
+				<MenuItemVertical 
+					key={i} 
+					{...action} 
+					onClick={e => onClick(e, action)} 
+					onMouseEnter={e => onOver(e, action)} 
+					checkbox={action.id == value}
+				/>
+			))}
+		</div>
+	);
 	
-};
+}));
 
 export default MenuBlockHAlign;

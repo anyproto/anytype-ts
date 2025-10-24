@@ -455,8 +455,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	setVersion (version: I.HistoryVersion) {
 		this.refSideLeft?.forceUpdate();
-		this.refSideLeft?.refHeader?.setVersion(version);
-		this.refSideLeft?.refHead?.forceUpdate();
+		this.refSideLeft?.getHeaderRef()?.setVersion(version);
+		this.refSideLeft?.getHeadRef()?.forceUpdate();
 
 		$(window).trigger('updateDataviewData');
 	};

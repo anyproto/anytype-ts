@@ -167,8 +167,6 @@ export interface PageSettingsComponent extends PageComponent {
 	onExport: (format: I.ExportType, param: any) => void;
 	onSpaceTypeTooltip: (e: any) => void;
 	getId?(): string;
-	storageGet?(): any;
-	storageSet?(data: any): void;
 };
 
 export interface FooterComponent {

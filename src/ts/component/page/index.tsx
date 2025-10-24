@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -61,82 +61,17 @@ const Components = {
 	'main/settings':		 PageMainSettings,
 };
 
-const Page = observer(class Page extends React.Component<I.PageComponent> {
+const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	_isMounted = false;
-	refChild: any = null;
-	frame = 0;
+	const { isPopup } = props;
+	const { config, theme } = S.Common;
+	const { showMenuBar } = config;
+	const { account } = S.Auth;
+	const ns = U.Common.getEventNamespace(isPopup);
+	const childRef = useRef(null);
+	const platform = U.Common.getPlatform();
 
-	render () {
-		const { isPopup } = this.props;
-		const { config, theme } = S.Common;
-		const { showMenuBar } = config;
-		const { account } = S.Auth;
-		const { page, action } = this.getMatchParams();
-		const path = [ page, action ].join('/');
-		const isMain = this.isMain();
-		const Component = Components[path];
-		const namespace = U.Common.getEventNamespace(isPopup);
-
-		if (account) {
-			const { status } = account || {};
-			const { type } = status || {};
-		};
-
-		if (isMain && !account) {
-			return null;
-		};
-
-		return (
-			<div 
-				id="pageFlex" 
-				className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
-			>
-				{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
-				<div id="page" className={`page ${this.getClass('page')}`}>
-					{Component ? (
-						<Component ref={ref => this.refChild = ref} {...this.props} />
-					) : (
-						<Frame>
-							<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
-						</Frame>
-					)}
-				</div>
-				<SidebarRight 
-					ref={ref => S.Common.refSet(`sidebarRight${namespace}`, ref)} 
-					key="sidebarRight" 
-					{...this.props} 
-				/>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.init();
-	};
-
-	componentDidUpdate () {
-		this.init();
-	};
-	
-	componentWillUnmount () {
-		const { isPopup } = this.props;
-
-		this._isMounted = false;
-		this.unbind();
-
-		if (!isPopup) {
-			S.Popup.closeAll();
-		};
-
-		S.Menu.closeAll();
-		Preview.tooltipHide(true);
-		Preview.previewHide(true);
-	};
-
-	getMatchParams () {
-		const { isPopup } = this.props;
+	const getMatchParams = () => {
 		const match = U.Common.objectCopy(keyboard.getMatch(isPopup));
 
 		match.params.page = String(match.params.page || 'index');
@@ -147,22 +82,30 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return match.params;
 	};
 
-	getRootId () {
-		const { id } = this.getMatchParams();
+	const { id, page, action } = getMatchParams();
+
+	const getId = (prefix: string) => {
+		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
+	};
+
+	const pageId = getId('page');
+	const path = [ page, action ].join('/');
+	const Component = Components[path];
+
+	if (account) {
+		const { status } = account || {};
+		const { type } = status || {};
+	};
+
+	const getRootId = () => {
 		const home = U.Space.getDashboard();
 
 		return id || home?.id;
 	};
 
-	init () {
+	const init = () => {
 		const { account } = S.Auth;
 		const { pin } = S.Common;
-		const { isPopup } = this.props;
-		const { page, action } = this.getMatchParams();
-		const isIndex = this.isIndex();
-		const isAuth = this.isAuth();
-		const isMain = this.isMain();
-		const isPinCheck = this.isAuthPinCheck();
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
 		const routeParam = { replace: true };
@@ -179,116 +122,85 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (isMain && !account) {
+		if (isMain() && !account) {
 			U.Router.go('/', routeParam);
 			return;
 		};
 
-		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
+		if (pin && !keyboard.isPinChecked && !isAuthPinCheck() && !isAuth() && !isIndex()) {
 			U.Router.go('/auth/pin-check', routeParam);
 			return;
 		};
 
-		if (isMain && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
+		if (isMain() && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
 			U.Router.go('/auth/deleted', routeParam);
 			return;
 		};
 
 		if (!data.isClosed) {
-			sidebar.rightPanelSetState(isPopup, { rootId: this.getRootId(), page: state.page });
+			sidebar.rightPanelSetState(isPopup, { rootId: getRootId(), page: state.page });
 		};
 
-		this.setBodyClass();
-		this.resize();
-		this.event();
-		this.rebind();
+		setBodyClass();
+		resize();
+		rebind();
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
+
+		analytics.event('page', { params: getMatchParams() });
 	};
 
-	rebind () {
-		const { isPopup } = this.props;
+	const rebind = () => {
 		const { history } = U.Router;
 		const ns = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
-		this.unbind();
-		$(window).on(`resize.page${ns}${key}`, () => this.resize());
+		unbind();
+		$(window).on(`resize.page${ns}${key}`, () => resize());
 	};
 
-	unbind () {
-		const { isPopup } = this.props;
+	const unbind = () => {
 		const { history } = U.Router;
-		const ns = U.Common.getEventNamespace(isPopup);
 		const key = String(history?.location?.key || '');
 
 		$(window).off(`resize.page${ns}${key}`);
 	};
 
-	event () {
-		analytics.event('page', { params: this.getMatchParams() });
-	};
-
-	isIndex () {
-		const { page } = this.getMatchParams();
+	const isIndex = () => {
 		return page == 'index';
 	};
 
-	isAuth () {
-		const { page } = this.getMatchParams();
+	const isAuth = () => {
 		return page == 'auth';
 	};
 
-	isAuthPinCheck () {
-		const { action } = this.getMatchParams();
-		return this.isAuth() && (action == 'pin-check');
+	const isAuthPinCheck = () => {
+		return isAuth() && (action == 'pin-check');
 	};
 
-	isMain () {
-		const { page } = this.getMatchParams();
+	const isMain = () => {
 		return page == 'main';
 	};
 
-	isMainIndex () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'index');
-	};
-
-	isMainType () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'type');
-	};
-
-	isMainRelation () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'relation');
-	};
-
-	getClass (prefix: string) {
-		const { isPopup } = this.props;
-		const { page, action, id } = this.getMatchParams();
-		
+	const getClass = (prefix: string) => {
 		return [ 
 			U.Common.toCamelCase([ prefix, page ].join('-')),
 			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
-			this.getId(prefix),
+			getId(prefix),
 			U.Common.getContainerClassName(isPopup),
 		].join(' ');
 	};
 	
-	setBodyClass () {
-		const { isPopup } = this.props;
+	const setBodyClass = () => {
+		const { isPopup } = props;
 	
 		if (isPopup) {
 			return;
 		};
 
-		const { config } = S.Common;
-		const { showMenuBar } = config;
-		const platform = U.Common.getPlatform();
 		const cn = [ 
-			this.getClass('body'), 
+			getClass('body'), 
 			U.Common.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $('html');
@@ -304,42 +216,61 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		S.Common.setThemeClass();
 	};
 
-	getId (prefix: string) {
-		const { isPopup } = this.props;
-		const match = keyboard.getMatch(isPopup);
-		const page = match.params.page || 'index';
-		const action = match.params.action || 'index';
-
-		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
+	const resize = () => {
+		childRef.current?.resize?.();
+		sidebar.resizePage(props.isPopup, null, null, false);
 	};
 
-	storageGet () {
-		return Storage.get(this.getId('page')) || {};
-	};
+	useEffect(() => {
+		init();
 
-	storageSet (data) {
-		Storage.set(this.getId('page'), data);
-	};
-	
-	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
+		return () => {
+			unbind();
+
+			if (!isPopup) {
+				S.Popup.closeAll();
+			};
+
+			S.Menu.closeAll();
+			Preview.tooltipHide(true);
+			Preview.previewHide(true);
 		};
+	}, []);
 
-		this.frame = raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
+	useEffect(() => init());
 
-			if (this.refChild && this.refChild.resize) {
-				this.refChild.resize();			
-			};
-
-			sidebar.resizePage(this.props.isPopup, null, null, false);
-		});
+	if (isMain() && !account) {
+		return null;
 	};
-	
-});
 
-export default Page;
+	return (
+		<div 
+			id="pageFlex" 
+			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
+		>
+			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
+			<div id="page" className={`page ${getClass('page')}`}>
+				{Component ? (
+					<Component 
+						ref={childRef} 
+						{...props}
+						storageGet={() => Storage.get(pageId) || {}}
+						storageSet={data => Storage.set(pageId, data)}
+					/>
+				) : (
+					<Frame>
+						<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+					</Frame>
+				)}
+			</div>
+			<SidebarRight 
+				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)} 
+				key="sidebarRight" 
+				{...props} 
+			/>
+		</div>
+	);
+	
+}));
+
+export default PageIndex;
