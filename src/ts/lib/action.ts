@@ -916,16 +916,7 @@ class Action {
 			return;
 		};
 
-		U.Object.openRoute(
-			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{
-				onRouteChange: () => {
-					S.Popup.open('membership', {
-						data: { tier: tier ? tier : I.TierType.Builder }
-					});
-				}
-			},
-		);
+		U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
 	};
 
 	/**

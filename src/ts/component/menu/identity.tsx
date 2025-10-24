@@ -8,10 +8,7 @@ const MenuIdentity = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { close } = props;
 
 	const onClick = () => {
-		U.Object.openRoute(
-			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{ onRouteChange: () => { S.Popup.open('membership', { data: { tier: I.TierType.Builder } }) } },
-		);
+		U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
 		close();
 	};
 
