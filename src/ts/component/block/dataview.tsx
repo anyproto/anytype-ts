@@ -421,7 +421,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.viewId = '';
 			};
 		} else 
-		if ([ I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type)) {
+		if ([ I.ViewType.Calendar, I.ViewType.Timeline, I.ViewType.Graph ].includes(view.type)) {
 			if (this.refView && this.refView.load) {
 				this.refView.load();
 			} else {
