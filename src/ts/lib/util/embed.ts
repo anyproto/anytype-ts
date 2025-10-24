@@ -1,7 +1,7 @@
 import { I, U, J } from 'Lib';
 
 const DOMAINS: any = {};
-DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
+DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be', 'youtube-nocookie.com' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
@@ -44,7 +44,7 @@ class UtilEmbed {
 			a.search += '&enablejsapi=1&rel=0';
 			url = a.toString();
 		} catch (e) {};
-		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
+		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
 	};
 
 	/**
@@ -206,7 +206,7 @@ class UtilEmbed {
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
-				url = `https://www.youtube.com/embed/${this.getYoutubePath(url)}`;
+				url = `https://www.youtube-nocookie.com/embed/${this.getYoutubePath(url)}`;
 				break;
 			};
 
