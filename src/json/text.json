@@ -1163,10 +1163,10 @@
 	"popupMembershipCode5": "Name has invalid characters",
 	"popupMembershipCode6": "This tier does not support name",
 
-
 	"popupMembershipActivationTitle": "Activate Your Membership",
 	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",
 	"popupMembershipActivationPlaceholder": "Paste activation code...",
+	"popupMembershipActivationActivate": "Activate",
 
 	"popupMembershipActivationError1": "Unknown error occured",
 	"popupMembershipActivationError2": "Bad input",

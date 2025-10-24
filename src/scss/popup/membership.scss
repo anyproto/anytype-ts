@@ -24,12 +24,24 @@
     .popup.popupMembershipActivation {
         .innerWrap { width: 424px; padding: 32px 32px 18px 32px; text-align: center; }
 
-        .icon { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/confirm/join.svg'); }
+        .icon.activation { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/membership/activation.svg'); }
 
         .title { @include text-header3; margin: 0px 0px 4px 0px; }
         .label { margin: 0px 0px 20px 0px; }
 
-        .input { text-align: center; margin: 0px 0px 16px 0px; height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+        .inputWrapper { position: relative; height: 40px; margin: 0px 0px 12px 0px;  }
+        .inputWrapper {
+            .input {
+                padding: 0px 32px 0px 16px; height: 40px; line-height: 40px; border-radius: 20px;
+                border: 1px solid var(--color-shape-primary); background-color: var(--color-shape-highlight-medium);
+            }
+
+            .icon.clear { display: none; position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; background-image: url('~img/icon/membership/clear.svg'); }
+
+            &.canClear {
+                .icon.clear { display: block; }
+            }
+        }
 
         .buttons { display: flex; flex-direction: column; gap: 8px 0px; }
         .button { width: 100%; }
