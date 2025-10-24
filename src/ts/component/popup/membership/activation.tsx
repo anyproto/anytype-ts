@@ -43,7 +43,6 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 					return;
 				};
 
-				S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, success: true } });
 				close();
 			});
 		});

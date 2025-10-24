@@ -1144,16 +1144,6 @@
 
 	"popupApiCreateCreate": "Create new API key",
 
-	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
-	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
-	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
-	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
-	"popupMembershipFreeEnterCode": "Enter code",
-
-	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
-	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
-	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
-
 	"popupMembershipPaidTitle": "Pick your unique name",
 
 	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
@@ -1161,34 +1151,10 @@
 	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
 
 	"popupMembershipPaidPlaceholder": "Enter your name",
-	"popupMembershipPayByCard": "Pay by Card",
-	"popupMembershipPayByCrypto": "Pay by Crypto",
-	"popupMembershipPaidBy": "Paid by %s",
-	"popupMembershipActivate": "Activate",
-
-	"popupMembershipResend": "Resend",
-	"popupMembershipCountdown": " in %s sec",
 
 	"popupMembershipStatusWaitASecond": "Wait a second...",
 	"popupMembershipStatusNameAvailable": "This name is available!",
 	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
-	"popupMembershipCurrentStatus": "Current status",
-	"popupMembershipValidUntil": "Valid until",
-	"popupMembershipForever": "Forever",
-	"popupMembershipChangeEmail": "Change e-mail",
-	"popupMembershipManagePayment": "Manage payment",
-	"popupMembershipWriteToAnyteam": "Write to Anyteam",
-	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
-	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
-	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
-
-	"popupMembershipWhatsIncluded": "What's included",
-
-	"popupMembershipSuccessTitle": "Welcome to the network, %s",
-	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
-	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
-	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
-	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"popupMembershipCode1": "Unknown error occurred",
 	"popupMembershipCode2": "No .any provided",
@@ -1197,7 +1163,6 @@
 	"popupMembershipCode5": "Name has invalid characters",
 	"popupMembershipCode6": "This tier does not support name",
 
-	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
 
 	"popupMembershipActivationTitle": "Activate Your Membership",
 	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",

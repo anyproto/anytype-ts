@@ -84,8 +84,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 					setError(translate('pageMainMembershipError'));
 					return;
 				};
-
-				S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
 			});
 		});
 	};
