@@ -223,7 +223,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
-		//getFilterRef: () => filterInputRef.current,
+		getFilterRef: () => filterInputRef.current,
 		getListRef: () => listRef.current,
 		onClick,
 		onOver,
