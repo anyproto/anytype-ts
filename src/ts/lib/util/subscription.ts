@@ -611,6 +611,7 @@ class UtilSubscription {
 			};
 
 			cnt++;
+
 			if ((cnt == list.length) && callBack) {
 				callBack();
 			};

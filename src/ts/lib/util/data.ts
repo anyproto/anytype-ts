@@ -361,8 +361,10 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
 		U.Subscription.createGlobal(() => {
-			Storage.clearDeletedSpaces(false);
-			Storage.clearDeletedSpaces(true);
+			if (S.Record.spaceMap.size) {
+				Storage.clearDeletedSpaces(false);
+				Storage.clearDeletedSpaces(true);
+			};
 		});
 
 		analytics.event('OpenAccount');

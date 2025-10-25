@@ -24,15 +24,18 @@ const LOCAL_KEYS = [
 	'scroll',
 	'focus',
 	'sidebarData',
+	'lastOpenedObject',
 ];
 
 const Api = {
 	get: (key: string, isLocal: boolean) => {
+		let ret = {};
 		if (electron.storeGet && !isLocal) {
-			return electron.storeGet(key);
+			ret = electron.storeGet(key);
 		} else {
-			return Api.parse(localStorage.getItem(key));
+			ret = Api.parse(localStorage.getItem(key));
 		};
+		return ret;
 	},
 
 	set: (key: string, obj: any, isLocal: boolean) => {
@@ -57,7 +60,11 @@ const Api = {
 		};
 
 		let ret = '';
-		try { ret = JSON.parse(s); } catch (e) { /**/ };
+		try { 
+			ret = JSON.parse(s); 
+		} catch (e) { 
+			console.error(e); 
+		};
 		return ret;
 	},
 };
@@ -252,6 +259,8 @@ class Storage {
 	 */
 	clearDeletedSpaces (isLocal: boolean) {
 		const keys = Object.keys(this.getSpace(isLocal));
+
+		console.trace();
 
 		keys.forEach(key => {
 			const spaceview = U.Space.getSpaceviewBySpaceId(key);
