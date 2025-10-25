@@ -705,7 +705,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	useEffect(() => {
 		initBlocks();
-	}, [ space, types.length ]);
+	}, [ space, types.length, childrenIds, length ]);
 
 	return (
 		<>
