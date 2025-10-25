@@ -101,4 +101,5 @@ export interface MembershipTier {
 	isStarter?: boolean;
 	isBuilder?: boolean;
 	isCreator?: boolean;
+	isIntro?: boolean;
 };

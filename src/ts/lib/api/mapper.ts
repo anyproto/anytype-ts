@@ -599,6 +599,7 @@ export const Mapper = {
 				features: obj.getFeaturesList(),
 				namesCount: obj.getAnynamescountincluded(),
 				offer: obj.getOffer(),
+				isIntro: obj.getIsintroplan(),
 			};
 		},
 
