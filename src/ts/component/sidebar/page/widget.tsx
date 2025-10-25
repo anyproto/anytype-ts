@@ -12,8 +12,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const [ dummy, setDummy ] = useState(0);
 	const { widgets } = S.Block;
 	const types = S.Record.getTypes();
-	const childrenIds = S.Block.getChildrenIds(widgets, widgets);
-	const length = childrenIds.length;
+	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
+	const lengthWidget = childrenIdsWidget.length;
+	const childrenIdsTypes = S.Block.getChildrenIds(widgets, J.Constant.blockId.widgetTypes);
+	const lengthTypes = childrenIdsTypes.length;
 	const { sidebarDirection, isPopup } = props;
 	const { space } = S.Common;
 	const cnsh = [ 'subHead' ];
@@ -437,8 +439,22 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		raf.cancel(frameRef.current);
 	};
 
-	const getBlockWidgets = () => {
-		const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+	const getWidgets = (sectionId: I.WidgetSection) => {
+		let root = '';
+
+		switch (sectionId) {
+			case I.WidgetSection.Pin: {
+				root = widgets;
+				break;
+			};
+
+			case I.WidgetSection.Type: {
+				root = J.Constant.blockId.widgetTypes;
+				break;
+			};
+		};
+
+		const blocks = S.Block.getChildren(widgets, root, (block: I.Block) => {
 			if (!block.isWidget()) {
 				return false;
 			};
@@ -454,7 +470,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				return false;
 			};
 
-			if ([ J.Constant.widgetId.bin ].includes(target) && (block.content.section == I.WidgetSection.Pin)) {
+			if ([ J.Constant.widgetId.bin ].includes(target) && (sectionId == I.WidgetSection.Pin)) {
 				return false;
 			};
 
@@ -582,7 +598,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			);
 		};
 	} else {
-		const blockWidgets = getBlockWidgets();
 		const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 		const sections = [
 			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
@@ -609,7 +624,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 
-					let list = blockWidgets.filter(it => it.content.section == section.id);
+					let list = getWidgets(section.id);
 					let buttons = null;
 
 					if (isSectionType) {
@@ -704,7 +719,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	useEffect(() => {
 		initBlocks();
-	}, [ space, types.length, childrenIds, length ]);
+	}, [ space, types.length ]);
 
 	return (
 		<>
