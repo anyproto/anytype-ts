@@ -289,6 +289,10 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		};
 	}, []);
 
+	useEffect(() => {
+		setActive();
+	});
+
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
