@@ -90,7 +90,7 @@
 		"source-map-loader": "^0.2.4",
 		"style-loader": "^1.2.1",
 		"typescript": "^5.3.3",
-		"typescript-eslint": "^0.0.1-alpha.0",
+		"typescript-eslint": "^8.46.2",
 		"wait-for-localhost-cli": "^3.0.0"
 	},
 	"dependencies": {
@@ -164,7 +164,7 @@
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
 		"stream-slicer": "^0.0.6",
-		"swiper": "^11.0.3",
+		"swiper": "^12.0.3",
 		"systeminformation": "^5.23.5",
 		"webpack": "^5.97.1"
 	},
