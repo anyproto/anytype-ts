@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, MouseEvent } from 'react';
+import React, { forwardRef, useEffect, MouseEvent, useRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
@@ -14,6 +14,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	const allowObjectDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 	const allowTypeDetails = S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ]);
 	const isTemplate = U.Object.isTemplateType(object.type);
+	const sectionsRef = useRef({});
 
 	const getSections = (): any[] => {
 		const isTemplate = U.Object.isTemplateType(object.type);
@@ -61,7 +62,9 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 
 		keyboard.disableSelection(true);
 		S.Common.getRef('selectionProvider')?.clear();
-		S.Common.getRef('dragProvider')?.onDragStart(e, I.DropType.Relation, [ item.id ], this);
+		S.Common.getRef('dragProvider')?.onDragStart(e, I.DropType.Relation, [ item.id ], {
+			getNode: () => sectionsRef.current[item.id]?.getNode(),
+		});
 	};
 
 	const onLocal = (e: MouseEvent, item: any) => {
@@ -240,6 +243,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 								{section.children.map((item, i) => (
 									<Section
 										{...props}
+										ref={ref => sectionsRef.current[item.id] = ref}
 										key={item.id}
 										id={item.id}
 										component="object/relation"

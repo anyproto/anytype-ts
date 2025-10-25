@@ -86,13 +86,15 @@ class UtilSubscription {
 
 		if (ignoreDeleted) {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		} else {
+		} else 
+		if (!filters.find(it => it.relationKey == 'isDeleted')) {
 			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.None, value: null });
 		};
 
 		if (ignoreArchived) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		} else {
+		} else 
+		if (!filters.find(it => it.relationKey == 'isArchived')) {
 			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.None, value: null });
 		};
 

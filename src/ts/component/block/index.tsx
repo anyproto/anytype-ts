@@ -48,8 +48,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		match: null,
 	};
 
-	_isMounted = false;
-		
 	constructor (props: Props) {
 		super(props);
 		
@@ -431,7 +429,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.initToggle();
 	};
 	
@@ -446,10 +443,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.initToggle();
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	initToggle () {
 		const { rootId, block } = this.props;
 
@@ -459,10 +452,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 	
 	onToggle (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		
@@ -473,7 +462,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onDragStart (e: any) {
 		e.stopPropagation();
 
-		if (!this._isMounted || keyboard.isResizing) {
+		if (keyboard.isResizing) {
 			e.preventDefault();
 			return;
 		};
@@ -606,7 +595,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { rootId, block, readonly } = this.props;
 
-		if (!this._isMounted || readonly) {
+		if (readonly) {
 			return;
 		};
 
@@ -637,10 +626,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onResize (e: any, index: number, offset: number) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		e.preventDefault();
 		e.stopPropagation();
 		
@@ -670,10 +655,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = S.Block.getChildrenIds(rootId, id);
@@ -739,7 +720,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onMouseMove (e: any) {
 		const { rootId, block, readonly } = this.props;
 
-		if (!this._isMounted || keyboard.isDragging || keyboard.isResizing || readonly || !block.isLayoutRow()) {
+		if (keyboard.isDragging || keyboard.isResizing || readonly || !block.isLayoutRow()) {
 			return;
 		};
 		

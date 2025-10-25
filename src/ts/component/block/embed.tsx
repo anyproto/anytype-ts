@@ -22,7 +22,6 @@ interface State {
 
 const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComponent, State> {
 	
-	_isMounted = false;
 	text = '';
 	timeoutChange = 0;
 	timeoutScroll = 0;
@@ -167,7 +166,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.resize();
 		this.init();
 	};
@@ -177,7 +175,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		window.clearTimeout(this.timeoutChange);
@@ -207,7 +204,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		if (isEditing) {
 			win.on(`mousedown.${block.id}`, (e: any) => {
-				if (!this._isMounted || S.Menu.isOpenList([ 'blockLatex', 'select' ])) {
+				if (S.Menu.isOpenList([ 'blockLatex', 'select' ])) {
 					return;
 				};
 
@@ -267,10 +264,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		window.clearTimeout(this.timeoutScroll);
 		this.timeoutScroll = window.setTimeout(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			const container = U.Common.getScrollContainer(isPopup);
 			const node = $(this.node);
 			const ch = container.height();
@@ -360,10 +353,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onKeyDownInput (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { filter } = S.Common;
 		const range = this.getRange();
 
@@ -375,10 +364,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onKeyUpInput (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { block } = this.props;
 		const value = this.getValue();
 		const range = this.getRange();
@@ -465,10 +450,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!this._isMounted) {
-			return;
-		};
-
 		this.range = this.getRange();
 
 		if (this.range) {
@@ -478,10 +459,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onLatexMenu (e: any, element: string, isTemplate: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { rootId, block } = this.props;
 		const win = $(window);
 
@@ -533,7 +510,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setValue (value: string) {
-		if (!this._isMounted || !this.state.isEditing) {
+		if (!this.state.isEditing) {
 			return;
 		};
 
@@ -570,10 +547,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setContent (text: string) {
-		if (!this._isMounted) {
-			return '';
-		};
-
 		const { isShowing, width } = this.state;
 		const { block } = this.props;
 		const { fields, content } = block;
@@ -834,10 +807,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onSelect () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { block } = this.props;
 		const win = $(window);
 
@@ -853,10 +822,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	onResizeStart (e: any, checkMax: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		if (!this._isMounted) {
-			return;
-		};
 		
 		const { block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
@@ -879,10 +844,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		e.preventDefault();
 		e.stopPropagation();
 		
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const node = $(this.node);
 		const wrap = node.find('#valueWrap');
 		
@@ -897,10 +858,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onResizeEnd (e: any, checkMax: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const { rootId, block } = this.props;
 		const { id, fields } = block;
 		const node = $(this.node);
