@@ -5,7 +5,7 @@ import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
 
-const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
 	const { interfaceLang } = S.Common;
@@ -174,4 +174,4 @@ const PageMainSettingsMembershipFree = observer(forwardRef<I.PageRef, I.PageSett
 
 }));
 
-export default PageMainSettingsMembershipFree;
+export default PageMainSettingsMembershipIntro;
