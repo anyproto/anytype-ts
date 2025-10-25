@@ -24,7 +24,6 @@ const LOCAL_KEYS = [
 	'scroll',
 	'focus',
 	'sidebarData',
-	'lastOpenedObject',
 ];
 
 const Api = {
