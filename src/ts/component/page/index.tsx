@@ -218,7 +218,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const resize = () => {
 		childRef.current?.resize?.();
-		sidebar.resizePage(props.isPopup, null, null, false);
+		sidebar.resizePage(isPopup, null, null, false);
 	};
 
 	useEffect(() => {
