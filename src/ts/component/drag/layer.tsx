@@ -9,8 +9,14 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 	const nodeRef = useRef(null);
 
 	const show = (rootId: string, type: I.DropType, ids: string[], component: any) => {
-		const comp = $(ReactDOM.findDOMNode(component));
-		const rect = (comp.get(0) as Element).getBoundingClientRect();
+		let componentNode = null;
+		if (component.getNode()) {
+			componentNode = component.getNode();
+		} else {
+			componentNode = ReactDOM.findDOMNode(component);
+		};
+
+		const rect = componentNode.getBoundingClientRect();
 		const node = $(nodeRef.current);
 		const inner = node.find('#inner').html('');
 		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
