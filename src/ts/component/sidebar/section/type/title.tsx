@@ -131,7 +131,7 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 
 		return () => {
 			window.clearTimeout(timeoutRef.current);	
-		}
+		};
 	}, []);
 
 	useEffect(() => {

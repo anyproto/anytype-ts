@@ -20,7 +20,7 @@ const Label: FC<Props> = ({
 	text = '',
 	color = '',
 	className = '',
-  	tooltipParam = {},
+	tooltipParam = {},
 	dataset = {},
 	onClick,
 	onMouseDown,
