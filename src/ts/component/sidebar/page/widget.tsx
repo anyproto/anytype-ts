@@ -52,7 +52,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const initBlocks = () => {
 		U.Subscription.createTypeCheck(() => {
 			S.Block.updateTypeWidgetList();
-			setDummy(dummy + 1);
 		});
 	};
 
