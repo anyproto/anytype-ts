@@ -44,11 +44,8 @@ const PopupExport = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const save = (newData) => {
-
 		storageSet(newData);
 		setStateData(newData);
-
-		console.log('NEW DATA', JSON.stringify(newData, null, 3));
 	};
 
 	const onConfirm = () => {
