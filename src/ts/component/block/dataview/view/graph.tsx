@@ -32,7 +32,6 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, settings.typeEdges, (message: any) => {
 			if (!message.error.code) {
 				setData({ nodes: message.nodes.map(it => S.Detail.mapper(it)), edges: message.edges });
-				graphRef.current?.init();
 			};
 		});
 	};
@@ -66,6 +65,11 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		load,
 		resize,
 	}));
+
+	useEffect(() => {
+		graphRef.current?.init();
+		resize();
+	}, [ data ]);
 
 	return (
 		<div 

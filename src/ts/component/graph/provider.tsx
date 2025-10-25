@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import * as d3 from 'd3';
@@ -19,6 +19,7 @@ interface GraphRefProps {
 	init: () => void;
 	resize: () => void;
 	addNewNode: (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => void;
+	forceUpdate: () => void;
 };
 
 const Graph = observer(forwardRef<GraphRefProps, Props>(({
@@ -46,6 +47,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const zoom = useRef(null);
 	const isDraggingToSelect = useRef(false);
 	const nodesSelectedByDragToSelect = useRef([]);
+	const [ dummy, setDummy ] = useState(0);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
 		try {
@@ -628,6 +630,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		init,
 		resize,
 		addNewNode,
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (
