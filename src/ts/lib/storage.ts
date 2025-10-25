@@ -258,9 +258,6 @@ class Storage {
 	 */
 	clearDeletedSpaces (isLocal: boolean) {
 		const keys = Object.keys(this.getSpace(isLocal));
-
-		console.trace();
-
 		keys.forEach(key => {
 			const spaceview = U.Space.getSpaceviewBySpaceId(key);
 			if (!spaceview) {
