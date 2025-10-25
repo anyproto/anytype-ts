@@ -1,79 +1,27 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon, EmptyState } from 'Component';
 import { I, S, U, C, translate, Action, analytics } from 'Lib';
 
-interface State {
-	list: I.PublishState[];
-};
+const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish extends React.Component<I.PageSettingsComponent, State> {
+	const { getId } = props;
+	const [ list, setList ] = useState<I.PublishState[]>([]);
+	const { dateFormat } = S.Common;
 
-	state = {
-		list: [],
-	};
-
-	render () {
-		const { dateFormat } = S.Common;
-		const { list } = this.state;
-
-		const Row = (item: any) => {
-			const object = S.Detail.mapper(item.details);
-
-			return (
-				<div className="row">
-					<div className="col colObject" onClick={() => this.onClick(item)}>
-						<IconObject object={object} />
-						<ObjectName object={object} />
-					</div>
-					<div className="col colDate">{U.Date.dateWithFormat(dateFormat, item.timestamp)}</div>
-					<div className="col">{U.File.size(item.size)}</div>
-					<div className="col colMore">
-						<Icon id={`icon-more-${item.objectId}`} className="more withBackground" onClick={() => this.onMore(item)} />
-					</div>
-				</div>
-			);
-		};
-
-		return (
-			<>
-				<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
-
-				{list.length ? (
-					<div className="items">
-						<div className="row isHead">
-							<div className="col colSpace">{translate('commonObject')}</div>
-							<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
-							<div className="col">{translate('commonSize')}</div>
-							<div className="col colMore" />
-						</div>
-						{list.map((item: any, i: number) => <Row key={i} {...item} />)}
-					</div>
-				) : (
-					<EmptyState text={translate('popupSettingsDataManagementDataPublishEmpty')} />
-				)}
-			</>
-		);
-	};
-
-	componentDidMount(): void {
-		this.load();
-	};
-
-	load () {
+	const load = () => {
 		C.PublishingList('', (message: any) => {
 			if (!message.error.code) {
-				this.setState({ list: message.list });
+				setList(message.list);
 			};
 		});
 	};
 
-	onClick (item: any) {
+	const onClick = (item: any) => {
 		Action.openUrl(U.Space.getPublishUrl(item.uri));
 	};
 
-	onMore (item: any) {
-		const { getId } = this.props;
+	const onMore = (item: any) => {
 		const element = $(`#${getId()} #icon-more-${item.objectId}`);
 		const object = S.Detail.mapper(item.details);
 		const options: any[] = [
@@ -100,7 +48,7 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 						};
 
 						case 'view': {
-							this.onClick(item);
+							onClick(item);
 							break;
 						};
 
@@ -110,7 +58,7 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 						};
 
 						case 'unpublish': {
-							this.onUnpublish(item);
+							onUnpublish(item);
 							break;
 						};
 					};
@@ -119,13 +67,12 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 		});
 	};
 
-	onUnpublish (item: any) {
+	const onUnpublish = (item: any) => {
 		const object = S.Detail.mapper(item.details);
 
 		C.PublishingRemove(item.spaceId, item.objectId, (message: any) => {
 			if (!message.error.code) {
-				this.load();
-
+				load();
 				analytics.event('ShareObjectUnpublish', { objectType: object.type });
 			};
 		});
@@ -133,6 +80,49 @@ const PageMainSettingsDataPublish = observer(class PageMainSettingsDataPublish e
 		analytics.event('ClickShareObjectUnpublish', { objectType: object.type });
 	};
 
-});
+
+	const Row = (item: any) => {
+		const object = S.Detail.mapper(item.details);
+
+		return (
+			<div className="row">
+				<div className="col colObject" onClick={() => onClick(item)}>
+					<IconObject object={object} />
+					<ObjectName object={object} />
+				</div>
+				<div className="col colDate">{U.Date.dateWithFormat(dateFormat, item.timestamp)}</div>
+				<div className="col">{U.File.size(item.size)}</div>
+				<div className="col colMore">
+					<Icon id={`icon-more-${item.objectId}`} className="more withBackground" onClick={() => onMore(item)} />
+				</div>
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		load();
+	}, []);
+
+	return (
+		<>
+			<Title text={translate('popupSettingsDataManagementDataPublishTitle')} />
+
+			{list.length ? (
+				<div className="items">
+					<div className="row isHead">
+						<div className="col colSpace">{translate('commonObject')}</div>
+						<div className="col">{translate('popupSettingsDataManagementDataPublishDate')}</div>
+						<div className="col">{translate('commonSize')}</div>
+						<div className="col colMore" />
+					</div>
+					{list.map((item: any, i: number) => <Row key={i} {...item} />)}
+				</div>
+			) : (
+				<EmptyState text={translate('popupSettingsDataManagementDataPublishEmpty')} />
+			)}
+		</>
+	);
+
+}));
 
 export default PageMainSettingsDataPublish;

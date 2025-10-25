@@ -779,7 +779,7 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmptyTitle": "You have just created a chat",
+	"blockChatEmptyTitle": "Chat without the cloud",
 	"blockChatEmptyItem1": "Yours forever",
 	"blockChatEmptyItem2": "Messages, docs & files available offline",
 	"blockChatEmptyItem3": "Fully private and encrypted",
@@ -832,6 +832,8 @@
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
+	"popupSettingsPersonalSectionChat": "Chat",
+	"popupSettingsPersonalChatSend": "Send message with",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalTimeFormat": "Time format",

@@ -1,4 +1,4 @@
-import * as amplitude from 'amplitude-js';
+import amplitude from 'amplitude-js';
 import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 
 const KEYS = [ 
@@ -838,17 +838,20 @@ class Analytics {
 	 * @param {any} [data] - Optional event data.
 	 */
 	stackAdd (code: string, data?: any) {
-		this.stack.push({ code, data });
+		if (code) {
+			this.stack.push({ code, data });
+		};
 	};
 
 	/**
 	 * Sends all stacked analytics events.
 	 */
 	stackSend () {
-		this.stack.forEach(({ code, data }) => {
-			this.event(code, data);
-		});
+		this.stack.forEach(({ code, data }) => this.event(code, data));
+		this.stackClear();
+	};
 
+	stackClear () {
 		this.stack = [];
 	};
 

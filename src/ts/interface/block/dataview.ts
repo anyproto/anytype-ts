@@ -150,6 +150,15 @@ export interface ViewRelation {
 	align?: I.BlockHAlign;
 };
 
+export interface ViewRef {
+	load?(): void;
+	resize?(): void;
+};
+
+export interface RowRef {
+	setIsEditing: (v: boolean) => void;
+};
+
 export interface ViewComponent {
 	rootId?: string;
 	block?: I.Block;

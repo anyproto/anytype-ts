@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -460,18 +460,20 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		U.Subscription.subscribe({
-			subId: subId.current,
-			filters,
-			sorts,
-			limit,
-			keys: J.Relation.sidebar,
-			ignoreArchived,
-			noDeps: true,
-		}, () => {
-			if (callBack) {
-				callBack();
-			};
+		U.Subscription.destroyList([ subId.current ], false, () => {
+			U.Subscription.subscribe({
+				subId: subId.current,
+				filters,
+				sorts,
+				limit,
+				keys: J.Relation.sidebar,
+				ignoreArchived,
+				noDeps: true,
+			}, () => {
+				if (callBack) {
+					callBack();
+				};
+			});
 		});
 	};
 
@@ -608,8 +610,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		const wrapper = $('<div id="button-show-all"></div>');
+		const root = createRoot(wrapper.get(0));
 
-		ReactDOM.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />, wrapper.get(0));
+		root.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />);
 
 		innerWrap.find('#button-show-all').remove();
 		innerWrap.append(wrapper);
@@ -674,7 +677,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const childProps = {
 		...props,
 		ref: childRef,
-		key: childKey,
 		parent: block,
 		block: child,
 		canCreate,
@@ -816,7 +818,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	switch (layout) {
 		case I.WidgetLayout.Space: {
 			cn.push('widgetSpace');
-			content = <WidgetSpace {...childProps} />;
+			content = <WidgetSpace key={childKey} {...childProps} />;
 
 			isDraggable = false;
 			break;
@@ -829,7 +831,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		case I.WidgetLayout.Tree: {
 			cn.push('widgetTree');
-			content = <WidgetTree {...childProps} />;
+			content = <WidgetTree key={childKey} {...childProps} />;
 			break;
 		};
 
@@ -837,7 +839,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.WidgetLayout.Compact:
 		case I.WidgetLayout.View: {
 			cn.push('widgetView');
-			content = <WidgetView {...childProps} />;
+			content = <WidgetView key={childKey} {...childProps} />;
 			break;
 		};
 

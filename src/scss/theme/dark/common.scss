@@ -457,17 +457,6 @@ html.themeDark {
 					}
 				}
 			}
-
-			.spaceHeader {
-				.buttons {
-					.item {
-						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
-						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
-						.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
-					}
-				}
-			}
 		}
 
 		.sidebarPage.pageVault {

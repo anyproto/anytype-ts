@@ -6,7 +6,7 @@ import { I, C, S, U, Action, Survey, analytics, translate } from 'Lib';
 
 const DAYS = 30;
 
-const PageAuthDeleted = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const { account } = S.Auth;
 

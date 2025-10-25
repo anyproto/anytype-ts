@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { Frame, Error, Button, Header, Phrase, Title, Label } from 'Component';
 import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Storage, Action } from 'Lib';
 
-const PageAuthLogin = observer(forwardRef<{}, I.PageComponent>((props, ref: any) => {
+const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
 	const nodeRef = useRef(null);
 	const phraseRef = useRef(null);

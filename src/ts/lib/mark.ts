@@ -9,25 +9,42 @@ for (const i in I.MarkType) {
 };
 
 const Patterns = {
-	'-→': '⟶',
-	'—>': '⟶',
+	// Arrows and Directional Indicators
 	'->': '→',
-
-	'←-': '⟵',
-	'<—': '⟵',
+	'—>': '⟶',
 	'<-': '←',
-	
+	'<—': '⟵',
+	'<→': '↔',
+	'←>': '↔',
 	'←→': '⟷',
-	'<-->': '⟷',
 	'⟵>': '⟷',
 	'<⟶': '⟷',
+	'=>': '⇒',
+	'==>': '⟹',
+	'->>': '↠',
+	'<<-': '↞',
+	'~>': '↝',
+	'<~': '↜',
 
+	// Inequality and Comparison Operators
+	'!=': '≠',
+	'~=': '≅',
+	'===': '≡',
+	'≠=': '≢',
+	'>=': '≥',
+	'<=': '≤',
+
+	// Programming and Operator Symbols
 	'--': '—',
-
-	//'(c)': '©',
-	'(r)': '®',
-	'(tm)': '™',
 	'...': '…',
+
+	// Punctuation and Symbols
+	//'(c)': '©',
+	//'(r)': '®',
+	'(tm)': '™',
+
+	// Mathematical and Scientific
+	'|~': '≉',
 };
 
 const Order = [

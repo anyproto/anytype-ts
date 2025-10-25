@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import * as ReactDOM from 'react-dom';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
@@ -19,6 +19,7 @@ interface GraphRefProps {
 	init: () => void;
 	resize: () => void;
 	addNewNode: (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) => void;
+	forceUpdate: () => void;
 };
 
 const Graph = observer(forwardRef<GraphRefProps, Props>(({
@@ -46,6 +47,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	const zoom = useRef(null);
 	const isDraggingToSelect = useRef(false);
 	const nodesSelectedByDragToSelect = useRef([]);
+	const [ dummy, setDummy ] = useState(0);
 
 	const send = (id: string, param: any, transfer?: any[]) => {
 		try {
@@ -62,12 +64,12 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		win.on(`updateGraphSettings.${id}`, () => updateSettings());
 		win.on(`updateGraphRoot.${id}`, (e: any, data: any) => setRootId(data.id));
 		win.on(`updateGraphData.${id}`, () => load());
-		win.on(`removeGraphNode.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
+		win.on(`archiveObject.${id}`, (e: any, data: any) => send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.${id}`, e => onKeyDown(e));
 	};
 
 	const unbind = () => {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'removeGraphNode', 'keydown' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateGraphData', 'archiveObject', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.${id}`).join(' '));
 		$(canvas.current).off('touchstart touchmove');
@@ -338,7 +340,9 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			body.find('#graphPreview').remove();
 			body.append(el);
 
-			ReactDOM.render(<PreviewDefault object={subject.current} className="previewGraph" noLoad={true} />, el.get(0), position);
+			const root = createRoot(el.get(0));
+			root.render(<PreviewDefault object={subject.current} position={position} className="previewGraph" noLoad={true} />);
+
 			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
 		} else {
 			position();
@@ -626,6 +630,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		init,
 		resize,
 		addNewNode,
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (

@@ -5,6 +5,7 @@ export default {
 	protocol:			 'anytype',
 	appName:			 'Anytype',
 	anytypeProfileId:	 '_anytype_profile',
+	missingObjectId:	 '_missing_object',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
@@ -169,6 +170,7 @@ export default {
 		type:			 'type',
 		header:			 'header',
 		chat:			 'chat',
+		widgetTypes:	 'types',
 	},
 
 	widgetId: {

@@ -1,21 +1,5 @@
 @import "~scss/_mixins";
 
-.pageFlex { 
-	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
-	padding: 8px 8px 8px 0px;
-}
-.pageFlex {
-	.sidebarDummy { flex-shrink: 0; }
-	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); border-radius: 12px; }
-
-	&.withSidebarRight { padding-right: 0px; }
-	&.withSidebarRight {
-		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
-	}
-
-	&.sidebarAnimation { transition-property: padding; }
-}
-
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
 .sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
@@ -33,44 +17,28 @@
 	position: fixed; z-index: 24; user-select: none; top: 0px; height: 100%; background-color: var(--color-shape-highlight-light-solid); 
 	display: flex; flex-direction: column;
 }
-.sidebar.anim { transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
-
-.sidebar.left { left: 0px; flex-direction: row; }
-
-.sidebar.right { right: -$sidebarRightWidth; width: $sidebarRightWidth; flex-shrink: 0; padding: 8px 8px 8px 0px; }
-.sidebar.right.anim { transition-property: right; }
-
-.sidebar.withPreview { z-index: 31; }
-
-.sidebar.right {
-	@import "./preview";
-
-	.sidebarPage { 
-		background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px;
-	}
-}
 
 .sidebar {
 	@import "./page/common";
 
-	.pageWrapper, .subPageWrapper { padding: 8px 0px; flex-shrink: 0; position: relative; flex-direction: column; }
+	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
 		&.isClosed { overflow: hidden; }
 	}
 
-	.pageWrapper { z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
+	.pageWrapper { padding: 8px 0px 0px 0px; z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
 	}
 
-	.subPageWrapper { width: 336px; display: flex; }
+	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
 
 		&.sidebarAnimation { transition-property: transform; }
 	}
 
-	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -12px; top: 0px; }
+	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; top: 0px; }
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
@@ -92,8 +60,26 @@
 	}
 
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
-
 	.banner.update { position: absolute; bottom: 45px; z-index: 10; left: 12px; width: 312px; }
+
+	&.withPreview { z-index: 31; }
+	&.left { left: 0px; flex-direction: row; }
+	&.left {
+		.resize-h { right: -12px; }
+	}
+
+	&.right { right: 0px; flex-shrink: 0; padding: 8px 0px; }
+	&.right {
+		.resize-h { left: -12px; }
+		&.sidebarAnimation { transition-property: transform; }
+
+		@import "./preview";
+
+		.sidebarPage { 
+			background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px; 
+			margin-right: 8px;
+		}
+	}
 }
 
 html.platformWindows {

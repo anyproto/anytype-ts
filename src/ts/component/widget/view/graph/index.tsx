@@ -25,8 +25,6 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 				edges: message.edges,
 				nodes: message.nodes.map(it => S.Detail.mapper(it))
 			});
-
-			graphRef.current?.init();
 		});
 	};
 
@@ -35,7 +33,12 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 	};
 
 	useEffect(() => load(), []);
-	useEffect(() => resize(), [ data ]);
+
+	useEffect(() => {
+		resize();
+		graphRef.current?.init();
+	}, [ data ]);
+
 	useImperativeHandle(ref, () => ({}));
 
 	return (

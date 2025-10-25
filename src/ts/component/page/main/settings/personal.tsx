@@ -1,119 +1,141 @@
-import * as React from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer } from 'Lib';
+import { I, S, U, translate, Action, analytics, Renderer, keyboard, } from 'Lib';
 
-const PageMainSettingsPersonal = observer(class PageMainSettingsPersonal extends React.Component<I.PageSettingsComponent> {
+enum ChatKey {
+	Enter 	 = 'enter',
+	CmdEnter = 'cmdEnter',
+};
 
-	render () {
-		const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
-		const { hideTray, showMenuBar } = config;
-		const { theme } = S.Common;
+const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-		const themes: any[] = [
-			{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
-			{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
-			{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
-		];
+	const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
+	const { hideTray, showMenuBar } = config;
+	const { theme, chatCmdSend } = S.Common;
+	const cmd = keyboard.cmdSymbol();
 
-		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
-		const linkStyles: I.Option[] = [
-			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
-			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
-		];
+	const themes: any[] = [
+		{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
+		{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
+		{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
+	];
 
-		return (
-			<>
-				<Title text={translate('popupSettingsPersonalTitle')} />
+	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
+	const linkStyles: I.Option[] = [
+		{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
+		{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+	];
 
-				<Label className="section" text={translate('commonAppearance')} />
+	const chatKeys: I.Option[] = [
+		{ id: ChatKey.Enter, name: 'Enter' },
+		{ id: ChatKey.CmdEnter, name: `${cmd} + Enter` },
+	];
 
-				<div className="colorScheme">
-					{themes.map((item: any, i: number) => (
-						<div
-							key={i}
-							className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')}
-							onClick={() => Action.themeSet(item.id)}
-						>
-							<div className="bg">
-								<Icon />
-								<div className="a" />
-								<div className="b" />
-								<div className="c" />
-							</div>
-							<Label className="left" text={item.name} />
+	return (
+		<>
+			<Title text={translate('popupSettingsPersonalTitle')} />
+
+			<Label className="section" text={translate('commonAppearance')} />
+
+			<div className="colorScheme">
+				{themes.map((item: any, i: number) => (
+					<div
+						key={i}
+						className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')}
+						onClick={() => Action.themeSet(item.id)}
+					>
+						<div className="bg">
+							<Icon />
+							<div className="a" />
+							<div className="b" />
+							<div className="c" />
 						</div>
-					))}
+						<Label className="left" text={item.name} />
+					</div>
+				))}
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalFullscreen')} />
+					<Switch
+						className="big"
+						value={fullscreenObject}
+						onChange={(e: any, v: boolean) => {
+							S.Common.fullscreenObjectSet(v);
+							analytics.event('ShowObjectFullscreen', { type: v });
+						}}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalChatSend')} />
+					<Select
+						id="chatSend"
+						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+						options={chatKeys}
+						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalLinkStyle')} />
+
+					<Select
+						id="linkStyle"
+						value={String(linkStyle)}
+						options={linkStyles}
+						onChange={v => S.Common.linkStyleSet(v)}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
 				</div>
 
-				<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalSidebar')} />
+					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
+				</div>
 
-				<div className="actionItems">
+				<div className="item">
+					<Label text={translate('electronMenuShowTray')} />
+					<Switch
+						className="big"
+						value={!hideTray}
+						onChange={(e: any, v: boolean) => {
+							Renderer.send('setHideTray', v);
+							analytics.event('ShowInSystemTray', { type: v });
+						}}
+					/>
+				</div>
+
+				{canHideMenu ? (
 					<div className="item">
-						<Label text={translate('popupSettingsPersonalFullscreen')} />
-						<Switch
-							className="big"
-							value={fullscreenObject}
+						<Label text={translate('electronMenuShowMenu')} />
+						<Switch 
+							className="big" 
+							value={showMenuBar} 
 							onChange={(e: any, v: boolean) => {
-								S.Common.fullscreenObjectSet(v);
-								analytics.event('ShowObjectFullscreen', { type: v });
-							}}
+								Renderer.send('setMenuBarVisibility', v);
+							}} 
 						/>
 					</div>
+				) : ''}
+			</div>
+		</>
+	);
 
-				</div>
-
-				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
-
-				<div className="actionItems">
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalLinkStyle')} />
-
-						<Select
-							id="linkStyle"
-							value={String(linkStyle)}
-							options={linkStyles}
-							onChange={v => S.Common.linkStyleSet(v)}
-							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalSidebar')} />
-						<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
-					</div>
-
-					<div className="item">
-						<Label text={translate('electronMenuShowTray')} />
-						<Switch
-							className="big"
-							value={!hideTray}
-							onChange={(e: any, v: boolean) => {
-								Renderer.send('setHideTray', v);
-								analytics.event('ShowInSystemTray', { type: v });
-							}}
-						/>
-					</div>
-
-					{canHideMenu ? (
-						<div className="item">
-							<Label text={translate('electronMenuShowMenu')} />
-							<Switch 
-								className="big" 
-								value={showMenuBar} 
-								onChange={(e: any, v: boolean) => {
-									Renderer.send('setMenuBarVisibility', v);
-								}} 
-							/>
-						</div>
-					) : ''}
-				</div>
-
-			</>
-		);
-	};
-
-});
+}));
 
 export default PageMainSettingsPersonal;

@@ -1008,15 +1008,12 @@ class BlockStore {
 
 	updateTypeWidgetList () {
 		const { widgets } = this;
-		const spaceview = U.Space.getSpaceview();
 		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-	
-		let element = this.getMapElement(widgets, widgets);
-		if (!element) {
-			return;
-		};
 
-		element = U.Common.objectCopy(element);
+		const element = new M.BlockStructure({
+			parentId: J.Constant.blockId.widgetTypes,
+			childrenIds: [],
+		});
 
 		let childrenIds = element.childrenIds || [];
 
@@ -1041,7 +1038,7 @@ class BlockStore {
 			childrenIds.push(J.Constant.widgetId.bin);
 		};
 
-		this.updateStructure(widgets, widgets, childrenIds);
+		this.updateStructure(widgets, J.Constant.blockId.widgetTypes, childrenIds);
 		this.updateStructureParents(widgets);
 	};
 

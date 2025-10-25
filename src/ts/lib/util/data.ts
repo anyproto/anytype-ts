@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation, sidebar } from 'Lib';
 
 const TYPE_KEYS = {
 	default: [
@@ -257,11 +257,10 @@ class UtilData {
 	 */
 	onAuth (param?: any, callBack?: () => void) {
 		param = param || {};
-		param.routeParam = param.routeParam || {};
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
 
 		if (!widgets) {
@@ -275,8 +274,6 @@ class UtilData {
 			};
 
 			U.Subscription.createSpace(() => {
-				S.Block.updateTypeWidgetList();
-
 				S.Common.pinInit(() => {
 					keyboard.initPinCheck();
 
@@ -364,8 +361,10 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
 		U.Subscription.createGlobal(() => {
-			Storage.clearDeletedSpaces(false);
-			Storage.clearDeletedSpaces(true);
+			if (S.Record.spaceMap.size) {
+				Storage.clearDeletedSpaces(false);
+				Storage.clearDeletedSpaces(true);
+			};
 		});
 
 		analytics.event('OpenAccount');
@@ -636,6 +635,9 @@ class UtilData {
 		if (c1.tmpOrder > c2.tmpOrder) return 1;
 		if (c1.tmpOrder < c2.tmpOrder) return -1;
 
+		if (!c1.orderId && c2.orderId) return 1;
+		if (c1.orderId && !c2.orderId) return -1;
+
 		if (c1.orderId > c2.orderId) return 1;
 		if (c1.orderId < c2.orderId) return -1;
 
@@ -652,26 +654,6 @@ class UtilData {
 		if (c1.isHidden && !c2.isHidden) return 1;
 		if (!c1.isHidden && c2.isHidden) return -1;
 		return 0;
-	};
-
-	/**
-	 * Sorts two objects by their pinned status and last used date.
-	 * @param {any} c1 - The first object.
-	 * @param {any} c2 - The second object.
-	 * @param {string[]} ids - The list of pinned IDs.
-	 * @returns {number} The sort order.
-	 */
-	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
-		const idx1 = ids.indexOf(c1.id);
-		const idx2 = ids.indexOf(c2.id);
-		const isPinned1 = idx1 >= 0;
-		const isPinned2 = idx2 >= 0;
-
-		if (isPinned1 && !isPinned2) return -1;
-		if (!isPinned1 && isPinned2) return 1;
-		if (idx1 > idx2) return 1;
-		if (idx1 < idx2) return -1;
-		return this.sortByLastUsedDate(c1, c2);
 	};
 
 	/**
@@ -787,7 +769,7 @@ class UtilData {
 	 * @param {I.ObjectLayout} layout - The object layout.
 	 * @returns {I.ContentLink} The checked link settings.
 	 */
-	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout): I.ContentLink {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
 		content = U.Common.objectCopy(content);
@@ -853,15 +835,17 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		return [
-			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+		const filters = U.Subscription.getBaseFilters({
+			ignoreHidden: true,
+			ignoreArchived: true,
+			ignoreDeleted: true,	 
+		});
+
+		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
-		];
+		]);
 	};
 
 	/**

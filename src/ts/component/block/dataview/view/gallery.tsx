@@ -82,19 +82,18 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 						onClick={e => onRecordAdd(e, 1)} 
 					/>
 				);
+			} else {
+				return (
+					<Card
+						ref={ref => onRefRecord(ref, id)}
+						key={`gallery-card-${view.id + id}`}
+						{...this.props} 
+						getCoverObject={this.getCoverObject}
+						recordId={id}
+						recordIdx={records.indexOf(id)}
+					/>
+				);
 			};
-
-			return (
-				<Card
-					ref={ref => onRefRecord(ref, id)}
-					key={`gallery-card-${view.id + id}`}
-					{...this.props} 
-					getCoverObject={this.getCoverObject}
-					recordId={id}
-					recordIdx={records.indexOf(id)}
-					rowIndex={index}
-				/>
-			);
 		};
 
 		const rowRenderer = (param: any) => {

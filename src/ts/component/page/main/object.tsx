@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { I, U, Action, analytics, keyboard } from 'Lib';
 
-const PageMainObject = forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		const { isPopup } = props;

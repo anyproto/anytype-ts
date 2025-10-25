@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
@@ -6,77 +6,20 @@ import { I, U, J, keyboard, translate, analytics, Mark } from 'Lib';
 
 const SKIP = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
-class MenuSearchText extends React.Component<I.Menu> {
-	
-	node: any = null;
-	ref = null;
-	last = '';
-	n = 0;
-	toggled = [];
-	items: any = null;
-	timeout = 0;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onClear = this.onClear.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onSearch = this.onSearch.bind(this);
-	};
+const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	render () {
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="flex"
-			>
-				<Icon className="search" />
+	const { param, storageGet, storageSet, close } = props;
+	const { data } = param;
+	const { route, isPopup } = data;
+	const nodeRef = useRef(null);
+	const inputRef = useRef(null);
+	const n = useRef(0);
+	const toggledRef = useRef<Array<string>>([]);
+	const itemsRef = useRef<any>(null);
+	const lastRef = useRef<string>('');
+	const timeoutRef = useRef<number>(0);
 
-				<Input 
-					ref={ref => this.ref = ref} 
-					placeholder={translate('commonSearchPlaceholder')}
-					onKeyDown={this.onKeyDown} 
-					onKeyUp={this.onKeyUp} 
-				/>
-				<div className="buttons">
-
-					<div id="switcher" className="switcher">
-						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<div id="cnt" className="cnt" />
-						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
-					</div>
-
-					<div className="line" />
-
-					<Icon className="clear" onClick={this.onClear} />
-				</div>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { param, storageGet } = this.props;
-		const { data } = param;
-
-		window.setTimeout(() => { 
-			const value = String(data.value || storageGet().search || '');
-
-			this.ref?.setValue(value);
-			this.ref?.setRange({ from: 0, to: value.length });
-			this.search();
-		}, 100);
-	};
-
-	componentWillUnmount () {
-		this.clear();
-		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
-	};
-
-	onKeyDown (e: any) {
-		const cmd = keyboard.cmdKey();
-
+	const onKeyDown = (e: any) => {
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
 			e.preventDefault();
 		});
@@ -85,26 +28,24 @@ class MenuSearchText extends React.Component<I.Menu> {
 			e.preventDefault();
 			e.stopPropagation();
 
-			this.onArrow(1);
-			window.clearTimeout(this.timeout);
+			onArrow(1);
+			window.clearTimeout(timeoutRef.current);
 		});
 	};
 	
-	onKeyUp (e: any) {
+	const onKeyUp = (e: any) => {
 		e.preventDefault();
-		window.clearTimeout(this.timeout);
+		window.clearTimeout(timeoutRef.current);
 
 		let ret = false;
 
-		const cmd = keyboard.cmdKey();
-
 		keyboard.shortcut(`tab, enter`, e, () => {
-			this.search();
+			search();
 			ret = true;
 		});
 
-		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
-			this.onArrow(pressed == 'arrowup' ? -1 : 1);
+		keyboard.shortcut(`arrowup, arrowdown, tab, enter, searchText`, e, (pressed: string) => {
+			onArrow(pressed == 'arrowup' ? -1 : 1);
 			ret = true;
 		});
 
@@ -112,46 +53,38 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		this.timeout = window.setTimeout(() => this.search(), J.Constant.delay.keyboard);
+		timeoutRef.current = window.setTimeout(() => search(), J.Constant.delay.keyboard);
 	};
 
-	onArrow (dir: number) {
-		const max = (this.items || []).length - 1;
+	const onArrow = (dir: number) => {
+		const max = (itemsRef.current || []).length - 1;
 
-		this.n += dir;
+		n.current += dir;
 
-		if (this.n < 0) {
-			this.n = max;
+		if (n.current < 0) {
+			n.current = max;
 		};
-		if (this.n > max) {
-			this.n = 0;
+		if (n.current > max) {
+			n.current = 0;
 		};
 
-		this.focus();
+		focus();
 	};
 
-	onSearch (e: any) {
-		this.focus();
-		this.onArrow(1);
-	};
-
-	search () {
-		const value = this.ref?.getValue();
-		if (value && (this.last == value)) {
+	const search = () => {
+		const value = inputRef.current?.getValue();
+		if (value && (lastRef.current == value)) {
 			return;
 		};
 
-		const { storageSet, param } = this.props;
-		const { data } = param;
-		const { route } = data;
-		const container = this.getContainer();
-		const node = $(this.node);
+		const container = U.Common.getScrollContainer(isPopup);
+		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher').removeClass('active');
 		const tag = Mark.getTag(I.MarkType.Search);
 
-		this.n = 0;
-		this.clear();
-		this.last = value;
+		n.current = 0;
+		clear();
+		lastRef.current = value;
 		
 		storageSet({ search: value });
 
@@ -176,7 +109,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 					const parent = $(parents[0]);
 					const id = parents.attr('data-id');
 
-					this.toggled.push(id);
+					toggledRef.current.push(id);
 					parent.addClass('isToggled');
 				};
 
@@ -188,28 +121,25 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = this.getItems();
-		
-		switcher.toggleClass('active', !!this.items.length);
+		itemsRef.current = getItems();
+		switcher.toggleClass('active', !!itemsRef.current.length);
 
-		this.setCnt();
-		this.focus();
+		setCnt();
+		focus();
 	};
 
-	onClear () {
-		const { storageSet, close } = this.props;
-
-		this.ref?.setValue('');
-		this.clear();
+	const onClear = () => {
+		inputRef.current?.setValue('');
+		clear();
 
 		close();
 		storageSet({ search: '' });
 	};
 
-	clear () {
-		const node = $(this.node);
+	const clear = () => {
+		const node = $(nodeRef.current);
 		const switcher = node.find('#switcher');
-		const items = this.getItems();
+		const items = getItems();
 
 		for (let i = 0; i < items.length; i++) {
 			const item = $(items[i]);
@@ -217,35 +147,31 @@ class MenuSearchText extends React.Component<I.Menu> {
 			item.replaceWith(item.html());
 		};
 
-		for (const id of this.toggled) {
+		for (const id of toggledRef.current) {
 			$(`#block-${id}`).removeClass('isToggled');
 		};
 
-		this.toggled = [];
+		toggledRef.current = [];
 		switcher.removeClass('active');
 	};
 
-	getContainer () {
-		return U.Common.getScrollContainer(this.props.param.data.isPopup);
-	};
-
-	getItems () {
-		const container = this.getContainer();
+	const getItems = () => {
+		const container = U.Common.getScrollContainer(isPopup);
 		return container.length ? container.get(0).querySelectorAll(Mark.getTag(I.MarkType.Search)) : [];
 	};
 
-	focus () {
-		if (!this.items || !this.items.length) {
+	const focus = () => {
+		if (!itemsRef.current || !itemsRef.current.length) {
 			return;
 		};
 
-		const container = this.getContainer();
+		const container = U.Common.getScrollContainer(isPopup);
 		const offset = J.Size.lastBlock + J.Size.header;
 		const tag = Mark.getTag(I.MarkType.Search);
 
 		container.find(`${tag}.active`).removeClass('active');
 
-		const next = $(this.items[this.n]);
+		const next = $(itemsRef.current[n.current]);
 
 		if (!next || !next.length) {
 			return;
@@ -258,17 +184,61 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const wh = container.height();
 		const y = no - container.offset().top + st;
 
-		this.setCnt();
+		setCnt();
 		container.scrollTop(y - wh + offset);
 	};
 
-	setCnt () {
-		const node = $(this.node);
+	const setCnt = () => {
+		const node = $(nodeRef.current);
 		const cnt = node.find('#cnt');
 
-		cnt.text(`${this.n + 1}/${this.items.length}`);
+		cnt.text(`${n.current + 1}/${itemsRef.current.length}`);
 	};
+
+	useEffect(() => {
+		window.setTimeout(() => { 
+			const value = String(data.value || storageGet().search || '');
+
+			inputRef.current?.setValue(value);
+			inputRef.current?.setRange({ from: 0, to: value.length });
+			search();
+		}, 100);
+
+		return () => {
+			clear();
+			keyboard.setFocus(false);
+			window.clearTimeout(timeoutRef.current);
+		};
+	}, []);
 	
-};
+	return (
+		<div 
+			ref={nodeRef}
+			className="flex"
+		>
+			<Icon className="search" />
+
+			<Input 
+				ref={inputRef} 
+				placeholder={translate('commonSearchPlaceholder')}
+				onKeyDown={onKeyDown} 
+				onKeyUp={onKeyUp} 
+			/>
+
+			<div className="buttons">
+				<div id="switcher" className="switcher">
+					<Icon className="arrow left" onClick={() => onArrow(-1)} />
+					<div id="cnt" className="cnt" />
+					<Icon className="arrow right" onClick={() => onArrow(1)} />
+				</div>
+
+				<div className="line" />
+
+				<Icon className="clear" onClick={onClear} />
+			</div>
+		</div>
+	);
+	
+});
 
 export default MenuSearchText;

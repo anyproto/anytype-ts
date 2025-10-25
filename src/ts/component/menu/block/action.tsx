@@ -9,7 +9,6 @@ interface State {
 
 class MenuBlockAction extends React.Component<I.Menu, State> {
 	
-	_isMounted = false;
 	node: any = null;
 	n = -1;
 	refFilter: any = null;
@@ -94,7 +93,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { getId } = this.props;
 		const menu = $(`#${getId()}`);
 		
-		this._isMounted = true;
 		this.rebind();
 
 		menu.off('mouseleave').on('mouseleave', () => S.Menu.clearTimeout());
@@ -106,8 +104,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
-
 		keyboard.setFocus(false);
 		S.Menu.closeAll(J.Menu.action);
 		S.Menu.clearTimeout();
@@ -326,10 +322,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 	
 	onOver (e: any, item: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const { id, param, close, getId, setActive } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -592,7 +584,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 
 	onClick (e: any, item: any) {
-		if (!this._isMounted || item.arrow) {
+		if (item.arrow) {
 			return;
 		};
 		
