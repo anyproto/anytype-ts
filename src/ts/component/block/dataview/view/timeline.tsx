@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';

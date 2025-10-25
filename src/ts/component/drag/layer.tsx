@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react'; 
 import { I, M, S, U, J, keyboard } from 'Lib';
@@ -13,7 +12,11 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 		if (component.getNode()) {
 			componentNode = component.getNode();
 		} else {
-			componentNode = ReactDOM.findDOMNode(component);
+			componentNode = null;
+		};
+
+		if (!componentNode) {
+			return;
 		};
 
 		const rect = componentNode.getBoundingClientRect();
