@@ -78,7 +78,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const top = Storage.getScroll('sidebarWidget', '', isPopup);
 
 		body.scrollTop(top);
-		onScroll();
 	};
 
 	const onSync = () => {

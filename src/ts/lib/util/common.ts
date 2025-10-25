@@ -1401,7 +1401,7 @@ class UtilCommon {
 			param.FORBID_ATTR.push('style');
 		};
 
-		return DOMPurify.sanitize(s, param);
+		return DOMPurify.sanitize(s, param).toString();
 	};
 
 	/**
