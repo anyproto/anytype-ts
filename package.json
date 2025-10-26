@@ -224,7 +224,8 @@
 			"node_modules/p-finally",
 			"node_modules/file-type",
 			"node_modules/regedit",
-			"node_modules/mime-types"
+			"node_modules/mime-types",
+			"node_modules/mime-db"
 		],
 		"extraResources": [
 			{
@@ -317,6 +318,10 @@
 			{
 				"from": "node_modules/mime-types",
 				"to": "node_modules/mime-types"
+			},
+			{
+				"from": "node_modules/mime-db",
+				"to": "node_modules/mime-db"
 			},
 			{
 				"from": "node_modules/@electron",
