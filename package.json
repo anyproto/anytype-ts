@@ -423,6 +423,14 @@
 				"to": "node_modules/env-paths"
 			},
 			{
+				"from": "node_modules/escape-goat",
+				"to": "node_modules/escape-goat"
+			},
+			{
+				"from": "node_modules/escape-string-regexp",
+				"to": "node_modules/escape-string-regexp"
+			},
+			{
 				"from": "node_modules/execa",
 				"to": "node_modules/execa"
 			},
@@ -577,10 +585,6 @@
 			{
 				"from": "node_modules/mkdirp",
 				"to": "node_modules/mkdirp"
-			},
-			{
-				"from": "node_modules/modify-filename",
-				"to": "node_modules/modify-filename"
 			},
 			{
 				"from": "node_modules/ms",
