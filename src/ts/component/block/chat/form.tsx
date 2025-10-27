@@ -207,6 +207,8 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
+
+			$(window).trigger('resize');
 		});
 
 		keyboard.shortcut('chatObject', e, () => {
