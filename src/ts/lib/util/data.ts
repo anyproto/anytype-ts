@@ -302,9 +302,8 @@ class UtilData {
 
 	/**
 	 * Handles one-time authentication tasks after login.
-	 * @param {boolean} noTierCache - Whether to skip tier cache.
 	 */
-	onAuthOnce (noTierCache: boolean) {
+	onAuthOnce () {
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
