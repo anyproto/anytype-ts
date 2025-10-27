@@ -9,7 +9,7 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 
 	const show = (rootId: string, type: I.DropType, ids: string[], component: any) => {
 		let componentNode = null;
-		if (component.getNode()) {
+		if (component.getNode) {
 			componentNode = component.getNode();
 		} else {
 			componentNode = null;
