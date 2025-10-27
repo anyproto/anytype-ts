@@ -892,8 +892,8 @@
     > .pageSettingsMembership {
         > .title { @include text-title; text-align: center; margin: 0px; }
 
-        .membershipFree { padding-top: 8px; }
-        .membershipFree {
+        .membershipIntro { padding-top: 8px; }
+        .membershipIntro {
             > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
 
             .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin-bottom: 32px; }
@@ -994,7 +994,15 @@
 
         .membershipPurchased { padding-top: 32px; }
         .membershipPurchased {
+            .section { display: flex; gap: 0px 16px; }
+            .section {
+                .item {
+                    flex-shrink: 0; width: 312px; height: 246px; border-radius: 24px;
+                    padding: 24px 16px 16px; border: 1px solid var(--color-shape-secondary);
+                }
 
+                .item.current { border: 0px; box-shadow: 0 0 32px 0 rgba(203, 207, 255, 0.50); }
+            }
         }
     }
 }

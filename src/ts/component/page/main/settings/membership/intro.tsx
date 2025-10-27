@@ -128,7 +128,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	return (
-		<div className="membershipFree">
+		<div className="membershipIntro">
 			<Label text={translate('popupSettingsMembershipText')} />
 
 			<div className="switchWrapper">
