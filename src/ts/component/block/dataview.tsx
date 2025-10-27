@@ -1183,7 +1183,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		keyboard.disableSelection(true);
-		dragProvider?.onDragStart(e, I.DropType.Record, ids, this);
+		dragProvider?.onDragStart(e, I.DropType.Record, ids, {
+			getNode: () => this.node
+		});
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {

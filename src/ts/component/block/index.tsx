@@ -486,7 +486,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			this.ids = selection.getForClick(block.id, false, true);
 		};
 		
-		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
+		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, {
+			getNode: () => this.node,
+		});
 	};
 	
 	onMenuDown (e: any) {
