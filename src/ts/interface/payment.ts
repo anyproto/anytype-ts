@@ -85,7 +85,6 @@ export interface MembershipTier {
 	description: string;
 	colorStr: string;
 	nameMinLength: number;
-	isTest: boolean;
 	periodType: MembershipTierDataPeriodType;
 	period: number;
 	priceCents: number;
@@ -97,4 +96,6 @@ export interface MembershipTier {
 	price?: number;
 	priceMonthly?: number;
 	isIntro?: boolean;
+	isUpgradeable?: boolean;
+	manageUrl?: string;
 };

@@ -14,7 +14,6 @@ class MembershipTier implements I.MembershipTier {
 	description = '';
 	colorStr = '';
 	nameMinLength = 0;
-	isTest = false;
 	periodType = 0;
 	period = 0;
 	priceCents = 0;
@@ -30,7 +29,6 @@ class MembershipTier implements I.MembershipTier {
 		this.description = String(props.description || '');
 		this.colorStr = String(props.colorStr || '');
 		this.nameMinLength = Number(props.nameMinLength) || 0;
-		this.isTest = Boolean(props.isTest);
 		this.periodType = Number(props.periodType) || 0;
 		this.period = Number(props.period) || 0;
 		this.priceCents = Number(props.priceCents) || 0;

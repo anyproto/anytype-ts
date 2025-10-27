@@ -8,11 +8,9 @@ import { Pagination, Mousewheel } from 'swiper/modules';
 const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const { interfaceLang } = S.Common;
+	const { interfaceLang, membershipTiers } = S.Common;
 	const { status } = membership;
 	const [ showAnnual, setShowAnnual ] = useState(true);
-	const tier = U.Data.getMembershipTier(membership.tier);
-	const membershipTiers = S.Common.membershipTiers.filter(it => !it.isTest);
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -53,11 +51,9 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const onPay = (item: I.MembershipTier) => {
-		C.MembershipGetPortalLinkUrl((message: any) => {
-			if (message.url) {
-				Action.openUrl(message.url);
-			};
-		});
+		if (item.manageUrl) {
+			Action.openUrl(item.manageUrl);
+		};
 	};
 
 	const TierItem = (props: any) => {
