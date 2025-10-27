@@ -8,7 +8,10 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const { membership } = S.Auth;
 	const { status, tierItem } = membership;
 	const tier = U.Data.getMembershipTier(membership.tier);
-	
+
+	console.log('TIER: ', tier)
+	console.log('TIER ITEM: ', tierItem)
+
 	//DEV: hardcoded values
 	const color = 'blue';
 	const plan = 'Plus annual';
