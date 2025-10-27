@@ -665,7 +665,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (isSectionType && (layout != I.WidgetLayout.Link)) {
+		if (layout != I.WidgetLayout.Link) {
 			onSetPreview();
 		} else {
 			onExpandHandler(e);
