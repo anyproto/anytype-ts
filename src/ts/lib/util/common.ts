@@ -1945,10 +1945,6 @@ class UtilCommon {
 		};
 	};
 
-	checkCanMembershipUpgrade (): boolean {
-		return S.Auth.membership.tierItem.isUpgradeable;
-	};
-
 	getMembershipPeriodLabel (tier: I.MembershipTier): string {
 		// default is year
 		let periodLabel = translate('pluralYear');
