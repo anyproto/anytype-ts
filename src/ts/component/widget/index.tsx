@@ -741,7 +741,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
-			icon = <IconObject object={object} size={20} iconSize={20} className="headerIcon" />;
+			icon = (
+				<IconObject 
+					object={object} 
+					size={20} 
+					iconSize={20} 
+					className="headerIcon" 
+					canEdit={U.Object.isTaskLayout(object?.layout)} 
+					onClick={e => e.stopPropagation()}
+				/>
+			);
 		};
 
 		if (!isPreview) {

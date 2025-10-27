@@ -186,9 +186,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 	};
 
 	const onMouseDown = (e: any) => {
-		const isTask = U.Object.isTaskLayout(object.layout);
-		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
-
 		if (onClick) {
 			onClick(e);
 		};
@@ -196,6 +193,9 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		if (!canEdit) {
 			return;
 		};
+
+		const isTask = U.Object.isTaskLayout(layout);
+		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(layout);
 
 		if (isTask || isEmoji) {
 			e.preventDefault();

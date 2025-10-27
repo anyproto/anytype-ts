@@ -149,7 +149,7 @@
 
 .widget.widgetLink {
 	.headerIcon { opacity: 1 !important; }
-	.iconWrap.collapse { opacity: 0 !important; }
+	.iconWrap.collapse { opacity: 0 !important; pointer-events: none; }
 }
 
 @import "./space";
