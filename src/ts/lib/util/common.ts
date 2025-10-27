@@ -891,9 +891,7 @@ class UtilCommon {
 				text: translate('popupInviteInviteConfirmText'),
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
-				onCancel: () => {
-					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
-				},
+				onCancel: () => Action.openSettings('spaceList', ''),
 			},
 		});
 	};
@@ -1945,10 +1943,6 @@ class UtilCommon {
 			Storage.set('whatsNew', true);
 			Storage.setHighlight('whatsNew', true);
 		};
-	};
-
-	checkCanMembershipUpgrade (): boolean {
-		return S.Auth.membership.tierItem.isUpgradeable;
 	};
 
 	getMembershipPeriodLabel (tier: I.MembershipTier): string {

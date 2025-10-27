@@ -137,7 +137,7 @@ const Toast: FC = observer(() => {
 			};
 
 			case 'manageStorage': {
-				U.Object.openRoute({ id: 'storageManager', layout: I.ObjectLayout.Settings });
+				Action.openSettings('storageManager', analytics.route.toast);
 				S.Common.toastClear();
 			};
 		};

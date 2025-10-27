@@ -854,7 +854,7 @@ class UtilMenu {
 							case 'settings': {
 								const routeParam = { 
 									replace: true, 
-									onFadeIn: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
+									onFadeIn: () => Action.openSettings('spaceIndex', param.route),
 								};
 		
 								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
@@ -1184,7 +1184,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+			Action.openSettings('importIndex', route);
 		};
 
 		const getClipboardData = async () => {

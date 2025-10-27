@@ -30,9 +30,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 	};
 
 	const onUpgrade = (type: string) => {
-		Action.membershipUpgrade();
-
-		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
+		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
 	};
 
 	const getParticipantList = () => {

@@ -910,7 +910,7 @@ class Action {
 		};
 	};
 
-	membershipUpgrade () {
+	membershipUpgrade (event?: any) {
 		const tier = S.Auth.membership.tierItem;
 
 		if (!tier.isUpgradeable) {
@@ -927,7 +927,11 @@ class Action {
 		if (tier.manageUrl) {
 			this.openUrl(tier.manageUrl);
 		} else {
-			U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
+			this.openSettings('membership', '');
+		};
+
+		if (event) {
+			analytics.event('ClickUpgradePlanTooltip', event);
 		};
 	};
 
@@ -1086,16 +1090,18 @@ class Action {
 		});
 	};
 
-	openSettings (id: string, route: string) {
-		U.Object.openRoute({ 
+	openSettings (id: string, route: string, param?: Partial<I.RouteParam>) {
+		const object = { 
 			id, 
 			layout: I.ObjectLayout.Settings,
-			_routeParam_: { 
-				additional: [ 
-					{ key: 'route', value: route },
-				],
-			},
-		});
+			_routeParam_: { additional: [] },
+		};
+
+		if (route) {
+			object._routeParam_.additional.push({ route });
+		};
+
+		U.Object.openRoute(object, param);
 	};
 
 	openSpaceShare (route: string) {
