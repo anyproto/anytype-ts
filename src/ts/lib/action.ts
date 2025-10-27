@@ -910,7 +910,7 @@ class Action {
 		};
 	};
 
-	membershipUpgrade () {
+	membershipUpgrade (event?: any) {
 		const tier = S.Auth.membership.tierItem;
 
 		if (!tier.isUpgradeable) {
@@ -928,6 +928,10 @@ class Action {
 			this.openUrl(tier.manageUrl);
 		} else {
 			this.openSettings('membership', '');
+		};
+
+		if (event) {
+			analytics.event('ClickUpgradePlanTooltip', event);
 		};
 	};
 

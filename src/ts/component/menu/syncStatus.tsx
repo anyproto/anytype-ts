@@ -309,11 +309,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 
 			case 'upgrade': {
-				const usage = Math.round(U.Common.calculateStorageUsage());
-
-				Action.membershipUpgrade();
-
-				analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route });
+				Action.membershipUpgrade({ 
+					type: 'StorageExceeded', 
+					usage: Math.round(U.Common.calculateStorageUsage()), 
+					route,
+				});
 				break;
 			};
 		};

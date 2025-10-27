@@ -17,9 +17,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
 
 	const onMembership = (type: string) => {
-		S.Popup.closeAll(null, () => Action.membershipUpgrade());
-
-		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
+		S.Popup.closeAll(null, () => Action.membershipUpgrade({ type, route: analytics.route.inviteConfirm }));
 	};
 
 	const onConfirm = (permissions: I.ParticipantPermissions) => {

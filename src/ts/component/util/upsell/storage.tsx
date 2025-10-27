@@ -55,9 +55,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 	};
 
 	const onClick = () => {
-		Action.membershipUpgrade();
-
-		analytics.event('ClickUpgradePlanTooltip', { type: `StorageWarning`, usage: Math.round(usagePercent), route });
+		Action.membershipUpgrade({ type: 'StorageWarning', usage: Math.round(usagePercent), route });
 	};
 
 	return (

@@ -173,8 +173,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						S.Menu.closeAll([ 'select' ]);
 					}}
 					onClick={() => {
-						U.Router.go('/main/settings/membership', {});
-						analytics.event('ClickUpgradePlanTooltip', { type: 'help' });
+						Action.membershipUpgrade({ type: 'help' });
 					}}
 				/>
 			) : ''}
