@@ -967,7 +967,7 @@ class BlockStore {
 
 	addTypeWidget (id: string) {
 		const { widgets } = this;
-		const element = this.getMapElement(widgets, widgets);
+		const element = this.getMapElement(this.widgets, J.Constant.blockId.widgetTypes);
 
 		if (!element) {
 			return;
@@ -989,27 +989,26 @@ class BlockStore {
 		this.createWidget(type.id, I.WidgetSection.Type);
 		element.childrenIds.push(id);
 
-		this.updateStructure(widgets, widgets, element.childrenIds);
+		this.updateStructure(widgets, element.parentId, element.childrenIds);
 		this.updateStructureParents(widgets);
 	};
 
 	removeTypeWidget (id: string) {
 		const { widgets } = this;
-		const element = this.getMapElement(widgets, widgets);
+		const element = this.getMapElement(widgets, J.Constant.blockId.widgetTypes);
 
 		if (!element) {
 			return;
 		};
 
 		this.delete(widgets, id);
-		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
+		this.updateStructure(widgets, J.Constant.blockId.widgetTypes, element.childrenIds.filter(it => it != id));
 		this.updateStructureParents(widgets);
 	};
 
 	updateTypeWidgetList () {
 		const { widgets } = this;
 		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-
 		const element = new M.BlockStructure({
 			parentId: J.Constant.blockId.widgetTypes,
 			childrenIds: [],
@@ -1038,7 +1037,7 @@ class BlockStore {
 			childrenIds.push(J.Constant.widgetId.bin);
 		};
 
-		this.updateStructure(widgets, J.Constant.blockId.widgetTypes, childrenIds);
+		this.updateStructure(widgets, element.parentId, childrenIds);
 		this.updateStructureParents(widgets);
 	};
 
