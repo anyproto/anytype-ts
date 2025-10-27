@@ -532,7 +532,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const childProps = {
 		...props,
 		id,
-		key: id,
 		canEdit,
 		relation,
 		placeholder,
@@ -592,7 +591,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			onMouseEnter={onMouseEnterHandler} 
 			onMouseLeave={onMouseLeaveHandler}
 		>
-			<CellComponent ref={childRef} {...childProps} />
+			<CellComponent ref={childRef} key={id} {...childProps} />
 		</div> 
 	);
 

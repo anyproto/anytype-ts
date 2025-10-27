@@ -77,7 +77,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		checkButton();
 	};
 
-	const onClick = (e: any, item: any)  =>{
+	const onClick = (e: any, item: any) => {
 		if (item.isBgColor) {
 			colorRef.current = item.value;
 			save();
@@ -161,8 +161,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getColor = () => {
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
-
-		return colors[n.current]?.value || colorRef.current
+		return colors[n.current]?.value || colorRef.current;
 	};
 	
 	const checkButton = () => {

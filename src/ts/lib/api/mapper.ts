@@ -590,7 +590,6 @@ export const Mapper = {
 				name: obj.getName(),
 				description: obj.getDescription(),
 				nameMinLength: obj.getAnynameminlength(),
-				isTest: obj.getIstest(),
 				periodType: obj.getPeriodtype() as number,
 				period: obj.getPeriodvalue(),
 				priceCents: obj.getPricestripeusdcents(),
@@ -600,6 +599,8 @@ export const Mapper = {
 				namesCount: obj.getAnynamescountincluded(),
 				offer: obj.getOffer(),
 				isIntro: obj.getIsintroplan(),
+				isUpgradeable: obj.getIsupgradeable(),
+				manageUrl: obj.getStripemanageurl(),
 			};
 		},
 

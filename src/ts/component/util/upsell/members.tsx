@@ -37,7 +37,7 @@ const UpsellMembers = observer(forwardRef<{}, Props>(({
 	};
 
 	const onClick = () => {
-		Action.membershipUpgrade(tier.id);
+		Action.membershipUpgrade();
 
 		analytics.event('ClickUpgradePlanTooltip', { type: `SpaceWarning`, route });
 	};

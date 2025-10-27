@@ -910,28 +910,25 @@ class Action {
 		};
 	};
 
-	membershipUpgrade (tier?: I.TierType) {
-		if (!U.Common.checkCanMembershipUpgrade()) {
-			this.membershipUpgradeViaEmail();
-			return;
+	membershipUpgrade () {
+		const tier = S.Auth.membership.tierItem;
+
+		if (!tier.isUpgradeable) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmMembershipUpgradeTitle'),
+					text: translate('popupConfirmMembershipUpgradeText'),
+					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					canCancel: false
+				}
+			});
+		} else 
+		if (tier.manageUrl) {
+			this.openUrl(tier.manageUrl);
+		} else {
+			U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
 		};
-
-		U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
-	};
-
-	/**
-	 * Opens a membership upgrade confirmation popup.
-	 */
-	membershipUpgradeViaEmail () {
-		S.Popup.open('confirm', {
-			data: {
-				title: translate('popupConfirmMembershipUpgradeTitle'),
-				text: translate('popupConfirmMembershipUpgradeText'),
-				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
-				canCancel: false
-			}
-		});
 	};
 
 	/**

@@ -25,7 +25,7 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 
 	const mySharedSpaces = U.Space.getMySharedSpacesList();
 	const onClick = () => {
-		Action.membershipUpgrade(tier.id);
+		Action.membershipUpgrade();
 
 		analytics.event('ClickUpgradePlanTooltip', { type: `SpaceWarning`, route });
 	};

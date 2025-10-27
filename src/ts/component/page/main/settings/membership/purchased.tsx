@@ -6,9 +6,9 @@ import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const { status } = membership;
+	const { status, tierItem } = membership;
 	const tier = U.Data.getMembershipTier(membership.tier);
-
+	
 	//DEV: hardcoded values
 	const color = 'blue';
 	const plan = 'Plus annual';

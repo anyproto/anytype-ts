@@ -368,3 +368,13 @@ export enum AppDeviceState {
 	Background	 = 0, // means app is suspended
 	Foreground	 = 1,
 };
+
+export interface DragProviderRefProps {
+	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
+	onScroll: () => void;
+};
+
+export interface DragComponentProps {
+	getNode: () => any;
+	onRecordDrop?: (targetId: string, ids: string[], position: I.BlockPosition) => void;
+};

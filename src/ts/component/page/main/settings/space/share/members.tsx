@@ -15,7 +15,6 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 	const { isPopup, onStopSharing } = props;
 	const { space } = S.Common;
 	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 	const spaceview = U.Space.getSpaceview();
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);
@@ -171,7 +170,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 	let showLimit = false;
 	let memberUpgradeType = '';
 
-	if (spaceview.isShared && !U.Space.getReaderLimit() && tier?.price) {
+	if (spaceview.isShared && !U.Space.getReaderLimit() && membership.tierItem.price) {
 		limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 		limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 		memberUpgradeType = 'members';

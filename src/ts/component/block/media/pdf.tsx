@@ -245,7 +245,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 						</div>
 
 						<MediaPdf 
-							id={`pdf-block-${id}`}
 							ref={mediaRef}
 							src={S.Common.fileUrl(targetObjectId)}
 							page={page}

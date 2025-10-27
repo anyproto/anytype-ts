@@ -48,20 +48,12 @@ class Membership implements I.Membership {
 		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
-	get isNone (): boolean {
-		return this.tier == I.TierType.None;
+	get tierItem (): I.MembershipTier {
+		return U.Data.getMembershipTier(this.tier);
 	};
 
-	get isStarter (): boolean {
-		return this.tier == I.TierType.Starter;
-	};
-
-	get isBuilder (): boolean {
-		return [ I.TierType.BuilderTest, I.TierType.Builder ].includes(this.tier);
-	};
-
-	get isCreator (): boolean {
-		return [ I.TierType.CoCreatorTest, I.TierType.CoCreator ].includes(this.tier);
+	get isIntro (): boolean {
+		return this.tierItem.isIntro;
 	};
 
 };

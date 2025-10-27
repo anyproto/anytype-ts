@@ -1401,7 +1401,7 @@ class UtilCommon {
 			param.FORBID_ATTR.push('style');
 		};
 
-		return DOMPurify.sanitize(s, param);
+		return DOMPurify.sanitize(s, param).toString();
 	};
 
 	/**
@@ -1948,19 +1948,7 @@ class UtilCommon {
 	};
 
 	checkCanMembershipUpgrade (): boolean {
-		const { membership } = S.Auth;
-
-		return [
-			I.TierType.None,
-			I.TierType.Explorer,
-			I.TierType.Starter,
-			I.TierType.Pioneer,
-			I.TierType.Free,
-			I.TierType.Pro,
-			I.TierType.Plus,
-			I.TierType.Ultra,
-			I.TierType.CoCreator,
-		].includes(membership.tier);
+		return S.Auth.membership.tierItem.isUpgradeable;
 	};
 
 	getMembershipPeriodLabel (tier: I.MembershipTier): string {

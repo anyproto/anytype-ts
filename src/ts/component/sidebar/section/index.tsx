@@ -26,6 +26,7 @@ interface Props extends I.SidebarSectionComponent {
 };
 
 interface Ref extends I.SidebarSectionRef {
+	getNode(): any;
 	setObject(object: any): void;
 	getObject(): any;
 };
@@ -46,6 +47,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 	const cn = [ 'section', U.Common.toCamelCase(component.replace(/\//g, '-')) ];
 	const readonly = props.readonly || object?.isArchived;
 	const id = [ 'section' ].concat(component.split('/'));
+	const nodeRef = useRef(null);
 
 	if (item) {
 		id.push(item.id);
@@ -67,6 +69,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
+		getNode: () => nodeRef.current,
 		getObject: () => object,
 		setObject: (o: any) => {
 			setStateObject(o);
@@ -76,6 +79,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	return (
 		<div 
+			ref={nodeRef}
 			id={id.join('-')}
 			className={cn.join(' ')}
 			draggable={!readonly && !!onDragStart}
