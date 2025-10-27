@@ -507,7 +507,7 @@ class Action {
 
 						U.Data.onInfo(account.info);
 						U.Data.onAuthWithoutSpace(routeParam);
-						U.Data.onAuthOnce(true);
+						U.Data.onAuthOnce();
 					});
 				});
 			});

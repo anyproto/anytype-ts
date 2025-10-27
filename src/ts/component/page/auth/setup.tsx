@@ -107,7 +107,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(false);
+			U.Data.onAuthOnce();
 		
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
