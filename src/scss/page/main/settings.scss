@@ -888,100 +888,113 @@
         .actionItems { margin: 32px 0px 24px 0px; }
     }
 
-    > .pageSettingsMembership { display: flex; flex-direction: column; }
+    > .pageSettingsMembership { display: flex; flex-direction: column; padding-bottom: 0px; }
     > .pageSettingsMembership {
-        .title { text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.64px; margin: 0px 0px 2px 0px; }
-        .title.riccione { font-family: 'RiccioneExtraLight'; letter-spacing: -0.518px; }
-        .description { text-align: center; margin-bottom: 26px !important; }
+        > .title { @include text-title; text-align: center; margin: 0px; }
 
-        .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; padding: 16px 0px; }
-        .switchWrapper {
-            .label { font-weight: 500; }
-        }
+        .membershipFree { padding-top: 8px; }
+        .membershipFree {
+            > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
 
-        .label.special {
-            span { text-decoration: underline; }
-        }
-
-        .swiper { flex-shrink: 0; border-radius: 16px; }
-
-        .swiper.tiersList {
-            .swiper-wrapper { align-items: stretch; margin-bottom: 12px; }
-            .swiper-slide { width: 208px; height: unset; }
-
-            .swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
-            .swiper-pagination {
-                .swiper-pagination-bullet { width: 6px; height: 6px; border-radius: 4px; background-color: var(--color-control-inactive); }
-                .swiper-pagination-bullet:hover { background-color: var(--color-control-active); }
-                .swiper-pagination-bullet.swiper-pagination-bullet-active { width: 40px; background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+            .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin-bottom: 32px; }
+            .switchWrapper {
+                .label { font-weight: 500; }
             }
-        }
 
-        .tiers { padding-top: 22px; margin-bottom: 44px; }
-        .tiers {
-            .tier { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
-            .tier {
-                .iconWrapper { display: flex; align-items: flex-start; flex-direction: row; margin: 0px 0px 10px 0px; justify-content: space-between; gap: 0px 8px; }
-                .iconWrapper {
-                    .icon { width: 64px; height: 64px; background-size: contain; background-position: left center; }
+            .swiper { flex-shrink: 0; border-radius: 16px; }
+            .swiper {
+                .swiper-wrapper { align-items: stretch; margin-bottom: 12px; }
+                .swiper-slide { width: 208px; height: unset; border-right: 1px solid var(--color-shape-primary); }
+                .swiper-slide:last-child { border-right: 0px; }
 
-                    .offerLabel { 
-						border: 1px solid rgba(0,0,0,0); background: var(--color-bg-primary); border-radius: 10px; @include text-small; font-weight: 500; 
-						height: 20px; padding: 0px 8px; @include text-overflow-nw;
-					}
+                .swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+                .swiper-pagination {
+                    .swiper-pagination-bullet { width: 6px; height: 6px; border-radius: 4px; background-color: var(--color-control-inactive); }
+                    .swiper-pagination-bullet:hover { background-color: var(--color-control-active); }
+                    .swiper-pagination-bullet.swiper-pagination-bullet-active { width: 40px; background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+                }
+            }
+
+            .tiers { padding-top: 22px; margin-bottom: 44px; }
+            .tiers {
+                .tier { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; padding: 16px 16px 12px; gap: 32px 0px; }
+                .tier {
+                    .iconWrapper { display: flex; align-items: flex-start; flex-direction: row; margin: 0px 0px 12px 0px; justify-content: space-between; gap: 0px 8px; }
+                    .iconWrapper {
+                        .icon { width: 64px; height: 64px; background-size: contain; background-position: left center; }
+                    }
+
+                    .title { @include text-header3; margin: 0px 0px 12px 0px; text-align: left; }
+
+                    .features { display: flex; flex-direction: column; gap: 8px 0px; }
+                    .features {
+                        .label { display: flex; gap: 0px 6px; @include text-small; }
+                        .label:before { content: ''; display: block; width: 14px; height: 14px; margin-top: 1px; background: url('~img/icon/membership/tick.svg'); }
+                    }
+
+                    .button { width: 100%; }
+                    .button.disabled { color: var(--color-text-primary); }
+                    .bottom { display: flex; flex-direction: column; gap: 8px 0px; }
+
+                    .priceWrapper { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); display: flex; align-items: baseline; gap: 0px 4px; }
+                    .priceWrapper {
+                        .price { @include text-header1; font-weight: 600; color: var(--color-text-primary); }
+                    }
+
+                    &.isCurrent {
+                        .priceWrapper { display: none; }
+                    }
                 }
 
-                .title { @include text-paragraph; margin: 0px 0px 4px 0px; text-align: left; }
-                .label { @include text-small; margin: 0px 0px 47px 0px; }
-                .button { width: 100%; }
-                .bottom { display: flex; flex-direction: column; gap: 11px 0px; }
-
-                .priceWrapper { @include text-small; @include text-overflow-nw; display: flex; align-items: baseline; gap: 0px 4px; }
-                .priceWrapper {
-                    .price { @include text-paragraph; font-weight: 600; }
+                .tier.green {
+                    .icon { background-image: url('~img/icon/payment/green.svg'); }
+                    .offerLabel { color: var(--color-teal); }
                 }
-
-				&.isCurrent {
-					.iconWrapper {
-						.offerLabel { border-color: var(--color-control-accent); background: none; color: var(--color-control-accent); }
-					}
-
-					.priceWrapper {
-						.price { display: none; }
-					}
-				}
+                .tier.blue {
+                    .icon { background-image: url('~img/icon/payment/blue.svg'); background-size: 60px; }
+                    .offerLabel { color: var(--color-blue); }
+                }
+                .tier.red {
+                    .icon { background-image: url('~img/icon/payment/red.svg'); }
+                    .offerLabel { color: var(--color-red); }
+                }
+                .tier.ice {
+                    .icon { background-image: url('~img/icon/payment/ice.svg'); }
+                    .offerLabel { color: var(--color-ice); }
+                }
+                .tier.default {
+                    .icon { background-image: url('~img/icon/payment/purple.svg'); }
+                    .offerLabel { color: var(--color-purple); }
+                }
             }
 
-            .tier.green { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25%); }
-            .tier.green {
-                .icon { background-image: url('~img/icon/payment/green.svg'); }
-				.offerLabel { color: var(--color-teal); }
+            .actions { margin-bottom: 58px; display: flex; gap: 0px 16px; justify-content: center; align-items: stretch; }
+            .actions {
+                .action { width: 312px; padding: 16px; border-radius: 24px; border: 1px solid var(--color-shape-secondary); }
+                .action {
+                    .icon {
+                        width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px;
+                        background-position: 50% 50%; background-repeat: no-repeat; background-color: var(--color-shape-highlight-medium);
+                    }
+                    .icon.activation { background-size: 20px; background-image: url('~img/icon/membership/activation.svg'); }
+                    .icon.contact { background-size: 28px; background-image: url('~img/icon/membership/contact.svg'); }
+
+                    .title { @include text-paragraph; font-weight: 500; margin-bottom: 2px; }
+                    .label { color: var(--color-text-secondary); margin-bottom: 12px; }
+                    .button { width: 100%; font-weight: 500; }
+                }
             }
-            .tier.blue { background: linear-gradient(180deg, #eaecfe 0%, #f4f4f4 25%); }
-            .tier.blue {
-                .icon { background-image: url('~img/icon/payment/blue.svg'); background-size: 60px; }
-				.offerLabel { color: var(--color-blue); }
-            }
-            .tier.red { background: linear-gradient(180deg, #ffebeb 0%, #f5f5f5 25%); }
-            .tier.red {
-                .icon { background-image: url('~img/icon/payment/red.svg'); }
-				.offerLabel { color: var(--color-red); }
-            }
-            .tier.ice { background: linear-gradient(180deg, #daf0ff 0%, #f4f4f4 25%); }
-            .tier.ice {
-                .icon { background-image: url('~img/icon/payment/ice.svg'); }
-				.offerLabel { color: var(--color-ice); }
-            }
-            .tier.default { background: linear-gradient(180deg, #ffeaff 0%, #f3f3f3 25%); }
-            .tier.default {
-                .icon { background-image: url('~img/icon/payment/purple.svg'); }
-				.offerLabel { color: var(--color-purple); }
+
+            .links { margin-bottom: 16px; display: flex; justify-content: center; gap: 0px 32px; }
+            .links {
+                .label { @include text-small; color: var(--color-text-secondary); }
+                .label:hover { color: var(--color-text-primary); }
             }
         }
 
-        .actionItems { margin-bottom: 29px !important; }
-        .actionItems {
-            .icon { width: 16px; height: 16px; background: url('~img/icon/payment/hyperlink.svg'); }
+        .membershipPurchased { padding-top: 32px; }
+        .membershipPurchased {
+
         }
     }
 }

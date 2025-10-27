@@ -5,18 +5,14 @@ import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
 
-const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const { interfaceLang, membershipTiers } = S.Common;
+	const { interfaceLang } = S.Common;
 	const { status } = membership;
 	const [ showAnnual, setShowAnnual ] = useState(true);
 	const tier = U.Data.getMembershipTier(membership.tier);
-	const cnt = [];
-
-	if (interfaceLang == J.Constant.default.interfaceLang) {
-		cnt.push('riccione');
-	};
+	const membershipTiers = S.Common.membershipTiers.filter(it => !it.isTest);
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -33,27 +29,35 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const links = [
-		{ url: J.Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
-		{ url: J.Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
+		{ url: J.Url.pricing, name: translate('popupSettingsMembershipFAQ'), type: 'MenuHelpMembershipFAQ' },
 		{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
+		{ url: J.Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
 	];
 
-	const onPay = (item: I.MembershipTier) => {
-		if (item.id == membership.tier) {
-			C.MembershipGetPortalLinkUrl((message: any) => {
-				if (message.url) {
-					Action.openUrl(message.url);
-				};
-			});
-		} else {
-			C.MembershipRegisterPaymentRequest(item.id, null, '', !showAnnual, (message) => {
-				if (message.url) {
-					Action.openUrl(message.url);
-				};
+	const actions = [
+		{ id: 'activation', button: translate('commonActivate'), title: translate('popupSettingsMembershipActionsActivationTitle'), text: translate('popupSettingsMembershipActionsActivationText') },
+		{ id: 'contact', button: translate('popupSettingsMembershipActionsContactReachUs'), title: translate('popupSettingsMembershipActionsContactTitle'), text: translate('popupSettingsMembershipActionsContactText') }
+	];
 
-				analytics.event('ClickMembership', { params: { tier }});
-			});
+	const onAction = (item: any) => {
+		switch (item.id) {
+			case 'activation': {
+				onCode();
+				break;
+			};
+			case 'contact': {
+				onContact();
+				break;
+			};
 		};
+	};
+
+	const onPay = (item: I.MembershipTier) => {
+		C.MembershipGetPortalLinkUrl((message: any) => {
+			if (message.url) {
+				Action.openUrl(message.url);
+			};
+		});
 	};
 
 	const TierItem = (props: any) => {
@@ -62,15 +66,12 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 		const periodPrice = showAnnual ? item.price : item.priceMonthly;
 		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
 		const cn = [ 'tier', `c${item.id}`, item.color ];
-		const offer = isCurrent ? translate('popupSettingsMembershipCurrent') : item.offer;
 
 		if (isCurrent) {
 			cn.push('isCurrent');
 		};
 
 		let period = '';
-		let buttonText = translate('popupSettingsMembershipSelectPlan');
-		let offerLabel = null;
 
 		if (isCurrent) {
 			if (membership.status == I.MembershipStatus.Pending) {
@@ -81,9 +82,7 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 			} else {
 				period = translate('popupSettingsMembershipForeverFree');
 			};
-
-			buttonText = translate('commonManage');
-		} else 
+		} else
 		if (item.period) {
 			const periodLabel = showAnnual ? translate('pluralYear') : translate('pluralMonth');
 
@@ -94,40 +93,43 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 			};
 		};
 
-		if (offer) {
-			offerLabel = <div className="offerLabel">{offer}</div>;
-		};
-
 		return (
-			<div 
-				className={cn.join(' ')}
-				onClick={() => onPay(item)}
-			>
+			<div className={cn.join(' ')}>
 				<div className="top">
 					<div className="iconWrapper">
 						<Icon />
-						{offerLabel}
 					</div>
 
 					<Title text={item.name} />
-					<Label text={item.description} />
+
+					<div className="features">
+						{item.features.map((el, idx) => <Label key={idx} text={el} />)}
+					</div>
 				</div>
 				<div className="bottom">
 					<div className="priceWrapper">
 						<span className="price">{price}</span>{period}
 					</div>
-					<Button className="c28" text={buttonText} />
+					{isCurrent ? (
+						<Button
+							className="disabled"
+							text={translate('popupSettingsMembershipCurrentPlan')}
+						/>
+					) : (
+						<Button
+							onClick={() => onPay(item)}
+							color="accent"
+							text={translate('popupSettingsMembershipSelectPlan')}
+						/>
+					)}
 				</div>
 			</div>
 		);
 	};
 
 	return (
-		<>
-			<Title 
-				className={cnt.join(' ')} 
-				text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
-			/>
+		<div className="membershipFree">
+			<Label text={translate('popupSettingsMembershipText')} />
 
 			<div className="switchWrapper">
 				<Label text={translate('popupSettingsMembershipSwitchMonthly')} />
@@ -140,8 +142,6 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 
 			<div className="tiers">
 				<Swiper
-					className="tiersList"
-					spaceBetween={16}
 					slidesPerView={3}
 					mousewheel={{ forceToAxis: true }}
 					pagination={membershipTiers.length > 3 ? { clickable: true } : false}
@@ -155,28 +155,23 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 				</Swiper>
 			</div>
 
-			{!tier?.price ? (
-				<div className="actionItems">
-					<div onClick={onCode} className="item redeemCode">
-						<Label text={translate('popupSettingsMembershipRedeemCode')} />
-						<Icon className="arrow" />
-					</div>
-				</div>
-			) : ''}
-
-			<div className="actionItems">
-				{links.map((item, i) => (
-					<div key={i} onClick={() => onLink(item)} className="item">
-						<Label text={item.name} />
-						<Icon />
+			<div className="actions">
+				{actions.map((item, idx) => (
+					<div key={idx} className="action">
+						<Icon className={item.id} />
+						<Title text={item.title} />
+						<Label text={item.text} />
+						<Button text={item.button} color="blank" onClick={() => onAction(item)} />
 					</div>
 				))}
 			</div>
 
-			<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={onContact} />
-		</>
+			<div className="links">
+				{links.map((item, i) => <Label key={i} onClick={() => onLink(item)} text={item.name} />)}
+			</div>
+		</div>
 	);
 
 }));
 
-export default PageMainSettingsMembership;
+export default PageMainSettingsMembershipIntro;

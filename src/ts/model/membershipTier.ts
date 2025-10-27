@@ -22,6 +22,7 @@ class MembershipTier implements I.MembershipTier {
 	features = [];
 	namesCount = 0;
 	offer = '';
+	isIntro = false;
 
 	constructor (props: Partial<I.MembershipTier>) {
 		this.id = Number(props.id) || I.TierType.None;
@@ -37,6 +38,7 @@ class MembershipTier implements I.MembershipTier {
 		this.features = Array.isArray(props.features) ? props.features : [];
 		this.namesCount = Number(props.namesCount) || 0;
 		this.offer = String(props.offer || '');
+		this.isIntro = Boolean(props.isIntro);
 	};
 
 	get color (): string {

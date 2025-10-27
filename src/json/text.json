@@ -192,7 +192,6 @@
 	"commonRelations": "Properties",
 	"commonSelectType": "Select Type",
 	"commonOpenType": "Open Type",
-	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
 	"commonShowMore": "Show more",
@@ -232,6 +231,7 @@
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
 	"commonSaveChat": "Save chat",
+	"commonActivate": "Activate",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1008,22 +1008,13 @@
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareQRCode": "QR code",
 
-	"popupSettingsMembershipTitle1": "Membership",
-	"popupSettingsMembershipTitle2": "Let's build together",
-	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
+	"popupSettingsMembershipTitle": "Membership",
+	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
 	"popupSettingsMembershipSelectPlan": "Select plan",
+	"popupSettingsMembershipCurrentPlan": "Current plan",
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual (-20%)",
-
-	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
-	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
-	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",
-	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in spaces, and a unique identity on the Anytype Network.",
-	"popupSettingsMembershipSlide2Title": "Support Digital Independence",
-	"popupSettingsMembershipSlide2Text": "Your contribution supports our team and endorses <a href=\"%s\">our&nbsp;vision</a> of a user-owned, secure, and collaborative digital network.",
-	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
-	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
@@ -1033,13 +1024,15 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
-	"popupSettingsMembershipRedeemCode": "I already have a code",
+	"popupSettingsMembershipActionsActivationTitle": "Activate Code",
+	"popupSettingsMembershipActionsActivationText": "If you bought a membership online or have an invitation, activate your code here",
+	"popupSettingsMembershipActionsContactTitle": "Have questions?",
+	"popupSettingsMembershipActionsContactText": "Use Anytype for education or didn’t find suitable plan? Reach us.",
+	"popupSettingsMembershipActionsContactReachUs": "Reach Us",
 
-	"popupSettingsMembershipLevelsDetails": "Membership plan details",
+	"popupSettingsMembershipFAQ": "FAQ",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
-
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
@@ -1144,13 +1137,12 @@
 
 	"popupApiCreateCreate": "Create new API key",
 
-	"popupMembershipPaidTitle": "Pick your unique name",
-
-	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
-	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
-	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
-
-	"popupMembershipPaidPlaceholder": "Enter your name",
+	"popupMembershipFinalizationTitle": "You’re all set!",
+	"popupMembershipFinalizationTitleWithName": "You’re all set with %s plan!",
+	"popupMembershipFinalizationText1": "Thanks for joining Anytype membership — we really appreciate it.",
+	"popupMembershipFinalizationText2": "The last step is to choose your .any name. This is your unique identity on the Anytype network and your personal web domain. Choose carefully — it can’t be changed later.",
+	"popupMembershipFinalizationPlaceholder": "Enter your name",
+	"popupMembershipFinalizationClaimName": "Claim Name",
 
 	"popupMembershipStatusWaitASecond": "Wait a second...",
 	"popupMembershipStatusNameAvailable": "This name is available!",
@@ -1166,7 +1158,6 @@
 	"popupMembershipActivationTitle": "Activate Your Code",
 	"popupMembershipActivationText": "Enter the code you received after purchase or from invatation. Your membership will be activated instantly.",
 	"popupMembershipActivationPlaceholder": "Paste activation code...",
-	"popupMembershipActivationActivate": "Activate",
 
 	"popupMembershipActivationError1": "Unknown error occured",
 	"popupMembershipActivationError2": "Bad input",

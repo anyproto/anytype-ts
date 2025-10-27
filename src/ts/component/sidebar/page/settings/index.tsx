@@ -84,7 +84,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
 					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
-					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') } : null
+					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle') } : null
 				].filter(it => it),
 			},
 			{

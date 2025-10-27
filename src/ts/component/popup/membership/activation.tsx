@@ -81,7 +81,7 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 			</div>
 
 			<div className="buttons">
-				<Button ref={buttonRef} className="c36" color="accent" text={translate('popupMembershipActivationActivate')} onClick={onSubmit} />
+				<Button ref={buttonRef} className="c36" color="accent" text={translate('commonActivate')} onClick={onSubmit} />
 				<Button className="c36" color="blank" text={translate('commonCancel')} onClick={() => close()} />
 			</div>
 
