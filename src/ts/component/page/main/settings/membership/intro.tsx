@@ -52,7 +52,6 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	const onPay = (item: I.MembershipTier) => {
 		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, !showAnnual, (message) => {
-			console.log('MESSAGE: ', message)
 			if (message.url) {
 				Action.openUrl(message.url);
 			};

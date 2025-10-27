@@ -997,11 +997,54 @@
             .section { display: flex; gap: 0px 16px; }
             .section {
                 .item {
-                    flex-shrink: 0; width: 312px; height: 246px; border-radius: 24px;
+                    flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between;
+                    width: 312px; height: 246px; border-radius: 24px; text-align: center;
                     padding: 24px 16px 16px; border: 1px solid var(--color-shape-secondary);
+                    position: relative; z-index: 2; background: var(--color-bg-primary);
+                }
+                .item {
+                    .title { @include text-paragraph; font-weight: 500; margin-bottom: 4px; }
+                    .label { @include text-small; color: var(--color-text-secondary); }
+                    .button { width: 100%; }
                 }
 
-                .item.current { border: 0px; box-shadow: 0 0 32px 0 rgba(203, 207, 255, 0.50); }
+                .item.current { border: 0px; text-align: left; z-index: 1; }
+                .item.current {
+                    .top { margin: 0px 8px; }
+                    .icon { margin-bottom: 12px; background-size: 60px; width: 60px; height: 60px; }
+                    .title { @include text-header2; font-weight: 500; }
+
+                    &.green {
+                        .icon { background-image: url('~img/icon/payment/green.svg'); }
+                    }
+                    &.ice {
+                        .icon { background-image: url('~img/icon/payment/ice.svg'); }
+                    }
+
+                    &.blue { box-shadow: 0 0 32px 0 rgba(203, 207, 255, 0.50); }
+                    &.blue {
+                        .icon { background-image: url('~img/icon/payment/blue.svg'); }
+                    }
+
+                    &.red { box-shadow: 0 0 32px 0 rgba(248, 181, 181, 0.50);  }
+                    &.red {
+                        .icon { background-image: url('~img/icon/payment/red.svg'); }
+                    }
+
+                    &.purple,
+                    &.default { box-shadow: 0 0 32px 0 rgba(249, 216, 248, 0.50);  }
+                    &.purple,
+                    &.default {
+                        .icon { background-image: url('~img/icon/payment/purple.svg'); }
+                    }
+                }
+
+                .item.anyName {
+                    .icon { width: 60px; height: 48px; margin-bottom: 10px; background: url('~img/icon/membership/anyname.svg'); }
+                    &.noName {
+                        .title { font-weight: 600; }
+                    }
+                }
             }
         }
     }

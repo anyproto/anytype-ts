@@ -11,14 +11,11 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 	const { membership } = S.Auth;
 	const { tierItem } = membership
 
-	console.log('MEMBERSHIP: ', membership)
-	console.log('TIER ITEM: ', tierItem)
-
 	return (
 		<>
 			<Title text={translate('popupSettingsMembershipTitle')} />
 
-			{membership.tierItem.isIntro ? <Intro {...props} /> : <Purchased {...props} />}
+			{tierItem.isIntro ? <Intro {...props} /> : <Purchased {...props} />}
 		</>
 	);
 
