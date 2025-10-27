@@ -1231,10 +1231,7 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		const { membership } = S.Auth;
-		const tier = this.getMembershipTier(membership.tier);
-
-		return !tier?.namesCount && this.isAnytypeNetwork();
+		return this.isAnytypeNetwork() && S.Auth.membership.tierItem.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

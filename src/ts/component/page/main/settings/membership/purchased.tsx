@@ -6,9 +6,7 @@ import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const { status } = membership;
-	const tier = U.Data.getMembershipTier(membership.tier);
-
+	const { status, tierItem } = membership;
 
 	return (
 		<div className="membershipPurchased">

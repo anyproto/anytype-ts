@@ -9,13 +9,12 @@ import Purchased from './purchased';
 const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 
 	return (
 		<>
 			<Title text={translate('popupSettingsMembershipTitle')} />
 
-			{tier.isIntro ? <Intro {...props} /> : <Purchased {...props} />}
+			{membership.tierItem.isIntro ? <Intro {...props} /> : <Purchased {...props} />}
 		</>
 	);
 
