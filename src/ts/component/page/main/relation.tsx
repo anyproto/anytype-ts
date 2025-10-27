@@ -65,14 +65,16 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	};
 
 	const close = () => {
-		if (!idRef.current) {
+		const id = idRef.current;
+		if (!id) {
 			return;
 		};
 
-		const close = !isPopup || (rootId == idRef.current);
+		const { isPopup, matchPopup } = props;
+		const close = !isPopup || (isPopup && (matchPopup?.params?.id != id));
 
 		if (close) {
-			Action.pageClose(idRef.current, true);
+			Action.pageClose(id, true);
 		};
 	};
 
