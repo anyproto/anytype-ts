@@ -13,16 +13,12 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 	const onIdentity = () => {
-		if (globalName) {
-			return;
+		if (!globalName) {
+			S.Menu.open('identity', {
+				element: '#settings-identity-badge',
+				horizontal: I.MenuDirection.Center,
+			});
 		};
-
-		S.Menu.open('identity', {
-			element: '#settings-identity-badge',
-			horizontal: I.MenuDirection.Center,
-		});
-
-		analytics.event('ClickUpgradePlanTooltip', { type: 'identity' });
 	};
 
 	const onMore = () => {

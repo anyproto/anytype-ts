@@ -80,7 +80,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 			};
 
 			U.Data.getMembershipStatus(true, (membership) => {
-				if (!membership || membership.isNone) {
+				if (!membership) {
 					setError(translate('pageMainMembershipError'));
 					return;
 				};

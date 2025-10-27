@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics, sidebar } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -79,12 +79,12 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'language', name: translate('pageSettingsLanguageTitle') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-				]
+				],
 			},
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
 					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
-					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle') } : null
+					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle') } : null,
 				].filter(it => it),
 			},
 			{
@@ -92,9 +92,9 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 					{ id: 'dataIndex', name: translate('popupSettingsLocalStorageTitle'), icon: 'storage' },
 					{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 					{ id: 'dataPublish', name: translate('popupSettingsDataManagementDataPublishTitle'), icon: 'sites' },
-					{ id: 'api', name: translate('popupSettingsApiTitle'), icon: 'api'  },
-				]
-			}
+					{ id: 'api', name: translate('popupSettingsApiTitle'), icon: 'api' },
+				],
+			},
 		];
 	};
 
@@ -147,9 +147,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const onBack = () => {
 		if (space) {
 			U.Space.openDashboard();
+			S.Common.setLeftSidebarState('vault', 'widget');
+		} else {
+			sidebar.leftPanelSubPageClose();
 		};
-
-		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 	const ItemSection = (item: any) => {
@@ -213,10 +214,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
-			if (!membership.isNone) {
-				const tierItem = U.Data.getMembershipTier(membership.tier);
+			console.log('membership', membership);
 
-				caption = <div className="caption">{tierItem.name}</div>;
+			if (!membership.isIntro) {
+				caption = <div className="caption">{membership.tierItem.name}</div>;
 			} else {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 			};

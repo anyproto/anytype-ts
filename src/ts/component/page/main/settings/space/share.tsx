@@ -244,7 +244,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 	return (
 		<>
 			<div>
-				<UpsellBanner components={[ 'members', 'space'  ]} route={analytics.route.settingsSpaceShare} />
+				<UpsellBanner components={[ 'members', 'space' ]} route={analytics.route.settingsSpaceShare} />
 			</div>
 
 			<div id="titleWrapper" className="titleWrapper">

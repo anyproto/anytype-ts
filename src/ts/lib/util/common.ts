@@ -891,9 +891,7 @@ class UtilCommon {
 				text: translate('popupInviteInviteConfirmText'),
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
-				onCancel: () => {
-					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
-				},
+				onCancel: () => Action.openSettings('spaceList', ''),
 			},
 		});
 	};
@@ -1401,7 +1399,7 @@ class UtilCommon {
 			param.FORBID_ATTR.push('style');
 		};
 
-		return DOMPurify.sanitize(s, param);
+		return DOMPurify.sanitize(s, param).toString();
 	};
 
 	/**
@@ -1945,22 +1943,6 @@ class UtilCommon {
 			Storage.set('whatsNew', true);
 			Storage.setHighlight('whatsNew', true);
 		};
-	};
-
-	checkCanMembershipUpgrade (): boolean {
-		const { membership } = S.Auth;
-
-		return [
-			I.TierType.None,
-			I.TierType.Explorer,
-			I.TierType.Starter,
-			I.TierType.Pioneer,
-			I.TierType.Free,
-			I.TierType.Pro,
-			I.TierType.Plus,
-			I.TierType.Ultra,
-			I.TierType.CoCreator,
-		].includes(membership.tier);
 	};
 
 	getMembershipPeriodLabel (tier: I.MembershipTier): string {

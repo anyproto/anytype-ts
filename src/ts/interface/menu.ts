@@ -71,15 +71,17 @@ export interface Menu {
 };
 
 export interface MenuRef {
-	rebind: () => void,
-	unbind: () => void,
+	rebind: () => void;
+	unbind: () => void;
 	getItems: () => any[];
-	getIndex: () => number,
-	setIndex: (i: number) => void,
-	onClick?: (e: any, item: any) => void,
-	onOver?: (e: any, item: any) => void,
-	getData?: () => any,
-	getListRef?: () => any,
+	getIndex: () => number;
+	setIndex: (i: number) => void;
+	onClick?: (e: any, item: any) => void;
+	onOver?: (e: any, item: any) => void;
+	getData?: () => any;
+	getFilterRef?: () => any;
+	getListRef?: () => any;
+	beforePosition?: () => void;
 };
 
 export interface MenuItem {

@@ -14,7 +14,6 @@ class MembershipTier implements I.MembershipTier {
 	description = '';
 	colorStr = '';
 	nameMinLength = 0;
-	isTest = false;
 	periodType = 0;
 	period = 0;
 	priceCents = 0;
@@ -23,6 +22,7 @@ class MembershipTier implements I.MembershipTier {
 	namesCount = 0;
 	offer = '';
 	isIntro = false;
+	manageUrl = '';
 
 	constructor (props: Partial<I.MembershipTier>) {
 		this.id = Number(props.id) || I.TierType.None;
@@ -30,7 +30,6 @@ class MembershipTier implements I.MembershipTier {
 		this.description = String(props.description || '');
 		this.colorStr = String(props.colorStr || '');
 		this.nameMinLength = Number(props.nameMinLength) || 0;
-		this.isTest = Boolean(props.isTest);
 		this.periodType = Number(props.periodType) || 0;
 		this.period = Number(props.period) || 0;
 		this.priceCents = Number(props.priceCents) || 0;
@@ -39,6 +38,7 @@ class MembershipTier implements I.MembershipTier {
 		this.namesCount = Number(props.namesCount) || 0;
 		this.offer = String(props.offer || '');
 		this.isIntro = Boolean(props.isIntro);
+		this.manageUrl = String(props.manageUrl || '');
 	};
 
 	get color (): string {
@@ -55,18 +55,6 @@ class MembershipTier implements I.MembershipTier {
 
 	get isNone (): boolean {
 		return this.id == I.TierType.None;
-	};
-
-	get isStarter (): boolean {
-		return this.id == I.TierType.Starter;
-	};
-
-	get isBuilder (): boolean {
-		return [ I.TierType.BuilderTest, I.TierType.Builder ].includes(this.id);
-	};
-
-	get isCreator (): boolean {
-		return [ I.TierType.CoCreatorTest, I.TierType.CoCreator ].includes(this.id);
 	};
 
 };

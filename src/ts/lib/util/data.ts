@@ -302,9 +302,8 @@ class UtilData {
 
 	/**
 	 * Handles one-time authentication tasks after login.
-	 * @param {boolean} noTierCache - Whether to skip tier cache.
 	 */
-	onAuthOnce (noTierCache: boolean) {
+	onAuthOnce () {
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
@@ -361,8 +360,10 @@ class UtilData {
 
 		this.getMembershipTiers(false, () => this.getMembershipStatus(false));
 		U.Subscription.createGlobal(() => {
-			Storage.clearDeletedSpaces(false);
-			Storage.clearDeletedSpaces(true);
+			if (S.Record.spaceMap.size) {
+				Storage.clearDeletedSpaces(false);
+				Storage.clearDeletedSpaces(true);
+			};
 		});
 
 		analytics.event('OpenAccount');
@@ -767,7 +768,7 @@ class UtilData {
 	 * @param {I.ObjectLayout} layout - The object layout.
 	 * @returns {I.ContentLink} The checked link settings.
 	 */
-	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout): I.ContentLink {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
 		content = U.Common.objectCopy(content);
@@ -1229,10 +1230,7 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		const { membership } = S.Auth;
-		const tier = this.getMembershipTier(membership.tier);
-
-		return !tier?.namesCount && this.isAnytypeNetwork();
+		return this.isAnytypeNetwork() && S.Auth.membership.tierItem.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

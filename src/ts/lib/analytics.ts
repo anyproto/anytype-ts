@@ -1,4 +1,4 @@
-import * as amplitude from 'amplitude-js';
+import amplitude from 'amplitude-js';
 import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 
 const KEYS = [ 

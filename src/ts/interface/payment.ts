@@ -75,10 +75,8 @@ export interface Membership {
 	nameType?: NameType;
 	userEmail?: string;
 	subscribeToNewsletter?: boolean;
-	isNone?: boolean;
-	isStarter?: boolean;
-	isBuilder?: boolean;
-	isCreator?: boolean;
+	tierItem?: MembershipTier;
+	isIntro?: boolean;
 };
 
 export interface MembershipTier {
@@ -87,7 +85,6 @@ export interface MembershipTier {
 	description: string;
 	colorStr: string;
 	nameMinLength: number;
-	isTest: boolean;
 	periodType: MembershipTierDataPeriodType;
 	period: number;
 	priceCents: number;
@@ -98,8 +95,7 @@ export interface MembershipTier {
 	color?: string;
 	price?: number;
 	priceMonthly?: number;
-	isStarter?: boolean;
-	isBuilder?: boolean;
-	isCreator?: boolean;
 	isIntro?: boolean;
+	isUpgradeable?: boolean;
+	manageUrl?: string;
 };

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, translate, Action } from 'Lib';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -16,7 +16,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 		U.Data.getMembershipTiers(true, () => {
 			U.Data.getMembershipStatus(true, (membership: I.Membership) => {
-				if (!membership || membership.isNone) {
+				if (!membership) {
 					setError(translate('pageMainMembershipError'));
 					return;
 				};
@@ -31,6 +31,8 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 						} else
 						if (status == I.MembershipStatus.Finalization) {
 							S.Popup.open('membershipFinalization', { data: { tier } });
+						} else {
+							Action.openSettings('membership', '');
 						};
 					},
 				});

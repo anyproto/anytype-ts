@@ -21,17 +21,17 @@
 .sidebar {
 	@import "./page/common";
 
-	.pageWrapper, .subPageWrapper { padding: 8px 0px; flex-shrink: 0; position: relative; flex-direction: column; }
+	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
 		&.isClosed { overflow: hidden; }
 	}
 
-	.pageWrapper { z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
+	.pageWrapper { padding: 8px 0px 0px 0px; z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
 	}
 
-	.subPageWrapper { width: 336px; display: flex; }
+	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
 	.subPageWrapper {
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
 

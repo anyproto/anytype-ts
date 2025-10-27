@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
@@ -8,110 +8,40 @@ import HistoryRight from './history/right';
 
 const Diff = require('diff');
 
-interface State {
-	isLoading: boolean;
-};
+const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
-const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
+	const [ isLoading, setLoading ] = useState(false);
+	const { isPopup } = props;
+	const rootId = keyboard.getRootId(isPopup);
+	const ns = U.Common.getEventNamespace(isPopup);
+	const cmd = keyboard.cmdKey();
+	const selection = S.Common.getRef('selectionProvider');
+	const nodeRef = useRef(null);
+	const leftRef = useRef(null);
+	const rightRef = useRef(null);
 
-	node = null;
-	refSideLeft = null;
-	refSideRight = null;
-	state = {
-		isLoading: false,
-	};
-
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.getWrapperWidth = this.getWrapperWidth.bind(this);
-		this.renderDiff = this.renderDiff.bind(this);
-		this.setVersion = this.setVersion.bind(this);
-		this.setLoading = this.setLoading.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onClose = this.onClose.bind(this);
-	};
-
-	render () {
-		const { isLoading } = this.state;
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-
-		return (
-			<div ref={node => this.node = node}>
-				{isLoading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
-
-				<div id="body" className="flex">
-					<HistoryLeft 
-						ref={ref => this.refSideLeft = ref} 
-						{...this.props} 
-						rootId={rootId} 
-						onCopy={this.onCopy} 
-						getWrapperWidth={this.getWrapperWidth}
-					/>
-
-					<HistoryRight 
-						ref={ref => this.refSideRight = ref} 
-						{...this.props} 
-						rootId={rootId}
-						renderDiff={this.renderDiff}
-						setVersion={this.setVersion}
-						setLoading={this.setLoading}
-					/>
-				</div>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this.resize();
-		this.rebind();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-		this.rebind();
-	};
-
-	componentWillUnmount(): void {
-		this.unbind();
-
-		S.Block.clear(this.getRootId());
-		S.Common.diffSet([]);
-	};
-
-	unbind () {
-		const { isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
+	const unbind = () => {
 		const events = [ 'keydown' ];
 
-		$(window).off(events.map(it => `${it}.history${namespace}`).join(' '));
+		$(window).off(events.map(it => `${it}.history${ns}`).join(' '));
 	};
 
-	rebind () {
-		const { isPopup } = this.props;
+	const rebind = () => {
 		const win = $(window);
-		const namespace = U.Common.getEventNamespace(isPopup);
 
-		this.unbind();
-		win.on('keydown.history' + namespace, e => this.onKeyDown(e));
+		unbind();
+		win.on(`keydown.history${ns}`, e => onKeyDown(e));
 	};
 
-	onKeyDown (e: any) {
-		const cmd = keyboard.cmdKey();
-
-		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => this.onCopy());
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => onCopy());
 	};
 
-	onClose () {
-		const rootId = this.getRootId();
-
+	const onClose = () => {
 		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
 	};
 
-	onCopy () {
-		const selection = S.Common.getRef('selectionProvider');
-		const rootId = this.getRootId();
+	const onCopy = () => {
 		const { focused } = focus.state;
 
 		let ids = selection?.get(I.SelectType.Block, true) || [];
@@ -123,8 +53,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		Action.copyBlocks(rootId, ids, false);
 	};
 
-	renderDiff (previousId: string, diff: any[]) {
-		const node = $(this.node);
+	const renderDiff = (previousId: string, diff: any[]) => {
+		const node = $(nodeRef.current);
 
 		// Remove all diff classes
 		for (const i in I.DiffType) {
@@ -139,7 +69,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		let elements = [];
 
 		diff.forEach(it => {
-			elements = elements.concat(this.getElements(previousId, it));
+			elements = elements.concat(getElements(previousId, it));
 		});
 
 		elements = elements.map(it => ({ ...it, element: $(it.element) })).filter(it => it.element.length);
@@ -149,17 +79,16 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				it.element.addClass(U.Data.diffClass(it.type));
 			});
 
-			this.scrollToElement(elements[0].element);
+			scrollToElement(elements[0].element);
 		};
 	};
 
-	scrollToElement (element: any) {
+	const scrollToElement = (element: any) => {
 		if (!element || !element.length) {
 			return;
 		};
 
-		const node = $(this.node);
-		const container = node.find('#historySideLeft');
+		const container = $(leftRef.current?.getNode());
 
 		if (!container || !container.length) {
 			return;
@@ -173,9 +102,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		container.scrollTop(Math.max(y, ch) - ch);
 	};
 
-	getElements (previousId: string, event: any) {
+	const getElements = (previousId: string, event: any) => {
 		const { type, data } = event;
-		const rootId = this.getRootId();
 		const oldContextId = [ rootId, previousId ].join('-');
 
 		let elements = [];
@@ -253,7 +181,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				};
 
 				if (type == I.DiffType.Change) {
-					elements = elements.concat(this.getBlockChangeElements(data.id));
+					elements = elements.concat(getBlockChangeElements(data.id));
 				} else {
 					elements.push({ type, element: `#block-${data.id}` });
 				};
@@ -271,7 +199,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetDiv':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				elements = elements.concat(this.getBlockChangeElements(data.id));
+				elements = elements.concat(getBlockChangeElements(data.id));
 				break;
 			};
 
@@ -331,8 +259,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 			case 'ObjectDetailsSet': 
 			case 'ObjectDetailsAmend': {
-				const rootId = this.getRootId();
-
 				if (data.id != rootId) {
 					break;
 				};
@@ -363,7 +289,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						const blocks = S.Block.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
 
 						blocks.forEach(it => {
-							elements = elements.concat(this.getBlockChangeElements(it.id));
+							elements = elements.concat(getBlockChangeElements(it.id));
 						});
 					};
 				};
@@ -375,18 +301,17 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		return elements;
 	};
 
-	getBlockChangeElements (id: string) {
+	const getBlockChangeElements = (id: string) => {
 		return [
 			{ type: I.DiffType.None, element: `#block-${id}` },
 			{ type: I.DiffType.Change, element: `#block-${id} > .wrapContent` },
 		];
 	};
 
-	resize () {
-		const { isPopup } = this.props;
-		const node = $(this.node);
-		const sideLeft = node.find('#historySideLeft');
-		const sideRight = node.find('#historySideRight');
+	const resize = () => {
+		const node = $(nodeRef.current);
+		const sideLeft = $(leftRef.current?.getNode());
+		const sideRight = $(rightRef.current?.getNode());
 		const editorWrapper = node.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
 		const container = U.Common.getPageContainer(isPopup);
@@ -408,24 +333,23 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		sideLeft.css(cssl);
-		editorWrapper.css({ width: !this.isSetOrCollection() ? this.getWrapperWidth() : '' });
+		editorWrapper.css({ width: !isSetOrCollection() ? getWrapperWidth() : '' });
 	};
 
-	getWrapperWidth (): number {
-		return this.getWidth(U.Data.getLayoutWidth(this.props.rootId));
+	const getWrapperWidth = (): number => {
+		return getWidth(U.Data.getLayoutWidth(rootId));
 	};
 
-	getWidth (w: number) {
+	const getWidth = (w: number) => {
 		w = Number(w) || 0;
 
-		const node = $(this.node);
-		const sideLeft = node.find('#historySideLeft');
+		const sideLeft = $(leftRef.current?.getNode());
 		const min = 300;
 
 		let mw = sideLeft.width();
 		let width = 0;
 
-		if (this.isSetOrCollection()) {
+		if (isSetOrCollection()) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
@@ -438,33 +362,68 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		return Math.max(min, width);
 	};
 
-	getGroupId (time: number) {
-		return U.Date.date('M d, Y', time);
-	};
-
-	getRootId () {
-		return keyboard.getRootId(this.props.isPopup);
-	};
-
-	isSetOrCollection (): boolean {
-		const rootId = this.getRootId();
+	const isSetOrCollection = (): boolean => {
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		return U.Object.isInSetLayouts(root?.layout);
 	};
 
-	setVersion (version: I.HistoryVersion) {
-		this.refSideLeft?.forceUpdate();
-		this.refSideLeft?.getHeaderRef()?.setVersion(version);
-		this.refSideLeft?.getHeadRef()?.forceUpdate();
+	const setVersion = (version: I.HistoryVersion) => {
+		if (leftRef.current) {
+			leftRef.current.forceUpdate();
+			leftRef.current.getHeaderRef()?.setVersion(version);
+			leftRef.current.getHeadRef()?.forceUpdate();
+		};
 
 		$(window).trigger('updateDataviewData');
 	};
 
-	setLoading (v: boolean) {
-		this.setState({ isLoading: v });
-	};
+	useEffect(() => {
+		resize();
+		rebind();
 
-});
+		return () => {
+			unbind();
+
+			S.Block.clear(rootId);
+			S.Common.diffSet([]);
+		};
+	}, []);
+
+	useEffect(() => {
+		resize();
+		rebind();
+	});
+
+	useImperativeHandle(ref, () => ({
+		resize,
+	}));
+
+	return (
+		<div ref={nodeRef}>
+			{isLoading ? <Loader id="loader" fitToContainer={true} isPopup={isPopup} /> : ''}
+
+			<div id="body" className="flex">
+				<HistoryLeft 
+					ref={leftRef} 
+					{...props} 
+					rootId={rootId} 
+					onCopy={onCopy} 
+					getWrapperWidth={getWrapperWidth}
+				/>
+
+				<HistoryRight 
+					ref={rightRef} 
+					{...props} 
+					rootId={rootId}
+					renderDiff={renderDiff}
+					setVersion={setVersion}
+					setLoading={setLoading}
+				/>
+			</div>
+		</div>
+	);
+	
+}));
 
 export default PageMainHistory;

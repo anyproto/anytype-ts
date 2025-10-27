@@ -507,7 +507,7 @@ class Action {
 
 						U.Data.onInfo(account.info);
 						U.Data.onAuthWithoutSpace(routeParam);
-						U.Data.onAuthOnce(true);
+						U.Data.onAuthOnce();
 					});
 				});
 			});
@@ -910,28 +910,29 @@ class Action {
 		};
 	};
 
-	membershipUpgrade (tier?: I.TierType) {
-		if (!U.Common.checkCanMembershipUpgrade()) {
-			this.membershipUpgradeViaEmail();
-			return;
+	membershipUpgrade (event?: any) {
+		const tier = S.Auth.membership.tierItem;
+
+		if (!tier.isUpgradeable) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmMembershipUpgradeTitle'),
+					text: translate('popupConfirmMembershipUpgradeText'),
+					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					canCancel: false
+				}
+			});
+		} else 
+		if (tier.manageUrl) {
+			this.openUrl(tier.manageUrl);
+		} else {
+			this.openSettings('membership', '');
 		};
 
-		U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
-	};
-
-	/**
-	 * Opens a membership upgrade confirmation popup.
-	 */
-	membershipUpgradeViaEmail () {
-		S.Popup.open('confirm', {
-			data: {
-				title: translate('popupConfirmMembershipUpgradeTitle'),
-				text: translate('popupConfirmMembershipUpgradeText'),
-				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
-				canCancel: false
-			}
-		});
+		if (event) {
+			analytics.event('ClickUpgradePlanTooltip', event);
+		};
 	};
 
 	/**
@@ -1089,16 +1090,18 @@ class Action {
 		});
 	};
 
-	openSettings (id: string, route: string) {
-		U.Object.openRoute({ 
+	openSettings (id: string, route: string, param?: Partial<I.RouteParam>) {
+		const object = { 
 			id, 
 			layout: I.ObjectLayout.Settings,
-			_routeParam_: { 
-				additional: [ 
-					{ key: 'route', value: route },
-				],
-			},
-		});
+			_routeParam_: { additional: [] },
+		};
+
+		if (route) {
+			object._routeParam_.additional.push({ route });
+		};
+
+		U.Object.openRoute(object, param);
 	};
 
 	openSpaceShare (route: string) {

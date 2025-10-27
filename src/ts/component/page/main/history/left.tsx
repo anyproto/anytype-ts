@@ -11,6 +11,7 @@ interface Props extends I.PageComponent {
 
 interface Ref {
 	forceUpdate: () => void;
+	getNode: () => any;
 	getHeaderRef: () => any;
 	getHeadRef: () => any;
 };
@@ -67,6 +68,7 @@ const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
 	});
 
 	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
 		forceUpdate: () => setDummy(dummy + 1),
 		getHeaderRef: () => headerRef.current,
 		getHeadRef: () => headRef.current,

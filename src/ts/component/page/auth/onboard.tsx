@@ -72,7 +72,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 		U.Data.onInfo(account.info);
-		U.Data.onAuthOnce(true);
+		U.Data.onAuthOnce();
 
 		S.Common.spaceSet('');
 

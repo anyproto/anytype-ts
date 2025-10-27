@@ -123,7 +123,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 
 	const Component = Components[c] || null;
 	const { isShown, isRed } = getConditions(c);
-	const canShow = U.Common.checkCanMembershipUpgrade()
+	const canShow = membership.tierItem.isUpgradeable
 		&& U.Space.isMyOwner()
 		&& U.Data.isAnytypeNetwork()
 		&& tier

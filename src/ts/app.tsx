@@ -11,16 +11,14 @@ import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, Icon, SidebarLeft, MenuBar } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
-require('pdfjs-dist/build/pdf.worker.entry.js');
-
 configure({ enforceActions: 'never' });
 
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
-import 'swiper/scss';
-import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
-import 'react-pdf/dist/cjs/Page/TextLayer.css';
+import 'swiper/css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
@@ -282,7 +280,7 @@ const App: FC = () => {
 						};
 
 						U.Data.onInfo(account.info);
-						U.Data.onAuthOnce(false);
+						U.Data.onAuthOnce();
 					});
 				});
 

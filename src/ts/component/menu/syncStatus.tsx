@@ -294,6 +294,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	onIncentiveButtonClick (id: string) {
+		const route = analytics.route.syncStatus;
+
 		switch (id) {
 			case 'storage': {
 				const { files } = S.Auth.getNotSynced();
@@ -301,17 +303,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
 					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
 				} else {
-					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
+					Action.openSettings('spaceStorage', route);
 				};
 				break;
 			};
 
 			case 'upgrade': {
-				const usage = Math.round(U.Common.calculateStorageUsage());
-
-				Action.membershipUpgrade();
-
-				analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.syncStatus });
+				Action.membershipUpgrade({ 
+					type: 'StorageExceeded', 
+					usage: Math.round(U.Common.calculateStorageUsage()), 
+					route,
+				});
 				break;
 			};
 		};

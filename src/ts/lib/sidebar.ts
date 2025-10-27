@@ -39,32 +39,33 @@ class Sidebar {
 		this.initObjects(isPopup);
 
 		const { space } = S.Common;
-		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
-		const keys = [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft ];
 		const { default: defaultWidth } = J.Size.sidebar.width;
+		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
-		if (stored) {
-			for (const key of keys) {
-				const data = stored[key];
-
-				if (!data) {
-					continue;
-				};
-
-				if ('undefined' == typeof(data.isClosed)) {
-					data.isClosed = !data.width;
-				};
-
-				if ((key == I.SidebarPanel.SubLeft) && !space) {
-					data.isClosed = true;
-				};
-
-				this.setData(key, isPopup, data);
+		for (const panel of [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft, I.SidebarPanel.Right ]) {
+			if (isPopup && (panel != I.SidebarPanel.Right)) {
+				continue;
 			};
-		} else {
-			this.setData(I.SidebarPanel.Left, isPopup, { width: defaultWidth, isClosed: false });
-			this.setData(I.SidebarPanel.SubLeft, isPopup, { width: defaultWidth, isClosed: space ? false : true });
-			this.setData(I.SidebarPanel.Right, isPopup, { width: defaultWidth, isClosed: true });
+
+			const data = stored?.[panel];
+
+			let isClosed = true;
+			let width = defaultWidth;
+
+			if (data) {
+				isClosed = Boolean(data.isClosed);
+				width = this.limitWidth(data.width);
+			};
+
+			if ((panel == I.SidebarPanel.SubLeft) && !space) {
+				isClosed = true;
+			};
+
+			if (panel == I.SidebarPanel.Right) {
+				isClosed = true;
+			};
+
+			this.setData(panel, isPopup, { width, isClosed });
 		};
 
 		this.resizePage(isPopup, null, null, false);
@@ -91,7 +92,7 @@ class Sidebar {
 		const ns = U.Common.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
 
-		return this.panelData[key] || { width: J.Size.sidebar.width.default, isClosed: false };
+		return this.panelData[key] || { width: J.Size.sidebar.width.default, isClosed: true };
 	};
 
 	/**
@@ -104,7 +105,7 @@ class Sidebar {
 		const key = [ panel, ns ].join('');
 
 		this.panelData = Storage.get(STORAGE_KEY, isLocal) || {};
-		this.panelData[key] = Object.assign(this.panelData[panel] || {}, v);
+		this.panelData[key] = Object.assign(this.panelData[key] || {}, v);
 
 		this.setStyle(panel, isPopup, this.panelData[key]);
 		Storage.set(STORAGE_KEY, this.panelData, isLocal);
