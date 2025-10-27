@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject, Loader } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics, Action } from 'Lib';
 
 const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -17,9 +17,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
 
 	const onMembership = (type: string) => {
-		S.Popup.closeAll(null, () => {
-			U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
-		});
+		S.Popup.closeAll(null, () => Action.membershipUpgrade());
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
 	};

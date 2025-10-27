@@ -18,6 +18,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const cn = [ `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const route = analytics.route.widget;
 
 	if (isSpaceOwner && requestCnt) {
 		cn.push('withCnt');
@@ -30,12 +31,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		switch (item.id) {
 			case 'member': {
 				Action.openSpaceShare(analytics.route.navigation);
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
+				analytics.event('ClickSpaceWidgetInvite', { route });
 				break;
 			};
 
 			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+				Action.openSettings('spaceIndex', route);
 				break;
 			};
 

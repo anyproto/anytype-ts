@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import { MenuItemVertical, Title, Label } from 'Component';
-import { I, S, keyboard, Renderer, U } from 'Lib';
+import { I, S, U, keyboard, Renderer, Action } from 'Lib';
 
 const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 
@@ -30,7 +30,7 @@ const MenuSyncStatusInfo = forwardRef<{}, I.Menu>((props, ref) => {
 			};
 
 			case 'upgradeMembership': {
-				U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings });
+				Action.membershipUpgrade();
 				break;
 			};
 		};
