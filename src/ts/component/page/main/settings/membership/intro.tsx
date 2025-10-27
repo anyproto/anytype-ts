@@ -51,9 +51,12 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const onPay = (item: I.MembershipTier) => {
-		if (item.manageUrl) {
-			Action.openUrl(item.manageUrl);
-		};
+		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, !showAnnual, (message) => {
+			console.log('MESSAGE: ', message)
+			if (message.url) {
+				Action.openUrl(item.manageUrl);
+			};
+		});
 	};
 
 	const TierItem = (props: any) => {

@@ -9,6 +9,10 @@ import Purchased from './purchased';
 const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
+	const { tierItem } = membership
+
+	console.log('MEMBERSHIP: ', membership)
+	console.log('TIER ITEM: ', tierItem)
 
 	return (
 		<>
