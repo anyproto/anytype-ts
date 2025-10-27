@@ -856,7 +856,7 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 
 				C.ChatAddMessage(rootId, message, (message: any) => {
-					scrollToMessage(message.messageId, true);
+					scrollToBottom();
 					clear();
 
 					analytics.event('SentMessage', { type: messageType });
