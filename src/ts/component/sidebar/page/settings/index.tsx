@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics, sidebar } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -147,9 +147,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const onBack = () => {
 		if (space) {
 			U.Space.openDashboard();
+			S.Common.setLeftSidebarState('vault', 'widget');
+		} else {
+			sidebar.leftPanelSubPageClose();
 		};
-
-		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 	const ItemSection = (item: any) => {
