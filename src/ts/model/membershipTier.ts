@@ -57,18 +57,6 @@ class MembershipTier implements I.MembershipTier {
 		return this.id == I.TierType.None;
 	};
 
-	get isStarter (): boolean {
-		return this.id == I.TierType.Starter;
-	};
-
-	get isBuilder (): boolean {
-		return [ I.TierType.BuilderTest, I.TierType.Builder ].includes(this.id);
-	};
-
-	get isCreator (): boolean {
-		return [ I.TierType.CoCreatorTest, I.TierType.CoCreator ].includes(this.id);
-	};
-
 };
 
 export default MembershipTier;

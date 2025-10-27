@@ -84,7 +84,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
 					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
-					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') } : null,
+					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle') } : null,
 				].filter(it => it),
 			},
 			{
@@ -213,10 +213,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
-			if (!membership.isNone) {
-				const tierItem = U.Data.getMembershipTier(membership.tier);
+			console.log('membership', membership);
 
-				caption = <div className="caption">{tierItem.name}</div>;
+			if (!membership.isIntro) {
+				caption = <div className="caption">{membership.tierItem.name}</div>;
 			} else {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 			};
