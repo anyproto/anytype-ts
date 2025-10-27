@@ -54,7 +54,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, !showAnnual, (message) => {
 			console.log('MESSAGE: ', message)
 			if (message.url) {
-				Action.openUrl(item.manageUrl);
+				Action.openUrl(message.url);
 			};
 		});
 	};
