@@ -51,9 +51,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const onPay = (item: I.MembershipTier) => {
-		if (item.manageUrl) {
-			Action.openUrl(item.manageUrl);
-		};
+		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, !showAnnual, (message) => {
+			if (message.url) {
+				Action.openUrl(message.url);
+			};
+		});
 	};
 
 	const TierItem = (props: any) => {
@@ -124,7 +126,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	return (
-		<div className="membershipFree">
+		<div className="membershipIntro">
 			<Label text={translate('popupSettingsMembershipText')} />
 
 			<div className="switchWrapper">

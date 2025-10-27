@@ -1230,7 +1230,7 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		return this.isAnytypeNetwork() && S.Auth.membership.tierItem.isIntro;
+		return this.isAnytypeNetwork() && S.Auth.membership?.tierItem?.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

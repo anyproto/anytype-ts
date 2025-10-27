@@ -1034,6 +1034,20 @@
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
+	"popupSettingsMembershipCurrentTier": "You're on the %s %s plan",
+	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
+	"popupSettingsMembershipManage": "Manage",
+
+	"popupSettingsMembershipPeriod0": "",
+	"popupSettingsMembershipPeriod1": "unlimited",
+	"popupSettingsMembershipPeriod2": "daily",
+	"popupSettingsMembershipPeriod3": "weekly",
+	"popupSettingsMembershipPeriod4": "monthly",
+	"popupSettingsMembershipPeriod5": "annual",
+
+	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
+	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 	"popupSettingsOnboardingStoragePath": "Vault Data Location",

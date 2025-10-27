@@ -214,8 +214,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
-			console.log('membership', membership);
-
 			if (!membership.isIntro) {
 				caption = <div className="caption">{membership.tierItem.name}</div>;
 			} else {
