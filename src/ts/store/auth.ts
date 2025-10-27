@@ -14,7 +14,7 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public startingId: Map<string, string> = new Map();
-	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
+	public membershipData: I.Membership = null;
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	
 	constructor () {
@@ -55,7 +55,7 @@ class AuthStore {
 	};
 
 	get membership (): I.Membership {
-		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
+		return this.membershipData || new M.Membership({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
 	};
 
 	/**

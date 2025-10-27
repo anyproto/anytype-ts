@@ -97,7 +97,7 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(true);
+			U.Data.onAuthOnce();
 
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});

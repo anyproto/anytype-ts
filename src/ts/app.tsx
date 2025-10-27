@@ -280,7 +280,7 @@ const App: FC = () => {
 						};
 
 						U.Data.onInfo(account.info);
-						U.Data.onAuthOnce(false);
+						U.Data.onAuthOnce();
 					});
 				});
 
