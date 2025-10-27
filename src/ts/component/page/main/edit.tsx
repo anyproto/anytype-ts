@@ -51,10 +51,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				/>
 			</div>
 			
-			<Footer 
-				component="mainObject"
-				{...props} 
-			/>
+			<Footer component="mainObject" {...props} />
 		</>
 	);
 

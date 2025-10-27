@@ -387,6 +387,8 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		getFilterRef: () => filterRef.current,
+		getListRef: () => listRef.current,
 		onClick,
 	}), []);
 

@@ -1,17 +1,13 @@
-import React, { forwardRef, useImperativeHandle, MouseEvent, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, MouseEvent, useRef, useState, useEffect, useMemo } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { U } from 'Lib';
-import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
-import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
-pdfjs.GlobalWorkerOptions.useWorkerFetch = true;
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
+pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
 
 interface Props {
-	id: string;
 	src: string;
 	page: number;
 	onDocumentLoad: (result: any) => void;
@@ -24,7 +20,6 @@ interface MediaPdfRefProps {
 };
 
 const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
-	id = '',
 	src = '',
 	page = 0,
 	onDocumentLoad,
@@ -38,10 +33,10 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 	const resizeObserver = new ResizeObserver(() => {
 		raf(() => resize());
 	});
-	const options = { 
+	const options = useMemo(() => ({ 
 		isEvalSupported: false, 
 		cMapUrl: U.Common.fixAsarPath('./cmaps/'),
-	};
+	}), []);
 
 	const resize = () => {
 		if (frame.current) {

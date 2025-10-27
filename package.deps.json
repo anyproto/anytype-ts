@@ -80,5 +80,9 @@
     {
 		"from": "node_modules/mime-types",
 		"to": "node_modules/mime-types"
+    },
+	{
+		"from": "node_modules/mime-db",
+		"to": "node_modules/mime-db"
     }
 ]

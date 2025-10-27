@@ -201,7 +201,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (errorId == item.id) {
 				cn.push('hasError');
-				alert = <Icon className="alert" />
+				alert = <Icon className="alert" />;
 			};
 
 			onClickHandler = () => onClick(item);

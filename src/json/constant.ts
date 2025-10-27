@@ -170,6 +170,7 @@ export default {
 		type:			 'type',
 		header:			 'header',
 		chat:			 'chat',
+		widgetTypes:	 'types',
 	},
 
 	widgetId: {

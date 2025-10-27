@@ -323,6 +323,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		forceUpdate: () => setDummy(dummy + 1),
 		onClick: onClickHandler,
 		getData: () => data,
+		getFilterRef: () => filterRef.current,
 		getListRef: () => listRef.current,
 	}), []);
 

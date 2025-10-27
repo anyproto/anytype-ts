@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
@@ -657,7 +657,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						text = text.replace(/\r?\n/g, '');
 						text = text.replace(/<iframe([^>]*)>.*?<\/iframe>/gi, '<iframe$1></iframe>');
 
-						data.html = DOMPurify.sanitize(text, sanitizeParam);
+						data.html = DOMPurify.sanitize(text, sanitizeParam).toString;
 					};
 
 					iw.postMessage(data, '*');
@@ -739,7 +739,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				ReactDOM.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={this.text} />, value.get(0));
+				const root = createRoot(value.get(0));
+				root.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={this.text} />);
 				break;
 			};
 

@@ -361,8 +361,10 @@ class UtilData {
 
 		this.getMembershipTiers(false, () => this.getMembershipStatus(false));
 		U.Subscription.createGlobal(() => {
-			Storage.clearDeletedSpaces(false);
-			Storage.clearDeletedSpaces(true);
+			if (S.Record.spaceMap.size) {
+				Storage.clearDeletedSpaces(false);
+				Storage.clearDeletedSpaces(true);
+			};
 		});
 
 		analytics.event('OpenAccount');
@@ -767,7 +769,7 @@ class UtilData {
 	 * @param {I.ObjectLayout} layout - The object layout.
 	 * @returns {I.ContentLink} The checked link settings.
 	 */
-	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout): I.ContentLink {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
 		content = U.Common.objectCopy(content);
