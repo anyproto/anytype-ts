@@ -425,10 +425,12 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	useEffect(() => {
 		savedRoute.current = U.Common.objectCopy(keyboard.getMatch(false));
-		filterInputRef.current?.focus();
 
 		initSort();
-		load(openFirst);
+		load(() => {
+			openFirst();
+			window.setTimeout(() => filterInputRef.current?.focus(), 15);
+		});
 
 		return () => {
 			U.Subscription.destroyList([ J.Constant.subId.library ]);

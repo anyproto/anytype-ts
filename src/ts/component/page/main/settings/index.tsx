@@ -193,7 +193,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		);
 	};
 
-	useEffect(() => init());
+	useEffect(() => init(), [ id ]);
 
 	return content;
 

@@ -54,6 +54,8 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	const onChangeHandler = () => {
 		const value = getValue();
 
+		console.log(value, valueRef.current);
+
 		if (value != valueRef.current) {
 			valueRef.current = value;
 			disableButton(!value);

@@ -327,9 +327,11 @@ class Sidebar {
 			return;
 		};
 
-		this.initObjects(false);
-
 		const state = S.Common.getLeftSidebarState();
+		if (state.subPage == id) {
+			return;
+		};
+
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 
@@ -338,6 +340,8 @@ class Sidebar {
 		if (!dataSubLeft.isClosed) {
 			return;
 		};
+
+		this.initObjects(false);
 
 		const width = dataLeft.isClosed ? 0 : dataLeft.width;
 		const newWidth = width + dataSubLeft.width;
