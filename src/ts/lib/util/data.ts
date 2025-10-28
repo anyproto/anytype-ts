@@ -325,11 +325,21 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
+				const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 				obj.mentionCounter += state.mentions.counter || 0;
 				obj.messageCounter += state.messages.counter || 0;
-				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
 
+				const notificationMode = U.Object.getChatNotificationMode(spaceview, chatId);
+				if (notificationMode == I.NotificationMode.All) {
+					obj.mentionCounter += state.mentions.counter || 0;
+					obj.messageCounter += state.messages.counter || 0;
+				} else 
+				if (notificationMode == I.NotificationMode.Mentions) {
+					obj.mentionCounter += state.mentions.counter || 0;
+				};
+
+				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
 				spaceCounters[spaceId] = obj;
 
 				S.Chat.setState(chatSubId, { 

@@ -152,7 +152,7 @@ class Dispatcher {
 			};
 
 			const needLog = this.needEventLog(type) && !skipDebug;
-			const space = U.Space.getSpaceviewBySpaceId(spaceId);
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -970,11 +970,12 @@ class Dispatcher {
 
 					let showNotification = false;
 
-					if (space && space.chatId) {
-						if (space.notificationMode == I.NotificationMode.All) {
+					if (spaceview) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
-						if (space.notificationMode == I.NotificationMode.Mentions) {
+						if (notificationMode == I.NotificationMode.Mentions) {
 							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
 						};
 					};
@@ -993,7 +994,7 @@ class Dispatcher {
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
-							title: space.name, 
+							title: spaceview?.name, 
 							text: notification,
 						}, () => {
 							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
@@ -1017,9 +1018,7 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => {
-						S.Chat.setState(subId, mapped.state, true);
-					});
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state, true));
 					break;
 				};
 
