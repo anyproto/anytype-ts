@@ -1231,14 +1231,14 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, objectView: any) {
+	onObjectView (rootId: string, traceId: string, objectView: any, force: boolean) {
 		const { details, restrictions, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 		const rootDetails = details.find(it => it.id == rootId)?.details;
 		const isChat = U.Object.isChatLayout(rootDetails?.layout);
-		const check = isChat ? !S.Detail.get(contextId, rootId, [])._empty_ : S.Block.getLeaf(contextId, rootId);
+		const check = !force && (isChat ? !S.Detail.get(contextId, rootId, [])._empty_ : S.Block.getLeaf(contextId, rootId));
 
 		// Block structure already exists
 		if (!check) {

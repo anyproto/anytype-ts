@@ -1455,7 +1455,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
 		// Save last opened object
@@ -1480,7 +1480,7 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
 		if (callBack) {

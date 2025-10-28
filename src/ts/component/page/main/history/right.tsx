@@ -215,7 +215,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 			};
 
 			if (!message.error.code) {
-				dispatcher.onObjectView(rootId, '', message.objectView);
+				dispatcher.onObjectView(rootId, '', message.objectView, true);
 				setVersion(message.version);
 				props.setVersion(message.version);
 			};
@@ -233,7 +233,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 			C.HistoryShowVersion(rootId, previousId, (message: any) => {
 				if (!message.error.code) {
-					dispatcher.onObjectView(rootId, previousId, message.objectView);
+					dispatcher.onObjectView(rootId, previousId, message.objectView, true);
 				};
 
 				renderDiff(previousId, events);
