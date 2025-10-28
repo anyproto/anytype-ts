@@ -328,14 +328,12 @@ class Sidebar {
 		};
 
 		const state = S.Common.getLeftSidebarState();
-		if (state.subPage == id) {
-			return;
-		};
-
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 
-		S.Common.setLeftSidebarState(state.page, id);
+		if (state.subPage != id) {
+			S.Common.setLeftSidebarState(state.page, id);
+		};
 
 		if (!dataSubLeft.isClosed) {
 			return;
