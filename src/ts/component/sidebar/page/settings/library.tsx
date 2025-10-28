@@ -13,6 +13,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	const { page, isPopup } = props;
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
+	const { space } = S.Common;
 	const pathname = U.Router.getRoute();
 	const param = U.Router.getParam(pathname);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
@@ -22,6 +23,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	const sortId = useRef(I.SortId.LastUsed);
 	const sortType = useRef(I.SortType.Desc);
 	const savedRoute = useRef<any>({});
+	const spaceview = U.Space.getSpaceview();
 	const filter = useRef('');
 
 	let type = '';
@@ -60,7 +62,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const load = (callBack?: (message: any) => void) => {
-		const spaceview = U.Space.getSpaceview();
 		const options = U.Menu.getLibrarySortOptions(sortId.current, sortType.current);
 		const option = options.find(it => it.id == sortId.current);
 
@@ -100,15 +101,17 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			};
 		};
 
-		U.Subscription.subscribe({
-			subId: J.Constant.subId.library,
-			filters,
-			sorts,
-			keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
-			noDeps: true,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-		}, callBack);
+		U.Subscription.destroyList([ J.Constant.subId.library ], true, () => {
+			U.Subscription.subscribe({
+				subId: J.Constant.subId.library,
+				filters,
+				sorts,
+				keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
+				noDeps: true,
+				ignoreHidden: true,
+				ignoreDeleted: true,
+			}, callBack);
+		});
 	};
 
 	const loadSearchIds = (clear: boolean) => {
@@ -429,7 +432,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		initSort();
 		load(() => {
 			openFirst();
-			window.setTimeout(() => filterInputRef.current?.focus(), 15);
+			window.setTimeout(() => filterInputRef.current?.focus(), 50);
 		});
 
 		return () => {
@@ -440,7 +443,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	useEffect(() => {
 		load();
-	}, [ searchIds ]);
+	}, [ searchIds, space ]);
 
 	return (
 		<>
