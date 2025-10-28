@@ -1496,6 +1496,21 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
+	uxTypeOptions () {
+		return [
+			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
+		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+	};
+
+	notificationModeOptions () {
+		return [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+			{ id: I.NotificationMode.Nothing },
+		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
+	};
+
 };
 
 export default new UtilMenu();

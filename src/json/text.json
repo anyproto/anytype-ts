@@ -232,6 +232,7 @@
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
 	"commonSaveChat": "Save chat",
+	"commonNotifications": "Notifications",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -928,6 +929,7 @@
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
+	"popupSettingsSpaceIndexPushText3": "Custom notification settings",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
 	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
 	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d spaces. Upgrade to create more.",

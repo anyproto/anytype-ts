@@ -84,6 +84,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
+		let notification = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
 		let archive = null;
 		let archiveCnt = 0;
 		let pin = null;
@@ -99,6 +100,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedUnlink = isCollection;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
+		let allowedNotification = true;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -136,6 +138,9 @@ class MenuContext extends React.Component<I.Menu> {
 				allowedCollection = false;
 				allowedPin = false;
 			};
+			if (allowedNotification && !U.Object.isChatLayout(object.layout)) {
+				allowedNotification = false;
+			};
 		});
 
 		if (pinCnt == length) {
@@ -160,6 +165,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedUnlink = false;
 			allowedRelation = false;
 			allowedCollection = false;
+			allowedNotification = false;
 		};
 
 		if (archiveCnt && (archiveCnt == length)) {
@@ -169,6 +175,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedType = false;
 			allowedPin = false;
 			allowedCollection = false;
+			allowedNotification = false;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -184,10 +191,11 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedRelation)	 relation = null;
 		if (!allowedCollection)	 addCollection = null;
 		if (!allowedLink)		 pageLink = null;
+		if (!allowedNotification) notification = null;
 
 		let sections = [
 			{ children: [ open, changeType, relation, pageLink ] },
-			{ children: [ pin, linkTo, addCollection ] },
+			{ children: [ pin, notification, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
 
@@ -227,6 +235,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data, className, classNameWrap } = param;
 		const { onLinkTo, route } = data;
 		const objectIds = this.getObjectIds();
+		const { space } = S.Common;
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -335,6 +344,16 @@ class MenuContext extends React.Component<I.Menu> {
 					},
 				});
 				break;
+			};
+
+			case 'notification': {
+				menuId = 'select';
+				menuParam.data = {
+					options: U.Menu.prepareForSelect(U.Menu.notificationModeOptions()),
+					onSelect: (e, option) => {
+						Action.setChatNotificationMode(space, objectIds, Number(option.id));
+					},
+				};
 			};
 		};
 

@@ -389,15 +389,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	isActive (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const value = Relation.getArrayValue(data.value);
-
 		if (undefined !== item.checkbox) {
 			return item.checkbox;
 		};
 
-		return value.includes(String(item.id));
+		return Relation.getArrayValue(this.props.param.data.value).includes(String(item.id));
 	};
 
 	resize () {

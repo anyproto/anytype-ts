@@ -795,6 +795,22 @@ class UtilObject {
 		return svg;
 	};
 
+	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
+		if (!spaceview) {
+			return I.NotificationMode.All;
+		};
+
+		if (spaceview.mentionIds.includes(chatId)) {
+			return I.NotificationMode.Mentions;
+		};
+
+		if (spaceview.muteIds.includes(chatId)) {
+			return I.NotificationMode.Nothing;
+		};
+
+		return spaceview.notificationMode as I.NotificationMode;
+	};
+
 };
 
 export default new UtilObject();

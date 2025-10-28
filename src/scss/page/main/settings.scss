@@ -209,7 +209,8 @@
 						.icon { flex-shrink: 0; width: 20px; height: 20px; }
 						.icon.type { background-image: url('~img/icon/settings/type.svg'); }
 						.icon.home { background-image: url('~img/icon/settings/home.svg'); }
-						.icon.push0 { background-image: url('~img/icon/settings/pushOn.svg'); }
+						.icon.push0,
+						.icon.push3 { background-image: url('~img/icon/settings/pushOn.svg'); }
                         .icon.push1,
                         .icon.push2 { background-image: url('~img/icon/settings/pushOff.svg'); }
 						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }

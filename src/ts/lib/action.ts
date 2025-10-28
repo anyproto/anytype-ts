@@ -1097,6 +1097,25 @@ class Action {
 		this.openSettings('spaceShare', route);
 	};
 
+	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) {		
+		switch (mode) {
+			case I.NotificationMode.All: {
+				C.PushNotificationAddAllIds(spaceId, ids, callBack);
+				break;
+			};
+
+			case I.NotificationMode.Mentions: {
+				C.PushNotificationAddMentionIds(spaceId, ids, callBack);
+				break;
+			};
+
+			case I.NotificationMode.Nothing: {
+				C.PushNotificationAddMuteIds(spaceId, ids, callBack);
+				break;
+			};
+		};
+	};
+
 };
 
 export default new Action();
