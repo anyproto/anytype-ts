@@ -117,7 +117,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 			switch (id) {
 				case 'spaceIndexEmpty': {
-					page = 'widget';
+					page = '';
 					break;
 				};
 
@@ -138,7 +138,9 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			};
 		};
 
-		sidebar.leftPanelSubPageOpen(page);
+		if (page) {
+			sidebar.leftPanelSubPageOpen(page);
+		};
 	};
 
 	const onExport = (type: I.ExportType, param: any) => {
