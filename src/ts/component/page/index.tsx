@@ -82,7 +82,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		return match.params;
 	};
 
-	const { id, page, action } = getMatchParams();
+	const params = getMatchParams();
+	const { page, action, id } = params;
 
 	const getId = (prefix: string) => {
 		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
@@ -236,11 +237,11 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => init(), [ page, action ]);
+	useEffect(() => init(), [ params ]);
 
 	useLayoutEffect(() => {
 		raf(() => resize());
-	}, [ id, page, action ]);
+	}, [ params ]);
 
 	if (isMain() && !account) {
 		return null;

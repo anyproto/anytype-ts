@@ -1240,6 +1240,7 @@ class Dispatcher {
 
 		let checkIfExists = false;
 
+		/*
 		if (needCheck) {
 			if (isChat) {
 				checkIfExists = !S.Detail.get(contextId, rootId, [])._empty_;
@@ -1247,6 +1248,7 @@ class Dispatcher {
 				checkIfExists = !!S.Block.getLeaf(contextId, rootId);
 			};
 		};
+		*/
 
 		// Block structure already exists
 		if (!checkIfExists) {

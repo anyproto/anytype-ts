@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
@@ -49,6 +49,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const childRef = useRef(null);
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
+	const object = S.Detail.get(rootId, rootId, []);
 	const resizeObserver = new ResizeObserver(() => {
 		raf(() => resize());
 	});
@@ -203,6 +204,10 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 	}, []);
+
+	useLayoutEffect(() => {
+		raf(() => sidebar.resizePage(isPopup, null, null, false));
+	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({
 		setVersion: (version: string) => {
