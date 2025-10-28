@@ -308,7 +308,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 		switch (type) {
 			case I.ObjectContainerType.Type: {
-				U.Object.createType({ name: filter }, isPopup);
+				U.Object.createType({ name: filter.current }, isPopup);
 				break;
 			};
 
