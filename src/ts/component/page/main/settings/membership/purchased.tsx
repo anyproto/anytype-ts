@@ -2,6 +2,7 @@ import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Switch } from 'Component';
 import { I, S, U, J, C, Action, translate, analytics, keyboard, Relation } from 'Lib';
+import { MembershipGetPortalLinkUrl } from 'Lib/api/command';
 
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -19,9 +20,11 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const anyNameCn = [ 'item', 'anyName', globalName ? '' : 'noName' ];
 
 	const onManage = () => {
-		if (tierItem.manageUrl) {
-			Action.openUrl(tierItem.manageUrl);
-		};
+		C.MembershipGetPortalLinkUrl((message) => {
+			if (message.url) {
+				Action.openUrl(message.url);
+			};
+		});
 	};
 
 	const onNameSelect = () => {
