@@ -1455,7 +1455,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
 		};
 
 		// Save last opened object

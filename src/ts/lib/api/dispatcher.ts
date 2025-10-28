@@ -1231,17 +1231,26 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, objectView: any, force: boolean) {
+	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 		const rootDetails = details.find(it => it.id == rootId)?.details;
 		const isChat = U.Object.isChatLayout(rootDetails?.layout);
-		const check = !force && (isChat ? !S.Detail.get(contextId, rootId, [])._empty_ : S.Block.getLeaf(contextId, rootId));
+
+		let checkIfExists = false;
+
+		if (needCheck) {
+			if (isChat) {
+				checkIfExists = !S.Detail.get(contextId, rootId, [])._empty_;
+			} else {
+				checkIfExists = !!S.Block.getLeaf(contextId, rootId);
+			};
+		};
 
 		// Block structure already exists
-		if (!check) {
+		if (!checkIfExists) {
 			S.Block.clear(contextId);
 
 			if (root && root.fields.analyticsContext) {
