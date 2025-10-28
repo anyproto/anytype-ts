@@ -349,7 +349,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'notification': {
 				menuId = 'select';
 				menuParam.data = {
-					options: U.Menu.prepareForSelect(U.Menu.notificationModeOptions()),
+					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
 						Action.setChatNotificationMode(space, objectIds, Number(option.id));
 					},

@@ -428,7 +428,7 @@ class UtilMenu {
 	};
 
 	getRelationTypes () {
-		return this.prepareForSelect([
+		return [
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
@@ -444,7 +444,7 @@ class UtilMenu {
 			it.name = translate(`relationName${it.id}`);
 			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
-		}));
+		});
 	};
 
 	getWidgetLimitOptions (layout: I.WidgetLayout) {
@@ -460,7 +460,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return this.prepareForSelect(options.map(id => ({ id, name: id })));
+		return options.map(id => ({ id, name: id }));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout, isPreview?: boolean) {

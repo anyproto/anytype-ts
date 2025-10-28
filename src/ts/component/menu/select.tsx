@@ -242,10 +242,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	getItemsWithoutFilter () {
-		const { param } = this.props;
-		const { data } = param;
-
-		return (data.options || []).filter(it => it);
+		return U.Menu.prepareForSelect((this.props.param.data.options || [])).filter(it => it);
 	};
 
 	getSections () {

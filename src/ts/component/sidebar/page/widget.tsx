@@ -358,7 +358,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const block = S.Block.getLeaf(widgets, previewId);
 		const child = getChild(block.id);
 		const object = getObject(block, child?.getTargetObjectId());
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(object?.id, object?.layout, true));
+		const layoutOptions = U.Menu.getWidgetLayoutOptions(object?.id, object?.layout, true);
 		const appearance: any[] = layoutOptions.map(it => ({ isLayout: true, layout: it.id, name: it.name, checkbox: it.id == param.layout}));
 
 		appearance.unshift({ isSection: true, name: translate('commonAppearance') });

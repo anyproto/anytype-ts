@@ -140,7 +140,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { widgets } = S.Block;
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
 		const canRemove = U.Space.canMyParticipantWrite();
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview));
+		const layoutOptions = U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
 
 		if (!block) {

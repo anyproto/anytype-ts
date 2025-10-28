@@ -80,7 +80,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
 		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
-		return U.Menu.prepareForSelect(items);
+		return items;
 	};
 
 	const onPermissionsSelect = (item: any, isNew?: boolean) => {

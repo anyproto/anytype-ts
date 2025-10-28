@@ -392,7 +392,7 @@ class MenuObject extends React.Component<I.Menu> {
 				menuId = 'select';
 				menuParam.data = {
 					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
-					options: U.Menu.prepareForSelect(U.Menu.notificationModeOptions()),
+					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
 						Action.setChatNotificationMode(space, [ object.id ], Number(option.id));
 						close();
