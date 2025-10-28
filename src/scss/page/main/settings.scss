@@ -987,8 +987,9 @@
 
             .actions { margin-bottom: 58px; display: flex; gap: 0px 16px; justify-content: center; align-items: stretch; }
             .actions {
-                .action { width: 312px; padding: 16px; border-radius: 24px; border: 1px solid var(--color-shape-secondary); }
+                .action { display: flex; flex-direction: column; justify-content: space-between; width: 312px; padding: 16px; border-radius: 24px; border: 1px solid var(--color-shape-secondary); }
                 .action {
+                    .top { margin-bottom: 12px; }
                     .icon {
                         width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px;
                         background-position: 50% 50%; background-repeat: no-repeat; background-color: var(--color-shape-highlight-medium);
@@ -997,7 +998,7 @@
                     .icon.contact { background-size: 28px; background-image: url('~img/icon/membership/contact.svg'); }
 
                     .title { @include text-paragraph; font-weight: 500; margin-bottom: 2px; }
-                    .label { color: var(--color-text-secondary); margin-bottom: 12px; }
+                    .label { color: var(--color-text-secondary); }
                     .button { width: 100%; font-weight: 500; }
                 }
             }

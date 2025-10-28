@@ -152,9 +152,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 			<div className="actions">
 				{actions.map((item, idx) => (
 					<div key={idx} className="action">
-						<Icon className={item.id} />
-						<Title text={item.title} />
-						<Label text={item.text} />
+						<div className="top">
+							<Icon className={item.id} />
+							<Title text={item.title} />
+							<Label text={item.text} />
+						</div>
 						<Button text={item.button} color="blank" onClick={() => onAction(item)} />
 					</div>
 				))}
