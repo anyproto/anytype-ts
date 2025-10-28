@@ -67,6 +67,22 @@ class WindowManager {
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
+    // Logitech software binds dedicated forward/back mouse buttons to the legacy
+    // three-finger swipe gestures on MacOS by default. The system will NOT fire mouse events
+    // for forward/back mouse button presses when this is the case. The electron swipe event is
+    // MacOS-specific, and won't interfere with Windows/Linux event handling.
+    // https://www.electronjs.org/docs/latest/api/browser-window#event-swipe-macos
+    win.on('swipe', (_e, direction) => {
+      switch (direction) {
+        case 'left':
+          Util.send(win, 'macosMouseNavigation', 'back');
+          break;
+        case 'right':
+          Util.send(win, 'macosMouseNavigation', 'forward');
+          break;
+      }
+    });
+
 		win.webContents.setWindowOpenHandler(({ url }) => {
 			Api.openUrl(win, url);
 			return { action: 'deny' };

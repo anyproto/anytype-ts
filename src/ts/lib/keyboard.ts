@@ -76,6 +76,20 @@ class Keyboard {
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
+
+    Renderer.remove('macosMouseNavigation');
+    Renderer.on('macosMouseNavigation', (_e: any, direction: 'back' | 'forward') => {
+      if (!this.isNavigationDisabled) {
+        switch (direction) {
+          case 'back':
+            this.onBack();
+            break;
+          case 'forward':
+            this.onForward();
+            break;
+        }
+      };
+    });
 	};
 
 	/**
