@@ -15,7 +15,7 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 		<>
 			<Title text={translate('popupSettingsMembershipTitle')} />
 
-			{tierItem.isIntro ? <Intro {...props} /> : <Purchased {...props} />}
+			{tierItem.isIntro || !tierItem.id ? <Intro {...props} /> : <Purchased {...props} />}
 		</>
 	);
 

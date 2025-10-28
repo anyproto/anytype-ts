@@ -214,7 +214,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
-			if (!membership.isIntro) {
+			if (!membership.isIntro && membership.tierItem && membership.tierItem.name) {
 				caption = <div className="caption">{membership.tierItem.name}</div>;
 			} else {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;

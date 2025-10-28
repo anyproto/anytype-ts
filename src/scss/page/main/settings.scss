@@ -896,9 +896,26 @@
         .membershipIntro {
             > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
 
-            .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin-bottom: 32px; }
             .switchWrapper {
-                .label { font-weight: 500; }
+                position: relative; display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin: 0px auto 32px;
+                width: 212px; height: 24px; border-radius: 12px; border: 2px solid var(--color-shape-secondary); background: var(--color-shape-secondary);
+            }
+            .switchWrapper {
+                .label { position: relative; z-index: 1; font-weight: 500; width: 50%; flex-shrink: 0; text-align: center; color: var(--color-text-secondary); }
+                .label {
+                    span { @include text-small; font-weight: 400; }
+
+                    &.active { color: var(--color-text-primary); }
+                    &.active {
+                        span { color: var(--color-system-accent-125); }
+                    }
+                }
+
+                &:before {
+                    content: ''; position: absolute; z-index: 0; width: 50%; height: 100%; left: 50%; top: 0px; border-radius: 12px;
+                    background-color: var(--color-bg-primary); transition: left $easeInQuint 0.15s;
+                }
+                &.isMonthly:before { left: 0%; }
             }
 
             .swiper { flex-shrink: 0; border-radius: 16px; }

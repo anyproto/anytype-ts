@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Icon, Switch } from 'Component';
+import { Title, Label, Button, Icon } from 'Component';
 import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
@@ -10,7 +10,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const { membership } = S.Auth;
 	const { interfaceLang, membershipTiers } = S.Common;
 	const { status } = membership;
-	const [ showAnnual, setShowAnnual ] = useState(true);
+	const [ isMonthly, setIsMonthly ] = useState(false);
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -51,7 +51,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const onPay = (item: I.MembershipTier) => {
-		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, !showAnnual, (message) => {
+		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, isMonthly, (message) => {
 			if (message.url) {
 				Action.openUrl(message.url);
 			};
@@ -61,7 +61,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const TierItem = (props: any) => {
 		const { item } = props;
 		const isCurrent = item.id == membership.tier;
-		const periodPrice = showAnnual ? item.price : item.priceMonthly;
+		const periodPrice = isMonthly ? item.priceMonthly : item.price;
 		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
 		const cn = [ 'tier', `c${item.id}`, item.color ];
 
@@ -82,7 +82,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 			};
 		} else
 		if (item.period) {
-			const periodLabel = showAnnual ? translate('pluralYear') : translate('pluralMonth');
+			const periodLabel = isMonthly ? translate('pluralMonth') : translate('pluralYear');
 
 			if (item.period == 1) {
 				period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));
@@ -129,13 +129,9 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		<div className="membershipIntro">
 			<Label text={translate('popupSettingsMembershipText')} />
 
-			<div className="switchWrapper">
-				<Label text={translate('popupSettingsMembershipSwitchMonthly')} />
-				<Switch
-					value={showAnnual}
-					onChange={(e, v) => setShowAnnual(v)}
-				/>
-				<Label text={translate('popupSettingsMembershipSwitchAnnual')} />
+			<div className={[ 'switchWrapper', isMonthly ? 'isMonthly' : '' ].join(' ')} onClick={() => setIsMonthly(!isMonthly)}>
+				<Label className={isMonthly ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
+				<Label className={!isMonthly ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
 			</div>
 
 			<div className="tiers">

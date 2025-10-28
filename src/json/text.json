@@ -1014,7 +1014,7 @@
 	"popupSettingsMembershipCurrentPlan": "Current plan",
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
-	"popupSettingsMembershipSwitchAnnual": "Annual (-20%)",
+	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",

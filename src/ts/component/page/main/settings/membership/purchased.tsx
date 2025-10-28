@@ -19,6 +19,8 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const anyNameCn = [ 'item', 'anyName', globalName ? '' : 'noName' ];
 
+	console.log('TIER: ', tierItem)
+
 	const onManage = () => {
 		C.MembershipGetPortalLinkUrl((message) => {
 			if (message.url) {
