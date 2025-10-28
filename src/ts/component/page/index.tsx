@@ -237,7 +237,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => init());
+	useEffect(() => init(), [ path ]);
 
 	if (isMain() && !account) {
 		return null;

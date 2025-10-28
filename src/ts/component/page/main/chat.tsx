@@ -1,6 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, DragEvent } from 'react';
-import $ from 'jquery';
-import raf from 'raf';
+import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
@@ -40,8 +38,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
 			setDummy(dummy + 1);
-
-			resize();
 		});
 	};
 
@@ -78,35 +74,15 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		chatRef.current?.ref?.onDrop(e);
 	};
 
-	const resize = () => {
-		raf(() => {
-			const node = $(nodeRef.current);
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const scrollWrapper = node.find('#scrollWrapper');
-			const formWrapper = node.find('#formWrapper');
-			const fh = Number(formWrapper.outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - J.Size.header - fh;
-
-			scrollWrapper.css({ minHeight: mh });
-			chatRef.current?.ref?.resize();
-		});
-	};
-
 	useEffect(() => {
 		open();
-		resize();
 
 		return () => close();
 	}, []);
 
 	useEffect(() => {
 		open();
-		resize();
 	});
-
-	useImperativeHandle(ref, () => ({
-		resize,
-	}));
 
 	let content = null;
 

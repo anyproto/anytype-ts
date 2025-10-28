@@ -204,10 +204,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		sidebar.resizePage(isPopup, null, null, false);
-	});
-
 	useImperativeHandle(ref, () => ({
 		setVersion: (version: string) => {
 			if (childRef.current && childRef.current.setVersion) {
