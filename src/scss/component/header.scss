@@ -2,7 +2,7 @@
 
 .header { 
 	position: sticky; top: 0px; right: 0px; width: 100%; z-index: 20; user-select: none; display: flex; flex-direction: row; align-items: center; 
-	justify-content: space-between;
+	justify-content: space-between; flex-shrink: 0;
 }
 
 .header {
