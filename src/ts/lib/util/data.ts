@@ -998,7 +998,7 @@ class UtilData {
 						this.onInfo(message.account.info);
 
 						Renderer.send('keytarSet', message.account.id, phrase);
-						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						C.ObjectImportUseCase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
 								S.Auth.startingId.set(S.Common.space, message.startingId);
 							};

@@ -552,14 +552,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const addGroupLabels = (records: any[], widgetId: string) => {
-		let relationKey;
+		let relationKey = '';
+
 		if (widgetId == J.Constant.widgetId.recentOpen) {
 			relationKey = 'lastOpenedDate';
 		};
 		if (widgetId == J.Constant.widgetId.recentEdit) {
 			relationKey = 'lastModifiedDate';
 		};
-		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
+
+		return relationKey ? U.Data.groupDateSections(records, relationKey, { type: '', links: [] }) : records;
 	};
 
 	const checkShowAllButton = (subId: string) => {

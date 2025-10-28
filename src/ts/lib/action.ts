@@ -501,7 +501,6 @@ class Action {
 							animate: true,
 							onFadeIn: () => {
 								S.Popup.open('migration', { data: { type: 'import' } });
-								S.Block.closeRecentWidgets();
 							},
 						};
 
@@ -822,22 +821,6 @@ class Action {
 		diff.forEach(it => {
 			if (it.added && it.value.length) {
 				analytics.event('AddSpellcheckLanguage', { type: it.value[0] });
-			};
-		});
-	};
-
-	/**
-	 * Imports a usecase into a space.
-	 * @param {string} spaceId - The space ID.
-	 * @param {I.Usecase} id - The usecase ID.
-	 * @param {function} [callBack] - Optional callback after import.
-	 */
-	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
-		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			S.Block.closeRecentWidgets();
-
-			if (callBack) {
-				callBack(message);
 			};
 		});
 	};

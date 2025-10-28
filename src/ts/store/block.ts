@@ -847,22 +847,6 @@ class BlockStore {
 	};
 
 	/**
-	 * Closes recent widgets in the UI.
-	 */
-	closeRecentWidgets () {
-		const { recentEdit, recentOpen } = J.Constant.widgetId;
-		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.getTargetObjectId()));
-
-		if (blocks.length) {
-			blocks.forEach(it => {
-				if (it.parentId) {
-					Storage.setToggle('widget', it.parentId, true);
-				};
-			});
-		};
-	};
-
-	/**
 	 * Returns structure for Table of contents
 	 */
 	getTableOfContents (rootId: string, withTitle?: boolean) {
