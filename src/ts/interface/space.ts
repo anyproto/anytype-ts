@@ -58,4 +58,5 @@ export enum NotificationMode {
 	All						 = 0,
 	Mentions				 = 1,
 	Nothing					 = 2,
+	Custom					 = 3,
 };

@@ -180,13 +180,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		this.load(true);
 	};
 
-	componentDidUpdate () {
+	componentDidUpdate (prevProps: I.Menu) {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
 
-		if (this.filter != filter) {
+		if ((this.filter != filter) || (prevProps.param.menuKey != this.props.param.menuKey)) {
 			this.n = 0;
 			this.filter = filter;
 			this.reload();

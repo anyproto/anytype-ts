@@ -260,7 +260,7 @@ class Storage {
 		const keys = Object.keys(this.getSpace(isLocal));
 		keys.forEach(key => {
 			const spaceview = U.Space.getSpaceviewBySpaceId(key);
-			if (!spaceview) {
+			if (spaceview?.isAccountDeleted) {
 				this.deleteSpace(key, isLocal);
 			};
 		});

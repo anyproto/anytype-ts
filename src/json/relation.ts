@@ -163,6 +163,8 @@ export default {
 		'chatId',
 		'spaceUxType',
 		'spacePushNotificationMode',
+		'spacePushNotificationCustomMuteIds',
+		'spacePushNotificationCustomMentionIds',
 		'spaceOrder',
 		'spaceJoinDate',
 	],

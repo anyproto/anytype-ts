@@ -2507,3 +2507,30 @@ export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.Notificati
 
 	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
 };
+
+export const PushNotificationAddMuteIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.AddMuteIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);	
+
+	dispatcher.request(PushNotificationAddMuteIds.name, request, callBack);
+};
+
+export const PushNotificationAddMentionIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.AddMentionIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);	
+
+	dispatcher.request(PushNotificationAddMentionIds.name, request, callBack);
+};
+
+export const PushNotificationAddAllIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.AddAllIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);	
+
+	dispatcher.request(PushNotificationAddAllIds.name, request, callBack);
+};
