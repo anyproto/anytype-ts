@@ -323,6 +323,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				noClose: true,
 				onSelect: (e: any, item: any) => {
 					const cb = () => {
+						S.Block.updateWidgetData(targetId);
 						menuContext.close();
 					};
 
