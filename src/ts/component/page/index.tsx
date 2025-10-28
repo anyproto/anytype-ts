@@ -236,11 +236,11 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => init(), [ path ]);
+	useEffect(() => init(), [ page, action ]);
 
 	useLayoutEffect(() => {
 		raf(() => resize());
-	}, [ path ]);
+	}, [ id, page, action ]);
 
 	if (isMain() && !account) {
 		return null;
