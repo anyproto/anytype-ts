@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -142,7 +142,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		setBodyClass();
-		resize();
 		rebind();
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
@@ -238,6 +237,10 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	}, []);
 
 	useEffect(() => init(), [ path ]);
+
+	useLayoutEffect(() => {
+		raf(() => resize());
+	}, [ path ]);
 
 	if (isMain() && !account) {
 		return null;
