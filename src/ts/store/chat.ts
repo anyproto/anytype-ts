@@ -225,6 +225,16 @@ class ChatStore {
 		const param = this.getSubParam(subId);
 		const spaceMap = this.stateMap.get(param.spaceId) || new Map();
 		const current = spaceMap.get(param.chatId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(param.spaceId);
+		const notificationMode = U.Object.getChatNotificationMode(spaceview, param.chatId);
+
+		if (notificationMode == I.NotificationMode.Nothing) {
+			state.messages.counter = 0;
+			state.mentions.counter = 0;
+		} else
+		if (notificationMode == I.NotificationMode.Mentions) {
+			state.messages.counter = 0;
+		};
 
 		if (current) {
 			const { messages, mentions, lastStateId, order } = state;
