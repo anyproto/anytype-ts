@@ -84,6 +84,7 @@
 	}
 
 	.block.blockText.isReadonly.textTitle > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-title); }
+	.block.blockText.isReadonly.textDescription > .wrapContent > .selectionTarget > .dropTarget { padding-top: 4px; padding-bottom: 3px; }
 	.block.blockText.isReadonly.textDescription > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-description); }
 	.block.blockText.isReadonly.textHeader1 > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-header1); }
 	.block.blockText.isReadonly.textHeader2 > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-header2); }
