@@ -15,7 +15,7 @@ import ItemProgress from './vault/update';
 const LIMIT = 20;
 const HEIGHT_ITEM = 64;
 
-const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { updateVersion, space } = S.Common;
@@ -551,6 +551,4 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 }));
 
-const SidebarPageVault = memo(SidebarPageVaultBase);
-
-export default SidebarPageVault;
+export default memo(SidebarPageVault);

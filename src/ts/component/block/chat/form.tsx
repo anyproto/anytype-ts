@@ -37,7 +37,7 @@ interface RefProps {
 	getMarks: () => I.Mark[];
 };
 
-const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -1704,6 +1704,4 @@ const ChatFormBase = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 }));
 
-const ChatForm = memo(ChatFormBase);
-
-export default ChatForm;
+export default memo(ChatForm);
