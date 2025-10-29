@@ -109,7 +109,6 @@ const Input = forwardRef<InputRef, Props>(({
 		const v = (undefined !== preventScroll) ? preventScroll : true;
 
 		inputRef.current?.focus({ preventScroll: v });
-		handleFocus($.Event('focus'));
 	};
 
 	const handleEvent = (
@@ -260,6 +259,8 @@ const Input = forwardRef<InputRef, Props>(({
 
 		if (focusOnMount) {
 			focus();
+			keyboard.setFocus(true);
+			keyboard.disableSelection(true);
 		};
 
 		return () => {

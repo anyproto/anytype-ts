@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import { Label, Button, Error, Icon, Input } from 'Component';
+import { I, U, translate } from 'Lib';
 import $ from 'jquery';
 
 const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
