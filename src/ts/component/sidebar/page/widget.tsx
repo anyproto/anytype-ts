@@ -720,7 +720,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	useEffect(() => {
 		initBlocks();
-	}, [ types.length ]);
+	}, [ types, space ]);
 
 	return (
 		<>
