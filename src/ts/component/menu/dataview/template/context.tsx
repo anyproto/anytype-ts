@@ -6,7 +6,7 @@ import { I, C, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
 
 const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive } = props;
+	const { param, close, onKeyDown, setActive } = props;
 	const { data } = param;
 	const { template, isView, templateId, noToast, route, onDuplicate, onArchive, onSetDefault } = data;
 	const isDefault = template.id == templateId;

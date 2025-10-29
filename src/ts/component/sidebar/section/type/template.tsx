@@ -7,7 +7,7 @@ import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 
 const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
-	const { rootId, object, readonly, isPopup, onChange } = props;
+	const { rootId, object, readonly, onChange } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
