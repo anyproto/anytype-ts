@@ -31,19 +31,15 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, get
 	return (
 		<>
 			<Label text={translate('popupSpaceJoinByLinkLabel')} />
-
 			<Icon />
-
 			<Input 
 				type="text" 
 				ref={inputRef} 
 				onKeyUp={onKeyUp} 
 				placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')} 
-				focusOnMount={true} 
+				focusOnMount={true}
 			/>
-
 			<Button className="disabled" text={translate('popupInviteRequestRequestToJoin')} onClick={onSubmit} />
-
 			<Error text={error} />
 		</>
 	);

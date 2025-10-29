@@ -109,6 +109,7 @@ const Input = forwardRef<InputRef, Props>(({
 		const v = (undefined !== preventScroll) ? preventScroll : true;
 
 		inputRef.current?.focus({ preventScroll: v });
+		handleFocus($.Event('focus'));
 	};
 
 	const handleEvent = (
@@ -253,17 +254,11 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	useEffect(() => {
-		return () => {
-			onUnmount?.();
-		};
-	}, []);
-
-	useEffect(() => {
 		if (maskOptions && inputRef.current) {
 			new Inputmask(maskOptions.mask, maskOptions).mask(inputRef.current);
 		};
 
-		if (focusOnMount && inputRef.current) {
+		if (focusOnMount) {
 			focus();
 		};
 
@@ -272,8 +267,10 @@ const Input = forwardRef<InputRef, Props>(({
 				keyboard.setFocus(false);
 				keyboard.disableSelection(false);
 			};
+
+			onUnmount?.();
 		};
-	}, [ maskOptions, focusOnMount ]);
+	}, []);
 
 	useEffect(() => {
 		if (initialRender.current) {
