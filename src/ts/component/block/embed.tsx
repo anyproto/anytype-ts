@@ -6,7 +6,7 @@ import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid, MediaExcalidraw } from 'Component';
 import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
@@ -31,9 +31,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const editableRef = useRef(null);
 	const typeRef = useRef(null);
 	const timeoutScrollRef = useRef(0);
+	const timeoutSaveRef = useRef(0);
 	const textRef = useRef('');
 	const rangeRef = useRef<I.TextRange>(null);
 	const selection = S.Common.getRef('selectionProvider');
+	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
 
 	if (width) {
 		css.width = (width * 100) + '%';
@@ -374,7 +376,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		setText(text);
 
-		if (!text) {
+		if (!text && !allowEmptyContent) {
 			value.html('');
 			return;
 		};
@@ -555,6 +557,29 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Excalidraw: {
+				const root = createRoot(value.get(0));
+
+				let data = null;
+				try {
+					data = JSON.parse(text || '{}');
+				} catch (e) {
+					console.warn('Invalid Excalidraw data:', e);
+				};
+
+				root.render(
+					<MediaExcalidraw
+						data={data}
+						onChange={(elements, appState, files) => {
+							console.log('Excalidraw onChange', elements, appState, files);
+
+							window.clearTimeout(timeoutSaveRef.current);
+							timeoutSaveRef.current = window.setTimeout(() => {
+								C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
+							}, 100);
+						}}
+						readonly={readonly}
+					/>
+				);
 				break;
 			};
 
@@ -584,7 +609,9 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		e.preventDefault();
 		e.stopPropagation();
 
-		setIsEditing(true);
+		if (processor != I.EmbedProcessor.Excalidraw) {
+			setIsEditing(true);
+		};
 	};
 
 	const save = (update: boolean, callBack?: (message: any) => void) => {
@@ -739,7 +766,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	} else {
 		source = <Icon className="source" onMouseDown={onEdit} />;
 		placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-		empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
+		empty = !text && !allowEmptyContent ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
 		if (!isShowing && text && !U.Embed.allowAutoRender(processor)) {
 			cn.push('withPreview');
@@ -754,6 +781,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			unbind();
 
 			window.clearTimeout(timeoutScrollRef.current);
+			window.clearTimeout(timeoutSaveRef.current);
 		};
 	}, []);
 

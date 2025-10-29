@@ -96,6 +96,7 @@ import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 import MediaPdf from './util/media/pdf';
 import MediaMermaid from './util/media/mermaid';
+import MediaExcalidraw from './util/media/excalidraw';
 
 import ProgressBar from './util/progressBar';
 import ProgressText from './util/progressText';
@@ -203,6 +204,7 @@ export {
 	MediaVideo,
 	MediaPdf,
 	MediaMermaid,
+	MediaExcalidraw,
 
 	ProgressBar,
 	ProgressText,

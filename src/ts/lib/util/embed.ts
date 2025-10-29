@@ -539,6 +539,12 @@ class UtilEmbed {
 		].includes(p);
 	};
 
+	allowEmptyContent (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Excalidraw,
+		].includes(p);
+	};
+
 };
 
 export default new UtilEmbed();
