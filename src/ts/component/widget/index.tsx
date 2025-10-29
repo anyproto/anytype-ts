@@ -204,8 +204,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			if (childRef.current && childRef.current?.appendSearchIds) {
-				childRef.current?.appendSearchIds([ newObject.id ]);
+			if (childRef.current && childRef.current.appendSearchIds) {
+				const ids = childRef.current.getSearchIds ? childRef.current.getSearchIds() : [];
+
+				if (ids) {
+					childRef.current.appendSearchIds([ newObject.id ]);
+				};
 			};
 
 			U.Object.openConfig(newObject);

@@ -60,6 +60,7 @@ class CommonStore {
 	public windowId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
+	public openObjectIds: Map<string, Set<string>> = new Map();
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -957,6 +958,29 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
+	};
+
+	addOpenObject (spaceId: string, objectId: string) {
+		const list = this.openObjectIds.get(spaceId) || new Set<string>();
+		list.add(objectId);
+		this.openObjectIds.set(spaceId, list);
+	};
+
+	getOpenObjects (spaceId: string): string[] {
+		const list = this.openObjectIds.get(spaceId);
+		return list ? Array.from(list) : [];
+	};
+
+	isOpenObject (spaceId: string, objectId: string): boolean {
+		const list = this.openObjectIds.get(spaceId);
+		return list ? list.has(objectId) : false;
+	};
+
+	removeOpenObject (spaceId: string, objectId: string) {
+		const list = this.openObjectIds.get(spaceId);
+		if (list && list.has(objectId)) {
+			list.delete(objectId);
+		};
 	};
 
 };

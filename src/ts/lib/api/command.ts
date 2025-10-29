@@ -1456,13 +1456,15 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
-		};
 
-		// Save last opened object
-		const object = S.Detail.get(objectId, objectId, []);
+			// Save last opened object
+			const object = S.Detail.get(objectId, objectId, []);
 
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-			Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
+			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+				Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
+			};
+
+			S.Common.addOpenObject(spaceId, objectId);
 		};
 
 		if (callBack) {

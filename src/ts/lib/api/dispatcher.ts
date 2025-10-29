@@ -1235,20 +1235,7 @@ class Dispatcher {
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-		const rootDetails = details.find(it => it.id == rootId)?.details;
-		const isChat = U.Object.isChatLayout(rootDetails?.layout);
-
-		let checkIfExists = false;
-
-		/*
-		if (needCheck) {
-			if (isChat) {
-				checkIfExists = !S.Detail.get(contextId, rootId, [])._empty_;
-			} else {
-				checkIfExists = !!S.Block.getLeaf(contextId, rootId);
-			};
-		};
-		*/
+		const checkIfExists = needCheck && S.Common.isOpenObject(S.Common.space, rootId);
 
 		// Block structure already exists
 		if (!checkIfExists) {
