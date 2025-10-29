@@ -36,6 +36,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const rangeRef = useRef<I.TextRange>(null);
 	const selection = S.Common.getRef('selectionProvider');
 	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
+	const rootRef = useRef(null);
 
 	if (width) {
 		css.width = (width * 100) + '%';
@@ -382,8 +383,13 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		const win = $(window);
+		const element = value.get(0) as HTMLElement;
 
-		switch (processor) {
+		if ([ I.EmbedProcessor.Mermaid, I.EmbedProcessor.Excalidraw ].includes(processor) && !rootRef.current) {
+			rootRef.current = createRoot(element);
+		};
+
+			switch (processor) {
 			default: {
 				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
@@ -551,14 +557,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const root = createRoot(value.get(0));
-				root.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />);
+				rootRef.current.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />);
 				break;
 			};
 
 			case I.EmbedProcessor.Excalidraw: {
-				const root = createRoot(value.get(0));
-
 				let data = null;
 				try {
 					data = JSON.parse(text || '{}');
@@ -566,16 +569,14 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					console.warn('Invalid Excalidraw data:', e);
 				};
 
-				root.render(
+				rootRef.current.render(
 					<MediaExcalidraw
 						data={data}
 						onChange={(elements, appState, files) => {
-							console.log('Excalidraw onChange', elements, appState, files);
-
 							window.clearTimeout(timeoutSaveRef.current);
 							timeoutSaveRef.current = window.setTimeout(() => {
 								C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
-							}, 100);
+							}, 1000);
 						}}
 						readonly={readonly}
 					/>

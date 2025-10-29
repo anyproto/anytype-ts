@@ -137,6 +137,7 @@ module.exports = (env, argv) => {
 				{
 					enforce: 'pre',
 					test: /\.js$/,
+					exclude: [ /node_modules\/@excalidraw/ ],
 					loader: 'source-map-loader'
 				},
 				{

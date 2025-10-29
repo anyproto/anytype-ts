@@ -13,7 +13,6 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 	onChange = () => {},
 }, ref) => {
 
-	console.log('DATA', data);
 	data.elements = data.elements || [];
 	data.appState = data.appState || {};
 	data.appState.collaborators = new Map();
