@@ -352,6 +352,7 @@ class MenuContext extends React.Component<I.Menu> {
 					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
 						Action.setChatNotificationMode(space, objectIds, Number(option.id));
+						close();
 					},
 				};
 			};
