@@ -775,7 +775,7 @@
 			&:hover { background: var(--color-shape-highlight-light); }
 
 			.icon { width: 40px; height: 40px; background-size: contain; background-position: top center; flex-shrink: 0; }
-			.name { font-weight: 500; }
+			.name { font-weight: 500; @include text-overflow-nw; }
 		}
     }
 

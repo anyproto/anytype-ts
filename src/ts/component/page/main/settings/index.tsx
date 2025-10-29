@@ -139,7 +139,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		};
 
 		if (page) {
-			sidebar.leftPanelSubPageOpen(page);
+			sidebar.leftPanelSubPageOpen(page, false);
 		};
 	};
 

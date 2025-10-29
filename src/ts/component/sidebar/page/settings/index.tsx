@@ -149,7 +149,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			U.Space.openDashboard();
 			S.Common.setLeftSidebarState('vault', 'widget');
 		} else {
-			sidebar.leftPanelSubPageClose();
+			sidebar.leftPanelSubPageClose(true);
 		};
 	};
 

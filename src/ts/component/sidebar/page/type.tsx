@@ -35,8 +35,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		objectRef.current = getObject();
 		backupRef.current = U.Common.objectCopy(objectRef.current);
 
-		console.trace();
-
 		updateSections();
 		disableButton(true);
 	};

@@ -123,7 +123,7 @@ class Sidebar {
 					subPage = S.Common.getLeftSidebarState().subPage;
 				};
 
-				this.leftPanelSubPageOpen(subPage);
+				this.leftPanelSubPageOpen(subPage, true);
 				break;
 			};
 		};
@@ -137,7 +137,7 @@ class Sidebar {
 			};
 
 			case I.SidebarPanel.SubLeft: {
-				this.leftPanelSubPageClose();
+				this.leftPanelSubPageClose(true);
 				break;
 			};
 		};
@@ -298,7 +298,7 @@ class Sidebar {
 		S.Menu.closeAll();
 	};
 
-	leftPanelSubPageClose () {
+	leftPanelSubPageClose (animate: boolean) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -311,7 +311,7 @@ class Sidebar {
 		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
 		this.objLeft.addClass('sidebarAnimation').css({ width });
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
-		this.resizePage(false, width, null, true);
+		this.resizePage(false, width, null, animate);
 
 		window.setTimeout(() => {
 			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true });
@@ -319,10 +319,10 @@ class Sidebar {
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
-		}, J.Constant.delay.sidebar);
+		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
-	leftPanelSubPageOpen (id: string) {
+	leftPanelSubPageOpen (id: string, animate: boolean) {
 		if (this.isAnimating) {
 			return;
 		};
@@ -347,7 +347,7 @@ class Sidebar {
 		this.subPageWrapperLeft.css({ transform: 'translate3d(-100%,0px,0px)' });
 		this.objLeft.css({ width });
 		this.dummyLeft.css({ width });
-		this.resizePage(false, newWidth, null, true);
+		this.resizePage(false, newWidth, null, animate);
 		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false });
 
 		raf(() => {
@@ -359,7 +359,7 @@ class Sidebar {
 				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.dummyLeft.removeClass('sidebarAnimation');
-			}, J.Constant.delay.sidebar);
+			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 	};
 
@@ -367,9 +367,9 @@ class Sidebar {
 		const { isClosed } = this.getData(I.SidebarPanel.SubLeft);
 
 		if (isClosed) {
-			this.leftPanelSubPageOpen(id);
+			this.leftPanelSubPageOpen(id, true);
 		} else {
-			this.leftPanelSubPageClose();
+			this.leftPanelSubPageClose(true);
 		};
 	};
 

@@ -218,7 +218,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			replace: true,
 			onRouteChange: () => {
 				if (!space) {
-					sidebar.leftPanelSubPageOpen('widget');
+					sidebar.leftPanelSubPageOpen('widget', false);
 				};
 			},
 		};
