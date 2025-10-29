@@ -147,6 +147,11 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	useEffect(() => {
 		init();
 		resize();
+	}, []);
+
+	useEffect(() => {
+		init();
+		resize();
 	}, [ location ]);
 
 	useImperativeHandle(ref, () => ({ resize }));
