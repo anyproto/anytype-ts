@@ -1235,7 +1235,7 @@ class Dispatcher {
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-		const checkIfExists = needCheck && S.Common.isOpenObject(S.Common.space, rootId);
+		const checkIfExists = needCheck && keyboard.isPopup() && S.Common.isOpenObject(S.Common.space, rootId);
 
 		// Block structure already exists
 		if (!checkIfExists) {
