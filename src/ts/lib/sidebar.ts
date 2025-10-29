@@ -319,6 +319,7 @@ class Sidebar {
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
+			$(window).trigger('sidebarResize');
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
@@ -359,6 +360,7 @@ class Sidebar {
 				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.dummyLeft.removeClass('sidebarAnimation');
+				$(window).trigger('sidebarResize');
 			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 	};
