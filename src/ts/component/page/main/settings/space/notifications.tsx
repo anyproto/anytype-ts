@@ -8,7 +8,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 
 	const { getId } = props;
 	const spaceview = U.Space.getSpaceview();
-	const { notificationMode } = spaceview;
+	const notificationMode = spaceview.notificationMode || I.NotificationMode.All;
 	const nodeRef = useRef(null);
 	const chatsRef = useRef([]);
 	const [ dummy, setDummy ] = useState(0);
@@ -29,7 +29,6 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 		const keys = J.Relation.default.concat([ 'links', 'backlinks' ]);
 
 		U.Subscription.search({ filters, keys }, (message: any) => {
-			console.log('MESSAGE: ', message)
 			chatsRef.current = message.records;
 			setDummy(dummy + 1);
 		});
@@ -48,7 +47,6 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 			data: {
 				options: U.Menu.notificationModeOptions(),
 				onSelect: (e: any, item: any) => {
-					console.log('ITEM: ', item)
 					Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id));
 				}
 			}
@@ -65,6 +63,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 
 			<div className="section options">
 				<Label text={translate(`pageSettingsSpaceNotificationsNotifyMeAbout`)} />
+
 				<div className="actionItems">
 					{notificationOptions.map((el, idx) => (
 						<div key={idx} onClick={() => onSpaceModeChange(el)} className={[ 'item', notificationMode == el ? 'selected' : '' ].join(' ')}>
@@ -78,6 +77,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 			{chatsRef.current.length ? (
 				<div className="section chats">
 					<Label text={translate(`pageSettingsSpaceNotificationsChatSpecificNotifications`)} />
+
 					<div className="actionItems">
 						{chatsRef.current.map((el, idx) => (
 							<div key={idx} id={el.id} className="item">

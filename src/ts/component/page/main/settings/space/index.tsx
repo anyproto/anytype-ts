@@ -304,40 +304,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			</div>
 
 			<div className="sections">
-				{spaceview.isShared ? (
-					<div className="section sectionSpaceManager">
-						<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-						<div className="sectionContent">
-
-							<div className="item">
-								<div className="sides">
-									<Icon className={[ 'push', `push${spaceview.notificationMode}` ].join(' ')} />
-
-									<div className="side left">
-										<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-										<Label text={translate(`popupSettingsSpaceIndexPushText${spaceview.notificationMode}`)} />
-									</div>
-
-									<div className="side right">
-										<Select
-											id="notificationMode"
-											ref={modeRef}
-											value={String(spaceview.notificationMode)}
-											options={U.Menu.notificationModeOptions()}
-											onChange={v => {
-												C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-												analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-											}}
-											arrowClassName="black"
-											menuParam={{ horizontal: I.MenuDirection.Right }}
-										/>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				) : ''}
-
 				{canWrite ? (
 					<>
 						<div className="section sectionSpaceManager">

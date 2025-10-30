@@ -128,10 +128,6 @@ const App: FC = () => {
 	const init = () => {
 		const { version, arch, getGlobal } = electron;
 
-		window.setTimeout(() => {
-			Action.openSettings('spaceNotifications', '');
-		}, 1500)
-
 		U.Router.init(history);
 		U.Smile.init();
 

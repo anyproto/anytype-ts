@@ -612,6 +612,7 @@
 	"pageSettingsSpaceNotificationsChatSpecificMode0": "All messages",
 	"pageSettingsSpaceNotificationsChatSpecificMode1": "Mentions only",
 	"pageSettingsSpaceNotificationsChatSpecificMode2": "Muted",
+	"pageSettingsSpaceNotificationsChatSpecificMode3": "Custom settings",
 
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
