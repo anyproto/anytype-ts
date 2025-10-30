@@ -175,7 +175,10 @@ class UtilEmbed {
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
-			const reg = new RegExp(`:\/\/([^.]*.)?(${DOMAINS[i].join('|')})`, 'gi');
+			const domains = DOMAINS[i].map(U.Common.regexEscape);
+			const reg = new RegExp(`:\/\/([^.]*.)?(${domains.join('|')})`, 'gi');
+
+			console.log('reg', reg, url, domains);
 
 			if (url.match(reg)) {
 				p = Number(i);
