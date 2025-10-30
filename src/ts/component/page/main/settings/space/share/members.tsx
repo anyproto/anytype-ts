@@ -116,7 +116,6 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 				title = translate('popupConfirmMemberRemoveTitle');
 				text = U.Common.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
 				button = translate('commonRemove');
-
 				onConfirm = () => {
 					if (isNew) {
 						C.SpaceRequestDecline(space, item.identity, cb);

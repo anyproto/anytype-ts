@@ -110,9 +110,11 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	let content = null;
 	if (isDiv) {
 		content = <div className="inner" />;
+		hasClick = false;
 	} else
 	if (isSection) {
 		content = name;
+		hasClick = false;
 	} else
 	if (withDescription) {
 		content = (
