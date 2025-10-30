@@ -601,6 +601,19 @@
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
+
+	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
+	"pageSettingsSpaceNotificationsMode0": "All messages",
+	"pageSettingsSpaceNotificationsMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsMode2": "Nothing",
+	"pageSettingsSpaceNotificationsMode3": "Custom",
+
+	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
+	"pageSettingsSpaceNotificationsChatSpecificMode0": "All messages",
+	"pageSettingsSpaceNotificationsChatSpecificMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsChatSpecificMode2": "Muted",
+	"pageSettingsSpaceNotificationsChatSpecificMode3": "Custom settings",
+
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
 	"editorControlCover0": "Add cover",
