@@ -658,7 +658,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (isSystemTarget && !isBin) {
+		if (layout != I.WidgetLayout.Link) {
 			onSetPreview();
 		} else {
 			onClick(e);
@@ -671,11 +671,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (layout != I.WidgetLayout.Link) {
-			onSetPreview();
-		} else {
-			onExpandHandler(e);
-		};
+		onClick(e);
 	};
 
 	const buttons = [];
