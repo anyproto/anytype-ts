@@ -661,6 +661,34 @@
         }
     }
 
+    > .pageSettingsSpaceNotifications {
+        .wrap { display: flex; flex-direction: column; gap: 36px 0px; }
+
+        .section { display: flex; flex-direction: column; gap: 8px 0px; }
+        .section {
+            > .label { @include text-small; color: var(--color-text-secondary); font-weight: 500; }
+
+            &.options {
+                .item { font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
+                .item.selected {
+                    &:after { content: ''; width: 19px; height: 20px; background: url('~img/icon/notification/tick.svg'); }
+                }
+            }
+
+            &.chats {
+                .side.left { display: flex; justify-content: flex-start; align-items: center; gap: 0px 12px; }
+                .side.left {
+                    .title { @include text-common; font-weight: 500; margin-bottom: 0px; }
+                    .label { @include text-small; color: var(--color-text-secondary); }
+                }
+                .side.right {
+                    .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+                    .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+                }
+            }
+        }
+    }
+
     > .pageSettingsDelete {
         .text { margin: 0px 0px 32px 0px; }
         .text {
