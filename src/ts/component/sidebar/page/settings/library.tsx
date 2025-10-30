@@ -14,6 +14,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	const { page, isPopup } = props;
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const { space } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
 	const pathname = U.Router.getRoute();
 	const param = U.Router.getParam(pathname);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
@@ -25,6 +26,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	const savedRoute = useRef<any>({});
 	const spaceview = U.Space.getSpaceview();
 	const filter = useRef('');
+	const bodyRef = useRef(null);
 
 	let type = '';
 	let title = '';
@@ -252,7 +254,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			},
 		};
 
-		U.Object.openRoute(param);
+		U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
 
 		let e = '';
 
@@ -262,6 +264,13 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		};
 
 		analytics.event(e, { route: analytics.route.library });
+	};
+
+	const setActive = (id: string) => {
+		const body = $(bodyRef.current);
+
+		body.find('.item.active').removeClass('active');
+		body.find(`#item-${id}`).addClass('active');
 	};
 
 	const onContext = (item: any) => {
@@ -445,6 +454,10 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		load();
 	}, [ searchIds, space ]);
 
+	useEffect(() => {
+		setActive(param.objectId);
+	}, [ param.objectId ]);
+
 	return (
 		<>
 			<div className="subHead">
@@ -459,7 +472,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 				</div>
 			</div>
 
-			<div id="body" className="body">
+			<div id="body" ref={bodyRef} className="body">
 				<div className="list">
 					<div className="filterWrapper">
 						<div className="side left">
