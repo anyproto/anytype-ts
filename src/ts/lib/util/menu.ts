@@ -1163,7 +1163,10 @@ class UtilMenu {
 	};
 
 	prepareForSelect (a: any[]) {
-		return a.map(it => ({ ...it, id: String(it.id) }));
+		return a.map(it => {
+			const id = undefined !== it.id ? String(it.id) : '';
+			return { ...it, id };
+		});
 	};
 
 	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
