@@ -894,12 +894,12 @@ class Keyboard {
 				};
 
 				switch (arg) {
-					case 'back': {
+					case 'left': {
 						this.onBack();
 						break;
 					};
 
-					case 'forward': {
+					case 'right': {
 						this.onForward();
 						break;
 					};
