@@ -214,6 +214,8 @@ class Keyboard {
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
 				U.Space.openDashboard({ replace: false });
+			} else {
+				this.onBack();
 			};
 			
 			Preview.previewHide(false);
