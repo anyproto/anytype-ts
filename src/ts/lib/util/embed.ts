@@ -178,23 +178,24 @@ class UtilEmbed {
 			const domains = DOMAINS[i].map(U.Common.regexEscape);
 			const reg = new RegExp(`:\/\/([^.]*.)?(${domains.join('|')})`, 'gi');
 
-			console.log('reg', reg, url, domains);
-
-			if (url.match(reg)) {
-				p = Number(i);
-
-				// Restrict youtube channel links
-				if ((p == I.EmbedProcessor.Youtube)) {
-					try {
-						const info = new URL(url);
-
-						if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
-							p = null;
-						};
-					} catch (e) { p = null; };
-				};
-				break;
+			if (!url.match(reg)) {
+				continue;
 			};
+
+			p = Number(i);
+
+			// Restrict youtube channel links
+			if ((p == I.EmbedProcessor.Youtube)) {
+				try {
+					const info = new URL(url);
+
+					if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
+						p = null;
+					};
+				} catch (e) { p = null; };
+			};
+			break;
+		
 		};
 		return p;
 	};
