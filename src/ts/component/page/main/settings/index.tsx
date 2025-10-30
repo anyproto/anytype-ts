@@ -117,7 +117,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 			switch (id) {
 				case 'spaceIndexEmpty': {
-					page = '';
+					page = 'widget';
 					break;
 				};
 
