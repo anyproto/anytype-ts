@@ -202,6 +202,8 @@ class WindowManager {
 		};
 
 		const view = win.views[index];
+		console.log('setActiveTab', index, view);
+
 		if (!view) {
 			return;
 		};
