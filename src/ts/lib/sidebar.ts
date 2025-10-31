@@ -155,18 +155,21 @@ class Sidebar {
 			return;
 		};
 
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+		const newWidth = dataSubLeft.isClosed ? 0 : dataSubLeft.width;
+
 		this.pageWrapperLeft.addClass('anim');
 		this.setElementsWidth(width);
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true });
-		this.resizePage(false, 0, null, true);
+		this.resizePage(false, newWidth, null, true);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.pageWrapperLeft.removeClass('anim').addClass('isClosed');
 			this.setElementsWidth('');
 
-			$(window).trigger('resize');
+			$(window).trigger('sidebarResize');
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -183,19 +186,22 @@ class Sidebar {
 			return;
 		};
 
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+		const newWidth = width + (dataSubLeft.isClosed ? 0 : dataSubLeft.width);
+
 		this.setElementsWidth(width);
 		this.pageWrapperLeft.addClass('anim').removeClass('isClosed');
 
 		this.setStyle(I.SidebarPanel.Left, false, { width });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false });
-		this.resizePage(false, width, null, true);
+		this.resizePage(false, newWidth, null, true);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.pageWrapperLeft.removeClass('anim');
 			this.setElementsWidth('');
 
-			$(window).trigger('resize');
+			$(window).trigger('sidebarResize');
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -241,7 +247,7 @@ class Sidebar {
 			this.rightPanelSetState(isPopup, { page: '' });
 			this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
-			$(window).trigger('resize');
+			$(window).trigger('sidebarResize');
 		}, J.Constant.delay.sidebar);
 	};
 
@@ -272,7 +278,7 @@ class Sidebar {
 			this.timeoutAnim = window.setTimeout(() => {
 				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
-				$(window).trigger('resize');
+				$(window).trigger('sidebarResize');
 			}, J.Constant.delay.sidebar);
 		});
 	};
@@ -319,6 +325,7 @@ class Sidebar {
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
+
 			$(window).trigger('sidebarResize');
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
@@ -360,6 +367,7 @@ class Sidebar {
 				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
 				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.dummyLeft.removeClass('sidebarAnimation');
+
 				$(window).trigger('sidebarResize');
 			}, animate ? J.Constant.delay.sidebar : 0);
 		});
