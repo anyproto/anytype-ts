@@ -173,7 +173,6 @@ class WindowManager {
 
 	createTab (win, param) {
 		const id = randomUUID();
-		const bounds = win.getBounds();
 		const view = new WebContentsView({ 
 			webPreferences: {
 				...this.getPreferencesForNewWindow(),
@@ -188,12 +187,10 @@ class WindowManager {
 		view.id = id;
 		view.data = {};
 		view.webContents.loadURL(this.getUrlForNewTab());
-		view.setBounds({ x: 0, y: TAB_BAR_HEIGHT, width: bounds.width, height: bounds.height - TAB_BAR_HEIGHT });
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 
 		remote.enable(view.webContents);
-
 		this.setActiveTab(win, win.views.length - 1);
 	};
 
@@ -204,12 +201,20 @@ class WindowManager {
 			return;
 		};
 
+		const view = win.views[index];
+		if (!view) {
+			return;
+		};
+
 		if (win.views[win.activeIndex]) {
 			win.contentView.removeChildView(win.views[win.activeIndex]);
 		};
 
+		const bounds = win.getBounds();
+		view.setBounds({ x: 0, y: TAB_BAR_HEIGHT, width: bounds.width, height: bounds.height - TAB_BAR_HEIGHT });
+
 		win.activeIndex = index;
-		win.contentView.addChildView(win.views[win.activeIndex]);
+		win.contentView.addChildView(view);
 
 		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id, data: it.data })), index);
 	};
@@ -299,12 +304,13 @@ class WindowManager {
 		param = param || {};
 
 		switch (cmd) {
-			case 'menu':
+			case 'menu': {
 				MenuManager.menu.popup({ x: 16, y: 38 });
 				break;
+			};
 
 			case 'printHtml':
-			case 'printPdf':
+			case 'printPdf': {
 				const ext = cmd.replace(/print/, '').toLowerCase();
 				dialog.showSaveDialog(win, {
 					buttonLabel: 'Export',
@@ -322,6 +328,7 @@ class WindowManager {
 					Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 				});
 				break;
+			};
 		};
 	};
 

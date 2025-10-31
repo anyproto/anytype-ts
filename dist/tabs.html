@@ -16,20 +16,25 @@
 
 			body { font-family: 'Inter', sans-serif; font-size: 14px; color: #000; background: transparent; }
 
-			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; -webkit-app-region: drag; }
+			#tabs { display: flex; flex-direction: row; height: 28px; padding: 4px 12px 0px 12px; -webkit-app-region: drag; }
 			#tabs.platform-darwin { padding-left: 76px; }
 
 			.tab { 
-				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 8px; 
+				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 2px 0px 8px; 
 				cursor: default; max-width: 200px; user-select: none; -webkit-app-region: no-drag; border-radius: 6px 6px 0px 0px;
 			}
+			.tab.noClose { padding-right: 8px; }
 			.tab.active { background-color: #f7f7f7; }
-			.tab .clickable { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; }
-			.tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-			.tab .image { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
-			.tab .icon.close { 
-				width: 20px; height: 20px; background-size: contain; background-repeat: no-repeat; background-position: center; 
-				background-image: url('./img/icon/close.svg'); flex-shrink: 0;
+
+			.tab {
+				.clickable { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; }
+				.name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+				.image { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
+				.icon.close { 
+					width: 20px; height: 20px; background-size: contain; background-repeat: no-repeat; background-position: center; 
+					background-image: url('./img/icon/close.svg'); flex-shrink: 0; border-radius: 6px; background-size: 16px;
+				}
+				.icon.close:hover { background-color: rgba(0, 0, 0, 0.05); }
 			}
 		</style>
 	</head>
@@ -79,6 +84,7 @@
 
 						if (tabs.length === 1) {
 							tab.find('.icon.close').remove();
+							tab.addClass('noClose');
 						};
 
 						clickable.off('click').on('click', () => {

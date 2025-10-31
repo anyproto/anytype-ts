@@ -10,7 +10,7 @@
 }
 .sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
 
-#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
+#sidebarLeftButton { backdrop-filter: blur(20px); left: 12px; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
@@ -36,6 +36,13 @@
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
 
 		&.sidebarAnimation { transition-property: transform; }
+
+		&:not(.withSidebarLeft) {
+			.sidebarPage {
+				&.pageWidget > .head, 
+				.subHead { padding-left: 48px; }
+			}
+		}
 	}
 
 	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; top: 0px; }

@@ -471,15 +471,14 @@ class Sidebar {
 		const isMainVoidError = keyboard.isMainVoidError();
 		const isMainHistory = keyboard.isMainHistory();
 		const isPopupMainHistory = keyboard.isPopupMainHistory();
-		const data = this.getData(I.SidebarPanel.Right, isPopup);
-
-		let leftButtonX = 12;
+		const dataLeft = this.getData(I.SidebarPanel.Left, isPopup);
+		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
 		};
 
-		if ((widthRight === null) && this.objRight && this.objRight.length && !data.isClosed) {
+		if ((widthRight === null) && this.objRight && this.objRight.length && !dataRight.isClosed) {
 			widthRight = this.objRight.outerWidth();
 		};
 
@@ -519,6 +518,7 @@ class Sidebar {
 
 		this.pageFlex.toggleClass('withSidebarLeft', !!widthLeft);
 		this.pageFlex.toggleClass('withSidebarRight', !!widthRight);
+		this.subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 
 		if (!isPopup) {
 			this.pageFlex.toggleClass('sidebarAnimation', animate);
@@ -527,7 +527,6 @@ class Sidebar {
 			this.header.toggleClass('withSidebarLeft', !!widthLeft);
 
 			this.dummyLeft.css({ width: widthLeft });
-			this.leftButton.css({ left: leftButtonX });
 		} else {
 			this.objRight.css({ height: container.height() });
 		};
