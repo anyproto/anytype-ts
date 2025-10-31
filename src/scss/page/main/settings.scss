@@ -896,9 +896,26 @@
         .membershipIntro {
             > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
 
-            .switchWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin-bottom: 32px; }
             .switchWrapper {
-                .label { font-weight: 500; }
+                position: relative; display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin: 0px auto 32px;
+                width: 212px; height: 24px; border-radius: 12px; border: 2px solid var(--color-shape-secondary); background: var(--color-shape-secondary);
+            }
+            .switchWrapper {
+                .label { position: relative; z-index: 1; font-weight: 500; width: 50%; flex-shrink: 0; text-align: center; color: var(--color-text-secondary); }
+                .label {
+                    span { @include text-small; font-weight: 400; }
+
+                    &.active { color: var(--color-text-primary); }
+                    &.active {
+                        span { color: var(--color-system-accent-125); }
+                    }
+                }
+
+                &:before {
+                    content: ''; position: absolute; z-index: 0; width: 50%; height: 100%; left: 50%; top: 0px; border-radius: 12px;
+                    background-color: var(--color-bg-primary); transition: left $easeInQuint 0.15s;
+                }
+                &.isMonthly:before { left: 0%; }
             }
 
             .swiper { flex-shrink: 0; border-radius: 16px; }
@@ -970,8 +987,9 @@
 
             .actions { margin-bottom: 58px; display: flex; gap: 0px 16px; justify-content: center; align-items: stretch; }
             .actions {
-                .action { width: 312px; padding: 16px; border-radius: 24px; border: 1px solid var(--color-shape-secondary); }
+                .action { display: flex; flex-direction: column; justify-content: space-between; width: 312px; padding: 16px; border-radius: 24px; border: 1px solid var(--color-shape-secondary); }
                 .action {
+                    .top { margin-bottom: 12px; }
                     .icon {
                         width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px;
                         background-position: 50% 50%; background-repeat: no-repeat; background-color: var(--color-shape-highlight-medium);
@@ -980,7 +998,7 @@
                     .icon.contact { background-size: 28px; background-image: url('~img/icon/membership/contact.svg'); }
 
                     .title { @include text-paragraph; font-weight: 500; margin-bottom: 2px; }
-                    .label { color: var(--color-text-secondary); margin-bottom: 12px; }
+                    .label { color: var(--color-text-secondary); }
                     .button { width: 100%; font-weight: 500; }
                 }
             }
