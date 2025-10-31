@@ -279,6 +279,7 @@ class Sidebar {
 				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
 				$(window).trigger('sidebarResize');
+				raf(() => $(window).trigger('resize'));
 			}, J.Constant.delay.sidebar);
 		});
 	};
