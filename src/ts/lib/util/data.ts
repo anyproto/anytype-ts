@@ -841,6 +841,28 @@ class UtilData {
 	};
 
 	/**
+	 * Sets the tab title text.
+	 * @param {string} text - The text to set as the tab title.
+	 */
+	setTabTitleText (text: string) {
+		Renderer.send('updateTab', S.Common.tabId, { title: text });
+	};
+
+	/**
+	 * Sets the tab title based on the object name.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} objectId - The object ID.
+	 */
+	setTabTitle (rootId: string, objectId: string) {
+		const object = S.Detail.get(rootId, objectId, []);
+
+		Renderer.send('updateTab', S.Common.tabId, { 
+			title: U.Object.name(object, true),
+			icon: U.Graph.imageSrc(object),
+		});
+	};
+
+	/**
 	 * Returns the default graph filters for object queries.
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */

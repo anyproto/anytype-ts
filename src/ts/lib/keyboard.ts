@@ -1236,9 +1236,11 @@ class Keyboard {
 
 		if (titles[action]) {
 			U.Data.setWindowTitleText(titles[action]);
+			U.Data.setTabTitleText(titles[action]);
 		} else {
 			const rootId = this.getRootId();
 			U.Data.setWindowTitle(rootId, rootId);
+			U.Data.setTabTitle(rootId, rootId);
 		};
 	};
 

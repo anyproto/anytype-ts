@@ -206,10 +206,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		Renderer.send('updateTab', S.Common.tabId, { object: S.Detail.get(rootId, rootId) });
-	}, [ object ]);
-
 	useLayoutEffect(() => {
 		raf(() => sidebar.resizePage(isPopup, null, null, false));
 	}, [ object ]);

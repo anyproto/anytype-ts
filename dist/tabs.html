@@ -18,11 +18,13 @@
 
 			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; }
 			.tab { 
-				display: flex; align-items: center; justify-content: flex-start; gap: 0px 4px; background-color: #ebebeb; padding: 0px 8px; 
+				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 8px; 
 				cursor: default; max-width: 200px;
 			}
 			.tab.active { background-color: #fff; }
 			.tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+			.tab .image { width: 18px; height: 18px; object-fit: contain; }
+			.tab .icon.close { width: 18px; height: 18px; background-size: contain; background-repeat: no-repeat; background-position: center; }
 		</style>
 	</head>
 	<body>
@@ -48,15 +50,19 @@
 					tabs.forEach((it, i) => {
 						it.data = it.data || {};
 						const data = it.data || {};
-						const object = data.object || {};
-						const name = String(object.pluralName || object.name || 'Untitled');
+						const title = String(data.title || 'New tab');
+						const icon = String(data.icon || '');
 
 						const tab = $(`
 							<div class="tab">
-								<div class="name">${name}</div>
-								<div class="icon close">x</div>
+									<div class="name">${title}</div>
+									<div class="icon close">x</div>
 							</div>
 						`);
+
+						if (icon) {
+							tab.prepend($(`<img src="${icon}" class="image" />`));
+						};
 
 						if (tabs.length === 1) {
 							tab.find('.icon.close').remove();
