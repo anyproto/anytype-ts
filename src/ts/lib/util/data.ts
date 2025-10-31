@@ -725,8 +725,13 @@ class UtilData {
 	 */
 	sortByTypeKey (c1: any, c2: any, isChat: boolean) {
 		const keys = this.typeSortKeys(isChat);
+		const i1 = keys.indexOf(c1.uniqueKey);
+		const i2 = keys.indexOf(c2.uniqueKey);
 
-		return keys.indexOf(c1.uniqueKey) - keys.indexOf(c2.uniqueKey);
+		if ((i1 < 0) && (i2 < 0)) return 1;
+		if ((i1 >= 0) && (i2 >= 0)) return -1;
+
+		return i1 - i2;
 	};
 
 	/**
