@@ -2193,6 +2193,29 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
 };
 
+// ---------------------- MEMBERSHIP V2 ---------------------- //
+export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetPortalLink.Request();
+
+	dispatcher.request(MembershipV2GetPortalLink.name, request, callBack);
+};
+
+export const MembershipV2GetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetStatus.Request();
+
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipV2GetStatus.name, request, callBack);
+};
+
+export const MembershipV2GetProducts = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetProducts.Request();
+
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipV2GetProducts.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {
