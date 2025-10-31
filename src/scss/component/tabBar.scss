@@ -1,0 +1,16 @@
+#tabBar { 
+	height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
+	flex-direction: row;
+}
+#tabBar {
+	.tab { 
+		-webkit-app-region: no-drag; padding: 0px 12px; height: 100%; display: flex; align-items: center; cursor: pointer; @include text-small; font-weight: 500; 
+		transition: background-color $transitionCommon; max-width: 200px;
+	}
+	.tab {
+		&:hover { background: var(--color-shape-secondary); }
+		&.active { background: var(--color-shape-secondary); }
+
+		.name { @include text-overflow-nw; }
+	}
+}

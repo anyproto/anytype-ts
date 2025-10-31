@@ -115,13 +115,31 @@ class Util {
 		return path.join.apply(null, dataPath);
 	};
 
-	send () {
-		const args = [ ...arguments ];
-		const win = args[0];
+	send (win, ...args) {
+		if (!win || win.isDestroyed() || !win.webContents) {
+			return;
+		};
 
-		if (win && !win.isDestroyed() && win.webContents) {
-			args.shift();
-			win.webContents.send.apply(win.webContents, args);
+		win.webContents.send(...args);
+		this.sendToActiveTab(win, ...args);
+	};
+
+	sendToActiveTab (win, ...args) {
+		const view = win?.views?.[win.activeIndex];
+		if (view && view.webContents) {
+			view.webContents.send(...args);
+		};
+	};
+
+	sendToAllTabs (win, ...args) {
+		if (!win || win.isDestroyed() || !win.views) {
+			return;
+		};
+
+		for (const view of win.views) {
+			if (view && view.webContents) {
+				view.webContents.send(...args);
+			};
 		};
 	};
 

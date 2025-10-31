@@ -14,6 +14,7 @@ const DEFAULT_SHORTCUTS = {
 	searchText: [ 'CmdOrCtrl', 'F' ],
 	print: [ 'CmdOrCtrl', 'P' ],
 	newWindow: [ 'CmdOrCtrl', 'Shift', 'N' ],
+	newTab: [ 'CmdOrCtrl', 'T' ],
 	zoomIn: [ 'CmdOrCtrl', '=' ],
 	zoomOut: [ 'CmdOrCtrl', '-' ],
 	zoomReset: [ 'CmdOrCtrl', '0' ],
@@ -212,6 +213,7 @@ class MenuManager {
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => WindowManager.createTab(this.win) },
 
 					Separator,
 
@@ -430,6 +432,7 @@ class MenuManager {
 			Separator,
 
 			{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
+			{ label: Util.translate('electronMenuNewTab'), accelerator: this.getAccelerator('newTab'), click: () => WindowManager.createTab(this.win) },
 
 			Separator,
 

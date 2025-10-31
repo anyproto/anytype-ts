@@ -1,0 +1,18 @@
+#menuBar { 
+	height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
+	flex-direction: row;
+}
+#menuBar {
+	.side { width: 50%; height: 100%; display: flex; align-items: center; padding: 0px 12px; @include text-small; font-weight: 500; }
+	.side.left { justify-content: flex-start; gap: 0px 2px; }
+	.side.right { justify-content: flex-end; }
+
+	.icon { 
+		width: 28px !important; height: 100% !important; border-radius: 0px !important; background-size: 12px !important; -webkit-app-region: no-drag; 
+		transition: background-color $transitionCommon;
+	}
+	.icon.window-menu { background-image: url('~img/icon/window/menu.svg'); }
+	.icon.window-min { background-image: url('~img/icon/window/min.svg'); }
+	.icon.window-max { background-image: url('~img/icon/window/max.svg'); }
+	.icon.window-close { background-image: url('~img/icon/window/close.svg'); }
+}

@@ -1,9 +1,10 @@
-const { app, BrowserWindow, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, WebContentsView, nativeImage, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
 const port = process.env.SERVER_PORT;
+const { randomUUID } = require('crypto');
 
 const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
@@ -29,18 +30,9 @@ class WindowManager {
 			backgroundColor: Util.getBgColor(isDark ? 'dark' : ''),
 			show: false,
 			titleBarStyle: 'hidden-inset',
-			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
-			},
 		}, param);
 
-		param.webPreferences = Object.assign({
-			nativeWindowOpen: true,
-			contextIsolation: true,
-			nodeIntegration: false,
-			spellcheck: true,
-			sandbox: false,
-		}, param.webPreferences);
+		param.webPreferences = Object.assign(this.getPreferencesForNewWindow(), param.webPreferences || {});
 
 		let win = new BrowserWindow(param);
 
@@ -50,10 +42,6 @@ class WindowManager {
 		win.windowId = win.id;
 
 		this.list.add(win);
-
-		win.on('close', () => {
-			Util.send(win, 'will-close-window', win.id);
-		});
 
 		win.on('closed', () => {
 			this.list.delete(win);
@@ -65,6 +53,7 @@ class WindowManager {
 			MenuManager.setWindow(win);
 		});
 
+		win.on('close', () => Util.send(win, 'will-close-window', win.id));
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 		win.on('swipe', (e, direction) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
@@ -136,16 +125,24 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
+		//win.loadURL(this.getUrlForNewWindow());
 
 		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
+		win.on('resize', () => {
+			const { width, height } = win.getBounds();
+
+			if (win.views && win.views[win.activeIndex]) {
+				win.views[win.activeIndex].setBounds({ x: 0, y: 0, width, height });
+			};
+		});
 
 		if (is.development) {
-			win.toggleDevTools();
+			//win.toggleDevTools();
 		};
 
+		this.createTab(win);
 		return win;
 	};
 
@@ -175,6 +172,49 @@ class WindowManager {
 
 		setTimeout(() => this.closeChallenge(options), 30000);
 		return win;
+	};
+
+	createTab (win, param) {
+		const bounds = win.getBounds();
+		const view = new WebContentsView({ webPreferences: this.getPreferencesForNewWindow() });
+
+		win.views = win.views || [];
+		win.activeIndex = win.activeIndex || 0;
+		win.views.push(view);
+
+		view.id = randomUUID();
+		view.webContents.loadURL(this.getUrlForNewWindow());
+		view.setBounds({ x: 0, y: 0, width: bounds.width, height: bounds.height });
+
+		remote.enable(view.webContents);
+
+		if (is.development) {
+			view.webContents.toggleDevTools();
+		};
+
+		this.setActiveTab(win, win.views.length - 1);
+	};
+
+	setActiveTab (win, index) {
+		win.activeIndex = index;
+		win.contentView.addChildView(win.views[win.activeIndex]);
+
+		Util.sendToAllTabs(win, 'update-tabs', win.views.map(it => ({ id: it.id })), win.activeIndex);
+	};
+
+	getPreferencesForNewWindow () {
+		return {
+			preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
+			nativeWindowOpen: true,
+			contextIsolation: true,
+			nodeIntegration: false,
+			spellcheck: true,
+			sandbox: false,
+		};
+	};
+
+	getUrlForNewWindow () {
+		return is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html');
 	};
 
 	getScreenSize () {

@@ -48,6 +48,7 @@ import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 import EmptyState from './util/emptyState';
 import MenuBar from './util/menuBar';
+import TabBar from './util/tabBar';
 
 import Input from './form/input';
 import InputWithFile from './form/inputWithFile';
@@ -175,6 +176,7 @@ export {
 	Notification,
 	Banner,
 	MenuBar,
+	TabBar,
 
 	Icon,
 	IconObject,

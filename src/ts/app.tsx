@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, Icon, SidebarLeft, MenuBar } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, SidebarLeft, MenuBar, TabBar } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -159,6 +159,7 @@ const App: FC = () => {
 		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-window', onWillCloseWindow);
+		Renderer.on('update-tabs', (e: any, tabs: { id: string; }[], index: number) => S.Common.windowTabsSet(tabs, index));
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);
@@ -196,7 +197,7 @@ const App: FC = () => {
 	};
 
 	const onInit = (e: any, data: any) => {
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token, tabs, tabIdx } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -213,6 +214,7 @@ const App: FC = () => {
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
 		S.Common.setLeftSidebarState('vault', '');
+		S.Common.windowTabsSet(tabs, tabIdx);
 
 		Action.checkDefaultSpellingLang();
 
@@ -496,6 +498,7 @@ const App: FC = () => {
 					) : ''}
 
 					<MenuBar />
+					<TabBar />
 					<div id="floaterContainer" />
 					<div id="tooltipContainer" />
 					<div id="globalFade" />
