@@ -528,6 +528,7 @@ class Keyboard {
 
 		S.Menu.closeAll();
 		this.restoreSource();
+		sidebar.rightPanelClose(isPopup);
 		analytics.event('HistoryBack');
 	};
 
@@ -550,6 +551,7 @@ class Keyboard {
 		};
 
 		S.Menu.closeAll();
+		sidebar.rightPanelClose(isPopup);
 		analytics.event('HistoryForward');
 	};
 
