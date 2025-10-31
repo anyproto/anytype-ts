@@ -58,6 +58,7 @@ class CommonStore {
 	public diffValue: I.Diff[] = [];
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
+	public tabId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
 	public openObjectIds: Map<string, Set<string>> = new Map();
@@ -858,6 +859,14 @@ class CommonStore {
 	 */
 	windowIdSet (id: string) {
 		this.windowId = String(id || '');
+	};
+
+	/**
+	 * Sets the tab ID.
+	 * @param {string} id - The tab ID.
+	 */
+	tabIdSet (id: string) {
+		this.tabId = String(id || '');
 	};
 
 	/**

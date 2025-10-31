@@ -184,16 +184,16 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @returns {{ prefix: string; spaceId: string; chatId: string; isSpace: boolean; }} The parsed parameters.
 	 */
-	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; windowId: string } {
+	private getSubParam (subId: string): { prefix: string; spaceId: string; chatId: string; tabId: string } {
 		subId = String(subId || '');
 
-		const [ prefix, spaceId, chatId, windowId ] = subId.split('-');
+		const [ prefix, spaceId, chatId, tabId ] = subId.split('-');
 
 		if (prefix == J.Constant.subId.chatSpace) {
-			return { prefix, spaceId, chatId, windowId };
+			return { prefix, spaceId, chatId, tabId };
 		} else {
 			const [ rootId, blockId ] = chatId.split(':');
-			return { prefix: '', spaceId, chatId: rootId, windowId };
+			return { prefix: '', spaceId, chatId: rootId, tabId };
 		};
 	};
 
@@ -203,7 +203,7 @@ class ChatStore {
 	 * @returns {string} The subscription ID.
 	 */
 	getSpaceSubId (spaceId: string): string {
-		return [ J.Constant.subId.chatSpace, spaceId, '', S.Common.windowId ].join('-');
+		return [ J.Constant.subId.chatSpace, spaceId, '', S.Common.tabId ].join('-');
 	};
 
 	/**
@@ -213,7 +213,7 @@ class ChatStore {
 	 * @returns {string} The subscription ID.
 	 */
 	getChatSubId (prefix: string, spaceId: string, chatId: string): string {
-		return [ prefix, spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.windowId ].join('-');
+		return [ prefix, spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.tabId ].join('-');
 	};
 
 	/**

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect, useState } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
@@ -47,6 +47,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
+	const [ dummy, setDummy ] = useState(0);
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
 	const object = S.Detail.get(rootId, rootId, []);
@@ -205,6 +206,10 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	}, []);
 
+	useEffect(() => {
+		Renderer.send('updateTab', S.Common.tabId, { object: S.Detail.get(rootId, rootId) });
+	}, [ object ]);
+
 	useLayoutEffect(() => {
 		raf(() => sidebar.resizePage(isPopup, null, null, false));
 	}, [ object ]);
@@ -216,11 +221,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			};
 		},
 
-		forceUpdate: () => {
-			if (childRef.current && childRef.current.forceUpdate) {
-				childRef.current?.forceUpdate();
-			};
-		},
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (

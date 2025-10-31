@@ -67,6 +67,10 @@ class MenuManager {
 		return ret.join('+');
 	};
 
+	getView () {
+		return this.win.views[this.win.activeIndex];
+	};
+
 	initMenu () {
 		this.initShortcuts();
 
@@ -162,7 +166,7 @@ class MenuManager {
 						label: Util.translate('electronMenuUndo'), accelerator: this.getAccelerator('undo'),
 						click: () => { 
 							if (this.win) {
-								this.win.webContents.undo();
+								this.getView().webContents.undo();
 								Util.send(this.win, 'commandGlobal', 'undo');
 							};
 						}
@@ -171,7 +175,7 @@ class MenuManager {
 						label: Util.translate('electronMenuRedo'), accelerator: this.getAccelerator('redo'),
 						click: () => {
 							if (this.win) {
-								this.win.webContents.redo();
+								this.getView().redo();
 								Util.send(this.win, 'commandGlobal', 'redo');
 							};
 						}
@@ -197,7 +201,7 @@ class MenuManager {
 						label: Util.translate('electronMenuSelectAll'), accelerator: this.getAccelerator('selectAll'),
 						click: () => {
 							if (this.win) {
-								this.win.webContents.selectAll();
+								this.getView().selectAll();
 								Util.send(this.win, 'commandEditor', 'selectAll');
 							};
 						}
@@ -218,8 +222,8 @@ class MenuManager {
 					Separator,
 
 					{ role: 'minimize', label: Util.translate('electronMenuMinimise') },
-					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
-					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
+					{ label: Util.translate('electronMenuZoomIn'), accelerator: this.getAccelerator('zoomIn'), click: () => Api.setZoom(this.win, this.getView().getZoomLevel() + 1) },
+					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.getView().getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset'), click: () => Api.setZoom(this.win, 0) },
 					{
 						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen'), type: 'checkbox', checked: this.win.isFullScreen(),
@@ -344,7 +348,7 @@ class MenuManager {
 
 				Separator,
 
-				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
+				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.getView().webContents.toggleDevTools() },
 			]
 		});
 

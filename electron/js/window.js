@@ -138,10 +138,6 @@ class WindowManager {
 			};
 		});
 
-		if (is.development) {
-			win.toggleDevTools();
-		};
-
 		this.createTab(win);
 		return win;
 	};
@@ -175,22 +171,28 @@ class WindowManager {
 	};
 
 	createTab (win, param) {
+		const id = randomUUID();
 		const bounds = win.getBounds();
-		const view = new WebContentsView({ webPreferences: this.getPreferencesForNewWindow() });
+		const view = new WebContentsView({ 
+			webPreferences: {
+				...this.getPreferencesForNewWindow(),
+				additionalArguments: [ `--tab-id=${id}` ],
+			},
+		});
+		const offset = 28;
 
 		win.views = win.views || [];
 		win.activeIndex = win.activeIndex || 0;
 		win.views.push(view);
 
-		view.id = randomUUID();
+		view.id = id;
+		view.data = {};
 		view.webContents.loadURL(this.getUrlForNewTab());
-		view.setBounds({ x: 0, y: 28, width: bounds.width, height: bounds.height - 600 });
+		view.setBounds({ x: 0, y: offset, width: bounds.width, height: bounds.height - offset });
+
+		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 
 		remote.enable(view.webContents);
-
-		if (is.development) {
-			view.webContents.toggleDevTools();
-		};
 
 		this.setActiveTab(win, win.views.length - 1);
 	};
@@ -209,7 +211,46 @@ class WindowManager {
 		win.activeIndex = index;
 		win.contentView.addChildView(win.views[win.activeIndex]);
 
-		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id })), index);
+		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id, data: it.data })), index);
+	};
+
+	updateTab (win, id, data) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(it => it.id == id);
+		if (!view) {
+			return;
+		};
+
+		const index = win.views.findIndex(it => it.id == id);
+
+		view.data = Object.assign(view.data || {}, data);
+		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id, data: it.data })), index);
+	};
+
+	removeTab (win, index) {
+		index = Number(index) || 0;
+
+		if (!win.views || !win.views[index]) {
+			return;
+		};
+
+		if (win.views.length == 1) {
+			return;
+		};
+
+		const view = win.views[index];
+		win.views.splice(index, 1);
+
+		if (win.activeIndex == index) {
+			win.contentView.removeChildView(view);
+		};
+
+		this.setActiveTab(win, Math.max(0, index - 1));
 	};
 
 	getPreferencesForNewWindow () {

@@ -41,6 +41,7 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
 			token: this.token,
+			noPreloader: win.activeIndex > 0,
 		});
 
 		win.route = '';
@@ -365,21 +366,21 @@ class Api {
 
 	getTabs (win) {
 		return { 
-			tabs: (win.views || []).map(it => ({ id: it.id })), 
+			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })), 
 			index: win.activeIndex || 0,
 		};
 	};
 
 	setActiveTab (win, index) {
 		WindowManager.setActiveTab(win, index);
-	};	
+	};
 
-	updateTab (win, index, data) {
-		//WindowManager.updateTab(win, index, data);
+	updateTab (win, id, data) {
+		WindowManager.updateTab(win, id, data);
 	};
 
 	removeTab (win, index) {
-		//WindowManager.removeTab(win, index);
+		WindowManager.removeTab(win, index);
 	};
 
 };

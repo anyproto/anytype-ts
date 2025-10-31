@@ -371,10 +371,10 @@ class Storage {
 	 * @param {string} windowId - The window ID.
 	 * @param {any} param - The parameters to set.
 	 */
-	setLastOpened (windowId: string, param: any) {
+	setLastOpened (tabId: string, param: any) {
 		const obj = this.getLastOpened();
 
-		obj[windowId] = Object.assign(obj[windowId] || {}, param);
+		obj[tabId] = Object.assign(obj[tabId] || {}, param);
 		this.set('lastOpenedObject', obj, this.isLocal('lastOpenedObject'));
 	};
 
@@ -386,29 +386,29 @@ class Storage {
 		ids = ids || [];
 
 		const obj = this.getLastOpened();
-		const windowIds = [];
+		const tabIds = [];
 
-		for (const windowId in obj) {
-			if (!obj[windowId] || ids.includes(obj[windowId].id)) {
-				windowIds.push(windowId);
+		for (const tabId in obj) {
+			if (!obj[tabId] || ids.includes(obj[tabId].id)) {
+				tabIds.push(tabId);
 			};
 		};
 
-		this.deleteLastOpenedByWindowId(windowIds);
+		this.deleteLastOpenedByTabId(tabIds);
 	};
 
 	/**
-	 * Deletes last opened objects by window IDs.
-	 * @param {string[]} ids - The window IDs to delete.
+	 * Deletes last opened objects by tab IDs.
+	 * @param {string[]} ids - The tab IDs to delete.
 	 */
-	deleteLastOpenedByWindowId (ids: string[]) {
+	deleteLastOpenedByTabId (ids: string[]) {
 		if (!ids.length) {
 			return;
 		};
 
 		const obj = this.getLastOpened();
 
-		ids.forEach(ids => delete(obj[ids]));
+		ids.forEach(id => delete(obj[id]));
 		this.set('lastOpenedObject', obj, this.isLocal('lastOpenedObject'));
 	};
 

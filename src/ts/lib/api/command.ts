@@ -1461,7 +1461,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 			const object = S.Detail.get(objectId, objectId, []);
 
 			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-				Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
+				Storage.setLastOpened(S.Common.tabId, { id: object.id, layout: object.layout });
 			};
 
 			S.Common.addOpenObject(spaceId, objectId);

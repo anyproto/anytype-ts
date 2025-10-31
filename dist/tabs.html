@@ -14,15 +14,15 @@
 				src: url('./font/inter/medium.woff2') format('woff2');
 			}
 
-			body { font-family: 'Inter', sans-serif; font-size: 14px; }
+			body { font-family: 'Inter', sans-serif; font-size: 14px; color: #000; }
 
 			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; }
 			.tab { 
-				display: flex; align-items: center; justify-content: flex-start; gap: 0px 4px; background-color: #ccc; padding: 0px 8px; 
-				cursor: default;
+				display: flex; align-items: center; justify-content: flex-start; gap: 0px 4px; background-color: #ebebeb; padding: 0px 8px; 
+				cursor: default; max-width: 200px;
 			}
 			.tab.active { background-color: #fff; }
-			.tab .name { font-size: 14px; }
+			.tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 		</style>
 	</head>
 	<body>
@@ -46,15 +46,32 @@
 					container.empty();
 
 					tabs.forEach((it, i) => {
-						const tab = $('<div class="tab"></div>');
-						const name = $('<div class="name"></div>').text(it.id);
+						it.data = it.data || {};
+						const data = it.data || {};
+						const object = data.object || {};
+						const name = String(object.pluralName || object.name || '');
 
-						tab.append(name);
+						const tab = $(`
+							<div class="tab">
+								<div class="name">${name}</div>
+								<div class="icon close">x</div>
+							</div>
+						`);
+
+						if (tabs.length === 1) {
+							tab.find('.icon.close').remove();
+						};
+
 						container.append(tab);
 
-						tab.off('click').on('click', () => {
+						tab.find('.name').off('click').on('click', () => {
 							electron.Api(winId, 'setActiveTab', Number(i));
 							setActive(i);
+						});
+
+						tab.find('.icon.close').off('click').on('click', (e) => {
+							e.stopPropagation();
+							electron.Api(winId, 'removeTab', Number(i));
 						});
 					});
 

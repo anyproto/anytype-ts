@@ -124,6 +124,17 @@ class Util {
 		this.sendToActiveTab(win, ...args);
 	};
 
+	sendToTab (win, tabId, ...args) {
+		if (!win || win.isDestroyed() || !win.views) {
+			return;
+		};
+
+		const view = win.views.find(v => v.id == tabId);
+		if (view && view.webContents) {
+			view.webContents.send(...args);
+		};
+	};
+
 	sendToActiveTab (win, ...args) {
 		const view = win?.views?.[win.activeIndex];
 		if (view && view.webContents) {
