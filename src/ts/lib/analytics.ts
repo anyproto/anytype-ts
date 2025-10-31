@@ -80,6 +80,7 @@ class Analytics {
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
+		settingsAccount: 'ScreenSettingsAccount',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',

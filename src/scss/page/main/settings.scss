@@ -123,6 +123,15 @@
                 .inputWrapper.withIcon:hover {
                     .icon.copy { opacity: 1; }
                 }
+
+                .upsellWrapper { border: 1px solid var(--color-shape-secondary); border-radius: 24px; margin-top: 8px; padding: 24px 16px 16px; text-align: center; }
+                .upsellWrapper {
+                    .text { width: 280px; margin: 0px auto; }
+                    .icon { width: 60px; height: 48px; background-image: url('~img/icon/membership/any-id.svg'); margin-bottom: 10px; }
+                    .title { font-weight: 600; margin-bottom: 4px; padding: 0px; }
+                    .label { color: var(--color-text-secondary); margin-bottom: 20px; }
+                    .button { width: 100%; }
+                }
             }
         }
     }

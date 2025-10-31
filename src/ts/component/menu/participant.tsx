@@ -29,9 +29,9 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 			className: 'anyId',
 			data: {
 				icon: 'anyId',
-				title: translate('popupConfirmAnyIdTitle'),
-				text: translate('popupConfirmAnyIdText'),
-				textConfirm: translate('popupConfirmAnyIdConfirm'),
+				title: translate('membershipUpsellAnyIdTitle'),
+				text: translate('membershipUpsellAnyIdText'),
+				textConfirm: translate('membershipUpsellAnyIdExplorePlans'),
 				colorConfirm: 'blank',
 				onConfirm: () => {
 					Action.openSettings('membership', analytics.route.menuParticipant);
