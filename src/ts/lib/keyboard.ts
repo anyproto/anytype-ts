@@ -1232,6 +1232,7 @@ class Keyboard {
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
 			archive: translate('commonBin'),
+			settings: translate('commonSettings'),
 		};
 
 		if (titles[action]) {

@@ -22,15 +22,8 @@ class Api {
 	token = '';
 	isPinChecked = false;
 
-	appOnLoad (win) {
-		const cssPath = path.join(Util.userPath(), 'custom.css');
-
-		let css = '';
-		if (fs.existsSync(cssPath)) {
-			css = fs.readFileSync(cssPath, 'utf8');
-		};
-
-		Util.send(win, 'init', {
+	getInitData (win) {
+		return {
 			id: win.id,
 			dataPath: Util.dataPath(),
 			config: ConfigManager.config,
@@ -39,11 +32,14 @@ class Api {
 			route: win.route,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
-			css: String(css || ''),
+			css: Util.getCss(),
 			token: this.token,
 			noPreloader: win.activeIndex > 0,
-		});
+		};
+	};
 
+	appOnLoad (win, tabId) {
+		Util.sendToTab(win, tabId, 'init', this.getInitData(win));
 		win.route = '';
 	};
 

@@ -279,6 +279,13 @@ class Util {
 		return is.linux && (process.env.XDG_SESSION_TYPE === 'wayland');
 	};
 
+	getCss () {
+		const cssPath = path.join(this.userPath(), 'custom.css');
+		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
+
+		return String(css || '');
+	};
+
 };
 
 module.exports = new Util();

@@ -126,7 +126,7 @@ const App: FC = () => {
 	const nodeRef = useRef(null);
 
 	const init = () => {
-		const { version, arch, getGlobal } = electron;
+		const { version, arch, getGlobal, tabId } = electron;
 
 		U.Router.init(history);
 		U.Smile.init();
@@ -136,7 +136,7 @@ const App: FC = () => {
 		
 		registerIpcEvents();
 
-		Renderer.send('appOnLoad');
+		Renderer.send('appOnLoad', tabId());
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
