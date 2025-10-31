@@ -16,6 +16,7 @@ const DEFAULT_HEIGHT = 768;
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
+const TAB_BAR_HEIGHT = 28;
 
 class WindowManager {
 
@@ -91,7 +92,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 10, y: 26 };
+			param.trafficLightPosition = { x: 10, y: 6 };
 		} else
 		if (is.windows) {
 			param.frame = false;
@@ -134,7 +135,7 @@ class WindowManager {
 			const { width, height } = win.getBounds();
 
 			if (win.views && win.views[win.activeIndex]) {
-				win.views[win.activeIndex].setBounds({ x: 0, y: 0, width, height });
+				win.views[win.activeIndex].setBounds({ x: 0, y: TAB_BAR_HEIGHT, width, height: height - TAB_BAR_HEIGHT });
 			};
 		});
 
@@ -179,7 +180,6 @@ class WindowManager {
 				additionalArguments: [ `--tab-id=${id}` ],
 			},
 		});
-		const offset = 28;
 
 		win.views = win.views || [];
 		win.activeIndex = win.activeIndex || 0;
@@ -188,7 +188,7 @@ class WindowManager {
 		view.id = id;
 		view.data = {};
 		view.webContents.loadURL(this.getUrlForNewTab());
-		view.setBounds({ x: 0, y: offset, width: bounds.width, height: bounds.height - offset });
+		view.setBounds({ x: 0, y: TAB_BAR_HEIGHT, width: bounds.width, height: bounds.height - TAB_BAR_HEIGHT });
 
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 

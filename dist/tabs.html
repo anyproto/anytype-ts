@@ -14,14 +14,16 @@
 				src: url('./font/inter/medium.woff2') format('woff2');
 			}
 
-			body { font-family: 'Inter', sans-serif; font-size: 14px; color: #000; }
+			body { font-family: 'Inter', sans-serif; font-size: 14px; color: #000; background: transparent; }
 
-			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; }
+			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; -webkit-app-region: drag; }
+			#tabs.platform-darwin { padding-left: 76px; }
+
 			.tab { 
 				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 8px; 
-				cursor: default; max-width: 200px; user-select: none;
+				cursor: default; max-width: 200px; user-select: none; -webkit-app-region: no-drag; border-radius: 6px 6px 0px 0px;
 			}
-			.tab.active { background-color: #fff; }
+			.tab.active { background-color: #f7f7f7; }
 			.tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 			.tab .image { width: 18px; height: 18px; object-fit: contain; }
 			.tab .icon.close { width: 18px; height: 18px; background-size: contain; background-repeat: no-repeat; background-position: center; }
@@ -36,6 +38,8 @@
 				const currentWindow = electron.currentWindow();
 				const winId = Number(currentWindow?.windowId) || 0;
 				const container = $('#tabs');
+
+				container.addClass(`platform-${electron.platform}`);
 
 				const setActive = (index) => {
 					container.find('.tab.active').removeClass('active');

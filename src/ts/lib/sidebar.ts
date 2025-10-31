@@ -495,7 +495,6 @@ class Sidebar {
 		widthLeft = Number(widthLeft) || 0;
 		widthRight = Number(widthRight) || 0;
 
-		const { isFullScreen } = S.Common;
 		const container = U.Common.getScrollContainer(isPopup);
 		const pageWidth = this.pageFlex.width() - widthLeft - widthRight;
 		const ho = isMainHistory || isPopupMainHistory ? J.Size.history.panel : 0;
@@ -504,10 +503,6 @@ class Sidebar {
 
 		if (!isPopup) {
 			pageCss.height = U.Common.getAppContainerHeight() - 16;
-		};
-
-		if (U.Common.isPlatformMac() && !isFullScreen) {
-			leftButtonX = 84;
 		};
 
 		this.header.css({ width: '' });
