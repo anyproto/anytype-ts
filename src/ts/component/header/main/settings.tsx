@@ -12,19 +12,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const space = U.Space.getSpaceview();
 	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
-	const onIdentity = () => {
-		if (globalName) {
-			return;
-		};
-
-		S.Menu.open('identity', {
-			element: '#settings-identity-badge',
-			horizontal: I.MenuDirection.Center,
-		});
-
-		analytics.event('ClickUpgradePlanTooltip', { type: 'identity' });
-	};
-
 	const onMore = () => {
 		menuOpen('select', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
@@ -57,14 +44,14 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		const id = param.id || 'account';
 		const showId = [ 'account', 'index' ];
 
-		if (!showId.includes(id)) {
+		if (!showId.includes(id) || !globalName) {
 			return '';
 		};
 
 		return (
-			<div id="settings-identity-badge" className="identity" onClick={onIdentity}>
-				<Icon className={globalName ? 'anyName' : 'info'} />
-				<Label text={globalName ? globalName : U.Common.shortMask(account.id, 6)} />
+			<div id="settings-identity-badge" className="identity">
+				<Icon className="anyName" />
+				<Label text={globalName} />
 			</div>
 		);
 	};

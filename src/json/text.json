@@ -969,6 +969,10 @@
 	"upsellBannerMembersLimitUsageText": "You've reached the limit of %s editors. ",
 	"upsellBannerMembersUpsellText": "Upgrade to invite more editors. ",
 
+	"membershipUpsellAnyIdTitle": "This is your ANY ID",
+	"membershipUpsellAnyIdText": "Become a member to make your ID human-readable, so other members can easily find and connect with you.",
+	"membershipUpsellAnyIdExplorePlans": "Explore plans",
+
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportData": "Import data",
