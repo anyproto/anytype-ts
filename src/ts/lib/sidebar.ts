@@ -39,7 +39,6 @@ class Sidebar {
 		this.initObjects(isPopup);
 
 		const { space } = S.Common;
-		const { default: defaultWidth } = J.Size.sidebar.width;
 		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
 		for (const panel of [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft, I.SidebarPanel.Right ]) {
@@ -48,13 +47,14 @@ class Sidebar {
 			};
 
 			const data = stored?.[panel];
+			const param = this.getSizeParam(panel);
 
 			let isClosed = true;
-			let width = defaultWidth;
+			let width = param.default;
 
 			if (data) {
 				isClosed = Boolean(data.isClosed);
-				width = this.limitWidth(data.width);
+				width = this.limitWidth(panel, data.width);
 			};
 
 			if ((panel == I.SidebarPanel.SubLeft) && !space) {
@@ -91,8 +91,9 @@ class Sidebar {
 	getData (panel: I.SidebarPanel, isPopup?: boolean): SidebarData {
 		const ns = U.Common.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
+		const param = this.getSizeParam(panel);
 
-		return this.panelData[key] || { width: J.Size.sidebar.width.default, isClosed: true };
+		return this.panelData[key] || { width: param.default, isClosed: true };
 	};
 
 	/**
@@ -398,7 +399,7 @@ class Sidebar {
 	 * @param {number} w - The width to set.
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number): void {
-		this.setData(panel, isPopup, { width: this.limitWidth(width), isClosed: false });
+		this.setData(panel, isPopup, { width: this.limitWidth(panel, width), isClosed: false });
 		this.resizePage(isPopup, null, null, false);
 	};
 
@@ -422,7 +423,8 @@ class Sidebar {
 		const { x } = keyboard.mouse.page;
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
-		const vw = dataLeft.isClosed ? 0 : J.Size.sidebar.threshold;
+		const param = this.getSizeParam(I.SidebarPanel.Left);
+		const vw = dataLeft.isClosed ? 0 : param.threshold;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -584,7 +586,7 @@ class Sidebar {
 		const obj = this.getWrapper(panel, isPopup);
 
 		if (obj && obj.length) {
-			obj.css({ width: v.isClosed ? 0 : this.limitWidth(v.width) });
+			obj.css({ width: v.isClosed ? 0 : this.limitWidth(panel, v.width) });
 		};
 
 		if (undefined !== v.isClosed) {
@@ -597,8 +599,9 @@ class Sidebar {
 	 * @param {number} width - The width to limit.
 	 * @returns {number} The limited width.
 	 */
-	private limitWidth (width: number): number {
-		const { min, max } = J.Size.sidebar.width;
+	private limitWidth (panel: I.SidebarPanel, width: number): number {
+		const { min, max } = this.getSizeParam(panel);
+
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
@@ -621,6 +624,16 @@ class Sidebar {
 	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
 		S.Common.setRightSidebarState(isPopup, v.page);
 		this.rightPanelGetRef(isPopup)?.setState(v);
+	};
+
+	getSizeParam (panel: I.SidebarPanel) {
+		const param = J.Size.sidebar;
+
+		let ret = param.default;
+		if (param[panel]) {
+			ret = Object.assign(ret, param[panel]);
+		};
+		return ret;
 	};
 
 };
