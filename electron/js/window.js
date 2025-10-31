@@ -358,7 +358,7 @@ class WindowManager {
 
 	sendToAll () {
 		const args = [ ...arguments ];
-		this.list.forEach(it => Util.send.apply(this, [ it ].concat(args)));
+		this.list.forEach(it => Util.send.apply(Util, [ it ].concat(args)));
 	};
 
 	reloadAll () {
