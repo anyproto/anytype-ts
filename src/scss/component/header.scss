@@ -83,19 +83,7 @@
 }
 
 .header:not(.withSidebarLeft) {
-	.side.left { padding-left: 120px; }
-}
-
-html:not(.platformMac) {
-	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 52px; }
-	}
-}
-
-body.isFullScreen {
-	.header:not(.withSidebarLeft) {
-		.side.left { padding-left: 52px; }
-	}
+	.side.left { padding-left: 48px; }
 }
 
 .header.authIndex { height: 52px; width: 100% !important; }

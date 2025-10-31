@@ -24,9 +24,13 @@
 				cursor: default; max-width: 200px; user-select: none; -webkit-app-region: no-drag; border-radius: 6px 6px 0px 0px;
 			}
 			.tab.active { background-color: #f7f7f7; }
+			.tab .clickable { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; }
 			.tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-			.tab .image { width: 18px; height: 18px; object-fit: contain; }
-			.tab .icon.close { width: 18px; height: 18px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+			.tab .image { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
+			.tab .icon.close { 
+				width: 20px; height: 20px; background-size: contain; background-repeat: no-repeat; background-position: center; 
+				background-image: url('./img/icon/close.svg'); flex-shrink: 0;
+			}
 		</style>
 	</head>
 	<body>
@@ -58,22 +62,26 @@
 
 						const tab = $(`
 							<div class="tab">
+								<div class="clickable">
 									<div class="name">${title}</div>
-									<div class="icon close">x</div>
+								</div>	
+								<div class="icon close"></div>
 							</div>
 						`);
 
+						container.append(tab);
+
+						const clickable = tab.find('.clickable');
+
 						if (icon) {
-							tab.prepend($(`<img src="${icon}" class="image" />`));
+							clickable.prepend($(`<img src="${icon}" class="image" />`));
 						};
 
 						if (tabs.length === 1) {
 							tab.find('.icon.close').remove();
 						};
 
-						container.append(tab);
-
-						tab.find('.name').off('click').on('click', () => {
+						clickable.off('click').on('click', () => {
 							electron.Api(winId, 'setActiveTab', Number(i));
 							setActive(i);
 						});
