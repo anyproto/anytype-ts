@@ -125,7 +125,7 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		//win.loadURL(this.getUrlForNewWindow());
+		win.loadURL(this.getUrlForNewWindow());
 
 		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());
@@ -139,7 +139,7 @@ class WindowManager {
 		});
 
 		if (is.development) {
-			//win.toggleDevTools();
+			win.toggleDevTools();
 		};
 
 		this.createTab(win);
@@ -183,8 +183,8 @@ class WindowManager {
 		win.views.push(view);
 
 		view.id = randomUUID();
-		view.webContents.loadURL(this.getUrlForNewWindow());
-		view.setBounds({ x: 0, y: 0, width: bounds.width, height: bounds.height });
+		view.webContents.loadURL(this.getUrlForNewTab());
+		view.setBounds({ x: 0, y: 28, width: bounds.width, height: bounds.height - 600 });
 
 		remote.enable(view.webContents);
 
@@ -196,10 +196,20 @@ class WindowManager {
 	};
 
 	setActiveTab (win, index) {
+		index = Number(index) || 0;
+
+		if (!win.views || !win.views[index]) {
+			return;
+		};
+
+		if (win.views[win.activeIndex]) {
+			win.contentView.removeChildView(win.views[win.activeIndex]);
+		};
+
 		win.activeIndex = index;
 		win.contentView.addChildView(win.views[win.activeIndex]);
 
-		Util.sendToAllTabs(win, 'update-tabs', win.views.map(it => ({ id: it.id })), win.activeIndex);
+		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id })), index);
 	};
 
 	getPreferencesForNewWindow () {
@@ -214,7 +224,11 @@ class WindowManager {
 	};
 
 	getUrlForNewWindow () {
-		return is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html');
+		return is.development ? `http://localhost:${port}/tabs.html` : 'file://' + path.join(Util.appPath, 'dist', 'tabs.html');
+	};
+
+	getUrlForNewTab () {
+		return this.getUrlForNewWindow().replace('tabs.html', 'index.html');
 	};
 
 	getScreenSize () {

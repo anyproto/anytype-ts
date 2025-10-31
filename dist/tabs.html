@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Anytype</title>
+
+		<script src="./js/jquery.js"></script>
+
+		<style type="text/css">
+			* { margin: 0px; padding: 0px; box-sizing: border-box; }
+	
+			@font-face {
+				font-family: 'Inter'; font-style: normal; font-weight: 500;
+				src: url('./font/inter/medium.woff2') format('woff2');
+			}
+
+			body { font-family: 'Inter', sans-serif; font-size: 14px; }
+
+			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; }
+			.tab { 
+				display: flex; align-items: center; justify-content: flex-start; gap: 0px 4px; background-color: #ccc; padding: 0px 8px; 
+				cursor: default;
+			}
+			.tab.active { background-color: #fff; }
+			.tab .name { font-size: 14px; }
+		</style>
+	</head>
+	<body>
+		<div id="tabs"></div>
+
+		<script type="text/javascript">
+			$(document).ready(() => {
+				const electron = window.Electron;
+				const currentWindow = electron.currentWindow();
+				const winId = Number(currentWindow?.windowId) || 0;
+				const container = $('#tabs');
+
+				const setActive = (index) => {
+					container.find('.tab.active').removeClass('active');
+					container.find(`.tab:eq(${index})`).addClass('active');
+				};
+
+				const setTabs = (tabs, index) => {
+					tabs = tabs || [];
+
+					container.empty();
+
+					tabs.forEach((it, i) => {
+						const tab = $('<div class="tab"></div>');
+						const name = $('<div class="name"></div>').text(it.id);
+
+						tab.append(name);
+						container.append(tab);
+
+						tab.off('click').on('click', () => {
+							electron.Api(winId, 'setActiveTab', Number(i));
+							setActive(i);
+						});
+					});
+
+					const plus = $('<div class="tab isAdd"><div class="name">+</div></div>');			
+					container.append(plus);
+
+					plus.off('click').on('click', () => electron.Api(winId, 'createTab'));
+			
+					setActive(index);
+				};
+
+				electron.Api(winId, 'getTabs').then(({ tabs, index }) => setTabs(tabs, index));
+				electron.on('tabChanged', (e, tabs, index) => setTabs(tabs, index));
+			});
+		</script>
+	</body>
+</html>

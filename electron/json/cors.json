@@ -8,8 +8,6 @@
 
 	"img-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
 		"file://*",
@@ -19,8 +17,6 @@
 
 	"media-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
 		"file://*", 

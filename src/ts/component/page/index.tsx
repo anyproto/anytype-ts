@@ -193,8 +193,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 	
 	const setBodyClass = () => {
-		const { isPopup } = props;
-	
 		if (isPopup) {
 			return;
 		};
@@ -208,8 +206,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (!showMenuBar) {
-			cn.push('noMenuBar');
+		if (showMenuBar) {
+			cn.push('withMenuBar');
 		};
 
 		obj.attr({ class: cn.join(' ') });

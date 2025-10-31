@@ -41,8 +41,6 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
 			token: this.token,
-			tabs: (win.views || []).map(it => ({ id: it.id })),
-			tabIdx: win.activeIndex || 0,
 		});
 
 		win.route = '';
@@ -363,6 +361,13 @@ class Api {
 
 	createTab (win) {
 		WindowManager.createTab(win);
+	};
+
+	getTabs (win) {
+		return { 
+			tabs: (win.views || []).map(it => ({ id: it.id })), 
+			index: win.activeIndex || 0,
+		};
 	};
 
 	setActiveTab (win, index) {

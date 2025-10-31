@@ -202,7 +202,7 @@ html.platformWindows, html.platformLinux {
 	::-webkit-scrollbar-button { display: none; }
 }
 
-html.platformWindows:not(.noMenuBar) {
+html.platformWindows.withMenuBar {
 	@import "./component/menuBar";
 
 	.sidebar { margin-top: 28px; height: calc(100% - 28px); }

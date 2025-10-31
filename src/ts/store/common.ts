@@ -61,8 +61,6 @@ class CommonStore {
 	public windowIsFocused = true;
 	public routeParam: any = {};
 	public openObjectIds: Map<string, Set<string>> = new Map();
-	public windowTabsValue = [];
-	public activeTabIdxValue = 0;
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -126,8 +124,6 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
-			windowTabsValue: observable,
-			activeTabIdxValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -143,8 +139,6 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
-			windowTabs: computed,
-			activeTabIdx: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -166,7 +160,6 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
-			windowTabsSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -338,14 +331,6 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
-	};
-
-	get windowTabs (): any[] {
-		return this.windowTabsValue || [];
-	};
-
-	get activeTabIdx (): number {
-		return Number(this.activeTabIdxValue) || 0;
 	};
 
 	/**
@@ -996,11 +981,6 @@ class CommonStore {
 		if (list && list.has(objectId)) {
 			list.delete(objectId);
 		};
-	};
-
-	windowTabsSet (tabs: { id: string; }[], index: number) {
-		this.windowTabsValue = tabs;
-		this.activeTabIdxValue = index;
 	};
 
 };
