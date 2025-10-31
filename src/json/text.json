@@ -1333,6 +1333,10 @@
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
+	"popupConfirmAnyIdTitle": "This is your ANY ID",
+	"popupConfirmAnyIdText": "Become a member to make your ID human-readable, so other members can easily find and connect with you.",
+	"popupConfirmAnyIdConfirm": "Explore plans",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",

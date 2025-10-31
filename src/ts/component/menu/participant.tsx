@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch } from 'Component';
-import { I, U, translate } from 'Lib';
+import { ObjectName, ObjectDescription, Label, IconObject, Icon, EmptySearch } from 'Component';
+import { S, I, U, translate, Action, analytics } from 'Lib';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 	useEffect(() => load(), []);
@@ -18,10 +18,36 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		});
 	};
 
+	const onBadgeClick = () => {
+		const participant = U.Space.getParticipant();
+
+		if (participant.globalName) {
+			return;
+		};
+
+		S.Popup.open('confirm', {
+			className: 'anyId',
+			data: {
+				icon: 'anyId',
+				title: translate('popupConfirmAnyIdTitle'),
+				text: translate('popupConfirmAnyIdText'),
+				textConfirm: translate('popupConfirmAnyIdConfirm'),
+				colorConfirm: 'blank',
+				onConfirm: () => {
+					Action.openSettings('membership', analytics.route.menuParticipant);
+				},
+				canCancel: false
+			}
+		})
+	};
+
 	return object ? (
 		<>
 			<IconObject object={object} size={96} />
-			<ObjectName object={object} />
+			<div className="nameWrapper">
+				<ObjectName object={object} />
+				{object.globalName ? <Icon className="badge" onClick={onBadgeClick} /> : ''}
+			</div>
 			<Label 
 				text={U.Common.shorten(object.resolvedName, 150)} 
 				onClick={() => {

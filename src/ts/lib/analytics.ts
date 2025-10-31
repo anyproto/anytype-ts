@@ -70,6 +70,7 @@ class Analytics {
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
 		menuPublish: 'MenuPublish',
+		menuParticipant: 'MenuParticipant',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
