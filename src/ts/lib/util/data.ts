@@ -817,7 +817,10 @@ class UtilData {
 	 * @param {string} objectId - The object ID.
 	 */
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
+		const object = S.Detail.get(rootId, objectId, []);
+		if (!object._empty_) {
+			this.setWindowTitleText(U.Object.name(object, true));
+		};
 	};
 
 	/**
@@ -855,6 +858,9 @@ class UtilData {
 	 */
 	setTabTitle (rootId: string, objectId: string) {
 		const object = S.Detail.get(rootId, objectId, []);
+		if (object._empty_) {
+			return;
+		};
 
 		Renderer.send('updateTab', S.Common.tabId, { 
 			title: U.Object.name(object, true),

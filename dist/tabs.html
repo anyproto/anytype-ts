@@ -19,7 +19,7 @@
 			#tabs { display: flex; flex-direction: row; height: 28px; padding: 0px 12px; }
 			.tab { 
 				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 8px; 
-				cursor: default; max-width: 200px;
+				cursor: default; max-width: 200px; user-select: none;
 			}
 			.tab.active { background-color: #fff; }
 			.tab .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -48,7 +48,6 @@
 					container.empty();
 
 					tabs.forEach((it, i) => {
-						it.data = it.data || {};
 						const data = it.data || {};
 						const title = String(data.title || 'New tab');
 						const icon = String(data.icon || '');
