@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
+import children from 'Component/page/elements/children';
 
 class UtilMenu {
 
@@ -1512,6 +1513,38 @@ class UtilMenu {
 			{ id: I.NotificationMode.Mentions },
 			{ id: I.NotificationMode.Nothing },
 		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
+	};
+
+	settingsSectionsMap () {
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Active ]);
+		const types = U.Common.plural(10, translate('pluralObjectType'));
+		const relations = U.Common.plural(10, translate('pluralProperty'));
+
+		return {
+			exportIndex: translate('commonExport'),
+			importIndex: translate('commonImport'),
+			spaceIndex: translate('pageSettingsSpaceGeneral'),
+			spaceShare: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers'),
+			spaceNotifications: translate('commonNotifications'),
+			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
+			archive: translate('commonBin'),
+			types,
+			relations,
+			integrations: translate('pageSettingsSpaceIntegrations'),
+			index: translate('popupSettingsProfileTitle'),
+			account: translate('popupSettingsProfileTitle'),
+			personal: translate('popupSettingsPersonalTitle'),
+			language: translate('pageSettingsLanguageTitle'),
+			pinIndex: translate('popupSettingsPinTitle'),
+			phrase: translate('popupSettingsPhraseTitle'),
+			membership: translate('popupSettingsMembershipTitle1'),
+			dataIndex: translate('popupSettingsLocalStorageTitle'),
+			spaceList: translate('popupSettingsSpacesListTitle'),
+			dataPublish: translate('popupSettingsDataManagementDataPublishTitle'),
+			api: translate('popupSettingsApiTitle'),
+			set: types,
+			relation: relations,
+		};
 	};
 
 };
