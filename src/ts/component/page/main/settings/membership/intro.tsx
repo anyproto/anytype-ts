@@ -8,9 +8,10 @@ import { Pagination, Mousewheel } from 'swiper/modules';
 const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { membership } = S.Auth;
-	const { interfaceLang, membershipTiers } = S.Common;
+	const { membershipProducts } = S.Common;
 	const { status } = membership;
 	const [ isMonthly, setIsMonthly ] = useState(false);
+	const products = membershipProducts.filter(it => it.isTopLevel && !it.isHidden);
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -63,7 +64,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		const isCurrent = item.id == membership.tier;
 		const periodPrice = isMonthly ? item.priceMonthly : item.price;
 		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
-		const cn = [ 'tier', `c${item.id}`, item.color ];
+		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
 
 		if (isCurrent) {
 			cn.push('isCurrent');
@@ -101,7 +102,16 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 					<Title text={item.name} />
 
 					<div className="features">
-						{item.features.map((el, idx) => <Label key={idx} text={el} />)}
+						{item.featuresList.map(el => {
+							const name = translate(U.Common.toCamelCase(`membershipFeature-${el.key}`));
+
+							let value = el.value;
+							if (el.key == 'storageBytes') {
+								value = U.File.size(el.value);
+							};
+
+							return <Label key={el.key} text={`${name}: ${value}`} />;
+						})}
 					</div>
 				</div>
 				<div className="bottom">
@@ -138,10 +148,10 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 				<Swiper
 					slidesPerView={3}
 					mousewheel={{ forceToAxis: true }}
-					pagination={membershipTiers.length > 3 ? { clickable: true } : false}
+					pagination={products.length > 3 ? { clickable: true } : false}
 					modules={[ Pagination, Mousewheel ]}
 				>
-					{membershipTiers.map((item) => (
+					{products.map((item) => (
 						<SwiperSlide key={item.id}>
 							<TierItem item={item} />
 						</SwiperSlide>

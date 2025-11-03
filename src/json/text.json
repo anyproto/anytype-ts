@@ -2640,5 +2640,14 @@
 	"aiOnboardingStatusDraftingTypes": "Drafting your custom types...",
 	"aiOnboardingStatusGenerating": "Generating your types and objects...",
 	"aiOnboardingStatusCreatingProgress": "Creating types and objects... %d of %d",
-	"aiOnboardingStatusFinalTouches": "Final touches..."
+	"aiOnboardingStatusFinalTouches": "Final touches...",
+
+	"membershipFeatureStorageBytes": "Storage",
+	"membershipFeatureSpaceReaders": "Space readers",
+	"membershipFeatureSpaceWriters": "Space writers",
+	"membershipFeatureSharedSpaces": "Shared spaces",
+	"membershipFeatureTeamSeats": "Team seats",
+	"membershipFeatureAnyNameCount": "Any names",
+	"membershipFeatureAnyNameMinLen": "Any name minimum length"
+
 }

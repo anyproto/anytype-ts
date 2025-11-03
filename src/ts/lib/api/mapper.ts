@@ -604,6 +604,38 @@ export const Mapper = {
 			};
 		},
 
+		MembershipAmount: (obj: Model.MembershipV2.Amount): I.MembershipAmount => {
+			return {
+				currency: obj.getCurrency(),
+				amountCents: obj.getAmountcents(),
+			};
+		},
+
+		MembershipProduct: (obj: Model.MembershipV2.Product): I.MembershipProduct => {
+			const features = obj.getFeatures();
+
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				description: obj.getDescription(),
+				isTopLevel: obj.getIstoplevel(),
+				isHidden: obj.getIshidden(),
+				color: obj.getColorstr(),
+				offer: obj.getOffer(),
+				pricesYearly: (obj.getPricesyearlyList() || []).map(Mapper.From.MembershipAmount),
+				pricesMonthly: (obj.getPricesmonthlyList() || []).map(Mapper.From.MembershipAmount),
+				features: {
+					storageBytes: features.getStoragebytes(),
+					spaceReaders: features.getSpacereaders(),
+					spaceWriters: features.getSpacewriters(),
+					sharedSpaces: features.getSharedspaces(),
+					teamSeats: features.getTeamseats(),
+					anyNameCount: features.getAnynamecount(),
+					anyNameMinLen: features.getAnynameminlen(),
+				},
+			};
+		},
+
 		Process: (obj: Events.Model.Process) => {
 			const type = Mapper.ProcessType(obj.getMessageCase());
 

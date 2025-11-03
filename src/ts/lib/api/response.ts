@@ -599,6 +599,12 @@ export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Respo
 	};
 };
 
+export const MembershipV2GetProducts = (response: Rpc.MembershipV2.GetProducts.Response) => {
+	return {
+		products: (response.getProductsList() || []).map(Mapper.From.MembershipProduct),
+	};
+};
+
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),

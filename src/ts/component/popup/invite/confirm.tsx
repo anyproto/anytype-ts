@@ -11,7 +11,6 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const { icon, identity, route, spaceId } = data;
 	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 	const readerLimt = useRef(0);
 	const writerLimit = useRef(0);
 	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};
@@ -75,7 +74,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 	let buttons = [];
-	if (!readerLimt.current && !tier?.price) {
+	if (!readerLimt.current && !membership.tierItem?.price) {
 		buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => onMembership('members') });
 	} else 
 	if (!writerLimit.current) {

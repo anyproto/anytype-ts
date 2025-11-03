@@ -99,3 +99,31 @@ export interface MembershipTier {
 	isUpgradeable?: boolean;
 	manageUrl?: string;
 };
+
+export interface MembershipAmount {
+	currency: string;
+	amountCents: number;
+};
+
+export interface MembershipProduct {
+	id: string;
+	name: string;
+	description: string;
+	isTopLevel: boolean;
+	isHidden: boolean;
+	color: string;
+	offer: string;
+	pricesYearly: MembershipAmount[];
+	pricesMonthly: MembershipAmount[];
+	features: {
+		storageBytes: number;
+		spaceReaders: number;
+		spaceWriters: number;
+		sharedSpaces: number;
+		teamSeats: number;
+		anyNameCount: number;
+		anyNameMinLen: number;
+	};
+	featuresList?: { key: string; value: number; }[];
+	colorStr?: string;
+};

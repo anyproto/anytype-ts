@@ -95,6 +95,7 @@ class CommonStore {
 	};
 
 	public membershipTiersList: I.MembershipTier[] = [];
+	public membershipProductsList: I.MembershipProduct[] = [];
 
 	constructor () {
 		makeObservable(this, {
@@ -115,6 +116,7 @@ class CommonStore {
 			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			membershipProductsList: observable,
 			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
@@ -131,6 +133,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			membershipTiers: computed,
+			membershipProducts: computed,
 			space: computed,
 			isOnline: computed,
 			showRelativeDates: computed,
@@ -154,6 +157,7 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			membershipTiersListSet: action,
+			membershipProductsListSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			showRelativeDatesSet: action,
@@ -314,6 +318,10 @@ class CommonStore {
 
 	get membershipTiers (): I.MembershipTier[] {
 		return this.membershipTiersList || [];
+	};
+
+	get membershipProducts (): I.MembershipProduct[] {
+		return this.membershipProductsList || [];
 	};
 
 	get diff (): I.Diff[] {
@@ -841,6 +849,23 @@ class CommonStore {
 	 */
 	membershipTiersListSet (list: I.MembershipTier[]) {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
+	};
+
+	/**
+	 * Sets the membership products list.
+	 * @param {I.MembershipProduct[]} list - The membership products list.
+	 */
+	membershipProductsListSet (list: I.MembershipProduct[]) {
+		this.membershipProductsList = (list || []).map(it => new M.MembershipProduct(it));
+	};
+
+	/**
+	 * Gets a membership product by ID.
+	 * @param {string} id - The membership product ID.
+	 * @returns {I.MembershipProduct | null} The membership product or null if not found.
+	 */
+	getMembershipProduct (id: string): I.MembershipProduct | null {
+		return this.membershipProductsList.find(it => it.id === id) || null;
 	};
 
 	/**

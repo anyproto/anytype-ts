@@ -55,8 +55,8 @@ class Keyboard {
 
 			S.Common.isOnlineSet(onLine);
 
-			if (!S.Common.membershipTiers.length) {
-				U.Data.getMembershipTiers(false, () => U.Data.getMembershipStatus(false));
+			if (!S.Common.membershipProducts.length) {
+				U.Data.getMembershipProducts(false, () => U.Data.getMembershipStatus(false));
 			};
 		});
 

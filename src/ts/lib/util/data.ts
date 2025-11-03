@@ -358,7 +358,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(false, () => this.getMembershipStatus(false));
+		this.getMembershipProducts(false, () => this.getMembershipStatus(false));
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
 				Storage.clearDeletedSpaces(false);
@@ -899,7 +899,7 @@ class UtilData {
 	 * @param {boolean} noCache - Whether to skip cache.
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
-	getMembershipTiers (noCache: boolean, callBack?: () => void) {
+	getMembershipProducts (noCache: boolean, callBack?: () => void) {
 		const { interfaceLang, isOnline } = S.Common;
 
 		if (!isOnline || !this.isAnytypeNetwork()) {
@@ -916,6 +916,14 @@ class UtilData {
 			if (callBack) {
 				callBack();
 			};
+		});
+
+		C.MembershipV2GetProducts(noCache, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			S.Common.membershipProductsListSet(message.products);
 		});
 	};
 
