@@ -1,6 +1,5 @@
 @import "~scss/_mixins";
 
-.widget.widgetSpace { z-index: 1; margin: 0px 0px 16px 0px; }
 .widget.widgetSpace {
 	.head { padding-top: 0px; }
 	.head {
@@ -54,8 +53,7 @@
 		.buttons { padding: 0px 8px; }
 		.buttons {
 			.item { 
-				padding: 3px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; background: var(--color-bg-primary); 
-				border-radius: 6px;
+				padding: 3px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; border-radius: 6px;
 			}
 			.item::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;

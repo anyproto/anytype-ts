@@ -21,9 +21,9 @@
 
 	.widgetSection { display: flex; flex-direction: column; }
 	.widgetSection {
-		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 16px; }
+		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 4px; }
 		> .nameWrap {
-			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); display: none; }
+			.icon.arrow { width: 12px; height: 12px; background-image: url('~img/arrow/widgetSection0.svg'); transform: rotateZ(-90deg); }
 			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/plus/widgetSection0.svg'); }
 
 			.name { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 5px 0px; transition: color $transitionCommon; }
@@ -49,12 +49,11 @@
 			}
 
 			&:hover {
-				.icon.arrow { display: block; }
 				.buttons { opacity: 1; }
 			}
 		}
 
-		> .items { display: flex; flex-direction: column; overflow: hidden; height: 0px; }
+		> .items { display: flex; flex-direction: column; overflow: hidden; height: 0px; gap: 8px 0px; }
 		> .items {
 			&.anim { transition: height 0.2s $easeInQuint; }
 		}
@@ -64,7 +63,7 @@
 		}
 	}
 
-	> .body { padding: 0px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
+	> .body { padding: 0px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body.isPreview { overflow: hidden; }
 	> .body {
 		@keyframes shake1 {
@@ -77,7 +76,7 @@
 			100% { transform: rotate(-0.5deg); }
 		}
 
-		> .content { display: flex; flex-direction: column; }
+		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
 
 		#widget-chat { margin: 0px 0px 8px 0px; }
 

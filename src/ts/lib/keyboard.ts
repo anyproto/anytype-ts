@@ -290,7 +290,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-sidebar-select-type').trigger('click');
+				$('#button-widget-arrow').trigger('click');
 			});
 
 			// Lock the app

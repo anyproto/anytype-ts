@@ -92,6 +92,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		});
 	};
 
+	const onArrow = () => {
+		U.Menu.typeSuggest({ 
+			element: '#button-widget-arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.navigation, object => U.Object.openConfig(object));
+	};
+
 	const onDragStart = (e: DragEvent, block: I.Block): void => {
 		e.stopPropagation();
 
@@ -729,7 +742,36 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					<Sync id="headerSync" onClick={onSync} />
 				</div>
 				<div className="side right">
-					<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
+					<Icon 
+						className="search withBackground" 
+						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
+						tooltipParam={{ 
+							text: translate('commonSearch'), 
+							caption: keyboard.getCaption('search'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+					<div className="createWrapper">
+						<Icon 
+							className="create withBackground" 
+							onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
+							tooltipParam={{ 
+								text: translate('commonNewObject'), 
+								caption: keyboard.getCaption('createObject'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+						<Icon 
+							id="button-widget-arrow"
+							className="arrow withBackground" 
+							onClick={onArrow}
+							tooltipParam={{ 
+								text: translate('commonNewObject'), 
+								caption: keyboard.getCaption('createObject'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 
