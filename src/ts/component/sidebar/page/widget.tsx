@@ -751,27 +751,29 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
-					<div className="createWrapper">
-						<Icon 
-							className="create withBackground" 
-							onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
-							tooltipParam={{ 
-								text: translate('commonNewObject'), 
-								caption: keyboard.getCaption('createObject'), 
-								typeY: I.MenuDirection.Bottom,
-							}}
-						/>
-						<Icon 
-							id="button-widget-arrow"
-							className="arrow withBackground" 
-							onClick={onArrow}
-							tooltipParam={{ 
-								text: translate('commonNewObject'), 
-								caption: keyboard.getCaption('createObject'), 
-								typeY: I.MenuDirection.Bottom,
-							}}
-						/>
-					</div>
+					{canWrite ? (
+						<div className="createWrapper">
+							<Icon 
+								className="create withBackground" 
+								onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
+								tooltipParam={{ 
+									text: translate('commonNewObject'), 
+									caption: keyboard.getCaption('createObject'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+							/>
+							<Icon 
+								id="button-widget-arrow"
+								className="arrow withBackground" 
+								onClick={onArrow}
+								tooltipParam={{ 
+									text: translate('popupShortcutMainBasics19'), 
+									caption: keyboard.getCaption('selectType'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 

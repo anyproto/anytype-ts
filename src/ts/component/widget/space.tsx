@@ -13,7 +13,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 	const requestCnt = participants.filter(it => it.isJoining).length;
 	const isSpaceOwner = U.Space.isMyOwner();
-	const canWrite = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
 	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
@@ -36,21 +35,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 			case 'settings': {
 				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
-				break;
-			};
-
-			case 'create': {
-				U.Menu.typeSuggest({ 
-					element: '#widget-space #item-create',
-					offsetX: $(nodeRef.current).width() + 4,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-					vertical: I.MenuDirection.Center,
-				}, {}, { 
-					deleteEmpty: true,
-					selectTemplate: true,
-					withImport: true,
-				}, analytics.route.navigation, object => U.Object.openConfig(object));
 				break;
 			};
 
@@ -98,7 +82,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		);
 	} else {
 		const buttons = [
-			canWrite ? { id: 'create', name: translate('commonNewObject') } : null,
 			!spaceview.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
 			{ id: 'settings', name: translate('commonSettings') },
 		].filter(it => it);
