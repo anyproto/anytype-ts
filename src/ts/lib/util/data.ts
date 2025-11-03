@@ -892,9 +892,7 @@ class UtilData {
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
 	getMembershipProducts (noCache: boolean, callBack?: () => void) {
-		const { isOnline } = S.Common;
-
-		if (!isOnline || !this.isAnytypeNetwork()) {
+		if (!S.Common.isOnline || !this.isAnytypeNetwork()) {
 			return;
 		};
 

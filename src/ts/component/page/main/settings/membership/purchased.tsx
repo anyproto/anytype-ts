@@ -1,13 +1,12 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Icon, Switch } from 'Component';
-import { I, S, U, J, C, Action, translate, analytics, keyboard, Relation } from 'Lib';
+import { Title, Label, Button, Icon } from 'Component';
+import { I, S, U, J, C, Action, translate } from 'Lib';
 
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { data } = S.Membership;
 	const product = data?.getTopProduct();
-	const { status } = product;
 	const { isYearly, dateEnds } = product.info;
 	const { name, colorStr } = product.product;
 	const price = product.product.getPriceString(isYearly);

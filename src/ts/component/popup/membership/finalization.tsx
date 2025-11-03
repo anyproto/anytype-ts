@@ -6,6 +6,8 @@ import { I, C, S, U, J, translate } from 'Lib';
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param } = props;
+	const { data } = param;
+	const { tier } = data;
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -24,8 +26,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	};
 
 	const onKeyUp = () => {
-		const { data } = param;
-		const { tier } = data;
 		const name = nameRef.current?.getValue() || '';
 
 		buttonRef.current?.setDisabled(true);
@@ -99,9 +99,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		};
 		*/
 	}, []);
-
-	const { data } = param;
-	const { tier } = data;
 
 	return null;
 
