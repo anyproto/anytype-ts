@@ -53,9 +53,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 
-		if (isCollection) {
-			onDragRecordStart?.(e, record.id);
-		};
+		onDragRecordStart?.(e, record.id);
 	};
 
 	const onClick = (e: any) => {
@@ -142,17 +140,11 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	if (!isInline) {
 		content = (
 			<SelectionTarget id={record.id} type={I.SelectType.Record}>
-				{content}
-			</SelectionTarget>
-		);
-
-		if (isCollection) {
-			content = (
 				<DropTarget {...props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 					{content}
 				</DropTarget>
-			);
-		};
+			</SelectionTarget>
+		);
 	};
 
 	useEffect(() => {
@@ -169,7 +161,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			ref={nodeRef}
 			className={cn.join(' ')} 
 			style={style}
-			draggable={isCollection && !isInline}
+			draggable={!isInline}
 			onClick={onClick}
 			onContextMenu={(e: any) => onContext(e, record.id)}
 			onDragStart={onDragStart}

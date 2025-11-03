@@ -63,7 +63,7 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	if (isCollection && !isInline) {
+	if (!isInline) {
 		content = (
 			<>
 				{!readonly ? (

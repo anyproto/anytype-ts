@@ -107,7 +107,22 @@
 			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 			.row:hover { background-color: var(--color-shape-highlight-light); }
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
 			.row.add { margin-top: -2px; }
+
+			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
+			.cell.isEditing:first-child { 
+				.cellContent { padding-left: 20px !important; }
+			}
+
+			.dropTarget.isOver { box-shadow: 0px 0px; }
+			.dropTarget.isOver::before { 
+				content: ""; position: absolute; background: var(--color-control-accent); width: 100%; height: 2px; border-radius: 2px; left: 0px; z-index: 1;
+			}
+			.dropTarget.isOver.top::before { top: -1px; }
+			.dropTarget.isOver.bottom::before { bottom: -1px; }
 
 			.row > .selectionTarget,
 			.row > .dropTarget > .selectionTarget { display: grid; }
@@ -187,24 +202,6 @@
 			.cell.isEditing.c-checkbox { 
 				.cellContent { min-width: unset; }
 			}
-		}
-
-		.viewContent.viewGrid.isCollection {
-			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
-			.cell.isEditing:first-child { 
-				.cellContent { padding-left: 20px !important; }
-			}
-
-			.row:hover {
-				.icon.drag { opacity: 1; }
-			}
-
-			.dropTarget.isOver { box-shadow: 0px 0px; }
-			.dropTarget.isOver::before { 
-				content: ""; position: absolute; background: var(--color-control-accent); width: 100%; height: 2px; border-radius: 2px; left: 0px; z-index: 1;
-			}
-			.dropTarget.isOver.top::before { top: -1px; }
-			.dropTarget.isOver.bottom::before { bottom: -1px; }
 		}
 	}
 

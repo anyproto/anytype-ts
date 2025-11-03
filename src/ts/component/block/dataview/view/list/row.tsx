@@ -162,7 +162,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		);
 	};
 
-	if (isCollection && !isInline) {
+	if (!isInline) {
 		content = (
 			<>
 				<Icon
