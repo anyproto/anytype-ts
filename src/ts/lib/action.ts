@@ -679,7 +679,7 @@ class Action {
 		}).filter(it => it);
 
 		if (isCut && (blocks.length > 1)) {
-			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+			next = S.Block.getNextBlock(rootId, blocks[0].id, -1, it => it.isFocusable());
 		};
 
 		if ((range.from == range.to) && !blocks.length) {
