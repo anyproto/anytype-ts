@@ -363,20 +363,24 @@ class Api {
 	getTabs (win) {
 		return { 
 			tabs: (win.views || []).map(it => ({ id: it.id, data: it.data })), 
-			index: win.activeIndex || 0,
+			id: win.views[win.activeIndex || 0]?.id,
 		};
 	};
 
-	setActiveTab (win, index) {
-		WindowManager.setActiveTab(win, index);
+	setActiveTab (win, id) {
+		WindowManager.setActiveTab(win, id);
 	};
 
 	updateTab (win, id, data) {
 		WindowManager.updateTab(win, id, data);
 	};
 
-	removeTab (win, index) {
-		WindowManager.removeTab(win, index);
+	removeTab (win, id, updateActive) {
+		WindowManager.removeTab(win, id, updateActive);
+	};
+
+	closeOtherTabs (win, id) {
+		WindowManager.closeOtherTabs(win, id);
 	};
 
 };

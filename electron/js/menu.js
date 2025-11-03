@@ -229,7 +229,12 @@ class MenuManager {
 						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen'), type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
-					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.getView().webContents.reload() }
+					{ 
+						label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => {
+							this.win.reload();
+							this.getView().webContents.reload();
+						}
+					},
 				]
 			},
 			{

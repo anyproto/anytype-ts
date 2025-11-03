@@ -21,14 +21,15 @@
 
 			.tab { 
 				display: flex; align-items: center; justify-content: flex-start; gap: 0px 6px; background-color: #ebebeb; padding: 0px 2px 0px 8px; 
-				cursor: default; max-width: 200px; user-select: none; -webkit-app-region: no-drag; border-radius: 6px 6px 0px 0px;
+				cursor: default; flex-basis: 200px; user-select: none; -webkit-app-region: no-drag; border-radius: 6px 6px 0px 0px; overflow: hidden;
+				flex: 1 1; max-width: 200px;
 			}
 			.tab.noClose { padding-right: 8px; }
 			.tab.active { background-color: #f7f7f7; }
-			.tab.isAdd { justify-content: center; font-size: 18px; font-weight: bold; width: 28px; padding: 0px 8px; }
+			.tab.isAdd { justify-content: center; font-size: 18px; font-weight: bold; flex-basis: 28px; padding: 0px 8px; flex-grow: 0; flex-shrink: 0; }
 
 			.tab {
-				.clickable { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; }
+				.clickable { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; overflow: hidden; }
 				.name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 				.image { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; }
 				.icon.close { 
@@ -47,27 +48,24 @@
 				const electron = window.Electron;
 				const currentWindow = electron.currentWindow();
 				const winId = Number(currentWindow?.windowId) || 0;
-				const container = $('#tabs');
+				const container = $('#tabs').addClass(`platform-${electron.platform}`);
 
-				container.addClass(`platform-${electron.platform}`);
-
-				const setActive = (index) => {
+				const setActive = (id) => {
 					container.find('.tab.active').removeClass('active');
-					container.find(`.tab:eq(${index})`).addClass('active');
+					container.find(`#tab-${id}`).addClass('active');
 				};
 
-				const setTabs = (tabs, index) => {
-					tabs = tabs || [];
-
+				const setTabs = (tabs, id) => {
 					container.empty();
 
+					tabs = tabs || [];
 					tabs.forEach((it, i) => {
 						const data = it.data || {};
 						const title = String(data.title || 'New tab');
 						const icon = String(data.icon || '');
 
 						const tab = $(`
-							<div class="tab">
+							<div id="tab-${it.id}" class="tab">
 								<div class="clickable">
 									<div class="name">${title}</div>
 								</div>	
@@ -95,7 +93,7 @@
 
 						tab.find('.icon.close').off('click').on('click', (e) => {
 							e.stopPropagation();
-							electron.Api(winId, 'removeTab', Number(i));
+							electron.Api(winId, 'removeTab', [ it.id, true ]);
 						});
 					});
 
@@ -104,11 +102,11 @@
 
 					plus.off('click').on('click', () => electron.Api(winId, 'createTab'));
 			
-					setActive(index);
+					setActive(id);
 				};
 
-				electron.Api(winId, 'getTabs').then(({ tabs, index }) => setTabs(tabs, index));
-				electron.on('tabChanged', (e, tabs, index) => setTabs(tabs, index));
+				electron.Api(winId, 'getTabs').then(({ tabs, id }) => setTabs(tabs, id));
+				electron.on('update-tabs', (e, tabs, id) => setTabs(tabs, id));
 			});
 		</script>
 	</body>

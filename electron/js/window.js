@@ -139,6 +139,8 @@ class WindowManager {
 			};
 		});
 
+		win.webContents.toggleDevTools();
+
 		this.createTab(win);
 		return win;
 	};
@@ -191,17 +193,17 @@ class WindowManager {
 		view.on('close', () => Util.sendToTab(win, view.id, 'will-close-tab'));
 
 		remote.enable(view.webContents);
-		this.setActiveTab(win, win.views.length - 1);
+		this.setActiveTab(win, id);
 	};
 
-	setActiveTab (win, index) {
-		index = Number(index) || 0;
+	setActiveTab (win, id) {
+		id = String(id || '');
 
-		if (!win.views || !win.views[index]) {
+		if (!id || !win.views) {
 			return;
 		};
 
-		const view = win.views[index];
+		const view = win.views.find(it => it.id == id);
 		if (!view) {
 			return;
 		};
@@ -211,12 +213,14 @@ class WindowManager {
 		};
 
 		const bounds = win.getBounds();
+		const index = win.views.findIndex(it => it.id == id);
+
 		view.setBounds({ x: 0, y: TAB_BAR_HEIGHT, width: bounds.width, height: bounds.height - TAB_BAR_HEIGHT });
 
 		win.activeIndex = index;
 		win.contentView.addChildView(view);
 
-		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id, data: it.data })), index);
+		this.updateTabsBar(win, id);
 	};
 
 	updateTab (win, id, data) {
@@ -231,31 +235,49 @@ class WindowManager {
 			return;
 		};
 
-		const index = win.views.findIndex(it => it.id == id);
-
 		view.data = Object.assign(view.data || {}, data);
-		Util.send(win, 'tabChanged', win.views.map(it => ({ id: it.id, data: it.data })), index);
+		this.updateTabsBar(win, id);
 	};
 
-	removeTab (win, index) {
-		index = Number(index) || 0;
+	removeTab (win, id, updateActive) {
+		id = String(id || '');
 
-		if (!win.views || !win.views[index]) {
+		if (!id || !win.views || (win.views.length <= 1)) {
 			return;
 		};
 
-		if (win.views.length == 1) {
-			return;
-		};
-
-		const view = win.views[index];
-		win.views.splice(index, 1);
+		const view = win.views.find(it => it.id == id);
+		const index = win.views.findIndex(it => it.id == id);
 
 		if (win.activeIndex == index) {
 			win.contentView.removeChildView(view);
 		};
 
-		this.setActiveTab(win, Math.max(0, index - 1));
+		win.views.splice(index, 1);
+
+		if (updateActive) {
+			this.setActiveTab(win, win.views[index - 1]?.id);
+		};
+	};
+
+	closeOtherTabs (win, id) {
+		id = String(id || '');
+
+		if (!id || !win.views) {
+			return;
+		};
+
+		const views = win.views.filter(it => it.id != id);
+
+		views.forEach(view => {
+			this.removeTab(win, view.id);
+		});
+
+		this.setActiveTab(win, id);
+	};
+
+	updateTabsBar (win, id) {
+		Util.send(win, 'update-tabs', win.views.map(it => ({ id: it.id, data: it.data })), id);
 	};
 
 	getPreferencesForNewWindow () {
