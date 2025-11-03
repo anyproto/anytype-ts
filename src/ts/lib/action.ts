@@ -678,8 +678,12 @@ class Action {
 			return it;
 		}).filter(it => it);
 
-		if (isCut) {
+		if (isCut && (blocks.length > 1)) {
 			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+		};
+
+		if ((range.from == range.to) && !blocks.length) {
+			return;
 		};
 
 		C[cmd](rootId, blocks, range, (message: any) => {

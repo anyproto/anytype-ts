@@ -1894,7 +1894,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.preventDefault();
 
 		if (!ids.length) {
-			ids = [ focused ];
+			if (range.from != range.to) {
+				ids = [ focused ];
+			};
 		} else {
 			ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 		};
