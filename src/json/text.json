@@ -1038,13 +1038,6 @@
 	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
 	"popupSettingsMembershipManage": "Manage",
 
-	"popupSettingsMembershipPeriod0": "",
-	"popupSettingsMembershipPeriod1": "unlimited",
-	"popupSettingsMembershipPeriod2": "daily",
-	"popupSettingsMembershipPeriod3": "weekly",
-	"popupSettingsMembershipPeriod4": "monthly",
-	"popupSettingsMembershipPeriod5": "annual",
-
 	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
 	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
 
@@ -2338,10 +2331,6 @@
 
 	"errorNameServiceResolveName3": "Please connect to the internet",
 
-	"errorMembershipGetStatus6": "Membership not found",
-	"errorMembershipGetStatus7": "Membership has wrong state",
-	"errorMembershipGetStatus8": "Please connect to the internet",
-
 	"errorMembershipIsNameValid3": "Name is too short",
 	"errorMembershipIsNameValid4": "Name is too long",
 	"errorMembershipIsNameValid5": "Name contains invalid characters",
@@ -2372,13 +2361,6 @@
 	"errorMembershipGetVerificationEmail9": "Failed to send email",
 	"errorMembershipGetVerificationEmail10": "Membership already exists",
 
-	"errorMembershipVerifyEmailCode6": "This email is already verified",
-	"errorMembershipVerifyEmailCode7": "Code has expired",
-	"errorMembershipVerifyEmailCode8": "Wrong code",
-	"errorMembershipVerifyEmailCode9": "Membership not found",
-	"errorMembershipVerifyEmailCode10": "Membership is already active",
-
-	"errorMembershipGetTiers4": "Unable to connect to payment node",
 	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 

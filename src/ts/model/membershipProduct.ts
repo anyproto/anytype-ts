@@ -11,9 +11,9 @@ class MembershipProduct implements I.MembershipProduct {
 
 	id = '';
 	name = '';
-	description = ''
+	description = '';
 	isTopLevel = false;
-	isHidden = false
+	isHidden = false;
 	color = '';
 	offer = '';
 	pricesYearly: I.MembershipAmount[] = [];

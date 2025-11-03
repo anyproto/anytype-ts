@@ -569,41 +569,6 @@ export const Mapper = {
 			};
 		},
 
-		Membership: (obj: Model.Membership): I.Membership => {
-			return {
-				tier: obj.getTier(),
-				status: obj.getStatus() as number,
-				dateStarted: obj.getDatestarted(),
-				dateEnds: obj.getDateends(),
-				isAutoRenew: obj.getIsautorenew(),
-				paymentMethod: obj.getPaymentmethod() as number,
-				name: obj.getNsname(),
-				nameType: obj.getNsnametype() as number,
-				userEmail: obj.getUseremail(),
-				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
-			};
-		},
-
-		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
-			return {
-				id: obj.getId(),
-				name: obj.getName(),
-				description: obj.getDescription(),
-				nameMinLength: obj.getAnynameminlength(),
-				periodType: obj.getPeriodtype() as number,
-				period: obj.getPeriodvalue(),
-				priceCents: obj.getPricestripeusdcents(),
-				priceCentsMonthly: obj.getPricestripeusdcentsmonthly(),
-				colorStr: obj.getColorstr(),
-				features: obj.getFeaturesList(),
-				namesCount: obj.getAnynamescountincluded(),
-				offer: obj.getOffer(),
-				isIntro: obj.getIsintroplan(),
-				isUpgradeable: obj.getIsupgradeable(),
-				manageUrl: obj.getStripemanageurl(),
-			};
-		},
-
 		MembershipAmount: (obj: Model.MembershipV2.Amount): I.MembershipAmount => {
 			return {
 				currency: obj.getCurrency(),
@@ -632,6 +597,31 @@ export const Mapper = {
 					teamSeats: features.getTeamseats(),
 					anyNameCount: features.getAnynamecount(),
 					anyNameMinLen: features.getAnynameminlen(),
+				},
+			};
+		},
+
+		MembershipData: (obj: Model.MembershipV2.Data): I.MembershipData => {
+			const invoice = obj.getNextinvoice();
+
+			return {
+				products: (obj.getProductsList() || []).map(it => {
+					const info = it.getPurchaseinfo();
+
+					return {
+						product: Mapper.From.MembershipProduct(it.getProduct()),
+						info: {
+							dateStarted: info.getDatestarted(),
+							dateEnds: info.getDateends(),
+							isAutoRenew: info.getIsautorenew(),
+							isYearly: info.getIsyearly(),
+						},
+						status: it.getProductstatus().getStatus() as number,
+					};
+				}),
+				nextInvoice: {
+					date: invoice.getDate(),
+					total: invoice.hasTotal() ? Mapper.From.MembershipAmount(invoice.getTotal()) : null,
 				},
 			};
 		},
@@ -1247,9 +1237,6 @@ export const Mapper = {
 
 			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
 
-			if (v == V.MEMBERSHIPUPDATE)			 t = 'MembershipUpdate';
-			if (v == V.MEMBERSHIPTIERSUPDATE)		 t = 'MembershipTiersUpdate';
-
 			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
 			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
@@ -1690,18 +1677,6 @@ export const Mapper = {
 		PayloadBroadcast: (obj: Events.Event.Payload.Broadcast) => {
 			return {
 				payload: obj.getPayload(),
-			};
-		},
-
-		MembershipUpdate: (obj: Events.Event.Membership.Update) => {
-			return {
-				membership: Mapper.From.Membership(obj.getData()),
-			};
-		},
-
-		MembershipTiersUpdate: (obj: Events.Event.Membership.TiersUpdate) => {
-			return {
-				tiers: (obj.getTiersList() || []).map(Mapper.From.MembershipTierData),
 			};
 		},
 

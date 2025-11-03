@@ -1945,30 +1945,6 @@ class UtilCommon {
 		};
 	};
 
-	getMembershipPeriodLabel (tier: I.MembershipTier): string {
-		// default is year
-		let periodLabel = translate('pluralYear');
-
-		if (tier.periodType) {
-			switch (tier.periodType) {
-				case I.MembershipTierDataPeriodType.PeriodTypeDays: {
-					periodLabel = translate('pluralDay');
-					break;
-				};
-				case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
-					periodLabel = translate('pluralWeek');
-					break;
-				};
-				case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
-					periodLabel = translate('pluralMonth');
-					break;
-				};
-			};
-		};
-
-		return periodLabel;
-	};
-
 	calculateStorageUsage (): number {
 		const spaces = U.Space.getList();
 

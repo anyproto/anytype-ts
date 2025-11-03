@@ -872,24 +872,16 @@ class UtilData {
 	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
-	getMembershipStatus (noCache?: boolean, callBack?: (membership: I.Membership) => void) {
+	getMembershipStatus (noCache?: boolean, callBack?: () => void) {
 		if (!this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetStatus(noCache || false, (message: any) => {
-			if (!message.membership) {
-				return;
-			};
-
-			const membership = new M.Membership(message.membership);
-			const { tier } = membership;
-
-			S.Auth.membershipSet(membership);
-			analytics.setTier(tier);
+		C.MembershipV2GetStatus(noCache, (message: any) => {
+			S.Membership.dataSet(message.data);
 
 			if (callBack) {
-				callBack(membership);
+				callBack();
 			};
 		});
 	};
@@ -900,40 +892,21 @@ class UtilData {
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
 	getMembershipProducts (noCache: boolean, callBack?: () => void) {
-		const { interfaceLang, isOnline } = S.Common;
+		const { isOnline } = S.Common;
 
 		if (!isOnline || !this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
-			if (message.error.code) {
-				return;
+		C.MembershipV2GetProducts(noCache, (message) => {
+			if (!message.error.code) {
+				S.Membership.productsSet(message.products);
 			};
-
-			S.Common.membershipTiersListSet(message.tiers);
 
 			if (callBack) {
 				callBack();
 			};
 		});
-
-		C.MembershipV2GetProducts(noCache, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			S.Common.membershipProductsListSet(message.products);
-		});
-	};
-
-	/**
-	 * Gets a membership tier by its ID.
-	 * @param {I.TierType} id - The tier ID.
-	 * @returns {I.MembershipTier} The membership tier object.
-	 */
-	getMembershipTier (id: I.TierType): I.MembershipTier {
-		return S.Common.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
 	/**
@@ -1238,7 +1211,8 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		return this.isAnytypeNetwork() && S.Auth.membership?.tierItem?.isIntro;
+		return false;
+		//return this.isAnytypeNetwork() && S.Auth.membership?.tierItem?.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

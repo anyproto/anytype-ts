@@ -7,11 +7,8 @@ import { Pagination, Mousewheel } from 'swiper/modules';
 
 const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { membership } = S.Auth;
-	const { membershipProducts } = S.Common;
-	const { status } = membership;
 	const [ isMonthly, setIsMonthly ] = useState(false);
-	const products = membershipProducts.filter(it => it.isTopLevel && !it.isHidden);
+	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);

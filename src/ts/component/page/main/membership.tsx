@@ -15,6 +15,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		const data = U.Common.searchParam(location.search);
 
 		U.Data.getMembershipProducts(true, () => {
+			/*
 			U.Data.getMembershipStatus(true, (membership: I.Membership) => {
 				if (!membership) {
 					setError(translate('pageMainMembershipError'));
@@ -37,6 +38,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 					},
 				});
 			});
+			*/
 		});
 
 		resize();

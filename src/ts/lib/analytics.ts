@@ -242,8 +242,8 @@ class Analytics {
 	 * Sets the user's tier property for analytics.
 	 * @param {I.TierType} tier - The user's tier.
 	 */
-	setTier (tier: I.TierType) {
-		this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
+	setTier (tier: string) {
+		//this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
 	};
 
 	/**
@@ -573,13 +573,13 @@ class Analytics {
 
 			case 'ChangePlan':
 			case 'ScreenMembership': {
-				data.name = I.TierType[data.params.tier];
+				//data.name = I.TierType[data.params.tier];
 				break;
 			};
 
 			case 'ClickMembership': {
-				data.name = data.name || I.TierType[data.params.tier];
-				data.type = data.type || I.PaymentMethod[data.params.method];
+				//data.name = data.name || I.TierType[data.params.tier];
+				//data.type = data.type || I.PaymentMethod[data.params.method];
 				break;
 			};
 

@@ -79,12 +79,14 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 				return;
 			};
 
+			/*
 			U.Data.getMembershipStatus(true, (membership) => {
 				if (!membership) {
 					setError(translate('pageMainMembershipError'));
 					return;
 				};
 			});
+			*/
 		});
 	};
 
@@ -102,7 +104,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		return null;
 	};
 
-	const { membership } = S.Auth;
 	const { name, nameType } = membership;
 
 	const title = tierItem.name ? U.Common.sprintf(translate(`popupMembershipFinalizationTitleWithName`), tierItem.name) : translate(`popupMembershipFinalizationTitle`);

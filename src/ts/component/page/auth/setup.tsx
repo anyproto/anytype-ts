@@ -70,6 +70,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					].forEach(it => Survey.check(it));
 
 					const cb1 = () => {
+						/*
 						U.Data.getMembershipStatus(false, membership => {
 							if (membership.status == I.MembershipStatus.Finalization) {
 								S.Popup.open('membershipFinalization', { 
@@ -80,6 +81,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 								cb2();
 							};
 						});
+						*/
 					};
 
 					const cb2 = () => {

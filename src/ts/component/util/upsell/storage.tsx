@@ -41,7 +41,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 		};
 		upsellText = translate('upsellBannerStorageFullUpsellText');
 	} else {
-		const periodLabel = U.Common.getMembershipPeriodLabel(tier);
+		const periodLabel = '';
 
 		let period = '';
 		if (tier.period == 1) {

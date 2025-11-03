@@ -10,7 +10,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { rootId } = data;
 	const { isOnline } = S.Common;
-	const { membership } = S.Auth;
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);

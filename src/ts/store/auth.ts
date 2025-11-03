@@ -14,20 +14,16 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public startingId: Map<string, string> = new Map();
-	public membershipData: I.Membership = null;
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	
 	constructor () {
 		makeObservable(this, {
 			accountItem: observable,
 			accountList: observable,
-			membershipData: observable,
-			membership: computed,
 			accounts: computed,
 			account: computed,
 			accountAdd: action,
 			accountSet: action,
-			membershipSet: action,
 			clearAll: action,
 			logout: action,
 		});
@@ -52,10 +48,6 @@ class AuthStore {
 			mode: Number(obj.mode) || I.NetworkMode.Default,
 			path: String(obj.path || ''),
 		};
-	};
-
-	get membership (): I.Membership {
-		return this.membershipData || new M.Membership({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
 	};
 
 	/**
@@ -89,22 +81,6 @@ class AuthStore {
 	 */
 	appKeySet (v: string) {
 		this.appKey = String(v || '');
-	};
-
-	/**
-	 * Sets the membership data.
-	 * @param {I.Membership} v - The membership data.
-	 */
-	membershipSet (v: I.Membership) {
-		this.membershipData = v;
-	};
-
-	/**
-	 * Updates the membership data.
-	 * @param {I.Membership} v - The membership data.
-	 */
-	membershipUpdate (v: I.Membership) {
-		set(this.membershipData, v);
 	};
 
 	/**
@@ -261,7 +237,6 @@ class AuthStore {
 		this.accountItem = null;
 
 		this.accountListClear();
-		this.membershipSet({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
 		this.syncStatusMap.clear();
 	};
 
@@ -294,6 +269,7 @@ class AuthStore {
 			S.Menu.closeAllForced();
 			S.Notification.clear();
 			S.Chat.clearAll();
+			S.Membership.clearAll();
 
 			this.clearAll();
 			Storage.logout();

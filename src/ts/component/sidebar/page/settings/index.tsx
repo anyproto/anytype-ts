@@ -14,7 +14,7 @@ const HEIGHT_DIV = 12;
 const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
-	const { membership } = S.Auth;
+	const { data } = S.Membership;
 	const { space, isOnline } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
 	const profile = U.Space.getProfile();
@@ -214,11 +214,13 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
+			/*
 			if (!membership.isIntro && membership.tierItem && membership.tierItem.name) {
 				caption = <div className="caption">{membership.tierItem.name}</div>;
 			} else {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 			};
+			*/
 		};
 
 		if (item.alert) {

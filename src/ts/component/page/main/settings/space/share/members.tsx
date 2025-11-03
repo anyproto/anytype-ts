@@ -14,7 +14,6 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
 	const { isPopup, onStopSharing } = props;
 	const { space } = S.Common;
-	const { membership } = S.Auth;
 	const spaceview = U.Space.getSpaceview();
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);

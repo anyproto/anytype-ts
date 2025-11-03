@@ -9,8 +9,7 @@ import ViewRelation from './viewRelation';
 import Filter from './filter';
 import Sort from './sort';
 
-import Membership from './membership';
-import MembershipTier from './membershipTier';
+import MembershipData from './membershipData';
 import MembershipProduct from './membershipProduct';
 
 export { 
@@ -28,7 +27,6 @@ export {
 	Filter,
 	Sort,
 
-	Membership,
-	MembershipTier,
+	MembershipData,
 	MembershipProduct,
 };

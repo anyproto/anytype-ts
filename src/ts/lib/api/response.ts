@@ -569,18 +569,6 @@ export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Res
 	};
 };
 
-export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
-	return {
-		membership: Mapper.From.Membership(response.getData()),
-	};
-};
-
-export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
-	return {
-		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
-	};
-};
-
 export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
 	return {
 		url: response.getPaymenturl(),
@@ -604,6 +592,12 @@ export const MembershipV2GetProducts = (response: Rpc.MembershipV2.GetProducts.R
 		products: (response.getProductsList() || []).map(Mapper.From.MembershipProduct),
 	};
 };
+
+export const MembershipV2GetStatus = (response: Rpc.MembershipV2.GetStatus.Response) => {
+	return {
+		data: Mapper.From.MembershipData(response.getData()),
+	};
+}
 
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {

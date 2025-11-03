@@ -10,7 +10,6 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const { param, close } = props;
 	const { data } = param;
 	const { icon, identity, route, spaceId } = data;
-	const { membership } = S.Auth;
 	const readerLimt = useRef(0);
 	const writerLimit = useRef(0);
 	const space = U.Space.getSpaceviewBySpaceId(spaceId) || {};

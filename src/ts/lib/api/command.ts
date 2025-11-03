@@ -2103,24 +2103,6 @@ export const NameServiceResolveName = (name: string, callBack?: (message: any) =
 
 // ---------------------- PAYMENTS ---------------------- //
 
-export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetStatus.Request();
-	
-	request.setNocache(noCache);
-
-	dispatcher.request(MembershipGetStatus.name, request, callBack);
-};
-
-export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetTiers.Request();
-
-	request.setNocache(noCache);
-	request.setLocale(locale);
-	request.setVersion('2.0');
-
-	dispatcher.request(MembershipGetTiers.name, request, callBack);
-};
-
 export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.IsNameValid.Request();
 
@@ -2158,14 +2140,6 @@ export const MembershipGetVerificationEmail = (email: string, subscribeNews: boo
 	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
 };
 
-export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.VerifyEmailCode.Request();
-	
-	request.setCode(code);
-	
-	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
-};
-
 export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.Finalize.Request();
 
@@ -2194,6 +2168,7 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 };
 
 // ---------------------- MEMBERSHIP V2 ---------------------- //
+
 export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => {
 	const request = new Rpc.MembershipV2.GetPortalLink.Request();
 

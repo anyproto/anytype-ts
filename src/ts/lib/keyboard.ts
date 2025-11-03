@@ -55,7 +55,7 @@ class Keyboard {
 
 			S.Common.isOnlineSet(onLine);
 
-			if (!S.Common.membershipProducts.length) {
+			if (!S.Membership.products.length) {
 				U.Data.getMembershipProducts(false, () => U.Data.getMembershipStatus(false));
 			};
 		});
@@ -918,10 +918,9 @@ class Keyboard {
 	 * Handles membership upgrade action.
 	 */
 	onMembershipUpgradeViaEmail () {
-		const { account, membership } = S.Auth;
-		const name = membership.name ? membership.name : account.id;
+		const participant = U.Space.getMyParticipant();
 
-		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, participant?.resolvedName));
 	};
 
 	/**
