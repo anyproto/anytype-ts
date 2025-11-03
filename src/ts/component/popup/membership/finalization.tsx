@@ -39,6 +39,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		};
 
 		timeoutRef.current = window.setTimeout(() => {
+			/*
 			C.MembershipIsNameValid(tier, name, (message: any) => {
 				if (message.error.code) {
 					setError(message.error.description);
@@ -64,6 +65,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 					};
 				});
 			});
+			*/
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -91,18 +93,25 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	};
 
 	useEffect(() => {
+		/*
 		if (!S.Auth.membership?.name) {
 			buttonRef.current?.setDisabled(true);
 		};
+		*/
 	}, []);
 
 	const { data } = param;
 	const { tier } = data;
+
+	return null;
+
+	/*
 	const tierItem = U.Data.getMembershipTier(tier);
 
 	if (!tierItem) {
 		return null;
 	};
+
 
 	const { name, nameType } = membership;
 
@@ -134,6 +143,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 			{isLoading ? <Loader /> : ''}
 		</div>
 	);
+	*/
 
 }));
 

@@ -66,6 +66,16 @@ class MembershipProduct implements I.MembershipProduct {
 		return COLORS.includes(this.color) ? this.color : 'default';
 	};
 
+	getPrice (isYearly: boolean): I.MembershipAmount | null {
+		const prices = isYearly ? this.pricesYearly : this.pricesMonthly;
+		return prices.length ? prices[0] : null;
+	};
+
+	getPriceString (isYearly: boolean): string {
+		const price = this.getPrice(isYearly);
+		return price ? `${(price.amountCents / 100).toFixed(2)} ${price.currency}` : '';
+	};
+
 };
 
 export default MembershipProduct;

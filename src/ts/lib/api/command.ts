@@ -2090,39 +2090,7 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
 
-// ---------------------- NAME SERVICE ---------------------- //
-
-export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveName.Request();
-
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(NameServiceResolveName.name, request, callBack);
-};
-
 // ---------------------- PAYMENTS ---------------------- //
-
-export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.IsNameValid.Request();
-
-	request.setRequestedtier(tier as number);
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipIsNameValid.name, request, callBack);
-};
-
-export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, isMonthly: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
-
-	request.setRequestedtier(tier as number);
-	request.setPaymentmethod(method as number);
-	request.setIsmonthly(isMonthly);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);
-};
 
 export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
 	const request = new Empty();

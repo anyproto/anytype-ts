@@ -8,17 +8,20 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const { data } = S.Membership;
 	const product = data?.getTopProduct();
 	const { status } = product;
-	const { isYearly } = product.info;
-	const { name, colorStr, price, priceMonthly } = product.product;
-	const nextPaymentAmount = isYearly ? price : priceMonthly;
-	const payment = `$${nextPaymentAmount}`;
-	const date = 'July, 04, 2026'; // TODO: change when data is available
+	const { isYearly, dateEnds } = product.info;
+	const { name, colorStr } = product.product;
+	const price = product.product.getPriceString(isYearly);
+	const date = U.Date.dateWithFormat(S.Common.dateFormat, dateEnds);
 	const currentCn = [ 'item', 'current', colorStr ];
 
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
-	const globalName = Relation.getStringValue(participant?.globalName);
-	const anyNameCn = [ 'item', 'anyName', globalName ? '' : 'noName' ];
+	const { globalName } = participant;
+	const nameCn = [ 'item', 'anyName' ];
+
+	if (globalName) {
+		nameCn.push('withName');
+	};
 
 	const onManage = () => {
 		C.MembershipGetPortalLinkUrl((message) => {
@@ -39,12 +42,12 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 					<div className="top">
 						<Icon />
 						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, 'PERIOD TYPE')} />
-						<Label text={U.Common.sprintf(translate('popupSettingsMembershipNextPayment'), payment, date)} />
+						<Label text={U.Common.sprintf(translate('popupSettingsMembershipNextPayment'), price, date)} />
 					</div>
 					<Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />
 				</div>
 
-				<div className={anyNameCn.join(' ')}>
+				<div className={nameCn.join(' ')}>
 					<div className="top">
 						<Icon />
 						<Title text={globalName ? globalName : translate('popupSettingsMembershipSelectAnyNameTitle')} />

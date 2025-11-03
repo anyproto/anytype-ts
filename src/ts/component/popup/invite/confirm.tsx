@@ -73,7 +73,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 	let buttons = [];
-	if (!readerLimt.current && !membership.tierItem?.price) {
+	if (!readerLimt.current) {
 		buttons.push({ id: 'reader', text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => onMembership('members') });
 	} else 
 	if (!writerLimit.current) {

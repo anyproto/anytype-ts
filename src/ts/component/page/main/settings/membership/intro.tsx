@@ -9,6 +9,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	const [ isMonthly, setIsMonthly ] = useState(false);
 	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
+	const { data } = S.Membership;
+	const current = data?.getTopProduct();
 
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
@@ -48,17 +50,19 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		};
 	};
 
-	const onPay = (item: I.MembershipTier) => {
+	const onPay = (item: any) => {
+		/*
 		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, isMonthly, (message) => {
 			if (message.url) {
 				Action.openUrl(message.url);
 			};
 		});
+		*/
 	};
 
 	const TierItem = (props: any) => {
 		const { item } = props;
-		const isCurrent = item.id == membership.tier;
+		const isCurrent = item.id == current?.product.id;
 		const periodPrice = isMonthly ? item.priceMonthly : item.price;
 		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
@@ -70,11 +74,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		let period = '';
 
 		if (isCurrent) {
-			if (membership.status == I.MembershipStatus.Pending) {
+			if (current?.status == I.MembershipStatus.Pending) {
 				period = translate('popupSettingsMembershipPending');
 			} else
-			if (item.period && membership.dateEnds) {
-				period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', membership.dateEnds));
+			if (item.period && current?.info.dateEnds) {
+				period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', current?.info.dateEnds));
 			} else {
 				period = translate('popupSettingsMembershipForeverFree');
 			};

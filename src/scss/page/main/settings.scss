@@ -1059,9 +1059,11 @@
 
                 .item.anyName {
                     .icon { width: 60px; height: 48px; margin-bottom: 10px; background: url('~img/icon/membership/anyname.svg'); }
-                    &.noName {
-                        .title { font-weight: 600; }
-                    }
+					.title { font-weight: 600; }
+
+					&.withName {
+						.title { font-weight: 400; }
+					}
                 }
             }
         }

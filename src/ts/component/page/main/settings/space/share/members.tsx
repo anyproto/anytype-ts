@@ -167,7 +167,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 	let showLimit = false;
 	let memberUpgradeType = '';
 
-	if (spaceview.isShared && !U.Space.getReaderLimit() && membership.tierItem.price) {
+	if (spaceview.isShared && !U.Space.getReaderLimit()) {
 		limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 		limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 		memberUpgradeType = 'members';

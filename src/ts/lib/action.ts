@@ -911,9 +911,14 @@ class Action {
 	};
 
 	membershipUpgrade (event?: any) {
-		const tier = S.Auth.membership.tierItem;
+		const { data } = S.Membership;
+		const product = data?.getTopProduct();
 
-		if (!tier.isUpgradeable) {
+		if (!product) {
+			return;
+		};
+
+		if (!product.product.isUpgradeable) {
 			S.Popup.open('confirm', {
 				data: {
 					title: translate('popupConfirmMembershipUpgradeTitle'),
@@ -923,9 +928,6 @@ class Action {
 					canCancel: false
 				}
 			});
-		} else 
-		if (tier.manageUrl) {
-			this.openUrl(tier.manageUrl);
 		} else {
 			this.openSettings('membership', '');
 		};

@@ -44,6 +44,8 @@ export interface MembershipProduct {
 	description: string;
 	isTopLevel: boolean;
 	isHidden: boolean;
+	isIntro?: boolean;
+	isUpgradeable?: boolean;
 	color: string;
 	offer: string;
 	pricesYearly: MembershipAmount[];
@@ -59,4 +61,6 @@ export interface MembershipProduct {
 	};
 	featuresList?: { key: string; value: number; }[];
 	colorStr?: string;
+	getPrice?: (isYearly: boolean) => MembershipAmount | null;
+	getPriceString?: (isYearly: boolean) => string;
 };

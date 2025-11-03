@@ -558,23 +558,6 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	};
 };
 
-export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
-	return {
-		available: response.getAvailable(),
-		ownerScwEthAddress: response.getOwnerscwethaddress(),
-		ownerEtherAddress: response.getOwnerethaddress(),
-		ownerAnyAddress: response.getOwneranyaddress(),
-		spaceId: response.getSpaceid(),
-		nameExpires: response.getNameexpires(),
-	};
-};
-
-export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
-	return {
-		url: response.getPaymenturl(),
-	};
-};
-
 export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
 	return { 
 		url: response.getPortalurl(),
