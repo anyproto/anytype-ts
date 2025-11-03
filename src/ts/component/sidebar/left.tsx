@@ -40,7 +40,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
-	const closeWidth = J.Size.sidebar.width.min * 0.75;
 
 	const getComponentId = (id: string) => {
 		id = String(id || '');
@@ -130,6 +129,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			const w = Math.max(0, (e.pageX - ox.current));
 			const d = w - width.current;
 			const data = sidebar.getData(panel);
+			const sizeParam = sidebar.getSizeParam(panel);
+			const { min } = sizeParam;
+			const closeWidth = min * 0.75;
 
 			if (!d) {
 				return;
@@ -145,7 +147,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			if (d > 0) {
 				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
-					sidebar.open(panel, '', J.Size.sidebar.width.min);
+					sidebar.open(panel, '', min);
 				} else 
 				if (w > closeWidth) {
 					sidebar.setWidth(panel, false, w);

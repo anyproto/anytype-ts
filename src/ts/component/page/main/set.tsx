@@ -74,7 +74,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				return;
 			};
 
-			headRef.current?.forceUpdate();
+			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			controlsRef.current?.forceUpdate();
 

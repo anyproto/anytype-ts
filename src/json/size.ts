@@ -10,8 +10,8 @@ export default {
 	},
 
 	sidebar: {
-		width: { min: 240, max: 480, default: 336 },
-		threshold: 72,
+		default: { min: 240, max: 480, default: 336, threshold: 72 },
+		left: { min: 120 },
 	},
 
 	table: {
