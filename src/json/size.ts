@@ -3,7 +3,7 @@ export default {
 	blockMenu: 48,
 	lastBlock: 80,
 	menuBorder: 10,
-	header: 52,
+	header: 44,
 
 	history: {
 		panel: 348,

@@ -98,7 +98,7 @@ body.isFullScreen {
 	}
 }
 
-.header.authIndex { height: 52px; width: 100% !important; }
+.header.authIndex { height: 44px; width: 100% !important; }
 .header.authIndex {
 	.side.left { padding: 86px; }
 
@@ -130,7 +130,7 @@ html.bodyAuthSelect {
 	}
 }
 
-.header.mainHistory { height: 52px; width: calc(100% - 336px); right: 336px; background: var(--color-bg-primary); }
+.header.mainHistory { width: calc(100% - 336px); right: 336px; }
 .header.mainHistory {
 	.side.center { overflow: hidden; }
 	.side.center {
@@ -138,7 +138,7 @@ html.bodyAuthSelect {
 	}
 }
 
-.header.isCommon { background: var(--color-bg-primary); height: 52px; }
+.header.isCommon { background: var(--color-bg-primary); height: 44px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {

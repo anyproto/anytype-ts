@@ -2,7 +2,7 @@
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-.sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon { position: fixed; top: 16px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
 .sidebarHeadIcon
 .sidebarHeadIcon {
 	&.sidebarAnimation { transition-property: left; }
