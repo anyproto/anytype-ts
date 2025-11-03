@@ -2,8 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview } from 'Lib';
+import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -79,17 +79,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const top = Storage.getScroll('sidebarWidget', '', isPopup);
 
 		body.scrollTop(top);
-	};
-
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: '#headerSync',
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
-		});
 	};
 
 	const onArrow = () => {
@@ -739,7 +728,15 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		<>
 			<div id="head" className="head">
 				<div className="side left">
-					<Sync id="headerSync" onClick={onSync} />
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
 				</div>
 				<div className="side right">
 					<Icon 

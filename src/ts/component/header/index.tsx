@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEff
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon } from 'Component';
+import { Icon, Sync } from 'Component';
 import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
@@ -67,24 +67,22 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
+	};
+
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
 		let buttons: any[] = [];
 
 		if (isPopup) {
 			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
-		} else {
-			const match = keyboard.getMatch(isPopup);
-			const cn = [];
-
-			if (match.params.action != 'settings') {
-				buttons.push({ 
-					id: 'widgetPanel', 
-					name: translate('commonWidgets'), 
-					className: cn.join(' '), 
-					caption: keyboard.getCaption('widget'),
-					onClick: () => sidebar.leftPanelSubPageToggle('widget'),
-				});
-			};
 		};
 
 		if (withNavigation) {
@@ -100,6 +98,20 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 		return (
 			<>
+				{!isPopup ? (
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
+
+				<Sync id="headerSync" onClick={onSync} />
+
 				{buttons.map(item => {
 					const cn = [ item.id, 'withBackground' ];
 
