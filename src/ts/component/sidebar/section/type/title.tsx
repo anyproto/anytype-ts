@@ -75,7 +75,6 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	};
 
 	const onBlur = () => {
-		rangeRef.current = null;
 		onChangeHandler();
 	};
 
