@@ -453,8 +453,9 @@ class DetailStore {
 		object.notificationMode = Number(object.notificationMode || object.spacePushNotificationMode) || I.NotificationMode.All;
 		object.orderId = Relation.getStringValue(object.orderId || object.spaceOrder);
 		object.spaceJoinDate = Number(object.spaceJoinDate) || 0;
-		object.muteIds = Relation.getArrayValue(object.muteIds || object.spacePushNotificationCustomMuteIds);
-		object.mentionIds = Relation.getArrayValue(object.mentionIds || object.spacePushNotificationCustomMentionIds);
+		object.allIds = Relation.getArrayValue(object.allIds || object.spacePushNotificationForceAllIds);
+		object.muteIds = Relation.getArrayValue(object.muteIds || object.spacePushNotificationForceMuteIds);
+		object.mentionIds = Relation.getArrayValue(object.mentionIds || object.spacePushNotificationForceMentionIds);
 
 		if (object.iconOption > 10) {
 			object.iconOption = object.iconOption - 10;
@@ -487,8 +488,9 @@ class DetailStore {
 		delete(object.spacePushNotificationMode);
 		delete(object.spaceUxType);
 		delete(object.spaceOrder);
-		delete(object.spacePushNotificationCustomMuteIds);
-		delete(object.spacePushNotificationCustomMentionIds);
+		delete(object.spacePushNotificationForceAllIds);
+		delete(object.spacePushNotificationForceMuteIds);
+		delete(object.spacePushNotificationForceMentionIds);
 
 		return object;
 	};

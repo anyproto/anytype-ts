@@ -2665,7 +2665,6 @@
 	"notificationMode0": "Enable all",
 	"notificationMode1": "Mentions only",
 	"notificationMode2": "Disable all",
-	"notificationMode3": "Custom",
 
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",

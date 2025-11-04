@@ -2510,29 +2510,21 @@ export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.Notificati
 	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
 };
 
-export const PushNotificationAddMuteIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.PushNotification.AddMuteIds.Request();
+export const PushNotificationSetForceModeIds = (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.SetForceModeIds.Request();
 
 	request.setSpaceid(spaceId);
-	request.setChatidsList(ids);	
+	request.setChatidsList(ids);
+	request.setMode(mode as number);
 
-	dispatcher.request(PushNotificationAddMuteIds.name, request, callBack);
+	dispatcher.request(PushNotificationSetForceModeIds.name, request, callBack);
 };
 
-export const PushNotificationAddMentionIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.PushNotification.AddMentionIds.Request();
+export const PushNotificationResetIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.ResetIds.Request();
 
 	request.setSpaceid(spaceId);
-	request.setChatidsList(ids);	
+	request.setChatidsList(ids);
 
-	dispatcher.request(PushNotificationAddMentionIds.name, request, callBack);
-};
-
-export const PushNotificationAddAllIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.PushNotification.AddAllIds.Request();
-
-	request.setSpaceid(spaceId);
-	request.setChatidsList(ids);	
-
-	dispatcher.request(PushNotificationAddAllIds.name, request, callBack);
+	dispatcher.request(PushNotificationResetIds.name, request, callBack);
 };

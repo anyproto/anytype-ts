@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Title, IconObject, Icon } from 'Component';
 import { I, J, U, S, translate, C, Action } from 'Lib';
@@ -7,7 +6,9 @@ import { I, J, U, S, translate, C, Action } from 'Lib';
 const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
+	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
+	const { allIds, mentionIds, muteIds } = spaceview;
 	const notificationMode = spaceview.notificationMode || I.NotificationMode.All;
 	const nodeRef = useRef(null);
 	const chatsRef = useRef([]);
@@ -18,44 +19,63 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 		I.NotificationMode.Nothing,
 	];
 
-	if (notificationMode == I.NotificationMode.Custom) {
-		notificationOptions.push(I.NotificationMode.Custom);
-	};
-
 	const load = () => {
+		const ids = [ ...allIds, ...mentionIds, ...muteIds ];
 		const filters = [
-			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat }
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 		];
-		const keys = J.Relation.default.concat([ 'links', 'backlinks' ]);
+		const keys = U.Subscription.chatRelationKeys();
 
-		U.Subscription.search({ filters, keys }, (message: any) => {
+		U.Subscription.search({ 
+			filters, 
+			keys,
+		}, (message: any) => {
 			chatsRef.current = message.records;
 			setDummy(dummy + 1);
 		});
 	};
 
 	const onSpaceModeChange = (v: I.NotificationMode) => {
-		C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
+		C.PushNotificationSetSpaceMode(space, Number(v));
 	};
 
 	const onChatModeClick = (el: any) => {
-		const element = `#${getId()} #${el.id} .icon.more`;
+		const options: any[] = (U.Menu.notificationModeOptions() as any[]).concat([
+			{ isDiv: true },
+			{ id: 'reset', name: translate(`commonReset`) },
+		]);
+
 		S.Menu.open('select', {
-			element,
+			element: `#${getId()} #${el.id} .icon.more`,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			data: {
-				options: U.Menu.notificationModeOptions(),
+				options,
 				onSelect: (e: any, item: any) => {
-					Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id));
-				}
-			}
-		})
+					switch (item.id) {
+						case 'reset': {
+							C.PushNotificationResetIds(space, [ el.id ], load);
+							break;
+						};
+
+						default: {
+							Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id), load);
+							break;
+						};
+					};
+				},
+			},
+		});
 	};
 
 	useEffect(() => {
 		load();
 	}, []);
+
+	useEffect(() => {
+		load();
+	}, [ allIds, mentionIds, muteIds ]);
 
 	return (
 		<div ref={nodeRef} className="wrap">

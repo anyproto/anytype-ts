@@ -357,7 +357,7 @@ class MenuContext extends React.Component<I.Menu> {
 				let value = null;
 
 				if (objectIds.length == 1) {
-					value = String(U.Object.getChatNotificationMode(U.Space.getSpaceview(), objectIds[0], true)) || '';
+					value = String(U.Object.getChatNotificationMode(U.Space.getSpaceview(), objectIds[0])) || '';
 				};
 
 				menuId = 'select';
