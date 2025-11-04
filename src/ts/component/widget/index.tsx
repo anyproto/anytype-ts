@@ -43,7 +43,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const targetId = child?.getTargetObjectId();
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
-	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
 	const containsChat = U.Object.isChatLayout(object?.recommendedLayout);
@@ -678,7 +677,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	let counters = { mentionCounter: 0, messageCounter: 0 };
 	if (isChat) {
 		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	};
+	} else
 	if (containsChat) {
 		cn.push('containsChat');
 		counters = S.Chat.getSpaceCounters(space);
@@ -730,10 +729,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isPreview) {
 		isDraggable = false;
 	} else {
-		if (isSectionType) {
-			buttons.push({ id: 'expand', icon: 'expand', tooltip: translate('commonOpenObject'), onClick: onExpandHandler });
-		};
-
 		if (canCreate) {
 			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
 		};

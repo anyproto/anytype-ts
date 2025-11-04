@@ -1,6 +1,5 @@
 @import "~scss/_mixins";
 
-.widget.widgetObject {}
 .widget.widgetObject {
 	.contentWrapper { padding: 8px; }
 
@@ -11,7 +10,7 @@
 
 		.side.left {
 			.iconObject { flex-shrink: 0; }
-			.name { flex-grow: 1; @include text-overflow-nw; }
+			.name { flex-grow: 1; @include text-overflow-nw; font-weight: 600; }
 		}
 
 		&::before {

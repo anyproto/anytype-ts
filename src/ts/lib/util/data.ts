@@ -326,11 +326,8 @@ class UtilData {
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
 				const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-
-				obj.mentionCounter += state.mentions.counter || 0;
-				obj.messageCounter += state.messages.counter || 0;
-
 				const notificationMode = U.Object.getChatNotificationMode(spaceview, chatId);
+				
 				if (notificationMode == I.NotificationMode.All) {
 					obj.mentionCounter += state.mentions.counter || 0;
 					obj.messageCounter += state.messages.counter || 0;
@@ -1230,15 +1227,6 @@ class UtilData {
 		switch (block.content.section) {
 			case I.WidgetSection.Pin: {
 				ret = { ...block.content };
-				break;
-			};
-
-			case I.WidgetSection.Type: {
-				ret = { 
-					layout: Number(object.widgetLayout) || I.WidgetLayout.Link, 
-					limit: Number(object.widgetLimit) || 6, 
-					viewId: String(object.widgetViewId) || '',
-				};
 				break;
 			};
 		};

@@ -43,9 +43,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const getSections = () => {
 		const ret = [
-			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
 		];
+
+		if (lengthWidget) {
+			ret.unshift({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });
+		};
 
 		if (!spaceview.isChat) {
 			const counters = S.Chat.getSpaceCounters(space);
@@ -210,36 +213,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				C.BlockListMoveToExistingObject(widgets, widgets, dropTargetIdRef.current, [ blockId ], positionRef.current);
 				break;
 			};
-
-			case I.WidgetSection.Type: {
-				const child1 = getChild(blockId);
-				const targetId1 = child1?.getTargetObjectId();
-				const child2 = getChild(dropTargetIdRef.current);
-				const targetId2 = child2?.getTargetObjectId();
-
-				if (!targetId1 || !targetId2 || (targetId1 == targetId2)) {
-					break;
-				};
-
-				const items = S.Record.checkHiddenObjects(S.Record.getTypes());
-				const oldIndex = items.findIndex(it => it.id == targetId1);
-				let newIndex = items.findIndex(it => it.id == targetId2) + (positionRef.current == I.BlockPosition.Bottom ? 1 : 0);
-
-				if ((oldIndex < 0) || (newIndex < 0)) {
-					break;
-				};
-
-				if (oldIndex < newIndex) {
-					newIndex--;
-				};
-
-				const newItems = arrayMove(items, oldIndex, newIndex);
-
-				U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {
-					C.ObjectTypeSetOrder(S.Common.space, newItems.map(it => it.id), callBack);
-				});
-				break;
-			};
 		};
 
 		onDragEnd();
@@ -333,11 +306,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 						switch (block.content.section) {
 							case I.WidgetSection.Pin: {
 								C.BlockWidgetSetLayout(widgets, block.id, item.layout, cb);
-								break;
-							};
-
-							case I.WidgetSection.Type: {
-								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: Number(item.layout) } ], cb);
 								break;
 							};
 						};
@@ -679,13 +647,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					const list = getWidgets(section.id);
 
 					let buttons = null;
-
 					if (isSectionType && canWrite) {
 						buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
-					};
-
-					if (isSectionPin && !list.length) {
-						return null;
 					};
 
 					return (

@@ -164,13 +164,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
 				break;
 			};
-
-			case I.WidgetSection.Type: {
-				C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
-					S.Block.updateWidgetData(targetId);
-				});
-				break;
-			};
 		};
 	};
 

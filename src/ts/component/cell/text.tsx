@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
-import { Input, IconObject } from 'Component';
+import { Input, IconObject, ChatCounter } from 'Component';
 
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
@@ -159,6 +159,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	let EditorComponent = null;
 	let val = record[relation.relationKey];
 	let icon = null;
+	let counter = null;
 
 	if (isDate || isNumber) {
 		val = Relation.formatValue(relation, val, true);
@@ -318,6 +319,11 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			} else {
 				val = val || translate('defaultNamePage');
 			};
+
+			if (U.Object.isChatLayout(record.layout)) {
+				const counters = S.Chat.getChatCounters(S.Common.space, record.id);
+				counter = <ChatCounter {...counters} mode={I.NotificationMode.All} />;
+			};
 		};
 	};
 
@@ -397,6 +403,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		<>
 			{icon}
 			<Name name={val} />
+			{counter}
 		</>
 	);
 

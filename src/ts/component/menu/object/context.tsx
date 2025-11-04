@@ -74,7 +74,6 @@ class MenuContext extends React.Component<I.Menu> {
 		const objectIds = this.getObjectIds();
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
-		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
@@ -85,6 +84,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
 		let notification = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
+		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 		let archive = null;
 		let archiveCnt = 0;
 		let pin = null;
@@ -101,6 +101,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
 		let allowedNotification = true;
+		let allowedExport = true;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -127,10 +128,15 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
+
 			if (U.Object.isTypeLayout(object.layout)) {
 				allowedRelation = false;
 				allowedCopy	= false;
+				allowedCollection = false;
+				allowedType = false;
+				allowedExport = false;
 			};
+
 			if (U.Object.isRelationLayout(object.layout)) {
 				allowedRelation = false;
 				allowedLinkTo = false;
@@ -192,6 +198,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCollection)	 addCollection = null;
 		if (!allowedLink)		 pageLink = null;
 		if (!allowedNotification) notification = null;
+		if (!allowedExport)		 exportObject = null;
 
 		let sections = [
 			{ children: [ open, changeType, relation, pageLink ] },
