@@ -108,7 +108,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					<div className="arrowWrapper">
 						<Icon 
 							className="back withBackground" 
-							onClick={keyboard.onBack}
+							onClick={() => keyboard.onBack()}
 							tooltipParam={{ 
 								text: translate('commonBack'), 
 								caption: keyboard.getCaption('back'), 
@@ -117,7 +117,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 						/>
 						<Icon 
 							className="forward withBackground" 
-							onClick={keyboard.onForward}
+							onClick={() => keyboard.onForward()}
 							tooltipParam={{ 
 								text: translate('commonForward'), 
 								caption: keyboard.getCaption('forward'), 
