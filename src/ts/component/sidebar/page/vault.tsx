@@ -466,7 +466,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<Filter 
 					ref={filterRef}
 					icon="search"
-					className="outlined"
+					className="outlined round"
 					placeholder={translate('commonSearch')}
 					onChange={onFilterChange}
 					onClear={onFilterClear}

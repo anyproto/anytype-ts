@@ -122,7 +122,7 @@
 	.item.isSection .inner::before { display: none !important; }
 }
 
-.widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; }
+.widget.isPreview { display: flex; flex-direction: column; flex-grow: 1; background: none; }
 .widget.isPreview {
 	.head { padding: 0px 16px; }
 	.body { overflow: visible; }

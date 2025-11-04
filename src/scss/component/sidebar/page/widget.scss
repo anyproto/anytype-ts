@@ -1,26 +1,17 @@
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .sidebarPage.pageWidget {
 	> .head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 44px;
+		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 44px;
 		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2;
 	}
 	> .head {
-		.name { 
-			@include text-overflow-nw; opacity: 0; transform: translate3d(0px,30px,0px); transition: all 0.2s $easeInQuint; 
-			max-width: calc(100% - 88px); display: none;
-		}
+		.side { flex-grow: 0; flex-shrink: 0; }
+		.side.center { flex-shrink: 1; flex-grow: 1; display: flex; align-items: center; gap: 0px 6px; }
 
+		.name { @include text-overflow-nw; }
 		.createWrapper {
 			.icon { width: 24px !important; }
 		}
-	}
-	> .head.show {
-		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
-	}
-
-	> .subHead {
-		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
-		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
 	}
 
 	.widgetSection { display: flex; flex-direction: column; }
@@ -67,8 +58,8 @@
 		}
 	}
 
-	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
-	> .body.isPreview { overflow: hidden; }
+	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; padding-bottom: 4px; }
+	> .body.isPreview { overflow: hidden; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
 		@keyframes shake1 {
 			0% { transform: rotate(-0.5deg); }

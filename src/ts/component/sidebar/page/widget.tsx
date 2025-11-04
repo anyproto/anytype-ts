@@ -18,11 +18,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const lengthTypes = childrenIdsTypes.length;
 	const { sidebarDirection, isPopup } = props;
 	const { space } = S.Common;
-	const cnsh = [ 'subHead' ];
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const counters = S.Chat.getTotalCounters();
 	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
@@ -35,10 +33,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(key), '');
 	};
 
-	if (counters.messageCounter) {
-		cnsh.push('withCounter');
-	};
-
 	let headerButtons: any[] = [];
 	if (spaceview.isChat) {
 		headerButtons = headerButtons.concat([
@@ -49,7 +43,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	let content = null;
-	let subHead = null;
+	let head = null;
 
 	const initBlocks = () => {
 		U.Subscription.createTypeCheck(() => {
@@ -565,10 +559,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				);
 			};
 
-			subHead = (
-				<div className={cnsh.join(' ')}>
+			head = (
+				<>
 					<div className="side left">
-						<Icon className="back" onClick={e => {
+						<Icon className="back withBackground" onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -584,7 +578,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					<div className="side right">
 						{buttons}
 					</div>
-				</div>
+				</>
 			);
 
 			content = (
@@ -606,6 +600,56 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
 		];
+
+		head = (
+			<>
+				<div className="side left">
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				</div>
+				<div className="side right">
+					<Icon 
+						className="search withBackground" 
+						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
+						tooltipParam={{ 
+							text: translate('commonSearch'), 
+							caption: keyboard.getCaption('search'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+					{canWrite ? (
+						<div className="createWrapper">
+							<Icon 
+								className="create withBackground" 
+								onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
+								tooltipParam={{ 
+									text: translate('commonNewObject'), 
+									caption: keyboard.getCaption('createObject'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+							/>
+							<Icon 
+								id="button-widget-arrow"
+								className="arrow withBackground" 
+								onClick={onArrow}
+								tooltipParam={{ 
+									text: translate('popupShortcutMainBasics19'), 
+									caption: keyboard.getCaption('selectType'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+							/>
+						</div>
+					) : ''}
+				</div>
+			</>
+		);
 
 		content = (
 			<div className="content">
@@ -727,54 +771,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	return (
 		<>
 			<div id="head" className="head">
-				<div className="side left">
-					<Icon 
-						className="widgetPanel withBackground" 
-						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
-						tooltipParam={{ 
-							text: translate('commonWidgets'), 
-							caption: keyboard.getCaption('widget'), 
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
-				</div>
-				<div className="side right">
-					<Icon 
-						className="search withBackground" 
-						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
-						tooltipParam={{ 
-							text: translate('commonSearch'), 
-							caption: keyboard.getCaption('search'), 
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
-					{canWrite ? (
-						<div className="createWrapper">
-							<Icon 
-								className="create withBackground" 
-								onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
-								tooltipParam={{ 
-									text: translate('commonNewObject'), 
-									caption: keyboard.getCaption('createObject'), 
-									typeY: I.MenuDirection.Bottom,
-								}}
-							/>
-							<Icon 
-								id="button-widget-arrow"
-								className="arrow withBackground" 
-								onClick={onArrow}
-								tooltipParam={{ 
-									text: translate('popupShortcutMainBasics19'), 
-									caption: keyboard.getCaption('selectType'), 
-									typeY: I.MenuDirection.Bottom,
-								}}
-							/>
-						</div>
-					) : ''}
-				</div>
+				{head}
 			</div>
-
-			{subHead}
 
 			<div
 				id="body"
