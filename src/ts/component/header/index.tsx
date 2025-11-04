@@ -62,7 +62,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('withBanner');
 	};
 
-	const onGraph = (e: MouseEvent) => {
+	const onGraph = (e: any) => {
 		e.stopPropagation();
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
@@ -79,23 +79,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
-		let buttons: any[] = [];
-
-		if (isPopup) {
-			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
-		};
-
-		if (withNavigation) {
-			buttons = buttons.concat([
-				{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-				{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
-			]);
-		};
-
-		if (withGraph) {
-			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
-		};
-
 		return (
 			<>
 				{!isPopup ? (
@@ -108,31 +91,53 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
-				) : ''}
+				) : (
+					<Icon 
+						className="expand withBackground" 
+						onClick={onOpen || onExpand}
+						tooltipParam={{ 
+							text: translate('commonOpenObject'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				)}
 
 				<Sync id="headerSync" onClick={onSync} />
 
-				{buttons.map(item => {
-					const cn = [ item.id, 'withBackground' ];
-
-					if (item.disabled) {
-						cn.push('disabled');
-					};
-					if (item.className) {
-						cn.push(item.className);
-					};
-
-					return (
+				{withNavigation ? (
+					<div className="arrowWrapper">
 						<Icon 
-							key={item.id} 
-							tooltipParam={{ text: item.name, caption: item.caption, typeY: I.MenuDirection.Bottom }} 
-							className={cn.join(' ')} 
-							onClick={item.onClick} 
-							onDoubleClick={e => e.stopPropagation()}
-							onMouseDown={e => e.stopPropagation()}
+							className="back withBackground" 
+							onClick={keyboard.onBack}
+							tooltipParam={{ 
+								text: translate('commonBack'), 
+								caption: keyboard.getCaption('back'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
 						/>
-					);
-				})}
+						<Icon 
+							className="forward withBackground" 
+							onClick={keyboard.onForward}
+							tooltipParam={{ 
+								text: translate('commonForward'), 
+								caption: keyboard.getCaption('forward'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+					</div>
+				) : ''}
+
+				{withGraph ? (
+					<Icon 
+						className="graph withBackground" 
+						onClick={onGraph}
+						tooltipParam={{ 
+							text: translate('commonGraph'), 
+							caption: keyboard.getCaption('graph'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 			</>
 		);
 	};

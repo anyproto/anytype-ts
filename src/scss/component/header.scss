@@ -6,17 +6,19 @@
 }
 
 .header {
-	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; }
+	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; min-width: 20%; gap: 0px 8px; }
 	.side.left { padding: 0px 12px; flex-shrink: 0; }
 	.side.left {
 		.icon:first-child { margin-left: 0px; }
 		.icon:last-child { margin-right: 0px; }
 	}
 	.side.center { flex-grow: 1; justify-content: center; max-width: 60%; }
-	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
+	.side.right { padding: 0px 12px; flex-shrink: 0; justify-content: end; }
 	.side.right {
 		.button.blank { font-weight: 500; border: 0px; padding: 0px 6px; color: var(--color-text-secondary); flex-shrink: 0; }
 	}
+
+	.sync { -webkit-app-region: no-drag; }
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; @include text-overflow-nw; padding: 0px 6px; 
@@ -59,9 +61,6 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
-	.icon.back { margin-left: 8px; }
-	.icon.forward { margin-right: 8px; }
-
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
@@ -86,18 +85,18 @@
 	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
-.header:not(.withSidebarLeft) {
+.header:not(.withSidebarTotalLeft) {
 	.side.left { padding-left: 120px; }
 }
 
 html:not(.platformMac) {
-	.header:not(.withSidebarLeft) {
+	.header:not(.withSidebarTotalLeft) {
 		.side.left { padding-left: 52px; }
 	}
 }
 
 body.isFullScreen {
-	.header:not(.withSidebarLeft) {
+	.header:not(.withSidebarTotalLeft) {
 		.side.left { padding-left: 52px; }
 	}
 }

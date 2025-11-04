@@ -102,7 +102,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 10, y: 22 };
+			param.trafficLightPosition = { x: 20, y: 18 };
 		} else
 		if (is.windows) {
 			param.frame = false;

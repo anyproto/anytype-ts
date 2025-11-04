@@ -133,6 +133,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			const { min } = sizeParam;
 			const closeWidth = min * 0.75;
 
+			console.log('onResizeMove', { panel, sizeParam });
+
 			if (!d) {
 				return;
 			};

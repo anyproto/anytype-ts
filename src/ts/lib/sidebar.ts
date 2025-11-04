@@ -511,7 +511,7 @@ class Sidebar {
 		const pageCss: any = { width: pageWidth };
 
 		if (!isPopup) {
-			pageCss.height = U.Common.getAppContainerHeight() - 16;
+			pageCss.height = U.Common.getAppContainerHeight() - 8;
 		};
 
 		this.header.css({ width: '' });
@@ -526,16 +526,23 @@ class Sidebar {
 		this.footer.css({ width: hw });
 		this.page.css(pageCss);
 
-		this.pageFlex.toggleClass('withSidebarLeft', !!widthLeft);
+		
 		this.pageFlex.toggleClass('withSidebarRight', !!widthRight);
-		this.subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 
 		if (!isPopup) {
 			this.pageFlex.toggleClass('sidebarAnimation', animate);
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('sidebarAnimation', animate);
-			this.header.toggleClass('withSidebarLeft', !!widthLeft);
+
+			this.pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
+			this.pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			this.pageFlex.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
+
+			this.header.toggleClass('withSidebarTotalLeft', !!widthLeft);
+			this.header.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 			this.header.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
+
+			this.subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 
 			this.dummyLeft.css({ width: widthLeft });
 		} else {

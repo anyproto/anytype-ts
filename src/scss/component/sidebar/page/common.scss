@@ -19,6 +19,7 @@
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 
+		.icon { flex-shrink: 0; }
 		.icon.close { background-image: url('~img/icon/close.svg'); }
 		.icon.settings { background-image: url('~img/icon/sidebar/settings.svg'); }
 		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
@@ -55,7 +56,7 @@
 	}
 
 	> .body {
-		padding: 0px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
+		padding: 8px 12px 12px 12px; display: flex; flex-direction: column; gap: 12px 0px; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; 
 		flex-grow: 1;
 	}
 	> .body {
