@@ -4,8 +4,10 @@ import { I, S, U, translate, Relation, analytics, Action } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+
 	const { menuOpen } = props;
-	const { account } = S.Auth;
+	const param = U.Router.getParam(U.Router.getRoute());
+	const id = param.id || 'account';
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
@@ -21,7 +23,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
 				],
 				onSelect: (e: React.MouseEvent, option: any) => {
-
 					switch (option.id) {
 						case 'spaceInfo': {
 							Action.spaceInfo();
@@ -33,19 +34,14 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 							break;
 						};
 					};
-
 				},
-			}
+			},
 		});
 	};
 
 	const renderIdentity = () => {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-		const showId = [ 'account', 'index' ];
-
-		if (!showId.includes(id) || !globalName) {
-			return '';
+		if (![ 'account', 'index' ].includes(id) || !globalName) {
+			return null;
 		};
 
 		return (
@@ -57,12 +53,8 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	};
 
 	const renderMore = () => {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-		const showId = [ 'spaceIndex', 'spaceIndexEmpty' ];
-
-		if (!showId.includes(id)) {
-			return '';
+		if (![ 'spaceIndex', 'spaceIndexEmpty' ].includes(id)) {
+			return null;
 		};
 
 		return (
