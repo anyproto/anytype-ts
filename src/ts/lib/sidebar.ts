@@ -634,7 +634,7 @@ class Sidebar {
 	};
 
 	getSizeParam (panel: I.SidebarPanel) {
-		const param = J.Size.sidebar;
+		const param = U.Common.objectCopy(J.Size.sidebar);
 
 		let ret = param.default;
 		if (param[panel]) {

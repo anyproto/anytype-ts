@@ -36,8 +36,6 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 		const { status, network } = syncStatus;
 		const icon = network == I.SyncStatusNetwork.LocalOnly ? I.SyncStatusSpace.Offline : I.SyncStatusSpace[status];
 
-		console.log('SYNC STATUS:', syncStatus);
-
 		return String(icon).toLowerCase();
 	};
 
