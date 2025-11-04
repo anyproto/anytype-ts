@@ -1827,7 +1827,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		S.Common.filterSet(range.from, '');
 
 		S.Menu.open('blockAdd', { 
-			element: $(`#block-${blockId}`),
+			element: `#block-${blockId}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
 			recalcRect: () => {
