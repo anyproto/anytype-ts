@@ -1,7 +1,4 @@
-.containerSettings { 
-	height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; 
-	padding: 8px 0px 0px 0px;
-}
+.containerSettings { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .containerSettings {
     > .head {
         display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 44px;

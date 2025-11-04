@@ -261,11 +261,12 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 	return (
 		<>
-			<div className="subHead">
+			<div className="head">
 				<div className="side left">
-					<Icon className="back" onClick={onBack} />
+					<Icon className="back withBackground" onClick={onBack} />
 				</div>
-
+			</div>
+			<div className="subHead">
 				<div className="side center">
 					<div className="name">{translate('commonSettings')}</div>
 				</div>
