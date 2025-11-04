@@ -112,7 +112,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const Item = (item: any) => {
 		const isChat = U.Object.isChatLayout(item.recommendedLayout || item.layout);
-		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag });
+		const isBin = item.id == J.Constant.widgetId.bin;
+		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag || isBin });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
@@ -142,11 +143,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				<div className="side right">
 					{isChat ? <ChatCounter {...S.Chat.getChatCounters(space, item.id)} /> : ''}
 					<div className="buttons">
-						<Icon 
-							className="more" 
-							tooltipParam={{ text: translate('widgetOptions') }} 
-							onClick={e => onContextHandler(e, item, true)} 
-						/>
+						{!isBin ? (
+							<Icon 
+								className="more" 
+								tooltipParam={{ text: translate('widgetOptions') }} 
+								onClick={e => onContextHandler(e, item, true)} 
+							/>
+						) : ''}
 					</div>
 				</div>
 			</div>
