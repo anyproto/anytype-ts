@@ -45,6 +45,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
+	const containsChat = U.Object.isChatLayout(object?.recommendedLayout);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);
@@ -94,11 +95,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	};
 
 	const unbind = () => {
 		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
@@ -672,6 +668,15 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.stopPropagation();
 
 		onClick(e);
+	};
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
+	};
+	if (containsChat) {
+		cn.push('containsChat');
+		counters = S.Chat.getSpaceCounters(space);
 	};
 
 	const buttons = [];

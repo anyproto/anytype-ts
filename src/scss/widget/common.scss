@@ -65,8 +65,16 @@
 	&.withButtons {
 		&.active, &:hover {
 			.head {
-				.counters { display: none; }
+				.counters, .chatCounter { display: none; }
 				.buttons { display: flex; }
+			}
+		}
+	}
+
+	&.containsChat {
+		&:not(.isClosed) {
+			.head {
+				.chatCounter { display: none; }
 			}
 		}
 	}
