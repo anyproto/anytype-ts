@@ -36,6 +36,10 @@
 		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
 		
 		&.sidebarAnimation { transition-property: transform; }
+
+		&:not(.withSidebarLeft) {
+			.sidebarPage { margin-left: 4px; width: calc(100% - 4px); }
+		}
 	}
 
 	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; top: 0px; }
@@ -94,6 +98,20 @@ html.platformMac {
 			.sidebarPage {
 				> .head {
 					.side.left { padding-left: 108px; }
+				}
+			}
+		}
+	}
+
+	.isFullScreen {
+		#sidebarLeftButton { left: 16px; }
+
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						.side.left { padding-left: 36px; }
+					}
 				}
 			}
 		}
