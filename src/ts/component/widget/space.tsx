@@ -44,17 +44,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const onMore = (space: any) => {
-		const element = $(`#widget-space .nameWrap`);
-
 		U.Menu.spaceContext(space, {
-			element,
+			element: '#widget-space .nameWrap .arrow',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
-		}, { route: analytics.route.settings });
+		}, { route: analytics.route.widget });
 	};
 
 	let content = null;
@@ -94,6 +90,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />
+						<Icon className="arrow" />
 					</div>
 
 					{members.length > 1 ? (
