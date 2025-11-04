@@ -24,6 +24,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const withMembership = isOnline && U.Data.isAnytypeNetwork();
+	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 
 	useEffect(() => {
@@ -259,6 +260,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 	const items = getItems();
 
+	useEffect(() => {
+		listRef.current?.recomputeRowHeights(0);
+	});
+
 	return (
 		<>
 			<div className="head">
@@ -287,6 +292,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
+											ref={listRef}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={cache.current}
