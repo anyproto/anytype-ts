@@ -202,7 +202,7 @@ html.platformWindows, html.platformLinux {
 	::-webkit-scrollbar-button { display: none; }
 }
 
-html.platformWindows:not(.noMenuBar) {
+html.platformWindows.withMenuBar {
 	#menuBar { 
 		height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
 		flex-direction: row;
@@ -223,7 +223,16 @@ html.platformWindows:not(.noMenuBar) {
 	}
 
 	.sidebar { margin-top: 28px; height: calc(100% - 28px); }
-	.sidebarHeadIcon { top: 48px; }
+	.sidebar {
+		.subPageWrapper:not(.withSidebarLeft) {
+			.sidebarPage {
+				> .head {
+					.side.left	{ padding-left: 36px; }
+				}
+			}
+		}
+	}
+	#sidebarLeftButton { left: 16px; top: 40px; display: block; }
 
 	.popups {
 		.popup.popupShortcut {
