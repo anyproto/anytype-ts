@@ -477,7 +477,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 							<Filter
 								ref={filterInputRef}
 								icon="search"
-								className="outlined"
+								className="outlined round"
 								placeholder={translate('commonSearch')}
 								onChange={onFilterChange}
 								onClear={onFilterClear}
