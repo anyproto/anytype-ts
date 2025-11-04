@@ -55,7 +55,7 @@
 		}
 	}
 
-	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; padding-bottom: 4px; }
+	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; padding-bottom: 12px; }
 	> .body.isPreview { overflow: hidden; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
 		@keyframes shake1 {
