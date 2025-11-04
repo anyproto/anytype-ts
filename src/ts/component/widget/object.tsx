@@ -84,7 +84,11 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 						return S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0;
 					};
 
-					return !U.Object.isInSystemLayouts(it.recommendedLayout) && (it.uniqueKey != J.Constant.typeKey.template);
+					return (
+						!U.Object.isInSystemLayouts(it.recommendedLayout) && 
+						!U.Object.isDateLayout(it.recommendedLayout) && 
+						(it.uniqueKey != J.Constant.typeKey.template)
+					);
 				});
 
 				items.push({ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive });
