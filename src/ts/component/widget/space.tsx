@@ -21,7 +21,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				Action.openSpaceShare(analytics.route.navigation);
+				Action.openSpaceShare(analytics.route.widget);
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
@@ -41,6 +41,20 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 		};
+	};
+
+	const onMore = (space: any) => {
+		const element = $(`#widget-space .nameWrap`);
+
+		U.Menu.spaceContext(space, {
+			element,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			onOpen: () => element.addClass('active'),
+			onClose: () => element.removeClass('active'),
+		}, { route: analytics.route.settings });
 	};
 
 	let content = null;
@@ -78,8 +92,16 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			<div className="head">
 				<IconObject object={spaceview} size={48} />
 				<div className="info">
-					<ObjectName object={spaceview} />
-					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+					<div className="nameWrap" onClick={onMore}>
+						<ObjectName object={spaceview} />
+					</div>
+
+					{members.length > 1 ? (
+						<Label 
+							text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
+							onClick={e => onButtonClick(e, { id: 'member' })}
+						/> 
+					) : ''}
 				</div>
 			</div>
 		);
