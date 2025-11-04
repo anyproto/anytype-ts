@@ -320,6 +320,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const initToggle = () => {
+		if ([ J.Constant.widgetId.space ].includes(block.id)) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		const icon = node.find('.icon.collapse');

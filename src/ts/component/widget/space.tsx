@@ -10,17 +10,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		return null;
 	};
 
-	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const requestCnt = participants.filter(it => it.isJoining).length;
-	const isSpaceOwner = U.Space.isMyOwner();
 	const nodeRef = useRef(null);
 	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
-	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cn = [ `space${I.SpaceUxType[spaceview.uxType]}` ];
-
-	if (isSpaceOwner && requestCnt) {
-		cn.push('withCnt');
-	};
 
 	const onButtonClick = (e: any, item: any) => {
 		e.preventDefault();
@@ -81,53 +74,14 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			</>
 		);
 	} else {
-		const buttons = [
-			!spaceview.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-			{ id: 'settings', name: translate('commonSettings') },
-		].filter(it => it);
-
 		content = (
-			<>
-				<div className="head">
-					<div className="sides">
-						<div className="side left">
-							<div className="clickable">
-								<IconObject object={spaceview} />
-								<ObjectName object={spaceview} />
-							</div>
-						</div>
-					</div>
+			<div className="head">
+				<IconObject object={spaceview} size={48} />
+				<div className="info">
+					<ObjectName object={spaceview} />
+					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
 				</div>
-
-				<div className="buttons">
-					{buttons.map((item, i) => {
-						let cnt = null;
-
-						if (item.id == 'member') {
-							cnt = <div className="cnt">{requestCnt}</div>;
-						};
-
-						return (
-							<div 
-								key={i} 
-								id={`item-${item.id}`} 
-								className="item" 
-								onClick={e => onButtonClick(e, item)}
-							>
-								<div className="side left">
-									<Icon className={item.id} />
-									<div className="name">
-										{item.name}
-									</div>
-								</div>
-								<div className="side right">
-									{cnt}
-								</div>
-							</div>
-						);
-					})}
-				</div>
-			</>
+			</div>
 		);
 	};
 

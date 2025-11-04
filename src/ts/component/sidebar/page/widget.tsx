@@ -595,7 +595,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			);
 		};
 	} else {
-		const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
+		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 		const sections = [
 			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
