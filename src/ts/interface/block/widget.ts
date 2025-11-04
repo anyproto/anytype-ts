@@ -2,8 +2,8 @@ import { I } from 'Lib';
 
 export enum WidgetSection {
 	Pin			 = 0,
-	Type		 = 1,
-	Button		 = 2,
+	Unread		 = 1,
+	Type		 = 2,
 };
 
 export enum WidgetLayout { 
@@ -13,7 +13,8 @@ export enum WidgetLayout {
 	Compact		 = 3,
 	View		 = 4,
 
-	Space	 	 = 100,
+	Space		 = 100,
+	Object		 = 101,
 };
 
 export interface WidgetComponent {

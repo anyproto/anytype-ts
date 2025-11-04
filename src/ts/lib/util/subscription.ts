@@ -62,7 +62,9 @@ class UtilSubscription {
 	 * @param {any} param - Parameters for filter construction.
 	 * @returns {any[]} The array of filter objects.
 	 */
-	getBaseFilters (param: Partial<I.SearchSubscribeParam>) {
+	getBaseFilters (param?: Partial<I.SearchSubscribeParam>) {
+		param = param || {};
+		
 		const { config } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
@@ -525,7 +527,7 @@ class UtilSubscription {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(false),
 				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
@@ -545,10 +547,22 @@ class UtilSubscription {
 				},
 			},
 			{
+				subId: J.Constant.subId.chat,
+				keys: this.chatRelationKeys(),
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
+				],
+				sorts: [
+					{ relationKey: 'lastMessageDate', type: I.SortType.Asc },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+			},
+			{
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -586,7 +600,7 @@ class UtilSubscription {
 			},
 		];
 
-		this.createList(list, callBack);
+		this.createList(list, () => this.createTypeCheck(callBack));
 	};
 
 	fileTypeKeys () {

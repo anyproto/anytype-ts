@@ -451,6 +451,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		<>
 			<div id="head" className="head">
 				<div className="side left" />
+				<div className="side center" />
 				<div className="side right">
 					{canCreate ? (
 						<Icon

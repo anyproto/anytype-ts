@@ -37,10 +37,10 @@
 		.head {
 			.iconObject { flex-shrink: 0; }
 			.info { display: flex; flex-direction: column; flex-grow: 1; }
-			.nameWrap { display: flex; align-items: center; gap: 0px 6px; }
-			.name { @include text-paragraph; font-weight: 600; }
+			.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+			.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; flex-grow: 1; }
 			.label { @include text-small; color: var(--color-text-secondary); }
-			.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); }
+			.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
 		}
 	}
 }

@@ -856,8 +856,12 @@ class UtilMenu {
 									replace: true, 
 									onFadeIn: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
 								};
-		
-								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+
+								if (targetSpaceId == S.Common.space) {
+									routeParam.onFadeIn();
+								} else {
+									U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+								};
 								break;
 							};
 

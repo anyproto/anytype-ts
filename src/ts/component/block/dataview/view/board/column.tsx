@@ -85,8 +85,6 @@ const BoardColumn = observer(forwardRef<{}, Props>((props, ref) => {
 				keys: getKeys(view.id),
 				sources: target.setOf || [],
 				limit,
-				ignoreHidden: true,
-				ignoreDeleted: true,
 				collectionId: (isCollection ? target.id : ''),
 			}, () => {
 				S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));

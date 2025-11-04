@@ -131,6 +131,7 @@ export default {
 		fileManagerSynced: 		'fileManagerSynced',
 		fileManagerNotSynced: 	'fileManagerNotSynced',
 		chatPreview:	 		'chatPreview',
+		chat:			 		'chat',
 	},
 
 	typeKey: {
@@ -172,7 +173,6 @@ export default {
 		type:			 'type',
 		header:			 'header',
 		chat:			 'chat',
-		widgetTypes:	 'types',
 	},
 
 	widgetId: {
@@ -181,6 +181,8 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		space:			 'space',
+		unread:			 'unread',
+		type:			 'type',
 		bin:			 'bin',
 		chat:			 'chat',
 	},

@@ -110,8 +110,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 				sorts,
 				keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
 				noDeps: true,
-				ignoreHidden: true,
-				ignoreDeleted: true,
 			}, callBack);
 		});
 	};
@@ -460,15 +458,15 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	return (
 		<>
-			<div className="subHead">
+			<div id="head" className="head">
 				<div className="side left">
-					<Icon className="back" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
+					<Icon className="back withBackground" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
 				</div>
 				<div className="side center">
 					<div className="name">{title}</div>
 				</div>
 				<div className="side right">
-					<Icon id="button-object-more" className="more" onClick={onMore} />
+					<Icon id="button-object-more" className="more withBackground" onClick={onMore} />
 				</div>
 			</div>
 

@@ -199,8 +199,6 @@ class Dataview {
 				limit,
 				offset,
 				collectionId,
-				ignoreDeleted: true,
-				ignoreHidden: true,
 			}, callBack);
 		};
 

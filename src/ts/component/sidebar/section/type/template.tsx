@@ -122,8 +122,6 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 			filters,
 			sorts,
 			keys,
-			ignoreHidden: true,
-			ignoreDeleted: true,
 		});
 	};
 

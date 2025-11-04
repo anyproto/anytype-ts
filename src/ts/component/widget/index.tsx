@@ -7,6 +7,7 @@ import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'C
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
+import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
 
@@ -89,7 +90,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const limit = getLimit();
 	const layout = getLayout();
-	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
+	const hasChild = ![ I.WidgetLayout.Space, I.WidgetLayout.Object ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
@@ -320,7 +321,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const initToggle = () => {
-		if ([ J.Constant.widgetId.space ].includes(block.id)) {
+		if ([ I.WidgetLayout.Space, I.WidgetLayout.Object ].includes(layout)) {
 			return;
 		};
 
@@ -839,6 +840,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.WidgetLayout.Space: {
 			cn.push('widgetSpace');
 			content = <WidgetSpace key={childKey} {...childProps} />;
+
+			isDraggable = false;
+			break;
+		};
+
+		case I.WidgetLayout.Object: {
+			cn.push('widgetObject');
+			content = <WidgetObject key={childKey} {...childProps} />;
 
 			isDraggable = false;
 			break;

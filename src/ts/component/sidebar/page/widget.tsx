@@ -9,13 +9,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const [ previewId, setPreviewId ] = useState('');
 	const [ sectionIds, setSectionIds ] = useState([]);
-	const [ dummy, setDummy ] = useState(0);
 	const { widgets } = S.Block;
-	const types = S.Record.getTypes();
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
-	const childrenIdsTypes = S.Block.getChildrenIds(widgets, J.Constant.blockId.widgetTypes);
-	const lengthTypes = childrenIdsTypes.length;
 	const { sidebarDirection, isPopup } = props;
 	const { space } = S.Common;
 	const cnb = [ 'body' ];
@@ -45,15 +41,25 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	let content = null;
 	let head = null;
 
-	const initBlocks = () => {
-		U.Subscription.createTypeCheck(() => {
-			S.Block.updateTypeWidgetList();
-		});
+	const getSections = () => {
+		const ret = [
+			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
+			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
+		];
+
+		if (!spaceview.isChat) {
+			const counters = S.Chat.getSpaceCounters(space);
+			if ((counters.messageCounter > 0) || (counters.mentionCounter > 0)) {
+				ret.unshift({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
+			};
+		};
+
+		return ret;
 	};
 
 	const initSections = () => {
 		const newSectionIds = [];
-		const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+		const ids = getSections().map(it => it.id);
 
 		ids.forEach(id => {
 			if (!isSectionClosed(id)) {
@@ -437,68 +443,71 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const getWidgets = (sectionId: I.WidgetSection) => {
-		let root = '';
+		let blocks = [];
 
 		switch (sectionId) {
-			case I.WidgetSection.Pin: {
-				root = widgets;
+			case I.WidgetSection.Unread: {
+				blocks.push(new M.Block({ id: J.Constant.widgetId.unread, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
 				break;
 			};
 
 			case I.WidgetSection.Type: {
-				root = J.Constant.blockId.widgetTypes;
+				blocks.push(new M.Block({ id: J.Constant.widgetId.type, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				break;
+			};
+
+			case I.WidgetSection.Pin: {
+				blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+					if (!block.isWidget()) {
+						return false;
+					};
+
+					const child = getChild(block.id);
+					if (!child) {
+						return false;
+					};
+
+					const target = child.getTargetObjectId();
+
+					if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
+						return false;
+					};
+
+					if ([ J.Constant.widgetId.bin ].includes(target) && (sectionId == I.WidgetSection.Pin)) {
+						return false;
+					};
+
+					if (Object.values(J.Constant.widgetId).includes(target)) {
+						return true;
+					};
+
+					const object = getObject(block, target);
+
+					if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+						return false;
+					};
+
+					return true;
+				});
+
+				blocks.sort((a: I.Block, b: I.Block) => {
+					const c1 = getChild(a.id);
+					const c2 = getChild(b.id);
+
+					const t1 = c1?.getTargetObjectId();
+					const t2 = c2?.getTargetObjectId();
+
+					const isBin1 = t1 == J.Constant.widgetId.bin;
+					const isBin2 = t2 == J.Constant.widgetId.bin;
+
+					if (isBin1 && !isBin2) return 1;
+					if (!isBin1 && isBin2) return -1;
+
+					return 0;
+				});
 				break;
 			};
 		};
-
-		const blocks = S.Block.getChildren(widgets, root, (block: I.Block) => {
-			if (!block.isWidget()) {
-				return false;
-			};
-
-			const child = getChild(block.id);
-			if (!child) {
-				return false;
-			};
-
-			const target = child.getTargetObjectId();
-
-			if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
-				return false;
-			};
-
-			if ([ J.Constant.widgetId.bin ].includes(target) && (sectionId == I.WidgetSection.Pin)) {
-				return false;
-			};
-
-			if (Object.values(J.Constant.widgetId).includes(target)) {
-				return true;
-			};
-
-			const object = getObject(block, target);
-
-			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
-				return false;
-			};
-
-			return true;
-		});
-
-		blocks.sort((a: I.Block, b: I.Block) => {
-			const c1 = getChild(a.id);
-			const c2 = getChild(b.id);
-
-			const t1 = c1?.getTargetObjectId();
-			const t2 = c2?.getTargetObjectId();
-
-			const isBin1 = t1 == J.Constant.widgetId.bin;
-			const isBin2 = t2 == J.Constant.widgetId.bin;
-
-			if (isBin1 && !isBin2) return 1;
-			if (!isBin1 && isBin2) return -1;
-
-			return 0;
-		});
 
 		return blocks;
 	};
@@ -596,10 +605,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 	} else {
 		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
-		const sections = [
-			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
-			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
-		];
+		const sections = getSections();
 
 		head = (
 			<>
@@ -670,37 +676,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
+					const list = getWidgets(section.id);
 
-					let list = getWidgets(section.id);
 					let buttons = null;
 
-					if (isSectionType) {
-						if (canWrite) {
-							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
-						};
-
-						if (sectionIds.includes(section.id) && (list.length > 1)) {
-							list = list.sort((a, b) => {
-								const c1 = getChild(a.id);
-								const c2 = getChild(b.id);
-
-								const t1 = c1?.getTargetObjectId();
-								const t2 = c2?.getTargetObjectId();
-
-								if (!t1 || !t2) {
-									return 0;
-								};
-
-								const type1 = S.Record.getTypeById(t1);
-								const type2 = S.Record.getTypeById(t2);
-
-								if (!type1 || !type2) {
-									return 0;
-								};
-
-								return U.Data.sortByOrderId(type1, type2);
-							});
-						};
+					if (isSectionType && canWrite) {
+						buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 					};
 
 					if (isSectionPin && !list.length) {
@@ -762,11 +743,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	useEffect(() => {
 		setPreviewId('');
+		initSections();
 	}, [ space ]);
-
-	useEffect(() => {
-		initBlocks();
-	}, [ types, space ]);
 
 	return (
 		<>

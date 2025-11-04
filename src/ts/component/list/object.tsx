@@ -76,8 +76,6 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 			filters: fl,
 			offset,
 			limit,
-			ignoreHidden: true,
-			ignoreDeleted: true,
 		}, callBack);
 	};
 

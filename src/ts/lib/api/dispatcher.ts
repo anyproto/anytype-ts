@@ -863,10 +863,6 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
-
-						if (subId == J.Constant.subId.type) {
-							S.Block.removeTypeWidget(id);
-						};
 					};
 					break;
 				};
@@ -1152,10 +1148,6 @@ class Dispatcher {
 				if (object.isAccountDeleted && (object.targetSpaceId == space)) {
 					U.Space.openFirstSpaceOrVoid(null, { replace: true });
 				};
-			};
-
-			if (subIds.includes(J.Constant.subId.type)) {
-				S.Block.addTypeWidget(id);
 			};
 		};
 
