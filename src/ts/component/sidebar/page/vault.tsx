@@ -396,7 +396,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const onSettings = () => {
-		Action.openSettings('index', analytics.route.vault);
+		Action.openSettings('account', analytics.route.vault);
 	};
 
 	const onGallery = () => {
