@@ -369,6 +369,14 @@ export const FileDiscardPreload = (fileId: string, callBack?: (message: any) => 
 	dispatcher.request(FileDiscardPreload.name, request, callBack);
 };
 
+export const FileSetAutoDownload = (enabled: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.File.SetAutoDownload.Request();
+
+	request.setEnabled(enabled);
+
+	dispatcher.request(FileSetAutoDownload.name, request, callBack);
+};
+
 // ---------------------- NAVIGATION ---------------------- //
 
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {

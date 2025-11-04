@@ -1070,6 +1070,10 @@
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
 	"popupSettingsDataOffloadWarningTextLocalOnly": "Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
+
+	"popupSettingsDataOfflineAccess": "Offline Access",
+	"popupSettingsDataOfflineAccessDescription": "Auto sync files up to 20 MB for offline access",
+
 	"popupSettingsDataFilesOffloaded": "Files offloaded",
 	"popupSettingsDataKeepFiles": "Keep files",
 	"popupSettingsDataRemoveFiles": "Remove files",

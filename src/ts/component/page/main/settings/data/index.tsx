@@ -1,10 +1,11 @@
-import React, { forwardRef } from 'react';
-import { Title, Label, Button, Icon } from 'Component';
+import React, { forwardRef, useState, useEffect } from 'react';
+import { Title, Label, Button, Icon, Switch } from 'Component';
 import { I, C, S, U, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
+	const [ autodownload, setAutodownload ] = useState(true);
 	const { dataPath, spaceStorage } = S.Common;
 	const { localUsage } = spaceStorage;
 	const isLocalNetwork = U.Data.isLocalNetwork();
@@ -47,6 +48,22 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 		analytics.event('ClickSettingsDataManagementLocation', { route: analytics.route.settings });
 	};
 
+	const getAutodownloadStatus = () => {
+		// TODO: finish when MW is ready
+	};
+
+	const onAutoDownloadSwitch = (e: any, v: boolean) => {
+		C.FileSetAutoDownload(v, (message) => {
+			if (!message.error) {
+				setAutodownload(v);
+			};
+		});
+	};
+
+	useEffect(() => {
+		getAutodownloadStatus();
+	}, []);
+
 	return (
 		<>
 			<Title text={translate('popupSettingsLocalStorageTitle')} />
@@ -79,6 +96,23 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 					</div>
 					<div className="side right">
 						<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
+					</div>
+				</div>
+
+				<div className="item">
+					<div className="side left">
+						<Icon className="download" />
+
+						<div className="txt">
+							<div className="name">{translate('popupSettingsDataOfflineAccess')}</div>
+							<div className="type">{translate(`popupSettingsDataOfflineAccessDescription`)}</div>
+						</div>
+					</div>
+					<div className="side right">
+						<Switch
+							value={autodownload}
+							onChange={onAutoDownloadSwitch}
+						/>
 					</div>
 				</div>
 			</div>

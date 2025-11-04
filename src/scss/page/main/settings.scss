@@ -356,8 +356,8 @@
             background-position: 50% 50%; background-repeat: no-repeat; background-size: 24px; background-color: var(--color-shape-highlight-medium);
         }
         .icon.drive { background-image: url('~img/icon/settings/drive.svg'); }
-        .icon.sites { background-image: url('~img/icon/settings/sites.svg'); }
         .icon.location { background-image: url('~img/icon/settings/location.svg'); }
+        .icon.download { background-image: url('~img/icon/settings/download.svg'); }
 
         .actionItems {
             .title { @include text-common; font-weight: 400; margin-bottom: 0; }
