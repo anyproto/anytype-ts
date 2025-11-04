@@ -1167,7 +1167,7 @@ class UtilMenu {
 	};
 
 	prepareForSelect (a: any[]) {
-		return a.map(it => {
+		return a.filter(it => it).map(it => {
 			const id = undefined !== it.id ? String(it.id) : '';
 			return { ...it, id };
 		});
