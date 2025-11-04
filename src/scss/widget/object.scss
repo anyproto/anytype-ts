@@ -10,6 +10,7 @@
 
 		.side.left {
 			.iconObject { flex-shrink: 0; }
+			.icon { width: 20px; height: 20px; flex-shrink: 0; }
 			.name { flex-grow: 1; @include text-overflow-nw; font-weight: 600; }
 		}
 

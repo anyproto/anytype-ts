@@ -31,23 +31,6 @@
 }
 
 .widget.widgetSpace {
-	.body {
-		.side.right {
-			.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
-
-			.icon.plus { background-image: url('#{$themePath}/icon/widget/button/create.svg'); border-color: var(--color-shape-secondary); }
-			.icon.arrow { background-image: url('#{$themePath}/icon/widget/button/arrow.svg'); }
-		}
-
-		.buttons {
-			.item {
-				.side.right {
-					.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); opacity: 1; }
-				}
-			}
-		}
-	}
-
 	.spaceChat {
 		.buttons {
 			.item {
@@ -56,6 +39,13 @@
 				.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
 				.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
 			}
+		}
+	}
+
+	.spaceData,
+	.spaceStream {
+		.head {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/select/space.svg'); }
 		}
 	}
 }

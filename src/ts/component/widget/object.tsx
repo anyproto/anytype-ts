@@ -86,6 +86,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 					return !U.Object.isInSystemLayouts(it.recommendedLayout) && (it.uniqueKey != J.Constant.typeKey.template);
 				});
+
+				items.push({ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive });
 				break;
 			};
 		};
@@ -112,6 +114,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			transition,
 		};
 
+		let icon = null;
+		if (item.icon) {
+			icon = <Icon className={item.icon} />;
+		} else {
+			icon = <IconObject object={item} />;
+		};
+
 		return (
 			<div 
 				id={`item-${item.id}`}
@@ -123,7 +132,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
 				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
-					<IconObject object={item} />
+					{icon}	
 					<ObjectName object={item} />
 				</div>
 				<div className="side right">
