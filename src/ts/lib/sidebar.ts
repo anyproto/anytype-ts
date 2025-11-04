@@ -532,7 +532,9 @@ class Sidebar {
 		if (!isPopup) {
 			this.pageFlex.toggleClass('sidebarAnimation', animate);
 			this.dummyLeft.toggleClass('sidebarAnimation', animate);
+			
 			this.leftButton.toggleClass('sidebarAnimation', animate);
+			this.leftButton.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 
 			this.pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			this.pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);

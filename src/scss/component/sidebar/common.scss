@@ -10,7 +10,8 @@
 }
 .sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
 
-#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
+#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; display: block; }
+#sidebarLeftButton.withSidebarLeft { display: none; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
