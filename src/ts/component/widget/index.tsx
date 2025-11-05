@@ -10,6 +10,7 @@ import WidgetSpace from './space';
 import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
+import { init } from 'emoji-mart';
 
 interface Props extends I.WidgetComponent {
 	name?: string;

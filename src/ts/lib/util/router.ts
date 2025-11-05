@@ -242,18 +242,14 @@ class UtilRouter {
 
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
-					S.Common.setLeftSidebarState('vault', 'widget');
 
 					U.Data.onInfo(message.info);
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false, onRouteChange } }, () => {
+						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+							S.Common.setLeftSidebarState('vault', 'widget');
 							this.isOpening = false;
 						});
-					};
-
-					const onRouteChange = () => {
-						routeParam.onRouteChange?.();
 					};
 
 					const startingId = S.Auth.startingId.get(id);
