@@ -24,6 +24,11 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 				initialData={data}
 				viewModeEnabled={readonly}
 				onChange={onChange}
+				UIOptions={{
+					tools: {
+						image: false,
+					}
+				}}
 			/>
 		</div>
 	);
