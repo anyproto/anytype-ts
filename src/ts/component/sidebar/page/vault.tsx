@@ -301,7 +301,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		const icons = [];
 		const iconSize = vaultMessages ? 48 : 32;
 
-		let iconMute = null;
 		let time = null;
 		let last = null;
 		let counter = null;
@@ -324,10 +323,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		if (item.chatId) {
-			if (item.isMuted) {
-				iconMute = <Icon className="muted" />;
-			};
-
 			time = <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>;
 			last = <Label text={item.lastMessage} />;
 			counter = <ChatCounter {...item.counters} mode={item.notificationMode} />;
@@ -353,11 +348,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					{vaultMessages ? (
 						<>
 							<div className="nameWrapper">
-								<div className="nameInner">
-									<ObjectName object={item} />
-									{iconMute}
-								</div>
-
+								<ObjectName object={item} />
 								{time}
 							</div>
 							<div className="messageWrapper">
@@ -372,10 +363,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						</>
 					) : (
 						<div className="nameWrapper">
-							<div className="nameInner">
-								<ObjectName object={item} />
-								{iconMute}
-							</div>
+							<ObjectName object={item} />
 
 							<div className="icons">
 								{icons.map(icon => <Icon key={icon} className={icon} />)}

@@ -31,8 +31,7 @@
 
 		.nameWrapper,
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
-		.nameInner { display: flex; flex-grow: 1; align-items: center; gap: 0px 4px; overflow: hidden; }
-		.name { @include text-overflow-nw; font-weight: 500; }
+		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; }
 		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 		.label b { font-weight: 500; }
 
@@ -48,8 +47,6 @@
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }
 		.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
-		.icon.muted { background-image: url('~img/icon/vault/muted.svg'); }
-		.icon.error { display: block; margin: 0px; border-radius: 50%; background: var(--color-red) url('~img/icon/vault/error.svg') 50% 50% no-repeat; }
 
 		.cnt { 
 			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 
