@@ -371,13 +371,8 @@ class ChatStore {
 			const counters = this.getSpaceCounters(space.targetSpaceId);
 
 			if (counters) {
-				if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-					ret.mentionCounter += counters.mentionCounter || 0;
-				};
-
-				if (space.notificationMode == I.NotificationMode.All) {
-					ret.messageCounter += counters.messageCounter || 0;
-				};
+				ret.mentionCounter += counters.mentionCounter || 0;
+				ret.messageCounter += counters.messageCounter || 0;
 			};
 		};
 

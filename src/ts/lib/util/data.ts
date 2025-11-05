@@ -325,17 +325,7 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
-				const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-				const notificationMode = U.Object.getChatNotificationMode(spaceview, chatId);
 				
-				if (notificationMode == I.NotificationMode.All) {
-					obj.mentionCounter += state.mentions.counter || 0;
-					obj.messageCounter += state.messages.counter || 0;
-				} else 
-				if (notificationMode == I.NotificationMode.Mentions) {
-					obj.mentionCounter += state.mentions.counter || 0;
-				};
-
 				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
 				spaceCounters[spaceId] = obj;
 
@@ -357,8 +347,8 @@ class UtilData {
 				const obj = spaceCounters[spaceId];
 
 				S.Chat.setState(spaceSubId, { 
-					mentions: { counter: obj.mentionCounter, orderId: '' }, 
-					messages: { counter: obj.messageCounter, orderId: '' },
+					mentions: { counter: 0, orderId: '' }, 
+					messages: { counter: 0, orderId: '' },
 					lastMessageDate: obj.lastMessageDate,
 					lastStateId: '',
 					order: 0,
