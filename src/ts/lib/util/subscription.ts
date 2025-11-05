@@ -72,7 +72,7 @@ class UtilSubscription {
 		
 		let skipLayouts = [];
 
-		if (!config.experimental || spaceview.isChat) {
+		if (spaceview.isChat) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
 		};
 
