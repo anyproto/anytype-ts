@@ -550,7 +550,7 @@ class Relation {
 		}));
 
 		const ret = [
-			{ id: '', icon: '', name: translate('commonNone') },
+			{ id: 'none', icon: '', name: translate('commonNone') },
 			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
 		];
 
