@@ -114,9 +114,6 @@ export default {
 		'headerRelationsLayout',
 		'setOf',
 		'orderId',
-		'widgetLayout',
-		'widgetLimit',
-		'widgetViewId',
 	],
 
 	graph: [
