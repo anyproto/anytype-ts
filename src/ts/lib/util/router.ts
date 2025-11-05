@@ -109,7 +109,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelClose(false);
+		sidebar.rightPanelClose(false, false);
 
 		focus.clear(true);
 

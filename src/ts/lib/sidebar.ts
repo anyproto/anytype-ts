@@ -230,7 +230,7 @@ class Sidebar {
 	/**
 	 * Closes the sidebar with animation and updates state.
 	 */
-	rightPanelClose (isPopup: boolean): void {
+	rightPanelClose (isPopup: boolean, animate?: boolean): void {
 		this.initObjects(isPopup);
 
 		const { isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
@@ -240,7 +240,7 @@ class Sidebar {
 		};
 
 		this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(100%,0px,0px)' });
-		this.resizePage(isPopup, null, 0, true);
+		this.resizePage(isPopup, null, 0, animate);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -249,14 +249,14 @@ class Sidebar {
 			this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 
 			$(window).trigger('sidebarResize');
-		}, J.Constant.delay.sidebar);
+		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
 	/**
 	 * Opens the sidebar to the specified width with animation.
 	 * @param {number} [width] - The width to open the sidebar to.
 	 */
-	rightPanelOpen (isPopup: boolean, state: Partial<I.SidebarRightState>, width?: number): void {
+	rightPanelOpen (isPopup: boolean, state: Partial<I.SidebarRightState>, width?: number, animate?: boolean): void {
 		this.initObjects(isPopup);
 
 		const { isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
@@ -270,7 +270,7 @@ class Sidebar {
 		this.rightPanelSetState(isPopup, state);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: false });
-		this.resizePage(isPopup, null, width, true);
+		this.resizePage(isPopup, null, width, animate);
 
 		raf(() => {
 			this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
@@ -281,7 +281,7 @@ class Sidebar {
 
 				$(window).trigger('sidebarResize');
 				raf(() => $(window).trigger('resize'));
-			}, J.Constant.delay.sidebar);
+			}, animate ? J.Constant.delay.sidebar : 0);
 		});
 	};
 
@@ -296,10 +296,10 @@ class Sidebar {
 		const { width, isClosed } = this.getData(I.SidebarPanel.Right, isPopup);
 
 		if (isClosed) {
-			this.rightPanelOpen(isPopup, state, width);
+			this.rightPanelOpen(isPopup, state, width, true);
 			analytics.event('ExpandSidebar');
 		} else {
-			this.rightPanelClose(isPopup);
+			this.rightPanelClose(isPopup, true);
 			analytics.event('CollapseSidebar');
 		};
 

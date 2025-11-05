@@ -81,7 +81,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 					<Icon className="copy" />
 				</div>
 
-				{!participant.globalName ? (
+				{participant && !participant.globalName ? (
 					<div className="upsellWrapper">
 						<div className="text">
 							<Icon />

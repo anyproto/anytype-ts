@@ -187,7 +187,7 @@ class Keyboard {
 				S.Menu.closeLast();
 			} else 
 			if (!data.isClosed) {
-				sidebar.rightPanelClose(isPopup);
+				sidebar.rightPanelClose(isPopup, true);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -528,7 +528,7 @@ class Keyboard {
 
 		S.Menu.closeAll();
 		this.restoreSource();
-		sidebar.rightPanelClose(isPopup);
+		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryBack');
 	};
 
@@ -551,7 +551,7 @@ class Keyboard {
 		};
 
 		S.Menu.closeAll();
-		sidebar.rightPanelClose(isPopup);
+		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryForward');
 	};
 

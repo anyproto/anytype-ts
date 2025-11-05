@@ -223,6 +223,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		init();
+		resize();
 
 		return () => {
 			unbind();
