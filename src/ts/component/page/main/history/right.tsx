@@ -424,7 +424,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 			<div id={`item-${item.id}`} className="child">
 				<div className="info" onClick={e => loadVersion(item.id)}>
 					{icon}
-					<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
+					<div className="date">{U.Date.timeWithFormat(timeFormat, item.time, true)}</div>
 				</div>
 
 				{withChildren ? (

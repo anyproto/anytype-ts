@@ -251,12 +251,13 @@ class UtilDate {
 	 * @param {I.TimeFormat} v - The time format enum value.
 	 * @returns {string} The format string.
 	 */
-	timeFormat (v: I.TimeFormat): string {
+	timeFormat (v: I.TimeFormat, withSeconds?: boolean): string {
 		let f = '';
+		let s = withSeconds ? ':s' : '';
 		switch (v) {
 			default:
-			case I.TimeFormat.H12:	 f = 'g:i A'; break;
-			case I.TimeFormat.H24:	 f = 'H:i'; break;
+			case I.TimeFormat.H12:	 f = `g:i${s} A`; break;
+			case I.TimeFormat.H24:	 f = `H:i${s}`; break;
 		};
 		return f;
 	};
@@ -267,8 +268,8 @@ class UtilDate {
 	 * @param {number} t - The Unix timestamp.
 	 * @returns {string} The formatted time string.
 	 */
-	timeWithFormat (f: I.TimeFormat, t: number): string {
-		return this.date(this.timeFormat(f), t);
+	timeWithFormat (f: I.TimeFormat, t: number, withSeconds?: boolean): string {
+		return this.date(this.timeFormat(f, withSeconds), t);
 	};
 
 	/**
