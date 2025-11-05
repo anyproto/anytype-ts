@@ -71,7 +71,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						object={{ ...spaceview, spaceId: S.Common.space }}
 					/>
 					<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
-					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+					{spaceview.isShared ? (
+						<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
+					) : (
+						<Label text={translate('commonPersonalSpace')} />
+					)}
 				</div>
 				<div className="buttons">
 					{buttons.map((item, idx) => (
@@ -97,8 +101,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						<Label 
 							text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
 							onClick={e => onButtonClick(e, { id: 'member' })}
-						/> 
-					) : <Label text={translate('commonPersonalSpace')} />}
+						/>
+					) : (
+						<Label text={translate('commonPersonalSpace')} />
+					)}
 				</div>
 			</div>
 		);

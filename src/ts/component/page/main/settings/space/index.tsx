@@ -286,7 +286,11 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div className="counter" />
 				</div>
 
-				{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+				{spaceview.isShared ? (
+					<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
+				) : (
+					<Label text={translate('commonPersonalSpace')} />
+				)}
 			</div>
 
 			<div className="spaceButtons">
