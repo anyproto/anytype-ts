@@ -358,6 +358,10 @@ class Api {
 		win.close();
 	};
 
+	toggleFullScreen (win) {
+		win.setFullScreen(!win.isFullScreen());
+	};
+
 };
 
 module.exports = new Api();

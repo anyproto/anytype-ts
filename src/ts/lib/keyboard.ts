@@ -158,6 +158,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -183,6 +184,9 @@ class Keyboard {
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
