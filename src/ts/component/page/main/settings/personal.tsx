@@ -78,19 +78,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				</div>
 
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalLinkStyle')} />
-
-					<Select
-						id="linkStyle"
-						value={String(linkStyle)}
-						options={linkStyles}
-						onChange={v => S.Common.linkStyleSet(v)}
-						arrowClassName="black"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-
-				<div className="item">
 					<Label text={translate('popupSettingsPersonalSidebar')} />
 					<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
 				</div>
@@ -148,6 +135,19 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 							S.Common.fullscreenObjectSet(v);
 							analytics.event('ShowObjectFullscreen', { type: v });
 						}}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalLinkStyle')} />
+
+					<Select
+						id="linkStyle"
+						value={String(linkStyle)}
+						options={linkStyles}
+						onChange={v => S.Common.linkStyleSet(v)}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>
 			</div>

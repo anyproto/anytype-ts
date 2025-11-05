@@ -13,7 +13,7 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 import ItemProgress from './vault/update';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 48;
+const HEIGHT_ITEM = 44;
 const HEIGHT_ITEM_MESSAGE = 64;
 const HEIGHT_ITEM_UPDATE = 100;
 
