@@ -532,7 +532,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							};
 						});
 
-						this.menuContext.close();
+						this.menuContext?.close();
 						analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.featured });
 					},
 				});
@@ -547,7 +547,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					],
 					onSelect: (item: any) => {
 						U.Object.openConfig({ id: item.id, layout: I.ObjectLayout.Set });
-						this.menuContext.close();
+						this.menuContext?.close();
 					}
 				});
 		};

@@ -380,7 +380,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								options: this.optionsSort(),
 								onSelect: (e: any, item: any) => {
 									C.BlockTableSort(rootId, columnId, item.id);
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -404,7 +404,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 									fill(() => { 
 										this.onSelect(e, item, rowId, columnId, this.getBlockIds(I.BlockType.TableRow, rowId, columnId, cellId)); 
 									});
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -419,7 +419,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 									fill(() => { 
 										this.onSelect(e, item, rowId, columnId, this.getBlockIds(I.BlockType.TableColumn, rowId, columnId, cellId)); 
 									});
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -433,7 +433,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetAlign(rootId, blockIds, el.id));
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -447,7 +447,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -459,7 +459,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								value: current.content.color,
 								onChange: (id: string) => {
 									fill(() => C.BlockTextListSetColor(rootId, blockIds, id));
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -471,7 +471,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								value: current.bgColor,
 								onChange: (id: string) => {
 									fill(() => C.BlockListSetBackgroundColor(rootId, blockIds, id));
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -484,7 +484,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								options: optionsStyle,
 								onSelect: (e: any, el: any) => {
 									fill(() => { C.BlockTextListSetMark(rootId, blockIds, { type: el.id, param: '', range: { from: 0, to: 0 } }); });
-									menuContext.close();
+									menuContext?.close();
 								}
 							});
 							break;
@@ -499,7 +499,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					fill(() => { 
 						this.onSelect(e, item, rowId, columnId, blockIds);
 					});
-					menuContext.close();
+					menuContext?.close();
 				}
 			},
 		});

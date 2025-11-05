@@ -412,7 +412,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 									options,
 									onSelect: (e: any, item: any) => {
 										save(item.id);
-										menuContext.close();
+										menuContext?.close();
 									},
 								}
 							});

@@ -127,7 +127,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				value: '',
 				onSelect: icon => {
 					onReactionSelect(icon);
-					menuContext.close();
+					menuContext?.close();
 				},
 				route: analytics.route.reaction,
 			}

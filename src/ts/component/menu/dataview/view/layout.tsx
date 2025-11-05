@@ -361,7 +361,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 						this.param[item.id] = (el.id == 'none' ? '' : el.id);
 						this.save();
 
-						this.menuContext.close();
+						this.menuContext?.close();
 					};
 				},
 			}
