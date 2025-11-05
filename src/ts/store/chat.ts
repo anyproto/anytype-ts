@@ -403,7 +403,7 @@ class ChatStore {
 		};
 
 		for (const [ chatId, state ] of spaceMap) {
-			if (!chatId) {
+			if (chatId) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
