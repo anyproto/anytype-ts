@@ -199,11 +199,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	focus () {
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+		window.setTimeout(() => this.ref?.focus(), 15);
 	};
 
 	getSections () {

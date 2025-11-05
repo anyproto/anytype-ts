@@ -120,7 +120,7 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 	};
 
 	const focus = () => {
-		window.setTimeout(() => nodeRef.current.focus({ preventScroll: true }));
+		window.setTimeout(() => nodeRef.current?.focus({ preventScroll: true }));
 	};
 	
 	const select = () => {

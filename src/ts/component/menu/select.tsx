@@ -234,11 +234,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
+		window.setTimeout(() => this.refFilter?.focus(), 15);
 	};
 
 	getItemsWithoutFilter () {

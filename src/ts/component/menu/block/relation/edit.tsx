@@ -232,11 +232,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	focus () {
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+		window.setTimeout(() => this.ref?.focus(), 15);
 	};
 
 	checkButton () {
