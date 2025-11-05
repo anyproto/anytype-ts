@@ -31,7 +31,7 @@
 
 		.nameWrapper,
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
-		.nameInner { display: flex; flex-grow: 1; align-items: center; gap: 0px 4px; }
+		.nameInner { display: flex; flex-grow: 1; align-items: center; gap: 0px 4px; overflow: hidden; }
 		.name { @include text-overflow-nw; font-weight: 500; }
 		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 		.label b { font-weight: 500; }
