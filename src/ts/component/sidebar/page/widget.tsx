@@ -42,11 +42,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	let head = null;
 
 	const getSections = () => {
+		const widgets = getWidgets(I.WidgetSection.Pin);
 		const ret = [
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
 		];
 
-		if (lengthWidget) {
+		if (widgets.length) {
 			ret.unshift({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });
 		};
 
