@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight, translate } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
@@ -202,7 +202,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			<Icon 
 				id="sidebarLeftButton"
 				className="toggle sidebarHeadIcon withBackground"
-				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
+				tooltipParam={{ 
+					text: translate('popupShortcutMainBasics15'), 
+					caption: keyboard.getCaption('toggleSidebar'), 
+					typeY: I.MenuDirection.Bottom,
+				}}
 				onClick={() => sidebar.leftPanelToggle()}
 				onMouseDown={e => e.stopPropagation()}
 			/>
