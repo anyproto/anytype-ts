@@ -63,37 +63,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				))}
 			</div>
 
-			<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalFullscreen')} />
-					<Switch
-						className="big"
-						value={fullscreenObject}
-						onChange={(e: any, v: boolean) => {
-							S.Common.fullscreenObjectSet(v);
-							analytics.event('ShowObjectFullscreen', { type: v });
-						}}
-					/>
-				</div>
-			</div>
-
-			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalChatSend')} />
-					<Select
-						id="chatSend"
-						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
-						options={chatKeys}
-						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-			</div>
-
 			<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
 
 			<div className="actionItems">
@@ -152,6 +121,37 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						/>
 					</div>
 				) : ''}
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalChatSend')} />
+					<Select
+						id="chatSend"
+						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+						options={chatKeys}
+						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalFullscreen')} />
+					<Switch
+						className="big"
+						value={fullscreenObject}
+						onChange={(e: any, v: boolean) => {
+							S.Common.fullscreenObjectSet(v);
+							analytics.event('ShowObjectFullscreen', { type: v });
+						}}
+					/>
+				</div>
 			</div>
 		</>
 	);
