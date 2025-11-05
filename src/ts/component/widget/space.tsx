@@ -93,12 +93,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						<Icon className="arrow" />
 					</div>
 
-					{members.length > 1 ? (
+					{spaceview.isShared ? (
 						<Label 
 							text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
 							onClick={e => onButtonClick(e, { id: 'member' })}
 						/> 
-					) : ''}
+					) : <Label text={translate('commonPersonalSpace')} />}
 				</div>
 			</div>
 		);

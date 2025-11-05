@@ -31,7 +31,7 @@
 		.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
-		.icon.arrow { width: 16px; height: 20px; background-image: url('~img/icon/widget/button/arrow.svg'); }
+		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
 		.icon.widgetPanel { background-image: url('~img/icon/header/widget.svg'); }
 		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
 		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }

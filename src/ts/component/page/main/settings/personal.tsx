@@ -37,8 +37,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		{ id: ChatKey.CmdEnter, name: `${cmd} + Enter` },
 	];
 
-	console.log(vaultMessages, Number(vaultMessages), String(Number(vaultMessages)));
-
 	return (
 		<>
 			<Title text={translate('popupSettingsPersonalTitle')} />

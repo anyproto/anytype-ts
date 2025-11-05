@@ -6,9 +6,6 @@
 	}
 	> .head {
 		.name { @include text-overflow-nw; }
-		.createWrapper {
-			.icon { width: 24px !important; }
-		}
 	}
 
 	.widgetSection { display: flex; flex-direction: column; }
