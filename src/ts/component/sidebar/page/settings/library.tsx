@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { analytics, I, J, keyboard, S, Storage, translate, U } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { onBecomeObserved } from 'mobx';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -380,6 +381,11 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		onClick(records[0]);
 	};
 
+	const onBack = () => {
+		S.Common.setLeftSidebarState('vault', 'settingsSpace');
+		U.Router.go(`/${U.Router.build(savedRoute.current.params)}`, {});
+	};
+
 	const ItemSection = (item: any) => {
 		const cn = [ 'itemSection' ];
 
@@ -444,7 +450,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 		return () => {
 			U.Subscription.destroyList([ J.Constant.subId.library ]);
-			U.Router.go(`/${U.Router.build(savedRoute.current.params)}`, {});
 		};
 	}, []);
 
@@ -460,7 +465,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		<>
 			<div id="head" className="head">
 				<div className="side left">
-					<Icon className="back withBackground" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
+					<Icon className="back withBackground" onClick={onBack} />
 				</div>
 				<div className="side center">
 					<div className="name">{title}</div>
