@@ -266,7 +266,8 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	return (
 		<>
 			<div id="head" className="head">
-				<div className="side left">
+				<div className="side left" />
+				<div className="side center">
 					<Label text={translate('sidebarTypeTitle')} />
 				</div>
 

@@ -13,7 +13,7 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 import ItemProgress from './vault/update';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 72;
+const HEIGHT_ITEM = 64;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 

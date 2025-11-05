@@ -8,11 +8,16 @@
 	}
 	> .head {
 		.side { position: relative; z-index: 1; display: flex; align-items: center; flex-shrink: 0; }
-		.side.left { justify-content: flex-start; @include text-overflow-nw; }
+		.side.left:empty, .side.right:empty { display: none; }
+
+		.side.left { justify-content: flex-start; }
 		.side.left {
 			.label { @include text-overflow-nw; }
 		}
-		.side.center { flex-shrink: 1; flex-grow: 1; display: flex; align-items: center; gap: 0px 6px; }
+		.side.center { flex-shrink: 1; flex-grow: 1; display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+		.side.center {
+			.label { width: 100%; @include text-overflow-nw; }
+		}
 		.side.right { flex-shrink: 0; display: flex; flex-direction: row; gap: 0px 8px; }
 
 		.button, .icon { -webkit-app-region: no-drag; }

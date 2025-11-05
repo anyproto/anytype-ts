@@ -20,6 +20,7 @@
 		}
 		&:hover::before, &.active::before { opacity: 1; }
 		&:hover, &.active {
+			.chatCounter { display: none; }
 			.buttons { display: flex; }
 			.buttons {
 				.icon.more { opacity: 1; }

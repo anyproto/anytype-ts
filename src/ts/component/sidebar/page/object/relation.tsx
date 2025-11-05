@@ -163,7 +163,8 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	return (
 		<>
 			<div id="head" className="head">
-				<div className="side left">
+				<div className="side left" />
+				<div className="side center">
 					<Label text={translate('sidebarTypeRelation')} />
 				</div>
 
