@@ -49,6 +49,7 @@ const PreviewIndex = observer(forwardRef(() => {
 		const rect = U.Common.objectCopy($('#preview').get(0).getBoundingClientRect());
 
 		S.Menu.open('blockLink', {
+			classNameWrap: 'fromBlock',
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => Preview.previewHide(true),

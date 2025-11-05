@@ -30,6 +30,7 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			element: `#button-${blockId}-${type}`,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			className: 'fixed',
+			classNameWrap: 'fromBlock',
 			offsetY: -4,
 			offsetX: -8,
 			vertical: I.MenuDirection.Top,
