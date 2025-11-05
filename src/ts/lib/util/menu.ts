@@ -116,12 +116,12 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
+			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
-				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
 		};
