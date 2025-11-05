@@ -43,6 +43,7 @@ class CommonStore {
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
 	public updateVersionValue = '';
+	public vaultMessagesValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 	public rightSidebarStateValue = { 
 		full: { page: '' }, 
@@ -124,6 +125,7 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
+			vaultMessagesValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -139,6 +141,7 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
+			vaultMessages: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -160,6 +163,7 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
+			vaultMessagesSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -331,6 +335,10 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
+	};
+
+	get vaultMessages (): any {
+		return this.boolGet('vaultMessages');
 	};
 
 	/**
@@ -834,6 +842,14 @@ class CommonStore {
 	 */
 	dataPathSet (v: string) {
 		this.dataPathValue = String(v || '');
+	};
+
+	/**
+	 * Sets the vault messages value.
+	 * @param {boolean} v - The vault messages value.
+	 */
+	vaultMessagesSet (v: boolean) {
+		this.boolSet('vaultMessages', v);
 	};
 
 	/**

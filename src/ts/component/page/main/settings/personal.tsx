@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
+	const { config, linkStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
 	const { hideTray, showMenuBar } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -19,6 +19,11 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
 		{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
 		{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
+	];
+
+	const vaultStyles: I.Option[] = [
+		{ id: 0, name: translate('popupSettingsVaultCompact') },
+		{ id: 1, name: translate('popupSettingsVaultWithMessages') },
 	];
 
 	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
@@ -31,6 +36,8 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		{ id: ChatKey.Enter, name: 'Enter' },
 		{ id: ChatKey.CmdEnter, name: `${cmd} + Enter` },
 	];
+
+	console.log(vaultMessages, Number(vaultMessages), String(Number(vaultMessages)));
 
 	return (
 		<>
@@ -90,6 +97,19 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 			<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
 
 			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalVaultStyle')} />
+
+					<Select
+						id="linkStyle"
+						value={String(Number(vaultMessages))}
+						options={vaultStyles}
+						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
 				<div className="item">
 					<Label text={translate('popupSettingsPersonalLinkStyle')} />
 

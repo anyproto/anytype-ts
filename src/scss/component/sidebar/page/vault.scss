@@ -15,9 +15,8 @@
 		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-highlight-light-solid) 100%); }
 	}
 
-	.ReactVirtualized__List { padding: 0px 8px; scrollbar-gutter: stable; }
-
-	.filterWrapper { padding: 8px 16px; overflow: hidden; }
+	.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
+	.filterWrapper { padding: 8px 12px; overflow: hidden; }
 
 	.item { display: flex; align-items: center; gap: 0px 10px; padding: 8px; }
 	.item {
@@ -79,7 +78,7 @@
 		&.isProgress {
 			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
 
-			.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.svg'); flex-shrink: 0; }
+			.icon { width: 32px; height: 32px; background-image: url('~img/logo/progress.svg'); flex-shrink: 0; }
 			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
 			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
@@ -91,6 +90,17 @@
 				.fill.isActive { background-color: #ffb76c; }
 				.fill.empty { background-color: var(--color-shape-highlight-medium); }
 				.labels { display: none; }
+			}
+		}
+
+		> .head.withMessages { padding-left: 16px; padding-right: 16px; }
+
+		> .body.withMessages {
+			.ReactVirtualized__List { padding-left: 8px; padding-right: 8px; }
+			.filterWrapper { padding-left: 12px; padding-right: 12px; }
+
+			.item.isProgress {
+				.icon { width: 48px; height: 48px; }
 			}
 		}
 	}

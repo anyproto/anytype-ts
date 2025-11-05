@@ -13,12 +13,14 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 import ItemProgress from './vault/update';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 64;
+const HEIGHT_ITEM = 48;
+const HEIGHT_ITEM_MESSAGE = 64;
+const HEIGHT_ITEM_UPDATE = 100;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion, space } = S.Common;
+	const { updateVersion, space, vaultMessages } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -34,6 +36,13 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const canCreate = U.Space.canCreateSpace();
+	const cnh = [ 'head' ];
+	const cnb = [ 'body' ];
+
+	if (vaultMessages) {
+		cnh.push('withMessages');
+		cnb.push('withMessages');
+	};
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -292,6 +301,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 		const cn = [ 'item' ];
 		const icons = [];
+		const iconSize = vaultMessages ? 48 : 32;
 
 		let iconMute = null;
 		let time = null;
@@ -339,26 +349,43 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				onContextMenu={e => onContextMenu(e, item)}
 			>
 				<div className="iconWrap">
-					<IconObject object={item} size={48} iconSize={48} canEdit={false} />
+					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
 				</div>
 				<div className="info">
-					<div className="nameWrapper">
-						<div className="nameInner">
-							<ObjectName object={item} />
-							{iconMute}
+					{vaultMessages ? (
+						<>
+							<div className="nameWrapper">
+								<div className="nameInner">
+									<ObjectName object={item} />
+									{iconMute}
+								</div>
+
+								{time}
+							</div>
+							<div className="messageWrapper">
+								{last}
+
+								<div className="icons">
+									{icons.map(icon => <Icon key={icon} className={icon} />)}
+								</div>
+
+								{counter}
+							</div>
+						</>
+					) : (
+						<div className="nameWrapper">
+							<div className="nameInner">
+								<ObjectName object={item} />
+								{iconMute}
+							</div>
+
+							<div className="icons">
+								{icons.map(icon => <Icon key={icon} className={icon} />)}
+							</div>
+
+							{counter}
 						</div>
-
-						{time}
-					</div>
-					<div className="messageWrapper">
-						{last}
-
-						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
-						</div>
-
-						{counter}
-					</div>
+					)}
 				</div>
 			</div>
 		);
@@ -430,7 +457,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getRowHeight = (item: any) => {
-		return HEIGHT_ITEM + (item.isUpdate ? 36 : 0);
+		if (item.isUpdate) {
+			return HEIGHT_ITEM_UPDATE;
+		};
+
+		return vaultMessages ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
 	useEffect(() => {
@@ -449,7 +480,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	return (
 		<>
-			<div id="head" className="head">
+			<div id="head" className={cnh.join(' ')}>
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
@@ -473,7 +504,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					onClear={onFilterClear}
 				/>
 			</div>
-			<div id="body" className="body">
+			<div id="body" className={cnb.join(' ')}>
 				{!items.length ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
