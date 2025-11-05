@@ -241,7 +241,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			unsetActive();
 			setHover(item);
 		};
 	};
@@ -249,7 +248,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const onOut = () => {
 		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
-			setActive(spaceview);
 		};
 	};
 
