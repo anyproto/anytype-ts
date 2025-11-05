@@ -346,6 +346,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	onDragStartCard (e: any, groupId: any, record: any) {
 		const { readonly } = this.props;
+
 		if (readonly) {
 			e.preventDefault();
 			e.stopPropagation();
