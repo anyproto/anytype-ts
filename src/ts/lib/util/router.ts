@@ -244,10 +244,10 @@ class UtilRouter {
 					S.Common.nullifySpaceKeys();
 
 					U.Data.onInfo(message.info);
+					S.Common.setLeftSidebarState('vault', 'widget');
 
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
-							S.Common.setLeftSidebarState('vault', 'widget');
 							this.isOpening = false;
 						});
 					};
