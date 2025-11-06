@@ -47,8 +47,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 
 		if (!spaceview.isChat) {
+			const chats = S.Record.getRecords(J.Constant.subId.chat);
 			const counters = S.Chat.getSpaceCounters(space);
-			if ((counters.messageCounter > 0) || (counters.mentionCounter > 0)) {
+
+			if (chats.length && ((counters.messageCounter > 0) || (counters.mentionCounter > 0))) {
 				ret.unshift({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
 			};
 		};
