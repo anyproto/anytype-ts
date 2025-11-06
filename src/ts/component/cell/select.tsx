@@ -117,11 +117,11 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const focus = () => {
-		if (!entryRef.current) {
-			return;
-		};
-
 		window.setTimeout(() => {
+			if (!entryRef.current) {
+				return;
+			};
+
 			entryRef.current.focus();
 			setRange(entryRef.current, { start: 0, end: 0 });
 
