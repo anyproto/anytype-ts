@@ -11,6 +11,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const { parent, onContext } = props;
 	const { space } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
@@ -138,7 +139,12 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					<ObjectName object={item} />
 				</div>
 				<div className="side right">
-					{isChat ? <ChatCounter {...S.Chat.getChatCounters(space, item.id)} /> : ''}
+					{isChat ? (
+						<ChatCounter 
+							{...S.Chat.getChatCounters(space, item.id)} 
+							mode={U.Object.getChatNotificationMode(spaceview, item.id)} 
+						/>
+					) : ''}
 					<div className="buttons">
 						{!isBin ? (
 							<Icon 
