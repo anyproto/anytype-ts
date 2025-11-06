@@ -70,7 +70,6 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		Storage.set('chatsOnboarding', true);
 		Storage.setOnboarding('objectDescriptionButton');
 		Storage.setOnboarding('typeResetLayout');
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), true);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 
 		U.Data.onInfo(account.info);

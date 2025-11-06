@@ -2,8 +2,8 @@ import { I } from 'Lib';
 
 export enum WidgetSection {
 	Pin			 = 0,
-	Unread		 = 1,
-	Type		 = 2,
+	Type		 = 1,
+	Unread		 = 2,
 };
 
 export enum WidgetLayout { 
