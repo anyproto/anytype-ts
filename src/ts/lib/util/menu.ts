@@ -1372,12 +1372,18 @@ class UtilMenu {
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
+							const menuParam = {
+								horizontal: I.MenuDirection.Center,
+								...param,
+								data: { details },
+							};
+
 							window.setTimeout(() => {
 								if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-									this.onBookmarkMenu({ ...param, data: { details }}, object => cb(object, 0));
+									this.onBookmarkMenu(menuParam, object => cb(object, 0));
 								} else
 								if (U.Object.isChatLayout(item.recommendedLayout)) {
-									this.onChatMenu({ ...param, data: { details }}, object => cb(object, 0));
+									this.onChatMenu(menuParam, object => cb(object, 0));
 								};
 							}, S.Menu.getTimeout());
 						} else {
@@ -1403,7 +1409,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
-			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
 				...data,
@@ -1420,7 +1425,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('chatCreate', {
-			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
 				...data,

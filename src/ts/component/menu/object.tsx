@@ -580,6 +580,8 @@ class MenuObject extends React.Component<I.Menu> {
 					element: `#button-header-more`,
 					className,
 					classNameWrap,
+					horizontal: I.MenuDirection.Right,
+					vertical: I.MenuDirection.Center,
 					data: {
 						details: object,
 					},

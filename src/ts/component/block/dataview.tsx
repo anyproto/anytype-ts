@@ -799,6 +799,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const objectId = this.getObjectId();
 		const menuParam = {
+			horizontal: I.MenuDirection.Center,
 			...this.getMenuParam(e, dir),
 			...param,
 		};
