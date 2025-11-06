@@ -4,14 +4,12 @@ import { Label, Button } from 'Component';
 import { translate, U, Action, analytics } from 'Lib';
 
 interface Props {
-	tier: any;
 	route: string;
 	isRed: boolean;
 	className?: string;
 };
 
 const UpsellSpace = observer(forwardRef<{}, Props>(({
-	tier = {},
 	route = '',
 	className = '',
 }, ref) => {

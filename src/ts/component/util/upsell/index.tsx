@@ -28,9 +28,8 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 		return null;
 	};
 
-	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
-	const product: I.MembershipProduct = products[0];
-
+	const { data } = S.Membership;
+	const purchased = data?.getTopProduct();
 
 	const getConditions = (item): { isShown: boolean; isRed: boolean } => {
 		let isShown = false;
@@ -119,23 +118,16 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 	const Component = Components[c] || null;
 	const { isShown, isRed } = getConditions(c);
 
-	return null;
-
-	/*
-	const canShow = membership.tierItem.isUpgradeable
-		&& U.Space.isMyOwner()
+	const canShow = U.Space.isMyOwner()
 		&& U.Data.isAnytypeNetwork()
-		&& tier
-		&& (tier.id != membership.tier)
 		&& isShown;
-	const tierCanNotUpgrade = !tier.price || !tier.period || !tier.periodType;
 
-	if (!Component || !canShow || tierCanNotUpgrade) {
+	if (!Component || !canShow || (purchased && !purchased.product.isUpgradeable)) {
 		return null;
 	};
 
-	return <Component className={className} route={route} tier={tier} isRed={isRed} />;
-	*/
+	return <Component className={className} route={route} isRed={isRed} />;
+
 
 }));
 

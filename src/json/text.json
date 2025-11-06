@@ -963,7 +963,6 @@
 	"upsellBannerStorageUsageText": "<b>%s of remote storage used. </b>",
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
 	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
-	"upsellBannerStorageUpsellText": "Get 128 GB for %s. ",
 	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
 
 	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
