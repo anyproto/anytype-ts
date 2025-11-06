@@ -2159,6 +2159,22 @@ export const MembershipV2GetProducts = (noCache: boolean, callBack?: (message: a
 	dispatcher.request(MembershipV2GetProducts.name, request, callBack);
 };
 
+export const MembershipV2AnyNameIsValid = (anyName: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.AnyNameIsValid.Request();
+
+	request.setNsname(anyName);
+
+	dispatcher.request(MembershipV2AnyNameIsValid.name, request, callBack);
+};
+
+export const MembershipV2AnyNameAllocate = (anyName: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.AnyNameAllocate.Request();
+
+	request.setNsname(anyName);
+
+	dispatcher.request(MembershipV2AnyNameAllocate.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {

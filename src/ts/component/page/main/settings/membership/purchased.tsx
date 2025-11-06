@@ -1,10 +1,11 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, S, U, J, C, Action, translate } from 'Lib';
 
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
+	const [ dummy, setDummy ] = useState(0);
 	const { data } = S.Membership;
 	const { nextInvoice } = data;
 	const purchased = data?.getTopProduct();
@@ -12,10 +13,6 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const { isAutoRenew, dateEnds, isYearly } = info;
 	const { name, colorStr } = product;
 	const period = isYearly ? translate('popupSettingsMembershipCurrentTierAnnual') : translate('popupSettingsMembershipCurrentTierMonthly');
-
-	console.log('PURCHASED: ', purchased)
-	console.log('INVOICE: ', nextInvoice)
-
 	const currentCn = [ 'item', 'current', colorStr ? colorStr : 'default' ];
 
 	const profile = U.Space.getProfile();
@@ -40,7 +37,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	};
 
 	const onManage = () => {
-		C.MembershipGetPortalLinkUrl((message) => {
+		C.MembershipV2GetPortalLink((message) => {
 			if (message.url) {
 				Action.openUrl(message.url);
 			};
@@ -48,7 +45,12 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	};
 
 	const onNameSelect = () => {
-		S.Popup.open('membershipFinalization', {});
+		S.Popup.open('membershipFinalization', {
+			data: {
+				tier: product
+			},
+			onClose: () => setDummy(dummy + 1),
+		});
 	};
 
 	return (

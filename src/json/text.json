@@ -1163,6 +1163,12 @@
 	"popupMembershipCode4": "Name is too long",
 	"popupMembershipCode5": "Name has invalid characters",
 	"popupMembershipCode6": "This tier does not support name",
+	"popupMembershipCode8": "You are not logged in and not supposed to see this",
+	"popupMembershipCode9": "Payment node error",
+	"popupMembershipCode10": "Cache error",
+	"popupMembershipCode11": "Can not reserve",
+	"popupMembershipCode12": "Can not connect",
+	"popupMembershipCode13": "This name is already reserved by someone else",
 
 	"popupMembershipActivationTitle": "Activate Your Code",
 	"popupMembershipActivationText": "Enter the code you received after purchase or from invatation. Your membership will be activated instantly.",

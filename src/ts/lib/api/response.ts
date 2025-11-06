@@ -570,6 +570,12 @@ export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Respo
 	};
 };
 
+export const MembershipV2GetPortalLink = (response: Rpc.MembershipV2.GetPortalLink.Response) => {
+	return {
+		url: response.getUrlwithjwt(),
+	};
+};
+
 export const MembershipV2GetProducts = (response: Rpc.MembershipV2.GetProducts.Response) => {
 	return {
 		products: (response.getProductsList() || []).map(Mapper.From.MembershipProduct),
