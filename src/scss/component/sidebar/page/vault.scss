@@ -1,4 +1,3 @@
-.sidebarPage.pageVault { overflow: hidden; }
 .sidebarPage.pageVault {
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 44px;
@@ -47,6 +46,7 @@
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }
 		.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
+		.icon.error { display: block; margin: 0px; border-radius: 50%; background: var(--color-red) url('~img/icon/vault/error.svg') 50% 50% no-repeat; }
 
 		.cnt { 
 			min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-system-accent-125); @include text-very-small; 

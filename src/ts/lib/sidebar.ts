@@ -144,6 +144,20 @@ class Sidebar {
 		};
 	};
 
+	toggle (panel: I.SidebarPanel, subPage?: string): void {
+		switch (panel) {
+			case I.SidebarPanel.Left: {
+				this.leftPanelToggle();
+				break;
+			};
+
+			case I.SidebarPanel.SubLeft: {
+				this.leftPanelSubPageToggle(subPage);
+				break;
+			};
+		};
+	};
+
 	/**
 	 * Closes the sidebar with animation and updates state.
 	 */

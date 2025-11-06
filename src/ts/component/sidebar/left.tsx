@@ -173,9 +173,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		window.setTimeout(() => movedX.current = false, 15);
 	};
 
-	const onHandleClick = () => {
+	const onHandleClick = (panel: I.SidebarPanel) => {
 		if (!movedX.current) {
-			sidebar.leftPanelToggle();
+			sidebar.toggle(panel, subPage);
 		};
 	};
 
@@ -228,8 +228,13 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							/> 
 						</div>
 					) : ''}
-					<div className="resize-h" draggable={true} onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}>
-						<div className="resize-handle" onClick={onHandleClick} />
+					<div 
+						className="resize-h" 
+						draggable={true} 
+						onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}
+						onClick={() => onHandleClick(I.SidebarPanel.Left)}
+					>
+						<div className="resize-handle" />
 					</div>
 				</div>
 				
@@ -245,7 +250,12 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							/> 
 						</div>
 					) : ''}
-					<div className="resize-h" draggable={true} onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}>
+					<div 
+						className="resize-h" 
+						draggable={true} 
+						onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}
+						onClick={() => onHandleClick(I.SidebarPanel.SubLeft)}
+					>
 						<div className="resize-handle" />
 					</div>
 				</div>

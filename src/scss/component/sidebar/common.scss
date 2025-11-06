@@ -24,7 +24,9 @@
 
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
-		&.isClosed { overflow: hidden; }
+		&.isClosed {
+			.sidebarPage { overflow: hidden; border: 0px; }
+		}
 	}
 
 	.pageWrapper { padding: 4px 0px 0px 0px; z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
