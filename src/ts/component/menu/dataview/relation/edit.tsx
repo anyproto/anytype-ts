@@ -639,9 +639,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						this.save();
 					};
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				},
 			}
 		});

@@ -165,9 +165,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribe: subId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'subId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'subId is empty' } });
 			return;
 		};
 
@@ -176,9 +174,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribe: spaceId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'spaceId is empty' } });
 			return;
 		};
 
@@ -190,9 +186,7 @@ class UtilSubscription {
 					console.error('[U.Subscription].subscribe: already subscribed', subId, hash);
 				};
 
-				if (callBack) {
-					callBack({ error: { code: 1, description: 'Already subscribed' } });
-				};
+				callBack?.({ error: { code: 1, description: 'Already subscribed' } });
 				return;
 			};
 
@@ -202,9 +196,7 @@ class UtilSubscription {
 		C.ObjectSearchSubscribe(spaceId, subId, filters.map(this.filterMapper), sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -237,9 +229,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribeIds: subId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'subId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'subId is empty' } });
 			return;
 		};
 
@@ -248,9 +238,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribeIds: spaceId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'spaceId is empty' } });
 			return;
 		};
 
@@ -259,9 +247,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribeIds: ids list is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'ids list is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'ids list is empty' } });
 			return;
 		};
 
@@ -273,9 +259,7 @@ class UtilSubscription {
 					console.error('[U.Subscription].searchSubscribe: already subscribed', subId, hash);
 				};
 
-				if (callBack) {
-					callBack({ error: { code: 1, description: 'Already subscribed' } });
-				};
+				callBack?.({ error: { code: 1, description: 'Already subscribed' } });
 				return;
 			};
 
@@ -293,9 +277,7 @@ class UtilSubscription {
 
 			this.onSubscribe(subId, 'id', keys, message, updateDetails);
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -334,9 +316,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].search: spaceId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'spaceId is empty' } });
 			return;
 		};
 
@@ -345,9 +325,7 @@ class UtilSubscription {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -397,9 +375,7 @@ class UtilSubscription {
 		const { account } = S.Auth;
 	
 		if (!account) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -447,9 +423,7 @@ class UtilSubscription {
 		const skipIds = U.Space.getSystemDashboardIds();
 
 		if (!account) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -459,9 +433,7 @@ class UtilSubscription {
 		};
 
 		if (!spaces.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -637,9 +609,7 @@ class UtilSubscription {
 		ids = ids || [];
 
 		if (!ids.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -652,9 +622,7 @@ class UtilSubscription {
 				};
 			});
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 

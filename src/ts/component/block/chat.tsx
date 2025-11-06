@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState, useLayoutEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -33,7 +33,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const timeoutResize = useRef(0);
 	const top = useRef(0);
 	const scrolledItems = useRef(new Set());
-	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
@@ -96,9 +95,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				S.Chat.setState(subId, message.state, false);
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -112,9 +109,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		C.ChatSubscribeLastMessages(chatId, J.Constant.limit.chat.messages, subId, (message: any) => {
 			if (message.error.code) {
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 				return;
 			};
 
@@ -134,9 +129,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					setDummy(dummy + 1);
 				};
 
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 			});
 		});
 	};
@@ -145,7 +138,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const chatId = getChatId();
 		const subId = getSubId();
 
-		if (!chatId || isLoading.current) {
+		if (!chatId) {
 			return;
 		};
 
@@ -154,21 +147,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		isLoading.current = true;
-
 		if (clear) {
 			subscribeMessages(clear, () => {
-				isLoading.current = false;
 				setIsBottom(true);
-
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 			});
 		} else {
 			const messages = S.Chat.getList(subId);
 			if (!messages.length) {
-				isLoading.current = false;
 				return;
 			};
 
@@ -177,19 +163,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const after = dir > 0 ? messages[messages.length - 1].orderId : '';
 
 			if (!before && !after) {
-				isLoading.current = false;
 				return;
 			};
 
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
-				isLoading.current = false;
-
 				if (message.error.code) {
 					setIsLoaded(true);
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 					return;
 				};
 
@@ -219,9 +200,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 					};
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		};
@@ -251,10 +230,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				loadDepsAndReplies(list, () => {
 					S.Chat.set(subId, list);
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		});
@@ -301,9 +277,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const loadDeps = (ids: string[], callBack?: () => void) => {
 		if (!ids.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -313,18 +287,12 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			noDeps: true,
 			keys: U.Subscription.chatRelationKeys(),
 			updateDetails: true,
-		}, () => {
-			if (callBack) {
-				callBack();
-			};
-		});
+		}, callBack);
 	};
 
 	const loadReplies = (ids: string[], callBack?: () => void) => {
 		if (!ids.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -336,9 +304,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				message.messages.forEach(it => S.Chat.setReply(subId, it));
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -387,14 +353,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		return sections;
 	};
 
-	const getItems = useCallback(() => {
+	const getItems = () => {
 		let items = [];
 		for (const section of sections) {
 			items.push({ key: section.key, createdAt: section.createdAt, isSection: true });
 			items = items.concat(section.list);
 		};
 		return items;
-	}, [ messages.length ]);
+	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		if (subIds.includes(getSubId())) {
@@ -1024,7 +990,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	useEffect(() => {
 		init();
-	}, [ space, chatId ]);
+	}, [ rootId, space, chatId ]);
 
 	useLayoutEffect(() => {
 		initialRender.current = false;

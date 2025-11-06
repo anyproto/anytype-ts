@@ -460,10 +460,7 @@ class UtilCommon {
 			};
 			
 			document.removeEventListener('copy', handler, true);
-			
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		};
 
 		document.addEventListener('copy', handler, true);

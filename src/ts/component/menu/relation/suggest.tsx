@@ -230,9 +230,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		this.loadRequest(requestParam, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
 				this.setState({ isLoading: false });
@@ -245,10 +243,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	loadRequest (param: any, callBack?: (message: any) => void) {
 		U.Subscription.search(param, (message: any) => {
 			this.items = this.items.concat(message.records || []);
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 

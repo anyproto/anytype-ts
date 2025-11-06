@@ -2159,9 +2159,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.focus(message.blockId, 0, 0, true);
 			};
 
-			if (callBack) {
-				callBack(message.blockId);
-			};
+			callBack?.(message.blockId);
 
 			const event: any = {
 				middleTime: message.middleTime,
@@ -2437,9 +2435,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			cover.css({ top: hh });
 		};
 
-		if (callBack) {
-			callBack();
-		};
+		callBack?.();
 	};
 
 	focus (id: string, from: number, to: number, scroll: boolean) {

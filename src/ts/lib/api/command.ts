@@ -1257,11 +1257,7 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
-	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (callBack) {
-			callBack(message);
-		};
-	});
+	dispatcher.request(HistoryShowVersion.name, request, callBack);
 };
 
 export const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1467,9 +1463,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 			S.Common.addOpenObject(spaceId, objectId);
 		};
 
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1485,9 +1479,7 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 

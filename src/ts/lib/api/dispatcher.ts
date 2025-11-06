@@ -1350,9 +1350,7 @@ class Dispatcher {
 				const middleTime = Math.ceil(t1 - t0);
 				message.middleTime = middleTime;
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				t2 = performance.now();
 				

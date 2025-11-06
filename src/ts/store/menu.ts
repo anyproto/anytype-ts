@@ -165,9 +165,7 @@ class MenuStore {
 	close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 		if (!item) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -188,13 +186,8 @@ class MenuStore {
 		const onTimeout = () => {
 			this.menuList = this.menuList.filter(it => it.id != id);
 
-			if (onClose) {
-				onClose();
-			};
-
-			if (callBack) {
-				callBack();
-			};
+			onClose?.();
+			callBack?.();
 
 			this.setIsAnimating(id, false);
 		};
@@ -235,9 +228,7 @@ class MenuStore {
 	closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		if (!items.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 		

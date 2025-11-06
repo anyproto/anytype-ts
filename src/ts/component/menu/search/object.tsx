@@ -334,9 +334,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
 				this.items = [];

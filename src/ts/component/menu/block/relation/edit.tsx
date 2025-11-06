@@ -321,9 +321,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						this.save();
 					};
 					
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				},
 			}
 		});

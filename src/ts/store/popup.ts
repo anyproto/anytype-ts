@@ -161,9 +161,7 @@ class PopupStore {
 	close (id: string, callBack?: () => void, force?: boolean) {
 		const item = this.get(id);
 		if (!item) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 		
@@ -176,9 +174,7 @@ class PopupStore {
 		if (force) {
 			this.popupList = filtered;
 		
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		} else {
 			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
 
@@ -189,9 +185,7 @@ class PopupStore {
 			window.setTimeout(() => {
 				this.popupList = filtered;
 
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 
 				$(window).trigger('resize');
 			}, J.Constant.delay.popup);
@@ -211,7 +205,7 @@ class PopupStore {
 
 		this.clearTimeout();
 		if (callBack) {
-			this.timeout = window.setTimeout(() => callBack(), timeout);
+			this.timeout = window.setTimeout(callBack, timeout);
 		};
 	};
 

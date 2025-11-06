@@ -64,10 +64,7 @@ class Api {
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
