@@ -201,11 +201,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
 		U.Menu.spaceContext(item, {
-			onOpen: () => {
-				unsetActive();
-				unsetHover();
-			},
-			onClose: () => setActive(spaceview),
+			element: `#${getId()} #item-${item.id}`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
