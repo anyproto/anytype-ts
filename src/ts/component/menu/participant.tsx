@@ -18,35 +18,11 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		});
 	};
 
-	const onBadgeClick = () => {
-		const participant = U.Space.getParticipant();
-
-		if (participant.globalName) {
-			return;
-		};
-
-		S.Popup.open('confirm', {
-			className: 'anyId',
-			data: {
-				icon: 'anyId',
-				title: translate('membershipUpsellAnyIdTitle'),
-				text: translate('membershipUpsellAnyIdText'),
-				textConfirm: translate('membershipUpsellAnyIdExplorePlans'),
-				colorConfirm: 'blank',
-				onConfirm: () => {
-					Action.openSettings('membership', analytics.route.menuParticipant);
-				},
-				canCancel: false
-			}
-		})
-	};
-
 	return object ? (
 		<>
 			<IconObject object={object} size={96} />
 			<div className="nameWrapper">
 				<ObjectName object={object} />
-				{object.globalName ? <Icon className="badge" onClick={onBadgeClick} /> : ''}
 			</div>
 			<Label 
 				text={U.Common.shorten(object.resolvedName, 150)} 

@@ -38,9 +38,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, pronounId } = data;
+		const { pronounId } = data;
 		const { isLoading } = this.state;
-		const filter = this.getFilter();
 		const items = this.getItems();
 
 		const rowRenderer = (param: any) => {

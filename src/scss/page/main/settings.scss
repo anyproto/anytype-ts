@@ -611,7 +611,7 @@
 
                     .tagItem { color: var(--color-text-inversion); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
                     .caption { @include text-common; color: var(--color-text-secondary); }
-                    .icon.badge { width: 14px; height: 14px; background: url('~img/icon/membership/badge.svg'); }
+                    .icon.badge { width: 14px; height: 14px; }
                 }
 
                 .side.right { justify-content: flex-end; }
