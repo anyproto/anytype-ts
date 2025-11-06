@@ -6,12 +6,17 @@ import { I, S, U, J, C, Action, translate } from 'Lib';
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { data } = S.Membership;
-	const product = data?.getTopProduct();
-	const { isYearly, dateEnds } = product.info;
-	const { name, colorStr } = product.product;
-	const price = product.product.getPriceString(isYearly);
-	const date = U.Date.dateWithFormat(S.Common.dateFormat, dateEnds);
-	const currentCn = [ 'item', 'current', colorStr ];
+	const { nextInvoice } = data;
+	const purchased = data?.getTopProduct();
+	const { info, product } = purchased;
+	const { isAutoRenew, dateEnds, isYearly } = info;
+	const { name, colorStr } = product;
+	const period = isYearly ? translate('popupSettingsMembershipCurrentTierAnnual') : translate('popupSettingsMembershipCurrentTierMonthly');
+
+	console.log('PURCHASED: ', purchased)
+	console.log('INVOICE: ', nextInvoice)
+
+	const currentCn = [ 'item', 'current', colorStr ? colorStr : 'default' ];
 
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
@@ -20,6 +25,18 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 
 	if (globalName) {
 		nameCn.push('withName');
+	};
+
+	let membershipText = '';
+	let date = '';
+	if (isAutoRenew) {
+		const price = U.Common.getMembershipPriceString(nextInvoice.total);
+
+		date = U.Date.dateWithFormat(S.Common.dateFormat, nextInvoice.date);
+		membershipText = U.Common.sprintf(translate('popupSettingsMembershipNextPayment'), price, date);
+	} else {
+		date = U.Date.dateWithFormat(S.Common.dateFormat, dateEnds);
+		membershipText = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), date);
 	};
 
 	const onManage = () => {
@@ -40,8 +57,8 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 				<div className={currentCn.join(' ')}>
 					<div className="top">
 						<Icon />
-						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, 'PERIOD TYPE')} />
-						<Label text={U.Common.sprintf(translate('popupSettingsMembershipNextPayment'), price, date)} />
+						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, period)} />
+						<Label text={membershipText} />
 					</div>
 					<Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />
 				</div>

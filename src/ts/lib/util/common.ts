@@ -1977,6 +1977,16 @@ class UtilCommon {
 		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
 	};
 
+	getMembershipPriceString (price?: I.MembershipAmount): string {
+		if (!price) {
+			return '';
+		};
+
+		const digits = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(price.amountCents / 100);
+
+		return `${J.Constant.currencySymbol[price.currency]}${digits}`;
+	};
+
 };
 
 export default new UtilCommon();

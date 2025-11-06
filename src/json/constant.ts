@@ -211,4 +211,8 @@ export default {
 		}
 	`,
 
+	currencySymbol: {
+		USD: '$',
+		EUR: '€',
+	},
 };

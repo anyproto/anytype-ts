@@ -10,12 +10,13 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 
 	const { data } = S.Membership;
 	const product = data?.getTopProduct();
+	const showIntro = !product || product.product.isIntro;
 
 	return (
 		<>
 			<Title text={translate('popupSettingsMembershipTitle')} />
 
-			{!product ? <Intro {...props} /> : <Purchased {...props} />}
+			{showIntro ? <Intro {...props} /> : <Purchased {...props} />}
 		</>
 	);
 

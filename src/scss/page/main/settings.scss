@@ -1012,7 +1012,7 @@
 
         .membershipPurchased { padding-top: 32px; }
         .membershipPurchased {
-            .section { display: flex; gap: 0px 16px; }
+            .section { display: flex; gap: 16px 16px; justify-content: center; flex-wrap: wrap; }
             .section {
                 .item {
                     flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between;

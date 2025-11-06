@@ -1035,6 +1035,8 @@
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
 	"popupSettingsMembershipCurrentTier": "You're on the %s %s plan",
+	"popupSettingsMembershipCurrentTierMonthly": "monthly",
+	"popupSettingsMembershipCurrentTierAnnual": "annual",
 	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
 	"popupSettingsMembershipManage": "Manage",
 

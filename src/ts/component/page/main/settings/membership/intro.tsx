@@ -63,8 +63,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const TierItem = (props: any) => {
 		const { item } = props;
 		const isCurrent = item.id == current?.product.id;
-		const periodPrice = isMonthly ? item.priceMonthly : item.price;
-		const price = item.price ? `$${periodPrice}` : translate('popupSettingsMembershipJustEmail');
+		const price = item.getPriceString(!isMonthly);
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
 
 		if (isCurrent) {
@@ -82,15 +81,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 			} else {
 				period = translate('popupSettingsMembershipForeverFree');
 			};
-		} else
-		if (item.period) {
-			const periodLabel = isMonthly ? translate('pluralMonth') : translate('pluralYear');
-
-			if (item.period == 1) {
-				period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));
-			} else {
-				period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), item.period, U.Common.plural(item.period, periodLabel));
-			};
+		} else {
+			period = `per ${U.Common.plural(1, isMonthly ? translate('pluralMonth') : translate('pluralYear'))}`;
 		};
 
 		return (

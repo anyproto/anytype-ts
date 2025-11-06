@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import { I, U } from 'Lib';
 
 const COLORS = [
 	'green',
@@ -6,6 +6,11 @@ const COLORS = [
 	'red',
 	'ice',
 ];
+
+const CURRENCY_SYMBOL = {
+	USD: '$',
+	EUR: '€',
+};
 
 class MembershipProduct implements I.MembershipProduct {
 
@@ -73,7 +78,8 @@ class MembershipProduct implements I.MembershipProduct {
 
 	getPriceString (isYearly: boolean): string {
 		const price = this.getPrice(isYearly);
-		return price ? `${(price.amountCents / 100).toFixed(2)} ${price.currency}` : '';
+
+		return U.Common.getMembershipPriceString(price);
 	};
 
 };
