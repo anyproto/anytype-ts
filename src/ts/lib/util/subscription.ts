@@ -603,15 +603,6 @@ class UtilSubscription {
 		this.createList(list, () => this.createTypeCheck(callBack));
 	};
 
-	fileTypeKeys () {
-		return [
-			J.Constant.typeKey.file,
-			J.Constant.typeKey.image,
-			J.Constant.typeKey.audio,
-			J.Constant.typeKey.video
-		];
-	};
-
 	/**
 	 * Creates a list of subscriptions from the provided list of parameters.
 	 * @param {I.SearchSubscribeParam[]} list - List of subscription parameters.
@@ -687,7 +678,9 @@ class UtilSubscription {
 		};
 
 		if (list.length) {
-			this.createList(list, callBack);
+			this.destroyList(list.map(it => it.subId), true, () => {
+				this.createList(list, callBack);
+			});
 		} else {
 			callBack?.();
 		};
