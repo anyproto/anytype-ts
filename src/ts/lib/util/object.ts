@@ -162,6 +162,7 @@ class UtilObject {
 			param.data.matchPopup.params = { ...param.data.matchPopup.params, ...object._routeParam_ };
 		};
 
+		sidebar.rightPanelClose(true, false);
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
