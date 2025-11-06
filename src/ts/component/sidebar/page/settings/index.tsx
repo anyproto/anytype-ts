@@ -216,13 +216,14 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
-			/*
-			if (!membership.isIntro && membership.tierItem && membership.tierItem.name) {
-				caption = <div className="caption">{membership.tierItem.name}</div>;
-			} else {
+			const { data } = S.Membership;
+			const product = data?.getTopProduct();
+
+			if (!product || product.product.isIntro) {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
+			} else {
+				caption = <div className="caption">{product.product.name}</div>;
 			};
-			*/
 		};
 
 		if (item.alert) {
