@@ -734,10 +734,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					canEdit: true,
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
-
-						if (callBack) {
-							callBack();
-						};
+						callBack?.();
 					},
 				},
 			});

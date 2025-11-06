@@ -121,10 +121,7 @@ class Action {
 	 */
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
 		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
+			callBack?.(message);
 			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
 		});
 	};
@@ -147,10 +144,7 @@ class Action {
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
 
-			if (callBack) {
-				callBack(message);
-			};
-
+			callBack?.(message);
 			analytics.event('DuplicateBlock', { count: message.blockIds.length });
 		});
 	};
@@ -170,9 +164,7 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			const count = blockIds.length;
 
@@ -378,9 +370,7 @@ class Action {
 				return;
 			};
 			
-			if (callBack) {
-				callBack(filePaths);
-			};
+			callBack?.(filePaths);
 		});
 	};
 
@@ -401,9 +391,7 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(filePaths);
-			};
+			callBack?.(filePaths);
 		});
 	};
 
@@ -450,17 +438,10 @@ class Action {
 						};
 					};
 
-					if (callBack) {
-						callBack();
-					};
-
+					callBack?.();
 					analytics.event('RemoveCompletely', { count, route });
 				},
-				onCancel: () => {
-					if (callBack) {
-						callBack();
-					};
-				},
+				onCancel: callBack,
 			},
 		});
 	};
@@ -529,9 +510,7 @@ class Action {
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
 			analytics.event('MoveToBin', { route, count: ids.length });
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -545,14 +524,9 @@ class Action {
 		ids = ids || [];
 
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			analytics.event('RestoreFromBin', { route, count: ids.length });
-
-			if (callBack) {
-				callBack();
+			if (!message.error.code) {
+				callBack?.();
+				analytics.event('RestoreFromBin', { route, count: ids.length });
 			};
 		});
 	};
@@ -588,12 +562,8 @@ class Action {
 			Preview.toastShow({ text: translate('toastImportStart') });
 
 			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				if (callBack) {	
-					callBack(message);
+				if (!message.error.code) {
+					callBack?.(message);
 				};
 			});
 		});
@@ -624,9 +594,7 @@ class Action {
 				this.openPath(paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -770,9 +738,7 @@ class Action {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					C.SpaceDelete(id, (message: any) => {
-						if (callBack) {
-							callBack(message);
-						};
+						callBack?.(message);
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
@@ -951,13 +917,10 @@ class Action {
 							return;
 						};
 
-						if (callBack) {
-							callBack();
-						};
-
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
 						analytics.event('RevokeShareLink');
+						callBack?.();
 					});
 				},
 			},
@@ -1019,9 +982,7 @@ class Action {
 	checkDiskSpace (callBack?: () => void) {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
 			if (!diskSpace) {
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 				return;
 			};
 
@@ -1038,9 +999,8 @@ class Action {
 						canCancel: false,
 					},
 				});
-			} else 
-			if (callBack) {
-				callBack();
+			} else {
+				callBack?.();
 			};
 		});
 	};

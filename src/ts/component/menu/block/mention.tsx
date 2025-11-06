@@ -268,9 +268,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return;
 			};
 
-			if (callBack) {
-				callBack(null);
-			};
+			callBack?.(null);
 
 			if (clear) {
 				this.items = [];

@@ -120,9 +120,7 @@ class Dataview {
 
 				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 			} else {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			};
 		});
 	};

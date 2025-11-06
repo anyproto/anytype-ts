@@ -1242,9 +1242,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = this.getTarget();
 
 		C.BlockDataviewSortAdd(rootId, block.id, view.id, item, () => {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 
 			analytics.event('AddSort', {
 				objectType: object.type,
@@ -1259,9 +1257,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = this.getTarget();
 
 		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 
 			analytics.event('AddFilter', {
 				condition: item.condition,
@@ -1470,9 +1466,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				window.setTimeout(() => this.applyObjectOrder(it.groupId, records), 30);
 			});
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 

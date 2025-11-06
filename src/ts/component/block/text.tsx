@@ -979,9 +979,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		if ((this.text === value) && !update) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 

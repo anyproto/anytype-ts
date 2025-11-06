@@ -461,10 +461,7 @@ class Keyboard {
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -1007,9 +1004,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 		analytics.event('Undo', { route });
 	};
@@ -1033,9 +1028,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 
 		analytics.event('Redo', { route });

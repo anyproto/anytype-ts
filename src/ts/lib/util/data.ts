@@ -291,10 +291,7 @@ class UtilData {
 					};
 
 					S.Common.redirectSet('');
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		});
@@ -391,9 +388,7 @@ class UtilData {
 					dispatcher.startStream();
 				};
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -406,20 +401,14 @@ class UtilData {
 		const { token } = S.Auth;
 
 		if (!token) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
 		C.WalletCloseSession(token, () => {
 			S.Auth.tokenSet('');
-
 			dispatcher.stopStream();
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -744,12 +733,8 @@ class UtilData {
 			filters,
 			limit,
 		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
+			if (!message.error.code) {
+				callBack?.(message);
 			};
 		});
 	};
@@ -892,9 +877,7 @@ class UtilData {
 			S.Auth.membershipSet(membership);
 			analytics.setTier(tier);
 
-			if (callBack) {
-				callBack(membership);
-			};
+			callBack?.(membership);
 		});
 	};
 
@@ -919,9 +902,7 @@ class UtilData {
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			S.Common.membershipTiersListSet(tiers);
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -1177,9 +1158,7 @@ class UtilData {
 			const ids = S.Record.checkHiddenObjects(Relation.getArrayValue(message.conflictRelationIds)
 				.map(id => S.Record.getRelationById(id))).map(it => it.id).filter(it => it);
 
-			if (callBack) {
-				callBack(ids);
-			};
+			callBack?.(ids);
 		});
 	};
 

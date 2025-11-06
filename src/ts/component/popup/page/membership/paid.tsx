@@ -54,9 +54,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 				return;
 			};
 
-			if (callBack) {
-				callBack();
-			};
+				callBack?.();
 		});
 	};
 
@@ -82,20 +80,14 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 					} else {
 						disableButtons(false);
 						setOk(translate('popupMembershipStatusNameAvailable'));
-
-						if (callBack) {
-							callBack();
-						};
+						callBack?.();
 					};
 				});
 			});
 		} else {
 			disableButtons(false);
-
-			if (callBack) {
-				callBack();
-			};
-		}
+			callBack?.();
+		};
 	};
 
 	const onKeyUp = (e: any) => {
