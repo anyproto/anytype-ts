@@ -144,6 +144,11 @@
 		.katex > .katex-html { white-space: normal; }
 		.katex .base { margin-top: 2px; margin-bottom: 2px; }
 	}
+
+	.block.blockEmbed.isExcalidraw {
+		.icon.source { display: none !important; }
+		.mediaExcalidraw { height: 600px; }
+	}
 }
 
 html.isSelecting {

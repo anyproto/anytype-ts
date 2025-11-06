@@ -249,10 +249,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const load = (clear: boolean, callBack?: () => void) => {
 		const { space } = S.Common;
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
-		const filters: any[] = U.Subscription.getBaseFilters({
-			ignoreArchived: true,
-			ignoreDeleted: true,
-		}).concat([
+		const filters: any[] = U.Subscription.getBaseFilters().concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);

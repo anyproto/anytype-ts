@@ -114,9 +114,6 @@ export default {
 		'headerRelationsLayout',
 		'setOf',
 		'orderId',
-		'widgetLayout',
-		'widgetLimit',
-		'widgetViewId',
 	],
 
 	graph: [
@@ -163,6 +160,9 @@ export default {
 		'chatId',
 		'spaceUxType',
 		'spacePushNotificationMode',
+		'spacePushNotificationForceAllIds',
+		'spacePushNotificationForceMuteIds',
+		'spacePushNotificationForceMentionIds',
 		'spaceOrder',
 		'spaceJoinDate',
 	],

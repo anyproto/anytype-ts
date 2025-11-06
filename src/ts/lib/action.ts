@@ -43,6 +43,7 @@ class Action {
 		S.Block.clear(rootId);
 
 		U.Subscription.destroyList([ rootId ]);
+		S.Common.removeOpenObject(space, rootId);
 
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
@@ -501,7 +502,6 @@ class Action {
 							animate: true,
 							onFadeIn: () => {
 								S.Popup.open('migration', { data: { type: 'import' } });
-								S.Block.closeRecentWidgets();
 							},
 						};
 
@@ -678,8 +678,12 @@ class Action {
 			return it;
 		}).filter(it => it);
 
-		if (isCut) {
-			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+		if (isCut && (blocks.length > 1)) {
+			next = S.Block.getNextBlock(rootId, blocks[0].id, -1, it => it.isFocusable());
+		};
+
+		if ((range.from == range.to) && !blocks.length) {
+			return;
 		};
 
 		C[cmd](rootId, blocks, range, (message: any) => {
@@ -822,22 +826,6 @@ class Action {
 		diff.forEach(it => {
 			if (it.added && it.value.length) {
 				analytics.event('AddSpellcheckLanguage', { type: it.value[0] });
-			};
-		});
-	};
-
-	/**
-	 * Imports a usecase into a space.
-	 * @param {string} spaceId - The space ID.
-	 * @param {I.Usecase} id - The usecase ID.
-	 * @param {function} [callBack] - Optional callback after import.
-	 */
-	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
-		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			S.Block.closeRecentWidgets();
-
-			if (callBack) {
-				callBack(message);
 			};
 		});
 	};
@@ -1108,6 +1096,10 @@ class Action {
 
 	openSpaceShare (route: string) {
 		this.openSettings('spaceShare', route);
+	};
+
+	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) {		
+		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
 	};
 
 };

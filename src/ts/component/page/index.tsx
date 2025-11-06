@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -82,7 +82,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		return match.params;
 	};
 
-	const { id, page, action } = getMatchParams();
+	const params = getMatchParams();
+	const { page, action, id } = params;
 
 	const getId = (prefix: string) => {
 		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
@@ -142,7 +143,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		setBodyClass();
-		resize();
 		rebind();
 
 		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
@@ -208,8 +208,8 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (!showMenuBar) {
-			cn.push('noMenuBar');
+		if (showMenuBar) {
+			cn.push('withMenuBar');
 		};
 
 		obj.attr({ class: cn.join(' ') });
@@ -223,6 +223,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		init();
+		resize();
 
 		return () => {
 			unbind();
@@ -237,7 +238,11 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => init());
+	useEffect(() => init(), [ params ]);
+
+	useLayoutEffect(() => {
+		raf(() => resize());
+	}, [ params ]);
 
 	if (isMain() && !account) {
 		return null;

@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fullscreenObject, hideSidebar } = S.Common;
+	const { config, linkStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
 	const { hideTray, showMenuBar } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -19,6 +19,11 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
 		{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
 		{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
+	];
+
+	const vaultStyles: I.Option[] = [
+		{ id: 0, name: translate('popupSettingsVaultCompact') },
+		{ id: 1, name: translate('popupSettingsVaultWithMessages') },
 	];
 
 	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
@@ -56,48 +61,17 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 				))}
 			</div>
 
-			<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalFullscreen')} />
-					<Switch
-						className="big"
-						value={fullscreenObject}
-						onChange={(e: any, v: boolean) => {
-							S.Common.fullscreenObjectSet(v);
-							analytics.event('ShowObjectFullscreen', { type: v });
-						}}
-					/>
-				</div>
-			</div>
-
-			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
-
-			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalChatSend')} />
-					<Select
-						id="chatSend"
-						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
-						options={chatKeys}
-						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-			</div>
-
 			<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
 
 			<div className="actionItems">
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalLinkStyle')} />
+					<Label text={translate('popupSettingsPersonalVaultStyle')} />
 
 					<Select
 						id="linkStyle"
-						value={String(linkStyle)}
-						options={linkStyles}
-						onChange={v => S.Common.linkStyleSet(v)}
+						value={String(Number(vaultMessages))}
+						options={vaultStyles}
+						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
@@ -132,6 +106,50 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						/>
 					</div>
 				) : ''}
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionChat')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalChatSend')} />
+					<Select
+						id="chatSend"
+						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+						options={chatKeys}
+						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+			</div>
+
+			<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalFullscreen')} />
+					<Switch
+						className="big"
+						value={fullscreenObject}
+						onChange={(e: any, v: boolean) => {
+							S.Common.fullscreenObjectSet(v);
+							analytics.event('ShowObjectFullscreen', { type: v });
+						}}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalLinkStyle')} />
+
+					<Select
+						id="linkStyle"
+						value={String(linkStyle)}
+						options={linkStyles}
+						onChange={v => S.Common.linkStyleSet(v)}
+						arrowClassName="black"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
 			</div>
 		</>
 	);

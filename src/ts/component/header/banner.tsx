@@ -61,7 +61,7 @@ const HeaderBanner: FC<Props> = ({
 					C.ObjectApplyTemplate(object.id, item.id);
 
 					analytics.event('SelectTemplate', { route: analytics.route.banner });
-					menuContext.close();
+					menuContext?.close();
 				},
 			},
 		});

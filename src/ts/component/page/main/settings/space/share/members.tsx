@@ -76,7 +76,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
 		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
-		return U.Menu.prepareForSelect(items);
+		return items;
 	};
 
 	const onPermissionsSelect = (item: any, isNew?: boolean) => {
@@ -112,7 +112,6 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 				title = translate('popupConfirmMemberRemoveTitle');
 				text = U.Common.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
 				button = translate('commonRemove');
-
 				onConfirm = () => {
 					if (isNew) {
 						C.SpaceRequestDecline(space, item.identity, cb);
@@ -175,40 +174,46 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 	};
 
 	const Member = (item: any) => {
-		const isCurrent = item.id == participant?.id;
-		const isNew = item.isJoining;
+		const { style, id, permissions, status, isActive, isDeclined, isRemoved, isJoining, globalName } = item;
+		const isCurrent = id == participant?.id;
 
 		let button = null;
 
 		if (isOwner) {
 			if (isCurrent) {
-				button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
+				button = <Label text={translate(`participantPermissions${permissions}`)} />;
 			} else {
-				const placeholder = isNew ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
+				const placeholder = isJoining ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
 
 				button = (
-					<div id={`item-${item.id}-select`} className="select" onClick={() => onPermissionsSelect(item, isNew)}>
+					<div id={`item-${id}-select`} className="select" onClick={() => onPermissionsSelect(item, isJoining)}>
 						<div className="item">
 							<div className="name">{placeholder}</div>
 						</div>
-						<Icon className={[ 'arrow', isNew ? 'light' : 'dark' ].join(' ')} />
+						<Icon className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} />
 					</div>
 				);
 			};
 		} else
-		if (item.isActive) {
-			button = <Label color="grey" text={translate(`participantPermissions${item.permissions}`)} />;
+		if (isActive) {
+			button = <Label color="grey" text={translate(`participantPermissions${permissions}`)} />;
 		} else
-		if (item.isDeclined || item.isRemoved) {
-			button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
+		if (isDeclined || isRemoved) {
+			button = <Label color="red" text={translate(`participantStatus${status}`)} />;
 		};
 
 		return (
-			<div id={`item-${item.id}`} className={[ 'row', isNew ? 'isNew' : '' ].join(' ')} style={item.style} >
+			<div id={`item-${id}`} className={[ 'row', isJoining ? 'isNew' : '' ].join(' ')} style={style} >
 				<div className="side left" onClick={() => U.Object.openConfig(item)}>
 					<IconObject size={48} object={item} />
-					<ObjectName object={item} />
-					{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
+					<div className="text">
+						<div className="nameWrapper">
+							<ObjectName object={item} />
+							{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
+							{globalName ? <Icon className="badge" /> : ''}
+						</div>
+						{globalName ? <Label className="anyId" text={globalName} /> : ''}
+					</div>
 				</div>
 				<div className="side right">
 					{button}

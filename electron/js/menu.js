@@ -17,7 +17,7 @@ const DEFAULT_SHORTCUTS = {
 	zoomIn: [ 'CmdOrCtrl', '=' ],
 	zoomOut: [ 'CmdOrCtrl', '-' ],
 	zoomReset: [ 'CmdOrCtrl', '0' ],
-	toggleFullscreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
+	toggleFullScreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
 	shortcut: [ 'Ctrl', 'Space' ],
 	close: [ 'CmdOrCtrl', 'Q' ],
 };
@@ -220,8 +220,8 @@ class MenuManager {
 					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset'), click: () => Api.setZoom(this.win, 0) },
 					{
-						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen'), type: 'checkbox', checked: this.win.isFullScreen(),
-						click: () => this.win.setFullScreen(!this.win.isFullScreen())
+						label: Util.translate('electronMenuFullScreen'), accelerator: this.getAccelerator('toggleFullScreen'), type: 'checkbox', checked: this.win.isFullScreen(),
+						click: () => Api.toggleFullScreen(this.win),
 					},
 					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
 				]

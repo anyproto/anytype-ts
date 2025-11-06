@@ -487,7 +487,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					noFilter: true,
 					noVirtualisation: true,
 					value: item[item.id],
-					options: U.Menu.prepareForSelect(options),
+					options,
 					onSelect: (e: any, el: any) => {
 						this.onChange(item.id, el.id);
 					}

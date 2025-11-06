@@ -30,6 +30,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
 	};
 	const cnb = [ 'c48' ];
+	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 	const unbind = () => {
 		$(window).off('keydown.onboarding');
@@ -90,13 +91,11 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 		switch (stage) {
 			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(stage + (needEmail ? 1 : 2)));
 				break;
 			};
 
 			case Stage.Email: {
-				const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
-
 				if (!needEmail) {
 					Animation.from(() => setStage(stage + 1));
 					break;

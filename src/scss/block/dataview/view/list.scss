@@ -4,7 +4,7 @@
 	.block.blockDataview {
 		.dataviewControls.viewList::after { left: 16px; width: calc(100% - 16px); }
 
-		.viewContent.viewList { padding: 8px 0px 80px 10px; }
+		.viewContent.viewList { padding: 8px 0px 80px 0px; }
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
 
@@ -16,6 +16,25 @@
 				.cellWrapper.isEmpty {
 					.cellContent:not(.withMenu) { display: none; }
 				}
+			}
+
+			.row { padding-left: 12px; }
+			.row {
+				.icon.drag { top: 10px; left: 0px; margin: 0px; }
+			}
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
+
+			.dropTarget.isOver { box-shadow: 0px 0px; }
+			.dropTarget.isOver::before { 
+				content: ""; position: absolute; background: var(--color-control-accent); width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
+			}
+			.dropTarget.isOver.top::before { top: -6px; }
+			.dropTarget.isOver.bottom::before { bottom: 4px; }
+
+			.dropTarget {
+				.selectionTarget { padding: 0px; border-radius: 0px; }
 			}
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; }
@@ -146,28 +165,6 @@
 
 			.loadMore { margin-top: 2px; }
         }
-
-		.viewContent.viewList.isCollection { padding-left: 0px; }
-		.viewContent.viewList.isCollection {
-			.row { padding-left: 12px; }
-			.row {
-				.icon.drag { top: 10px; left: 0px; margin: 0px; }
-			}
-			.row:hover {
-				.icon.drag { opacity: 1; }
-			}
-
-			.dropTarget.isOver { box-shadow: 0px 0px; }
-			.dropTarget.isOver::before { 
-				content: ""; position: absolute; background: var(--color-control-accent); width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
-			}
-			.dropTarget.isOver.top::before { top: -6px; }
-			.dropTarget.isOver.bottom::before { bottom: 4px; }
-
-			.dropTarget {
-				.selectionTarget { padding: 0px; border-radius: 0px; }
-			}
-		}
     }
 
 	.block.blockDataview.isInline {

@@ -799,6 +799,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const objectId = this.getObjectId();
 		const menuParam = {
+			horizontal: I.MenuDirection.Center,
 			...this.getMenuParam(e, dir),
 			...param,
 		};
@@ -1175,20 +1176,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			ids.push(record.id);
 		};
 
-		keyboard.setSelectionClearDisabled(false);
-
 		if (!block.isDraggable()) {
 			e.preventDefault();
 			return;
 		};
 
 		keyboard.disableSelection(true);
+		keyboard.setSelectionClearDisabled(false);
+
 		dragProvider?.onDragStart(e, I.DropType.Record, ids, {
-			getNode: () => this.node
+			getNode: () => this.node,
+			onRecordDrop: this.onRecordDrop,
 		});
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
+		keyboard.disableSelection(false);
+
 		const { rootId, block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const subId = this.getSubId();

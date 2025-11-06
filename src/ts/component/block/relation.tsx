@@ -13,11 +13,6 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 	const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 	const cmd = keyboard.cmdKey();
 	const relation = S.Record.getRelationByKey(relationKey);
-
-	if (!relation) {
-		return null;
-	};
-
 	const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 	const isDeleted = !relation;
 

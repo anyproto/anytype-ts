@@ -71,8 +71,6 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			filters,
 			sorts,
 			keys: J.Relation.default.concat([ 'targetObjectType' ]),
-			ignoreHidden: true,
-			ignoreDeleted: true,
 		}, setCurrent);
 	};
 

@@ -1455,14 +1455,16 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		};
+			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
 
-		// Save last opened object
-		const object = S.Detail.get(objectId, objectId, []);
+			// Save last opened object
+			const object = S.Detail.get(objectId, objectId, []);
 
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-			Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
+			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+				Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
+			};
+
+			S.Common.addOpenObject(spaceId, objectId);
 		};
 
 		if (callBack) {
@@ -1480,7 +1482,7 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
 		if (callBack) {
@@ -2489,4 +2491,23 @@ export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.Notificati
 	request.setMode(mode as number);
 
 	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
+};
+
+export const PushNotificationSetForceModeIds = (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.SetForceModeIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);
+	request.setMode(mode as number);
+
+	dispatcher.request(PushNotificationSetForceModeIds.name, request, callBack);
+};
+
+export const PushNotificationResetIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.ResetIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);
+
+	dispatcher.request(PushNotificationResetIds.name, request, callBack);
 };

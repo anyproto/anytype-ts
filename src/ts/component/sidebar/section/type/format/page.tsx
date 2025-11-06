@@ -15,8 +15,8 @@ const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props
 	const alignRef = useRef(null);
 	const featuredRef = useRef(null);
 	const widthRef = useRef(null);
-	const alignOptions = U.Menu.prepareForSelect(U.Menu.getHAlign([ I.BlockHAlign.Justify ]));
-	const featuredViewOptions = U.Menu.prepareForSelect(U.Menu.getFeaturedRelationLayout());
+	const alignOptions = U.Menu.getHAlign([ I.BlockHAlign.Justify ]);
+	const featuredViewOptions = U.Menu.getFeaturedRelationLayout();
 	const snaps = [];
 
 	for (let i = 0; i <= 10; i ++) {

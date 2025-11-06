@@ -232,6 +232,8 @@
 	"commonEmptyBin": "Empty Bin",
 	"commonSaveChat": "Save chat",
 	"commonActivate": "Activate",
+	"commonNotifications": "Notifications",
+	"commonPersonalSpace": "Personal Space",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -600,6 +602,19 @@
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
+
+	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
+	"pageSettingsSpaceNotificationsMode0": "All messages",
+	"pageSettingsSpaceNotificationsMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsMode2": "Nothing",
+	"pageSettingsSpaceNotificationsMode3": "Custom",
+
+	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
+	"pageSettingsSpaceNotificationsChatSpecificMode0": "All messages",
+	"pageSettingsSpaceNotificationsChatSpecificMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsChatSpecificMode2": "Muted",
+	"pageSettingsSpaceNotificationsChatSpecificMode3": "Custom settings",
+
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
 	"editorControlCover0": "Add cover",
@@ -826,6 +841,7 @@
 	"popupSettingsPersonalNavigationMenuClick": "Click",
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
 	"popupSettingsPersonalLinkStyle": "Link to object style",
+	"popupSettingsPersonalVaultStyle": "Vault density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
@@ -837,6 +853,8 @@
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalTimeFormat": "Time format",
+	"popupSettingsVaultCompact": "Compact",
+	"popupSettingsVaultWithMessages": "Message previews",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -928,6 +946,7 @@
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
+	"popupSettingsSpaceIndexPushText3": "Custom notification settings",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
 	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
 	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d spaces. Upgrade to create more.",
@@ -953,6 +972,10 @@
 	"upsellBannerMembersUsageText": "%s of %s editor seats are used. ",
 	"upsellBannerMembersLimitUsageText": "You've reached the limit of %s editors. ",
 	"upsellBannerMembersUpsellText": "Upgrade to invite more editors. ",
+
+	"membershipUpsellAnyIdTitle": "This is your ANY ID",
+	"membershipUpsellAnyIdText": "Become a member to make your ID human-readable, so other members can easily find and connect with you.",
+	"membershipUpsellAnyIdExplorePlans": "Explore plans",
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
@@ -1385,7 +1408,7 @@
 	"popupShortcutMainBasics12": "Open in a modal window",
 	"popupShortcutMainBasics13": "Open in a new window",
 	"popupShortcutMainBasics14": "View shortcuts",
-	"popupShortcutMainBasics15": "Show / Hide Sidebar",
+	"popupShortcutMainBasics15": "Toggle Sidebar",
 	"popupShortcutMainBasics16": "Zoom in",
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
@@ -2052,6 +2075,7 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
+	"widgetSectionUnread": "Unread",
 	"widgetSectionPinned": "Pinned",
 	"widgetSectionType": "Objects",
 	"widgetSectionNewType": "New Type",

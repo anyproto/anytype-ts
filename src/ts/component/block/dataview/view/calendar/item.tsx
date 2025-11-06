@@ -89,8 +89,6 @@ const Item = observer(forwardRef<Ref, Props>((props, ref) => {
 			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
 	};

@@ -354,15 +354,14 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			parentId: id,
 			data: {
 				value: this.param[item.id],
-				noClose: true,
 				onSelect: (e: any, el: any) => {
 					if (el.id == 'addRelation') {
 						this.onAddRelation(item.id);
 					} else {
-						this.param[item.id] = el.id;
+						this.param[item.id] = (el.id == 'none' ? '' : el.id);
 						this.save();
 
-						this.menuContext.close();
+						this.menuContext?.close();
 					};
 				},
 			}

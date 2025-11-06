@@ -41,9 +41,13 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-	const viewType = view ? view.type : I.ViewType.List;
 	const isOpen = Storage.checkToggle('widget', parent.id);
 	const isShown = isOpen || isPreview;
+
+	let viewType = view ? view.type : I.ViewType.List;
+	if (layout != I.WidgetLayout.View) {
+		viewType = I.ViewType.List;
+	};
 
 	const updateData = () =>{
 		const srcObject = S.Detail.get(targetId, targetId);
@@ -158,13 +162,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		switch (parent.content.section) {
 			case I.WidgetSection.Pin: {
 				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
-				break;
-			};
-
-			case I.WidgetSection.Type: {
-				C.ObjectListSetDetails([ targetId ], [ { key: 'widgetViewId', value: viewId } ], () => {
-					S.Block.updateWidgetData(targetId);
-				});
 				break;
 			};
 		};
@@ -299,7 +296,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined"
+							className="outlined round"
 							icon="search"
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
@@ -337,37 +334,32 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			</div>
 		);
 	} else {
-		if (layout == I.WidgetLayout.View) {
-			cn.push(`view${I.ViewType[viewType]}`);
-			switch (viewType) {
-				default: {
-					content = <WidgetViewList {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Gallery: {
-					content = <WidgetViewGallery {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Board: {
-					content = <WidgetViewBoard {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Calendar: {
-					content = <WidgetViewCalendar {...childProps} />;
-					break;
-				};
-
-				case I.ViewType.Graph: {
-					content = <WidgetViewGraph {...childProps} />;
-					break;
-				};
+		cn.push(`view${I.ViewType[viewType]}`);
+		switch (viewType) {
+			default: {
+				content = <WidgetViewList {...childProps} />;
+				break;
 			};
-		} else {
-			cn.push('viewList');
-			content = <WidgetViewList {...childProps} />;
+
+			case I.ViewType.Gallery: {
+				content = <WidgetViewGallery {...childProps} />;
+				break;
+			};
+
+			case I.ViewType.Board: {
+				content = <WidgetViewBoard {...childProps} />;
+				break;
+			};
+
+			case I.ViewType.Calendar: {
+				content = <WidgetViewCalendar {...childProps} />;
+				break;
+			};
+
+			case I.ViewType.Graph: {
+				content = <WidgetViewGraph {...childProps} />;
+				break;
+			};
 		};
 	};
 
@@ -401,7 +393,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (!isSystemTarget) {
 			load(viewId, true);
 		};
-	}, [ viewId ]);
+	}, [ viewId, viewType ]);
 
 	useEffect(() => {
 		if (U.Common.compareJSON(searchIds, prevIdsRef.current)) {

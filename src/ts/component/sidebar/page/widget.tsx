@@ -2,42 +2,27 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview } from 'Lib';
+import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
 	const [ sectionIds, setSectionIds ] = useState([]);
-	const [ dummy, setDummy ] = useState(0);
 	const { widgets } = S.Block;
-	const types = S.Record.getTypes();
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
-	const childrenIdsTypes = S.Block.getChildrenIds(widgets, J.Constant.blockId.widgetTypes);
-	const lengthTypes = childrenIdsTypes.length;
 	const { sidebarDirection, isPopup } = props;
 	const { space } = S.Common;
-	const cnsh = [ 'subHead' ];
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const counters = S.Chat.getTotalCounters();
 	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
-
-	// Subscriptions
-	for (const key of U.Subscription.fileTypeKeys()) {
-		const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(key), '');
-	};
-
-	if (counters.messageCounter) {
-		cnsh.push('withCounter');
-	};
 
 	let headerButtons: any[] = [];
 	if (spaceview.isChat) {
@@ -49,17 +34,31 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	let content = null;
-	let subHead = null;
+	let head = null;
 
-	const initBlocks = () => {
-		U.Subscription.createTypeCheck(() => {
-			S.Block.updateTypeWidgetList();
-		});
+	const getSections = () => {
+		const widgets = getWidgets(I.WidgetSection.Pin);
+		const ret = [
+			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
+		];
+
+		if (widgets.length) {
+			ret.unshift({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });
+		};
+
+		if (!spaceview.isChat) {
+			const counters = S.Chat.getSpaceCounters(space);
+			if ((counters.messageCounter > 0) || (counters.mentionCounter > 0)) {
+				ret.unshift({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
+			};
+		};
+
+		return ret;
 	};
 
 	const initSections = () => {
 		const newSectionIds = [];
-		const ids = [ I.WidgetSection.Pin, I.WidgetSection.Type ];
+		const ids = getSections().map(it => it.id);
 
 		ids.forEach(id => {
 			if (!isSectionClosed(id)) {
@@ -81,15 +80,17 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		body.scrollTop(top);
 	};
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: '#headerSync',
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
-		});
+	const onArrow = () => {
+		U.Menu.typeSuggest({ 
+			element: '#button-widget-arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.navigation, object => U.Object.openConfig(object));
 	};
 
 	const onDragStart = (e: DragEvent, block: I.Block): void => {
@@ -208,36 +209,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				C.BlockListMoveToExistingObject(widgets, widgets, dropTargetIdRef.current, [ blockId ], positionRef.current);
 				break;
 			};
-
-			case I.WidgetSection.Type: {
-				const child1 = getChild(blockId);
-				const targetId1 = child1?.getTargetObjectId();
-				const child2 = getChild(dropTargetIdRef.current);
-				const targetId2 = child2?.getTargetObjectId();
-
-				if (!targetId1 || !targetId2 || (targetId1 == targetId2)) {
-					break;
-				};
-
-				const items = S.Record.checkHiddenObjects(S.Record.getTypes());
-				const oldIndex = items.findIndex(it => it.id == targetId1);
-				let newIndex = items.findIndex(it => it.id == targetId2) + (positionRef.current == I.BlockPosition.Bottom ? 1 : 0);
-
-				if ((oldIndex < 0) || (newIndex < 0)) {
-					break;
-				};
-
-				if (oldIndex < newIndex) {
-					newIndex--;
-				};
-
-				const newItems = arrayMove(items, oldIndex, newIndex);
-
-				U.Data.sortByOrderIdRequest(J.Constant.subId.type, newItems, callBack => {
-					C.ObjectTypeSetOrder(S.Common.space, newItems.map(it => it.id), callBack);
-				});
-				break;
-			};
 		};
 
 		onDragEnd();
@@ -323,18 +294,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				noClose: true,
 				onSelect: (e: any, item: any) => {
 					const cb = () => {
-						menuContext.close();
+						S.Block.updateWidgetData(targetId);
+						menuContext?.close();
 					};
 
 					if (item.isLayout) {
 						switch (block.content.section) {
 							case I.WidgetSection.Pin: {
 								C.BlockWidgetSetLayout(widgets, block.id, item.layout, cb);
-								break;
-							};
-
-							case I.WidgetSection.Type: {
-								C.ObjectListSetDetails([ targetId ], [ { key: 'widgetLayout', value: Number(item.layout) } ], cb);
 								break;
 							};
 						};
@@ -357,7 +324,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const block = S.Block.getLeaf(widgets, previewId);
 		const child = getChild(block.id);
 		const object = getObject(block, child?.getTargetObjectId());
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(object?.id, object?.layout, true));
+		const layoutOptions = U.Menu.getWidgetLayoutOptions(object?.id, object?.layout, true);
 		const appearance: any[] = layoutOptions.map(it => ({ isLayout: true, layout: it.id, name: it.name, checkbox: it.id == param.layout}));
 
 		appearance.unshift({ isSection: true, name: translate('commonAppearance') });
@@ -440,68 +407,71 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const getWidgets = (sectionId: I.WidgetSection) => {
-		let root = '';
+		let blocks = [];
 
 		switch (sectionId) {
-			case I.WidgetSection.Pin: {
-				root = widgets;
+			case I.WidgetSection.Unread: {
+				blocks.push(new M.Block({ id: J.Constant.widgetId.unread, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
 				break;
 			};
 
 			case I.WidgetSection.Type: {
-				root = J.Constant.blockId.widgetTypes;
+				blocks.push(new M.Block({ id: J.Constant.widgetId.type, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				break;
+			};
+
+			case I.WidgetSection.Pin: {
+				blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+					if (!block.isWidget()) {
+						return false;
+					};
+
+					const child = getChild(block.id);
+					if (!child) {
+						return false;
+					};
+
+					const target = child.getTargetObjectId();
+
+					if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
+						return false;
+					};
+
+					if ([ J.Constant.widgetId.bin ].includes(target) && (sectionId == I.WidgetSection.Pin)) {
+						return false;
+					};
+
+					if (Object.values(J.Constant.widgetId).includes(target)) {
+						return true;
+					};
+
+					const object = getObject(block, target);
+
+					if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+						return false;
+					};
+
+					return true;
+				});
+
+				blocks.sort((a: I.Block, b: I.Block) => {
+					const c1 = getChild(a.id);
+					const c2 = getChild(b.id);
+
+					const t1 = c1?.getTargetObjectId();
+					const t2 = c2?.getTargetObjectId();
+
+					const isBin1 = t1 == J.Constant.widgetId.bin;
+					const isBin2 = t2 == J.Constant.widgetId.bin;
+
+					if (isBin1 && !isBin2) return 1;
+					if (!isBin1 && isBin2) return -1;
+
+					return 0;
+				});
 				break;
 			};
 		};
-
-		const blocks = S.Block.getChildren(widgets, root, (block: I.Block) => {
-			if (!block.isWidget()) {
-				return false;
-			};
-
-			const child = getChild(block.id);
-			if (!child) {
-				return false;
-			};
-
-			const target = child.getTargetObjectId();
-
-			if ([ J.Constant.widgetId.allObject, J.Constant.widgetId.chat ].includes(target)) {
-				return false;
-			};
-
-			if ([ J.Constant.widgetId.bin ].includes(target) && (sectionId == I.WidgetSection.Pin)) {
-				return false;
-			};
-
-			if (Object.values(J.Constant.widgetId).includes(target)) {
-				return true;
-			};
-
-			const object = getObject(block, target);
-
-			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
-				return false;
-			};
-
-			return true;
-		});
-
-		blocks.sort((a: I.Block, b: I.Block) => {
-			const c1 = getChild(a.id);
-			const c2 = getChild(b.id);
-
-			const t1 = c1?.getTargetObjectId();
-			const t2 = c2?.getTargetObjectId();
-
-			const isBin1 = t1 == J.Constant.widgetId.bin;
-			const isBin2 = t2 == J.Constant.widgetId.bin;
-
-			if (isBin1 && !isBin2) return 1;
-			if (!isBin1 && isBin2) return -1;
-
-			return 0;
-		});
 
 		return blocks;
 	};
@@ -562,10 +532,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				);
 			};
 
-			subHead = (
-				<div className={cnsh.join(' ')}>
+			head = (
+				<>
 					<div className="side left">
-						<Icon className="back" onClick={e => {
+						<Icon className="back withBackground" onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -581,7 +551,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					<div className="side right">
 						{buttons}
 					</div>
-				</div>
+				</>
 			);
 
 			content = (
@@ -598,11 +568,58 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			);
 		};
 	} else {
-		const spaceBlock = new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
-		const sections = [
-			{ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') },
-			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
-		];
+		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
+		const sections = getSections();
+
+		head = (
+			<>
+				<div className="side left">
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				</div>
+				<div className="side right">
+					<Icon 
+						className="search withBackground" 
+						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
+						tooltipParam={{ 
+							text: translate('commonSearch'), 
+							caption: keyboard.getCaption('search'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+					{canWrite ? (
+						<div className="createWrapper">
+							<Icon 
+								className="create withBackground" 
+								onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
+								tooltipParam={{ 
+									text: translate('commonNewObject'), 
+									caption: keyboard.getCaption('createObject'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+							/>
+							<Icon 
+								id="button-widget-arrow"
+								className="arrow withBackground" 
+								onClick={onArrow}
+								tooltipParam={{ 
+									text: translate('popupShortcutMainBasics19'), 
+									caption: keyboard.getCaption('selectType'), 
+									typeY: I.MenuDirection.Bottom,
+								}}
+							/>
+						</div>
+					) : ''}
+				</div>
+			</>
+		);
 
 		content = (
 			<div className="content">
@@ -623,41 +640,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
+					const list = getWidgets(section.id);
 
-					let list = getWidgets(section.id);
 					let buttons = null;
-
-					if (isSectionType) {
-						if (canWrite) {
-							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
-						};
-
-						if (sectionIds.includes(section.id) && (list.length > 1)) {
-							list = list.sort((a, b) => {
-								const c1 = getChild(a.id);
-								const c2 = getChild(b.id);
-
-								const t1 = c1?.getTargetObjectId();
-								const t2 = c2?.getTargetObjectId();
-
-								if (!t1 || !t2) {
-									return 0;
-								};
-
-								const type1 = S.Record.getTypeById(t1);
-								const type2 = S.Record.getTypeById(t2);
-
-								if (!type1 || !type2) {
-									return 0;
-								};
-
-								return U.Data.sortByOrderId(type1, type2);
-							});
-						};
-					};
-
-					if (isSectionPin && !list.length) {
-						return null;
+					if (isSectionType && canWrite) {
+						buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 					};
 
 					return (
@@ -715,24 +702,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	useEffect(() => {
 		setPreviewId('');
+		initSections();
 	}, [ space ]);
-
-	useEffect(() => {
-		initBlocks();
-	}, [ space, types.length ]);
 
 	return (
 		<>
 			<div id="head" className="head">
-				<div className="side left">
-					<Sync id="headerSync" onClick={onSync} />
-				</div>
-				<div className="side right">
-					<Icon className="search withBackground" onClick={() => keyboard.onSearchPopup(analytics.route.widget)} />
-				</div>
+				{head}
 			</div>
-
-			{subHead}
 
 			<div
 				id="body"

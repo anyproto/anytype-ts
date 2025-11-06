@@ -38,7 +38,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 			return;
 		};
 
-		close();
 		idRef.current = rootId;
 		setIsLoading(true);
 		setIsDeleted(false);
@@ -58,6 +57,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
+			listRef.current?.getData(1);
 			sidebar.rightPanelSetState(isPopup, { rootId });
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });
@@ -442,37 +442,35 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 					) : ''}
 				</div>
 
-				{!object._empty_ ? (
-					<div className="section set">
-						<div className="title">
-							<div className="side left">
-								{U.Common.plural(totalObject, translate('pluralObject'))}
-								<span className="cnt">{totalObject}</span>
-							</div>
-
-							<div className="side right">
-								<Icon
-									id="button-create"
-									className="more withBackground"
-									onClick={onMore}
-								/>
-							</div>
+				<div className="section set">
+					<div className="title">
+						<div className="side left">
+							{U.Common.plural(totalObject, translate('pluralObject'))}
+							<span className="cnt">{totalObject}</span>
 						</div>
 
-						<div className="content">
-							<ListObject
-								ref={listRef}
-								{...props}
-								sources={[ rootId ]}
-								spaceId={object.spaceId}
-								subId={subIdObject}
-								rootId={rootId}
-								columns={columnsObject}
-								route={analytics.route.screenRelation}
+						<div className="side right">
+							<Icon
+								id="button-create"
+								className="more withBackground"
+								onClick={onMore}
 							/>
 						</div>
 					</div>
-				) : ''}
+
+					<div className="content">
+						<ListObject
+							ref={listRef}
+							{...props}
+							sources={[ rootId ]}
+							spaceId={object.spaceId}
+							subId={subIdObject}
+							rootId={rootId}
+							columns={columnsObject}
+							route={analytics.route.screenRelation}
+						/>
+					</div>
+				</div>
 			</div>
 
 			<Footer component="mainObject" {...props} />

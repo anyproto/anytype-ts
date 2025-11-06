@@ -8,7 +8,7 @@ import SidebarLayoutPreview from 'Component/sidebar/preview';
 
 const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 	
-	const { rootId, details = {}, isPopup, page, previous, noPreview } = props;
+	const { rootId, isPopup, page, previous, noPreview } = props;
 	const buttonSaveRef = useRef(null);
 	const previewRef = useRef(null);
 	const sectionRefs = useRef(new Map());
@@ -261,12 +261,13 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	useEffect(() => {
 		init();
-	}, [ rootId, details ]);
+	}, [ rootId ]);
 
 	return (
 		<>
 			<div id="head" className="head">
-				<div className="side left">
+				<div className="side left" />
+				<div className="side center">
 					<Label text={translate('sidebarTypeTitle')} />
 				</div>
 

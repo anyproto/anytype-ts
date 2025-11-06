@@ -1,7 +1,6 @@
-.sidebarPage.pageVault { overflow: hidden; }
 .sidebarPage.pageVault {
 	> .head { 
-		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
+		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 44px;
 		gap: 0px 8px; overflow: hidden; flex-shrink: 0;
 	}
 	> .head {
@@ -15,15 +14,10 @@
 		.grad { height: 36px; bottom: 52px; background-image: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-shape-highlight-light-solid) 100%); }
 	}
 
-	.ReactVirtualized__List { padding: 0px 8px; scrollbar-gutter: stable; }
+	.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
+	.filterWrapper { padding: 8px 12px; overflow: hidden; }
 
-	.filterWrapper { padding: 4px 16px 8px 16px; overflow: hidden; }
-	.filter { padding: 0px; }
-	.filter { 
-		.inner { background-color: var(--color-shape-highlight-medium); border-radius: 15px; }
-	}
-
-	.item { display: flex; align-items: center; gap: 0px 10px; padding: 8px; }
+	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -36,8 +30,7 @@
 
 		.nameWrapper,
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
-		.nameInner { display: flex; flex-grow: 1; align-items: center; gap: 0px 4px; }
-		.name { @include text-overflow-nw; font-weight: 500; }
+		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; }
 		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 		.label b { font-weight: 500; }
 
@@ -53,7 +46,6 @@
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }
 		.icon.pin { background-image: url('~img/icon/vault/pin.svg'); }
-		.icon.muted { background-image: url('~img/icon/vault/muted.svg'); }
 		.icon.error { display: block; margin: 0px; border-radius: 50%; background: var(--color-red) url('~img/icon/vault/error.svg') 50% 50% no-repeat; }
 
 		.cnt { 
@@ -83,7 +75,7 @@
 		&.isProgress {
 			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
 
-			.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.png'); flex-shrink: 0; }
+			.icon { width: 32px; height: 32px; background-image: url('~img/logo/progress.svg'); flex-shrink: 0; }
 			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
 			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
@@ -95,6 +87,18 @@
 				.fill.isActive { background-color: #ffb76c; }
 				.fill.empty { background-color: var(--color-shape-highlight-medium); }
 				.labels { display: none; }
+			}
+		}
+
+		> .head.withMessages { padding-left: 16px; padding-right: 16px; }
+
+		> .body.withMessages {
+			.ReactVirtualized__List { padding-left: 8px; padding-right: 8px; }
+			.filterWrapper { padding-left: 12px; padding-right: 12px; }
+
+			.item { gap: 0px 10px; }
+			.item.isProgress {
+				.icon { width: 48px; height: 48px; }
 			}
 		}
 	}

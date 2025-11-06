@@ -138,7 +138,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (clear) {
 			offset.current = 0;
-			itemList.current = [];
 		};
 
 		U.Subscription.search({
@@ -149,6 +148,10 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (clear) {
+				itemList.current = [];
+			};
+
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
 

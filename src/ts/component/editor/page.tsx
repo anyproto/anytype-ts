@@ -51,7 +51,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	timeoutScroll = 0;
 
 	frameMove = 0;
-	frameResize = 0;
 	frameScroll = 0;
 
 	constructor (props: Props) {
@@ -166,7 +165,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage(isPopup, null, null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -183,7 +181,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(false);
 
 		raf.cancel(this.frameMove);
-		raf.cancel(this.frameResize);
 		raf.cancel(this.frameScroll);
 
 		window.clearInterval(this.timeoutScreen);
@@ -1830,7 +1827,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		S.Common.filterSet(range.from, '');
 
 		S.Menu.open('blockAdd', { 
-			element: $(`#block-${blockId}`),
+			element: `#block-${blockId}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
 			recalcRect: () => {
@@ -1897,7 +1894,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.preventDefault();
 
 		if (!ids.length) {
-			ids = [ focused ];
+			if (range.from != range.to) {
+				ids = [ focused ];
+			};
 		} else {
 			ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 		};
@@ -2395,58 +2394,52 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		if (this.frameResize) {
-			raf.cancel(this.frameResize);
+		const { rootId, isPopup } = this.props;
+		const node = $(this.node);
+		const note = node.find('#note');
+		const blocks = node.find('.blocks');
+		const last = node.find('#blockLast');
+		const size = node.find('#editorSize');
+		const cover = node.find('.block.blockCover');
+		const pageContainer = U.Common.getPageContainer(isPopup);
+		const header = pageContainer.find('#header');
+		const scrollContainer = U.Common.getScrollContainer(isPopup);
+		const hh = header.height();
+
+		this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
+
+		if (blocks.length && last.length && scrollContainer.length) {
+			last.css({ height: '' });
+
+			const ct = scrollContainer.offset().top;
+			const ch = scrollContainer.height();
+			const bt = blocks.offset().top;
+			const bh = blocks.outerHeight();
+
+			let height = ch - ct - bt - bh;
+
+			if (bh > ch) {
+				height = Math.max(ch / 2, height);
+			};
+
+			height = Math.max(J.Size.lastBlock, height);
+
+			last.css({ height });
 		};
 
-		this.frameResize = raf(() => {
-			const { rootId, isPopup } = this.props;
-			const node = $(this.node);
-			const note = node.find('#note');
-			const blocks = node.find('.blocks');
-			const last = node.find('#blockLast');
-			const size = node.find('#editorSize');
-			const cover = node.find('.block.blockCover');
-			const pageContainer = U.Common.getPageContainer(isPopup);
-			const header = pageContainer.find('#header');
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const hh = header.height();
+		if (note.length) {
+			note.css({ top: hh });
+		};
+		if (size.length) {
+			size.css({ top: hh + 8 });
+		};
+		if (cover.length) {
+			cover.css({ top: hh });
+		};
 
-			this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
-
-			if (blocks.length && last.length && scrollContainer.length) {
-				last.css({ height: '' });
-
-				const ct = scrollContainer.offset().top;
-				const ch = scrollContainer.height();
-				const bt = blocks.offset().top;
-				const bh = blocks.outerHeight();
-
-				let height = ch - ct - bt - bh;
-
-				if (bh > ch) {
-					height = Math.max(ch / 2, height);
-				};
-
-				height = Math.max(J.Size.lastBlock, height);
-
-				last.css({ height });
-			};
-
-			if (note.length) {
-				note.css({ top: hh });
-			};
-			if (size.length) {
-				size.css({ top: hh + 8 });
-			};
-			if (cover.length) {
-				cover.css({ top: hh });
-			};
-
-			if (callBack) {
-				callBack();
-			};
-		});
+		if (callBack) {
+			callBack();
+		};
 	};
 
 	focus (id: string, from: number, to: number, scroll: boolean) {

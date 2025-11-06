@@ -10,19 +10,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		return null;
 	};
 
-	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const requestCnt = participants.filter(it => it.isJoining).length;
-	const isSpaceOwner = U.Space.isMyOwner();
-	const canWrite = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
 	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
-	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cn = [ `space${I.SpaceUxType[spaceview.uxType]}` ];
 	const route = analytics.route.widget;
-
-	if (isSpaceOwner && requestCnt) {
-		cn.push('withCnt');
-	};
 
 	const onButtonClick = (e: any, item: any) => {
 		e.preventDefault();
@@ -30,28 +22,13 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				Action.openSpaceShare(analytics.route.navigation);
+				Action.openSpaceShare(route);
 				analytics.event('ClickSpaceWidgetInvite', { route });
 				break;
 			};
 
 			case 'settings': {
 				Action.openSettings('spaceIndex', route);
-				break;
-			};
-
-			case 'create': {
-				U.Menu.typeSuggest({ 
-					element: '#widget-space #item-create',
-					offsetX: $(nodeRef.current).width() + 4,
-					className: 'fixed',
-					classNameWrap: 'fromSidebar',
-					vertical: I.MenuDirection.Center,
-				}, {}, { 
-					deleteEmpty: true,
-					selectTemplate: true,
-					withImport: true,
-				}, analytics.route.navigation, object => U.Object.openConfig(object));
 				break;
 			};
 
@@ -65,6 +42,16 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 		};
+	};
+
+	const onMore = () => {
+		U.Menu.spaceContext(U.Space.getSpaceview(), {
+			element: '#widget-space .nameWrap .arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
+		}, { route: analytics.route.widget });
 	};
 
 	let content = null;
@@ -85,7 +72,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						object={{ ...spaceview, spaceId: S.Common.space }}
 					/>
 					<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
-					{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+					{spaceview.isShared ? (
+						<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
+					) : (
+						<Label text={translate('commonPersonalSpace')} />
+					)}
 				</div>
 				<div className="buttons">
 					{buttons.map((item, idx) => (
@@ -98,54 +89,25 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			</>
 		);
 	} else {
-		const buttons = [
-			canWrite ? { id: 'create', name: translate('commonNewObject') } : null,
-			!spaceview.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-			{ id: 'settings', name: translate('commonSettings') },
-		].filter(it => it);
-
 		content = (
-			<>
-				<div className="head">
-					<div className="sides">
-						<div className="side left">
-							<div className="clickable">
-								<IconObject object={spaceview} />
-								<ObjectName object={spaceview} />
-							</div>
-						</div>
+			<div className="head">
+				<IconObject object={spaceview} size={48} />
+				<div className="info">
+					<div className="nameWrap" onClick={onMore}>
+						<ObjectName object={spaceview} />
+						<Icon className="arrow" />
 					</div>
+
+					{spaceview.isShared ? (
+						<Label 
+							text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
+							onClick={e => onButtonClick(e, { id: 'member' })}
+						/>
+					) : (
+						<Label text={translate('commonPersonalSpace')} />
+					)}
 				</div>
-
-				<div className="buttons">
-					{buttons.map((item, i) => {
-						let cnt = null;
-
-						if (item.id == 'member') {
-							cnt = <div className="cnt">{requestCnt}</div>;
-						};
-
-						return (
-							<div 
-								key={i} 
-								id={`item-${item.id}`} 
-								className="item" 
-								onClick={e => onButtonClick(e, item)}
-							>
-								<div className="side left">
-									<Icon className={item.id} />
-									<div className="name">
-										{item.name}
-									</div>
-								</div>
-								<div className="side right">
-									{cnt}
-								</div>
-							</div>
-						);
-					})}
-				</div>
-			</>
+			</div>
 		);
 	};
 

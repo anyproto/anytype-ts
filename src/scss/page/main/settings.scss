@@ -123,6 +123,15 @@
                 .inputWrapper.withIcon:hover {
                     .icon.copy { opacity: 1; }
                 }
+
+                .upsellWrapper { border: 1px solid var(--color-shape-secondary); border-radius: 24px; margin-top: 8px; padding: 24px 16px 16px; text-align: center; }
+                .upsellWrapper {
+                    .text { width: 280px; margin: 0px auto; }
+                    .icon { width: 60px; height: 48px; background-image: url('~img/icon/membership/any-id.svg'); margin-bottom: 10px; }
+                    .title { font-weight: 600; margin-bottom: 4px; padding: 0px; }
+                    .label { color: var(--color-text-secondary); margin-bottom: 20px; }
+                    .button { width: 100%; }
+                }
             }
         }
     }
@@ -156,7 +165,7 @@
                 .placeholder { z-index: 0; }
             }
 
-            .membersCounter { color: var(--color-text-secondary); }
+            .label { color: var(--color-text-secondary); }
         }
         .spaceHeader:hover,
         .spaceHeader.isEditing {
@@ -209,7 +218,8 @@
 						.icon { flex-shrink: 0; width: 20px; height: 20px; }
 						.icon.type { background-image: url('~img/icon/settings/type.svg'); }
 						.icon.home { background-image: url('~img/icon/settings/home.svg'); }
-						.icon.push0 { background-image: url('~img/icon/settings/pushOn.svg'); }
+						.icon.push0,
+						.icon.push3 { background-image: url('~img/icon/settings/pushOn.svg'); }
                         .icon.push1,
                         .icon.push2 { background-image: url('~img/icon/settings/pushOff.svg'); }
 						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
@@ -592,10 +602,16 @@
             .row {
                 .side { display: flex; align-items: center; }
                 .side.left {
+                    .text { display: flex; flex-direction: column; justify-content: center; }
+                    .nameWrapper { display: flex; gap: 0px 4px; align-items: center; }
+
                     .iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
-                    .name { @include text-common; @include text-overflow-nw; width: auto; max-width: 330px; }
+                    .name { @include text-common; @include text-overflow-nw; font-weight: 500; width: auto; max-width: 330px; }
+                    .anyId { @include text-small; color: var(--color-text-secondary); }
+
                     .tagItem { color: var(--color-text-inversion); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
-                    .caption { @include text-common; color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
+                    .caption { @include text-common; color: var(--color-text-secondary); }
+                    .icon.badge { width: 14px; height: 14px; background: url('~img/icon/membership/badge.svg'); }
                 }
 
                 .side.right { justify-content: flex-end; }
@@ -655,6 +671,34 @@
                 }
                 .col {
                     .label { @include text-common; color: var(--color-text-secondary); }
+                }
+            }
+        }
+    }
+
+    > .pageSettingsSpaceNotifications {
+        .wrap { display: flex; flex-direction: column; gap: 36px 0px; }
+
+        .section { display: flex; flex-direction: column; gap: 8px 0px; }
+        .section {
+            > .label { @include text-small; color: var(--color-text-secondary); font-weight: 500; }
+
+            &.options {
+                .item { font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
+                .item.selected {
+                    &:after { content: ''; width: 19px; height: 20px; background: url('~img/icon/menu/chk.svg'); }
+                }
+            }
+
+            &.chats {
+                .side.left { display: flex; justify-content: flex-start; align-items: center; gap: 0px 12px; }
+                .side.left {
+                    .title { @include text-common; font-weight: 500; margin-bottom: 0px; }
+                    .label { @include text-small; color: var(--color-text-secondary); }
+                }
+                .side.right {
+                    .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+                    .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
                 }
             }
         }
@@ -774,7 +818,7 @@
 			&:hover { background: var(--color-shape-highlight-light); }
 
 			.icon { width: 40px; height: 40px; background-size: contain; background-position: top center; flex-shrink: 0; }
-			.name { font-weight: 500; }
+			.name { font-weight: 500; @include text-overflow-nw; }
 		}
     }
 

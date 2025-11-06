@@ -116,12 +116,12 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
+			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
-				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
 		};
@@ -428,7 +428,7 @@ class UtilMenu {
 	};
 
 	getRelationTypes () {
-		return this.prepareForSelect([
+		return [
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
@@ -444,7 +444,7 @@ class UtilMenu {
 			it.name = translate(`relationName${it.id}`);
 			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
-		}));
+		});
 	};
 
 	getWidgetLimitOptions (layout: I.WidgetLayout) {
@@ -460,7 +460,7 @@ class UtilMenu {
 				break;
 			};
 		};
-		return this.prepareForSelect(options.map(id => ({ id, name: id })));
+		return options.map(id => ({ id, name: id }));
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout, isPreview?: boolean) {
@@ -856,8 +856,12 @@ class UtilMenu {
 									replace: true, 
 									onFadeIn: () => Action.openSettings('spaceIndex', param.route),
 								};
-		
-								U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+
+								if (targetSpaceId == S.Common.space) {
+									routeParam.onFadeIn();
+								} else {
+									U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+								};
 								break;
 							};
 
@@ -1163,7 +1167,10 @@ class UtilMenu {
 	};
 
 	prepareForSelect (a: any[]) {
-		return a.map(it => ({ ...it, id: String(it.id) }));
+		return a.filter(it => it).map(it => {
+			const id = undefined !== it.id ? String(it.id) : '';
+			return { ...it, id };
+		});
 	};
 
 	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
@@ -1365,12 +1372,18 @@ class UtilMenu {
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
+							const menuParam = {
+								horizontal: I.MenuDirection.Center,
+								...param,
+								data: { details },
+							};
+
 							window.setTimeout(() => {
 								if (U.Object.isBookmarkLayout(item.recommendedLayout)) {
-									this.onBookmarkMenu({ ...param, data: { details }}, object => cb(object, 0));
+									this.onBookmarkMenu(menuParam, object => cb(object, 0));
 								} else
 								if (U.Object.isChatLayout(item.recommendedLayout)) {
-									this.onChatMenu({ ...param, data: { details }}, object => cb(object, 0));
+									this.onChatMenu(menuParam, object => cb(object, 0));
 								};
 							}, S.Menu.getTimeout());
 						} else {
@@ -1396,7 +1409,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('dataviewCreateBookmark', {
-			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
 				...data,
@@ -1413,7 +1425,6 @@ class UtilMenu {
 		delete(param.data);
 
 		S.Menu.open('chatCreate', {
-			horizontal: I.MenuDirection.Center,
 			data: {
 				onSubmit: callBack,
 				...data,
@@ -1494,6 +1505,21 @@ class UtilMenu {
 		});
 
 		analytics.event(`Screen${prefix}CreateMenu`);
+	};
+
+	uxTypeOptions () {
+		return [
+			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
+			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
+		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+	};
+
+	notificationModeOptions () {
+		return [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+			{ id: I.NotificationMode.Nothing },
+		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
 	};
 
 };

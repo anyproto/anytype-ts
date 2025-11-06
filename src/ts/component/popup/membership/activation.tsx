@@ -54,6 +54,8 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 				};
 
 				close();
+
+				analytics.event('ActivateMembershipCode');
 			});
 		});
 

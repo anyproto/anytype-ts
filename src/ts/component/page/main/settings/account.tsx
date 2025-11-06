@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { IconObject, Input, Title, Icon } from 'Component';
-import { I, S, U, J, C, translate, keyboard } from 'Lib';
+import { IconObject, Input, Title, Icon, Label, Button } from 'Component';
+import { I, S, U, J, C, translate, keyboard, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
@@ -9,6 +9,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const { account } = S.Auth;
 	const profile = U.Space.getProfile();
 	const timeout = useRef(0);
+	const participant = U.Space.getParticipant();
 
 	let name = profile.name;
 	if (name == translate('defaultNamePage')) {
@@ -29,6 +30,13 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				C.ObjectListSetDetails([ S.Block.profile ], [ { key, value: String(value || '') } ]);
 			};
 		}, t);
+	};
+
+	const onUpsell = () => {
+		const route = analytics.route.settingsAccount;
+
+		Action.openSettings('membership', route);
+		analytics.event('ClickUpgradePlanTooltip', { route });
 	};
 
 	useEffect(() => {
@@ -79,6 +87,21 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 					/>
 					<Icon className="copy" />
 				</div>
+
+				{participant && !participant.globalName ? (
+					<div className="upsellWrapper">
+						<div className="text">
+							<Icon />
+							<Title text={translate('membershipUpsellAnyIdTitle')} />
+							<Label text={translate('membershipUpsellAnyIdText')} />
+							<Button
+								color="blank"
+								text={translate('membershipUpsellAnyIdExplorePlans')}
+								onClick={onUpsell}
+							/>
+						</div>
+					</div>
+				) : ''}
 			</div>
 
 			{config.experimental ? (

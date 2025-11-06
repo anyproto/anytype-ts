@@ -83,7 +83,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat, onOpen)}</div>
 
 			<div className="side center">
 				{center}

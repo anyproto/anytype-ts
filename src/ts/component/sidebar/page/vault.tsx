@@ -13,12 +13,14 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 import ItemProgress from './vault/update';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 64;
+const HEIGHT_ITEM = 44;
+const HEIGHT_ITEM_MESSAGE = 64;
+const HEIGHT_ITEM_UPDATE = 100;
 
-const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion, space } = S.Common;
+	const { updateVersion, space, vaultMessages } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -34,6 +36,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const canCreate = U.Space.canCreateSpace();
+	const cnh = [ 'head' ];
+	const cnb = [ 'body' ];
+
+	if (vaultMessages) {
+		cnh.push('withMessages');
+		cnb.push('withMessages');
+	};
 
 	const unbind = () => {
 		const events = [ 'keydown', 'keyup' ];
@@ -218,7 +227,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 			replace: true,
 			onRouteChange: () => {
 				if (!space) {
-					sidebar.leftPanelSubPageOpen('widget');
+					sidebar.leftPanelSubPageOpen('widget', false);
 				};
 			},
 		};
@@ -232,7 +241,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
-			unsetActive();
 			setHover(item);
 		};
 	};
@@ -240,7 +248,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	const onOut = () => {
 		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
-			setActive(spaceview);
 		};
 	};
 
@@ -292,8 +299,8 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 		const cn = [ 'item' ];
 		const icons = [];
+		const iconSize = vaultMessages ? 48 : 32;
 
-		let iconMute = null;
 		let time = null;
 		let last = null;
 		let counter = null;
@@ -316,10 +323,6 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 		};
 
 		if (item.chatId) {
-			if (item.isMuted) {
-				iconMute = <Icon className="muted" />;
-			};
-
 			time = <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>;
 			last = <Label text={item.lastMessage} />;
 			counter = <ChatCounter {...item.counters} mode={item.notificationMode} />;
@@ -339,26 +342,36 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				onContextMenu={e => onContextMenu(e, item)}
 			>
 				<div className="iconWrap">
-					<IconObject object={item} size={48} iconSize={48} canEdit={false} />
+					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
 				</div>
 				<div className="info">
-					<div className="nameWrapper">
-						<div className="nameInner">
+					{vaultMessages ? (
+						<>
+							<div className="nameWrapper">
+								<ObjectName object={item} />
+								{time}
+							</div>
+							<div className="messageWrapper">
+								{last}
+
+								<div className="icons">
+									{icons.map(icon => <Icon key={icon} className={icon} />)}
+								</div>
+
+								{counter}
+							</div>
+						</>
+					) : (
+						<div className="nameWrapper">
 							<ObjectName object={item} />
-							{iconMute}
+
+							<div className="icons">
+								{icons.map(icon => <Icon key={icon} className={icon} />)}
+							</div>
+
+							{counter}
 						</div>
-
-						{time}
-					</div>
-					<div className="messageWrapper">
-						{last}
-
-						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
-						</div>
-
-						{counter}
-					</div>
+					)}
 				</div>
 			</div>
 		);
@@ -396,7 +409,7 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const onSettings = () => {
-		Action.openSettings('index', analytics.route.vault);
+		Action.openSettings('account', analytics.route.vault);
 	};
 
 	const onGallery = () => {
@@ -430,7 +443,11 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 	};
 
 	const getRowHeight = (item: any) => {
-		return HEIGHT_ITEM + (item.isUpdate ? 36 : 0);
+		if (item.isUpdate) {
+			return HEIGHT_ITEM_UPDATE;
+		};
+
+		return vaultMessages ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
 	useEffect(() => {
@@ -449,8 +466,9 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 	return (
 		<>
-			<div id="head" className="head">
+			<div id="head" className={cnh.join(' ')}>
 				<div className="side left" />
+				<div className="side center" />
 				<div className="side right">
 					{canCreate ? (
 						<Icon
@@ -466,13 +484,13 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 				<Filter 
 					ref={filterRef}
 					icon="search"
-					className="outlined"
+					className="outlined round"
 					placeholder={translate('commonSearch')}
 					onChange={onFilterChange}
 					onClear={onFilterClear}
 				/>
 			</div>
-			<div id="body" className="body">
+			<div id="body" className={cnb.join(' ')}>
 				{!items.length ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
@@ -551,6 +569,4 @@ const SidebarPageVaultBase = observer(forwardRef<{}, I.SidebarPageComponent>((pr
 
 }));
 
-const SidebarPageVault = memo(SidebarPageVaultBase);
-
-export default SidebarPageVault;
+export default memo(SidebarPageVault);

@@ -25,23 +25,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	const modeRef = useRef(null);
 	const canSaveRef = useRef(true);
 
-	const spaceModes = [
-		{ id: I.NotificationMode.All },
-		{ id: I.NotificationMode.Mentions },
-		{ id: I.NotificationMode.Nothing },
-	].map((it: any) => {
-		it.name = translate(`notificationMode${it.id}`);
-		return it;
-	});
-
-	const spaceUxTypes = [
-		{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
-		{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
-	].map((it: any) => {
-		it.name = translate(`spaceUxType${it.id}`);
-		return it;
-	});
-
 	if (isEditing) {
 		cnh.push('isEditing');
 	};
@@ -303,7 +286,11 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div className="counter" />
 				</div>
 
-				{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+				{spaceview.isShared ? (
+					<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
+				) : (
+					<Label text={translate('commonPersonalSpace')} />
+				)}
 			</div>
 
 			<div className="spaceButtons">
@@ -321,40 +308,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			</div>
 
 			<div className="sections">
-				{spaceview.isShared ? (
-					<div className="section sectionSpaceManager">
-						<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-						<div className="sectionContent">
-
-							<div className="item">
-								<div className="sides">
-									<Icon className={[ 'push', `push${spaceview.notificationMode}` ].join(' ')} />
-
-									<div className="side left">
-										<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-										<Label text={translate(`popupSettingsSpaceIndexPushText${spaceview.notificationMode}`)} />
-									</div>
-
-									<div className="side right">
-										<Select
-											id="notificationMode"
-											ref={modeRef}
-											value={String(spaceview.notificationMode)}
-											options={spaceModes}
-											onChange={v => {
-												C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-												analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-											}}
-											arrowClassName="black"
-											menuParam={{ horizontal: I.MenuDirection.Right }}
-										/>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				) : ''}
-
 				{canWrite ? (
 					<>
 						<div className="section sectionSpaceManager">
@@ -377,7 +330,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 													readonly={!canWrite}
 													ref={uxTypeRef}
 													value={String(spaceview.uxType)}
-													options={spaceUxTypes}
+													options={U.Menu.uxTypeOptions()}
 													onChange={onSpaceUxType}
 													arrowClassName="black"
 													menuParam={{ horizontal: I.MenuDirection.Right }}

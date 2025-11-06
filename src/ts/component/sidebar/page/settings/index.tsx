@@ -24,6 +24,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const withMembership = isOnline && U.Data.isAnytypeNetwork();
+	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 
 	useEffect(() => {
@@ -58,6 +59,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
 					spaceview.isPersonal ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
+					{ id: 'spaceNotifications', icon: 'notifications', name: translate('commonNotifications') },
 					{ id: 'spaceStorage', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: notSyncedCounter },
 					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				].filter(it => it),
@@ -149,7 +151,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			U.Space.openDashboard();
 			S.Common.setLeftSidebarState('vault', 'widget');
 		} else {
-			sidebar.leftPanelSubPageClose();
+			sidebar.leftPanelSubPageClose(true);
 		};
 	};
 
@@ -258,13 +260,20 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 	const items = getItems();
 
+	useEffect(() => {
+		listRef.current?.recomputeRowHeights(0);
+	});
+
 	return (
 		<>
-			<div className="subHead">
+			<div className="head">
 				<div className="side left">
-					<Icon className="back" onClick={onBack} />
+					<Icon className="back withBackground" onClick={onBack} />
 				</div>
-
+				<div className="side center" />
+			</div>
+			
+			<div className="subHead">
 				<div className="side center">
 					<div className="name">{translate('commonSettings')}</div>
 				</div>
@@ -283,6 +292,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
+											ref={listRef}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={cache.current}

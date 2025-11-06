@@ -1,25 +1,18 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, Relation, analytics, Action } from 'Lib';
+import { I, S, U, translate, Relation, analytics, Action, keyboard, sidebar } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
-	const { menuOpen } = props;
-	const { account } = S.Auth;
+
+	const { menuOpen, isPopup } = props;
+	const param = U.Router.getParam(U.Router.getRoute());
+	const id = param.id || 'account';
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
 	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
-
-	const onIdentity = () => {
-		if (!globalName) {
-			S.Menu.open('identity', {
-				element: '#settings-identity-badge',
-				horizontal: I.MenuDirection.Center,
-			});
-		};
-	};
 
 	const onMore = () => {
 		menuOpen('select', '#button-header-more', {
@@ -30,7 +23,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
 				],
 				onSelect: (e: React.MouseEvent, option: any) => {
-
 					switch (option.id) {
 						case 'spaceInfo': {
 							Action.spaceInfo();
@@ -42,36 +34,27 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 							break;
 						};
 					};
-
 				},
-			}
+			},
 		});
 	};
 
 	const renderIdentity = () => {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-		const showId = [ 'account', 'index' ];
-
-		if (!showId.includes(id)) {
-			return '';
+		if (![ 'account', 'index' ].includes(id) || !globalName) {
+			return null;
 		};
 
 		return (
-			<div id="settings-identity-badge" className="identity" onClick={onIdentity}>
-				<Icon className={globalName ? 'anyName' : 'info'} />
-				<Label text={globalName ? globalName : U.Common.shortMask(account.id, 6)} />
+			<div id="settings-identity-badge" className="identity">
+				<Icon className="anyName" />
+				<Label text={globalName} />
 			</div>
 		);
 	};
 
 	const renderMore = () => {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-		const showId = [ 'spaceIndex', 'spaceIndexEmpty' ];
-
-		if (!showId.includes(id)) {
-			return '';
+		if (![ 'spaceIndex', 'spaceIndexEmpty' ].includes(id)) {
+			return null;
 		};
 
 		return (
@@ -87,7 +70,19 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 	return (
 		<>
-			<div className="side left" />
+			<div className="side left">
+				{!isPopup ? (
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
+			</div>
 			<div className="side center">{renderIdentity()}</div>
 			<div className="side right">{renderMore()}</div>
 		</>

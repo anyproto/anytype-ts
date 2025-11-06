@@ -62,7 +62,9 @@ class UtilSubscription {
 	 * @param {any} param - Parameters for filter construction.
 	 * @returns {any[]} The array of filter objects.
 	 */
-	getBaseFilters (param: Partial<I.SearchSubscribeParam>) {
+	getBaseFilters (param?: Partial<I.SearchSubscribeParam>) {
+		param = param || {};
+		
 		const { config } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const { ignoreHidden, ignoreDeleted, ignoreArchived } = param;
@@ -70,7 +72,7 @@ class UtilSubscription {
 		
 		let skipLayouts = [];
 
-		if (!config.experimental || spaceview.isChat) {
+		if (spaceview.isChat) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
 		};
 
@@ -525,7 +527,7 @@ class UtilSubscription {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(false),
 				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
@@ -545,10 +547,22 @@ class UtilSubscription {
 				},
 			},
 			{
+				subId: J.Constant.subId.chat,
+				keys: this.chatRelationKeys(),
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
+				],
+				sorts: [
+					{ relationKey: 'lastMessageDate', type: I.SortType.Asc },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+			},
+			{
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -586,16 +600,7 @@ class UtilSubscription {
 			},
 		];
 
-		this.createList(list, callBack);
-	};
-
-	fileTypeKeys () {
-		return [
-			J.Constant.typeKey.file,
-			J.Constant.typeKey.image,
-			J.Constant.typeKey.audio,
-			J.Constant.typeKey.video
-		];
+		this.createList(list, () => this.createTypeCheck(callBack));
 	};
 
 	/**
@@ -660,15 +665,9 @@ class UtilSubscription {
 	createTypeCheck (callBack?: () => void) {
 		const list = [];
 
-		for (const key of this.fileTypeKeys()) {
-			const type = S.Record.getTypeByKey(key);
-
-			if (!type) {
-				continue;
-			};
-
+		for (const type of S.Record.getTypes()) {
 			list.push({
-				subId: this.typeCheckSubId(key),
+				subId: this.typeCheckSubId(type.uniqueKey),
 				filters: [
 					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type.id },
 				],
@@ -679,7 +678,9 @@ class UtilSubscription {
 		};
 
 		if (list.length) {
-			this.createList(list, callBack);
+			this.destroyList(list.map(it => it.subId), true, () => {
+				this.createList(list, callBack);
+			});
 		} else {
 			callBack?.();
 		};

@@ -13,8 +13,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const { location } = history;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
-	const cidRef = useRef('');
-	const keyRef = useRef('');
 	const [ error, setError ] = useState('');
 
 	const onError = (code: number, request: string) => {
@@ -52,13 +50,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const init = () => {
 		const { account } = S.Auth;
 		const { cid, key, route } = U.Common.searchParam(location.search);
-
-		if ((cidRef.current == cid) && (keyRef.current == key)) {
-			return;
-		};
-
-		cidRef.current = cid;
-		keyRef.current = key;
 
 		const request = (message: any) => {
 			if (message.inviteType == I.InviteType.WithoutApprove) {
@@ -151,13 +142,11 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 		node.css({ height: wh });
 		frameRef.current?.resize();
-		sidebar.resizePage(isPopup, null, null, false);
 	};
 
 	useEffect(() => {
 		init();
-		resize();
-	});
+	}, []);
 
 	useImperativeHandle(ref, () => ({ resize }));
 

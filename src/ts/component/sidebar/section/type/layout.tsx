@@ -65,13 +65,13 @@ const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.Side
 			};
 		};
 
-		return U.Menu.prepareForSelect(ret.map(id => {
+		return ret.map(id => {
 			return {
 				id,
 				icon: U.Menu.getLayoutIcon(id),
 				name: translate(`layout${id}`),
 			};
-		}));
+		});
 	};
 
 	useEffect(() => {

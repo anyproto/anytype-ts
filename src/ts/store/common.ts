@@ -43,6 +43,7 @@ class CommonStore {
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
 	public updateVersionValue = '';
+	public vaultMessagesValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 	public rightSidebarStateValue = { 
 		full: { page: '' }, 
@@ -60,6 +61,7 @@ class CommonStore {
 	public windowId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
+	public openObjectIds: Map<string, Set<string>> = new Map();
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -120,6 +122,7 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
+			vaultMessagesValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -134,6 +137,7 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
+			vaultMessages: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -154,6 +158,7 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
+			vaultMessagesSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -321,6 +326,10 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
+	};
+
+	get vaultMessages (): any {
+		return this.boolGet('vaultMessages');
 	};
 
 	/**
@@ -827,6 +836,14 @@ class CommonStore {
 	};
 
 	/**
+	 * Sets the vault messages value.
+	 * @param {boolean} v - The vault messages value.
+	 */
+	vaultMessagesSet (v: boolean) {
+		this.boolSet('vaultMessages', v);
+	};
+
+	/**
 	 * Sets the diff value.
 	 * @param {I.Diff[]} diff - The diff value.
 	 */
@@ -940,6 +957,29 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
+	};
+
+	addOpenObject (spaceId: string, objectId: string) {
+		const list = this.openObjectIds.get(spaceId) || new Set<string>();
+		list.add(objectId);
+		this.openObjectIds.set(spaceId, list);
+	};
+
+	getOpenObjects (spaceId: string): string[] {
+		const list = this.openObjectIds.get(spaceId);
+		return list ? Array.from(list) : [];
+	};
+
+	isOpenObject (spaceId: string, objectId: string): boolean {
+		const list = this.openObjectIds.get(spaceId);
+		return list ? list.has(objectId) : false;
+	};
+
+	removeOpenObject (spaceId: string, objectId: string) {
+		const list = this.openObjectIds.get(spaceId);
+		if (list && list.has(objectId)) {
+			list.delete(objectId);
+		};
 	};
 
 };

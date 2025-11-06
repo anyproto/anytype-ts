@@ -33,6 +33,7 @@ import PageSpaceIndex from './space/index';
 import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
+import PageSpaceNotifications from './space/notifications';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
@@ -73,6 +74,7 @@ const Components: any = {
 	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
+	spaceNotifications:	 PageSpaceNotifications,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
@@ -80,7 +82,7 @@ const Components: any = {
 };
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare',
+	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
@@ -138,7 +140,9 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			};
 		};
 
-		sidebar.leftPanelSubPageOpen(page);
+		if (page) {
+			sidebar.leftPanelSubPageOpen(page, false);
+		};
 	};
 
 	const onExport = (type: I.ExportType, param: any) => {
@@ -191,7 +195,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		);
 	};
 
-	useEffect(() => init());
+	useEffect(() => init(), [ id ]);
 
 	return content;
 

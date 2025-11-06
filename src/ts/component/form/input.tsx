@@ -253,18 +253,14 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	useEffect(() => {
-		return () => {
-			onUnmount?.();
-		};
-	}, []);
-
-	useEffect(() => {
 		if (maskOptions && inputRef.current) {
 			new Inputmask(maskOptions.mask, maskOptions).mask(inputRef.current);
 		};
 
-		if (focusOnMount && inputRef.current) {
+		if (focusOnMount) {
 			focus();
+			keyboard.setFocus(true);
+			keyboard.disableSelection(true);
 		};
 
 		return () => {
@@ -272,8 +268,10 @@ const Input = forwardRef<InputRef, Props>(({
 				keyboard.setFocus(false);
 				keyboard.disableSelection(false);
 			};
+
+			onUnmount?.();
 		};
-	}, [ maskOptions, focusOnMount ]);
+	}, []);
 
 	useEffect(() => {
 		if (initialRender.current) {

@@ -8,22 +8,27 @@
 
 	"img-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
 		"file://*",
+		"http://127.0.0.1:*", 
+		"https://127.0.0.1:*", 
+		"http://localhost:*",
+		"https://localhost:*",
 		"https://*.sndcdn.com",
 		"https://scontent.cdninstagram.com"
 	],
 
 	"media-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
-		"file://*", 
+		"file://*",
+		"http://127.0.0.1:*", 
+		"https://127.0.0.1:*", 
+		"http://localhost:*",
+		"https://localhost:*",
+		"http://localhost:*", 
 		"https://*.googlevideo.com",
 		"https://scontent.cdninstagram.com",
 		"https://media.sketchfab.com",
@@ -82,7 +87,8 @@
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
 		"https://static.sketchfab.com",
-		"https://*.bstarstatic.com"
+		"https://*.bstarstatic.com",
+		"https://unpkg.com/@excalidraw/"
 	],
 
 	"connect-src": [ 
@@ -187,7 +193,8 @@
 		"https://*.googletagmanager.com",
 		"https://*.facebook.net",
 		"https://*.diagrams.net",
-        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
+        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/",
+		"https://unpkg.com/@excalidraw/"
 	],
 
 	"frame-src": [

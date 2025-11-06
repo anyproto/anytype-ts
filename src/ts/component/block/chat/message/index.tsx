@@ -16,7 +16,7 @@ interface ChatMessageRefProps {
 	getNode: () => HTMLElement;
 };
 
-const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, scrollToBottom, onContextMenu, onMore, onReplyEdit,
@@ -127,7 +127,7 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 				value: '',
 				onSelect: icon => {
 					onReactionSelect(icon);
-					menuContext.close();
+					menuContext?.close();
 				},
 				route: analytics.route.reaction,
 			}
@@ -426,6 +426,4 @@ const ChatMessageBase = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCo
 
 }));
 
-const ChatMessage = memo(ChatMessageBase);
-
-export default ChatMessage;
+export default memo(ChatMessage);

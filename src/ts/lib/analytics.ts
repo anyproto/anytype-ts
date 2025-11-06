@@ -70,6 +70,7 @@ class Analytics {
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
 		menuPublish: 'MenuPublish',
+		menuParticipant: 'MenuParticipant',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -79,6 +80,7 @@ class Analytics {
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
+		settingsAccount: 'ScreenSettingsAccount',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',

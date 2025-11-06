@@ -74,7 +74,6 @@ class MenuContext extends React.Component<I.Menu> {
 		const objectIds = this.getObjectIds();
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
-		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
@@ -84,6 +83,9 @@ class MenuContext extends React.Component<I.Menu> {
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuObjectContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuObjectContextEditRelations') };
+		let notification = { id: 'notification', icon: 'notification', name: translate('commonNotifications'), arrow: true };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
+		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 		let archive = null;
 		let archiveCnt = 0;
 		let pin = null;
@@ -99,6 +101,9 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedUnlink = isCollection;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
+		let allowedNotification = true;
+		let allowedEditChat = true;
+		let allowedExport = true;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -106,6 +111,10 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!object || object._empty_) {
 				return;
 			};
+
+			const isType = U.Object.isTypeLayout(object.layout);
+			const isRelation = U.Object.isRelationLayout(object.layout);
+			const isChat = U.Object.isChatLayout(object.layout);
 
 			if (S.Block.getWidgetsForTarget(object.id, I.WidgetSection.Pin).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
@@ -125,16 +134,29 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
-			if (U.Object.isTypeLayout(object.layout)) {
+
+			if (isType) {
 				allowedRelation = false;
 				allowedCopy	= false;
+				allowedCollection = false;
+				allowedType = false;
+				allowedExport = false;
 			};
-			if (U.Object.isRelationLayout(object.layout)) {
+
+			if (isRelation) {
 				allowedRelation = false;
 				allowedLinkTo = false;
 				allowedCopy	= false;
 				allowedCollection = false;
 				allowedPin = false;
+			};
+
+			if (!isChat) {
+				allowedNotification = false;
+				allowedEditChat = false;
+			} else {
+				allowedExport = false;
+				allowedCollection = false;
 			};
 		});
 
@@ -148,7 +170,8 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedOpen = false;
 			allowedLinkTo = false;
 			allowedLink = false;
-			allowedPin = false;		
+			allowedPin = false;	
+			allowedEditChat = false;
 		};
 
 		if (!canWrite) {
@@ -160,6 +183,8 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedUnlink = false;
 			allowedRelation = false;
 			allowedCollection = false;
+			allowedNotification = false;
+			allowedEditChat = false;
 		};
 
 		if (archiveCnt && (archiveCnt == length)) {
@@ -169,6 +194,8 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedType = false;
 			allowedPin = false;
 			allowedCollection = false;
+			allowedNotification = false;
+			allowedEditChat = false;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -184,10 +211,13 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedRelation)	 relation = null;
 		if (!allowedCollection)	 addCollection = null;
 		if (!allowedLink)		 pageLink = null;
+		if (!allowedNotification) notification = null;
+		if (!allowedEditChat)	 editChat = null;
+		if (!allowedExport)		 exportObject = null;
 
 		let sections = [
 			{ children: [ open, changeType, relation, pageLink ] },
-			{ children: [ pin, linkTo, addCollection ] },
+			{ children: [ pin, notification, editChat, linkTo, addCollection ] },
 			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
 
@@ -227,6 +257,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data, className, classNameWrap } = param;
 		const { onLinkTo, route } = data;
 		const objectIds = this.getObjectIds();
+		const { space } = S.Common;
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -336,6 +367,24 @@ class MenuContext extends React.Component<I.Menu> {
 				});
 				break;
 			};
+
+			case 'notification': {
+				let value = null;
+
+				if (objectIds.length == 1) {
+					value = String(U.Object.getChatNotificationMode(U.Space.getSpaceview(), objectIds[0])) || '';
+				};
+
+				menuId = 'select';
+				menuParam.data = {
+					value,
+					options: U.Menu.notificationModeOptions(),
+					onSelect: (e, option) => {
+						Action.setChatNotificationMode(space, objectIds, Number(option.id));
+						close();
+					},
+				};
+			};
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
@@ -350,9 +399,8 @@ class MenuContext extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { widgets } = S.Block;
-		const { param, close } = this.props;
-		const { data } = param;
+		const { param, close, getId, getSize } = this.props;
+		const { data, className, classNameWrap } = param;
 		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
 		const objectIds = this.getObjectIds();
 		const space = U.Space.getSpaceview();
@@ -366,6 +414,8 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		focus.clear(false);
+
+		let needClose = true;
 
 		switch (item.id) {
 
@@ -443,9 +493,27 @@ class MenuContext extends React.Component<I.Menu> {
 				break;
 			};
 
+			case 'editChat': {
+				U.Menu.onChatMenu({
+					element: `#${getId()} #item-${item.id}`,
+					className,
+					classNameWrap,
+					offsetX: getSize().width,
+					vertical: I.MenuDirection.Center,
+					data: {
+						details: first,
+					},
+				});
+
+				needClose = false;
+				break;
+			};
+
 		};
 		
-		close();
+		if (needClose) {
+			close();
+		};
 	};
 
 };

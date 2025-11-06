@@ -361,13 +361,8 @@ class ChatStore {
 			const counters = this.getSpaceCounters(space.targetSpaceId);
 
 			if (counters) {
-				if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-					ret.mentionCounter += counters.mentionCounter || 0;
-				};
-
-				if (space.notificationMode == I.NotificationMode.All) {
-					ret.messageCounter += counters.messageCounter || 0;
-				};
+				ret.mentionCounter += counters.mentionCounter || 0;
+				ret.messageCounter += counters.messageCounter || 0;
 			};
 		};
 
@@ -393,7 +388,7 @@ class ChatStore {
 		};
 
 		for (const [ chatId, state ] of spaceMap) {
-			if (!chatId) {
+			if (chatId) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
@@ -450,7 +445,7 @@ class ChatStore {
 		const counters = this.getTotalCounters();
 		const t = this.counterString(counters.messageCounter);
 
-		if (t != this.badgeValue) {
+		if (!this.badgeValue || (t != this.badgeValue)) {
 			this.badgeValue = t;
 			Renderer.send('setBadge', t);
 		};

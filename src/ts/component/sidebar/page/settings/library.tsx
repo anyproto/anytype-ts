@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { analytics, I, J, keyboard, S, Storage, translate, U } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { onBecomeObserved } from 'mobx';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -13,6 +14,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	const { page, isPopup } = props;
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
+	const { space } = S.Common;
+	const [ dummy, setDummy ] = useState(0);
 	const pathname = U.Router.getRoute();
 	const param = U.Router.getParam(pathname);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
@@ -22,7 +25,9 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	const sortId = useRef(I.SortId.LastUsed);
 	const sortType = useRef(I.SortType.Desc);
 	const savedRoute = useRef<any>({});
+	const spaceview = U.Space.getSpaceview();
 	const filter = useRef('');
+	const bodyRef = useRef(null);
 
 	let type = '';
 	let title = '';
@@ -60,7 +65,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const load = (callBack?: (message: any) => void) => {
-		const spaceview = U.Space.getSpaceview();
 		const options = U.Menu.getLibrarySortOptions(sortId.current, sortType.current);
 		const option = options.find(it => it.id == sortId.current);
 
@@ -100,15 +104,15 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			};
 		};
 
-		U.Subscription.subscribe({
-			subId: J.Constant.subId.library,
-			filters,
-			sorts,
-			keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
-			noDeps: true,
-			ignoreHidden: true,
-			ignoreDeleted: true,
-		}, callBack);
+		U.Subscription.destroyList([ J.Constant.subId.library ], true, () => {
+			U.Subscription.subscribe({
+				subId: J.Constant.subId.library,
+				filters,
+				sorts,
+				keys: J.Relation.default.concat([ 'lastUsedDate', 'sourceObject' ]),
+				noDeps: true,
+			}, callBack);
+		});
 	};
 
 	const loadSearchIds = (clear: boolean) => {
@@ -249,7 +253,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			},
 		};
 
-		U.Object.openRoute(param);
+		U.Object.openRoute(param, { onRouteChange: () => setDummy(dummy + 1) });
 
 		let e = '';
 
@@ -259,6 +263,13 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		};
 
 		analytics.event(e, { route: analytics.route.library });
+	};
+
+	const setActive = (id: string) => {
+		const body = $(bodyRef.current);
+
+		body.find('.item.active').removeClass('active');
+		body.find(`#item-${id}`).addClass('active');
 	};
 
 	const onContext = (item: any) => {
@@ -308,7 +319,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 		switch (type) {
 			case I.ObjectContainerType.Type: {
-				U.Object.createType({ name: filter }, isPopup);
+				U.Object.createType({ name: filter.current }, isPopup);
 				break;
 			};
 
@@ -370,6 +381,11 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		onClick(records[0]);
 	};
 
+	const onBack = () => {
+		S.Common.setLeftSidebarState('vault', 'settingsSpace');
+		U.Router.go(`/${U.Router.build(savedRoute.current.params)}`, {});
+	};
+
 	const ItemSection = (item: any) => {
 		const cn = [ 'itemSection' ];
 
@@ -425,43 +441,48 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	useEffect(() => {
 		savedRoute.current = U.Common.objectCopy(keyboard.getMatch(false));
-		filterInputRef.current?.focus();
 
 		initSort();
-		load(openFirst);
+		load(() => {
+			openFirst();
+			window.setTimeout(() => filterInputRef.current?.focus(), 50);
+		});
 
 		return () => {
 			U.Subscription.destroyList([ J.Constant.subId.library ]);
-			U.Router.go(`/${U.Router.build(savedRoute.current.params)}`, {});
 		};
 	}, []);
 
 	useEffect(() => {
 		load();
-	}, [ searchIds ]);
+	}, [ searchIds, space ]);
+
+	useEffect(() => {
+		setActive(param.objectId);
+	}, [ param.objectId ]);
 
 	return (
 		<>
-			<div className="subHead">
+			<div id="head" className="head">
 				<div className="side left">
-					<Icon className="back" onClick={() => S.Common.setLeftSidebarState('vault', 'settingsSpace')} />
+					<Icon className="back withBackground" onClick={onBack} />
 				</div>
 				<div className="side center">
 					<div className="name">{title}</div>
 				</div>
 				<div className="side right">
-					<Icon id="button-object-more" className="more" onClick={onMore} />
+					<Icon id="button-object-more" className="more withBackground" onClick={onMore} />
 				</div>
 			</div>
 
-			<div id="body" className="body">
+			<div id="body" ref={bodyRef} className="body">
 				<div className="list">
 					<div className="filterWrapper">
 						<div className="side left">
 							<Filter
 								ref={filterInputRef}
 								icon="search"
-								className="outlined"
+								className="outlined round"
 								placeholder={translate('commonSearch')}
 								onChange={onFilterChange}
 								onClear={onFilterClear}

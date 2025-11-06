@@ -7,8 +7,10 @@ import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'C
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
 
 import WidgetSpace from './space';
+import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
+import { init } from 'emoji-mart';
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -42,9 +44,9 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const targetId = child?.getTargetObjectId();
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
-	const isSectionType = block.content.section == I.WidgetSection.Type;
 	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
+	const containsChat = U.Object.isChatLayout(object?.recommendedLayout);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);
@@ -88,17 +90,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const limit = getLimit();
 	const layout = getLayout();
-	const hasChild = ![ I.WidgetLayout.Space ].includes(layout);
+	const hasChild = ![ I.WidgetLayout.Space, I.WidgetLayout.Object ].includes(layout);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const cn = [ 'widget' ];
 	const withSelect = !isSystemTarget && (!isPreview || !U.Common.isPlatformMac());
 	const childKey = `widget-${child?.id}-${layout}`;
 	const canDrop = object && !isSystemTarget && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	};
 
 	const unbind = () => {
 		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
@@ -204,8 +201,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			if (childRef.current && childRef.current?.appendSearchIds) {
-				childRef.current?.appendSearchIds([ newObject.id ]);
+			if (childRef.current && childRef.current.appendSearchIds) {
+				const ids = childRef.current.getSearchIds ? childRef.current.getSearchIds() : [];
+
+				if (ids) {
+					childRef.current.appendSearchIds([ newObject.id ]);
+				};
 			};
 
 			U.Object.openConfig(newObject);
@@ -320,6 +321,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const initToggle = () => {
+		if ([ I.WidgetLayout.Space, I.WidgetLayout.Object ].includes(layout)) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
 		const icon = node.find('.icon.collapse');
@@ -552,14 +557,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const addGroupLabels = (records: any[], widgetId: string) => {
-		let relationKey;
+		let relationKey = '';
+
 		if (widgetId == J.Constant.widgetId.recentOpen) {
 			relationKey = 'lastOpenedDate';
 		};
 		if (widgetId == J.Constant.widgetId.recentEdit) {
 			relationKey = 'lastModifiedDate';
 		};
-		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
+
+		return relationKey ? U.Data.groupDateSections(records, relationKey, { type: '', links: [] }) : records;
 	};
 
 	const checkShowAllButton = (subId: string) => {
@@ -652,7 +659,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (isSystemTarget && !isBin) {
+		if (layout != I.WidgetLayout.Link) {
 			onSetPreview();
 		} else {
 			onClick(e);
@@ -665,11 +672,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (layout != I.WidgetLayout.Link) {
-			onSetPreview();
-		} else {
-			onExpandHandler(e);
-		};
+		onClick(e);
+	};
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	if (isChat) {
+		counters = S.Chat.getChatCounters(space, spaceview.chatId);
+	} else
+	if (containsChat) {
+		cn.push('containsChat');
+		counters = S.Chat.getSpaceCounters(space);
 	};
 
 	const buttons = [];
@@ -718,10 +730,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isPreview) {
 		isDraggable = false;
 	} else {
-		if (isSectionType) {
-			buttons.push({ id: 'expand', icon: 'expand', tooltip: translate('commonOpenObject'), onClick: onExpandHandler });
-		};
-
 		if (canCreate) {
 			buttons.push({ id: 'create', icon: 'plus', tooltip: translate('commonCreateNewObject'), onClick: onCreateClick });
 		};
@@ -741,7 +749,16 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		if (object?.isSystem) {
 			icon = <Icon className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {
-			icon = <IconObject object={object} size={20} iconSize={20} className="headerIcon" />;
+			icon = (
+				<IconObject 
+					object={object} 
+					size={20} 
+					iconSize={20} 
+					className="headerIcon" 
+					canEdit={U.Object.isTaskLayout(object?.layout)} 
+					onClick={e => e.stopPropagation()}
+				/>
+			);
 		};
 
 		if (!isPreview) {
@@ -819,6 +836,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.WidgetLayout.Space: {
 			cn.push('widgetSpace');
 			content = <WidgetSpace key={childKey} {...childProps} />;
+
+			isDraggable = false;
+			break;
+		};
+
+		case I.WidgetLayout.Object: {
+			cn.push('widgetObject');
+			content = <WidgetObject key={childKey} {...childProps} />;
 
 			isDraggable = false;
 			break;

@@ -109,7 +109,7 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelClose(false);
+		sidebar.rightPanelClose(false, false);
 
 		focus.clear(true);
 
@@ -242,18 +242,14 @@ class UtilRouter {
 
 					analytics.removeContext();
 					S.Common.nullifySpaceKeys();
-					S.Common.setLeftSidebarState('vault', 'widget');
 
 					U.Data.onInfo(message.info);
+					S.Common.setLeftSidebarState('vault', 'widget');
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false, onRouteChange } }, () => {
+						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 							this.isOpening = false;
 						});
-					};
-
-					const onRouteChange = () => {
-						routeParam.onRouteChange?.();
 					};
 
 					const startingId = S.Auth.startingId.get(id);

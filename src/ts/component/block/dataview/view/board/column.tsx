@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore, Cell } from 'Component';
@@ -14,7 +14,11 @@ interface Props extends I.ViewComponent {
 	getSubId?: () => string;
 };
 
-const BoardColumn = observer(forwardRef<{}, Props>((props, ref) => {
+interface RefProps {
+	getItems: () => any[];
+};
+
+const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const { 
 		id, rootId, block, value, isCollection, getSubId, getView, getLimit, onDragStartColumn, getTarget, onRefRecord, applyObjectOrder, 
@@ -85,8 +89,6 @@ const BoardColumn = observer(forwardRef<{}, Props>((props, ref) => {
 				keys: getKeys(view.id),
 				sources: target.setOf || [],
 				limit,
-				ignoreHidden: true,
-				ignoreDeleted: true,
 				collectionId: (isCollection ? target.id : ''),
 			}, () => {
 				S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
@@ -159,6 +161,10 @@ const BoardColumn = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(() => {
 		load(true);
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		getItems,
+	}));
 
 	return (
 		<div 

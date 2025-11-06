@@ -324,11 +324,8 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
-
-				obj.mentionCounter += state.mentions.counter || 0;
-				obj.messageCounter += state.messages.counter || 0;
+				
 				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
-
 				spaceCounters[spaceId] = obj;
 
 				S.Chat.setState(chatSubId, { 
@@ -349,8 +346,8 @@ class UtilData {
 				const obj = spaceCounters[spaceId];
 
 				S.Chat.setState(spaceSubId, { 
-					mentions: { counter: obj.mentionCounter, orderId: '' }, 
-					messages: { counter: obj.messageCounter, orderId: '' },
+					mentions: { counter: 0, orderId: '' }, 
+					messages: { counter: 0, orderId: '' },
 					lastMessageDate: obj.lastMessageDate,
 					lastStateId: '',
 					order: 0,
@@ -714,8 +711,13 @@ class UtilData {
 	 */
 	sortByTypeKey (c1: any, c2: any, isChat: boolean) {
 		const keys = this.typeSortKeys(isChat);
+		const i1 = keys.indexOf(c1.uniqueKey);
+		const i2 = keys.indexOf(c2.uniqueKey);
 
-		return keys.indexOf(c1.uniqueKey) - keys.indexOf(c2.uniqueKey);
+		if ((i1 < 0) && (i2 < 0)) return 1;
+		if ((i1 >= 0) && (i2 >= 0)) return -1;
+
+		return i1 - i2;
 	};
 
 	/**
@@ -975,7 +977,7 @@ class UtilData {
 						this.onInfo(message.account.info);
 
 						Renderer.send('keytarSet', message.account.id, phrase);
-						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						C.ObjectImportUseCase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
 								S.Auth.startingId.set(S.Common.space, message.startingId);
 							};
@@ -1192,15 +1194,6 @@ class UtilData {
 		switch (block.content.section) {
 			case I.WidgetSection.Pin: {
 				ret = { ...block.content };
-				break;
-			};
-
-			case I.WidgetSection.Type: {
-				ret = { 
-					layout: Number(object.widgetLayout) || I.WidgetLayout.Link, 
-					limit: Number(object.widgetLimit) || 6, 
-					viewId: String(object.widgetViewId) || '',
-				};
 				break;
 			};
 		};

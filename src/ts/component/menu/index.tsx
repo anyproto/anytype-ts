@@ -808,13 +808,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					this.setIndex(this.ref.getItems().length - 1);
 					this.setActive(null, true);
 
-					inputRef.blur();
+					inputRef?.blur();
 					ret = true;
 				});
 			} else {
 				keyboard.shortcut('arrowup', e, () => {
 					if (index < 0) {
-						inputRef.focus();
+						inputRef?.focus();
 
 						this.setIndex(-1);
 						this.setActive(null, true);

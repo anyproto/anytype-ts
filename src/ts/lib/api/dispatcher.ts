@@ -152,7 +152,7 @@ class Dispatcher {
 			};
 
 			const needLog = this.needEventLog(type) && !skipDebug;
-			const space = U.Space.getSpaceviewBySpaceId(spaceId);
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -863,10 +863,6 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
-
-						if (subId == J.Constant.subId.type) {
-							S.Block.removeTypeWidget(id);
-						};
 					};
 					break;
 				};
@@ -964,11 +960,12 @@ class Dispatcher {
 
 					let showNotification = false;
 
-					if (space && space.chatId) {
-						if (space.notificationMode == I.NotificationMode.All) {
+					if (spaceview) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
-						if (space.notificationMode == I.NotificationMode.Mentions) {
+						if (notificationMode == I.NotificationMode.Mentions) {
 							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
 						};
 					};
@@ -987,7 +984,7 @@ class Dispatcher {
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
-							title: space.name, 
+							title: spaceview?.name, 
 							text: notification,
 						}, () => {
 							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
@@ -1011,9 +1008,7 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => {
-						S.Chat.setState(subId, mapped.state, true);
-					});
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state, true));
 					break;
 				};
 
@@ -1148,10 +1143,6 @@ class Dispatcher {
 					U.Space.openFirstSpaceOrVoid(null, { replace: true });
 				};
 			};
-
-			if (subIds.includes(J.Constant.subId.type)) {
-				S.Block.addTypeWidget(id);
-			};
 		};
 
 		if (!rootId) {
@@ -1225,15 +1216,15 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, objectView: any) {
+	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-		const check = S.Block.getLeaf(contextId, rootId) || !S.Detail.get(contextId, rootId, [])._empty_;
+		const checkIfExists = false;//;needCheck && keyboard.isPopup() && S.Common.isOpenObject(S.Common.space, rootId);
 
 		// Block structure already exists
-		if (!check) {
+		if (!checkIfExists) {
 			S.Block.clear(contextId);
 
 			if (root && root.fields.analyticsContext) {

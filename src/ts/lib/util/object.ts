@@ -162,6 +162,7 @@ class UtilObject {
 			param.data.matchPopup.params = { ...param.data.matchPopup.params, ...object._routeParam_ };
 		};
 
+		sidebar.rightPanelClose(true, false);
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
@@ -793,6 +794,25 @@ class UtilObject {
 		};
 
 		return svg;
+	};
+
+	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
+		if (!spaceview) {
+			return I.NotificationMode.All;
+		};
+
+		let ret = null;
+		if (spaceview.allIds.includes(chatId)) {
+			ret = I.NotificationMode.All;
+		} else
+		if (spaceview.mentionIds.includes(chatId)) {
+			ret = I.NotificationMode.Mentions;
+		} else
+		if (spaceview.muteIds.includes(chatId)) {
+			ret = I.NotificationMode.Nothing;
+		};
+
+		return ret || spaceview.notificationMode as I.NotificationMode;
 	};
 
 };

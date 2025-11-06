@@ -1,8 +1,8 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
-import { Icon } from 'Component';
+import { Icon, Sync } from 'Component';
 import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
@@ -49,6 +49,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const childRef = useRef(null);
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
+	const object = S.Detail.get(rootId, rootId, []);
 	const resizeObserver = new ResizeObserver(() => {
 		raf(() => resize());
 	});
@@ -61,65 +62,82 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('withBanner');
 	};
 
-	const onGraph = (e: MouseEvent) => {
+	const onGraph = (e: any) => {
 		e.stopPropagation();
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
+	};
+
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
-		let buttons: any[] = [];
-
-		if (isPopup) {
-			buttons.push({ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand });
-		} else {
-			const match = keyboard.getMatch(isPopup);
-			const cn = [];
-
-			if (match.params.action != 'settings') {
-				buttons.push({ 
-					id: 'widgetPanel', 
-					name: translate('commonWidgets'), 
-					className: cn.join(' '), 
-					caption: keyboard.getCaption('widget'),
-					onClick: () => sidebar.leftPanelSubPageToggle('widget'),
-				});
-			};
-		};
-
-		if (withNavigation) {
-			buttons = buttons.concat([
-				{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-				{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
-			]);
-		};
-
-		if (withGraph) {
-			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
-		};
-
 		return (
 			<>
-				{buttons.map(item => {
-					const cn = [ item.id, 'withBackground' ];
+				{!isPopup ? (
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : (
+					<Icon 
+						className="expand withBackground" 
+						onClick={onOpen || onExpand}
+						tooltipParam={{ 
+							text: translate('commonOpenObject'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				)}
 
-					if (item.disabled) {
-						cn.push('disabled');
-					};
-					if (item.className) {
-						cn.push(item.className);
-					};
+				<Sync id="headerSync" onClick={onSync} />
 
-					return (
+				{withNavigation ? (
+					<div className="arrowWrapper">
 						<Icon 
-							key={item.id} 
-							tooltipParam={{ text: item.name, caption: item.caption, typeY: I.MenuDirection.Bottom }} 
-							className={cn.join(' ')} 
-							onClick={item.onClick} 
-							onDoubleClick={e => e.stopPropagation()}
-							onMouseDown={e => e.stopPropagation()}
+							className="back withBackground" 
+							onClick={() => keyboard.onBack()}
+							tooltipParam={{ 
+								text: translate('commonBack'), 
+								caption: keyboard.getCaption('back'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
 						/>
-					);
-				})}
+						<Icon 
+							className="forward withBackground" 
+							onClick={() => keyboard.onForward()}
+							tooltipParam={{ 
+								text: translate('commonForward'), 
+								caption: keyboard.getCaption('forward'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+					</div>
+				) : ''}
+
+				{withGraph ? (
+					<Icon 
+						className="graph withBackground" 
+						onClick={onGraph}
+						tooltipParam={{ 
+							text: translate('commonGraph'), 
+							caption: keyboard.getCaption('graph'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 			</>
 		);
 	};
@@ -204,9 +222,9 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		sidebar.resizePage(isPopup, null, null, false);
-	});
+	useLayoutEffect(() => {
+		raf(() => sidebar.resizePage(isPopup, null, null, false));
+	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({
 		setVersion: (version: string) => {

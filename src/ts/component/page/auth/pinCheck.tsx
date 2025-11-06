@@ -15,11 +15,11 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('focus.pin', () => pinRef.current.focus());
+		$(window).on('focus.pin', () => pinRef.current?.focus());
 	};
 
 	const onError = () => {
-		pinRef.current.reset();	
+		pinRef.current?.reset();
 		setError(translate('authPinCheckError'));
 	};
 

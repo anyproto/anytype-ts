@@ -40,6 +40,7 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	currentWindow: () => getCurrentWindow(),
 	isFocused: () => getCurrentWindow().isFocused(),
+	isFullScreen: () => getCurrentWindow().isFullScreen(),
 	focus: () => {
 		getCurrentWindow().focus();
 		app.focus({ steal: true });

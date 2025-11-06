@@ -159,6 +159,7 @@ class Keyboard {
 		const space = U.Space.getSpaceview();
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const route = analytics.route.shortcut;
+		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -184,11 +185,14 @@ class Keyboard {
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
 			if (!data.isClosed) {
-				sidebar.rightPanelClose(isPopup);
+				sidebar.rightPanelClose(isPopup, true);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -215,6 +219,8 @@ class Keyboard {
 			} else 
 			if (this.isMainSettings() && !this.isFocused) {
 				U.Space.openDashboard({ replace: false });
+			} else {
+				this.onBack();
 			};
 			
 			Preview.previewHide(false);
@@ -289,7 +295,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-sidebar-select-type').trigger('click');
+				$('#button-widget-arrow').trigger('click');
 			});
 
 			// Lock the app
@@ -527,6 +533,7 @@ class Keyboard {
 
 		S.Menu.closeAll();
 		this.restoreSource();
+		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryBack');
 	};
 
@@ -549,6 +556,7 @@ class Keyboard {
 		};
 
 		S.Menu.closeAll();
+		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryForward');
 	};
 
@@ -887,6 +895,24 @@ class Keyboard {
 				break;
 			};
 
+			case 'mouseNavigation': {
+				if (!arg || this.isNavigationDisabled) {
+					break;
+				};
+
+				switch (arg) {
+					case 'left': {
+						this.onBack();
+						break;
+					};
+
+					case 'right': {
+						this.onForward();
+						break;
+					};
+				};
+				break;
+			};
 		};
 	};
 

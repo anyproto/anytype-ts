@@ -1,3 +1,5 @@
+import space from "Lib/util/space";
+
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',
 	amplitude:			 '1ba981d1a9afb8af8c81847ef3383a20',
@@ -129,6 +131,7 @@ export default {
 		fileManagerSynced: 		'fileManagerSynced',
 		fileManagerNotSynced: 	'fileManagerNotSynced',
 		chatPreview:	 		'chatPreview',
+		chat:			 		'chat',
 	},
 
 	typeKey: {
@@ -170,7 +173,6 @@ export default {
 		type:			 'type',
 		header:			 'header',
 		chat:			 'chat',
-		widgetTypes:	 'types',
 	},
 
 	widgetId: {
@@ -178,6 +180,9 @@ export default {
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
+		space:			 'space',
+		unread:			 'unread',
+		type:			 'type',
 		bin:			 'bin',
 		chat:			 'chat',
 	},

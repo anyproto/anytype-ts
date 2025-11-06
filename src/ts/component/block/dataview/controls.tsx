@@ -368,7 +368,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		toggleHoverArea(true);
 
 		if (!isInline) {
-			filterRef.current.focus();
+			filterRef.current?.focus();
 		};
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 

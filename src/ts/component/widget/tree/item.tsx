@@ -125,7 +125,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 				</div>
 
 				<ChatCounter {...counters} />
-
 				<div className="buttons">{more}</div>
 			</div>
 		);

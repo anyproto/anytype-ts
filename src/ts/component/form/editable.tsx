@@ -127,7 +127,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 			return;
 		};
 
-		editableRef.current.focus({ preventScroll: true });
+		editableRef.current?.focus({ preventScroll: true });
 		setRange(editableRef.current, { start: range.from, end: range.to });
 	};
 
