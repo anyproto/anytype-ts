@@ -2100,7 +2100,7 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
-	"widgetSectionUnread": "Unreads",
+	"widgetSectionUnread": "Unread",
 	"widgetSectionPinned": "Pinned",
 	"widgetSectionType": "Objects",
 	"widgetSectionNewType": "New Type",

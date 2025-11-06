@@ -69,6 +69,7 @@ class Onboarding {
 	};
 
 	startBasics (isPopup: boolean) {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
