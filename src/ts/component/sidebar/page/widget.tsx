@@ -24,11 +24,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
 
-	// Subscriptions
-	for (const key of U.Subscription.fileTypeKeys()) {
-		const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(key), '');
-	};
-
 	let headerButtons: any[] = [];
 	if (spaceview.isChat) {
 		headerButtons = headerButtons.concat([

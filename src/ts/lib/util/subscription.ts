@@ -674,15 +674,9 @@ class UtilSubscription {
 	createTypeCheck (callBack?: () => void) {
 		const list = [];
 
-		for (const key of this.fileTypeKeys()) {
-			const type = S.Record.getTypeByKey(key);
-
-			if (!type) {
-				continue;
-			};
-
+		for (const type of S.Record.getTypes()) {
 			list.push({
-				subId: this.typeCheckSubId(key),
+				subId: this.typeCheckSubId(type.uniqueKey),
 				filters: [
 					{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type.id },
 				],

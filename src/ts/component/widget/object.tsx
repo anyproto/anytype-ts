@@ -80,14 +80,11 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 			case J.Constant.widgetId.type: {
 				items = S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
-					if (U.Subscription.fileTypeKeys().includes(it.uniqueKey)) {
-						return S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0;
-					};
-
 					return (
 						!U.Object.isInSystemLayouts(it.recommendedLayout) && 
 						!U.Object.isDateLayout(it.recommendedLayout) && 
-						(it.uniqueKey != J.Constant.typeKey.template)
+						(it.uniqueKey != J.Constant.typeKey.template) &&
+						(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
 					);
 				});
 
