@@ -257,6 +257,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 		} else {
 			canOpen = false;
+			canUnlink = false;
 		};
 
 		if (!relation || !relation.id || readonly) {
