@@ -715,10 +715,12 @@ class UtilData {
 		const i1 = keys.indexOf(c1.uniqueKey);
 		const i2 = keys.indexOf(c2.uniqueKey);
 
-		if ((i1 < 0) && (i2 < 0)) return 1;
-		if ((i1 >= 0) && (i2 >= 0)) return -1;
+		if ((i1 < 0) && (i2 >= 0)) return 1;
+		if ((i1 >= 0) && (i2 < 0)) return -1;
+		if (i1 > i2) return 1;
+		if (i1 < i2) return -1;
 
-		return i1 - i2;
+		return 0;
 	};
 
 	/**
