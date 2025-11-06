@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, Relation, analytics, Action } from 'Lib';
+import { I, S, U, translate, Relation, analytics, Action, keyboard, sidebar } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { menuOpen } = props;
+	const { menuOpen, isPopup } = props;
 	const param = U.Router.getParam(U.Router.getRoute());
 	const id = param.id || 'account';
 	const profile = U.Space.getProfile();
@@ -70,7 +70,19 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 	return (
 		<>
-			<div className="side left" />
+			<div className="side left">
+				{!isPopup ? (
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
+			</div>
 			<div className="side center">{renderIdentity()}</div>
 			<div className="side right">{renderMore()}</div>
 		</>
