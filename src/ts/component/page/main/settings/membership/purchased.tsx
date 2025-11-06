@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, C, Action, translate } from 'Lib';
+import { I, S, U, J, C, Action, translate, analytics } from 'Lib';
 
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -42,12 +42,15 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 				Action.openUrl(message.url);
 			};
 		});
+
+		analytics.event('ClickMembershipManagePlan', { type: 'Manage' });
 	};
 
 	const onNameSelect = () => {
 		S.Popup.open('membershipFinalization', {
 			data: {
-				tier: product
+				tier: product,
+				route: analytics.route.settingsMembership,
 			},
 			onClose: () => setDummy(dummy + 1),
 		});

@@ -97,6 +97,8 @@ class Analytics {
 		reaction: 'Reaction',
 		icon: 'Icon',
 		editor: 'Editor',
+
+		stripe: 'Stripe',
 	};
 
 	/**
@@ -574,12 +576,6 @@ class Analytics {
 			case 'ChangePlan':
 			case 'ScreenMembership': {
 				//data.name = I.TierType[data.params.tier];
-				break;
-			};
-
-			case 'ClickMembership': {
-				//data.name = data.name || I.TierType[data.params.tier];
-				//data.type = data.type || I.PaymentMethod[data.params.method];
 				break;
 			};
 

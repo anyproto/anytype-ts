@@ -12,6 +12,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
 
+	const onSwitch = () => {
+		setIsMonthly(!isMonthly);
+		analytics.event('ScreenMembershipSwitchPeriod', { type: isMonthly ? 'Annual' : 'Monthly' });
+	};
+
 	const onLink = (item: any) => {
 		Action.openUrl(item.url);
 		analytics.event(item.type, { route: analytics.route.settingsMembership });
@@ -51,13 +56,13 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const onPay = (item: any) => {
-		/*
-		C.MembershipRegisterPaymentRequest(item.id, I.PaymentMethod.Stripe, isMonthly, (message) => {
-			if (message.url) {
-				Action.openUrl(message.url);
-			};
-		});
-		*/
+		console.log('ITEM: ', item)
+		// C.MembershipV2GetPortalLink((message) => {
+		// 	if (message.url) {
+		// 		Action.openUrl(message.url);
+		// 	};
+		// });
+		analytics.event('ClickMembership', { name: item.name });
 	};
 
 	const TierItem = (props: any) => {
@@ -132,7 +137,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		<div className="membershipIntro">
 			<Label text={translate('popupSettingsMembershipText')} />
 
-			<div className={[ 'switchWrapper', isMonthly ? 'isMonthly' : '' ].join(' ')} onClick={() => setIsMonthly(!isMonthly)}>
+			<div className={[ 'switchWrapper', isMonthly ? 'isMonthly' : '' ].join(' ')} onClick={onSwitch}>
 				<Label className={isMonthly ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
 				<Label className={!isMonthly ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
 			</div>

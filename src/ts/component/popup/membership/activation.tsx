@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, translate } from 'Lib';
+import { I, C, S, translate, analytics } from 'Lib';
 
 const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -56,6 +56,8 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 				close();
 			});
 		});
+
+		analytics.event('ClickMembershipCode');
 	};
 
 	useEffect(() => {
@@ -64,6 +66,8 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		};
 
 		window.setTimeout(() => checkButton());
+
+		analytics.event('ScreenMembershipCode', { route: code ? analytics.route.stripe : analytics.route.settingsMembership });
 	}, []);
 
 	return (

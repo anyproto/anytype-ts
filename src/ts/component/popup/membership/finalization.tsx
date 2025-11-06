@@ -1,13 +1,13 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader, Icon } from 'Component';
-import { I, C, S, U, J, translate } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { tier } = data;
+	const { tier, route } = data;
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -71,19 +71,21 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 			U.Data.getMembershipStatus(true, close);
 		});
+
+		analytics.event('ClickMembershipFinalization');
 	};
 
 	useEffect(() => {
 		buttonRef.current?.setDisabled(true);
-	}, []);
 
-	const title = translate(`popupMembershipFinalizationTitle`);
+		analytics.event('ScreenMembershipFinalization', route);
+	}, []);
 
 	return (
 		<div className="anyNameForm">
 			<Icon className={[ 'color', tier.colorStr || 'default' ].join(' ')} />
 			<div className="text">
-				<Title text={title} />
+				<Title text={translate(`popupMembershipFinalizationTitle`)} />
 				<Label text={translate('popupMembershipFinalizationText1')} />
 				<Label text={translate('popupMembershipFinalizationText2')} />
 			</div>
