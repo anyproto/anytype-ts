@@ -1226,11 +1226,7 @@ class Dispatcher {
 		const { details, restrictions, participants } = objectView;
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-	
-		let checkIfExists = false;
-		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(true))) {
-			checkIfExists = true;
-		};
+		const checkIfExists = false;
 
 		// Block structure already exists
 		if (!checkIfExists) {
