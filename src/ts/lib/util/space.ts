@@ -31,7 +31,7 @@ class UtilSpace {
 		if (undefined === param.replace) {
 			param.replace = true;
 		};
-		
+
 		if (S.Common.space) {
 			U.Space.openDashboard(param);
 		} else {

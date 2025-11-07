@@ -111,7 +111,7 @@ class UtilObject {
 		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
-	openRoute (object: any, param?: any) {
+	openRoute (object: any, param?: Partial<I.RouteParam>) {
 		param = this.checkParam(param);
 
 		const route = this.route(object);

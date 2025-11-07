@@ -120,22 +120,7 @@ class UtilRouter {
 
 		const change = () => {
 			this.history.push(route); 
-
-			if (onRouteChange) {
-				onRouteChange();
-			};
-		};
-
-		const fadeOut = () => {
-			if (onFadeOut) {
-				onFadeOut();
-			};
-		};
-
-		const fadeIn = () => {
-			if (onFadeIn) {
-				onFadeIn();
-			};
+			onRouteChange?.();
 		};
 
 		const onTimeout = () => {
@@ -147,9 +132,9 @@ class UtilRouter {
 			};
 
 			if (!animate) {
-				fadeOut();
+				onFadeOut?.();
 				change();
-				fadeIn();
+				onFadeIn?.();
 				return;
 			};
 
@@ -162,12 +147,12 @@ class UtilRouter {
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
-				fadeOut();
+				onFadeOut?.();
 				change();
 			}, t);
 
 			window.setTimeout(() => {
-				fadeIn();
+				onFadeIn?.();
 				fade.removeClass('show');
 				window.setTimeout(() => fade.hide(), t);
 			}, wait + t);
