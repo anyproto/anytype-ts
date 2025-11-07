@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { observer } from 'mobx-react';
-import { S } from 'Lib';
+import { S, keyboard } from 'Lib';
 
 interface Props {
 	data?: any;
@@ -27,7 +27,15 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 				isCollaborating={false}
 				initialData={data}
 				viewModeEnabled={readonly}
-				onChange={onChange}
+				onChange={(elements, appState, files) => {
+					if ([ 'selection', 'text' ].includes(appState.activeTool.type)) {
+						keyboard.setFocus(true);
+					} else {
+						keyboard.setFocus(false);
+					};
+
+					onChange(elements as any[], appState, files);
+				}}
 				theme={(theme ? 'dark' : 'light')}
 				UIOptions={{
 					tools: {
