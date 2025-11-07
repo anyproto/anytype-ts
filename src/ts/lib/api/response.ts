@@ -617,9 +617,10 @@ export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Respo
 
 export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 	return {
-		spaceName: response.getSpacename(),
-		creatorName: response.getCreatorname(),
 		spaceId: response.getSpaceid(),
+		spaceName: response.getSpacename(),
+		iconImage: response.getSpaceiconcid(),
+		creatorName: response.getCreatorname(),
 		inviteType: response.getInvitetype(),
 	};
 };

@@ -550,7 +550,7 @@
 
 	"pageAuthOnboardCopyKey": "Copy Key",
 
-	"pageAuthSetupImportTitle": "We couldn’t recover your vault.",
+	"pageAuthSetupImportTitle": "We couldn't recover your vault.",
 	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupTryAgain": "Try again",
@@ -872,7 +872,7 @@
 	"popupSettingsApiCopyMcp": "Copy MCP Config",
 	"popupSettingsApiMcpConfig": "MCP Config",
 
-	"popupSettingsApiEmpty": "You haven’t created any API keys yet",
+	"popupSettingsApiEmpty": "You haven't created any API keys yet",
 
 	"popupApiCreateTitle": "Create new API key",
 	"popupApiCreateSuccess": "API key successfully created",
@@ -909,7 +909,7 @@
 
 	"popupSettingsDataManagementDataPublishTitle": "My Sites",
 	"popupSettingsDataManagementDataPublishDate": "Published date",
-	"popupSettingsDataManagementDataPublishEmpty": "You haven’t published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
+	"popupSettingsDataManagementDataPublishEmpty": "You haven't published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Describe your space",
@@ -1266,10 +1266,6 @@
 	"popupConfirmSpaceJoinError106Title": "This Space is full.",
 	"popupConfirmSpaceJoinError106Text": "The owner needs to increase the number of available editor seats or give you another link with view-only permissions.",
 
-	"popupConfirmJoinSpaceTitle": "Join %s",
-	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
-	"popupConfirmJoinSpaceButtonConfirm": "Join Space",
-
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
@@ -1315,9 +1311,9 @@
 	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
 
 	"popupConfirmAttachmentSyncError2Title": "Incompatible Version",
-	"popupConfirmAttachmentSyncError2Text": "This version doesn’t support sending files or images. Update the app to share media in chats.",
+	"popupConfirmAttachmentSyncError2Text": "This version doesn't support sending files or images. Update the app to share media in chats.",
 	"popupConfirmAttachmentSyncError3Title": "Network Error",
-	"popupConfirmAttachmentSyncError3Text": "We couldn’t connect right now. This may be due to no internet or a temporary sync issue. We’ll keep trying in the background.",
+	"popupConfirmAttachmentSyncError3Text": "We couldn't connect right now. This may be due to no internet or a temporary sync issue. We'll keep trying in the background.",
 	"popupConfirmAttachmentSyncError4Title": "File is too big for this space",
 	"popupConfirmAttachmentSyncError4Text": "...",
 
@@ -1333,19 +1329,23 @@
 	"popupConfirmStopSharingSpaceText": "You've removed the last member, so this space is now private and only accessible to you",
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
-	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
+	"popupConfirmSystemWidgetRemoveText": "We've redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
 	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
-	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
+	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can't be undone.",
 
 	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
-	"popupInviteRequestTitle": "Join a space",
+	"popupInviteRequestAccessTitle": "Access required",
+	"popupInviteRequestAccessTextData": "This space requires owner approval. Send a request and you'll be notified once it's approved.",
+	"popupInviteRequestAccessTextChat": "This chat requires owner approval. Send a request and you'll be notified once it's approved.",
+	"popupInviteRequestInviteTitle": "You've been invited",
+	"popupInviteRequestInviteTextData": "You'll join this space immediately and can start exploring and discussing its objects.",
+	"popupInviteRequestInviteTextChat": "You'll join this chat immediately and can start exploring and discussing its objects.",
+	"popupInviteRequestCreatedBy": "Created by <b>%s</b>",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
-	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
 	"popupInviteRequestRequestToJoin": "Request to join",
-	"popupInviteRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
 
 	"popupInviteInviteConfirmTitle": "Request sent",
 	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
@@ -1603,7 +1603,7 @@
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
 	"popupPhraseTitle1": "How the Key works",
-	"popupPhraseSubTitle1": "It’s your login and password",
+	"popupPhraseSubTitle1": "It's your login and password",
 	"popupPhraseLabel1": "Your key is represented by a recovery phrase — 12 random words that generate your vault on this device.",
 	"popupPhraseSubTitle2": "Whoever has the key, has access",
 	"popupPhraseLabel2": "Anyone who knows these words can access your vault. Right now, you are the only person in the world who knows them.",
@@ -1929,7 +1929,7 @@
 	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"menuSyncStatusIncentiveBannerTitle": "Files not synced",
-	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn’t be synced because you’re run out of storage. Please upgrade or clean up your storage.",
+	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn't be synced because you're run out of storage. Please upgrade or clean up your storage.",
 	"menuSyncStatusIncentiveBannerReviewFiles": "Review Files",
 
 	"menuPublishTitle": "Publish to web",
@@ -2266,8 +2266,8 @@
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
 	"onboardingPinnedNewText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
 	"onboardingObjectsNewText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
-	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned’ Section</b> We’ve organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you’re ready.",
-	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It’s the new, unified place to see everything you’ve made.",
+	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned' Section</b> We've organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you're ready.",
+	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It's the new, unified place to see everything you've made.",
 
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
