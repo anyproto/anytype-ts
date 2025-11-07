@@ -91,7 +91,7 @@
 		"style-loader": "^1.2.1",
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^8.46.2",
-		"wait-for-localhost-cli": "^4.0.0"
+		"wait-for-localhost-cli": "^3.0.0"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",
