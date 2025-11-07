@@ -965,7 +965,7 @@
             .swiper { flex-shrink: 0; border-radius: 16px; }
             .swiper {
                 .swiper-wrapper { align-items: stretch; margin-bottom: 12px; }
-                .swiper-slide { width: 208px; height: unset; border-right: 1px solid var(--color-shape-primary); }
+                .swiper-slide { width: 244px; height: unset; border-right: 1px solid var(--color-shape-primary); }
                 .swiper-slide:last-child { border-right: 0px; }
 
                 .swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
@@ -977,12 +977,15 @@
                 }
             }
 
-            .tiers { padding-top: 22px; margin-bottom: 44px; width: 623px }
-            &.wide {
-                .tiers { width: 831px; margin-left: -104px; }
+            .tiers { padding-top: 22px; width: 975px; margin-left: -148px; margin-bottom: 44px;  }
+            &.normal {
+                .tiers { width: 731px; margin-left: -26px; }
             }
             &.narrow {
-                .tiers { width: 415px; margin: 0px auto 44px; }
+                .tiers { width: 487px; margin: 0px auto 44px; }
+            }
+            &.tiny {
+                .tiers { width: 243px; }
             }
             .tiers {
                 .tier { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; padding: 16px 16px 12px; gap: 32px 0px; }

@@ -165,12 +165,14 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		const sw = sidebar.getDummyWidth();
 		const pw = ww - sw;
 		const breakpoint = {
-			wide: 896,
-			narrow: 680,
+			normal: 1040,
+			narrow: 796,
+			tiny: 552,
 		};
 
-		$(nodeRef.current).toggleClass('wide', pw > breakpoint.wide);
-		$(nodeRef.current).toggleClass('narrow', pw <= breakpoint.narrow);
+		for (const key of Object.keys(breakpoint)) {
+			$(nodeRef.current).toggleClass(key, pw <= breakpoint[key]);
+		};
 	};
 
 	useEffect(() => {
