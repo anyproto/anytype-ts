@@ -39,7 +39,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			return;
 		};
 
-		const newItems = arrayMove(items, oldIndex, newIndex);
+		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.id != J.Constant.widgetId.bin);
 
 		U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
 			C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
