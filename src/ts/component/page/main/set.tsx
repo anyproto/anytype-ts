@@ -53,10 +53,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 		idRef.current = rootId;
 		setIsDeleted(false);
@@ -254,7 +250,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		open();
 		resize();
 		checkDeleted();
-	});
+	}, [ rootId ]);
 
 	useImperativeHandle(ref, () => ({
 		resize,

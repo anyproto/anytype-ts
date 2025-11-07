@@ -34,10 +34,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	}, [ rootId ]);
 	
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		idRef.current = rootId;
 		setIsLoading(true);
 		setIsDeleted(false);

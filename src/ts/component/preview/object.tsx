@@ -301,10 +301,6 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const load = () => {
 		const contextId = getRootId();
 
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		idRef.current = rootId;
 
 		C.ObjectShow(rootId, TRACE_ID, U.Router.getRouteSpaceId(), () => {
@@ -458,6 +454,10 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			Action.pageClose(false, getRootId(), false);
 		};
 	});
+
+	useEffect(() => {
+		load();
+	}, [ rootId ]);
 
 	return (
 		<div

@@ -24,7 +24,6 @@ const BUTTON_OFFSET = 10;
 const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
 	
 	node: any = null;
-	id = '';
 	hoverId = '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	winScrollTop = 0;
@@ -153,12 +152,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.initNodes();
 	};
 
-	componentDidUpdate () {
+	componentDidUpdate (prevProps: Props) {
 		const { rootId, isPopup } = this.props;
 		const node = $(this.node);
 		const resizable = node.find('.resizable');
 		
-		this.open();
+		if (prevProps.rootId != rootId) {
+			this.open();
+		};
+		
 		this.checkDeleted();
 		this.initNodes();
 		this.rebind();
@@ -218,18 +220,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	open () {
 		const { rootId, onOpen, isPopup } = this.props;
 
-		if (this.id == rootId) {
-			return;
-		};
-
-		this.close();
-		this.id = rootId;
 		this.setState({ isDeleted: false });
 
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
-		C.ObjectOpen(this.id, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
 			this.setLoading(false);
 
@@ -263,11 +259,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	close () {
-		Action.pageClose(this.props.isPopup, this.id, true);
+		const { rootId, isPopup } = this.props;
 
-		if (this.id) {
-			Storage.setFocus(this.id, focus.state);
-		};
+		Action.pageClose(isPopup, rootId, true);
+		Storage.setFocus(rootId, focus.state);
 	};
 
 	onCommand (cmd: string, arg: any) {

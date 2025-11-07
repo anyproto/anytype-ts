@@ -34,13 +34,8 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 		setIsLoading(true);
-
 		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
@@ -284,7 +279,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	useEffect(() => {
 		open();
 		reload();	
-	});
+	}, [ rootId, relationKey ]);
 
 	return content;
 

@@ -34,13 +34,9 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		open();
 		resize();
 		rebind();
-	});
+	}, [ rootId ]);
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 		idRef.current = rootId;
 

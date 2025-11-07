@@ -1220,8 +1220,8 @@ class UtilData {
 		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
 	};
 
-	checkPageClose (isPopup: boolean): boolean {
-		return !isPopup || (isPopup && (keyboard.getRootId(false) != keyboard.getRootId(true)));
+	checkPageClose (isPopup: boolean, rootId: string): boolean {
+		return !isPopup || (isPopup && (keyboard.getRootId(false) != rootId));
 	};
 
 };
