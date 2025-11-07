@@ -64,9 +64,3 @@ export interface MembershipProduct {
 	getPrice?: (isYearly: boolean) => MembershipAmount | null;
 	getPriceString?: (isYearly: boolean) => string;
 };
-
-export interface CartProduct {
-	id: string;
-	isYearly: boolean;
-	remove?: boolean;
-};

@@ -2145,10 +2145,11 @@ export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => 
 	dispatcher.request(MembershipV2GetPortalLink.name, request, callBack);
 };
 
-export const MembershipV2CartUpdate = (products: I.CartProduct[], callBack?: (message: any) => void) => {
+export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.MembershipV2.CartUpdate.Request();
 
-	// request.setProductsList(products.map(Mapper.To.CartProduct));
+	request.setProductidsList(productIds);
+	request.setIsyearly(isYearly);
 
 	dispatcher.request(MembershipV2CartUpdate.name, request, callBack);
 };

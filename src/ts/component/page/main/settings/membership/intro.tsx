@@ -7,14 +7,14 @@ import { Pagination, Mousewheel } from 'swiper/modules';
 
 const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const [ isMonthly, setIsMonthly ] = useState(false);
+	const [ isAnnual, setIsAnnual ] = useState(true);
 	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
 
 	const onSwitch = () => {
-		setIsMonthly(!isMonthly);
-		analytics.event('ScreenMembershipSwitchPeriod', { type: isMonthly ? 'Annual' : 'Monthly' });
+		setIsAnnual(!isAnnual);
+		analytics.event('ScreenMembershipSwitchPeriod', { type: isAnnual ? 'Monthly' : 'Annual' });
 	};
 
 	const onLink = (item: any) => {
@@ -56,19 +56,25 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const onPay = (item: any) => {
-		console.log('ITEM: ', item)
-		// C.MembershipV2GetPortalLink((message) => {
-		// 	if (message.url) {
-		// 		Action.openUrl(message.url);
-		// 	};
-		// });
+		C.MembershipV2CartUpdate([ item.id ], isAnnual, (res) => {
+			if (res.error.code) {
+				console.log('ERROR WHILE CART UPDATE')
+				return;
+			};
+
+			C.MembershipV2GetPortalLink((message) => {
+				if (message.url) {
+					Action.openUrl(message.url);
+				};
+			});
+		});
 		analytics.event('ClickMembership', { name: item.name });
 	};
 
 	const TierItem = (props: any) => {
 		const { item } = props;
 		const isCurrent = item.id == current?.product.id;
-		const price = item.getPriceString(!isMonthly);
+		const price = item.getPriceString(isAnnual);
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
 
 		if (isCurrent) {
@@ -87,7 +93,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 				period = translate('popupSettingsMembershipForeverFree');
 			};
 		} else {
-			period = `per ${U.Common.plural(1, isMonthly ? translate('pluralMonth') : translate('pluralYear'))}`;
+			period = `per ${U.Common.plural(1, isAnnual ? translate('pluralYear') : translate('pluralMonth'))}`;
 		};
 
 		return (
@@ -137,9 +143,9 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		<div className="membershipIntro">
 			<Label text={translate('popupSettingsMembershipText')} />
 
-			<div className={[ 'switchWrapper', isMonthly ? 'isMonthly' : '' ].join(' ')} onClick={onSwitch}>
-				<Label className={isMonthly ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
-				<Label className={!isMonthly ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
+			<div className={[ 'switchWrapper', isAnnual ? 'isAnnual' : 'isMonthly' ].join(' ')} onClick={onSwitch}>
+				<Label className={!isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
+				<Label className={isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
 			</div>
 
 			<div className="tiers">

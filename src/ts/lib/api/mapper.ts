@@ -1167,16 +1167,6 @@ export const Mapper = {
 			return item;
 		},
 
-		CartProduct: (obj: I.CartProduct) => {
-			const item = new Model.MembershipV2.CartProduct();
-
-			// item.setProduct(obj.id);
-			item.setIsyearly(obj.isYearly);
-			item.setRemove(obj.remove || false);
-
-			return item;
-		},
-
 	},
 
 	Event: {
