@@ -64,7 +64,7 @@
 		&.isDragging { z-index: 1; }
 
 		&.isLoading {
-			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 48px; height: 48px; }
+			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 32px; height: 32px; }
 			.iconWrap {
 				.iconObject { display: none; }
 				&:before {
@@ -101,8 +101,14 @@
 			.filterWrapper { padding-left: 12px; padding-right: 12px; }
 
 			.item { gap: 0px 10px; }
-			.item.isProgress {
-				.icon { width: 48px; height: 48px; }
+			.item {
+				&.isProgress {
+					.icon { width: 48px; height: 48px; }
+				}
+
+				&.isLoading {
+					.iconWrap { width: 48px; height: 48px; }
+				}
 			}
 		}
 	}
