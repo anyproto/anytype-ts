@@ -139,12 +139,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					<ObjectName object={item} />
 				</div>
 				<div className="side right">
-					{isChat ? (
-						<ChatCounter 
-							{...S.Chat.getChatCounters(space, item.id)} 
-							mode={U.Object.getChatNotificationMode(spaceview, item.id)} 
-						/>
-					) : ''}
+					{isChat ? <ChatCounter chatId={item.id} /> : ''}
 					<div className="buttons">
 						{!isBin ? (
 							<Icon 

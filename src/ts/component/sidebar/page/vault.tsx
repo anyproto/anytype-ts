@@ -321,7 +321,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (item.chatId) {
 			time = <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>;
 			last = <Label text={item.lastMessage} />;
-			counter = <ChatCounter {...item.counters} mode={item.notificationMode} />;
+			counter = <ChatCounter spaceId={item.targetSpaceId} />;
 		};
 
 		return (

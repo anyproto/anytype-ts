@@ -35,6 +35,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const hasMore = U.Space.canMyParticipantWrite();
 	const isChat = U.Object.isChatLayout(object.layout);
 	const [ dummy, setDummy ] = useState(0);
+	const spaceview = U.Space.getSpaceview();
 
 	if (isOpen) {
 		cn.push('isOpen');
@@ -124,7 +125,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 					<ObjectName object={object} withPlural={true} />
 				</div>
 
-				<ChatCounter {...counters} />
+				<ChatCounter chatId={id} />
 				<div className="buttons">{more}</div>
 			</div>
 		);

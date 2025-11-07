@@ -651,19 +651,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
-	const onExpandHandler = (e: MouseEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (layout != I.WidgetLayout.Link) {
-			onSetPreview();
-		} else {
-			onClick(e);
-		};
-
-		analytics.event('ClickWidgetTitle');
-	};
-
 	const onClickHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -671,13 +658,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		onClick(e);
 	};
 
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	} else
 	if (containsChat) {
 		cn.push('containsChat');
-		counters = S.Chat.getSpaceCounters(space);
 	};
 
 	const buttons = [];
@@ -771,7 +753,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							<ChatCounter {...counters} mode={spaceview.notificationMode} />
+							{isChat || containsChat ? <ChatCounter chatId={isChat ? object.id : undefined} /> : ''}
 
 							{buttons.length ? (
 								<div className="buttons">

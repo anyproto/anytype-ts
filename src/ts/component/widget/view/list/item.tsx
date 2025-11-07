@@ -35,6 +35,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
 	const isBookmark = U.Object.isBookmarkLayout(object.layout);
+	const spaceview = U.Space.getSpaceview();
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
@@ -153,7 +154,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			{isChat ? (
 				<div className="chatInfo">
 					{time}
-					<ChatCounter {...counters} />
+					<ChatCounter chatId={id} />
 				</div>
 			) : ''}
 
