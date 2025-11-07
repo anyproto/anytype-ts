@@ -11,6 +11,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	target = null;
 	layout: I.WidgetLayout = null;
 	limit = 0;
+	needUpdate = false;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -27,7 +28,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.limit = limit;
 		this.target = target;
 		this.checkState();
-};
+	};
 
 	render(): React.ReactNode {
 		const { param } = this.props;
@@ -90,6 +91,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	}
 
 	componentDidMount () {
+		this.needUpdate = false;
 		this.checkButton();
 		this.rebind();
 
@@ -110,7 +112,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.unbind();
 
 		S.Menu.closeAll(J.Menu.widget);
-		$(window).trigger(`updateWidgetData.${blockId}`);
+		if (this.needUpdate) {
+			$(window).trigger(`updateWidgetData.${blockId}`);
+		};
 	};
 
 	rebind (): void {
@@ -368,6 +372,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 		};
 
+		this.needUpdate = true;
 		C.BlockCreateWidget(widgets, blockId, newBlock, I.BlockPosition.Replace, this.layout, this.limit, onSave);
 		close(); 
 	};

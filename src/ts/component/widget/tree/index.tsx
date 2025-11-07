@@ -55,7 +55,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const updateData = () => {
 		if (isSystemTarget) {
-			getData(getSubId());
+			getData(subId);
+			checkShowAllButton(subId);
 		};
 	};
 
@@ -290,6 +291,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const nodes = loadTree();
 	const length = nodes.length;
+	const subId = getSubId();
 
 	let content = null;
 	let head = null;
@@ -421,10 +423,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		links.current = object.links;
-
-		if (isSystemTarget) {
-			getData(getSubId());
-		};
+		updateData();
 	}, []);
 
 	useEffect(() => {

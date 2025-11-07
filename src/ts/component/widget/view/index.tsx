@@ -84,6 +84,8 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (view) {
 			load(view.id, true);
 		};
+
+		checkShowAllButton(subId);
 	};
 
 	const updateViews = () => {
@@ -97,6 +99,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		S.Record.viewsSet(rootId, J.Constant.blockId.dataview, views);
 
 		selectRef.current?.setOptions(views);
+		checkShowAllButton(subId);
 	};
 
 	const load = (viewId: string, clear?: boolean) => {
