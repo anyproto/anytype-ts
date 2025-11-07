@@ -38,6 +38,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	container = null;
 	containerRect = null;
 	dir = 0;
+	id = '';
 
 	state = {
 		isLoading: false,
@@ -158,6 +159,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const resizable = node.find('.resizable');
 		
 		if (prevProps.rootId != rootId) {
+			this.close();
 			this.open();
 		};
 		
@@ -225,6 +227,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
+		this.id = rootId;
+
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
 			this.setLoading(false);
@@ -259,10 +263,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	close () {
-		const { rootId, isPopup } = this.props;
-
-		Action.pageClose(isPopup, rootId, true);
-		Storage.setFocus(rootId, focus.state);
+		Action.pageClose(this.props.isPopup, this.id, true);
+		Storage.setFocus(this.id, focus.state);
 	};
 
 	onCommand (cmd: string, arg: any) {

@@ -126,7 +126,7 @@
 
 	.block.blockText.textDescription { @include text-description; }
 	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
-	.block.blockText.textDescription > .wrapContent > .selectionTarget > .dropTarget { padding-top: 4px; padding-bottom: 3px; }
+	.block.blockText.textDescription > .wrapContent > .selectionTarget > .dropTarget { padding-top: 6px; padding-bottom: 2px; }
 
 	/* Headers */
 
