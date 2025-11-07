@@ -66,10 +66,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		};
 	};
 
-	const onPay = (item: any) => {
+	const onPay = (item: any, callBack: () => void) => {
 		C.MembershipV2CartUpdate([ item.id ], isAnnual, (res) => {
 			if (res.error.code) {
-				console.log('ERROR WHILE CART UPDATE')
+				console.log('ERROR WHILE CART UPDATE');
+				callBack();
 				return;
 			};
 
@@ -77,6 +78,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 				if (message.url) {
 					Action.openUrl(message.url);
 				};
+
+				callBack();
 			});
 		});
 		analytics.event('ClickMembership', { name: item.name });
@@ -87,6 +90,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		const isCurrent = item.id == current?.product.id;
 		const price = item.getPriceString(isAnnual);
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
+		const buttonRef = useRef(null);
 
 		if (isCurrent) {
 			cn.push('isCurrent');
@@ -105,6 +109,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 			};
 		} else {
 			period = `per ${U.Common.plural(1, isAnnual ? translate('pluralYear') : translate('pluralMonth'))}`;
+		};
+
+		const onClick = () => {
+			buttonRef.current.setLoading(true);
+			onPay(item, () => buttonRef.current.setLoading(false));
 		};
 
 		return (
@@ -140,7 +149,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 						/>
 					) : (
 						<Button
-							onClick={() => onPay(item)}
+							ref={buttonRef}
+							onClick={onClick}
 							color="accent"
 							text={translate('popupSettingsMembershipSelectPlan')}
 						/>
