@@ -1228,6 +1228,8 @@ class Dispatcher {
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 	
 		let checkIfExists = false;
+		console.log('Check if exists', { needCheck, isPopup: keyboard.isPopup(), rootId, keyboardRootId: keyboard.getRootId(false) });
+
 		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(false))) {
 			checkIfExists = true;
 		};
