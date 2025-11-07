@@ -1224,13 +1224,19 @@ class Dispatcher {
 
 	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
-		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-		const checkIfExists = false;//;needCheck && keyboard.isPopup() && S.Common.isOpenObject(S.Common.space, rootId);
+	
+		let checkIfExists = false;
+		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId())) {
+			console.log('OBJECT IS ALREADY OPEN', rootId);
+			checkIfExists = true;
+		};
 
 		// Block structure already exists
 		if (!checkIfExists) {
+			const root = objectView.blocks.find(it => it.id == rootId);
+
 			S.Block.clear(contextId);
 
 			if (root && root.fields.analyticsContext) {

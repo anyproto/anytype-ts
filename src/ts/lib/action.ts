@@ -43,7 +43,6 @@ class Action {
 		S.Block.clear(rootId);
 
 		U.Subscription.destroyList([ rootId ]);
-		S.Common.removeOpenObject(space, rootId);
 
 		if (withCommand) {
 			C.ObjectClose(rootId, space);
