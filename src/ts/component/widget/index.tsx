@@ -591,10 +591,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			const viewType = view?.type || I.ViewType.List;
 			const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
 
-			if (view && view.isBoard()) {
-				total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
-			} else {
-				total = S.Record.getMeta(subId, '').total;
+			if (isAllowedView) {
+				if (view && view.isBoard()) {
+					total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+				} else {
+					total = S.Record.getMeta(subId, '').total;
+				};
 			};
 
 			show = !isPreview && (total > limit) && isAllowedView;

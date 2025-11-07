@@ -45,8 +45,20 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const isShown = isOpen || isPreview;
 
 	let viewType = view ? view.type : I.ViewType.List;
+	let total = 0;
+
 	if (layout != I.WidgetLayout.View) {
 		viewType = I.ViewType.List;
+	};
+
+	const isAllowedShowAll = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
+
+	if (isAllowedShowAll) {
+		if (view && view.isBoard()) {
+			total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+		} else {
+			total = S.Record.getMeta(subId, '').total;
+		};
 	};
 
 	const updateData = () =>{
@@ -411,7 +423,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', isEmpty);
 
 		checkShowAllButton(subId);
-	});
+	}, [ total ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,
