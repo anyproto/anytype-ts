@@ -1234,6 +1234,8 @@ class Dispatcher {
 			checkIfExists = true;
 		};
 
+		console.log('CHECK', checkIfExists);
+
 		// Block structure already exists
 		if (!checkIfExists) {
 			const root = objectView.blocks.find(it => it.id == rootId);
