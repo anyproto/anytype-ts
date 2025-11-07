@@ -33,14 +33,10 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		
 		const items = getItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
-
-		let newIndex = items.findIndex(it => it.id == over.id);
+		const newIndex = items.findIndex(it => it.id == over.id);
+		
 		if ((oldIndex < 0) || (newIndex < 0)) {
 			return;
-		};
-
-		if (oldIndex < newIndex) {
-			newIndex--;
 		};
 
 		const newItems = arrayMove(items, oldIndex, newIndex);
