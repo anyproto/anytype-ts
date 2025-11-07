@@ -1229,7 +1229,6 @@ class Dispatcher {
 	
 		let checkIfExists = false;
 		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(true))) {
-			console.log('OBJECT IS ALREADY OPEN', rootId);
 			checkIfExists = true;
 		};
 

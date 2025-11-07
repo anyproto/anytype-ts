@@ -1262,8 +1262,8 @@ class Keyboard {
 	 * @returns {any} The match object.
 	 */
 	getPopupMatch () {
-		const popup = S.Popup.get('page');
-		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
+		const popup = U.Common.objectCopy(S.Popup.get('page'));
+		const match: any = popup ? { ...popup?.param?.data?.matchPopup } : {};
 
 		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
 
