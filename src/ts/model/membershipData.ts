@@ -82,7 +82,7 @@ class MembershipData implements I.MembershipData {
 	};
 
 	getTopProduct (): I.MembershipPurchasedProduct | null {
-		return this.products.find(it => it.isActive && it.product.isTopLevel) || null;
+		return this.products.find(it => it.product.isTopLevel && (it.isActive || it.isFinalization)) || null;
 	};
 
 };
