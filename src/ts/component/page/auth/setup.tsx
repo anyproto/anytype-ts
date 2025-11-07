@@ -70,18 +70,26 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					].forEach(it => Survey.check(it));
 
 					const cb1 = () => {
-						/*
-						U.Data.getMembershipStatus(false, membership => {
-							if (membership.status == I.MembershipStatus.Finalization) {
-								S.Popup.open('membershipFinalization', { 
+						const { data } = S.Membership;
+						const purchased = data?.getTopProduct();
+
+						if (!purchased) {
+							cb2();
+						} else {
+							const { product, status } = purchased;
+
+							if (status && (status == I.MembershipStatus.Finalization)) {
+								S.Popup.open('membershipFinalization', {
 									onClose: cb2,
-									data: { tier: membership.tier },
+									data: {
+										product,
+										route: analytics.route.authSetup,
+									},
 								});
 							} else {
 								cb2();
 							};
-						});
-						*/
+						};
 					};
 
 					const cb2 = () => {
@@ -104,7 +112,9 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						};
 					};
 
-					Action.checkDiskSpace(cb1);
+					U.Data.getMembershipStatus(true, () => {
+						Action.checkDiskSpace(cb1);
+					});
 				},
 			};
 

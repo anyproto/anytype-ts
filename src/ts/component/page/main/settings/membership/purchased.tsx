@@ -49,7 +49,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const onNameSelect = () => {
 		S.Popup.open('membershipFinalization', {
 			data: {
-				tier: product,
+				product,
 				route: analytics.route.settingsMembership,
 			},
 			onClose: () => setDummy(dummy + 1),

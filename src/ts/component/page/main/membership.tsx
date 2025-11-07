@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, translate, Action } from 'Lib';
+import { I, S, U, translate, Action, analytics } from 'Lib';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -9,36 +9,39 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const { isPopup } = props;
 	const [ error, setError ] = useState('');
 
+
 	const init = () => {
 		const { history } = U.Router;
 		const { location } = history;
-		const data = U.Common.searchParam(location.search);
+		const searchParam = U.Common.searchParam(location.search);
+		const { data } = S.Membership;
 
-		U.Data.getMembershipProducts(true, () => {
-			/*
-			U.Data.getMembershipStatus(true, (membership: I.Membership) => {
-				if (!membership) {
-					setError(translate('pageMainMembershipError'));
-					return;
+		if (!data) {
+			setError(translate('pageMainMembershipError'));
+			return;
+		};
+
+		const purchased = data.getTopProduct();
+		const { product, status } = purchased;
+
+		U.Space.openDashboardOrVoid({
+			replace: true,
+			onFadeIn: () => {
+				if (searchParam.code) {
+					S.Popup.open('membershipActivation', { data: searchParam });
+				} else
+				if (status == I.MembershipStatus.Finalization) {
+					S.Popup.open('membershipFinalization', {
+						data: {
+							product,
+							route: analytics.route.stripe,
+						},
+						onClose: () => Action.openSettings('membership', analytics.route.stripe),
+					});
+				} else {
+					Action.openSettings('membership', analytics.route.stripe);
 				};
-
-				const { status, tier } = membership;
-
-				U.Space.openDashboardOrVoid({
-					replace: true,
-					onFadeIn: () => {
-						if (data.code) {
-							S.Popup.open('membershipActivation', { data });
-						} else
-						if (status == I.MembershipStatus.Finalization) {
-							S.Popup.open('membershipFinalization', { data: { tier } });
-						} else {
-							Action.openSettings('membership', '');
-						};
-					},
-				});
-			});
-			*/
+			},
 		});
 
 		resize();
@@ -52,7 +55,9 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		node.css({ height: (isPopup ? obj.height() : win.height()) });
 	};
 
-	useEffect(() => init(), []);
+	useEffect(() => {
+		U.Data.getMembershipStatus(true, init);
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		resize,

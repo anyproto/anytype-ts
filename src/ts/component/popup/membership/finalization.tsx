@@ -7,7 +7,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 	const { param, close } = props;
 	const { data } = param;
-	const { tier, route } = data;
+	const { product, route } = data;
 	const [ status, setStatus ] = useState('');
 	const [ statusText, setStatusText ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -83,7 +83,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 	return (
 		<div className="anyNameForm">
-			<Icon className={[ 'color', tier.colorStr || 'default' ].join(' ')} />
+			<Icon className={[ 'color', product.colorStr || 'default' ].join(' ')} />
 			<div className="text">
 				<Title text={translate(`popupMembershipFinalizationTitle`)} />
 				<Label text={translate('popupMembershipFinalizationText1')} />

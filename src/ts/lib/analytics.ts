@@ -85,6 +85,8 @@ class Analytics {
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
 
+		authSetup: 'ScreenAuthSetup',
+
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
 		addWidgetMenu: 'Menu',
