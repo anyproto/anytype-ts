@@ -257,6 +257,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const isSectionPin = block.content.section == I.WidgetSection.Pin;
 
+		this.needUpdate = true;
+
 		switch (section.id) {
 			case 'layout': {
 				this.layout = Number(option.id);
