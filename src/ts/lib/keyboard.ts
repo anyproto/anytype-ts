@@ -106,17 +106,18 @@ class Keyboard {
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
+		const isPopup = this.isPopup();
 
 		// Mouse back
 		if ((e.buttons & 8) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onBack();
+			this.onBack(isPopup);
 		};
 
 		// Mouse forward
 		if ((e.buttons & 16) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onForward();
+			this.onForward(isPopup);
 		};
 
 		// Remove isFocusable from focused block
@@ -176,8 +177,8 @@ class Keyboard {
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut('back', e, () => this.onBack());
-			this.shortcut('forward', e, () => this.onForward());
+			this.shortcut('back', e, () => this.onBack(isPopup));
+			this.shortcut('forward', e, () => this.onForward(isPopup));
 		};
 
 		// Close popups and menus
@@ -219,7 +220,7 @@ class Keyboard {
 			if (this.isMainSettings() && !this.isFocused) {
 				U.Space.openDashboard({ replace: false });
 			} else {
-				this.onBack();
+				this.onBack(isPopup);
 			};
 			
 			Preview.previewHide(false);
@@ -475,11 +476,8 @@ class Keyboard {
 	/**
 	 * Handles back navigation.
 	 */
-	onBack () {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-
-		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack()) {
+	onBack (isPopup: boolean) {
+		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack(isPopup)) {
 			return;
 		};
 
@@ -492,6 +490,7 @@ class Keyboard {
 				});
 			};
 		} else {
+			const { account } = S.Auth;
 			const history = U.Router.history;
 			const current = U.Router.getParam(history.location.pathname);
 			const prev = history.entries[history.index - 1];
@@ -536,10 +535,8 @@ class Keyboard {
 	/**
 	 * Handles forward navigation.
 	 */
-	onForward () {
-		const isPopup = this.isPopup();
-
-		if (!this.checkForward()) {
+	onForward (isPopup: boolean) {
+		if (!this.checkForward(isPopup)) {
 			return;
 		};
 
@@ -560,32 +557,32 @@ class Keyboard {
 	 * Checks if back navigation is possible.
 	 * @returns {boolean} True if back is possible.
 	 */
-	checkBack (): boolean {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
+	checkBack (isPopup: boolean): boolean {
+		if (isPopup) {
+			return true;
 		};
 
-		if (!isPopup) {
-			const prev = history.entries[history.index - 1];
+		const history = U.Router.history;
+		if (!history) {
+			return false;
+		};
 
-			if (account && !prev) {
+		const { account } = S.Auth;
+		const prev = history.entries[history.index - 1];
+
+		if (account && !prev) {
+			return false;
+		};
+
+		if (prev) {
+			const route = U.Router.getParam(prev.pathname);
+
+			if ([ 'index', 'auth' ].includes(route.page) && account) {
 				return false;
 			};
 
-			if (prev) {
-				const route = U.Router.getParam(prev.pathname);
-
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return false;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return false;
-				};
+			if ((route.page == 'main') && !account) {
+				return false;
 			};
 		};
 
@@ -596,18 +593,16 @@ class Keyboard {
 	 * Checks if forward navigation is possible.
 	 * @returns {boolean} True if forward is possible.
 	 */
-	checkForward (): boolean {
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
-		};
-
+	checkForward (isPopup: boolean): boolean {
 		let ret = true;
 		if (isPopup) {
 			ret = historyPopup.checkForward();
 		} else {
+			const history = U.Router.history;
+			if (!history) {
+				return false;
+			};
+
 			ret = history.index + 1 <= history.entries.length - 1;
 		};
 		return ret;
@@ -629,6 +624,7 @@ class Keyboard {
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 		const canUndo = !this.isFocused && this.isMainEditor();
+		const isPopup = this.isPopup();
 
 		switch (cmd) {
 			case 'search': {
@@ -898,12 +894,12 @@ class Keyboard {
 
 				switch (arg) {
 					case 'left': {
-						this.onBack();
+						this.onBack(isPopup);
 						break;
 					};
 
 					case 'right': {
-						this.onForward();
+						this.onForward(isPopup);
 						break;
 					};
 				};
