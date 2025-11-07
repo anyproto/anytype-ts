@@ -10,7 +10,8 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ isDeleted, setIsDeleted ] = useState(false);	
+	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
 	const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -59,11 +60,13 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			sidebar.rightPanelSetState(isPopup, { rootId });
+			setDummy(dummy + 1);
 		});
 	};
 
 	const close = () => {
-		Action.pageClose(props.isPopup, idRef.current, true);
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const rebind = () => {

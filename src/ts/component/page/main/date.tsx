@@ -12,6 +12,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ relations, setRelations ] = useState([]);
+	const [ dummy, setDummy ] = useState(0);
 	const match = keyboard.getMatch(isPopup);
 	const [ relationKey, setRelationKey ] = useState(match.params.relationKey);
 	const rootId = keyboard.getRootId(isPopup);
@@ -53,13 +54,14 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			sidebar.rightPanelSetState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-
 			loadCategory();
+			setDummy(dummy + 1);
 		});
 	};
 
 	const close = () => {
-		Action.pageClose(props.isPopup, idRef.current, true);
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const loadCategory = () => {

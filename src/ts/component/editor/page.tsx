@@ -265,6 +265,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	close () {
 		Action.pageClose(this.props.isPopup, this.id, true);
 		Storage.setFocus(this.id, focus.state);
+		this.id = '';
 	};
 
 	onCommand (cmd: string, arg: any) {

@@ -37,7 +37,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const close = () => {
-		Action.pageClose(props.isPopup, idRef.current, true);
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const isReadonly = () => {
