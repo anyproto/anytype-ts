@@ -1228,8 +1228,6 @@ class Dispatcher {
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 		const alreadyExists = needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(false));
 
-		console.log('[Dispatcher.onObjectView]', contextId, 'blocks:', objectView.blocks.length, 'alreadyExists:', alreadyExists);
-
 		// Block structure already exists
 		if (!alreadyExists) {
 			const root = objectView.blocks.find(it => it.id == rootId);

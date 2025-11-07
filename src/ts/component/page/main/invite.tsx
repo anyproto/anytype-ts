@@ -15,8 +15,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const frameRef = useRef(null);
 	const [ error, setError ] = useState('');
 
-	console.log('LOCATION', location);
-
 	const onError = (code: number, request: string) => {
 		const errorCodes = Object.values(J.Error.Code[request]);
 
@@ -52,8 +50,6 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const init = () => {
 		const { account } = S.Auth;
 		const { cid, key, route } = U.Common.searchParam(location.search);
-
-		console.log('INVITE PARAMS', { cid, key, route });
 
 		const request = (message: any) => {
 			if (message.inviteType == I.InviteType.WithoutApprove) {
