@@ -1337,10 +1337,6 @@ class UtilCommon {
 
 	/**
 	 * Get width and height of window DOM node
-	 * Returns the percent value of part/whole.
-	 * @param {number} part - The part value.
-	 * @param {number} whole - The whole value.
-	 * @returns {number} The percent value.
 	 */
 	getWindowDimensions (): { ww: number; wh: number } {
 		const win = $(window);

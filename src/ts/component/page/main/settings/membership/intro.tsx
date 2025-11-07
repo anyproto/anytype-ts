@@ -1,16 +1,27 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, C, Action, translate, analytics, keyboard } from 'Lib';
+import { I, S, U, J, C, Action, translate, analytics, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
 
 const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
+	const nodeRef = useRef(null);
 	const [ isAnnual, setIsAnnual ] = useState(true);
 	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
+
+	const rebind = () => {
+		unbind();
+		$(window).on('resize.membershipIntro sidebarResize.membershipIntro', () => resize());
+	};
+
+	const unbind = () => {
+		$(window).off('resize.membershipIntro sidebarResize.membershipIntro');
+	};
 
 	const onSwitch = () => {
 		setIsAnnual(!isAnnual);
@@ -139,8 +150,26 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		);
 	};
 
+	const resize = () => {
+		const { ww } = U.Common.getWindowDimensions();
+		const sw = sidebar.getDummyWidth();
+		const pw = ww - sw;
+		const breakpoint = {
+			wide: 896,
+			narrow: 680,
+		};
+
+		$(nodeRef.current).toggleClass('wide', pw > breakpoint.wide);
+		$(nodeRef.current).toggleClass('narrow', pw <= breakpoint.narrow);
+	};
+
+	useEffect(() => {
+		rebind();
+		return () => unbind();
+	}, [])
+
 	return (
-		<div className="membershipIntro">
+		<div ref={nodeRef} className="membershipIntro">
 			<Label text={translate('popupSettingsMembershipText')} />
 
 			<div className={[ 'switchWrapper', isAnnual ? 'isAnnual' : 'isMonthly' ].join(' ')} onClick={onSwitch}>
@@ -150,7 +179,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 			<div className="tiers">
 				<Swiper
-					slidesPerView={3}
+					slidesPerView={'auto'}
 					mousewheel={{ forceToAxis: true }}
 					pagination={products.length > 3 ? { clickable: true } : false}
 					modules={[ Pagination, Mousewheel ]}

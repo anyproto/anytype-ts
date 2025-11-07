@@ -969,6 +969,7 @@
                 .swiper-slide:last-child { border-right: 0px; }
 
                 .swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+                .swiper-pagination.swiper-pagination-lock { opacity: 0; }
                 .swiper-pagination {
                     .swiper-pagination-bullet { width: 6px; height: 6px; border-radius: 4px; background-color: var(--color-control-inactive); }
                     .swiper-pagination-bullet:hover { background-color: var(--color-control-active); }
@@ -976,7 +977,13 @@
                 }
             }
 
-            .tiers { padding-top: 22px; margin-bottom: 44px; }
+            .tiers { padding-top: 22px; margin-bottom: 44px; width: 623px }
+            &.wide {
+                .tiers { width: 831px; margin-left: -104px; }
+            }
+            &.narrow {
+                .tiers { width: 415px; margin: 0px auto 44px; }
+            }
             .tiers {
                 .tier { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; padding: 16px 16px 12px; gap: 32px 0px; }
                 .tier {
