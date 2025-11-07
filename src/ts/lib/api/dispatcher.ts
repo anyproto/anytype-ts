@@ -1228,7 +1228,7 @@ class Dispatcher {
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 	
 		let checkIfExists = false;
-		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId())) {
+		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(true))) {
 			console.log('OBJECT IS ALREADY OPEN', rootId);
 			checkIfExists = true;
 		};
