@@ -1092,12 +1092,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 				const button = $(this.node).find('#head-source-select');
 
+				S.Detail.update(rootId, { id: item.id, details: item }, false);
+
 				if (!isCollection && isNew && button.length) {
 					button.trigger('click');
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
+					this.loadData(message.views[0].id, 0, true);
 				};
 
 				if (isNew) {
@@ -1138,6 +1140,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				addParam,
 				onSelect,
 				withPlural: true,
+				keys: J.Relation.default.concat('setOf'),
 			}
 		}, param || {}));
 	};

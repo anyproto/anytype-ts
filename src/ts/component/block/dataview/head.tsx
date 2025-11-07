@@ -123,6 +123,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			element,
 			offsetY: 4,
 			width: 240,
+			classNameWrap: 'fromBlock',
 			onOpen: context => this.menuContext = context,
 			data: {
 				options,
@@ -166,6 +167,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
+			classNameWrap: 'fromBlock',
 			isSub: true,
 			data: {},
 		};
