@@ -455,8 +455,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 
 		return () => {
 			unbind();
-
-			Action.pageClose(getRootId(), false);
+			Action.pageClose(false, getRootId(), false);
 		};
 	});
 

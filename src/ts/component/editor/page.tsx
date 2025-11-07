@@ -263,18 +263,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	close () {
-		if (!this.id) {
-			return;
+		Action.pageClose(this.props.isPopup, this.id, true);
+
+		if (this.id) {
+			Storage.setFocus(this.id, focus.state);
 		};
-
-		const { isPopup, matchPopup } = this.props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != this.id));
-
-		if (close) {
-			Action.pageClose(this.id, true);
-		};
-
-		Storage.setFocus(this.id, focus.state);
 	};
 
 	onCommand (cmd: string, arg: any) {

@@ -64,17 +64,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const close = () => {
-		const id = idRef.current;
-		if (!id) {
-			return;
-		};
-
-		const { isPopup, matchPopup } = props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != id));
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(props.isPopup, idRef.current, true);
 	};
 
 	const loadCategory = () => {

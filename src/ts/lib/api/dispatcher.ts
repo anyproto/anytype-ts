@@ -1226,18 +1226,12 @@ class Dispatcher {
 		const { details, restrictions, participants } = objectView;
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-	
-		let checkIfExists = false;
-		console.log('Check if exists', { needCheck, isPopup: keyboard.isPopup(), rootId, keyboardRootId: keyboard.getRootId(false) });
+		const alreadyExists = needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(false));
 
-		if (needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(false))) {
-			checkIfExists = true;
-		};
-
-		console.log('CHECK', checkIfExists);
+		console.log('[Dispatcher.onObjectView]', contextId, 'blocks:', objectView.blocks.length, 'alreadyExists:', alreadyExists);
 
 		// Block structure already exists
-		if (!checkIfExists) {
+		if (!alreadyExists) {
 			const root = objectView.blocks.find(it => it.id == rootId);
 
 			S.Block.clear(contextId);

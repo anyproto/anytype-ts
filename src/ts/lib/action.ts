@@ -9,8 +9,8 @@ class Action {
 	 * @param {string} rootId - The root object ID.
 	 * @param {boolean} withCommand - Whether to send a close command to the backend.
 	 */
-	pageClose (rootId: string, withCommand: boolean) {
-		if (keyboard.isCloseDisabled) {
+	pageClose (isPopup: boolean, rootId: string, withCommand: boolean) {
+		if (!rootId || keyboard.isCloseDisabled || !U.Data.checkPageClose(isPopup)) {
 			return;
 		};
 
