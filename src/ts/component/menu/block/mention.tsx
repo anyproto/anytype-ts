@@ -38,7 +38,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { pronounId } = data;
+		const { pronounId, withCaption } = data;
 		const { isLoading } = this.state;
 		const items = this.getItems();
 
@@ -75,7 +75,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
-						caption={type ? <ObjectType object={type} /> : ''}
+						caption={withCaption && type ? <ObjectType object={type} /> : ''}
 						style={param.style}
 						isDiv={item.isDiv}
 						className={cn.join(' ')}

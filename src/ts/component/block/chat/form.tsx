@@ -789,7 +789,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onSend = () => {
-		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')){
+		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')) {
 			return;
 		};
 

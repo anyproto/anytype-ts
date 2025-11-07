@@ -903,6 +903,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					marks: this.marks,
 					skipIds: [ rootId ],
 					canAdd: true,
+					withCaption: true,
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						if (S.Menu.isAnimating('blockMention')) {
 							return;

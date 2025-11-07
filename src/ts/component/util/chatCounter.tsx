@@ -21,7 +21,7 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 		mode = U.Object.getChatNotificationMode(spaceview, chatId);
 	} else {
 		counters = S.Chat.getSpaceCounters(spaceId);
-		mode = spaceview.notificationMode;
+		mode = spaceview?.notificationMode;
 	};
 
 	const { mentionCounter, messageCounter } = counters;
