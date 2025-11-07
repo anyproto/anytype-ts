@@ -15,6 +15,8 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const frameRef = useRef(null);
 	const [ error, setError ] = useState('');
 
+	console.log('LOCATION', location);
+
 	const onError = (code: number, request: string) => {
 		const errorCodes = Object.values(J.Error.Code[request]);
 
@@ -50,6 +52,8 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	const init = () => {
 		const { account } = S.Auth;
 		const { cid, key, route } = U.Common.searchParam(location.search);
+
+		console.log('INVITE PARAMS', { cid, key, route });
 
 		const request = (message: any) => {
 			if (message.inviteType == I.InviteType.WithoutApprove) {
@@ -97,40 +101,45 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 		if (!cid || !key) {
 			setError(translate('pageMainInviteErrorData'));
-		} else {
-			C.SpaceInviteView(cid, key, (message: any) => {
-				U.Space.openDashboardOrVoid();
-
-				S.Popup.closeAll(null, () => {
-					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
-
-					if (message.error.code) {
-						onError(message.error.code, 'SpaceInviteView');
-					} else 
-					if (space) {
-						if (space.isAccountJoining) {
-							U.Common.onInviteRequest();
-						} else
-						if (!space.isAccountRemoving && !space.isAccountDeleted) {
-							S.Popup.open('confirm', {
-								data: {
-									title: translate('popupConfirmDuplicateSpace'),
-									textConfirm: translate('commonOpenSpace'),
-									textCancel: translate('commonCancel'),
-									onConfirm: () => {
-										U.Router.switchSpace(message.spaceId, '', false, {}, false);
-									},
-								},
-							});
-						} else {
-							request(message);
-						};
-					} else {
-						request(message);
-					};
-				});
-			});
+			return;
 		};
+
+		const cb = (message: any) => {
+			const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
+
+			if (message.error.code) {
+				onError(message.error.code, 'SpaceInviteView');
+			} else 
+			if (space) {
+				if (space.isAccountJoining) {
+					U.Common.onInviteRequest();
+				} else
+				if (!space.isAccountRemoving && !space.isAccountDeleted) {
+					S.Popup.open('confirm', {
+						data: {
+							title: translate('popupConfirmDuplicateSpace'),
+							textConfirm: translate('commonOpenSpace'),
+							textCancel: translate('commonCancel'),
+							onConfirm: () => {
+								U.Router.switchSpace(message.spaceId, '', false, {}, false);
+							},
+						},
+					});
+				} else {
+					request(message);
+				};
+			} else {
+				request(message);
+			};
+		};
+
+		C.SpaceInviteView(cid, key, (message: any) => {
+			U.Space.openDashboardOrVoid({
+				onRouteChange: () => {
+					S.Popup.closeAll(null, () => cb(message));
+				},
+			});
+		});
 	};
 
 	const resize = () => {
