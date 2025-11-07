@@ -37,6 +37,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const selection = S.Common.getRef('selectionProvider');
 	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
 	const rootRef = useRef(null);
+	const isExcalidraw = block.isEmbedExcalidraw();
 
 	if (width) {
 		css.width = (width * 100) + '%';
@@ -801,14 +802,26 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 	}, [ isEditing ]);
 
+	let tabIndex = -1;
+	let onKeyDownProp;
+	let onKeyUpProp;
+	let onFocusProp;
+
+	if (!isExcalidraw) {
+		tabIndex = 0;
+		onKeyDownProp = onKeyDownBlock;
+		onKeyUpProp = onKeyUpBlock;
+		onFocusProp = onFocusBlock;
+	};
+
 	return (
 		<div 
 			ref={nodeRef}
-			tabIndex={0} 
+			tabIndex={tabIndex} 
 			className={cn.join(' ')}
-			onKeyDown={onKeyDownBlock} 
-			onKeyUp={onKeyUpBlock} 
-			onFocus={onFocusBlock}
+			onKeyDown={onKeyDownProp} 
+			onKeyUp={onKeyUpProp} 
+			onFocus={onFocusProp}
 		>
 			{source}
 
