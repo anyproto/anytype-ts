@@ -932,13 +932,28 @@
         .actionItems { margin: 32px 0px 24px 0px; }
     }
 
-    > .pageSettingsMembership { display: flex; flex-direction: column; padding-bottom: 0px; }
+    > .pageSettingsMembership { display: flex; flex-direction: column; padding-bottom: 0px; min-height: 100%; }
     > .pageSettingsMembership {
         > .title { @include text-title; text-align: center; margin: 0px; }
 
-        .membershipIntro { padding-top: 8px; }
+        > .loaderWrapper { flex: 1 1 0; display: flex; justify-content: center; align-items: center; width: 380px;  }
+        > .loaderWrapper {
+            .inner { display: flex; flex-direction: column; gap: 12px 0px; text-align: center; align-items: center; }
+            .icon { width: 56px; height: 56px; background: url('~img/icon/membership/spinner.svg'); animation: rotate 0.8s infinite linear; }
+            .label { @include text-common; color: var(--color-text-secondary); }
+
+            .label.wait { opacity: 0; transition: opacity $easeInQuint 0.5s; }
+            &.longWait {
+                .label.wait { opacity: 1; }
+            }
+        }
+
+        .membershipIntro { padding-top: 8px; flex: 1 1 0; display: flex; flex-direction: column; }
         .membershipIntro {
-            > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
+            > .content { flex: 1 1 0; }
+            > .content {
+                > .label { max-width: 640px; text-align: center; margin: 0px auto 32px; }
+            }
 
             .switchWrapper {
                 position: relative; display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin: 0px auto 32px;
@@ -1122,4 +1137,9 @@
             }
         }
     }
+}
+
+.pageMainSettingsMembership { display: flex; flex-direction: column; }
+.pageMainSettingsMembership {
+    .settingsPageContainer { flex: 1 1 0; }
 }

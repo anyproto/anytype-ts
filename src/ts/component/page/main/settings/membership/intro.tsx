@@ -16,7 +16,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	const rebind = () => {
 		unbind();
-		$(window).on('resize.membershipIntro sidebarResize.membershipIntro', () => resize());
+		resize();
+		$(window).on('resize.membershipIntro sidebarResize.membershipIntro', resize);
 	};
 
 	const unbind = () => {
@@ -182,39 +183,41 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	return (
 		<div ref={nodeRef} className="membershipIntro">
-			<Label text={translate('popupSettingsMembershipText')} />
+			<div className="content">
+				<Label text={translate('popupSettingsMembershipText')} />
 
-			<div className={[ 'switchWrapper', isAnnual ? 'isAnnual' : 'isMonthly' ].join(' ')} onClick={onSwitch}>
-				<Label className={!isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
-				<Label className={isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
-			</div>
+				<div className={[ 'switchWrapper', isAnnual ? 'isAnnual' : 'isMonthly' ].join(' ')} onClick={onSwitch}>
+					<Label className={!isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
+					<Label className={isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
+				</div>
 
-			<div className="tiers">
-				<Swiper
-					slidesPerView={'auto'}
-					mousewheel={{ forceToAxis: true }}
-					pagination={products.length > 3 ? { clickable: true } : false}
-					modules={[ Pagination, Mousewheel ]}
-				>
-					{products.map((item) => (
-						<SwiperSlide key={item.id}>
-							<TierItem item={item} />
-						</SwiperSlide>
-					))}
-				</Swiper>
-			</div>
+				<div className="tiers">
+					<Swiper
+						slidesPerView={'auto'}
+						mousewheel={{ forceToAxis: true }}
+						pagination={products.length > 3 ? { clickable: true } : false}
+						modules={[ Pagination, Mousewheel ]}
+					>
+						{products.map((item) => (
+							<SwiperSlide key={item.id}>
+								<TierItem item={item} />
+							</SwiperSlide>
+						))}
+					</Swiper>
+				</div>
 
-			<div className="actions">
-				{actions.map((item, idx) => (
-					<div key={idx} className="action">
-						<div className="top">
-							<Icon className={item.id} />
-							<Title text={item.title} />
-							<Label text={item.text} />
+				<div className="actions">
+					{actions.map((item, idx) => (
+						<div key={idx} className="action">
+							<div className="top">
+								<Icon className={item.id} />
+								<Title text={item.title} />
+								<Label text={item.text} />
+							</div>
+							<Button text={item.button} color="blank" onClick={() => onAction(item)} />
 						</div>
-						<Button text={item.button} color="blank" onClick={() => onAction(item)} />
-					</div>
-				))}
+					))}
+				</div>
 			</div>
 
 			<div className="links">

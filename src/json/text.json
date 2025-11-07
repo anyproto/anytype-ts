@@ -1065,6 +1065,9 @@
 	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
 	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
 
+	"popupSettingsMembershipLoaderText1": "Please wait, loading...",
+	"popupSettingsMembershipLoaderText2": "Looks like there are connection issues, you can continue using Anytype meanwhile and come back in a bit",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 	"popupSettingsOnboardingStoragePath": "Vault Data Location",

@@ -5,18 +5,28 @@ import { I, S, translate, U } from 'Lib';
 
 import Intro from './intro';
 import Purchased from './purchased';
+import Loader from './loader';
 
 const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { data } = S.Membership;
-	const product = data?.getTopProduct();
-	const showIntro = !product || product.product.isIntro;
+
+	let content: any = null;
+
+	if (!data) {
+		content = <Loader />;
+	} else {
+		const product = data.getTopProduct();
+		const showIntro = !product || product.product.isIntro;
+
+		content = showIntro ? <Intro {...props} /> : <Purchased {...props} />;
+	};
 
 	return (
 		<>
 			<Title text={translate('popupSettingsMembershipTitle')} />
 
-			{showIntro ? <Intro {...props} /> : <Purchased {...props} />}
+			{content}
 		</>
 	);
 
