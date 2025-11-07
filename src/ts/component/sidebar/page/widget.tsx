@@ -70,9 +70,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		if (!U.Common.compareJSON(newSectionIds, sectionIds)) {
 			setSectionIds(newSectionIds);
-		} else {
-			ids.forEach(initToggle);
 		};
+		
+		ids.forEach(initToggle);
 	};
 
 	const initScroll = () => {
