@@ -196,6 +196,8 @@ html.platformLinux {
 }
 
 html.platformWindows, html.platformLinux {
+	#sidebarLeftButton { left: 16px; display: block; }
+
 	::-webkit-scrollbar { width: 6px; height: 6px; }
 	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
@@ -232,11 +234,24 @@ html.platformWindows.withMenuBar {
 			}
 		}
 	}
-	#sidebarLeftButton { left: 16px; top: 40px; display: block; }
 
 	.popups {
 		.popup.popupShortcut {
 			.innerWrap { top: 28px; height: calc(100% - 28px); }
+		}
+	}
+
+	#sidebarLeftButton { top: 40px; }
+}
+
+html.platformLinux {
+	.sidebar {
+		.subPageWrapper:not(.withSidebarLeft) {
+			.sidebarPage {
+				> .head {
+					.side.left	{ padding-left: 36px; }
+				}
+			}
 		}
 	}
 }
