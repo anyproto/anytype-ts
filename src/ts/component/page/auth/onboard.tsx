@@ -59,11 +59,6 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onAuth = () => {
-		const routeParam = { 
-			replace: true, 
-			onRouteChange: () => sidebar.init(false),
-		};
-
 		S.Common.showRelativeDatesSet(true);
 
 		Storage.set('isNewUser', true);
@@ -75,11 +70,8 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		U.Data.onInfo(account.info);
 		U.Data.onAuthOnce(true);
 
-		S.Common.spaceSet('');
-
 		U.Subscription.createGlobal(() => {
-			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
-			S.Common.redirectSet('');
+			U.Router.switchSpace(S.Common.space, '', false, {}, false);
 		});
 	};
 
