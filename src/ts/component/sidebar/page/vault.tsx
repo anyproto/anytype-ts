@@ -314,6 +314,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			icons.push('pin');
 		};
 
+		if (item.notificationMode != I.NotificationMode.All) {
+			cn.push('isMuted');
+		};
+
 		if (!item.lastMessage) {
 			cn.push('noMessages');
 		};
