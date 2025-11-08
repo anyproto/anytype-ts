@@ -117,18 +117,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		Action.removeWidget(block.id, object);
 	};
 
-	const onClick = (e: MouseEvent): void => {
-		if (e.button) {
-			return;
-		};
-
-		const rootId = getRootId();
-		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-
-		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
-		U.Object.openEvent(e, object);
-	};
-
 	const onCreateClick = (e: MouseEvent): void => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -424,6 +412,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
+		const keys = J.Relation.sidebar;
+
 		let limit = getLimit();
 		let ignoreArchived = true;
 
@@ -449,12 +439,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 			case J.Constant.widgetId.recentEdit: {
 				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
+				keys.push('lastModifiedDate');
 				break;
 			};
 
 			case J.Constant.widgetId.recentOpen: {
 				filters.push({ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
 				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+				keys.push('lastOpenedDate');
 				break;
 			};
 
@@ -471,7 +463,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				filters,
 				sorts,
 				limit,
-				keys: J.Relation.sidebar,
+				keys,
 				ignoreArchived,
 				noDeps: true,
 			}, callBack);
@@ -657,7 +649,19 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onClick(e);
+		if (e.button) {
+			return;
+		};
+
+		if (isSystemTarget) {
+			onSetPreview();
+		} else {
+			const rootId = getRootId();
+			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+
+			S.Common.routeParam = { ref: 'widget', viewId: view?.id };
+			U.Object.openEvent(e, object);
+		};
 	};
 
 	if (containsChat) {
