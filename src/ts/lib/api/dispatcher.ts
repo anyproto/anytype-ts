@@ -1111,17 +1111,19 @@ class Dispatcher {
 			};
 		};
 
-		if (updateParents) {
-			S.Block.updateStructureParents(rootId);
-		};
+		window.setTimeout(() => {
+			if (updateParents) {
+				S.Block.updateStructureParents(rootId);
+			};
 
-		if (updateNumbers) {
-			S.Block.updateNumbers(rootId); 
-		};
+			if (updateNumbers) {
+				S.Block.updateNumbers(rootId); 
+			};
 
-		if (updateMarkup) {
-			S.Block.updateMarkup(rootId);
-		};
+			if (updateMarkup) {
+				S.Block.updateMarkup(rootId);
+			};
+		});
 	};
 
 	getUniqueSubIds (subIds: string[]) {
