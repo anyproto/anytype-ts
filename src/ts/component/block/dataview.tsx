@@ -583,26 +583,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getTarget () {
-		const { rootId } = this.props;
-		const targeId = this.getObjectId();
-
-		return S.Detail.get(rootId, targeId, [ 'setOf' ]);
+		return S.Detail.get(this.props.rootId, this.getObjectId(), [ 'setOf' ]);
 	};
 
 	getTypeId (): string {
 		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const view = this.getView();
-
-		return Dataview.getTypeId(rootId, block.id, objectId, view.id);
+		return Dataview.getTypeId(rootId, block.id, this.getObjectId(), this.getView()?.id);
 	};
 
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const view = this.getView();
-
-		return Dataview.getDetails(rootId, block.id, objectId, view.id, groupId);
+		return Dataview.getDetails(rootId, block.id, this.getObjectId(), this.getView()?.id, groupId);
 	};
 
 	getMenuParam (e: any, dir: number): any {
