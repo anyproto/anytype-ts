@@ -132,7 +132,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			>
 				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
 					{icon}	
-					<ObjectName object={item} />
+					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
 					{isChat ? <ChatCounter chatId={item.id} /> : ''}
