@@ -512,6 +512,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
 						allowtransparency: true,
+						referrerpolicy: 'strict-origin-when-cross-origin',
 					});
 
 					iframe.off('load').on('load', onLoad);

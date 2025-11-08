@@ -17,7 +17,8 @@
 		"https://localhost:*",
 		"https://*.sndcdn.com",
 		"https://scontent.cdninstagram.com",
-		"https://*.any.coop"
+		"https://*.any.coop",
+		"https://*.ytimg.com"
 	],
 
 	"media-src": [ 
