@@ -143,7 +143,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 									height={Number(height) || 0}
 									deferredMeasurmentCache={this.cache}
 									rowCount={length}
-									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
+									rowHeight={param => {
+										console.log(param, this.cache.rowHeight(param), cardHeight);
+
+										return Math.max(this.cache.rowHeight(param), cardHeight)
+									}}
 									rowRenderer={rowRenderer}
 									overscanRowCount={length}
 									scrollToAlignment="start"
@@ -195,7 +199,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return;
 		};
 
-		S.Common.setTimeout('galleryReset', 500, () => {
+		S.Common.setTimeout('galleryReset', 50, () => {
 			this.setColumnCount();
 			this.cache.clearAll();
 
