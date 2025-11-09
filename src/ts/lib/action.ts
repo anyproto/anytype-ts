@@ -14,11 +14,8 @@ class Action {
 			return;
 		};
 
-		const { widgets } = S.Block;
-		const { space } = S.Common;
-
 		// Prevent closing of system objects
-		if ([ widgets ].includes(rootId)) {
+		if (rootId == S.Block.widgets) {
 			return;
 		};
 
@@ -45,7 +42,7 @@ class Action {
 		U.Subscription.destroyList([ rootId ]);
 
 		if (withCommand) {
-			C.ObjectClose(rootId, space);
+			C.ObjectClose(rootId, S.Common.space);
 		};
 	};
 

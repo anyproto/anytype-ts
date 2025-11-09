@@ -175,21 +175,9 @@ class BlockStore {
 	 * @param {any[]} list - The structure list.
 	 */
 	setStructure (rootId: string, list: any[]) {
-		const map: Map<string, I.BlockStructure> = new Map();
-
-		list = U.Common.objectCopy(list || []);
-		list.map((item: any) => {
-			map.set(item.id, {
-				parentId: '',
-				childrenIds: item.childrenIds || [],
-			});
+		list.forEach((item: any) => {
+			this.updateStructure(rootId, item.id, item.childrenIds || []);
 		});
-
-		this.treeMap.set(rootId, map);
-
-		for (const [ id, item ] of map.entries()) {
-			map.set(id, new M.BlockStructure(item));
-		};
 	};
 
 	/**
@@ -200,9 +188,11 @@ class BlockStore {
 	 */
 	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const element = this.getMapElement(rootId, blockId);
+
 		if (!element) {
 			const map = this.getMap(rootId);
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
+			this.treeMap.set(rootId, map);
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};

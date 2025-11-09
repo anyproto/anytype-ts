@@ -1234,8 +1234,6 @@ class Dispatcher {
 		if (!alreadyExists) {
 			const root = objectView.blocks.find(it => it.id == rootId);
 
-			S.Block.clear(contextId);
-
 			if (root && root.fields.analyticsContext) {
 				analytics.setContext(root.fields.analyticsContext);
 			} else {

@@ -16,6 +16,7 @@ interface Props extends I.PageComponent {
 interface State {
 	isLoading: boolean;
 	isDeleted: boolean;
+	id: string;
 };
 
 const THROTTLE = 50;
@@ -38,16 +39,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	container = null;
 	containerRect = null;
 	dir = 0;
-	id = '';
 
 	state = {
 		isLoading: false,
 		isDeleted: false,
+		id: '',
 	};
 
 	timeoutMove = 0;
 	timeoutScreen = 0;
-	timeoutLoading = 0;
 	timeoutScroll = 0;
 
 	frameMove = 0;
@@ -188,7 +188,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		raf.cancel(this.frameScroll);
 
 		window.clearInterval(this.timeoutScreen);
-		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
 	};
 
@@ -222,15 +221,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	open () {
 		const { rootId, onOpen, isPopup } = this.props;
 
-		this.setState({ isDeleted: false });
-
-		window.clearTimeout(this.timeoutLoading);
-		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
-
-		this.id = rootId;
+		this.setState({ isDeleted: false, id: rootId });
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
-			window.clearTimeout(this.timeoutLoading);
 			this.setLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -263,9 +256,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	close () {
-		Action.pageClose(this.props.isPopup, this.id, true);
-		Storage.setFocus(this.id, focus.state);
-		this.id = '';
+		Action.pageClose(this.props.isPopup, this.state.id, true);
+		Storage.setFocus(this.state.id, focus.state);
+		this.setState({ id: '' });
 	};
 
 	onCommand (cmd: string, arg: any) {
