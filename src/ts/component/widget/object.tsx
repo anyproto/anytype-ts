@@ -11,13 +11,17 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const { parent, onContext } = props;
 	const { space } = S.Common;
-	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
-	const canDrag = parent.id == J.Constant.widgetId.type;
+
+	const getId = (id: string) => {
+		return [ space, id ].join('-');
+	};
+
+	const canDrag = parent.id == getId(J.Constant.widgetId.type);
 
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
@@ -48,13 +52,14 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const getSubId = () => {
 		let subId = '';
+
 		switch (parent.id) {
-			case J.Constant.widgetId.unread: {
+			case getId(J.Constant.widgetId.unread): {
 				subId = J.Constant.subId.chat;
 				break;
 			};
 
-			case J.Constant.widgetId.type: {
+			case getId(J.Constant.widgetId.type): {
 				subId = J.Constant.subId.type;
 				break;
 			};
@@ -67,7 +72,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		let items = [];
 
 		switch (parent.id) {
-			case J.Constant.widgetId.unread: {
+			case getId(J.Constant.widgetId.unread): {
 				items = S.Record.getRecords(J.Constant.subId.chat).filter(it => {
 					const counters = S.Chat.getChatCounters(space, it.id);
 					return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
@@ -75,7 +80,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				break;
 			};
 
-			case J.Constant.widgetId.type: {
+			case getId(J.Constant.widgetId.type): {
 				items = S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
 					return (
 						!U.Object.isInSystemLayouts(it.recommendedLayout) && 

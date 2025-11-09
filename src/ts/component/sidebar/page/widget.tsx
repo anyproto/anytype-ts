@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { arrayMove } from '@dnd-kit/sortable';
 import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
@@ -413,12 +412,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		switch (sectionId) {
 			case I.WidgetSection.Unread: {
-				blocks.push(new M.Block({ id: J.Constant.widgetId.unread, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				blocks.push(new M.Block({ id: [ space, J.Constant.widgetId.unread ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
 				break;
 			};
 
 			case I.WidgetSection.Type: {
-				blocks.push(new M.Block({ id: J.Constant.widgetId.type, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				blocks.push(new M.Block({ id: [ space, J.Constant.widgetId.type ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
 				break;
 			};
 
@@ -559,7 +558,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			content = (
 				<Widget 
 					{...props}
-					key={`widget-${block.id}`}
 					block={block}
 					isPreview={true}
 					setPreview={setPreviewId}

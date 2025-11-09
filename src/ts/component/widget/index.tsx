@@ -10,7 +10,6 @@ import WidgetSpace from './space';
 import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
-import { init } from 'emoji-mart';
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -29,10 +28,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const timeout = useRef(0);
-	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, className, canEdit, canRemove, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
+	const isAnimating = useRef(false);
+	const timeoutOpen = useRef(0);
+	const timeout1 = useRef(0);
+	const timeout2 = useRef(0);
 
 	const getChild = (): I.Block => {
 		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -357,8 +358,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			innerWrap.css({ opacity: 1 });
 		});
 
-		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => { 
+		window.clearTimeout(timeoutOpen.current);
+		timeoutOpen.current = window.setTimeout(() => { 
 			const isOpen = getIsOpen();
 
 			if (isOpen) {
@@ -384,8 +385,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			wrapper.css({ height: minHeight });
 		});
 
-		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => {
+		window.clearTimeout(timeoutOpen.current);
+		timeoutOpen.current = window.setTimeout(() => {
 			const isOpen = getIsOpen();
 
 			if (!isOpen) {
@@ -854,37 +855,48 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	};
 
-	useEffect(() => {
-		rebind();
-
+	const initAnimation = (): void => {
 		const node = $(nodeRef.current);
 
-		let t1 = 0;
-		let t2 = 0;
-
 		if (!disableAnimation) {
+			isAnimating.current = true;
+
 			node.addClass('anim');
-			t1 = window.setTimeout(() => {
+			timeout1.current = window.setTimeout(() => {
 				node.addClass('show');
-				t2 = window.setTimeout(() => node.removeClass('anim'), 300);
+				timeout2.current = window.setTimeout(() => {
+					node.removeClass('anim');
+					isAnimating.current = false;
+				}, J.Constant.delay.widgetItem);
 			}, J.Constant.delay.widgetItem);
 		} else {
 			node.addClass('show');
 		};
+	};
+
+	useEffect(() => {
+		rebind();
+		initAnimation();
 
 		return () => {
 			unbind();
 
-			window.clearTimeout(t1);
-			window.clearTimeout(t2);
-			window.clearTimeout(timeout.current);
+			window.clearTimeout(timeout1.current);
+			window.clearTimeout(timeout2.current);
+			window.clearTimeout(timeoutOpen.current);
 		};
 	}, []);
 
 	useEffect(() => {
+		initAnimation();
+	}, [ space ]);
+
+	useEffect(() => {
 		initToggle();
 
-		$(nodeRef.current).addClass('show');
+		if (!isAnimating.current) {
+			$(nodeRef.current).addClass('show');
+		};
 	});
 
 	return (
