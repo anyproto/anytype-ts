@@ -199,7 +199,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return;
 		};
 
-		S.Common.setTimeout('galleryReset', 50, () => {
+		S.Common.setTimeout('galleryReset', 30, () => {
 			this.setColumnCount();
 			this.cache.clearAll();
 
