@@ -51,7 +51,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case 'create': {
-				keyboard.pageCreate({}, analytics.route.widget, []);
+				keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate ]);
 				break;
 			};
 		};
