@@ -1098,6 +1098,16 @@ class Dispatcher {
 					break;
 				};
 
+				case 'MembershipUpdate': {
+					S.Membership.dataSet(mapped.data);
+					break;
+				};
+
+				case 'MembershipProductsUpdate': {
+					S.Membership.productsSet(mapped.products);
+					break;
+				};
+
 			};
 
 			if (needLog) {
