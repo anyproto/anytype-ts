@@ -269,7 +269,10 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					iconSize={96}
 					object={{ ...spaceview, spaceId: S.Common.space }}
 					canEdit={canWrite}
-					menuParam={{ horizontal: I.MenuDirection.Center }}
+					menuParam={{ 
+						horizontal: I.MenuDirection.Center,
+						classNameWrap: 'fromBlock',
+					}}
 					onSelect={onSelect}
 					onUpload={onUpload}
 				/>
