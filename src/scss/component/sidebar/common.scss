@@ -75,6 +75,10 @@
 		.resize-h { right: -12px; }
 	}
 
+	.subPageWrapper.isClosed {
+		.resize-h { display: none; }
+	}
+
 	&.right { right: 0px; flex-shrink: 0; padding: 4px 0px; }
 	&.right {
 		.resize-h { left: -12px; }
