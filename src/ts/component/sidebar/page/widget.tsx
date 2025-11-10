@@ -38,6 +38,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const getSections = () => {
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const ret = [
+			{ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') },
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
 		];
 
@@ -411,13 +412,17 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		let blocks = [];
 
 		switch (sectionId) {
-			case I.WidgetSection.Unread: {
-				blocks.push(new M.Block({ id: [ space, J.Constant.widgetId.unread ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
-				break;
-			};
+			case I.WidgetSection.Unread:
+			case I.WidgetSection.Type:
+			case I.WidgetSection.RecentEdit: {
 
-			case I.WidgetSection.Type: {
-				blocks.push(new M.Block({ id: [ space, J.Constant.widgetId.type ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				const idMap = {
+					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
+					[I.WidgetSection.Type]: J.Constant.widgetId.type,
+					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
+				};
+
+				blocks.push(new M.Block({ id: [ space, idMap[sectionId] ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
 				break;
 			};
 

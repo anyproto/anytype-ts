@@ -355,9 +355,12 @@ class UtilSubscription {
 	 * @returns {any} The mapped sort object.
 	 */
 	sortMapper (it: any) {
-		if (undefined === it.includeTime) {
-			const relation = S.Record.getRelationByKey(it.relationKey);
-			if (relation && Relation.isDate(relation.format)) {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+
+		if (relation) {
+			it.format = relation.format;
+
+			if ((undefined === it.includeTime) && Relation.isDate(relation.format)) {
 				it.includeTime = relation.includeTime;
 			};
 		};
