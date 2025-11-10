@@ -7,7 +7,6 @@ class ChatStore {
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
-	public chatMap: Map<string, any> = new Map();
 	private badgeValue = '';
 
 	constructor () {

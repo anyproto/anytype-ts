@@ -421,12 +421,12 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
 				],
-				keys: [ 'id', 'name' ],
+				keys: J.Relation.chatGlobal,
 				noDeps: true,
 				crossSpace: true,
 				onSubscribe: message => {
-					S.Chat.chatMap.clear();
-					(message.records || []).forEach(it => S.Chat.chatMap.set(it.id, it));
+					S.Record.chatMap.clear();
+					(message.records || []).forEach(it => S.Record.chatMap.set(it.id, it));
 				},
 			},
 		];

@@ -179,7 +179,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
 
 				const first = list[0];
-				const chat = S.Chat.chatMap.get(first.chatId);
+				const chat = S.Record.chatMap.get(first.chatId);
 
 				it.chat = chat;
 				it.lastMessageDate = first.createdAt;
