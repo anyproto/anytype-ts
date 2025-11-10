@@ -604,7 +604,7 @@ export const Mapper = {
 		MembershipData: (obj: Model.MembershipV2.Data): I.MembershipData => {
 			const invoice = obj.getNextinvoice();
 
-			return {
+			const ret: any = {
 				products: (obj.getProductsList() || []).map(it => {
 					const info = it.getPurchaseinfo();
 
@@ -619,11 +619,16 @@ export const Mapper = {
 						status: it.getProductstatus().getStatus() as number,
 					};
 				}),
-				nextInvoice: {
+			};
+
+			if (invoice) {
+				ret.nextInvoice = {
 					date: invoice.getDate(),
 					total: invoice.hasTotal() ? Mapper.From.MembershipAmount(invoice.getTotal()) : null,
-				},
+				};
 			};
+
+			return ret;
 		},
 
 		Process: (obj: Events.Model.Process) => {

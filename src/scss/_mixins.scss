@@ -12,7 +12,6 @@ $transitionChatMessageTime: 0.3s;
 }
 @mixin text-very-small { 
 	font-size: var(--font-size-very-small); line-height: var(--line-height-very-small); letter-spacing: var(--letter-spacing-very-small); 
-	color: var(--color-control-active); 
 }
 @mixin text-small { 
 	font-size: var(--font-size-small); line-height: var(--line-height-small); letter-spacing: var(--letter-spacing-small); 

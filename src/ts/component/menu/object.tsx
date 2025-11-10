@@ -445,7 +445,7 @@ class MenuObject extends React.Component<I.Menu> {
 			if (home && (object.id == home.id)) {
 				Action.openSettings('spaceIndexEmpty', route);
 			} else {
-				keyboard.onBack();
+				keyboard.onBack(false);
 			};
 		};
 

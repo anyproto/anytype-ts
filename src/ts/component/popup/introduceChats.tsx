@@ -69,9 +69,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	const onStepChange = (idx: number, callBack?: () => void) => {
 		setStep(idx);
-		if (callBack) {
-			callBack();
-		};
+		callBack?.();
 
 		analytics.event('OnboardingPopup', { id: 'Chats', step: idx + 1 });
 	};

@@ -400,6 +400,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const targetIds = [];
 			const textBlocksCnt = blocks.filter(it => it.isText()).length;
 
+
+
 			blocks.forEach((block: I.Block, index: number) => {
 				if (block.isText()) {
 					const text = block.getText();
@@ -442,6 +444,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			const res = U.Common.stringInsert(current, newText, from, to);
 
+			newMarks = Mark.adjust(newMarks, 0, current.length);
+
 			marks.current = Mark.adjust(marks.current, from, newText.length);
 			marks.current = marks.current.concat(newMarks);
 
@@ -454,7 +458,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		if (json && json.blocks && json.blocks.length) {
 			parseBlocks(json.blocks.map(it => new M.Block(it)));
-			newMarks = Mark.adjust(newMarks, 0, current.length);
 			parseText();
 		} else 
 		if (html) {
@@ -789,7 +792,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onSend = () => {
-		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')){
+		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')) {
 			return;
 		};
 

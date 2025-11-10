@@ -799,7 +799,7 @@ class UtilMenu {
 			};
 		};
 
-		if (space.chatId) {
+		if (!space.isPersonal) {
 			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
 				options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
 			} else {
@@ -1230,10 +1230,7 @@ class UtilMenu {
 
 				const url = U.Common.matchUrl(text);
 				const cb = (object: any, time: number) => {
-					if (callBack) {
-						callBack(object);
-					};
-
+					callBack?.(object);
 					analytics.createObject(object.type, object.layout, route, time);
 				};
 
@@ -1359,9 +1356,7 @@ class UtilMenu {
 					],
 					onClick: (item: any) => {
 						const cb = (object: any, time: number) => {
-							if (callBack) {
-								callBack(object);
-							};
+							callBack?.(object);
 
 							analytics.event('SelectObjectType', { objectType: object.type });
 							analytics.createObject(object.type, object.layout, route, time);

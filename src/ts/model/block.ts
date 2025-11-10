@@ -338,6 +338,10 @@ class Block implements I.Block {
 	isEmbedBilibili (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Bilibili);
 	};
+
+	isEmbedExcalidraw (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Excalidraw);
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;

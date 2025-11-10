@@ -36,7 +36,7 @@ const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		});
 
 		return () => {
-			Action.pageClose(id, false);
+			Action.pageClose(isPopup, id, false);
 		};
 
 	}, []);

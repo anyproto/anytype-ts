@@ -16,6 +16,7 @@ interface Props extends I.PageComponent {
 interface State {
 	isLoading: boolean;
 	isDeleted: boolean;
+	id: string;
 };
 
 const THROTTLE = 50;
@@ -24,7 +25,6 @@ const BUTTON_OFFSET = 10;
 const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
 	
 	node: any = null;
-	id = '';
 	hoverId = '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	winScrollTop = 0;
@@ -43,11 +43,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	state = {
 		isLoading: false,
 		isDeleted: false,
+		id: '',
 	};
 
 	timeoutMove = 0;
 	timeoutScreen = 0;
-	timeoutLoading = 0;
 	timeoutScroll = 0;
 
 	frameMove = 0;
@@ -153,12 +153,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.initNodes();
 	};
 
-	componentDidUpdate () {
+	componentDidUpdate (prevProps: Props) {
 		const { rootId, isPopup } = this.props;
 		const node = $(this.node);
 		const resizable = node.find('.resizable');
 		
-		this.open();
+		if (prevProps.rootId != rootId) {
+			this.close();
+			this.open();
+		};
+		
 		this.checkDeleted();
 		this.initNodes();
 		this.rebind();
@@ -184,7 +188,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		raf.cancel(this.frameScroll);
 
 		window.clearInterval(this.timeoutScreen);
-		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
 	};
 
@@ -218,19 +221,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	open () {
 		const { rootId, onOpen, isPopup } = this.props;
 
-		if (this.id == rootId) {
-			return;
-		};
+		this.setState({ isDeleted: false, id: rootId });
 
-		this.close();
-		this.id = rootId;
-		this.setState({ isDeleted: false });
-
-		window.clearTimeout(this.timeoutLoading);
-		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
-
-		C.ObjectOpen(this.id, '', U.Router.getRouteSpaceId(), (message: any) => {
-			window.clearTimeout(this.timeoutLoading);
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			this.setLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -263,18 +256,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	close () {
-		if (!this.id) {
-			return;
-		};
-
-		const { isPopup, matchPopup } = this.props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != this.id));
-
-		if (close) {
-			Action.pageClose(this.id, true);
-		};
-
-		Storage.setFocus(this.id, focus.state);
+		Action.pageClose(this.props.isPopup, this.state.id, true);
+		Storage.setFocus(this.state.id, focus.state);
+		this.setState({ id: '' });
 	};
 
 	onCommand (cmd: string, arg: any) {
@@ -2159,9 +2143,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.focus(message.blockId, 0, 0, true);
 			};
 
-			if (callBack) {
-				callBack(message.blockId);
-			};
+			callBack?.(message.blockId);
 
 			const event: any = {
 				middleTime: message.middleTime,
@@ -2437,9 +2419,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			cover.css({ top: hh });
 		};
 
-		if (callBack) {
-			callBack();
-		};
+		callBack?.();
 	};
 
 	focus (id: string, from: number, to: number, scroll: boolean) {

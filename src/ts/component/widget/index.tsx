@@ -10,7 +10,6 @@ import WidgetSpace from './space';
 import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
-import { init } from 'emoji-mart';
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -29,10 +28,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const timeout = useRef(0);
-	const spaceview = U.Space.getSpaceview();
 	const { block, isPreview, className, canEdit, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
+	const isAnimating = useRef(false);
+	const timeoutOpen = useRef(0);
+	const timeout1 = useRef(0);
+	const timeout2 = useRef(0);
 
 	const getChild = (): I.Block => {
 		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -115,18 +116,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const onRemove = (e: MouseEvent): void => {
 		e.stopPropagation();
 		Action.removeWidget(block.id, object);
-	};
-
-	const onClick = (e: MouseEvent): void => {
-		if (e.button) {
-			return;
-		};
-
-		const rootId = getRootId();
-		const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-
-		S.Common.routeParam = { ref: 'widget', viewId: view?.id };
-		U.Object.openEvent(e, object);
 	};
 
 	const onCreateClick = (e: MouseEvent): void => {
@@ -369,8 +358,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			innerWrap.css({ opacity: 1 });
 		});
 
-		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => { 
+		window.clearTimeout(timeoutOpen.current);
+		timeoutOpen.current = window.setTimeout(() => { 
 			const isOpen = getIsOpen();
 
 			if (isOpen) {
@@ -396,8 +385,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			wrapper.css({ height: minHeight });
 		});
 
-		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => {
+		window.clearTimeout(timeoutOpen.current);
+		timeoutOpen.current = window.setTimeout(() => {
 			const isOpen = getIsOpen();
 
 			if (!isOpen) {
@@ -424,6 +413,8 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
+		const keys = J.Relation.sidebar;
+
 		let limit = getLimit();
 		let ignoreArchived = true;
 
@@ -449,12 +440,14 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 			case J.Constant.widgetId.recentEdit: {
 				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
+				keys.push('lastModifiedDate');
 				break;
 			};
 
 			case J.Constant.widgetId.recentOpen: {
 				filters.push({ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
 				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+				keys.push('lastOpenedDate');
 				break;
 			};
 
@@ -471,14 +464,10 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				filters,
 				sorts,
 				limit,
-				keys: J.Relation.sidebar,
+				keys,
 				ignoreArchived,
 				noDeps: true,
-			}, () => {
-				if (callBack) {
-					callBack();
-				};
-			});
+			}, callBack);
 		});
 	};
 
@@ -595,10 +584,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			const viewType = view?.type || I.ViewType.List;
 			const isAllowedView = [ I.ViewType.Board, I.ViewType.List, I.ViewType.Grid, I.ViewType.Gallery ].includes(viewType);
 
-			if (view && view.isBoard()) {
-				total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
-			} else {
-				total = S.Record.getMeta(subId, '').total;
+			if (isAllowedView) {
+				if (view && view.isBoard()) {
+					total = Dataview.getGroups(rootId, J.Constant.blockId.dataview, viewId, false).length;
+				} else {
+					total = S.Record.getMeta(subId, '').total;
+				};
 			};
 
 			show = !isPreview && (total > limit) && isAllowedView;
@@ -655,33 +646,27 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		S.Menu.open('objectContext', menuParam);
 	};
 
-	const onExpandHandler = (e: MouseEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (layout != I.WidgetLayout.Link) {
-			onSetPreview();
-		} else {
-			onClick(e);
-		};
-
-		analytics.event('ClickWidgetTitle');
-	};
-
 	const onClickHandler = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onClick(e);
+		if (e.button) {
+			return;
+		};
+
+		if (isSystemTarget) {
+			onSetPreview();
+		} else {
+			const rootId = getRootId();
+			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+
+			S.Common.routeParam = { ref: 'widget', viewId: view?.id };
+			U.Object.openEvent(e, object);
+		};
 	};
 
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, spaceview.chatId);
-	} else
 	if (containsChat) {
 		cn.push('containsChat');
-		counters = S.Chat.getSpaceCounters(space);
 	};
 
 	const buttons = [];
@@ -775,7 +760,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							<ChatCounter {...counters} mode={spaceview.notificationMode} />
+							{isChat || containsChat ? <ChatCounter chatId={isChat ? object.id : undefined} /> : ''}
 
 							{buttons.length ? (
 								<div className="buttons">
@@ -870,37 +855,48 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	};
 
-	useEffect(() => {
-		rebind();
-
+	const initAnimation = (): void => {
 		const node = $(nodeRef.current);
 
-		let t1 = 0;
-		let t2 = 0;
-
 		if (!disableAnimation) {
+			isAnimating.current = true;
+
 			node.addClass('anim');
-			t1 = window.setTimeout(() => {
+			timeout1.current = window.setTimeout(() => {
 				node.addClass('show');
-				t2 = window.setTimeout(() => node.removeClass('anim'), 300);
+				timeout2.current = window.setTimeout(() => {
+					node.removeClass('anim');
+					isAnimating.current = false;
+				}, J.Constant.delay.widgetItem);
 			}, J.Constant.delay.widgetItem);
 		} else {
 			node.addClass('show');
 		};
+	};
+
+	useEffect(() => {
+		rebind();
+		initAnimation();
 
 		return () => {
 			unbind();
 
-			window.clearTimeout(t1);
-			window.clearTimeout(t2);
-			window.clearTimeout(timeout.current);
+			window.clearTimeout(timeout1.current);
+			window.clearTimeout(timeout2.current);
+			window.clearTimeout(timeoutOpen.current);
 		};
 	}, []);
 
 	useEffect(() => {
+		initAnimation();
+	}, [ space ]);
+
+	useEffect(() => {
 		initToggle();
 
-		$(nodeRef.current).addClass('show');
+		if (!isAnimating.current) {
+			$(nodeRef.current).addClass('show');
+		};
 	});
 
 	return (

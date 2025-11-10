@@ -120,9 +120,7 @@ class Dataview {
 
 				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 			} else {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			};
 		});
 	};
@@ -542,6 +540,7 @@ class Dataview {
 			I.FilterCondition.AllIn,
 		];
 		const details: any = {};
+		const hasGroupValue = view.groupRelationKey && [ I.ViewType.Board, I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type);
 
 		if (relations.length) {
 			relations.forEach(it => {
@@ -553,7 +552,7 @@ class Dataview {
 			return details;
 		};
 
-		if (view.groupRelationKey) {
+		if (hasGroupValue) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
 				if (group) {
@@ -572,7 +571,7 @@ class Dataview {
 		};
 
 		for (const filter of view.filters) {
-			if (!conditions.includes(filter.condition) || (filter.relationKey == view.groupRelationKey)) {
+			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
 

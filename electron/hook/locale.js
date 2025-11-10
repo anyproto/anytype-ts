@@ -23,7 +23,7 @@ const run = async () => {
 
 		if (content) {
 			fs.writeFileSync(fp, content);
-			console.log('[Locale]: Saved lang file:', fp);
+			console.log(`[Locale]: Saved lang file: ${fp}`);
 		};
 	};
 };

@@ -320,7 +320,7 @@ updateForces = () => {
 		edgeMap.set(d.id, tmpEdgeMap.get(d.id) || []);
 	});
 
-	simulation.alpha(0.5).restart();
+	simulation.alpha(1).restart();
 	nodeMap = getNodeMap();
 
 	redraw();

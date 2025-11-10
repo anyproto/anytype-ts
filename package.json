@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.50.33-alpha",
+	"version": "0.50.43-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -82,7 +82,7 @@
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"node-loader": "^2.1.0",
-		"npm": "^11.6.2",
+		"npm": "^11.6.0",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
 		"sass": "1.77.6",
@@ -91,7 +91,7 @@
 		"style-loader": "^1.2.1",
 		"typescript": "^5.3.3",
 		"typescript-eslint": "^8.46.2",
-		"wait-for-localhost-cli": "^4.0.0"
+		"wait-for-localhost-cli": "^3.0.0"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",

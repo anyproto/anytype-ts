@@ -1,5 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
+import { observer } from 'mobx-react';
+import { S, keyboard } from 'Lib';
 
 interface Props {
 	data?: any;
@@ -7,11 +9,13 @@ interface Props {
 	onChange?: (elements: any[], appState: any, files: any) => void;
 }
 
-const MediaExcalidraw = forwardRef<{}, Props>(({
+const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 	data = {},
 	readonly = false,
 	onChange = () => {},
 }, ref) => {
+
+	const theme = S.Common.getThemeClass();
 
 	data.elements = data.elements || [];
 	data.appState = data.appState || {};
@@ -23,7 +27,16 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 				isCollaborating={false}
 				initialData={data}
 				viewModeEnabled={readonly}
-				onChange={onChange}
+				onChange={(elements, appState, files) => {
+					if ([ 'selection', 'text' ].includes(appState.activeTool.type)) {
+						keyboard.setFocus(true);
+					} else {
+						keyboard.setFocus(false);
+					};
+
+					onChange(elements as any[], appState, files);
+				}}
+				theme={(theme ? 'dark' : 'light')}
 				UIOptions={{
 					tools: {
 						image: false,
@@ -33,6 +46,6 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 		</div>
 	);
 
-});
+}));
 
 export default MediaExcalidraw;

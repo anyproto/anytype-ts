@@ -12,6 +12,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ relations, setRelations ] = useState([]);
+	const [ dummy, setDummy ] = useState(0);
 	const match = keyboard.getMatch(isPopup);
 	const [ relationKey, setRelationKey ] = useState(match.params.relationKey);
 	const rootId = keyboard.getRootId(isPopup);
@@ -34,13 +35,8 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 		setIsLoading(true);
-
 		idRef.current = rootId;
 
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
@@ -58,23 +54,14 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			sidebar.rightPanelSetState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-
 			loadCategory();
+			setDummy(dummy + 1);
 		});
 	};
 
 	const close = () => {
-		const id = idRef.current;
-		if (!id) {
-			return;
-		};
-
-		const { isPopup, matchPopup } = props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != id));
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const loadCategory = () => {
@@ -294,7 +281,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	useEffect(() => {
 		open();
 		reload();	
-	});
+	}, [ rootId, relationKey ]);
 
 	return content;
 

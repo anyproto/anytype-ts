@@ -35,15 +35,11 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
 	const isBookmark = U.Object.isBookmarkLayout(object.layout);
+	const spaceview = U.Space.getSpaceview();
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
 		transition,
-	};
-
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, id);
 	};
 
 	if (canDrag) {
@@ -140,7 +136,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (hasMore) {
 		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
-	
+
 	let inner = (
 		<div className="inner" onMouseDown={onClick}>
 			{icon}
@@ -153,12 +149,11 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			{isChat ? (
 				<div className="chatInfo">
 					{time}
-					<ChatCounter {...counters} />
+					<ChatCounter chatId={id} />
 				</div>
 			) : ''}
 
 			<div className="buttons">
-
 				{more}
 			</div>
 		</div>

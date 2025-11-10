@@ -1221,10 +1221,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
 					C.BlockTableRowSetHeader(rootId, id, v, () => {
 						this.framesUpdate();
-
-						if (callBack) {
-							callBack();
-						};
+						callBack?.();
 					}); 
 				}
 			},

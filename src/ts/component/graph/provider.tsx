@@ -580,9 +580,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			nodes.current.push(object);
 			send('onAddNode', { target: object, sourceId });
 
-			if (callBack) {
-				callBack(object);
-			};
+			callBack?.(object);
 		});
 	};
 

@@ -55,7 +55,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const updateData = () => {
 		if (isSystemTarget) {
-			getData(getSubId());
+			getData(subId);
+			checkShowAllButton(subId);
 		};
 	};
 
@@ -269,9 +270,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const resize = () => {
-		const nodes = loadTree();
 		const node = $(nodeRef.current);
-		const length = nodes.length;
 		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
 		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
 
@@ -292,6 +291,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const nodes = loadTree();
 	const length = nodes.length;
+	const subId = getSubId();
 
 	let content = null;
 	let head = null;
@@ -423,16 +423,10 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	useEffect(() => {
 		links.current = object.links;
-
-		if (isSystemTarget) {
-			getData(getSubId());
-		};
+		updateData();
 	}, []);
 
 	useEffect(() => {
-		checkShowAllButton(getSubId());
-		resize();
-
 		// Reload the tree if the links have changed
 		if (!U.Common.compareJSON(links.current, object.links)) {
 			clear();
@@ -441,11 +435,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 		listRef.current?.recomputeRowHeights(0);
 		listRef.current?.scrollToPosition(top.current);
+	});
+
+	useEffect(() => {
+		checkShowAllButton(getSubId());
+		resize();
 
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
-
-		checkShowAllButton(getSubId());
-	});
+	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,

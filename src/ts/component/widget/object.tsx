@@ -11,13 +11,17 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const { parent, onContext } = props;
 	const { space } = S.Common;
-	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
-	const canDrag = parent.id == J.Constant.widgetId.type;
+
+	const getId = (id: string) => {
+		return [ space, id ].join('-');
+	};
+
+	const canDrag = parent.id == getId(J.Constant.widgetId.type);
 
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
@@ -33,17 +37,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		
 		const items = getItems();
 		const oldIndex = items.findIndex(it => it.id == active.id);
-
-		let newIndex = items.findIndex(it => it.id == over.id);
+		const newIndex = items.findIndex(it => it.id == over.id);
+		
 		if ((oldIndex < 0) || (newIndex < 0)) {
 			return;
 		};
 
-		if (oldIndex < newIndex) {
-			newIndex--;
-		};
-
-		const newItems = arrayMove(items, oldIndex, newIndex);
+		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.id != J.Constant.widgetId.bin);
 
 		U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
 			C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
@@ -52,13 +52,14 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const getSubId = () => {
 		let subId = '';
+
 		switch (parent.id) {
-			case J.Constant.widgetId.unread: {
+			case getId(J.Constant.widgetId.unread): {
 				subId = J.Constant.subId.chat;
 				break;
 			};
 
-			case J.Constant.widgetId.type: {
+			case getId(J.Constant.widgetId.type): {
 				subId = J.Constant.subId.type;
 				break;
 			};
@@ -71,7 +72,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		let items = [];
 
 		switch (parent.id) {
-			case J.Constant.widgetId.unread: {
+			case getId(J.Constant.widgetId.unread): {
 				items = S.Record.getRecords(J.Constant.subId.chat).filter(it => {
 					const counters = S.Chat.getChatCounters(space, it.id);
 					return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
@@ -79,7 +80,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				break;
 			};
 
-			case J.Constant.widgetId.type: {
+			case getId(J.Constant.widgetId.type): {
 				items = S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
 					return (
 						!U.Object.isInSystemLayouts(it.recommendedLayout) && 
@@ -136,15 +137,10 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			>
 				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
 					{icon}	
-					<ObjectName object={item} />
+					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
-					{isChat ? (
-						<ChatCounter 
-							{...S.Chat.getChatCounters(space, item.id)} 
-							mode={U.Object.getChatNotificationMode(spaceview, item.id)} 
-						/>
-					) : ''}
+					{isChat ? <ChatCounter chatId={item.id} /> : ''}
 					<div className="buttons">
 						{!isBin ? (
 							<Icon 

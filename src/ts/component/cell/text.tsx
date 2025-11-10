@@ -321,8 +321,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			};
 
 			if (U.Object.isChatLayout(record.layout)) {
-				const counters = S.Chat.getChatCounters(S.Common.space, record.id);
-				counter = <ChatCounter {...counters} mode={I.NotificationMode.All} />;
+				counter = <ChatCounter chatId={record.id} />
 			};
 		};
 	};

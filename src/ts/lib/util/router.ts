@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Action, keyboard } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -120,22 +120,7 @@ class UtilRouter {
 
 		const change = () => {
 			this.history.push(route); 
-
-			if (onRouteChange) {
-				onRouteChange();
-			};
-		};
-
-		const fadeOut = () => {
-			if (onFadeOut) {
-				onFadeOut();
-			};
-		};
-
-		const fadeIn = () => {
-			if (onFadeIn) {
-				onFadeIn();
-			};
+			onRouteChange?.();
 		};
 
 		const onTimeout = () => {
@@ -147,9 +132,9 @@ class UtilRouter {
 			};
 
 			if (!animate) {
-				fadeOut();
+				onFadeOut?.();
 				change();
-				fadeIn();
+				onFadeIn?.();
 				return;
 			};
 
@@ -162,12 +147,12 @@ class UtilRouter {
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
-				fadeOut();
+				onFadeOut?.();
 				change();
 			}, t);
 
 			window.setTimeout(() => {
-				fadeIn();
+				onFadeIn?.();
 				fade.removeClass('show');
 				window.setTimeout(() => fade.hide(), t);
 			}, wait + t);

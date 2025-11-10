@@ -211,10 +211,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		backlinkRef.current = item;
 
 		analytics.event('SearchBacklink', { route, type });
-
-		if (callBack) {
-			callBack();
-		};
+		callBack?.();
 	};
 
 	const onClearSearch = () => {
@@ -311,10 +308,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (clear) {
 				setIsLoading(false);
-				if (callBack) callBack();
-			} else {
-				if (callBack) callBack();
 			};
+			
+			callBack?.();
 		});
 	};
 

@@ -4,10 +4,9 @@
 .chatCounter {
 	.icon { 
 		min-width: 18px; width: auto !important; height: 18px !important; border-radius: 9px !important; background-color: var(--color-system-accent-100); 
-		display: flex; align-items: center; justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-small; 
-		padding: 0px 4px;
+		display: flex; align-items: center; justify-content: center; color: var(--color-text-inversion); text-align: center; @include text-very-small; 
+		padding: 0px 4px; font-weight: 500;
 	}
 	.icon.mention { background-image: url('~img/icon/widget/mention.svg'); background-size: 12px; }
-
 	.icon.isMuted { background-color: var(--color-text-tertiary); }
 }
