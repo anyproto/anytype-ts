@@ -321,15 +321,13 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('isMuted');
 		};
 
-		if (!item.lastMessage) {
-			cn.push('noMessages');
-		};
-
 		if (item.lastMessage) {
 			time = <Label className="time" text={U.Date.timeAgo(item.lastMessageDate)} />;
 			last = <Label text={item.lastMessage} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
 			counter = <ChatCounter spaceId={item.targetSpaceId} />;
+		} else {
+			cn.push('noMessages');
 		};
 
 		let info = null;

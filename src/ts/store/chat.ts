@@ -507,7 +507,7 @@ class ChatStore {
 		const author = dependencies.get(participantId);
 
 		if (author) {
-			ret.push(`<b>${U.Object.name(author)}</b>:`);
+			ret.push(U.Object.name(author));
 		};
 
 		if (text) {

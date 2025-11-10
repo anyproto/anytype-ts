@@ -34,7 +34,7 @@
 
 		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; }
 		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
-		.label b { font-weight: 500; }
+		.label.chatName { font-weight: 500; }
 
 		&.isMuted {
 			.name { color: var(--color-text-secondary); }
