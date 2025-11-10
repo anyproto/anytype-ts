@@ -2,11 +2,14 @@
 
 .widget.widgetSpace { background: none; }
 .widget.widgetSpace {
+	.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+	.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
+
 	.buttons { padding: 8px; background: var(--color-shape-highlight-light); border-radius: 12px; }
 	.buttons {
 		.item { 
 			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 2px 8px; border-radius: 6px;
-			line-height: 24px; position: relative;
+			line-height: 24px; position: relative; font-weight: 600;;
 		}
 		.item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
@@ -40,11 +43,9 @@
 			.iconObject { flex-shrink: 0; }
 			.info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
 
-			.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
 			.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; }
 
 			.label { @include text-small; color: var(--color-text-secondary); }
-			.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
 		}
 	}
 }

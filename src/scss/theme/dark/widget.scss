@@ -31,12 +31,7 @@
 }
 
 .widget.widgetSpace {
-	.spaceData,
-	.spaceStream {
-		.head {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/select/space.svg'); }
-		}
-	}
+	.icon.arrow { background-image: url('#{$themePath}/arrow/select/space.svg'); }
 }
 
 .widget.widgetTree {

@@ -92,7 +92,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					iconSize={80}
 					object={{ ...spaceview, spaceId: S.Common.space }}
 				/>
-				<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
+				<div className="nameWrap" onClick={onMore}>
+					<ObjectName object={spaceview} />
+					<Icon className="arrow" />
+				</div>
 
 				{memberLabel}
 			</div>
