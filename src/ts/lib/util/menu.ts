@@ -799,12 +799,10 @@ class UtilMenu {
 			};
 		};
 
-		if (space.chatId) {
-			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-				options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
-			} else {
-				options.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
-			};
+		if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+			options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+		} else {
+			options.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 		};
 
 		if (options.length && !param.noDivider) {

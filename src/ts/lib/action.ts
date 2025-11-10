@@ -31,8 +31,8 @@ class Action {
 				this.dbClearBlock(rootId, block.id);
 			} else 
 			if (block.isChat()) {
-				this.dbClearBlock(object.chatId, block.id);
 				this.dbClearChat(object.chatId, block.id);
+				this.dbClearChat(object.id, block.id);
 			};
 		};
 

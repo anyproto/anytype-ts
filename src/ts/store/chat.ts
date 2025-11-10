@@ -383,11 +383,6 @@ class ChatStore {
 			return ret;
 		};
 
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		if (!spaceview?.chatId) {
-			return ret;
-		};
-
 		for (const [ chatId, state ] of spaceMap) {
 			if (chatId) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
