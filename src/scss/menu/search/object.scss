@@ -30,6 +30,8 @@
 		}
 	}
 
+	.menu.menuSearchObject.widthValue { width: var(--menu-width-value); }
+
 	.menu.menuSearchObject.big { width: var(--menu-width-set); }
 	.menu.menuSearchObject.big {
 		.content { height: 360px; }

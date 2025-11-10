@@ -375,7 +375,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const onRecentlyOpen = () => {
 		S.Menu.open('searchObject', {
-			className: 'single fixed',
+			className: 'single fixed widthValue',
 			classNameWrap: 'fromSidebar',
 			element: '#button-recently-open',
 			data: {
