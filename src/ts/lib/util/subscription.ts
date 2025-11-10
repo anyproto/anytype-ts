@@ -616,7 +616,6 @@ class UtilSubscription {
 		};
 
 		for (const item of list) {
-			console.log('ITEM', item);
 			this.subscribe(item, message => cb(item, message));
 		};
 	};

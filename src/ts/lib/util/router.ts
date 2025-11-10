@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Action, keyboard } from 'Lib';
 
 interface RouteParam {
 	page: string; 

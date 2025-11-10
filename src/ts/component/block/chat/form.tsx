@@ -458,7 +458,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		if (json && json.blocks && json.blocks.length) {
 			parseBlocks(json.blocks.map(it => new M.Block(it)));
-			newMarks = Mark.adjust(newMarks, 0, current.length);
 			parseText();
 		} else 
 		if (html) {
