@@ -180,6 +180,11 @@ export default {
 		'syncError',
 	],
 
+	chatGlobal: [
+		'id',
+		'name',
+	],
+
 	pageCover: 'pageCover',
 
 	key: {

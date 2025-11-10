@@ -208,9 +208,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 					<IconObject size={48} object={item} />
 					<div className="text">
 						<div className="nameWrapper">
-							<ObjectName object={item} />
-							{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
-							{globalName ? <Icon className="badge" /> : ''}
+							<ObjectName object={item} withPronoun={item.id == participant.id} withBadge={true} />
 						</div>
 						{globalName ? <Label className="anyId" text={globalName} /> : ''}
 					</div>

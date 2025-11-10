@@ -297,6 +297,7 @@ export interface SearchSubscribeParam {
 	ignoreArchived: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
+	crossSpace: boolean;
 };
 
 export interface SearchIdsParam extends SearchSubscribeParam {

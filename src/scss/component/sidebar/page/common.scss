@@ -53,6 +53,7 @@
 
 		.side { flex-direction: row; display: flex; align-items: center; position: relative; z-index: 1; }
 		.side.left { justify-content: center; flex-shrink: 0; }
+		.side.left:empty, .side.right:empty { display: none; }
 
 		.side.center { flex-grow: 1; justify-content: flex-start; gap: 0px 6px; overflow: hidden; }
 		.side.center {

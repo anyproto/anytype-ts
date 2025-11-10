@@ -16,6 +16,7 @@ class RecordStore {
 	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 	public spaceMap: Map<string, string> = new Map();
+	public chatMap: Map<string, any> = new Map();
 
 	constructor() {
 		makeObservable(this, {
@@ -534,12 +535,12 @@ class RecordStore {
 	 * @returns {any[]} The sorted list of types.
 	 */
 	sortTypes (list: any[]) {
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 
 		return (list || []).sort((c1, c2) => {
 			return (
 				U.Data.sortByOrderId(c1, c2) ||
-				U.Data.sortByTypeKey(c1, c2, space.isChat) ||
+				U.Data.sortByTypeKey(c1, c2, spaceview.isChat) ||
 				U.Data.sortByName(c1, c2)
 			);
 		});

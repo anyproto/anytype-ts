@@ -132,6 +132,7 @@ export default {
 		fileManagerNotSynced: 	'fileManagerNotSynced',
 		chatPreview:	 		'chatPreview',
 		chat:			 		'chat',
+		chatGlobal:	 			'chatGlobal',
 	},
 
 	typeKey: {

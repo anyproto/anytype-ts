@@ -76,7 +76,7 @@
 		}
 	}
 
-	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
+	&.anim { transition: opacity 0.2s ease-in-out; }
 	&.show { opacity: 1; }
 
 	#button-show-all { padding: 0px 8px; }

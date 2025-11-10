@@ -7,7 +7,6 @@
 		.iconObject { margin: 0px 0px 12px 0px; }
 		.nameWrapper { display: flex; justify-content: center; align-items: center; gap: 0px 6px; }
 		.name { @include text-header2; }
-		.icon.badge { width: 18px; height: 18px; background-size: 18px; background-image: url('~img/icon/membership/badge.svg'); }
 
 		.label { color: var(--color-text-secondary); @include text-overflow-nw; @include text-small; max-width: 100%; margin: 4px 0px 0px 0px; }
 		.label:empty { display: none; }

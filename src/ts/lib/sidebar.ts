@@ -261,8 +261,7 @@ class Sidebar {
 			this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true });
 			this.rightPanelSetState(isPopup, { page: '' });
 			this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
-
-			$(window).trigger('sidebarResize');
+			this.resizePage(isPopup, null, null, false);
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
@@ -292,8 +291,8 @@ class Sidebar {
 			window.clearTimeout(this.timeoutAnim);
 			this.timeoutAnim = window.setTimeout(() => {
 				this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
-
-				$(window).trigger('sidebarResize');
+				this.resizePage(isPopup, null, null, false);
+				
 				raf(() => $(window).trigger('resize'));
 			}, animate ? J.Constant.delay.sidebar : 0);
 		});

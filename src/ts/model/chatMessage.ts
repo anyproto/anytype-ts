@@ -50,6 +50,7 @@ class ChatMessageAttachment implements I.ChatMessageAttachment {
 class ChatMessage implements I.ChatMessage {
 
 	id = '';
+	chatId = '';
 	orderId = '';
 	creator = '';
 	createdAt = 0;
@@ -70,6 +71,7 @@ class ChatMessage implements I.ChatMessage {
 	constructor (props: I.ChatMessage) {
 
 		this.id = String(props.id || '');
+		this.chatId = String(props.chatId || '');
 		this.orderId = String(props.orderId || '');
 		this.creator = String(props.creator || '');
 		this.createdAt = Number(props.createdAt) || 0;

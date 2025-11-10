@@ -1257,11 +1257,7 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
-	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (callBack) {
-			callBack(message);
-		};
-	});
+	dispatcher.request(HistoryShowVersion.name, request, callBack);
 };
 
 export const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1463,13 +1459,9 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
 				Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
 			};
-
-			S.Common.addOpenObject(spaceId, objectId);
 		};
 
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1485,9 +1477,7 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1737,6 +1727,22 @@ export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I
 	request.setCollectionid(collectionId);
 
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
+};
+
+export const ObjectCrossSpaceSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
+	const request = new Rpc.Object.CrossSpaceSearchSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setKeysList(U.Common.arrayUnique(keys));
+	request.setSourceList(sources);
+	request.setNodepsubscription(noDeps);
+	request.setCollectionid(collectionId);
+
+	dispatcher.request(ObjectCrossSpaceSearchSubscribe.name, request, callBack);
 };
 
 export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {

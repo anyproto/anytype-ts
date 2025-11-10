@@ -382,11 +382,6 @@ class ChatStore {
 			return ret;
 		};
 
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		if (!spaceview?.chatId) {
-			return ret;
-		};
-
 		for (const [ chatId, state ] of spaceMap) {
 			if (chatId) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
@@ -506,7 +501,7 @@ class ChatStore {
 		const author = dependencies.get(participantId);
 
 		if (author) {
-			ret.push(`<b>${U.Object.name(author)}</b>:`);
+			ret.push(`${U.Object.name(author)}:`);
 		};
 
 		if (text) {

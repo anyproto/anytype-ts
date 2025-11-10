@@ -132,10 +132,8 @@ class UtilSubscription {
 	 * @param {(message: any) => void} [callBack] - Optional callback for subscription results.
 	 */
 	subscribe (param: Partial<I.SearchSubscribeParam>, callBack?: (message: any) => void) {
-		const { space } = S.Common;
-
 		param = Object.assign({
-			spaceId: space,
+			spaceId: S.Common.space,
 			subId: '',
 			idField: 'id',
 			filters: [],
@@ -150,11 +148,12 @@ class UtilSubscription {
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
-			collectionId: ''
+			collectionId: '',
+			crossSpace: false,
 		}, param);
 
 		const { config } = S.Common;
-		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
+		const { spaceId, subId, idField, sources, offset, limit, afterId, beforeId, noDeps, collectionId, crossSpace } = param;
 		const keys = this.mapKeys(param);
 		const debug = config.flagsMw.subscribe;
 		const filters = this.getBaseFilters(param);
@@ -165,20 +164,16 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribe: subId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'subId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'subId is empty' } });
 			return;
 		};
 
-		if (!spaceId) {
+		if (!crossSpace && !spaceId) {
 			if (debug) {
 				console.error('[U.Subscription].subscribe: spaceId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'spaceId is empty' } });
 			return;
 		};
 
@@ -190,22 +185,26 @@ class UtilSubscription {
 					console.error('[U.Subscription].subscribe: already subscribed', subId, hash);
 				};
 
-				if (callBack) {
-					callBack({ error: { code: 1, description: 'Already subscribed' } });
-				};
+				callBack?.({ error: { code: 1, description: 'Already subscribed' } });
 				return;
 			};
 
 			this.map.set(subId, hash);
 		};
 
-		C.ObjectSearchSubscribe(spaceId, subId, filters.map(this.filterMapper), sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
-			this.onSubscribe(subId, idField, keys, message);
+		if (crossSpace) {
+			C.ObjectCrossSpaceSearchSubscribe(subId, filters.map(this.filterMapper), sorts.map(this.sortMapper), keys, sources, noDeps, collectionId, (message: any) => {
+				this.onSubscribe(subId, idField, keys, message);
 
-			if (callBack) {
-				callBack(message);
-			};
-		});
+				callBack?.(message);
+			});
+		} else {
+			C.ObjectSearchSubscribe(spaceId, subId, filters.map(this.filterMapper), sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
+				this.onSubscribe(subId, idField, keys, message);
+
+				callBack?.(message);
+			});
+		};
 	};
 
 	/**
@@ -237,9 +236,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribeIds: subId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'subId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'subId is empty' } });
 			return;
 		};
 
@@ -248,9 +245,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribeIds: spaceId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'spaceId is empty' } });
 			return;
 		};
 
@@ -259,9 +254,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].subscribeIds: ids list is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'ids list is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'ids list is empty' } });
 			return;
 		};
 
@@ -273,9 +266,7 @@ class UtilSubscription {
 					console.error('[U.Subscription].searchSubscribe: already subscribed', subId, hash);
 				};
 
-				if (callBack) {
-					callBack({ error: { code: 1, description: 'Already subscribed' } });
-				};
+				callBack?.({ error: { code: 1, description: 'Already subscribed' } });
 				return;
 			};
 
@@ -293,9 +284,7 @@ class UtilSubscription {
 
 			this.onSubscribe(subId, 'id', keys, message, updateDetails);
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -334,9 +323,7 @@ class UtilSubscription {
 				console.error('[U.Subscription].search: spaceId is empty');
 			};
 
-			if (callBack) {
-				callBack({ error: { code: 1, description: 'spaceId is empty' } });
-			};
+			callBack?.({ error: { code: 1, description: 'spaceId is empty' } });
 			return;
 		};
 
@@ -345,9 +332,7 @@ class UtilSubscription {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -397,9 +382,7 @@ class UtilSubscription {
 		const { account } = S.Auth;
 	
 		if (!account) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -428,8 +411,22 @@ class UtilSubscription {
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreHidden: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.space).forEach(it => S.Record.spaceMap.set(it.targetSpaceId, it.id));
+				onSubscribe: message => {
+					S.Record.spaceMap.clear();
+					(message.records || []).forEach(it => S.Record.spaceMap.set(it.targetSpaceId, it.id));
+				},
+			},
+			{
+				subId: J.Constant.subId.chatGlobal,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
+				],
+				keys: J.Relation.chatGlobal,
+				noDeps: true,
+				crossSpace: true,
+				onSubscribe: message => {
+					S.Record.chatMap.clear();
+					(message.records || []).forEach(it => S.Record.chatMap.set(it.id, it));
 				},
 			},
 		];
@@ -447,9 +444,7 @@ class UtilSubscription {
 		const skipIds = U.Space.getSystemDashboardIds();
 
 		if (!account) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -459,9 +454,7 @@ class UtilSubscription {
 		};
 
 		if (!spaces.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -542,8 +535,8 @@ class UtilSubscription {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.type).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+				onSubscribe: message => {
+					(message.records || []).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				},
 			},
 			{
@@ -568,8 +561,8 @@ class UtilSubscription {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
-				onSubscribe: () => {
-					S.Record.getRecords(J.Constant.subId.relation).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+				onSubscribe: message => {
+					(message.records || []).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
@@ -637,9 +630,7 @@ class UtilSubscription {
 		ids = ids || [];
 
 		if (!ids.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -652,9 +643,7 @@ class UtilSubscription {
 				};
 			});
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 

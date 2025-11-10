@@ -955,7 +955,7 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
-					const message = new M.ChatMessage({ ...mapped.message, dependencies });
+					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
 					const notification = S.Chat.getMessageSimpleText(spaceId, message);
 
 					let showNotification = false;
@@ -1105,17 +1105,19 @@ class Dispatcher {
 			};
 		};
 
-		if (updateParents) {
-			S.Block.updateStructureParents(rootId);
-		};
+		window.setTimeout(() => {
+			if (updateParents) {
+				S.Block.updateStructureParents(rootId);
+			};
 
-		if (updateNumbers) {
-			S.Block.updateNumbers(rootId); 
-		};
+			if (updateNumbers) {
+				S.Block.updateNumbers(rootId); 
+			};
 
-		if (updateMarkup) {
-			S.Block.updateMarkup(rootId);
-		};
+			if (updateMarkup) {
+				S.Block.updateMarkup(rootId);
+			};
+		});
 	};
 
 	getUniqueSubIds (subIds: string[]) {
@@ -1218,14 +1220,13 @@ class Dispatcher {
 
 	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
-		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-		const checkIfExists = false;//;needCheck && keyboard.isPopup() && S.Common.isOpenObject(S.Common.space, rootId);
+		const alreadyExists = needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(false));
 
 		// Block structure already exists
-		if (!checkIfExists) {
-			S.Block.clear(contextId);
+		if (!alreadyExists) {
+			const root = objectView.blocks.find(it => it.id == rootId);
 
 			if (root && root.fields.analyticsContext) {
 				analytics.setContext(root.fields.analyticsContext);
@@ -1344,9 +1345,7 @@ class Dispatcher {
 				const middleTime = Math.ceil(t1 - t0);
 				message.middleTime = middleTime;
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				t2 = performance.now();
 				

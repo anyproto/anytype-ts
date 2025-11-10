@@ -171,17 +171,19 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const getItems = () => {
 		let items = U.Menu.getVaultItems().map(it => {
-			if (!it.chatId) {
-				return it;
-			};
-
 			it.lastMessage = '';
 			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
 
 			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId)).slice(0);
 			if (list.length) {
 				list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
-				it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, list[0]);
+
+				const first = list[0];
+				const chat = S.Record.chatMap.get(first.chatId);
+
+				it.chat = chat;
+				it.lastMessageDate = first.createdAt;
+				it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, first);
 			};
 
 			return it;
@@ -201,11 +203,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
 		U.Menu.spaceContext(item, {
-			onOpen: () => {
-				unsetActive();
-				unsetHover();
-			},
-			onClose: () => setActive(spaceview),
+			element: `#${getId()} #item-${item.id}`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
@@ -301,6 +299,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		const icons = [];
 		const iconSize = vaultMessages ? 48 : 32;
 
+		let chatName = null;
 		let time = null;
 		let last = null;
 		let counter = null;
@@ -318,14 +317,71 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			icons.push('pin');
 		};
 
-		if (!item.lastMessage) {
+		if (item.notificationMode != I.NotificationMode.All) {
+			cn.push('isMuted');
+		};
+
+		if (item.lastMessage) {
+			time = <Label className="time" text={U.Date.timeAgo(item.lastMessageDate)} />;
+			last = <Label text={item.lastMessage} />;
+			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
+			counter = <ChatCounter spaceId={item.targetSpaceId} />;
+		} else {
 			cn.push('noMessages');
 		};
 
-		if (item.chatId) {
-			time = <div className="time">{U.Date.timeAgo(item.lastMessageDate)}</div>;
-			last = <Label text={item.lastMessage} />;
-			counter = <ChatCounter {...item.counters} mode={item.notificationMode} />;
+		let info = null;
+		if (vaultMessages) {
+			let message = null;
+
+			if (item.isChat) {
+				message = (
+					<div className="messageWrapper">
+						{last}
+						<div className="icons">
+							{icons.map(icon => <Icon key={icon} className={icon} />)}
+						</div>
+						{counter}
+					</div>
+				);
+			} else {
+				message = (
+					<>
+						<div className="chatWrapper">
+							{chatName}
+							<div className="icons">
+								{icons.map(icon => <Icon key={icon} className={icon} />)}
+							</div>
+							{counter}
+						</div>
+						<div className="messageWrapper">
+							{last}
+						</div>
+					</>
+				);
+			};
+
+			info = (
+				<>
+					<div className="nameWrapper">
+						<ObjectName object={item} />
+						{time}
+					</div>
+					{message}
+				</>
+			);
+		} else {
+			info = (
+				<div className="nameWrapper">
+					<ObjectName object={item} />
+
+					<div className="icons">
+						{icons.map(icon => <Icon key={icon} className={icon} />)}
+					</div>
+
+					{counter}
+				</div>
+			);
 		};
 
 		return (
@@ -345,33 +401,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
 				</div>
 				<div className="info">
-					{vaultMessages ? (
-						<>
-							<div className="nameWrapper">
-								<ObjectName object={item} />
-								{time}
-							</div>
-							<div className="messageWrapper">
-								{last}
-
-								<div className="icons">
-									{icons.map(icon => <Icon key={icon} className={icon} />)}
-								</div>
-
-								{counter}
-							</div>
-						</>
-					) : (
-						<div className="nameWrapper">
-							<ObjectName object={item} />
-
-							<div className="icons">
-								{icons.map(icon => <Icon key={icon} className={icon} />)}
-							</div>
-
-							{counter}
-						</div>
-					)}
+					{info}
 				</div>
 			</div>
 		);

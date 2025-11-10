@@ -135,6 +135,9 @@ class DetailStore {
 		if (U.Object.isSpaceViewLayout(item.details.layout)) {
 			S.Record.spaceMap.set(item.details.targetSpaceId, item.details.id);
 		};
+		if (U.Object.isChatLayout(item.details.layout)) {
+			S.Record.chatMap.set(item.details.id, this.get(rootId, item.details.id, J.Relation.chatGlobal, true));
+		};
 
 		if (createMap) {
 			this.map.set(rootId, map);

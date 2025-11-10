@@ -9,6 +9,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
 	const headerRef = useRef(null);
@@ -53,10 +54,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 		idRef.current = rootId;
 		setIsDeleted(false);
@@ -77,30 +74,21 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			controlsRef.current?.forceUpdate();
-
 			sidebar.rightPanelSetState(isPopup, { rootId });
+			setDummy(dummy + 1);
+
 			resize();
 
 			if (U.Object.isTypeLayout(object.layout)) {
 				window.setTimeout(() => Onboarding.start('typeResetLayout', isPopup), 50);
-
 				analytics.event('ScreenType', { objectType: object.id });
 			};
 		});
 	};
 
 	const close = () => {
-		const id = idRef.current;
-		if (!id) {
-			return;
-		};
-
-		const { isPopup, matchPopup } = props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != id));
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const onScroll = () => {
@@ -264,7 +252,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		open();
 		resize();
 		checkDeleted();
-	});
+	}, [ rootId ]);
 
 	useImperativeHandle(ref, () => ({
 		resize,

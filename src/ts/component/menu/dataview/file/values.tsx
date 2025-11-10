@@ -63,10 +63,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					save(value);
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				},
 			}
 		});

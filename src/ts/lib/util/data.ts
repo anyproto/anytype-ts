@@ -291,10 +291,7 @@ class UtilData {
 					};
 
 					S.Common.redirectSet('');
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		});
@@ -334,6 +331,7 @@ class UtilData {
 				}, false);
 
 				if (message) {
+					message.chatId = chatId;
 					message.dependencies = dependencies;
 
 					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
@@ -390,9 +388,7 @@ class UtilData {
 					dispatcher.startStream();
 				};
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -405,20 +401,14 @@ class UtilData {
 		const { token } = S.Auth;
 
 		if (!token) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
 		C.WalletCloseSession(token, () => {
 			S.Auth.tokenSet('');
-
 			dispatcher.stopStream();
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -714,10 +704,12 @@ class UtilData {
 		const i1 = keys.indexOf(c1.uniqueKey);
 		const i2 = keys.indexOf(c2.uniqueKey);
 
-		if ((i1 < 0) && (i2 < 0)) return 1;
-		if ((i1 >= 0) && (i2 >= 0)) return -1;
+		if ((i1 < 0) && (i2 >= 0)) return 1;
+		if ((i1 >= 0) && (i2 < 0)) return -1;
+		if (i1 > i2) return 1;
+		if (i1 < i2) return -1;
 
-		return i1 - i2;
+		return 0;
 	};
 
 	/**
@@ -741,12 +733,8 @@ class UtilData {
 			filters,
 			limit,
 		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
+			if (!message.error.code) {
+				callBack?.(message);
 			};
 		});
 	};
@@ -882,9 +870,7 @@ class UtilData {
 		C.MembershipV2GetStatus(noCache, (message: any) => {
 			S.Membership.dataSet(message.data);
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -903,9 +889,7 @@ class UtilData {
 				S.Membership.productsSet(message.products);
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -1152,9 +1136,7 @@ class UtilData {
 			const ids = S.Record.checkHiddenObjects(Relation.getArrayValue(message.conflictRelationIds)
 				.map(id => S.Record.getRelationById(id))).map(it => it.id).filter(it => it);
 
-			if (callBack) {
-				callBack(ids);
-			};
+			callBack?.(ids);
 		});
 	};
 
@@ -1212,6 +1194,10 @@ class UtilData {
 
 	checkIsDeleted (id: string): boolean {
 		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
+	};
+
+	checkPageClose (isPopup: boolean, rootId: string): boolean {
+		return !isPopup || (isPopup && (keyboard.getRootId(false) != rootId));
 	};
 
 };

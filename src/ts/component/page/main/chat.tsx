@@ -17,14 +17,9 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		close();
 
 		idRef.current = rootId;
-
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
@@ -42,17 +37,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const close = () => {
-		const id = idRef.current;
-		if (!id) {
-			return;
-		};
-
-		const { isPopup, matchPopup } = props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != id));
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const isReadonly = () => {
@@ -82,7 +68,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	useEffect(() => {
 		open();
-	});
+	}, [ rootId ]);
 
 	let content = null;
 

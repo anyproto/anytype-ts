@@ -8,6 +8,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const { isPopup } = props;
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, J.Relation.relation);
@@ -34,10 +35,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	}, [ rootId ]);
 	
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
 		idRef.current = rootId;
 		setIsLoading(true);
 		setIsDeleted(false);
@@ -59,23 +56,15 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 			headRef.current?.forceUpdate();
 			listRef.current?.getData(1);
 			sidebar.rightPanelSetState(isPopup, { rootId });
+			setDummy(dummy + 1);
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });
 		});
 	};
 
 	const close = () => {
-		const id = idRef.current;
-		if (!id) {
-			return;
-		};
-
-		const { isPopup, matchPopup } = props;
-		const close = !isPopup || (isPopup && (matchPopup?.params?.id != id));
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const getOptionsData = (): { output: any[], more: number, label: string, canAdd: boolean } => {

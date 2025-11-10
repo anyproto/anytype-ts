@@ -9,16 +9,13 @@ class Action {
 	 * @param {string} rootId - The root object ID.
 	 * @param {boolean} withCommand - Whether to send a close command to the backend.
 	 */
-	pageClose (rootId: string, withCommand: boolean) {
-		if (keyboard.isCloseDisabled) {
+	pageClose (isPopup: boolean, rootId: string, withCommand: boolean) {
+		if (!rootId || keyboard.isCloseDisabled || !U.Data.checkPageClose(isPopup, rootId)) {
 			return;
 		};
 
-		const { widgets } = S.Block;
-		const { space } = S.Common;
-
 		// Prevent closing of system objects
-		if ([ widgets ].includes(rootId)) {
+		if (rootId == S.Block.widgets) {
 			return;
 		};
 
@@ -34,8 +31,8 @@ class Action {
 				this.dbClearBlock(rootId, block.id);
 			} else 
 			if (block.isChat()) {
-				this.dbClearBlock(object.chatId, block.id);
 				this.dbClearChat(object.chatId, block.id);
+				this.dbClearChat(object.id, block.id);
 			};
 		};
 
@@ -43,10 +40,9 @@ class Action {
 		S.Block.clear(rootId);
 
 		U.Subscription.destroyList([ rootId ]);
-		S.Common.removeOpenObject(space, rootId);
 
 		if (withCommand) {
-			C.ObjectClose(rootId, space);
+			C.ObjectClose(rootId, S.Common.space);
 		};
 	};
 
@@ -121,10 +117,7 @@ class Action {
 	 */
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
 		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
+			callBack?.(message);
 			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
 		});
 	};
@@ -147,10 +140,7 @@ class Action {
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
 
-			if (callBack) {
-				callBack(message);
-			};
-
+			callBack?.(message);
 			analytics.event('DuplicateBlock', { count: message.blockIds.length });
 		});
 	};
@@ -170,9 +160,7 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			const count = blockIds.length;
 
@@ -378,9 +366,7 @@ class Action {
 				return;
 			};
 			
-			if (callBack) {
-				callBack(filePaths);
-			};
+			callBack?.(filePaths);
 		});
 	};
 
@@ -401,9 +387,7 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(filePaths);
-			};
+			callBack?.(filePaths);
 		});
 	};
 
@@ -450,17 +434,10 @@ class Action {
 						};
 					};
 
-					if (callBack) {
-						callBack();
-					};
-
+					callBack?.();
 					analytics.event('RemoveCompletely', { count, route });
 				},
-				onCancel: () => {
-					if (callBack) {
-						callBack();
-					};
-				},
+				onCancel: callBack,
 			},
 		});
 	};
@@ -529,9 +506,7 @@ class Action {
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
 			analytics.event('MoveToBin', { route, count: ids.length });
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -545,14 +520,9 @@ class Action {
 		ids = ids || [];
 
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			analytics.event('RestoreFromBin', { route, count: ids.length });
-
-			if (callBack) {
-				callBack();
+			if (!message.error.code) {
+				callBack?.();
+				analytics.event('RestoreFromBin', { route, count: ids.length });
 			};
 		});
 	};
@@ -588,12 +558,8 @@ class Action {
 			Preview.toastShow({ text: translate('toastImportStart') });
 
 			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				if (callBack) {	
-					callBack(message);
+				if (!message.error.code) {
+					callBack?.(message);
 				};
 			});
 		});
@@ -624,9 +590,7 @@ class Action {
 				this.openPath(paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -770,9 +734,7 @@ class Action {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					C.SpaceDelete(id, (message: any) => {
-						if (callBack) {
-							callBack(message);
-						};
+						callBack?.(message);
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
@@ -945,13 +907,10 @@ class Action {
 							return;
 						};
 
-						if (callBack) {
-							callBack();
-						};
-
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
 						analytics.event('RevokeShareLink');
+						callBack?.();
 					});
 				},
 			},
@@ -1013,9 +972,7 @@ class Action {
 	checkDiskSpace (callBack?: () => void) {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
 			if (!diskSpace) {
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 				return;
 			};
 
@@ -1032,9 +989,8 @@ class Action {
 						canCancel: false,
 					},
 				});
-			} else 
-			if (callBack) {
-				callBack();
+			} else {
+				callBack?.();
 			};
 		});
 	};

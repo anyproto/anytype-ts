@@ -111,7 +111,7 @@ class UtilObject {
 		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
-	openRoute (object: any, param?: any) {
+	openRoute (object: any, param?: Partial<I.RouteParam>) {
 		param = this.checkParam(param);
 
 		const route = this.route(object);
@@ -203,9 +203,7 @@ class UtilObject {
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				const object = message.details;
 				analytics.createObject(object.type, object.layout, route, message.middleTime);
@@ -303,9 +301,7 @@ class UtilObject {
 		param.limit = 1;
 
 		this.getByIds([ id ], param, objects => {
-			if (callBack) {
-				callBack(objects[0]);
-			};
+			callBack?.(objects[0]);
 		});
 	};
 
@@ -327,9 +323,7 @@ class UtilObject {
 		};
 
 		U.Subscription.search(param, (message: any) => {
-			if (callBack) {
-				callBack((message.records || []).filter(it => !it._empty_));
-			};
+			callBack?.((message.records || []).filter(it => !it._empty_));
 		});
 	};
 

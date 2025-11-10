@@ -1,20 +1,30 @@
 import React, { forwardRef } from 'react';
 import { Icon } from 'Component';
-import { I, S } from 'Lib';
+import { I, S, U } from 'Lib';
 
 interface Props {
-	mentionCounter: number;
-	messageCounter: number;
-	mode?: I.NotificationMode;
+	spaceId?: string;
+	chatId?: string;
 	className?: string;
 };
 
-const ChatCounter = forwardRef<HTMLDivElement, Props>(({
-	mentionCounter = 0,
-	messageCounter = 0,
-	mode = I.NotificationMode.All,
-	className = '',
-}, ref) => {
+const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
+
+	const { spaceId = S.Common.space, chatId, className = '' } = props;
+	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	let mode = I.NotificationMode.All;
+
+	if (chatId) {
+		counters = S.Chat.getChatCounters(spaceId, chatId);
+		mode = U.Object.getChatNotificationMode(spaceview, chatId);
+	} else {
+		counters = S.Chat.getSpaceCounters(spaceId);
+		mode = spaceview?.notificationMode;
+	};
+
+	const { mentionCounter, messageCounter } = counters;
 
 	if (!mentionCounter && !messageCounter) {
 		return null;

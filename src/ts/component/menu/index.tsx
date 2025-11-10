@@ -715,10 +715,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	close (callBack?: () => void) {
 		S.Menu.close(this.props.id, () => {
 			window.setTimeout(() => this.rebindPrevious(), S.Menu.getTimeout());
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 

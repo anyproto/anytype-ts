@@ -25,13 +25,13 @@ class UtilSpace {
 		U.Object.openRoute(home, param);
 	};
 
-	openDashboardOrVoid (param?: any) {
+	openDashboardOrVoid (param?: Partial<I.RouteParam>) {
 		param = param || {};
 
 		if (undefined === param.replace) {
 			param.replace = true;
 		};
-		
+
 		if (S.Common.space) {
 			U.Space.openDashboard(param);
 		} else {

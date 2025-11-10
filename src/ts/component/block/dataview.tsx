@@ -583,26 +583,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getTarget () {
-		const { rootId } = this.props;
-		const targeId = this.getObjectId();
-
-		return S.Detail.get(rootId, targeId, [ 'setOf' ]);
+		return S.Detail.get(this.props.rootId, this.getObjectId(), [ 'setOf' ]);
 	};
 
 	getTypeId (): string {
 		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const view = this.getView();
-
-		return Dataview.getTypeId(rootId, block.id, objectId, view.id);
+		return Dataview.getTypeId(rootId, block.id, this.getObjectId(), this.getView()?.id);
 	};
 
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const view = this.getView();
-
-		return Dataview.getDetails(rootId, block.id, objectId, view.id, groupId);
+		return Dataview.getDetails(rootId, block.id, this.getObjectId(), this.getView()?.id, groupId);
 	};
 
 	getMenuParam (e: any, dir: number): any {
@@ -1092,12 +1083,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 				const button = $(this.node).find('#head-source-select');
 
+				S.Detail.update(rootId, { id: item.id, details: item }, false);
+
 				if (!isCollection && isNew && button.length) {
 					button.trigger('click');
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
+					this.loadData(message.views[0].id, 0, true);
 				};
 
 				if (isNew) {
@@ -1138,6 +1131,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				addParam,
 				onSelect,
 				withPlural: true,
+				keys: J.Relation.default.concat('setOf'),
 			}
 		}, param || {}));
 	};
@@ -1242,9 +1236,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = this.getTarget();
 
 		C.BlockDataviewSortAdd(rootId, block.id, view.id, item, () => {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 
 			analytics.event('AddSort', {
 				objectType: object.type,
@@ -1259,9 +1251,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = this.getTarget();
 
 		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 
 			analytics.event('AddFilter', {
 				condition: item.condition,
@@ -1470,9 +1460,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				window.setTimeout(() => this.applyObjectOrder(it.groupId, records), 30);
 			});
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
