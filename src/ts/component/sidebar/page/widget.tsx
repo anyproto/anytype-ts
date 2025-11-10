@@ -384,6 +384,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 				],
+				sorts: [
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				],
 				onSelect: (el: any) => {
 					U.Object.openConfig(el);
 				},

@@ -2,7 +2,7 @@
 
 .widget.widgetSpace { background: none; }
 .widget.widgetSpace {
-	.buttons { padding: 8px 4px; background: var(--color-shape-highlight-light); border-radius: 12px; }
+	.buttons { padding: 8px; background: var(--color-shape-highlight-light); border-radius: 12px; }
 	.buttons {
 		.item { 
 			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 2px 8px; border-radius: 6px;
