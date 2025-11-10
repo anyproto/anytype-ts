@@ -13,7 +13,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const nodeRef = useRef(null);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-	const cn = [ `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
 	const memberLabel = spaceview.isShared ? (
 		<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
 	) : (

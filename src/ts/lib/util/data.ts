@@ -73,6 +73,15 @@ class UtilData {
 	};
 
 	/**
+	 * Returns the CSS class for a space UX type.
+	 * @param {I.SpaceUxType} v - The space UX type.
+	 * @returns {string} The CSS class.
+	 */
+	spaceClass (v: I.SpaceUxType): string {
+		return `space${I.SpaceUxType[v]}`
+	};
+
+	/**
 	 * Returns the icon class for a given block type and style value.
 	 * @param {I.BlockType} type - The block type.
 	 * @param {number} v - The style value.

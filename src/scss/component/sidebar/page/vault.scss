@@ -52,7 +52,7 @@
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
 
 		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; }
-		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
+		.label { @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 		.label.chatName { font-weight: 500; }
 
 		&::before {
@@ -90,6 +90,14 @@
 				}
 			}
 			.cnt { display: none; }
+		}
+
+		&:not(.spaceChat) {
+			.label.lastMessage { @include text-overflow-nw; }
+		}
+
+		&.spaceChat {
+			.label.lastMessage { @include clamp2; }
 		}
 
 		&.isProgress { flex-direction: column; gap: 8px 0px; }

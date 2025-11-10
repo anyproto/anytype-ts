@@ -427,10 +427,6 @@ class UtilSubscription {
 				keys: J.Relation.chatGlobal,
 				noDeps: true,
 				crossSpace: true,
-				onSubscribe: message => {
-					S.Record.chatMap.clear();
-					(message.records || []).forEach(it => S.Record.chatMap.set(it.id, it));
-				},
 			},
 		];
 
