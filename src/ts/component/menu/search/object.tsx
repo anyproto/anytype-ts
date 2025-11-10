@@ -266,6 +266,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
+		const { param } = this.props;
+		const { data } = param;
+		const { noInfiniteLoading } = data;
+
+		if (noInfiniteLoading) {
+			return Promise.resolve();
+		};
+
 		return new Promise((resolve, reject) => {
 			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
@@ -286,7 +294,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, dataChange, skipIds, keys } = data;
+		const { type, dataMapper, dataSort, dataChange, skipIds, keys, limit } = data;
 		const filter = String(data.filter || '');
 		const spaceId = data.spaceId || S.Common.space;
 		
@@ -327,7 +335,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
-			limit: J.Constant.limit.menuRecords,
+			limit: limit || J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });

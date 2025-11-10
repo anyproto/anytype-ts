@@ -379,6 +379,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			classNameWrap: 'fromSidebar',
 			element: '#button-recently-open',
 			data: {
+				limit: 15,
+				noFilter: true,
+				noInfiniteLoading: true,
 				label: translate('widgetRecentOpen'),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
