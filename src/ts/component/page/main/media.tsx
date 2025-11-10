@@ -32,15 +32,15 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	}, []);
 
 	useEffect(() => {
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
 		resize();
-		rebind();
 	}, [ rootId ]);
 
 	const open = () => {
-		close();
 		idRef.current = rootId;
-
 		setIsDeleted(false);
 		setIsLoading(true);
 

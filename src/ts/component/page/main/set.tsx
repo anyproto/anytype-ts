@@ -249,8 +249,11 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	}, []);
 
 	useEffect(() => {
-		close();
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
+
 		resize();
 	}, [ rootId ]);
 

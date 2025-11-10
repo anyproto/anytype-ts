@@ -31,7 +31,10 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	}, []);
 
 	useEffect(() => {
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
 	}, [ rootId ]);
 	
 	const open = () => {

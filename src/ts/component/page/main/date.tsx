@@ -275,12 +275,16 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	useEffect(() => {
+		open();
+
 		return () => close();
 	}, []);
 
 	useEffect(() => {
-		open();
-		reload();	
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
 	}, [ rootId, relationKey ]);
 
 	return content;
