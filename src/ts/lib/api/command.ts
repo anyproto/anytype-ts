@@ -1729,6 +1729,22 @@ export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
+export const ObjectCrossSpaceSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
+	const request = new Rpc.Object.CrossSpaceSearchSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setKeysList(U.Common.arrayUnique(keys));
+	request.setSourceList(sources);
+	request.setNodepsubscription(noDeps);
+	request.setCollectionid(collectionId);
+
+	dispatcher.request(ObjectCrossSpaceSearchSubscribe.name, request, callBack);
+};
+
 export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.GroupsSubscribe.Request();
 

@@ -259,6 +259,19 @@ export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Respo
 	};
 };
 
+export const ObjectCrossSpaceSearchSubscribe = (response: Rpc.Object.CrossSpaceSearchSubscribe.Response) => {
+	const counters = response.getCounters();
+	return {
+		counters: {
+			total: counters.getTotal(),
+			nextCount: counters.getNextcount(),
+			prevCount: counters.getPrevcount(),
+		},
+		records: (response.getRecordsList() || []).map(Decode.struct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+	};
+};
+
 export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.struct),

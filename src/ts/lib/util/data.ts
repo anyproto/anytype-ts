@@ -332,6 +332,7 @@ class UtilData {
 				}, false);
 
 				if (message) {
+					message.chatId = chatId;
 					message.dependencies = dependencies;
 
 					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));

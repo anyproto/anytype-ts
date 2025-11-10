@@ -29,7 +29,9 @@
 		}
 
 		.nameWrapper,
+		.chatWrapper,
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
+
 		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; }
 		.label { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 		.label b { font-weight: 500; }
@@ -45,7 +47,7 @@
 		&.active::before, &.hover::before { background: var(--color-shape-highlight-medium); }
 		&.selected::before { background: var(--color-system-selection); }
 
-		.time { @include text-small; color: var(--color-text-secondary); }
+		.time { @include text-small; color: var(--color-text-secondary); text-align: right; }
 
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }

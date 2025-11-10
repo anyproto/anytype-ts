@@ -53,6 +53,7 @@ export interface ChatMessageReaction {
 
 export interface ChatMessage {
 	id: string;
+	chatId: string;
 	orderId: string;
 	creator: string;
 	createdAt: number;
