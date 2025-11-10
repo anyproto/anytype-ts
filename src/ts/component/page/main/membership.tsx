@@ -36,7 +36,6 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 							product,
 							route: analytics.route.stripe,
 						},
-						onClose: () => Action.openSettings('membership', analytics.route.stripe),
 					});
 				} else {
 					Action.openSettings('membership', analytics.route.stripe);

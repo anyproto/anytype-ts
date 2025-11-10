@@ -10,10 +10,11 @@ import Loader from './loader';
 const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { data } = S.Membership;
+	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
 
 	let content: any = null;
 
-	if (!data) {
+	if (!data || !products.length) {
 		content = <Loader />;
 	} else {
 		const product = data.getTopProduct();

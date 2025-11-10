@@ -147,6 +147,12 @@ class Dispatcher {
 			const { spaceId, data } = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
+			if ([ 'MembershipUpdate', 'MembershipProductsUpdate' ].includes(type)) {
+				console.log('MU EVENT: ', type)
+				console.log('MU MAPPED: ', mapped)
+				console.log('MU DATA: ', data)
+			}
+
 			if (!mapped) {
 				continue;
 			};
@@ -1098,15 +1104,13 @@ class Dispatcher {
 					break;
 				};
 
-				case 'MembershipUpdate': {
-					console.log('[DISPATCHER]: MEMBERSHIP UPDATE')
-					// S.Membership.dataSet(mapped.data);
+				case 'MembershipV2Update': {
+					S.Membership.dataSet(mapped.data);
 					break;
 				};
 
-				case 'MembershipProductsUpdate': {
-					console.log('[DISPATCHER]: MEMBERSHIP PRODUCT UPDATE')
-					// S.Membership.productsSet(mapped.products);
+				case 'MembershipV2ProductsUpdate': {
+					S.Membership.productsSet(mapped.products);
 					break;
 				};
 
