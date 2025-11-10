@@ -343,9 +343,11 @@ class UtilSubscription {
 	 */
 	filterMapper (it: I.Filter) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
-		if (relation) {
-			it.format = relation.format;
+		if (!relation) {
+			return it;
 		};
+
+		it.format = relation.format;
 		return it;
 	};
 
@@ -356,13 +358,14 @@ class UtilSubscription {
 	 */
 	sortMapper (it: any) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
+		if (!relation) {
+			return it;
+		};
 
-		if (relation) {
-			it.format = relation.format;
+		it.format = relation.format;
 
-			if ((undefined === it.includeTime) && Relation.isDate(relation.format)) {
-				it.includeTime = relation.includeTime;
-			};
+		if ((undefined === it.includeTime) && Relation.isDate(relation.format)) {
+			it.includeTime = relation.includeTime;
 		};
 		return it;
 	};
