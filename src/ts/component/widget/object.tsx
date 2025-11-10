@@ -146,6 +146,10 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (item.id == J.Constant.widgetId.bin) {
+			return;
+		};
+
 		const node = $(nodeRef.current);
 		const element = node.find(`#item-${item.id}`);
 		const more = element.find('.icon.more');

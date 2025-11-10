@@ -54,7 +54,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	};
 
 	const open = () => {
-		close();
 		idRef.current = rootId;
 		setIsDeleted(false);
 		setIsLoading(true);
@@ -66,10 +65,11 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
 			if (checkDeleted()) {
 				return;
 			};
+
+			const object = S.Detail.get(rootId, rootId, []);
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
@@ -249,9 +249,9 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	}, []);
 
 	useEffect(() => {
+		close();
 		open();
 		resize();
-		checkDeleted();
 	}, [ rootId ]);
 
 	useImperativeHandle(ref, () => ({
