@@ -16,21 +16,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
-
-	let headerButtons: any[] = [];
-	if (spaceview.isChat) {
-		headerButtons = headerButtons.concat([
-			{ id: 'chat', name: translate('commonChat') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
-			{ id: 'settings', name: translate('commonSettings') }
-		]);
-	};
 
 	let content = null;
 	let head = null;
@@ -80,19 +70,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const top = Storage.getScroll('sidebarWidget', '', isPopup);
 
 		body.scrollTop(top);
-	};
-
-	const onArrow = () => {
-		U.Menu.typeSuggest({ 
-			element: '#button-widget-arrow',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			offsetY: 4,
-		}, {}, { 
-			deleteEmpty: true,
-			selectTemplate: true,
-			withImport: true,
-		}, analytics.route.navigation, object => U.Object.openConfig(object));
 	};
 
 	const onDragStart = (e: DragEvent, block: I.Block): void => {
@@ -590,38 +567,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					/>
 				</div>
 				<div className="side right">
-					<Icon 
-						className="search withBackground" 
-						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
-						tooltipParam={{ 
-							text: translate('commonSearch'), 
-							caption: keyboard.getCaption('search'), 
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
-					{canWrite ? (
-						<div className="createWrapper">
-							<Icon 
-								className="create withBackground" 
-								onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
-								tooltipParam={{ 
-									text: translate('commonNewObject'), 
-									caption: keyboard.getCaption('createObject'), 
-									typeY: I.MenuDirection.Bottom,
-								}}
-							/>
-							<Icon 
-								id="button-widget-arrow"
-								className="arrow withBackground" 
-								onClick={onArrow}
-								tooltipParam={{ 
-									text: translate('popupShortcutMainBasics19'), 
-									caption: keyboard.getCaption('selectType'), 
-									typeY: I.MenuDirection.Bottom,
-								}}
-							/>
-						</div>
-					) : ''}
 				</div>
 			</>
 		);

@@ -1,7 +1,7 @@
 import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, C, translate, analytics, Action } from 'Lib';
+import { I, U, S, C, translate, analytics, Action, keyboard } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -11,9 +11,28 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const nodeRef = useRef(null);
-	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
+	const canWrite = U.Space.canMyParticipantWrite();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cn = [ `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const memberLabel = spaceview.isShared ? (
+		<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
+	) : (
+		<Label text={translate('commonPersonalSpace')} />
+	);
+
+	const buttons = [
+		canWrite ? { 
+			id: 'create', 
+			name: translate('commonCreate'), 
+			withArrow: true,
+			arrowTooltipParam: { 
+				text: translate('popupShortcutMainBasics19'), 
+				caption: keyboard.getCaption('selectType'), 
+				typeY: I.MenuDirection.Bottom as any,
+			},
+		} : null,
+		{ id: 'search', name: translate('commonSearch') }
+	].filter(it => it);
 
 	const onButtonClick = (e: any, item: any) => {
 		e.preventDefault();
@@ -26,21 +45,31 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 
-			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+			case 'search': {
+				keyboard.onSearchPopup(analytics.route.widget);
 				break;
 			};
 
-			case 'chat': {
-				U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-				break;
-			};
-
-			case 'mute': {
-				C.PushNotificationSetSpaceMode(S.Common.space, Number(isMuted ? I.NotificationMode.All : I.NotificationMode.Mentions));
+			case 'create': {
+				keyboard.pageCreate({}, analytics.route.widget, []);
 				break;
 			};
 		};
+	};
+
+	const onArrow = (e: any) => {
+		e.stopPropagation();
+
+		U.Menu.typeSuggest({ 
+			element: '#button-create-arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.navigation, object => U.Object.openConfig(object));
 	};
 
 	const onMore = () => {
@@ -55,37 +84,18 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	let content = null;
 	if (spaceview.isChat) {
-		const buttons = [
-			{ id: 'chat', name: translate('commonChat') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
-			{ id: 'settings', name: translate('commonSettings') }
-		];
-
 		content = (
-			<>
-				<div className="spaceInfo">
-					<IconObject
-						id="spaceIcon"
-						size={80}
-						iconSize={80}
-						object={{ ...spaceview, spaceId: S.Common.space }}
-					/>
-					<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
-					{spaceview.isShared ? (
-						<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
-					) : (
-						<Label text={translate('commonPersonalSpace')} />
-					)}
-				</div>
-				<div className="buttons">
-					{buttons.map((item, idx) => (
-						<div className="item" onClick={e => onButtonClick(e, item)} key={idx}>
-							<Icon className={[ item.id, item.className ? item.className : '' ].join(' ')} />
-							<Label text={item.name} />
-						</div>
-					))}
-				</div>
-			</>
+			<div className="spaceInfo">
+				<IconObject
+					id="spaceIcon"
+					size={80}
+					iconSize={80}
+					object={{ ...spaceview, spaceId: S.Common.space }}
+				/>
+				<ObjectName object={{ ...spaceview, spaceId: S.Common.space }} />
+
+				{memberLabel}
+			</div>
 		);
 	} else {
 		content = (
@@ -97,14 +107,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						<Icon className="arrow" />
 					</div>
 
-					{spaceview.isShared ? (
-						<Label 
-							text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
-							onClick={e => onButtonClick(e, { id: 'member' })}
-						/>
-					) : (
-						<Label text={translate('commonPersonalSpace')} />
-					)}
+					{memberLabel}
 				</div>
 			</div>
 		);
@@ -113,6 +116,22 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>
 			{content}
+			<div className="buttons">
+				{buttons.map((item, idx) => (
+					<div className="item" onClick={e => onButtonClick(e, item)} key={idx}>
+						<Icon className={item.id} />
+						<Label text={item.name} />
+						{item.withArrow ? (
+							<Icon 
+								id={`button-${item.id}-arrow`}
+								className="arrow withBackground"
+								onClick={onArrow}
+								tooltipParam={item.arrowTooltipParam}
+							/>
+						) : ''}
+					</div>
+				))}
+			</div>
 		</div>
 	);
 
