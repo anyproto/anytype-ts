@@ -373,6 +373,24 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 	};
 
+	const onRecentlyOpen = () => {
+		S.Menu.open('searchObject', {
+			className: 'single fixed',
+			classNameWrap: 'fromSidebar',
+			element: '#button-recently-open',
+			data: {
+				label: translate('widgetRecentOpen'),
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+				],
+				onSelect: (el: any) => {
+					U.Object.openConfig(el);
+				},
+			}
+		});
+	};
+
 	const clear = () => {
 		const body = $(bodyRef.current);
 
@@ -567,6 +585,15 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					/>
 				</div>
 				<div className="side right">
+					<Icon 
+						id="button-recently-open"
+						className="clock withBackground"
+						onClick={onRecentlyOpen}
+						tooltipParam={{ 
+							text: translate('widgetRecentOpen'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
 				</div>
 			</>
 		);
