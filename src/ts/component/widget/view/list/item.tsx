@@ -42,11 +42,6 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		transition,
 	};
 
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, id);
-	};
-
 	if (canDrag) {
 		cn.push('canDrag');
 	};
@@ -141,7 +136,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (hasMore) {
 		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
-	
+
 	let inner = (
 		<div className="inner" onMouseDown={onClick}>
 			{icon}
@@ -159,7 +154,6 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			) : ''}
 
 			<div className="buttons">
-
 				{more}
 			</div>
 		</div>
