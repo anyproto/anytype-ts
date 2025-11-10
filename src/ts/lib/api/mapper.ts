@@ -1803,15 +1803,17 @@ export const Mapper = {
 		},
 
 		MembershipUpdate: (obj: Events.Event.MembershipV2.Update) => {
-			return {
-				data: Mapper.From.MembershipData(obj.getData()),
-			};
+			console.log('[MAPPER]: MEMBERSHIP UPDATE')
+			// return {
+			// 	data: Mapper.From.MembershipData(obj.getData()),
+			// };
 		},
 
 		MembershipProductsUpdate: (obj: Events.Event.MembershipV2.ProductsUpdate) => {
-			return {
-				products: (obj.getProductsList() || []).map(Mapper.From.MembershipProduct),
-			};
+			console.log('[MAPPER]: MEMBERSHIP PRODUCTS UPDATE')
+			// return {
+			// 	products: (obj.getProductsList() || []).map(Mapper.From.MembershipProduct),
+			// };
 		},
 
 	},

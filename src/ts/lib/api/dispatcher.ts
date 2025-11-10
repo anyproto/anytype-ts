@@ -1099,12 +1099,14 @@ class Dispatcher {
 				};
 
 				case 'MembershipUpdate': {
-					S.Membership.dataSet(mapped.data);
+					console.log('[DISPATCHER]: MEMBERSHIP UPDATE')
+					// S.Membership.dataSet(mapped.data);
 					break;
 				};
 
 				case 'MembershipProductsUpdate': {
-					S.Membership.productsSet(mapped.products);
+					console.log('[DISPATCHER]: MEMBERSHIP PRODUCT UPDATE')
+					// S.Membership.productsSet(mapped.products);
 					break;
 				};
 
