@@ -1184,8 +1184,10 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		return false;
-		//return this.isAnytypeNetwork() && S.Auth.membership?.tierItem?.isIntro;
+		const { data } = S.Membership;
+		const product = data?.getTopProduct();
+
+		return this.isAnytypeNetwork() && product?.product?.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

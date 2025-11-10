@@ -245,11 +245,13 @@ class Analytics {
 	};
 
 	/**
-	 * Sets the user's tier property for analytics.
-	 * @param {I.TierType} tier - The user's tier.
+	 * Sets the user's purchased membership name property for analytics.
 	 */
-	setTier (tier: string) {
-		//this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
+	setProduct () {
+		const { data } = S.Membership;
+		const product = data?.getTopProduct();
+
+		this.setProperty({ product: product?.product?.name || 'None' });
 	};
 
 	/**

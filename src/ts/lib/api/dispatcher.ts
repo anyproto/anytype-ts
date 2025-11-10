@@ -147,12 +147,6 @@ class Dispatcher {
 			const { spaceId, data } = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
-			if ([ 'MembershipUpdate', 'MembershipProductsUpdate' ].includes(type)) {
-				console.log('MU EVENT: ', type)
-				console.log('MU MAPPED: ', mapped)
-				console.log('MU DATA: ', data)
-			}
-
 			if (!mapped) {
 				continue;
 			};
