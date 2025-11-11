@@ -11,12 +11,10 @@ const SPACE_KEYS = [
 	'lastOpenedObject',
 	'scroll',
 	'defaultType',
-	'pinnedTypes',
 	'chat',
 	'popupSearch',
 	'focus',
 	'openUrl',
-	'redirectInvite',
 ];
 
 const LOCAL_KEYS = [
