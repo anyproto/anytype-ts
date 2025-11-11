@@ -410,6 +410,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			const pc = $(pageContainer);
 
 			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
+
+
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
@@ -447,7 +449,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		} else {
 			setOn();
 
-			if (!canEdit && Relation.isText(relation.format)) {
+			if (canEdit && Relation.isText(relation.format)) {
 				bindContainerClick();
 			};
 		};

@@ -606,7 +606,6 @@ class Dataview {
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
 		let typeId = '';
-
 		if (view && view.defaultTypeId && isAllowedDefaultType) {
 			typeId = view.defaultTypeId;
 		} else
