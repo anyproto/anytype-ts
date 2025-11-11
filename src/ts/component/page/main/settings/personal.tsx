@@ -68,7 +68,7 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 					<Label text={translate('popupSettingsPersonalVaultStyle')} />
 
 					<Select
-						id="linkStyle"
+						id="vaultMessages"
 						value={String(Number(vaultMessages))}
 						options={vaultStyles}
 						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
