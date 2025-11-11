@@ -27,6 +27,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
 		getContentParam, getObject
 	} = props;
+	const { space } = S.Common;
 	const { viewId, limit, layout } = getContentParam();
 	const targetId = block ? block.getTargetObjectId() : '';
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
@@ -408,7 +409,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		if (!isSystemTarget) {
 			load(viewId, true);
 		};
-	}, [ viewId, viewType ]);
+	}, [ viewId, viewType, space ]);
 
 	useEffect(() => {
 		if (U.Common.compareJSON(searchIds, prevIdsRef.current)) {

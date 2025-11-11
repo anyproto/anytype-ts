@@ -229,11 +229,12 @@ class UtilRouter {
 					S.Common.nullifySpaceKeys();
 
 					U.Data.onInfo(message.info);
-					S.Common.setLeftSidebarState('vault', 'widget');
+					S.Common.setLeftSidebarState('vault', '');
 
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 							this.isOpening = false;
+							S.Common.setLeftSidebarState('vault', 'widget');
 						});
 					};
 
