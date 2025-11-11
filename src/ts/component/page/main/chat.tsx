@@ -17,8 +17,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 	const open = () => {
-		close();
-
 		idRef.current = rootId;
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -67,7 +65,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	}, []);
 
 	useEffect(() => {
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
 	}, [ rootId ]);
 
 	let content = null;

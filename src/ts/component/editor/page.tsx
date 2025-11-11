@@ -647,15 +647,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				if (type == I.MarkType.Link) {
-					S.Menu.open('blockLink', {
-						element: `#block-${ids[0]}`,
-						classNameWrap: 'fromBlock',
-						horizontal: I.MenuDirection.Center,
-						data: {
-							filter: '',
-							onChange: cb,
-						},
-					});
+					window.setTimeout(() => {
+						S.Menu.open('blockLink', {
+							element: `#block-${ids[0]}`,
+							classNameWrap: 'fromBlock',
+							horizontal: I.MenuDirection.Center,
+							data: {
+								filter: '',
+								onChange: cb,
+							},
+						});
+					}, J.Constant.delay.menu);
 				} else 
 				if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {
 					let menuId = '';
@@ -1368,23 +1370,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					filter = block.getText().substring(range.from, range.to);
 				};
 
-				S.Menu.open('blockLink', {
-					classNameWrap: 'fromBlock',
-					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-					horizontal: I.MenuDirection.Center,
-					offsetY: 4,
-					data: {
-						rootId,
-						blockId: block.id,
-						blockIds: [ block.id ],
-						filter,
-						type: newType,
-						onChange: (newType: I.MarkType, param: string) => {
-							marks = Mark.toggleLink({ type: newType, param, range }, marks);
-							cb();
+				window.setTimeout(() => {
+					S.Menu.open('blockLink', {
+						classNameWrap: 'fromBlock',
+						rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+						horizontal: I.MenuDirection.Center,
+						offsetY: 4,
+						data: {
+							rootId,
+							blockId: block.id,
+							blockIds: [ block.id ],
+							filter,
+							type: newType,
+							onChange: (newType: I.MarkType, param: string) => {
+								marks = Mark.toggleLink({ type: newType, param, range }, marks);
+								cb();
+							}
 						}
-					}
-				});
+					});
+				}, J.Constant.delay.menu);
 			});
 		} else 
 		if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {

@@ -2080,6 +2080,7 @@
 	"widgetSectionUnread": "Unread",
 	"widgetSectionPinned": "Pinned",
 	"widgetSectionType": "Objects",
+	"widgetSectionRecentEdit": "Recently edited",
 	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Old Pinned",

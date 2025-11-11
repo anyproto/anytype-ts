@@ -9,8 +9,8 @@
 		}
 	}
 
-	.menu.menuDataviewText:not(.fromFeatured) { box-shadow: 0px 0px; background: transparent; }
-	.menu.menuDataviewText:not(.fromFeatured) {
+	.menu.menuDataviewText:not(.fromBlockFeatured) { box-shadow: 0px 0px; background: transparent; }
+	.menu.menuDataviewText:not(.fromBlockFeatured) {
 		.content { overflow: visible !important; max-height: none; height: 100%; transition: $transitionAllCommon; padding: 0px; }
 		.editableWrap { height: 100%; }
 
@@ -18,19 +18,19 @@
 		#placeholder { padding: 13px 14px; }
 	}
 
-	.menu.menuDataviewText.isInline:not(.fromFeatured) {
+	.menu.menuDataviewText.isInline:not(.fromBlockFeatured) {
 		#input, #placeholder { padding: 9px 14px; }
 	}
 
-	.menu.menuDataviewText.fromBlock {
+	.menu.menuDataviewText.fromBlockRelation {
 		#input, #placeholder { padding: 5px 8px; }
 	}
 
-	.menu.menuDataviewText.show:not(.fromFeatured) {
+	.menu.menuDataviewText.show:not(.fromBlockFeatured) {
 		#input { box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 	}
 
-	.menu.menuDataviewText.fromFeatured {
+	.menu.menuDataviewText.fromBlockFeatured {
 		.content { padding: 8px 14px; }
 	}
 

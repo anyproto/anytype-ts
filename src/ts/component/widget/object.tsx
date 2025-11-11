@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -21,7 +21,32 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		return [ space, id ].join('-');
 	};
 
+	const getSubId = () => {
+		let subId = '';
+
+		switch (parent.id) {
+			case getId(J.Constant.widgetId.unread): {
+				subId = J.Constant.subId.chat;
+				break;
+			};
+
+			case getId(J.Constant.widgetId.type): {
+				subId = J.Constant.subId.type;
+				break;
+			};
+
+			case getId(J.Constant.widgetId.recentEdit): {
+				subId = J.Constant.widgetId.recentEdit;
+				break;
+			};
+		};
+
+		return subId;
+	};
+
+	const subId = getSubId();
 	const canDrag = parent.id == getId(J.Constant.widgetId.type);
+	const { total } = S.Record.getMeta(subId, '');
 
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
@@ -50,22 +75,35 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		});
 	};
 
-	const getSubId = () => {
-		let subId = '';
+	const getData = (callBack?: () => void) => {
+		const space = U.Space.getSpaceview();
+		const sorts = [ 
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+		];
+		const filters: I.Filter[] = [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+		];
+		const keys = [ ...J.Relation.sidebar ];
 
 		switch (parent.id) {
-			case getId(J.Constant.widgetId.unread): {
-				subId = J.Constant.subId.chat;
-				break;
-			};
-
-			case getId(J.Constant.widgetId.type): {
-				subId = J.Constant.subId.type;
+			case getId(J.Constant.widgetId.recentEdit): {
+				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
+				keys.push('lastModifiedDate');
 				break;
 			};
 		};
 
-		return subId;
+		U.Subscription.destroyList([ subId ], false, () => {
+			U.Subscription.subscribe({
+				subId,
+				filters,
+				sorts,
+				limit: 10,
+				keys,
+				noDeps: true,
+			}, callBack);
+		});
 	};
 
 	const getItems = () => {
@@ -73,10 +111,15 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		switch (parent.id) {
 			case getId(J.Constant.widgetId.unread): {
-				items = S.Record.getRecords(J.Constant.subId.chat).filter(it => {
+				items = S.Record.getRecords(subId).filter(it => {
 					const counters = S.Chat.getChatCounters(space, it.id);
 					return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
 				});
+				break;
+			};
+
+			case getId(J.Constant.widgetId.recentEdit): {
+				items = S.Record.getRecords(subId);
 				break;
 			};
 
@@ -85,6 +128,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					return (
 						!U.Object.isInSystemLayouts(it.recommendedLayout) && 
 						!U.Object.isDateLayout(it.recommendedLayout) && 
+						!U.Object.isParticipantLayout(it.recommendedLayout) &&
 						(it.uniqueKey != J.Constant.typeKey.template) &&
 						(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
 					);
@@ -101,6 +145,10 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const onContextHandler = (e: any, item: any, withElement: boolean): void => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		if (item.id == J.Constant.widgetId.bin) {
+			return;
+		};
 
 		const node = $(nodeRef.current);
 		const element = node.find(`#item-${item.id}`);
@@ -156,6 +204,12 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const items = getItems();
+
+	useEffect(() => {
+		if (parent.id == getId(J.Constant.widgetId.recentEdit)) {
+			getData();
+		};
+	}, []);
 
 	return (
 		<DndContext 

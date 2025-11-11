@@ -16,21 +16,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const isMuted = spaceview.notificationMode != I.NotificationMode.All;
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
-
-	let headerButtons: any[] = [];
-	if (spaceview.isChat) {
-		headerButtons = headerButtons.concat([
-			{ id: 'chat', name: translate('commonChat') },
-			{ id: 'mute', name: isMuted ? translate('commonUnmute') : translate('commonMute'), className: isMuted ? 'off' : 'on' },
-			{ id: 'settings', name: translate('commonSettings') }
-		]);
-	};
 
 	let content = null;
 	let head = null;
@@ -38,6 +28,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const getSections = () => {
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const ret = [
+			{ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') },
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
 		];
 
@@ -79,19 +70,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const top = Storage.getScroll('sidebarWidget', '', isPopup);
 
 		body.scrollTop(top);
-	};
-
-	const onArrow = () => {
-		U.Menu.typeSuggest({ 
-			element: '#button-widget-arrow',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			offsetY: 4,
-		}, {}, { 
-			deleteEmpty: true,
-			selectTemplate: true,
-			withImport: true,
-		}, analytics.route.navigation, object => U.Object.openConfig(object));
 	};
 
 	const onDragStart = (e: DragEvent, block: I.Block): void => {
@@ -395,6 +373,30 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 	};
 
+	const onRecentlyOpen = () => {
+		S.Menu.open('searchObject', {
+			className: 'single fixed widthValue',
+			classNameWrap: 'fromSidebar',
+			element: '#button-recently-open',
+			data: {
+				limit: 15,
+				noFilter: true,
+				noInfiniteLoading: true,
+				label: translate('widgetRecentOpen'),
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+				],
+				sorts: [
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				],
+				onSelect: (el: any) => {
+					U.Object.openConfig(el);
+				},
+			}
+		});
+	};
+
 	const clear = () => {
 		const body = $(bodyRef.current);
 
@@ -411,13 +413,17 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		let blocks = [];
 
 		switch (sectionId) {
-			case I.WidgetSection.Unread: {
-				blocks.push(new M.Block({ id: [ space, J.Constant.widgetId.unread ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
-				break;
-			};
+			case I.WidgetSection.Unread:
+			case I.WidgetSection.Type:
+			case I.WidgetSection.RecentEdit: {
 
-			case I.WidgetSection.Type: {
-				blocks.push(new M.Block({ id: [ space, J.Constant.widgetId.type ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				const idMap = {
+					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
+					[I.WidgetSection.Type]: J.Constant.widgetId.type,
+					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
+				};
+
+				blocks.push(new M.Block({ id: [ space, idMap[sectionId] ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
 				break;
 			};
 
@@ -586,37 +592,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				</div>
 				<div className="side right">
 					<Icon 
-						className="search withBackground" 
-						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
+						id="button-recently-open"
+						className="clock withBackground"
+						onClick={onRecentlyOpen}
 						tooltipParam={{ 
-							text: translate('commonSearch'), 
-							caption: keyboard.getCaption('search'), 
+							text: translate('widgetRecentOpen'), 
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
-					{canWrite ? (
-						<div className="createWrapper">
-							<Icon 
-								className="create withBackground" 
-								onClick={() => keyboard.pageCreate({}, analytics.route.widget, [])}
-								tooltipParam={{ 
-									text: translate('commonNewObject'), 
-									caption: keyboard.getCaption('createObject'), 
-									typeY: I.MenuDirection.Bottom,
-								}}
-							/>
-							<Icon 
-								id="button-widget-arrow"
-								className="arrow withBackground" 
-								onClick={onArrow}
-								tooltipParam={{ 
-									text: translate('popupShortcutMainBasics19'), 
-									caption: keyboard.getCaption('selectType'), 
-									typeY: I.MenuDirection.Bottom,
-								}}
-							/>
-						</div>
-					) : ''}
 				</div>
 			</>
 		);

@@ -434,7 +434,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 		case I.ObjectLayout.SpaceView: {
 			icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
-			cn.push('withImage', `uxType${uxType}`);
+			cn.push('withImage', U.Data.spaceClass(uxType));
 
 			if (iconImage) {
 				icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;

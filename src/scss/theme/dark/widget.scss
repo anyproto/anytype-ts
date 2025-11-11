@@ -31,23 +31,7 @@
 }
 
 .widget.widgetSpace {
-	.spaceChat {
-		.buttons {
-			.item {
-				.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
-				.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-				.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
-				.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
-			}
-		}
-	}
-
-	.spaceData,
-	.spaceStream {
-		.head {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/select/space.svg'); }
-		}
-	}
+	.icon.arrow { background-image: url('#{$themePath}/arrow/select/space.svg'); }
 }
 
 .widget.widgetTree {

@@ -4,6 +4,7 @@ export enum WidgetSection {
 	Pin			 = 0,
 	Type		 = 1,
 	Unread		 = 2,
+	RecentEdit	 = 3,
 };
 
 export enum WidgetLayout { 

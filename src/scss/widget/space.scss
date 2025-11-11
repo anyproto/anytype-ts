@@ -2,47 +2,50 @@
 
 .widget.widgetSpace { background: none; }
 .widget.widgetSpace {
+	.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+	.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
+
+	.buttons { padding: 8px; background: var(--color-shape-highlight-light); border-radius: 12px; }
+	.buttons {
+		.item { 
+			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 2px 8px; border-radius: 6px;
+			line-height: 24px; position: relative; font-weight: 600;;
+		}
+		.item::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
+			opacity: 0; border-radius: inherit;
+		}
+		.item:hover::before, .item.hover::before { opacity: 1; }
+		.item {
+			.icon { width: 20px; height: 20px; }
+			.icon.withBackground { width: 20px !important; height: 20px !important;}
+			.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
+			.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
+			.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
+
+			.label { @include text-overflow-nw; flex-grow: 1; }
+		}
+	}
+
 	.spaceChat {
-		.spaceInfo { margin-bottom: 16px; display: flex; flex-direction: column; align-items: center; }
+		.spaceInfo { margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; }
 		.spaceInfo {
 			.iconObject { margin-bottom: 8px; }
 			.name { @include text-header3; margin-bottom: 0px; }
 			.label { @include text-small; color: var(--color-text-secondary); }
 		}
-
-		.buttons { display: flex; justify-content: center; }
-		.buttons {
-			.item { width: 72px; text-align: center; display: flex; flex-direction: column; gap: 5px 0px; align-items: center; }
-			.item {
-				.icon {
-					width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium);
-					background-position: 50% 50%; background-repeat: no-repeat; background-size: 28px; transition: background-color $transitionCommon;
-				}
-				.icon.chat { background-image: url('~img/icon/sidebar/chatSpace/chat.svg'); }
-				.icon.mute.on { background-image: url('~img/icon/sidebar/chatSpace/pushOn.svg'); }
-				.icon.mute.off { background-image: url('~img/icon/sidebar/chatSpace/pushOff.svg'); }
-				.icon.settings { background-image: url('~img//icon/sidebar/chatSpace/settings.svg'); }
-
-				.label { @include text-small; @include text-overflow-nw; width: 100%; padding: 0px 2px; }
-			}
-			.item:hover {
-				.icon { background-color: var(--color-shape-highlight-dark); }
-			}
-		}
 	}
 
 	.spaceData,
 	.spaceStream {
-		.head { padding: 0px 0px 8px 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+		.head { padding: 0px 0px 16px 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 		.head {
 			.iconObject { flex-shrink: 0; }
 			.info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
 
-			.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
 			.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; }
 
 			.label { @include text-small; color: var(--color-text-secondary); }
-			.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
 		}
 	}
 }

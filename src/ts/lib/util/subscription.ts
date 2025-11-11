@@ -343,9 +343,11 @@ class UtilSubscription {
 	 */
 	filterMapper (it: I.Filter) {
 		const relation = S.Record.getRelationByKey(it.relationKey);
-		if (relation) {
-			it.format = relation.format;
+		if (!relation) {
+			return it;
 		};
+
+		it.format = relation.format;
 		return it;
 	};
 
@@ -355,11 +357,15 @@ class UtilSubscription {
 	 * @returns {any} The mapped sort object.
 	 */
 	sortMapper (it: any) {
-		if (undefined === it.includeTime) {
-			const relation = S.Record.getRelationByKey(it.relationKey);
-			if (relation && Relation.isDate(relation.format)) {
-				it.includeTime = relation.includeTime;
-			};
+		const relation = S.Record.getRelationByKey(it.relationKey);
+		if (!relation) {
+			return it;
+		};
+
+		it.format = relation.format;
+
+		if ((undefined === it.includeTime) && Relation.isDate(relation.format)) {
+			it.includeTime = relation.includeTime;
 		};
 		return it;
 	};
@@ -424,10 +430,6 @@ class UtilSubscription {
 				keys: J.Relation.chatGlobal,
 				noDeps: true,
 				crossSpace: true,
-				onSubscribe: message => {
-					S.Record.chatMap.clear();
-					(message.records || []).forEach(it => S.Record.chatMap.set(it.id, it));
-				},
 			},
 		];
 

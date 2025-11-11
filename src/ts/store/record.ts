@@ -16,7 +16,6 @@ class RecordStore {
 	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 	public spaceMap: Map<string, string> = new Map();
-	public chatMap: Map<string, any> = new Map();
 
 	constructor() {
 		makeObservable(this, {

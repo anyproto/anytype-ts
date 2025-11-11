@@ -54,6 +54,10 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 						object={profile}
 						size={128}
 						canEdit={true}
+						menuParam={{
+							horizontal: I.MenuDirection.Center,
+							classNameWrap: 'fromBlock',
+						}}
 					/>
 				</div>
 			</div>
