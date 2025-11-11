@@ -141,7 +141,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										withName={true}
 										noInplace={true}
 										onCellChange={this.onCellChange}
-										menuParam={{ className: 'fromFeatured', classNameWrap: 'fromBlock' }}
+										menuParam={{ className: 'fromBlockFeatured', classNameWrap: 'fromBlock' }}
 									/>
 									<div className="bullet" />
 								</span>
@@ -678,7 +678,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let menuParam = {
 			element: elementId,
-			className: 'fromFeatured',
+			className: 'fromBlockFeatured',
 			offsetY: 4,
 			noFlipX: true,
 			title: relation.name,

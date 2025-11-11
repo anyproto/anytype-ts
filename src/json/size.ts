@@ -38,7 +38,7 @@ export default {
 
 			min: 48,
 			max: 1000,
-			edit: 300,
+			edit: 200,
 			icon: 70
 		},
 	},
