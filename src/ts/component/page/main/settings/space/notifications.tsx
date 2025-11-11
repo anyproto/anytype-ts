@@ -12,6 +12,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 	const notificationMode = spaceview.notificationMode || I.NotificationMode.All;
 	const nodeRef = useRef(null);
 	const chatsRef = useRef([]);
+	const prevIds = useRef([]);
 	const [ dummy, setDummy ] = useState(0);
 	const notificationOptions: any[] = [
 		I.NotificationMode.All,
@@ -52,6 +53,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 			offsetY: 4,
 			data: {
 				options,
+				value: String(U.Object.getChatNotificationMode(spaceview, el.id)),
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'reset': {
@@ -74,7 +76,12 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 	}, []);
 
 	useEffect(() => {
-		load();
+		const ids = [ ...allIds, ...mentionIds, ...muteIds ];
+
+		if (!U.Common.compareJSON(ids, prevIds.current)) {
+			prevIds.current = ids;
+			load();
+		};
 	}, [ allIds, mentionIds, muteIds ]);
 
 	return (

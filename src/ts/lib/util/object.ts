@@ -795,18 +795,17 @@ class UtilObject {
 			return I.NotificationMode.All;
 		};
 
-		let ret = null;
 		if (spaceview.allIds.includes(chatId)) {
-			ret = I.NotificationMode.All;
+			return I.NotificationMode.All;
 		} else
 		if (spaceview.mentionIds.includes(chatId)) {
-			ret = I.NotificationMode.Mentions;
+			return I.NotificationMode.Mentions;
 		} else
 		if (spaceview.muteIds.includes(chatId)) {
-			ret = I.NotificationMode.Nothing;
+			return I.NotificationMode.Nothing;
 		};
 
-		return ret || spaceview.notificationMode as I.NotificationMode;
+		return spaceview.notificationMode as I.NotificationMode;
 	};
 
 };
