@@ -731,21 +731,16 @@ class UtilCommon {
 
 	/**
 	 * Returns the correct plural form of a word based on a count.
-	 * @param {any} cnt - The count.
+	 * @param {number} cnt - The count.
 	 * @param {string} words - The word forms separated by '|'.
 	 * @returns {string} The correct word form.
 	 */
-	plural (cnt: any, words: string) {
+	plural (cnt: number, words: string) {
 		const chunks = words.split('|');
 		const single = chunks[0];
-		const multiple = chunks[1] ? chunks[1] : single;
+		const multiple = chunks[1] || single;
 
-		cnt = String(cnt || '');
-
-		if (cnt.substr(-2) == 11) {
-			return multiple;
-		};
-		return cnt.substr(-1) == '1' ? single : multiple;
+		return cnt == 1 ? single : multiple;
 	};
 
 	/**
