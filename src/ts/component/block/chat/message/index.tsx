@@ -8,8 +8,6 @@ import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
 
-const LINES_LIMIT = 16;
-
 interface ChatMessageRefProps {
 	highlight: () => void;
 	onReactionAdd: () => void;
@@ -26,7 +24,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
-	const expandRef = useRef(null);
 	const attachmentRefs = useRef({});
 	const message = S.Chat.getMessageById(subId, id);
 
@@ -74,31 +71,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		renderEmoji(er, { iconSize: 16 });
 
 		resize();
-	};
-
-	const setExpandText = (isExpanded: boolean) => {
-		const expand = $(expandRef.current);
-		expand.text(isExpanded ? translate('blockChatMessageCollapse') : translate('blockChatMessageExpand'));
-	};
-
-	const onExpand = () => {
-		const node = $(nodeRef.current);
-
-		node.toggleClass('isExpanded');
-
-		setExpandText(node.hasClass('isExpanded'));
-		scrollToBottom();
-	};
-
-	const initExpand = () => {
-		const node = $(nodeRef.current);
-		const wrapper = node.find('.textWrapper');
-		const textHeight = wrapper.height();
-		const lineHeight = parseInt(wrapper.css('line-height'));
-		const canExpand = textHeight / lineHeight > LINES_LIMIT;
-
-		node.toggleClass('canExpand', canExpand);
-		setExpandText(node.hasClass('isExpanded'));
 	};
 
 	const onReactionAdd = () => {
@@ -236,7 +208,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const width = bubble.outerWidth();
 
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
-		initExpand();
 	};
 
 	if (!message) {
@@ -377,7 +348,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 										dangerouslySetInnerHTML={{ __html: text }}
 									/>
 									<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
-									<div ref={expandRef} className="expand" onClick={onExpand} />
 								</div>
 
 								{hasAttachments ? (
