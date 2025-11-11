@@ -68,14 +68,6 @@
 		}
 	}
 
-	&.containsChat {
-		&:not(.isClosed) {
-			.head {
-				.chatCounter { display: none; }
-			}
-		}
-	}
-
 	&.anim { transition: opacity 0.2s ease-in-out; }
 	&.show { opacity: 1; }
 
