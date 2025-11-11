@@ -45,7 +45,7 @@
 					.cellWrapper { margin-right: 4px; }
 					.cellWrapper.isName { width: 100%; }
 				}
-				.side.left.s60 { width: 60%; overflow: hidden; }
+				.side.left.s60 { width: 60%; }
 				.side.left.s60 {
 					.cellWrapper.isName { min-width: unset; flex-grow: 0; @include text-overflow-nw; }
 				}
