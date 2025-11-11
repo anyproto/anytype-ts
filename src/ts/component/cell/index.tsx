@@ -193,8 +193,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			param.title = relation.name;
 		};
 
-		console.log(param);
-
 		switch (relation.format) {
 
 			case I.RelationType.Date: {

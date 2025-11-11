@@ -15,7 +15,7 @@ import ItemProgress from './vault/update';
 const LIMIT = 20;
 const HEIGHT_ITEM = 44;
 const HEIGHT_ITEM_MESSAGE = 72;
-const HEIGHT_ITEM_UPDATE = 100;
+const HEIGHT_ITEM_UPDATE = 112;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 

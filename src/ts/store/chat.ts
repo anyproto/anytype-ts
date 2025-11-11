@@ -28,7 +28,7 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-
+		
 		this.messageMap.set(subId, observable.array(list));
 	};
 
