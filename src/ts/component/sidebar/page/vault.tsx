@@ -255,18 +255,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		return $(`#${getId()}`);
 	};
 
-	const setActive = (item: any) => {
-		unsetActive();
-
-		if (item) {
-			getNode().find(`#item-${item.id}`).addClass('active');
-		};
-	};
-
-	const unsetActive = () => {
-		getNode().find('.item.active').removeClass('active');
-	};
-
 	const setHover = (item: any) => {
 		if (item) {
 			getNode().find(`#item-${item.id}`).addClass('hover');
@@ -305,6 +293,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let time = null;
 		let last = null;
 		let counter = null;
+
+		if (item.targetSpaceId == space) {
+			cn.push('active');
+		};
 
 		if (isDragging) {
 			cn.push('isDragging');
@@ -491,10 +483,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			unbind();
 		};
 	}, []);
-
-	useEffect(() => {
-		raf(() => setActive(spaceview));
-	});
 
 	return (
 		<>
