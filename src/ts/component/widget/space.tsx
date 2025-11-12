@@ -26,14 +26,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		/>
 	);
 
-	const memberLabel = spaceview.isShared ? (
-		<Label 
-			text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
-			onClick={e => onButtonClick(e, { id: 'member' })}
-		/> 
-	) : (
-		<Label text={translate('commonPersonalSpace')} />
-	);
+	const memberText = spaceview.isShared ? 
+		`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}` : 
+		translate('commonPersonalSpace');
+
+	const memberLabel = <Label text={memberText} onClick={e => onButtonClick(e, { id: 'member' })} />;
 
 	const buttons = [
 		canWrite ? { 
