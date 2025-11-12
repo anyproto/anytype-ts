@@ -40,6 +40,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
 	const initialRender = useRef(true);
+	const namespace = U.Common.getEventNamespace(isPopup);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
@@ -52,7 +53,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const getSubId = () => {
-		return S.Chat.getChatSubId('chat', space, getChatId());
+		return S.Chat.getChatSubId('chat', space, getChatId()) + namespace;
 	};
 
 	const chatId = getChatId();
@@ -61,7 +62,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
@@ -69,7 +70,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		unbind();
 
@@ -918,14 +919,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		renderDates();
 
 		const container = U.Common.getScrollContainer(isPopup);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		container.off(`scroll.${ns}`);
-
 		window.clearTimeout(timeoutResize.current);
-		timeoutResize.current = window.setTimeout(() => {
-			container.on(`scroll.${ns}`, e => onScroll(e));
-		}, 50);
+		timeoutResize.current = window.setTimeout(() => container.on(`scroll.${ns}`, e => onScroll(e)), 50);
 	};
 
 	const sections = getSections();
