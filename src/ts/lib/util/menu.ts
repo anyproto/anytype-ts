@@ -911,10 +911,9 @@ class UtilMenu {
 
 		const items = U.Common.objectCopy(U.Space.getList()).
 			map(it => {
-				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-
-				it.counter = counters.mentionCounter || counters.messageCounter;
-				it.lastMessageDate = S.Chat.getSpaceLastMessageDate(it.targetSpaceId);
+				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
+				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
 				it.isPinned = !!it.orderId;
 				return it;
 			});
@@ -934,8 +933,8 @@ class UtilMenu {
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 
-			if (c1.counter && !c2.counter) return -1;
-			if (!c1.counter && c2.counter) return 1;
+			if (c1.hasCounter && !c2.hasCounter) return -1;
+			if (!c1.hasCounter && c2.hasCounter) return 1;
 
 			if (c1.creationDate > c2.creationDate) return -1;
 			if (c1.creationDate < c2.creationDate) return 1;

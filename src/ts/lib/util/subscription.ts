@@ -548,7 +548,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
 				],
 				sorts: [
-					{ relationKey: 'lastMessageDate', type: I.SortType.Asc },
+					{ relationKey: 'lastMessageDate', type: I.SortType.Desc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
