@@ -64,12 +64,13 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 		C.MembershipV2AnyNameAllocate(name, (message) => {
 			setIsLoading(false);
+
 			if (message.error.code) {
 				setError(message.error.code);
 				return;
 			};
 
-			U.Data.getMembershipStatus(true, close);
+			close();
 		});
 
 		analytics.event('ClickMembershipFinalization');

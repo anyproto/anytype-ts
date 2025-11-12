@@ -340,7 +340,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipProducts(false, () => this.getMembershipStatus(false));
+		this.getMembershipData();
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
 				Storage.clearDeletedSpaces(false);
@@ -844,18 +844,24 @@ class UtilData {
 		});
 	};
 
+	getMembershipData () {
+		this.getMembershipProducts(() => this.getMembershipStatus());
+	};
+
 	/**
 	 * Gets the membership status for the current account.
 	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
-	getMembershipStatus (noCache?: boolean, callBack?: () => void) {
+	getMembershipStatus (callBack?: () => void) {
 		if (!this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipV2GetStatus(noCache, (message: any) => {
-			S.Membership.dataSet(message.data);
+		C.MembershipV2GetStatus(true, (message: any) => {
+			if (!message.error.code) {
+				S.Membership.dataSet(message.data);
+			};
 
 			callBack?.();
 		});
@@ -866,12 +872,12 @@ class UtilData {
 	 * @param {boolean} noCache - Whether to skip cache.
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
-	getMembershipProducts (noCache: boolean, callBack?: () => void) {
+	getMembershipProducts (callBack?: () => void) {
 		if (!S.Common.isOnline || !this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipV2GetProducts(noCache, (message) => {
+		C.MembershipV2GetProducts(true, (message) => {
 			if (!message.error.code) {
 				S.Membership.productsSet(message.products);
 			};

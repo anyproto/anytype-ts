@@ -87,9 +87,7 @@ class MembershipProduct implements I.MembershipProduct {
 	};
 
 	getPriceString (isYearly: boolean): string {
-		const price = this.getPrice(isYearly);
-
-		return U.Common.getMembershipPriceString(price);
+		return U.Common.getMembershipPriceString(this.getPrice(isYearly));
 	};
 
 };

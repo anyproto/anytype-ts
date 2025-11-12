@@ -111,9 +111,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						};
 					};
 
-					U.Data.getMembershipStatus(true, () => {
-						Action.checkDiskSpace(cb1);
-					});
+					Action.checkDiskSpace(cb1);
 				},
 			};
 
