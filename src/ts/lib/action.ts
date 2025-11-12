@@ -861,14 +861,12 @@ class Action {
 	};
 
 	membershipUpgrade (event?: any) {
-		const { data } = S.Membership;
-		const product = data?.getTopProduct();
-
+		const product = S.Membership.data?.getTopProduct();
 		if (!product) {
 			return;
 		};
 
-		if (!product.product.isUpgradeable) {
+		if (!product.isUpgradeable) {
 			S.Popup.open('confirm', {
 				data: {
 					title: translate('popupConfirmMembershipUpgradeTitle'),

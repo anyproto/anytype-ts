@@ -1099,12 +1099,32 @@ class Dispatcher {
 				};
 
 				case 'MembershipV2Update': {
-					S.Membership.dataSet(mapped.data);
+					S.Membership.dataUpdate(mapped.data);
+
+					const { data } = S.Membership;
+					const purchased = data?.getTopPurchasedProduct();
+					const product = data?.getTopProduct();
+
+					console.log('PURCHASED', JSON.stringify(purchased, null, 3));
+					console.log('PRODUCT', JSON.stringify(product, null, 3));
+
+					if (!purchased || !product) {
+						break;
+					};
+
+					if (purchased.isFinalization) {
+						S.Popup.open('membershipFinalization', {
+							data: {
+								product,
+								route: analytics.route.stripe,
+							},
+						});
+					};
 					break;
 				};
 
 				case 'MembershipV2ProductsUpdate': {
-					S.Membership.productsSet(mapped.products);
+					S.Membership.productsUpdate(mapped.products);
 					break;
 				};
 

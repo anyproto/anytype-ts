@@ -614,7 +614,7 @@ export const Mapper = {
 							dateStarted: info.getDatestarted(),
 							dateEnds: info.getDateends(),
 							isAutoRenew: info.getIsautorenew(),
-							isYearly: info.getIsyearly(),
+							period: info.getPeriod(),
 						},
 						status: it.getProductstatus().getStatus() as number,
 					};

@@ -9,34 +9,16 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const { isPopup } = props;
 	const [ error, setError ] = useState('');
 
-
 	const init = () => {
 		const { history } = U.Router;
 		const { location } = history;
 		const searchParam = U.Common.searchParam(location.search);
-		const { data } = S.Membership;
-
-		if (!data) {
-			setError(translate('pageMainMembershipError'));
-			return;
-		};
-
-		const purchased = data.getTopProduct();
-		const { product, status } = purchased;
 
 		U.Space.openDashboardOrVoid({
 			replace: true,
 			onFadeIn: () => {
 				if (searchParam.code) {
 					S.Popup.open('membershipActivation', { data: searchParam });
-				} else
-				if (status == I.MembershipStatus.Finalization) {
-					S.Popup.open('membershipFinalization', {
-						data: {
-							product,
-							route: analytics.route.stripe,
-						},
-					});
 				} else {
 					Action.openSettings('membership', analytics.route.stripe);
 				};
@@ -55,7 +37,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	};
 
 	useEffect(() => {
-		U.Data.getMembershipStatus(true, init);
+		init();
 	}, []);
 
 	useImperativeHandle(ref, () => ({

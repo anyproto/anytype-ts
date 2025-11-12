@@ -9,18 +9,25 @@ export enum MembershipStatus {
 	Finalization			 = 3,
 };
 
+export enum MembershipPeriod {
+	Unlimited				 = 0,
+	Monthly					 = 1,
+	Yearly					 = 2,
+	ThreeYears				 = 3,
+};
+
 export interface MembershipAmount {
 	currency: string;
 	amountCents: number;
 };
 
 export interface MembershipPurchasedProduct {
-	product: MembershipProduct;
+	product: { id: string; };
 	info: {
 		dateStarted: number;
 		dateEnds: number;
 		isAutoRenew: boolean;
-		isYearly: boolean;
+		period: MembershipPeriod;
 	};
 	status: MembershipStatus;
 	isNone?: boolean;
@@ -35,7 +42,8 @@ export interface MembershipData {
 		date: number;
 		total: MembershipAmount;
 	};
-	getTopProduct?: () => MembershipPurchasedProduct | null;
+	getTopProduct?: () => MembershipProduct | null;
+	getTopPurchasedProduct?: () => MembershipPurchasedProduct | null;
 };
 
 export interface MembershipProduct {

@@ -1193,10 +1193,7 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		const { data } = S.Membership;
-		const product = data?.getTopProduct();
-
-		return this.isAnytypeNetwork() && product?.product?.isIntro;
+		return this.isAnytypeNetwork() && S.Membership.data?.getTopProduct()?.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

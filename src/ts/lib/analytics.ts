@@ -248,10 +248,7 @@ class Analytics {
 	 * Sets the user's purchased membership name property for analytics.
 	 */
 	setProduct () {
-		const { data } = S.Membership;
-		const product = data?.getTopProduct();
-
-		this.setProperty({ product: product?.product?.name || 'None' });
+		this.setProperty({ product: S.Membership.data?.getTopProduct()?.name || 'None' });
 	};
 
 	/**

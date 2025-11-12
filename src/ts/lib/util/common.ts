@@ -1971,7 +1971,6 @@ class UtilCommon {
 		};
 
 		const digits = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(price.amountCents / 100);
-
 		return `${J.Constant.currencySymbol[price.currency]}${digits}`;
 	};
 

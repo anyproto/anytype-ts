@@ -18,7 +18,7 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 		content = <Loader />;
 	} else {
 		const product = data.getTopProduct();
-		const showIntro = !product || product.product.isIntro;
+		const showIntro = !product || product.isIntro;
 
 		content = showIntro ? <Intro {...props} /> : <Purchased {...props} />;
 	};

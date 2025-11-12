@@ -219,10 +219,10 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			const { data } = S.Membership;
 			const product = data?.getTopProduct();
 
-			if (!product || product.product.isIntro) {
+			if (!product || product.isIntro) {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 			} else {
-				caption = <div className="caption">{product.product.name}</div>;
+				caption = <div className="caption">{product.name}</div>;
 			};
 		};
 

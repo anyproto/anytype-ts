@@ -71,14 +71,13 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 					const cb1 = () => {
 						const { data } = S.Membership;
-						const purchased = data?.getTopProduct();
+						const purchased = data?.getTopPurchasedProduct();
+						const product = data?.getTopProduct();
 
 						if (!purchased) {
 							cb2();
 						} else {
-							const { product, status } = purchased;
-
-							if (status && (status == I.MembershipStatus.Finalization)) {
+							if (purchased.isFinalization) {
 								S.Popup.open('membershipFinalization', {
 									onClose: cb2,
 									data: {

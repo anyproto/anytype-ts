@@ -1,3 +1,4 @@
+import { makeObservable, observable, intercept } from 'mobx';
 import { I, U } from 'Lib';
 
 const COLORS = [
@@ -6,11 +7,6 @@ const COLORS = [
 	'red',
 	'ice',
 ];
-
-const CURRENCY_SYMBOL = {
-	USD: '$',
-	EUR: '€',
-};
 
 class MembershipProduct implements I.MembershipProduct {
 
@@ -61,6 +57,20 @@ class MembershipProduct implements I.MembershipProduct {
 			anyNameCount: Number(props.features?.anyNameCount) || 0,
 			anyNameMinLen: Number(props.features?.anyNameMinLen) || 0,
 		};
+
+		makeObservable(this, {
+			name: observable,
+			description: observable,
+			isTopLevel: observable,
+			isHidden: observable,
+			color: observable,
+			offer: observable,
+			pricesYearly: observable,
+			pricesMonthly: observable,
+			features: observable,
+		});
+
+		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
 	get featuresList (): { key: string; value: number; }[] {

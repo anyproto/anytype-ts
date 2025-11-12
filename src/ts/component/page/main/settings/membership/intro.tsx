@@ -13,6 +13,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
+	const purchased = data?.getTopPurchasedProduct();
 
 	const rebind = () => {
 		unbind();
@@ -88,7 +89,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	const TierItem = (props: any) => {
 		const { item } = props;
-		const isCurrent = item.id == current?.product.id;
+		const isCurrent = item.id == current?.id;
 		const price = item.getPriceString(isAnnual);
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
 		const buttonRef = useRef(null);
@@ -100,11 +101,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		let period = '';
 
 		if (isCurrent) {
-			if (current?.status == I.MembershipStatus.Pending) {
+			if (purchased?.isPending) {
 				period = translate('popupSettingsMembershipPending');
 			} else
-			if (item.period && current?.info.dateEnds) {
-				period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', current?.info.dateEnds));
+			if (item.period && purchased?.info.dateEnds) {
+				period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', purchased?.info.dateEnds));
 			} else {
 				period = translate('popupSettingsMembershipForeverFree');
 			};

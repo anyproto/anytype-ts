@@ -8,11 +8,11 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = S.Membership;
 	const { nextInvoice } = data;
-	const purchased = data?.getTopProduct();
-	const { info, product } = purchased;
-	const { isAutoRenew, dateEnds, isYearly } = info;
+	const purchased = data?.getTopPurchasedProduct();
+	const product = data?.getTopProduct();
+	const { info } = purchased;
+	const { isAutoRenew, dateEnds, period } = info;
 	const { name, colorStr } = product;
-	const period = isYearly ? translate('popupSettingsMembershipCurrentTierAnnual') : translate('popupSettingsMembershipCurrentTierMonthly');
 	const currentCn = [ 'item', 'current', colorStr ? colorStr : 'default' ];
 
 	const profile = U.Space.getProfile();

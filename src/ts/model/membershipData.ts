@@ -1,25 +1,25 @@
-import { I, U } from 'Lib';
+import { I, U, M, S } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class MembershipPurchasedProduct implements I.MembershipPurchasedProduct {
 
-	product: I.MembershipProduct = null;
+	product: { id: string; } = null;
 	info = {
 		dateStarted: 0,
 		dateEnds: 0,
 		isAutoRenew: false,
-		isYearly: false,
+		period: 0,
 	};
 	status: I.MembershipStatus = I.MembershipStatus.None;
 
 	constructor (props: I.MembershipPurchasedProduct) {
 
-		this.product = props.product ? props.product : null;
+		this.product = props.product ? { id: props.product.id } : null;
 		this.info = {
 			dateStarted: Number(props.info?.dateStarted) || 0,
 			dateEnds: Number(props.info?.dateEnds) || 0,
 			isAutoRenew: Boolean(props.info?.isAutoRenew),
-			isYearly: Boolean(props.info?.isYearly),
+			period: Number(props.info?.period) || I.MembershipPeriod.Unlimited,
 		};
 		this.status = Number(props.status) || I.MembershipStatus.None;
 
@@ -81,8 +81,14 @@ class MembershipData implements I.MembershipData {
 		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
-	getTopProduct (): I.MembershipPurchasedProduct | null {
-		return this.products.find(it => it.product.isTopLevel && (it.isActive || it.isFinalization)) || null;
+	getTopProduct (): I.MembershipProduct | null {
+		const list = this.products.map(it => S.Membership.getProduct(it.product?.id)).filter(it => it && it.isTopLevel);
+		return list.length ? list[0] : null;
+	};
+
+	getTopPurchasedProduct (): I.MembershipPurchasedProduct | null {
+		const list = this.products.filter(it => S.Membership.getProduct(it.product?.id)?.isTopLevel);
+		return list.length ? list[0] : null;
 	};
 
 };

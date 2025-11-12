@@ -28,8 +28,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 		return null;
 	};
 
-	const { data } = S.Membership;
-	const purchased = data?.getTopProduct();
+	const product = S.Membership.data?.getTopProduct();
 
 	const getConditions = (item): { isShown: boolean; isRed: boolean } => {
 		let isShown = false;
@@ -122,7 +121,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 		&& U.Data.isAnytypeNetwork()
 		&& isShown;
 
-	if (!Component || !canShow || (purchased && !purchased.product.isUpgradeable)) {
+	if (!Component || !canShow || (product && !product.isUpgradeable)) {
 		return null;
 	};
 
