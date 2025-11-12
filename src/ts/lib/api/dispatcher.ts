@@ -843,7 +843,9 @@ class Dispatcher {
 					// Subscriptions
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					S.Detail.delete(rootId, id, keys);
+					if (rootId) {
+						S.Detail.delete(rootId, id, keys);
+					};
 
 					updateMarkup = true;
 					break;
