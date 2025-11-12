@@ -38,14 +38,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
-		const notSyncedCounter = S.Auth.getNotSynced().total;
 		const { setActive } = this.props;
-		const isOwner = U.Space.isMyOwner();
-		const canWrite = U.Space.canMyParticipantWrite();
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
-		const showIncentive = notSyncedCounter && canWrite && U.Data.isAnytypeNetwork();
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -135,17 +131,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				</div>
 
 				<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
-
-				{showIncentive ? (
-					<div className="incentiveBanner">
-						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
-						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
-						<div className="buttons">
-							<Button text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" className="c28" onClick={() => this.onIncentiveButtonClick('storage')} />
-							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
-						</div>
-					</div>
-				) : ''}
 
 				{!isLoading && !items.length ? (
 					<EmptySearch text={emptyText} />
