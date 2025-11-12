@@ -556,7 +556,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'openFile': {
-				Action.openFile(object.id, route);
+				Action.openFile(object, route);
 				break;
 			};
 

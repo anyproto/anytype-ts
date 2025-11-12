@@ -279,7 +279,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 			</div>
 
 			<Members {...props} onStopSharing={onStopSharing} />
-
 			<Error text={error} />
 		</>
 	);

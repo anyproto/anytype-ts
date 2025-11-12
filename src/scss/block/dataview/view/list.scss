@@ -71,7 +71,8 @@
 				}
 
 				.cellWrapper.isName {
-					.icon.editMode { opacity: 1; }
+					.icon.editMode { display: block; }
+					.chatCounter { display: none; }
 				}
 			}
 
@@ -98,7 +99,7 @@
 				.cellContent {
 					.name { width: unset; max-width: 100%; }
 				}
-				.icon.editMode { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; opacity: 0; }
+				.icon.editMode { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; display: none; }
 			}
 
 			.cellWrapper:not(.isName) {

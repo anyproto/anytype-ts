@@ -420,7 +420,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						case 'link': {
 							const object = S.Detail.get(rootId, rootId);
 
-							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
+							U.Object.copyLink(object, space, 'deeplink', '', `&messageId=${item.id}`);
 							analytics.event('ClickMessageMenuLink');
 							break;
 						};
@@ -877,27 +877,37 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		initialRender.current = true;
 
 		loadState(() => {
+
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
-			const cb = () => scrollToBottom(false);
 
-			let orderId = state.messageOrderId;
-			if (match.params.messageOrder) {
-				orderId = decodeURIComponent(match.params.messageOrder);
+			const cb1 = (orderId: string) => {
+				if (orderId) {
+					loadMessagesByOrderId(orderId, () => {
+						const target = S.Chat.getMessageByOrderId(subId, orderId);
+						if (target) {
+							setFirstUnreadOrderId(target.orderId);
+						} else {
+							loadMessages(1, true, cb2);
+						};
+					});
+				} else {
+					loadMessages(1, true, cb2);
+				};
 			};
+			const cb2 = () => scrollToBottom(false);
 
-			if (orderId) {
-				loadMessagesByOrderId(orderId, () => {
-					const target = S.Chat.getMessageByOrderId(subId, orderId);
-					if (target) {
-						setFirstUnreadOrderId(target.orderId);
+			if (match.params.messageId) {
+				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+					if (message.messages.length) {
+						cb1(message.messages[0].orderId);
 					} else {
-						loadMessages(1, true, cb);
+						cb1(state.messageOrderId);
 					};
 				});
 			} else {
-				loadMessages(1, true, cb);
+				cb1(state.messageOrderId);
 			};
 		});
 

@@ -22,7 +22,6 @@ export interface ChatState {
 	messages: ChatStateCounter;
 	mentions: ChatStateCounter;
 	lastStateId: string;
-	lastMessageDate: number;
 	order: number;
 };
 
@@ -33,7 +32,6 @@ export interface ChatStoreState {
 	mentionCounter: number;
 	lastStateId: string;
 	order: number;
-	lastMessageDate: number;
 };
 
 export interface ChatCounter {

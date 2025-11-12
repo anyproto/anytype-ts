@@ -28,9 +28,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const getSections = () => {
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const ret = [
-			{ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') },
 			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
 		];
+
+		if (S.Record.getMeta(J.Constant.subId.recentEdit, '').total) {
+			ret.unshift({ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') });
+		};
 
 		if (widgets.length) {
 			ret.unshift({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });

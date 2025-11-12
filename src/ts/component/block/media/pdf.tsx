@@ -75,7 +75,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	};
 
 	const onOpenFile = () => {
-		Action.openFile(block.getTargetObjectId(), analytics.route.block);
+		Action.openFile(object, analytics.route.block);
 	};
 
 	const onOpenObject = (e: any) => {

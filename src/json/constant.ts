@@ -133,6 +133,7 @@ export default {
 		chatPreview:	 		'chatPreview',
 		chat:			 		'chat',
 		chatGlobal:	 			'chatGlobal',
+		recentEdit:	 			'recentEdit',
 	},
 
 	typeKey: {
