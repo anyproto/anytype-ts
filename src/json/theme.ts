@@ -138,8 +138,8 @@ export default {
 			bg: '#171717',
 			link: '#3f3f3f',
 			arrow: '#555',
-			node: '#9a9a9a',
-			text: '#9a9a9a',
+			node: '#ababab',
+			text: '#ababab',
 			highlight: '#ffb522',
 			selected: '#2aa7ee',
 			iconBg: '#252525'
@@ -161,7 +161,7 @@ export default {
 			bg: '#fff'
 		},
 
-		iconUser: '#9a9a9a',
+		iconUser: '#ababab',
 
 		progress: {
 			bg: '#292929',
