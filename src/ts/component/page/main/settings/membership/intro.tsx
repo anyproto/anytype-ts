@@ -71,7 +71,6 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const onPay = (item: any, callBack: () => void) => {
 		C.MembershipV2CartUpdate([ item.id ], isAnnual, (res) => {
 			if (res.error.code) {
-				console.log('ERROR WHILE CART UPDATE');
 				callBack();
 				return;
 			};

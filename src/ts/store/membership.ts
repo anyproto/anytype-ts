@@ -65,8 +65,6 @@ class MembershipStore {
 			const model = new M.MembershipData(Object.assign(this.dataValue, data));
 
 			set(this.dataValue, model);
-
-			console.log('DATA UPDATE', model, this.dataValue);
 		} else 
 		if (data) {
 			this.dataValue = new M.MembershipData(data as I.MembershipData);

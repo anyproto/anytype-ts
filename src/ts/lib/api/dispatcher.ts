@@ -1107,9 +1107,6 @@ class Dispatcher {
 					const purchased = data?.getTopPurchasedProduct();
 					const product = data?.getTopProduct();
 
-					console.log('PURCHASED', JSON.stringify(purchased, null, 3));
-					console.log('PRODUCT', JSON.stringify(product, null, 3));
-
 					if (!purchased || !product) {
 						break;
 					};
