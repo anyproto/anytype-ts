@@ -60,7 +60,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 				<div className={currentCn.join(' ')}>
 					<div className="top">
 						<Icon />
-						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, period)} />
+						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
 					<Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />

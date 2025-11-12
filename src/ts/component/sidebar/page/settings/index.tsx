@@ -15,6 +15,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 	const { page } = props;
 	const { data } = S.Membership;
+	const product = data?.getTopProduct();
 	const { space, isOnline } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
 	const profile = U.Space.getProfile();
@@ -216,9 +217,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 
 		if (item.id == 'membership') {
-			const { data } = S.Membership;
-			const product = data?.getTopProduct();
-
 			if (!product || product.isIntro) {
 				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 			} else {
