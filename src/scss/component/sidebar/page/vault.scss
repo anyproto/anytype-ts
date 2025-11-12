@@ -17,6 +17,7 @@
 
 			.item { gap: 0px 10px; }
 			.item {
+				&.isProgress { gap: 8px 10px; }
 				&.isProgress {
 					.icon { width: 48px; height: 48px; }
 				}
