@@ -1,7 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, S, U, J, Relation, translate } from 'Lib';
-import object from 'Component/cell/item/object';
-import relation from 'json/relation';
 
 interface Detail {
 	relationKey: string;
@@ -425,8 +423,6 @@ class DetailStore {
 		object.text = object.name;
 		object.relationOptionColor = Relation.getStringValue(object.relationOptionColor);
 		object.orderId = Relation.getStringValue(object.orderId);
-
-		delete(object.relationOptionColor);
 
 		return object;
 	};

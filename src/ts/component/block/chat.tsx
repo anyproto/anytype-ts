@@ -8,6 +8,7 @@ import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action
 import Form from './chat/form';
 import Message from './chat/message';
 import SectionDate from './chat/message/date';
+import { sub } from 'date-fns';
 
 interface RefProps {
 	forceUpdate: () => void;

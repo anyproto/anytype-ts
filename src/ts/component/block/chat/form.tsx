@@ -1646,8 +1646,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
 			keyboard.disableSelection(false);
-
-
 		};
 	}, []);
 
