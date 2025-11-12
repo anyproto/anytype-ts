@@ -554,6 +554,20 @@ class UtilSubscription {
 				noDeps: true,
 			},
 			{
+				subId: J.Constant.subId.recentEdit,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
+				],
+				sorts: [
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+				limit: 10,
+			},
+			{
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
