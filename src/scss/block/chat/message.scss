@@ -158,20 +158,6 @@
 		}
 	}
 
-	&.canExpand {
-		.bubbleInner {
-			.textWrapper { min-width: 200px; }
-			.expand { display: flex; }
-			.text { @include clamp; -webkit-line-clamp: 16; }
-		}
-	}
-
-	&.canExpand.isExpanded {
-		.bubbleInner {
-			.text { -webkit-line-clamp: 1000; }
-		}
-	}
-
 	&:hover, &.hover {
 		.controls { opacity: 1; }
 	}

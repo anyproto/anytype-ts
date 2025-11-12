@@ -51,6 +51,7 @@ class UtilRouter {
 				i++;
 			};
 		};
+
 		return param;
 	};
 

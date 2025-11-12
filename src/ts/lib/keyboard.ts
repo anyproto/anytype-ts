@@ -296,7 +296,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-widget-arrow').trigger('click');
+				$('#button-create-arrow').trigger('click');
 			});
 
 			// Lock the app

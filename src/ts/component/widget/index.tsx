@@ -47,7 +47,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
-	const containsChat = U.Object.isChatLayout(object?.recommendedLayout);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);
@@ -665,10 +664,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	};
 
-	if (containsChat) {
-		cn.push('containsChat');
-	};
-
 	const buttons = [];
 	const canCreate = canCreateHandler();
 	const childProps = {
@@ -760,7 +755,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							{isChat || containsChat ? <ChatCounter chatId={isChat ? object.id : undefined} /> : ''}
+							{isChat ? <ChatCounter chatId={object.id} /> : ''}
 
 							{buttons.length ? (
 								<div className="buttons">

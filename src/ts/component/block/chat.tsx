@@ -43,6 +43,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
+		if (object._empty_) {
+			return '';
+		};
+
 		return object.chatId || rootId;
 	};
 
@@ -208,12 +213,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const loadMessagesByOrderId = (orderId: string, callBack?: () => void) => {
 		const chatId = getChatId();
-		const subId = getSubId();
-
 		if (!chatId) {
 			return;
 		};
 
+		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
 		let list = [];
@@ -876,13 +880,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
-			const orderId = match.params.messageOrder || state.messageOrderId;
 			const cb = () => scrollToBottom(false);
+
+			let orderId = state.messageOrderId;
+			if (match.params.messageOrder) {
+				orderId = decodeURIComponent(match.params.messageOrder);
+			};
 
 			if (orderId) {
 				loadMessagesByOrderId(orderId, () => {
 					const target = S.Chat.getMessageByOrderId(subId, orderId);
-
 					if (target) {
 						setFirstUnreadOrderId(target.orderId);
 					} else {

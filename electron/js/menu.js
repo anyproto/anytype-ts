@@ -548,7 +548,7 @@ class MenuManager {
 		let icon = '';
 
 		if (is.windows) {
-			icon = path.join('icons', '32x32.png');
+			icon = path.join('icons', '256x256.ico');
 		} else 
 		if (is.linux) {
 			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP;

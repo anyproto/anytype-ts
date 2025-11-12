@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, S, U, J, translate, analytics, keyboard, Action } from 'Lib';
+import { I, S, U, J, translate, analytics, keyboard, Action, Storage } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -89,6 +89,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const height = node.height();
 		const settings = S.Common.getGraph(storageKey);
 		const cnv = $(canvas.current);
+		const graphData = Storage.getGraphData();
 
 		images.current = {};
 		zoom.current = d3.zoom().scaleExtent([ 0.05, 10 ])
@@ -153,7 +154,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			rootId,
 			nodes: nodes.current,
 			edges: edges.current,
-			colors: J.Theme[theme].graph || {},
+			zoom: graphData.zoom,
+			colors: {
+				...J.Theme[theme].graph || {},
+				icon: J.Theme.icon,
+			},
 		}, [ transfer ]);
 
 		d3.select(canvas.current)
@@ -164,7 +169,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			on('end', (e: any, d: any) => onDragEnd(e))
 		)
 		.call(zoom.current)
-		.call(zoom.current.transform, d3.zoomIdentity.translate(0, 0).scale(1))
+		.call(zoom.current.transform, d3.zoomIdentity.translate(graphData.zoom.x, graphData.zoom.y).scale(graphData.zoom.k))
 		.on('click', (e: any) => {
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
@@ -206,7 +211,14 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
 		d.shortName = U.Common.shorten(d.name, 24);
-		d.typeKey = type?.uniqueKey || d.type;
+
+		if (type) {
+			d.typeKey = type.uniqueKey || d.type;
+
+			if (d.iconOption === undefined) {
+				d.iconOption = type.iconOption;
+			};
+		};
 
 		// Clear icon props to fix image size
 		if (U.Object.isTaskLayout(d.layout)) {
@@ -291,7 +303,11 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 	};
 
 	const onZoom = ({ transform, sourceEvent }) => {
-		if (isDraggingToSelect.current && sourceEvent) {
+		if (!sourceEvent) {
+			return;
+		};
+
+		if (isDraggingToSelect.current) {
 			const p = d3.pointer(sourceEvent, d3.select(canvas.current));
 			const node = $(nodeRef.current);
 			const { left, top } = node.offset();
@@ -299,6 +315,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			send('onDragToSelectMove', { x: p[0] - left, y: p[1] - top });
 		} else {
 			send('onZoom', { transform });
+			Storage.setGraphData({ zoom: transform });
 		};
 	};
 
@@ -447,7 +464,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				}));
 
 				nodesSelectedByDragToSelect.current = nodesSelectedByDragToSelect.current.filter(id => currentSelected.includes(id));
-
 
 				currentSelected.forEach((id: string) => {
 					if (ids.current.includes(id)){
