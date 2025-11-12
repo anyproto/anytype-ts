@@ -66,11 +66,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
+	const namespace = U.Common.getEventNamespace(isPopup);
+	const attachmentsSubId = subId + namespace;
 	
-	let attachments = S.Chat.getAttachments(subId);
+	let attachments = S.Chat.getAttachments(attachmentsSubId);
 
 	const setAttachments = (list: any[]) => {
-		S.Chat.setAttachments(subId, list);
+		S.Chat.setAttachments(attachmentsSubId, list);
 	};
 
 	const checkSendButton = () => {
@@ -604,7 +606,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				}, {}, { noButtons: true }, analytics.route.message, object => {
 					onChatButtonSelect(I.ChatButton.Object, object);
 
-					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.getAttachments(subId)) });
+					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.getAttachments(attachmentsSubId)) });
 
 					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
 					context?.close();
@@ -1601,7 +1603,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 											object={item}
 											onRemove={onAttachmentRemove}
 											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(subId))}
+											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
 										/>
 									</SwiperSlide>
 								))}
