@@ -278,32 +278,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
-	onIncentiveButtonClick (id: string) {
-		const route = analytics.route.syncStatus;
-
-		switch (id) {
-			case 'storage': {
-				const { files } = S.Auth.getNotSynced();
-
-				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
-					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
-				} else {
-					Action.openSettings('spaceStorage', route);
-				};
-				break;
-			};
-
-			case 'upgrade': {
-				Action.membershipUpgrade({ 
-					type: 'StorageExceeded', 
-					usage: Math.round(U.Common.calculateStorageUsage()), 
-					route,
-				});
-				break;
-			};
-		};
-	};
-
 	load () {
 		if (U.Data.isLocalNetwork()) {
 			return;
