@@ -40,8 +40,6 @@ class MembershipStore {
 	productsUpdate (list: I.MembershipProduct[]) {
 		list.forEach((it: any) => {
 			const idx = this.productsList.findIndex(p => p.id == it.id);
-			console.log('MembershipStore.productsUpdate', it, idx);
-
 			if (idx >= 0) {
 				set(this.productsList[idx], it);
 			} else {
