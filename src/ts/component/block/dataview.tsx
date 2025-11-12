@@ -218,7 +218,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRefRecord={(ref: any, id: string) => this.refRecords.set(id, ref)}
 						{...this.props}
 						{...dataviewProps}
-						pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={this.getPageContainer()}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
@@ -1588,14 +1588,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 
 		win.on(`keydown.record-${id}`, (e) => {
-			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id));
-			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id));
+			keyboard.shortcut('escape, enter', e, () => this.setRecordEditingOff(id));
 		});
 	};
 
 	setRecordEditingOff (id: string) {
 		const ref = this.refRecords.get(id);
 		const win = $(window);
+		const pageContainer = this.getPageContainer();
 
 		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
@@ -1610,6 +1610,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (nameRef) {
 			nameRef.onBlur();
 		};
+
+		$(pageContainer).trigger('mousedown');
 	};
 
 	multiSelectAction (id: string) {
@@ -1670,6 +1672,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.refView.resize();
 			};
 		});
+	};
+
+	getPageContainer () {
+		return U.Common.getCellContainer(this.props.isPopup ? 'popup' : 'page');
 	};
 
 });

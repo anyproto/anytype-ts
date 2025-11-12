@@ -77,7 +77,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				range.current = null;
 				setEditingHandler(false);
 
-				if (onRecordAdd && (pressed == 'enter+shift')) {
+				if (onRecordAdd && pressed.match('shift')) {
 					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
 				};
 			});
