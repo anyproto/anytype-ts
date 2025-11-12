@@ -203,7 +203,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			case I.ObjectLayout.File:
 			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.Audio: {
-				Action.openFile(object.id, analytics.route.chat);
+				Action.openFile(object, analytics.route.chat);
 				break;
 			};
 

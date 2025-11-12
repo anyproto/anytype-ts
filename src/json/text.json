@@ -1288,7 +1288,10 @@
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
-	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+	"popupConfirmOpenExternalLinkText": "You are trying to open an url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+
+	"popupConfirmOpenExternalFileTitle": "Are you sure?",
+	"popupConfirmOpenExternalFileText": "You are trying to open a file that is potentially harmful. Are you sure you want to proceed?<br/>File: %s",
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
