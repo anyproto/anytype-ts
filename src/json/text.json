@@ -1028,6 +1028,7 @@
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareQRCode": "QR code",
+	"popupSettingsSpaceShareMakePrivate": "Make Private",
 
 	"popupSettingsMembershipTitle1": "Membership",
 	"popupSettingsMembershipTitle2": "Let's build together",
@@ -1326,8 +1327,11 @@
 	"popupConfirmDeleteTypeTitle": "Delete Object Type?",
 	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
 
+	"popupConfirmStopSharingSpaceWarningTitle": "Make this space private?",
+	"popupConfirmStopSharingSpaceWarningText": "Making this space private will disable the current invite link, so it can no longer be used to join. You’ll remain the only member.\nWhen you re-enable sharing, a new link will be generated.",
+
 	"popupConfirmStopSharingSpaceTitle": "The space is now private",
-	"popupConfirmStopSharingSpaceText": "You've removed the last member, so this space is now private and only accessible to you",
+	"popupConfirmStopSharingSpaceText": "Making this space private will disable the current invite link, so it can no longer be used to join. You’ll remain the only member.\nWhen you re-enable sharing, a new link will be generated.",
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
 	"popupConfirmSystemWidgetRemoveText": "We've redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
@@ -1996,6 +2000,8 @@
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
 	"toastWidget": "Widget <b>%s</b> has been added",
 	"toastJoinSpace": "You have joined <b>%s</b>",
+
+	"toastSpaceIsPrivate": "This space is private now",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
