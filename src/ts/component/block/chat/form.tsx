@@ -524,6 +524,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onDragOver = (e: any) => {
+		if (!canDrop(e)) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
