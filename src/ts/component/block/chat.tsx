@@ -46,6 +46,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
+		console.log('OBJECT', object);
+
 		if (object._empty_) {
 			return '';
 		};
