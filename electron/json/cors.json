@@ -18,7 +18,8 @@
 		"https://*.sndcdn.com",
 		"https://scontent.cdninstagram.com",
 		"https://*.any.coop",
-		"https://*.ytimg.com"
+		"https://*.ytimg.com",
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
 	],
 
 	"media-src": [ 
@@ -36,7 +37,8 @@
 		"https://media.sketchfab.com",
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
-		"https://*.any.coop"
+		"https://*.any.coop",
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
 	],
 
 	"style-src": [ 
