@@ -27,25 +27,29 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const getSections = () => {
 		const widgets = getWidgets(I.WidgetSection.Pin);
-		const ret = [
-			{ id: I.WidgetSection.Type, name: translate('widgetSectionType') },
-		];
-
-		if (S.Record.getMeta(J.Constant.subId.recentEdit, '').total) {
-			ret.unshift({ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') });
-		};
-
-		if (widgets.length) {
-			ret.unshift({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });
-		};
+		const types = U.Data.getWidgetTypes();
+		const recent = S.Record.getMeta(J.Constant.subId.recentEdit, '').total;
+		const ret = [];
 
 		if (!spaceview.isChat) {
 			const chats = S.Record.getRecords(J.Constant.subId.chat);
 			const counters = S.Chat.getSpaceCounters(space);
 
 			if (chats.length && ((counters.messageCounter > 0) || (counters.mentionCounter > 0))) {
-				ret.unshift({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
+				ret.push({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
 			};
+		};
+
+		if (widgets.length) {
+			ret.push({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });
+		};
+
+		if (recent) {
+			ret.push({ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') });
+		};
+
+		if (types.length) {
+			ret.push({ id: I.WidgetSection.Type, name: translate('widgetSectionType') });
 		};
 
 		return ret;

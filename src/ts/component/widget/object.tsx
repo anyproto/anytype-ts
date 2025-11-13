@@ -95,16 +95,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			};
 
 			case J.Constant.widgetId.type: {
-				items = S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
-					return (
-						!U.Object.isInSystemLayouts(it.recommendedLayout) && 
-						!U.Object.isDateLayout(it.recommendedLayout) && 
-						!U.Object.isParticipantLayout(it.recommendedLayout) &&
-						(it.uniqueKey != J.Constant.typeKey.template) &&
-						(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
-					);
-				});
-
+				items = U.Data.getWidgetTypes();
 				break;
 			};
 		};

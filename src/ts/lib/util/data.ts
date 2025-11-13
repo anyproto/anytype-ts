@@ -1213,6 +1213,18 @@ class UtilData {
 		return !isPopup || (isPopup && (keyboard.getRootId(false) != rootId));
 	};
 
+	getWidgetTypes (): any[] {
+		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
+			return (
+				!U.Object.isInSystemLayouts(it.recommendedLayout) && 
+				!U.Object.isDateLayout(it.recommendedLayout) && 
+				!U.Object.isParticipantLayout(it.recommendedLayout) &&
+				(it.uniqueKey != J.Constant.typeKey.template) &&
+				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+			);
+		});
+	};
+
 };
 
 export default new UtilData();
