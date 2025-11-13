@@ -424,6 +424,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	useEffect(() => {
 		links.current = object.links;
 		updateData();
+		resize();
 	}, []);
 
 	useEffect(() => {
@@ -442,7 +443,7 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		resize();
 
 		$(`#widget-${parent.id}`).toggleClass('isEmpty', !length);
-	}, [ length ]);
+	}, [ nodes ]);
 
 	useImperativeHandle(ref, () => ({
 		updateData,
