@@ -372,6 +372,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		console.log('onMessageAdd', message, subIds.includes(getSubId()));
+		console.log('SUB_IDS', JSON.stringify(subIds, null, 3));
+		console.log('CURRENT_SUB_ID', getSubId());
 
 		if (subIds.includes(getSubId())) {
 			loadDepsAndReplies([ message ], () => scrollToBottomCheck());
