@@ -6,6 +6,7 @@ const TYPE_KEYS = {
 		J.Constant.typeKey.page,
 		J.Constant.typeKey.note,
 		J.Constant.typeKey.task,
+		J.Constant.typeKey.chatDerived,
 		J.Constant.typeKey.collection,
 		J.Constant.typeKey.set,
 		J.Constant.typeKey.bookmark,
