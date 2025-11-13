@@ -61,7 +61,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 				onRouteChange: () => sidebar.init(false),
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
-					const chatsOnboarding = Storage.get('chatsOnboarding');
+					const chatsOnboarding = true;//Storage.get('chatsOnboarding');
 
 					[
 						I.SurveyType.Register, 
@@ -99,6 +99,8 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						} else
 						if (whatsNew) {
 							U.Common.showWhatsNew(whatsNewParam);
+						} else {
+							Onboarding.startBasics(isPopup);
 						};
 					};
 

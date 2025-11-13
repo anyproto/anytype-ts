@@ -282,6 +282,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const loadDeps = (ids: string[], callBack?: () => void) => {
+		console.log('loadDeps', JSON.stringify(ids, null, 3));
+
 		if (!ids.length) {
 			callBack?.();
 			return;
@@ -369,6 +371,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
+		console.log('onMessageAdd', message, subIds.includes(getSubId()));
+
 		if (subIds.includes(getSubId())) {
 			loadDepsAndReplies([ message ], () => scrollToBottomCheck());
 		};
