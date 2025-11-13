@@ -60,10 +60,14 @@ class MembershipData implements I.MembershipData {
 			amountCents: 0,
 		},
 	};
+	teamOwnerId = '';
+	paymentProvider: I.PaymentProvider = I.PaymentProvider.None;
 
 	constructor (props: Partial<I.MembershipData>) {
 		this.products = Array.isArray(props.products) ? props.products : [];
 		this.products = this.products.map(it => new MembershipPurchasedProduct(it));
+		this.teamOwnerId = String(props.teamOwnerId || '');
+		this.paymentProvider = Number(props.paymentProvider) || I.PaymentProvider.None;
 
 		this.nextInvoice = {
 			date: Number(props.nextInvoice?.date) || 0,
@@ -76,6 +80,8 @@ class MembershipData implements I.MembershipData {
 		makeObservable(this, {
 			products: observable,
 			nextInvoice: observable,
+			teamOwnerId: observable,
+			paymentProvider: observable,
 		});
 
 		intercept(this as any, change => U.Common.intercept(this, change));

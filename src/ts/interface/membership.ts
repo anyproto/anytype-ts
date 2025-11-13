@@ -16,6 +16,15 @@ export enum MembershipPeriod {
 	ThreeYears				 = 3,
 };
 
+export enum PaymentProvider {
+	None					 = 0,
+	Stripe					 = 1,
+	Crypto					 = 2,
+	BillingPortal			 = 3,
+	AppStore				 = 4,
+	GooglePlay				 = 5,
+};
+
 export interface MembershipAmount {
 	currency: string;
 	amountCents: number;
@@ -42,6 +51,8 @@ export interface MembershipData {
 		date: number;
 		total: MembershipAmount;
 	};
+	teamOwnerId: string;
+	paymentProvider: PaymentProvider;
 	getTopProduct?: () => MembershipProduct | null;
 	getTopPurchasedProduct?: () => MembershipPurchasedProduct | null;
 };

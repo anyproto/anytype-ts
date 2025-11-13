@@ -1065,6 +1065,9 @@
 	"popupSettingsMembershipLoaderText1": "Please wait, loading...",
 	"popupSettingsMembershipLoaderText2": "Looks like there are connection issues, you can continue using Anytype meanwhile and come back in a bit",
 
+	"popupSettingsMembershipTeamMessage": "Should be managed by your team admin",
+	"popupSettingsMembershipElseMessage": "Should be managed elsewhere",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 	"popupSettingsOnboardingStoragePath": "Vault Data Location",

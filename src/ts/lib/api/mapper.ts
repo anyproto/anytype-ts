@@ -620,6 +620,8 @@ export const Mapper = {
 						status: it.getProductstatus().getStatus() as number,
 					};
 				}),
+				teamOwnerId: obj.getTeamownerid(),
+				paymentProvider: obj.getPaymentprovider() as number,
 			};
 
 			if (invoice) {

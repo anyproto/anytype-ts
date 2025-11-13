@@ -936,7 +936,10 @@
     > .pageSettingsMembership {
         > .title { @include text-title; text-align: center; margin: 0px; }
 
-        > .loaderWrapper { flex: 1 1 0; display: flex; justify-content: center; align-items: center; width: 380px;  }
+        > .loaderWrapper,
+        > .messageWrapper { flex: 1 1 0; display: flex; justify-content: center; align-items: center; width: 380px;  }
+        > .messageWrapper { margin: 24px auto; align-items: flex-start; }
+
         > .loaderWrapper {
             .inner { display: flex; flex-direction: column; gap: 12px 0px; text-align: center; align-items: center; }
             .icon { width: 56px; height: 56px; background: url('~img/icon/membership/spinner.svg'); animation: rotate 0.8s infinite linear; }
