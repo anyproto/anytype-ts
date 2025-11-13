@@ -77,7 +77,13 @@ class MembershipProduct implements I.MembershipProduct {
 	};
 
 	get featuresList (): { key: string; value: number; }[] {
-		return Object.entries(this.features).map(([key, value]) => ({ key, value })).filter(it => it.value);
+		const skip = [ 'spaceReaders', 'spaceWriters', 'anyNameCount' ];
+		const ret = Object.entries(this.features).
+			map(([key, value]) => ({ key, value })).
+			filter(it => !skip.includes(it.key) && it.value);
+
+		ret.splice(ret.findIndex(it => it.key == 'sharedSpaces'), 0, { key: 'privateSpaces', value: 4096 });
+		return ret;
 	};
 
 	get colorStr (): string {

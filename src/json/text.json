@@ -2636,13 +2636,14 @@
 	"aiOnboardingStatusCreatingProgress": "Creating types and objects... %d of %d",
 	"aiOnboardingStatusFinalTouches": "Final touches...",
 
-	"membershipFeatureStorageBytes": "Storage",
+	"membershipFeatureStorageBytes": "%s of remote storage",
 	"membershipFeatureSpaceReaders": "Space readers",
 	"membershipFeatureSpaceWriters": "Space writers",
-	"membershipFeatureSharedSpaces": "Shared spaces",
+	"membershipFeatureSharedSpaces": "%s shared spaces",
+	"membershipFeaturePrivateSpaces": "%s private spaces",
 	"membershipFeatureTeamSeats": "Team seats",
 	"membershipFeatureAnyNameCount": "Name available",
-	"membershipFeatureAnyNameMinLen": "Minimum length",
+	"membershipFeatureAnyNameMinLen": ".any name %s+ symbols",
 
 	"membershipPeriod0": "unlimited",
 	"membershipPeriod1": "monthly",
