@@ -1683,6 +1683,11 @@ class UtilCommon {
 				continue;
 			};
 
+			// Skip numbers after $ sign
+			if (/^[\d]/.test(after)) {
+				continue;
+			};
+
 			res = res.replace(m, `<${tag}>${render(body)}</${tag}>`);
 		};
 
