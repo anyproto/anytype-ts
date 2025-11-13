@@ -46,9 +46,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
-		console.log('OBJECT', object);
-		console.trace();
-
 		if (object._empty_) {
 			return rootId;
 		};
@@ -67,8 +64,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
 		const ns = block.id + namespace;
-
-		console.log('UNBIND', ns);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
@@ -287,8 +282,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const loadDeps = (ids: string[], callBack?: () => void) => {
-		console.log('loadDeps', JSON.stringify(ids, null, 3));
-
 		if (!ids.length) {
 			callBack?.();
 			return;
@@ -376,10 +369,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
-		console.log('onMessageAdd', message, subIds.includes(getSubId()));
-		console.log('SUB_IDS', JSON.stringify(subIds, null, 3));
-		console.log('CURRENT_SUB_ID', getSubId());
-
 		if (subIds.includes(getSubId())) {
 			loadDepsAndReplies([ message ], () => scrollToBottomCheck());
 		};

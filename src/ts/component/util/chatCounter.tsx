@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, S, U } from 'Lib';
 
@@ -8,7 +9,7 @@ interface Props {
 	className?: string;
 };
 
-const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
+const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 	const { spaceId = S.Common.space, chatId, className = '' } = props;
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
@@ -47,6 +48,6 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
 		</div>
 	);
-});
+}));
 
 export default ChatCounter;
