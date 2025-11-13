@@ -548,7 +548,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
 				],
 				sorts: [
-					{ relationKey: 'lastMessageDate', type: I.SortType.Desc },
+					{ relationKey: 'lastMessageDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -561,7 +561,7 @@ class UtilSubscription {
 					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
 				],
 				sorts: [
-					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -589,7 +589,7 @@ class UtilSubscription {
 				],
 				sorts: [
 					{ relationKey: 'orderId', type: I.SortType.Asc },
-					{ relationKey: 'createdDate', type: I.SortType.Desc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
 				],
 				noDeps: true,
 				ignoreDeleted: true,

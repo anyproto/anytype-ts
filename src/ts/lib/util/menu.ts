@@ -927,8 +927,8 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessageDate || c1.spaceJoinDate;
-			const d2 = c2.lastMessageDate || c2.spaceJoinDate;
+			const d1 = c1.lastMessage?.createdAt || c1.spaceJoinDate;
+			const d2 = c2.lastMessage?.createdAt || c2.spaceJoinDate;
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
