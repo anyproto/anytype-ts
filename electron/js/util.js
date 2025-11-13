@@ -30,6 +30,10 @@ class Util {
 		return logger;
 	};
 
+	getPort () {
+		return process.env.SERVER_PORT || '8080';
+	};
+
 	log (method, text) {
 		if (!logger[method]) {
 			method = 'info';

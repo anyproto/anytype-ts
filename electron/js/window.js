@@ -3,12 +3,12 @@ const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
-const port = process.env.SERVER_PORT;
 
 const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
+const port = Util.getPort();
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;

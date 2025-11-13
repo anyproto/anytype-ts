@@ -8,6 +8,7 @@ import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action
 import Form from './chat/form';
 import Message from './chat/message';
 import SectionDate from './chat/message/date';
+import { sub } from 'date-fns';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -46,14 +47,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		if (object._empty_) {
-			return '';
+			return rootId;
 		};
 
 		return object.chatId || rootId;
 	};
 
 	const getSubId = () => {
-		return S.Chat.getChatSubId('chat', space, getChatId()) + namespace;
+		return S.Chat.getChatSubId('chat', space, getChatId());
 	};
 
 	const chatId = getChatId();
@@ -1004,6 +1005,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, []);
 
 	useEffect(() => {
+		rebind();
 		init();
 	}, [ rootId, space, chatId ]);
 

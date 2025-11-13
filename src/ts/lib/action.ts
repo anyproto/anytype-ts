@@ -312,6 +312,7 @@ class Action {
 			return;
 		};
 
+		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
 			C.FileDownload(object.id, U.Common.getElectron().tmpPath(), (message: any) => {
 				if (message.path) {
@@ -320,10 +321,10 @@ class Action {
 				};
 			});
 		};
-		const isDangerous = !object.fileExt || [ 
+		const isDangerous = !ext || [ 
 			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar', 
 			'app', 'action', 'command', 'csh', 'osx', 'scpt', 'workflow', 'bin', 'ksh', 'out', 'run', 'sh', 'docm', 'xlsm', 'pptm',
-		].includes(object.fileExt);
+		].includes(ext);
 
 		if (isDangerous) {
 			S.Popup.open('confirm', {

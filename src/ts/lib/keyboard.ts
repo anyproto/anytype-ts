@@ -218,10 +218,12 @@ class Keyboard {
 					};
 				};
 			} else 
-			if (this.isMainSettings() && !this.isFocused) {
-				U.Space.openDashboard({ replace: false });
-			} else {
-				this.onBack(isPopup);
+			if (!this.isFocused) {
+				if (this.isMainSettings) {
+					U.Space.openDashboard({ replace: false });
+				} else {
+					this.onBack(isPopup);
+				};
 			};
 			
 			Preview.previewHide(false);

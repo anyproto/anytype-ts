@@ -410,8 +410,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			const pc = $(pageContainer);
 
 			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
-
-
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
