@@ -156,27 +156,27 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
 
-	const getAttachmentsClass = (): string => {
+	const getAttachmentsLayout = (): number => {
 		const attachments = getAttachments();
 		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
 		const al = attachments.length;
 		const ml = media.length;
-		const c = [];
 
+		let layout = 0;
 		if (ml && (ml == al)) {
 			if (ml == 1) {
 				const { widthInPixels, heightInPixels } = attachments[0];
 
 				if (Math.max(widthInPixels, heightInPixels) < 100) {
-					return '';
+					return 0;
 				};
 			};
 
-			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
+			layout = Math.min(10, ml);
 		};
 
-		return c.join(' ');
+		return layout;
 	};
 
 	const canAddReaction = (): boolean => {
@@ -220,15 +220,20 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const hasReactions = reactions.length;
 	const hasAttachments = attachments.length;
 	const isSelf = creator == account.id;
-	const attachmentsLayout = getAttachmentsClass();
+	const attachmentsLayout = getAttachmentsLayout();
 	const canAddReactionValue = canAddReaction();
 	const cn = [ 'message' ];
-	const ca = [ 'attachments', attachmentsLayout ];
+	const ca = [ 'attachments' ];
 	const ct = [ 'textWrapper' ];
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
 	const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+
+	if (attachmentsLayout) {
+		ca.push(`withLayout layout-${attachmentsLayout}`);
+		cnBubble.push('withLayout');
+	};
 
 	let userpicNode = null;
 	let authorNode = null;

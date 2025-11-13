@@ -34,7 +34,7 @@
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
 
-		.bubble { max-width: 480px; }
+		.bubble:not(.withLayout) { max-width: 480px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
