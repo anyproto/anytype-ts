@@ -50,16 +50,28 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onMore = () => {
-		menuOpen('object', '#button-header-more', {
-			horizontal: I.MenuDirection.Right,
-			subIds: J.Menu.object,
-			data: {
-				rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				isPopup,
-			}
-		});
+		const element = '#button-header-more';
+
+		if (spaceview.isChat) {
+			U.Menu.spaceContext(spaceview, {
+				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
+				className: 'fixed',
+				classNameWrap: 'fromHeader',
+				horizontal: I.MenuDirection.Right,
+				offsetY: 4,
+			}, { route: analytics.route.header });
+		} else {
+			menuOpen('object', element, {
+				horizontal: I.MenuDirection.Right,
+				subIds: J.Menu.object,
+				data: {
+					rootId,
+					blockId: rootId,
+					blockIds: [ rootId ],
+					isPopup,
+				}
+			});
+		};
 	};
 
 	if (bannerProps.type != I.BannerType.None) {

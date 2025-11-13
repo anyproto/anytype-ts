@@ -36,7 +36,7 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	
 	const onClick = (e: any) => {
 		if (!e.button) {
-			Action.openFile(block.getTargetObjectId(), analytics.route.block);
+			Action.openFile(object, analytics.route.block);
 		};
 	};
 

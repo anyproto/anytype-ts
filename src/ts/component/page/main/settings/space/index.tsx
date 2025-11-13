@@ -264,7 +264,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 				) : ''}
 
 				<IconObject
-					id="spaceIcon"
 					size={96}
 					iconSize={96}
 					object={{ ...spaceview, spaceId: S.Common.space }}

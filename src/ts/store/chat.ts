@@ -28,7 +28,7 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-
+		
 		this.messageMap.set(subId, observable.array(list));
 	};
 
@@ -76,7 +76,6 @@ class ChatStore {
 
 		list.splice(idx, 0, param);
 		this.set(subId, list);
-		this.setLastMessageDate(subId, param.createdAt);
 	};
 
 	/**
@@ -151,7 +150,7 @@ class ChatStore {
 	 * @returns {ChatState} The created chat state object.
 	 */
 	private createState (state: I.ChatState): I.ChatStoreState {
-		const { messages, mentions, lastStateId, order, lastMessageDate } = state;
+		const { messages, mentions, lastStateId, order } = state;
 		const el = {
 			messageOrderId: messages.orderId,
 			messageCounter: messages.counter,
@@ -159,7 +158,6 @@ class ChatStore {
 			mentionCounter: mentions.counter,
 			lastStateId,
 			order,
-			lastMessageDate,
 		};
 
 		makeObservable(el, {
@@ -169,7 +167,6 @@ class ChatStore {
 			mentionCounter: observable,
 			lastStateId: observable,
 			order: observable,
-			lastMessageDate: observable,
 		});
 
 		intercept(el as any, (change: any) => {
@@ -250,23 +247,6 @@ class ChatStore {
 	};
 
 	/**
-	 * Sets last message date for a subId.
-	 * @param {string} subId - The subscription ID.
-	 * @param {number} date - The timestamp.
-	 */
-	setLastMessageDate (subId: string, date: number) {
-		const param = this.getSubParam(subId);
-		const spaceMap = this.stateMap.get(param.spaceId) || new Map();
-		const current = spaceMap.get(param.chatId);
-
-		if (current) {
-			set(current, { lastMessageDate: Math.max(current.lastMessageDate, date) });
-		};
-
-		this.stateMap.set(param.spaceId, spaceMap);
-	};
-
-	/**
 	 * Gets the chat state for a subId.
 	 * @param {string} subId - The subscription ID.
 	 * @returns {ChatState} The chat state.
@@ -280,7 +260,6 @@ class ChatStore {
 			mentionCounter: 0,
 			lastStateId: '',
 			order: 0,
-			lastMessageDate: 0,
 		};
 
 		return Object.assign(ret, this.stateMap.get(param.spaceId)?.get(param.chatId) || {});
@@ -393,23 +372,18 @@ class ChatStore {
 	};
 
 	/**
-	 * Gets the lastMessageDate for a space.
+	 * Gets the last message for a space.
 	 * @param {string} spaceId - The space ID.
-	 * @returns {number} The timestamp for the lastMessageDate.
+	 * @returns {I.ChatMessage | null} The last message.
 	 */
-	getSpaceLastMessageDate (spaceId: string): number {
-		const spaceMap = this.stateMap.get(spaceId);
-
-		let ret = 0;
-		if (spaceMap) {
-			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
-					ret = Math.max(ret, Number(state.lastMessageDate) || 0);
-				};
-			};
+	getSpaceLastMessage (spaceId: string): I.ChatMessage | null {
+		const list = this.getList(this.getSpaceSubId(spaceId)).slice(0);
+		if (!list.length) {
+			return null;
 		};
 
-		return ret;
+		list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+		return list[0];
 	};
 
 	/**

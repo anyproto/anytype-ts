@@ -39,14 +39,14 @@
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; }
 			.sides {
-				.side { display: flex; flex-direction: row; align-items: center; }
+				.side { display: flex; flex-direction: row; align-items: center; overflow: hidden; }
 				.side.left { flex: 1 1 auto; min-width: 40%; }
 				.side.left {
 					.cellWrapper { margin-right: 4px; }
 					.cellWrapper.isName { width: 100%; }
 				}
-				.side.left.s50 { width: 50%; overflow: hidden; }
-				.side.left.s50 {
+				.side.left.s60 { width: 60%; }
+				.side.left.s60 {
 					.cellWrapper.isName { min-width: unset; flex-grow: 0; @include text-overflow-nw; }
 				}
 
@@ -71,7 +71,8 @@
 				}
 
 				.cellWrapper.isName {
-					.icon.editMode { opacity: 1; }
+					.icon.editMode { display: block; }
+					.chatCounter { display: none; }
 				}
 			}
 
@@ -98,7 +99,7 @@
 				.cellContent {
 					.name { width: unset; max-width: 100%; }
 				}
-				.icon.editMode { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; opacity: 0; }
+				.icon.editMode { flex-shrink: 0; width: 20px; height: 20px; display: inline-block; display: none; }
 			}
 
 			.cellWrapper:not(.isName) {

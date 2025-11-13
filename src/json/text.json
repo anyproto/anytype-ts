@@ -319,7 +319,7 @@
 	"electronMenuZoomIn": "Zoom in",
 	"electronMenuZoomOut": "Zoom out",
 	"electronMenuZoomDefault": "Default zoom",
-	"electronMenuFullscreen": "Fullscreen",
+	"electronMenuFullScreen": "Fullscreen",
 	"electronMenuReload": "Reload",
 	"electronMenuHelp": "Help",
 	"electronMenuReleaseNotes": "What's new",
@@ -799,8 +799,6 @@
 	"blockChatEmptyItem2": "Messages, docs & files available offline",
 	"blockChatEmptyItem3": "Fully private and encrypted",
 	"blockChatEmptyShareInviteLink": "Share invite link",
-	"blockChatMessageExpand": "Show more",
-	"blockChatMessageCollapse": "Show less",
 	"blockChatReactionAdd": "Add reaction",
 	"blockChatReply": "Reply",
 	"blockChatPlaceholder": "Enter your message",
@@ -1291,7 +1289,10 @@
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
-	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+	"popupConfirmOpenExternalLinkText": "You are trying to open an url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+
+	"popupConfirmOpenExternalFileTitle": "Are you sure?",
+	"popupConfirmOpenExternalFileText": "You are trying to open a file that is potentially harmful. Are you sure you want to proceed?<br/>File: %s",
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
@@ -1931,10 +1932,6 @@
 
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
-
-	"menuSyncStatusIncentiveBannerTitle": "Files not synced",
-	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn't be synced because you're run out of storage. Please upgrade or clean up your storage.",
-	"menuSyncStatusIncentiveBannerReviewFiles": "Review Files",
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties. Default limit is 10MB per object for free plans and 100MB for paid plans.",

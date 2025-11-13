@@ -9,7 +9,7 @@ const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
 module.exports = (env, argv) => {
-	const port = process.env.SERVER_PORT;
+	const port = process.env.SERVER_PORT || 8080;
 	const prod = argv.mode === 'production';
 
 	return {

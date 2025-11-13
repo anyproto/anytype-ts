@@ -15,7 +15,7 @@ import ItemProgress from './vault/update';
 const LIMIT = 20;
 const HEIGHT_ITEM = 44;
 const HEIGHT_ITEM_MESSAGE = 72;
-const HEIGHT_ITEM_UPDATE = 100;
+const HEIGHT_ITEM_UPDATE = 112;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -171,23 +171,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const getItems = () => {
 		let items = U.Menu.getVaultItems().map(it => {
-			it.lastMessage = '';
-			it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-
-			const list = S.Chat.getList(S.Chat.getSpaceSubId(it.targetSpaceId)).slice(0);
-			if (!list.length) {
-				return it;
+			if (it.lastMessage) {
+				it.chat = S.Detail.get(J.Constant.subId.chatGlobal, it.lastMessage.chatId, J.Relation.chatGlobal, true);
 			};
-
-			list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
-
-			const first = list[0];
-			const chat = S.Detail.get(J.Constant.subId.chatGlobal, first.chatId, J.Relation.chatGlobal, true);
-
-			it.chat = chat;
-			it.lastMessageDate = first.createdAt;
-			it.lastMessage = S.Chat.getMessageSimpleText(it.targetSpaceId, first);
-
 			return it;
 		});
 
@@ -255,18 +241,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		return $(`#${getId()}`);
 	};
 
-	const setActive = (item: any) => {
-		unsetActive();
-
-		if (item) {
-			getNode().find(`#item-${item.id}`).addClass('active');
-		};
-	};
-
-	const unsetActive = () => {
-		getNode().find('.item.active').removeClass('active');
-	};
-
 	const setHover = (item: any) => {
 		if (item) {
 			getNode().find(`#item-${item.id}`).addClass('hover');
@@ -306,6 +280,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let last = null;
 		let counter = null;
 
+		if (item.targetSpaceId == space) {
+			cn.push('active');
+		};
+
 		if (isDragging) {
 			cn.push('isDragging');
 		};
@@ -324,8 +302,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		if (item.lastMessage) {
-			time = <Label className="time" text={U.Date.timeAgo(item.lastMessageDate)} />;
-			last = <Label className="lastMessage" text={item.lastMessage} />;
+			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
+			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
 			counter = <ChatCounter spaceId={item.targetSpaceId} />;
 		} else {
@@ -491,10 +469,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			unbind();
 		};
 	}, []);
-
-	useEffect(() => {
-		raf(() => setActive(spaceview));
-	});
 
 	return (
 		<>

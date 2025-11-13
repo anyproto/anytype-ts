@@ -193,8 +193,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			param.title = relation.name;
 		};
 
-		console.log(param);
-
 		switch (relation.format) {
 
 			case I.RelationType.Date: {
@@ -412,8 +410,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			const pc = $(pageContainer);
 
 			pc.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
-
-
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();

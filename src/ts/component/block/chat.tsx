@@ -8,6 +8,7 @@ import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action
 import Form from './chat/form';
 import Message from './chat/message';
 import SectionDate from './chat/message/date';
+import { sub } from 'date-fns';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -40,9 +41,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
 	const initialRender = useRef(true);
+	const namespace = U.Common.getEventNamespace(isPopup);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
+		if (object._empty_) {
+			return rootId;
+		};
+
 		return object.chatId || rootId;
 	};
 
@@ -56,7 +63,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
@@ -64,7 +71,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		unbind();
 
@@ -208,12 +215,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const loadMessagesByOrderId = (orderId: string, callBack?: () => void) => {
 		const chatId = getChatId();
-		const subId = getSubId();
-
 		if (!chatId) {
 			return;
 		};
 
+		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
 		let list = [];
@@ -416,7 +422,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						case 'link': {
 							const object = S.Detail.get(rootId, rootId);
 
-							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
+							U.Object.copyLink(object, space, 'deeplink', '', `&messageId=${item.id}`);
 							analytics.event('ClickMessageMenuLink');
 							break;
 						};
@@ -873,24 +879,37 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		initialRender.current = true;
 
 		loadState(() => {
+
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
-			const orderId = match.params.messageOrder || state.messageOrderId;
-			const cb = () => scrollToBottom(false);
 
-			if (orderId) {
-				loadMessagesByOrderId(orderId, () => {
-					const target = S.Chat.getMessageByOrderId(subId, orderId);
+			const cb1 = (orderId: string) => {
+				if (orderId) {
+					loadMessagesByOrderId(orderId, () => {
+						const target = S.Chat.getMessageByOrderId(subId, orderId);
+						if (target) {
+							setFirstUnreadOrderId(target.orderId);
+						} else {
+							loadMessages(1, true, cb2);
+						};
+					});
+				} else {
+					loadMessages(1, true, cb2);
+				};
+			};
+			const cb2 = () => scrollToBottom(false);
 
-					if (target) {
-						setFirstUnreadOrderId(target.orderId);
+			if (match.params.messageId) {
+				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+					if (message.messages.length) {
+						cb1(message.messages[0].orderId);
 					} else {
-						loadMessages(1, true, cb);
+						cb1(state.messageOrderId);
 					};
 				});
 			} else {
-				loadMessages(1, true, cb);
+				cb1(state.messageOrderId);
 			};
 		});
 
@@ -901,14 +920,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		renderDates();
 
 		const container = U.Common.getScrollContainer(isPopup);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		container.off(`scroll.${ns}`);
-
 		window.clearTimeout(timeoutResize.current);
-		timeoutResize.current = window.setTimeout(() => {
-			container.on(`scroll.${ns}`, e => onScroll(e));
-		}, 50);
+		timeoutResize.current = window.setTimeout(() => container.on(`scroll.${ns}`, e => onScroll(e)), 50);
 	};
 
 	const sections = getSections();
@@ -989,6 +1005,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, []);
 
 	useEffect(() => {
+		rebind();
 		init();
 	}, [ rootId, space, chatId ]);
 

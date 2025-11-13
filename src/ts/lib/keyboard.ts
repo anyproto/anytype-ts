@@ -217,10 +217,12 @@ class Keyboard {
 					};
 				};
 			} else 
-			if (this.isMainSettings() && !this.isFocused) {
-				U.Space.openDashboard({ replace: false });
-			} else {
-				this.onBack(isPopup);
+			if (!this.isFocused) {
+				if (this.isMainSettings) {
+					U.Space.openDashboard({ replace: false });
+				} else {
+					this.onBack(isPopup);
+				};
 			};
 			
 			Preview.previewHide(false);
@@ -295,7 +297,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-widget-arrow').trigger('click');
+				$('#button-create-arrow').trigger('click');
 			});
 
 			// Lock the app

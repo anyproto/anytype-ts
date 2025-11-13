@@ -7,7 +7,7 @@ import { MenuItemVertical } from 'Component';
 const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, setHover, onKeyDown, getId, getSize, position } = props;
-	const { data } = param;
+	const { data, className, classNameWrap } = param;
 	const { 
 		subId, typeId, templateId, route, hasSources, getView, onTypeChange, onSetDefault, onSelect, isCollection, withTypeSelect, 
 		isAllowedObject, targetId,
@@ -34,7 +34,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getSections = () => {
 		const type = S.Record.getTypeById(typeId);
 		const templateName = template ? template.name : translate('commonBlank');
-
 		const itemsAdd: any[] = [];
 		const itemsSettings: any[] = [
 			{ id: 'template', name: translate('menuDataviewNewTemplate'), arrow: true, caption: templateName },
@@ -83,8 +82,8 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			className: param.className,
-			classNameWrap: param.classNameWrap,
+			className,
+			classNameWrap,
 			data: {
 				hasSources,
 				getView,
@@ -130,10 +129,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						data.templateId = type.defaultTemplateId;
 
 						loadTemplate();
-
-						if (onTypeChange) {
-							onTypeChange(type.id);
-						};
+						onTypeChange?.(type.id);
 					},
 				});
 				break;
@@ -149,17 +145,11 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuParam.data = Object.assign(menuParam.data, {
 					onSetDefault: id => {
 						update(id);
-
-						if (onSetDefault) {
-							onSetDefault(id);
-						};
+						onSetDefault?.(id);
 					},
 					onSelect: item => {
 						update(item.id);
-
-						if (onSelect) {
-							onSelect(item);
-						};
+						onSelect?.(item);
 					},
 				});
 				break;

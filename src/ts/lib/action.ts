@@ -284,7 +284,7 @@ class Action {
 					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
 					storageKey,
-					onConfirm: () => cb(),
+					onConfirm: cb,
 				}
 			});
 		} else {
@@ -307,17 +307,38 @@ class Action {
 	 * @param {string} id - The file ID.
 	 * @param {string} route - The route context for analytics.
 	 */
-	openFile (id: string, route: string) {
-		if (!id) {
+	openFile (object: any, route: string) {
+		if (object._empty_) {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().tmpPath(), (message: any) => {
-			if (message.path) {
-				this.openPath(message.path);
-				analytics.event('OpenMedia', { route });
-			};
-		});
+		const ext = String(object.fileExt || '').toLowerCase();
+		const cb = () => {
+			C.FileDownload(object.id, U.Common.getElectron().tmpPath(), (message: any) => {
+				if (message.path) {
+					this.openPath(message.path);
+					analytics.event('OpenMedia', { route });
+				};
+			});
+		};
+		const isDangerous = !ext || [ 
+			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar', 
+			'app', 'action', 'command', 'csh', 'osx', 'scpt', 'workflow', 'bin', 'ksh', 'out', 'run', 'sh', 'docm', 'xlsm', 'pptm',
+		].includes(ext);
+
+		if (isDangerous) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					title: translate('popupConfirmOpenExternalFileTitle'),
+					text: U.Common.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
+					textConfirm: translate('commonYes'),
+					onConfirm: cb,
+				},
+			});
+		} else {
+			cb();
+		};
 	};
 
 	/**

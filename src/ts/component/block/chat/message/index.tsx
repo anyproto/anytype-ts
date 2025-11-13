@@ -8,8 +8,6 @@ import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
 
-const LINES_LIMIT = 16;
-
 interface ChatMessageRefProps {
 	highlight: () => void;
 	onReactionAdd: () => void;
@@ -26,7 +24,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
-	const expandRef = useRef(null);
 	const attachmentRefs = useRef({});
 	const message = S.Chat.getMessageById(subId, id);
 
@@ -74,31 +71,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		renderEmoji(er, { iconSize: 16 });
 
 		resize();
-	};
-
-	const setExpandText = (isExpanded: boolean) => {
-		const expand = $(expandRef.current);
-		expand.text(isExpanded ? translate('blockChatMessageCollapse') : translate('blockChatMessageExpand'));
-	};
-
-	const onExpand = () => {
-		const node = $(nodeRef.current);
-
-		node.toggleClass('isExpanded');
-
-		setExpandText(node.hasClass('isExpanded'));
-		scrollToBottom();
-	};
-
-	const initExpand = () => {
-		const node = $(nodeRef.current);
-		const wrapper = node.find('.textWrapper');
-		const textHeight = wrapper.height();
-		const lineHeight = parseInt(wrapper.css('line-height'));
-		const canExpand = textHeight / lineHeight > LINES_LIMIT;
-
-		node.toggleClass('canExpand', canExpand);
-		setExpandText(node.hasClass('isExpanded'));
 	};
 
 	const onReactionAdd = () => {
@@ -184,27 +156,27 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
 	};
 
-	const getAttachmentsClass = (): string => {
+	const getAttachmentsLayout = (): number => {
 		const attachments = getAttachments();
 		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
 		const al = attachments.length;
 		const ml = media.length;
-		const c = [];
 
+		let layout = 0;
 		if (ml && (ml == al)) {
 			if (ml == 1) {
 				const { widthInPixels, heightInPixels } = attachments[0];
 
 				if (Math.max(widthInPixels, heightInPixels) < 100) {
-					return '';
+					return 0;
 				};
 			};
 
-			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
+			layout = Math.min(10, ml);
 		};
 
-		return c.join(' ');
+		return layout;
 	};
 
 	const canAddReaction = (): boolean => {
@@ -236,7 +208,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const width = bubble.outerWidth();
 
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
-		initExpand();
 	};
 
 	if (!message) {
@@ -249,15 +220,20 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const hasReactions = reactions.length;
 	const hasAttachments = attachments.length;
 	const isSelf = creator == account.id;
-	const attachmentsLayout = getAttachmentsClass();
+	const attachmentsLayout = getAttachmentsLayout();
 	const canAddReactionValue = canAddReaction();
 	const cn = [ 'message' ];
-	const ca = [ 'attachments', attachmentsLayout ];
+	const ca = [ 'attachments' ];
 	const ct = [ 'textWrapper' ];
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
 	const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+
+	if (attachmentsLayout) {
+		ca.push(`withLayout layout-${attachmentsLayout}`);
+		cnBubble.push('withLayout');
+	};
 
 	let userpicNode = null;
 	let authorNode = null;
@@ -377,7 +353,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 										dangerouslySetInnerHTML={{ __html: text }}
 									/>
 									<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
-									<div ref={expandRef} className="expand" onClick={onExpand} />
 								</div>
 
 								{hasAttachments ? (

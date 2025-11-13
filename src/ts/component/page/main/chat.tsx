@@ -11,9 +11,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
-	const match = keyboard.getMatch(isPopup);
 	const [ dummy, setDummy ] = useState(0);
-	const rootId = props.rootId ? props.rootId : match?.params?.id;
+	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 	const open = () => {

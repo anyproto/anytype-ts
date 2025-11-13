@@ -189,7 +189,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const st = $(window).scrollTop();
 		const element = U.Common.getScrollContainer(isPopup).find(`.header ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
@@ -197,8 +196,8 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		}, param);
 
 		if (!isPopup) {
-			menuParam.fixedY = element.offset().top + element.height() - st + 4;
-			menuParam.classNameWrap = 'fixed fromHeader';
+			menuParam.className = 'fixed';
+			menuParam.classNameWrap = 'fromHeader';
 		};
 
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));

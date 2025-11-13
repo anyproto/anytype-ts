@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -17,6 +17,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
+	const realId = parent.id.replace(`${space}-`, '');
+
 	const getId = (id: string) => {
 		return [ space, id ].join('-');
 	};
@@ -24,19 +26,19 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const getSubId = () => {
 		let subId = '';
 
-		switch (parent.id) {
-			case getId(J.Constant.widgetId.unread): {
+		switch (realId) {
+			case J.Constant.widgetId.unread: {
 				subId = J.Constant.subId.chat;
 				break;
 			};
 
-			case getId(J.Constant.widgetId.type): {
+			case J.Constant.widgetId.type: {
 				subId = J.Constant.subId.type;
 				break;
 			};
 
-			case getId(J.Constant.widgetId.recentEdit): {
-				subId = J.Constant.widgetId.recentEdit;
+			case J.Constant.widgetId.recentEdit: {
+				subId = J.Constant.subId.recentEdit;
 				break;
 			};
 		};
@@ -75,42 +77,11 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		});
 	};
 
-	const getData = (callBack?: () => void) => {
-		const space = U.Space.getSpaceview();
-		const sorts = [ 
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
-		];
-		const filters: I.Filter[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
-			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-		];
-		const keys = [ ...J.Relation.sidebar ];
-
-		switch (parent.id) {
-			case getId(J.Constant.widgetId.recentEdit): {
-				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
-				keys.push('lastModifiedDate');
-				break;
-			};
-		};
-
-		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribe({
-				subId,
-				filters,
-				sorts,
-				limit: 10,
-				keys,
-				noDeps: true,
-			}, callBack);
-		});
-	};
-
 	const getItems = () => {
 		let items = [];
 
-		switch (parent.id) {
-			case getId(J.Constant.widgetId.unread): {
+		switch (realId) {
+			case J.Constant.widgetId.unread: {
 				items = S.Record.getRecords(subId).filter(it => {
 					const counters = S.Chat.getChatCounters(space, it.id);
 					return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
@@ -118,12 +89,12 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				break;
 			};
 
-			case getId(J.Constant.widgetId.recentEdit): {
+			case J.Constant.widgetId.recentEdit: {
 				items = S.Record.getRecords(subId);
 				break;
 			};
 
-			case getId(J.Constant.widgetId.type): {
+			case J.Constant.widgetId.type: {
 				items = S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
 					return (
 						!U.Object.isInSystemLayouts(it.recommendedLayout) && 
@@ -149,7 +120,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		const element = node.find(`#item-${item.id}`);
 		const more = element.find('.icon.more');
 
-		onContext({ node: element, element: more, withElement, subId: getSubId(), objectId: item.id });
+		onContext({ node: element, element: more, withElement, subId, objectId: item.id });
 	};
 
 	const Item = (item: any) => {
@@ -196,12 +167,6 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const items = getItems();
-
-	useEffect(() => {
-		if (parent.id == getId(J.Constant.widgetId.recentEdit)) {
-			getData();
-		};
-	}, []);
 
 	return (
 		<DndContext 

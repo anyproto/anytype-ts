@@ -34,7 +34,7 @@
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
 
-		.textWrapper { max-width: 480px; }
+		.bubble:not(.withLayout) { max-width: 480px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
@@ -155,20 +155,6 @@
 			.bubble {
 				.textWrapper { padding: 0px 12px 8px; max-width: 532px; }
 			}
-		}
-	}
-
-	&.canExpand {
-		.bubbleInner {
-			.textWrapper { min-width: 200px; }
-			.expand { display: flex; }
-			.text { @include clamp; -webkit-line-clamp: 16; }
-		}
-	}
-
-	&.canExpand.isExpanded {
-		.bubbleInner {
-			.text { -webkit-line-clamp: 1000; }
 		}
 	}
 

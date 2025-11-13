@@ -6,7 +6,7 @@ const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	useEffect(() => {
 		const { isPopup } = props;
 		const match = keyboard.getMatch(isPopup);
-		const { id, spaceId, cid, key, messageOrder } = match.params || {};
+		const { id, spaceId, cid, key, messageId } = match.params || {};
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 		const route = match.params.route || analytics.route.app;
 
@@ -25,10 +25,8 @@ const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			const routeParam = { additional: [] };
 
-			if (messageOrder) {
-				try {
-					routeParam.additional.push({ key: 'messageOrder', value: decodeURIComponent(messageOrder) });
-				} catch (e) { /***/ };
+			if (messageId) {
+				routeParam.additional.push({ key: 'messageId', value: messageId });
 			};
 
 			U.Object.openRoute({ ...object, _routeParam_: routeParam });

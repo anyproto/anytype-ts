@@ -2,6 +2,7 @@ import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, U, S, C, translate, analytics, Action, keyboard } from 'Lib';
+import { icon } from 'mermaid/dist/rendering-util/rendering-elements/shapes/icon';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -14,14 +15,22 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const canWrite = U.Space.canMyParticipantWrite();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
-	const memberLabel = spaceview.isShared ? (
-		<Label 
-			text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} 
-			onClick={e => onButtonClick(e, { id: 'member' })}
-		/> 
-	) : (
-		<Label text={translate('commonPersonalSpace')} />
+	const iconSize = spaceview.isChat ? 80 : 48;
+
+	const icon = (
+		<IconObject
+			size={iconSize}
+			iconSize={iconSize}
+			object={spaceview}
+			onClick={() => U.Space.openDashboard()}
+		/>
 	);
+
+	const memberText = spaceview.isShared ? 
+		`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}` : 
+		translate('commonPersonalSpace');
+
+	const memberLabel = <Label text={memberText} onClick={e => onButtonClick(e, { id: 'member' })} />;
 
 	const buttons = [
 		canWrite ? { 
@@ -89,12 +98,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	if (spaceview.isChat) {
 		content = (
 			<div className="spaceInfo">
-				<IconObject
-					id="spaceIcon"
-					size={80}
-					iconSize={80}
-					object={{ ...spaceview, spaceId: S.Common.space }}
-				/>
+				{icon}
 				<div className="nameWrap" onClick={onMore}>
 					<ObjectName object={spaceview} />
 					<Icon className="arrow" />
@@ -106,7 +110,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	} else {
 		content = (
 			<div className="head">
-				<IconObject object={spaceview} size={48} />
+				{icon}
 				<div className="info">
 					<div className="nameWrap" onClick={onMore}>
 						<ObjectName object={spaceview} />

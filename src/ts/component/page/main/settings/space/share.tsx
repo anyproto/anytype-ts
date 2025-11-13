@@ -6,7 +6,6 @@ import Members from './share/members';
 
 const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { getId } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
 	const [ invite, setInvite ] = useState({ cid: '', key: '', type: I.InviteLinkType.None });
@@ -256,7 +255,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 			</div>
 
 			<Members {...props} />
-
 			<Error text={error} />
 		</>
 	);

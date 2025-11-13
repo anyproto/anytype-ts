@@ -11,12 +11,11 @@ const SPACE_KEYS = [
 	'lastOpenedObject',
 	'scroll',
 	'defaultType',
-	'pinnedTypes',
 	'chat',
 	'popupSearch',
 	'focus',
 	'openUrl',
-	'redirectInvite',
+	'graphData',
 ];
 
 const LOCAL_KEYS = [
@@ -24,6 +23,7 @@ const LOCAL_KEYS = [
 	'scroll',
 	'focus',
 	'sidebarData',
+	'graphData'
 ];
 
 const Api = {
@@ -724,6 +724,24 @@ class Storage {
 	resetShortcuts () {
 		this.delete('shortcuts', this.isLocal('shortcuts'));
 		keyboard.initShortcuts();
+	};
+
+	setGraphData (data: any) {
+		const isLocal = this.isLocal('graphData');
+		const obj = this.get('graphData', isLocal) || {};
+
+		this.set('graphData', Object.assign(obj, data), isLocal);
+	};
+
+	getGraphData () {
+		const obj = this.get('graphData', this.isLocal('graphData')) || {};
+
+		obj.zoom = obj.zoom || {};
+		obj.zoom.k = Number(obj.zoom.k) || 1;
+		obj.zoom.x = Number(obj.zoom.x) || 0;
+		obj.zoom.y = Number(obj.zoom.y) || 0;
+
+		return obj;
 	};
 	
 };
