@@ -898,10 +898,21 @@ class UtilMenu {
 									break;
 								};
 
-								case 'settings': {
+								case 'settings':
+								case 'members':
+								case 'bin': {
+									let id: string = '';
+									let layout: I.ObjectLayout = I.ObjectLayout.Settings;
+
+									switch (element.id) {
+										case 'settings': id = 'spaceIndex'; break;
+										case 'members': id = 'spaceShare'; break;
+										case 'bin': id = J.Constant.widgetId.bin; layout = I.ObjectLayout.Archive; break;
+									};
+
 									const routeParam = {
 										replace: true,
-										onFadeIn: () => U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings }),
+										onFadeIn: () => U.Object.openRoute({ id, layout }),
 									};
 
 									if (targetSpaceId == S.Common.space) {
