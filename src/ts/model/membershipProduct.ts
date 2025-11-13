@@ -14,6 +14,7 @@ class MembershipProduct implements I.MembershipProduct {
 	name = '';
 	description = '';
 	isTopLevel = false;
+	isIntro = false;
 	isHidden = false;
 	color = '';
 	offer = '';
@@ -34,6 +35,7 @@ class MembershipProduct implements I.MembershipProduct {
 		this.name = String(props.name || '');
 		this.description = String(props.description || '');
 		this.isTopLevel = Boolean(props.isTopLevel);
+		this.isIntro = Boolean(props.isIntro);
 		this.isHidden = Boolean(props.isHidden);
 		this.color = String(props.color || '');
 		this.offer = String(props.offer || '');
@@ -62,6 +64,7 @@ class MembershipProduct implements I.MembershipProduct {
 			name: observable,
 			description: observable,
 			isTopLevel: observable,
+			isIntro: observable,
 			isHidden: observable,
 			color: observable,
 			offer: observable,

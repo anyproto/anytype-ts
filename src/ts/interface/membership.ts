@@ -51,8 +51,8 @@ export interface MembershipProduct {
 	name: string;
 	description: string;
 	isTopLevel: boolean;
+	isIntro: boolean;
 	isHidden: boolean;
-	isIntro?: boolean;
 	isUpgradeable?: boolean;
 	color: string;
 	offer: string;

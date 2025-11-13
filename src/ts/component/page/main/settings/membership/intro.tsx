@@ -127,15 +127,24 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 					<Title text={item.name} />
 
 					<div className="features">
-						{item.featuresList.map(el => {
-							const name = translate(U.Common.toCamelCase(`membershipFeature-${el.key}`));
+						{item.featuresList.map(({ key, value }) => {
+							const name = translate(U.Common.toCamelCase(`membershipFeature-${key}`));
 
-							let value = el.value;
-							if (el.key == 'storageBytes') {
-								value = U.File.size(el.value);
+							if (value >= 4096) {
+								value = translate('commonUnlimited');
+							} else
+							if (key == 'storageBytes') {
+								value = U.File.size(value);
 							};
 
-							return <Label key={el.key} text={`${name}: ${value}`} />;
+							let text = '';
+							if (key == 'anyNameCount') {
+								text = name;
+							} else {
+								text = `${name}: ${value}`;
+							};
+
+							return <Label key={key} text={text} />;
 						})}
 					</div>
 				</div>

@@ -584,6 +584,7 @@ export const Mapper = {
 				name: obj.getName(),
 				description: obj.getDescription(),
 				isTopLevel: obj.getIstoplevel(),
+				isIntro: obj.getIsintro(),
 				isHidden: obj.getIshidden(),
 				color: obj.getColorstr(),
 				offer: obj.getOffer(),

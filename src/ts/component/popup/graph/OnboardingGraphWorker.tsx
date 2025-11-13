@@ -166,7 +166,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		console.log('Mouse left canvas while dragging, releasing node');
+		console.log('[OnboardingGraphWorker]: Mouse left canvas while dragging, releasing node');
 		setIsDragging(false);
 		
 		workerRef.current.postMessage({ id: 'onMouseLeave' });

@@ -234,6 +234,7 @@
 	"commonActivate": "Activate",
 	"commonNotifications": "Notifications",
 	"commonPersonalSpace": "Personal Space",
+	"commonUnlimited": "Unlimited",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -2638,8 +2639,8 @@
 	"membershipFeatureSpaceWriters": "Space writers",
 	"membershipFeatureSharedSpaces": "Shared spaces",
 	"membershipFeatureTeamSeats": "Team seats",
-	"membershipFeatureAnyNameCount": "Any names",
-	"membershipFeatureAnyNameMinLen": "Any name minimum length",
+	"membershipFeatureAnyNameCount": "Name available",
+	"membershipFeatureAnyNameMinLen": "Minimum length",
 
 	"membershipPeriod0": "unlimited",
 	"membershipPeriod1": "monthly",

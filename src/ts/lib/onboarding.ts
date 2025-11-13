@@ -69,8 +69,6 @@ class Onboarding {
 	};
 
 	startBasics (isPopup: boolean) {
-		console.log('Onboarding.startBasics', Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld');
-
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
