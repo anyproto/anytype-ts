@@ -68,7 +68,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			return;
 		};
 
-		const newItems = arrayMove(items, oldIndex, newIndex).filter(it => it.id != J.Constant.widgetId.bin);
+		const newItems = arrayMove(items, oldIndex, newIndex);
 
 		U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
 			C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
@@ -134,7 +134,6 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					);
 				});
 
-				items.push({ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive });
 				break;
 			};
 		};
@@ -146,10 +145,6 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (item.id == J.Constant.widgetId.bin) {
-			return;
-		};
-
 		const node = $(nodeRef.current);
 		const element = node.find(`#item-${item.id}`);
 		const more = element.find('.icon.more');
@@ -159,8 +154,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const Item = (item: any) => {
 		const isChat = U.Object.isChatLayout(item.recommendedLayout || item.layout);
-		const isBin = item.id == J.Constant.widgetId.bin;
-		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag || isBin });
+		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
@@ -190,13 +184,11 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				<div className="side right">
 					{isChat ? <ChatCounter chatId={item.id} /> : ''}
 					<div className="buttons">
-						{!isBin ? (
-							<Icon 
-								className="more" 
-								tooltipParam={{ text: translate('widgetOptions') }} 
-								onClick={e => onContextHandler(e, item, true)} 
-							/>
-						) : ''}
+						<Icon
+							className="more"
+							tooltipParam={{ text: translate('widgetOptions') }}
+							onClick={e => onContextHandler(e, item, true)}
+						/>
 					</div>
 				</div>
 			</div>

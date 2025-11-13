@@ -4,15 +4,11 @@ import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import { I, C, S, U, translate, Action, analytics, } from 'Lib';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 
-interface Props extends I.PageSettingsComponent {
-	onStopSharing: () => void;
-};
-
 const HEIGHT = 64;
 
-const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
+const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { isPopup, onStopSharing } = props;
+	const { isPopup } = props;
 	const { space } = S.Common;
 	const { membership } = S.Auth;
 	const tier = U.Data.getMembershipTier(membership.tier);
@@ -103,24 +99,14 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
 		switch (v) {
 			case 'remove': {
-				const cb = () => {
-					const my = U.Space.getParticipant();
-					const members = getParticipantList().filter(it => it.id != my.id);
-
-					if (!members.length) {
-						onStopSharing();
-						return;
-					};
-				};
-
 				title = translate('popupConfirmMemberRemoveTitle');
 				text = U.Common.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
 				button = translate('commonRemove');
 				onConfirm = () => {
 					if (isNew) {
-						C.SpaceRequestDecline(space, item.identity, cb);
+						C.SpaceRequestDecline(space, item.identity);
 					} else {
-						C.SpaceParticipantRemove(space, [ item.identity ], cb);
+						C.SpaceParticipantRemove(space, [ item.identity ]);
 					};
 
 					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');
