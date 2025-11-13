@@ -109,7 +109,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 				period = translate('popupSettingsMembershipForeverFree');
 			};
 		} else {
-			period = `per ${U.Common.plural(1, isAnnual ? translate('pluralYear') : translate('pluralMonth'))}`;
+			const periodName = U.Common.plural(1, isAnnual ? translate('pluralYear') : translate('pluralMonth'));
+			period = U.Common.sprintf(translate('popupSettingsMembershipCurrentPricePeriod'), periodName);
 		};
 
 		const onClick = () => {

@@ -1033,6 +1033,7 @@
 	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
 	"popupSettingsMembershipSelectPlan": "Select plan",
 	"popupSettingsMembershipCurrentPlan": "Current plan",
+	"popupSettingsMembershipCurrentPricePeriod": "per seat per %s",
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
@@ -1058,7 +1059,6 @@
 	"popupSettingsMembershipCurrentTier": "You're on the %s %s plan",
 	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
 	"popupSettingsMembershipManage": "Manage",
-
 	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
 	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
 
@@ -1077,7 +1077,6 @@
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
 	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
 	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don't use it",
-
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
