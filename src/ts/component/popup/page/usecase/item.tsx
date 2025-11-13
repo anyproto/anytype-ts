@@ -49,12 +49,9 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 
 	const getSpaceOptions = (): any[] => {
 		let list: any[] = [
-			{ name: translate('popupUsecaseMenuLabel'), isSection: true }
+			{ name: translate('popupUsecaseMenuLabel'), isSection: true },
+			{ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate'), isBig: true }
 		];
-
-		if (U.Space.canCreateSpace()) {
-			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate'), isBig: true });
-		};
 
 		list = list.concat(U.Space.getList()
 			.filter(it => U.Space.canMyParticipantWrite(it.targetSpaceId))

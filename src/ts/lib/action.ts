@@ -702,10 +702,6 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	createSpace (uxType: I.SpaceUxType, route: string) {
-		if (!U.Space.canCreateSpace()) {
-			return;
-		};
-
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('spaceCreate', { data: { uxType, route } });
 		});

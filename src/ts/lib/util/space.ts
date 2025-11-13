@@ -371,28 +371,6 @@ class UtilSpace {
 	};
 
 	/**
-	 * Checks if the user can create a new space.
-	 * @returns {boolean} True if the user can create a space, false otherwise.
-	 */
-	canCreateSpace (): boolean {
-		const { config } = S.Common;
-
-		if (config.sudo) {
-			return true;
-		};
-
-		const { account } = S.Auth;
-		if (!account) {
-			return false;
-		};
-
-		const items = U.Common.objectCopy(this.getList().filter(it => it.creator == this.getParticipantId(it.targetSpaceId, account.id)));
-		const length = items.length;
-
-		return length < J.Constant.limit.space.count;
-	};
-
-	/**
 	 * Gets an invite by ID and calls a callback with the result.
 	 * @param {string} id - The invite ID.
 	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.

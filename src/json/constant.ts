@@ -41,7 +41,6 @@ export default {
 		tableOfContents:	 			 50,
 
 		space: {
-			count:						 50,
 			name:						 50,
 			description:				 200,
 			nameThreshold:				 10,

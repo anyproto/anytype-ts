@@ -34,7 +34,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
-	const canCreate = U.Space.canCreateSpace();
 	const cnh = [ 'head' ];
 	const cnb = [ 'body' ];
 
@@ -475,14 +474,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					{canCreate ? (
-						<Icon
-							id="button-create-space"
-							className="plus withBackground"
-							tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
-							onClick={onCreate}
-						/>
-					) : ''}
+					<Icon
+						id="button-create-space"
+						className="plus withBackground"
+						tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+						onClick={onCreate}
+					/>
 				</div>
 			</div>
 			<div className="filterWrapper">
