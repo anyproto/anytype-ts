@@ -89,7 +89,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	const TierItem = (props: any) => {
 		const { item } = props;
-		const isCurrent = item.id == current?.id;
+		const isCurrent = (item.id == current?.id) || (item.isIntro && !current);
 		const price = item.getPriceString(isAnnual);
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
 		const buttonRef = useRef(null);
@@ -144,9 +144,11 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 					</div>
 				</div>
 				<div className="bottom">
-					<div className="priceWrapper">
-						<span className="price">{price}</span>{period}
-					</div>
+					{!isCurrent ? (
+						<div className="priceWrapper">
+							<span className="price">{price}</span>{period}
+						</div>
+					) : ''}
 					{isCurrent ? (
 						<Button
 							className="disabled"

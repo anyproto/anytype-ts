@@ -25,6 +25,7 @@ class MembershipProduct implements I.MembershipProduct {
 		spaceReaders: 0,
 		spaceWriters: 0,
 		sharedSpaces: 0,
+		privateSpaces: 0,
 		teamSeats: 0,
 		anyNameCount: 0,
 		anyNameMinLen: 0,
@@ -55,6 +56,7 @@ class MembershipProduct implements I.MembershipProduct {
 			spaceReaders: Number(props.features?.spaceReaders) || 0,
 			spaceWriters: Number(props.features?.spaceWriters) || 0,
 			sharedSpaces: Number(props.features?.sharedSpaces) || 0,
+			privateSpaces: Number(props.features?.privateSpaces) || 0,
 			teamSeats: Number(props.features?.teamSeats) || 0,
 			anyNameCount: Number(props.features?.anyNameCount) || 0,
 			anyNameMinLen: Number(props.features?.anyNameMinLen) || 0,
@@ -78,12 +80,10 @@ class MembershipProduct implements I.MembershipProduct {
 
 	get featuresList (): { key: string; value: number; }[] {
 		const skip = [ 'spaceReaders', 'spaceWriters', 'anyNameCount' ];
-		const ret = Object.entries(this.features).
+
+		return Object.entries(this.features).
 			map(([key, value]) => ({ key, value })).
 			filter(it => !skip.includes(it.key) && it.value);
-
-		ret.splice(ret.findIndex(it => it.key == 'sharedSpaces'), 0, { key: 'privateSpaces', value: 4096 });
-		return ret;
 	};
 
 	get colorStr (): string {

@@ -595,6 +595,7 @@ export const Mapper = {
 					spaceReaders: features.getSpacereaders(),
 					spaceWriters: features.getSpacewriters(),
 					sharedSpaces: features.getSharedspaces(),
+					privateSpaces: 4096, //features.getPrivatespaces(),
 					teamSeats: features.getTeamseats(),
 					anyNameCount: features.getAnynamecount(),
 					anyNameMinLen: features.getAnynameminlen(),

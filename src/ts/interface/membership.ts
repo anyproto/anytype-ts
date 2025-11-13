@@ -74,6 +74,7 @@ export interface MembershipProduct {
 		spaceReaders: number;
 		spaceWriters: number;
 		sharedSpaces: number;
+		privateSpaces: number;
 		teamSeats: number;
 		anyNameCount: number;
 		anyNameMinLen: number;
