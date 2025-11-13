@@ -47,9 +47,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		console.log('OBJECT', object);
+		console.trace();
 
 		if (object._empty_) {
-			return '';
+			return rootId;
 		};
 
 		return object.chatId || rootId;
@@ -66,6 +67,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
 		const ns = block.id + namespace;
+
+		console.log('UNBIND', ns);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
@@ -1013,6 +1016,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, []);
 
 	useEffect(() => {
+		rebind();
 		init();
 	}, [ rootId, space, chatId ]);
 
