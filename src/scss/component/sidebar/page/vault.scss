@@ -26,6 +26,8 @@
 					.iconWrap { width: 48px; height: 48px; }
 				}
 
+				&.noMessages { align-items: center; }
+
 				.nameWrapper,
 				.chatWrapper,
 				.messageWrapper { align-items: flex-start; }
