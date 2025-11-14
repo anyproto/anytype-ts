@@ -92,6 +92,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			} else {
 				const cn = [];
 				const icn: string[] = [ 'inner' ];
+				const withDescription = item.isBlock && (item.type != I.BlockType.Embed);
 					
 				if (item.isTextColor) {
 					icn.push('textColor textColor-' + (item.value || 'default'));
@@ -127,7 +128,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						{...item} 
 						index={index}
 						className={cn.join(' ')}
-						withDescription={item.isBlock} 
+						withDescription={withDescription} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)} 
 						style={param.style}
@@ -291,17 +292,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		let sections: any[] = [
-			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: U.Menu.getBlockText() },
-			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: U.Menu.getBlockList() },
-			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: U.Menu.getBlockMedia() },
-			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: U.Menu.getBlockEmbed() },
-			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: U.Menu.getBlockOther() },
-			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: U.Menu.getBlockObject() },
-		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: true })) }));
-
-		sections = sections.concat([
-			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations() },
-		]);
+			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: U.Menu.getBlockText(), isBig: true },
+			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: U.Menu.getBlockList(), isBig: true },
+			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: U.Menu.getBlockMedia(), isBig: true },
+			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: U.Menu.getBlockOther(), isBig: true },
+			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: U.Menu.getBlockObject(), isBig: true },
+			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations(), isBig: false },
+			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: U.Menu.getBlockEmbed(), isBig: false },
+		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: s.isBig })) }));
 		
 		if (filter && filter.text) {
 			const actions = U.Menu.getActions({ count: 1 });
@@ -767,9 +765,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	getRowHeight (item: any, index: number) {
 		let h = HEIGHT_ITEM;
-		if (item.isRelation || item.isRelationAdd) h = HEIGHT_RELATION;
-		else if (item.isSection && (index > 0)) h = HEIGHT_SECTION;
-		else if (item.isBlock) h = HEIGHT_DESCRIPTION;
+		if (item.isRelation || item.isRelationAdd) {
+			h = HEIGHT_RELATION;
+		} else 
+		if (item.isSection && (index > 0)) {
+			h = HEIGHT_SECTION;
+		} else 
+		if (item.isBlock && (item.type != I.BlockType.Embed)) {
+			h = HEIGHT_DESCRIPTION;
+		};
 		return h;
 	};
 

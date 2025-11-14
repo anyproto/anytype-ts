@@ -14,19 +14,19 @@
 
 		.info { @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; flex-shrink: 0; }
 
-		.item { padding: 4px 16px; }
-		.item.add { padding: 6px 16px; }
-		.item.sides { display: flex; padding: 6px 16px; flex-direction: row; align-items: center; gap: 0px 6px; }
+		.item { padding: 6px 16px; }
+		.item.sides { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
 		.item.sides {
 			.info { width: 154px; }
 		}
-		.item.empty { padding: 16px; @include text-small; }
+		.item.empty { padding-top: 16px; padding-bottom: 16px; @include text-small; }
 
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 		}
 		.item::before { transition: none; }
 
+		.item.isBig { padding-top: 4px; padding-bottom: 4px; }
 		.item.isBig {
 			.iconObject { background-color: var(--color-shape-tertiary); }
 		}
@@ -50,32 +50,6 @@
 
 			.icon.divLine { background-image: url('~img/icon/menu/action/block/div/line1.svg'); }
 			.icon.divDot { background-image: url('~img/icon/menu/action/block/div/dot1.svg'); }
-
-			.icon.embed-latex { background-image: url('~img/icon/menu/action/block/embed/latex.svg'); }
-			.icon.embed-mermaid { background-image: url('~img/icon/menu/action/block/embed/mermaid.svg'); }
-			.icon.embed-youtube { background-image: url('~img/icon/menu/action/block/embed/youtube.svg'); }
-			.icon.embed-vimeo { background-image: url('~img/icon/menu/action/block/embed/vimeo.svg'); }
-			.icon.embed-googleMaps { background-image: url('~img/icon/menu/action/block/embed/googleMaps.svg'); }
-			.icon.embed-soundcloud { background-image: url('~img/icon/menu/action/block/embed/soundcloud.svg'); }
-			.icon.embed-chart { background-image: url('~img/icon/menu/action/block/embed/chart.svg'); }
-			.icon.embed-miro { background-image: url('~img/icon/menu/action/block/embed/miro.svg'); }
-			.icon.embed-figma { background-image: url('~img/icon/menu/action/block/embed/figma.svg'); }
-			.icon.embed-bilibili { background-image: url('~img/icon/menu/action/block/embed/bilibili.svg'); }
-			.icon.embed-codepen { background-image: url('~img/icon/menu/action/block/embed/codepen.svg'); }
-			.icon.embed-facebook { background-image: url('~img/icon/menu/action/block/embed/facebook.svg'); }
-			.icon.embed-githubGist { background-image: url('~img/icon/menu/action/block/embed/githubGist.svg'); }
-			.icon.embed-graphviz { background-image: url('~img/icon/menu/action/block/embed/graphviz.svg'); }
-			.icon.embed-instagram { background-image: url('~img/icon/menu/action/block/embed/instagram.svg'); }
-			.icon.embed-kroki { background-image: url('~img/icon/menu/action/block/embed/kroki.svg'); }
-			.icon.embed-openStreetMap { background-image: url('~img/icon/menu/action/block/embed/openStreetMap.svg'); }
-			.icon.embed-reddit { background-image: url('~img/icon/menu/action/block/embed/reddit.svg'); }
-			.icon.embed-telegram { background-image: url('~img/icon/menu/action/block/embed/telegram.svg'); }
-			.icon.embed-twitter { background-image: url('~img/icon/menu/action/block/embed/twitter.svg'); }
-			.icon.embed-excalidraw { background-image: url('~img/icon/menu/action/block/embed/excalidraw.svg'); }
-			.icon.embed-sketchfab { background-image: url('~img/icon/menu/action/block/embed/sketchfab.svg'); }
-			.icon.embed-drawio { background-image: url('~img/icon/menu/action/block/embed/drawio.svg'); }
-			.icon.embed-image { background-image: url('~img/icon/menu/action/block/embed/image.svg'); }
-			.icon.embed-spotify { background-image: url('~img/icon/menu/action/block/embed/spotify.svg')}
 
 			.icon.existing { background-image: url('~img/icon/menu/action/block/existing1.svg'); }
 			.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark1.svg'); }
