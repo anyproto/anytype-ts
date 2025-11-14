@@ -434,6 +434,7 @@ class Sidebar {
 		const { x } = keyboard.mouse.page;
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+		const leftState = S.Common.getLeftSidebarState();
 		const param = this.getSizeParam(I.SidebarPanel.Left);
 		const vw = dataLeft.isClosed ? 0 : param.threshold;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
@@ -460,10 +461,20 @@ class Sidebar {
 
 		if (show) {
 			this.leftPanelOpen(dataLeft.width);
+			window.setTimeout(() => {
+				this.leftPanelSubPageOpen(leftState.subPage, true);
+			}, J.Constant.delay.sidebar);
 		};
 
-		if (hide && !dataLeft.isClosed) {
-			this.leftPanelClose();
+		if (hide) {
+			let t = 0;
+			if (!dataLeft.isClosed) {
+				this.leftPanelClose();
+				t = J.Constant.delay.sidebar;
+			};
+			if (!dataLeft.isClosed) {
+				window.setTimeout(() => this.leftPanelSubPageClose(true), t);
+			};
 		};
 	};
 
@@ -538,7 +549,6 @@ class Sidebar {
 		this.header.css({ width: hw });
 		this.footer.css({ width: hw });
 		this.page.css(pageCss);
-
 		
 		this.pageFlex.toggleClass('withSidebarRight', !!widthRight);
 
