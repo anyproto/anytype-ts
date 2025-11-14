@@ -1275,10 +1275,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Common.filterSet(from, '');
 
+		const param = caretMenuParam();
+
 		raf(() => {
 			S.Menu.open('blockMention', {
 				element: `#button-${block.id}-${I.ChatButton.Mention}`,
-				...caretMenuParam(),
+				...param,
+				className: [ 'single', param.className ].join(' '),
 				data: {
 					rootId,
 					blockId: block.id,

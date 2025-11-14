@@ -3,12 +3,11 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation, Dataview } from 'Lib';
+import { I, C, S, U, J, M, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
-const HEIGHT_RELATION = 32;
 const LIMIT = 10;
 
 const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
@@ -92,7 +91,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			} else {
 				const cn = [];
 				const icn: string[] = [ 'inner' ];
-				const withDescription = item.isBlock && (item.type != I.BlockType.Embed);
 					
 				if (item.isTextColor) {
 					icn.push('textColor textColor-' + (item.value || 'default'));
@@ -128,7 +126,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						{...item} 
 						index={index}
 						className={cn.join(' ')}
-						withDescription={withDescription} 
+						withDescription={item.withDescription} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)} 
 						style={param.style}
@@ -292,14 +290,20 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		let sections: any[] = [
-			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: U.Menu.getBlockText(), isBig: true },
-			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: U.Menu.getBlockList(), isBig: true },
-			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: U.Menu.getBlockMedia(), isBig: true },
-			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: U.Menu.getBlockOther(), isBig: true },
-			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: U.Menu.getBlockObject(), isBig: true },
-			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations(), isBig: false },
-			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: U.Menu.getBlockEmbed(), isBig: false },
-		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: s.isBig })) }));
+			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: U.Menu.getBlockText(), isBig: true, withDescription: true },
+			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
+			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
+			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
+			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
+			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations(), isBig: false, withDescription: false },
+			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
+		].map(s => ({ 
+			...s, 
+			children: s.children.map(c => ({
+				...s,
+				...c, 
+			})),
+		}));
 		
 		if (filter && filter.text) {
 			const actions = U.Menu.getActions({ count: 1 });
@@ -765,13 +769,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	getRowHeight (item: any, index: number) {
 		let h = HEIGHT_ITEM;
-		if (item.isRelation || item.isRelationAdd) {
-			h = HEIGHT_RELATION;
-		} else 
 		if (item.isSection && (index > 0)) {
 			h = HEIGHT_SECTION;
 		} else 
-		if (item.isBlock && (item.type != I.BlockType.Embed)) {
+		if (item.withDescription) {
 			h = HEIGHT_DESCRIPTION;
 		};
 		return h;
