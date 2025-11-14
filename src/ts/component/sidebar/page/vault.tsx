@@ -77,7 +77,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.leftPanelOpen(width);
+				sidebar.leftPanelOpen(width, true);
 			};
 		});
 	};
@@ -110,7 +110,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.leftPanelClose();
+			sidebar.leftPanelClose(true);
 			closeSidebar.current = false;
 		};
 	};
