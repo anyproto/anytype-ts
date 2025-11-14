@@ -82,10 +82,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		switch (realId) {
 			case J.Constant.widgetId.unread: {
-				items = S.Record.getRecords(subId).filter(it => {
-					const counters = S.Chat.getChatCounters(space, it.id);
-					return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
-				});
+				items = U.Data.getWidgetChats();
 				break;
 			};
 

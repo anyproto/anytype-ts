@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, U, translate, Relation, analytics, Action, keyboard, sidebar } from 'Lib';
+import { I, U, translate, Relation, analytics, keyboard, sidebar } from 'Lib';
 import { Icon, Label } from 'Component';
 import $ from 'jquery';
 

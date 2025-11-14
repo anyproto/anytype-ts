@@ -31,10 +31,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const ret = [];
 
 		if (!spaceview.isChat) {
-			const chats = S.Record.getRecords(J.Constant.subId.chat);
-			const counters = S.Chat.getSpaceCounters(space);
-
-			if (chats.length && ((counters.messageCounter > 0) || (counters.mentionCounter > 0))) {
+			const chats = U.Data.getWidgetChats();
+			if (chats.length) {
 				ret.push({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
 			};
 		};

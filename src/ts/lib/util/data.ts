@@ -1225,6 +1225,13 @@ class UtilData {
 		});
 	};
 
+	getWidgetChats (): any[] {
+		return S.Record.getRecords(J.Constant.subId.chat).filter(it => {
+			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+		});
+	};
+
 };
 
 export default new UtilData();
