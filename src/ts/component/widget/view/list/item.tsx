@@ -5,6 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
+import { has } from 'lodash';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -35,7 +36,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
 	const isBookmark = U.Object.isBookmarkLayout(object.layout);
-	const spaceview = U.Space.getSpaceview();
+	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
@@ -146,7 +147,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				{descr}
 			</div>
 
-			{isChat ? (
+			{isChat && !hasUnreadSection ? (
 				<div className="chatInfo">
 					{time}
 					<ChatCounter chatId={id} />

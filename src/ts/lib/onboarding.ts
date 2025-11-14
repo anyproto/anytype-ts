@@ -19,7 +19,7 @@ class Onboarding {
 	 * @param {boolean} [force] - Whether to force onboarding even if already completed.
 	 * @param {any} [options] - Additional options for onboarding.
 	 */
-	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
+	start (key: string, isPopup: boolean, force?: boolean, options?: any): boolean {
 		options = options || {};
 
 		const section = this.getSection(key);
@@ -30,7 +30,7 @@ class Onboarding {
 			|| (!force && Storage.getOnboarding(key))
 			//|| !Storage.get('chatsOnboarding')
 		) {
-			return;
+			return false;
 		};
 
 		const { items } = section;
@@ -66,17 +66,19 @@ class Onboarding {
 				});
 			}, t);
 		});
+
+		return true;
 	};
 
 	startBasics (isPopup: boolean) {
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+		if (this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup)) {
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
-		S.Common.setLeftSidebarState('vault', 'widget');
-		$(window).trigger('checkWidgetToggles');
-
-		this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup);
+			S.Common.setLeftSidebarState('vault', 'widget');
+			$(window).trigger('checkWidgetToggles');
+		};
 	};
 
 	completeBasics () {

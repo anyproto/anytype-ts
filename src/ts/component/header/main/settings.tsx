@@ -1,42 +1,29 @@
 import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, Relation, analytics, Action, keyboard, sidebar } from 'Lib';
+import { I, U, translate, Relation, analytics, keyboard, sidebar } from 'Lib';
 import { Icon, Label } from 'Component';
+import $ from 'jquery';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { menuOpen, isPopup } = props;
+	const { isPopup } = props;
 	const param = U.Router.getParam(U.Router.getRoute());
 	const id = param.id || 'account';
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
-	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 	const onMore = () => {
-		menuOpen('select', '#button-header-more', {
-			horizontal: I.MenuDirection.Right,
-			data: {
-				options: [
-					{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
-				],
-				onSelect: (e: React.MouseEvent, option: any) => {
-					switch (option.id) {
-						case 'spaceInfo': {
-							Action.spaceInfo();
-							break;
-						};
+		const element = $('#header #button-header-more');
 
-						case 'delete': {
-							Action.removeSpace(S.Common.space, analytics.route.settings);
-							break;
-						};
-					};
-				},
-			},
-		});
+		U.Menu.spaceContext(space, {
+			element,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			onOpen: () => element.addClass('active'),
+			onClose: () => element.removeClass('active'),
+		}, { noPin: true, isSharePage: id == 'spaceShare', route: analytics.route.settings });
 	};
 
 	const renderIdentity = () => {
@@ -53,7 +40,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	};
 
 	const renderMore = () => {
-		if (![ 'spaceIndex', 'spaceIndexEmpty' ].includes(id)) {
+		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
 			return null;
 		};
 

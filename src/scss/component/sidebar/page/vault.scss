@@ -15,7 +15,7 @@
 			.ReactVirtualized__List { padding-left: 8px; padding-right: 8px; }
 			.filterWrapper { padding-left: 12px; padding-right: 12px; }
 
-			.item { gap: 0px 10px; }
+			.item { gap: 0px 10px; align-items: flex-start; }
 			.item {
 				&.isProgress { gap: 2px 10px; }
 				&.isProgress {
@@ -25,6 +25,8 @@
 				&.isLoading {
 					.iconWrap { width: 48px; height: 48px; }
 				}
+
+				&.noMessages { align-items: center; }
 
 				.nameWrapper,
 				.chatWrapper,

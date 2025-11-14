@@ -57,12 +57,12 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'reset': {
-							C.PushNotificationResetIds(space, [ el.id ], load);
+							C.PushNotificationResetIds(space, [ el.id ]);
 							break;
 						};
 
 						default: {
-							Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id), load);
+							Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id));
 							break;
 						};
 					};

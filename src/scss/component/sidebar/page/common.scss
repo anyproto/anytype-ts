@@ -70,6 +70,8 @@
 		flex-grow: 1;
 	}
 	> .body {
+		.emptySearch { justify-content: flex-start; }
+
 		.group { display: flex; flex-direction: column; }
 		.group {
 			> .titleWrap { padding: 0px 4px 12px 4px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: space-between; }

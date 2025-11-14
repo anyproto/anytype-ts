@@ -62,6 +62,7 @@ class CommonStore {
 	public windowIsFocused = true;
 	public routeParam: any = {};
 	public openObjectIds: Map<string, Set<string>> = new Map();
+	public widgetSectionsValue: I.WidgetSection[] = [];
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -123,6 +124,7 @@ class CommonStore {
 			firstDayValue: observable,
 			updateVersionValue: observable,
 			vaultMessagesValue: observable,
+			widgetSectionsValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -138,6 +140,7 @@ class CommonStore {
 			pin: computed,
 			firstDay: computed,
 			vaultMessages: computed,
+			widgetSections: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -159,6 +162,7 @@ class CommonStore {
 			pinSet: action,
 			firstDaySet: action,
 			vaultMessagesSet: action,
+			widgetSectionsSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -330,6 +334,10 @@ class CommonStore {
 
 	get vaultMessages (): any {
 		return this.boolGet('vaultMessages');
+	};
+
+	get widgetSections (): I.WidgetSection[] {
+		return this.widgetSectionsValue || [];
 	};
 
 	/**
@@ -957,6 +965,14 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
+	};
+
+	widgetSectionsSet (sections: I.WidgetSection[]) {
+		this.widgetSectionsValue = sections || [];
+	};
+
+	checkWidgetSection (id: I.WidgetSection): boolean {
+		return this.widgetSections.includes(id);
 	};
 
 };

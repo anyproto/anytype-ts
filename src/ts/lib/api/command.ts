@@ -316,7 +316,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, callBack?: (message: any) => void) => {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, imageKind: I.ImageKind, callBack?: (message: any) => void) => {
 	if (!url && !path && !preloadFileId) {
 		return;
 	};
@@ -330,6 +330,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setDetails(Encode.struct(details));
 	request.setPreloadfileid(preloadFileId);
 	request.setPreloadonly(preloadOnly);
+	request.setImagekind(imageKind as number);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };

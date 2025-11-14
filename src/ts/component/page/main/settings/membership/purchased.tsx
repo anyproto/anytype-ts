@@ -24,6 +24,8 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 
 	let membershipText = '';
 	let date = '';
+	let button = null;
+
 	if (isAutoRenew) {
 		const price = U.Common.getMembershipPriceString(nextInvoice.total);
 
@@ -54,6 +56,19 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 		});
 	};
 
+	if (data.teamOwnerId) {
+		button = <Label text={translate('popupSettingsMembershipTeamMessage')} />;
+	} else 
+	if ([ 
+		I.PaymentProvider.AppStore, 
+		I.PaymentProvider.GooglePlay, 
+		I.PaymentProvider.Crypto,
+	].includes(data.paymentProvider)) {
+		button = <Label text={translate('popupSettingsMembershipElseMessage')} />;
+	} else {
+		button = <Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />;
+	};
+
 	return (
 		<div className="membershipPurchased">
 			<div className="section">
@@ -63,7 +78,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
-					<Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />
+					{button}
 				</div>
 
 				<div className={nameCn.join(' ')}>

@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
 
 class UtilMenu {
 
@@ -788,119 +788,194 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const options: any[] = [];
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
+		const isOwner = U.Space.isMyOwner(targetSpaceId);
+		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 
-		if (!param.noPin) {
-			if (space.orderId) {
-				options.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
-			} else { 
-				options.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+		const getOptions = (inviteLink: string) => {
+			const shareOptions = [
+				{ id: 'link', icon: 'space-link', name: translate('commonCopyLink') },
+				{ id: 'qr', icon: 'space-qr', name: translate('popupSettingsSpaceShareQRCode') },
+			];
+			const sections = {
+				pinAndMute: [],
+				share: [],
+				general: [],
 			};
-		};
 
-		if (!space.isPersonal) {
-			if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-				options.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+			if (param.isSharePage && (inviteLink || (isOwner && space.isShared))) {
+				if (inviteLink) {
+					sections.share = shareOptions;
+				};
+
+				if (isOwner && space.isShared) {
+					sections.general.push({
+						id: 'stopSharing',
+						name: translate('popupSettingsSpaceShareMakePrivate'),
+						color: 'red',
+						disabled: participants.length > 1
+					});
+				};
 			} else {
-				options.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
-			};
-		};
-
-		if (options.length && !param.noDivider) {
-			options.push({ isDiv: true });
-		};
-
-		if (isLoading) {
-			options.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
-		} else {
-			options.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
-		};
-
-		S.Menu.open('select', {
-			...menuParam,
-			data: {
-				options,
-				onSelect: (e: any, element: any) => {
-					window.setTimeout(() => {
-						switch (element.id) {
-							case 'mute':
-							case 'unmute': {
-								const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
-
-								C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-								analytics.event('ChangeMessageNotificationState', { type: mode, route: param.route });
-								break;
-							};
-
-							case 'pin': {
-								const items: any[] = this.getVaultItems().filter(it => it.isPinned);
-								const newItems = [ space ].concat(items);
-
-								U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
-									C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
-								});
-
-								analytics.event('PinSpace', { route: param.route });
-								break;
-							};
-
-							case 'unpin': {
-								C.SpaceUnsetOrder(space.id);
-								analytics.event('UnpinSpace', { route: param.route });
-								break;
-							};
-
-							case 'settings': {
-								const routeParam = { 
-									replace: true, 
-									onFadeIn: () => Action.openSettings('spaceIndex', param.route),
-								};
-
-								if (targetSpaceId == S.Common.space) {
-									routeParam.onFadeIn();
-								} else {
-									U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
-								};
-								break;
-							};
-
-							case 'remove': {
-								Action.removeSpace(space.targetSpaceId, param.route, true);
-								break;
-							};
-
-						};
-
-					}, S.Menu.getTimeout());
-				},
-			},
-		});
-	};
-
-	inviteContext (param: any) {
-		const { containerId, cid, key } = param || {};
-		const options: any[] = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareQRCode') },
-		];
-
-		S.Menu.open('select', {
-			element: `#${containerId} #button-more-link`,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				options,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'qr': {
-							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
-							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-							analytics.event('ScreenQr', { route: analytics.route.inviteLink });
-							break;
-						};
+				if (!param.noPin) {
+					if (space.orderId) {
+						sections.pinAndMute.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+					} else {
+						sections.pinAndMute.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
 					};
+				};
+
+				if (!space.isPersonal) {
+					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+						sections.pinAndMute.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+					} else {
+						sections.pinAndMute.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+					};
+
+					sections.general.push({ id: 'members', icon: 'settings-members', name: translate('commonMembers') });
+				};
+
+				if (!param.noShare && inviteLink) {
+					sections.share = shareOptions;
+				};
+
+				sections.general.push({ id: 'bin', icon: 'widget-bin', name: translate('commonBin') });
+
+				if (isLoading) {
+					sections.general.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+				} else {
+					sections.general.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+				};
+			};
+
+			let options: any[] = [];
+			Object.values(sections).forEach((section, idx) => {
+				if (section.length) {
+					if (options.length && !param.noDivider) {
+						options.push({ isDiv: true, id: `menu-divider-${idx}` });
+					};
+					options = options.concat(section);
+				};
+			});
+
+			return options;
+		};
+
+		const callBack = (cid?: string, key?: string) => {
+			const inviteLink: string = cid && key ? U.Space.getInviteLink(cid, key) : '';
+
+			S.Menu.open('select', {
+				...menuParam,
+				data: {
+					options: getOptions(inviteLink),
+					onSelect: (e: any, element: any) => {
+						window.setTimeout(() => {
+							switch (element.id) {
+								case 'mute':
+								case 'unmute': {
+									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
+
+									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+									analytics.event('ChangeMessageNotificationState', { type: mode, route: param.route });
+									break;
+								};
+
+								case 'pin': {
+									const items: any[] = this.getVaultItems().filter(it => it.isPinned);
+									const newItems = [ space ].concat(items);
+
+									U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+										C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
+									});
+
+									analytics.event('PinSpace', { route: param.route });
+									break;
+								};
+
+								case 'unpin': {
+									C.SpaceUnsetOrder(space.id);
+									analytics.event('UnpinSpace', { route: param.route });
+									break;
+								};
+
+								case 'settings':
+								case 'members':
+								case 'bin': {
+									let id: string = '';
+									let layout: I.ObjectLayout = I.ObjectLayout.Settings;
+
+									switch (element.id) {
+										case 'settings': id = 'spaceIndex'; break;
+										case 'members': id = 'spaceShare'; break;
+										case 'bin': id = J.Constant.widgetId.bin; layout = I.ObjectLayout.Archive; break;
+									};
+
+									const routeParam = {
+										replace: true,
+										onFadeIn: () => U.Object.openRoute({ id, layout }),
+									};
+
+									if (targetSpaceId == S.Common.space) {
+										routeParam.onFadeIn();
+									} else {
+										U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
+									};
+									break;
+								};
+
+								case 'remove': {
+									Action.removeSpace(space.targetSpaceId, param.route, true);
+									break;
+								};
+
+								case 'qr': {
+									S.Popup.open('inviteQr', { data: { link: inviteLink } });
+									analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+									analytics.event('ScreenQr', { route: analytics.route.inviteLink });
+									break;
+								};
+
+								case 'link': {
+									U.Common.copyToast('', inviteLink, translate('toastInviteCopy'));
+									analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceShare });
+									break;
+								};
+
+								case 'stopSharing': {
+									S.Popup.open('confirm', {
+										data: {
+											icon: 'noAccessRed',
+											title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
+											text: translate(`popupConfirmStopSharingSpaceWarningText`),
+											textConfirm: translate('commonConfirm'),
+											colorConfirm: 'red',
+											onConfirm: () => {
+												C.SpaceStopSharing(S.Common.space, (message) => {
+													if (message.error.code) {
+														return;
+													};
+
+													Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
+												});
+											},
+										},
+									});
+									break;
+								};
+
+							};
+
+						}, S.Menu.getTimeout());
+					},
 				},
-			}
-		});
+			});
+		};
+
+		if (space.isShared) {
+			U.Space.getInvite(targetSpaceId, callBack);
+		} else {
+			callBack();
+		};
 	};
 
 	getVaultItems () {

@@ -6,6 +6,7 @@ const TYPE_KEYS = {
 		J.Constant.typeKey.page,
 		J.Constant.typeKey.note,
 		J.Constant.typeKey.task,
+		J.Constant.typeKey.chatDerived,
 		J.Constant.typeKey.collection,
 		J.Constant.typeKey.set,
 		J.Constant.typeKey.bookmark,
@@ -1190,6 +1191,25 @@ class UtilData {
 
 	checkPageClose (isPopup: boolean, rootId: string): boolean {
 		return !isPopup || (isPopup && (keyboard.getRootId(false) != rootId));
+	};
+
+	getWidgetTypes (): any[] {
+		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
+			return (
+				!U.Object.isInSystemLayouts(it.recommendedLayout) && 
+				!U.Object.isDateLayout(it.recommendedLayout) && 
+				!U.Object.isParticipantLayout(it.recommendedLayout) &&
+				(it.uniqueKey != J.Constant.typeKey.template) &&
+				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+			);
+		});
+	};
+
+	getWidgetChats (): any[] {
+		return S.Record.getRecords(J.Constant.subId.chat).filter(it => {
+			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+		});
 	};
 
 };

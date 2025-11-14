@@ -452,7 +452,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		keyboard.disableCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			

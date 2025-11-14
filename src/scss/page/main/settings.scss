@@ -936,9 +936,7 @@
     > .pageSettingsMembership {
         > .title { @include text-title; text-align: center; margin: 0px; }
 
-        > .loaderWrapper,
-        > .messageWrapper { flex: 1 1 0; display: flex; justify-content: center; align-items: center; width: 380px;  }
-        > .messageWrapper { margin: 24px auto; align-items: flex-start; }
+        > .loaderWrapper { flex: 1 1 0; display: flex; justify-content: center; align-items: center; width: 380px;  }
 
         > .loaderWrapper {
             .inner { display: flex; flex-direction: column; gap: 12px 0px; text-align: center; align-items: center; }

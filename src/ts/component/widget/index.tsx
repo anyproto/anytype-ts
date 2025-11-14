@@ -47,6 +47,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
 	const isBin = targetId == J.Constant.widgetId.bin;
+	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
 		return U.Data.widgetContentParam(object, block);
@@ -755,7 +756,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							{isChat ? <ChatCounter chatId={object.id} /> : ''}
+							{isChat && !hasUnreadSection ? <ChatCounter chatId={object.id} /> : ''}
 
 							{buttons.length ? (
 								<div className="buttons">
