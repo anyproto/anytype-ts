@@ -207,7 +207,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const center = node.find('.side.center');
 
-		node.toggleClass('isSmall', center.outerWidth() <= 260);
+		node.toggleClass('isSmall', center.outerWidth() <= 200);
 	};
 
 	useEffect(() => {
