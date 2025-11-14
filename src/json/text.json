@@ -1068,7 +1068,8 @@
 	"popupSettingsMembershipLoaderText2": "Looks like there are connection issues, you can continue using Anytype meanwhile and come back in a bit",
 
 	"popupSettingsMembershipTeamMessage": "Contact your billing manager to change the membership",
-	"popupSettingsMembershipElseMessage": "Should be managed elsewhere",
+	"popupSettingsMembershipMarketMessage": "To manage your membership, please cancel your active subscription in %s and purchase a new one via Desktop app",
+	"popupSettingsMembershipCryptoMessage": "Contact care@anytype.io to manage your subscription",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
@@ -2655,6 +2656,13 @@
 	"membershipPeriod0": "unlimited",
 	"membershipPeriod1": "monthly",
 	"membershipPeriod2": "annual",
-	"membershipPeriod3": "three years"
+	"membershipPeriod3": "three years",
+
+	"paymentProvider0": "None",
+	"paymentProvider1": "Stripe",
+	"paymentProvider2": "Crypto",
+	"paymentProvider3": "Billing", 
+	"paymentProvider4": "App Store",
+	"paymentProvider5": "Google Play"
 
 }

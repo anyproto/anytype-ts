@@ -6,7 +6,8 @@ import { I, S, U, J, C, Action, translate, analytics } from 'Lib';
 const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
-	const { data } = S.Membership;
+	const { data } = S.Membership
+	const { account} = S.Auth;
 	const { nextInvoice } = data;
 	const purchased = data?.getTopPurchasedProduct();
 	const product = data?.getTopProduct();
@@ -56,15 +57,14 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 		});
 	};
 
-	if (data.teamOwnerId) {
+	if (data.teamOwnerId && (data.teamOwnerId != account.id)) {
 		button = <Label text={translate('popupSettingsMembershipTeamMessage')} />;
 	} else 
-	if ([ 
-		I.PaymentProvider.AppStore, 
-		I.PaymentProvider.GooglePlay, 
-		I.PaymentProvider.Crypto,
-	].includes(data.paymentProvider)) {
-		button = <Label text={translate('popupSettingsMembershipElseMessage')} />;
+	if ([ I.PaymentProvider.AppStore, I.PaymentProvider.GooglePlay ].includes(data.paymentProvider)) {
+		button = <Label text={U.Common.sprintf(translate('popupSettingsMembershipMarketMessage'), translate(`paymentProvider${data.paymentProvider}`))} />;
+	} else
+	if (data.paymentProvider == I.PaymentProvider.Crypto) {
+		button = <Label text={translate('popupSettingsMembershipCryptoMessage')} />;
 	} else {
 		button = <Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />;
 	};
