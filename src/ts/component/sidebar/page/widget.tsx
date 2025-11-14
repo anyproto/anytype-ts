@@ -7,12 +7,11 @@ import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
-	const [ sectionIds, setSectionIds ] = useState([]);
 	const { widgets } = S.Block;
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup } = props;
-	const { space } = S.Common;
+	const { space, widgetSections } = S.Common;
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -32,10 +31,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const ret = [];
 
 		if (!spaceview.isChat) {
-			const chats = S.Record.getRecords(J.Constant.subId.chat);
-			const counters = S.Chat.getSpaceCounters(space);
-
-			if (chats.length && ((counters.messageCounter > 0) || (counters.mentionCounter > 0))) {
+			const chats = U.Data.getWidgetChats();
+			if (chats.length) {
 				ret.push({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
 			};
 		};
@@ -56,18 +53,20 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const initSections = () => {
-		const newSectionIds = [];
+		const newSections = [];
 		const ids = getSections().map(it => it.id);
 
 		ids.forEach(id => {
 			if (!isSectionClosed(id)) {
-				newSectionIds.push(id);
+				newSections.push(id);
 			};
 		});
 
-		if (!U.Common.compareJSON(newSectionIds, sectionIds)) {
-			setSectionIds(newSectionIds);
+		if (!U.Common.compareJSON(newSections, widgetSections)) {
+			S.Common.widgetSectionsSet(newSections);
 		};
+
+		console.log(ids);
 		
 		ids.forEach(initToggle);
 	};
@@ -363,19 +362,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const isClosed = isSectionClosed(id);
 		const save = () => Storage.setToggle('widgetSection', String(id), !isClosed);
 
-		let newSectionIds = [ ...sectionIds ];
-		newSectionIds = isClosed ? sectionIds.concat(id) : sectionIds.filter(it => it != id);
+		let newSectionIds = [ ...widgetSections ];
+		newSectionIds = isClosed ? newSectionIds.concat(id) : newSectionIds.filter(it => it != id);
 
 		section.toggleClass('isOpen', isClosed);
 
 		if (isClosed) {
 			save();
-			setSectionIds(newSectionIds);
+			S.Common.widgetSectionsSet(newSectionIds);
 			U.Common.toggle(list, 200, false);
 		} else {
 			U.Common.toggle(list, 200, true, () => {
 				save();
-				setSectionIds(sectionIds);
+				S.Common.widgetSectionsSet(newSectionIds);
 			});
 		};
 	};
@@ -649,7 +648,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 								</div>
 							</div>
 
-							{sectionIds.includes(section.id) ? (
+							{widgetSections.includes(section.id) ? (
 								<div className="items">
 									{list.map((block, i) => (
 										<Widget

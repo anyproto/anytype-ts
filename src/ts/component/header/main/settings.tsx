@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, U, translate, Relation, analytics, Action, keyboard, sidebar, S } from 'Lib';
+import { S, I, U, translate, Relation, analytics, keyboard, sidebar } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {

@@ -82,10 +82,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		switch (realId) {
 			case J.Constant.widgetId.unread: {
-				items = S.Record.getRecords(subId).filter(it => {
-					const counters = S.Chat.getChatCounters(space, it.id);
-					return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
-				});
+				items = U.Data.getWidgetChats();
 				break;
 			};
 
@@ -115,7 +112,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const Item = (item: any) => {
-		const isChat = U.Object.isChatLayout(item.recommendedLayout || item.layout);
+		const isChat = U.Object.isChatLayout(item.layout);
 		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
