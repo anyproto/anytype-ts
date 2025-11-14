@@ -1943,6 +1943,8 @@
 	"menuPublishLabelOffline": "No internet connection",
 	"menuPublishBecomeMemberText": "<b>Get a custom domain</b> and higher  limits by becoming a member",
 
+	"menuOnboardingCounter": "%s of %s",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
@@ -2334,6 +2336,19 @@
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
+
+	"onboardingCommonTitleVault": "This is your Vault",
+	"onboardingCommonTextVault": "All your Spaces and Chats live here.",
+	"onboardingCommonTitleChannels": "Create Channels",
+	"onboardingCommonTextChannels": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
+	"onboardingCommonTitleSettings": "Your profile & settings",
+	"onboardingCommonTextSettings": "Update your profile, access your Key, and adjust app settings here.",
+	"onboardingCommonTitlePin": "Pin what matters most",
+	"onboardingCommonTextPin": "Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars.",
+	"onboardingCommonTitleTypes": "Organize with Types",
+	"onboardingCommonTextTypes": "Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
+	"onboardingCommonTitleProperties": "Link with Properties",
+	"onboardingCommonTextProperties": "Each object has Properties defined by its Type. Some are plain values, others are objects too — relations that link everything in your graph.",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",

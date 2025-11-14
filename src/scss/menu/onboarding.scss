@@ -7,7 +7,8 @@
 		.wrap { display: flex; flex-direction: column; }
 		.arrowDirection { background-image: url('~img/arrow/menuDirectionInversion.svg') }
 
-		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary-inversion); margin: 0px 0px 8px 0px; }
+		.category,
+		.counter { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary-inversion); margin: 0px 0px 8px 0px; }
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 700; margin-bottom: 2px; width: calc(100% - 20px); }
 		.descr {
 			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
@@ -110,3 +111,10 @@
 }
 .onboardingElement.onboardingHeaderSync.sync { background-color: var(--color-shape-tertiary) !important; }
 .onboardingElement.onboardingIconP2P { background-color: var(--color-shape-tertiary) !important; border-radius: 50% !important; }
+
+.onboardingElement {
+	&#sidebarPageVault { background-color: var(--color-shape-highlight-light-solid) !important; }
+
+	&#button-header-share,
+	&.widgetSection > .items > .widget { background-color: var(--color-bg-primary) !important; }
+}

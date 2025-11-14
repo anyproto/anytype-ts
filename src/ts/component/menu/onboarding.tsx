@@ -33,7 +33,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		const { key, current } = data;
 		const section = this.getSection();
 		const items = this.getItems();
-		const { showConfetti } = section;
+		const { showConfetti, withCounter } = section;
 		const item = items[current];
 		if (!item) {
 			return null;
@@ -79,6 +79,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			>
 				{!noClose ? <Icon className="close" onClick={this.onClose} /> : ''}
 
+				{withCounter ? <Label className="counter" text={U.Common.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
 				{category ? <Label className="category" text={category} /> : ''}
 				{item.name ? <Label className="name" text={item.name} /> : ''}
 				{item.description ? <Label className="descr" text={item.description} /> : ''}

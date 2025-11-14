@@ -25,6 +25,86 @@ const Data = {
 		},
 	}),
 
+	common: () => {
+		const spaceview = U.Space.getSpaceview();
+
+		return {
+			showDimmer: true,
+			withCounter: true,
+			onComplete: Onboarding.completeBasics,
+			param: {
+				noArrow: true,
+				noClose: true,
+				noBorderY: false,
+				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
+				width: 288,
+			},
+			items: [
+				{
+					name: translate('onboardingCommonTitleVault'),
+					description: translate('onboardingCommonTextVault'),
+					param: {
+						element: '#appContainer #sidebarPageVault',
+						highlightElements: [ '#sidebarLeft > #pageWrapper' ],
+						vertical: I.MenuDirection.Center,
+						stickToElementEdge: null,
+						offsetX: -290,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitleChannels'),
+					description: translate('onboardingCommonTextChannels'),
+					param: {
+						noBorderY: true,
+						element: '#appContainer #sidebarPageVault #button-create-space',
+						highlightElements: [ '#sidebarLeft > #pageWrapper' ],
+						stickToElementEdge: I.MenuDirection.Top,
+						offsetX: -298,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitleSettings'),
+					description: translate('onboardingCommonTextSettings'),
+					param: {
+						element: '#appContainer #sidebarPageVault .bottom',
+						highlightElements: [ '#sidebarLeft > #pageWrapper' ],
+						stickToElementEdge: I.MenuDirection.Right,
+						vertical: I.MenuDirection.Top,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitlePin'),
+					description: translate('onboardingCommonTextPin'),
+					param: {
+						element: '#sidebarPageWidget > #body > .content > .section-pin > .items',
+						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-pin' ],
+						stickToElementEdge: I.MenuDirection.Top,
+						offsetX: -298,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitleTypes'),
+					description: translate('onboardingCommonTextTypes'),
+					param: {
+						element: '#sidebarPageWidget > #body > .content > .section-type > .items',
+						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-type' ],
+						stickToElementEdge: I.MenuDirection.Top,
+						offsetX: -298,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitleProperties'),
+					description: translate('onboardingCommonTextProperties'),
+					param: {
+						element: '#header #button-header-share',
+						horizontal: I.MenuDirection.Right,
+						offsetX: 0,
+					}
+				},
+			]
+		};
+	},
+
 	basicsNew: () => {
 		const theme = S.Common.getThemeClass();
 		const spaceview = U.Space.getSpaceview();
