@@ -147,10 +147,10 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				{descr}
 			</div>
 
-			{isChat && !hasUnreadSection ? (
+			{isChat ? (
 				<div className="chatInfo">
 					{time}
-					<ChatCounter chatId={id} />
+					{!hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
 				</div>
 			) : ''}
 
