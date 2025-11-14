@@ -117,6 +117,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
 		];
 
 		if (config.experimental) {
