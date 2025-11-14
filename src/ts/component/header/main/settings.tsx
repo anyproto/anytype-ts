@@ -6,7 +6,7 @@ import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
-	const { isPopup, menuOpen } = props;
+	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
 	const param = U.Router.getParam(U.Router.getRoute());
 	const id = param.id || 'account';
