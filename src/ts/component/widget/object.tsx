@@ -115,7 +115,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const Item = (item: any) => {
-		const isChat = U.Object.isChatLayout(item.recommendedLayout || item.layout);
+		const isChat = U.Object.isChatLayout(item.layout);
 		const { attributes, listeners, transform, transition, setNodeRef} = useSortable({ id: item.id, disabled: !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
