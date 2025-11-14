@@ -1030,6 +1030,7 @@
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareQRCode": "QR code",
 	"popupSettingsSpaceShareMakePrivate": "Make Private",
+	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
 
 	"popupSettingsMembershipTitle1": "Membership",
 	"popupSettingsMembershipTitle2": "Let's build together",
@@ -1329,10 +1330,7 @@
 	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
 
 	"popupConfirmStopSharingSpaceWarningTitle": "Make this space private?",
-	"popupConfirmStopSharingSpaceWarningText": "Making this space private will disable the current invite link, so it can no longer be used to join. You’ll remain the only member.\nWhen you re-enable sharing, a new link will be generated.",
-
-	"popupConfirmStopSharingSpaceTitle": "The space is now private",
-	"popupConfirmStopSharingSpaceText": "Making this space private will disable the current invite link, so it can no longer be used to join. You’ll remain the only member.\nWhen you re-enable sharing, a new link will be generated.",
+	"popupConfirmStopSharingSpaceWarningText": "Making this space private will disable the current invite link, so it can no longer be used to join.<br/>When you re-enable sharing, a new link will be generated.",
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
 	"popupConfirmSystemWidgetRemoveText": "We've redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",

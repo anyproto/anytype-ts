@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
+import React from 'react';
 
 class UtilMenu {
 
@@ -784,6 +785,32 @@ class UtilMenu {
 		});
 	};
 
+	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
+		const isOwner = U.Space.isMyOwner();
+
+		S.Menu.open('select', {
+			...menuParam,
+			data: {
+				options: [
+					{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
+				],
+				onSelect: (e: React.MouseEvent, option: any) => {
+					switch (option.id) {
+						case 'spaceInfo': {
+							Action.spaceInfo();
+							break;
+						};
+						case 'delete': {
+							Action.removeSpace(S.Common.space, analytics.route.settings);
+							break;
+						};
+					};
+				},
+			}
+		})
+	};
+
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: any) {
 		param = param || {};
 
@@ -798,25 +825,36 @@ class UtilMenu {
 				{ id: 'qr', icon: 'space-qr', name: translate('popupSettingsSpaceShareQRCode') },
 			];
 			const sections = {
+				spaceSettings: [],
 				pinAndMute: [],
 				share: [],
 				general: [],
 			};
 
-			if (param.isSharePage && (inviteLink || (isOwner && space.isShared))) {
+			if (param.isSharePage) {
 				if (inviteLink) {
 					sections.share = shareOptions;
 				};
 
 				if (isOwner && space.isShared) {
+					const isDisabled = participants.length > 1;
 					sections.general.push({
 						id: 'stopSharing',
 						name: translate('popupSettingsSpaceShareMakePrivate'),
 						color: 'red',
-						disabled: participants.length > 1
+						disabled: isDisabled,
+						tooltipParam: { text: isDisabled ? translate('popupSettingsSpaceShareMakePrivateTooltip') : '' }
 					});
 				};
 			} else {
+				if (!isLoading) {
+					sections.spaceSettings.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+				};
+
+				if (!param.noShare && inviteLink) {
+					sections.share = shareOptions;
+				};
+
 				if (!param.noPin) {
 					if (space.orderId) {
 						sections.pinAndMute.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
@@ -832,19 +870,13 @@ class UtilMenu {
 						sections.pinAndMute.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 					};
 
-					sections.general.push({ id: 'members', icon: 'settings-members', name: translate('commonMembers') });
-				};
-
-				if (!param.noShare && inviteLink) {
-					sections.share = shareOptions;
+					sections.share.push({ id: 'members', icon: 'settings-members', name: translate('commonMembers') });
 				};
 
 				sections.general.push({ id: 'bin', icon: 'widget-bin', name: translate('commonBin') });
 
 				if (isLoading) {
 					sections.general.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
-				} else {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
 				};
 			};
 
