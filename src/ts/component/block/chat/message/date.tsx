@@ -31,10 +31,7 @@ const SectionDate = observer(forwardRef<{}, Props>((props, ref) => {
 		<AnimatePresence mode="popLayout">
 			<motion.div
 				ref={nodeRef} className="sectionDate"
-				initial={{ y: 20, opacity: 0 }}
-				animate={{ y: 0, opacity: 1 }}
-				exit={{ y: -20, opacity: 0 }}
-				transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+				{...U.Common.animationProps()}
 			>
 				<Label text={text} />
 			</motion.div>

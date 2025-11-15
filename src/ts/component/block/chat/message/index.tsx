@@ -319,10 +319,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				onDoubleClick={onReplyEdit}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
-				initial={{ y: 20, opacity: 0 }}
-				animate={{ y: 0, opacity: 1 }}
-				exit={{ y: -20, opacity: 0 }}
-				transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+				{...U.Common.animationProps()}
 			>
 				{isNew ? (
 					<div className="newMessages">

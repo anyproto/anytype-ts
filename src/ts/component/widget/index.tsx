@@ -856,10 +856,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				onDrag={(e: any) => onDrag?.(e, block)}
 				onDragEnd={onDragEnd}
 				onContextMenu={onOptions}
-				initial={{ y: 20, opacity: 0 }}
-				animate={{ y: 0, opacity: 1 }}
-				exit={{ y: -20, opacity: 0 }}
-				transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+				{...U.Common.animationProps()}
 			>
 				{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
 				{head}

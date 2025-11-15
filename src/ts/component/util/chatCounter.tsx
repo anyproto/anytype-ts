@@ -43,15 +43,17 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		cnMessage.push('isMuted');
 	};
 
+	const animationProps = U.Common.animationProps();
+
 	return (
 		<AnimatePresence mode="popLayout">
 			{(mentionCounter || messageCounter) ? (
 				<motion.div
 					className={cn.join(' ')}
-					initial={{ scale: 0.2, opacity: 0 }}
+					initial={{ scale: 0.6, opacity: 0 }}
 					animate={{ scale: 1, opacity: 1 }}
 					exit={{ scale: 0.6, opacity: 0 }}
-					transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+					transition={animationProps.transition}
 				>
 					{mentionCounter ? <Icon className={cnMention.join(' ')} /> : ''}
 					{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
