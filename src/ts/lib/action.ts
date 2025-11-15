@@ -686,10 +686,12 @@ class Action {
 
 				if (next) {
 					const l = next.getLength();
-
 					focus.set(next.id, { from: l, to: l });
-					focus.apply();
+				} else {
+					focus.set(focused, { from: range.from, to: range.to });
 				};
+
+				focus.apply();
 			};
 		});
 
