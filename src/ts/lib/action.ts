@@ -688,9 +688,9 @@ class Action {
 					const l = next.getLength();
 					focus.set(next.id, { from: l, to: l });
 				} else {
-					focus.set(focused, { from: range.from, to: range.to });
+					focus.set(focused, { from: range.from, to: range.from });
 				};
-
+				
 				focus.apply();
 			};
 		});

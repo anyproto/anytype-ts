@@ -249,6 +249,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	componentWillUnmount(): void {
+		const { block } = this.props;
+		const { focused } = focus.state;
+
 		S.Common.clearTimeout('blockContext');
 		window.clearTimeout(this.timeoutFilter);
 		window.clearTimeout(this.timeoutClick);
@@ -256,6 +259,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (this.frame) {
 			raf.cancel(this.frame);
 			this.frame = 0;
+		};
+
+		if (focused == block.id) {
+			focus.clear(true);
 		};
 	};
 
