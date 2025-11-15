@@ -128,6 +128,7 @@
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
 		"findandreplacedomtext": "^0.4.6",
+		"framer-motion": "^12.23.24",
 		"google-protobuf": "^4.0.0",
 		"grpc-web": "^2.0.2",
 		"history": "^4.10.1",
