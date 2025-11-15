@@ -48,7 +48,7 @@ $elementsTransition: opacity 0.2s linear;
 
                         .bubble {
                             border-radius: 20px; background-color: var(--color-bg-primary); display: flex; flex-direction: column;
-                            transition: opacity $transitionChatMessageTime ease-in-out; opacity: 0; @include text-paragraph;
+                            transition: opacity 0.3s ease-in-out; opacity: 0; @include text-paragraph;
                         }
                         .bubble {
                             .textWrapper { padding: 8px 16px; }

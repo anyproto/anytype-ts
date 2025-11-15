@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
+import { motion, AnimatePresence } from 'framer-motion';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
@@ -15,7 +15,6 @@ interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
 	disableContextMenu?: boolean;
-	disableAnimation?: boolean;
 	className?: string;
 	onDragStart?: (e: MouseEvent, block: I.Block) => void;
 	onDragOver?: (e: MouseEvent, block: I.Block) => void;
@@ -24,16 +23,12 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const { block, isPreview, className, canEdit, canRemove, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, canRemove, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
 	const { widgets } = S.Block;
-	const isAnimating = useRef(false);
 	const timeoutOpen = useRef(0);
-	const timeout1 = useRef(0);
-	const timeout2 = useRef(0);
 
 	const getChild = (): I.Block => {
 		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -836,75 +831,49 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	};
 
-	const initAnimation = (): void => {
-		const node = $(nodeRef.current);
-
-		if (!disableAnimation) {
-			isAnimating.current = true;
-
-			node.addClass('anim');
-			timeout1.current = window.setTimeout(() => {
-				node.addClass('show');
-				timeout2.current = window.setTimeout(() => {
-					node.removeClass('anim');
-					isAnimating.current = false;
-				}, J.Constant.delay.widgetItem);
-			}, J.Constant.delay.widgetItem);
-		} else {
-			node.addClass('show');
-		};
-	};
-
 	useEffect(() => {
 		rebind();
-		initAnimation();
 
 		return () => {
 			unbind();
-
-			window.clearTimeout(timeout1.current);
-			window.clearTimeout(timeout2.current);
 			window.clearTimeout(timeoutOpen.current);
 		};
 	}, []);
 
 	useEffect(() => {
-		initAnimation();
-	}, [ space ]);
-
-	useEffect(() => {
 		initToggle();
-
-		if (!isAnimating.current) {
-			$(nodeRef.current).addClass('show');
-		};
 	});
 
 	return (
-		<div
-			ref={nodeRef}
-			id={`widget-${block.id}`}
-			className={cn.join(' ')}
-			draggable={isDraggable}
-			onDragStart={e => onDragStart ? onDragStart(e, block) : null}
-			onDragOver={e => onDragOver ? onDragOver(e, block) : null}
-			onDrag={e => onDrag ? onDrag(e, block) : null}
-			onDragEnd={onDragEnd}
-			onContextMenu={onOptions}
-		>
-			{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef}
+				id={`widget-${block.id}`}
+				className={cn.join(' ')}
+				draggable={isDraggable}
+				onDragStart={(e: any) => onDragStart?.(e, block)}
+				onDragOver={(e: any) => onDragOver?.(e, block)}
+				onDrag={(e: any) => onDrag?.(e, block)}
+				onDragEnd={onDragEnd}
+				onContextMenu={onOptions}
+				initial={{ y: 20, opacity: 0 }}
+				animate={{ y: 0, opacity: 1 }}
+				exit={{ y: -20, opacity: 0 }}
+				transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+			>
+				{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
+				{head}
 
-			{head}
+				<div id="wrapper" className="contentWrapper">
+					{content}
+				</div>
 
-			<div id="wrapper" className="contentWrapper">
-				{content}
-			</div>
+				<div className="dimmer" />
 
-			<div className="dimmer" />
-
-			{targetTop}
-			{targetBot}
-		</div>
+				{targetTop}
+				{targetBot}
+			</motion.div>
+		</AnimatePresence>	
 	);
 
 }));

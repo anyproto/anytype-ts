@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
@@ -618,7 +619,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					onDrag={onDrag}
 					canEdit={false}
 					canRemove={false}
-					disableAnimation={true}
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
@@ -635,37 +635,47 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					};
 
 					return (
-						<div id={`section-${section.id}`} className={cns.join(' ')} key={section.id}>
-							<div className="nameWrap">
-								<div className="name" onClick={() => onToggle(section.id)}>
-									<Icon className="arrow" />
-									{section.name}
+						<AnimatePresence mode="popLayout">
+							<motion.div 
+								id={`section-${section.id}`} 
+								className={cns.join(' ')} 
+								key={section.id}
+								initial={{ y: 20, opacity: 0 }}
+								animate={{ y: 0, opacity: 1 }}
+								exit={{ y: -20, opacity: 0 }}
+								transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+							>
+								<div className="nameWrap">
+									<div className="name" onClick={() => onToggle(section.id)}>
+										<Icon className="arrow" />
+										{section.name}
+									</div>
+									<div className="buttons">
+										{buttons}
+									</div>
 								</div>
-								<div className="buttons">
-									{buttons}
-								</div>
-							</div>
 
-							{widgetSections.includes(section.id) ? (
-								<div className="items">
-									{list.map((block, i) => (
-										<Widget
-											{...props}
-											key={`widget-${block.id}`}
-											block={block}
-											canEdit={canWrite}
-											canRemove={isSectionPin}
-											onDragStart={onDragStart}
-											onDragOver={onDragOver}
-											onDrag={onDrag}
-											setPreview={setPreviewId}
-											sidebarDirection={sidebarDirection}
-											getObject={id => getObject(block, id)}
-										/>
-									))}
-								</div>
-							) : ''}
-						</div>
+								{widgetSections.includes(section.id) ? (
+									<div className="items">
+										{list.map((block, i) => (
+											<Widget
+												{...props}
+												key={`widget-${block.id}`}
+												block={block}
+												canEdit={canWrite}
+												canRemove={isSectionPin}
+												onDragStart={onDragStart}
+												onDragOver={onDragOver}
+												onDrag={onDrag}
+												setPreview={setPreviewId}
+												sidebarDirection={sidebarDirection}
+												getObject={id => getObject(block, id)}
+											/>
+										))}
+									</div>
+								) : ''}
+							</motion.div>
+						</AnimatePresence>
 					);
 				})}
 			</div>

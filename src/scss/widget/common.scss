@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.widget { background: var(--color-shape-highlight-light); border-radius: 12px; transform: translate(0px, 0px); position: relative; opacity: 0; }
+.widget { background: var(--color-shape-highlight-light); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { padding: 8px; }
@@ -67,9 +67,6 @@
 			}
 		}
 	}
-
-	&.anim { transition: opacity 0.2s ease-in-out; }
-	&.show { opacity: 1; }
 
 	#button-show-all { 
 		padding: 0px 8px; display: none; align-items: center; justify-content: flex-start; border: 0; @include text-small; font-weight: 500; 

@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Label } from 'Component';
 import { U, S, J } from 'Lib';
 
@@ -27,9 +28,17 @@ const SectionDate = observer(forwardRef<{}, Props>((props, ref) => {
 	}, [ date ]);
 
 	return (
-		<div ref={nodeRef} className="sectionDate">
-			<Label text={text} />
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef} className="sectionDate"
+				initial={{ y: 20, opacity: 0 }}
+				animate={{ y: 0, opacity: 1 }}
+				exit={{ y: -20, opacity: 0 }}
+				transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+			>
+				<Label text={text} />
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));
