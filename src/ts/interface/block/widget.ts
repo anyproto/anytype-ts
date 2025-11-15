@@ -35,6 +35,7 @@ export interface WidgetComponent {
 	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;
 	onCreate?: (param: any) => void;
+	onSetPreview?: () => void;
 	getObject?: (id: string) => any;
 	getContentParam?: () => { layout: WidgetLayout; limit: number; viewId: string; };
 };

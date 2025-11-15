@@ -566,6 +566,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
+		const button = innerWrap.find('#button-show-all');
 		
 		let total = 0;
 		let show = false;
@@ -595,25 +596,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		if (show) {
-			addShowAllButton();
-		} else {
-			node.find('#button-show-all').remove();
-		};
-
-		innerWrap.toggleClass('withShowAll', show);
-	};
-
-	const addShowAllButton = () => {
-		const node = $(nodeRef.current);
-		const innerWrap = node.find('#innerWrap');
-		const wrapper = $('<div id="button-show-all"></div>');
-		const root = createRoot(wrapper.get(0));
-
-		root.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />);
-
-		innerWrap.find('#button-show-all').remove();
-		innerWrap.append(wrapper);
+		button.css({ display: show ? 'flex' : 'none' });
 	};
 
 	const onContext = (param: any) => {
@@ -682,6 +665,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		onContext,
 		onCreate,
 		getContentParam,
+		onSetPreview,
 	};
 
 	if (className) {

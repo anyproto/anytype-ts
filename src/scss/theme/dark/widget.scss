@@ -25,9 +25,7 @@
 		.icon.count.mention { background-image: url('#{$themePath}/icon/widget/mention.svg'); }
 	}
 
-	#button-show-all {
-		.button:after { background-image: url('#{$themePath}/arrow/showAll.svg'); }
-	}
+	#button-show-all:after { background-image: url('#{$themePath}/arrow/showAll.svg'); }
 }
 
 .widget.widgetSpace {

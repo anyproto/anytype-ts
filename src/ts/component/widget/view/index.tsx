@@ -25,7 +25,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 
 	const { 
 		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
-		getContentParam, getObject
+		getContentParam, getObject, onSetPreview
 	} = props;
 	const { space } = S.Common;
 	const { viewId, limit, layout } = getContentParam();
@@ -447,6 +447,14 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 			{head}
 			{content}
+			
+			<Button 
+				id="button-show-all" 
+				onClick={onSetPreview} 
+				text={translate('widgetSeeAll')} 
+				className="c28" 
+				color="blank" 
+			/>
 		</div>
 	);
 
