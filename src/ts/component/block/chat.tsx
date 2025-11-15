@@ -898,7 +898,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					loadMessages(1, true, cb2);
 				};
 			};
-			const cb2 = () => scrollToBottom(false);
+			const cb2 = () => {
+				scrollToBottom(false);
+			};
 
 			if (match.params.messageId) {
 				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
@@ -994,7 +996,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	useEffect(() => {
 		rebind();
-		init();
 
 		return () => {
 			unbind();
