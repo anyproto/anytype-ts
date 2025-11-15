@@ -538,7 +538,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getRootId = (): string => {
-		return child ? [ targetId, 'widget', child.id ].join('-') : '';
+		return child ? [ targetId, getTraceId() ].join('-') : '';
 	};
 
 	const getTraceId = (): string => {
@@ -660,6 +660,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getData,
 		getLimit,
 		getTraceId,
+		getRootId,
 		addGroupLabels,
 		checkShowAllButton,
 		onContext,

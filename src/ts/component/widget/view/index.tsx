@@ -10,6 +10,7 @@ import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
+import { get } from 'jquery';
 
 interface WidgetViewRefProps {
 	updateData: () => void;
@@ -24,7 +25,7 @@ interface WidgetViewRefProps {
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
-		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
 		getContentParam, getObject, onSetPreview
 	} = props;
 	const { space } = S.Common;
@@ -38,7 +39,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
 	const traceId = getTraceId();
-	const rootId = block ? [ targetId, traceId ].join('-') : '';
+	const rootId = getRootId();
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);

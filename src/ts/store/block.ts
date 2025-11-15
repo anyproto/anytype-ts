@@ -820,6 +820,24 @@ class BlockStore {
 	};
 
 	/**
+	 * Updates the content of a block in all widgets for a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} content - The new content.
+	 */
+	updateWidgetBlockContent (rootId: string, blockId: string, content: any) {
+		const widgets = this.getWidgetsForTarget(rootId);
+		const children = widgets.reduce((a: string[], c: any) => {
+			return a.concat(c.childBlocks.map(c => c.id));
+		}, []);
+		const rootIds = children.map(it => `${rootId}-widget-${it}`);
+
+		rootIds.forEach(rid => {
+			this.updateContent(rid, blockId, content);
+		});
+	};
+
+	/**
 	 * Triggers a widget event for a root.
 	 * @param {string} code - The event code.
 	 * @param {string} rootId - The root ID.
@@ -891,12 +909,12 @@ class BlockStore {
 		return list;
 	};
 
-	getWidgetsForTarget (id: string, section: I.WidgetSection): I.Block[] {
+	getWidgetsForTarget (id: string): I.Block[] {
 		const { widgets } = this;
 		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
 
 		const list = this.getBlocks(widgets, (block: I.Block) => {
-			if (!block.isWidget() || (block.content.section != section)) {
+			if (!block.isWidget()) {
 				return false;
 			};
 

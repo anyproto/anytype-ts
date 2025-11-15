@@ -874,7 +874,7 @@ class Action {
 	};
 
 	toggleWidgetsForObject (objectId: string, route?: string) {
-		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
+		if (S.Block.getWidgetsForTarget(objectId).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
 			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);

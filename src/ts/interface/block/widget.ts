@@ -31,6 +31,7 @@ export interface WidgetComponent {
 	getData?: (subId: string, callBack?: () => void) => void;
 	getLimit?: () => number;
 	getTraceId?: () => string;
+	getRootId?: () => string;
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;

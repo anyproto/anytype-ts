@@ -66,8 +66,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			S.Common.widgetSectionsSet(newSections);
 		};
 
-		console.log(ids);
-		
 		ids.forEach(initToggle);
 	};
 

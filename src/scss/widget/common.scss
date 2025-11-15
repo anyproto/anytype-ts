@@ -80,8 +80,6 @@
 		margin: 0px -12px 0px 4px; 
 	}
 
-	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
-
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; }
 
