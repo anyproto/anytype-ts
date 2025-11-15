@@ -10,7 +10,6 @@ import WidgetSpace from './space';
 import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
-import { index } from 'd3';
 
 interface Props extends I.WidgetComponent {
 	name?: string;
