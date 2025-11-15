@@ -623,7 +623,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					getObject={id => getObject(spaceBlock, id)}
 				/>
 
-				{sections.map(section => {
+				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
@@ -640,7 +640,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 								id={`section-${section.id}`} 
 								className={cns.join(' ')} 
 								key={section.id}
-								{...U.Common.animationProps()}
+								{...U.Common.animationProps({
+									initial: { y: 20 }, 
+									animate: { y: 0 }, 
+									exit: { y: -20 },
+									transition: { duration: 200, delay: i * 0.05 },
+								})}
 							>
 								<div className="nameWrap">
 									<div className="name" onClick={() => onToggle(section.id)}>
@@ -659,6 +664,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 												{...props}
 												key={`widget-${block.id}`}
 												block={block}
+												index={i}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
 												onDragStart={onDragStart}

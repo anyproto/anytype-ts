@@ -965,7 +965,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	} else {
 		content = (
 			<div className="scroll">
-				{items.map(item => {
+				{items.map((item, i) => {
 					if (item.isSection) {
 						return <SectionDate key={item.key} date={item.createdAt} />;
 					} else {
@@ -978,6 +978,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 								rootId={chatId}
 								blockId={block.id}
 								subId={subId}
+								index={i}
 								isNew={item.orderId == firstUnreadOrderId}
 								hasMore={!!getMessageMenuOptions(item, true).length}
 								onContextMenu={e => onContextMenu(e, item)}

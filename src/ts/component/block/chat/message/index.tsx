@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, animate } from 'framer-motion';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
 import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
@@ -18,7 +18,7 @@ interface ChatMessageRefProps {
 const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, scrollToBottom, onContextMenu, onMore, onReplyEdit,
+		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
 		renderLinks, renderMentions, renderObjects, renderEmoji,
 	} = props;
 	const { space } = S.Common;
@@ -319,7 +319,12 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				onDoubleClick={onReplyEdit}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
-				{...U.Common.animationProps()}
+				{...U.Common.animationProps({ 
+					initial: { y: 20 }, 
+					animate: { y: 0 }, 
+					exit: { y: -20 },
+					transition: { duration: 0.3, delay: 0.1 },
+				})}
 			>
 				{isNew ? (
 					<div className="newMessages">

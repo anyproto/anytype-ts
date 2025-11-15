@@ -10,6 +10,7 @@ import WidgetSpace from './space';
 import WidgetObject from './object';
 import WidgetView from './view';
 import WidgetTree from './tree';
+import { index } from 'd3';
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -26,7 +27,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const { block, isPreview, className, canEdit, canRemove, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, canRemove, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
 	const { widgets } = S.Block;
 	const timeoutOpen = useRef(0);
 
@@ -856,7 +857,12 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				onDrag={(e: any) => onDrag?.(e, block)}
 				onDragEnd={onDragEnd}
 				onContextMenu={onOptions}
-				{...U.Common.animationProps()}
+				{...U.Common.animationProps({
+					initial: { y: 20 }, 
+					animate: { y: 0 }, 
+					exit: { y: -20 },
+					transition: { duration: 0.2, delay: index * 0.025 },
+				})}
 			>
 				{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
 				{head}

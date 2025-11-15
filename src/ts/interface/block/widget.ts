@@ -26,6 +26,7 @@ export interface WidgetComponent {
 	canEdit?: boolean;
 	canRemove?: boolean;
 	isSystemTarget?: boolean;
+	index?: number;
 	sidebarDirection?: I.SidebarDirection;
 	setPreview?: (id: string) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
