@@ -10,6 +10,8 @@ const HEIGHT_SMALL = 38;
 const HEIGHT_ITEM = 60;
 const LIMIT_HEIGHT = 15;
 
+const isMac = U.Common.isPlatformMac();
+
 const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, storageGet, storageSet, getId, close } = props;
@@ -71,9 +73,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const cmd = keyboard.cmdKey();
 		const filter = getFilter();
 		const item = items[nRef.current];
-
+		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
+		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
 		keyboard.disableMouse(true);
-
 		keyboard.shortcut('escape', e, () => {
 			if (backlinkRef.current) {
 				onClearSearch();
@@ -91,7 +93,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		keyboard.shortcut('arrowup, arrowdown, ctrl+p, ctrl+n', e, (pressed: string) => {
+		keyboard.shortcut(`${shortcutPrev}, ${shortcutNext}` , e, (pressed: string) => {
 			const dir = [ 'arrowup', 'ctrl+p' ].includes(pressed) ? -1 : 1;
 			onArrow(dir);
 		});
