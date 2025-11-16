@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, S, U } from 'Lib';
@@ -27,11 +26,6 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	};
 
 	const { mentionCounter, messageCounter } = counters;
-
-	if (!mentionCounter && !messageCounter) {
-		return null;
-	};
-
 	const cn = [ 'chatCounter', className ];
 	const cnMention = [ 'mention' ];
 	const cnMessage = [ 'message' ];
@@ -43,23 +37,11 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		cnMessage.push('isMuted');
 	};
 
-	const animationProps = U.Common.animationProps();
-
 	return (
-		<AnimatePresence mode="popLayout">
-			{(mentionCounter || messageCounter) ? (
-				<motion.div
-					className={cn.join(' ')}
-					initial={{ scale: 0.6, opacity: 0 }}
-					animate={{ scale: 1, opacity: 1 }}
-					exit={{ scale: 0.6, opacity: 0 }}
-					transition={animationProps.transition}
-				>
-					{mentionCounter ? <Icon className={cnMention.join(' ')} /> : ''}
-					{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
-				</motion.div>
-			) : ''}
-		</AnimatePresence>
+		<div className={cn.join(' ')}>
+			{mentionCounter ? <Icon className={cnMention.join(' ')} /> : ''}
+			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
+		</div>
 	);
 
 }));

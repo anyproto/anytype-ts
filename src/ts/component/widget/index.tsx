@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
