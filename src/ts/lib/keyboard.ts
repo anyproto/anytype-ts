@@ -1854,18 +1854,6 @@ class Keyboard {
 		};
 	};
 
-	getListDirection (pressed: string): -1 | 1 | 0 {
-		if ([ 'arrowup', 'ctrl+p' ].includes(pressed)) {
-			return -1;
-		};
-
-		if ([ 'arrowdown', 'ctrl+n' ].includes(pressed)) {
-			return 1;
-		};
-
-		return 0;
-	};
-
 	/**
 	 * Gets the caption for a shortcut by ID.
 	 * @param {string} id - The shortcut ID.
