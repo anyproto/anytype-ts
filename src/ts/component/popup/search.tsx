@@ -91,8 +91,12 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			onArrow(pressed == 'arrowup' ? -1 : 1);
+		keyboard.shortcut('arrowup, arrowdown, ctrl+p, ctrl+n', e, (pressed: string) => {
+			const dir = keyboard.getListDirection(pressed);
+			if (!dir) {
+				return;
+			};
+			onArrow(dir);
 		});
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
