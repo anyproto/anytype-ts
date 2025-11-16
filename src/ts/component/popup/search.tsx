@@ -92,7 +92,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, ctrl+p, ctrl+n', e, (pressed: string) => {
-			const dir = ['arrowup', 'ctrl+p'].includes(pressed) ? 1 : -1;
+			const dir = ['arrowup', 'ctrl+p'].includes(pressed) ? -1 : 1;
 			onArrow(dir);
 		});
 
