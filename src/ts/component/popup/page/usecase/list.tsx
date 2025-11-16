@@ -61,7 +61,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			const list = message.list || [];
 
 			S.Common.gallery = { categories, list };
-			Onboarding.start('collaboration', true, false);
 			setIsLoading(false);
 		});
 	};
@@ -228,8 +227,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 					))}
 				</Swiper>
 			</div>
-
-			<Label className="banner" text={translate('popupUsecaseBanner')} onClick={() => U.Common.showWhatsNew()} />
 
 			<div className="mid">
 				<Title text={translate('popupUsecaseListTitle')} />
