@@ -775,7 +775,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (inputRef.isFocused() && (index < 0)) {
 				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
-				keyboard.shortcut('arrowdown', e, () => {
+				keyboard.shortcut('arrowdown, ctrl+n', e, () => {
 					inputRef.blur();
 
 					this.setIndex(0);
@@ -797,7 +797,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					});
 				};
 
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut('arrowup, ctrl+p', e, () => {
 					if (!this.ref.getItems) {
 						return;
 					};
@@ -809,7 +809,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					ret = true;
 				});
 			} else {
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut('arrowup, ctrl+p', e, () => {
 					if (index < 0) {
 						inputRef?.focus();
 
@@ -881,12 +881,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 		};
 
-		keyboard.shortcut('arrowup', e, () => {
+		keyboard.shortcut('arrowup, ctrl+p', e, () => {
 			e.preventDefault();
 			onArrow(-1);
 		});
 
-		keyboard.shortcut('arrowdown', e, () => {
+		keyboard.shortcut('arrowdown, ctrl+n', e, () => {
 			e.preventDefault();
 			onArrow(1);
 		});
