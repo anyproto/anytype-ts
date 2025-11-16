@@ -2,8 +2,8 @@ import $ from 'jquery';
 import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
-
-	mouse: any = {
+	
+	mouse: any = { 
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
 	};
@@ -12,7 +12,7 @@ class Keyboard {
 	source: any = null;
 	selection: any = null;
 	shortcuts: any = {};
-
+	
 	isDragging = false;
 	isResizing = false;
 	isFocused = false;
@@ -32,14 +32,14 @@ class Keyboard {
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
 	isRtl = false;
-
+	
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
 	 */
 	init () {
 		this.unbind();
 		this.initShortcuts();
-
+		
 		const win = $(window);
 
 		S.Common.isOnlineSet(navigator.onLine);
@@ -63,7 +63,7 @@ class Keyboard {
 		win.on('focus.common', () => {
 			S.Common.windowIsFocusedSet(true);
 		});
-
+		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
@@ -84,7 +84,7 @@ class Keyboard {
 	initShortcuts () {
 		this.shortcuts = J.Shortcut.getItems();
 	};
-
+	
 	/**
 	 * Unbinds all keyboard event listeners.
 	 */
@@ -143,7 +143,7 @@ class Keyboard {
 			sidebar.onMouseMove();
 		};
 	};
-
+	
 	/**
 	 * Handles key down events for shortcuts and navigation.
 	 * @param {any} e - The keyboard event.
@@ -190,7 +190,7 @@ class Keyboard {
 			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
-			} else
+			} else 
 			if (!data.isClosed) {
 				sidebar.rightPanelClose(isPopup, true);
 			} else
@@ -216,7 +216,7 @@ class Keyboard {
 						S.Popup.close(last.id);
 					};
 				};
-			} else
+			} else 
 			if (!this.isFocused) {
 				if (this.isMainSettings) {
 					U.Space.openDashboard({ replace: false });
@@ -224,7 +224,7 @@ class Keyboard {
 					this.onBack(isPopup);
 				};
 			};
-
+			
 			Preview.previewHide(false);
 		});
 
@@ -392,7 +392,7 @@ class Keyboard {
 				keyboard.shortcut(`space${i}`, e, () => {
 					const spaces = U.Menu.getVaultItems();
 					const item = spaces[id];
-
+	
 					if (!item) {
 						return;
 					};
@@ -487,8 +487,8 @@ class Keyboard {
 			if (!historyPopup.checkBack()) {
 				S.Popup.close('page');
 			} else {
-				historyPopup.goBack((match: any) => {
-					S.Popup.updateData('page', { matchPopup: match });
+				historyPopup.goBack((match: any) => { 
+					S.Popup.updateData('page', { matchPopup: match }); 
 				});
 			};
 		} else {
@@ -543,8 +543,8 @@ class Keyboard {
 		};
 
 		if (isPopup) {
-			historyPopup.goForward((match: any) => {
-				S.Popup.updateData('page', { matchPopup: match });
+			historyPopup.goForward((match: any) => { 
+				S.Popup.updateData('page', { matchPopup: match }); 
 			});
 		} else {
 			U.Router.history.goForward();
@@ -1042,7 +1042,7 @@ class Keyboard {
 		const html = $('html');
 
 		html.addClass('printMedia');
-
+		
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
@@ -1204,7 +1204,7 @@ class Keyboard {
 	onToggleLock () {
 		const rootId = this.getRootId();
 		const root = S.Block.getLeaf(rootId, rootId);
-
+		
 		if (root) {
 			this.onLock(rootId, !root.isLocked(), analytics.route.shortcut);
 		};
@@ -1323,7 +1323,7 @@ class Keyboard {
 	 */
 	getMatch (isPopup?: boolean) {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
-
+		
 		let ret: any = { params: {} };
 		let data: any = {};
 
@@ -1373,7 +1373,7 @@ class Keyboard {
 	isMain () {
 		return this.getRouteMatch().params.page == 'main';
 	};
-
+	
 	/**
 	 * Returns true if the current context is the main editor.
 	 * @returns {boolean}
@@ -1478,7 +1478,7 @@ class Keyboard {
 	isPopupMainHistory () {
 		return this.isPopupMain() && (this.getPopupMatch().params.action == 'history');
 	};
-
+	
 	/**
 	 * Sets the focus state.
 	 * @param {boolean} v - The focus state.
@@ -1486,7 +1486,7 @@ class Keyboard {
 	setFocus (v: boolean) {
 		this.isFocused = v;
 	};
-
+	
 	/**
 	 * Sets the resize state.
 	 * @param {boolean} v - The resize state.
@@ -1494,7 +1494,7 @@ class Keyboard {
 	setResize (v: boolean) {
 		this.isResizing = v;
 	};
-
+	
 	/**
 	 * Sets the dragging state.
 	 * @param {boolean} v - The dragging state.
@@ -1609,7 +1609,7 @@ class Keyboard {
 
 		this.setSource(null);
 	};
-
+	
 	/**
 	 * Disables or enables mouse interactions.
 	 * @param {boolean} v - The state value.
@@ -1657,7 +1657,7 @@ class Keyboard {
 	disableContextOpen (v: boolean) {
 		this.isContextOpenDisabled = v;
 	};
-
+	
 	/**
 	 * Disables or enables preview events.
 	 * @param {boolean} v - The state value.
@@ -1714,7 +1714,7 @@ class Keyboard {
 			{ key: 'textBackground', type: I.MarkType.BgColor,	 param: '' },
 		];
 	};
-
+	
 	/**
 	 * Returns true if the event is a special key event.
 	 * @param {any} e - The event object.
@@ -1725,11 +1725,11 @@ class Keyboard {
 		const sk = new Set([
 			Key.escape, Key.backspace, Key.delete, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta,
 			Key.left, Key.up, Key.right, Key.down,
-			'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'CapsLock',
+			'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'CapsLock', 
 			'NumLock', 'ScrollLock', 'Pause', 'PrintScreen', 'ContextMenu', 'Dead',
 			...fk,
 		].map(it => it.toLowerCase()));
-
+		
 		return sk.has(this.eventKey(e));
 	};
 
