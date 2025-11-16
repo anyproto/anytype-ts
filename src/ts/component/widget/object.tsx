@@ -123,7 +123,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		if (item.icon) {
 			icon = <Icon className={item.icon} />;
 		} else {
-			icon = <IconObject object={item} />;
+			icon = <IconObject object={item} canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)} />;
 		};
 
 		return (
