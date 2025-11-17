@@ -274,7 +274,11 @@ class PopupStore {
 	 * @param {I.PopupParam} param - The popup parameters.
 	 */
 	replace (oldId: string, newId: string, param: I.PopupParam) {
-		this.close(oldId, () => this.open(newId, param));
+		this.close(oldId, () => {
+			window.setTimeout(() => {
+				this.open(newId, param)
+			});
+		});
 	};
 
 };

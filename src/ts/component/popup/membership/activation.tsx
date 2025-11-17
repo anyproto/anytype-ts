@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, translate, Action } from 'Lib';
+import { I, C, S, translate } from 'Lib';
 
 const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -37,14 +37,18 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 				return;
 			};
 
-			C.MembershipCodeRedeem(code, '', () => {
-				if (message.error.code) {
-					setError(message.error.description);
-					return;
-				};
+			if (message.tier == I.TierType.Team) {
+				C.MembershipCodeRedeem(code, '', () => {
+					if (message.error.code) {
+						setError(message.error.description);
+						return;
+					};
 
-				close();
-			});
+					close();
+				});
+			} else {
+				S.Popup.replace('membershipActivation', 'membership', { data: { tier: message.tier, code } });
+			};
 		});
 	};
 
