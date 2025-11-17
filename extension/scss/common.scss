@@ -162,3 +162,60 @@ html.anytypeWebclipper-auth {
 
 	.passThrough { pointer-events: all; }
 }
+
+@media (prefers-color-scheme: dark) {
+	html.anytypeWebclipper-iframe,
+	html.anytypeWebclipper-popup,
+	html.anytypeWebclipper-auth {
+		/* Text */
+		--color-text-primary: #f8f8f8;
+		--color-text-secondary: #ababab;
+		--color-text-tertiary: #656565;
+		--color-text-inversion: #171717;
+
+		/* Shape */
+		--color-shape-primary: #313131;
+		--color-shape-secondary: #292929;
+		--color-shape-tertiary: #232323;
+
+		--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
+		--color-shape-highlight-light: rgba(255, 255, 255, 0.03);
+
+		/* Control */
+		--color-control-accent: #d4d4d4;
+		--color-control-active: #737373;
+		--color-control-inactive: #414141;
+
+		/* Background */
+		--color-bg-primary: #171717;
+		--color-bg-loader: rgba(0,0,0,0.7);
+
+		/* Tag */
+		--color-tag-grey: var(--color-text-secondary);
+		--color-tag-yellow: var(--color-yellow);
+		--color-tag-orange: var(--color-orange);
+		--color-tag-red: var(--color-red);
+		--color-tag-pink: var(--color-pink);
+		--color-tag-purple: var(--color-purple);
+		--color-tag-blue: var(--color-blue);
+		--color-tag-ice: var(--color-ice);
+		--color-tag-teal: var(--color-teal);
+		--color-tag-lime: var(--color-lime);
+
+		--color-bg-tag-grey: #3c3c3c;
+		--color-bg-tag-yellow: #55500d;
+		--color-bg-tag-orange: #5f430a;
+		--color-bg-tag-red: #74321e;
+		--color-bg-tag-pink: #712055;
+		--color-bg-tag-purple: #542663;
+		--color-bg-tag-blue: #20295c;
+		--color-bg-tag-ice: #19465f;
+		--color-bg-tag-teal: #16534e;
+		--color-bg-tag-lime: #36551d;
+
+		/* System */
+		--color-system-selection: rgba(24, 163, 241, 0.3);
+
+		body { color-scheme: dark; }
+	}
+}

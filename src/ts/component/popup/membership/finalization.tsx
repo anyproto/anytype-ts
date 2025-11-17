@@ -11,7 +11,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	const [ isLoading, setIsLoading ] = useState(false);
 	const nameRef = useRef(null);
 	const buttonRef = useRef(null);
-	const timeoutRef = useRef(null);
+	const timeoutRef = useRef<any>(null);
 
 	const setOk = (t: string) => {
 		setStatus(I.InterfaceStatus.Ok);

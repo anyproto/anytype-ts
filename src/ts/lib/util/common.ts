@@ -3,6 +3,7 @@ import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
+import { initial } from 'lodash';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -1282,6 +1283,21 @@ class UtilCommon {
 			ret[`data-${k}`] = data[k];
 		};
 		return ret;
+	};
+
+	animationProps (param?: any) {
+		param = param || {};
+		param.initial = param.initial || {};
+		param.animate = param.animate || {};
+		param.exit = param.exit || {};
+		param.transition = param.transition || {};
+
+		return {
+			initial: { opacity: 0, ...param.initial },
+			animate: { opacity: 1, ...param.animate },
+			exit: { opacity: 0, ...param.exit },
+			transition: { type: 'spring', stiffness: 300, damping: 20, ...param.transition } as any,
+		};
 	};
 
 	/**

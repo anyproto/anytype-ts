@@ -1,3 +1,4 @@
+import { index } from 'd3';
 import { I } from 'Lib';
 
 export enum ChatButton {
@@ -89,6 +90,7 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	hasMore: boolean;
 	subId: string
 	style?: any;
+	index?: number;
 	onContextMenu: (e: any) => void;
 	onMore: (e: any) => void;
 	onReplyEdit: (e: any) => void;

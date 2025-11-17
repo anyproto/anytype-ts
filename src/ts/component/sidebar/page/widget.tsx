@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
@@ -66,8 +67,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			S.Common.widgetSectionsSet(newSections);
 		};
 
-		console.log(ids);
-		
 		ids.forEach(initToggle);
 	};
 
@@ -620,12 +619,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					onDrag={onDrag}
 					canEdit={false}
 					canRemove={false}
-					disableAnimation={true}
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
 
-				{sections.map(section => {
+				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
@@ -637,37 +635,50 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					};
 
 					return (
-						<div id={`section-${section.id}`} className={cns.join(' ')} key={section.id}>
-							<div className="nameWrap">
-								<div className="name" onClick={() => onToggle(section.id)}>
-									<Icon className="arrow" />
-									{section.name}
+						<AnimatePresence mode="popLayout">
+							<motion.div 
+								id={`section-${section.id}`} 
+								className={cns.join(' ')} 
+								key={section.id}
+								{...U.Common.animationProps({
+									initial: { y: 20 }, 
+									animate: { y: 0 }, 
+									exit: { y: -20 },
+									transition: { duration: 200, delay: i * 0.05 },
+								})}
+							>
+								<div className="nameWrap">
+									<div className="name" onClick={() => onToggle(section.id)}>
+										<Icon className="arrow" />
+										{section.name}
+									</div>
+									<div className="buttons">
+										{buttons}
+									</div>
 								</div>
-								<div className="buttons">
-									{buttons}
-								</div>
-							</div>
 
-							{widgetSections.includes(section.id) ? (
-								<div className="items">
-									{list.map((block, i) => (
-										<Widget
-											{...props}
-											key={`widget-${block.id}`}
-											block={block}
-											canEdit={canWrite}
-											canRemove={isSectionPin}
-											onDragStart={onDragStart}
-											onDragOver={onDragOver}
-											onDrag={onDrag}
-											setPreview={setPreviewId}
-											sidebarDirection={sidebarDirection}
-											getObject={id => getObject(block, id)}
-										/>
-									))}
-								</div>
-							) : ''}
-						</div>
+								{widgetSections.includes(section.id) ? (
+									<div className="items">
+										{list.map((block, i) => (
+											<Widget
+												{...props}
+												key={`widget-${block.id}`}
+												block={block}
+												index={i}
+												canEdit={canWrite}
+												canRemove={isSectionPin}
+												onDragStart={onDragStart}
+												onDragOver={onDragOver}
+												onDrag={onDrag}
+												setPreview={setPreviewId}
+												sidebarDirection={sidebarDirection}
+												getObject={id => getObject(block, id)}
+											/>
+										))}
+									</div>
+								) : ''}
+							</motion.div>
+						</AnimatePresence>
 					);
 				})}
 			</div>

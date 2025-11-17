@@ -116,7 +116,7 @@ class MenuContext extends React.Component<I.Menu> {
 			const isRelation = U.Object.isRelationLayout(object.layout);
 			const isChat = U.Object.isChatLayout(object.layout);
 
-			if (S.Block.getWidgetsForTarget(object.id, I.WidgetSection.Pin).length) pinCnt++;
+			if (S.Block.getWidgetsForTarget(object.id).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {

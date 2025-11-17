@@ -166,15 +166,3 @@ html.bodyAuthSelect {
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
-
-.header.mainSettings {
-	.identity { 
-		-webkit-app-region: no-drag; display: flex; gap: 0px 4px; align-items: center; height: 22px; padding: 0px 8px 0px 6px; border-radius: 11px; 
-		background: var(--color-shape-highlight-medium); text-transform: uppercase;
-	}
-	.identity {
-		.icon.anyName { width: 20px; height: 20px; background: url('~img/icon/header/anyName.svg'); }
-		.icon.info { width: 16px; height: 16px; background: url('~img/icon/header/info.svg'); }
-		.label { @include text-very-small; font-weight: 500; color: var(--color-text-primary); }
-	}
-}
