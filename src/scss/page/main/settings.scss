@@ -132,6 +132,11 @@
                     .label { color: var(--color-text-secondary); margin-bottom: 20px; }
                     .button { width: 100%; }
                 }
+
+                .anyNameWrapper { display: flex; align-items: center; gap: 0px 4px; }
+                .anyNameWrapper {
+                    .icon.badge { background-image: url('~img/icon/membership/badge-bw.svg'); }
+                }
             }
         }
     }

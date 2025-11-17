@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { IconObject, Input, Title, Icon, Label, Button } from 'Component';
-import { I, S, U, J, C, translate, keyboard, Action, analytics } from 'Lib';
+import { I, S, U, J, C, translate, keyboard, Action, analytics, Relation } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
@@ -9,7 +9,8 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const { account } = S.Auth;
 	const profile = U.Space.getProfile();
 	const timeout = useRef(0);
-	const participant = U.Space.getParticipant();
+	const participant = U.Space.getParticipant() || profile;
+	const globalName = Relation.getStringValue(participant?.globalName);
 
 	let name = profile.name;
 	if (name == translate('defaultNamePage')) {
@@ -73,33 +74,51 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				/>
 			</div>
 
-			<div className="section">
-				<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
+			{participant ? (
+				globalName ? (
+					<div className="section">
+						<div className="anyNameWrapper">
+							<Icon className="badge" />
+							<Title text={translate('popupSettingsAccountAnyIdTitle')} />
+						</div>
 
-				<div className="inputWrapper withIcon">
-					<Input
-						value={account.id}
-						readonly={true}
-						onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
-					/>
-					<Icon className="copy" />
-				</div>
-
-				{participant && !participant.globalName ? (
-					<div className="upsellWrapper">
-						<div className="text">
-							<Icon />
-							<Title text={translate('membershipUpsellAnyIdTitle')} />
-							<Label text={translate('membershipUpsellAnyIdText')} />
-							<Button
-								color="blank"
-								text={translate('membershipUpsellAnyIdExplorePlans')}
-								onClick={() => Action.openSettings('membership', analytics.route.settingsAccount)}
+						<div className="inputWrapper withIcon">
+							<Input
+								value={globalName}
+								readonly={true}
+								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnyIdTitle'), account.id)}
 							/>
+							<Icon className="copy" />
 						</div>
 					</div>
-				) : ''}
-			</div>
+				) : (
+					<div className="section">
+						<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
+
+						<div className="inputWrapper withIcon">
+							<Input
+								value={account.id}
+								readonly={true}
+								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+							/>
+							<Icon className="copy" />
+						</div>
+
+						<div className="upsellWrapper">
+							<div className="text">
+								<Icon />
+								<Title text={translate('membershipUpsellAnyIdTitle')} />
+								<Label text={translate('membershipUpsellAnyIdText')} />
+								<Button
+									color="blank"
+									text={translate('membershipUpsellAnyIdExplorePlans')}
+									onClick={() => Action.openSettings('membership', analytics.route.settingsAccount)}
+								/>
+							</div>
+						</div>
+					</div>
+				)
+			) : ''}
 
 			{config.experimental ? (
 				<div className="section">
