@@ -216,4 +216,15 @@
             }
         }
     }
+
+	> .pageSettingsIndex,
+	> .pageSettingsAccount {
+		.sections {
+			.section {
+				.anyNameWrapper {
+					.icon.badge { background-image: url('#{$themePath}/icon/membership/badge-bw.svg'); }
+				}
+			}
+		}
+	}
 }
