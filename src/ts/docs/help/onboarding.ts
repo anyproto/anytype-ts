@@ -36,8 +36,9 @@ const Data = {
 				noArrow: true,
 				noClose: true,
 				noBorderY: false,
-				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
+				horizontal: I.MenuDirection.Right,
 				width: 288,
+				highlightElements: [ '#sidebarLeft > #pageWrapper' ],
 			},
 			items: [
 				{
@@ -45,7 +46,6 @@ const Data = {
 					description: translate('onboardingCommonTextVault'),
 					param: {
 						element: '#appContainer #sidebarPageVault',
-						highlightElements: [ '#sidebarLeft > #pageWrapper' ],
 						vertical: I.MenuDirection.Center,
 						stickToElementEdge: null,
 						offsetX: -290,
@@ -57,7 +57,6 @@ const Data = {
 					param: {
 						noBorderY: true,
 						element: '#appContainer #sidebarPageVault #button-create-space',
-						highlightElements: [ '#sidebarLeft > #pageWrapper' ],
 						stickToElementEdge: I.MenuDirection.Top,
 						offsetX: -298,
 					}
@@ -67,7 +66,6 @@ const Data = {
 					description: translate('onboardingCommonTextSettings'),
 					param: {
 						element: '#appContainer #sidebarPageVault .bottom',
-						highlightElements: [ '#sidebarLeft > #pageWrapper' ],
 						stickToElementEdge: I.MenuDirection.Right,
 						vertical: I.MenuDirection.Top,
 					}
@@ -96,7 +94,8 @@ const Data = {
 					name: translate('onboardingCommonTitleProperties'),
 					description: translate('onboardingCommonTextProperties'),
 					param: {
-						element: '#header #button-header-share',
+						element: '#header #button-header-relation',
+						highlightElements: [ '#header #button-header-relation' ],
 						horizontal: I.MenuDirection.Right,
 						offsetX: 0,
 					}

@@ -118,3 +118,11 @@
 	&#button-header-share,
 	&.widgetSection > .items > .widget { background-color: var(--color-bg-primary) !important; }
 }
+
+.onboardingElement.onboardingElementDark {
+	&#pageWrapper #sidebarPageVault {
+		.bottom {
+			.grad { display: none !important; }
+		}
+	}
+}

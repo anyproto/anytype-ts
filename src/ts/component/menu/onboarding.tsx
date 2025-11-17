@@ -181,6 +181,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		const { param } = this.props;
 		const { data, highlightElements } = param;
 		const section = this.getSection();
+		const theme = S.Common.getThemeClass();
 
 		if (!section) {
 			return;
@@ -222,6 +223,10 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 
 					if (item.cloneElementClassName) {
 						clone.addClass(item.cloneElementClassName);
+					};
+
+					if (theme == 'dark') {
+						clone.addClass('onboardingElementDark');
 					};
 
 					this.hiddenElement = element;
