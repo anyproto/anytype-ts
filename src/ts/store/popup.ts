@@ -106,6 +106,10 @@ class PopupStore {
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
 			this.update(id, item.param);
+
+			window.setTimeout(() => {
+				$(window).trigger('resize');
+			});
 		};
 	};
 
@@ -276,7 +280,8 @@ class PopupStore {
 	replace (oldId: string, newId: string, param: I.PopupParam) {
 		this.close(oldId, () => {
 			window.setTimeout(() => {
-				this.open(newId, param)
+				this.open(newId, param);
+				$(window).trigger('resize');
 			});
 		});
 	};
