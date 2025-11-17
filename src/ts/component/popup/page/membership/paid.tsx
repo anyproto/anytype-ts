@@ -156,7 +156,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 						return;
 					};
 
-					S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
+					S.Popup.updateData('membership', { tier: membership.tier, success: true });
 				});
 			});
 		});
