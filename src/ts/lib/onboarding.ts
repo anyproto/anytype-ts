@@ -86,6 +86,14 @@ class Onboarding {
 		$(window).trigger('checkWidgetToggles');
 	};
 
+	completeCommon () {
+		// TODO: add onComplete logic
+	};
+
+	completeChat () {
+		// TODO: add onComplete logic
+	};
+
 	/**
 	 * Gets the menu parameters for a section and item.
 	 * @param {any} section - The onboarding section.

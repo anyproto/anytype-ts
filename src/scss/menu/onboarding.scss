@@ -117,6 +117,8 @@
 		&:before { border-radius: 8px 0px 0px 8px; left: -12px; }
 		&:after { border-radius: 0px 8px 8px 0px; right: -12px; }
 	}
+
+	&#button-chat-attachment { background-color: var(--color-bg-primary); }
 }
 
 .onboardingElement.onboardingElementDark {

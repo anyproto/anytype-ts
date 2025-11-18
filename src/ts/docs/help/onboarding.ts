@@ -26,6 +26,48 @@ const Data = {
 		},
 	}),
 
+	chat: () => {
+		return {
+			showDimmer: true,
+			withCounter: true,
+			onComplete: Onboarding.completeChat,
+			param: {
+				noArrow: true,
+				noClose: true,
+				horizontal: I.MenuDirection.Left,
+			},
+			items: [
+				{
+					name: translate('onboardingMainChatTitle1'),
+					description: translate('onboardingCommonText1'),
+					param: {
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Center,
+						element: '#page.pageMainChat',
+					}
+				},
+				{
+					name: translate('onboardingMainChatTitle2'),
+					description: translate('onboardingCommonText2'),
+					param: {
+						element: '#page.pageMainChat #button-chat-attachment',
+						vertical: I.MenuDirection.Top,
+						offsetY: -8,
+					}
+				},
+				{
+					name: translate('onboardingMainChatTitle3'),
+					description: translate('onboardingCommonText3'),
+					param: {
+						element: '#sidebarPageWidget',
+						vertical: I.MenuDirection.Center,
+						offsetX: $('#sidebarPageWidget').width() + 8,
+					}
+				},
+			],
+		};
+	},
+
 	common: () => {
 		const theme = S.Common.getThemeClass();
 		const path = theme == 'dark' ? './img/help/onboarding/common/dark/' : './img/help/onboarding/common/';
@@ -56,7 +98,7 @@ const Data = {
 		return {
 			showDimmer: true,
 			withCounter: true,
-			onComplete: Onboarding.completeBasics,
+			onComplete: Onboarding.completeCommon,
 			param: {
 				noArrow: true,
 				noClose: true,

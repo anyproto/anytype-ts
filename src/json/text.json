@@ -2352,6 +2352,12 @@
 	"onboardingCommonTitleSettings": "Open Settings to Invite People",
 	"onboardingCommonTextSettings": "Invite members and collaborate together in a private, fully encrypted, offline-first environment.",
 
+	"onboardingMainChatTitle1": "Meet the most powerful private chat.",
+	"onboardingCommonText1": "Fully encrypted, offline-first, and yours forever — even without Anytype.",
+	"onboardingMainChatTitle2": "More than just text messages",
+	"onboardingCommonText2": "Add pages, tasks, lists, or media directly into the chat and colalborate on them together.",
+	"onboardingMainChatTitle3": "Talk, and watch your chat growing",
+	"onboardingCommonText3": "Your messages can become notes, tasks, or links — a living knowledge base, private and yours.",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
