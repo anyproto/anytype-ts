@@ -105,7 +105,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 								<Button
 									key={i}
 									text={button.text}
-									color={(i == buttons.length - 1) ? 'accent' : 'blank'}
+									color={(i == 0) ? 'accent' : 'blank'}
 									className="c36"
 									onClick={e => this.onButton(e, button.action)}
 								/>
