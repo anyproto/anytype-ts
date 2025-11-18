@@ -1,4 +1,5 @@
 import { I, U, translate, S, Onboarding } from 'Lib';
+import $ from 'jquery';
 
 const Data = {
 	mainGraph: () => ({
@@ -26,7 +27,25 @@ const Data = {
 	}),
 
 	common: () => {
-		const spaceview = U.Space.getSpaceview();
+		const elements = {
+			vault: '#appContainer #sidebarPageVault #body',
+			channel: '#appContainer #sidebarPageVault #button-create-space',
+			profile: '#appContainer #sidebarPageVault .bottom .appSettings',
+			gallery: '#appContainer #sidebarPageVault .bottom .icon.gallery',
+			pin: '#sidebarPageWidget > #body > .content > .section-pin > .items',
+			type: '#sidebarPageWidget > #body > .content > .section-type > .items',
+			relation: '#header #button-header-relation',
+			widgetSpace: '#widget-space .spaceData .head',
+		};
+
+		const getOffset = (el: string) => {
+			let offset = 8;
+			if (el == 'widgetSpace') {
+				offset = 20;
+			};
+
+			return $(elements[el]).width() + offset;
+		};
 
 		return {
 			showDimmer: true,
@@ -36,19 +55,17 @@ const Data = {
 				noArrow: true,
 				noClose: true,
 				noBorderY: false,
-				horizontal: I.MenuDirection.Right,
-				width: 288,
+				horizontal: I.MenuDirection.Left,
 				highlightElements: [ '#sidebarLeft > #pageWrapper' ],
+				stickToElementEdge: I.MenuDirection.Top,
 			},
 			items: [
 				{
 					name: translate('onboardingCommonTitleVault'),
 					description: translate('onboardingCommonTextVault'),
 					param: {
-						element: '#appContainer #sidebarPageVault',
-						vertical: I.MenuDirection.Center,
-						stickToElementEdge: null,
-						offsetX: -290,
+						element: elements.vault,
+						offsetX: getOffset('vault'),
 					}
 				},
 				{
@@ -56,48 +73,69 @@ const Data = {
 					description: translate('onboardingCommonTextChannels'),
 					param: {
 						noBorderY: true,
-						element: '#appContainer #sidebarPageVault #button-create-space',
-						stickToElementEdge: I.MenuDirection.Top,
-						offsetX: -298,
+						element: elements.channel,
+						offsetX: getOffset('channel'),
 					}
 				},
 				{
-					name: translate('onboardingCommonTitleSettings'),
-					description: translate('onboardingCommonTextSettings'),
+					name: translate('onboardingCommonTitleProfile'),
+					description: translate('onboardingCommonTextProfile'),
 					param: {
-						element: '#appContainer #sidebarPageVault .bottom',
-						stickToElementEdge: I.MenuDirection.Right,
+						element: elements.profile,
+						stickToElementEdge: null,
 						vertical: I.MenuDirection.Top,
+						offsetY: -8,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitleGallery'),
+					description: translate('onboardingCommonTextGallery'),
+					param: {
+						element: elements.gallery,
+						stickToElementEdge: null,
+						vertical: I.MenuDirection.Top,
+						offsetY: -8,
 					}
 				},
 				{
 					name: translate('onboardingCommonTitlePin'),
 					description: translate('onboardingCommonTextPin'),
 					param: {
-						element: '#sidebarPageWidget > #body > .content > .section-pin > .items',
+						element: elements.pin,
 						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-pin' ],
-						stickToElementEdge: I.MenuDirection.Top,
-						offsetX: -298,
+						offsetX: getOffset('pin'),
 					}
 				},
 				{
 					name: translate('onboardingCommonTitleTypes'),
 					description: translate('onboardingCommonTextTypes'),
 					param: {
-						element: '#sidebarPageWidget > #body > .content > .section-type > .items',
+						element: elements.type,
 						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-type' ],
-						stickToElementEdge: I.MenuDirection.Top,
-						offsetX: -298,
+						offsetX: getOffset('type'),
 					}
 				},
 				{
 					name: translate('onboardingCommonTitleProperties'),
 					description: translate('onboardingCommonTextProperties'),
 					param: {
-						element: '#header #button-header-relation',
-						highlightElements: [ '#header #button-header-relation' ],
+						element: elements.relation,
+						highlightElements: [ elements.relation ],
 						horizontal: I.MenuDirection.Right,
 						offsetX: 0,
+					}
+				},
+				{
+					name: translate('onboardingCommonTitleSettings'),
+					description: translate('onboardingCommonTextSettings'),
+					cloneElementClassName: 'widgetSpaceHead',
+					param: {
+						element: elements.widgetSpace,
+						highlightElements: [ elements.widgetSpace ],
+						stickToElementEdge: null,
+						vertical: I.MenuDirection.Bottom,
+						offsetY: -$(elements.widgetSpace).height() - 24,
+						offsetX: getOffset('widgetSpace'),
 					}
 				},
 			]
@@ -237,9 +275,9 @@ const Data = {
 				description: translate('onboardingSyncStatusText'),
 				cloneElementClassName: 'onboardingHeaderSync',
 				param: {
-					element: '#menuSyncStatus',
+					element: '#header #headerSync',
 					horizontal: I.MenuDirection.Right,
-					highlightElements: [ '#menuSyncStatus' ],
+					highlightElements: [ '#header #headerSync' ],
 					offsetY: 14,
 				}
 			},

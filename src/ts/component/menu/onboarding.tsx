@@ -18,7 +18,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		error: null,
 	};
 	frame = 0;
-	hiddenElement: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -131,7 +130,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	componentDidMount () {
 		this.rebind();
 		this.event();
-		this.hideElements();
 		this.initDimmer();
 
 		U.Common.renderLinks($(this.node));
@@ -162,15 +160,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	componentWillUnmount(): void {
 		this.unbind();
 		this.clearDimmer();
-		this.showElements();
-	};
-
-	showElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).removeClass('isOnboardingHidden'));
-	};
-
-	hideElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).addClass('isOnboardingHidden'));
 	};
 
 	getItems () {
@@ -213,11 +202,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 					const { top, left } = element.offset();
 					const st = $(window).scrollTop();
 
-					if (this.hiddenElement) {
-						this.hiddenElement.css({ visibility: 'visible' });
-						this.hiddenElement = null;
-					};
-
 					body.append(clone);
 					U.Common.copyCss(element.get(0), clone.get(0));
 
@@ -229,8 +213,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 						clone.addClass('onboardingElementDark');
 					};
 
-					this.hiddenElement = element;
-					element.css({ visibility: 'hidden' });
 					clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
 				});
 			});
