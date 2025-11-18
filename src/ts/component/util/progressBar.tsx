@@ -15,12 +15,14 @@ interface Props {
 	segments: Segment[];
 	current?: string;
 	max?: string;
+	complete?: boolean;
 };
 
 const ProgressBar: FC<Props> = ({
 	segments = [],
 	current = '',
 	max = '',
+	complete = false,
 }) => {
 	const total = segments.reduce((res, current) => res += current.percent, 0);
 	const onTooltipShow = (e: MouseEvent, item: Segment) => {
@@ -55,7 +57,7 @@ const ProgressBar: FC<Props> = ({
 	};
 
 	return (
-		<div className="progressBar">
+		<div className={[ 'progressBar', complete ? 'complete' : '' ].join(' ')}>
 			<div className="bar">
 				{segments.map((item, i) => (
 					<Item key={i} {...item} />

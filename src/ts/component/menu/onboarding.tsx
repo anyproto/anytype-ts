@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Label } from 'Component';
+import { Button, Icon, Label, ProgressBar } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -40,6 +40,11 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 
 		const l = items.length;
 		const withSteps = l > 1;
+		const segments = [];
+
+		if (withSteps) {
+			segments.push({ name: '', caption: '', percent: (current + 1) / l, isActive: true });
+		};
 
 		let buttons = [];
 		let category = '';
@@ -94,31 +99,22 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
-					{withSteps ? (
-						<div className="steps">
-							{[ ...Array(l) ].map((e: number, i: number) => {
-								const cn = [ 'step' ];
-								if (i == current) {
-									cn.push('active');
-								};
-
-								return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
-							})}
-						</div>
-					) : ''}
-					
 					{buttons.length ? (
 						<div className="buttons">
 							{buttons.map((button, i) => (
 								<Button
 									key={i}
 									text={button.text}
-									color={(i == buttons.length - 1) ? 'black' : 'blank'}
-									className="c28"
+									color={(i == buttons.length - 1) ? 'accent' : 'blank'}
+									className="c36"
 									onClick={e => this.onButton(e, button.action)}
 								/>
 							))}
 						</div>
+					) : ''}
+
+					{withSteps ? (
+						<ProgressBar segments={segments} complete={current == l - 1} />
 					) : ''}
 				</div>
 
