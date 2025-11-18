@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -238,7 +238,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	onScrollVertical () {
 		const { isPopup, isInline } = this.props;
 
-		if (isInline) {
+		if (isInline || isPopup) {
 			return;
 		};
 
@@ -249,26 +249,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
 		const scroll = node.find('#scroll');
 		const { left, top } = rowHead.offset();
-		const sy = container.scrollTop();
 		const sx = scroll.scrollLeft();
 		
-		let cy = 0;
-		let threshold = 0;
-		let x = 0;
-		let y = 0;
-
-		if (isPopup) {
-			return;
-		};
-
-		cy = top - sy;
-		threshold = J.Size.header;
-		x = left + sx;
-		y = threshold;
-
 		let clone = node.find('#rowHeadClone');
 
 		if (!clone.length) {
@@ -276,7 +260,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 			node.append(clone);
 
-			ReactDOM.render((
+			const root = createRoot(clone.get(0));
+
+			root.render((
 				<HeadRow 
 					{...this.props} 
 					onCellAdd={this.onCellAdd} 
@@ -285,18 +271,23 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					onResizeStart={this.onResizeStart}
 					getColumnWidths={this.getColumnWidths}
 				/>
-			), clone.get(0));
+			));
 
 			clone.find('.rowHead').attr({ id: '' });
 		};
 
-		if (cy <= threshold) {
-			clone.css({ left: x, top: y, width: rowHead.outerWidth() + 2, transform: `translate3d(${-sx}px,0px,0px)`	});
+		if (top <= J.Size.header) {
+			clone.css({ 
+				left: left + sx, 
+				top: J.Size.header, 
+				width: rowHead.outerWidth() + 2, 
+				transform: `translate3d(${-sx}px,0px,0px)`,	
+			});
 		} else {
 			clone.remove();
 		};
 
-		rowHead.toggleClass('fixed', cy <= threshold);
+		rowHead.toggleClass('fixed', top <= J.Size.header);
 	};
 
 	resizeColumns (relationKey: string, width: number) {

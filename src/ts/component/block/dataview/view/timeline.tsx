@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, MouseEvent, DragEvent } from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
@@ -374,8 +374,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
 	};
@@ -521,7 +519,9 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 			const createElement = () => {
 				el = $(`<div id="tooltipItem-${id}" class="tooltipItem" />`).appendTo(tooltipRef.current);
-				ReactDOM.render(<Tooltip {...object} />, el.get(0));
+
+				const root = createRoot(el.get(0));
+				root.render(<Tooltip {...object} />);
 
 				el.off('click').on('click', (e: any) => {
 					e.stopPropagation();

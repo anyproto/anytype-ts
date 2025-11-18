@@ -29,6 +29,7 @@
 			.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
 			.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
 			.icon.noAccess { display: block; background-image: url('~img/icon/popup/confirm/lock.svg'); }
+			.icon.noAccessRed { display: block; background-image: url('~img/icon/popup/confirm/red-lock.svg'); }
 			.icon.confirm { background-image: url('~img/icon/popup/confirm/confirm.svg'); }
 			.icon.invite { background-image: url('~img/icon/popup/confirm/invite.svg'); }
 			.icon.warning { background-image: url('~img/icon/popup/confirm/warning.svg'); }
@@ -37,6 +38,7 @@
 			.icon.join { background-image: url('~img/icon/popup/confirm/join.svg'); }
 			.icon.create { background-image: url('~img/icon/popup/confirm/create.svg'); }
 			.icon.success { background-image: url('~img/icon/popup/confirm/success.svg'); }
+			.icon.anyId { width: 60px; height: 48px; background-image: url('~img/icon/membership/any-id.svg'); }
 		}
 
 		.checkboxWrapper { 

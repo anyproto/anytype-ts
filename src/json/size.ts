@@ -3,16 +3,14 @@ export default {
 	blockMenu: 48,
 	lastBlock: 80,
 	menuBorder: 10,
-	header: 52,
+	header: 44,
 
 	history: {
 		panel: 348,
 	},
 
 	sidebar: {
-		width: { min: 240, max: 480, default: 336, close: 180 },
-		threshold: 72,
-		right: 348,
+		default: { min: 240, max: 480, default: 336, threshold: 72 },
 	},
 
 	table: {
@@ -40,7 +38,7 @@ export default {
 
 			min: 48,
 			max: 1000,
-			edit: 300,
+			edit: 200,
 			icon: 70
 		},
 	},

@@ -292,11 +292,6 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		sparkOnboarding.confirmTypes();
 	};
 
-	const handleImport = () => {
-		setIsImporting(true);
-		sparkOnboarding.importWorkspace();
-	};
-
 	const handleGoToSpace = () => {
 		if (!newSpaceId) {
 			return;

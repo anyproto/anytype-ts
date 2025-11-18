@@ -1,4 +1,5 @@
-> .sidebarPage.pageType {
+.sidebarPage.pageType { overflow: visible; }
+.sidebarPage.pageType {
 	.section.typeTitle { padding: 16px; }
 	.section.typeTitle {
 		> .wrap { display: flex; flex-direction: column; gap: 5px 0px; }
@@ -35,7 +36,7 @@
 			.swiper-pagination-bullet-active { background: var(--color-text-primary); }
 		}
 
-		.previewObject { width: calc(50% - 6px); height: 97px; }
+		.previewObject { width: calc(50% - 6px); height: 96px; background-color: var(--color-bg-primary); }
 		.previewObject {
 			.moreWrapper { width: 24px; height: 24px; }
 

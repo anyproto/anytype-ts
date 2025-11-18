@@ -21,7 +21,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		isLoading: false,
 	};
 
-	_isMounted = false;	
 	filter = '';
 	index: any = null;
 	cache: any = {};
@@ -71,10 +70,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				withPlural,
 			};
 
+			let name = item.name;
 			if (item.isAdd) {
 				cn.push('add');
 				props.isAdd = true;
+			} else {
+				name = <ObjectName object={item} withPlural={withPlural} />;
 			};
+
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
@@ -107,7 +110,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					<MenuItemVertical
 						{...props}
 						index={param.index}
-						name={<ObjectName object={item} withPlural={withPlural} />}
+						name={name}
 						onMouseEnter={e => this.onMouseEnter(e, item)}
 						onClick={e => this.onClick(e, item)}
 						onMore={onMore ? e => onMore(e, item) : undefined}
@@ -172,19 +175,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.rebind();
 		this.resize();
 		this.load(true);
 	};
 
-	componentDidUpdate () {
+	componentDidUpdate (prevProps: I.Menu) {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
 
-		if (this.filter != filter) {
+		if ((this.filter != filter) || (prevProps.param.menuKey != this.props.param.menuKey)) {
 			this.n = 0;
 			this.filter = filter;
 			this.reload();
@@ -202,7 +204,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -265,6 +266,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
+		const { param } = this.props;
+		const { data } = param;
+		const { noInfiniteLoading } = data;
+
+		if (noInfiniteLoading) {
+			return Promise.resolve();
+		};
+
 		return new Promise((resolve, reject) => {
 			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
@@ -278,10 +287,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { isLoading } = this.state;
 		if (isLoading) {
 			return;
@@ -289,7 +294,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, dataChange, skipIds, keys } = data;
+		const { type, dataMapper, dataSort, dataChange, skipIds, keys, limit } = data;
 		const filter = String(data.filter || '');
 		const spaceId = data.spaceId || S.Common.space;
 		
@@ -330,20 +335,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
-			limit: J.Constant.limit.menuRecords,
+			limit: limit || J.Constant.limit.menuRecords,
 		}, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
 				this.items = [];

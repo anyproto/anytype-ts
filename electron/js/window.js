@@ -3,12 +3,12 @@ const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
-const port = process.env.SERVER_PORT;
 
 const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
+const port = Util.getPort();
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
@@ -64,8 +64,10 @@ class WindowManager {
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win);
 		});
+
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
+		win.on('swipe', (e, direction) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
 
 		win.webContents.setWindowOpenHandler(({ url }) => {
 			Api.openUrl(win, url);
@@ -100,7 +102,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 10, y: 18 };
+			param.trafficLightPosition = { x: 20, y: 18 };
 		} else
 		if (is.windows) {
 			param.frame = false;
@@ -221,6 +223,8 @@ class WindowManager {
 					} else {
 						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
 					};
+				}).catch(() => {
+					Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 				});
 				break;
 		};

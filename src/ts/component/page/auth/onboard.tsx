@@ -10,7 +10,7 @@ enum Stage {
 	UseCase		= 3,
 };
 
-const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { redirect } = S.Common;
@@ -30,6 +30,7 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
 	};
 	const cnb = [ 'c48' ];
+	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 	const unbind = () => {
 		$(window).off('keydown.onboarding');
@@ -58,8 +59,6 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 	};
 
 	const onAuth = () => {
-		const routeParam = { replace: true };
-
 		S.Common.showRelativeDatesSet(true);
 
 		Storage.set('isNewUser', true);
@@ -71,11 +70,8 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 		U.Data.onInfo(account.info);
 		U.Data.onAuthOnce(true);
 
-		S.Common.spaceSet('');
-
 		U.Subscription.createGlobal(() => {
-			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
-			S.Common.redirectSet('');
+			U.Router.switchSpace(S.Common.space, '', false, {}, false);
 		});
 	};
 
@@ -87,13 +83,11 @@ const PageAuthOnboard = observer(forwardRef<{}, I.PageComponent>((props, ref) =>
 
 		switch (stage) {
 			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(stage + (needEmail ? 1 : 2)));
 				break;
 			};
 
 			case Stage.Email: {
-				const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
-
 				if (!needEmail) {
 					Animation.from(() => setStage(stage + 1));
 					break;

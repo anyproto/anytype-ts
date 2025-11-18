@@ -8,27 +8,37 @@
 
 	"img-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
 		"file://*",
+		"http://127.0.0.1:*", 
+		"https://127.0.0.1:*", 
+		"http://localhost:*",
+		"https://localhost:*",
 		"https://*.sndcdn.com",
-		"https://scontent.cdninstagram.com"
+		"https://scontent.cdninstagram.com",
+		"https://*.any.coop",
+		"https://*.ytimg.com",
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
 	],
 
 	"media-src": [ 
 		"'self'", 
-		"http://*:*", 
-		"https://*:*", 
 		"data:", 
 		"blob:", 
-		"file://*", 
+		"file://*",
+		"http://127.0.0.1:*", 
+		"https://127.0.0.1:*", 
+		"http://localhost:*",
+		"https://localhost:*",
+		"http://localhost:*", 
 		"https://*.googlevideo.com",
 		"https://scontent.cdninstagram.com",
 		"https://media.sketchfab.com",
 		"https://*.spotify.com",
-  		"https://*.spotifycdn.com"
+  		"https://*.spotifycdn.com",
+		"https://*.any.coop",
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
 	],
 
 	"style-src": [ 
@@ -36,7 +46,8 @@
 		"http://localhost:*", 
 		"data:",
 		"file://*", 
-		"https://*.youtube.com", 
+		"https://*.youtube.com",
+		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com", 
   		"https://*.spotifycdn.com",
 		"https://*.vimeocdn.com",
@@ -67,6 +78,7 @@
 		"file://*", 
 		"http://localhost:*", 
 		"https://*.youtube.com",
+		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
 		"https://encore.scdn.co/",
@@ -80,7 +92,8 @@
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
 		"https://static.sketchfab.com",
-		"https://*.bstarstatic.com"
+		"https://*.bstarstatic.com",
+		"https://unpkg.com/@excalidraw/"
 	],
 
 	"connect-src": [ 
@@ -95,6 +108,7 @@
 		"https://api.amplitude.com", 
 		"devtools://devtools", 
 		"https://*.youtube.com",
+		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com", 
   		"https://*.spotifycdn.com",
 		"https://*.vimeocdn.com", 
@@ -151,6 +165,7 @@
 		"https://sentry.io",
 		"devtools://devtools",
 		"https://*.youtube.com",
+		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com", 
   		"https://*.spotifycdn.com",
 		"https://*.vimeocdn.com",
@@ -183,7 +198,8 @@
 		"https://*.googletagmanager.com",
 		"https://*.facebook.net",
 		"https://*.diagrams.net",
-        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
+        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/",
+		"https://unpkg.com/@excalidraw/"
 	],
 
 	"frame-src": [
@@ -191,6 +207,7 @@
 		"file://*",
 		"http://localhost:*/embed/iframe.html",
 		"https://*.youtube.com",
+		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
 		"https://*.vimeo.com",

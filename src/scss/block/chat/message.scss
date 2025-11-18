@@ -1,9 +1,6 @@
-.message { @include text-common; position: relative; opacity: 0; }
+.message { @include text-common; position: relative; }
 .message {
 	* { user-select: text !important; }
-
-	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
-	&.show { opacity: 1; }
 
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
@@ -34,7 +31,7 @@
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 		}
 
-		.textWrapper { max-width: 480px; }
+		.bubble:not(.withLayout) { max-width: 480px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
@@ -113,7 +110,7 @@
 			&.isMulti { gap: 0px 2px; }
 			&.isMe { background-color: var(--color-bg-tag-lime); }
 
-			.count { min-width: 18px; text-align: center; }
+			.count { min-width: 18px; text-align: center; user-select: none !important; cursor: default; }
 		}
 		.reactionAdd { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 	}
@@ -155,20 +152,6 @@
 			.bubble {
 				.textWrapper { padding: 0px 12px 8px; max-width: 532px; }
 			}
-		}
-	}
-
-	&.canExpand {
-		.bubbleInner {
-			.textWrapper { min-width: 200px; }
-			.expand { display: flex; }
-			.text { @include clamp; -webkit-line-clamp: 16; }
-		}
-	}
-
-	&.canExpand.isExpanded {
-		.bubbleInner {
-			.text { -webkit-line-clamp: unset; }
 		}
 	}
 

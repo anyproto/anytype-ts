@@ -3,7 +3,7 @@ import { Frame, Title, Error, Pin } from 'Component';
 import { I, S, U, Storage, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
+const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const pinRef = useRef(null);
 	const { pin } = S.Common;
@@ -15,11 +15,11 @@ const PageAuthPinCheck = observer(forwardRef<{}, I.PageComponent>(() => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('focus.pin', () => pinRef.current.focus());
+		$(window).on('focus.pin', () => pinRef.current?.focus());
 	};
 
 	const onError = () => {
-		pinRef.current.reset();	
+		pinRef.current?.reset();
 		setError(translate('authPinCheckError'));
 	};
 

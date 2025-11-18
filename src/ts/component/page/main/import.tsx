@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Loader, Title, Error, Frame, Button } from 'Component';
 import { I, C, S, U, translate, analytics } from 'Lib';
 
-const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { isPopup } = props;
@@ -24,7 +24,7 @@ const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
-				U.Space.openDashboard();
+				U.Space.openDashboardOrVoid();
 
 				window.setTimeout(() => {
 					S.Popup.open('usecase', { 
@@ -53,7 +53,7 @@ const PageMainImport = forwardRef<{}, I.PageComponent>((props, ref) => {
 							text={translate('commonBack')} 
 							color="blank" 
 							className="c36" 
-							onClick={() => U.Space.openDashboard()} 
+							onClick={() => U.Space.openDashboardOrVoid()} 
 						/>
 					</div>
 				) : <Loader />}

@@ -41,10 +41,13 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
+	public chatCmdSendValue = null;
 	public updateVersionValue = '';
+	public vaultMessagesValue = null;
+	public leftSidebarStateValue = { page: '', subPage: '' };
 	public rightSidebarStateValue = { 
-		full: { page: null, isOpen: false }, 
-		popup: { page: null, isOpen: false },
+		full: { page: '' }, 
+		popup: { page: '' },
 	};
 	public hideSidebarValue = null;
 	public pinValue = null;
@@ -58,6 +61,8 @@ class CommonStore {
 	public windowId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
+	public openObjectIds: Map<string, Set<string>> = new Map();
+	public widgetSectionsValue: I.WidgetSection[] = [];
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -113,6 +118,7 @@ class CommonStore {
 			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
+			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
@@ -120,6 +126,8 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
+			vaultMessagesValue: observable,
+			widgetSectionsValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -135,6 +143,8 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
+			vaultMessages: computed,
+			widgetSections: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -151,10 +161,13 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			membershipTiersListSet: action,
+			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
+			vaultMessagesSet: action,
+			widgetSectionsSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -236,6 +249,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get chatCmdSend (): boolean {
+		return this.boolGet('chatCmdSend');
 	};
 
 	get theme (): string {
@@ -322,6 +339,14 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
+	};
+
+	get vaultMessages (): any {
+		return this.boolGet('vaultMessages');
+	};
+
+	get widgetSections (): I.WidgetSection[] {
+		return this.widgetSectionsValue || [];
 	};
 
 	/**
@@ -570,14 +595,29 @@ class CommonStore {
 	};
 
 	/**
+	 * Sets the hide chat send option value.
+	 * @param {boolean} v - Value.
+	 */
+	chatCmdSendSet (v: boolean) {
+		this.boolSet('chatCmdSend', v);
+	};
+
+	/**
+	 * Sets the show sidebar left value.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 * @param {string} page - The page to set, null if no page is shown
+	 */
+	setLeftSidebarState (page: string, subPage: string) {
+		set(this.leftSidebarStateValue, { page, subPage });
+	};
+
+	/**
 	 * Sets the show sidebar right value.
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	setRightSidebarState (isPopup: boolean, page: string, isOpen: boolean) {
-		const key = this.getStateKey(isPopup);
-
-		set(this.rightSidebarStateValue, { [ key ]: { page, isOpen } });
+	setRightSidebarState (isPopup: boolean, page: string) {
+		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page } });
 	};
 
 	/**
@@ -813,6 +853,14 @@ class CommonStore {
 	};
 
 	/**
+	 * Sets the vault messages value.
+	 * @param {boolean} v - The vault messages value.
+	 */
+	vaultMessagesSet (v: boolean) {
+		this.boolSet('vaultMessages', v);
+	};
+
+	/**
 	 * Sets the membership tiers list.
 	 * @param {I.MembershipTier[]} list - The membership tiers list.
 	 */
@@ -873,12 +921,20 @@ class CommonStore {
 	};
 
 	/**
+	 * Gets the current state of the left sidebar.
+	 * @returns {page: string; subPage: string;} The current state shown in the sidebar
+	 */
+	getLeftSidebarState (): { page: string; subPage: string; } {
+		return this.leftSidebarStateValue || { page: '', subPage: '' };
+	};
+
+	/**
 	 * Gets the current state of the right sidebar.
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
 	 */
-	getRightSidebarState (isPopup: boolean): { page: string; isOpen: boolean; } {
-		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '', isOpen: false };
+	getRightSidebarState (isPopup: boolean): { page: string; } {
+		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '' };
 	};
 
 	/**
@@ -926,6 +982,14 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
+	};
+
+	widgetSectionsSet (sections: I.WidgetSection[]) {
+		this.widgetSectionsValue = sections || [];
+	};
+
+	checkWidgetSection (id: I.WidgetSection): boolean {
+		return this.widgetSections.includes(id);
 	};
 
 };

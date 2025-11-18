@@ -106,7 +106,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 	const onFilterShow = () => {
 		$(filterWrapperRef.current).addClass('active');
-		filterRef.current.focus();
+		filterRef.current?.focus();
 	};
 
 	const onFilterChange = (v: string) => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
@@ -48,8 +48,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		match: null,
 	};
 
-	_isMounted = false;
-		
 	constructor (props: Props) {
 		super(props);
 		
@@ -431,7 +429,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.initToggle();
 	};
 	
@@ -446,10 +443,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.initToggle();
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	initToggle () {
 		const { rootId, block } = this.props;
 
@@ -459,10 +452,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 	
 	onToggle (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		
@@ -473,7 +462,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onDragStart (e: any) {
 		e.stopPropagation();
 
-		if (!this._isMounted || keyboard.isResizing) {
+		if (keyboard.isResizing) {
 			e.preventDefault();
 			return;
 		};
@@ -497,7 +486,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			this.ids = selection.getForClick(block.id, false, true);
 		};
 		
-		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
+		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, {
+			getNode: () => this.node,
+		});
 	};
 	
 	onMenuDown (e: any) {
@@ -606,7 +597,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { rootId, block, readonly } = this.props;
 
-		if (!this._isMounted || readonly) {
+		if (readonly) {
 			return;
 		};
 
@@ -637,10 +628,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onResize (e: any, index: number, offset: number) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		e.preventDefault();
 		e.stopPropagation();
 		
@@ -670,10 +657,6 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = S.Block.getChildrenIds(rootId, id);
@@ -739,7 +722,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onMouseMove (e: any) {
 		const { rootId, block, readonly } = this.props;
 
-		if (!this._isMounted || keyboard.isDragging || keyboard.isResizing || readonly || !block.isLayoutRow()) {
+		if (keyboard.isDragging || keyboard.isResizing || readonly || !block.isLayoutRow()) {
 			return;
 		};
 		
@@ -939,7 +922,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			let icon = null;
 			if (_empty_) {
-				icon = <Loader type={I.LoaderType.Loader} className={[ 'c' + size, 'inline' ].join(' ')} />;
+				icon = <Loader type={I.LoaderType.Loader} className={[ `c${size}`, 'inline' ].join(' ')} />;
 			} else {
 				icon = (
 					<IconObject 
@@ -955,7 +938,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				);
 			};
 
-			item.removeClass('disabled isDone withImage');
+			item.removeClass('disabled isDone');
 
 			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
@@ -965,11 +948,14 @@ const Block = observer(class Block extends React.Component<Props> {
 				item.addClass('isDone');
 			};
 
-			ReactDOM.render(icon, smile.get(0), () => {
-				if (smile.html()) {
-					item.addClass('withImage c' + size);
-				};
-			});
+
+			const container = smile.get(0);
+			const root = container._reactRoot || createRoot(container);
+
+			container._reactRoot = root;
+			root.render(icon);
+
+			item.addClass(`withImage c${size}`);
 
 			if (!target || item.hasClass('disabled')) {
 				return;
@@ -1095,7 +1081,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			const smile = item.find('smile');
 
 			if (smile.length) {
-				ReactDOM.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />, smile.get(0));
+				const container = smile.get(0);
+				const root = container._reactRoot || createRoot(container);
+
+				container._reactRoot = root;
+				root.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: id }} />);
 			};
 		});
 	};

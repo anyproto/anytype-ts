@@ -25,6 +25,20 @@ class UtilSpace {
 		U.Object.openRoute(home, param);
 	};
 
+	openDashboardOrVoid (param?: Partial<I.RouteParam>) {
+		param = param || {};
+
+		if (undefined === param.replace) {
+			param.replace = true;
+		};
+
+		if (S.Common.space) {
+			U.Space.openDashboard(param);
+		} else {
+			U.Router.go('/main/void/select', param);
+		};
+	};
+
 	/**
 	 * Opens the first available space or a void page if none exist.
 	 * @param {(it: any) => boolean} [filter] - Optional filter function for spaces.
@@ -413,16 +427,6 @@ class UtilSpace {
 	 */
 	getPublishUrl (slug: string): string {
 		return 'https://' + [ this.getPublishDomain(), slug ].join('/');
-	};
-
-	/**
-	 * Gets the default sidebar page based on the current space type.
-	 * @returns {string} The default sidebar page.
-	 */
-	getDefaultSidebarPage (id?: string): string {
-		const space = this.getSpaceview(id);
-
-		return space._empty_ || space?.isChat ? 'vault' : 'widget';
 	};
 
 };

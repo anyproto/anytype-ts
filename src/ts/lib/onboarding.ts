@@ -19,7 +19,7 @@ class Onboarding {
 	 * @param {boolean} [force] - Whether to force onboarding even if already completed.
 	 * @param {any} [options] - Additional options for onboarding.
 	 */
-	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
+	start (key: string, isPopup: boolean, force?: boolean, options?: any): boolean {
 		options = options || {};
 
 		const section = this.getSection(key);
@@ -28,9 +28,9 @@ class Onboarding {
 			|| !section.items
 			|| !section.items.length
 			|| (!force && Storage.getOnboarding(key))
-			|| !Storage.get('chatsOnboarding')
+			//|| !Storage.get('chatsOnboarding')
 		) {
-			return;
+			return false;
 		};
 
 		const { items } = section;
@@ -66,23 +66,19 @@ class Onboarding {
 				});
 			}, t);
 		});
+
+		return true;
 	};
 
 	startBasics (isPopup: boolean) {
-		const spaceview = U.Space.getSpaceview();
+		if (this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup)) {
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
-
-		if (spaceview.isChat) {
-			sidebar.rightPanelToggle(false, keyboard.isPopup(), 'widget', {});
-		} else {
-			sidebar.leftPanelSetState({ page: 'widget' });
+			S.Common.setLeftSidebarState('vault', 'widget');
+			$(window).trigger('checkWidgetToggles');
 		};
-
-		$(window).trigger('checkWidgetToggles');
-
-		this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup);
 	};
 
 	completeBasics () {

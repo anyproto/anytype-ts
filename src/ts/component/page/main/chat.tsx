@@ -1,5 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle, DragEvent } from 'react';
-import $ from 'jquery';
+import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
 import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
@@ -12,19 +11,12 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const idRef = useRef('');
 	const blocksRef = useRef(null);
 	const chatRef = useRef<any>(null);
-	const match = keyboard.getMatch(isPopup);
-	const rootId = props.rootId ? props.rootId : match?.params?.id;
+	const [ dummy, setDummy ] = useState(0);
+	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
-		close();
-
 		idRef.current = rootId;
-
 		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
@@ -37,23 +29,13 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
-
-			resize();
+			setDummy(dummy + 1);
 		});
 	};
 
 	const close = () => {
-		const id = idRef.current;
-
-		if (!id) {
-			return;
-		};
-
-		const close = !isPopup || (rootId == id);
-
-		if (close) {
-			Action.pageClose(id, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const isReadonly = () => {
@@ -75,33 +57,18 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		chatRef.current?.ref?.onDrop(e);
 	};
 
-	const resize = () => {
-		const node = $(nodeRef.current);
-		const scrollContainer = U.Common.getScrollContainer(isPopup);
-		const scrollWrapper = node.find('#scrollWrapper');
-		const formWrapper = node.find('#formWrapper');
-		const fh = Number(formWrapper.outerHeight(true)) || 0;
-		const mh = scrollContainer.height() - J.Size.header - fh;
-
-		scrollWrapper.css({ minHeight: mh });
-		chatRef.current?.ref?.resize();
-	};
-
 	useEffect(() => {
 		open();
-		resize();
 
 		return () => close();
 	}, []);
 
 	useEffect(() => {
-		open();
-		resize();
-	});
-
-	useImperativeHandle(ref, () => ({
-		resize,
-	}));
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
+	}, [ rootId ]);
 
 	let content = null;
 

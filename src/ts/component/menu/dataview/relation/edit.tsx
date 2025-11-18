@@ -199,11 +199,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	focus () {
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+		window.setTimeout(() => this.ref?.focus(), 15);
 	};
 
 	getSections () {
@@ -261,6 +257,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 		} else {
 			canOpen = false;
+			canUnlink = false;
 		};
 
 		if (!relation || !relation.id || readonly) {
@@ -412,7 +409,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 									options,
 									onSelect: (e: any, item: any) => {
 										save(item.id);
-										menuContext.close();
+										menuContext?.close();
 									},
 								}
 							});
@@ -642,9 +639,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						this.save();
 					};
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				},
 			}
 		});

@@ -7,7 +7,7 @@ html.anytypeWebclipper-auth {
 	/* Text */
 
 	--color-text-primary: #252525;
-	--color-text-secondary: #949494;
+	--color-text-secondary: #828282;
 	--color-text-tertiary: #bfbfbf;
 	--color-text-inversion: #fff;
 
@@ -51,6 +51,30 @@ html.anytypeWebclipper-auth {
 	--color-ice: #2aa7ee;
 	--color-teal: #0fc8ba;
 	--color-lime: #5dd400;
+
+	/* Tag */
+
+	--color-tag-grey: #8c9ea5;
+	--color-tag-yellow: #b2a616;
+	--color-tag-orange: #d3720d;
+	--color-tag-red: #e2400c;
+	--color-tag-pink: #ca1b8e;
+	--color-tag-purple: #9e30c4;
+	--color-tag-blue: #3e58eb;
+	--color-tag-ice: #1c8bca;
+	--color-tag-teal: #0caaa3;
+	--color-tag-lime: #64b90f;
+
+	--color-bg-tag-grey: #e3e3e3;
+	--color-bg-tag-yellow: #f4eb91;
+	--color-bg-tag-orange: #fcdc9c;
+	--color-bg-tag-red: #fcd1c3;
+	--color-bg-tag-pink: #f8c2e5;
+	--color-bg-tag-purple: #e8d0f1;
+	--color-bg-tag-blue: #cbd2fa;
+	--color-bg-tag-ice: #b2dff9;
+	--color-bg-tag-teal: #a9ebe6;
+	--color-bg-tag-lime: #c5efa3;
 
 	/* Font */
 
@@ -137,4 +161,61 @@ html.anytypeWebclipper-auth {
 	}
 
 	.passThrough { pointer-events: all; }
+}
+
+@media (prefers-color-scheme: dark) {
+	html.anytypeWebclipper-iframe,
+	html.anytypeWebclipper-popup,
+	html.anytypeWebclipper-auth {
+		/* Text */
+		--color-text-primary: #f8f8f8;
+		--color-text-secondary: #ababab;
+		--color-text-tertiary: #656565;
+		--color-text-inversion: #171717;
+
+		/* Shape */
+		--color-shape-primary: #313131;
+		--color-shape-secondary: #292929;
+		--color-shape-tertiary: #232323;
+
+		--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
+		--color-shape-highlight-light: rgba(255, 255, 255, 0.03);
+
+		/* Control */
+		--color-control-accent: #d4d4d4;
+		--color-control-active: #737373;
+		--color-control-inactive: #414141;
+
+		/* Background */
+		--color-bg-primary: #171717;
+		--color-bg-loader: rgba(0,0,0,0.7);
+
+		/* Tag */
+		--color-tag-grey: var(--color-text-secondary);
+		--color-tag-yellow: var(--color-yellow);
+		--color-tag-orange: var(--color-orange);
+		--color-tag-red: var(--color-red);
+		--color-tag-pink: var(--color-pink);
+		--color-tag-purple: var(--color-purple);
+		--color-tag-blue: var(--color-blue);
+		--color-tag-ice: var(--color-ice);
+		--color-tag-teal: var(--color-teal);
+		--color-tag-lime: var(--color-lime);
+
+		--color-bg-tag-grey: #3c3c3c;
+		--color-bg-tag-yellow: #55500d;
+		--color-bg-tag-orange: #5f430a;
+		--color-bg-tag-red: #74321e;
+		--color-bg-tag-pink: #712055;
+		--color-bg-tag-purple: #542663;
+		--color-bg-tag-blue: #20295c;
+		--color-bg-tag-ice: #19465f;
+		--color-bg-tag-teal: #16534e;
+		--color-bg-tag-lime: #36551d;
+
+		/* System */
+		--color-system-selection: rgba(24, 163, 241, 0.3);
+
+		body { color-scheme: dark; }
+	}
 }

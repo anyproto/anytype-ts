@@ -120,9 +120,7 @@ class Dataview {
 
 				C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 			} else {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			};
 		});
 	};
@@ -199,8 +197,6 @@ class Dataview {
 				limit,
 				offset,
 				collectionId,
-				ignoreDeleted: true,
-				ignoreHidden: true,
 			}, callBack);
 		};
 
@@ -544,6 +540,7 @@ class Dataview {
 			I.FilterCondition.AllIn,
 		];
 		const details: any = {};
+		const hasGroupValue = view.groupRelationKey && [ I.ViewType.Board, I.ViewType.Calendar, I.ViewType.Timeline ].includes(view.type);
 
 		if (relations.length) {
 			relations.forEach(it => {
@@ -555,7 +552,7 @@ class Dataview {
 			return details;
 		};
 
-		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
+		if (hasGroupValue) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
 				if (group) {
@@ -574,7 +571,7 @@ class Dataview {
 		};
 
 		for (const filter of view.filters) {
-			if (!conditions.includes(filter.condition)) {
+			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
 
@@ -609,7 +606,6 @@ class Dataview {
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
 
 		let typeId = '';
-
 		if (view && view.defaultTypeId && isAllowedDefaultType) {
 			typeId = view.defaultTypeId;
 		} else

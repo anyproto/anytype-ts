@@ -6,7 +6,7 @@ html.themeDark {
 	/* Text */
 
 	--color-text-primary: #f8f8f8;
-	--color-text-secondary: #9a9a9a;
+	--color-text-secondary: #ababab;
 	--color-text-tertiary: #656565;
 	--color-text-inversion: #171717;
 
@@ -19,6 +19,7 @@ html.themeDark {
 	--color-shape-highlight-dark: rgba(255, 255, 255, 0.11);
 	--color-shape-highlight-medium: rgba(255, 255, 255, 0.05);
 	--color-shape-highlight-light: rgba(255, 255, 255, 0.03);
+	--color-shape-highlight-light-solid: #1e1e1e;
 
 	/* Control */
 
@@ -299,6 +300,7 @@ html.themeDark {
 	.icon.settings-type { background-image: url('#{$themePath}/icon/settings/type.svg'); }
 	.icon.settings-relation { background-image: url('#{$themePath}/icon/settings/relation.svg'); }
 	.icon.settings-bin { background-image: url('#{$themePath}/icon/settings/bin.svg'); }
+	.icon.settings-notifications { background-image: url('#{$themePath}/icon/settings/pushOn.svg'); }
 
 	.icon.settings-ux1 { background-image: url('#{$themePath}/icon/settings/space/space.svg'); }
 	.icon.settings-ux3 { background-image: url('#{$themePath}/icon/settings/space/chat.svg'); }
@@ -349,12 +351,6 @@ html.themeDark {
 		.headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
 	}
 
-	.header.mainSettings {
-		.identity {
-			.icon.anyName { background-image: url('#{$themePath}/icon/header/anyName.svg'); }
-		}
-	}
-
 	/* Vault */
 
 	.vault { background-color: #393939; }
@@ -389,7 +385,7 @@ html.themeDark {
 		.icon.back { background-image: url('#{$themePath}/icon/widget/back0.svg'); }
 		.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 
-		> .sidebarPage {
+		.sidebarPage {
 			> .subHead {
 				.icon.back:hover { background-image: url('#{$themePath}/icon/widget/back1.svg'); }
 				.icon.create { background-image: url('#{$themePath}/icon/widget/button/create.svg'); }
@@ -413,7 +409,7 @@ html.themeDark {
 			}
 		}
 		
-		> .containerSettings {
+		.containerSettings {
 			> .body {
 				.list {
 					> .head {
@@ -434,7 +430,7 @@ html.themeDark {
 			}
 		}
 
-		> .sidebarPage.pageWidget {
+		.sidebarPage.pageWidget {
 			> .bottom {
 				.icon.settings:hover { background-image: url('#{$themePath}/icon/widget/button/widgetSettings1.svg'); }
 			}
@@ -456,20 +452,9 @@ html.themeDark {
 					}
 				}
 			}
-
-			.spaceHeader {
-				.buttons {
-					.item {
-						.icon.chat { background-image: url('#{$themePath}/icon/sidebar/chatSpace/chat.svg'); }
-						.icon.mute.on { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOn.svg'); }
-						.icon.mute.off { background-image: url('#{$themePath}/icon/sidebar/chatSpace/pushOff.svg'); }
-						.icon.settings { background-image: url('#{$themePath}/icon/sidebar/chatSpace/settings.svg'); }
-					}
-				}
-			}
 		}
 
-		> .sidebarPage.pageVault {
+		.sidebarPage.pageVault {
 			.item {
 				.cnt { color: var(--color-text-primary); }
 			}

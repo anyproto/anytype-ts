@@ -143,6 +143,15 @@ export interface ViewRelation {
 	align?: I.BlockHAlign;
 };
 
+export interface ViewRef {
+	load?(): void;
+	resize?(): void;
+};
+
+export interface RowRef {
+	setIsEditing: (v: boolean) => void;
+};
+
 export interface ViewComponent {
 	rootId?: string;
 	block?: I.Block;
@@ -257,8 +266,7 @@ export interface Cell {
 	textLimit?: number;
 	arrayLimit?: number;
 	shortUrl?: boolean;
-	menuClassName?: string;
-	menuClassNameWrap?: string;
+	menuParam?: Partial<I.MenuParam>;
 	recordId?: string;
 	recordIdx?: number;
 	groupId?: string;

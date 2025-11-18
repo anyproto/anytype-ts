@@ -127,7 +127,9 @@ class MenuObject extends React.Component<I.Menu> {
 		let openFile = { id: 'openFile', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') };
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
-		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' }
+		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
+		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
+		let notification = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -147,9 +149,9 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (object.isArchived) {
 			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
-			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
+			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin'), caption: keyboard.getCaption('moveToBin') };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
+			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin'), caption: keyboard.getCaption('moveToBin') };
 		};
 
 		// Restrictions
@@ -162,22 +164,25 @@ class MenuObject extends React.Component<I.Menu> {
 			isChat
 		);
 
+		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !isFilePreview && !isInSet;
-		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !object.templateIsBundled;
+		const allowedSearch = !isFilePreview && !isInSet && !isChat;
+		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
-		const allowedLinkTo = canWrite && !isRelation &&!object.isArchived;
+		const allowedLinkTo = canWrite && !isRelation && !object.isArchived;
 		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;
 		const allowedPageLink = !isRelation && !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelation;
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
-		const allowedPrint = !isFilePreview;
+		const allowedPrint = !isFilePreview && !isChat;
 		const allowedDownloadFile = isInFile;
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
-		const allowedEditType = isType && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
+		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
+		const allowedEditChat = isChat;
+		const allowedNotification = isChat;
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -199,6 +204,8 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedOpenFile)		 openFile = null;
 		if (!allowedOpenObject)		 openObject = null;
 		if (!allowedEditType) 		 editType = null;
+		if (!allowedEditChat) 		 editChat = null;
+		if (!allowedNotification) 	 notification = null;
 
 		if (!canWrite) {
 			template = null;
@@ -256,8 +263,8 @@ class MenuObject extends React.Component<I.Menu> {
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		};
 
-		sections = sections.concat([ { children: [ advanced ] } ]);
-		sections = [ { children: [ editType ] } ].concat(sections);
+		sections.push({ children: [ advanced ] });
+		sections.unshift({ children: [ editType, editChat, notification ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -292,8 +299,11 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
+		const { space } = S.Common;
+		const object = this.getObject();
+		const spaceview = U.Space.getSpaceview();
 
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -301,8 +311,8 @@ class MenuObject extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			className: param.className,
-			classNameWrap: param.classNameWrap,
+			className,
+			classNameWrap,
 			rebind: this.rebind,
 			data: {
 				rootId,
@@ -367,15 +377,25 @@ class MenuObject extends React.Component<I.Menu> {
 						switch (option.id) {
 
 							case 'pageDeeplink': {
-								const object = this.getObject();
-								const space = U.Space.getSpaceview();
-
-								U.Object.copyLink(object, space, 'deeplink', '');
+								U.Object.copyLink(object, spaceview, 'deeplink', '');
 								close();
 								break;
 							};
 
 						};
+					},
+				};
+				break;
+			};
+
+			case 'notification': {
+				menuId = 'select';
+				menuParam.data = {
+					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
+					options: U.Menu.notificationModeOptions(),
+					onSelect: (e, option) => {
+						Action.setChatNotificationMode(space, [ object.id ], Number(option.id));
+						close();
 					},
 				};
 				break;
@@ -399,7 +419,7 @@ class MenuObject extends React.Component<I.Menu> {
 	
 	onClick (e: any, item: any) {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, className, classNameWrap } = param;
 		const { blockId, rootId, onSelect, onArchive, onDelete } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 		const object = this.getObject();
@@ -425,7 +445,7 @@ class MenuObject extends React.Component<I.Menu> {
 			if (home && (object.id == home.id)) {
 				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
 			} else {
-				keyboard.onBack();
+				keyboard.onBack(false);
 			};
 		};
 
@@ -536,7 +556,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'openFile': {
-				Action.openFile(object.id, route);
+				Action.openFile(object, route);
 				break;
 			};
 
@@ -551,7 +571,21 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(true, keyboard.isPopup(), 'type', { rootId })
+				sidebar.rightPanelToggle(keyboard.isPopup(), { page: 'type', rootId });
+				break;
+			};
+
+			case 'editChat': {
+				U.Menu.onChatMenu({
+					element: `#button-header-more`,
+					className,
+					classNameWrap,
+					horizontal: I.MenuDirection.Right,
+					vertical: I.MenuDirection.Center,
+					data: {
+						details: object,
+					},
+				});
 				break;
 			};
 		};

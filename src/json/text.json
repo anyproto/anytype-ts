@@ -96,9 +96,9 @@
 	"commonDates": "Dates",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
-	"commonRemoveFromFavorites": "Unpin",
 	"commonPin": "Pin",
 	"commonUnpin": "Unpin",
+	"commonTogglePin": "Pin/Unpin",
 	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
@@ -173,6 +173,7 @@
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonEditType" : "Edit Type",
+	"commonEditChat" : "Change Info",
 	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don't show this again",
 	"commonObject": "Object",
@@ -230,6 +231,10 @@
 	"commonSeeChanges": "See Changes",
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
+	"commonSaveChat": "Save chat",
+	"commonNotifications": "Notifications",
+	"commonPersonalSpace": "Personal Space",
+	"commonSaveAsFile": "Save as file",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -315,7 +320,7 @@
 	"electronMenuZoomIn": "Zoom in",
 	"electronMenuZoomOut": "Zoom out",
 	"electronMenuZoomDefault": "Default zoom",
-	"electronMenuFullscreen": "Fullscreen",
+	"electronMenuFullScreen": "Fullscreen",
 	"electronMenuReload": "Reload",
 	"electronMenuHelp": "Help",
 	"electronMenuReleaseNotes": "What's new",
@@ -546,7 +551,7 @@
 
 	"pageAuthOnboardCopyKey": "Copy Key",
 
-	"pageAuthSetupImportTitle": "We couldn’t recover your vault.",
+	"pageAuthSetupImportTitle": "We couldn't recover your vault.",
 	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupTryAgain": "Try again",
@@ -597,6 +602,19 @@
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
+
+
+	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
+	"pageSettingsSpaceNotificationsMode0": "All messages",
+	"pageSettingsSpaceNotificationsMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsMode2": "Nothing",
+	"pageSettingsSpaceNotificationsMode3": "Custom",
+
+	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
+	"pageSettingsSpaceNotificationsChatSpecificMode0": "All messages",
+	"pageSettingsSpaceNotificationsChatSpecificMode1": "Mentions only",
+	"pageSettingsSpaceNotificationsChatSpecificMode2": "Muted",
+	"pageSettingsSpaceNotificationsChatSpecificMode3": "Custom settings",
 
 	"editorControlIcon0": "Add icon",
 	"editorControlIcon1": "Icon",
@@ -777,13 +795,11 @@
 	"blockTableOptionsAlignText": "Text align",
 	"blockTableOptionsAlignVertical": "Vertical align",
 
-	"blockChatEmptyTitle": "You have just created a chat",
+	"blockChatEmptyTitle": "Chat without the cloud",
 	"blockChatEmptyItem1": "Yours forever",
 	"blockChatEmptyItem2": "Messages, docs & files available offline",
 	"blockChatEmptyItem3": "Fully private and encrypted",
 	"blockChatEmptyShareInviteLink": "Share invite link",
-	"blockChatMessageExpand": "Show more",
-	"blockChatMessageCollapse": "Show less",
 	"blockChatReactionAdd": "Add reaction",
 	"blockChatReply": "Reply",
 	"blockChatPlaceholder": "Enter your message",
@@ -803,6 +819,7 @@
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
 	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsAccountAnyIdTitle": "ANY ID",
 	"popupSettingsAccountDeleteTitle": "Delete Vault",
 	"popupSettingsEthereumIdentityTitle": "Ethereum Address",
 
@@ -824,15 +841,20 @@
 	"popupSettingsPersonalNavigationMenuClick": "Click",
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
 	"popupSettingsPersonalLinkStyle": "Link to object style",
+	"popupSettingsPersonalVaultStyle": "Vault density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalRelativeDates": "Use relative dates",
 	"popupSettingsPersonalFirstDay": "Week starts on",
 	"popupSettingsPersonalDateFormat": "Date format",
 	"popupSettingsPersonalSectionLanguage": "Language & Spelling",
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
+	"popupSettingsPersonalSectionChat": "Chat",
+	"popupSettingsPersonalChatSend": "Send message with",
 	"popupSettingsPersonalSectionApp": "App Appearance",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
 	"popupSettingsPersonalTimeFormat": "Time format",
+	"popupSettingsVaultCompact": "Compact",
+	"popupSettingsVaultWithMessages": "Message previews",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -850,7 +872,7 @@
 	"popupSettingsApiCopyMcp": "Copy MCP Config",
 	"popupSettingsApiMcpConfig": "MCP Config",
 
-	"popupSettingsApiEmpty": "You haven’t created any API keys yet",
+	"popupSettingsApiEmpty": "You haven't created any API keys yet",
 
 	"popupApiCreateTitle": "Create new API key",
 	"popupApiCreateSuccess": "API key successfully created",
@@ -887,7 +909,7 @@
 
 	"popupSettingsDataManagementDataPublishTitle": "My Sites",
 	"popupSettingsDataManagementDataPublishDate": "Published date",
-	"popupSettingsDataManagementDataPublishEmpty": "You haven’t published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
+	"popupSettingsDataManagementDataPublishEmpty": "You haven't published anything to the web yet.<br/>Open an object and hit <b>Share → Publish to Web</b> to make it live.",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Describe your space",
@@ -910,7 +932,7 @@
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
-	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. If you reach the limit, files will be stoped syncing and be stored only locally.",
+	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. Once you reach your limit, files will stop syncing and will only be stored locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
 	"popupSettingsSpaceIndexImport": "Import to Space",
@@ -924,6 +946,7 @@
 	"popupSettingsSpaceIndexPushText0": "You will receive all notifications",
 	"popupSettingsSpaceIndexPushText1": "You will receive notifications when you are mentioned only",
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
+	"popupSettingsSpaceIndexPushText3": "Custom notification settings",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
 	"popupSettingsSpaceIndexUxTypeText": "Convert spaces into chats and vise versa",
 	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d spaces. Upgrade to create more.",
@@ -949,6 +972,10 @@
 	"upsellBannerMembersUsageText": "%s of %s editor seats are used. ",
 	"upsellBannerMembersLimitUsageText": "You've reached the limit of %s editors. ",
 	"upsellBannerMembersUpsellText": "Upgrade to invite more editors. ",
+
+	"membershipUpsellAnyIdTitle": "This is your ANY ID",
+	"membershipUpsellAnyIdText": "Become a member to make your ID human-readable, so other members can easily find and connect with you.",
+	"membershipUpsellAnyIdExplorePlans": "Explore plans",
 
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
@@ -1003,6 +1030,8 @@
 	"popupSettingsSpaceShareGenerateLinkWithoutApprove": "Generate link without approve",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareQRCode": "QR code",
+	"popupSettingsSpaceShareMakePrivate": "Make Private",
+	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
 
 	"popupSettingsMembershipTitle1": "Membership",
 	"popupSettingsMembershipTitle2": "Let's build together",
@@ -1239,10 +1268,6 @@
 	"popupConfirmSpaceJoinError106Title": "This Space is full.",
 	"popupConfirmSpaceJoinError106Text": "The owner needs to increase the number of available editor seats or give you another link with view-only permissions.",
 
-	"popupConfirmJoinSpaceTitle": "Join %s",
-	"popupConfirmJoinSpaceText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>",
-	"popupConfirmJoinSpaceButtonConfirm": "Join Space",
-
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
@@ -1267,7 +1292,10 @@
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
-	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+	"popupConfirmOpenExternalLinkText": "You are trying to open an url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
+
+	"popupConfirmOpenExternalFileTitle": "Are you sure?",
+	"popupConfirmOpenExternalFileText": "You are trying to open a file that is potentially harmful. Are you sure you want to proceed?<br/>File: %s",
 
 	"popupConfirmChatDeleteMessageTitle": "Delete this message?",
 	"popupConfirmChatDeleteMessageText": "It cannot be restored after confirmation",
@@ -1288,9 +1316,9 @@
 	"popupConfirmDiskSpaceText": "Looks like your device is almost out of space. This might cause the app to misbehave or lose your changes. Try clearing up some storage to keep everything running smoothly.",
 
 	"popupConfirmAttachmentSyncError2Title": "Incompatible Version",
-	"popupConfirmAttachmentSyncError2Text": "This version doesn’t support sending files or images. Update the app to share media in chats.",
+	"popupConfirmAttachmentSyncError2Text": "This version doesn't support sending files or images. Update the app to share media in chats.",
 	"popupConfirmAttachmentSyncError3Title": "Network Error",
-	"popupConfirmAttachmentSyncError3Text": "We couldn’t connect right now. This may be due to no internet or a temporary sync issue. We’ll keep trying in the background.",
+	"popupConfirmAttachmentSyncError3Text": "We couldn't connect right now. This may be due to no internet or a temporary sync issue. We'll keep trying in the background.",
 	"popupConfirmAttachmentSyncError4Title": "File is too big for this space",
 	"popupConfirmAttachmentSyncError4Text": "...",
 
@@ -1302,23 +1330,27 @@
 	"popupConfirmDeleteTypeTitle": "Delete Object Type?",
 	"popupConfirmDeleteTypeText": "Are you sure you want to delete this Type? All existing objects of this type will be preserved, but will no longer be associated with it.",
 
-	"popupConfirmStopSharingSpaceTitle": "The space is now private",
-	"popupConfirmStopSharingSpaceText": "You've removed the last member, so this space is now private and only accessible to you",
+	"popupConfirmStopSharingSpaceWarningTitle": "Make this space private?",
+	"popupConfirmStopSharingSpaceWarningText": "Making this space private will disable the current invite link, so it can no longer be used to join.<br/>When you re-enable sharing, a new link will be generated.",
 
 	"popupConfirmSystemWidgetRemoveTitle": "This Widget Cannot Be Restored",
-	"popupConfirmSystemWidgetRemoveText": "We’ve redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
+	"popupConfirmSystemWidgetRemoveText": "We've redesigned how widgets work, and this widget is no longer supported. Once deleted, this widget cannot be restored.",
 	"popupConfirmSystemWidgetRemoveFavoriteTitle": "Pins Have Moved",
-	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can’t be undone.",
+	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can't be undone.",
 
 	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
-	"popupInviteRequestTitle": "Join a space",
+	"popupInviteRequestAccessTitle": "Access required",
+	"popupInviteRequestAccessTextData": "This space requires owner approval. Send a request and you'll be notified once it's approved.",
+	"popupInviteRequestAccessTextChat": "This chat requires owner approval. Send a request and you'll be notified once it's approved.",
+	"popupInviteRequestInviteTitle": "You've been invited",
+	"popupInviteRequestInviteTextData": "You'll join this space immediately and can start exploring and discussing its objects.",
+	"popupInviteRequestInviteTextChat": "You'll join this chat immediately and can start exploring and discussing its objects.",
+	"popupInviteRequestCreatedBy": "Created by <b>%s</b>",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
-	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
 	"popupInviteRequestRequestToJoin": "Request to join",
-	"popupInviteRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
 
 	"popupInviteInviteConfirmTitle": "Request sent",
 	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
@@ -1406,7 +1438,7 @@
 	"popupShortcutMainBasics12": "Open in a modal window",
 	"popupShortcutMainBasics13": "Open in a new window",
 	"popupShortcutMainBasics14": "View shortcuts",
-	"popupShortcutMainBasics15": "Show / Hide Sidebar",
+	"popupShortcutMainBasics15": "Toggle Sidebar",
 	"popupShortcutMainBasics16": "Zoom in",
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
@@ -1419,6 +1451,7 @@
 	"popupShortcutMainBasics25": "Move to / restore from Bin",
 	"popupShortcutMainBasics26": "Pin / Unpin",
 	"popupShortcutMainBasics27": "Space %d",
+	"popupShortcutMainBasics28": "Toggle Widget panel",
 
 	"popupShortcutMainTextStyle": "Text style",
 	"popupShortcutMainTextStyle1": "Bold",
@@ -1575,7 +1608,7 @@
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
 	"popupPhraseTitle1": "How the Key works",
-	"popupPhraseSubTitle1": "It’s your login and password",
+	"popupPhraseSubTitle1": "It's your login and password",
 	"popupPhraseLabel1": "Your key is represented by a recovery phrase — 12 random words that generate your vault on this device.",
 	"popupPhraseSubTitle2": "Whoever has the key, has access",
 	"popupPhraseLabel2": "Anyone who knows these words can access your vault. Right now, you are the only person in the world who knows them.",
@@ -1592,7 +1625,6 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
-	"popupUsecaseBanner": "We're updating our Gallery experiences so they're more compatible with our latest version. <a>Read more.</a>",
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no Properties shown yet",
@@ -1832,7 +1864,6 @@
 	"menuObjectUnlockPage": "Unlock Object",
 	"menuObjectLockPage": "Lock Object",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
-	"menuObjectCreateWidget": "Create Widget",
 	"menuObjectDownloadOpen": "Download and Open",
 	"menuObjectAdvanced": "Advanced",
 
@@ -1860,6 +1891,8 @@
 
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
+
+	"menuChatCreatePlaceholder": "e.g. feature-chat",
 
 	"syncButtonNameError1": "Storage limit reached",
 	"syncButtonNameError2": "Incompatible version",
@@ -1898,10 +1931,6 @@
 
 	"menuSyncStatusEmptyLocal": "Your Vault is currently in local-only mode, so your data isn't being synced to Anytype nodes.",
 	"menuSyncStatusEmpty": "There are no objects to show",
-
-	"menuSyncStatusIncentiveBannerTitle": "Files not synced",
-	"menuSyncStatusIncentiveBannerLabel": "%s %s couldn’t be synced because you’re run out of storage. Please upgrade or clean up your storage.",
-	"menuSyncStatusIncentiveBannerReviewFiles": "Review Files",
 
 	"menuPublishTitle": "Publish to web",
 	"menuPublishInfoTooltip": "Published object will be uploaded to our publishing server and will be accessible via the URL as a static, unencrypted HTML page. Linked objects will not be published.<br/>Currently, not all blocks are supported for publishing, such as Queries, Collections and Properties. Default limit is 10MB per object for free plans and 100MB for paid plans.",
@@ -1970,6 +1999,8 @@
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
 	"toastWidget": "Widget <b>%s</b> has been added",
 	"toastJoinSpace": "You have joined <b>%s</b>",
+
+	"toastSpaceIsPrivate": "This space is private now",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
@@ -2071,8 +2102,10 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
+	"widgetSectionUnread": "Unread",
 	"widgetSectionPinned": "Pinned",
 	"widgetSectionType": "Objects",
+	"widgetSectionRecentEdit": "Recently edited",
 	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Old Pinned",
@@ -2089,6 +2122,7 @@
 	"widgetShowAll": "See all Objects",
 	"widgetItemClipboard": "Create from clipboard",
 	"widgetSeeAll": "See All",
+	"widgetNoMessages": "No messages yet",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2235,8 +2269,8 @@
 	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
 	"onboardingPinnedNewText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
 	"onboardingObjectsNewText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
-	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned’ Section</b> We’ve organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you’re ready.",
-	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It’s the new, unified place to see everything you’ve made.",
+	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned' Section</b> We've organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you're ready.",
+	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It's the new, unified place to see everything you've made.",
 
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
@@ -2251,9 +2285,6 @@
 	"onboardingCollectionsTitle": "Collections",
 	"onboardingCollectionsText": "<b>Create an object in the Collection.</b> Use Collections to store and organise handpicked objects and files.",
 	"onboardingCollectionsButton": "Okay!",
-
-	"onboardingCollaborationTitle": "Introducing the local-first collaboration",
-	"onboardingCollaborationText": "Check out the new Collaboration category to explore experiences that help you co-create, share and collaborate.",
 
 	"onboardingChatsTitle": "Ideas need conversations",
 	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",

@@ -30,6 +30,10 @@ class Util {
 		return logger;
 	};
 
+	getPort () {
+		return process.env.SERVER_PORT || '8080';
+	};
+
 	log (method, text) {
 		if (!logger[method]) {
 			method = 'info';
@@ -206,11 +210,11 @@ class Util {
 	printPdf (win, exportPath, name, options) {
 		win.webContents.printToPDF(options).then(data => {
 			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
-				if (error) throw error;
-
-				shell.openPath(exportPath).catch(err => {
-					this.log('info', err);
-				});
+				if (!error) {
+					shell.openPath(exportPath).catch(err => this.log('info', err));
+				} else {
+					this.log('info', error);
+				};
 
 				this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			});
@@ -244,6 +248,10 @@ class Util {
 
 	defaultUserDataPath () {
 		return path.join(app.getPath('appData'), app.getName());
+	};
+
+	isWayland () {
+		return is.linux && (process.env.XDG_SESSION_TYPE === 'wayland');
 	};
 
 };

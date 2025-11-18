@@ -395,7 +395,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 
 			S.Menu.closeAll(menuIds, () => {
-				S.Menu.open(menuId, menuParam);
+				window.setTimeout(() => S.Menu.open(menuId, menuParam), 0);
 			});
 		};
 	};

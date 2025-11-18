@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { getRange, setRange } from 'selection-ranges';
 import { I, U, keyboard, Mark } from 'Lib';
 import raf from 'raf';
@@ -12,6 +12,7 @@ interface Props {
 	readonly?: boolean;
 	spellcheck?: boolean;
 	maxLength?: number;
+	focusOnMount?: boolean;
 	onKeyDown?: (e: any) => void;
 	onKeyUp?: (e: any) => void;
 	onFocus?: (e: any) => void;
@@ -50,6 +51,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	placeholder = '', 
 	spellcheck = false, 
 	maxLength,
+	focusOnMount = false,
 	onSelect, 
 	onMouseDown, 
 	onMouseUp, 
@@ -125,7 +127,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 			return;
 		};
 
-		editableRef.current.focus({ preventScroll: true });
+		editableRef.current?.focus({ preventScroll: true });
 		setRange(editableRef.current, { start: range.from, end: range.to });
 	};
 
@@ -253,6 +255,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 			/>
 		);
 	};
+
+	useEffect(() => {
+		if (focusOnMount && !readonly) {
+			setFocus();
+		};
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		placeholderCheck,

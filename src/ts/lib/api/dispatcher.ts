@@ -152,7 +152,7 @@ class Dispatcher {
 			};
 
 			const needLog = this.needEventLog(type) && !skipDebug;
-			const space = U.Space.getSpaceviewBySpaceId(spaceId);
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -843,7 +843,9 @@ class Dispatcher {
 					// Subscriptions
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					S.Detail.delete(rootId, id, keys);
+					if (rootId) {
+						S.Detail.delete(rootId, id, keys);
+					};
 
 					updateMarkup = true;
 					break;
@@ -863,10 +865,6 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
-
-						if (subId == J.Constant.subId.type) {
-							S.Block.removeTypeWidget(id);
-						};
 					};
 					break;
 				};
@@ -965,23 +963,23 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
-					const message = new M.ChatMessage({ ...mapped.message, dependencies });
+					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
 					const notification = S.Chat.getMessageSimpleText(spaceId, message);
 
 					let showNotification = false;
 
-					if (space && space.chatId) {
-						if (space.notificationMode == I.NotificationMode.All) {
+					if (spaceview) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
-						if (space.notificationMode == I.NotificationMode.Mentions) {
+						if (notificationMode == I.NotificationMode.Mentions) {
 							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
 						};
 					};
 
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
-
 						const list = S.Chat.getList(subId);
 
 						let idx = list.findIndex(it => it.orderId == orderId);
@@ -994,21 +992,11 @@ class Dispatcher {
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						U.Common.notification({ 
-							title: space.name, 
+							title: spaceview?.name, 
 							text: notification,
 						}, () => {
-							const { space } = S.Common;
-							const open = () => {
-								U.Object.openAuto({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-
-								analytics.event('OpenChatFromNotification');
-							};
-
-							if (spaceId != space) {
-								U.Router.switchSpace(spaceId, '', false, { onRouteChange: open }, false);
-							} else {
-								open();
-							};
+							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
+							analytics.event('OpenChatFromNotification');
 						});
 					};
 
@@ -1017,8 +1005,8 @@ class Dispatcher {
 				};
 
 				case 'ChatUpdate': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.update(subId, mapped.message);
 					});
 
@@ -1027,49 +1015,46 @@ class Dispatcher {
 				};
 
 				case 'ChatStateUpdate': {
-					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
-						S.Chat.setState(subId, mapped.state, true);
-					});
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state, true));
 					break;
 				};
 
 				case 'ChatUpdateMessageReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
 					});
 					break;	
 				};
 
 				case 'ChatUpdateMentionReadStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
 					});
 					break;
 				};
 
 				case 'ChatUpdateMessageSyncStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
 					});
 					break;
 				};
 
 				case 'ChatDelete': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
 						S.Chat.delete(subId, mapped.id);
 					});
 					break;
 				};
 
 				case 'ChatUpdateReactions': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach((subId) => {
-						subId = S.Chat.checkVaultSubscriptionId(spaceId, subId);
-
 						const message = S.Chat.getMessageById(subId, mapped.id);
 						if (message) {
 							set(message, { reactions: mapped.reactions });
@@ -1128,17 +1113,19 @@ class Dispatcher {
 			};
 		};
 
-		if (updateParents) {
-			S.Block.updateStructureParents(rootId);
-		};
+		window.setTimeout(() => {
+			if (updateParents) {
+				S.Block.updateStructureParents(rootId);
+			};
 
-		if (updateNumbers) {
-			S.Block.updateNumbers(rootId); 
-		};
+			if (updateNumbers) {
+				S.Block.updateNumbers(rootId); 
+			};
 
-		if (updateMarkup) {
-			S.Block.updateMarkup(rootId);
-		};
+			if (updateMarkup) {
+				S.Block.updateMarkup(rootId);
+			};
+		});
 	};
 
 	getUniqueSubIds (subIds: string[]) {
@@ -1165,10 +1152,6 @@ class Dispatcher {
 				if (object.isAccountDeleted && (object.targetSpaceId == space)) {
 					U.Space.openFirstSpaceOrVoid(null, { replace: true });
 				};
-			};
-
-			if (subIds.includes(J.Constant.subId.type)) {
-				S.Block.addTypeWidget(id);
 			};
 		};
 
@@ -1243,41 +1226,47 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, objectView: any) {
+	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
-		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
+		const alreadyExists = needCheck && keyboard.isPopup() && (rootId == keyboard.getRootId(false));
 
-		if (root && root.fields.analyticsContext) {
-			analytics.setContext(root.fields.analyticsContext);
-		} else {
-			analytics.removeContext();
-		};
+		// Block structure already exists
+		if (!alreadyExists) {
+			const root = objectView.blocks.find(it => it.id == rootId);
 
-		S.Detail.set(contextId, details);
-		S.Block.restrictionsSet(contextId, restrictions);
-		S.Block.participantsSet(contextId, participants);
-
-		if (root) {
-			const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
-
-			root.type = I.BlockType.Page;
-			root.layout = object.layout;
-		};
-
-		const blocks = objectView.blocks.map(it => {
-			if (it.type == I.BlockType.Dataview) {
-				S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
-				S.Record.viewsSet(contextId, it.id, it.content.views);
+			if (root && root.fields.analyticsContext) {
+				analytics.setContext(root.fields.analyticsContext);
+			} else {
+				analytics.removeContext();
 			};
 
-			structure.push({ id: it.id, childrenIds: it.childrenIds });
-			return new M.Block(it);
-		});
+			S.Detail.set(contextId, details);
+			S.Block.restrictionsSet(contextId, restrictions);
+			S.Block.participantsSet(contextId, participants);
 
-		S.Block.set(contextId, blocks);
-		S.Block.setStructure(contextId, structure);
+			if (root) {
+				const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
+
+				root.type = I.BlockType.Page;
+				root.layout = object.layout;
+			};
+
+			const blocks = objectView.blocks.map(it => {
+				if (it.type == I.BlockType.Dataview) {
+					S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
+					S.Record.viewsSet(contextId, it.id, it.content.views);
+				};
+
+				structure.push({ id: it.id, childrenIds: it.childrenIds });
+				return new M.Block(it);
+			});
+
+			S.Block.set(contextId, blocks);
+			S.Block.setStructure(contextId, structure);
+		};
+
 		S.Block.updateStructureParents(contextId);
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
@@ -1312,6 +1301,11 @@ class Dispatcher {
 
 		try {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
+				if (error) {
+					console.error('GRPC Error', type, error);
+					return;
+				};
+
 				if (!response) {
 					return;
 				};
@@ -1359,9 +1353,7 @@ class Dispatcher {
 				const middleTime = Math.ceil(t1 - t0);
 				message.middleTime = middleTime;
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				t2 = performance.now();
 				

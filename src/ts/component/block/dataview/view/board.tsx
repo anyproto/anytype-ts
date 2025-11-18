@@ -346,6 +346,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	onDragStartCard (e: any, groupId: any, record: any) {
 		const { readonly } = this.props;
+
 		if (readonly) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -504,10 +505,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	getSubId (id: string): string {
-		const { rootId, block, isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const { rootId, block } = this.props;
 
-		return S.Record.getGroupSubId(rootId, block.id, id) + namespace;
+		return S.Record.getGroupSubId(rootId, block.id, id);
 	};
 
 	resize () {

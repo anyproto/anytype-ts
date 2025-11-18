@@ -7,7 +7,7 @@ interface Props extends I.ChatMessageReaction, I.ChatMessageComponent {
 	onSelect: (icon: string) => void;
 };
 
-const ChatMessageReactionBase = observer(forwardRef<{}, Props>((props, ref) => {
+const ChatMessageReaction = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -44,6 +44,4 @@ const ChatMessageReactionBase = observer(forwardRef<{}, Props>((props, ref) => {
 
 }));
 
-const ChatMessageReaction = memo(ChatMessageReactionBase);
-
-export default ChatMessageReaction;
+export default memo(ChatMessageReaction);

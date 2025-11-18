@@ -44,7 +44,8 @@ export interface MenuParam {
 	noFlipY?: boolean;
 	noClose?: boolean;
 	noAutoHover?: boolean;
-	noBorder?: boolean;
+	noBorderX?: boolean;
+	noBorderY?: boolean;
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
@@ -70,15 +71,17 @@ export interface Menu {
 };
 
 export interface MenuRef {
-	rebind: () => void,
-	unbind: () => void,
+	rebind: () => void;
+	unbind: () => void;
 	getItems: () => any[];
-	getIndex: () => number,
-	setIndex: (i: number) => void,
-	onClick?: (e: any, item: any) => void,
-	onOver?: (e: any, item: any) => void,
-	getData?: () => any,
-	getListRef?: () => any,
+	getIndex: () => number;
+	setIndex: (i: number) => void;
+	onClick?: (e: any, item: any) => void;
+	onOver?: (e: any, item: any) => void;
+	getData?: () => any;
+	getFilterRef?: () => any;
+	getListRef?: () => any;
+	beforePosition?: () => void;
 };
 
 export interface MenuItem {
@@ -119,4 +122,5 @@ export interface MenuItem {
 	onSwitch?(e: any, v: boolean): void;
 	onSelect?(id: string): void;
 	onMore?(e: any): void;
+	tooltipParam?: I.TooltipParam;
 };

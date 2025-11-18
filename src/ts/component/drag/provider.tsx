@@ -9,14 +9,9 @@ interface Props {
 	children?: React.ReactNode;
 };
 
-interface DragProviderRefProps {
-	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
-	onScroll: () => void;
-};
-
 const OFFSET = 100;
 
-const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, ref: any) => {
+const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
 	const { children } = props;
 	const nodeRef = useRef(null);
@@ -172,7 +167,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		clearState();
 	};
 
-	const onDragStart = (e: any, dropType: I.DropType, ids: string[], component: any) => {
+	const onDragStart = (e: any, dropType: I.DropType, ids: string[], component: I.DragComponentProps) => {
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
 		const selection = S.Common.getRef('selectionProvider');

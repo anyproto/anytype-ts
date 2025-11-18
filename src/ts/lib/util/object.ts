@@ -111,7 +111,7 @@ class UtilObject {
 		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
-	openRoute (object: any, param?: any) {
+	openRoute (object: any, param?: Partial<I.RouteParam>) {
 		param = this.checkParam(param);
 
 		const route = this.route(object);
@@ -159,9 +159,10 @@ class UtilObject {
 		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
-			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
+			param.data.matchPopup.params = { ...param.data.matchPopup.params, ...object._routeParam_ };
 		};
 
+		sidebar.rightPanelClose(true, false);
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
@@ -202,9 +203,7 @@ class UtilObject {
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				const object = message.details;
 				analytics.createObject(object.type, object.layout, route, message.middleTime);
@@ -266,6 +265,14 @@ class UtilObject {
 		C.ObjectListSetDetails([ rootId ], [ { key: 'lastUsedDate', value: timestamp } ], callBack);
 	};
 
+	setObjectTypes (rootId: string, ids: string[], callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationFormatObjectTypes', value: Relation.getArrayValue(ids) } ], callBack);
+	};
+
+	setOptionColor (rootId: string, color: string, callBack?: (message: any) => void) {
+		C.ObjectListSetDetails([ rootId ], [ { key: 'relationOptionColor', value: color } ], callBack);
+	};
+
 	name (object: any, withPlural?: boolean): string {
 		if (!object) {
 			return '';
@@ -294,9 +301,7 @@ class UtilObject {
 		param.limit = 1;
 
 		this.getByIds([ id ], param, objects => {
-			if (callBack) {
-				callBack(objects[0]);
-			};
+			callBack?.(objects[0]);
 		});
 	};
 
@@ -318,9 +323,7 @@ class UtilObject {
 		};
 
 		U.Subscription.search(param, (message: any) => {
-			if (callBack) {
-				callBack((message.records || []).filter(it => !it._empty_));
-			};
+			callBack?.((message.records || []).filter(it => !it._empty_));
 		});
 	};
 
@@ -442,11 +445,11 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -743,12 +746,13 @@ class UtilObject {
 	createType (details: any, isPopup: boolean) {
 		details = details || {};
 
-		const newDetails: any = {
-			...this.getNewTypeDetails(),
-			...details,
-		};
-
-		sidebar.rightPanelToggle(true, isPopup, 'type', { details: newDetails });
+		sidebar.rightPanelToggle(isPopup, { 
+			page: 'type', 
+			details: {
+				...this.getNewTypeDetails(),
+				...details,
+			},
+		});
 	};
 
 	getNewTypeDetails (): any {
@@ -784,6 +788,24 @@ class UtilObject {
 		};
 
 		return svg;
+	};
+
+	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
+		if (!spaceview) {
+			return I.NotificationMode.All;
+		};
+
+		if (spaceview.allIds.includes(chatId)) {
+			return I.NotificationMode.All;
+		} else
+		if (spaceview.mentionIds.includes(chatId)) {
+			return I.NotificationMode.Mentions;
+		} else
+		if (spaceview.muteIds.includes(chatId)) {
+			return I.NotificationMode.Nothing;
+		};
+
+		return spaceview.notificationMode as I.NotificationMode;
 	};
 
 };

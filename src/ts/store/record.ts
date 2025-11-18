@@ -534,12 +534,12 @@ class RecordStore {
 	 * @returns {any[]} The sorted list of types.
 	 */
 	sortTypes (list: any[]) {
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 
 		return (list || []).sort((c1, c2) => {
 			return (
 				U.Data.sortByOrderId(c1, c2) ||
-				U.Data.sortByTypeKey(c1, c2, space.isChat) ||
+				U.Data.sortByTypeKey(c1, c2, spaceview.isChat) ||
 				U.Data.sortByName(c1, c2)
 			);
 		});

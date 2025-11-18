@@ -156,9 +156,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -170,10 +168,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		detailsRef.current[relationKey] = Relation.formatValue(relation, value, true);
 		loadDeps();
-
-		if (callBack) {
-			callBack({ error: { code: 0 } });
-		};
+		callBack?.({ error: { code: 0 } });
 	};
 
 	const onCellClick = (e: any, id: string) => {
@@ -303,10 +298,10 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							viewType={I.ViewType.Grid}
 							readonly={readonly}
 							idPrefix={ID_PREFIX}
-							menuClassNameWrap="fromPopup"
 							onCellChange={onCellChange}
 							getView={view ? (() => view): null}
 							pageContainer={U.Common.getCellContainer('popupRelation')}
+							menuParam={{ classNameWrap: 'fromPopup' }}
 						/>
 					</div>
 				</div>

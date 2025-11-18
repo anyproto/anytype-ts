@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, S, U, J, translate, keyboard } from 'Lib';
+import { I, S, U, translate, keyboard } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 
@@ -7,13 +7,6 @@ interface State {
 	dotMap: Map<string, boolean>;
 	selectedDate: ReturnType<typeof U.Date.getCalendarDateParam>;
 };
-
-enum ArrowDirection {
-	Up = 'arrowup',
-	Down = 'arrowdown',
-	Left = 'arrowleft',
-	Right = 'arrowright',
-}
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
 
@@ -209,17 +202,16 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.onArrow(pressed as ArrowDirection);
+			this.onArrow(pressed);
 		});
 
 		keyboard.shortcut('enter', e, () => this.onClick(e, this.state.selectedDate));
 	};
 
-	onArrow = (dir: ArrowDirection) => {
-		const num = [ ArrowDirection.Up, ArrowDirection.Down ].includes(dir) ? 7 : 1;
-		const d = [ ArrowDirection.Up, ArrowDirection.Left ].includes(dir) ? -1 : 1;
+	onArrow = (pressed: string) => {
+		const num = [ 'arrowup', 'arrowdown' ].includes(pressed) ? 7 : 1;
+		const d = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
 		const daysDelta = num * d;
-
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
@@ -297,7 +289,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				],
 				onSelect: () => {
 					U.Object.openDateByTimestamp(relationKey, U.Date.timestamp(item.y, item.m, item.d));
-				}
+				},
 			}
 		});
 	};

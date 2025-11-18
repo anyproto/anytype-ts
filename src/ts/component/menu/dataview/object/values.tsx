@@ -90,7 +90,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			noAnimation: true,
 			className,
 			classNameWrap,
-			rebind: rebind,
+			rebind,
 			parentId: id,
 			data: {
 				...data,

@@ -7,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, Relation, translate, Preview } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 40;
@@ -25,6 +25,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 	const filterRef = useRef(null);
 	const n = useRef(-1);
 	const filterValueRef = useRef('');
+	const nodeRef = useRef(null);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -71,6 +72,11 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
 		};
+
+		Preview.tooltipShow({ 
+			text: item.name, 
+			element: $(nodeRef.current).find(`#item-${item.id}`)
+		});
 	};
 
 	const onClick = (e: any, item: any) => {
@@ -324,6 +330,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 					id={`item-${item.id}`} 
 					className={cn.join(' ')} 
 					onMouseEnter={e => onOver(e, item)}
+					onMouseLeave={() => Preview.tooltipHide(false)}
 					ref={setNodeRef}
 					{...attributes}
 					{...listeners}
@@ -387,11 +394,13 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
+		getFilterRef: () => filterRef.current,
+		getListRef: () => listRef.current,
 		onClick,
 	}), []);
 
 	return (
-		<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
+		<div ref={nodeRef} className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 			{!noFilter ? (
 				<Filter
 					className="outlined"

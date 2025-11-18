@@ -1,154 +1,41 @@
-import * as React from 'react';
+import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
+import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import { I, S, U, J, translate, keyboard, Action } from 'Lib';
 
-interface State {
-	error: string;
-};
+const PageMainSettingsImportCsv = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent, State> {
+	const { storageGet, storageSet } = props;
+	const [ error, setError ] = useState('');
+	const [ data, setData ] = useState<any>({});
+	const delimiterRef = useRef(null);
 
-	refMode = null;
-	refDelimiter = null;
-	data: any = {};
-	state: State = { 
-		error: '',
-	};
-
-	constructor (props: I.PageSettingsComponent) {
-		super(props);
-
-		this.onImport = this.onImport.bind(this);
-		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
-	};
-
-	render () {
-		this.init();
-
-		const { error } = this.state;
-		const { delimiter, delimiters } = this.delimiterOptions();
-		const modeOptions: any[] = [ 
-			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
-			{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') }
-		];
-
-		return (
-			<div>
-				<Icon className="logo" />
-				<Title text={translate('popupSettingsImportCsvTitle')} />
-				<Label text={translate('popupSettingsImportCsvText')} />
-
-				<div className="actionItems">
-					<div className="item">
-						<Label text={translate('popupSettingsImportCsvMode')} />
-						<Select 
-							ref={ref => this.refMode = ref}
-							id="csv-import-mode" 
-							value={String(this.data.mode)} 
-							options={modeOptions} 
-							onChange={v => {
-								this.data.mode = Number(v) || 0;
-								this.save();
-							}}
-							arrowClassName="light"
-							menuParam={{ horizontal: I.MenuDirection.Right }}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsImportCsvUseFirstRow')} />
-						<Switch 
-							value={this.data.firstRow} 
-							className="big" 
-							onChange={(e: any, v: boolean) => { 
-								this.data.firstRow = v; 
-								this.save();
-							}}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsImportCsvTranspose')} />
-						<Switch 
-							value={this.data.transpose} 
-							className="big" 
-							onChange={(e: any, v: boolean) => { 
-								this.data.transpose = v; 
-								this.save();
-							}}
-						/>
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsImportCsvColumnsDivider')} />
-						<Select 
-							ref={ref => this.refDelimiter = ref}
-							id="csv-import-delimiter" 
-							value={delimiter?.id} 
-							options={delimiters} 
-							onChange={v => this.delimiterSet(v, '')}
-							arrowClassName="light"
-							menuParam={{ 
-								horizontal: I.MenuDirection.Right, 
-								data: { 
-									withFilter: true,
-									preventFilter: true,
-									placeholder: translate('popupSettingsImportCsvCustomSymbol'),
-									onFilterKeyUp: this.onFilterKeyUp,
-								},
-							}}
-						/>
-
-					</div>
-				</div>
-				
-				<div className="buttons">
-					<Button className="c36" text={translate('popupSettingsImportData')} onClick={this.onImport} />
-				</div>
-
-				<Error text={error} />
-			</div>
-		);
-	};
-
-	componentDidMount(): void {
-		this.init();
-	};
-
-	init () {
-		const { storageGet } = this.props;
+	const init = () => {
 		const options = storageGet().csv || {};
 
 		if (undefined === options.firstRow) {
 			options.firstRow = true;
 		};
 
-		this.data = {
+		setData({
 			mode: Number(options.mode) || I.CsvImportMode.Collection,
 			firstRow: Boolean(options.firstRow),
 			transpose: Boolean(options.transpose),
 			delimiter: String(options.delimiter || ','),
-		};
+		});
 	};
 
-	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
+	const onFilterKeyUp = (e: KeyboardEvent, v: string) => {
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
-			this.delimiterSet('', v);
-			this.forceUpdate();
-
-			const { delimiter, delimiters } = this.delimiterOptions();
-
-			this.refDelimiter?.setOptions(delimiters);
-			this.refDelimiter?.setValue(delimiter?.id);
-
+			delimiterSet('', v);
 			S.Menu.close('select');
 		});
 	};
 
-	delimiterSet (id: string, v: string) {
-		const delimiters = this.getDelimiters();
+	const delimiterSet = (id: string, v: string) => {
+		const delimiters = getDelimiters();
 		const option = delimiters.find(it => {
 			if (id && (it.id == id)) {
 				return true;
@@ -159,44 +46,45 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 			return false;
 		});
 
+		let delimiter = '';
 		if (option) {
-			this.data.delimiter = option.value || option.caption;
+			delimiter = option.value || option.caption;
 		} else 
 		if (v) {
-			this.data.delimiter = v.substring(0, 10);
+			delimiter = v.substring(0, 10);
 		};
 
-		this.save();
+		save({ ...data, delimiter });
 	};
 
-	delimiterOptions () {
-		const delimiters = this.getDelimiters();
+	const delimiterOptions = () => {
+		const delimiters = getDelimiters();
 
-		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
+		let delimiter = delimiters.find(it => (it.value == data.delimiter) || (it.caption == data.delimiter));
 		if (!delimiter) {
-			delimiter = { id: 'custom', name: translate('popupSettingsImportCsvCustom'), caption: this.data.delimiter };
+			delimiter = { id: 'custom', name: translate('popupSettingsImportCsvCustom'), caption: data.delimiter };
 			delimiters.push(delimiter);
 		};
 
 		return { delimiter, delimiters };
 	};
 
-	onImport () {
-		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], this.data, (message: any) => {
+	const onImport = () => {
+		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], data, (message: any) => {
 			if (message.error.code) {
-				this.setState({ error: message.error.description });
-				return;
+				setError(message.error.description);
+			} else {
+				U.Space.openDashboard();
 			};
-
-			U.Space.openDashboard();
 		});
 	};
 
-	save () {
-		this.props.storageSet({ csv: this.data });
+	const save = (newData) => {
+		setData(newData);
+		storageSet({ csv: newData });
 	};
 
-	getDelimiters () {
+	const getDelimiters = () => {
 		return [
 			{ id: 'comma', name: translate('delimiterComma'), caption: ',' },
 			{ id: 'semicolon', name: translate('delimiterSemicolon'), caption: ';' },
@@ -206,6 +94,91 @@ class PageMainSettingsImportCsv extends React.Component<I.PageSettingsComponent,
 		];
 	};
 
-};
+	const { delimiter, delimiters } = delimiterOptions();
+	const modeOptions: any[] = [ 
+		{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
+		{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') }
+	];
+
+	useEffect(() => {
+		init();
+	}, []);
+
+	useEffect(() => {
+		const { delimiter, delimiters } = delimiterOptions();
+
+		delimiterRef.current?.setOptions(delimiters);
+		delimiterRef.current?.setValue(delimiter?.id);
+	}, [ data ]);
+
+	return (
+		<div>
+			<Icon className="logo" />
+			<Title text={translate('popupSettingsImportCsvTitle')} />
+			<Label text={translate('popupSettingsImportCsvText')} />
+
+			<div className="actionItems">
+				<div className="item">
+					<Label text={translate('popupSettingsImportCsvMode')} />
+					<Select 
+						id="csv-import-mode" 
+						value={String(data.mode)} 
+						options={modeOptions} 
+						onChange={(v: string) => save({ ...data, mode: Number(v) || 0 })}
+						arrowClassName="light"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsImportCsvUseFirstRow')} />
+					<Switch 
+						value={data.firstRow} 
+						className="big" 
+						onChange={(e: any, v: boolean) => save({ ...data, firstRow: v })}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsImportCsvTranspose')} />
+					<Switch 
+						value={data.transpose} 
+						className="big" 
+						onChange={(e: any, v: boolean) => save({ ...data, transpose: v })}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsImportCsvColumnsDivider')} />
+					<Select 
+						ref={delimiterRef}
+						id="csv-import-delimiter" 
+						value={delimiter?.id} 
+						options={delimiters} 
+						onChange={v => delimiterSet(v, '')}
+						arrowClassName="light"
+						menuParam={{ 
+							horizontal: I.MenuDirection.Right, 
+							data: {
+								withFilter: true,
+								preventFilter: true,
+								placeholder: translate('popupSettingsImportCsvCustomSymbol'),
+								onFilterKeyUp: onFilterKeyUp,
+							},
+						}}
+					/>
+
+				</div>
+			</div>
+			
+			<div className="buttons">
+				<Button className="c36" text={translate('popupSettingsImportData')} onClick={onImport} />
+			</div>
+
+			<Error text={error} />
+		</div>
+	);
+
+}));
 
 export default PageMainSettingsImportCsv;

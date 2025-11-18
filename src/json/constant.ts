@@ -1,3 +1,5 @@
+import space from "Lib/util/space";
+
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',
 	amplitude:			 '1ba981d1a9afb8af8c81847ef3383a20',
@@ -5,6 +7,7 @@ export default {
 	protocol:			 'anytype',
 	appName:			 'Anytype',
 	anytypeProfileId:	 '_anytype_profile',
+	missingObjectId:	 '_missing_object',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
@@ -110,6 +113,7 @@ export default {
 		search:			 		'search',
 		profile:		 		'profile',
 		deleted:		 		'deleted',
+		archived:		 		'archived',
 		type:			 		'type',
 		typeStore:		 		'typeStore',
 		relation:		 		'relation',
@@ -125,7 +129,11 @@ export default {
 		chatSpace:		 		'lastMessage',
 		template:		 		'template',
 		fileManagerSynced: 		'fileManagerSynced',
-		fileManagerNotSynced: 	'fileManagerNotSynced'
+		fileManagerNotSynced: 	'fileManagerNotSynced',
+		chatPreview:	 		'chatPreview',
+		chat:			 		'chat',
+		chatGlobal:	 			'chatGlobal',
+		recentEdit:	 			'recentEdit',
 	},
 
 	typeKey: {
@@ -174,6 +182,9 @@ export default {
 		favorite:		 'favorite',
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
+		space:			 'space',
+		unread:			 'unread',
+		type:			 'type',
 		bin:			 'bin',
 		chat:			 'chat',
 	},

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, U, J, translate, keyboard, analytics, Storage } from 'Lib';
+import { Label, Button, Error, Icon, Input } from 'Component';
+import { I, U, translate } from 'Lib';
 import $ from 'jquery';
 
 const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
@@ -31,19 +31,15 @@ const PopupSpaceJoinByLink = observer(forwardRef<{}, I.Popup>(({ param = {}, get
 	return (
 		<>
 			<Label text={translate('popupSpaceJoinByLinkLabel')} />
-
 			<Icon />
-
 			<Input 
 				type="text" 
 				ref={inputRef} 
 				onKeyUp={onKeyUp} 
 				placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')} 
-				focusOnMount={true} 
+				focusOnMount={true}
 			/>
-
 			<Button className="disabled" text={translate('popupInviteRequestRequestToJoin')} onClick={onSubmit} />
-
 			<Error text={error} />
 		</>
 	);

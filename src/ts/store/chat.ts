@@ -7,6 +7,7 @@ class ChatStore {
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
+	private badgeValue = '';
 
 	constructor () {
 		makeObservable(this, {
@@ -27,7 +28,7 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-
+		
 		this.messageMap.set(subId, observable.array(list));
 	};
 
@@ -75,7 +76,6 @@ class ChatStore {
 
 		list.splice(idx, 0, param);
 		this.set(subId, list);
-		this.setLastMessageDate(subId, param.createdAt);
 	};
 
 	/**
@@ -150,7 +150,7 @@ class ChatStore {
 	 * @returns {ChatState} The created chat state object.
 	 */
 	private createState (state: I.ChatState): I.ChatStoreState {
-		const { messages, mentions, lastStateId, order, lastMessageDate } = state;
+		const { messages, mentions, lastStateId, order } = state;
 		const el = {
 			messageOrderId: messages.orderId,
 			messageCounter: messages.counter,
@@ -158,7 +158,6 @@ class ChatStore {
 			mentionCounter: mentions.counter,
 			lastStateId,
 			order,
-			lastMessageDate,
 		};
 
 		makeObservable(el, {
@@ -168,7 +167,6 @@ class ChatStore {
 			mentionCounter: observable,
 			lastStateId: observable,
 			order: observable,
-			lastMessageDate: observable,
 		});
 
 		intercept(el as any, (change: any) => {
@@ -206,6 +204,16 @@ class ChatStore {
 	};
 
 	/**
+	 * Gets the subscription ID for a space and chat.
+	 * @param {string} spaceId - The space ID.	
+	 * @param {string} chatId - The chat ID.
+	 * @returns {string} The subscription ID.
+	 */
+	getChatSubId (prefix: string, spaceId: string, chatId: string): string {
+		return [ prefix, spaceId, `${chatId}:${J.Constant.blockId.chat}`, S.Common.windowId ].join('-');
+	};
+
+	/**
 	 * Sets the chat state for a subId.
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatState} state - The chat state.
@@ -239,23 +247,6 @@ class ChatStore {
 	};
 
 	/**
-	 * Sets last message date for a subId.
-	 * @param {string} subId - The subscription ID.
-	 * @param {number} date - The timestamp.
-	 */
-	setLastMessageDate (subId: string, date: number) {
-		const param = this.getSubParam(subId);
-		const spaceMap = this.stateMap.get(param.spaceId) || new Map();
-		const current = spaceMap.get(param.chatId);
-
-		if (current) {
-			set(current, { lastMessageDate: Math.max(current.lastMessageDate, date) });
-		};
-
-		this.stateMap.set(param.spaceId, spaceMap);
-	};
-
-	/**
 	 * Gets the chat state for a subId.
 	 * @param {string} subId - The subscription ID.
 	 * @returns {ChatState} The chat state.
@@ -269,7 +260,6 @@ class ChatStore {
 			mentionCounter: 0,
 			lastStateId: '',
 			order: 0,
-			lastMessageDate: 0,
 		};
 
 		return Object.assign(ret, this.stateMap.get(param.spaceId)?.get(param.chatId) || {});
@@ -350,13 +340,8 @@ class ChatStore {
 			const counters = this.getSpaceCounters(space.targetSpaceId);
 
 			if (counters) {
-				if ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-					ret.mentionCounter += counters.mentionCounter || 0;
-				};
-
-				if (space.notificationMode == I.NotificationMode.All) {
-					ret.messageCounter += counters.messageCounter || 0;
-				};
+				ret.mentionCounter += counters.mentionCounter || 0;
+				ret.messageCounter += counters.messageCounter || 0;
 			};
 		};
 
@@ -376,13 +361,8 @@ class ChatStore {
 			return ret;
 		};
 
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		if (!spaceview?.chatId) {
-			return ret;
-		};
-
 		for (const [ chatId, state ] of spaceMap) {
-			if (!chatId) {
+			if (chatId) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
@@ -392,21 +372,18 @@ class ChatStore {
 	};
 
 	/**
-	 * Gets the lastMessageDate for a space.
+	 * Gets the last message for a space.
 	 * @param {string} spaceId - The space ID.
-	 * @returns {number} The timestamp for the lastMessageDate.
+	 * @returns {I.ChatMessage | null} The last message.
 	 */
-	getSpaceLastMessageDate (spaceId: string): number {
-		const spaceMap = this.stateMap.get(spaceId);
-
-		let ret = 0;
-		if (spaceMap) {
-			for (const [ chatId, state ] of spaceMap) {
-				ret = Math.max(ret, Number(state.lastMessageDate) || 0);
-			};
+	getSpaceLastMessage (spaceId: string): I.ChatMessage | null {
+		const list = this.getList(this.getSpaceSubId(spaceId)).slice(0);
+		if (!list.length) {
+			return null;
 		};
 
-		return ret;
+		list.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
+		return list[0];
 	};
 
 	/**
@@ -435,13 +412,12 @@ class ChatStore {
 	 */
 	setBadge () {
 		const counters = this.getTotalCounters();
+		const t = this.counterString(counters.messageCounter);
 
-		let t = 0;
-		if (counters) {
-			t = counters.messageCounter;
+		if (!this.badgeValue || (t != this.badgeValue)) {
+			this.badgeValue = t;
+			Renderer.send('setBadge', t);
 		};
-
-		Renderer.send('setBadge', this.counterString(t));
 	};
 
 	/**
@@ -494,12 +470,12 @@ class ChatStore {
 			return '';
 		};
 
+		const ret = [];
 		const participantId = U.Space.getParticipantId(spaceId, creator);
 		const author = dependencies.get(participantId);
-		const ret = [];
 
 		if (author) {
-			ret.push(`${author.name}:`);
+			ret.push(`${U.Object.name(author)}:`);
 		};
 
 		if (text) {
@@ -522,16 +498,32 @@ class ChatStore {
 	};
 
 	/**
-	 * Checks the vault subscription ID for a space and subId.
+	 * Mutates subscriptionIds array and adds chat preview and vault subscription ids properly.
 	 * @param {string} spaceId - The space ID.
 	 * @param {string} subId - The subscription ID.
 	 * @returns {string} The vault subscription ID.
 	 */
-	checkVaultSubscriptionId (spaceId: string, subId: string): string {
-		if (subId == J.Constant.subId.chatSpace) {
-			subId = this.getSpaceSubId(spaceId);
+	checkVaultSubscriptionIds (subIds: string[], spaceId: string, chatId: string): string[] {
+		const ret = [];
+
+		for (let i = 0; i < subIds.length; i++) {
+			const subId = subIds[i];
+
+			if (subId == J.Constant.subId.chatSpace) {
+				const isArchived = U.Data.checkIsArchived(chatId);
+				const isDeleted = U.Data.checkIsDeleted(chatId);
+
+				ret.push(this.getSpaceSubId(spaceId));
+
+				if (!isArchived && !isDeleted) {
+					ret.push(this.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId));
+				};
+			} else {
+				ret.push(subId);
+			};
 		};
-		return subId;
+
+		return ret;
 	};
 
 };

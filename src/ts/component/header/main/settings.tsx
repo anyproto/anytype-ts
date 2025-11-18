@@ -1,81 +1,57 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, Relation, analytics, Action } from 'Lib';
+import { S, I, U, translate, analytics, keyboard, sidebar } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
-	const { menuOpen } = props;
-	const { account } = S.Auth;
-	const profile = U.Space.getProfile();
-	const participant = U.Space.getParticipant() || profile;
-	const globalName = Relation.getStringValue(participant?.globalName);
+
+	const { isPopup } = props;
+	const [ invite, setInvite ] = useState({ cid: '', key: '' });
+	const param = U.Router.getParam(U.Router.getRoute());
+	const id = param.id || 'account';
 	const space = U.Space.getSpaceview();
-	const isOwner = U.Space.isMyOwner(space.targetSpaceId);
+	const isOwner = U.Space.isMyOwner();
 
-	const onIdentity = () => {
-		if (globalName) {
-			return;
+	const init = () => {
+		if (space.isShared && (!invite.cid || !invite.key)) {
+			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
+				if (cid && key) {
+					setInvite({ cid, key });
+				};
+			});
+		} else {
+			setInvite({ cid: '', key: '' });
 		};
-
-		S.Menu.open('identity', {
-			element: '#settings-identity-badge',
-			horizontal: I.MenuDirection.Center,
-		});
-
-		analytics.event('ClickUpgradePlanTooltip', { type: 'identity' });
 	};
 
 	const onMore = () => {
-		menuOpen('select', '#button-header-more', {
+		const element = $('#header #button-header-more');
+		const menuParam = {
+			element,
 			horizontal: I.MenuDirection.Right,
-			data: {
-				options: [
-					{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
-				],
-				onSelect: (e: React.MouseEvent, option: any) => {
-
-					switch (option.id) {
-						case 'spaceInfo': {
-							Action.spaceInfo();
-							break;
-						};
-
-						case 'delete': {
-							Action.removeSpace(S.Common.space, analytics.route.settings);
-							break;
-						};
-					};
-
-				},
-			}
-		});
-	};
-
-	const renderIdentity = () => {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-		const showId = [ 'account', 'index' ];
-
-		if (!showId.includes(id)) {
-			return '';
+			offsetY: 4,
+			onOpen: () => element.addClass('active'),
+			onClose: () => element.removeClass('active'),
 		};
 
-		return (
-			<div id="settings-identity-badge" className="identity" onClick={onIdentity}>
-				<Icon className={globalName ? 'anyName' : 'info'} />
-				<Label text={globalName ? globalName : U.Common.shortMask(account.id, 6)} />
-			</div>
-		);
+		if (id == 'spaceShare') {
+			U.Menu.spaceContext(space, menuParam, { isSharePage: true, route: analytics.route.settings });
+		} else {
+			U.Menu.spaceSettingsIndex(menuParam, { route: analytics.route.settings });
+		};
 	};
 
 	const renderMore = () => {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-		const showId = [ 'spaceIndex', 'spaceIndexEmpty' ];
+		const hasLink = invite.cid && invite.key;
+		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
 
-		if (!showId.includes(id)) {
-			return '';
+		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
+			return null;
+		};
+
+		if (id == 'spaceShare' && !spaceShareShowButton) {
+			return null;
 		};
 
 		return (
@@ -89,10 +65,30 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		);
 	};
 
+	useEffect(() => {
+		init();
+	}, []);
+
+	useEffect(() => {
+		init();
+	}, [ space.spaceAccessType ]);
+
 	return (
 		<>
-			<div className="side left" />
-			<div className="side center">{renderIdentity()}</div>
+			<div className="side left">
+				{!isPopup ? (
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
+			</div>
+			<div className="side center" />
 			<div className="side right">{renderMore()}</div>
 		</>
 	);

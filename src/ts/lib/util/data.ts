@@ -1,11 +1,12 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation, sidebar } from 'Lib';
 
 const TYPE_KEYS = {
 	default: [
 		J.Constant.typeKey.page,
 		J.Constant.typeKey.note,
 		J.Constant.typeKey.task,
+		J.Constant.typeKey.chatDerived,
 		J.Constant.typeKey.collection,
 		J.Constant.typeKey.set,
 		J.Constant.typeKey.bookmark,
@@ -70,6 +71,15 @@ class UtilData {
 	 */
 	blockEmbedClass (v: I.EmbedProcessor): string {
 		return `is${String(I.EmbedProcessor[v])}`;
+	};
+
+	/**
+	 * Returns the CSS class for a space UX type.
+	 * @param {I.SpaceUxType} v - The space UX type.
+	 * @returns {string} The CSS class.
+	 */
+	spaceClass (v: I.SpaceUxType): string {
+		return `space${I.SpaceUxType[v]}`
 	};
 
 	/**
@@ -257,11 +267,10 @@ class UtilData {
 	 */
 	onAuth (param?: any, callBack?: () => void) {
 		param = param || {};
-		param.routeParam = param.routeParam || {};
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
 
 		if (!widgets) {
@@ -275,8 +284,6 @@ class UtilData {
 			};
 
 			U.Subscription.createSpace(() => {
-				S.Block.updateTypeWidgetList();
-
 				S.Common.pinInit(() => {
 					keyboard.initPinCheck();
 
@@ -294,10 +301,7 @@ class UtilData {
 					};
 
 					S.Common.redirectSet('');
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		});
@@ -322,25 +326,28 @@ class UtilData {
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
 			for (const item of message.previews) {
-				const { spaceId, message, state, dependencies } = item;
-				const subId = S.Chat.getSpaceSubId(spaceId);
+				const { spaceId, chatId, message, state, dependencies } = item;
+				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
+				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
+				
+				S.Chat.setState(chatSubId, state, false);
 
 				if (message) {
+					message.chatId = chatId;
 					message.dependencies = dependencies;
-					S.Chat.add(subId, 0, new M.ChatMessage(message));
-				};
 
-				S.Chat.setState(subId, { 
-					...state, 
-					lastMessageDate: Number(message?.createdAt || 0),
-				}, false);
+					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
+					S.Chat.add(chatSubId, 0, new M.ChatMessage(message));
+				};
 			};
 		});
 
 		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
 		U.Subscription.createGlobal(() => {
-			Storage.clearDeletedSpaces(false);
-			Storage.clearDeletedSpaces(true);
+			if (S.Record.spaceMap.size) {
+				Storage.clearDeletedSpaces(false);
+				Storage.clearDeletedSpaces(true);
+			};
 		});
 
 		analytics.event('OpenAccount');
@@ -370,9 +377,7 @@ class UtilData {
 					dispatcher.startStream();
 				};
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -385,20 +390,14 @@ class UtilData {
 		const { token } = S.Auth;
 
 		if (!token) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
 		C.WalletCloseSession(token, () => {
 			S.Auth.tokenSet('');
-
 			dispatcher.stopStream();
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -455,16 +454,19 @@ class UtilData {
 	 * @returns {any[]} The list of object types.
 	 */
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withLists, limit } = param || {};
 		const { space } = S.Common;
-		const pageLayouts = U.Object.getPageLayouts();
-		const skipLayouts = U.Object.getSetLayouts();
+		const layouts = U.Object.getPageLayouts();
 
 		let items: any[] = [];
 
+		if (withLists) {
+			layouts.push(I.ObjectLayout.Set);
+			layouts.push(I.ObjectLayout.Collection);
+		};
+
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && 
-				!skipLayouts.includes(it.recommendedLayout) && 
+			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
 				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
@@ -473,14 +475,6 @@ class UtilData {
 
 		if (limit) {
 			items = items.slice(0, limit);
-		};
-
-		if (withSet) {
-			items.push(S.Record.getSetType());
-		};
-
-		if (withCollection) {
-			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
@@ -616,6 +610,9 @@ class UtilData {
 		if (c1.tmpOrder > c2.tmpOrder) return 1;
 		if (c1.tmpOrder < c2.tmpOrder) return -1;
 
+		if (!c1.orderId && c2.orderId) return 1;
+		if (c1.orderId && !c2.orderId) return -1;
+
 		if (c1.orderId > c2.orderId) return 1;
 		if (c1.orderId < c2.orderId) return -1;
 
@@ -632,26 +629,6 @@ class UtilData {
 		if (c1.isHidden && !c2.isHidden) return 1;
 		if (!c1.isHidden && c2.isHidden) return -1;
 		return 0;
-	};
-
-	/**
-	 * Sorts two objects by their pinned status and last used date.
-	 * @param {any} c1 - The first object.
-	 * @param {any} c2 - The second object.
-	 * @param {string[]} ids - The list of pinned IDs.
-	 * @returns {number} The sort order.
-	 */
-	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
-		const idx1 = ids.indexOf(c1.id);
-		const idx2 = ids.indexOf(c2.id);
-		const isPinned1 = idx1 >= 0;
-		const isPinned2 = idx2 >= 0;
-
-		if (isPinned1 && !isPinned2) return -1;
-		if (!isPinned1 && isPinned2) return 1;
-		if (idx1 > idx2) return 1;
-		if (idx1 < idx2) return -1;
-		return this.sortByLastUsedDate(c1, c2);
 	};
 
 	/**
@@ -713,8 +690,15 @@ class UtilData {
 	 */
 	sortByTypeKey (c1: any, c2: any, isChat: boolean) {
 		const keys = this.typeSortKeys(isChat);
+		const i1 = keys.indexOf(c1.uniqueKey);
+		const i2 = keys.indexOf(c2.uniqueKey);
 
-		return keys.indexOf(c1.uniqueKey) - keys.indexOf(c2.uniqueKey);
+		if ((i1 < 0) && (i2 >= 0)) return 1;
+		if ((i1 >= 0) && (i2 < 0)) return -1;
+		if (i1 > i2) return 1;
+		if (i1 < i2) return -1;
+
+		return 0;
 	};
 
 	/**
@@ -738,12 +722,8 @@ class UtilData {
 			filters,
 			limit,
 		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
+			if (!message.error.code) {
+				callBack?.(message);
 			};
 		});
 	};
@@ -767,7 +747,7 @@ class UtilData {
 	 * @param {I.ObjectLayout} layout - The object layout.
 	 * @returns {I.ContentLink} The checked link settings.
 	 */
-	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
+	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout): I.ContentLink {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
 		content = U.Common.objectCopy(content);
@@ -833,15 +813,17 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		return [
-			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+		const filters = U.Subscription.getBaseFilters({
+			ignoreHidden: true,
+			ignoreArchived: true,
+			ignoreDeleted: true,	 
+		});
+
+		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
-		];
+		]);
 	};
 
 	/**
@@ -884,9 +866,7 @@ class UtilData {
 			S.Auth.membershipSet(membership);
 			analytics.setTier(tier);
 
-			if (callBack) {
-				callBack(membership);
-			};
+			callBack?.(membership);
 		});
 	};
 
@@ -911,9 +891,7 @@ class UtilData {
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			S.Common.membershipTiersListSet(tiers);
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -994,7 +972,7 @@ class UtilData {
 						this.onInfo(message.account.info);
 
 						Renderer.send('keytarSet', message.account.id, phrase);
-						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						C.ObjectImportUseCase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
 								S.Auth.startingId.set(S.Common.space, message.startingId);
 							};
@@ -1003,7 +981,7 @@ class UtilData {
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
-						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Data });
 					});
 				});
 			});
@@ -1169,9 +1147,7 @@ class UtilData {
 			const ids = S.Record.checkHiddenObjects(Relation.getArrayValue(message.conflictRelationIds)
 				.map(id => S.Record.getRelationById(id))).map(it => it.id).filter(it => it);
 
-			if (callBack) {
-				callBack(ids);
-			};
+			callBack?.(ids);
 		});
 	};
 
@@ -1213,15 +1189,6 @@ class UtilData {
 				ret = { ...block.content };
 				break;
 			};
-
-			case I.WidgetSection.Type: {
-				ret = { 
-					layout: Number(object.widgetLayout) || I.WidgetLayout.Link, 
-					limit: Number(object.widgetLimit) || 6, 
-					viewId: String(object.widgetViewId) || '',
-				};
-				break;
-			};
 		};
 
 		return ret;
@@ -1232,6 +1199,37 @@ class UtilData {
 		const tier = this.getMembershipTier(membership.tier);
 
 		return !tier?.namesCount && this.isAnytypeNetwork();
+	};
+
+	checkIsArchived (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.archived, '').includes(id);
+	};
+
+	checkIsDeleted (id: string): boolean {
+		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
+	};
+
+	checkPageClose (isPopup: boolean, rootId: string): boolean {
+		return !isPopup || (isPopup && (keyboard.getRootId(false) != rootId));
+	};
+
+	getWidgetTypes (): any[] {
+		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
+			return (
+				!U.Object.isInSystemLayouts(it.recommendedLayout) && 
+				!U.Object.isDateLayout(it.recommendedLayout) && 
+				!U.Object.isParticipantLayout(it.recommendedLayout) &&
+				(it.uniqueKey != J.Constant.typeKey.template) &&
+				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+			);
+		});
+	};
+
+	getWidgetChats (): any[] {
+		return S.Record.getRecords(J.Constant.subId.chat).filter(it => {
+			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+		});
 	};
 
 };

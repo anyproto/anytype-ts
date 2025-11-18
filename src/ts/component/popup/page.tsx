@@ -25,7 +25,7 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		historyPopup.pushMatch(matchPopup);
-		sidebar.rightPanelRestore(true);
+		sidebar.init(true);
 
 		return () => {
 			unbind();

@@ -64,10 +64,7 @@ class Api {
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -85,7 +82,9 @@ class Api {
 	};
 
 	setBackground (win, theme) {
-		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(Util.getBgColor(theme)));
+		const bgColor = Util.isWayland() ? '#00000000' : Util.getBgColor(theme);
+
+		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
 	};
 
 	setZoom (win, zoom) {
@@ -224,7 +223,9 @@ class Api {
 
 	setChannel (win, id) {
 		UpdateManager.setChannel(id); 
-		this.setConfig(win, { channel: id });
+		this.setConfig(win, { channel: id }, () => {
+			this.initMenu(win);
+		});
 	};
 
 	setInterfaceLang (win, lang) {
@@ -352,6 +353,10 @@ class Api {
 
 	close (win) {
 		win.close();
+	};
+
+	toggleFullScreen (win) {
+		win.setFullScreen(!win.isFullScreen());
 	};
 
 };

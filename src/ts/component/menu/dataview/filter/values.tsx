@@ -9,7 +9,6 @@ const TIMEOUT = 1000;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
 
-	_isMounted = false;
 	node: any = null;
 	timeoutChange = 0;
 	refInput = null;
@@ -299,7 +298,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
 		this.init();
 		this.rebind();
 	};
@@ -348,7 +346,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		S.Menu.closeAll(J.Menu.cell);
@@ -490,7 +487,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					noFilter: true,
 					noVirtualisation: true,
 					value: item[item.id],
-					options: U.Menu.prepareForSelect(options),
+					options,
 					onSelect: (e: any, el: any) => {
 						this.onChange(item.id, el.id);
 					}
@@ -737,10 +734,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					canEdit: true,
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
-
-						if (callBack) {
-							callBack();
-						};
+						callBack?.();
 					},
 				},
 			});
@@ -756,9 +750,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	checkClear (v: any) {
-		if (this._isMounted) {
-			$(this.node).find('.icon.clear').toggleClass('active', v);
-		};
+		$(this.node).find('.icon.clear').toggleClass('active', v);
 	};
 
 	onClear (e: any) {

@@ -33,7 +33,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
 			onClick: () => {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				Action.openSpaceShare(analytics.route.menuPublish);
 				close();
 
 				analytics.event('ClickShareObjectShareSpace', { objectType: object.type });

@@ -191,11 +191,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
+		window.setTimeout(() => this.refFilter?.focus(), 15);
 	};
 
 	rebind () {
@@ -281,9 +277,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
 				this.items = [];

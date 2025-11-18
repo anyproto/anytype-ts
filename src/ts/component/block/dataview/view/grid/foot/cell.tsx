@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { I, S, C, U, keyboard, Relation, Dataview, analytics, Preview } from 'Lib';
 
@@ -7,132 +7,56 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	block?: I.Block;
 };
 
-interface State {
-	result: any;
+interface Ref {
+	calculate: () => void;
 };
 
-const FootCell = observer(class FootCell extends React.Component<Props, State> {
+const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 
-	node = null;
-	menuContext = null;
+	const { rootId, block, relationKey, getView } = props;
+	const [ result, setResult ] = useState<any>(null);
+	const nodeRef = useRef(null);
+	const menuContextRef = useRef(null);
+	const relation = S.Record.getRelationByKey(relationKey);
 
-	state = {
-		result: null,
+	useEffect(() => calculate());
+
+	useImperativeHandle(ref, () => ({
+		calculate,
+	}));
+
+	if (!relation) {
+		return <div />;
 	};
 
-	constructor (props: Props) {
-		super(props);
+	const view = getView();
+	const viewRelation = view?.getRelation(relationKey);
+	const cn = [ 'cellFoot', `align${viewRelation?.align}` ];
+	const formulaType = viewRelation?.formulaType || I.FormulaType.None;
+	const option: any = Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(formulaType)) || {};
+	const name = option.short || option.name || '';
+	const subId = [ rootId, block.id, 'total' ].join('-');
+	const records = S.Record.getRecords(subId, [ relationKey ], true);
 
-		this.onOpen = this.onOpen.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-	};
+	records.forEach(record => {
+		const value = record[relationKey];
+	});
 
-	render () {
-		const { relationKey, getView } = this.props;
-		const { result } = this.state;
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (!relation) {
-			return <div />;
-		};
-
-		const view = getView();
-		const viewRelation = view?.getRelation(relationKey);
-		const cn = [ 'cellFoot', `align${viewRelation?.align}` ];
-		const formulaType = this.getFormulaType();
-		const option: any = this.getOption() || {};
-		const name = option.short || option.name || '';
-		const subId = this.getSubId();
-		const records = S.Record.getRecords(subId, [ relationKey ], true);
-
-		records.forEach(record => {
-			const value = record[relationKey];
-		});
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				id={Relation.cellId('foot', relationKey, '')} 
-				className={cn.join(' ')}
-				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
-			>
-				<div className="cellContent" onClick={this.onSelect}>
-					<div className="flex">
-						{formulaType != I.FormulaType.None ? (
-							<div className="result">
-								<span className="name">{name}</span>
-								<span className="value">{result}</span>
-							</div>
-						) : ''}
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount (): void {
-		this.calculate();
-	};
-
-	componentDidUpdate (): void {
-		this.calculate();
-	};
-
-	getSubId (): string {
-		const { rootId, block } = this.props;
-		return [ rootId, block.id, 'total' ].join('-');
-	};
-
-	calculate () {
-		const { relationKey, getView } = this.props;
-		const view = getView();
-
+	const calculate = () => {
 		if (!view) {
 			return;
 		};
 
-		const viewRelation = view.getRelation(relationKey);
-		if (!viewRelation) {
-			return;
-		};
+		const newResult = Dataview.getFormulaResult(subId, viewRelation);
 
-		const subId = this.getSubId();
-		const result = Dataview.getFormulaResult(subId, viewRelation);
-
-		if (this.state.result !== result) {
-			this.state.result = result;
-			this.setState({ result });
+		if (newResult !== result) {
+			setResult(newResult);
 		};
 	};
 
-	getOption (): any {
-		const { relationKey, getView } = this.props;
-		const view = getView();
-
-		if (!view) {
-			return null;
-		};
-
-		const formulaType = this.getFormulaType();
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (!relation) {
-			return null;
-		};
-
-		return Relation.formulaByType(relationKey, relation.format).find(it => it.id == String(formulaType));
-	};
-
-	onSelect (e: any) {
-		const { relationKey, getView } = this.props;
+	const onSelect = (e: any) => {
 		const id = Relation.cellId('foot', relationKey, '');
 		const options = U.Menu.getFormulaSections(relationKey);
-		const formulaType = this.getFormulaType();
 
 		if (formulaType == I.FormulaType.None) {
 			return;
@@ -142,16 +66,14 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			S.Menu.open('select', {
 				element: `#${id}`,
 				horizontal: I.MenuDirection.Center,
-				onOpen: this.onOpen,
+				onOpen,
 				subIds: [ 'select2' ],
 				data: {
-					options: U.Menu.prepareForSelect(options),
+					options,
 					noScroll: true, 
 					noVirtualisation: true,
-					onOver: this.onOver,
-					onSelect: (e: any, item: any) => {
-						this.onChange(item.id);
-					},
+					onOver,
+					onSelect: (e: any, item: any) => onChange(item.id),
 				}
 			});
 		});
@@ -159,19 +81,17 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		Preview.tooltipHide();
 	};
 
-	onOpen (context: any): void {
-		const { rootId, relationKey } = this.props;
-		const relation = S.Record.getRelationByKey(relationKey);
+	const onOpen = (context: any) => {
 		const object = S.Detail.get(rootId, rootId, []);
 
-		this.menuContext = context;
-		window.setTimeout(() => this.onMouseEnter(), 10);
+		menuContextRef.current = context;
+		window.setTimeout(() => onMouseEnter(), 10);
 
 		analytics.event('ClickGridFormula', { format: relation.format, objectType: object.type });
 	};
 
-	onOver (e: any, item: any) {
-		if (!this.menuContext) {
+	const onOver = (e: any, item: any) => {
+		if (!menuContextRef.current) {
 			return;
 		};
 
@@ -180,36 +100,31 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, relationKey } = this.props;
-		const relation = S.Record.getRelationByKey(relationKey);
 		const options = Relation.formulaByType(relationKey, relation.format).filter(it => it.section == item.id);
 
 		S.Menu.closeAll([ 'select2' ], () => {
 			S.Menu.open('select2', {
 				component: 'select',
-				element: `#${this.menuContext.getId()} #item-${item.id}`,
-				offsetX: this.menuContext.getSize().width,
+				element: `#${menuContextRef.current.getId()} #item-${item.id}`,
+				offsetX: menuContextRef.current.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,
-				rebind: this.menuContext.ref?.rebind,
-				parentId: this.menuContext.props.id,
+				rebind: menuContextRef.current.ref?.rebind,
+				parentId: menuContextRef.current.props.id,
 				data: {
 					rootId,
 					options,
 					onSelect: (e: any, item: any) => {
-						this.onChange(item.id);
-						this.menuContext.close();
+						onChange(item.id);
+						menuContextRef.current.close();
 					},
 				}
 			});
 		});
 	};
 
-	onChange (id: string): void {
-		const { rootId, block, relationKey, getView } = this.props;
-		const view = getView();
+	const onChange = (id: string) => {
 		const item = view.getRelation(relationKey);
-		const relation = S.Record.getRelationByKey(relationKey);
 		const object = S.Detail.get(rootId, rootId, []);
 
 		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, item.relationKey, { 
@@ -220,28 +135,22 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		analytics.event('ChangeGridFormula', { type: id, format: relation.format, objectType: object.type });
 	};
 
-	onMouseEnter (): void {
+	const onMouseEnter = () => {
 		if (keyboard.isDragging) {
 			return;
 		};
-
-		const formulaType = this.getFormulaType();
 
 		if (formulaType == I.FormulaType.None) {
 			return;
 		};
 
-		const node = $(this.node);
+		const node = $(nodeRef.current);
 
 		node.addClass('hover');
 
-		const { result } = this.state;
 		if ((result === null) || S.Menu.isOpen()) {
 			return;
 		};
-
-		const option: any = this.getOption() || {};
-		const name = option.short || option.name || '';
 
 		const t = Preview.tooltipCaption(name, result);
 		if (t) {
@@ -249,23 +158,32 @@ const FootCell = observer(class FootCell extends React.Component<Props, State> {
 		};
 	};
 
-	onMouseLeave () {
-		$(this.node).removeClass('hover');
+	const onMouseLeave = () => {
+		$(nodeRef.current).removeClass('hover');
 		Preview.tooltipHide();
 	};
 
-	getFormulaType (): I.FormulaType {
-		const { relationKey, getView } = this.props;
-		const view = getView();
+	return (
+		<div 
+			ref={nodeRef}
+			id={Relation.cellId('foot', relationKey, '')} 
+			className={cn.join(' ')}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+		>
+			<div className="cellContent" onClick={onSelect}>
+				<div className="flex">
+					{formulaType != I.FormulaType.None ? (
+						<div className="result">
+							<span className="name">{name}</span>
+							<span className="value">{result}</span>
+						</div>
+					) : ''}
+				</div>
+			</div>
+		</div>
+	);
 
-		if (!view) {
-			return I.FormulaType.None;
-		};
-
-		const viewRelation = view.getRelation(relationKey);
-		return viewRelation ? viewRelation.formulaType : I.FormulaType.None;
-	};
-
-});
+}));
 
 export default FootCell;

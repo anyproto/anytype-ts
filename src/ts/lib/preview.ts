@@ -36,7 +36,7 @@ class Preview {
 		if (undefined !== param.delay) {
 			delay = param.delay;
 		};
-		
+
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};

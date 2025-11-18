@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
@@ -49,6 +49,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const childRef = useRef(null);
 	const Component = Components[component] || null;
 	const cn = [ 'header', component, className ];
+	const object = S.Detail.get(rootId, rootId, []);
 	const resizeObserver = new ResizeObserver(() => {
 		raf(() => resize());
 	});
@@ -61,52 +62,85 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		cn.push('withBanner');
 	};
 
-	const onGraph = (e: MouseEvent) => {
+	const onGraph = (e: any) => {
 		e.stopPropagation();
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
 	const onSync = () => {
-		menuOpen('syncStatus', '#headerSync', { subIds: J.Menu.syncStatus });
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
 	};
 
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
-		let buttons: any[] = [
-			{ id: 'expand', name: translate('commonOpenObject'), onClick: onOpen || onExpand },
-		];
-
-		if (withNavigation) {
-			buttons = buttons.concat([
-				{ id: 'back', name: translate('commonBack'), caption: keyboard.getCaption('back'), onClick: () => keyboard.onBack(), disabled: !keyboard.checkBack() },
-				{ id: 'forward', name: translate('commonForward'), caption: keyboard.getCaption('forward'), onClick: () => keyboard.onForward(), disabled: !keyboard.checkForward() },
-			]);
-		};
-
-		if (withGraph) {
-			buttons.push({ id: 'graph', name: translate('commonGraph'), caption: keyboard.getCaption('graph'), onClick: onGraph });
-		};
+		const cnb = [ 'back', 'withBackground', (!keyboard.checkBack(isPopup) ? 'disabled' : '') ];
+		const cnf = [ 'forward', 'withBackground', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ];
 
 		return (
 			<>
+				{!isPopup ? (
+					<Icon 
+						className="widgetPanel withBackground" 
+						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						tooltipParam={{ 
+							text: translate('commonWidgets'), 
+							caption: keyboard.getCaption('widget'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : (
+					<Icon 
+						className="expand withBackground" 
+						onClick={onOpen || onExpand}
+						tooltipParam={{ 
+							text: translate('commonOpenObject'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				)}
+
 				<Sync id="headerSync" onClick={onSync} />
 
-				{buttons.map(item => {
-					const cn = [ item.id, 'withBackground' ];
-
-					if (item.disabled) {
-						cn.push('disabled');
-					};
-
-					return (
+				{withNavigation ? (
+					<div className="arrowWrapper">
 						<Icon 
-							key={item.id} 
-							tooltipParam={{ text: item.name, caption: item.caption, typeY: I.MenuDirection.Bottom }} 
-							className={cn.join(' ')} 
-							onClick={e => item.onClick(e)} 
-							onDoubleClick={e => e.stopPropagation()}
+							className={cnb.join(' ')} 
+							onClick={() => keyboard.onBack(isPopup)}
+							tooltipParam={{ 
+								text: translate('commonBack'), 
+								caption: keyboard.getCaption('back'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
 						/>
-					);
-				})}
+						<Icon 
+							className={cnf.join(' ')} 
+							onClick={() => keyboard.onForward(isPopup)}
+							tooltipParam={{ 
+								text: translate('commonForward'), 
+								caption: keyboard.getCaption('forward'), 
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+					</div>
+				) : ''}
+
+				{withGraph ? (
+					<Icon 
+						className="graph withBackground" 
+						onClick={onGraph}
+						tooltipParam={{ 
+							text: translate('commonGraph'), 
+							caption: keyboard.getCaption('graph'), 
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 			</>
 		);
 	};
@@ -155,30 +189,25 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const st = $(window).scrollTop();
-		const element = $(`${getContainer()} ${elementId}`);
+		const element = U.Common.getScrollContainer(isPopup).find(`.header ${elementId}`);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
 		}, param);
 
 		if (!isPopup) {
-			menuParam.fixedY = element.offset().top + element.height() - st + 4;
-			menuParam.classNameWrap = 'fixed fromHeader';
+			menuParam.className = 'fixed';
+			menuParam.classNameWrap = 'fromHeader';
 		};
 
 		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
-	};
-
-	const getContainer = () => {
-		return (isPopup ? '.popup' : '') + ' .header';
 	};
 
 	const resize = () => {
 		const node = $(nodeRef.current);
 		const center = node.find('.side.center');
 
-		node.toggleClass('isSmall', center.outerWidth() <= 260);
+		node.toggleClass('isSmall', center.outerWidth() <= 200);
 	};
 
 	useEffect(() => {
@@ -195,9 +224,9 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		sidebar.resizePage(null, null, false);
-	});
+	useLayoutEffect(() => {
+		raf(() => sidebar.resizePage(isPopup, null, null, false));
+	}, [ object ]);
 
 	useImperativeHandle(ref, () => ({
 		setVersion: (version: string) => {

@@ -167,8 +167,6 @@ export interface PageSettingsComponent extends PageComponent {
 	onExport: (format: I.ExportType, param: any) => void;
 	onSpaceTypeTooltip: (e: any) => void;
 	getId?(): string;
-	storageGet?(): any;
-	storageSet?(data: any): void;
 };
 
 export interface FooterComponent {
@@ -297,9 +295,9 @@ export interface SearchSubscribeParam {
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
 	ignoreArchived: boolean;
-	ignoreChat: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
+	crossSpace: boolean;
 };
 
 export interface SearchIdsParam extends SearchSubscribeParam {
@@ -370,4 +368,14 @@ export enum ImageSize {
 export enum AppDeviceState {
 	Background	 = 0, // means app is suspended
 	Foreground	 = 1,
+};
+
+export interface DragProviderRefProps {
+	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
+	onScroll: () => void;
+};
+
+export interface DragComponentProps {
+	getNode: () => any;
+	onRecordDrop?: (targetId: string, ids: string[], position: I.BlockPosition) => void;
 };

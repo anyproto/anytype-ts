@@ -1,5 +1,25 @@
 #page.isFull { overflow-x: hidden; overflow-y: auto; }
 
+.pageFlex { 
+	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
+	padding: 4px 4px 4px 0px;
+}
+.pageFlex {
+	.sidebarDummy { flex-shrink: 0; }
+	#page { width: 100%; position: relative;  background-color: var(--color-bg-primary); border-radius: 12px; }
+
+	&.withSidebarRight { padding-right: 0px; }
+	&.withSidebarRight {
+		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
+	}
+
+	&.withSidebarSubLeft {
+		#page { border-top-left-radius: 0px; border-bottom-left-radius: 0px; }
+	}
+
+	&.sidebarAnimation { transition-property: padding; }
+}
+
 @import "./auth";
 @import "./main/edit";
 @import "./main/graph";

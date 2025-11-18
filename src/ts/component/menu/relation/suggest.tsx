@@ -19,7 +19,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		isLoading: false,
 	};
 
-	_isMounted = false;
 	filter = '';
 	cache: any = null;
 	items: any[] = [];
@@ -146,8 +145,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
-
 		this.rebind();
 		this.resize();
 		this.load(true);
@@ -179,8 +176,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
-
 		S.Menu.closeAll([ 'searchObject' ]);
 		window.clearTimeout(this.timeoutFilter);
 	};
@@ -203,10 +198,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { param } = this.props;
 		const { data } = param;
 		const types = data.types || [];
@@ -239,13 +230,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		this.loadRequest(requestParam, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
 				this.setState({ isLoading: false });
@@ -258,10 +243,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	loadRequest (param: any, callBack?: (message: any) => void) {
 		U.Subscription.search(param, (message: any) => {
 			this.items = this.items.concat(message.records || []);
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 

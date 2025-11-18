@@ -1,24 +1,50 @@
-import React, { forwardRef } from 'react';
+import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, U, translate, keyboard, analytics } from 'Lib';
+import { Icon, IconObject, ObjectName, Label } from 'Component';
+import { I, U, S, C, translate, analytics, Action, keyboard } from 'Lib';
+import { icon } from 'mermaid/dist/rendering-util/rendering-elements/shapes/icon';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
-	const space = U.Space.getSpaceview();
-	const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-	const requestCnt = participants.filter(it => it.isJoining).length;
-	const isSpaceOwner = U.Space.isMyOwner();
-	const cn = [];
-	const buttons = [
-		{ id: 'search', name: translate('commonSearch') },
-		!space.isPersonal ? { id: 'member', name: translate('pageSettingsSpaceIndexInviteMembers') } : null,
-		{ id: 'settings', name: translate('commonSettings') },
-	].filter(it => it);
-
-	if (isSpaceOwner && requestCnt) {
-		cn.push('withCnt');
+	const spaceview = U.Space.getSpaceview();
+	if (!spaceview) {
+		return null;
 	};
+
+	const nodeRef = useRef(null);
+	const canWrite = U.Space.canMyParticipantWrite();
+	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
+	const iconSize = spaceview.isChat ? 80 : 48;
+
+	const icon = (
+		<IconObject
+			size={iconSize}
+			iconSize={iconSize}
+			object={spaceview}
+			onClick={() => U.Space.openDashboard()}
+		/>
+	);
+
+	const memberText = spaceview.isShared ? 
+		`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}` : 
+		translate('commonPersonalSpace');
+
+	const memberLabel = <Label text={memberText} onClick={e => onButtonClick(e, { id: 'member' })} />;
+
+	const buttons = [
+		canWrite ? { 
+			id: 'create', 
+			name: translate('commonCreate'), 
+			withArrow: true,
+			arrowTooltipParam: { 
+				text: translate('popupShortcutMainBasics19'), 
+				caption: keyboard.getCaption('selectType'), 
+				typeY: I.MenuDirection.Bottom as any,
+			},
+		} : null,
+		{ id: 'search', name: translate('commonSearch') }
+	].filter(it => it);
 
 	const onButtonClick = (e: any, item: any) => {
 		e.preventDefault();
@@ -26,7 +52,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		switch (item.id) {
 			case 'member': {
-				U.Object.openRoute({ id: 'spaceShare', layout: I.ObjectLayout.Settings });
+				Action.openSpaceShare(analytics.route.widget);
 				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
 				break;
 			};
@@ -36,42 +62,85 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 
-			case 'settings': {
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+			case 'create': {
+				keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 				break;
 			};
 		};
 	};
 
+	const onArrow = (e: any) => {
+		e.stopPropagation();
+
+		U.Menu.typeSuggest({ 
+			element: '#button-create-arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			offsetY: 4,
+		}, {}, { 
+			deleteEmpty: true,
+			selectTemplate: true,
+			withImport: true,
+		}, analytics.route.navigation, object => U.Object.openConfig(object));
+	};
+
+	const onMore = () => {
+		U.Menu.spaceContext(U.Space.getSpaceview(), {
+			element: '#widget-space .nameWrap .arrow',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
+		}, { route: analytics.route.widget });
+	};
+
+	let content = null;
+	if (spaceview.isChat) {
+		content = (
+			<div className="spaceInfo">
+				{icon}
+				<div className="nameWrap" onClick={onMore}>
+					<ObjectName object={spaceview} />
+					<Icon className="arrow" />
+				</div>
+
+				{memberLabel}
+			</div>
+		);
+	} else {
+		content = (
+			<div className="head">
+				{icon}
+				<div className="info">
+					<div className="nameWrap" onClick={onMore}>
+						<ObjectName object={spaceview} />
+						<Icon className="arrow" />
+					</div>
+
+					{memberLabel}
+				</div>
+			</div>
+		);
+	};
+
 	return (
-		<div className={cn.join(' ')}>
+		<div ref={nodeRef} className={cn.join(' ')}>
+			{content}
 			<div className="buttons">
-				{buttons.map((item, i) => {
-					let cnt = null;
-
-					if (item.id == 'member') {
-						cnt = <div className="cnt">{requestCnt}</div>;
-					};
-
-					return (
-						<div 
-							key={i} 
-							id={`item-${item.id}`} 
-							className="item" 
-							onClick={e => onButtonClick(e, item)}
-						>
-							<div className="side left">
-								<Icon className={item.id} />
-								<div className="name">
-									{item.name}
-								</div>
-							</div>
-							<div className="side right">
-								{cnt}
-							</div>
-						</div>
-					);
-				})}
+				{buttons.map((item, idx) => (
+					<div className="item" onClick={e => onButtonClick(e, item)} key={idx}>
+						<Icon className={item.id} />
+						<Label text={item.name} />
+						{item.withArrow ? (
+							<Icon 
+								id={`button-${item.id}-arrow`}
+								className="arrow withBackground"
+								onClick={onArrow}
+								tooltipParam={item.arrowTooltipParam}
+							/>
+						) : ''}
+					</div>
+				))}
 			</div>
 		</div>
 	);

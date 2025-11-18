@@ -1,7 +1,8 @@
-import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, DragEvent } from 'react';
+import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, U, S, sidebar } from 'Lib';
+import { I, U, J, S, keyboard, sidebar } from 'Lib';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -13,18 +14,9 @@ interface Props {
 };
 
 interface SidebarRightRefProps {
-	setState: (state: State) => void;
-	getState: () => State;
-};
-
-interface State {
-	page: string;
-	rootId: string;
-	details: any;
-	readonly: boolean;
-	noPreview: boolean;
-	blockId: string;
-	previous: State;
+	getNode: () => HTMLElement | null;
+	setState: (state: I.SidebarRightState) => void;
+	getState: () => I.SidebarRightState;
 };
 
 const Components = {
@@ -37,38 +29,105 @@ const Components = {
 const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
 	const { isPopup } = props;
-	const childRef = useRef(null);
+	const nodeRef = useRef(null);
+	const pageRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
-	const [ state, setState ] = useState<State>({
-		page: spaceview.isChat ? 'widget' : '',
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const [ state, setState ] = useState<I.SidebarRightState>({
 		rootId: '',
 		details: {},
 		readonly: false,
 		noPreview: false,
 		previous: null,
 		blockId: '',
+		back: '',
 	});
 
-	const page = String(state.page || '');
+	const page = String(rightSidebar.page || '');
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cn = [ 'sidebar', 'right', 'customScrollbar', `space${I.SpaceUxType[spaceview.uxType]}` ];
+	const cn = [ 'sidebar', 'right', U.Data.spaceClass(spaceview.uxType) ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
-	const withPreview = [ 'type' ].includes(page);
-	const showToggle = spaceview.isChat && [ 'widget' ].includes(page);
+	const withPreview = !state.noPreview && [ 'type' ].includes(page);
+	const ox = useRef(0);
+	const oy = useRef(0);
+	const sx = useRef(0);
+	const frame = useRef(0);
+	const width = useRef(0);
 
 	if (withPreview) {
 		cn.push('withPreview');
 	};
 
+	if (!U.Common.isPlatformMac()) {
+		cn.push('customScrollbar');
+	};
+
+	const onResizeStart = (e: DragEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const win = $(window);
+		const body = $('body');
+		const node = $(nodeRef.current);
+		const o = node.offset();
+		const data = sidebar.getData(I.SidebarPanel.Right);
+
+		ox.current = o.left;
+		oy.current = o.top;
+		sx.current = e.pageX;
+		width.current = node.outerWidth();
+
+		keyboard.disableSelection(true);
+		keyboard.setResize(true);
+		body.addClass('colResize');
+
+		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
+		win.on('mousemove.sidebar', e => onResizeMove(e));
+		win.on('mouseup.sidebar blur.sidebar', e => onResizeEnd());
+	};
+
+	const onResizeMove = (e: any) => {
+		if (frame.current) {
+			raf.cancel(frame.current);
+		};
+
+		frame.current = raf(() => {
+			if (sidebar.isAnimating) {
+				return;
+			};
+
+			const w = width.current + ox.current - e.pageX;
+			const d = w - width.current;
+
+			if (d) {
+				sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
+
+				if (pageRef.current && pageRef.current.resize) {
+					pageRef.current.resize();
+				};
+			};
+		});
+	};
+
+	const onResizeEnd = () => {
+		keyboard.disableSelection(false);
+		keyboard.setResize(false);
+		raf.cancel(frame.current);
+
+		$('body').removeClass('colResize');
+		$(window).off('mousemove.sidebar mouseup.sidebar');
+	};
+
 	useEffect(() => {
-		childRef.current?.forceUpdate();
+		pageRef.current?.forceUpdate();
 	});
 
 	useImperativeHandle(ref, () => ({
+		getNode: () => nodeRef.current,
 		getState: () => U.Common.objectCopy(state),
-		setState: (newState: State) => {
+		setState: (newState: I.SidebarRightState) => {
 			if (newState.page !== state.page) {
 				delete(state.previous);
 				newState.previous = U.Common.objectCopy(state);
@@ -81,27 +140,25 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	return (
 		<div 
 			id="sidebarRight"
+			ref={nodeRef}
 			className={cn.join(' ')}
 		>
-			{showToggle ? (
-				<Icon 
-					id="button-header-toggle" 
-					className="widgetPanel withBackground"
-					onClick={() => sidebar.rightPanelToggle(true, isPopup, page, {})} 
-					onDoubleClick={e => e.stopPropagation()}
-				/>
-			) : ''}
-
 			{Component ? (
-				<div id={pageId} className={cnp.join(' ')}>
-					<Component 
-						ref={childRef} 
-						{...props} 
-						{...state}
-						sidebarDirection={I.SidebarDirection.Right}
-						getId={() => pageId}
-					/> 
-				</div>
+				<>
+					<div id={pageId} className={cnp.join(' ')}>
+						<Component 
+							ref={pageRef} 
+							{...props} 
+							{...state}
+							sidebarDirection={I.SidebarDirection.Right}
+							getId={() => pageId}
+						/> 
+					</div>
+
+					<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
+						<div className="resize-handle" />
+					</div>
+				</>
 			): ''}
 		</div>
 	);

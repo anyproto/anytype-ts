@@ -50,6 +50,7 @@ Also install:
 - **Node.js ≥ 20** & npm ≥ 10 *(or pnpm ≥ 9)*
 - **Go ≥ 1.22** (to build [anytype‑heart](https://github.com/anyproto/anytype-heart))
 
+On ARM systems, node package `keytar` needs to be rebuilt during installation, so make sure that your system has a C++ compiler, Python3 and Python package `setuptools`. E.g. on Debian/Ubuntu: `sudo apt install python3-setuptools`. Alternatively, on any system, create a Python virtual environment (venv) and inside the venv: `pip install setuptools`. Then build from source inside the venv.
 
 ## 🏗 Building from Source
 
@@ -95,6 +96,14 @@ Optional env vars:
 | `SERVER_PORT`| Local gRPC port of *anytype‑heart*        |
 | `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`   |
 
+### Web Clipper extension Development
+
+Switch manifest before testing/packaging the addon for different browsers using the following scripts:
+
+```bash
+npm run ext:manifest:firefox
+npm run ext:manifest:chromium
+```
 
 ## 🌍 Localisation
 

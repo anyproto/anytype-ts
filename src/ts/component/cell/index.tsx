@@ -22,7 +22,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const { 
 		elementId, relationKey, recordId, getRecord, getView, idPrefix, pageContainer,
-		isInline, menuClassName = '', menuClassNameWrap = '', block, subId, rootId, onCellChange,
+		isInline, menuParam = {}, block, subId, rootId, onCellChange,
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 		noInplace, editModeOn, viewType,
 	} = props;
@@ -78,16 +78,12 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		const className = [];
 		const cellContent = cell.hasClass('cellContent') ? cell : cell.find('.cellContent');
 
-		if (menuClassName) {
-			className.push(menuClassName);
+		if (menuParam.className) {
+			className.push(menuParam.className);
 		};
 
 		if (isInline) {
 			className.push('isInline');
-		};
-
-		if (noInplace) {
-			className.push('fromFeatured');
 		};
 
 		let width = Math.max(J.Size.dataview.cell.edit, cell.outerWidth());
@@ -162,9 +158,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
-			className: className.join(' '),
-			classNameWrap: menuClassNameWrap,
-			noBorder: true,
+			...menuParam,
 			onOpen: () => {
 				$(element).addClass('withMenu');
 				setOn();
@@ -178,7 +172,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				cellRef: childRef.current,
 				rootId,
 				subId,
-				blockId: block.id,
+				blockId: block?.id,
 				value, 
 				relation: observable.box(relation),
 				relationKey: relation.relationKey,
@@ -453,7 +447,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		} else {
 			setOn();
 
-			if (!canEdit && Relation.isText(relation.format)) {
+			if (canEdit && Relation.isText(relation.format)) {
 				bindContainerClick();
 			};
 		};
@@ -538,7 +532,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const childProps = {
 		...props,
 		id,
-		key: id,
 		canEdit,
 		relation,
 		placeholder,
@@ -598,7 +591,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			onMouseEnter={onMouseEnterHandler} 
 			onMouseLeave={onMouseLeaveHandler}
 		>
-			<CellComponent ref={childRef} {...childProps} />
+			<CellComponent ref={childRef} key={id} {...childProps} />
 		</div> 
 	);
 

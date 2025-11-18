@@ -1,3 +1,4 @@
+import { index } from 'd3';
 import { I } from 'Lib';
 
 export enum ChatButton {
@@ -22,7 +23,6 @@ export interface ChatState {
 	messages: ChatStateCounter;
 	mentions: ChatStateCounter;
 	lastStateId: string;
-	lastMessageDate: number;
 	order: number;
 };
 
@@ -33,7 +33,6 @@ export interface ChatStoreState {
 	mentionCounter: number;
 	lastStateId: string;
 	order: number;
-	lastMessageDate: number;
 };
 
 export interface ChatCounter {
@@ -53,6 +52,7 @@ export interface ChatMessageReaction {
 
 export interface ChatMessage {
 	id: string;
+	chatId: string;
 	orderId: string;
 	creator: string;
 	createdAt: number;
@@ -90,6 +90,7 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	hasMore: boolean;
 	subId: string
 	style?: any;
+	index?: number;
 	onContextMenu: (e: any) => void;
 	onMore: (e: any) => void;
 	onReplyEdit: (e: any) => void;

@@ -1,4 +1,4 @@
-import * as amplitude from 'amplitude-js';
+import amplitude from 'amplitude-js';
 import { I, C, S, U, J, Relation, Renderer } from 'Lib';
 
 const KEYS = [ 
@@ -69,6 +69,8 @@ class Analytics {
 		menuContext: 'MenuContext',
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
+		menuPublish: 'MenuPublish',
+		menuParticipant: 'MenuParticipant',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -78,6 +80,7 @@ class Analytics {
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
+		settingsAccount: 'ScreenSettingsAccount',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
@@ -280,7 +283,7 @@ class Analytics {
 			param.spaceType = Number(space.spaceAccessType) || 0;
 			param.spaceType = I.SpaceType[param.spaceType];
 
-			let uxType = I.SpaceUxType.Space;
+			let uxType = I.SpaceUxType.Data;
 			if (undefined !== data.uxType) {
 				uxType = data.uxType;
 			};
@@ -301,6 +304,10 @@ class Analytics {
 		switch (code) {
 			case 'page': {
 				code = this.pageMapper(data.params);
+
+				if (data.params.route) {
+					data.route = data.params.route;
+				};
 				break;
 			};
 
@@ -614,6 +621,11 @@ class Analytics {
 				break;
 			};
 
+			case 'CreateSpace' : {
+				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -828,17 +840,20 @@ class Analytics {
 	 * @param {any} [data] - Optional event data.
 	 */
 	stackAdd (code: string, data?: any) {
-		this.stack.push({ code, data });
+		if (code) {
+			this.stack.push({ code, data });
+		};
 	};
 
 	/**
 	 * Sends all stacked analytics events.
 	 */
 	stackSend () {
-		this.stack.forEach(({ code, data }) => {
-			this.event(code, data);
-		});
+		this.stack.forEach(({ code, data }) => this.event(code, data));
+		this.stackClear();
+	};
 
+	stackClear () {
 		this.stack = [];
 	};
 

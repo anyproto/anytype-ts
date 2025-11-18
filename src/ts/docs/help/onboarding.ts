@@ -160,8 +160,7 @@ const Data = {
 				param: {
 					element: '#menuSyncStatus',
 					horizontal: I.MenuDirection.Right,
-					stickToElementEdge: I.MenuDirection.None,
-					highlightElements: [ '#menuSyncStatus', '#sidebarRightButton' ],
+					highlightElements: [ '#menuSyncStatus' ],
 					offsetY: 14,
 				}
 			},
@@ -306,26 +305,6 @@ const Data = {
 			},
 		}
 	),
-
-	collaboration: () => {
-		const width = 432;
-		return {
-			items: [
-				{
-					name: translate('onboardingCollaborationTitle'),
-					description: translate('onboardingCollaborationText'),
-					noButton: true,
-					param: {
-						element: '#popupUsecase #category-collaboration',
-						className: 'isSpace',
-						classNameWrap: 'fixed',
-						width,
-						offsetY: 14,
-					}
-				},
-			],
-		};
-	},
 
 	objectDescriptionButton: () => {
 		const controls = '#page.isFull .editorControls';

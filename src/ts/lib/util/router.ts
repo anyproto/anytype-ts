@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus } from 'Lib';
+import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Action, keyboard } from 'Lib';
 
 interface RouteParam {
 	page: string; 
@@ -51,6 +51,7 @@ class UtilRouter {
 				i++;
 			};
 		};
+
 		return param;
 	};
 
@@ -109,32 +110,18 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
+		sidebar.rightPanelClose(false, false);
+
 		focus.clear(true);
 
-		if (routeParam.spaceId && ![ space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && (routeParam.spaceId != space)) {
 			this.switchSpace(routeParam.spaceId, route, false, param, false);
 			return;
 		};
 
 		const change = () => {
 			this.history.push(route); 
-			this.checkSidebarState();
-
-			if (onRouteChange) {
-				onRouteChange();
-			};
-		};
-
-		const fadeOut = () => {
-			if (onFadeOut) {
-				onFadeOut();
-			};
-		};
-
-		const fadeIn = () => {
-			if (onFadeIn) {
-				onFadeIn();
-			};
+			onRouteChange?.();
 		};
 
 		const onTimeout = () => {
@@ -146,9 +133,9 @@ class UtilRouter {
 			};
 
 			if (!animate) {
-				fadeOut();
+				onFadeOut?.();
 				change();
-				fadeIn();
+				onFadeIn?.();
 				return;
 			};
 
@@ -161,12 +148,12 @@ class UtilRouter {
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
-				fadeOut();
+				onFadeOut?.();
 				change();
 			}, t);
 
 			window.setTimeout(() => {
-				fadeIn();
+				onFadeIn?.();
 				fade.removeClass('show');
 				window.setTimeout(() => fade.hide(), t);
 			}, wait + t);
@@ -243,18 +230,13 @@ class UtilRouter {
 					S.Common.nullifySpaceKeys();
 
 					U.Data.onInfo(message.info);
+					S.Common.setLeftSidebarState('vault', '');
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam: { ...routeParam, onRouteChange, animate: false } }, () => {
+						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
 							this.isOpening = false;
+							S.Common.setLeftSidebarState('vault', 'widget');
 						});
-					};
-
-					const onRouteChange = () => {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-
-						this.checkSidebarState();
-						routeParam.onRouteChange?.();
 					};
 
 					const startingId = S.Auth.startingId.get(id);
@@ -274,20 +256,6 @@ class UtilRouter {
 				},
 			});
 		});
-	};
-
-	checkSidebarState () {
-		const spaceview = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(false);
-
-		if (!spaceview.isChat && (rightSidebar.page == 'widget')) {
-			sidebar.rightPanelClose(false);
-		} else 
-		if (spaceview.isChat && (rightSidebar.page != 'widget')) {
-			sidebar.rightPanelClose(false);
-		} else {
-			sidebar.rightPanelRestore(false);
-		};
 	};
 
 	/**

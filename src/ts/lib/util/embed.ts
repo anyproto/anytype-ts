@@ -1,7 +1,7 @@
 import { I, U, J } from 'Lib';
 
 const DOMAINS: any = {};
-DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
+DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be', 'youtube-nocookie.com' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
@@ -44,7 +44,7 @@ class UtilEmbed {
 			a.search += '&enablejsapi=1&rel=0';
 			url = a.toString();
 		} catch (e) {};
-		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
+		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
 	};
 
 	/**
@@ -175,23 +175,27 @@ class UtilEmbed {
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
-			const reg = new RegExp(`:\/\/([^.]*.)?(${DOMAINS[i].join('|')})`, 'gi');
+			const domains = DOMAINS[i].map(U.Common.regexEscape);
+			const reg = new RegExp(`:\/\/([^.]*.)?(${domains.join('|')})`, 'gi');
 
-			if (url.match(reg)) {
-				p = Number(i);
-
-				// Restrict youtube channel links
-				if ((p == I.EmbedProcessor.Youtube)) {
-					try {
-						const info = new URL(url);
-
-						if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
-							p = null;
-						};
-					} catch (e) { p = null; };
-				};
-				break;
+			if (!url.match(reg)) {
+				continue;
 			};
+
+			p = Number(i);
+
+			// Restrict youtube channel links
+			if ((p == I.EmbedProcessor.Youtube)) {
+				try {
+					const info = new URL(url);
+
+					if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
+						p = null;
+					};
+				} catch (e) { p = null; };
+			};
+			break;
+		
 		};
 		return p;
 	};
@@ -206,7 +210,7 @@ class UtilEmbed {
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
-				url = `https://www.youtube.com/embed/${this.getYoutubePath(url)}`;
+				url = `https://www.youtube-nocookie.com/embed/${this.getYoutubePath(url)}`;
 				break;
 			};
 
@@ -536,6 +540,12 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Spotify,
+		].includes(p);
+	};
+
+	allowEmptyContent (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Excalidraw,
 		].includes(p);
 	};
 

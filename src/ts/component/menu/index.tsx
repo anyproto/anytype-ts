@@ -12,7 +12,6 @@ import MenuPublish from './publish';
 import MenuTableOfContents from './tableOfContents';
 
 import MenuSelect from './select';
-import MenuButton from './button';
 
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
@@ -81,6 +80,7 @@ import MenuSyncStatusInfo from './syncStatus/info';
 import MenuIdentity from './identity';
 
 import MenuChatText from './chat/text';
+import MenuChatCreate from './chat/create';
 
 interface State {
 	tab: string;
@@ -88,6 +88,8 @@ interface State {
 
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
+
+const isMac = U.Common.isPlatformMac();
 
 const Components: any = {
 
@@ -98,7 +100,6 @@ const Components: any = {
 	tableOfContents:		 MenuTableOfContents,
 
 	select:					 MenuSelect,
-	button:					 MenuButton,
 
 	smile:					 MenuSmile,
 	smileSkin:				 MenuSmileSkin,
@@ -167,11 +168,11 @@ const Components: any = {
 	identity:				 MenuIdentity,
 
 	chatText: 				 MenuChatText,
+	chatCreate: 			 MenuChatCreate,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
 	node: any = null;
 	timeoutPoly = 0;
 	ref = null;
@@ -320,7 +321,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { id, param } = this.props;
 		const { initialTab, onOpen, noAutoHover } = param;
 
-		this._isMounted = true;
 		this.poly = $('#menu-polygon');
 
 		this.setClass();
@@ -372,7 +372,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { isSub } = param;
 		const el = this.getElement();
 
-		this._isMounted = false;
 		this.unbind();
 
 		if (el && el.length) {
@@ -410,10 +409,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	setClass () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { param } = this.props;
 		const { classNameWrap } = param;
 		const node = $(this.node);
@@ -454,10 +449,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.isAnimating = true;
 
 			raf(() => {
-				if (!this._isMounted) {
-					return;
-				};
-				
 				menu.addClass('show');
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
@@ -481,17 +472,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	position () {
 		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, noBorder } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow, stickToElementEdge, noBorderX, noBorderY } = param;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
 		};
 
 		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			const node = $(this.node);
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
@@ -603,10 +590,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					break;
 			};
 
-			if (!noBorder) {
+			if (!noBorderX) {
 				x = Math.max(borderLeft, x);
 				x = Math.min(ww - width - J.Size.menuBorder, x);
+			};
 
+			if (!noBorderY) {
 				y = Math.max(borderTop, y);
 				y = Math.min(wh - height - borderBottom, y);
 			};
@@ -728,10 +717,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	close (callBack?: () => void) {
 		S.Menu.close(this.props.id, () => {
 			window.setTimeout(() => this.rebindPrevious(), S.Menu.getTimeout());
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -780,19 +766,21 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { commonFilter, data } = param;
 		const { preventFilter } = data;
-		const refInput = this.ref.refFilter || this.ref.refName;
+		const inputRef = this.getInputRef();
 		const shortcutClose = [ 'escape' ];
 		const shortcutSelect = [ 'tab', 'enter' ];
-		
+		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
+		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
+			
 		let index = this.getIndex();
 		let ret = false;
 
-		if (refInput) {
-			if (refInput.isFocused && (index < 0)) {
+		if (inputRef) {
+			if (inputRef.isFocused() && (index < 0)) {
 				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
-				keyboard.shortcut('arrowdown', e, () => {
-					refInput.blur();
+				keyboard.shortcut(shortcutNext, e, () => {
+					inputRef.blur();
 
 					this.setIndex(0);
 					this.setActive(null, true);
@@ -813,7 +801,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					});
 				};
 
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut(shortcutPrev, e, () => {
 					if (!this.ref.getItems) {
 						return;
 					};
@@ -821,13 +809,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					this.setIndex(this.ref.getItems().length - 1);
 					this.setActive(null, true);
 
-					refInput.blur();
+					inputRef?.blur();
 					ret = true;
 				});
 			} else {
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut(shortcutPrev, e, () => {
 					if (index < 0) {
-						refInput.focus();
+						inputRef?.focus();
 
 						this.setIndex(-1);
 						this.setActive(null, true);
@@ -866,9 +854,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			index += dir;
 
 			if (index < 0) {
-				if ((index == -1) && refInput) {
+				if ((index == -1) && inputRef) {
 					index = -1;
-					refInput.focus();
+					inputRef.focus();
 				} else {
 					index = l - 1;
 				};
@@ -897,12 +885,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 		};
 
-		keyboard.shortcut('arrowup', e, () => {
+		keyboard.shortcut(shortcutPrev, e, () => {
 			e.preventDefault();
 			onArrow(-1);
 		});
 
-		keyboard.shortcut('arrowdown', e, () => {
+		keyboard.shortcut(shortcutNext, e, () => {
 			e.preventDefault();
 			onArrow(1);
 		});
@@ -923,7 +911,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			});
 		};
 
-		if (!keyboard.isFocused && (!refInput || (refInput && !refInput.isFocused))) {
+		if (!keyboard.isFocused && (!inputRef || (inputRef && !inputRef.isFocused()))) {
 			if (this.ref && this.ref.onRemove) {
 				keyboard.shortcut('backspace', e, () => {
 					e.preventDefault();
@@ -943,6 +931,31 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				});
 			};
 		};
+	};
+
+	getInputRef () {
+		if (!this.ref) {
+			return null;
+		};
+		if (this.ref.getFilterRef) {
+			return this.ref.getFilterRef();
+		};
+		return this.ref.refFilter || this.ref.refName;
+	};
+
+	getListRef () {
+		if (!this.ref) {
+			return null;
+		};
+
+		if (this.ref.refList) {
+			return this.ref.refList;
+		} else 
+		if (this.ref.getListRef) {
+			return this.ref.getListRef();
+		};
+
+		return null;
 	};
 
 	onSortMove (dir: number) {
@@ -970,24 +983,17 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const refInput = this.ref.refFilter || this.ref.refName;
+		const inputRef = this.getInputRef();	
+		const listRef = this.getListRef();
 
 		let index = this.getIndex();
-		if ((index < 0) && refInput) {
-			refInput.focus();
+		if ((index < 0) && inputRef) {
+			inputRef.focus();
 		};
 
 		const items = this.ref.getItems();
 		if (item && (undefined !== item.id)) {
 			index = items.findIndex(it => it.id == item.id);
-		};
-
-		let listRef = null;
-		if (this.ref.refList) {
-			listRef = this.ref.refList;
-		} else 
-		if (this.ref.getListRef) {
-			listRef = this.ref.getListRef();
 		};
 
 		if (scroll) {
@@ -1019,10 +1025,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 	
 	setHover (item?: any, scroll?: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const node = $(this.node);
 		const menu = node.find('.menu');
 		

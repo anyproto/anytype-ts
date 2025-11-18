@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
@@ -33,16 +33,13 @@ import PageSpaceIndex from './space/index';
 import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
+import PageSpaceNotifications from './space/notifications';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
 import PageMainArchive from '../archive';
 
 import PageMembership from './membership';
-
-interface State {
-	loading: boolean;
-};
 
 const Components: any = {
 	index: 				 PageAccount,
@@ -77,6 +74,7 @@ const Components: any = {
 	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
+	spaceNotifications:	 PageSpaceNotifications,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
@@ -84,7 +82,7 @@ const Components: any = {
 };
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare',
+	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
@@ -92,132 +90,72 @@ const SPACE_PAGES = [
 
 const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
-const PageMainSettings = observer(class PageMainSettings extends React.Component<I.PageComponent, State> {
+const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	ref: any = null;
-	onConfirmPin: any = null;
+	const param = U.Router.getParam(U.Router.getRoute());
+	const id = param.id || 'account';
+	const pageId = U.Common.toCamelCase(`pageSettings-${id}`);
+	const confirmPinRef = useRef<any>(null);
+	const childRef = useRef(null);
+	const [ dummy, setDummy ] = useState(0);
 
-	state = {
-		loading: false,
+	if (!Components[id]) {
+		return null;
 	};
 
-	constructor (props: I.PageComponent) {
-		super(props);
+	const Component = Components[id];
 
-		this.getId = this.getId.bind(this);
-		this.isSpace = this.isSpace.bind(this);
-		this.onExport = this.onExport.bind(this);
-		this.setConfirmPin = this.setConfirmPin.bind(this);
-		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
-		this.setLoading = this.setLoading.bind(this);
-		this.storageGet = this.storageGet.bind(this);
-		this.storageSet = this.storageSet.bind(this);
-	};
-
-	render () {
-		const param = U.Router.getParam(U.Router.getRoute());
-		const id = param.id || 'account';
-
-		if (!Components[id]) {
-			return null;
-		};
-
-		const Component = Components[id];
-
-		let content = (
-			<div id={this.getId()} className={[ 'settingsPage', this.getId() ].join(' ')} >
-				<Component
-					ref={ref => this.ref = ref}
-					{...this.props}
-					getId={this.getId}
-					onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
-					onExport={this.onExport}
-					onConfirmPin={this.onConfirmPin}
-					setConfirmPin={this.setConfirmPin}
-					setLoading={this.setLoading}
-					onSpaceTypeTooltip={this.onSpaceTypeTooltip}
-					storageGet={this.storageGet}
-					storageSet={this.storageSet}
-				/>
-			</div>
-		);
-
-		if (!SKIP_CONTAINER.includes(id)) {
-			content = (
-				<>
-					<Header {...this.props} component="mainSettings" />
-					<div className="settingsPageContainer" id="settingsPageContainer">
-						{content}
-					</div>
-					<Footer component="mainObject" {...this.props} />
-				</>
-			);
-		};
-
-		return content;
-	};
-
-	componentDidMount () {
-		this.init();
-	};
-
-	componentDidUpdate () {
-		this.init();
-	};
-
-	init () {
-		const { isPopup } = this.props;
-
-		sidebar.rightPanelClose(isPopup);
-
-		if (!this.isSpace()) {
-			sidebar.leftPanelSetState({ page: 'settings' });
-			return;
-		};
-
-		if (!U.Space.canMyParticipantWrite()) {
-			return;
-		};
-
-		const { id } = U.Router.getParam(U.Router.getRoute());
-
+	const init = () => {
 		let page = '';
-		switch (id) {
-			case 'spaceIndexEmpty': {
-				page = U.Space.getDefaultSidebarPage();
-				break;
+
+		if (!SPACE_PAGES.includes(id)) {
+			page = 'settings';
+		} else {
+			if (!U.Space.canMyParticipantWrite()) {
+				return;
 			};
 
-			case 'set': {
-				page = 'settings/types';
-				break;
-			};
+			const { id } = U.Router.getParam(U.Router.getRoute());
 
-			case 'relation': {
-				page = 'settings/relations';
-				break;
-			};
+			switch (id) {
+				case 'spaceIndexEmpty': {
+					page = 'widget';
+					break;
+				};
 
-			default: {
-				page = 'settings/space';
-				break;
+				case 'set': {
+					page = 'settings/types';
+					break;
+				};
+
+				case 'relation': {
+					page = 'settings/relations';
+					break;
+				};
+
+				default: {
+					page = 'settings/space';
+					break;
+				};
 			};
 		};
 
-		sidebar.leftPanelSetState({ page });
+		if (page) {
+			sidebar.leftPanelSubPageOpen(page, false);
+		};
 	};
 
-	onExport (type: I.ExportType, param: any) {
-		analytics.event('ClickExport', { type, route: analytics.route.settings });
+	const onExport = (type: I.ExportType, param: any) => {
 		Action.export(S.Common.space, [], type, { ...param, route: analytics.route.settings });
+		analytics.event('ClickExport', { type, route: analytics.route.settings });
 	};
 
-	setConfirmPin (v: () => void) {
-		this.onConfirmPin = v;
-		this.forceUpdate();
+	const setConfirmPin = (v: () => void) => {
+		confirmPinRef.current = v;
+		setDummy(dummy + 1);
 	};
 
-	onSpaceTypeTooltip (e) {
+	const onSpaceTypeTooltip = (e) => {
 		Preview.tooltipShow({
 			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
 			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
@@ -228,40 +166,39 @@ const PageMainSettings = observer(class PageMainSettings extends React.Component
 		});
 	};
 
-	setLoading (v: boolean) {
-		this.setState({ loading: v });
+	let content = (
+		<div id={pageId} className={[ 'settingsPage', pageId ].join(' ')} >
+			<Component
+				ref={childRef}
+				{...props}
+				getId={() => pageId}
+				onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
+				onExport={onExport}
+				onConfirmPin={confirmPinRef.current}
+				setConfirmPin={setConfirmPin}
+				onSpaceTypeTooltip={onSpaceTypeTooltip}
+				storageGet={() => Storage.get(pageId) || {}}
+				storageSet={data => Storage.set(pageId, data)}
+			/>
+		</div>
+	);
+
+	if (!SKIP_CONTAINER.includes(id)) {
+		content = (
+			<>
+				<Header {...props} component="mainSettings" />
+				<div className="settingsPageContainer" id="settingsPageContainer">
+					{content}
+				</div>
+				<Footer component="mainObject" {...props} />
+			</>
+		);
 	};
 
-	storageGet () {
-		return Storage.get(this.getId()) || {};
-	};
+	useEffect(() => init(), [ id ]);
 
-	storageSet (data: any) {
-		Storage.set(this.getId(), data);
-	};
+	return content;
 
-	getId () {
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
-		const id = param.id || 'account';
+}));
 
-		return U.Common.toCamelCase(`pageSettings-${id}`);
-	};
-
-	isSpace () {
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
-		const id = param.id || 'account';
-
-		return SPACE_PAGES.includes(id);
-	};
-
-	resize () {
-		if (this.ref && this.ref.resize) {
-			this.ref.resize();
-		};
-	};
-
-});
-
-export default PageMainSettings;
+export default PageMainSettingsIndex;

@@ -1,62 +1,62 @@
 export enum SpaceStatus {
-	Unknown					 = 0,
-	Loading					 = 1,
-	Ok						 = 2,
-	Missing					 = 3,
-	Error					 = 4,
-	RemoteWaitingDeletion	 = 5,
-	RemoteDeleted			 = 6,
-	Deleted					 = 7,
-	Active					 = 8,
-	Joining					 = 9,
-	Removing				 = 10,
+	Unknown = 0,
+	Loading = 1,
+	Ok = 2,
+	Missing = 3,
+	Error = 4,
+	RemoteWaitingDeletion = 5,
+	RemoteDeleted = 6,
+	Deleted = 7,
+	Active = 8,
+	Joining = 9,
+	Removing = 10,
 };
 
 export enum SpaceType {
-	Private					 = 0,
-	Personal				 = 1,
-	Shared					 = 2,
+	Private = 0,
+	Personal = 1,
+	Shared = 2,
 };
 
 export enum SpaceUxType {
 	None = 0,
-	Space = 1,
+	Data = 1,
 	Stream = 2,
 	Chat = 3,
 	OneToOne = 4,
 };
 
 export enum ParticipantPermissions {
-	Reader					 = 0,
-	Writer					 = 1,
-	Owner					 = 2,
-	None					 = 3,
+	Reader = 0,
+	Writer = 1,
+	Owner = 2,
+	None = 3,
 };
 
 export enum ParticipantStatus {
-	Joining					 = 0,
-	Active					 = 1,
-	Removed					 = 2,
-	Declined				 = 3,
-	Removing				 = 4,
-	Canceled				 = 5,
+	Joining = 0,
+	Active = 1,
+	Removed = 2,
+	Declined = 3,
+	Removing = 4,
+	Canceled = 5,
 };
 
 export enum InviteType {
-	WithApprove 			 = 0,
-	Guest 					 = 1,
-	WithoutApprove 			 = 2,
+	WithApprove = 0,
+	Guest = 1,
+	WithoutApprove = 2,
 };
 
 export enum InviteLinkType {
-	None 					 = 0,
-	Editor 					 = 1,
-	Viewer 					 = 2,
-	Manual 					 = 3,
+	None = 0,
+	Editor = 1,
+	Viewer = 2,
+	Manual = 3,
 };
 
 export enum NotificationMode {
-	All						 = 0,
-	Mentions				 = 1,
-	Nothing					 = 2,
+	All = 0,
+	Mentions = 1,
+	Nothing = 2,
 };

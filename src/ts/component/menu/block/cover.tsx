@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
+import { image } from 'd3';
 
 enum Tab {
 	Gallery	 = 0,
@@ -20,7 +21,6 @@ const LIMIT = 36;
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
 
-	_isMounted = false;
 	node: any = null;
 	state = {
 		filter: '',
@@ -150,7 +150,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
 		this.load();
 		this.rebind();
 
@@ -167,7 +166,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	componentWillUnmount () {
-		this._isMounted = false;
 		this.unbind();
 
 		keyboard.disablePaste(false);
@@ -219,6 +217,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
+					{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Cover },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -274,7 +273,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -346,7 +345,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -357,7 +356,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -368,7 +367,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !U.File.checkDropFiles(e)) {
+		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -384,7 +383,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		keyboard.disableCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover,(message: any) => {
 			this.setState({ isLoading: false });
 			keyboard.disableCommonDrop(false);
 			
@@ -414,7 +413,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', (message: any) => {
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 				if (!message.error.code) {
 					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};

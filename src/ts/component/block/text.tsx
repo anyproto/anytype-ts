@@ -80,7 +80,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Subscriptions
 		for (const mark of marks) {
-			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
+			if ([ I.MarkType.Mention ].includes(mark.type)) {
 				const object = S.Detail.get(rootId, mark.param, []);
 			};
 		};
@@ -249,6 +249,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	componentWillUnmount(): void {
+		const { block } = this.props;
+		const { focused } = focus.state;
+
 		S.Common.clearTimeout('blockContext');
 		window.clearTimeout(this.timeoutFilter);
 		window.clearTimeout(this.timeoutClick);
@@ -256,6 +259,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (this.frame) {
 			raf.cancel(this.frame);
 			this.frame = 0;
+		};
+
+		if (focused == block.id) {
+			focus.clear(true);
 		};
 	};
 
@@ -426,9 +433,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+/` },
 		];
-		const twinePairs = {
+		const twinPairs = {
 			'{': '}',
 			'(': ')',
+			'[': ']',
 			'`':'`',
 			'\'':'\'',
 			'\"':'\"',
@@ -597,26 +605,41 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
-		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
-			e.preventDefault();
+		if (
+			range && 
+			(
+				(range.from != range.to) || 
+				block.isTextCode()
+			) && 
+			Object.keys(twinPairs).includes(key)
+		) {
+			const count = value.split(key).length - 1;
+			const skipTwinPairs = [ '$' ].includes(key) && block.isTextCode();
 
-			if ((key == '`') && !block.isTextCode()) {
-				this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
-			} else {
-				const length = key.length;
-				const cut = value.slice(range.from, range.to);
-				const closing = twinePairs[key] || key;
+			if ((count % 2 === 0) && !skipTwinPairs) {
+				e.preventDefault();
 
-				value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
-				this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+				let length = 0;
+
+				if ((key == '`') && !block.isTextCode()) {
+					this.marks.push({ type: I.MarkType.Code, range: { from: range.from, to: range.to } });
+				} else {
+					length = key.length;
+
+					const cut = value.slice(range.from, range.to);
+					const closing = twinPairs[key] || key;
+
+					value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+					this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
+				};
+
+				this.setValue(value);
+
+				focus.set(block.id, { from: range.from + length, to: range.to + length });
+				focus.apply();
+
+				ret = true;
 			};
-
-			this.setValue(value);
-
-			focus.set(block.id, { from: range.from + length, to: range.to + length });
-			focus.apply();
-
-			ret = true;
 		};
 
 		if (ret) {
@@ -887,6 +910,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					marks: this.marks,
 					skipIds: [ rootId ],
 					canAdd: true,
+					withCaption: true,
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						if (S.Menu.isAnimating('blockMention')) {
 							return;
@@ -963,9 +987,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		if ((this.text === value) && !update) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -1193,13 +1215,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onMouseDown (e: any) {
-		const { block } = this.props;
-		const selection = S.Common.getRef('selectionProvider');
-
-		if (!selection) {
-			return;
-		};
-
 		window.clearTimeout(this.timeoutClick);
 
 		this.clicks++;
@@ -1209,12 +1224,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			S.Menu.closeAll([ 'blockContext' ], () => {
 				this.clicks = 0;
-				//this.refEditable?.setRange({ from: 0, to: block.getLength() });
+
+				const { block } = this.props;
 
 				focus.set(block.id, { from: 0, to: block.getLength() });
 				focus.apply();
-
-				//this.onSelect();
 			});
 		};
 	};

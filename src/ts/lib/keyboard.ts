@@ -106,17 +106,18 @@ class Keyboard {
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
+		const isPopup = this.isPopup();
 
 		// Mouse back
 		if ((e.buttons & 8) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onBack();
+			this.onBack(isPopup);
 		};
 
 		// Mouse forward
 		if ((e.buttons & 16) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onForward();
+			this.onForward(isPopup);
 		};
 
 		// Remove isFocusable from focused block
@@ -157,38 +158,41 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		const showWidget = !isPopup && space.isChat;
+		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
 
-			sidebar.toggleOpenClose();
+			sidebar.leftPanelToggle();
 		});
 
 		if (this.isMainEditor()) {
 			this.shortcut('tableOfContents', e, () => {
 				e.preventDefault();
 
-				sidebar.rightPanelToggle(true, isPopup, 'object/tableOfContents', { rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'object/tableOfContents', rootId });
 			});
 		};
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut('back', e, () => this.onBack());
-			this.shortcut('forward', e, () => this.onForward());
+			this.shortcut('back', e, () => this.onBack(isPopup));
+			this.shortcut('forward', e, () => this.onForward(isPopup));
 		};
 
 		// Close popups and menus
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (rightSidebar.isOpen) {
-				sidebar.rightPanelToggle(true, isPopup, rightSidebar.page);
+			if (!data.isClosed) {
+				sidebar.rightPanelClose(isPopup, true);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -213,9 +217,12 @@ class Keyboard {
 					};
 				};
 			} else 
-			if (this.isMainSettings() && !this.isFocused) {
-				sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-				U.Space.openDashboard({ replace: false });
+			if (!this.isFocused) {
+				if (this.isMainSettings) {
+					U.Space.openDashboard({ replace: false });
+				} else {
+					this.onBack(isPopup);
+				};
 			};
 			
 			Preview.previewHide(false);
@@ -290,7 +297,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-sidebar-select-type').trigger('click');
+				$('#button-create-arrow').trigger('click');
 			});
 
 			// Lock the app
@@ -341,13 +348,10 @@ class Keyboard {
 				S.Popup.open('logout', {});
 			});
 
-			// Chat widget panel
-			if (showWidget) {
-				this.shortcut('chatPanel', e, () => {
-					sidebar.rightPanelToggle(true, isPopup, 'widget', { rootId });
-					analytics.event('ScreenChatSidebar');
-				});
-			};
+			// Widget panel
+			this.shortcut('widget', e, () => {
+				sidebar.leftPanelSubPageToggle('widget');
+			});
 
 			if (canWrite) {
 				// Create new page
@@ -358,13 +362,11 @@ class Keyboard {
 					});
 				};
 
-				// Create new widget
-				this.shortcut('createWidget', e, () => {
+				// Pin/Unpin
+				this.shortcut('pin', e, () => {
 					e.preventDefault();
 
-					const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
-
-					Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, analytics.route.header);
 				});
 
 				// Lock/Unlock
@@ -399,14 +401,13 @@ class Keyboard {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
 					} else {
 						U.Space.openDashboard({ replace: false });
-						sidebar.panelSetState(isPopup, I.SidebarDirection.Left, { page: U.Space.getDefaultSidebarPage(item.id) });
 					};
 				});
 			};
 
 
 			keyboard.shortcut('createSpace', e, () => {
-				const element = `#sidebarRightButton`;
+				const element = `#button-create-space`;
 
 				let rect = null;
 				let horizontal = I.MenuDirection.Left;
@@ -463,10 +464,7 @@ class Keyboard {
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -480,11 +478,8 @@ class Keyboard {
 	/**
 	 * Handles back navigation.
 	 */
-	onBack () {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-
-		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack()) {
+	onBack (isPopup: boolean) {
+		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack(isPopup)) {
 			return;
 		};
 
@@ -497,6 +492,7 @@ class Keyboard {
 				});
 			};
 		} else {
+			const { account } = S.Auth;
 			const history = U.Router.history;
 			const current = U.Router.getParam(history.location.pathname);
 			const prev = history.entries[history.index - 1];
@@ -524,35 +520,25 @@ class Keyboard {
 					return;
 				};
 
-				if ((route.page == 'main') && (route.action != 'settings') && (current.page == 'main') && (current.action == 'settings')) {
-					const state = sidebar.leftPanelGetState();
-					if (![ 'object', 'widget' ].includes(state.page)) {
-						sidebar.leftPanelSetState({ page: U.Space.getDefaultSidebarPage() });
-					};
-				};
-
 				if ((current.page == 'main') && (current.action == 'settings') && ([ 'index', 'account', 'spaceIndex', 'spaceShare' ].includes(current.id))) {
 					U.Space.openDashboard({ replace: false });
 				} else {
 					history.goBack();
 				};
-
-				U.Router.checkSidebarState();
 			};
 		};
 
 		S.Menu.closeAll();
 		this.restoreSource();
+		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryBack');
 	};
 
 	/**
 	 * Handles forward navigation.
 	 */
-	onForward () {
-		const isPopup = this.isPopup();
-
-		if (!this.checkForward()) {
+	onForward (isPopup: boolean) {
+		if (!this.checkForward(isPopup)) {
 			return;
 		};
 
@@ -565,6 +551,7 @@ class Keyboard {
 		};
 
 		S.Menu.closeAll();
+		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryForward');
 	};
 
@@ -572,32 +559,32 @@ class Keyboard {
 	 * Checks if back navigation is possible.
 	 * @returns {boolean} True if back is possible.
 	 */
-	checkBack (): boolean {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
+	checkBack (isPopup: boolean): boolean {
+		if (isPopup) {
+			return true;
 		};
 
-		if (!isPopup) {
-			const prev = history.entries[history.index - 1];
+		const history = U.Router.history;
+		if (!history) {
+			return false;
+		};
 
-			if (account && !prev) {
+		const { account } = S.Auth;
+		const prev = history.entries[history.index - 1];
+
+		if (account && !prev) {
+			return false;
+		};
+
+		if (prev) {
+			const route = U.Router.getParam(prev.pathname);
+
+			if ([ 'index', 'auth' ].includes(route.page) && account) {
 				return false;
 			};
 
-			if (prev) {
-				const route = U.Router.getParam(prev.pathname);
-
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return false;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return false;
-				};
+			if ((route.page == 'main') && !account) {
+				return false;
 			};
 		};
 
@@ -608,18 +595,16 @@ class Keyboard {
 	 * Checks if forward navigation is possible.
 	 * @returns {boolean} True if forward is possible.
 	 */
-	checkForward (): boolean {
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
-		};
-
+	checkForward (isPopup: boolean): boolean {
 		let ret = true;
 		if (isPopup) {
 			ret = historyPopup.checkForward();
 		} else {
+			const history = U.Router.history;
+			if (!history) {
+				return false;
+			};
+
 			ret = history.index + 1 <= history.entries.length - 1;
 		};
 		return ret;
@@ -641,6 +626,7 @@ class Keyboard {
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 		const canUndo = !this.isFocused && this.isMainEditor();
+		const isPopup = this.isPopup();
 
 		switch (cmd) {
 			case 'search': {
@@ -702,7 +688,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Space, route);
+				Action.createSpace(I.SpaceUxType.Data, route);
 				break;
 			};
 
@@ -891,6 +877,7 @@ class Keyboard {
 							title: translate('commonWarning'),
 							text: translate('popupConfirmReleaseChannelText'),
 							onConfirm: () => cb(),
+							onCancel: () => Renderer.send('initMenu')
 						},
 					});
 				};
@@ -902,6 +889,24 @@ class Keyboard {
 				break;
 			};
 
+			case 'mouseNavigation': {
+				if (!arg || this.isNavigationDisabled) {
+					break;
+				};
+
+				switch (arg) {
+					case 'left': {
+						this.onBack(isPopup);
+						break;
+					};
+
+					case 'right': {
+						this.onForward(isPopup);
+						break;
+					};
+				};
+				break;
+			};
 		};
 	};
 
@@ -997,9 +1002,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 		analytics.event('Undo', { route });
 	};
@@ -1023,9 +1026,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 
 		analytics.event('Redo', { route });
@@ -1259,8 +1260,8 @@ class Keyboard {
 	 * @returns {any} The match object.
 	 */
 	getPopupMatch () {
-		const popup = S.Popup.get('page');
-		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
+		const popup = U.Common.objectCopy(S.Popup.get('page'));
+		const match: any = popup ? { ...popup?.param?.data?.matchPopup } : {};
 
 		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
 

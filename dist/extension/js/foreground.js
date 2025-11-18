@@ -1,7 +1,6 @@
 (() => {
 
-	const extensionIds = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf' ];
-	const allowedOrigins = extensionIds.map(id => `chrome-extension://${id}`);
+	const allowedOrigins = [ new URL(chrome.runtime.getURL('/')).origin ];
 	const body = document.querySelector('body');
 	const container = document.createElement('div');
 	const dimmer = document.createElement('div');
@@ -24,18 +23,40 @@
 	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-		if (!extensionIds.includes(sender.id)) {
+		if (sender.id !== chrome.runtime.id) {
 			return false;
 		};
 
 		switch (msg.type) {
-			case 'clickMenu':
+			case 'getSelectionHTML': {
+				let html = '';
+				const sel = window.getSelection();
+				if (sel && sel.rangeCount) {
+					const container = document.createElement('div');
+					for (let i = 0, len = sel.rangeCount; i < len; ++i) {
+						container.appendChild(sel.getRangeAt(i).cloneContents());
+					};
+					html = container.innerHTML;
+				};
+
+				// Avoid sending an empty html back to the background script
+				if (!html) {
+					return false;
+				};
+
+				sendResponse(html);
+				return true;
+			};
+
+			case 'clickMenu': {
 				container.style.display = 'block';
 				break;
+			};
 
-			case 'hide':
+			case 'hide': {
 				container.style.display = 'none';
 				break;
+			};
 		};
 		
 		sendResponse({});

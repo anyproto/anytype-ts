@@ -4,7 +4,6 @@ const { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog 
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const storage = require('electron-json-storage');
-const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
@@ -48,6 +47,8 @@ for (let i in Cors) {
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.commandLine.appendSwitch('gtk-version', '3');
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
+
 app.removeAsDefaultProtocolClient(protocol);
 
 if (process.defaultApp) {
@@ -98,12 +99,6 @@ ipcMain.on('storeSet', (e, key, value) => {
 ipcMain.on('storeDelete', (e, key) => {
 	e.returnValue = store.delete(key);
 });
-
-if (is.development && !port) {
-	console.error('ERROR: Please define SERVER_PORT env var');
-	Api.exit(mainWindow, '', false);
-	return;
-};
 
 if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '' ,false);

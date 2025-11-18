@@ -34,9 +34,7 @@ class ConfigManager {
 				console.error(error);
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -48,9 +46,7 @@ class ConfigManager {
 		console.log('[ConfigManager].set:', this.config);
 
 		storage.set(CONFIG_NAME, this.config, (error) => {
-			if (callBack) {
-				callBack(error);
-			};
+			callBack?.(error);
 		});
 	};
 

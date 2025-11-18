@@ -80,7 +80,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const focus = () => {
-		inputRef.current.focus();
+		inputRef.current?.focus();
 	};
 
 	const blur = () => {
@@ -121,8 +121,8 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		inputRef.current.setValue('');
-		inputRef.current.focus();
+		inputRef.current?.setValue('');
+		inputRef.current?.focus();
 		
 		onChangeHandler(e, '');
 		if (onClear) {

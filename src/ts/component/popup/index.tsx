@@ -196,7 +196,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	if (id == 'aiOnboarding') {
 		dimmer = <DimmerWithGraph onClick={onDimmer} />;
 	} else {
-		dimmer = <Dimmer onClick={onDimmer} />;
+		dimmer = <Dimmer onMouseDown={onDimmer} />;
 	};
 
 	return (

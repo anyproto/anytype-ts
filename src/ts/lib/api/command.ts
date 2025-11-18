@@ -316,7 +316,7 @@ export const FileDrop = (contextId: string, targetId: string, position: I.BlockP
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, callBack?: (message: any) => void) => {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, details: any, preloadOnly: boolean, preloadFileId: string, imageKind: I.ImageKind, callBack?: (message: any) => void) => {
 	if (!url && !path && !preloadFileId) {
 		return;
 	};
@@ -330,6 +330,7 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	request.setDetails(Encode.struct(details));
 	request.setPreloadfileid(preloadFileId);
 	request.setPreloadonly(preloadOnly);
+	request.setImagekind(imageKind as number);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -1238,11 +1239,6 @@ export const BlockDataviewSetSource = (contextId: string, blockId: string, sourc
 
 export const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
-	const target = block.content.targetBlockId;
-
-	if (!block.id && [ J.Constant.widgetId.bin, J.Constant.widgetId.chat ].includes(target)) {
-		block.id = target;
-	};
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
@@ -1262,11 +1258,7 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setObjectid(objectId);
 	request.setVersionid(versionId);
 
-	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (callBack) {
-			callBack(message);
-		};
-	});
+	dispatcher.request(HistoryShowVersion.name, request, callBack);
 };
 
 export const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1460,19 +1452,17 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
+
+			// Save last opened object
+			const object = S.Detail.get(objectId, objectId, []);
+
+			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+				Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
+			};
 		};
 
-		// Save last opened object
-		const object = S.Detail.get(objectId, objectId, []);
-
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-			Storage.setLastOpened(S.Common.windowId, { id: object.id, layout: object.layout });
-		};
-
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1485,12 +1475,10 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, traceId, message.objectView);
+			dispatcher.onObjectView(objectId, traceId, message.objectView, false);
 		};
 
-		if (callBack) {
-			callBack(message);
-		};
+		callBack?.(message);
 	});
 };
 
@@ -1740,6 +1728,22 @@ export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I
 	request.setCollectionid(collectionId);
 
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
+};
+
+export const ObjectCrossSpaceSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
+	const request = new Rpc.Object.CrossSpaceSearchSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setKeysList(U.Common.arrayUnique(keys));
+	request.setSourceList(sources);
+	request.setNodepsubscription(noDeps);
+	request.setCollectionid(collectionId);
+
+	dispatcher.request(ObjectCrossSpaceSearchSubscribe.name, request, callBack);
 };
 
 export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
@@ -2511,4 +2515,23 @@ export const PushNotificationSetSpaceMode = (spaceId: string, mode: I.Notificati
 	request.setMode(mode as number);
 
 	dispatcher.request(PushNotificationSetSpaceMode.name, request, callBack);
+};
+
+export const PushNotificationSetForceModeIds = (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.SetForceModeIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);
+	request.setMode(mode as number);
+
+	dispatcher.request(PushNotificationSetForceModeIds.name, request, callBack);
+};
+
+export const PushNotificationResetIds = (spaceId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.PushNotification.ResetIds.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChatidsList(ids);
+
+	dispatcher.request(PushNotificationResetIds.name, request, callBack);
 };

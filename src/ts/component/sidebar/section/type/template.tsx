@@ -1,13 +1,14 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
 import { I, J, U, S, C, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
 
-const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, object, readonly, onChange } = props;
+	const [ dummy, setDummy ] = useState(0);
 	const subId = [ J.Constant.subId.template, rootId ].join('-');
 	const items = S.Record.getRecords(subId);
 	const templateId = object?.defaultTemplateId;
@@ -121,14 +122,16 @@ const SidebarSectionTypeTemplate = observer(forwardRef<{}, I.SidebarSectionCompo
 			filters,
 			sorts,
 			keys,
-			ignoreHidden: true,
-			ignoreDeleted: true,
 		});
 	};
 
 	useEffect(() => {
 		load();
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<div 

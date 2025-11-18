@@ -5,7 +5,6 @@ html.bodyIndex, html.bodyAuth {
 
 	#vault,
 	#sidebarLeftButton,
-	#sidebarRightButton,
 	#notifications,
 	.sidebar,
 	.sidebarDummy,
@@ -27,6 +26,7 @@ html.bodyIndex, html.bodyAuth {
 		}
 	}
 
+	.pageFlex { padding: 4px; }
 	.pageFlex {
 		> .page { transition: background-color linear 0.2s; }
 	}

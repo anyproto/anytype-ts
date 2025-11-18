@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button } from 'Component';
-import { I, C, S, U, translate } from 'Lib';
+import { I, U, C, translate } from 'Lib';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 	useEffect(() => load(), []);
@@ -53,12 +53,14 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	return object ? (
 		<>
 			<IconObject object={object} size={96} />
-			<ObjectName object={object} />
-			<Label 
-				text={U.Common.shorten(object.resolvedName, 150)} 
+			<div className="nameWrapper">
+				<ObjectName object={object} />
+			</div>
+			<Label
+				text={U.Common.shorten(object.resolvedName, 150)}
 				onClick={() => {
 					U.Common.copyToast(translate('blockFeaturedIdentity'), object.identity);
-				}} 
+				}}
 			/>
 			<ObjectDescription object={object} />
 			<div className="buttonsWrapper">

@@ -116,7 +116,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const load = (clear: boolean, callBack?: (message: any) => void) => {
 		const spaceview = U.Space.getSpaceview();
 		const sorts: I.Sort[] = [
-			{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.Start },
+			{ relationKey: 'orderId', type: I.SortType.Asc, empty: I.EmptyType.End },
 			{ 
 				relationKey: 'uniqueKey', 
 				type: I.SortType.Custom, 
@@ -138,7 +138,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (clear) {
 			offset.current = 0;
-			itemList.current = [];
 		};
 
 		U.Subscription.search({
@@ -149,12 +148,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (clear) {
+				itemList.current = [];
+			};
+
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -323,6 +324,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		forceUpdate: () => setDummy(dummy + 1),
 		onClick: onClickHandler,
 		getData: () => data,
+		getFilterRef: () => filterRef.current,
 		getListRef: () => listRef.current,
 	}), []);
 

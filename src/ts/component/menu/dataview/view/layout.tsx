@@ -162,18 +162,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isCalendar = this.param.type == I.ViewType.Calendar;
 		const clearGroups = isBoard && this.param.groupRelationKey && (view.groupRelationKey != this.param.groupRelationKey);
 
-		if (isCalendar && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = 'lastModifiedDate';
-		};
-
 		if (isBoard || isCalendar) {
 			const groupOptions = Relation.getGroupOptions(rootId, blockId, this.param.type);
 			if (!groupOptions.map(it => it.id).includes(this.param.groupRelationKey)) {
-				if (isCalendar) {
-					this.param.groupRelationKey = 'lastModifiedDate';
-				} else {
-					this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
-				};
+				this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 			};
 		};
 
@@ -362,15 +354,14 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			parentId: id,
 			data: {
 				value: this.param[item.id],
-				noClose: true,
 				onSelect: (e: any, el: any) => {
 					if (el.id == 'addRelation') {
 						this.onAddRelation(item.id);
 					} else {
-						this.param[item.id] = el.id;
+						this.param[item.id] = (el.id == 'none' ? '' : el.id);
 						this.save();
 
-						this.menuContext.close();
+						this.menuContext?.close();
 					};
 				},
 			}
