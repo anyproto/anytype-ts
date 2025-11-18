@@ -475,7 +475,7 @@ class DetailStore {
 
 		// UX type
 		object.uxType = Number(object.uxType || object.spaceUxType) || I.SpaceUxType.Space;
-		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
+		object.isChat = object.spaceUxType == I.SpaceUxType.Chat || object.spaceUxType == I.SpaceUxType.OneToOne;
 		object.isSpace = object.spaceUxType == I.SpaceUxType.Space;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
 

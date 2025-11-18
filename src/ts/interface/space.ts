@@ -19,10 +19,11 @@ export enum SpaceType {
 };
 
 export enum SpaceUxType {
-	None 					 = 0,
-	Space 					 = 1,
-	Stream					 = 2,
-	Chat 					 = 3,
+	None = 0,
+	Space = 1,
+	Stream = 2,
+	Chat = 3,
+	OneToOne = 4,
 };
 
 export enum ParticipantPermissions {
