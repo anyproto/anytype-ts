@@ -38,6 +38,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			return null;
 		};
 
+		const { name, description, video, img } = item;
 		const l = items.length;
 		const withSteps = l > 1;
 		const segments = [];
@@ -83,19 +84,31 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			>
 				{!noClose ? <Icon className="close" onClick={this.onClose} /> : ''}
 
-				{withCounter ? <Label className="counter" text={U.Common.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
-				{category ? <Label className="category" text={category} /> : ''}
-				{item.name ? <Label className="name" text={item.name} /> : ''}
-				{item.description ? <Label className="descr" text={item.description} /> : ''}
-				{item.video ? (
+				<div className="textWrapper">
+					{withCounter ? <Label className="counter" text={U.Common.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
+					{category ? <Label className="category" text={category} /> : ''}
+					{name ? <Label className="name" text={name} /> : ''}
+					{description ? <Label className="descr" text={description} /> : ''}
+				</div>
+
+				{video ? (
 					<video 
 						ref={node => this.video = node} 
-						src={item.video} 
-						onClick={e => this.onVideoClick(e, item.video)} 
+						src={video}
+						onClick={e => this.onVideoClick(e, video)}
 						controls={false} 
 						autoPlay={true} 
 						loop={true} 
 					/>
+				) : ''}
+
+				{img ? (
+					<div className="imgWrapper">
+						<img src={img.src} alt="" />
+						{img.caption ? (
+							<Label text={img.caption} />
+						) : ''}
+					</div>
 				) : ''}
 
 				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>

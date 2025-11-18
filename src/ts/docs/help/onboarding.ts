@@ -27,6 +27,8 @@ const Data = {
 	}),
 
 	common: () => {
+		const theme = S.Common.getThemeClass();
+		const path = theme == 'dark' ? './img/help/onboarding/common/dark/' : './img/help/onboarding/common/';
 		const elements = {
 			vault: '#appContainer #sidebarPageVault #body',
 			channel: '#appContainer #sidebarPageVault #button-create-space',
@@ -45,6 +47,10 @@ const Data = {
 			};
 
 			return $(elements[el]).width() + offset;
+		};
+
+		const getSrc = (el: string) => {
+			return `${path}${el}.png`;
 		};
 
 		return {
@@ -109,6 +115,9 @@ const Data = {
 				{
 					name: translate('onboardingCommonTitleTypes'),
 					description: translate('onboardingCommonTextTypes'),
+					img: {
+						src: getSrc('type'),
+					},
 					param: {
 						element: elements.type,
 						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-type' ],
@@ -118,6 +127,10 @@ const Data = {
 				{
 					name: translate('onboardingCommonTitleProperties'),
 					description: translate('onboardingCommonTextProperties'),
+					img: {
+						src: getSrc('relation'),
+						caption: translate('onboardingCommonTextPropertiesImgCaption'),
+					},
 					param: {
 						element: elements.relation,
 						highlightElements: [ elements.relation ],

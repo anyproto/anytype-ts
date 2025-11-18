@@ -2348,6 +2348,7 @@
 	"onboardingCommonTextTypes": "Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
 	"onboardingCommonTitleProperties": "Link with Properties",
 	"onboardingCommonTextProperties": "Each object has Properties defined by its Type. Some are plain values, others are objects too — relations that link everything in your graph.",
+	"onboardingCommonTextPropertiesImgCaption": "For example, Bauhaus Archive and Marlene Dietrich can be connected by City: Berlin.",
 	"onboardingCommonTitleSettings": "Open Settings to Invite People",
 	"onboardingCommonTextSettings": "Invite members and collaborate together in a private, fully encrypted, offline-first environment.",
 
