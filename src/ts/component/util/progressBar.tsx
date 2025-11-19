@@ -25,6 +25,12 @@ const ProgressBar: FC<Props> = ({
 	complete = false,
 }) => {
 	const total = segments.reduce((res, current) => res += current.percent, 0);
+	const cn = [ 'progressBar' ];
+
+	if (complete) {
+		cn.push('isComplete');
+	};
+
 	const onTooltipShow = (e: MouseEvent, item: Segment) => {
 		const name = U.Common.htmlSpecialChars(item.name);
 		const caption = U.Common.htmlSpecialChars(item.caption);
@@ -57,7 +63,7 @@ const ProgressBar: FC<Props> = ({
 	};
 
 	return (
-		<div className={[ 'progressBar', complete ? 'complete' : '' ].join(' ')}>
+		<div className={cn.join(' ')}>
 			<div className="bar">
 				{segments.map((item, i) => (
 					<Item key={i} {...item} />

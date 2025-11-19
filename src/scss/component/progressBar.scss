@@ -12,7 +12,7 @@
 		.label { @include text-small; padding-top: 8px; color: var(--color-text-secondary); }
 	}
 
-	&.complete {
+	&.isComplete {
 		.bar {
 			.empty { display: none; }
 		}
