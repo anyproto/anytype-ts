@@ -30,7 +30,6 @@ const Data = {
 		return {
 			showDimmer: true,
 			withCounter: true,
-			onComplete: Onboarding.completeChat,
 			param: {
 				noArrow: true,
 				noClose: true,
@@ -68,7 +67,7 @@ const Data = {
 		};
 	},
 
-	common: () => {
+	basics: () => {
 		const theme = S.Common.getThemeClass();
 		const path = theme == 'dark' ? './img/help/onboarding/common/dark/' : './img/help/onboarding/common/';
 		const elements = {
@@ -98,7 +97,6 @@ const Data = {
 		return {
 			showDimmer: true,
 			withCounter: true,
-			onComplete: Onboarding.completeCommon,
 			param: {
 				noArrow: true,
 				noClose: true,
@@ -191,100 +189,6 @@ const Data = {
 						vertical: I.MenuDirection.Bottom,
 						offsetY: -$(elements.widgetSpace).height() - 24,
 						offsetX: getOffset('widgetSpace'),
-					}
-				},
-			]
-		};
-	},
-
-	basicsNew: () => {
-		const theme = S.Common.getThemeClass();
-		const spaceview = U.Space.getSpaceview();
-		const elementHead = spaceview.isChat ? '#sidebarPageWidget .spaceHeader' : '#sidebarPageWidget #widget-space';
-		const isDark = theme == 'dark';
-		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
-
-		return {
-			showDimmer: true,
-			category: translate('onboardingBasicsTitle'),
-			onComplete: Onboarding.completeBasics,
-			param: {
-				noArrow: true,
-				noClose: true,
-				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
-				stickToElementEdge: I.MenuDirection.Top,
-				width: 288,
-				offsetX: -312,
-				highlightElements: [],
-				hiddenElements: [
-					elementHead,
-					'#sidebarPageWidget .section-pin',
-					'#sidebarPageWidget .section-type',
-					'#sidebarPageWidget > .bottom',
-				]
-			},
-			items: [
-				{
-					description: translate('onboardingSpacesText'),
-					param: {
-						element: elementHead,
-					}
-				},
-				{
-					description: translate('onboardingPinnedNewText'),
-					cloneElementClassName: scn,
-					param: {
-						element: '#sidebarPageWidget .section-pin',
-					}
-				},
-				{
-					description: translate('onboardingObjectsNewText'),
-					cloneElementClassName: scn,
-					param: {
-						element: '#sidebarPageWidget .section-type',
-					}
-				},
-			]
-		};
-	},
-
-	basicsOld: () => {
-		const theme = S.Common.getThemeClass();
-		const spaceview = U.Space.getSpaceview();
-		const isDark = theme == 'dark';
-		const scn = isDark ? 'onboardingClonedSectionDark' : 'onboardingClonedSection';
-
-		return {
-			showDimmer: true,
-			category: translate('onboardingBasicsTitle'),
-			onComplete: Onboarding.completeBasics,
-			param: {
-				noArrow: true,
-				noClose: true,
-				horizontal: spaceview.isChat ? I.MenuDirection.Left : I.MenuDirection.Right,
-				stickToElementEdge: I.MenuDirection.Top,
-				width: 288,
-				offsetX: -312,
-				highlightElements: [],
-				hiddenElements: [
-					'#sidebarPageWidget .section-pin',
-					'#sidebarPageWidget .section-type',
-					'#sidebarPageWidget > .bottom',
-				]
-			},
-			items: [
-				{
-					description: translate('onboardingPinnedOldText'),
-					cloneElementClassName: scn,
-					param: {
-						element: '#sidebarPageWidget .section-pin .nameWrap',
-					}
-				},
-				{
-					description: translate('onboardingObjectsOldText'),
-					cloneElementClassName: scn,
-					param: {
-						element: '#sidebarPageWidget .section-type .nameWrap',
 					}
 				},
 			]

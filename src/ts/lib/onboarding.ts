@@ -71,27 +71,18 @@ class Onboarding {
 	};
 
 	startBasics (isPopup: boolean) {
-		if (this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup)) {
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
+		if (!Storage.get('isNewUser')) {
+			return;
+		};
+		if (this.start('basics', isPopup)) {
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), true);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), true);
 			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
 			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
 			S.Common.setLeftSidebarState('vault', 'widget');
 			$(window).trigger('checkWidgetToggles');
 		};
-	};
-
-	completeBasics () {
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
-		$(window).trigger('checkWidgetToggles');
-	};
-
-	completeCommon () {
-		// TODO: add onComplete logic
-	};
-
-	completeChat () {
-		// TODO: add onComplete logic
 	};
 
 	/**
@@ -210,7 +201,7 @@ class Onboarding {
 	};
 
 	isCompletedBasics (): boolean {
-		return this.isCompleted('basicsNew') || this.isCompleted('basicsOld');
+		return this.isCompleted('basics');
 	};
 	
 };
