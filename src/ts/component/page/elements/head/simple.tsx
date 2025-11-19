@@ -188,8 +188,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 				U.Object.setDefaultTemplateId(object.id, newObject.id);
 			};
 
-			analytics.event('CreateTemplate', { objectType: object.type, route: analytics.route.screenType });
-			U.Object.openConfig(object);
+			analytics.event('CreateTemplate', { objectType: newObject.type, route: analytics.route.screenType });
+			U.Object.openConfig(newObject);
 		});
 	};
 

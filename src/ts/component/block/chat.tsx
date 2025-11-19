@@ -906,6 +906,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			if (match.params.messageId) {
 				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
 					if (message.messages.length) {
 						cb1(message.messages[0].orderId);
 					} else {
