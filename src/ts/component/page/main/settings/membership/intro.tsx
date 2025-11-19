@@ -10,8 +10,9 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 	const nodeRef = useRef(null);
 	const [ isAnnual, setIsAnnual ] = useState(true);
-	const intro = S.Membership.products.find(it => it.isIntro);
-	const products = [ intro ].concat(S.Membership.products.filter(it => it.isTopLevel && !it.isHidden));
+	
+	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
+	
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
 	const purchased = data?.getTopPurchasedProduct();
