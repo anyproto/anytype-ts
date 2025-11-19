@@ -144,6 +144,17 @@ const Data = {
 					}
 				},
 				{
+					name: translate('onboardingCommonTitleSpace'),
+					description: translate('onboardingCommonTextSpace'),
+					param: {
+						element: '.onboardingDimmer',
+						highlightElements: [],
+						stickToElementEdge: null,
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Center,
+					}
+				},
+				{
 					name: translate('onboardingCommonTitlePin'),
 					description: translate('onboardingCommonTextPin'),
 					param: {

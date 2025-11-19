@@ -85,6 +85,21 @@ class Onboarding {
 		};
 	};
 
+	startChat (isPopup: boolean) {
+		if (!Storage.get('isNewUser') || !this.isCompletedBasics()) {
+			return;
+		};
+		if (this.start('chat', isPopup)) {
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+			S.Common.setLeftSidebarState('vault', 'widget');
+			$(window).trigger('checkWidgetToggles');
+		};
+	};
+
 	/**
 	 * Gets the menu parameters for a section and item.
 	 * @param {any} section - The onboarding section.

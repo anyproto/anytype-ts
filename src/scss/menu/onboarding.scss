@@ -119,6 +119,8 @@
 	}
 
 	&#button-chat-attachment { background-color: var(--color-bg-primary); }
+
+	&.onboardingDimmer { opacity: 0 !important; }
 }
 
 .onboardingElement.onboardingElementDark {
