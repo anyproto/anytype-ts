@@ -819,6 +819,7 @@
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
 	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsAccountAnyIdTitle": "ANY ID",
 	"popupSettingsAccountDeleteTitle": "Delete Vault",
 	"popupSettingsEthereumIdentityTitle": "Ethereum Address",
 
