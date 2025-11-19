@@ -12,12 +12,14 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const { parent, onContext } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
+	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
 	const realId = parent.id.replace(`${space}-`, '');
+	const isUnread = realId == J.Constant.widgetId.unread;
 
 	const getId = (id: string) => {
 		return [ space, id ].join('-');
@@ -147,7 +149,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
-					{isChat ? <ChatCounter chatId={item.id} /> : ''}
+					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
 					<div className="buttons">
 						<Icon
 							className="more"
