@@ -67,7 +67,7 @@ const Data = {
 		};
 	},
 
-	basics: () => {
+	common: () => {
 		const theme = S.Common.getThemeClass();
 		const path = theme == 'dark' ? './img/help/onboarding/common/dark/' : './img/help/onboarding/common/';
 		const elements = {

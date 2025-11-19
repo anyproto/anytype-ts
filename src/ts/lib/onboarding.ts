@@ -70,11 +70,11 @@ class Onboarding {
 		return true;
 	};
 
-	startBasics (isPopup: boolean) {
+	startCommon (isPopup: boolean) {
 		if (!Storage.get('isNewUser')) {
 			return;
 		};
-		if (this.start('basics', isPopup)) {
+		if (this.start('common', isPopup)) {
 			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), true);
 			Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), true);
 			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
@@ -86,7 +86,7 @@ class Onboarding {
 	};
 
 	startChat (isPopup: boolean) {
-		if (!Storage.get('isNewUser') || !this.isCompletedBasics()) {
+		if (!Storage.get('isNewUser') || !this.isCompletedCommon()) {
 			return;
 		};
 		if (this.start('chat', isPopup)) {
@@ -215,8 +215,8 @@ class Onboarding {
 		return Storage.getOnboarding(key);
 	};
 
-	isCompletedBasics (): boolean {
-		return this.isCompleted('basics');
+	isCompletedCommon (): boolean {
+		return this.isCompleted('common');
 	};
 	
 };
