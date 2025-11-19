@@ -662,6 +662,8 @@ class UtilCommon {
 		} else 
 		if (this.matchPath(url)) {
 			url = `file://${url}`;
+		} else {
+			url = `https://${url}`;
 		};
 
 		return url;
