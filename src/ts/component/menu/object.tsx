@@ -181,7 +181,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
 		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
-		const allowedEditChat = isChat;
+		const allowedEditChat = canWrite && isChat;
 		const allowedNotification = isChat;
 
 		if (!allowedPageLink) {

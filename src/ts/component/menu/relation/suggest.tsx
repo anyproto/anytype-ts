@@ -282,6 +282,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			};
 
 			section.children = section.children.filter(it => it);
+			section.children = U.Menu.prepareForSelect(section.children);
 			return section.children.length > 0;
 		});
 

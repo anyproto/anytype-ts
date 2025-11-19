@@ -641,9 +641,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 								className={cns.join(' ')} 
 								key={section.id}
 								{...U.Common.animationProps({
-									initial: { y: 20 }, 
-									animate: { y: 0 }, 
-									exit: { y: -20 },
 									transition: { duration: 200, delay: i * 0.05 },
 								})}
 							>

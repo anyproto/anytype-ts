@@ -857,9 +857,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				onDragEnd={onDragEnd}
 				onContextMenu={onOptions}
 				{...U.Common.animationProps({
-					initial: { y: 20 }, 
-					animate: { y: 0 }, 
-					exit: { y: -20 },
 					transition: { duration: 0.2, delay: index * 0.025 },
 				})}
 			>
