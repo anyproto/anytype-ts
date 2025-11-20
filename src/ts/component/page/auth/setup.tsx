@@ -58,7 +58,6 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			const routeParam = { 
 				replace: true,
 				animate,
-				onRouteChange: () => sidebar.init(false),
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
 					const chatsOnboarding = true;//Storage.get('chatsOnboarding');

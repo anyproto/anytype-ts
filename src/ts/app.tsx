@@ -216,6 +216,7 @@ const App: FC = () => {
 
 		Action.checkDefaultSpellingLang();
 
+		sidebar.init(false);
 		analytics.init();
 
 		if (redirect) {
