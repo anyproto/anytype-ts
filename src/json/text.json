@@ -1943,6 +1943,8 @@
 	"menuPublishLabelOffline": "No internet connection",
 	"menuPublishBecomeMemberText": "<b>Get a custom domain</b> and higher  limits by becoming a member",
 
+	"menuOnboardingCounter": "%s of %s",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
@@ -2265,13 +2267,6 @@
 	"onboardingTemplateSelectTitle": "Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingBasicsTitle": "Widgets",
-	"onboardingSpacesText": "<b>This is your Space.</b> Click here to share it with others, customize its name and icon, or securely migrate from other apps.",
-	"onboardingPinnedNewText": "<b>Pin what matters most.</b> Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars. ",
-	"onboardingObjectsNewText": "<b>Organize with Types.</b> Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
-	"onboardingPinnedOldText": "<b>Your Widgets are Now the ‘Pinned' Section</b> We've organized your sidebar widgets into the Pinned section, which is now your dedicated home for shortcuts. Your previous pins are preserved in old Pinned widget. You can re-pin your favorites from there and then remove the old widget when you're ready.",
-	"onboardingObjectsOldText": "<b>All your Objects, by Type</b> This section gathers all your objects into containers based on their Type. It's the new, unified place to see everything you've made.",
-
 	"onboardingMembershipTitle": "Membership",
 	"onboardingMembershipText": "<b>Join the Anytype Network through a membership plan.</b> Explore our paid features or simply support our work. We're here because of you.",
 	"onboardingMembershipButton": "Lovely!",
@@ -2331,6 +2326,33 @@
 	"onboardingPrimitivesSlide3Title": "Templates Are for Content",
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
+
+	"onboardingCommonTitleVault": "This is your Vault",
+	"onboardingCommonTextVault": "All your Spaces and Chats live here.",
+	"onboardingCommonTitleChannels": "Create Channels",
+	"onboardingCommonTextChannels": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
+	"onboardingCommonTitleProfile": "Your profile & settings",
+	"onboardingCommonTextProfile": "Update your profile, access your Key, and adjust app settings here.",
+	"onboardingCommonTitleGallery": "Use Case Gallery",
+	"onboardingCommonTextGallery": "Explore templates made by Anytype and Community and boost up your workflow.",
+	"onboardingCommonTitleSpace": "This is your Get Started Space",
+	"onboardingCommonTextSpace": "It’s both a quick guide to Anytype and a sandbox where you can explore how Spaces are organized. You can return to it whenever you like.",
+	"onboardingCommonTitlePin": "Pin what matters most",
+	"onboardingCommonTextPin": "Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars.",
+	"onboardingCommonTitleTypes": "Organize with Types",
+	"onboardingCommonTextTypes": "Each object has a Type. Think of it as a super-tag that keeps things organized: Pages, Tasks, or any custom type you create. New objects automatically land in their category here.",
+	"onboardingCommonTitleProperties": "Link with Properties",
+	"onboardingCommonTextProperties": "Each object has Properties defined by its Type. Some are plain values, others are objects too — relations that link everything in your graph.",
+	"onboardingCommonTextPropertiesImgCaption": "For example, Bauhaus Archive and Marlene Dietrich can be connected by City: Berlin.",
+	"onboardingCommonTitleSettings": "Open Settings to Invite People",
+	"onboardingCommonTextSettings": "Invite members and collaborate together in a private, fully encrypted, offline-first environment.",
+
+	"onboardingMainChatTitle1": "Meet the most powerful private chat.",
+	"onboardingCommonText1": "Fully encrypted, offline-first, and yours forever — even without Anytype.",
+	"onboardingMainChatTitle2": "More than just text messages",
+	"onboardingCommonText2": "Add pages, tasks, lists, or media directly into the chat and colalborate on them together.",
+	"onboardingMainChatTitle3": "Talk, and watch your chat growing",
+	"onboardingCommonText3": "Your messages can become notes, tasks, or links — a living knowledge base, private and yours.",
 
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
