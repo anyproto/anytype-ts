@@ -607,6 +607,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (param.width) {
 				css.width = param.width;
 			};
+
 			menu.css(css);
 
 			if (isSub) {

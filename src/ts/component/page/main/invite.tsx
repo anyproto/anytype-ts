@@ -52,7 +52,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 
 		const request = (message: any) => {
 			S.Popup.open('inviteRequest', { 
-				onClose: () => Onboarding.startBasics(isPopup),
+				onClose: () => Onboarding.startCommon(isPopup),
 				data: { 
 					invite: message, 
 					cid, 

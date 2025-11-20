@@ -185,11 +185,6 @@
         .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
 
         .bottom {
-            .round {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
-                .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
-            }
-
             .category { color: #5c5a54; }
         }
 	}

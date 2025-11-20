@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Icon, Label } from 'Component';
+import { Button, Icon, Label, ProgressBar } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -18,7 +18,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		error: null,
 	};
 	frame = 0;
-	hiddenElement: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -28,19 +27,25 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, position } = this.props;
 		const { data, noClose } = param;
 		const { key, current } = data;
 		const section = this.getSection();
 		const items = this.getItems();
-		const { showConfetti } = section;
+		const { showConfetti, withCounter } = section;
 		const item = items[current];
 		if (!item) {
 			return null;
 		};
 
+		const { name, description, video, img } = item;
 		const l = items.length;
 		const withSteps = l > 1;
+		const segments = [];
+
+		if (withSteps) {
+			segments.push({ name: '', caption: '', percent: (current + 1) / l, isActive: true });
+		};
 
 		let buttons = [];
 		let category = '';
@@ -79,46 +84,50 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			>
 				{!noClose ? <Icon className="close" onClick={this.onClose} /> : ''}
 
-				{category ? <Label className="category" text={category} /> : ''}
-				{item.name ? <Label className="name" text={item.name} /> : ''}
-				{item.description ? <Label className="descr" text={item.description} /> : ''}
-				{item.video ? (
+				<div className="textWrapper">
+					{withCounter ? <Label className="counter" text={U.Common.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
+					{category ? <Label className="category" text={category} /> : ''}
+					{name ? <Label className="name" text={name} /> : ''}
+					{description ? <Label className="descr" text={description} /> : ''}
+				</div>
+
+				{video ? (
 					<video 
 						ref={node => this.video = node} 
-						src={item.video} 
-						onClick={e => this.onVideoClick(e, item.video)} 
+						src={video}
+						onClick={e => this.onVideoClick(e, video)}
 						controls={false} 
 						autoPlay={true} 
 						loop={true} 
 					/>
 				) : ''}
 
-				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
-					{withSteps ? (
-						<div className="steps">
-							{[ ...Array(l) ].map((e: number, i: number) => {
-								const cn = [ 'step' ];
-								if (i == current) {
-									cn.push('active');
-								};
+				{img ? (
+					<div className="imgWrapper">
+						<img src={img.src} alt="" onLoad={position} />
+						{img.caption ? (
+							<Label text={img.caption} />
+						) : ''}
+					</div>
+				) : ''}
 
-								return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
-							})}
-						</div>
-					) : ''}
-					
+				<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
 					{buttons.length ? (
 						<div className="buttons">
 							{buttons.map((button, i) => (
 								<Button
 									key={i}
 									text={button.text}
-									color={(i == buttons.length - 1) ? 'black' : 'blank'}
-									className="c28"
+									color={(i == 0) ? 'accent' : 'blank'}
+									className="c36"
 									onClick={e => this.onButton(e, button.action)}
 								/>
 							))}
 						</div>
+					) : ''}
+
+					{withSteps ? (
+						<ProgressBar segments={segments} complete={current == l - 1} />
 					) : ''}
 				</div>
 
@@ -130,7 +139,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	componentDidMount () {
 		this.rebind();
 		this.event();
-		this.hideElements();
 		this.initDimmer();
 
 		U.Common.renderLinks($(this.node));
@@ -161,15 +169,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	componentWillUnmount(): void {
 		this.unbind();
 		this.clearDimmer();
-		this.showElements();
-	};
-
-	showElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).removeClass('isOnboardingHidden'));
-	};
-
-	hideElements () {
-		this.props.param.hiddenElements.forEach(el => $(el).addClass('isOnboardingHidden'));
 	};
 
 	getItems () {
@@ -180,6 +179,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		const { param } = this.props;
 		const { data, highlightElements } = param;
 		const section = this.getSection();
+		const theme = S.Common.getThemeClass();
 
 		if (!section) {
 			return;
@@ -211,11 +211,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 					const { top, left } = element.offset();
 					const st = $(window).scrollTop();
 
-					if (this.hiddenElement) {
-						this.hiddenElement.css({ visibility: 'visible' });
-						this.hiddenElement = null;
-					};
-
 					body.append(clone);
 					U.Common.copyCss(element.get(0), clone.get(0));
 
@@ -223,8 +218,10 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 						clone.addClass(item.cloneElementClassName);
 					};
 
-					this.hiddenElement = element;
-					element.css({ visibility: 'hidden' });
+					if (theme == 'dark') {
+						clone.addClass('onboardingElementDark');
+					};
+
 					clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
 				});
 			});
