@@ -166,3 +166,10 @@ html.bodyAuthSelect {
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
+
+.header.mainSettings {
+	.identity { -webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; }
+	.identity {
+		.label { color: var(--color-text-primary); }
+	}
+}
