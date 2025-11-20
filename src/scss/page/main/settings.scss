@@ -190,9 +190,9 @@
                     width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); background-repeat: no-repeat;
                     background-position: 50% 50%; background-size: 20px; transition: $transitionAllCommon;
                 }
-                .icon.invite { background-image: url('~img/icon/settings/invite.svg'); }
-                .icon.qr { background-image: url('~img/icon/settings/qr.svg'); }
-                .icon.copyLink { background-image: url('~img/icon/settings/copy.svg'); }
+                .icon.invite { background-image: url('~img/icon/settings/space/buttons/invite.svg'); }
+                .icon.qr { background-image: url('~img/icon/settings/space/buttons/qr.svg'); }
+                .icon.copyLink { background-image: url('~img/icon/settings/space/buttons/copy.svg'); }
 
                 .label { @include text-small; @include text-overflow-nw; color: var(--color-text-primary); width: 100%; padding: 0px 2px; }
 

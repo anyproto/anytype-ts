@@ -821,14 +821,13 @@ class UtilMenu {
 
 		const getOptions = (inviteLink: string) => {
 			const shareOptions = [
-				{ id: 'link', icon: 'space-link', name: translate('commonCopyLink') },
-				{ id: 'qr', icon: 'space-qr', name: translate('popupSettingsSpaceShareQRCode') },
+				{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
+				{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
 			];
 			const sections = {
-				spaceSettings: [],
-				pinAndMute: [],
-				share: [],
 				general: [],
+				share: [],
+				archive: [],
 			};
 
 			if (param.isSharePage) {
@@ -838,7 +837,7 @@ class UtilMenu {
 
 				if (isOwner && space.isShared) {
 					const isDisabled = participants.length > 1;
-					sections.general.push({
+					sections.archive.push({
 						id: 'stopSharing',
 						name: translate('popupSettingsSpaceShareMakePrivate'),
 						disabled: isDisabled,
@@ -847,35 +846,37 @@ class UtilMenu {
 				};
 			} else {
 				if (!isLoading) {
-					sections.spaceSettings.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextChannelSettings') });
+				};
+
+				if (!space.isPersonal) {
+					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
+				};
+
+				if (param.withPin) {
+					if (space.orderId) {
+						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+					} else {
+						sections.general.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+					};
+				};
+
+				if (!space.isPersonal) {
+					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
+						sections.general.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+					} else {
+						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+					};
 				};
 
 				if (!param.noShare && inviteLink) {
 					sections.share = shareOptions;
 				};
 
-				if (!param.noPin) {
-					if (space.orderId) {
-						sections.pinAndMute.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
-					} else {
-						sections.pinAndMute.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
-					};
-				};
-
-				if (!space.isPersonal) {
-					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.pinAndMute.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
-					} else {
-						sections.pinAndMute.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
-					};
-
-					sections.share.push({ id: 'members', icon: 'settings-members', name: translate('commonMembers') });
-				};
-
-				sections.general.push({ id: 'bin', icon: 'widget-bin', name: translate('commonBin') });
+				sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 
 				if (isLoading) {
-					sections.general.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
 				};
 			};
 
