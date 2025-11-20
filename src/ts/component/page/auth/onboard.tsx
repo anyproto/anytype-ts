@@ -59,18 +59,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onAuth = () => {
-		S.Common.showRelativeDatesSet(true);
-
-		//Storage.set('chatsOnboarding', true);
-		Storage.setOnboarding('objectDescriptionButton');
-		Storage.setOnboarding('typeResetLayout');
-
-		U.Data.onInfo(account.info);
-		U.Data.onAuthOnce(true);
-
-		U.Subscription.createGlobal(() => {
-			U.Router.switchSpace(S.Common.space, '', false, {}, false);
-		});
+		U.Router.switchSpace(S.Common.space, '', false, {}, false);
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
