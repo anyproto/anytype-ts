@@ -39,7 +39,19 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		if ((noInplace && editModeOn) || withMenu.current) {
 			return true;
 		};
-		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
+
+		if (isName) {
+			return true;
+		};
+
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
+			const options = Relation.getOptions(record[relation.relationKey])
+				.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+			
+			return !!options.length;
+		};
+
+		return Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
 	const onClickHandler = (e: any) => {
