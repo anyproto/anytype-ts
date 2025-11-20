@@ -96,8 +96,6 @@ class Sidebar {
 
 		if (save) {
 			Storage.set(STORAGE_KEY, this.panelData, isLocal);
-
-			console.log('SAVE', key, this.panelData);
 		};
 	};
 
