@@ -226,6 +226,10 @@ class ChatStore {
 		if (current) {
 			const { messages, mentions, lastStateId, order } = state;
 
+			console.log('SET STATE UPDATE', subId);
+			console.log('NEW', JSON.stringify(state, null, 3));
+			console.log('CURRENT', JSON.stringify(current, null, 3));
+
 			if (checkOrder && (order < current.order)) {
 				return; // Ignore outdated state
 			};
@@ -239,6 +243,9 @@ class ChatStore {
 				order,
 			});
 		} else {
+			console.log('SET STATE UPDATE', subId);
+			console.log('NEW', JSON.stringify(state, null, 3));
+
 			spaceMap.set(param.chatId, this.createState(state));
 		};
 
