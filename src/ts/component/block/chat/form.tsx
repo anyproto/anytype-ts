@@ -691,6 +691,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		saveState([ ...list, ...attachments ]);
+		historySaveState();
+
+		/*
 		let cnt = 0;
 
 		const preloadIds = new Map<string, string>();
@@ -722,6 +726,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				cb()
 			};
 		});
+		*/
 	};
 
 	const preloadFile = (item: any, callBack: (preloadId: string) => void) => {
@@ -888,7 +893,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, item.preloadId, 0, (message: any) => {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, (message: any) => {
 					n++;
 
 					if (message.objectId) {
