@@ -841,7 +841,6 @@ class UtilMenu {
 					sections.general.push({
 						id: 'stopSharing',
 						name: translate('popupSettingsSpaceShareMakePrivate'),
-						color: 'red',
 						disabled: isDisabled,
 						tooltipParam: { text: isDisabled ? translate('popupSettingsSpaceShareMakePrivateTooltip') : '' }
 					});

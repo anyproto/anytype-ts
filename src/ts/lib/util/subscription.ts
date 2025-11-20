@@ -64,6 +64,11 @@ class UtilSubscription {
 	 */
 	getBaseFilters (param?: Partial<I.SearchSubscribeParam>) {
 		param = param || {};
+		param = Object.assign({
+			ignoreHidden: true,
+			ignoreDeleted: true,
+			ignoreArchived: true,
+		}, param);
 		
 		const { config } = S.Common;
 		const spaceview = U.Space.getSpaceview();

@@ -635,11 +635,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					};
 
 					return (
-						<AnimatePresence mode="popLayout">
+						<AnimatePresence key={section.id} mode="popLayout">
 							<motion.div 
 								id={`section-${section.id}`} 
 								className={cns.join(' ')} 
-								key={section.id}
+								key={`${section.id}-motion`}
 								{...U.Common.animationProps({
 									transition: { duration: 200, delay: i * 0.05 },
 								})}

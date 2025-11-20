@@ -851,7 +851,9 @@ class UtilData {
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
 	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
-		if (!this.isAnytypeNetwork()) {
+		const { isOnline } = S.Common;
+
+		if (!this.isAnytypeNetwork() || !isOnline) {
 			return;
 		};
 

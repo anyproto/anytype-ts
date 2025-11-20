@@ -251,7 +251,6 @@ class Action {
 		url = U.Common.urlFix(url);
 
 		const route = U.Common.getRouteFromUrl(url);
-		
 		if (route) {
 			U.Router.go(route, {});
 			return;

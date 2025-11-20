@@ -23,6 +23,7 @@ class UtilSpace {
 		};
 
 		U.Object.openRoute(home, param);
+		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 	openDashboardOrVoid (param?: Partial<I.RouteParam>) {

@@ -75,7 +75,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const object = getTarget();
 		const sources = getSources();
 
-		C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
+		Dataview.duplicateView(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
 			onViewSwitch({ id: message.viewId, type: view.type });
 
 			analytics.event('DuplicateView', {

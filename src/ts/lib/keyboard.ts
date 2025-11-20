@@ -139,9 +139,7 @@ class Keyboard {
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		if (this.isMain()) {
-			sidebar.onMouseMove();
-		};
+		sidebar.onMouseMove();
 	};
 	
 	/**
@@ -1263,7 +1261,7 @@ class Keyboard {
 		const popup = U.Common.objectCopy(S.Popup.get('page'));
 		const match: any = popup ? { ...popup?.param?.data?.matchPopup } : {};
 
-		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
+		match.params = match.params || {};
 
 		return match;
 	};
@@ -1274,46 +1272,9 @@ class Keyboard {
 	 */
 	getRouteMatch () {
 		const route = U.Router.getRoute();
-		const params = Object.assign(U.Router.getParam(route), this.checkUniversalRoutes(route));
+		const params = U.Router.getParam(route);
 
 		return { route, params };
-	};
-
-	checkUniversalRoutes (route: string) {
-		route = String(route || '');
-
-		const data = U.Common.searchParam(U.Router.getSearch());
-
-		let ret: any = {};
-
-		// Universal object route
-		if (route.match(/^\/object/)) {
-			ret = {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			};
-		};
-
-		// Invite route
-		if (route.match(/^\/invite/)) {
-			ret = {
-				page: 'main',
-				action: 'invite',
-				...data,
-			};
-		};
-
-		// Membership route
-		if (route.match(/^\/membership/)) {
-			ret = {
-				page: 'main',
-				action: 'membership',
-			};
-		};
-
-		return ret;
 	};
 
 	/**
@@ -1325,44 +1286,14 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 		
 		let ret: any = { params: {} };
-		let data: any = {};
 
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
 			ret = this.getRouteMatch();
-			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
 		ret.route = String(ret.route || '');
-
-		// Universal object route
-		if (ret.route.match(/^\/object/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			});
-		};
-
-		// Invite route
-		if (ret.route.match(/^\/invite/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'invite',
-				...data,
-			});
-		};
-
-		// Membership route
-		if (ret.route.match(/^\/membership/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'membership',
-			});
-		};
-
 		return ret;
 	};
 

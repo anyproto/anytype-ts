@@ -420,7 +420,8 @@ class Sidebar {
 
 		if (
 			this.isAnimating ||
-			!hideSidebar
+			!hideSidebar ||
+			!keyboard.isMain()
 		) {
 			return;
 		};
