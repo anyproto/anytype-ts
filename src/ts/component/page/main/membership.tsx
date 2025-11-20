@@ -8,8 +8,6 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const nodeRef = useRef(null);
 	const { isPopup } = props;
 	const [ error, setError ] = useState('');
-	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 
 	const init = () => {
 		const { history } = U.Router;
@@ -18,54 +16,49 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 		let newTier = data.tier;
 
-		U.Data.getMembershipStatus((membership: I.Membership) => {
-			if (!membership || membership.isNone) {
-				setError(translate('pageMainMembershipError'));
-				return;
-			};
+		U.Data.getMembershipTiers(true, () => {;
+			U.Data.getMembershipStatus((membership: I.Membership) => {
+				if (!membership || membership.isNone) {
+					setError(translate('pageMainMembershipError'));
+					return;
+				};
 
-			U.Space.openDashboardOrVoid({
-				replace: true,
-				onFadeIn: () => {
-					if (data.code) {
-						S.Popup.open('membershipActivation', { data });
-					} else
-					if (newTier && (newTier != I.TierType.None)) {
-						if (tier.price) {
-							newTier = tier.id;
-						};
+				const tier = U.Data.getMembershipTier(membership.tier);
 
-						S.Popup.open('membership', { data: { tier: newTier } });
-					} else {
-						finalise();
-					};
-				},
+				U.Space.openDashboardOrVoid({
+					replace: true,
+					onFadeIn: () => {
+						window.setTimeout(() => {
+							if (data.code) {
+								S.Popup.open('membershipActivation', { data });
+							} else
+							if (newTier && (newTier != I.TierType.None)) {
+								if (tier.price) {
+									newTier = tier.id;
+								};
+
+								S.Popup.open('membership', { data: { tier: newTier } });
+							} else 
+							if (membership.status == I.MembershipStatus.Finalization) {
+								S.Popup.open('membershipFinalization', { data: { tier } });
+							} else {
+								S.Popup.open('membership', {
+									data: {
+										onContinue: () => U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings }),
+										tier: membership.tier,
+										success: true,
+									},
+								});
+
+								analytics.event('ChangePlan', { params: { tier }});
+							};
+						}, J.Constant.delay.popup);
+					},
+				});
 			});
 		});
 
 		resize();
-	};
-
-	const finalise = () => {
-		S.Popup.closeAll(null, () => {
-			U.Data.getMembershipStatus((membership: I.Membership) => {
-				const { status, tier } = membership;
-
-				if (status == I.MembershipStatus.Finalization) {
-					S.Popup.open('membershipFinalization', { data: { tier } });
-				} else {
-					S.Popup.open('membership', {
-						data: {
-							onContinue: () => U.Object.openRoute({ id: 'membership', layout: I.ObjectLayout.Settings }),
-							tier: membership.tier,
-							success: true,
-						},
-					});
-
-					analytics.event('ChangePlan', { params: { tier }});
-				};
-			});
-		});
 	};
 
 	const resize = () => {
