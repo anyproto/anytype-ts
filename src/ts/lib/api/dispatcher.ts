@@ -991,8 +991,18 @@ class Dispatcher {
 					});
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+						const title = [];
+						const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
+
+						if (spaceview) {
+							title.push(spaceview.name);
+						};
+						if (!chat._empty_) {
+							title.push(chat.name);
+						};
+
 						U.Common.notification({ 
-							title: spaceview?.name, 
+							title: title.join(' - '), 
 							text: notification,
 						}, () => {
 							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });

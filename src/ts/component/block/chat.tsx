@@ -566,6 +566,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 
+		console.log('onReadStop');
+		console.log('IDS', JSON.stringify(ids, null, 3));
+		console.log('FIRST', first);
+		console.log('LAST', last);
+
 		if (S.Common.windowIsFocused) {
 			if (first && last) {
 				C.ChatReadMessages(chatId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
