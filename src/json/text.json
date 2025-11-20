@@ -1943,6 +1943,10 @@
 	"menuPublishLabelOffline": "No internet connection",
 	"menuPublishBecomeMemberText": "<b>Get a custom domain</b> and higher  limits by becoming a member",
 
+	"menuSpaceContextChannelSettings": "Channel settings",
+	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
+	"menuSpaceContextShowQRCode": "Show QR Code",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
