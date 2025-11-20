@@ -9,6 +9,7 @@ interface RouteParam {
 	viewId?: string; 
 	relationKey?: string;
 	messageId?: string;
+	objectId?: string;
 	additional?: { key: string, value: string }[];
 };
 
@@ -87,6 +88,7 @@ class UtilRouter {
 		const viewId = String(param.viewId || '');
 		const relationKey = String(param.relationKey || '');
 		const messageId = String(param.messageId || '');
+		const objectId = String(param.objectId || '');
 		const additional = param.additional || [];
 
 		let route = [ page, action, id ];
@@ -102,6 +104,10 @@ class UtilRouter {
 		if (messageId) {
 			route = route.concat([ 'messageId', messageId ]);
 		};
+		if (objectId) {
+			route = route.concat([ 'objectId', objectId ]);
+		};
+
 		if (additional.length) {
 			additional.forEach((it: any) => {
 				route = route.concat([ it.key, it.value ]);

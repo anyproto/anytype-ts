@@ -387,7 +387,7 @@ class Keyboard {
 			// Switch space
 			for (let i = 1; i <= 9; i++) {
 				const id = Number(i) - 1;
-				keyboard.shortcut(`space${i}`, e, () => {
+				this.shortcut(`space${i}`, e, () => {
 					const spaces = U.Menu.getVaultItems();
 					const item = spaces[id];
 	
@@ -403,8 +403,7 @@ class Keyboard {
 				});
 			};
 
-
-			keyboard.shortcut('createSpace', e, () => {
+			this.shortcut('createSpace', e, () => {
 				const element = `#button-create-space`;
 
 				let rect = null;
@@ -614,7 +613,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || keyboard.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 

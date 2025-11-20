@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { analytics, I, J, keyboard, S, Storage, translate, U } from 'Lib';
 import { Button, Filter, Icon, IconObject, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { onBecomeObserved } from 'mobx';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;

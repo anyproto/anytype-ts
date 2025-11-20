@@ -115,8 +115,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 				return;
 			};
 
-			const { id } = U.Router.getParam(U.Router.getRoute());
-
 			switch (id) {
 				case 'spaceIndexEmpty': {
 					page = 'widget';
