@@ -45,7 +45,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
-			return !!Relation.getOptions(record[relation.relationKey]).length;
+			const options = Relation.getOptions(record[relation.relationKey])
+				.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+			
+			return !!options.length;
 		};
 
 		return Relation.checkRelationValue(relation, record[relation.relationKey]);
