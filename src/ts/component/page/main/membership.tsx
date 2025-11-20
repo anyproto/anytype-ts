@@ -9,7 +9,6 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const { isPopup } = props;
 	const [ error, setError ] = useState('');
 	const { membership } = S.Auth;
-	const { status } = membership;
 	const tier = U.Data.getMembershipTier(membership.tier);
 
 	const init = () => {

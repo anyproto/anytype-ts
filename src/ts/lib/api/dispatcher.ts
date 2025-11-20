@@ -947,6 +947,12 @@ class Dispatcher {
 				case 'MembershipUpdate': {
 					S.Auth.membershipUpdate(mapped.membership);
 					U.Data.getMembershipTiers(true);
+
+					const { membership } = S.Auth;
+
+					if (membership.status == I.MembershipStatus.Finalization) {
+						S.Popup.open('membershipFinalization', { data: { tier: membership.tier } });
+					};
 					break;
 				};
 
