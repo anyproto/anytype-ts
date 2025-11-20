@@ -112,9 +112,7 @@ class Onboarding {
 		section.param = section.param || {};
 		item.param = item.param || {};
 
-		let param: any = {};
-
-		param = Object.assign(param, section.param);
+		let param: any = Object.assign({}, section.param);
 
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);
@@ -131,7 +129,6 @@ class Onboarding {
 		param.element = String(param.element || '');
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
-		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = param.rect || null;

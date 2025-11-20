@@ -20,7 +20,6 @@ const Data = {
 			classNameWrap: 'fixed fromSidebar',
 			className: 'isWizard',
 			horizontal: I.MenuDirection.Right,
-			noArrow: true,
 			passThrough: true,
 			offsetY: -4,
 		},
@@ -31,7 +30,6 @@ const Data = {
 			showDimmer: true,
 			withCounter: true,
 			param: {
-				noArrow: true,
 				noClose: true,
 				horizontal: I.MenuDirection.Left,
 			},
@@ -98,10 +96,7 @@ const Data = {
 			showDimmer: true,
 			withCounter: true,
 			param: {
-				noArrow: true,
 				noClose: true,
-				noBorderY: false,
-				horizontal: I.MenuDirection.Left,
 				highlightElements: [ '#sidebarLeft > #pageWrapper' ],
 				stickToElementEdge: I.MenuDirection.Top,
 			},
@@ -118,7 +113,6 @@ const Data = {
 					name: translate('onboardingCommonTitleChannels'),
 					description: translate('onboardingCommonTextChannels'),
 					param: {
-						noBorderY: true,
 						element: elements.channel,
 						offsetX: getOffset('channel'),
 					}
@@ -209,7 +203,6 @@ const Data = {
 	membership: () => ({
 		showDimmer: true,
 		param: {
-			noArrow: true,
 			horizontal: I.MenuDirection.Right,
 			width: 288,
 			offsetX: -304,
@@ -234,7 +227,6 @@ const Data = {
 	syncStatus: () => ({
 		showDimmer: true,
 		param: {
-			noArrow: true,
 			width: 288,
 			highlightElements: [],
 			classNameWrap: 'fixed',
@@ -269,9 +261,6 @@ const Data = {
 
 	collections: () => ({
 		showDimmer: true,
-		param: {
-			noArrow: true,
-		},
 		items: [
 			{
 				category: translate('onboardingCollectionsTitle'),

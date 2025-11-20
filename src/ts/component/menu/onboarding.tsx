@@ -27,7 +27,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, position } = this.props;
 		const { data, noClose } = param;
 		const { key, current } = data;
 		const section = this.getSection();
@@ -104,7 +104,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 
 				{img ? (
 					<div className="imgWrapper">
-						<img src={img.src} alt="" />
+						<img src={img.src} alt="" onLoad={position} />
 						{img.caption ? (
 							<Label text={img.caption} />
 						) : ''}
