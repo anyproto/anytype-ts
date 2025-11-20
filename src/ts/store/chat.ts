@@ -227,7 +227,7 @@ class ChatStore {
 			const { messages, mentions, lastStateId, order } = state;
 
 			// Ignore outdated state
-			if (!order || (order && (order < current.order))) {
+			if (current.order && order && (order < current.order)) {
 				console.log('[S.Chat.setState] Ignored outdated state', 'subId:', subId, 'state order:', order, 'current order:', current.order);
 				return;
 			};
