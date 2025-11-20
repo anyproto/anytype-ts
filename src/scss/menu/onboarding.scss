@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.20); background-color: var(--color-bg-primary); width: var(--menu-width-set); border-radius: 16px; }
+	.menu.menuOnboarding { width: var(--menu-width-set); }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; gap: 16px 0px; }
@@ -56,10 +56,6 @@
 					.isActive { background-color: var(--color-orange); }
 				}
 			}
-
-			.number { @include text-small; flex-grow: 1; text-align: center; color: var(--color-control-active);  }
-
-			b { font-weight: 500; }
 		}
 	}
 

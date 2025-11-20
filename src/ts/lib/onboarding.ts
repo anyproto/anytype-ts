@@ -71,33 +71,33 @@ class Onboarding {
 	};
 
 	startCommon (isPopup: boolean) {
-		if (!Storage.get('isNewUser')) {
+		const spaceview = U.Space.getSpaceview();
+		if (!spaceview.isData) {
 			return;
 		};
-		if (this.start('common', isPopup)) {
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), true);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), true);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
-			S.Common.setLeftSidebarState('vault', 'widget');
-			$(window).trigger('checkWidgetToggles');
+		if (this.start('common', isPopup)) {
+			this.initWidgetSections(true, true);
 		};
 	};
 
 	startChat (isPopup: boolean) {
-		if (!Storage.get('isNewUser') || !this.isCompletedCommon()) {
+		if (!this.isCompletedCommon()) {
 			return;
 		};
 		if (this.start('chat', isPopup)) {
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), false);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
-
-			S.Common.setLeftSidebarState('vault', 'widget');
-			$(window).trigger('checkWidgetToggles');
+			this.initWidgetSections(false, false);
 		};
+	};
+
+	initWidgetSections (unread: boolean, recentEdit: boolean) {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), unread);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), recentEdit);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+		S.Common.setLeftSidebarState('vault', 'widget');
+		$(window).trigger('checkWidgetToggles');
 	};
 
 	/**

@@ -1,5 +1,10 @@
-import { I, U, translate, S, Onboarding } from 'Lib';
+import { I, U, translate, S } from 'Lib';
 import $ from 'jquery';
+
+const IMG_PATH = {
+	'': './img/help/onboarding/common/',
+	dark: './img/theme/dark/help/onboarding/common/',
+};
 
 const Data = {
 	mainGraph: () => ({
@@ -67,12 +72,11 @@ const Data = {
 
 	common: () => {
 		const theme = S.Common.getThemeClass();
-		const path = theme == 'dark' ? './img/help/onboarding/common/dark/' : './img/help/onboarding/common/';
 		const elements = {
-			vault: '#appContainer #sidebarPageVault #body',
-			channel: '#appContainer #sidebarPageVault #button-create-space',
-			profile: '#appContainer #sidebarPageVault .bottom .appSettings',
-			gallery: '#appContainer #sidebarPageVault .bottom .icon.gallery',
+			vault: '#sidebarPageVault #body',
+			channel: '#sidebarPageVault #button-create-space',
+			profile: '#sidebarPageVault .bottom .appSettings',
+			gallery: '#sidebarPageVault .bottom .icon.gallery',
 			pin: '#sidebarPageWidget > #body > .content > .section-pin > .items',
 			type: '#sidebarPageWidget > #body > .content > .section-type > .items',
 			relation: '#header #button-header-relation',
@@ -80,16 +84,12 @@ const Data = {
 		};
 
 		const getOffset = (el: string) => {
-			let offset = 8;
-			if (el == 'widgetSpace') {
-				offset = 20;
-			};
-
+			const offset = el == 'widgetSpace' ? 20 : 8;
 			return $(elements[el]).width() + offset;
 		};
 
 		const getSrc = (el: string) => {
-			return `${path}${el}.png`;
+			return `${IMG_PATH[theme]}${el}.png`;
 		};
 
 		return {
@@ -97,7 +97,7 @@ const Data = {
 			withCounter: true,
 			param: {
 				noClose: true,
-				highlightElements: [ '#sidebarLeft > #pageWrapper' ],
+				highlightElements: [ '#sidebarLeft #pageWrapper' ],
 				stickToElementEdge: I.MenuDirection.Top,
 			},
 			items: [
@@ -153,7 +153,7 @@ const Data = {
 					description: translate('onboardingCommonTextPin'),
 					param: {
 						element: elements.pin,
-						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-pin' ],
+						highlightElements: [ `#sidebarPageWidget #section-${I.WidgetSection.Pin}` ],
 						offsetX: getOffset('pin'),
 					}
 				},
@@ -165,7 +165,7 @@ const Data = {
 					},
 					param: {
 						element: elements.type,
-						highlightElements: [ '#sidebarPageWidget > #body > .content > .section-type' ],
+						highlightElements: [ `#sidebarPageWidget #section-${I.WidgetSection.Type}` ],
 						offsetX: getOffset('type'),
 					}
 				},

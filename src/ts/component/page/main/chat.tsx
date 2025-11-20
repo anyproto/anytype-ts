@@ -29,6 +29,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
+
+			Onboarding.startChat(isPopup);
 			setDummy(dummy + 1);
 		});
 	};
@@ -59,7 +61,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	useEffect(() => {
 		open();
-		Onboarding.startChat(isPopup);
 
 		return () => close();
 	}, []);
