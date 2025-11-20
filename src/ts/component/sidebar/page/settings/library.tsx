@@ -383,7 +383,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 
 	const onBack = () => {
 		S.Common.setLeftSidebarState('vault', 'settingsSpace');
-		U.Router.go(`/${U.Router.build(savedRoute.current.params)}`, {});
+		U.Router.go(U.Router.build(savedRoute.current.params), {});
 	};
 
 	const ItemSection = (item: any) => {

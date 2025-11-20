@@ -8,6 +8,7 @@ interface RouteParam {
 	spaceId?: string; 
 	viewId?: string; 
 	relationKey?: string;
+	messageId?: string;
 	additional?: { key: string, value: string }[];
 };
 
@@ -29,30 +30,49 @@ class UtilRouter {
 	 * @param {string} path - The route path string.
 	 * @returns {RouteParam} The parsed route parameters.
 	 */
-	getParam (path: string): any {
-		const route = path.split('/');
-		if (!route.length) {
+	getParam (route: string): any {
+		route = String(route || '');
+		if (!route) {
 			return {};
 		};
 
-		if (route[0] == '') {
-			route.shift();
+		const parts = route.split('?');
+		if (!parts.length) {
+			return {};
+		};
+
+		const path = String(parts[0] || '').split('/');
+		const search = String(parts[1] || '');
+
+		if (path[0] == '') {
+			path.shift();
 		};
 
 		const param: any = {
-			page: String(route[0] || 'index'),
-			action: String(route[1] || 'index'),
-			id: String(route[2] || ''),
+			page: String(path[0] || 'index'),
+			action: String(path[1] || 'index'),
+			id: String(path[2] || ''),
 		};
 
-		if (route.length > 3) {
-			for (let i = 3; i < route.length; i++) {
-				param[route[i]] = route[(i + 1)];
+		if (path.length > 3) {
+			for (let i = 3; i < path.length; i++) {
+				param[path[i]] = path[(i + 1)];
 				i++;
 			};
 		};
 
-		return param;
+		const searchParam = search ? U.Common.searchParam(search) : {};
+
+		if (param.page == 'object') {
+			param.id = searchParam.objectId;
+		};
+
+		if ([ 'object', 'invite', 'membership' ].includes(param.page)) {
+			param.action = param.page;
+			param.page = 'main';
+		};
+
+		return Object.assign(param, searchParam);
 	};
 
 	/**
@@ -66,6 +86,7 @@ class UtilRouter {
 		const spaceId = String(param.spaceId || '');
 		const viewId = String(param.viewId || '');
 		const relationKey = String(param.relationKey || '');
+		const messageId = String(param.messageId || '');
 		const additional = param.additional || [];
 
 		let route = [ page, action, id ];
@@ -78,13 +99,16 @@ class UtilRouter {
 		if (relationKey) {
 			route = route.concat([ 'relationKey', relationKey ]);
 		};
+		if (messageId) {
+			route = route.concat([ 'messageId', messageId ]);
+		};
 		if (additional.length) {
 			additional.forEach((it: any) => {
 				route = route.concat([ it.key, it.value ]);
 			});
 		};
 
-		return route.join('/');
+		return '/' + route.join('/');
 	};
 
 	/**
@@ -102,6 +126,7 @@ class UtilRouter {
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
+		const newRoute = this.build(routeParam);
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
@@ -115,12 +140,12 @@ class UtilRouter {
 		focus.clear(true);
 
 		if (routeParam.spaceId && (routeParam.spaceId != space)) {
-			this.switchSpace(routeParam.spaceId, route, false, param, false);
+			this.switchSpace(routeParam.spaceId, newRoute, false, param, false);
 			return;
 		};
 
 		const change = () => {
-			this.history.push(route); 
+			this.history.push(newRoute); 
 			onRouteChange?.();
 		};
 
@@ -244,7 +269,7 @@ class UtilRouter {
 					if (startingId) {
 						U.Object.getById(startingId, {}, (object: any) => {
 							if (object) {
-								route = '/' + U.Object.route(object);
+								route = U.Object.route(object);
 							};
 							onStartingIdCheck();
 						});
