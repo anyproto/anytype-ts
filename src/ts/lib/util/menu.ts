@@ -821,8 +821,8 @@ class UtilMenu {
 
 		const getOptions = (inviteLink: string) => {
 			const shareOptions = [
-				{ id: 'link', icon: 'space-link', name: translate('menuSpaceContextCopyInviteLink') },
-				{ id: 'qr', icon: 'space-qr', name: translate('menuSpaceContextShowQRCode') },
+				{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
+				{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
 			];
 			const sections = {
 				general: [],
@@ -850,7 +850,7 @@ class UtilMenu {
 				};
 
 				if (!space.isPersonal) {
-					sections.general.push({ id: 'members', icon: 'settings-members', name: translate('commonMembers') });
+					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
 				if (param.withPin) {
@@ -873,7 +873,7 @@ class UtilMenu {
 					sections.share = shareOptions;
 				};
 
-				sections.archive.push({ id: 'bin', icon: 'widget-bin', name: translate('commonBin') });
+				sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 
 				if (isLoading) {
 					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });

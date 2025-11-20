@@ -84,7 +84,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 					const cb2 = () => {
 						const whatsNewParam = {
-							onClose: () => Onboarding.startBasics(isPopup),
+							onClose: () => Onboarding.startCommon(isPopup),
 						};
 
 						if (!chatsOnboarding) {
@@ -100,7 +100,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						if (whatsNew) {
 							U.Common.showWhatsNew(whatsNewParam);
 						} else {
-							Onboarding.startBasics(isPopup);
+							Onboarding.startCommon(isPopup);
 						};
 					};
 

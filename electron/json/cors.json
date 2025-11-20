@@ -19,7 +19,8 @@
 		"https://scontent.cdninstagram.com",
 		"https://*.any.coop",
 		"https://*.ytimg.com",
-		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
+		"https://images.unsplash.com"
 	],
 
 	"media-src": [ 
@@ -38,7 +39,8 @@
 		"https://*.spotify.com",
   		"https://*.spotifycdn.com",
 		"https://*.any.coop",
-		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
+		"https://images.unsplash.com"
 	],
 
 	"style-src": [ 

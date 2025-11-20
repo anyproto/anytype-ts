@@ -1026,7 +1026,7 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state, true));
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
 					break;
 				};
 

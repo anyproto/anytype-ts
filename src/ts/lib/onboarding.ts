@@ -70,19 +70,33 @@ class Onboarding {
 		return true;
 	};
 
-	startBasics (isPopup: boolean) {
-		if (this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup)) {
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-			Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+	startCommon (isPopup: boolean) {
+		const spaceview = U.Space.getSpaceview();
+		if (!spaceview.isData) {
+			return;
+		};
 
-			S.Common.setLeftSidebarState('vault', 'widget');
-			$(window).trigger('checkWidgetToggles');
+		if (this.start('common', isPopup)) {
+			this.initWidgetSections(true, true);
 		};
 	};
 
-	completeBasics () {
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
+	startChat (isPopup: boolean) {
+		if (!this.isCompletedCommon()) {
+			return;
+		};
+		if (this.start('chat', isPopup)) {
+			this.initWidgetSections(false, false);
+		};
+	};
+
+	initWidgetSections (unread: boolean, recentEdit: boolean) {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), unread);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), recentEdit);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+
+		S.Common.setLeftSidebarState('vault', 'widget');
 		$(window).trigger('checkWidgetToggles');
 	};
 
@@ -98,9 +112,7 @@ class Onboarding {
 		section.param = section.param || {};
 		item.param = item.param || {};
 
-		let param: any = {};
-
-		param = Object.assign(param, section.param);
+		let param: any = Object.assign({}, section.param);
 
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);
@@ -117,7 +129,6 @@ class Onboarding {
 		param.element = String(param.element || '');
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
-		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = param.rect || null;
@@ -201,8 +212,8 @@ class Onboarding {
 		return Storage.getOnboarding(key);
 	};
 
-	isCompletedBasics (): boolean {
-		return this.isCompleted('basicsNew') || this.isCompleted('basicsOld');
+	isCompletedCommon (): boolean {
+		return this.isCompleted('common');
 	};
 	
 };

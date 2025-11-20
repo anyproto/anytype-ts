@@ -97,7 +97,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		C.ChatSubscribeLastMessages(chatId, 1, subId, (message: any) => {
 			if (message.state) {
-				S.Chat.setState(subId, message.state, false);
+				S.Chat.setState(subId, message.state);
 			};
 
 			callBack?.();
@@ -119,7 +119,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			if (message.state) {
-				S.Chat.setState(subId, message.state, false);
+				S.Chat.setState(subId, message.state);
 			};
 
 			const messages = message.messages || [];
@@ -565,11 +565,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const last = S.Chat.getMessageById(subId, ids[ids.length - 1]);
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-
-		console.log('onReadStop');
-		console.log('IDS', JSON.stringify(ids, null, 3));
-		console.log('FIRST', first);
-		console.log('LAST', last);
 
 		if (S.Common.windowIsFocused) {
 			if (first && last) {

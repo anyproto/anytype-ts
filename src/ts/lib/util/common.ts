@@ -1946,10 +1946,6 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('chatsOnboarding')) {
-			return;
-		};
-
 		v = String(v || '');
 
 		const electron = this.getElectron();
