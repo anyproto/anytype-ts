@@ -813,11 +813,7 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		const filters = U.Subscription.getBaseFilters({
-			ignoreHidden: true,
-			ignoreArchived: true,
-			ignoreDeleted: true,	 
-		});
+		const filters = U.Subscription.getBaseFilters();
 
 		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
