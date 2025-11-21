@@ -36,7 +36,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 								S.Popup.open('membership', { data: { tier: newTier } });
 							} else 
 							if (membership.status == I.MembershipStatus.Finalization) {
-								S.Popup.open('membershipFinalization', { data: { tier } });
+								S.Popup.open('membershipFinalization', { data: { tier: membership.tier } });
 							} else {
 								S.Popup.open('membership', {
 									data: {

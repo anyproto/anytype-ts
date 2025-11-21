@@ -58,7 +58,7 @@ class ScrollOnMove {
 		this.y = y;
 
 		if (this.isScrolling) {
-			this.timeoutScroll = window.setTimeout(this.loop, 50);
+			this.loop();
 		};
 
 		// Hack to fix events not being triggered on mouseup

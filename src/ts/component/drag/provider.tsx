@@ -20,7 +20,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const position = useRef(I.BlockPosition.None);
 	const hoverData = useRef(null);
 	const canDrop = useRef(false);
-	const top = useRef(0);
 	const frame = useRef(0);
 	const objects = useRef(null);
 	const objectData = useRef(new Map());
@@ -72,6 +71,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 					height += top + bot + 2;
 				};
 			};
+
+			console.log(item.text(), y);
 
 			objectData.current.set(data.cacheKey, {
 				...data,
@@ -186,7 +187,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		console.log('[DragProvider].onDragStart', dropType, ids);
 
-		top.current = container.scrollTop();
 		layerRef.current.show(rootId, dropType, ids, component);
 		setClass(ids);
 		initData();
@@ -229,6 +229,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		e.preventDefault();
 		e.stopPropagation();
 
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
 
@@ -522,11 +523,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			return;
 		};
 
-		for (const [ key, value ] of objectData.current) {
-			const { left, top } = value.obj.offset();
-
-			objectData.current.set(key, { ...value, x: left, y: top });
-		};
+		initData();
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
@@ -806,7 +803,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const unbind = () => {
-		$(window).off('drag.drag dragend.drag');
+		$(window).off('dragend.drag');
 	};
 
 	useEffect(() => {
