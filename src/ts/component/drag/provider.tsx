@@ -33,7 +33,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = $(isPopup ? '#popupPage-innerWrap' : '#root');
+		const container = $(isPopup ? '#popupPage-innerWrap' : '#dragProvider');
 
 		clearState();
 		isInitialised.current = true;
@@ -72,7 +72,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				};
 			};
 
-			console.log(item.text(), y);
+			//console.log(item.text(), y, scrollContainer.scrollTop());
 
 			objectData.current.set(data.cacheKey, {
 				...data,
@@ -229,6 +229,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		e.preventDefault();
 		e.stopPropagation();
 
+		isInitialised.current = false;
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		initData();
 		checkNodes(e, e.pageX, e.pageY);
@@ -251,8 +252,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const onDragEnd = (e: any) => {
-		console.log('[DragProvider].onDragEnd');
-
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
