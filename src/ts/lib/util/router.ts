@@ -73,7 +73,14 @@ class UtilRouter {
 			param.page = 'main';
 		};
 
-		return Object.assign(param, searchParam);
+		const ret = Object.assign(param, searchParam);
+		const out: any = {};
+
+		for (const k in ret) {
+			out[decodeURIComponent(k)] = decodeURIComponent(ret[k]);
+		};
+
+		return out;
 	};
 
 	/**
@@ -100,6 +107,8 @@ class UtilRouter {
 		if (additional.length) {
 			route = route.concat(additional.map(it => [ it.key, it.value ]).flat());
 		};
+
+		route = route.map(it => encodeURIComponent(it));
 
 		return '/' + route.join('/');
 	};
