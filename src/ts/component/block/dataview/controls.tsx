@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
