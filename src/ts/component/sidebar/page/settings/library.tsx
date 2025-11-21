@@ -334,7 +334,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 					classNameWrap: 'fromSidebar',
 					horizontal: I.MenuDirection.Right,
 					data: {
-						filter: filter,
+						filter: filter.current,
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 							if (relation.id && filter && searchIds) {
 								setSearchIds(searchIds.concat(relation.id));
