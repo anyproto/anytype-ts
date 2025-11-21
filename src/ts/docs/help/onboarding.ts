@@ -23,7 +23,6 @@ const Data = {
 				return { x: 0, y: 0, width: ww, height: wh };
 			},
 			classNameWrap: 'fixed fromSidebar',
-			className: 'isWizard',
 			horizontal: I.MenuDirection.Right,
 			passThrough: true,
 			offsetY: -4,
