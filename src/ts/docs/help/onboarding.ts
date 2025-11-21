@@ -95,9 +95,7 @@ const Data = {
 		return {
 			showDimmer: true,
 			withCounter: true,
-			canSkip: true,
 			param: {
-				noClose: true,
 				highlightElements: [ '#sidebarLeft #pageWrapper' ],
 				stickToElementEdge: I.MenuDirection.Top,
 			},

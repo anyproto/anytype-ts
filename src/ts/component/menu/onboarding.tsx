@@ -69,10 +69,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 			};
 
 			buttons.push({ text: buttonText, action: 'next' });
-
-			if (section.canSkip) {
-				buttons.push({ text: translate('commonSkip'), action: 'close' });
-			};
 		};
 
 		if (item.buttons) {
@@ -331,11 +327,6 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		const { key, current } = data;
 
 		switch (action) {
-			case 'close': {
-				this.onClose();
-				break;
-			};
-
 			case 'next': {
 				this.onArrow(e, 1);
 				break;
