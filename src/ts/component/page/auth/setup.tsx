@@ -82,24 +82,18 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					};
 
 					const cb2 = () => {
-						const whatsNewParam = {
-							onClose: () => Onboarding.startCommon(isPopup),
-						};
-
 						if (!chatsOnboarding) {
 							S.Popup.open('introduceChats', {
 								onClose: () => {
 									Storage.set('chatsOnboarding', true);
 									Storage.setHighlight('createSpace', true);
 
-									window.setTimeout(() => U.Common.showWhatsNew(whatsNewParam), J.Constant.delay.popup * 2);
+									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
 								},
 							});
 						} else
 						if (whatsNew) {
-							U.Common.showWhatsNew(whatsNewParam);
-						} else {
-							Onboarding.startCommon(isPopup);
+							U.Common.showWhatsNew();
 						};
 					};
 

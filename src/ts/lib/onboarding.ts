@@ -71,11 +71,6 @@ class Onboarding {
 	};
 
 	startCommon (isPopup: boolean) {
-		const spaceview = U.Space.getSpaceview();
-		if (!spaceview.isData) {
-			return;
-		};
-
 		if (this.start('common', isPopup)) {
 			this.initWidgetSections(true, true);
 		};
