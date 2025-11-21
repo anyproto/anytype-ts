@@ -10,7 +10,11 @@ const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 10;
 
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
+interface State {
+	items: any[];
+};
+
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu, State> {
 	
 	emptyLength = 0;
 	timeout = 0;
@@ -18,6 +22,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	refList: any = null;
 	n = 0;
 	filter = '';
+	state = {
+		items: [],
+	};
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -113,10 +120,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				};
 
 				if (item.isObject) {
-					item.object = { 
-						...item,
-						layout: I.ObjectLayout.Type,
-					};
+					item.object = { ...item, layout: I.ObjectLayout.Type };
 					item.iconSize = 40;
 				};
 				
@@ -222,7 +226,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		if (this.filter != filter.text) {
 			this.n = 0;
 			this.filter = filter.text;
-			this.forceUpdate();
+			this.loadObjects();
 			return;
 		};
 
@@ -250,6 +254,33 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	loadObjects () {
+		if (!this.filter) {
+			this.setState({ items: [] });
+			return;
+		};
+
+		const filters: I.Filter[] = [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] },
+		];
+		const sorts: I.Sort[] = [
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'type', type: I.SortType.Asc },
+		];
+
+		U.Subscription.search({
+			filters,
+			sorts,
+			fullText: this.filter,
+			limit: 50,
+		}, (message: any) => {
+			this.setState({ items: message.records || [] });
+		});
 	};
 
 	getRelations () {
@@ -289,14 +320,24 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			return [];
 		};
 
+		const items = (this.state.items || []).map((it: any) => {
+			return { 
+				...it, 
+				object: { ...it }, 
+				isBlock: true, 
+				type: I.BlockType.Link,
+			};
+		});
+
 		let sections: any[] = [
-			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: U.Menu.getBlockText(), isBig: true, withDescription: true },
-			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
-			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
-			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
-			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
-			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations(), isBig: false, withDescription: false },
-			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
+			{ id: 'text', name: translate('menuBlockAddSectionText'), children: U.Menu.getBlockText(), isBig: true, withDescription: true },
+			{ id: 'list', name: translate('menuBlockAddSectionList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
+			{ id: 'media', name: translate('menuBlockAddSectionMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
+			{ id: 'other', name: translate('menuBlockAddSectionOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
+			{ id: 'link', name: translate('menuBlockAddSectionLink'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
+			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: this.getRelations(), isBig: false, withDescription: false },
+			{ id: 'object', name: translate('menuBlockAddSectionObject'), children: items, isBig: false, withDescription: false },
+			{ id: 'embed', name: translate('menuBlockAddSectionEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
 		].map(s => ({ 
 			...s, 
 			children: s.children.map(c => ({
@@ -328,10 +369,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: U.Menu.getHAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionsTextColor'), color: '', children: U.Menu.getTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionTextColor'), color: '', children: U.Menu.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionsBackgroundColor'), color: '', children: U.Menu.getBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionBackgroundColor'), color: '', children: U.Menu.getBgColors() });
 			};
 			
 			sections = U.Menu.sectionsFilter(sections, filter.text);
@@ -461,6 +502,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					canAdd: true,
 					type: I.NavigationType.Link,
 					withPlural: true,
+					filters: [
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() },
+					],
 				});
 				break;
 			};
@@ -577,7 +621,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			if (item.isBlock) {
-				const param: any = {
+				let param: any = {
 					type: item.type,
 					vAlign: block.vAlign,
 					content: {},
@@ -623,6 +667,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.type == I.BlockType.Embed) {
 					param.content.processor = item.itemId;
+				};
+
+				if (item.type == I.BlockType.Link) {
+					param = U.Data.getLinkBlockParam(item.itemId, item.layout, true);
 				};
 
 				const newBlock = new M.Block(param);

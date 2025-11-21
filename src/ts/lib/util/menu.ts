@@ -590,7 +590,7 @@ class UtilMenu {
 					c._sortWeight_ = getWeight(c.description);
 				};
 				
-				s._sortWeight_ += c._sortWeight_;
+				s._sortWeight_ += c._sortWeight_ / (s.children.length || 1);
 				return ret; 
 			});
 			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
