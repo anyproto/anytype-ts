@@ -2,8 +2,14 @@ import { I, U, translate, S } from 'Lib';
 import $ from 'jquery';
 
 const IMG_PATH = {
-	'': './img/help/onboarding/common/',
-	dark: './img/theme/dark/help/onboarding/common/',
+	common: {
+		'': './img/help/onboarding/common/',
+		dark: './img/theme/dark/help/onboarding/common/',
+	},
+	syncStatus: {
+		'': './img/help/onboarding/syncStatus/',
+		dark: './img/theme/dark/help/onboarding/syncStatus/',
+	},
 };
 
 const Data = {
@@ -88,7 +94,7 @@ const Data = {
 		};
 
 		const getSrc = (el: string) => {
-			return `${IMG_PATH[theme]}${el}.png`;
+			return `${IMG_PATH.common[theme]}${el}.png`;
 		};
 
 		return {
@@ -222,40 +228,51 @@ const Data = {
 		]
 	}),
 
-	syncStatus: () => ({
-		showDimmer: true,
-		param: {
-			width: 288,
-			highlightElements: [],
-			classNameWrap: 'fixed',
-		},
-		items: [
-			{
-				category: translate('onboardingSyncStatusTitle'),
-				description: translate('onboardingSyncStatusText'),
-				cloneElementClassName: 'onboardingHeaderSync',
-				param: {
-					element: '#header #headerSync',
-					horizontal: I.MenuDirection.Right,
-					highlightElements: [ '#header #headerSync' ],
-					offsetY: 14,
-				}
+	syncStatus: () => {
+		const theme = S.Common.getThemeClass();
+
+		const getSrc = (el: string) => {
+			return `${IMG_PATH.syncStatus[theme]}${el}.png`;
+		};
+
+		return {
+			showDimmer: true,
+			param: {
+				width: 288,
+				highlightElements: [],
+				classNameWrap: 'fixed',
 			},
-			{
-				category: translate('onboardingMobileTitle'),
-				description: translate('onboardingMobileText'),
-				buttonText: translate('onboardingMobileButton'),
-				cloneElementClassName: 'onboardingIconP2P',
-				param: {
-					className: 'qrDownload',
-					element: '#icon-p2p',
-					horizontal: I.MenuDirection.Right,
-					stickToElementEdge: I.MenuDirection.Top,
-					offsetX: -295,
-				}
-			},
-		]
-	}),
+			items: [
+				{
+					category: translate('onboardingSyncStatusTitle'),
+					description: translate('onboardingSyncStatusText'),
+					cloneElementClassName: 'onboardingHeaderSync',
+					param: {
+						element: '#header #headerSync',
+						horizontal: I.MenuDirection.Right,
+						highlightElements: [ '#header #headerSync' ],
+						offsetY: 14,
+					}
+				},
+				{
+					category: translate('onboardingMobileTitle'),
+					description: translate('onboardingMobileText'),
+					buttonText: translate('onboardingMobileButton'),
+					cloneElementClassName: 'onboardingIconP2P',
+					img: {
+						src: getSrc('qr')
+					},
+					param: {
+						className: 'qrDownload',
+						element: '#icon-p2p',
+						horizontal: I.MenuDirection.Right,
+						stickToElementEdge: I.MenuDirection.Top,
+						offsetX: -295,
+					}
+				},
+			]
+		}
+	},
 
 	collections: () => ({
 		showDimmer: true,
