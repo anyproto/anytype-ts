@@ -6,7 +6,7 @@ const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	useEffect(() => {
 		const { isPopup } = props;
 		const match = keyboard.getMatch(isPopup);
-		const { id, spaceId, cid, key, messageId } = match.params || {};
+		const { id, spaceId, cid, key, messageId } = match.params;
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 		const route = match.params.route || analytics.route.app;
 

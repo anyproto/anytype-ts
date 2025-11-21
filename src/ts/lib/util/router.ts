@@ -33,6 +33,7 @@ class UtilRouter {
 	 */
 	getParam (route: string): any {
 		route = String(route || '');
+
 		if (!route) {
 			return {};
 		};
@@ -141,7 +142,7 @@ class UtilRouter {
 
 		focus.clear(true);
 
-		if (routeParam.spaceId && (routeParam.spaceId != space)) {
+		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
 			this.switchSpace(routeParam.spaceId, newRoute, false, param, false);
 			return;
 		};
