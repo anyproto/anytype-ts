@@ -11,11 +11,13 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const nodeRef = useRef(null);
 	const [ isAnnual, setIsAnnual ] = useState(true);
 	
-	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
-	
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
 	const purchased = data?.getTopPurchasedProduct();
+
+	// show first purchased product and then the rest of the top-level products (excluding it)
+	const rest = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden && !it.isIntro&& it.id !== purchased?.product?.id);
+	const products = [ current, ...rest ];
 
 	const rebind = () => {
 		unbind();
