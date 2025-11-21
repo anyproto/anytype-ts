@@ -992,13 +992,15 @@ class Dispatcher {
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
 						const title = [];
-						const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 
 						if (spaceview) {
 							title.push(spaceview.name);
 						};
-						if (!chat._empty_) {
-							title.push(chat.name);
+						if (!spaceview.isChat) {
+							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
+							if (!chat._empty_) {
+								title.push(chat.name);
+							};
 						};
 
 						U.Common.notification({ 
