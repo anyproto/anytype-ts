@@ -9,6 +9,7 @@ import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
+import { max } from 'lodash';
 
 interface Props extends I.Cell {
 	elementId?: string;
@@ -126,13 +127,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (childRef.current) {
-				if (childRef.current.setEditing) {
-					childRef.current.setEditing(true);
-				};
-
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.setEditing?.(true);
+				childRef.current.onClick?.(e);
 			};
 
 			keyboard.disableSelection(true);
@@ -144,13 +140,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			keyboard.disableSelection(false);
 
 			if (childRef.current) {
-				if (childRef.current.onBlur) {
-					childRef.current.onBlur();
-				};
-
-				if (childRef.current.setEditing) {
-					childRef.current.setEditing(false);
-				};
+				childRef.current.onBlur?.();
+				childRef.current.setEditing?.(false);
 			};
 
 			if (!isGrid && isName) {
@@ -287,12 +278,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					break;
 				};
 
-				param = Object.assign(param, {
-					width: 288,
-				});
-				param.data = Object.assign(param.data, {
-					noResize: true,
-				});
+				param = Object.assign(param, { width: J.Size.menu.value });
+				param.data = Object.assign(param.data, { noResize: true });
 
 				menuId = 'dataviewText';
 				closeIfOpen = false;
@@ -315,12 +302,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						height,
 					});
 				} else {
-					param = Object.assign(param, {
-						width: 288,
-					});
-					param.data = Object.assign(param.data, {
-						noResize: true,
-					});
+					param = Object.assign(param, { width: J.Size.menu.value });
+					param.data = Object.assign(param.data, { noResize: true });
 				};
 
 				menuId = 'dataviewText';
@@ -332,12 +315,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
 				if (noInplace) {
-					param = Object.assign(param, {
-						width: 288,
-					});
-					param.data = Object.assign(param.data, {
-						noResize: true,
-					});
+					param = Object.assign(param, { width: J.Size.menu.value });
+					param.data = Object.assign(param.data, { noResize: true });
 					menuId = 'dataviewText';
 					closeIfOpen = false;
 
@@ -585,13 +564,9 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
-		isEditing: () => childRef.current.isEditing(),
+		isEditing: () => childRef.current.isEditing?.(),
 		canEdit: () => canCellEdit(relation, record),
-		onBlur: () => {
-			if (childRef.current.onBlur) {
-				childRef.current.onBlur();
-			};
-		},
+		onBlur: () => childRef.current.onBlur?.(),
 	}));
 
 	return (

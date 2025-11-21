@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, EmptySearch, ObjectName, ObjectType } from 'Component';
 import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
+import { set } from 'lodash';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
@@ -98,7 +99,9 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 
 	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeoutRef.current);
-		timeoutRef.current = window.setTimeout(() => filter = v, J.Constant.delay.keyboard);
+		timeoutRef.current = window.setTimeout(() => {
+			data.filter = v;
+		}, J.Constant.delay.keyboard);
 	};
 
 	const onOver = (e: any, item: any) => {
@@ -149,7 +152,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 
 	const resize = () => {
 		const obj = $(`#${getId()} .content`);
-		const offset = 120;
+		const offset = 100;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
