@@ -166,7 +166,7 @@ class UtilSpace {
 	getChat () {
 		return { 
 			id: S.Block.workspace,
-			name: translate('commonChat'),
+			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};

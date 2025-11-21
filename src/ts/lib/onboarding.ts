@@ -155,6 +155,8 @@ class Onboarding {
 		if (section.showDimmer) {
 			param.menuKey = 'withDimmer';
 			cnw.push('fromOnboarding');
+		} else {
+			cnw.push('fromBlock');
 		};
 		param.classNameWrap = cnw.join(' ');
 

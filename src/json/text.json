@@ -33,8 +33,6 @@
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
 	"commonGraph": "Graph",
-	"commonChat": "Chat",
-	"commonChats": "Chats",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
@@ -486,16 +484,6 @@
 	"authOnboardOptionsTeamWork": "Team work & shared docs",
 	"authOnboardOptionsOther": "Other",
 
-	"onboardingExperienceSubTitle": "Build your first space",
-	"onboardingExperienceTypeTitle": "Who Will Use This Space?",
-	"onboardingExperiencePurposeTitle": "What Life Area Is This Space For?",
-	"onboardingExperienceUsecaseTitle": "Pick an Experience To Start",
-	"onboardingExperienceUsecaseButtonSelectExperience": "Select this Experience",
-
-	"onboardingExperienceUsecaseStartFromScratchTitle": "Start Without A Template",
-	"onboardingExperienceUsecaseStartFromScratchText": "Structure your space yourself. If you change your mind, you can always add an experience from our gallery later on.",
-	"onboardingExperienceUsecaseButtonStartFromScratch": "Start From Scratch",
-
 	"usecaseCategoryDashboard": "Dashboard",
 	"usecaseCategoryWork": "Work",
 	"usecaseCategoryEducation": "Education",
@@ -602,7 +590,6 @@
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Space cannot be shared.<br/>Create a new one to invite members.",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
-
 
 	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
 	"pageSettingsSpaceNotificationsMode0": "All messages",

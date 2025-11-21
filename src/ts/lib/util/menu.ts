@@ -649,7 +649,7 @@ class UtilMenu {
 
 		let options = [];
 		if (spaceview.isChat) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate('commonChat') });
+			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
 		} else {
 			options = [
 				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -1612,8 +1612,8 @@ class UtilMenu {
 
 	uxTypeOptions () {
 		return [
-			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
-			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
+			{ id: I.SpaceUxType.Data },
+			{ id: I.SpaceUxType.Chat },
 		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
 	};
 
