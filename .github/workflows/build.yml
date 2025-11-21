@@ -58,7 +58,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: 22.17.0
+          node-version: 25.2.1
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps
