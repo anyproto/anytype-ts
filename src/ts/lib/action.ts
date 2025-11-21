@@ -1080,8 +1080,9 @@ class Action {
 		this.openSettings('spaceShare', route);
 	};
 
-	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) {		
+	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
+		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
 	};
 
 };

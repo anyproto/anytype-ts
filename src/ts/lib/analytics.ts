@@ -78,6 +78,7 @@ class Analytics {
 		settingsSpace: 'SettingsSpace',
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsSpaceNotifications: 'ScreenSettingsSpaceNotifications',
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
 		settingsAccount: 'ScreenSettingsAccount',
@@ -563,6 +564,7 @@ class Analytics {
 			case 'ChangeMessageNotificationState': {
 				data.type = Number(data.type) || 0;
 				data.type = I.NotificationMode[data.type];
+				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
 				break;
 			};
 
