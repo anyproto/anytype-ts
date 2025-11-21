@@ -62,7 +62,11 @@ export default {
 		},
 
 		relation: {
-			option: 4,
+			option:						 4,
+		},
+
+		string: {
+			mention:					 300,
 		},
 	},
 

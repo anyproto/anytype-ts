@@ -741,7 +741,7 @@ class BlockStore {
 				};
 
 				const old = text.substring(from, to);
-				const name = U.Common.shorten(U.Object.name(object, true).trim(), 30);
+				const name = U.Common.shorten(U.Object.name(object, true).trim(), J.Constant.limit.string.mention);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
