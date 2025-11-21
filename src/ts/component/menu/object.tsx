@@ -394,7 +394,7 @@ class MenuObject extends React.Component<I.Menu> {
 					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
 					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
-						Action.setChatNotificationMode(space, [ object.id ], Number(option.id));
+						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
 						close();
 					},
 				};
@@ -585,7 +585,7 @@ class MenuObject extends React.Component<I.Menu> {
 					data: {
 						details: object,
 					},
-				});
+				}, route);
 				break;
 			};
 		};

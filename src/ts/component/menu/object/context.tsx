@@ -380,7 +380,7 @@ class MenuContext extends React.Component<I.Menu> {
 					value,
 					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
-						Action.setChatNotificationMode(space, objectIds, Number(option.id));
+						Action.setChatNotificationMode(space, objectIds, Number(option.id), route);
 						close();
 					},
 				};
@@ -503,7 +503,7 @@ class MenuContext extends React.Component<I.Menu> {
 					data: {
 						details: first,
 					},
-				});
+				}, route);
 
 				needClose = false;
 				break;

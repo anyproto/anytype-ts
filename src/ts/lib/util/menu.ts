@@ -908,7 +908,7 @@ class UtilMenu {
 									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
 
 									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-									analytics.event('ChangeMessageNotificationState', { type: mode, route: param.route });
+									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route: param.route });
 									break;
 								};
 
@@ -1484,7 +1484,7 @@ class UtilMenu {
 									this.onBookmarkMenu(menuParam, object => cb(object, 0));
 								} else
 								if (U.Object.isChatLayout(item.recommendedLayout)) {
-									this.onChatMenu(menuParam, object => cb(object, 0));
+									this.onChatMenu(menuParam, route, object => cb(object, 0));
 								};
 							}, S.Menu.getTimeout());
 						} else {
@@ -1518,7 +1518,7 @@ class UtilMenu {
 		});
 	};
 
-	onChatMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+	onChatMenu (param?: Partial<I.MenuParam>, route?: string, callBack?: (bookmark: any) => void) {
 		param = param || {};
 
 		const data = param.data || {};
@@ -1532,6 +1532,8 @@ class UtilMenu {
 			},
 			...param,
 		});
+
+		analytics.event('ScreenChatInfo', { route });
 	};
 
 	setContext (context: any) {

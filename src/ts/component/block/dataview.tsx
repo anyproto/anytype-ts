@@ -807,7 +807,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case I.ObjectLayout.Chat: {
-				U.Menu.onChatMenu(menuParam, cb);
+				U.Menu.onChatMenu(menuParam, this.analyticsRoute(), cb);
 				break;
 			};
 		};
