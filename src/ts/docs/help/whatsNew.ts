@@ -27,12 +27,14 @@ export default () => {
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 		//{ type: I.BlockType.IconPage, icon: '👋' },
 
+		//${hl(``)}
+
 		title(`Space Multi-Chats & Navigation`),
 		h4(`<span>Release 0.51.0</span><span>November 24, 2025</span>`),
 		text(''),
 		text('Chats now live as native Objects in your Spaces, so you can spin up topic-based threads and link them directly to your work. Navigation across channels is now lighter and more consistent.'),
-		text(`And yes, the “multi” era continues — after Multiplayer Mode, we’re rolling out multi-chats. `),
-		text(`As always, your feedback fuels us — for better or worse.`),
+		text(`And yes, the “multi” era continues – after Multiplayer Mode, we’re rolling out multi-chats. `),
+		text(`As always, your feedback fuels us – for better or worse.`),
 		text(''),
 
 		h1(`Multi-Chats in your Space`),
@@ -66,12 +68,12 @@ export default () => {
 		text(``),
 
 		text(`<b>Recently Opened</b>`),
-		text(`Look for the <b>clock icon</b> at the top of your widget sidebar to open the history of recently viewed Objects.`),
+		text(`Look for the <b>clock icon</b> at the top of your Widget Sidebar to open the history of recently viewed Objects.`),
 		img(`51/6.png`),
 		text(``),
 
 		text(`<b>Recently Edited</b>`),
-		text(`In order to provide quick access to Objects you or your team have recently created or updated, we’ve introduced a new Recently Edited section. Support for personalizing the Widgets Sidebar, such as hiding section you don’t need, is coming soon.`),
+		text(`In order to provide quick access to Objects you or your team have recently created or updated, we’ve introduced a new Recently Edited section. Support for personalizing the Widget Sidebar, such as hiding section you don’t need, is coming soon.`),
 		img(`51/7.png`),
 		text(``),
 
@@ -82,7 +84,7 @@ export default () => {
 
 		text(`<b>Compact Vault Layout</b>`),
 		text(`The Vault now takes up less space, leaving more room for your work. Choose between a simple list or a view with message previews in your Settings, and swipe it away when you need more focus.`),
-		text(`<i>We’re already working on a future iteration that will support an icon-only Vault view for an even more minimal navigation experience.</i>`),
+		text(`We’re already working on a future iteration that will support an icon-only Vault view for an even more minimal navigation experience.`),
 		img(`51/9.png`),
 		text(``),
 
