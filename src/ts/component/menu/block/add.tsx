@@ -257,7 +257,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 	};
 
 	loadObjects () {
-		if (!this.filter) {
+		const filter = S.Common.filterText;
+
+		if (!filter) {
 			this.setState({ items: [] });
 			return;
 		};
@@ -276,8 +278,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		U.Subscription.search({
 			filters,
 			sorts,
-			fullText: this.filter,
-			limit: 50,
+			fullText: filter,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			this.setState({ items: message.records || [] });
 		});
