@@ -1043,6 +1043,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				allowedLinkTo: true,
 				allowedOpen: true,
 				allowedRelation: true,
+				allowedCollection: true,
 			}
 		});
 	};

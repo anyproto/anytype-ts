@@ -97,7 +97,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedType = true;
 		let allowedLinkTo = data.allowedLinkTo;
 		let allowedOpen = data.allowedOpen;
-		let allowedCollection = true;
+		let allowedCollection = data.allowedCollection;
 		let allowedUnlink = isCollection;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
@@ -138,7 +138,6 @@ class MenuContext extends React.Component<I.Menu> {
 			if (isType) {
 				allowedRelation = false;
 				allowedCopy	= false;
-				allowedCollection = false;
 				allowedType = false;
 				allowedExport = false;
 			};
