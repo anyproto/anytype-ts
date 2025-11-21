@@ -2,14 +2,8 @@ import { I, U, translate, S } from 'Lib';
 import $ from 'jquery';
 
 const IMG_PATH = {
-	common: {
-		'': './img/help/onboarding/common/',
-		dark: './img/theme/dark/help/onboarding/common/',
-	},
-	syncStatus: {
-		'': './img/help/onboarding/syncStatus/',
-		dark: './img/theme/dark/help/onboarding/syncStatus/',
-	},
+	'': './img/help/onboarding',
+	dark: './img/theme/dark/help/onboarding',
 };
 
 const Data = {
@@ -77,6 +71,7 @@ const Data = {
 
 	common: () => {
 		const theme = S.Common.getThemeClass();
+		const spaceview = U.Space.getSpaceview();
 		const elements = {
 			vault: '#sidebarPageVault #body',
 			channel: '#sidebarPageVault #button-create-space',
@@ -85,16 +80,12 @@ const Data = {
 			pin: '#sidebarPageWidget > #body > .content > .section-pin > .items',
 			type: '#sidebarPageWidget > #body > .content > .section-type > .items',
 			relation: '#header #button-header-relation',
-			widgetSpace: '#widget-space .spaceData .head',
+			widgetSpace: spaceview.isChat ? '#widget-space .spaceInfo' : '#widget-space .spaceData .head',
 		};
 
 		const getOffset = (el: string) => {
 			const offset = el == 'widgetSpace' ? 20 : 8;
 			return $(elements[el]).width() + offset;
-		};
-
-		const getSrc = (el: string) => {
-			return `${IMG_PATH.common[theme]}${el}.png`;
 		};
 
 		return {
@@ -165,7 +156,7 @@ const Data = {
 					name: translate('onboardingCommonTitleTypes'),
 					description: translate('onboardingCommonTextTypes'),
 					img: {
-						src: getSrc('type'),
+						src: `${IMG_PATH[theme]}/common/type.png`,
 					},
 					param: {
 						element: elements.type,
@@ -177,7 +168,7 @@ const Data = {
 					name: translate('onboardingCommonTitleProperties'),
 					description: translate('onboardingCommonTextProperties'),
 					img: {
-						src: getSrc('relation'),
+						src: `${IMG_PATH[theme]}/common/relation.png`,
 						caption: translate('onboardingCommonTextPropertiesImgCaption'),
 					},
 					param: {
@@ -231,10 +222,6 @@ const Data = {
 	syncStatus: () => {
 		const theme = S.Common.getThemeClass();
 
-		const getSrc = (el: string) => {
-			return `${IMG_PATH.syncStatus[theme]}${el}.png`;
-		};
-
 		return {
 			showDimmer: true,
 			param: {
@@ -260,7 +247,7 @@ const Data = {
 					buttonText: translate('onboardingMobileButton'),
 					cloneElementClassName: 'onboardingIconP2P',
 					img: {
-						src: getSrc('qr')
+						src: `${IMG_PATH[theme]}/syncStatus/qr.png`
 					},
 					param: {
 						className: 'qrDownload',
