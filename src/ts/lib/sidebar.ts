@@ -391,7 +391,7 @@ class Sidebar {
 	 * @param {number} w - The width to set.
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number, save: boolean): void {
-		this.setData(panel, isPopup, { width: this.limitWidth(panel, width), isClosed: false }, save);
+		this.setData(panel, isPopup, { width: this.limitWidth(panel, width) }, save);
 		this.resizePage(isPopup, null, null, false);
 	};
 
