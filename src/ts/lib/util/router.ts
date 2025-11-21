@@ -82,36 +82,23 @@ class UtilRouter {
 	 * @returns {string} The route string.
 	 */
 	build (param: Partial<RouteParam>): string {
-		const { page, action } = param;
+		const page = String(param.page || 'index');
+		const action = String(param.action || 'index');
 		const id = String(param.id || '');
-		const spaceId = String(param.spaceId || '');
-		const viewId = String(param.viewId || '');
-		const relationKey = String(param.relationKey || '');
-		const messageId = String(param.messageId || '');
-		const objectId = String(param.objectId || '');
 		const additional = param.additional || [];
 
 		let route = [ page, action, id ];
-		if (spaceId) {
-			route = route.concat([ 'spaceId', spaceId ]);
-		};
-		if (viewId) {
-			route = route.concat([ 'viewId', viewId ]);
-		};
-		if (relationKey) {
-			route = route.concat([ 'relationKey', relationKey ]);
-		};
-		if (messageId) {
-			route = route.concat([ 'messageId', messageId ]);
-		};
-		if (objectId) {
-			route = route.concat([ 'objectId', objectId ]);
+
+		for (const k in param) {
+			if ([ 'page', 'action', 'id', 'additional' ].includes(k)) {
+				continue;
+			};
+
+			route = route.concat([ k, param[k] ]);
 		};
 
 		if (additional.length) {
-			additional.forEach((it: any) => {
-				route = route.concat([ it.key, it.value ]);
-			});
+			route = route.concat(additional.map(it => [ it.key, it.value ]).flat());
 		};
 
 		return '/' + route.join('/');

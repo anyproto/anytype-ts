@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, J, translate, analytics, sidebar } from 'Lib';
+import { I, S, U, J, translate, analytics, sidebar, keyboard } from 'Lib';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -10,11 +10,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const [ error, setError ] = useState('');
 
 	const init = () => {
-		const { history } = U.Router;
-		const { location } = history;
-		const data = U.Common.searchParam(location.search);
-
-		let newTier = data.tier;
+		let { code, tier: newTier } = keyboard.getMatch(false).params;
 
 		U.Data.getMembershipTiers(true, () => {;
 			U.Data.getMembershipStatus((membership: I.Membership) => {
@@ -29,8 +25,8 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 					replace: true,
 					onFadeIn: () => {
 						window.setTimeout(() => {
-							if (data.code) {
-								S.Popup.open('membershipActivation', { data });
+							if (code) {
+								S.Popup.open('membershipActivation', { data: { code } });
 							} else
 							if (newTier && (newTier != I.TierType.None)) {
 								if (tier.price) {

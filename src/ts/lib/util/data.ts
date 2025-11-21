@@ -79,7 +79,7 @@ class UtilData {
 	 * @returns {string} The CSS class.
 	 */
 	spaceClass (v: I.SpaceUxType): string {
-		return `space${I.SpaceUxType[v]}`
+		return v ? `space${String(I.SpaceUxType[v])}` : '';
 	};
 
 	/**
