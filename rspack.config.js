@@ -4,12 +4,10 @@ const rspack = require('@rspack/core');
 const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+const { plugins } = require('prismjs');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
-
-// Stub for Excalidraw in extension build
-const EXCALIDRAW_STUB = path.resolve(__dirname, 'src/stubs/excalidraw-stub.js');
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT || 8080;
@@ -193,21 +191,28 @@ module.exports = (env, argv) => {
 	const extensionConfig = {
 		name: 'extension',
 		...base,
+
 		entry: {
 			extension: {
 				import: './extension/entry.tsx',
 				filename: 'extension/js/main.js',
 			},
 		},
-		// override resolve.alias to stub excalidraw
+
 		resolve: {
 			...base.resolve,
 			alias: {
 				...base.resolve.alias,
-				'@excalidraw/excalidraw': EXCALIDRAW_STUB,
+				'@excalidraw/excalidraw': path.resolve(__dirname, 'src/stubs/excalidraw-stub.js'),
 			},
 		},
-		// no devServer for extension
+
+		plugins: [
+			...base.plugins,
+			new rspack.DefinePlugin({
+				__IS_EXTENSION__: 'true',
+			})
+		],
 	};
 
 	return [ appConfig, extensionConfig ];
