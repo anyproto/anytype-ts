@@ -428,7 +428,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
 				};
 
-				blocks.push(new M.Block({ id: [ space, idMap[sectionId] ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				blocks.push(new M.Block({ 
+					id: [ space, idMap[sectionId] ].join('-'), 
+					type: I.BlockType.Widget, 
+					content: { layout: I.WidgetLayout.Object } 
+				}));
 				break;
 			};
 
