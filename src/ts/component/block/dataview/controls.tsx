@@ -6,7 +6,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, Button, Filter } from 'Component';
+import { Icon, Button, Filter, DropTarget } from 'Component';
 import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
 import Head from './head';
 
@@ -19,6 +19,7 @@ interface ControlsRefProps {
 	toggleHoverArea: (v: boolean) => void,
 	resize: () => void,
 	getHeadRef: () => any,
+	getNode: () => any,
 };
 
 const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
@@ -470,18 +471,20 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		return (
-			<div 
-				id={elementId} 
-				className={cn.join(' ')} 
-				onClick={() => onViewSet(item)} 
-				onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-			>
-				{item.name || translate('defaultNamePage')}
-			</div>
+			<DropTarget {...props} rootId={rootId} id={item.id} dropType={I.DropType.View} canDropMiddle={true}>
+				<div 
+					id={elementId} 
+					className={cn.join(' ')} 
+					onClick={() => onViewSet(item)} 
+					onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
+					ref={setNodeRef}
+					{...attributes}
+					{...listeners}
+					style={style}
+				>
+					{item.name || translate('defaultNamePage')}
+				</div>
+			</DropTarget>
 		);
 	};
 
@@ -504,6 +507,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		toggleHoverArea,
 		resize,
 		getHeadRef: () => headRef.current,
+		getNode: () => nodeRef.current,
 	}));
 
 	return (

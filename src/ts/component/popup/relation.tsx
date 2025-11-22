@@ -11,13 +11,10 @@ const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
 
 const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { param, close, getId } = props;
+	const { param, close } = props;
 	const { data } = param;
 	const { readonly, view } = data;
-
 	const [ error, setError ] = useState('');
-
-	const checkboxRef = useRef(null);
 	const cellRefs = useRef(new Map());
 	const initialRef = useRef({});
 	const detailsRef = useRef({});

@@ -223,7 +223,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.setState({ isDeleted: false, id: rootId });
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			this.setLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {

@@ -302,15 +302,6 @@ class UtilRouter {
 		return String(this.history?.location?.search || '');
 	};
 
-	/**
-	 * Gets the spaceId from the current route or the default space.
-	 * @returns {string} The spaceId.
-	 */
-	getRouteSpaceId () {
-		const param = this.getParam(this.getRoute());
-		return param.spaceId || S.Common.space;
-	};
-
 };
 
 export default new UtilRouter();

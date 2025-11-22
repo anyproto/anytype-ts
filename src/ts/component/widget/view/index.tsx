@@ -398,7 +398,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				return;
 			};
 
-			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+			C.ObjectShow(targetId, traceId, S.Common.space, (message) => {
 				if (!message.error.code) {
 					cb();
 				};

@@ -446,21 +446,24 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
-						if (!origin.current) {
-							break;
-						};
-
-						// Sort
-						const { onRecordDrop } = origin.current;
-
-						if (onRecordDrop) {
-							onRecordDrop(targetId, ids, position);
-						};
+						origin.current?.onRecordDrop?.(targetId, ids);
 						break;
 					};
 
 					case I.BlockPosition.InnerFirst: {
 						processAddRecord();
+						break;
+					};
+				};
+
+				break;
+			};
+
+			case I.DropType.View: {
+
+				switch (position) {
+					case I.BlockPosition.InnerFirst: {
+						origin.current?.onViewDrop?.(targetId, ids);
 						break;
 					};
 				};
@@ -681,6 +684,11 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 					};
 				};
 
+				// You can only drop inside of views
+				if (hd.dropType == I.DropType.View) {
+					setPosition(I.BlockPosition.InnerFirst);
+				};
+
 				if (isTargetTop || (hd.id == 'blockLast')) {
 					setPosition(I.BlockPosition.Top);
 				};
@@ -692,6 +700,11 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				if (isEmptyToggle) {
 					setPosition(I.BlockPosition.InnerFirst);
 				};
+			};
+
+			// You can only drop records into views
+			if ((hd.dropType == I.DropType.View) && (dropType != I.DropType.Record)) {
+				setPosition(I.BlockPosition.None);
 			};
 
 			if ((dropType == I.DropType.Record) && (hd.dropType == I.DropType.Record) && !canDropMiddle) {
