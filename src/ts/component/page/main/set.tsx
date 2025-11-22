@@ -58,7 +58,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		setIsDeleted(false);
 		setIsLoading(true);
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {

@@ -296,7 +296,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const load = () => {
 		idRef.current = rootId;
 
-		C.ObjectShow(rootId, TRACE_ID, U.Router.getRouteSpaceId(), () => {
+		C.ObjectShow(rootId, TRACE_ID, S.Common.space, () => {
 			if (setObject) {
 				setObject(S.Detail.get(contextId, rootId, []));
 			};
