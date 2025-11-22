@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellBanner } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -63,32 +63,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			);
 		};
 
-		const Item = (item: any) => {
-			const icon = U.Data.syncStatusClass(item.syncStatus);
-
-			return (
-				<div
-					id={`item-${item.id}`}
-					className="item sides"
-					onClick={e => this.onContextMenu(e, item)}
-					onMouseEnter={() => setActive(item, false)}
-					onContextMenu={e => this.onContextMenu(e, item)}
-				>
-					<div className="side left" >
-						<IconObject object={item} size={20} />
-						<div className="info">
-							<ObjectName object={item} />
-							{item.sizeInBytes ? <span className="size">{U.File.size(item.sizeInBytes)}</span> : ''}
-						</div>
-					</div>
-					<div className="side right">
-						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
-					</div>
-				</div>
-			);
-		};
-
 		const rowRenderer = ({ index, key, style, parent }) => {
 			const item = items[index];
 
@@ -101,8 +75,25 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				);
 			} else {
 				content = (
-					<div className="row" style={style}>
-						<Item {...item} index={index} />
+					<div
+						id={`item-${item.id}`}
+						className="item sides"
+						style={style}
+						onClick={e => this.onContextMenu(e, item)}
+						onMouseEnter={() => setActive(item, false)}
+						onContextMenu={e => this.onContextMenu(e, item)}
+					>
+						<div className="side left" >
+							<IconObject object={item} size={20} />
+							<div className="info">
+								<ObjectName object={item} />
+								{item.sizeInBytes ? <span className="size">{U.File.size(item.sizeInBytes)}</span> : ''}
+							</div>
+						</div>
+						<div className="side right">
+							<Icon className={U.Data.syncStatusClass(item.syncStatus)} />
+							<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						</div>
 					</div>
 				);
 			};
