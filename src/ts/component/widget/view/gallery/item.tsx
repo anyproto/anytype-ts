@@ -81,7 +81,6 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		const node = $(nodeRef.current);
 
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
-
 		onResize?.();
 	};
 

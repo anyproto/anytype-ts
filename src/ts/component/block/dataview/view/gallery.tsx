@@ -43,7 +43,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 	useEffect(() => {
 		reset();
-	}, [ width, columnCount, cardHeight ]);
+	}, [ width, columnCount, cardHeight, cardSize, coverRelationKey, hideIcon, relations.length ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
