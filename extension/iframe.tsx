@@ -19,6 +19,7 @@ configure({ enforceActions: 'never' });
 const Routes = [
 	{ path: '/' },
 	{ path: '/:page' },
+	{ path: '/:page/:action' },
 ];
 
 const Components = {
