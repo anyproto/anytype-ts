@@ -4,7 +4,6 @@ const rspack = require('@rspack/core');
 const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
-const { plugins } = require('prismjs');
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
@@ -203,7 +202,9 @@ module.exports = (env, argv) => {
 			...base.resolve,
 			alias: {
 				...base.resolve.alias,
-				'@excalidraw/excalidraw': path.resolve(__dirname, 'src/stubs/excalidraw-stub.js'),
+				'@excalidraw/excalidraw': path.resolve(__dirname, 'src/stubs/excalidraw.js'),
+				'@viz-js/viz': path.resolve(__dirname, 'src/stubs/viz.js'),
+				'mermaid': path.resolve(__dirname, 'src/stubs/mermaid.js'),
 			},
 		},
 
@@ -215,5 +216,5 @@ module.exports = (env, argv) => {
 		],
 	};
 
-	return [ appConfig, extensionConfig ];
+	return [ appConfig,extensionConfig ];
 };

@@ -1,8 +1,7 @@
 import React, { useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, C, translate, analytics, Action, keyboard } from 'Lib';
-import { icon } from 'mermaid/dist/rendering-util/rendering-elements/shapes/icon';
+import { I, U, translate, analytics, Action, keyboard } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
