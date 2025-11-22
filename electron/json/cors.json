@@ -94,8 +94,7 @@
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
 		"https://static.sketchfab.com",
-		"https://*.bstarstatic.com",
-		"https://unpkg.com/@excalidraw/"
+		"https://*.bstarstatic.com"
 	],
 
 	"connect-src": [ 
@@ -200,8 +199,7 @@
 		"https://*.googletagmanager.com",
 		"https://*.facebook.net",
 		"https://*.diagrams.net",
-        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/",
-		"https://unpkg.com/@excalidraw/"
+        "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
 	],
 
 	"frame-src": [
