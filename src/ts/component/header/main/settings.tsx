@@ -8,8 +8,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
-	const param = U.Router.getParam(U.Router.getRoute());
-	const id = param.id || 'account';
+	const { id = 'account' } = keyboard.getMatch(isPopup).params;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);

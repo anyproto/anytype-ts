@@ -15,8 +15,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
 	const { space } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
-	const pathname = U.Router.getRoute();
-	const param = U.Router.getParam(pathname);
+	const { objectId } = keyboard.getMatch(isPopup).params;
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
 	const filterInputRef = useRef(null);
 	const timeoutRef = useRef(0);
@@ -369,11 +368,9 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	};
 
 	const openFirst = () => {
-		const pathname = U.Router.getRoute();
-		const param = U.Router.getParam(pathname);
 		const records = getSections().reduce((acc, el) => acc.concat(el.children), []);
 
-		if (records.find(it => it.id == param?.objectId) || !records.length) {
+		if (records.find(it => it.id == objectId) || !records.length) {
 			return;
 		};
 
@@ -385,56 +382,54 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		U.Router.go(U.Router.build(savedRoute.current.params), {});
 	};
 
-	const ItemSection = (item: any) => {
-		const cn = [ 'itemSection' ];
+	const rowRenderer = ({ index, key, parent, style }) => {
+		const item = items[index];
 
-		if (item.isFirst) {
-			cn.push('isFirst');
-		};
-
-		return (
-			<div className={cn.join(' ')}>
-				<div className="name">{item.name}</div>
-			</div>
-		);
-	};
-
-	const Item = (item: any) => {
+		let content = null;
 		if (item.isSection) {
-			return <ItemSection {...item} />;
-		};
+			const cn = [ 'itemSection' ];
 
-		const cn = [ 'item' ];
-		if (item.id == param?.objectId) {
-			cn.push('active');
+			if (item.isFirst) {
+				cn.push('isFirst');
+			};
+
+			content = (
+				<div style={style} className={cn.join(' ')}>
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else {
+			const cn = [ 'item' ];
+			if (item.id == objectId) {
+				cn.push('active');
+			};
+
+			return (
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={() => onClick(item)}
+					style={style}
+					onContextMenu={() => onContext(item)}
+				>
+					<IconObject object={item} />
+					<ObjectName object={item} />
+				</div>
+			);
 		};
 
 		return (
-			<div
-				id={`item-${item.id}`}
-				className={cn.join(' ')}
-				onClick={() => onClick(item)}
-				onContextMenu={() => onContext(item)}
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
 			>
-				<IconObject object={item} />
-				<ObjectName object={item} />
-			</div>
+				{content}
+			</CellMeasurer>
 		);
 	};
-
-	const rowRenderer = ({ index, key, parent, style }) => (
-		<CellMeasurer
-			key={key}
-			parent={parent}
-			cache={cache.current}
-			columnIndex={0}
-			rowIndex={index}
-		>
-			<div className="row" style={style}>
-				<Item {...items[index]} />
-			</div>
-		</CellMeasurer>
-	);
 
 	const items = getItems();
 
@@ -457,8 +452,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 	}, [ searchIds, space ]);
 
 	useEffect(() => {
-		setActive(param.objectId);
-	}, [ param.objectId ]);
+		setActive(objectId);
+	}, [ objectId ]);
 
 	return (
 		<>
