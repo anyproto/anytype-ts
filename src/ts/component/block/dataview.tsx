@@ -1245,13 +1245,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId, block } = this.props;
 		const details = Dataview.getDetails(rootId, block.id, this.getObjectId(), targetId);
-		const map = [];
+		const operations: any[] = []; 
 
-		for (const key in details) {
-			map.push({ key, value: details[key] });
+		for (const k in details) {
+			const relation = S.Record.getRelationByKey(k);
+
+			if (!relation) {
+				continue;
+			};
+
+			operations.push({ 
+				relationKey: k, 
+				add: Relation.formatValue(relation, details[k], true),
+			});
 		};
 
-		C.ObjectListSetDetails(ids, map);
+		C.ObjectListModifyDetailValues(ids, operations,);
 		this.selectionCheck();
 	};
 
