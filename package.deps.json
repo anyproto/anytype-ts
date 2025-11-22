@@ -24,7 +24,6 @@
 	"dist/cmaps/**/*",
 	"dist/font/**/*",
 	"dist/workers/**/*",
-	"dist/excalidraw/**/*",
 	"!node_modules/**/*",
 	{
 		"from": "node_modules/google-protobuf",

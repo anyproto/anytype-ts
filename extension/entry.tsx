@@ -1,5 +1,3 @@
-window.EXCALIDRAW_ASSET_PATH = './excalidraw/';
-
 import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import { C, U, J, S } from 'Lib'; 
@@ -18,7 +16,6 @@ declare global {
 		Anytype: any;
 		isWebVersion: boolean;
 		AnytypeGlobalConfig: any;
-		EXCALIDRAW_ASSET_PATH: string;
 	}
 };
 
