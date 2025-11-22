@@ -78,7 +78,7 @@ class UtilRouter {
 		const out: any = {};
 
 		for (const k in ret) {
-			out[decodeURIComponent(k)] = decodeURIComponent(ret[k]);
+			out[U.Common.safeDecodeUri(k)] = U.Common.safeDecodeUri(ret[k]);
 		};
 
 		return out;

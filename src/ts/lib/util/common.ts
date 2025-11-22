@@ -2030,6 +2030,16 @@ class UtilCommon {
 		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
 	};
 
+	safeDecodeUri (s: string): string {
+		s = String(s || '');
+
+		try {
+			return decodeURIComponent(s);
+		} catch {
+			return s;
+		};
+	};
+
 };
 
 export default new UtilCommon();
