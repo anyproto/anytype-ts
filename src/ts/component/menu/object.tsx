@@ -425,6 +425,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const object = this.getObject();
 		const route = analytics.route.menuObject;
 		const space = U.Space.getSpaceview();
+		const isPopup = keyboard.isPopup();
 		
 		if (item.arrow) {
 			return;
@@ -445,7 +446,7 @@ class MenuObject extends React.Component<I.Menu> {
 			if (home && (object.id == home.id)) {
 				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
 			} else {
-				keyboard.onBack(false);
+				keyboard.onBack(isPopup);
 			};
 		};
 
@@ -571,7 +572,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(keyboard.isPopup(), { page: 'type', rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'type', rootId });
 				break;
 			};
 
