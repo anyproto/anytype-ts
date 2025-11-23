@@ -49,6 +49,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	timeoutMove = 0;
 	timeoutScreen = 0;
 	timeoutScroll = 0;
+	timeoutResize = 0;
 
 	frameMove = 0;
 	frameScroll = 0;
@@ -189,6 +190,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutMove);
+		window.clearTimeout(this.timeoutScroll);
+		window.clearTimeout(this.timeoutResize);
 	};
 
 	initNodes () {
@@ -2380,50 +2383,36 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const { rootId, isPopup } = this.props;
-		const node = $(this.node);
-		const note = node.find('#note');
-		const blocks = node.find('.blocks');
-		const last = node.find('#blockLast');
-		const size = node.find('#editorSize');
-		const cover = node.find('.block.blockCover');
-		const pageContainer = U.Common.getPageContainer(isPopup);
-		const header = pageContainer.find('#header');
-		const scrollContainer = U.Common.getScrollContainer(isPopup);
-		const hh = header.height();
+		window.clearTimeout(this.timeoutResize);
+		this.timeoutResize = window.setTimeout(() => {
+			const { rootId, isPopup } = this.props;
+			const node = $(this.node);
+			const blocks = node.find('.blocks');
+			const last = node.find('#blockLast');
+			const scrollContainer = U.Common.getScrollContainer(isPopup);
 
-		this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
+			this.setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
-		if (blocks.length && last.length && scrollContainer.length) {
-			last.css({ height: '' });
+			if (blocks.length && last.length && scrollContainer.length) {
+				last.css({ height: '' });
 
-			const ct = scrollContainer.offset().top;
-			const ch = scrollContainer.height();
-			const bt = blocks.offset().top;
-			const bh = blocks.outerHeight();
+				const ct = scrollContainer.offset().top;
+				const ch = scrollContainer.height();
+				const bt = blocks.offset().top;
+				const bh = blocks.outerHeight();
 
-			let height = ch - ct - bt - bh;
+				let height = ch - ct - bt - bh;
 
-			if (bh > ch) {
-				height = Math.max(ch / 2, height);
+				if (bh > ch) {
+					height = Math.max(ch / 2, height);
+				};
+
+				height = Math.max(J.Size.lastBlock, height);
+				last.css({ height });
 			};
 
-			height = Math.max(J.Size.lastBlock, height);
-
-			last.css({ height });
-		};
-
-		if (note.length) {
-			note.css({ top: hh });
-		};
-		if (size.length) {
-			size.css({ top: hh + 8 });
-		};
-		if (cover.length) {
-			cover.css({ top: hh });
-		};
-
-		callBack?.();
+			callBack?.();
+		}, 50);
 	};
 
 	focus (id: string, from: number, to: number, scroll: boolean) {

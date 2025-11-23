@@ -228,8 +228,6 @@ class ChatStore {
 
 			// Ignore outdated state
 			if (current.order && order && (order < current.order)) {
-				console.log('[S.Chat.setState] Ignored outdated state', 'subId:', subId, 'state order:', order, 'current order:', current.order);
-				console.trace();
 				return;
 			};
 
