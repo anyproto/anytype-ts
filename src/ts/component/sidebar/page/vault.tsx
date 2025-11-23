@@ -209,7 +209,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onClick = (item: any) => {
 		const routeParam = {
-			replace: true,
 			onRouteChange: () => {
 				if (!space) {
 					sidebar.leftPanelSubPageOpen('widget', false);

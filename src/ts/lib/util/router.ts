@@ -126,10 +126,15 @@ class UtilRouter {
 
 		param = param || {};
 
+		const { space } = S.Common;
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const { space } = S.Common;
 		const newRoute = this.build(routeParam);
+
+		console.log(param);
+		if (replace) {
+			console.trace();
+		};
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
@@ -139,7 +144,6 @@ class UtilRouter {
 		S.Menu.closeAll();
 		S.Popup.closeAll();
 		sidebar.rightPanelClose(false, false);
-
 		focus.clear(true);
 
 		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
@@ -247,10 +251,9 @@ class UtilRouter {
 				return;
 			};
 
+			console.log(routeParam);
+
 			this.go('/main/blank', { 
-				replace: true, 
-				animate: false,
-				delay: 0,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
 
@@ -261,7 +264,7 @@ class UtilRouter {
 					S.Common.setLeftSidebarState('vault', '');
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+						U.Data.onAuth({ route, routeParam }, () => {
 							this.isOpening = false;
 							S.Common.setLeftSidebarState('vault', 'widget');
 						});
@@ -274,6 +277,7 @@ class UtilRouter {
 							if (object) {
 								route = U.Object.route(object);
 							};
+
 							onStartingIdCheck();
 						});
 
