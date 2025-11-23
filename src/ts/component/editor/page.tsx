@@ -14,7 +14,6 @@ interface Props extends I.PageComponent {
 };
 
 interface State {
-	isLoading: boolean;
 	isDeleted: boolean;
 	id: string;
 };
@@ -28,8 +27,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	hoverId = '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	winScrollTop = 0;
-	containerScrollTop = 0;
-	uiHidden = false;
 	refHeader: any = null;
 	refControls: any = null;
 	refToc: any = null;
@@ -40,7 +37,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	dir = 0;
 
 	state = {
-		isLoading: false,
 		isDeleted: false,
 		id: '',
 	};
@@ -73,16 +69,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, isPopup } = this.props;
-		const { isLoading, isDeleted } = this.state;
+		const { rootId } = this.props;
+		const { isDeleted } = this.state;
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
-		};
-
-		if (isLoading) {
-			return <Loader id="loader" fitToContainer={true} isPopup={isPopup} />;
 		};
 
 		if (!root) {
@@ -147,9 +139,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentDidMount () {
-		this.rebind();
 		this.open();
-		this.initNodes();
 	};
 
 	componentDidUpdate (prevProps: Props) {
@@ -160,11 +150,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (prevProps.rootId != rootId) {
 			this.close();
 			this.open();
+			return;
 		};
-		
+
+		const top = Storage.getScroll('editor', rootId, isPopup);
+
 		this.checkDeleted();
 		this.initNodes();
 		this.rebind();
+		this.resizePage();
+		this.onScroll();
+
+		if (top) {
+			window.setTimeout(() => {
+				U.Common.getScrollContainer(isPopup).scrollTop(top);
+			}, 10);
+		};
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
@@ -172,12 +173,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
-
-		U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 	};
 	
 	componentWillUnmount () {
-		this.uiHidden = false;
 		this.unbind();
 		this.close();
 
@@ -219,39 +217,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	open () {
-		const { rootId, onOpen, isPopup } = this.props;
+		const { rootId, onOpen } = this.props;
 
 		this.setState({ isDeleted: false, id: rootId });
 
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
-			this.setLoading(false);
-
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
-			if (object.isDeleted) {
-				this.setState({ isDeleted: true });
-				return;
-			};
-
+			onOpen?.();
 			this.focusInit();
-
-			if (onOpen) {
-				onOpen();
-			};
-
-			if (this.refControls) {
-				this.refControls.forceUpdate();
-			};
-
-			this.resizePage(() => {
-				this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-				if (this.containerScrollTop) {
-					U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
-				};
-			});
+			this.refControls?.forceUpdate();
+			this.forceUpdate();
 		});
 	};
 
@@ -358,7 +336,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	rebind () {
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
@@ -382,17 +360,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 			const menuOpen = this.menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
+			const top = Storage.getScroll('editor', rootId, isPopup);
 			
 			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
 				raf(() => focus.apply());
 			};
 
-			container.scrollTop(this.containerScrollTop);
+			if (top) {
+				window.setTimeout(() => container.scrollTop(top), 10);
+			};
 		});
-
-		this.resizePage();
-		this.onScroll();
 
 		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resizePage());
 		container.on(`scroll.${ns}`, () => this.onScroll());
@@ -408,7 +386,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 		
-		const { isLoading } = this.state;
 		const { rootId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
@@ -435,8 +412,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.isDragging || 
 			selection?.isSelecting() || 
 			menuOpen || 
-			popupOpen ||
-			isLoading
+			popupOpen
 		) {
 			out();
 			return;
@@ -1848,13 +1824,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
-		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
-
-		window.clearTimeout(this.timeoutScroll);
-		this.timeoutScroll = window.setTimeout(() => {
-			Storage.setScroll('editor', rootId, top, isPopup);
-		}, 100);
+		Storage.setScroll('editor', rootId, top, isPopup);
 
 		raf.cancel(this.frameScroll);
 		this.frameScroll = raf(() => this.refToc?.onScroll());
@@ -2374,15 +2345,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	resizePage (callBack?: () => void) {
-		const { isLoading } = this.state;
-
-		if (isLoading) {
-			return;
-		};
+		const { rootId, isPopup } = this.props;
 
 		raf.cancel(this.frameResize);
 		this.frameResize = raf(() => {
-			const { rootId, isPopup } = this.props;
 			const node = $(this.node);
 			const blocks = node.find('.blocks');
 			const last = node.find('#blockLast');
@@ -2494,10 +2460,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		return false;
-	};
-
-	setLoading (v: boolean): void {
-		this.setState({ isLoading: v });
 	};
 
 });
