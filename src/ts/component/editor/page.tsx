@@ -33,7 +33,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	buttonAdd = null;
 	blockFeatured = null;
 	container = null;
-	containerRect = null;
 	dir = 0;
 
 	state = {
