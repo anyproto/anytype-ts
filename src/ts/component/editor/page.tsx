@@ -46,7 +46,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	timeoutMove = 0;
-	timeoutScreen = 0;
 	timeoutScroll = 0;
 
 	frameMove = 0;
@@ -188,7 +187,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		raf.cancel(this.frameScroll);
 		raf.cancel(this.frameResize);
 
-		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutMove);
 		window.clearTimeout(this.timeoutScroll);
 	};
