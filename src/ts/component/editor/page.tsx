@@ -30,7 +30,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	winScrollTop = 0;
 	containerScrollTop = 0;
 	uiHidden = false;
-	width = 0;
 	refHeader: any = null;
 	refControls: any = null;
 	refToc: any = null;
@@ -49,10 +48,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	timeoutMove = 0;
 	timeoutScreen = 0;
 	timeoutScroll = 0;
-	timeoutResize = 0;
 
 	frameMove = 0;
 	frameScroll = 0;
+	frameResize = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -187,11 +186,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		raf.cancel(this.frameMove);
 		raf.cancel(this.frameScroll);
+		raf.cancel(this.frameResize);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutMove);
 		window.clearTimeout(this.timeoutScroll);
-		window.clearTimeout(this.timeoutResize);
 	};
 
 	initNodes () {
@@ -1857,7 +1856,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearTimeout(this.timeoutScroll);
 		this.timeoutScroll = window.setTimeout(() => {
 			Storage.setScroll('editor', rootId, top, isPopup);
-		}, 50);
+		}, 100);
 
 		raf.cancel(this.frameScroll);
 		this.frameScroll = raf(() => this.refToc?.onScroll());
@@ -2383,8 +2382,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		window.clearTimeout(this.timeoutResize);
-		this.timeoutResize = window.setTimeout(() => {
+		raf.cancel(this.frameResize);
+		this.frameResize = raf(() => {
 			const { rootId, isPopup } = this.props;
 			const node = $(this.node);
 			const blocks = node.find('.blocks');
@@ -2412,7 +2411,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			callBack?.();
-		}, 50);
+		});
 	};
 
 	focus (id: string, from: number, to: number, scroll: boolean) {
@@ -2450,8 +2449,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const elements = node.find('#elements');
 		const percent = width / cw * 100;
 
-		this.width = width;
-
 		node.css({ width: `${percent}%` });
 		elements.css({ width: `${percent}%`, marginLeft: `-${percent / 2}%` });
 
@@ -2463,25 +2460,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		$('.resizable').trigger('resizeInit');
 	};
 
-	getWidth (w: number) {
-		w = Number(w) || 0;
+	getWidth (weight: number) {
+		weight = Number(weight) || 0;
 
-		const { isPopup, rootId } = this.props;
+		const { isPopup } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
-		const root = S.Block.getLeaf(rootId, rootId);
-
-		let mw = container.width();
-		let width = 0;
-
-		if (U.Object.isInSetLayouts(root?.layout)) {
-			width = mw - 192;
-		} else {
-			const size = mw * 0.6;
-
-			mw -= 128;
-			w = (mw - size) * w;
-			width = Math.max(size, Math.min(mw, size + w));
-		};
+		const maxWidth = container.width() - 128;
+		const base = maxWidth * 0.6;
+		const dynamic = base + (maxWidth - base) * weight;
+		const width = Math.max(base, Math.min(maxWidth, dynamic));
 
 		return Math.max(300, width);
 	};

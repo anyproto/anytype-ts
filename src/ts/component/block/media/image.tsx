@@ -88,10 +88,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		C.BlockListSetFields(rootId, [ { blockId: block.id, fields: { width: w } } ]);
 	};
 
-	const handleLoad = () => {
-		$(window).trigger('resize');
-	};
-
 	const handleError = () => {
 		$(wrapRef.current).addClass('brokenMedia');
 	};
@@ -198,7 +194,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
 							onDragStart={e => e.preventDefault()} 
 							onClick={handleClick} 
-							onLoad={handleLoad} 
 							onError={handleError} 
 						/>
 						<Icon className="download" onClick={handleDownload} />

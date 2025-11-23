@@ -1095,10 +1095,19 @@ class UtilData {
 	 * @returns {number} The layout width.
 	 */
 	getLayoutWidth (rootId: string): number {
-		const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
-		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(rootId, rootId);
-		const ret = undefined !== root?.fields?.width ? root?.fields?.width : type?.layoutWidth;
+
+		let ret = 0;
+		if (root && root.fields && (undefined !== root.fields.width)) {
+			ret = root.fields.width;
+		} else {
+			const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
+			const type = S.Record.getTypeById(object.targetObjectType || object.type);
+
+			if (type && type.layoutWidth) {
+				ret = type.layoutWidth;
+			};
+		};
 
 		return Number(ret) || 0;
 	};
