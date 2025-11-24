@@ -1,14 +1,16 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Title, IconObject, Icon } from 'Component';
-import { I, J, U, S, translate, C, Action, analytics } from 'Lib';
+import { I, U, S, translate, C, Action, Relation, analytics } from 'Lib';
 
 const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
-	const { allIds, mentionIds, muteIds } = spaceview;
+	const allIds = Relation.getArrayValue(spaceview.allIds);
+	const mentionIds = Relation.getArrayValue(spaceview.mentionIds);
+	const muteIds = Relation.getArrayValue(spaceview.muteIds);
 	const notificationMode = spaceview.notificationMode || I.NotificationMode.All;
 	const nodeRef = useRef(null);
 	const chatsRef = useRef([]);
