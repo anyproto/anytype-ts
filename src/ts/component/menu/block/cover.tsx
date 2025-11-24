@@ -217,7 +217,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
-					{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Cover },
+					//{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Cover },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
