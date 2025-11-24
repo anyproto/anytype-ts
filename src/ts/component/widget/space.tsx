@@ -18,8 +18,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const iconSize = spaceview.isChat ? 80 : 48;
 	const rootId = keyboard.getRootId();
 
-	console.log('ROOT ID', rootId, S.Block.workspace);
-
 	const icon = (
 		<IconObject
 			size={iconSize}
