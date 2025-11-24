@@ -105,8 +105,8 @@ const Data = {
 					}
 				},
 				{
-					name: translate('onboardingCommonTitleChannels'),
-					description: translate('onboardingCommonTextChannels'),
+					name: translate('onboardingCommonTitleSpaces'),
+					description: translate('onboardingCommonTextSpaces'),
 					param: {
 						element: elements.channel,
 						offsetX: getOffset('channel'),
