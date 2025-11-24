@@ -10,7 +10,11 @@ const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 10;
 
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
+interface State {
+	items: any[];
+};
+
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu, State> {
 	
 	emptyLength = 0;
 	timeout = 0;
@@ -18,6 +22,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	refList: any = null;
 	n = 0;
 	filter = '';
+	state = {
+		items: [],
+	};
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -113,10 +120,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				};
 
 				if (item.isObject) {
-					item.object = { 
-						...item,
-						layout: I.ObjectLayout.Type,
-					};
+					item.object = { ...item, layout: I.ObjectLayout.Type };
 					item.iconSize = 40;
 				};
 				
@@ -222,7 +226,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		if (this.filter != filter.text) {
 			this.n = 0;
 			this.filter = filter.text;
-			this.forceUpdate();
+			this.loadObjects();
 			return;
 		};
 
@@ -252,6 +256,35 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		$(window).off('keydown.menu');
 	};
 
+	loadObjects () {
+		const filter = S.Common.filterText;
+
+		if (!filter) {
+			this.setState({ items: [] });
+			return;
+		};
+
+		const filters: I.Filter[] = [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] },
+		];
+		const sorts: I.Sort[] = [
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'type', type: I.SortType.Asc },
+		];
+
+		U.Subscription.search({
+			filters,
+			sorts,
+			fullText: filter,
+			limit: J.Constant.limit.menuRecords,
+		}, (message: any) => {
+			this.setState({ items: message.records || [] });
+		});
+	};
+
 	getRelations () {
 		const { param } = this.props;
 		const { data } = param;
@@ -272,7 +305,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		ret = S.Record.checkHiddenObjects(ret).sort(U.Data.sortByName);
 
 		if (!isTemplate) {
-			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true, _sortWeight_: 1000 });
 		};
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true, aliases: [ 'relation' ] }));
@@ -289,14 +322,25 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			return [];
 		};
 
+		const items = (this.state.items || []).map((it: any) => {
+			return { 
+				...it, 
+				object: { ...it }, 
+				isBlock: true, 
+				type: I.BlockType.Link,
+			};
+		});
+
 		let sections: any[] = [
-			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: U.Menu.getBlockText(), isBig: true, withDescription: true },
-			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
-			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
-			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
-			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
-			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations(), isBig: false, withDescription: false },
-			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
+			{ id: 'text', name: translate('menuBlockAddSectionText'), children: U.Menu.getBlockText(), isBig: true, withDescription: true },
+			{ id: 'list', name: translate('menuBlockAddSectionList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
+			{ id: 'media', name: translate('menuBlockAddSectionMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
+			{ id: 'other', name: translate('menuBlockAddSectionOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
+			{ id: 'link', name: translate('menuBlockAddSectionLink'), children: U.Menu.getBlockLink(), isBig: true, withDescription: true },
+			{ id: 'type', name: translate('menuBlockAddSectionType'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
+			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: this.getRelations(), isBig: false, withDescription: false },
+			{ id: 'object', name: translate('menuBlockAddSectionObject'), children: items, isBig: false, withDescription: false },
+			{ id: 'embed', name: translate('menuBlockAddSectionEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
 		].map(s => ({ 
 			...s, 
 			children: s.children.map(c => ({
@@ -328,10 +372,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: U.Menu.getHAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionsTextColor'), color: '', children: U.Menu.getTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionTextColor'), color: '', children: U.Menu.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionsBackgroundColor'), color: '', children: U.Menu.getBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionBackgroundColor'), color: '', children: U.Menu.getBgColors() });
 			};
 			
 			sections = U.Menu.sectionsFilter(sections, filter.text);
@@ -360,29 +404,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			this.onOver(e, item);
 		};
 	};
-	
-	onOver (e: any, item: any) {
-		if (!item.arrow) {
-			S.Menu.closeAll(J.Menu.add);
-			return;
-		};
 
-		const { id, param, getId, getSize, close } = this.props;
+	getMenuParam () {
+		const { id, param, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
-		const { filter } = S.Common;
-		const block = S.Block.getLeaf(rootId, blockId);
-		const text = U.Common.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
-		const length = text.length;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
-		if (!block) {
-			return;
-		};
-
-		const menuParam: I.MenuParam = {
-			menuKey: item.itemId,
-			element: `#${getId()} #item-${item.id}`,
+		return {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
@@ -395,19 +423,47 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				skipIds: [ rootId ],
 				blockId,
 				blockIds: [ blockId ],
-				position,
-				onSelect: () => {
-					$(`#block-${blockId} .value`).text(text);
-
-					U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
-						focus.set(blockId, { from: length, to: length });
-						focus.apply();
-					});
-
-					close();
-				},
 			},
 		};
+	};
+	
+	onOver (e: any, item: any) {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.add);
+			return;
+		};
+
+		const { param, getId, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const { filter } = S.Common;
+		const block = S.Block.getLeaf(rootId, blockId);
+		const text = U.Common.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
+		const length = text.length;
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
+
+		if (!block) {
+			return;
+		};
+
+		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
+			menuKey: item.itemId,
+			element: `#${getId()} #item-${item.id}`,
+		});
+
+		menuParam.data = Object.assign(menuParam.data, {
+			position,
+			onSelect: () => {
+				$(`#block-${blockId} .value`).text(text);
+
+				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
+					focus.set(blockId, { from: length, to: length });
+					focus.apply();
+				});
+
+				close();
+			},
+		});
 
 		let menuId = '';
 
@@ -420,58 +476,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					type: I.NavigationType.Move, 
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-					],
-				});
-				break;
-			};
-
-			case 'date': {
-				menuId = 'calendar';
-				menuParam.data = Object.assign(menuParam.data, {
-					canEdit: true,
-					value: U.Date.now(),
-					onChange: (t: number) => {
-						C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
-							const target = message.details;
-
-							C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, target.layout, true), (message: any) => {
-								if (message.error.code) {
-									return;
-								};
-
-								focus.set(message.blockId, { from: 0, to: 0 });
-								focus.apply();
-
-								analytics.event('CreateLink');
-								close();
-							});
-						});
-					}
-				});
-				break;
-			};
-
-			case 'existingPage': {
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					canAdd: true,
-					type: I.NavigationType.Link,
-					withPlural: true,
-				});
-				break;
-			};
-
-			case 'existingFile': {
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					canAdd: true,
-					type: I.NavigationType.Link,
-					filters: [
-						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;
@@ -507,11 +511,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		if (item.arrow) {
+		if (item.arrow && !item.skipOver) {
 			return;
 		};
 		
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSelect, blockCreate } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -535,8 +539,30 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 		};
 
+		let menuId = '';
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
+
+		const rect = $(`#${getId()}`).get(0).getBoundingClientRect();
+		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
+			menuKey: item.itemId,
+			rect,
+			offsetX: 0,
+		});
+
+		menuParam.data = Object.assign(menuParam.data, {
+			position,
+			onSelect: () => {
+				$(`#block-${blockId} .value`).text(text);
+
+				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
+					focus.set(blockId, { from: length, to: length });
+					focus.apply();
+				});
+
+				close();
+			},
+		});
 
 		const cb = () => {
 			if (item.isTextColor) {
@@ -573,11 +599,71 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					case 'remove':
 						Action.remove(rootId, blockId, [ blockId ]);
 						break;
+
+					case 'date': {
+						menuId = 'calendar';
+						menuParam.data = Object.assign(menuParam.data, {
+							canEdit: true,
+							value: U.Date.now(),
+							onChange: (t: number) => {
+								C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+									if (message.error.code) {
+										return;
+									};
+
+									const target = message.details;
+
+									C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, target.layout, true), (message: any) => {
+										if (message.error.code) {
+											return;
+										};
+
+										focus.set(message.blockId, { from: 0, to: 0 });
+										focus.apply();
+
+										analytics.event('CreateLink');
+										close();
+									});
+								});
+							}
+						});
+						break;
+					};
+
+					case 'existingPage': {
+						menuId = 'searchObject';
+						menuParam.data = Object.assign(menuParam.data, {
+							canAdd: true,
+							type: I.NavigationType.Link,
+							withPlural: true,
+							filters: [
+								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() },
+							],
+						});
+						break;
+					};
+
+					case 'existingFile': {
+						menuId = 'searchObject';
+						menuParam.data = Object.assign(menuParam.data, {
+							canAdd: true,
+							type: I.NavigationType.Link,
+							filters: [
+								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+							],
+						});
+						break;
+					};
 				};
 			};
 
+			if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
+				close(() => {
+					window.setTimeout(() => S.Menu.open(menuId, menuParam), S.Menu.getTimeout());
+				});
+			} else
 			if (item.isBlock) {
-				const param: any = {
+				let param: any = {
 					type: item.type,
 					vAlign: block.vAlign,
 					content: {},
@@ -623,6 +709,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.type == I.BlockType.Embed) {
 					param.content.processor = item.itemId;
+				};
+
+				if (item.type == I.BlockType.Link) {
+					param = U.Data.getLinkBlockParam(item.itemId, item.layout, true);
 				};
 
 				const newBlock = new M.Block(param);
@@ -692,9 +782,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						const element = $(`#block-${newBlockId}`);
-
 						window.setTimeout(() => { 
+							const element = $(`#block-${newBlockId}`);
+
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
 								element.find(`.info`).trigger('click');

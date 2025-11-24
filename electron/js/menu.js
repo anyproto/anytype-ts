@@ -481,7 +481,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuAccountSettings'), click: () => { 
 					this.winShow(); 
-					this.openSettings(''); 
+					this.openSettings('account'); 
 				}
 			},
 			{ 

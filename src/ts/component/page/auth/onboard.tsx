@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
 
 enum Stage {
 	Phrase 		= 0,
@@ -59,20 +59,11 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onAuth = () => {
-		S.Common.showRelativeDatesSet(true);
-
-		Storage.set('isNewUser', true);
-		Storage.set('chatsOnboarding', true);
-		Storage.setOnboarding('objectDescriptionButton');
-		Storage.setOnboarding('typeResetLayout');
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
-
-		U.Data.onInfo(account.info);
-		U.Data.onAuthOnce(true);
-
-		U.Subscription.createGlobal(() => {
-			U.Router.switchSpace(S.Common.space, '', false, {}, false);
-		});
+		U.Router.switchSpace(S.Common.space, '', false, {
+			onFadeIn: () => {
+				Onboarding.startCommon(props.isPopup);
+			},
+		}, false);
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible

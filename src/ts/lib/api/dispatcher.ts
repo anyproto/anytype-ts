@@ -991,8 +991,20 @@ class Dispatcher {
 					});
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+						const title = [];
+
+						if (spaceview) {
+							title.push(spaceview.name);
+						};
+						if (!spaceview.isChat) {
+							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
+							if (!chat._empty_) {
+								title.push(chat.name);
+							};
+						};
+
 						U.Common.notification({ 
-							title: spaceview?.name, 
+							title: title.join(' - '), 
 							text: notification,
 						}, () => {
 							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
@@ -1016,7 +1028,7 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state, true));
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
 					break;
 				};
 
@@ -1286,6 +1298,7 @@ class Dispatcher {
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
+			callBack?.({ error: { code: 0, description: 'Unknown command' } });
 			return;
 		};
 
@@ -1303,6 +1316,7 @@ class Dispatcher {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
+					callBack?.({ error: { code: error.code, description: error.message } });
 					return;
 				};
 

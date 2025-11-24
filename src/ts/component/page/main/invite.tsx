@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { Loader, Title, Error, Frame, Button, Footer, IconObject } from 'Component';
-import { I, C, S, U, J, translate, Preview, Onboarding, analytics } from 'Lib';
+import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
+import { I, C, S, U, J, translate, keyboard } from 'Lib';
 
 interface PageMainInviteRefProps {
 	resize: () => void;
@@ -9,8 +9,6 @@ interface PageMainInviteRefProps {
 const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const { history } = U.Router;
-	const { location } = history;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const [ error, setError ] = useState('');
@@ -48,11 +46,11 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 	};
 
 	const init = () => {
-		const { cid, key, route } = U.Common.searchParam(location.search);
+		const match = keyboard.getMatch(false);
+		const { cid, key, route } = match.params;
 
 		const request = (message: any) => {
 			S.Popup.open('inviteRequest', { 
-				onClose: () => Onboarding.startBasics(isPopup),
 				data: { 
 					invite: message, 
 					cid, 

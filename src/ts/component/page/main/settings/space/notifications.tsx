@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Title, IconObject, Icon } from 'Component';
-import { I, J, U, S, translate, C, Action } from 'Lib';
+import { I, J, U, S, translate, C, Action, analytics } from 'Lib';
 
 const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -62,7 +62,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 						};
 
 						default: {
-							Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id));
+							Action.setChatNotificationMode(S.Common.space, [ el.id ], Number(item.id), analytics.route.settingsSpaceNotifications);
 							break;
 						};
 					};

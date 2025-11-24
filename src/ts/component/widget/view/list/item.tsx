@@ -69,7 +69,18 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 
-		onContext({ node, element: $(moreRef.current), withElement, subId, objectId: id });
+		onContext({ 
+			node, 
+			element: $(moreRef.current), 
+			withElement, 
+			subId, 
+			objectId: id,
+			data: {
+				allowedCollection: true, 
+				allowedExport: true,
+				allowedLinkTo: true,
+			},
+		});
 	};
 
 	const resize = () => {

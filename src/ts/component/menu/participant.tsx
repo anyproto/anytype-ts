@@ -54,7 +54,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		<>
 			<IconObject object={object} size={96} />
 			<div className="nameWrapper">
-				<ObjectName object={object} />
+				<ObjectName object={object} withBadge={true} />
 			</div>
 			<Label
 				text={U.Common.shorten(object.resolvedName, 150)}

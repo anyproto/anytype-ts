@@ -38,7 +38,10 @@ const ObjectName: FC<Props> = ({
 	let you = null;
 	let badge = null;
 
-	const onBadgeClick = () => {
+	const onBadgeClick = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const participant = U.Space.getParticipant();
 
 		if (participant.globalName) {

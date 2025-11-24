@@ -1,15 +1,17 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { S, I, U, translate, analytics, keyboard, sidebar } from 'Lib';
+import { S, I, U, translate, analytics, keyboard, sidebar, Relation } from 'Lib';
 import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
-	const param = U.Router.getParam(U.Router.getRoute());
-	const id = param.id || 'account';
+	const { id = 'account' } = keyboard.getMatch(isPopup).params;
+	const profile = U.Space.getProfile();
+	const participant = U.Space.getParticipant() || profile;
+	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
 	const isOwner = U.Space.isMyOwner();
 
@@ -40,6 +42,19 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		} else {
 			U.Menu.spaceSettingsIndex(menuParam, { route: analytics.route.settings });
 		};
+	};
+
+	const renderIdentity = () => {
+		if (![ 'account', 'index' ].includes(id) || !globalName) {
+			return null;
+		};
+
+		return (
+			<div id="settings-identity-badge" className="identity">
+				<Icon className="badge" />
+				<Label text={globalName} />
+			</div>
+		);
 	};
 
 	const renderMore = () => {
@@ -88,7 +103,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 					/>
 				) : ''}
 			</div>
-			<div className="side center" />
+			<div className="side center">{renderIdentity()}</div>
 			<div className="side right">{renderMore()}</div>
 		</>
 	);

@@ -662,6 +662,8 @@ class UtilCommon {
 		} else 
 		if (this.matchPath(url)) {
 			url = `file://${url}`;
+		} else {
+			url = `https://${url}`;
 		};
 
 		return url;
@@ -1944,10 +1946,6 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('chatsOnboarding')) {
-			return;
-		};
-
 		v = String(v || '');
 
 		const electron = this.getElectron();
@@ -2030,6 +2028,16 @@ class UtilCommon {
 
 	getAppContainerHeight () {
 		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
+	};
+
+	safeDecodeUri (s: string): string {
+		s = String(s || '');
+
+		try {
+			return decodeURIComponent(s);
+		} catch {
+			return s;
+		};
 	};
 
 };

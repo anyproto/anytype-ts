@@ -207,6 +207,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		reload();
 		rebind();
+		resize(initial);
 		setCurrentItem();
 
 		return () => {

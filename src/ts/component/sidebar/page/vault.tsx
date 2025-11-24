@@ -194,7 +194,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		}, { route: analytics.route.vault });
+		}, { withPin: true, route: analytics.route.vault });
 	};
 
 	const items = getItems();

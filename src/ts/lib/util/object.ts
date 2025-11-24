@@ -114,20 +114,12 @@ class UtilObject {
 	openRoute (object: any, param?: Partial<I.RouteParam>) {
 		param = this.checkParam(param);
 
-		const route = this.route(object);
-		if (!route) {
-			return;
-		};
-
 		keyboard.setSource(null);
-		U.Router.go(`/${route}`, param);
+		U.Router.go(this.route(object), param);
 	};
 
 	openWindow (object: any) {
-		const route = this.route(object);
-		if (route) {
-			Renderer.send('openWindow', `/${route}`);
-		};
+		Renderer.send('openWindow', this.route(object));
 	};
 
 	openPopup (object: any, param?: any) {

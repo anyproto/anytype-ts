@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -17,7 +17,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	const open = () => {
 		idRef.current = rootId;
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
@@ -29,6 +29,8 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
+
+			Onboarding.startChat(isPopup);
 			setDummy(dummy + 1);
 		});
 	};

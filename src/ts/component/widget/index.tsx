@@ -220,7 +220,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Menu.onBookmarkMenu(menuParam, cb);
 			} else 
 			if (U.Object.isChatLayout(type.recommendedLayout)) {
-				U.Menu.onChatMenu(menuParam, cb);
+				U.Menu.onChatMenu(menuParam, analytics.route.widget, cb);
 			}; 
 			return;
 		};
@@ -606,7 +606,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				route: analytics.route.widget,
 				objectIds: [ objectId ],
 				subId,
-				noRelation: true,
 			},
 		};
 
@@ -857,9 +856,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				onDragEnd={onDragEnd}
 				onContextMenu={onOptions}
 				{...U.Common.animationProps({
-					initial: { y: 20 }, 
-					animate: { y: 0 }, 
-					exit: { y: -20 },
 					transition: { duration: 0.2, delay: index * 0.025 },
 				})}
 			>

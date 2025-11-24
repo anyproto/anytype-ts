@@ -428,7 +428,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
 				};
 
-				blocks.push(new M.Block({ id: [ space, idMap[sectionId] ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				blocks.push(new M.Block({ 
+					id: [ space, idMap[sectionId] ].join('-'), 
+					type: I.BlockType.Widget, 
+					content: { layout: I.WidgetLayout.Object } 
+				}));
 				break;
 			};
 
@@ -635,15 +639,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					};
 
 					return (
-						<AnimatePresence mode="popLayout">
+						<AnimatePresence key={section.id} mode="popLayout">
 							<motion.div 
 								id={`section-${section.id}`} 
 								className={cns.join(' ')} 
-								key={section.id}
+								key={`${section.id}-motion`}
 								{...U.Common.animationProps({
-									initial: { y: 20 }, 
-									animate: { y: 0 }, 
-									exit: { y: -20 },
 									transition: { duration: 200, delay: i * 0.05 },
 								})}
 							>

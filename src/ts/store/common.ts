@@ -195,6 +195,10 @@ class CommonStore {
 		return this.filterObj;
 	};
 
+	get filterText () {
+		return String(this.filter.text || '').replace(/^[@\[]+/, '');
+	};
+
 	get gateway (): string {
 		return String(this.gatewayUrl || '');
 	};

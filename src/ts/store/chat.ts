@@ -218,7 +218,7 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatState} state - The chat state.
 	 */
-	setState (subId: string, state: I.ChatState, checkOrder: boolean) {
+	setState (subId: string, state: I.ChatState) {
 		const param = this.getSubParam(subId);
 		const spaceMap = this.stateMap.get(param.spaceId) || new Map();
 		const current = spaceMap.get(param.chatId);
@@ -226,8 +226,9 @@ class ChatStore {
 		if (current) {
 			const { messages, mentions, lastStateId, order } = state;
 
-			if (checkOrder && (order < current.order)) {
-				return; // Ignore outdated state
+			// Ignore outdated state
+			if (current.order && order && (order < current.order)) {
+				return;
 			};
 
 			set(current, {

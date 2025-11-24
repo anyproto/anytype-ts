@@ -607,6 +607,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (param.width) {
 				css.width = param.width;
 			};
+
 			menu.css(css);
 
 			if (isSub) {
@@ -796,7 +797,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						const item = items.length ? items[0] : null;
 
 						if (item) {
-							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+							item.arrow && !item.skipOver && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 						};
 					});
 				};
@@ -899,7 +900,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 				e.preventDefault();
 				if (item) {
-					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+					item.arrow && !item.skipOver && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 				};
 			});
 		};
