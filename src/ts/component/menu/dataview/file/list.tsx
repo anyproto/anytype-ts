@@ -213,6 +213,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 	});
 
 	useEffect(() => {
+		topRef.current = 0;
 		reload();
 	}, [ filter ]);
 
