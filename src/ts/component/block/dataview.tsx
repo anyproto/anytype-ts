@@ -1261,7 +1261,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		C.ObjectListModifyDetailValues(ids, operations,);
+		C.ObjectListModifyDetailValues(ids, operations);
+
+		S.Common.getRef('selectionProvider')?.clear();
 		this.selectionCheck();
 	};
 
