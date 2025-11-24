@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button } from 'Component';
-import { I, U, C, translate } from 'Lib';
+import { I, U, C, S, translate } from 'Lib';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 	useEffect(() => load(), []);
@@ -9,6 +9,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { param } = props;
 	const { data } = param;
 	const { object } = data;
+	const { config } = S.Common;
 
 	const load = () => {
 		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
@@ -63,9 +64,11 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 				}}
 			/>
 			<ObjectDescription object={object} />
-			<div className="buttonsWrapper">
-				<Button color="pink" className="c32" text="Start DM" onClick={startDmClick} />
-			</div>
+			{config.sudo ? (
+				<div className="buttonsWrapper">
+					<Button color="pink" className="c32" text="Start DM" onClick={startDmClick} />
+				</div>
+			) : ''}
 		</>
 	) : <EmptySearch text={translate('commonNotFound')} />;
 
