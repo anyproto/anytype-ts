@@ -13,16 +13,16 @@ interface Item {
 };
 
 const keyMap = {
-	[ I.ObjectLayout.Relation ]: {
+	[I.ObjectLayout.Relation]: {
 		isReadonlyRelation: 'isReadonly',
 		isReadonlyValue: 'relationReadonlyValue',
 		maxCount: 'relationMaxCount',
 		objectTypes: 'relationFormatObjectTypes',
 	},
-	[ I.ObjectLayout.Option ]: {
+	[I.ObjectLayout.Option]: {
 		color: 'relationOptionColor',
 	},
-	[ I.ObjectLayout.SpaceView ]: {
+	[I.ObjectLayout.SpaceView]: {
 		notificationMode: 'spacePushNotificationMode',
 		uxType: 'spaceUxType',
 		orderId: 'spaceOrder',
@@ -30,7 +30,7 @@ const keyMap = {
 		muteIds: 'spacePushNotificationForceMuteIds',
 		mentionIds: 'spacePushNotificationForceMentionIds',
 	},
-	[ I.ObjectLayout.Participant ]: {
+	[I.ObjectLayout.Participant]: {
 		permissions: 'participantPermissions',
 		status: 'participantStatus',
 	},
@@ -58,16 +58,16 @@ class DetailStore {
 	private createListItem (k: string, v: any): Detail {
 		const el = { relationKey: k, value: v, isDeleted: false };
 
-		makeObservable(el, {
-			value: observable,
+		makeObservable(el, { 
+			value: observable, 
 			isDeleted: observable,
 		});
 
 		intercept(el as any, (change: any) => {
-			return (change.newValue === el[ change.name ] ? null : change);
+			return (change.newValue === el[change.name] ? null : change); 
 		});
 		return el;
-	};
+	}; 
 
 	/**
 	 * Adds details to the detail store.
@@ -86,7 +86,7 @@ class DetailStore {
 			const list: Detail[] = [];
 
 			for (const k in item.details) {
-				list.push(this.createListItem(k, item.details[ k ]));
+				list.push(this.createListItem(k, item.details[k]));
 			};
 
 			map.set(item.id, list);
@@ -133,15 +133,15 @@ class DetailStore {
 
 		for (const k in item.details) {
 			if (clear) {
-				list.push(this.createListItem(k, item.details[ k ]));
+				list.push(this.createListItem(k, item.details[k]));
 				continue;
 			};
 
 			const el = list.find(it => it.relationKey == k);
 			if (el) {
-				set(el, { value: item.details[ k ], isDeleted: false });
+				set(el, { value: item.details[k], isDeleted: false });
 			} else {
-				list.push(this.createListItem(k, item.details[ k ]));
+				list.push(this.createListItem(k, item.details[k]));
 			};
 		};
 
@@ -218,7 +218,7 @@ class DetailStore {
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
-
+		
 		const object = { id };
 		const keys = new Set<string>();
 
@@ -252,7 +252,7 @@ class DetailStore {
 		});
 
 		for (let i = 0; i < list.length; i++) {
-			object[ list[ i ].relationKey ] = list[ i ].value;
+			object[list[i].relationKey] = list[i].value;
 		};
 
 		return this.mapper(object, skipLayoutFormat);
@@ -278,23 +278,23 @@ class DetailStore {
 		object = this.mapCommon(object || {});
 
 		if (!skipLayoutFormat || !skipLayoutFormat.includes(object.layout)) {
-			const fn = `map${I.ObjectLayout[ object.layout ]}`;
-			if (this[ fn ]) {
-				object = this[ fn ](object);
+			const fn = `map${I.ObjectLayout[object.layout]}`;
+			if (this[fn]) {
+				object = this[fn](object);
 			};
 
 			if (U.Object.isInFileLayouts(object.layout)) {
 				object = this.mapFile(object);
 			};
 
-			const mappedKeys = keyMap[ object.layout ];
+			const mappedKeys = keyMap[object.layout];
 
 			if (mappedKeys) {
 				for (const k in mappedKeys) {
-					const mappedKey = mappedKeys[ k ];
+					const mappedKey = mappedKeys[k];
 
-					object[ k ] = object[ mappedKey ];
-					delete (object[ mappedKey ]);
+					object[k] = object[mappedKey];
+					delete(object[mappedKey]);
 				};
 			};
 		};
@@ -552,7 +552,7 @@ class DetailStore {
 		object.globalName = Relation.getStringValue(object.globalName);
 		object.resolvedName = object.globalName || object.identity;
 
-		// Permission flags
+			// Permission flags
 		object.isOwner = object.participantPermissions == I.ParticipantPermissions.Owner;
 		object.isWriter = object.participantPermissions == I.ParticipantPermissions.Writer;
 		object.isReader = object.participantPermissions == I.ParticipantPermissions.Reader;
