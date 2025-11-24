@@ -1,6 +1,6 @@
 name: Release
 
-on:
+on
 #  push:
 #    tags:
 #      - v*
