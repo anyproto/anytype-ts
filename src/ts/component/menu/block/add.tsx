@@ -336,7 +336,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			{ id: 'list', name: translate('menuBlockAddSectionList'), children: U.Menu.getBlockList(), isBig: true, withDescription: true },
 			{ id: 'media', name: translate('menuBlockAddSectionMedia'), children: U.Menu.getBlockMedia(), isBig: true, withDescription: true },
 			{ id: 'other', name: translate('menuBlockAddSectionOther'), children: U.Menu.getBlockOther(), isBig: true, withDescription: true },
-			{ id: 'link', name: translate('menuBlockAddSectionLink'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
+			{ id: 'link', name: translate('menuBlockAddSectionLink'), children: U.Menu.getBlockLink(), isBig: true, withDescription: true },
+			{ id: 'type', name: translate('menuBlockAddSectionType'), children: U.Menu.getBlockObject(), isBig: true, withDescription: true },
 			{ id: 'relation', name: translate('menuBlockAddSectionRelations'), children: this.getRelations(), isBig: false, withDescription: false },
 			{ id: 'object', name: translate('menuBlockAddSectionObject'), children: items, isBig: false, withDescription: false },
 			{ id: 'embed', name: translate('menuBlockAddSectionEmbed'), children: U.Menu.getBlockEmbed(), isBig: false, withDescription: false },
@@ -403,29 +404,13 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			this.onOver(e, item);
 		};
 	};
-	
-	onOver (e: any, item: any) {
-		if (!item.arrow) {
-			S.Menu.closeAll(J.Menu.add);
-			return;
-		};
 
-		const { id, param, getId, getSize, close } = this.props;
+	getMenuParam () {
+		const { id, param, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
-		const { filter } = S.Common;
-		const block = S.Block.getLeaf(rootId, blockId);
-		const text = U.Common.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
-		const length = text.length;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
-		if (!block) {
-			return;
-		};
-
-		const menuParam: I.MenuParam = {
-			menuKey: item.itemId,
-			element: `#${getId()} #item-${item.id}`,
+		return {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
@@ -438,19 +423,47 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 				skipIds: [ rootId ],
 				blockId,
 				blockIds: [ blockId ],
-				position,
-				onSelect: () => {
-					$(`#block-${blockId} .value`).text(text);
-
-					U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
-						focus.set(blockId, { from: length, to: length });
-						focus.apply();
-					});
-
-					close();
-				},
 			},
 		};
+	};
+	
+	onOver (e: any, item: any) {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.add);
+			return;
+		};
+
+		const { param, getId, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const { filter } = S.Common;
+		const block = S.Block.getLeaf(rootId, blockId);
+		const text = U.Common.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
+		const length = text.length;
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
+
+		if (!block) {
+			return;
+		};
+
+		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
+			menuKey: item.itemId,
+			element: `#${getId()} #item-${item.id}`,
+		});
+
+		menuParam.data = Object.assign(menuParam.data, {
+			position,
+			onSelect: () => {
+				$(`#block-${blockId} .value`).text(text);
+
+				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
+					focus.set(blockId, { from: length, to: length });
+					focus.apply();
+				});
+
+				close();
+			},
+		});
 
 		let menuId = '';
 
@@ -463,61 +476,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 					type: I.NavigationType.Move, 
 					filters: [
 						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-					],
-				});
-				break;
-			};
-
-			case 'date': {
-				menuId = 'calendar';
-				menuParam.data = Object.assign(menuParam.data, {
-					canEdit: true,
-					value: U.Date.now(),
-					onChange: (t: number) => {
-						C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
-							const target = message.details;
-
-							C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, target.layout, true), (message: any) => {
-								if (message.error.code) {
-									return;
-								};
-
-								focus.set(message.blockId, { from: 0, to: 0 });
-								focus.apply();
-
-								analytics.event('CreateLink');
-								close();
-							});
-						});
-					}
-				});
-				break;
-			};
-
-			case 'existingPage': {
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					canAdd: true,
-					type: I.NavigationType.Link,
-					withPlural: true,
-					filters: [
-						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() },
-					],
-				});
-				break;
-			};
-
-			case 'existingFile': {
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					canAdd: true,
-					type: I.NavigationType.Link,
-					filters: [
-						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 				});
 				break;
@@ -553,11 +511,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		if (item.arrow) {
+		if (item.arrow && !item.skipOver) {
 			return;
 		};
 		
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSelect, blockCreate } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -581,8 +539,30 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			};
 		};
 
+		let menuId = '';
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
+
+		const rect = $(`#${getId()}`).get(0).getBoundingClientRect();
+		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
+			menuKey: item.itemId,
+			rect,
+			offsetX: 0,
+		});
+
+		menuParam.data = Object.assign(menuParam.data, {
+			position,
+			onSelect: () => {
+				$(`#block-${blockId} .value`).text(text);
+
+				U.Data.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
+					focus.set(blockId, { from: length, to: length });
+					focus.apply();
+				});
+
+				close();
+			},
+		});
 
 		const cb = () => {
 			if (item.isTextColor) {
@@ -619,9 +599,69 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 					case 'remove':
 						Action.remove(rootId, blockId, [ blockId ]);
 						break;
+
+					case 'date': {
+						menuId = 'calendar';
+						menuParam.data = Object.assign(menuParam.data, {
+							canEdit: true,
+							value: U.Date.now(),
+							onChange: (t: number) => {
+								C.ObjectDateByTimestamp(S.Common.space, t, (message: any) => {
+									if (message.error.code) {
+										return;
+									};
+
+									const target = message.details;
+
+									C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, target.layout, true), (message: any) => {
+										if (message.error.code) {
+											return;
+										};
+
+										focus.set(message.blockId, { from: 0, to: 0 });
+										focus.apply();
+
+										analytics.event('CreateLink');
+										close();
+									});
+								});
+							}
+						});
+						break;
+					};
+
+					case 'existingPage': {
+						menuId = 'searchObject';
+						menuParam.data = Object.assign(menuParam.data, {
+							canAdd: true,
+							type: I.NavigationType.Link,
+							withPlural: true,
+							filters: [
+								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileLayouts() },
+							],
+						});
+						break;
+					};
+
+					case 'existingFile': {
+						menuId = 'searchObject';
+						menuParam.data = Object.assign(menuParam.data, {
+							canAdd: true,
+							type: I.NavigationType.Link,
+							filters: [
+								{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+							],
+						});
+						break;
+					};
 				};
 			};
 
+			if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
+				close(() => {
+					window.setTimeout(() => S.Menu.open(menuId, menuParam), S.Menu.getTimeout());
+				});
+			} else
 			if (item.isBlock) {
 				let param: any = {
 					type: item.type,

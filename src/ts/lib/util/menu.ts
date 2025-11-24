@@ -135,16 +135,30 @@ class UtilMenu {
 	};
 
 	/**
+	 * Returns the list of link block types.
+	 * @returns {any[]} The list of object block types.
+	 */
+	getBlockLink () {
+		return [
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+		].map((it: any) => {
+			it = this.mapperBlock(it);
+
+			it.isAction = true;
+			it.skipOver = true;
+			return it;
+		});
+	};
+
+	/**
 	 * Returns the list of object block types.
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
 		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
-		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
-		];
+		const ret: any[] = [];
 
 		let i = 0;
 		for (const type of items) {
@@ -590,14 +604,14 @@ class UtilMenu {
 					c._sortWeight_ = getWeight(c.description);
 				};
 				
-				s._sortWeight_ += c._sortWeight_ / (s.children.length || 1);
+				//s._sortWeight_ += c._sortWeight_ / (s.children.length || 1);
 				return ret; 
 			});
 			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
+		//sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
