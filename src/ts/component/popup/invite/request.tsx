@@ -120,7 +120,6 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					{creatorName}
 				</b>
 			</div>
-			<Label className="creator" text={U.Common.sprintf(translate('popupInviteRequestCreatedBy'), creatorName)} />
 			<Label className="text" text={text} />
 
 			<div className="buttons">
