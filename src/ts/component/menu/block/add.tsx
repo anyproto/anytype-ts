@@ -782,9 +782,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						const element = $(`#block-${newBlockId}`);
-
 						window.setTimeout(() => { 
+							const element = $(`#block-${newBlockId}`);
+
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
 								element.find(`.info`).trigger('click');
