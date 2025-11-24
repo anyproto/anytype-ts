@@ -691,6 +691,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		saveState([ ...list, ...attachments ]);
+		historySaveState();
+
+		/*
 		let cnt = 0;
 
 		const preloadIds = new Map<string, string>();
@@ -722,10 +726,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				cb()
 			};
 		});
+		*/
 	};
 
 	const preloadFile = (item: any, callBack: (preloadId: string) => void) => {
-		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', (message: any) => callBack(message.preloadFileId));
+		C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, true, '', 0, (message: any) => callBack(message.preloadFileId));
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -888,7 +893,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let n = 0;
 			for (const item of files) {
-				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, item.preloadId, (message: any) => {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -1275,10 +1280,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Common.filterSet(from, '');
 
+		const param = caretMenuParam();
+
 		raf(() => {
 			S.Menu.open('blockMention', {
 				element: `#button-${block.id}-${I.ChatButton.Mention}`,
-				...caretMenuParam(),
+				...param,
+				className: [ 'single', param.className ].join(' '),
 				data: {
 					rootId,
 					blockId: block.id,

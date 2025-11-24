@@ -19,7 +19,7 @@ class Onboarding {
 	 * @param {boolean} [force] - Whether to force onboarding even if already completed.
 	 * @param {any} [options] - Additional options for onboarding.
 	 */
-	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
+	start (key: string, isPopup: boolean, force?: boolean, options?: any): boolean {
 		options = options || {};
 
 		const section = this.getSection(key);
@@ -30,7 +30,7 @@ class Onboarding {
 			|| (!force && Storage.getOnboarding(key))
 			//|| !Storage.get('chatsOnboarding')
 		) {
-			return;
+			return false;
 		};
 
 		const { items } = section;
@@ -66,23 +66,32 @@ class Onboarding {
 				});
 			}, t);
 		});
+
+		return true;
 	};
 
-	startBasics (isPopup: boolean) {
-		console.log('Onboarding.startBasics', Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld');
+	startCommon (isPopup: boolean) {
+		if (this.start('common', isPopup)) {
+			this.initWidgetSections(true, true);
+		};
+	};
 
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), false);
+	startChat (isPopup: boolean) {
+		if (!this.isCompletedCommon()) {
+			return;
+		};
+		if (this.start('chat', isPopup)) {
+			this.initWidgetSections(false, false);
+		};
+	};
+
+	initWidgetSections (unread: boolean, recentEdit: boolean) {
+		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), unread);
+		Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), recentEdit);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
 		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
 
 		S.Common.setLeftSidebarState('vault', 'widget');
-		$(window).trigger('checkWidgetToggles');
-
-		this.start(Storage.get('isNewUser') ? 'basicsNew' : 'basicsOld', isPopup);
-	};
-
-	completeBasics () {
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
 		$(window).trigger('checkWidgetToggles');
 	};
 
@@ -98,9 +107,7 @@ class Onboarding {
 		section.param = section.param || {};
 		item.param = item.param || {};
 
-		let param: any = {};
-
-		param = Object.assign(param, section.param);
+		let param: any = Object.assign({}, section.param);
 
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);
@@ -117,7 +124,6 @@ class Onboarding {
 		param.element = String(param.element || '');
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
-		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = param.rect || null;
@@ -144,6 +150,8 @@ class Onboarding {
 		if (section.showDimmer) {
 			param.menuKey = 'withDimmer';
 			cnw.push('fromOnboarding');
+		} else {
+			cnw.push('fromBlock');
 		};
 		param.classNameWrap = cnw.join(' ');
 
@@ -201,8 +209,8 @@ class Onboarding {
 		return Storage.getOnboarding(key);
 	};
 
-	isCompletedBasics (): boolean {
-		return this.isCompleted('basicsNew') || this.isCompleted('basicsOld');
+	isCompletedCommon (): boolean {
+		return this.isCompleted('common');
 	};
 	
 };

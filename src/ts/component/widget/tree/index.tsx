@@ -22,7 +22,7 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate } = props;
+	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -54,10 +54,13 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 	};
 
 	const updateData = () => {
-		if (isSystemTarget) {
-			getData(subId);
-			checkShowAllButton(subId);
+		if (!isSystemTarget) {
+			return;
 		};
+
+		getData(subId);
+		checkShowAllButton(subId);
+		resize();
 	};
 
 	const loadTree = (): I.WidgetTreeItem[] => {
@@ -271,7 +274,8 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const bh = node.hasClass('withShowAll') ? HEIGHT : 0;
+		const showAll = node.find('#button-show-all').css('display') != 'none';
+		const bh = showAll ? HEIGHT : 0;
 		const css: any = { height: getTotalHeight() + 8 + bh, paddingBottom: '' };
 
 		if (isPreview) {
@@ -463,6 +467,14 @@ const WidgetTree = observer(forwardRef<WidgetTreeRefProps, I.WidgetComponent>((p
 		>
 			{head}
 			{content}
+
+			<Button 
+				id="button-show-all" 
+				onClick={onSetPreview} 
+				text={translate('widgetSeeAll')} 
+				className="c28" 
+				color="blank" 
+			/>
 		</div>
 	);
 

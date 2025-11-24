@@ -1,8 +1,7 @@
-import React, { useRef, forwardRef } from 'react';
+import React, { useRef, forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, U, S, C, translate, analytics, Action, keyboard } from 'Lib';
-import { icon } from 'mermaid/dist/rendering-util/rendering-elements/shapes/icon';
+import { I, U, S, translate, analytics, Action, keyboard } from 'Lib';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -12,10 +11,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const nodeRef = useRef(null);
+	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
 	const iconSize = spaceview.isChat ? 80 : 48;
+	const rootId = keyboard.getRootId();
 
 	const icon = (
 		<IconObject
@@ -43,7 +44,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				typeY: I.MenuDirection.Bottom as any,
 			},
 		} : null,
-		{ id: 'search', name: translate('commonSearch') }
+		{ id: 'search', name: translate('commonSearch') },
+		spaceview.isChat ? { id: 'chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
 	const onButtonClick = (e: any, item: any) => {
@@ -64,6 +66,11 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 			case 'create': {
 				keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+				break;
+			};
+
+			case 'chat': {
+				U.Object.openRoute({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
 				break;
 			};
 		};
@@ -123,24 +130,42 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		);
 	};
 
+	useEffect(() => {
+		const win = $(window);
+
+		win.off('objectView').on('objectView', () => setDummy(dummy => dummy + 1));
+
+		return () => {
+			win.off('objectView');
+		};
+	}, []);
+
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>
 			{content}
 			<div className="buttons">
-				{buttons.map((item, idx) => (
-					<div className="item" onClick={e => onButtonClick(e, item)} key={idx}>
-						<Icon className={item.id} />
-						<Label text={item.name} />
-						{item.withArrow ? (
-							<Icon 
-								id={`button-${item.id}-arrow`}
-								className="arrow withBackground"
-								onClick={onArrow}
-								tooltipParam={item.arrowTooltipParam}
-							/>
-						) : ''}
-					</div>
-				))}
+				{buttons.map((item, idx) => {
+					const cn = [ 'item' ];
+
+					if ((item.id == 'chat') && (rootId == S.Block.workspace)) {
+						cn.push('active');
+					};
+
+					return (
+						<div className={cn.join(' ')} onClick={e => onButtonClick(e, item)} key={idx}>
+							<Icon className={item.id} />
+							<Label text={item.name} />
+							{item.withArrow ? (
+								<Icon 
+									id={`button-${item.id}-arrow`}
+									className="arrow withBackground"
+									onClick={onArrow}
+									tooltipParam={item.arrowTooltipParam}
+								/>
+							) : ''}
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);

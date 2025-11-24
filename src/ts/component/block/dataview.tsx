@@ -60,7 +60,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
 		this.getSubId = this.getSubId.bind(this);
 		this.getEmptyView = this.getEmptyView.bind(this);
-		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
@@ -71,7 +70,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
+		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
+		this.onViewDrop = this.onViewDrop.bind(this);
 		this.onTemplateMenu = this.onTemplateMenu.bind(this);
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onSelectEnd = this.onSelectEnd.bind(this);
@@ -807,7 +808,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case I.ObjectLayout.Chat: {
-				U.Menu.onChatMenu(menuParam, cb);
+				U.Menu.onChatMenu(menuParam, this.analyticsRoute(), cb);
 				break;
 			};
 		};
@@ -1043,6 +1044,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				allowedLinkTo: true,
 				allowedOpen: true,
 				allowedRelation: true,
+				allowedCollection: true,
+				allowedExport: true,
 			}
 		});
 	};
@@ -1160,11 +1163,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onDragRecordStart (e: any, recordId: string) {
 		e.stopPropagation();
 
-		const { block } = this.props;
+		const { block, isPopup } = this.props;
 		const dragProvider = S.Common.getRef('dragProvider');
 		const selection = S.Common.getRef('selectionProvider');
 		const record = this.getRecord(recordId);
 		const ids = selection?.get(I.SelectType.Record) || [];
+		const con = $(this.refControls.getNode());
+		const sel = $(this.refSelect.getNode());
 
 		if (!ids.length) {
 			ids.push(record.id);
@@ -1181,7 +1186,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		dragProvider?.onDragStart(e, I.DropType.Record, ids, {
 			getNode: () => this.node,
 			onRecordDrop: this.onRecordDrop,
+			onViewDrop: this.onViewDrop,
 		});
+
+		con.show();
+		sel.hide();
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
@@ -1228,6 +1237,34 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			cb();
 		};
+	};
+
+	onViewDrop (targetId: string, ids: string[]) {
+		if (!targetId || !ids.length) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const details = Dataview.getDetails(rootId, block.id, this.getObjectId(), targetId);
+		const operations: any[] = []; 
+
+		for (const k in details) {
+			const relation = S.Record.getRelationByKey(k);
+
+			if (!relation) {
+				continue;
+			};
+
+			operations.push({ 
+				relationKey: k, 
+				add: Relation.formatValue(relation, details[k], true),
+			});
+		};
+
+		C.ObjectListModifyDetailValues(ids, operations);
+
+		S.Common.getRef('selectionProvider')?.clear();
+		this.selectionCheck();
 	};
 
 	onSortAdd (item: any, callBack?: () => void) {
@@ -1499,9 +1536,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	selectionCheck () {
 		const selection = S.Common.getRef('selectionProvider');
-		const node = $(this.node);
-		const con = node.find('#dataviewControls');
-		const sel = node.find('#dataviewSelection');
+		const con = $(this.refControls.getNode());
+		const sel = $(this.refSelect.getNode());
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const length = ids.length;
 

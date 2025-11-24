@@ -680,6 +680,45 @@ class Dataview {
 	};
 
 	/**
+	 * Duplicates an existing view in a dataview block, preserving its configuration and optionally its group order.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {I.View} view - The view object to duplicate.
+	 * @param {string[]} sources - The source object IDs for the duplicated view.
+	 * @param {function} [callBack] - Optional callback after duplication.
+	 */
+	duplicateView (
+		rootId: string,
+		blockId: string,
+		view: I.View,
+		sources: string[],
+		callBack?: (message: any) => void,
+	) {
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block || !view) {
+			return;
+		};
+
+		const sourceOrder = (block.content.groupOrder || []).find(it => it.viewId == view.id);
+
+		C.BlockDataviewViewCreate(rootId, blockId, { ...view }, sources, (message: any) => {
+			if (message.error?.code) {
+				callBack?.(message);
+				return;
+			};
+
+			if (sourceOrder) {
+				const groupsCopy = (sourceOrder.groups || []).map((it: any) => ({ ...it }));
+
+				this.groupOrderUpdate(rootId, blockId, message.viewId, groupsCopy);
+				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: message.viewId, groups: groupsCopy });
+			};
+
+			callBack?.(message);
+		});
+	};
+
+	/**
 	 * Gets the cover object for a dataview relation.
 	 * @param {string} subId - The subscription ID.
 	 * @param {any} object - The object data.

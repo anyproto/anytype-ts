@@ -26,7 +26,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const closeSidebar = useRef(false);
 	const pressed = useRef(new Set());
 	const n = useRef(-1);
-	const spaceview = U.Space.getSpaceview();
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -77,7 +76,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.leftPanelOpen(width);
+				sidebar.leftPanelOpen(width, true);
 			};
 		});
 	};
@@ -110,7 +109,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.leftPanelClose();
+			sidebar.leftPanelClose(true);
 			closeSidebar.current = false;
 		};
 	};
@@ -195,7 +194,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		}, { route: analytics.route.vault });
+		}, { withPin: true, noBin: true, noMembers: true, route: analytics.route.vault });
 	};
 
 	const items = getItems();
@@ -480,7 +479,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						<Icon
 							id="button-create-space"
 							className="plus withBackground"
-							tooltipParam={{ caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+							tooltipParam={{ text: translate('commonCreateSpace'), caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
 							onClick={onCreate}
 						/>
 					) : ''}

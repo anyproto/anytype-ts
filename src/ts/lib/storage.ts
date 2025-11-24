@@ -22,7 +22,6 @@ const LOCAL_KEYS = [
 	'toggle',
 	'scroll',
 	'focus',
-	'sidebarData',
 	'graphData'
 ];
 

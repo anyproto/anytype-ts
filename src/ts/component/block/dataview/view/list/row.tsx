@@ -158,14 +158,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 	if (!isInline) {
 		content = (
-			<SelectionTarget id={record.id} type={I.SelectType.Record}>
-				{content}
-			</SelectionTarget>
-		);
-	};
-
-	if (!isInline) {
-		content = (
 			<>
 				<Icon
 					className="drag"
@@ -176,7 +168,9 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 					onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 				/>
 				<DropTarget {...props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-					{content}
+					<SelectionTarget id={record.id} type={I.SelectType.Record}>
+						{content}
+					</SelectionTarget>
 				</DropTarget>
 			</>
 		);

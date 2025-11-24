@@ -1,29 +1,47 @@
-import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
-import { I, U, translate, Relation, analytics, Action, keyboard, sidebar } from 'Lib';
-import { Icon, Label } from 'Component';
+import React, { forwardRef, useEffect, useState } from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { S, I, U, translate, analytics, keyboard, sidebar, Relation } from 'Lib';
+import { Icon, Label } from 'Component';
 
 const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const param = U.Router.getParam(U.Router.getRoute());
-	const id = param.id || 'account';
+	const [ invite, setInvite ] = useState({ cid: '', key: '' });
+	const { id = 'account' } = keyboard.getMatch(isPopup).params;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
+	const isOwner = U.Space.isMyOwner();
+
+	const init = () => {
+		if (space.isShared && (!invite.cid || !invite.key)) {
+			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
+				if (cid && key) {
+					setInvite({ cid, key });
+				};
+			});
+		} else {
+			setInvite({ cid: '', key: '' });
+		};
+	};
 
 	const onMore = () => {
 		const element = $('#header #button-header-more');
-
-		U.Menu.spaceContext(space, {
+		const menuParam = {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
-		}, { noPin: true, isSharePage: id == 'spaceShare', route: analytics.route.settings });
+		};
+
+		if (id == 'spaceShare') {
+			U.Menu.spaceContext(space, menuParam, { isSharePage: true, route: analytics.route.settings });
+		} else {
+			U.Menu.spaceSettingsIndex(menuParam, { route: analytics.route.settings });
+		};
 	};
 
 	const renderIdentity = () => {
@@ -33,14 +51,21 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 		return (
 			<div id="settings-identity-badge" className="identity">
-				<Icon className="anyName" />
+				<Icon className="badge" />
 				<Label text={globalName} />
 			</div>
 		);
 	};
 
 	const renderMore = () => {
+		const hasLink = invite.cid && invite.key;
+		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
+
 		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
+			return null;
+		};
+
+		if (id == 'spaceShare' && !spaceShareShowButton) {
 			return null;
 		};
 
@@ -54,6 +79,14 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 			/>
 		);
 	};
+
+	useEffect(() => {
+		init();
+	}, []);
+
+	useEffect(() => {
+		init();
+	}, [ space.spaceAccessType ]);
 
 	return (
 		<>

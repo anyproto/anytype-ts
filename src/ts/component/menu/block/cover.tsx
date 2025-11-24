@@ -217,7 +217,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
-					{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Cover },
+					//{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Cover },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -273,7 +273,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, { imageKind: I.ImageKind.Cover }, false, '', (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -383,7 +383,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		keyboard.disableCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover,(message: any) => {
 			this.setState({ isLoading: false });
 			keyboard.disableCommonDrop(false);
 			
@@ -413,7 +413,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', (message: any) => {
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 				if (!message.error.code) {
 					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};

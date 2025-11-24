@@ -71,6 +71,9 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
+				allowedCollection: true, 
+				allowedExport: true,
+				allowedLinkTo: true,
 			},
 		});
 	};
@@ -79,7 +82,6 @@ const WidgetGalleryItem = observer(forwardRef<{}, Props>(({
 		const node = $(nodeRef.current);
 
 		node.toggleClass('withIcon', !!node.find('.iconObject').length);
-
 		onResize?.();
 	};
 

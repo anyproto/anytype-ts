@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.50.55-alpha",
+	"version": "0.51.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -82,7 +82,6 @@
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"node-loader": "^2.1.0",
-		"npm": "^11.6.0",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
 		"sass": "1.77.6",
@@ -128,6 +127,7 @@
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
 		"findandreplacedomtext": "^0.4.6",
+		"glob": "^13.0.0",
 		"google-protobuf": "^4.0.0",
 		"grpc-web": "^2.0.2",
 		"history": "^4.10.1",
@@ -146,6 +146,7 @@
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^7.5.2",
+		"motion": "^12.23.24",
 		"node-gyp": "^9.0.0",
 		"os": "^0.1.1",
 		"pako": "^2.1.0",

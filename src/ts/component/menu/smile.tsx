@@ -495,7 +495,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
-					{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Icon },
+					//{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Icon },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -1213,7 +1213,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setLoading(true);
 		keyboard.disableCommonDrop(true);
 		
-		C.FileUpload(this.getSpaceId(), '', file, I.FileType.Image, { imageKind: I.ImageKind.Icon }, false, '', (message: any) => {
+		C.FileUpload(this.getSpaceId(), '', file, I.FileType.Image, {}, false, '', I.ImageKind.Icon, (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			
@@ -1233,7 +1233,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			this.setLoading(true);
 
-			C.FileUpload(this.getSpaceId(), '', paths[0], I.FileType.Image, { imageKind: I.ImageKind.Icon }, false, '', (message: any) => {
+			C.FileUpload(this.getSpaceId(), '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Icon, (message: any) => {
 				this.setLoading(false);
 
 				if (!message.error.code) {

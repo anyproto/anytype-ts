@@ -124,11 +124,20 @@ class Focus {
 		const container = U.Common.getScrollContainer(isPopup);
 		const ch = container.height();
 		const no = node.offset().top;
+		const nh = node.outerHeight();
 		const hh = J.Size.header;
 		const o = J.Size.lastBlock + hh;
 		const st = container.scrollTop();
 		const y = no - container.offset().top + st;
-
+		
+		const topViewport = st + hh;
+		const bottomViewport = st + ch - o;
+		
+		// If block intersects the visible area - don't scroll
+		if ((y + nh > topViewport) && (y < bottomViewport)) {
+			return;
+		}
+		
 		if ((y >= st) && (y <= st + ch - o)) {
 			return;
 		};
@@ -138,4 +147,4 @@ class Focus {
 
 };
 
- export const focus: Focus = new Focus();
+export const focus: Focus = new Focus();

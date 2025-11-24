@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence, animate } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
 import { I, S, U, C, J, Mark, translate, analytics } from 'Lib';
 
@@ -17,7 +18,7 @@ interface ChatMessageRefProps {
 const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const { 
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, scrollToBottom, onContextMenu, onMore, onReplyEdit,
+		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
 		renderLinks, renderMentions, renderObjects, renderEmoji,
 	} = props;
 	const { space } = S.Common;
@@ -28,16 +29,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const message = S.Chat.getMessageById(subId, id);
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
-
-		node.addClass('anim');
-		window.setTimeout(() => node.addClass('show'), J.Constant.delay.chatMessage);
-	}, []);
-
-	useEffect(() => {
 		init();
-
-		$(nodeRef.current).addClass('show');
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -318,85 +310,93 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	};
 
 	return (
-		<div
-			ref={nodeRef}
-			id={`item-${id}`}
-			className={cn.join(' ')}
-			onContextMenu={onContextMenu}
-			onDoubleClick={onReplyEdit}
-			style={style}
-			{...U.Common.dataProps({ 'order-id': message.orderId })}
-		>
-			{isNew ? (
-				<div className="newMessages">
-					<Label text={translate('blockChatNewMessages')} />
-				</div>
-			) : ''}
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef}
+				id={`item-${id}`}
+				className={cn.join(' ')}
+				onContextMenu={onContextMenu}
+				onDoubleClick={onReplyEdit}
+				style={style}
+				{...U.Common.dataProps({ 'order-id': message.orderId })}
+				{...U.Common.animationProps({ 
+					initial: { y: 20 }, 
+					animate: { y: 0 }, 
+					exit: { y: -20 },
+					transition: { duration: 0.3, delay: 0.1 },
+				})}
+			>
+				{isNew ? (
+					<div className="newMessages">
+						<Label text={translate('blockChatNewMessages')} />
+					</div>
+				) : ''}
 
-			<div className="flex">
-				<div className="side left">
-					{userpicNode}
-				</div>
+				<div className="flex">
+					<div className="side left">
+						{userpicNode}
+					</div>
 
-				<div className="side right">
-					<Reply {...props} id={replyToMessageId} />
+					<div className="side right">
+						<Reply {...props} id={replyToMessageId} />
 
-					{authorNode}
+						{authorNode}
 
-					<div className="bubbleOuter">
-						<div className="bubbleInner">
-							<div className={cnBubble.join(' ')}>
-								<div className={ct.join(' ')}>
-									<div
-										ref={textRef}
-										className="text"
-										dangerouslySetInnerHTML={{ __html: text }}
-									/>
-									<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
+						<div className="bubbleOuter">
+							<div className="bubbleInner">
+								<div className={cnBubble.join(' ')}>
+									<div className={ct.join(' ')}>
+										<div
+											ref={textRef}
+											className="text"
+											dangerouslySetInnerHTML={{ __html: text }}
+										/>
+										<div className="time">{statusIcon} {editedLabel} {U.Date.date('H:i', createdAt)}</div>
+									</div>
+
+									{hasAttachments ? (
+										<div className={ca.join(' ')}>
+											{attachments.map((item: any, i: number) => (
+												<Attachment
+													ref={ref => attachmentRefs.current[item.id] = ref}
+													key={i}
+													object={item}
+													subId={subId}
+													onRemove={() => onAttachmentRemove(item.id)}
+													onPreview={(preview) => onPreview(preview)}
+													showAsFile={!attachmentsLayout}
+													bookmarkAsDefault={attachments.length > 1}
+													isDownload={!isSelf}
+												/>
+											))}
+										</div>
+									) : ''}
 								</div>
 
-								{hasAttachments ? (
-									<div className={ca.join(' ')}>
-										{attachments.map((item: any, i: number) => (
-											<Attachment
-												ref={ref => attachmentRefs.current[item.id] = ref}
-												key={i}
-												object={item}
-												subId={subId}
-												onRemove={() => onAttachmentRemove(item.id)}
-												onPreview={(preview) => onPreview(preview)}
-												showAsFile={!attachmentsLayout}
-												bookmarkAsDefault={attachments.length > 1}
-												isDownload={!isSelf}
-											/>
+								{controls.length ? (
+									<div className="controls">
+										{controls.map((item, i) => (
+											<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
 										))}
 									</div>
 								) : ''}
 							</div>
 
-							{controls.length ? (
-								<div className="controls">
-									{controls.map((item, i) => (
-										<Icon key={i} id={item.id} className={item.className} onClick={item.onClick} tooltipParam={{ text: item.tooltip }} />
+							{hasReactions ? (
+								<div className="reactions">
+									{reactions.map((item: any, i: number) => (
+										<Reaction key={i} {...item} onSelect={onReactionSelect} />
 									))}
+									{!readonly && canAddReactionValue ? (
+										<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
+									) : ''}
 								</div>
 							) : ''}
 						</div>
-
-						{hasReactions ? (
-							<div className="reactions">
-								{reactions.map((item: any, i: number) => (
-									<Reaction key={i} {...item} onSelect={onReactionSelect} />
-								))}
-								{!readonly && canAddReactionValue ? (
-									<Icon id="reaction-add" className="reactionAdd" onClick={onReactionAdd} tooltipParam={{ text: translate('blockChatReactionAdd') }} />
-								) : ''}
-							</div>
-						) : ''}
 					</div>
 				</div>
-			</div>
-		</div>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

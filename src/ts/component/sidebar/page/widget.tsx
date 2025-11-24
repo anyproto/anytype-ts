@@ -1,18 +1,18 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar } from 'Lib';
 
 const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
-	const [ sectionIds, setSectionIds ] = useState([]);
 	const { widgets } = S.Block;
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup } = props;
-	const { space } = S.Common;
+	const { space, widgetSections } = S.Common;
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -32,10 +32,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const ret = [];
 
 		if (!spaceview.isChat) {
-			const chats = S.Record.getRecords(J.Constant.subId.chat);
-			const counters = S.Chat.getSpaceCounters(space);
-
-			if (chats.length && ((counters.messageCounter > 0) || (counters.mentionCounter > 0))) {
+			const chats = U.Data.getWidgetChats();
+			if (chats.length) {
 				ret.push({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
 			};
 		};
@@ -56,19 +54,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const initSections = () => {
-		const newSectionIds = [];
+		const newSections = [];
 		const ids = getSections().map(it => it.id);
 
 		ids.forEach(id => {
 			if (!isSectionClosed(id)) {
-				newSectionIds.push(id);
+				newSections.push(id);
 			};
 		});
 
-		if (!U.Common.compareJSON(newSectionIds, sectionIds)) {
-			setSectionIds(newSectionIds);
+		if (!U.Common.compareJSON(newSections, widgetSections)) {
+			S.Common.widgetSectionsSet(newSections);
 		};
-		
+
 		ids.forEach(initToggle);
 	};
 
@@ -363,19 +361,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const isClosed = isSectionClosed(id);
 		const save = () => Storage.setToggle('widgetSection', String(id), !isClosed);
 
-		let newSectionIds = [ ...sectionIds ];
-		newSectionIds = isClosed ? sectionIds.concat(id) : sectionIds.filter(it => it != id);
+		let newSectionIds = [ ...widgetSections ];
+		newSectionIds = isClosed ? newSectionIds.concat(id) : newSectionIds.filter(it => it != id);
 
 		section.toggleClass('isOpen', isClosed);
 
 		if (isClosed) {
 			save();
-			setSectionIds(newSectionIds);
+			S.Common.widgetSectionsSet(newSectionIds);
 			U.Common.toggle(list, 200, false);
 		} else {
 			U.Common.toggle(list, 200, true, () => {
 				save();
-				setSectionIds(sectionIds);
+				S.Common.widgetSectionsSet(newSectionIds);
 			});
 		};
 	};
@@ -430,7 +428,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
 				};
 
-				blocks.push(new M.Block({ id: [ space, idMap[sectionId] ].join('-'), type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Object } }));
+				blocks.push(new M.Block({ 
+					id: [ space, idMap[sectionId] ].join('-'), 
+					type: I.BlockType.Widget, 
+					content: { layout: I.WidgetLayout.Object } 
+				}));
 				break;
 			};
 
@@ -621,12 +623,11 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					onDrag={onDrag}
 					canEdit={false}
 					canRemove={false}
-					disableAnimation={true}
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
 
-				{sections.map(section => {
+				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
@@ -638,37 +639,47 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					};
 
 					return (
-						<div id={`section-${section.id}`} className={cns.join(' ')} key={section.id}>
-							<div className="nameWrap">
-								<div className="name" onClick={() => onToggle(section.id)}>
-									<Icon className="arrow" />
-									{section.name}
+						<AnimatePresence key={section.id} mode="popLayout">
+							<motion.div 
+								id={`section-${section.id}`} 
+								className={cns.join(' ')} 
+								key={`${section.id}-motion`}
+								{...U.Common.animationProps({
+									transition: { duration: 200, delay: i * 0.05 },
+								})}
+							>
+								<div className="nameWrap">
+									<div className="name" onClick={() => onToggle(section.id)}>
+										<Icon className="arrow" />
+										{section.name}
+									</div>
+									<div className="buttons">
+										{buttons}
+									</div>
 								</div>
-								<div className="buttons">
-									{buttons}
-								</div>
-							</div>
 
-							{sectionIds.includes(section.id) ? (
-								<div className="items">
-									{list.map((block, i) => (
-										<Widget
-											{...props}
-											key={`widget-${block.id}`}
-											block={block}
-											canEdit={canWrite}
-											canRemove={isSectionPin}
-											onDragStart={onDragStart}
-											onDragOver={onDragOver}
-											onDrag={onDrag}
-											setPreview={setPreviewId}
-											sidebarDirection={sidebarDirection}
-											getObject={id => getObject(block, id)}
-										/>
-									))}
-								</div>
-							) : ''}
-						</div>
+								{widgetSections.includes(section.id) ? (
+									<div className="items">
+										{list.map((block, i) => (
+											<Widget
+												{...props}
+												key={`widget-${block.id}`}
+												block={block}
+												index={i}
+												canEdit={canWrite}
+												canRemove={isSectionPin}
+												onDragStart={onDragStart}
+												onDragOver={onDragOver}
+												onDrag={onDrag}
+												setPreview={setPreviewId}
+												sidebarDirection={sidebarDirection}
+												getObject={id => getObject(block, id)}
+											/>
+										))}
+									</div>
+								) : ''}
+							</motion.div>
+						</AnimatePresence>
 					);
 				})}
 			</div>

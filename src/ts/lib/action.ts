@@ -251,7 +251,6 @@ class Action {
 		url = U.Common.urlFix(url);
 
 		const route = U.Common.getRouteFromUrl(url);
-		
 		if (route) {
 			U.Router.go(route, {});
 			return;
@@ -686,10 +685,12 @@ class Action {
 
 				if (next) {
 					const l = next.getLength();
-
 					focus.set(next.id, { from: l, to: l });
-					focus.apply();
+				} else {
+					focus.set(focused, { from: range.from, to: range.from });
 				};
+				
+				focus.apply();
 			};
 		});
 
@@ -874,7 +875,7 @@ class Action {
 	};
 
 	toggleWidgetsForObject (objectId: string, route?: string) {
-		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
+		if (S.Block.getWidgetsForTarget(objectId).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
 			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
@@ -1079,8 +1080,9 @@ class Action {
 		this.openSettings('spaceShare', route);
 	};
 
-	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, callBack?: (message: any) => void) {		
+	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
+		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
 	};
 
 };

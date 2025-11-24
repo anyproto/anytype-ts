@@ -32,15 +32,12 @@
 			.buttons { display: flex; justify-content: center; margin-top: 8px; }
 		}
 
-		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; opacity: 0; }
+		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; }
 		.sectionDate {
 			.label { 
 				@include text-small; padding: 3px 10px; background: var(--color-bg-primary-90); border-radius: 13px; color: var(--color-text-secondary); 
 				font-weight: 500; backdrop-filter: blur(5px);
 			}
-
-			&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
-			&.show { opacity: 1; }
 		}
 
 		markupmention.withImage {

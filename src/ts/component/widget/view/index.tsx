@@ -10,6 +10,7 @@ import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
+import { get } from 'jquery';
 
 interface WidgetViewRefProps {
 	updateData: () => void;
@@ -24,8 +25,8 @@ interface WidgetViewRefProps {
 const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
-		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getLimit, checkShowAllButton, onCreate,
-		getContentParam, getObject
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
+		getContentParam, getObject, onSetPreview
 	} = props;
 	const { space } = S.Common;
 	const { viewId, limit, layout } = getContentParam();
@@ -38,7 +39,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
 	const traceId = getTraceId();
-	const rootId = block ? [ targetId, traceId ].join('-') : '';
+	const rootId = getRootId();
 	const subId = S.Record.getSubId(rootId, J.Constant.blockId.dataview);
 	const object = getObject(targetId);
 	const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
@@ -128,7 +129,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			filters: getFilters(),
 			collectionId: (isCollection ? object.id : ''),
 			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
-			noDeps: true,
 			clear,
 		});
 	};
@@ -397,7 +397,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 				return;
 			};
 
-			C.ObjectShow(targetId, traceId, U.Router.getRouteSpaceId(), (message) => {
+			C.ObjectShow(targetId, traceId, S.Common.space, (message) => {
 				if (!message.error.code) {
 					cb();
 				};
@@ -447,6 +447,14 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 			{head}
 			{content}
+			
+			<Button 
+				id="button-show-all" 
+				onClick={onSetPreview} 
+				text={translate('widgetSeeAll')} 
+				className="c28" 
+				color="blank" 
+			/>
 		</div>
 	);
 

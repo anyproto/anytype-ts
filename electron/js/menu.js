@@ -20,6 +20,7 @@ const DEFAULT_SHORTCUTS = {
 	toggleFullScreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
 	shortcut: [ 'Ctrl', 'Space' ],
 	close: [ 'CmdOrCtrl', 'Q' ],
+	createSpace: [],
 };
 
 class MenuManager {
@@ -106,7 +107,7 @@ class MenuManager {
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
 					{ label: Util.translate('commonNewObject'), accelerator: this.getAccelerator('createObject'), click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
-					{ label: Util.translate('commonNewSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
+					{ label: Util.translate('commonNewSpace'), accelerator: this.getAccelerator('createSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
 
@@ -481,7 +482,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuAccountSettings'), click: () => { 
 					this.winShow(); 
-					this.openSettings(''); 
+					this.openSettings('account'); 
 				}
 			},
 			{ 

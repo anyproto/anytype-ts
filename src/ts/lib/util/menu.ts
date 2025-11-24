@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
+import React from 'react';
 
 class UtilMenu {
 
@@ -135,16 +136,30 @@ class UtilMenu {
 	};
 
 	/**
+	 * Returns the list of link block types.
+	 * @returns {any[]} The list of object block types.
+	 */
+	getBlockLink () {
+		return [
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+		].map((it: any) => {
+			it = this.mapperBlock(it);
+
+			it.isAction = true;
+			it.skipOver = true;
+			return it;
+		});
+	};
+
+	/**
 	 * Returns the list of object block types.
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
 		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
-		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
-		];
+		const ret: any[] = [];
 
 		let i = 0;
 		for (const type of items) {
@@ -170,7 +185,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of other block types.
 	 */
 	getBlockOther () {
-		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
+		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
@@ -529,26 +544,23 @@ class UtilMenu {
 	
 	sectionsFilter (sections: any[], filter: string) {
 		const f = U.Common.regexEscape(filter);
-		const regS = new RegExp('^' + f, 'gi');
-		const regC = new RegExp(f, 'gi');
+		const regS = new RegExp(`^${f}`, 'i');
 		const getWeight = (s: string) => {
 			let w = 0;
+			if (!s) {
+				return w;
+			};
+
 			if (s.toLowerCase() == f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
 				w = 1000;
-			} else 
-			if (s.match(regC)) {
-				w = 100;
 			};
 			return w;
 		};
 		
 		sections = sections.filter((s: any) => {
-			if (s.name.match(regC)) {
-				return true;
-			};
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
 
@@ -565,39 +577,38 @@ class UtilMenu {
 					};
 				};
 
-				c._sortWeight_ = 0;
+				c._sortWeight_ = Number(c._sortWeight_) || 0;
 				if (c.skipFilter) {
 					ret = true;
 				};
 
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
-						if (alias.match(regC)) {
-							c._sortWeight_ = getWeight(alias);
+						if (alias.match(regS)) {
+							c._sortWeight_ += getWeight(alias);
 							ret = true;
 							break;
 						};
 					};
 				};
 
-				if (!ret && c.name && c.name.match(regC)) {
+				if (!ret && c.name && c.name.match(regS)) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.name);
+					c._sortWeight_ += getWeight(c.name);
 				};
 
-				if (!ret && c.description && c.description.match(regC)) {
+				if (!ret && c.description && c.description.match(regS)) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.description);
+					c._sortWeight_ += getWeight(c.description);
 				};
-				
-				s._sortWeight_ += c._sortWeight_;
+
 				return ret; 
 			});
+
 			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
@@ -649,7 +660,7 @@ class UtilMenu {
 
 		let options = [];
 		if (spaceview.isChat) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate('commonChat') });
+			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
 		} else {
 			options = [
 				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -785,6 +796,32 @@ class UtilMenu {
 		});
 	};
 
+	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
+		const isOwner = U.Space.isMyOwner();
+
+		S.Menu.open('select', {
+			...menuParam,
+			data: {
+				options: [
+					{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
+				],
+				onSelect: (e: React.MouseEvent, option: any) => {
+					switch (option.id) {
+						case 'spaceInfo': {
+							Action.spaceInfo();
+							break;
+						};
+						case 'delete': {
+							Action.removeSpace(S.Common.space, analytics.route.settings);
+							break;
+						};
+					};
+				},
+			}
+		})
+	};
+
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: any) {
 		param = param || {};
 
@@ -795,57 +832,64 @@ class UtilMenu {
 
 		const getOptions = (inviteLink: string) => {
 			const shareOptions = [
-				{ id: 'link', icon: 'space-link', name: translate('commonCopyLink') },
-				{ id: 'qr', icon: 'space-qr', name: translate('popupSettingsSpaceShareQRCode') },
+				{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
+				{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
 			];
 			const sections = {
-				pinAndMute: [],
-				share: [],
 				general: [],
+				share: [],
+				archive: [],
 			};
 
-			if (param.isSharePage && (inviteLink || (isOwner && space.isShared))) {
+			if (param.isSharePage) {
 				if (inviteLink) {
 					sections.share = shareOptions;
 				};
 
 				if (isOwner && space.isShared) {
-					sections.general.push({
+					const isDisabled = participants.length > 1;
+					sections.archive.push({
 						id: 'stopSharing',
 						name: translate('popupSettingsSpaceShareMakePrivate'),
-						color: 'red',
-						disabled: participants.length > 1
+						disabled: isDisabled,
+						tooltipParam: { text: isDisabled ? translate('popupSettingsSpaceShareMakePrivateTooltip') : '' }
 					});
 				};
 			} else {
-				if (!param.noPin) {
+				if (!isLoading) {
+					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+				};
+
+				if (!space.isPersonal && !param.noMembers) {
+					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
+				};
+
+				if (param.withPin) {
 					if (space.orderId) {
-						sections.pinAndMute.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 					} else {
-						sections.pinAndMute.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+						sections.general.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
 					};
 				};
 
 				if (!space.isPersonal) {
 					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.pinAndMute.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+						sections.general.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
 					} else {
-						sections.pinAndMute.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+						sections.general.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
 					};
-
-					sections.general.push({ id: 'members', icon: 'settings-members', name: translate('commonMembers') });
 				};
 
 				if (!param.noShare && inviteLink) {
 					sections.share = shareOptions;
 				};
 
-				sections.general.push({ id: 'bin', icon: 'widget-bin', name: translate('commonBin') });
+				if (!param.noBin) {
+					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
+				};
 
 				if (isLoading) {
-					sections.general.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
-				} else {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('popupSettingsSpaceIndexTitle') });
+					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
 				};
 			};
 
@@ -877,7 +921,7 @@ class UtilMenu {
 									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
 
 									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-									analytics.event('ChangeMessageNotificationState', { type: mode, route: param.route });
+									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route: param.route });
 									break;
 								};
 
@@ -1453,7 +1497,7 @@ class UtilMenu {
 									this.onBookmarkMenu(menuParam, object => cb(object, 0));
 								} else
 								if (U.Object.isChatLayout(item.recommendedLayout)) {
-									this.onChatMenu(menuParam, object => cb(object, 0));
+									this.onChatMenu(menuParam, route, object => cb(object, 0));
 								};
 							}, S.Menu.getTimeout());
 						} else {
@@ -1487,7 +1531,7 @@ class UtilMenu {
 		});
 	};
 
-	onChatMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
+	onChatMenu (param?: Partial<I.MenuParam>, route?: string, callBack?: (bookmark: any) => void) {
 		param = param || {};
 
 		const data = param.data || {};
@@ -1501,6 +1545,8 @@ class UtilMenu {
 			},
 			...param,
 		});
+
+		analytics.event('ScreenChatInfo', { route });
 	};
 
 	setContext (context: any) {
@@ -1579,8 +1625,8 @@ class UtilMenu {
 
 	uxTypeOptions () {
 		return [
-			{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
-			{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
+			{ id: I.SpaceUxType.Data },
+			{ id: I.SpaceUxType.Chat },
 		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
 	};
 

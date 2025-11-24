@@ -114,20 +114,12 @@ class UtilObject {
 	openRoute (object: any, param?: Partial<I.RouteParam>) {
 		param = this.checkParam(param);
 
-		const route = this.route(object);
-		if (!route) {
-			return;
-		};
-
 		keyboard.setSource(null);
-		U.Router.go(`/${route}`, param);
+		U.Router.go(this.route(object), param);
 	};
 
 	openWindow (object: any) {
-		const route = this.route(object);
-		if (route) {
-			Renderer.send('openWindow', `/${route}`);
-		};
+		Renderer.send('openWindow', this.route(object));
 	};
 
 	openPopup (object: any, param?: any) {
@@ -485,7 +477,7 @@ class UtilObject {
 	};
 
 	getGraphSkipLayouts () {
-		return this.getFileAndSystemLayouts().filter(it => !this.isTypeLayout(it));
+		return this.getSystemLayouts().filter(it => !this.isTypeLayout(it));
 	};
 
 	// --------------------------------------------------------- //
@@ -795,13 +787,17 @@ class UtilObject {
 			return I.NotificationMode.All;
 		};
 
-		if (spaceview.allIds.includes(chatId)) {
+		const allIds = Relation.getArrayValue(spaceview.allIds);
+		const mentionIds = Relation.getArrayValue(spaceview.mentionIds);
+		const muteIds = Relation.getArrayValue(spaceview.muteIds);
+
+		if (allIds.includes(chatId)) {
 			return I.NotificationMode.All;
 		} else
-		if (spaceview.mentionIds.includes(chatId)) {
+		if (mentionIds.includes(chatId)) {
 			return I.NotificationMode.Mentions;
 		} else
-		if (spaceview.muteIds.includes(chatId)) {
+		if (muteIds.includes(chatId)) {
 			return I.NotificationMode.Nothing;
 		};
 

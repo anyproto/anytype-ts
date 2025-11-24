@@ -151,7 +151,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUpgrade = () => {
-		Action.membershipUpgrade();
+		Action.openSettings('membership', analytics.route.menuPublish);
 		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 

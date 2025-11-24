@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
+import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage, keyboard } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -92,8 +92,8 @@ const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
 const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	const param = U.Router.getParam(U.Router.getRoute());
-	const id = param.id || 'account';
+	const { isPopup } = props;
+	const { id = 'account' } = keyboard.getMatch(isPopup).params;
 	const pageId = U.Common.toCamelCase(`pageSettings-${id}`);
 	const confirmPinRef = useRef<any>(null);
 	const childRef = useRef(null);
@@ -114,8 +114,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			if (!U.Space.canMyParticipantWrite()) {
 				return;
 			};
-
-			const { id } = U.Router.getParam(U.Router.getRoute());
 
 			switch (id) {
 				case 'spaceIndexEmpty': {

@@ -83,9 +83,9 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		keyboard.setResize(true);
 		body.addClass('colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
+		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', e => onResizeMove(e));
-		win.on('mouseup.sidebar blur.sidebar', e => onResizeEnd());
+		win.on('mouseup.sidebar', e => onResizeEnd(e));
 	};
 
 	const onResizeMove = (e: any) => {
@@ -102,7 +102,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			const d = w - width.current;
 
 			if (d) {
-				sidebar.setWidth(I.SidebarPanel.Right, isPopup, w);
+				sidebar.setWidth(I.SidebarPanel.Right, isPopup, w, false);
 
 				if (pageRef.current && pageRef.current.resize) {
 					pageRef.current.resize();
@@ -111,10 +111,14 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		});
 	};
 
-	const onResizeEnd = () => {
+	const onResizeEnd = (e: any) => {
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
 		raf.cancel(frame.current);
+
+		const w = width.current + ox.current - e.pageX;
+
+		sidebar.setWidth(I.SidebarPanel.Right, isPopup, w, true);
 
 		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
