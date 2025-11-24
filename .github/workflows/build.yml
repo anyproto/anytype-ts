@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - v*
+#  push:
+#    tags:
+#      - v*
 
 permissions:
   contents: 'write'
@@ -47,6 +47,12 @@ jobs:
         if: matrix.os == 'ubuntu-latest' # only for ubuntu 24 or latest
         run:
           sudo apt-get install libsecret-1-dev
+
+      - name: Setup .NET 9
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
 
       - name: Install AzureSignTool
         if: ${{ startsWith(matrix.os, 'windows-') }}
