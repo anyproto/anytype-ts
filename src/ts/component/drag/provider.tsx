@@ -72,8 +72,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				};
 			};
 
-			//console.log(item.text(), y, scrollContainer.scrollTop());
-
 			objectData.current.set(data.cacheKey, {
 				...data,
 				obj: item,

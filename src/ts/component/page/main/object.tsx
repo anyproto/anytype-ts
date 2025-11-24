@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, U, Action, analytics, keyboard } from 'Lib';
+import { I, U, J, Action, analytics, keyboard } from 'Lib';
 
 const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -10,10 +10,18 @@ const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const space = U.Space.getSpaceviewBySpaceId(spaceId);
 		const route = match.params.route || analytics.route.app;
 
+		console.log(match);
+
 		// Redirect to invite page when invite parameters are present
 		if ((!space || !space.isAccountActive) && cid && key) {
 			U.Router.go(`/main/invite/?cid=${cid}&key=${key}`, { replace: true });
 			analytics.event('OpenObjectByLink', { route, type: 'Invite' });
+			return;
+		};
+
+		if ((id == J.Constant.blankId) && space) {
+			console.log('BLANK _ID');
+			U.Router.switchSpace(spaceId, '', false, {}, false);
 			return;
 		};
 
