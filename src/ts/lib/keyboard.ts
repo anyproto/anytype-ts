@@ -403,33 +403,38 @@ class Keyboard {
 				});
 			};
 
-			this.shortcut('createSpace', e, () => {
-				const element = `#button-create-space`;
-
-				let rect = null;
-				let horizontal = I.MenuDirection.Left;
-				let vertical = I.MenuDirection.Top;
-
-				if (!$(element).length) {
-					const { ww, wh } = U.Common.getWindowDimensions();
-
-					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
-					horizontal = I.MenuDirection.Center;
-					vertical = I.MenuDirection.Center;
-				};
-
-				U.Menu.spaceCreate({
-					element,
-					rect,
-					className: 'spaceCreate fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal,
-					vertical,
-				}, analytics.route.shortcut);
-			});
+			this.shortcut('createSpace', e, this.createSpace);
 		};
 
 		this.initPinCheck();
+	};
+
+	/**
+	 * Calls spaceCreate menu.
+	 */
+	createSpace () {
+		const element = `#button-create-space`;
+
+		let rect = null;
+		let horizontal = I.MenuDirection.Left;
+		let vertical = I.MenuDirection.Top;
+
+		if (!$(element).length) {
+			const { ww, wh } = U.Common.getWindowDimensions();
+
+			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+			horizontal = I.MenuDirection.Center;
+			vertical = I.MenuDirection.Center;
+		};
+
+		U.Menu.spaceCreate({
+			element,
+			rect,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal,
+			vertical,
+		}, analytics.route.shortcut);
 	};
 
 	/**
@@ -685,7 +690,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Data, route);
+				this.createSpace();
 				break;
 			};
 
