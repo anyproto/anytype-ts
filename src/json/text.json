@@ -134,7 +134,7 @@
 	"commonCreateNew": "Create new",
 	"commonSetName": "Query of %s",
 	"commonClear": "Clear",
-	"commonNewSpace": "New Space",
+	"commonNewSpace": "New Channel",
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
 	"commonCopyDeeplink": "Copy Deeplink",
@@ -212,7 +212,7 @@
 	"commonAppSettings": "App Settings",
 	"commonAddPinned": "Add to Pinned",
 	"commonRemovePinned": "Remove from Pinned",
-	"commonCreateSpace": "Create space",
+	"commonCreateSpace": "Create channel",
 	"commonCreateChat": "Create chat",
 	"commonMute": "Mute",
 	"commonUnmute": "Unmute",
@@ -875,8 +875,8 @@
 	"popupSettingsPinSelectRepeat": "Repeat Pin Code",
 	"popupSettingsPinSelectError": "Pin Codes do not match, please try again",
 
-	"popupSettingsSpacesListTitle": "Spaces",
-	"popupSettingsSpacesListSpace": "Space",
+	"popupSettingsSpacesListTitle": "Channels",
+	"popupSettingsSpacesListSpace": "Channel",
 	"popupSettingsSpacesCancelRequest": "Cancel request",
 	"popupSettingsSpacesListAccess": "Access",
 	"popupSettingsSpacesListNetwork": "Network",
@@ -1606,7 +1606,7 @@
 	"popupUsecaseUpdated": "Updated: %s",
 	"popupUsecaseInstall": "Install",
 	"popupUsecaseMenuLabel": "Install experience to",
-	"popupUsecaseSpaceCreate": "Create new space",
+	"popupUsecaseSpaceCreate": "Create new channel",
 	"popupUsecaseListTitle": "ANY Experience Gallery",
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
@@ -1933,7 +1933,7 @@
 
 	"menuOnboardingCounter": "%s of %s",
 
-	"menuSpaceContextChannelSettings": "Channel settings",
+	"menuSpaceContextSpaceSettings": "Channel settings",
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
 
@@ -2321,8 +2321,8 @@
 
 	"onboardingCommonTitleVault": "This is your Vault",
 	"onboardingCommonTextVault": "All your Spaces and Chats live here.",
-	"onboardingCommonTitleChannels": "Create Channels",
-	"onboardingCommonTextChannels": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
+	"onboardingCommonTitleSpaces": "Create Channels",
+	"onboardingCommonTextSpaces": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
 	"onboardingCommonTitleProfile": "Your profile & settings",
 	"onboardingCommonTextProfile": "Update your profile, access your Key, and adjust app settings here.",
 	"onboardingCommonTitleGallery": "Use Case Gallery",
