@@ -107,6 +107,19 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 
 			<Title text={spaceName} />
+			<div className="label creator">
+				{translate('popupInviteRequestCreatedBy')}
+				<b>
+					<IconObject 
+						object={{ 
+							layout: I.ObjectLayout.Participant, 
+							iconImage: invite.creatorIcon, 
+							name: creatorName,
+						}}
+					/>
+					{creatorName}
+				</b>
+			</div>
 			<Label className="creator" text={U.Common.sprintf(translate('popupInviteRequestCreatedBy'), creatorName)} />
 			<Label className="text" text={text} />
 

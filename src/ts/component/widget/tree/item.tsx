@@ -64,6 +64,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 			objectId: id, 
 			data: {
 				allowedCollection: true, 
+				allowedExport: true,
 				allowedLinkTo: true,
 			},
 		});

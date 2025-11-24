@@ -103,7 +103,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedLink = true;
 		let allowedNotification = true;
 		let allowedEditChat = true;
-		let allowedExport = true;
+		let allowedExport = data.allowedExport;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -139,7 +139,6 @@ class MenuContext extends React.Component<I.Menu> {
 				allowedRelation = false;
 				allowedCopy	= false;
 				allowedType = false;
-				allowedExport = false;
 			};
 
 			if (isRelation) {

@@ -1334,7 +1334,7 @@
 	"popupInviteRequestInviteTitle": "You've been invited",
 	"popupInviteRequestInviteTextData": "You'll join this space immediately and can start exploring and discussing its objects.",
 	"popupInviteRequestInviteTextChat": "You'll join this chat immediately and can start exploring and discussing its objects.",
-	"popupInviteRequestCreatedBy": "Created by <b>%s</b>",
+	"popupInviteRequestCreatedBy": "Created by",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestRequestToJoin": "Request to join",
 
