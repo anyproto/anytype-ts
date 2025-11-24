@@ -136,7 +136,7 @@ class Focus {
 		// If block intersects the visible area - don't scroll
 		if ((y + nh > topViewport) && (y < bottomViewport)) {
 			return;
-		}
+		};
 		
 		if ((y >= st) && (y <= st + ch - o)) {
 			return;

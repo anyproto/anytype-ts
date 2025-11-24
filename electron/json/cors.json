@@ -164,7 +164,8 @@
 		"https://*.statsigapi.net",
 		"https://*.bstarstatic.com",
 		"https://bandcamp.com",
-		"https://*.bcbits.com"
+		"https://*.bcbits.com",
+		"https://*.google-analytics.com"
 	],
 
 	"script-src-elem": [
@@ -243,6 +244,7 @@
 		"https://*.diagrams.net",
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
+		"https://www.googletagmanager.com/",
 		"chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
     ],
 
