@@ -477,7 +477,7 @@ class UtilObject {
 	};
 
 	getGraphSkipLayouts () {
-		return this.getFileAndSystemLayouts().filter(it => !this.isTypeLayout(it));
+		return this.getSystemLayouts().filter(it => !this.isTypeLayout(it));
 	};
 
 	// --------------------------------------------------------- //
