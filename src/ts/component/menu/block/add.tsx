@@ -264,10 +264,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			return;
 		};
 
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] },
+			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: rootId },
 		];
 		const sorts: I.Sort[] = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
