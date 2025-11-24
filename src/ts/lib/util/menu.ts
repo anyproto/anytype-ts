@@ -184,7 +184,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of other block types.
 	 */
 	getBlockOther () {
-		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
+		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
@@ -543,26 +543,23 @@ class UtilMenu {
 	
 	sectionsFilter (sections: any[], filter: string) {
 		const f = U.Common.regexEscape(filter);
-		const regS = new RegExp('^' + f, 'gi');
-		const regC = new RegExp(f, 'gi');
+		const regS = new RegExp(`^${f}`, 'i');
 		const getWeight = (s: string) => {
 			let w = 0;
+			if (!s) {
+				return w;
+			};
+
 			if (s.toLowerCase() == f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
 				w = 1000;
-			} else 
-			if (s.match(regC)) {
-				w = 100;
 			};
 			return w;
 		};
 		
 		sections = sections.filter((s: any) => {
-			if (s.name.match(regC)) {
-				return true;
-			};
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
 
@@ -586,7 +583,7 @@ class UtilMenu {
 
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
-						if (alias.match(regC)) {
+						if (alias.match(regS)) {
 							c._sortWeight_ += getWeight(alias);
 							ret = true;
 							break;
@@ -594,17 +591,16 @@ class UtilMenu {
 					};
 				};
 
-				if (!ret && c.name && c.name.match(regC)) {
+				if (!ret && c.name && c.name.match(regS)) {
 					ret = true;
 					c._sortWeight_ += getWeight(c.name);
 				};
 
-				if (!ret && c.description && c.description.match(regC)) {
+				if (!ret && c.description && c.description.match(regS)) {
 					ret = true;
 					c._sortWeight_ += getWeight(c.description);
 				};
 
-				//s._sortWeight_ += c._sortWeight_ / (s.children.length || 1);
 				return ret; 
 			});
 
@@ -612,7 +608,6 @@ class UtilMenu {
 			return s.children.length > 0;
 		});
 
-		//sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
