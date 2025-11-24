@@ -4,8 +4,7 @@ import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button }
 import { I, U, C, S, translate } from 'Lib';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
-	useEffect(() => load(), []);
-
+	
 	const { param } = props;
 	const { data } = param;
 	const { object } = data;
@@ -19,7 +18,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		});
 	};
 
-	const startDmClick = () => {
+	const onDmClick = () => {
 		const usecase = I.Usecase.ChatSpace;
 		const uxType = I.SpaceUxType.OneToOne;
 		const details: any = {
@@ -35,7 +34,6 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 				return;
 			};
 
-
 			C.WorkspaceSetInfo(message.objectId, details, () => {
 				if (message.error.code) {
 					console.error(message.error);
@@ -45,12 +43,14 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 				U.Router.switchSpace(message.objectId, '', true, {
 					onRouteChange: () => {
 						U.Space.openDashboard({ replace: true });
-					}
+					},
 				}, false);
 			});
 		});
+	};
 
-	}
+	useEffect(() => load(), []);
+
 	return object ? (
 		<>
 			<IconObject object={object} size={96} />
@@ -64,9 +64,10 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 				}}
 			/>
 			<ObjectDescription object={object} />
+
 			{config.sudo ? (
 				<div className="buttonsWrapper">
-					<Button color="pink" className="c32" text="Start DM" onClick={startDmClick} />
+					<Button color="pink" className="c32" text="Start DM" onClick={onDmClick} />
 				</div>
 			) : ''}
 		</>
