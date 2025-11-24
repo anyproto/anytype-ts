@@ -1932,7 +1932,7 @@
 
 	"menuOnboardingCounter": "%s of %s",
 
-	"menuSpaceContextChannelSettings": "Channel settings",
+	"menuSpaceContextSpaceSettings": "Channel settings",
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
 
@@ -2320,8 +2320,8 @@
 
 	"onboardingCommonTitleVault": "This is your Vault",
 	"onboardingCommonTextVault": "All your Spaces and Chats live here.",
-	"onboardingCommonTitleChannels": "Create Channels",
-	"onboardingCommonTextChannels": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
+	"onboardingCommonTitleSpaces": "Create Channels",
+	"onboardingCommonTextSpaces": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
 	"onboardingCommonTitleProfile": "Your profile & settings",
 	"onboardingCommonTextProfile": "Update your profile, access your Key, and adjust app settings here.",
 	"onboardingCommonTitleGallery": "Use Case Gallery",

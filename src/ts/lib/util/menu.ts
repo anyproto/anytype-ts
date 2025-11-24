@@ -846,7 +846,7 @@ class UtilMenu {
 				};
 			} else {
 				if (!isLoading) {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextChannelSettings') });
+					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
 				};
 
 				if (!space.isPersonal) {
