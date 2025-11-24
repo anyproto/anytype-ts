@@ -204,12 +204,6 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 	}, []);
 
 	useEffect(() => {
-		if (filter != filterRef.current) {
-			filterRef.current = filter;
-			reload();
-			return;
-		};
-
 		if (listRef.current && topRef.current) {
 			listRef.current.scrollToPosition(topRef.current);
 		};
@@ -217,6 +211,10 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		resize();
 		setActive();
 	});
+
+	useEffect(() => {
+		reload();
+	}, [ filter ]);
 
 	useImperativeHandle(ref, () => ({
 		rebind,
