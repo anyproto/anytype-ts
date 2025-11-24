@@ -305,7 +305,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		ret = S.Record.checkHiddenObjects(ret).sort(U.Data.sortByName);
 
 		if (!isTemplate) {
-			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
+			ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true, _sortWeight_: 1000 });
 		};
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true, aliases: [ 'relation' ] }));

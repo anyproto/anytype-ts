@@ -579,7 +579,7 @@ class UtilMenu {
 					};
 				};
 
-				c._sortWeight_ = 0;
+				c._sortWeight_ = Number(c._sortWeight_) || 0;
 				if (c.skipFilter) {
 					ret = true;
 				};
@@ -587,7 +587,7 @@ class UtilMenu {
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
 						if (alias.match(regC)) {
-							c._sortWeight_ = getWeight(alias);
+							c._sortWeight_ += getWeight(alias);
 							ret = true;
 							break;
 						};
@@ -596,17 +596,18 @@ class UtilMenu {
 
 				if (!ret && c.name && c.name.match(regC)) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.name);
+					c._sortWeight_ += getWeight(c.name);
 				};
 
 				if (!ret && c.description && c.description.match(regC)) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.description);
+					c._sortWeight_ += getWeight(c.description);
 				};
-				
+
 				//s._sortWeight_ += c._sortWeight_ / (s.children.length || 1);
 				return ret; 
 			});
+
 			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
