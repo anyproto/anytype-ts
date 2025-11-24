@@ -418,7 +418,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		return {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
-			isSub: true,
 			className,
 			classNameWrap,
 			rebind: this.rebind,
@@ -453,6 +452,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 
 		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
 			menuKey: item.itemId,
+			isSub: true,
 			element: `#${getId()} #item-${item.id}`,
 		});
 
@@ -547,14 +547,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		let menuId = '';
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		let menuContext = null;
 
 		const rect = $(`#${getId()}`).get(0).getBoundingClientRect();
 		const menuParam: I.MenuParam = Object.assign(this.getMenuParam(), {
 			menuKey: item.itemId,
 			rect,
 			offsetX: 0,
-			onOpen: context => menuContext = context,
 		});
 
 		menuParam.data = Object.assign(menuParam.data, {
@@ -568,7 +566,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 				});
 
 				close();
-				menuContext?.close();
 			},
 		});
 
