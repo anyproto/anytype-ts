@@ -99,8 +99,8 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						layout: I.ObjectLayout.SpaceView, 
 						name: spaceName, 
 						iconImage: invite.iconImage,
-						iconOption: invite.iconOption,
-						uxType: invite.uxType,
+						iconOption: invite.iconOption || 1,
+						uxType: invite.uxType || I.SpaceUxType.Data,
 					}}
 					size={96} 
 				/>
