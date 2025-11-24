@@ -56,7 +56,7 @@ jobs:
 
       - name: Install AzureSignTool
         if: ${{ startsWith(matrix.os, 'windows-') }}
-        run: dotnet tool install --global AzureSignTool
+        run: dotnet tool install --global AzureSignTool --version 6.0.1
 
       - name: Check out Git repository
         uses: actions/checkout@v1
