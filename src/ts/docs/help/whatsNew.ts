@@ -104,10 +104,6 @@ export default () => {
 		text(`Added support for embedding the Excalidraw editor as a block – finally bringing quick diagramming into your notes and documents.`),
 		text(``),
 
-		text(`<b>Firefox Web Clipper</b>`),
-		text(`The Anytype Web Clipper is now available for Firefox, letting you capture pages, bookmarks, and highlights directly into your Space.`),
-		text(``),
-
 		text(`<b>Smart Typing</b>`),
 		text(`Added support for more symbol patterns – for example, typing ${hl('!=')} now converts to ${hl('≠')} and ${hl('~=')} to ${hl('≈')}, alongside existing arrows, comparison, and operator shortcuts. Thanks to @${link('https://github.com/anyproto/anytype-ts/issues/1110', 'larsb24')} for the contribution!`),
 		text(``),
