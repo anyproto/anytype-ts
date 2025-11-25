@@ -8,10 +8,10 @@
 	&.sidebarAnimation { transition-property: left; }
 	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
 }
-.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
+.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
 #sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; display: block; }
-#sidebarLeftButton.withSidebarLeft { display: none; }
+#sidebarLeftButton.withSidebarLeft { background-image: url('~img/icon/widget/toggle1.svg'); }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
@@ -104,7 +104,7 @@ html.platformMac {
 		.subPageWrapper:not(.withSidebarLeft) {
 			.sidebarPage {
 				> .head {
-					.side.left { padding-left: 108px; }
+					.side.left { padding-left: 96px; }
 				}
 			}
 		}
