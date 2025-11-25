@@ -407,6 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
+		const node = $(this.node);
 
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');

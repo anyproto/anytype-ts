@@ -5,10 +5,11 @@ import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Icon, LoadMore } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
+import { LoadMore } from 'Component';
+import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
+import AddRow from './grid/body/add';
 import FootRow from './grid/foot/row';
 
 const PADDING = 46;
@@ -141,17 +142,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 							/>
 
 							{content}
-
-							{isAllowedObject ? (
-								<div className="row add">
-									<div className="cell add">
-										<div className="btn" onClick={e => onRecordAdd(e, 1)}>
-											<Icon className="plus" />
-											<div className="name">{translate('commonNewObject')}</div>
-										</div>
-									</div>
-								</div>
-							) : null}
+							{isAllowedObject ? <AddRow onClick={e => onRecordAdd(e, 1)} /> : ''}
 
 							<FootRow
 								{...this.props} 

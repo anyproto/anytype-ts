@@ -3,7 +3,8 @@ import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
 import { I, S, U, translate } from 'Lib';
-import Row from './list/row';
+import BodyRow from './list/row';
+import AddRow from './grid/body/add';
 
 const HEIGHT = 32;
 
@@ -53,7 +54,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		content = (
 			<div>
 				{records.map((id: string, index: number) => (
-					<Row
+					<BodyRow
 						ref={ref => onRefRecord(ref, id)}
 						key={`grid-row-${view.id}index`}
 						{...props}
@@ -86,7 +87,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 										onRowsRendered={onRowsRendered}
 										rowRenderer={({ key, index, style }) => (
 											<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
-												<Row
+												<BodyRow
 													ref={ref => onRefRecord(ref, records[index])}
 													{...props} 
 													recordId={records[index]}
@@ -111,17 +112,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				<div id="scrollWrap" className="scrollWrap">
 					<div className={cn.join(' ')}>
 						{content}
-
-						{isAllowedObject ? (
-							<div className="row add">
-								<div className="cell add">
-									<div className="btn" onClick={e => onRecordAdd(e, 1)}>
-										<Icon className="plus" />
-										<div className="name">{translate('commonNewObject')}</div>
-									</div>
-								</div>
-							</div>
-						) : null}
+						{isAllowedObject ? <AddRow onClick={e => onRecordAdd(e, 1)} /> : ''}
 
 						{isInline && (limit + offset < total) ? (
 							<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={loadMoreRows} />
