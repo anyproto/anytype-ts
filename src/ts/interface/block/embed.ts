@@ -27,6 +27,7 @@ export enum EmbedProcessor {
 	Drawio			 = 23,
 	Spotify			 = 24,
 	Bandcamp		 = 25,
+	AppleMusic 		 = 26,
 };
 
 export interface ContentEmbed {
