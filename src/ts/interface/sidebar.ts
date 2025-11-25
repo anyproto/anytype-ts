@@ -53,3 +53,9 @@ export enum SidebarRelationList {
 	Hidden 			= 3,
 	Local 			= 4,
 };
+
+export enum VaultMode {
+	Default = 0,
+	Compact = 1,
+	Minimal = 2,
+};

@@ -189,6 +189,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		U.Menu.spaceContext(item, {
 			element: `#${getId()} #item-${item.id}`,
 			className: 'fixed',
@@ -450,6 +453,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		}, analytics.route.vault);
 	};
 
+	const onVaultContext = (e: any) => {
+		U.Menu.vaultMode({
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
+			className: 'vaultMode fixed',
+			classNameWrap: 'fromSidebar',
+		});
+	};
+
 	const getRowHeight = (item: any) => {
 		if (item.isUpdate) {
 			return HEIGHT_ITEM_UPDATE;
@@ -470,7 +481,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	return (
 		<>
-			<div id="head" className={cnh.join(' ')}>
+			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
@@ -494,7 +505,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					onClear={onFilterClear}
 				/>
 			</div>
-			<div id="body" className={cnb.join(' ')}>
+			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
 				{!items.length ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}

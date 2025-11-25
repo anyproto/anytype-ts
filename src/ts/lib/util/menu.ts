@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview, Storage } from 'Lib';
 import React from 'react';
 
 class UtilMenu {
@@ -1620,6 +1620,44 @@ class UtilMenu {
 		});
 
 		analytics.event(`Screen${prefix}CreateMenu`);
+	};
+
+	vaultMode (param: I.MenuParam, noClose?: boolean, route?: string) {
+		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
+		const options: any[] = [
+			{ id: I.VaultMode.Default },
+			{ id: I.VaultMode.Compact },
+			{ id: I.VaultMode.Minimal },
+		].map((it) => ({
+			...it,
+			name: translate(`menuVaultMode${it.id}`),
+			checkbox: it.id == Storage.getVaultMode(),
+		}));
+
+		if (!noClose && !isClosed) {
+			options.push({ isDiv: true });
+			options.push({ id: 'close', name: translate('menuVaultModeCloseSidebar') });
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'close': {
+							sidebar.close(I.SidebarPanel.Left);
+							break;
+						};
+						default: {
+							Storage.setVaultMode(item.id);
+							break;
+						};
+					}
+				},
+			},
+		})
 	};
 
 	uxTypeOptions () {

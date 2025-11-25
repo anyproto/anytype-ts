@@ -1939,6 +1939,11 @@
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
 
+	"menuVaultMode0": "Message Preview",
+	"menuVaultMode1": "Compact",
+	"menuVaultMode2": "Stripe",
+	"menuVaultModeCloseSidebar": "Close sidebar",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
