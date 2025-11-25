@@ -77,29 +77,15 @@ const PreviewIndex = observer(forwardRef(() => {
 		const oh = node.outerHeight();
 		const css: any = { opacity: 0, left: 0, top: 0 };
 		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: height + OFFSET_Y, clipPath: '' };
+		const vsTop = (1 - height / oh) / 2 * 100;
+		const vsBot = (1 + height / oh) / 2 * 100;
 
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - width / ow) / 2 * 100;
 		let pe = ps + width / ow * 100;
-		let vs = (1 + height / oh) / 2 * 100;
 
-		if (y + oh + height >= st + wh) {
-			typeY = I.MenuDirection.Top;
-			vs = (1 - height / oh) / 2 * 100;
-
-			css.top = y - oh - OFFSET_Y;
-			css.transform = 'translateY(-5%)';
-
-			pcss.bottom = -height - OFFSET_Y;
-		} else {
-			css.top = y + height + OFFSET_Y;
-			css.transform = 'translateY(5%)';
-
-			pcss.top = -height - OFFSET_Y;
-		};
-
-		let cpTop = `polygon(0% 0%, ${ps}% ${vs}%, ${ps}% 100%, ${pe}% 100%, ${pe}% ${vs}%, 100% 0%)`;
-		let cpBot = `polygon(0% 100%, ${ps}% ${vs}%, ${ps}% 0%, ${pe}% 0%, ${pe}% ${vs}%, 100% 100%)`;
+		let cpTop = `polygon(0% 0%, ${ps}% ${vsTop}%, ${ps}% 100%, ${pe}% 100%, ${pe}% ${vsTop}%, 100% 0%)`;
+		let cpBot = `polygon(0% 100%, ${ps}% ${vsBot}%, ${ps}% 0%, ${pe}% 0%, ${pe}% ${vsBot}%, 100% 100%)`;
 		
 		if (ow < width) {
 			pcss.width = width;
@@ -111,7 +97,25 @@ const PreviewIndex = observer(forwardRef(() => {
 			cpBot = `polygon(0% 0%, ${ps}% 100%, ${pe}% 100%, 100% 0%)`;
 		};
 
-		pcss.clipPath = typeY == I.MenuDirection.Top ? cpTop : cpBot;
+		if (y + oh + height >= st + wh) {
+			typeY = I.MenuDirection.Top;
+		};
+
+		if (typeY == I.MenuDirection.Top) {
+			css.top = y - oh - OFFSET_Y;
+			css.transform = 'translateY(-5%)';
+
+			pcss.bottom = -height - OFFSET_Y;
+			pcss.clipPath = cpTop;
+		};
+
+		if (typeY == I.MenuDirection.Bottom) {
+			css.top = y + height + OFFSET_Y;
+			css.transform = 'translateY(5%)';
+
+			pcss.top = -height - OFFSET_Y;
+			pcss.clipPath = cpBot;
+		};
 			
 		css.left = x - ow / 2 + width / 2;
 		css.left = Math.max(BORDER, css.left);
