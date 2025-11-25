@@ -69,11 +69,6 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				break;
 			};
 				
-			case I.FileState.Uploading: {
-				element = <Loader />;
-				break;
-			};
-				
 			case I.FileState.Done: {
 				element = (
 					<div 

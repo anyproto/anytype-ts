@@ -178,20 +178,26 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
-				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'isDeleted' ], true);
-				
+				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'isDeleted', 'creator', 'syncStatus' ], true);
+				const showLoader = 
+					(content.state == I.FileState.Uploading) || 
+					(
+						(object.syncStatus == I.SyncStatusObject.Syncing) && 
+						(object.creator != U.Space.getCurrentParticipantId()
+					));
+
+				if (showLoader) {
+					blockComponent = <BlockLoader key={key} ref={setRef} {...this.props} />;
+					cn.push('isLoading');
+					break;
+				};
+
 				if (!object.isDeleted && (content.state == I.FileState.Done)) {
 					cn.push('withContent');
 				};
 
 				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={key} ref={setRef} {...this.props} />;
-					break;
-				};
-
-				if (content.state == I.FileState.Uploading || object.isDeleted) {
-					blockComponent = <BlockLoader key={key} ref={setRef} {...this.props} />;
-					cn.push('isLoading');
 					break;
 				};
 

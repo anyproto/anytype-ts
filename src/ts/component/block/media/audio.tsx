@@ -125,11 +125,6 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				break;
 			};
 				
-			case I.FileState.Uploading: {
-				element = <Loader />;
-				break;
-			};
-				
 			case I.FileState.Done: {
 				element = (
 					<MediaAudio
