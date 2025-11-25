@@ -413,7 +413,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
 			height = 160;
 		} else {
