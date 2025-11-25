@@ -148,7 +148,8 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onUpgrade = () => {
-		Action.membershipUpgrade({ type: 'publish' });
+		Action.openSettings('membership', analytics.route.menuPublish);
+		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 
 	const setSlugHandler = v => setSlug(U.Common.slug(v));

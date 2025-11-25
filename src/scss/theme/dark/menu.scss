@@ -4,7 +4,7 @@
 
     /* Common */
 
-    .menu { background: var(--color-bg-primary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px var(--color-shape-primary) inset; }
+    .menu { box-shadow: 0px 4px 16px rgb(0,0,0,0.2), 0px 0px 0px 1px var(--color-shape-secondary) inset; }
 
     .menu {
         .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph0.svg'); }
@@ -177,21 +177,11 @@
 
     /* Onboarding */
 
-	.menu.menuOnboarding { box-shadow: inset 0px 0px 0px 1px var(--color-shape-secondary); background: var(--color-shape-tertiary); }
 	.menu.menuOnboarding {
 		a { color: var(--color-bg-primary); }
 		.highlight { color: var(--color-system-accent-100); }
 
         .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
-
-        .bottom {
-            .round {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
-                .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
-            }
-
-            .category { color: #5c5a54; }
-        }
 	}
 
 	/* DataviewCreateBookmark */

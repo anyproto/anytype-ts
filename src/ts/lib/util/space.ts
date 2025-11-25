@@ -1,4 +1,4 @@
-import { I, C, S, U, J, Storage, translate } from 'Lib';
+import { I, C, S, U, J, Storage, translate, sidebar } from 'Lib';
 
 class UtilSpace {
 
@@ -8,10 +8,6 @@ class UtilSpace {
 	 */
 	openDashboard (param?: any) {
 		param = param || {};
-
-		if (undefined === param.replace) {
-			param.replace = true;
-		};
 
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
@@ -23,6 +19,7 @@ class UtilSpace {
 		};
 
 		U.Object.openRoute(home, param);
+		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
 	openDashboardOrVoid (param?: Partial<I.RouteParam>) {
@@ -36,6 +33,7 @@ class UtilSpace {
 			U.Space.openDashboard(param);
 		} else {
 			U.Router.go('/main/void/select', param);
+			sidebar.leftPanelSubPageClose(false);
 		};
 	};
 
@@ -57,6 +55,7 @@ class UtilSpace {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
 			U.Router.go('/main/void/error', param);
+			sidebar.leftPanelSubPageClose(false);
 		};
 	};
 
@@ -163,7 +162,7 @@ class UtilSpace {
 	getChat () {
 		return { 
 			id: S.Block.workspace,
-			name: translate('commonChat'),
+			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};

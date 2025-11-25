@@ -139,9 +139,7 @@ class Keyboard {
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		if (this.isMain()) {
-			sidebar.onMouseMove();
-		};
+		sidebar.onMouseMove();
 	};
 	
 	/**
@@ -390,7 +388,7 @@ class Keyboard {
 			// Switch space
 			for (let i = 1; i <= 9; i++) {
 				const id = Number(i) - 1;
-				keyboard.shortcut(`space${i}`, e, () => {
+				this.shortcut(`space${i}`, e, () => {
 					const spaces = U.Menu.getVaultItems();
 					const item = spaces[id];
 	
@@ -406,34 +404,38 @@ class Keyboard {
 				});
 			};
 
-
-			keyboard.shortcut('createSpace', e, () => {
-				const element = `#button-create-space`;
-
-				let rect = null;
-				let horizontal = I.MenuDirection.Left;
-				let vertical = I.MenuDirection.Top;
-
-				if (!$(element).length) {
-					const { ww, wh } = U.Common.getWindowDimensions();
-
-					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
-					horizontal = I.MenuDirection.Center;
-					vertical = I.MenuDirection.Center;
-				};
-
-				U.Menu.spaceCreate({
-					element,
-					rect,
-					className: 'spaceCreate fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal,
-					vertical,
-				}, route);
-			});
+			this.shortcut('createSpace', e, this.createSpace);
 		};
 
 		this.initPinCheck();
+	};
+
+	/**
+	 * Calls spaceCreate menu.
+	 */
+	createSpace () {
+		const element = `#button-create-space`;
+
+		let rect = null;
+		let horizontal = I.MenuDirection.Left;
+		let vertical = I.MenuDirection.Top;
+
+		if (!$(element).length) {
+			const { ww, wh } = U.Common.getWindowDimensions();
+
+			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+			horizontal = I.MenuDirection.Center;
+			vertical = I.MenuDirection.Center;
+		};
+
+		U.Menu.spaceCreate({
+			element,
+			rect,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal,
+			vertical,
+		}, analytics.route.shortcut);
 	};
 
 	/**
@@ -506,17 +508,28 @@ class Keyboard {
 			if (prev) {
 				const route = U.Router.getParam(prev.pathname);
 
+				let substituteIndex = -1;
 				let substitute = '';
 
-				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
-					substitute = history.entries[history.index - 2]?.pathname;
+				if (U.Router.isDoubleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 2;
+				} else
+				if (U.Router.isTripleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 3;
 				};
 
-				if ((route.page == 'main') && (route.action == 'history')) {
-					substitute = history.entries[history.index - 3]?.pathname;
+				if (substituteIndex >= 0) {
+					substitute = history.entries[substituteIndex]?.pathname;
+				};
+
+				if (!substitute && (route.page == 'auth') && (route.action == 'pin-check')) {
+					return;
 				};
 
 				if (substitute) {
+					history.entries = history.entries.slice(0, substituteIndex + 1);
+					history.index = substituteIndex;
+					
 					U.Router.go(substitute, {});
 					return;
 				};
@@ -579,6 +592,9 @@ class Keyboard {
 
 		if (prev) {
 			const route = U.Router.getParam(prev.pathname);
+			if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
+				return true;
+			};
 
 			if ([ 'index', 'auth' ].includes(route.page) && account) {
 				return false;
@@ -617,7 +633,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || keyboard.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 
@@ -689,7 +705,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Data, route);
+				this.createSpace();
 				break;
 			};
 
@@ -834,7 +850,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
-				Storage.delete('chatsOnboarding');
+				//Storage.delete('chatsOnboarding');
 
 				location.reload();
 				break;
@@ -1263,7 +1279,7 @@ class Keyboard {
 		const popup = U.Common.objectCopy(S.Popup.get('page'));
 		const match: any = popup ? { ...popup?.param?.data?.matchPopup } : {};
 
-		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
+		match.params = match.params || {};
 
 		return match;
 	};
@@ -1274,46 +1290,9 @@ class Keyboard {
 	 */
 	getRouteMatch () {
 		const route = U.Router.getRoute();
-		const params = Object.assign(U.Router.getParam(route), this.checkUniversalRoutes(route));
+		const params = U.Router.getParam(route);
 
 		return { route, params };
-	};
-
-	checkUniversalRoutes (route: string) {
-		route = String(route || '');
-
-		const data = U.Common.searchParam(U.Router.getSearch());
-
-		let ret: any = {};
-
-		// Universal object route
-		if (route.match(/^\/object/)) {
-			ret = {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			};
-		};
-
-		// Invite route
-		if (route.match(/^\/invite/)) {
-			ret = {
-				page: 'main',
-				action: 'invite',
-				...data,
-			};
-		};
-
-		// Membership route
-		if (route.match(/^\/membership/)) {
-			ret = {
-				page: 'main',
-				action: 'membership',
-			};
-		};
-
-		return ret;
 	};
 
 	/**
@@ -1325,44 +1304,14 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 		
 		let ret: any = { params: {} };
-		let data: any = {};
 
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
 			ret = this.getRouteMatch();
-			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
 		ret.route = String(ret.route || '');
-
-		// Universal object route
-		if (ret.route.match(/^\/object/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			});
-		};
-
-		// Invite route
-		if (ret.route.match(/^\/invite/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'invite',
-				...data,
-			});
-		};
-
-		// Membership route
-		if (ret.route.match(/^\/membership/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'membership',
-			});
-		};
-
 		return ret;
 	};
 

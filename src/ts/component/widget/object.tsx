@@ -12,12 +12,14 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const { parent, onContext } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
+	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
 	const realId = parent.id.replace(`${space}-`, '');
+	const isUnread = realId == J.Constant.widgetId.unread;
 
 	const getId = (id: string) => {
 		return [ space, id ].join('-');
@@ -123,7 +125,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		if (item.icon) {
 			icon = <Icon className={item.icon} />;
 		} else {
-			icon = <IconObject object={item} />;
+			icon = (
+				<IconObject 
+					object={item} 
+					canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)} 
+					iconSize={20}
+				/>
+			);
 		};
 
 		return (
@@ -134,14 +142,15 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				{...attributes}
 				{...listeners}
 				style={style}
+				onClick={e => U.Object.openEvent(e, item)}
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
-				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
+				<div className="side left">
 					{icon}	
 					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
-					{isChat ? <ChatCounter chatId={item.id} /> : ''}
+					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
 					<div className="buttons">
 						<Icon
 							className="more"

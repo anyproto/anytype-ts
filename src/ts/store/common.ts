@@ -45,9 +45,28 @@ class CommonStore {
 	public updateVersionValue = '';
 	public vaultMessagesValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
-	public rightSidebarStateValue = { 
-		full: { page: '' }, 
-		popup: { page: '' },
+
+	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
+		full: {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		}, 
+		popup: {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		},
 	};
 	public hideSidebarValue = null;
 	public pinValue = null;
@@ -188,6 +207,10 @@ class CommonStore {
 
 	get filter (): Filter {
 		return this.filterObj;
+	};
+
+	get filterText () {
+		return String(this.filter.text || '').replace(/^[@\[]+/, '');
 	};
 
 	get gateway (): string {
@@ -607,8 +630,8 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	setRightSidebarState (isPopup: boolean, page: string) {
-		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page } });
+	setRightSidebarState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
+		set(this.getRightSidebarState(isPopup), v);
 	};
 
 	/**
@@ -916,7 +939,7 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
 	 */
-	getRightSidebarState (isPopup: boolean): { page: string; } {
+	getRightSidebarState (isPopup: boolean): I.SidebarRightState {
 		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '' };
 	};
 

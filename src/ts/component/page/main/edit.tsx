@@ -14,14 +14,13 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		headerRef.current?.forceUpdate();
-		sidebar.rightPanelSetState(isPopup, { rootId });
 
 		if (home && (rootId != home.id)) {
 			let key = '';
 			if (U.Object.isTemplateType(object.type)) {
 				key = 'template';
 			} else 
-			if (Onboarding.isCompletedBasics()) {
+			if (Onboarding.isCompletedCommon()) {
 				key = 'editor';
 			};
 			if (key) {

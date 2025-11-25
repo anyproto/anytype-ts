@@ -10,7 +10,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 
 	let object = null;
 	if (rootId == S.Block.workspace) {

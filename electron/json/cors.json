@@ -19,7 +19,9 @@
 		"https://scontent.cdninstagram.com",
 		"https://*.any.coop",
 		"https://*.ytimg.com",
-		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
+		"https://*.bcbits.com",
+		"https://images.unsplash.com"
 	],
 
 	"media-src": [ 
@@ -36,9 +38,12 @@
 		"https://scontent.cdninstagram.com",
 		"https://media.sketchfab.com",
 		"https://*.spotify.com",
-  		"https://*.spotifycdn.com",
+  	"https://*.spotifycdn.com",
 		"https://*.any.coop",
-		"https://anytype-static.fra1.cdn.digitaloceanspaces.com"
+		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"https://images.unsplash.com"
 	],
 
 	"style-src": [ 
@@ -70,6 +75,8 @@
 		"https://static.sketchfab.com",
 		"https://*.diagrams.net",
 		"https://*.bstarstatic.com",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
         "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
 	],
 
@@ -155,7 +162,10 @@
 		"https://kroki.io",
 		"https://*.vimeo.com",
 		"https://*.statsigapi.net",
-		"https://*.bstarstatic.com"
+		"https://*.bstarstatic.com",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"https://*.google-analytics.com"
 	],
 
 	"script-src-elem": [
@@ -199,7 +209,9 @@
 		"https://*.facebook.net",
 		"https://*.diagrams.net",
         "chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/",
-		"https://unpkg.com/@excalidraw/"
+		"https://unpkg.com/@excalidraw/",
+		"https://bandcamp.com",
+		"https://*.bcbits.com"
 	],
 
 	"frame-src": [
@@ -230,6 +242,9 @@
 		"https://kroki.io",
 		"https://sketchfab.com",
 		"https://*.diagrams.net",
+		"https://bandcamp.com",
+		"https://*.bcbits.com",
+		"https://www.googletagmanager.com/",
 		"chrome-extension://fohdnlaeecihjiendkfhifhlgldpeopm/"
     ],
 

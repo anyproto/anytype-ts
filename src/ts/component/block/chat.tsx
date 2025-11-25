@@ -8,7 +8,6 @@ import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action
 import Form from './chat/form';
 import Message from './chat/message';
 import SectionDate from './chat/message/date';
-import { sub } from 'date-fns';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -25,6 +24,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
 	const scrollWrapperRef = useRef(null);
@@ -40,7 +40,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
-	const initialRender = useRef(true);
 	const namespace = U.Common.getEventNamespace(isPopup);
 
 	const getChatId = () => {
@@ -99,7 +98,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		C.ChatSubscribeLastMessages(chatId, 1, subId, (message: any) => {
 			if (message.state) {
-				S.Chat.setState(subId, message.state, false);
+				S.Chat.setState(subId, message.state);
 			};
 
 			callBack?.();
@@ -121,17 +120,23 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 
 			if (message.state) {
-				S.Chat.setState(subId, message.state, false);
+				S.Chat.setState(subId, message.state);
 			};
 
 			const messages = message.messages || [];
-			if (messages.length < J.Constant.limit.chat.messages) {
-				setIsLoaded(true);
+			if (!messages.length) {
+				setLoaded(true);
+				callBack?.();
+				return;
 			};
 
 			loadDepsAndReplies(messages, () => {
-				if (messages.length && clear) {
+				if (clear) {
 					S.Chat.set(subId, messages);
+				};
+
+				if (messages.length < J.Constant.limit.chat.messages) {
+					setLoaded(true);
 				} else {
 					setDummy(dummy + 1);
 				};
@@ -175,8 +180,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
 				if (message.error.code) {
-					setIsLoaded(true);
-
+					setLoaded(true);
 					callBack?.();
 					return;
 				};
@@ -185,7 +189,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				if (dir > 0) {
 					if (messages.length < J.Constant.limit.chat.messages) {
-						setIsLoaded(true);
+						setLoaded(true);
 						setIsBottom(true);
 						subscribeMessages(false);
 					} else {
@@ -759,7 +763,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		setIsLoaded(false);
+		setLoaded(false);
 		setIsBottom(false);
 
 		C.ChatGetMessagesByIds(chatId, [ item.replyToMessageId ], (message: any) => {
@@ -876,8 +880,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const init = () => {
-		initialRender.current = true;
-
+		setLoaded(false);
 		loadState(() => {
 
 			const subId = getSubId();
@@ -898,10 +901,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					loadMessages(1, true, cb2);
 				};
 			};
-			const cb2 = () => scrollToBottom(false);
+			const cb2 = () => {
+				scrollToBottom(false);
+			};
 
 			if (match.params.messageId) {
 				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
 					if (message.messages.length) {
 						cb1(message.messages[0].orderId);
 					} else {
@@ -927,6 +936,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		timeoutResize.current = window.setTimeout(() => container.on(`scroll.${ns}`, e => onScroll(e)), 50);
 	};
 
+	const setLoaded = (v: boolean) => {
+		setIsLoaded(v);
+	};
+
 	const sections = getSections();
 	const isEmpty = isLoaded && !messages.length;
 	const items = getItems();
@@ -949,21 +962,23 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						<Icon className="key" />
 						<Label text={translate('blockChatEmptyItem3')} />
 					</div>
-					<div className="buttons">
-						<Button 
-							onClick={() => Action.openSpaceShare(analytics.route.chat)} 
-							text={translate('blockChatEmptyShareInviteLink')} 
-							className="c28" 
-							color="blank" 
-						/>
-					</div>
+					{spaceview.isChat ? (
+						<div className="buttons">
+							<Button 
+								onClick={() => Action.openSpaceShare(analytics.route.chat)} 
+								text={translate('blockChatEmptyShareInviteLink')} 
+								className="c28" 
+								color="blank" 
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
 	} else {
 		content = (
 			<div className="scroll">
-				{items.map(item => {
+				{items.map((item, i) => {
 					if (item.isSection) {
 						return <SectionDate key={item.key} date={item.createdAt} />;
 					} else {
@@ -976,6 +991,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 								rootId={chatId}
 								blockId={block.id}
 								subId={subId}
+								index={i}
 								isNew={item.orderId == firstUnreadOrderId}
 								hasMore={!!getMessageMenuOptions(item, true).length}
 								onContextMenu={e => onContextMenu(e, item)}
@@ -994,7 +1010,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	useEffect(() => {
 		rebind();
-		init();
 
 		return () => {
 			unbind();
@@ -1010,7 +1025,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, [ rootId, space, chatId ]);
 
 	useLayoutEffect(() => {
-		initialRender.current = false;
 		scrollToBottomCheck();
 	}, [ messages.length ]);
 

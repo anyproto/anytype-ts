@@ -64,6 +64,11 @@ class UtilSubscription {
 	 */
 	getBaseFilters (param?: Partial<I.SearchSubscribeParam>) {
 		param = param || {};
+		param = Object.assign({
+			ignoreHidden: true,
+			ignoreDeleted: true,
+			ignoreArchived: true,
+		}, param);
 		
 		const { config } = S.Common;
 		const spaceview = U.Space.getSpaceview();
@@ -480,9 +485,6 @@ class UtilSubscription {
 					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
 				noDeps: true,
-				ignoreDeleted: true,
-				ignoreHidden: true,
-				ignoreArchived: true,
 			});
 		});
 
@@ -534,7 +536,6 @@ class UtilSubscription {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
-				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
 				onSubscribe: message => {
@@ -574,7 +575,6 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
-				ignoreDeleted: true,
 				ignoreHidden: false,
 				ignoreArchived: false,
 				onSubscribe: message => {
@@ -592,7 +592,6 @@ class UtilSubscription {
 					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
 				],
 				noDeps: true,
-				ignoreDeleted: true,
 			},
 			{
 				subId: J.Constant.subId.participant,
@@ -603,7 +602,6 @@ class UtilSubscription {
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
-				ignoreDeleted: true,
 				ignoreHidden: false,
 				noDeps: true,
 			},

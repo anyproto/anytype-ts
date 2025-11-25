@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight, translate } from 'Lib';
+import { I, U, S, keyboard, Preview, sidebar, translate } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
@@ -107,9 +107,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		keyboard.setResize(true);
 		body.addClass('colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
+		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', e => onResizeMove(e, panel));
-		win.on('mouseup.sidebar blur.sidebar', e => onResizeEnd());
+		win.on('mouseup.sidebar', e => onResizeEnd(e, panel));
 	};
 
 	const onResizeMove = (e: any, panel: I.SidebarPanel) => {
@@ -141,7 +141,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				if (w <= closeWidth) {
 					sidebar.close(panel);
 				} else {
-					sidebar.setWidth(panel, false, w);
+					sidebar.setWidth(panel, false, w, false);
 				};
 			};
 
@@ -150,7 +150,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 					sidebar.open(panel, '', min);
 				} else 
 				if (w > closeWidth) {
-					sidebar.setWidth(panel, false, w);
+					sidebar.setWidth(panel, false, w, false);
 				};
 			};
 
@@ -162,13 +162,17 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		});
 	};
 
-	const onResizeEnd = () => {
+	const onResizeEnd = (e: any, panel: I.SidebarPanel) => {
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
 		raf.cancel(frame.current);
 
 		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
+
+		const w = Math.max(0, (e.pageX - ox.current));
+
+		sidebar.setWidth(panel, false, w, true);
 
 		window.setTimeout(() => movedX.current = false, 15);
 	};

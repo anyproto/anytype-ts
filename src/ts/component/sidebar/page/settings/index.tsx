@@ -156,106 +156,105 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		};
 	};
 
-	const ItemSection = (item: any) => {
-		const cn = [ 'itemSection' ];
+	const rowRenderer = ({ index, key, parent, style }) => {
+		const item = items[index];
 
-		if (item.isFirst) {
-			cn.push('isFirst');
-		};
+		let content = null;
 
-		return (
-			<div className={cn.join(' ')}>
-				<div className="name">{item.name}</div>
-			</div>
-		);
-	};
-
-	const Item = (item: any) => {
 		if (item.isSection) {
-			return <ItemSection {...item} />;
-		};
+			const cn = [ 'itemSection' ];
 
+			if (item.isFirst) {
+				cn.push('isFirst');
+			};
+
+			content = (
+				<div style={style} className={cn.join(' ')}>
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else 
 		if (item.isDiv) {
-			return <div />;
-		};
+			content = <div style={style} />;
+		} else {
+			const cn = [ 'item' ];
+			const ccn = [ 'caption' ];
 
-		const cn = [ 'item' ];
+			let icon = null;
+			let name = null;
+			let caption = '';
 
-		let icon = null;
-		let name = null;
-		let caption = null;
-
-		if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
-			cn.push('active');
-		};
-
-		if (item.id == 'account') {
-			if ('index' == param.id) {
+			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
 				cn.push('active');
 			};
 
-			if (participant) {
-				name = (
-					<>
-						<Label className="userName" text={participant.name} />
-						{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
-					</>
-				);
-				icon = (
-					<IconObject 
-						object={{ ...participant, name: participant.globalName || participant.name }} 
-						size={40} 
-						iconSize={40} 
-					/>
-				);
-			};
+			if (item.id == 'account') {
+				if ('index' == param.id) {
+					cn.push('active');
+				};
 
-			cn.push('itemAccount');
-		} else {
-			icon = <Icon className={`settings-${item.icon || item.id}`} />;
-			name = item.name;
-		};
+				if (participant) {
+					name = (
+						<>
+							<Label className="userName" text={participant.name} />
+							{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
+						</>
+					);
 
-		if (item.id == 'membership') {
-			if (!product || product.isIntro) {
-				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
+					icon = (
+						<IconObject 
+							object={{ ...participant, name: participant.globalName || participant.name }} 
+							size={40} 
+							iconSize={40} 
+						/>
+					);
+				};
+
+				cn.push('itemAccount');
 			} else {
-				caption = <div className="caption">{product.name}</div>;
+				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				name = item.name;
 			};
-		};
 
-		if (item.alert) {
-			caption = <div className="caption alert">{item.alert}</div>;
+			if (item.id == 'membership') {
+				if (!product || product.isIntro) {
+					caption = translate(`commonJoin`);
+					ccn.push('join');
+				} else {
+					caption = product.name;
+				};
+			} else
+			if (item.alert) {
+				caption = item.alert;
+				ccn.push('alert');
+			};
+
+			content = (
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={() => onClick(item)}
+					style={style}
+				>
+					{icon}
+					<div className="name">{name}</div>
+					{caption ? <div className={ccn.join(' ')}>{caption}</div> : ''}
+				</div>
+			);
 		};
 
 		return (
-			<div
-				id={`item-${item.id}`}
-				className={cn.join(' ')}
-				onClick={() => onClick(item)}
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
 			>
-				{icon}
-
-				<div className="name">{name}</div>
-
-				{caption}
-			</div>
+				{content}
+			</CellMeasurer>
 		);
 	};
-
-	const rowRenderer = ({ index, key, parent, style }) => (
-		<CellMeasurer
-			key={key}
-			parent={parent}
-			cache={cache.current}
-			columnIndex={0}
-			rowIndex={index}
-		>
-			<div className="row" style={style}>
-				<Item {...items[index]} />
-			</div>
-		</CellMeasurer>
-	);
 
 	const items = getItems();
 

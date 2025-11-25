@@ -11,4 +11,10 @@
     .labels {
 		.label { @include text-small; padding-top: 8px; color: var(--color-text-secondary); }
 	}
+
+	&.isComplete {
+		.bar {
+			.empty { display: none; }
+		}
+	}
 }

@@ -3,6 +3,7 @@ import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
+import { initial } from 'lodash';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -661,6 +662,8 @@ class UtilCommon {
 		} else 
 		if (this.matchPath(url)) {
 			url = `file://${url}`;
+		} else {
+			url = `https://${url}`;
 		};
 
 		return url;
@@ -1280,6 +1283,21 @@ class UtilCommon {
 			ret[`data-${k}`] = data[k];
 		};
 		return ret;
+	};
+
+	animationProps (param?: any) {
+		param = param || {};
+		param.initial = param.initial || {};
+		param.animate = param.animate || {};
+		param.exit = param.exit || {};
+		param.transition = param.transition || {};
+
+		return {
+			initial: { opacity: 0, ...param.initial },
+			animate: { opacity: 1, ...param.animate },
+			exit: { opacity: 0, ...param.exit },
+			transition: { type: 'spring', stiffness: 300, damping: 20, ...param.transition } as any,
+		};
 	};
 
 	/**
@@ -1922,10 +1940,6 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('chatsOnboarding')) {
-			return;
-		};
-
 		v = String(v || '');
 
 		const electron = this.getElectron();
@@ -1977,6 +1991,16 @@ class UtilCommon {
 
 		const digits = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(price.amountCents / 100);
 		return `${J.Constant.currencySymbol[price.currency]}${digits}`;
+	};
+
+	safeDecodeUri (s: string): string {
+		s = String(s || '');
+
+		try {
+			return decodeURIComponent(s);
+		} catch {
+			return s;
+		};
 	};
 
 };

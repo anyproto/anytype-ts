@@ -97,13 +97,13 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedType = true;
 		let allowedLinkTo = data.allowedLinkTo;
 		let allowedOpen = data.allowedOpen;
-		let allowedCollection = true;
+		let allowedCollection = data.allowedCollection;
 		let allowedUnlink = isCollection;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
 		let allowedNotification = true;
 		let allowedEditChat = true;
-		let allowedExport = true;
+		let allowedExport = data.allowedExport;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -116,13 +116,13 @@ class MenuContext extends React.Component<I.Menu> {
 			const isRelation = U.Object.isRelationLayout(object.layout);
 			const isChat = U.Object.isChatLayout(object.layout);
 
-			if (S.Block.getWidgetsForTarget(object.id, I.WidgetSection.Pin).length) pinCnt++;
+			if (S.Block.getWidgetsForTarget(object.id).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
-			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived || U.Object.isTemplateType(object.type)) {
+			if (object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
@@ -138,9 +138,7 @@ class MenuContext extends React.Component<I.Menu> {
 			if (isType) {
 				allowedRelation = false;
 				allowedCopy	= false;
-				allowedCollection = false;
 				allowedType = false;
-				allowedExport = false;
 			};
 
 			if (isRelation) {
@@ -380,7 +378,7 @@ class MenuContext extends React.Component<I.Menu> {
 					value,
 					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
-						Action.setChatNotificationMode(space, objectIds, Number(option.id));
+						Action.setChatNotificationMode(space, objectIds, Number(option.id), route);
 						close();
 					},
 				};
@@ -503,7 +501,7 @@ class MenuContext extends React.Component<I.Menu> {
 					data: {
 						details: first,
 					},
-				});
+				}, route);
 
 				needClose = false;
 				break;

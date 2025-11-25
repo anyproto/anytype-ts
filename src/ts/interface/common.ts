@@ -14,6 +14,7 @@ export enum DropType {
 	Relation = 'relation',
 	Record	 = 'record',
 	Widget	 = 'widget',
+	View	 = 'view',
 };
 
 export enum SelectType {

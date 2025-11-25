@@ -181,7 +181,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
 		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
-		const allowedEditChat = isChat;
+		const allowedEditChat = canWrite && isChat;
 		const allowedNotification = isChat;
 
 		if (!allowedPageLink) {
@@ -394,7 +394,7 @@ class MenuObject extends React.Component<I.Menu> {
 					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
 					options: U.Menu.notificationModeOptions(),
 					onSelect: (e, option) => {
-						Action.setChatNotificationMode(space, [ object.id ], Number(option.id));
+						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
 						close();
 					},
 				};
@@ -425,6 +425,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const object = this.getObject();
 		const route = analytics.route.menuObject;
 		const space = U.Space.getSpaceview();
+		const isPopup = keyboard.isPopup();
 		
 		if (item.arrow) {
 			return;
@@ -445,7 +446,7 @@ class MenuObject extends React.Component<I.Menu> {
 			if (home && (object.id == home.id)) {
 				Action.openSettings('spaceIndexEmpty', route);
 			} else {
-				keyboard.onBack(false);
+				keyboard.onBack(isPopup);
 			};
 		};
 
@@ -571,7 +572,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(keyboard.isPopup(), { page: 'type', rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'type', rootId });
 				break;
 			};
 
@@ -585,7 +586,7 @@ class MenuObject extends React.Component<I.Menu> {
 					data: {
 						details: object,
 					},
-				});
+				}, route);
 				break;
 			};
 		};

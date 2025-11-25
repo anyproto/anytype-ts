@@ -330,7 +330,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 			switch (item.id) {
 				case 'copy': {
-					C.BlockDataviewViewCreate(rootId, blockId, { ...view, name: this.getViewName(view.name) }, sources, (message: any) => {
+					Dataview.duplicateView(rootId, blockId, { ...view, name: this.getViewName(view.name) }, sources, (message: any) => {
 						if (onSave) {
 							onSave();
 						};

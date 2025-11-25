@@ -58,7 +58,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		setIsDeleted(false);
 		setIsLoading(true);
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -74,7 +74,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			controlsRef.current?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 
 			resize();
@@ -107,7 +107,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
-		const ref = blockRefs[J.Constant.blockId.dataview];
+		const ref = blockRefs.current[J.Constant.blockId.dataview];
+		const { ww, wh } = U.Common.getWindowDimensions();
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
@@ -117,8 +118,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
-
-			const { ww, wh } = U.Common.getWindowDimensions();
 
 			ref?.ref?.onRecordAdd(e, -1, '', {
 				horizontal: I.MenuDirection.Center,

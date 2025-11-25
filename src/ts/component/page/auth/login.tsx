@@ -82,9 +82,7 @@ const PageAuthLogin = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			const spaceId = Storage.get('spaceId');
 			const routeParam = { 
 				replace: true, 
-				onFadeIn: () => {
-					Action.checkDiskSpace();
-				},
+				onFadeIn: () => Action.checkDiskSpace(),
 			};
 
 			if (spaceId) {

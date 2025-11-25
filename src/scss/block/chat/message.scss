@@ -1,9 +1,6 @@
-.message { @include text-common; position: relative; opacity: 0; }
+.message { @include text-common; position: relative; }
 .message {
 	* { user-select: text !important; }
-
-	&.anim { transition: opacity $transitionChatMessageTime ease-in-out; }
-	&.show { opacity: 1; }
 
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }

@@ -173,7 +173,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 				});
 
 				if (previous && previous.page) {
-					sidebar.rightPanelSetState(isPopup, previous);
+					S.Common.setRightSidebarState(isPopup, previous);
 				} else {
 					close();
 				};
@@ -204,7 +204,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		restore();
 
 		if (previous && previous.page) {
-			sidebar.rightPanelSetState(isPopup, previous);
+			S.Common.setRightSidebarState(isPopup, previous);
 		} else {
 			close();
 		};

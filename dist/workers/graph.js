@@ -613,7 +613,7 @@ drawNode = (d) => {
 	const diameter = radius * 2;
 	const isSelected = selected.includes(d.id);
 	const io = isOver == d.id;
-	const opt = data.colors.icon.list[d.iconOption - 1];
+	const opt = (data.colors?.icon?.list || [])[d.iconOption - 1];
 	
 	let colorNode = data.colors.icon.bg[opt] || data.colors.node;
 	let colorText = data.colors.text;

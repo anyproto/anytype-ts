@@ -8,6 +8,10 @@
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
+		&.isReadonly {
+			.cell.isEmpty { display: none; }
+		}
+
 		.listColumn {
 			.wrapMenu { display: none; }
 		}
@@ -56,7 +60,6 @@
 				.element { flex-shrink: 0; display: flex; }
 				.iconObject { display: block; }
 				.name { display: none; }
-				.empty { padding: 0px 4px; }
 			}
 
 			.cellContent.c-object {

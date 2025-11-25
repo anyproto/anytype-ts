@@ -8,34 +8,52 @@
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
 
-		    .row { height: 100%; width: 100%; padding-top: 2px; display: block; white-space: nowrap; position: relative; }
-			.row.isDone * { color: var(--color-text-secondary); }
+			.listItem { display: flex; flex-direction: row; align-items: center; }
+		    .row { height: 28px; width: 100%; padding-left: 12px; display: block; white-space: nowrap; position: relative; }
+			.row {
+				.icon.drag { left: 0px; }
 
-			.row:not(.editModeOn) {
-				.cellWrapper.isEmpty { margin: 0px !important; display: none; }
-				.cellWrapper.isEmpty {
-					.cellContent:not(.withMenu) { display: none; }
+				&.isDone * { color: var(--color-text-secondary); }
+				&:not(.editModeOn) {
+					.cellWrapper.isEmpty { margin: 0px !important; display: none; }
+					.cellWrapper.isEmpty {
+						.cellContent:not(.withMenu) { display: none; }
+					}
+				}
+
+				&:hover, &.hover {
+					.icon.drag { opacity: 1; }
+
+					.selectionTarget,
+					.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+
+					.cellWrapper.isName {
+						.cellContent:not(.isEditing) { max-width: calc(100% - 26px); }
+					}
+					.sides {
+						.side.left.s50 {
+							.cellWrapper.isName {
+								.cellContent:not(.isEditing) { max-width: calc(100% - 46px); }
+							}
+						}
+					}
+
+					.cellWrapper.isName {
+						.icon.editMode { display: block; }
+						.chatCounter { display: none; }
+					}
 				}
 			}
 
-			.row { padding-left: 12px; }
-			.row {
-				.icon.drag { top: 10px; left: 0px; margin: 0px; }
-			}
-			.row:hover {
-				.icon.drag { opacity: 1; }
-			}
+			.selectionTarget { padding: 2px 4px; }
 
+			.dropTarget { padding-left: 24px; margin-left: -24px; position: relative;  }
 			.dropTarget.isOver { box-shadow: 0px 0px; }
 			.dropTarget.isOver::before { 
-				content: ""; position: absolute; background: var(--color-control-accent); width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
+				content: ""; position: absolute; background: var(--color-control-accent); width: calc(100% - 14px); height: 2px; border-radius: 2px; left: 24px; 
 			}
-			.dropTarget.isOver.top::before { top: -6px; }
-			.dropTarget.isOver.bottom::before { bottom: 4px; }
-
-			.dropTarget {
-				.selectionTarget { padding: 0px; border-radius: 0px; }
-			}
+			.dropTarget.isOver.top::before { top: -2px; }
+			.dropTarget.isOver.bottom::before { bottom: -2px; }
 
 			.sides { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; }
 			.sides {
@@ -53,37 +71,11 @@
 				> .cellWrapper { flex-grow: 0; }
 			}
 
-			.row:hover,
-			.row.hover{
-				> .selectionTarget,
-				> .dropTarget,
-				.cell.add { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
-
-				.cellWrapper.isName {
-					.cellContent:not(.isEditing) { max-width: calc(100% - 26px); }
-				}
-				.sides {
-					.side.left.s50 {
-						.cellWrapper.isName {
-							.cellContent:not(.isEditing) { max-width: calc(100% - 46px); }
-						}
-					}
-				}
-
-				.cellWrapper.isName {
-					.icon.editMode { display: block; }
-					.chatCounter { display: none; }
-				}
-			}
-
 			.row.add { height: 28px; padding-top: 0px; margin-top: 2px; }
 			.row.add {
 				.cell.add { padding: 0px; height: 28px; }
 				.btn { height: 100%; width: 100%; padding-top: 4px; padding-left: 4px; }
 			}
-
-			.selectionTarget,
-			.dropTarget { height: 28px; padding: 2px 0px 2px 4px; }
 
 			.cellWrapper,
 			.cellContent { 

@@ -26,15 +26,18 @@ export interface WidgetComponent {
 	canEdit?: boolean;
 	canRemove?: boolean;
 	isSystemTarget?: boolean;
+	index?: number;
 	sidebarDirection?: I.SidebarDirection;
 	setPreview?: (id: string) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
 	getLimit?: () => number;
 	getTraceId?: () => string;
+	getRootId?: () => string;
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 	checkShowAllButton?: (subId: string) => void;
 	onContext?: (param: any) => void;
 	onCreate?: (param: any) => void;
+	onSetPreview?: () => void;
 	getObject?: (id: string) => any;
 	getContentParam?: () => { layout: WidgetLayout; limit: number; viewId: string; };
 };

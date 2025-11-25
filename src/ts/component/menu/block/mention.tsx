@@ -136,7 +136,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	componentDidUpdate () {
 		const { isLoading } = this.state;
 		const items = this.getItems();
-		const filter = this.getFilter();
+		const filter = S.Common.filterText;
 
 		if ((this.filter != filter) && !isLoading) {
 			this.filter = filter;
@@ -166,18 +166,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		$(window).off('keydown.menu');
 	};
 
-	getFilter () {
-		return String(S.Common.filter.text || '').replace(/^[@\[]+/, '');
-	};
-
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
-		const filter = this.getFilter();
+		const filter = S.Common.filterText;
 		const sections: any[] = [];
 		
-
 		let items = U.Common.objectCopy(this.items);
 
 		const dates = items.filter(it => U.Object.isDateLayout(it.layout));
@@ -231,7 +226,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds } = data;
-		const filter = this.getFilter();
+		const filter = S.Common.filterText;
 		const skipLayouts = U.Object.getSystemLayouts().filter(it => !U.Object.isDateLayout(it) && !U.Object.isTypeLayout(it));
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -330,7 +325,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const name = this.getFilter();
+			const name = S.Common.filterText;
 
 			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.details);

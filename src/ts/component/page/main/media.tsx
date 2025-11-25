@@ -44,7 +44,7 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		setIsDeleted(false);
 		setIsLoading(true);
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -59,7 +59,7 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 		});
 	};

@@ -16,7 +16,11 @@ export default {
 	table: {
 		min: 50,
 		max: 2000,
-		default: 140
+		default: 140,
+	},
+
+	menu: {
+		value: 288,
 	},
 
 	dataview: {
@@ -24,7 +28,7 @@ export default {
 			width: 224,
 			height: 72,
 			margin: 16,
-			padding: 16
+			padding: 16,
 		},
 
 		board: {
@@ -38,14 +42,14 @@ export default {
 
 			min: 48,
 			max: 1000,
-			edit: 200,
-			icon: 70
+			edit: 300,
+			icon: 70,
 		},
 	},
 
 	store: {
 		width: 300,
 		margin: 32,
-		border: 80
+		border: 80,
 	}
 };

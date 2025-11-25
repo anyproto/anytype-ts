@@ -56,7 +56,18 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const element = $(moreRef.current);
 
-		onContext({ node, element, withElement, subId, objectId: id });
+		onContext({ 
+			node, 
+			element, 
+			withElement, 
+			subId, 
+			objectId: id, 
+			data: {
+				allowedCollection: true, 
+				allowedExport: true,
+				allowedLinkTo: true,
+			},
+		});
 	};
 
 	const onToggleHandler = (e: MouseEvent): void => {

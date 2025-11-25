@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, U, keyboard, translate } from 'Lib';
@@ -9,12 +9,14 @@ interface Props extends I.ViewComponent {
 
 interface Ref {
 	setIds: (ids: string[]) => void;
+	getNode: () => any;
 };
 
 const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const { className, isInline, isCollection, multiSelectAction } = props;
 	const [ ids, setIds ] = useState<string[]>([]);
+	const nodeRef = useRef(null);
 	const cn = [ 'dataviewControls', 'dataviewSelection' ];
 
 	if (className) {
@@ -36,10 +38,11 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		setIds,
+		getNode: () => nodeRef.current,
 	}));
 
 	return (
-		<div id="dataviewSelection" className={cn.join(' ')}>
+		<div ref={nodeRef} id="dataviewSelection" className={cn.join(' ')}>
 			<div className="sides">
 				<div id="sideLeft" className="side left">{U.Common.sprintf(translate('blockDataviewSelectionSelected'), ids.length)}</div>
 

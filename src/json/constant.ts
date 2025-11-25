@@ -8,6 +8,7 @@ export default {
 	appName:			 'Anytype',
 	anytypeProfileId:	 '_anytype_profile',
 	missingObjectId:	 '_missing_object',
+	blankId:			 '_blank_',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
 	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
@@ -61,7 +62,11 @@ export default {
 		},
 
 		relation: {
-			option: 4,
+			option:						 4,
+		},
+
+		string: {
+			mention:					 300,
 		},
 	},
 

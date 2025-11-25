@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import { createRoot } from 'react-dom/client';
 import $ from 'jquery';
 import raf from 'raf';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget, IconObject, Button, ChatCounter } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation, scrollOnMove } from 'Lib';
@@ -15,7 +15,6 @@ interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
 	disableContextMenu?: boolean;
-	disableAnimation?: boolean;
 	className?: string;
 	onDragStart?: (e: MouseEvent, block: I.Block) => void;
 	onDragOver?: (e: MouseEvent, block: I.Block) => void;
@@ -24,16 +23,12 @@ interface Props extends I.WidgetComponent {
 
 const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const { block, isPreview, className, canEdit, disableAnimation, getObject, onDragStart, onDragOver, onDrag, setPreview } = props;
+	const { block, isPreview, className, canEdit, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
 	const { widgets } = S.Block;
-	const isAnimating = useRef(false);
 	const timeoutOpen = useRef(0);
-	const timeout1 = useRef(0);
-	const timeout2 = useRef(0);
 
 	const getChild = (): I.Block => {
 		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
@@ -225,7 +220,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				U.Menu.onBookmarkMenu(menuParam, cb);
 			} else 
 			if (U.Object.isChatLayout(type.recommendedLayout)) {
-				U.Menu.onChatMenu(menuParam, cb);
+				U.Menu.onChatMenu(menuParam, analytics.route.widget, cb);
 			}; 
 			return;
 		};
@@ -538,7 +533,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const getRootId = (): string => {
-		return child ? [ targetId, 'widget', child.id ].join('-') : '';
+		return child ? [ targetId, getTraceId() ].join('-') : '';
 	};
 
 	const getTraceId = (): string => {
@@ -566,6 +561,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 		const innerWrap = node.find('#innerWrap');
+		const button = innerWrap.find('#button-show-all');
 		
 		let total = 0;
 		let show = false;
@@ -595,25 +591,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 			show = !isPreview && (total > limit) && isAllowedView;
 		};
 
-		if (show) {
-			addShowAllButton();
-		} else {
-			node.find('#button-show-all').remove();
-		};
-
-		innerWrap.toggleClass('withShowAll', show);
-	};
-
-	const addShowAllButton = () => {
-		const node = $(nodeRef.current);
-		const innerWrap = node.find('#innerWrap');
-		const wrapper = $('<div id="button-show-all"></div>');
-		const root = createRoot(wrapper.get(0));
-
-		root.render(<Button onClick={onSetPreview} text={translate('widgetSeeAll')} className="c28 showAll" color="blank" />);
-
-		innerWrap.find('#button-show-all').remove();
-		innerWrap.append(wrapper);
+		button.css({ display: show ? 'flex' : 'none' });
 	};
 
 	const onContext = (param: any) => {
@@ -628,7 +606,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 				route: analytics.route.widget,
 				objectIds: [ objectId ],
 				subId,
-				noRelation: true,
 			},
 		};
 
@@ -677,11 +654,13 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		getData,
 		getLimit,
 		getTraceId,
+		getRootId,
 		addGroupLabels,
 		checkShowAllButton,
 		onContext,
 		onCreate,
 		getContentParam,
+		onSetPreview,
 	};
 
 	if (className) {
@@ -851,73 +830,47 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 
 	};
 
-	const initAnimation = (): void => {
-		const node = $(nodeRef.current);
-
-		if (!disableAnimation) {
-			isAnimating.current = true;
-
-			node.addClass('anim');
-			timeout1.current = window.setTimeout(() => {
-				node.addClass('show');
-				timeout2.current = window.setTimeout(() => {
-					node.removeClass('anim');
-					isAnimating.current = false;
-				}, J.Constant.delay.widgetItem);
-			}, J.Constant.delay.widgetItem);
-		} else {
-			node.addClass('show');
-		};
-	};
-
 	useEffect(() => {
 		rebind();
-		initAnimation();
 
 		return () => {
 			unbind();
-
-			window.clearTimeout(timeout1.current);
-			window.clearTimeout(timeout2.current);
 			window.clearTimeout(timeoutOpen.current);
 		};
 	}, []);
 
 	useEffect(() => {
-		initAnimation();
-	}, [ space ]);
-
-	useEffect(() => {
 		initToggle();
-
-		if (!isAnimating.current) {
-			$(nodeRef.current).addClass('show');
-		};
 	});
 
 	return (
-		<div
-			ref={nodeRef}
-			id={`widget-${block.id}`}
-			className={cn.join(' ')}
-			draggable={isDraggable}
-			onDragStart={e => onDragStart ? onDragStart(e, block) : null}
-			onDragOver={e => onDragOver ? onDragOver(e, block) : null}
-			onDrag={e => onDrag ? onDrag(e, block) : null}
-			onDragEnd={onDragEnd}
-			onContextMenu={onOptions}
-		>
-			{head}
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef}
+				id={`widget-${block.id}`}
+				className={cn.join(' ')}
+				draggable={isDraggable}
+				onDragStart={(e: any) => onDragStart?.(e, block)}
+				onDragOver={(e: any) => onDragOver?.(e, block)}
+				onDrag={(e: any) => onDrag?.(e, block)}
+				onDragEnd={onDragEnd}
+				onContextMenu={onOptions}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: index * 0.025 },
+				})}
+			>
+				{head}
 
-			<div id="wrapper" className="contentWrapper">
-				{content}
-			</div>
+				<div id="wrapper" className="contentWrapper">
+					{content}
+				</div>
 
-			<div className="dimmer" />
+				<div className="dimmer" />
 
-			{targetTop}
-			{targetBot}
-		</div>
+				{targetTop}
+				{targetBot}
+			</motion.div>
+		</AnimatePresence>	
 	);
 
 }));

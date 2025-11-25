@@ -1,24 +1,21 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, translate, Action, analytics } from 'Lib';
+import { Loader, Frame, Title } from 'Component';
+import { I, S, U, translate, keyboard, Action, analytics } from 'Lib';
 
 const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { isPopup } = props;
-	const [ error, setError ] = useState('');
 
 	const init = () => {
-		const { history } = U.Router;
-		const { location } = history;
-		const searchParam = U.Common.searchParam(location.search);
+		const { code } = keyboard.getMatch(false).params;
 
 		U.Space.openDashboardOrVoid({
 			replace: true,
 			onFadeIn: () => {
-				if (searchParam.code) {
-					S.Popup.open('membershipActivation', { data: searchParam });
+				if (code) {
+					S.Popup.open('membershipActivation', { data: { code } });
 				} else {
 					Action.openSettings('membership', analytics.route.stripe);
 				};
@@ -50,19 +47,8 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 			className="wrapper"
 		>
 			<Frame>
-				<Title text={error ? translate('commonError') : translate('pageMainMembershipTitle')} />
-				<Error text={error} />
-
-				{error ? (
-					<div className="buttons">
-						<Button 
-							text={translate('commonBack')} 
-							color="blank" 
-							className="c36" 
-							onClick={() => U.Space.openDashboardOrVoid()} 
-						/>
-					</div>
-				) : <Loader />}
+				<Title text={translate('pageMainMembershipTitle')} />
+				<Loader />
 			</Frame>
 		</div>
 	);

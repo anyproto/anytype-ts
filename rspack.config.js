@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT || 8080;
 	const prod = argv.mode === 'production';
 
-	return {
+	const base = {
 		mode: 'development',
 		devtool: 'source-map',
 
@@ -23,17 +23,6 @@ module.exports = (env, argv) => {
 			splitChunks: false,
 		},
 		
-		entry: {
-			app: { 
-				import: './src/ts/entry.tsx', 
-				filename: 'js/main.js',
-			},
-			extension: {
-				import: './extension/entry.tsx', 
-				filename: 'extension/js/main.js',
-			},
-		},
-
 		resolve: {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
 			alias: {
@@ -59,32 +48,6 @@ module.exports = (env, argv) => {
 		watchOptions: {
 			ignored: /node_modules/,
 			poll: false,
-		},
-		
-		devServer: {
-			hot: true,
-			static: ['dist'],
-			watchFiles: {
-				paths: ['src'],
-				options: {
-					usePolling: false,
-				},
-			},
-			historyApiFallback: true,
-			host: 'localhost',
-			port,
-			client: {
-				progress: false,
-				overlay: {
-					runtimeErrors: (error) => {
-						const allowed = [
-							'ResizeObserver loop completed with undelivered notifications.',
-							'Worker was terminated',
-						];
-						return !allowed.includes(error.message);
-					  },
-				},
-			},
 		},
 	
 		module: {
@@ -165,10 +128,6 @@ module.exports = (env, argv) => {
 			
 			new ForkTsCheckerWebpackPlugin(),
 
-			// new rspack.IgnorePlugin({
-			// 	resourceRegExp: /osx-temperature-sensor/,
-			// }),
-
 			new rspack.optimize.LimitChunkCountPlugin({
 				maxChunks: 1,
 			}),
@@ -189,4 +148,73 @@ module.exports = (env, argv) => {
 			}),
 		].filter(Boolean),
 	};
+
+	// App config: keeps Excalidraw
+	const appConfig = {
+		name: 'app',
+		...base,
+		entry: {
+			app: { 
+				import: './src/ts/entry.tsx', 
+				filename: 'js/main.js',
+			},
+		},
+		devServer: {
+			hot: true,
+			static: ['dist'],
+			watchFiles: {
+				paths: ['src'],
+				options: {
+					usePolling: false,
+				},
+			},
+			historyApiFallback: true,
+			host: 'localhost',
+			port,
+			client: {
+				progress: false,
+				overlay: {
+					runtimeErrors: (error) => {
+						const allowed = [
+							'ResizeObserver loop completed with undelivered notifications.',
+							'Worker was terminated',
+						];
+						return !allowed.includes(error.message);
+					},
+				},
+			},
+		},
+	};
+
+	// Extension config: same code, but Excalidraw is stubbed
+	const extensionConfig = {
+		name: 'extension',
+		...base,
+
+		entry: {
+			extension: {
+				import: './extension/entry.tsx',
+				filename: 'extension/js/main.js',
+			},
+		},
+
+		resolve: {
+			...base.resolve,
+			alias: {
+				...base.resolve.alias,
+				'@excalidraw/excalidraw': path.resolve(__dirname, 'src/stubs/excalidraw.js'),
+				'@viz-js/viz': path.resolve(__dirname, 'src/stubs/viz.js'),
+				'mermaid': path.resolve(__dirname, 'src/stubs/mermaid.js'),
+			},
+		},
+
+		plugins: [
+			...base.plugins,
+			new rspack.DefinePlugin({
+				__IS_EXTENSION__: 'true',
+			})
+		],
+	};
+
+	return [ appConfig,extensionConfig ];
 };

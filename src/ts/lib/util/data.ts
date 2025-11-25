@@ -79,7 +79,7 @@ class UtilData {
 	 * @returns {string} The CSS class.
 	 */
 	spaceClass (v: I.SpaceUxType): string {
-		return `space${I.SpaceUxType[v]}`
+		return v ? `space${String(I.SpaceUxType[v])}` : '';
 	};
 
 	/**
@@ -270,8 +270,8 @@ class UtilData {
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
+		const routeParam = param.routeParam || {};
 
 		if (!widgets) {
 			console.error('[U.Data].onAuth No widgets defined');
@@ -329,7 +329,7 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 				
-				S.Chat.setState(chatSubId, state, false);
+				S.Chat.setState(chatSubId, state);
 
 				if (message) {
 					message.chatId = chatId;
@@ -812,11 +812,7 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		const filters = U.Subscription.getBaseFilters({
-			ignoreHidden: true,
-			ignoreArchived: true,
-			ignoreDeleted: true,	 
-		});
+		const filters = U.Subscription.getBaseFilters();
 
 		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
@@ -855,7 +851,7 @@ class UtilData {
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
 	getMembershipStatus (callBack?: () => void) {
-		if (!this.isAnytypeNetwork()) {
+		if (!this.isAnytypeNetwork() || !S.Common.isOnline) {
 			return;
 		};
 
@@ -1080,10 +1076,19 @@ class UtilData {
 	 * @returns {number} The layout width.
 	 */
 	getLayoutWidth (rootId: string): number {
-		const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
-		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(rootId, rootId);
-		const ret = undefined !== root?.fields?.width ? root?.fields?.width : type?.layoutWidth;
+
+		let ret = 0;
+		if (root && root.fields && (undefined !== root.fields.width)) {
+			ret = root.fields.width;
+		} else {
+			const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
+			const type = S.Record.getTypeById(object.targetObjectType || object.type);
+
+			if (type && type.layoutWidth) {
+				ret = type.layoutWidth;
+			};
+		};
 
 		return Number(ret) || 0;
 	};

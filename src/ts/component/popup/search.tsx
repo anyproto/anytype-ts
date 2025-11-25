@@ -10,8 +10,10 @@ const HEIGHT_SMALL = 38;
 const HEIGHT_ITEM = 60;
 const LIMIT_HEIGHT = 15;
 
+const isMac = U.Common.isPlatformMac();
+
 const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
-	
+
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
 	const { route, onObjectSelect, skipIds } = data;
@@ -71,9 +73,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const cmd = keyboard.cmdKey();
 		const filter = getFilter();
 		const item = items[nRef.current];
-
+		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
+		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
 		keyboard.disableMouse(true);
-
 		keyboard.shortcut('escape', e, () => {
 			if (backlinkRef.current) {
 				onClearSearch();
@@ -91,8 +93,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			onArrow(pressed == 'arrowup' ? -1 : 1);
+		keyboard.shortcut(`${shortcutPrev}, ${shortcutNext}` , e, (pressed: string) => {
+			const dir = [ 'arrowup', 'ctrl+p' ].includes(pressed) ? -1 : 1;
+			onArrow(dir);
 		});
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
@@ -309,7 +312,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			if (clear) {
 				setIsLoading(false);
 			};
-			
+
 			callBack?.();
 		});
 	};
@@ -330,7 +333,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (backlinkRef.current) {
 			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
-		} else 
+		} else
 		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
@@ -376,19 +379,19 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			settingsSpace = settingsSpace.map(it => ({ ...it, isSpace: true, className: 'isSpace' }));
-			
+
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
-				{ 
+				{
 					id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
-					aliases: [ 
+					aliases: [
 						translate('commonLanguage', lang), translate('commonLanguage'),
 						translate('commonSpelling', lang), translate('commonSpelling'),
-					] 
+					]
 				},
-				{ 
+				{
 					id: 'personal', icon: 'settings-personal', name: translate('pageSettingsColorMode'),
-					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
+					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ]
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
 				{ id: 'dataIndex', icon: 'settings-storage', name: translate('popupSettingsLocalStorageTitle') },
@@ -485,13 +488,12 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						}, J.Constant.delay.route);
 					}
 				});
-			} else 
+			} else
 
 			// Settings item
 			if (item.isSettings) {
 				Action.openSettings(item.id, '');
-			} else 
-
+			} else
 			// Import action
 			if (item.isImport) {
 				Action.import(item.format, J.Constant.fileExtension.import[item.format]);
@@ -519,7 +521,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onContext = (e: any, item: any) => {
 		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${item.id}`,
-			recalcRect: () => { 
+			recalcRect: () => {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
@@ -538,7 +540,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let h = HEIGHT_ITEM;
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
-		} else 
+		} else
 		if (item.isSmall) {
 			h = HEIGHT_SMALL;
 		};
@@ -620,7 +622,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			const text = Mark.toHtml(highlight, ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
 			value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
-		} else 
+		} else
 		if (relationDetails.name) {
 			const { relationOptionColor } = relationDetails;
 			const color = relationOptionColor ? `textColor-${relationOptionColor}` : '';
@@ -659,10 +661,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (item.isObject) {
 			object = item;
-		} else 
+		} else
 		if (item.id == 'account') {
 			object = U.Space.getParticipant();
-		} else 
+		} else
 		if (item.id == 'spaceIndex') {
 			object = U.Space.getSpaceview();
 		};
@@ -740,9 +742,9 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		return (
 			<div
 				ref={node => rowsRef.current[item.index] = node}
-				id={`item-${item.id}`} 
+				id={`item-${item.id}`}
 				className={cn.join(' ')}
-				onMouseOver={e => onOver(e, item)} 
+				onMouseOver={e => onOver(e, item)}
 				onClick={e => onClick(e, item)}
 			>
 				{icon}
@@ -784,17 +786,17 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className="wrap"
 		>
 			{isLoading ? <Loader id="loader" /> : ''}
-			
+
 			<div className="head">
-				<Filter 
+				<Filter
 					icon="search"
 					value={filterValueRef.current}
-					ref={filterInputRef} 
+					ref={filterInputRef}
 					placeholder={translate('popupSearchPlaceholder')}
 					onSelect={onFilterSelect}
 					onChange={v => onFilterChange(v)}
@@ -806,7 +808,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{!items.length && !isLoading ? (
 				<EmptySearch filter={filterValueRef.current} />
 			) : ''}
-			
+
 			{cacheRef.current && items.length && !isLoading ? (
 				<div key="items" className="items">
 					<InfiniteLoader

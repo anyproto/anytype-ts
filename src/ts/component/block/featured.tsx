@@ -89,7 +89,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 							const value = object[relation.relationKey];
 							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
-							const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
+							const cn = [ 'cell' ];
+
+							if (readonly && Relation.isEmpty(value)) {
+								return null;
+							};
+
+							if (canEdit) {
+								cn.push('canEdit');
+							};
 
 							if (i == items.length - 1) {
 								cn.push('last');

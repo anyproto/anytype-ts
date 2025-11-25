@@ -26,11 +26,6 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	};
 
 	const { mentionCounter, messageCounter } = counters;
-
-	if (!mentionCounter && !messageCounter) {
-		return null;
-	};
-
 	const cn = [ 'chatCounter', className ];
 	const cnMention = [ 'mention' ];
 	const cnMessage = [ 'message' ];
@@ -48,6 +43,7 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
 		</div>
 	);
+
 }));
 
 export default ChatCounter;

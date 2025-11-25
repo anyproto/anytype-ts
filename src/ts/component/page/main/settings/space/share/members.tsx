@@ -193,9 +193,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 				<div className="side left" onClick={() => U.Object.openConfig(item)}>
 					<IconObject size={48} object={item} />
 					<div className="text">
-						<div className="nameWrapper">
-							<ObjectName object={item} withPronoun={item.id == participant.id} withBadge={true} />
-						</div>
+						<ObjectName object={item} withPronoun={item.id == participant.id} withBadge={true} />
 						{globalName ? <Label className="anyId" text={globalName} /> : ''}
 					</div>
 				</div>
