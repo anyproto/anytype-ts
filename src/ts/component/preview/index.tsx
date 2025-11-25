@@ -81,8 +81,25 @@ const PreviewIndex = observer(forwardRef(() => {
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - width / ow) / 2 * 100;
 		let pe = ps + width / ow * 100;
-		let cpTop = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
-		let cpBot = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
+		let vs = (1 + height / oh) / 2 * 100;
+
+		if (y + oh + height >= st + wh) {
+			typeY = I.MenuDirection.Top;
+			vs = (1 - height / oh) / 2 * 100;
+
+			css.top = y - oh - OFFSET_Y;
+			css.transform = 'translateY(-5%)';
+
+			pcss.bottom = -height - OFFSET_Y;
+		} else {
+			css.top = y + height + OFFSET_Y;
+			css.transform = 'translateY(5%)';
+
+			pcss.top = -height - OFFSET_Y;
+		};
+
+		let cpTop = `polygon(0% 0%, ${ps}% ${vs}%, ${ps}% 100%, ${pe}% 100%, ${pe}% ${vs}%, 100% 0%)`;
+		let cpBot = `polygon(0% 100%, ${ps}% ${vs}%, ${ps}% 0%, ${pe}% 0%, ${pe}% ${vs}%, 100% 100%)`;
 		
 		if (ow < width) {
 			pcss.width = width;
@@ -90,29 +107,11 @@ const PreviewIndex = observer(forwardRef(() => {
 			ps = (width - ow) / width / 2 * 100;
 			pe = (1 - (width - ow) / width / 2) * 100;
 			
-			cpTop = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
-			cpBot = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
+			cpTop = `polygon(0% 100%, ${ps}% 0%, ${pe}% 0%, 100% 100%)`;
+			cpBot = `polygon(0% 0%, ${ps}% 100%, ${pe}% 100%, 100% 0%)`;
 		};
 
-		if (y + oh + height >= st + wh) {
-			typeY = I.MenuDirection.Top;
-		};
-		
-		if (typeY == I.MenuDirection.Top) {
-			css.top = y - oh - OFFSET_Y;
-			css.transform = 'translateY(-5%)';
-				
-			pcss.bottom = -height - OFFSET_Y;
-			pcss.clipPath = cpTop;
-		};
-			
-		if (typeY == I.MenuDirection.Bottom) {
-			css.top = y + height + OFFSET_Y;
-			css.transform = 'translateY(5%)';
-				
-			pcss.top = -height - OFFSET_Y;
-			pcss.clipPath = cpBot;
-		};
+		pcss.clipPath = typeY == I.MenuDirection.Top ? cpTop : cpBot;
 			
 		css.left = x - ow / 2 + width / 2;
 		css.left = Math.max(BORDER, css.left);
