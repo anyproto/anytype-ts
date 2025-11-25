@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { Icon, LoadMore } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { LoadMore } from 'Component';
+import { I, S, U } from 'Lib';
 import BodyRow from './list/row';
 import AddRow from './grid/body/add';
 
@@ -53,10 +53,10 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	if (isInline) {
 		content = (
 			<div>
-				{records.map((id: string, index: number) => (
+				{records.map((id: string) => (
 					<BodyRow
 						ref={ref => onRefRecord(ref, id)}
-						key={`grid-row-${view.id}index`}
+						key={`grid-row-${view.id}-${id}`}
 						{...props}
 						recordId={id}
 						readonly={!isAllowedObject}
@@ -85,16 +85,19 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 										rowCount={records.length}
 										rowHeight={HEIGHT}
 										onRowsRendered={onRowsRendered}
-										rowRenderer={({ key, index, style }) => (
-											<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
+										rowRenderer={({ key, index, style }) => {
+											const id = records[index];
+											return (
 												<BodyRow
-													ref={ref => onRefRecord(ref, records[index])}
+													ref={ref => onRefRecord(ref, id)}
+													key={`grid-row-${view.id}-${id}`}
 													{...props} 
-													recordId={records[index]}
+													recordId={id}
 													recordIdx={index}
+													style={style}
 												/>
-											</div>
-										)}
+											);
+										}}
 										scrollTop={scrollTop}
 									/>
 								)}

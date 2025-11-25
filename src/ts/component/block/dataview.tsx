@@ -1,14 +1,17 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
+import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
+import { LayoutPlug } from 'Component';
 import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
 import Empty from './dataview/empty';
+import AddRow from './dataview/view/grid/body/add';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
@@ -17,7 +20,6 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
-import { Icon, LayoutPlug } from 'Component';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -322,6 +324,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (viewId && (viewId != this.viewId)) {
 			this.loadData(viewId, 0, true);
 		};
+
+		console.log($(this.node).find(`#add-row-${viewId}`));
 
 		this.init();
 		this.resize();
@@ -1368,12 +1372,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		);
 	};
 
-	getEmptyView (view: I.ViewType) {
+	getEmptyView (type: I.ViewType) {
 		if (!this.isAllowedObject()) {
 			return this.getEmpty('view');
 		};
 
-		const cn = [ 'viewContent', `view${I.ViewType[view]}` ];
+		const cn = [ 'viewContent', `view${I.ViewType[type]}` ];
 		const onAdd = (e: any) => {
 			if (!this.isCollection() && !this.getSources().length) {
 				this.onEmpty(e);
@@ -1384,32 +1388,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let inner: any = null;
 
-		switch (view) {
+		switch (type) {
+			case I.ViewType.Grid:
 			case I.ViewType.List: {
-				inner = (
-					<div className="row add">
-						<div className="cell add">
-							<div className="btn" onClick={onAdd}>
-								<Icon className="plus" />
-								<div className="name">{translate('commonNewObject')}</div>
-							</div>
-						</div>
-					</div>
-				);
-				break;
-			};
-
-			case I.ViewType.Grid: {
-				inner = <div className="row" onClick={onAdd} />;
+				inner = <AddRow onClick={onAdd} />;
 				break;
 			};
 
 			case I.ViewType.Gallery: {
 				inner = (
-					<div className="row empty">
-						<div className="card" onClick={onAdd} />
-						<div className="card add" onClick={onAdd} />
-					</div>
+					<AnimatePresence mode="popLayout">
+						<motion.div
+							className="row empty"
+							{...U.Common.animationProps({
+								transition: { duration: 0.2, delay: 0.1 },
+							})}
+						>
+							<div className="card" onClick={onAdd} />
+							<div className="card add" onClick={onAdd} />
+						</motion.div>
+					</AnimatePresence>
 				);
 				break;
 			};
