@@ -507,6 +507,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				allowedOpen: true,
 				allowedCollection: true,
 				allowedExport: true,
+				allowedType: true,
 				onLinkTo: (sourceId: string, targetId: string) => {
 					const target = getNode(targetId);
 					if (target) {
