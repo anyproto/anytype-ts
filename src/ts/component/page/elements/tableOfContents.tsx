@@ -45,7 +45,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		S.Menu.updateData('tableOfContents', { blockId: id });
 
 		if (isOpen) {
-			sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
+			S.Common.setRightSidebarState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
 		};
 	};
 

@@ -51,7 +51,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				return;
 			};
 
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			loadCategory();

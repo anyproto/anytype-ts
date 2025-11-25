@@ -58,7 +58,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			listRef.current?.getData(1);
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });

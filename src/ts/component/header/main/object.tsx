@@ -26,6 +26,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
+	const isRelationOpen = (rightSidebar.page == 'object/relation');
 
 	let center = null;
 	let label = '';
@@ -146,7 +147,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				{showShare ? (
 					<Icon 
 						id="button-header-share" 
-						tooltipParam={{ text: translate('commonShare'), typeY: I.MenuDirection.Bottom }}
+						tooltipParam={{ text: translate('commonPublish'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'share', 'withBackground' ].join(' ')}
 						onClick={onShare} 
 						onDoubleClick={e => e.stopPropagation()}
@@ -157,7 +158,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon 
 						id="button-header-relation" 
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', 'withBackground', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')}
+						className={[ 'relation', 'withBackground', (isRelationOpen ? 'active' : '') ].join(' ')}
 						onClick={onRelation} 
 						onDoubleClick={e => e.stopPropagation()}
 					/> 

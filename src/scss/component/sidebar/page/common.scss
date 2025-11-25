@@ -139,7 +139,7 @@
 
 		.item { 
 			padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
-			border-radius: 6px;
+			border-radius: 6px; gap: 0px 4px;
 		}
 		.item.isDragging { opacity: 0; }
 

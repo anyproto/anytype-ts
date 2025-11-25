@@ -239,9 +239,10 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.setData(I.SidebarPanel.Right, isPopup, { isClosed: true }, true);
-			this.rightPanelSetState(isPopup, { page: '' });
 			this.objRight.removeClass('sidebarAnimation').css({ transform: '' });
 			this.resizePage(isPopup, null, null, false);
+
+			S.Common.setRightSidebarState(isPopup, { page: '' });
 		}, animate ? J.Constant.delay.sidebar : 0);
 	};
 
@@ -260,7 +261,7 @@ class Sidebar {
 
 		this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
 
-		this.rightPanelSetState(isPopup, state);
+		S.Common.setRightSidebarState(isPopup, state);
 		this.setStyle(I.SidebarPanel.Right, isPopup, { width });
 		this.setData(I.SidebarPanel.Right, isPopup, { isClosed: false }, true);
 		this.resizePage(isPopup, null, width, animate);
@@ -628,11 +629,6 @@ class Sidebar {
 
 	rightPanelGetNode (isPopup: boolean): JQuery<HTMLElement> | null {
 		return $(this.rightPanelGetRef(isPopup)?.getNode());
-	};
-
-	rightPanelSetState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
-		S.Common.setRightSidebarState(isPopup, v.page);
-		this.rightPanelGetRef(isPopup)?.setState(v);
 	};
 
 	getSizeParam (panel: I.SidebarPanel) {
