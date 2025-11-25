@@ -183,7 +183,7 @@ const App: FC = () => {
 
 		Renderer.on('pin-check', () => {
 			keyboard.setPinChecked(false);
-			U.Router.go('/auth/pin-check', { replace: true, animate: true });
+			U.Router.go('/auth/pin-check', {});
 		});
 
 		Renderer.on('reload', () => {

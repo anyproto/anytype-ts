@@ -103,7 +103,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		const { pin } = S.Common;
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
-		const routeParam = { replace: true };
 		const selection = S.Common.getRef('selectionProvider');
 
 		Preview.tooltipHide(true);
@@ -116,17 +115,17 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		if (isMain() && !account) {
-			U.Router.go('/', routeParam);
+			U.Router.go('/', { replace: true });
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isAuthPinCheck() && !isAuth() && !isIndex()) {
-			U.Router.go('/auth/pin-check', routeParam);
+			U.Router.go('/auth/pin-check', {});
 			return;
 		};
 
 		if (isMain() && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
-			U.Router.go('/auth/deleted', routeParam);
+			U.Router.go('/auth/deleted', { replace: true });
 			return;
 		};
 

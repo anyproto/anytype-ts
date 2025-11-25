@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Frame, Title, Error, Pin } from 'Component';
-import { I, S, U, Storage, translate, keyboard } from 'Lib';
+import { I, S, U, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
@@ -26,14 +26,13 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	const onSuccess = () => {
 		const { account } = S.Auth;
 		const { redirect } = S.Common;
-		const routeParam = { replace: true, animate: true };
 
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? U.Router.go(redirect, routeParam) : U.Space.openDashboard(routeParam);
+			redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
 		} else {
-			U.Router.go('/', routeParam);
+			U.Router.go('/', { replace: true });
 		};
 
 		S.Common.redirectSet('');

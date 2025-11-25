@@ -150,6 +150,11 @@ class UtilRouter {
 			onRouteChange?.();
 		};
 
+		console.log('PARAM', param, replace);
+		if (replace) {
+			console.trace();
+		};
+
 		const onTimeout = () => {
 			Preview.hideAll();
 
@@ -296,6 +301,18 @@ class UtilRouter {
 	 */
 	getSearch (): string {
 		return String(this.history?.location?.search || '');
+	};
+
+	isRedirect (page: string, action: string): boolean {
+		if ((page == 'main') && [ 'object', 'invite', 'membership', 'blank' ].includes(action)) {
+			return true;
+		};
+
+		if ((page == 'auth') && (action == 'pin-check')) {
+			return true;
+		}
+		
+		return false;
 	};
 
 };

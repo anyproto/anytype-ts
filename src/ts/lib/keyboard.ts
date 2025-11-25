@@ -509,11 +509,7 @@ class Keyboard {
 
 				let substitute = '';
 
-				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
-					substitute = history.entries[history.index - 2]?.pathname;
-				};
-
-				if ((route.page == 'main') && (route.action == 'blank')) {
+				if (U.Router.isRedirect(route.page, route.action)) {
 					substitute = history.entries[history.index - 2]?.pathname;
 				};
 
