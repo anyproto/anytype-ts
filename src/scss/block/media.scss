@@ -70,9 +70,19 @@
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; z-index: 1;
 		}
+
+		.mediaBlockLoader { display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; height: 320px; background-color: var(--color-shape-highlight-light); }
+		.mediaBlockLoader {
+			.icon.loading { width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear; }
+			.icon.error { display: block; width: 20px; height: 20px; background: url('~img/icon/block/error.svg'); }
+			.label { @include text-small; color: var(--color-text-tertiary); }
+		}
 	}
 
-	.block.blockMedia.isAudio.withContent > .wrapContent  { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
+	.block.blockMedia.isAudio {
+		.mediaBlockLoader { height: 80px; }
+	}
+	.block.blockMedia.isAudio.withContent:not(.isLoading) > .wrapContent  { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
 	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 12px 12px 7px 14px; }
 
 	.block.blockMedia.isReadonly {

@@ -7,7 +7,7 @@ import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
-	const { width } = block.fields || {};
+	const { width, height } = block.fields || {};
 	const { state } = block.content;
 	const targetObjectId = block.getTargetObjectId();
 	const nodeRef = useRef(null);
@@ -146,7 +146,8 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
-	const object = S.Detail.get(rootId, targetObjectId, []);
+	const object = S.Detail.get(rootId, targetObjectId);
+	const cn = [ 'focusable', `c${block.id}` ];
 	const css: any = {};
 
 	if (width) {
@@ -210,7 +211,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	return (
 		<div 
 			ref={nodeRef} 
-			className={[ 'focusable', 'c' + block.id ].join(' ')} 
+			className={cn.join(' ')}
 			tabIndex={0} 
 			onKeyDown={handleKeyDown} 
 			onKeyUp={handleKeyUp} 

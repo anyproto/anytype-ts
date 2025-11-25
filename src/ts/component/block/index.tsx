@@ -23,7 +23,8 @@ import BlockFile from './media/file';
 import BlockImage from './media/image';
 import BlockVideo from './media/video';
 import BlockAudio from './media/audio';
-import BlockPdf from './media/pdf'; 
+import BlockPdf from './media/pdf';
+import BlockLoader from './media/loader';
 
 import BlockEmbed from './embed';
 
@@ -179,12 +180,18 @@ const Block = observer(class Block extends React.Component<Props> {
 			case I.BlockType.File: {
 				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'isDeleted' ], true);
 				
-				if (!object.isDeleted && (content.state == I.BookmarkState.Done)) {
+				if (!object.isDeleted && (content.state == I.FileState.Done)) {
 					cn.push('withContent');
 				};
 
 				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={key} ref={setRef} {...this.props} />;
+					break;
+				};
+
+				if (content.state == I.FileState.Uploading || object.isDeleted) {
+					blockComponent = <BlockLoader key={key} ref={setRef} {...this.props} />;
+					cn.push('isLoading');
 					break;
 				};
 
