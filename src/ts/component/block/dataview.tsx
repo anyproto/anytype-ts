@@ -1539,9 +1539,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	selectionCheck () {
 		const selection = S.Common.getRef('selectionProvider');
+		if (!selection || !this.refControls || !this.refSelect) {
+			return;
+		};
+
 		const con = $(this.refControls.getNode());
 		const sel = $(this.refSelect.getNode());
-		const ids = selection?.get(I.SelectType.Record) || [];
+		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
 		length ? con.hide() : con.show();
