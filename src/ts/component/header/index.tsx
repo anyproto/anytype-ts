@@ -88,6 +88,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					<Icon 
 						className="widgetPanel withBackground" 
 						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+						animatePresence={true}
 						tooltipParam={{ 
 							text: translate('commonWidgets'), 
 							caption: keyboard.getCaption('widget'), 
