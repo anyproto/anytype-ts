@@ -652,7 +652,7 @@ class UtilMenu {
 
 				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard({ replace: false });
+						U.Space.openDashboard();
 					};
 				});
 			});
@@ -956,7 +956,6 @@ class UtilMenu {
 									};
 
 									const routeParam = {
-										replace: true,
 										onFadeIn: () => U.Object.openRoute({ id, layout }),
 									};
 

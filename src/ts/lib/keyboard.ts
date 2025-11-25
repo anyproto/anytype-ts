@@ -513,6 +513,10 @@ class Keyboard {
 					substitute = history.entries[history.index - 2]?.pathname;
 				};
 
+				if ((route.page == 'main') && (route.action == 'blank')) {
+					substitute = history.entries[history.index - 2]?.pathname;
+				};
+
 				if ((route.page == 'main') && (route.action == 'history')) {
 					substitute = history.entries[history.index - 3]?.pathname;
 				};

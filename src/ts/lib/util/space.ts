@@ -9,10 +9,6 @@ class UtilSpace {
 	openDashboard (param?: any) {
 		param = param || {};
 
-		if (undefined === param.replace) {
-			param.replace = true;
-		};
-
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();

@@ -270,7 +270,6 @@ const App: FC = () => {
 
 						const spaceId = Storage.get('spaceId');
 						const routeParam = { 
-							replace: true, 
 							onRouteChange: hide,
 						};
 
