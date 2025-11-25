@@ -99,14 +99,27 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						layout: I.ObjectLayout.SpaceView, 
 						name: spaceName, 
 						iconImage: invite.iconImage,
-						iconOption: 1,
+						iconOption: invite.iconOption || 1,
+						uxType: invite.uxType || I.SpaceUxType.Data,
 					}}
 					size={96} 
 				/>
 			</div>
 
 			<Title text={spaceName} />
-			<Label className="creator" text={U.Common.sprintf(translate('popupInviteRequestCreatedBy'), creatorName)} />
+			<div className="label creator">
+				{translate('popupInviteRequestCreatedBy')}
+				<b>
+					<IconObject 
+						object={{ 
+							layout: I.ObjectLayout.Participant, 
+							iconImage: invite.creatorIcon, 
+							name: creatorName,
+						}}
+					/>
+					{creatorName}
+				</b>
+			</div>
 			<Label className="text" text={text} />
 
 			<div className="buttons">

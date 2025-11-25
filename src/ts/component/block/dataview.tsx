@@ -1045,6 +1045,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				allowedOpen: true,
 				allowedRelation: true,
 				allowedCollection: true,
+				allowedExport: true,
 			}
 		});
 	};
@@ -1260,7 +1261,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		C.ObjectListModifyDetailValues(ids, operations,);
+		C.ObjectListModifyDetailValues(ids, operations);
+
+		S.Common.getRef('selectionProvider')?.clear();
 		this.selectionCheck();
 	};
 

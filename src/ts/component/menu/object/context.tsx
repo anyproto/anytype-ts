@@ -103,7 +103,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedLink = true;
 		let allowedNotification = true;
 		let allowedEditChat = true;
-		let allowedExport = true;
+		let allowedExport = data.allowedExport;
 
 		objectIds.forEach((it: string) => {
 			const object = this.getObject(subId, getObject, it);
@@ -122,7 +122,7 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
-			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived || U.Object.isTemplateType(object.type)) {
+			if (object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
@@ -139,7 +139,6 @@ class MenuContext extends React.Component<I.Menu> {
 				allowedRelation = false;
 				allowedCopy	= false;
 				allowedType = false;
-				allowedExport = false;
 			};
 
 			if (isRelation) {

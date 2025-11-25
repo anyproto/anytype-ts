@@ -59,7 +59,7 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 		});
 	};

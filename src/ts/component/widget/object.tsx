@@ -142,9 +142,10 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				{...attributes}
 				{...listeners}
 				style={style}
+				onClick={e => U.Object.openEvent(e, item)}
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
-				<div className="side left" onClick={e => U.Object.openEvent(e, item)}>
+				<div className="side left">
 					{icon}	
 					<ObjectName object={item} withPlural={true} />
 				</div>

@@ -52,6 +52,7 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 			data: {
 				relationKeys: J.Relation.default.concat(view.groupRelationKey),
 				allowedCollection: true, 
+				allowedExport: true,
 				allowedLinkTo: true,
 			},
 		});

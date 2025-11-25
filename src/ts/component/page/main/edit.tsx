@@ -14,7 +14,7 @@ const PageMainEdit = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		headerRef.current?.forceUpdate();
-		sidebar.rightPanelSetState(isPopup, { rootId });
+		S.Common.setRightSidebarState(isPopup, { rootId });
 
 		if (home && (rootId != home.id)) {
 			let key = '';

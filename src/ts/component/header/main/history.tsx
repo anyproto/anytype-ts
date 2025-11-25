@@ -78,7 +78,7 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 				{showShare ? (
 					<Icon 
 						id="button-header-share" 
-						tooltipParam={{ text: translate('commonShare'), typeY: I.MenuDirection.Bottom }}
+						tooltipParam={{ text: translate('commonPublish'), typeY: I.MenuDirection.Bottom }}
 						className={[ 'share', 'withBackground' ].join(' ')}
 						onClick={onShare} 
 						onDoubleClick={e => e.stopPropagation()}

@@ -1284,6 +1284,8 @@ class Dispatcher {
 		S.Block.updateMarkup(contextId);
 
 		keyboard.setWindowTitle();
+
+		$(window).trigger('objectView');
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

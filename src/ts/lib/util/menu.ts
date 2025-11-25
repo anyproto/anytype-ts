@@ -122,6 +122,7 @@ class UtilMenu {
 
 		if (config.experimental) {
 			ret = ret.concat([
+				{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
@@ -135,16 +136,30 @@ class UtilMenu {
 	};
 
 	/**
+	 * Returns the list of link block types.
+	 * @returns {any[]} The list of object block types.
+	 */
+	getBlockLink () {
+		return [
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+		].map((it: any) => {
+			it = this.mapperBlock(it);
+
+			it.isAction = true;
+			it.skipOver = true;
+			return it;
+		});
+	};
+
+	/**
 	 * Returns the list of object block types.
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
 		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
-		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
-		];
+		const ret: any[] = [];
 
 		let i = 0;
 		for (const type of items) {
@@ -170,7 +185,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of other block types.
 	 */
 	getBlockOther () {
-		const aliasInline = [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
+		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
@@ -529,26 +544,23 @@ class UtilMenu {
 	
 	sectionsFilter (sections: any[], filter: string) {
 		const f = U.Common.regexEscape(filter);
-		const regS = new RegExp('^' + f, 'gi');
-		const regC = new RegExp(f, 'gi');
+		const regS = new RegExp(`^${f}`, 'i');
 		const getWeight = (s: string) => {
 			let w = 0;
+			if (!s) {
+				return w;
+			};
+
 			if (s.toLowerCase() == f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
 				w = 1000;
-			} else 
-			if (s.match(regC)) {
-				w = 100;
 			};
 			return w;
 		};
 		
 		sections = sections.filter((s: any) => {
-			if (s.name.match(regC)) {
-				return true;
-			};
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
 
@@ -565,39 +577,38 @@ class UtilMenu {
 					};
 				};
 
-				c._sortWeight_ = 0;
+				c._sortWeight_ = Number(c._sortWeight_) || 0;
 				if (c.skipFilter) {
 					ret = true;
 				};
 
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
-						if (alias.match(regC)) {
-							c._sortWeight_ = getWeight(alias);
+						if (alias.match(regS)) {
+							c._sortWeight_ += getWeight(alias);
 							ret = true;
 							break;
 						};
 					};
 				};
 
-				if (!ret && c.name && c.name.match(regC)) {
+				if (!ret && c.name && c.name.match(regS)) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.name);
+					c._sortWeight_ += getWeight(c.name);
 				};
 
-				if (!ret && c.description && c.description.match(regC)) {
+				if (!ret && c.description && c.description.match(regS)) {
 					ret = true;
-					c._sortWeight_ = getWeight(c.description);
+					c._sortWeight_ += getWeight(c.description);
 				};
-				
-				s._sortWeight_ += c._sortWeight_ / (s.children.length || 1);
+
 				return ret; 
 			});
+
 			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
@@ -846,10 +857,10 @@ class UtilMenu {
 				};
 			} else {
 				if (!isLoading) {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextChannelSettings') });
+					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
 				};
 
-				if (!space.isPersonal) {
+				if (!space.isPersonal && !param.noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
@@ -873,7 +884,9 @@ class UtilMenu {
 					sections.share = shareOptions;
 				};
 
-				sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
+				if (!param.noBin) {
+					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
+				};
 
 				if (isLoading) {
 					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });

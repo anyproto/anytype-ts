@@ -179,6 +179,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 
 		S.Menu.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
+			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => elements.addClass('hover'),
 			onClose: () => elements.removeClass('hover'),
@@ -202,6 +203,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		S.Menu.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
+			classNameWrap: 'fromBlock',
 			onOpen: () => elements.addClass('hover'),
 			onClose: () => elements.removeClass('hover'),
 			subIds: J.Menu.layout,

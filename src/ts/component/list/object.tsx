@@ -103,6 +103,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 				allowedLinkTo: true,
 				allowedOpen: true,
 				allowedCollection: true,
+				allowedExport: true,
 			}
 		});
 	};

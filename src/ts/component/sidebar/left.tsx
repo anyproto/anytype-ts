@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight, translate } from 'Lib';
+import { I, U, S, keyboard, Preview, sidebar, translate } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
