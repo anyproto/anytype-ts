@@ -146,7 +146,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
-	const object = S.Detail.get(rootId, targetObjectId);
+	const object = S.Detail.get(rootId, targetObjectId, []);
 	const cn = [ 'focusable', `c${block.id}` ];
 	const css: any = {};
 
