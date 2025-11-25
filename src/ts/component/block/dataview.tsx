@@ -1255,10 +1255,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				continue;
 			};
 
-			operations.push({ 
-				relationKey: k, 
-				add: Relation.formatValue(relation, details[k], true),
-			});
+			const value = Relation.formatValue(relation, details[k], true);
+
+			if (Relation.isArrayType(relation.format) && (relation.format != I.RelationType.Select)) {
+				operations.push({ relationKey: k, add: value });
+			} else {
+				operations.push({ relationKey: k, set: value });
+			};
 		};
 
 		C.ObjectListModifyDetailValues(ids, operations);
