@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, MouseEvent, SyntheticEvent } from 'react';
 import { observer } from 'mobx-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { DropTarget, Icon, IconObject, ObjectName, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, Storage, translate } from 'Lib';
 
@@ -154,20 +153,15 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	return (
-		<AnimatePresence mode="popLayout">
-			<motion.div
-				ref={nodeRef}
-				id={treeKey}
-				className={cn.join(' ')}
-				style={style}
-				onContextMenu={onContextMenu}
-				{...U.Common.animationProps({
-					transition: { duration: 0.2, delay: 0.1 },
-				})}
-			>
-				{inner}
-			</motion.div>
-		</AnimatePresence>
+		<div
+			ref={nodeRef}
+			id={treeKey}
+			className={cn.join(' ')}
+			style={style}
+			onContextMenu={onContextMenu}
+		>
+			{inner}
+		</div>
 	);
 
 }));

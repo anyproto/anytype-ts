@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
 import $ from 'jquery';
-import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -196,25 +195,20 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	return (
-		<AnimatePresence mode="popLayout">
-			<motion.div
-				className={cn.join(' ')}
-				key={object.id}
-				onContextMenu={e => onContextHandler(e, false)}
-				ref={ref => {
-					nodeRef.current = ref;
-					setNodeRef(ref);
-				}}
-				{...attributes}
-				{...listeners}
-				style={style}
-				{...U.Common.animationProps({
-					transition: { duration: 0.2, delay: 0.1 },
-				})}
-			>
-				{inner}
-			</motion.div>
-		</AnimatePresence>
+		<div
+			className={cn.join(' ')}
+			key={object.id}
+			onContextMenu={e => onContextHandler(e, false)}
+			ref={ref => {
+				nodeRef.current = ref;
+				setNodeRef(ref);
+			}}
+			{...attributes}
+			{...listeners}
+			style={style}
+		>
+			{inner}
+		</div>
 	);
 
 }));
