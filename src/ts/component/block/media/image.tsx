@@ -7,7 +7,7 @@ import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
-	const { width, height } = block.fields || {};
+	const { width } = block.fields || {};
 	const { state } = block.content;
 	const targetObjectId = block.getTargetObjectId();
 	const nodeRef = useRef(null);
