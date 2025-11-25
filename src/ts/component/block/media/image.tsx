@@ -1,7 +1,7 @@
 import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Loader, Icon, Error } from 'Component';
+import { InputWithFile, Icon, Error } from 'Component';
 import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 
 const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
