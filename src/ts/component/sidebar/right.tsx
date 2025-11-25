@@ -114,7 +114,11 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	useEffect(() => {
 		if (state.page == 'object/relation') {
 			const object = S.Detail.get(state.rootId, state.rootId);
-			if (U.Object.isTypeOrRelationLayout(object.layout)) {
+
+			if (
+				U.Object.isTypeOrRelationLayout(object.layout) || 
+				(spaceview.isChat && U.Object.isChatLayout(object.layout))
+			) {
 				sidebar.rightPanelClose(isPopup, false);
 				return;
 			};

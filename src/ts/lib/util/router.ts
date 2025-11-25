@@ -131,11 +131,6 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
-		console.log(param);
-		if (replace) {
-			console.trace();
-		};
-
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
 			timeout = S.Popup.getTimeout();
@@ -249,8 +244,6 @@ class UtilRouter {
 				};
 				return;
 			};
-
-			console.log(routeParam);
 
 			this.go('/main/blank', { 
 				onRouteChange: () => {

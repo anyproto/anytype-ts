@@ -27,6 +27,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				return;
 			};
 
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			headerRef.current?.forceUpdate();
 			chatRef.current?.ref?.forceUpdate();
 
