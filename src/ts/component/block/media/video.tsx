@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
+import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
 import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
@@ -199,11 +199,6 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						/>
 					</>
 				);
-				break;
-			};
-				
-			case I.FileState.Uploading: {
-				element = <Loader />;
 				break;
 			};
 				

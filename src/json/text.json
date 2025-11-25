@@ -800,6 +800,8 @@
 	"blockChatCopyText": "Copy text",
 	"blockChatMarkAsUnread": "Mark as unread",
 
+	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",
+
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",

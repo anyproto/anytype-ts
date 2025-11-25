@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -215,11 +215,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 						/>
 					</>
 				);
-				break;
-			};
-				
-			case I.FileState.Uploading: {
-				element = <Loader />;
 				break;
 			};
 				

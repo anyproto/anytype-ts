@@ -228,6 +228,10 @@ class UtilSpace {
 		return `_participant_${spaceId}_${accountId}`;
 	};
 
+	getCurrentParticipantId () {
+		return this.getParticipantId(S.Common.space, S.Auth.account.id);
+	};
+
 	/**
 	 * Extracts the account ID from a participant ID.
 	 * @param {string} id - The participant ID.
