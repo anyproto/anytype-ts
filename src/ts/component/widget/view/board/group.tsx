@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Icon, Cell } from 'Component';
 import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
 import Item from './item';
@@ -154,47 +155,52 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	});
 
 	return (
-		<div 
-			ref={nodeRef} 
-			className="group"
-		>
-			<div id={`item-${id}`} className="clickable" onClick={onToggle}>
-				<Icon className="arrow" />
-				<Cell 
-					id={`board-head-${id}`} 
-					rootId={rootId}
-					subId={subId}
-					block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
-					relationKey={view.groupRelationKey} 
-					viewType={I.ViewType.Board}
-					getRecord={() => head}
-					readonly={true} 
-					arrayLimit={2}
-					withName={true}
-					placeholder={translate('commonUncategorized')}
-				/>
-				{canCreate ? <Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} onClick={onCreateHandler} /> : ''}
-			</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef} 
+				className="group"
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				<div id={`item-${id}`} className="clickable" onClick={onToggle}>
+					<Icon className="arrow" />
+					<Cell 
+						id={`board-head-${id}`} 
+						rootId={rootId}
+						subId={subId}
+						block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
+						relationKey={view.groupRelationKey} 
+						viewType={I.ViewType.Board}
+						getRecord={() => head}
+						readonly={true} 
+						arrayLimit={2}
+						withName={true}
+						placeholder={translate('commonUncategorized')}
+					/>
+					{canCreate ? <Icon className="plus" tooltipParam={{ text: translate('commonCreateNewObject') }} onClick={onCreateHandler} /> : ''}
+				</div>
 
-			<div id={`item-${id}-children`} className="items">
-				{!items.length ? (
-					<div className="item empty">{translate('commonNoObjects')}</div>
-				) : (
-					<>
-						{items.map(id => (
-							<Item 
-								{...props}
-								key={`widget-${block.id}-item-${id}`} 
-								subId={subId}
-								id={id} 
-								hideIcon={view.hideIcon}
-							/>
-						))}
-						{total > limit ? <div className="item more" onClick={onAll}>{translate('widgetShowAll')}</div> : ''}
-					</>
-				)}
-			</div>
-		</div>
+				<div id={`item-${id}-children`} className="items">
+					{!items.length ? (
+						<div className="item empty">{translate('commonNoObjects')}</div>
+					) : (
+						<>
+							{items.map(id => (
+								<Item 
+									{...props}
+									key={`widget-${block.id}-item-${id}`} 
+									subId={subId}
+									id={id} 
+									hideIcon={view.hideIcon}
+								/>
+							))}
+							{total > limit ? <div className="item more" onClick={onAll}>{translate('widgetShowAll')}</div> : ''}
+						</>
+					)}
+				</div>
+			</motion.div>
+		</AnimatePresence>
 	);
 	
 }));

@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
 import $ from 'jquery';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
 import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
-import { has } from 'lodash';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -196,20 +196,25 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	return (
-		<div
-			className={cn.join(' ')}
-			key={object.id}
-			onContextMenu={e => onContextHandler(e, false)}
-			ref={ref => {
-				nodeRef.current = ref;
-				setNodeRef(ref);
-			}}
-			{...attributes}
-			{...listeners}
-			style={style}
-		>
-			{inner}
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				className={cn.join(' ')}
+				key={object.id}
+				onContextMenu={e => onContextHandler(e, false)}
+				ref={ref => {
+					nodeRef.current = ref;
+					setNodeRef(ref);
+				}}
+				{...attributes}
+				{...listeners}
+				style={style}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				{inner}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));
