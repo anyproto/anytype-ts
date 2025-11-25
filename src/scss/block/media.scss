@@ -75,7 +75,7 @@
 		.mediaBlockLoader {
 			.icon.loading { width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear; }
 			.icon.error { display: block; width: 20px; height: 20px; background: url('~img/icon/block/error.svg'); }
-			.label { @include text-small; color: var(--color-text-tertiary); }
+			.name { @include text-small; color: var(--color-text-tertiary); }
 		}
 	}
 
