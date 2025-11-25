@@ -15,6 +15,7 @@ DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
 DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
 DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com'];
+DOMAINS[I.EmbedProcessor.Bandcamp] = [ 'bandcamp.com' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -496,6 +497,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.Bandcamp,
 		].includes(p);
 	};
 
@@ -540,6 +542,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.Bandcamp,
 		].includes(p);
 	};
 

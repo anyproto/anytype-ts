@@ -38,7 +38,6 @@ class Sidebar {
 	init (isPopup: boolean) {
 		this.initObjects(isPopup);
 
-		const { space } = S.Common;
 		const stored = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
 		for (const panel of [ I.SidebarPanel.Left, I.SidebarPanel.SubLeft, I.SidebarPanel.Right ]) {
@@ -46,7 +45,7 @@ class Sidebar {
 				continue;
 			};
 
-			const data = stored?.[panel];
+			const data = stored?.[panel] || {};
 			const param = this.getSizeParam(panel);
 			const width = this.limitWidth(panel, data.width || param.default);
 			const isClosed = (undefined !== data.isClosed) && (panel != I.SidebarPanel.Right) ? Boolean(data.isClosed) : true;

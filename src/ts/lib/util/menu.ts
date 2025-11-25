@@ -122,6 +122,7 @@ class UtilMenu {
 
 		if (config.experimental) {
 			ret = ret.concat([
+				{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
@@ -859,7 +860,7 @@ class UtilMenu {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
 				};
 
-				if (!space.isPersonal) {
+				if (!space.isPersonal && !param.noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
@@ -883,7 +884,9 @@ class UtilMenu {
 					sections.share = shareOptions;
 				};
 
-				sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
+				if (!param.noBin) {
+					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
+				};
 
 				if (isLoading) {
 					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });

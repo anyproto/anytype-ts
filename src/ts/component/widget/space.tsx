@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef } from 'react';
+import React, { useRef, forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, U, S, translate, analytics, Action, keyboard } from 'Lib';
@@ -11,11 +11,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const nodeRef = useRef(null);
+	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
 	const iconSize = spaceview.isChat ? 80 : 48;
-	const param = keyboard.getMatch(false).params;
+	const rootId = keyboard.getRootId();
 
 	const icon = (
 		<IconObject
@@ -129,6 +130,16 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		);
 	};
 
+	useEffect(() => {
+		const win = $(window);
+
+		win.off('objectView').on('objectView', () => setDummy(dummy => dummy + 1));
+
+		return () => {
+			win.off('objectView');
+		};
+	}, []);
+
 	return (
 		<div ref={nodeRef} className={cn.join(' ')}>
 			{content}
@@ -136,7 +147,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				{buttons.map((item, idx) => {
 					const cn = [ 'item' ];
 
-					if ((item.id == 'chat') && (param.id == S.Block.workspace)) {
+					if ((item.id == 'chat') && (rootId == S.Block.workspace)) {
 						cn.push('active');
 					};
 

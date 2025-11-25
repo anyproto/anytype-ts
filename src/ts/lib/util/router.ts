@@ -126,9 +126,9 @@ class UtilRouter {
 
 		param = param || {};
 
+		const { space } = S.Common;
 		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const { space } = S.Common;
 		const newRoute = this.build(routeParam);
 
 		let timeout = S.Menu.getTimeout();

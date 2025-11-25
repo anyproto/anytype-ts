@@ -484,6 +484,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
 						const oe = e.originalEvent as any;
 						const { type, height, blockId, url } = oe.data;
+
 						if (blockId != block.id) {
 							return;
 						};
@@ -491,7 +492,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						switch (type) {
 							case 'resize': {
 								if (allowIframeResize) {
-									iframe.css({ height: Math.max(80, height) });
+									iframe.css({ height });
 								};
 								break;
 							};
