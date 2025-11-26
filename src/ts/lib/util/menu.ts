@@ -858,7 +858,7 @@ class UtilMenu {
 			} else {
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
-					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetCustomizeSections') });
+					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
 				if (!space.isPersonal && !param.noMembers) {

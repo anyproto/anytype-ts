@@ -1049,6 +1049,15 @@ class CommonStore {
 		return section && !section.isClosed && !section.isHidden;
 	};
 
+	getWidgetSection (id: I.WidgetSection) {
+		return this.widgetSections.find(it => it.id == id);
+	};
+
+	updateWidgetSection (param: Partial<I.WidgetSectionParam>) {
+		set(this.getWidgetSection(param.id), param);
+		this.widgetSectionsSet(this.widgetSections);
+	};
+
 };
 
 export const Common: CommonStore = new CommonStore();
