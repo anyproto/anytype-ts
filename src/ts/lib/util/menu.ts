@@ -116,13 +116,14 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
-			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
+			{ id: I.EmbedProcessor.AppleMusic, name: 'Apple Music' },
+			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
-				{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
@@ -652,7 +653,7 @@ class UtilMenu {
 
 				U.Subscription.createSubSpace([ space ], () => {
 					if (openRoute) {
-						U.Space.openDashboard({ replace: false });
+						U.Space.openDashboard();
 					};
 				});
 			});
@@ -956,7 +957,6 @@ class UtilMenu {
 									};
 
 									const routeParam = {
-										replace: true,
 										onFadeIn: () => U.Object.openRoute({ id, layout }),
 									};
 

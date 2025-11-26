@@ -216,7 +216,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	open () {
-		const { rootId, onOpen } = this.props;
+		const { rootId, onOpen, isPopup } = this.props;
 
 		this.setState({ isDeleted: false, id: rootId });
 
@@ -225,7 +225,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			onOpen?.();
+
 			this.focusInit();
 			this.refControls?.forceUpdate();
 			this.forceUpdate();

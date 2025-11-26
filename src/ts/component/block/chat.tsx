@@ -24,6 +24,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
 	const scrollWrapperRef = useRef(null);
@@ -961,14 +962,16 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						<Icon className="key" />
 						<Label text={translate('blockChatEmptyItem3')} />
 					</div>
-					<div className="buttons">
-						<Button 
-							onClick={() => Action.openSpaceShare(analytics.route.chat)} 
-							text={translate('blockChatEmptyShareInviteLink')} 
-							className="c28" 
-							color="blank" 
-						/>
-					</div>
+					{spaceview.isChat ? (
+						<div className="buttons">
+							<Button 
+								onClick={() => Action.openSpaceShare(analytics.route.chat)} 
+								text={translate('blockChatEmptyShareInviteLink')} 
+								className="c28" 
+								color="blank" 
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);

@@ -15,8 +15,6 @@ interface Props {
 
 interface SidebarRightRefProps {
 	getNode: () => HTMLElement | null;
-	setState: (state: I.SidebarRightState) => void;
-	getState: () => I.SidebarRightState;
 };
 
 const Components = {
@@ -32,18 +30,8 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
-	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const [ state, setState ] = useState<I.SidebarRightState>({
-		rootId: '',
-		details: {},
-		readonly: false,
-		noPreview: false,
-		previous: null,
-		blockId: '',
-		back: '',
-	});
-
-	const page = String(rightSidebar.page || '');
+	const state = S.Common.getRightSidebarState(isPopup);
+	const page = String(state.page || '');
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
@@ -72,7 +60,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		const body = $('body');
 		const node = $(nodeRef.current);
 		const o = node.offset();
-		const data = sidebar.getData(I.SidebarPanel.Right);
 
 		ox.current = o.left;
 		oy.current = o.top;
@@ -125,20 +112,23 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	};
 
 	useEffect(() => {
+		if (state.page == 'object/relation') {
+			const object = S.Detail.get(state.rootId, state.rootId);
+
+			if (
+				U.Object.isTypeOrRelationLayout(object.layout) || 
+				(spaceview.isChat && U.Object.isChatLayout(object.layout))
+			) {
+				sidebar.rightPanelClose(isPopup, false);
+				return;
+			};
+		};
+
 		pageRef.current?.forceUpdate();
-	});
+	}, [ state.rootId, state.page, state.noPreview, state.details, state.readonly, state.blockId ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
-		getState: () => U.Common.objectCopy(state),
-		setState: (newState: I.SidebarRightState) => {
-			if (newState.page !== state.page) {
-				delete(state.previous);
-				newState.previous = U.Common.objectCopy(state);
-			};
-
-			setState(newState);
-		},
 	}));
 
 	return (

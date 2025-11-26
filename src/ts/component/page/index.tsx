@@ -98,20 +98,11 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		const { type } = status || {};
 	};
 
-	const getRootId = () => {
-		const home = U.Space.getDashboard();
-
-		return id || home?.id;
-	};
-
 	const init = () => {
 		const { account } = S.Auth;
 		const { pin } = S.Common;
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
-		const routeParam = { replace: true };
-		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
-		const state = S.Common.getRightSidebarState(isPopup);
 		const selection = S.Common.getRef('selectionProvider');
 
 		Preview.tooltipHide(true);
@@ -124,22 +115,18 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		if (isMain() && !account) {
-			U.Router.go('/', routeParam);
+			U.Router.go('/', { replace: true });
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isAuthPinCheck() && !isAuth() && !isIndex()) {
-			U.Router.go('/auth/pin-check', routeParam);
+			U.Router.go('/auth/pin-check', {});
 			return;
 		};
 
 		if (isMain() && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
-			U.Router.go('/auth/deleted', routeParam);
+			U.Router.go('/auth/deleted', { replace: true });
 			return;
-		};
-
-		if (!data.isClosed) {
-			sidebar.rightPanelSetState(isPopup, { rootId: getRootId(), page: state.page });
 		};
 
 		setBodyClass();

@@ -32,7 +32,7 @@
 		.icon.plus { background-image: url('~img/icon/widget/plus0.svg'); }
 		.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
 		.icon.arrow { width: 16px !important; background-size: 16px 20px !important; background-image: url('~img/icon/widget/button/arrow.svg'); }
-		.icon.widgetPanel { background-image: url('~img/icon/header/widget.svg'); }
+		.icon.widgetPanel { background-image: url('~img/icon/header/widget1.svg'); }
 		.icon.more { background-image: url('~img/icon/widget/button/more.svg'); }
 		.icon.expand { background-image: url('~img/icon/widget/button/expand.svg'); }
 		.icon.clock { background-image: url('~img/icon/sidebar/clock.svg'); }
@@ -139,7 +139,7 @@
 
 		.item { 
 			padding: 3px 8px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; position: relative; 
-			border-radius: 6px;
+			border-radius: 6px; gap: 0px 4px;
 		}
 		.item.isDragging { opacity: 0; }
 

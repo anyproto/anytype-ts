@@ -138,8 +138,6 @@ class UtilRouter {
 
 		S.Menu.closeAll();
 		S.Popup.closeAll();
-		sidebar.rightPanelClose(false, false);
-
 		focus.clear(true);
 
 		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
@@ -248,9 +246,6 @@ class UtilRouter {
 			};
 
 			this.go('/main/blank', { 
-				replace: true, 
-				animate: false,
-				delay: 0,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
 
@@ -261,7 +256,7 @@ class UtilRouter {
 					S.Common.setLeftSidebarState('vault', '');
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam: { ...routeParam, animate: false } }, () => {
+						U.Data.onAuth({ route, routeParam }, () => {
 							this.isOpening = false;
 							S.Common.setLeftSidebarState('vault', 'widget');
 						});
@@ -274,6 +269,7 @@ class UtilRouter {
 							if (object) {
 								route = U.Object.route(object);
 							};
+
 							onStartingIdCheck();
 						});
 
@@ -300,6 +296,26 @@ class UtilRouter {
 	 */
 	getSearch (): string {
 		return String(this.history?.location?.search || '');
+	};
+
+	isDoubleRedirect (page: string, action: string): boolean {
+		if ((page == 'main') && [ 'object', 'invite', 'membership', 'blank' ].includes(action)) {
+			return true;
+		};
+
+		return false;
+	};
+
+	isTripleRedirect (page: string, action: string): boolean {
+		if ((page == 'main') && (action == 'history')) {
+			return true;
+		};
+
+		if ((page == 'auth') && (action == 'pin-check')) {
+			return true;
+		};
+
+		return false;
 	};
 
 };

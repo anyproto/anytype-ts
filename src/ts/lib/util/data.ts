@@ -270,8 +270,8 @@ class UtilData {
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
+		const routeParam = param.routeParam || {};
 
 		if (!widgets) {
 			console.error('[U.Data].onAuth No widgets defined');

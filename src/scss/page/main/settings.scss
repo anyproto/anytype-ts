@@ -397,7 +397,7 @@
         .title { margin-bottom: 32px !important; }
 
         .items {
-            .row { @include text-common; display: grid; grid-template-columns: minmax(0, 1fr) 100px 100px 28px; padding: 0px; gap: 0px 8px; }
+            .row { @include text-common; display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px 28px; padding: 0px; gap: 0px 8px; }
 
             .row.isHead {
                 @include text-small; color: var(--color-text-secondary); font-weight: 400; border-color: var(--color-shape-secondary); border-style: solid;
@@ -429,7 +429,7 @@
 		.titleWrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
 
 		.items {
-            .row { grid-template-columns: minmax(0, 1fr) 100px 100px 100px 28px; }
+            .row { grid-template-columns: minmax(0, 1fr) 150px 150px 150px 28px; }
 		}
 	}
 

@@ -8,8 +8,9 @@
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: hidden !important; overflow-y: hidden !important; }
 
-			.listItem { display: flex; flex-direction: row; align-items: center; }
-		    .row { height: 28px; width: 100%; padding-left: 12px; display: block; white-space: nowrap; position: relative; }
+		    .row { 
+				height: 28px !important; width: 100%; padding-left: 12px; display: block; white-space: nowrap; position: relative; 
+			}
 			.row {
 				.icon.drag { left: 0px; }
 

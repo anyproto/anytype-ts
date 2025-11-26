@@ -9,10 +9,6 @@ class UtilSpace {
 	openDashboard (param?: any) {
 		param = param || {};
 
-		if (undefined === param.replace) {
-			param.replace = true;
-		};
-
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = this.getLastObject();
@@ -230,6 +226,10 @@ class UtilSpace {
 	getParticipantId (spaceId: string, accountId: string) {
 		spaceId = String(spaceId || '').replace('.', '_');
 		return `_participant_${spaceId}_${accountId}`;
+	};
+
+	getCurrentParticipantId () {
+		return this.getParticipantId(S.Common.space, S.Auth.account.id);
 	};
 
 	/**

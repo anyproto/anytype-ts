@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore, Cell } from 'Component';
@@ -173,37 +174,45 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 			className={cn.join(' ')}
 			{...U.Common.dataProps({ id })}
 		>
-			<div id={`column-${id}-head`} className="head">
-				<div className="sides">
-					<div 
-						className="side left"
-						draggable={true}
-						onDragStart={e => onDragStartColumn(e, id)}
-						onClick={onMore}
-					>
-						<Cell 
-							id={`board-head-${id}`} 
-							rootId={rootId}
-							subId={subId}
-							block={block}
-							relationKey={view.groupRelationKey} 
-							viewType={I.ViewType.Board}
-							getRecord={() => head}
-							readonly={true} 
-							arrayLimit={4}
-							withName={true}
-							placeholder={translate('commonUncategorized')}
-						/>
+			<AnimatePresence mode="popLayout">
+				<motion.div
+					id={`column-${id}-head`} 
+					className="head"
+					{...U.Common.animationProps({
+						transition: { duration: 0.2, delay: 0.1 },
+					})}
+				>
+					<div className="sides">
+						<div 
+							className="side left"
+							draggable={true}
+							onDragStart={e => onDragStartColumn(e, id)}
+							onClick={onMore}
+						>
+							<Cell 
+								id={`board-head-${id}`} 
+								rootId={rootId}
+								subId={subId}
+								block={block}
+								relationKey={view.groupRelationKey} 
+								viewType={I.ViewType.Board}
+								getRecord={() => head}
+								readonly={true} 
+								arrayLimit={4}
+								withName={true}
+								placeholder={translate('commonUncategorized')}
+							/>
+						</div>
+
+						<div className="side right">
+							<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
+							{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
+						</div>
 					</div>
 
-					<div className="side right">
-						<Icon id={`button-${id}-more`} className="more" tooltipParam={{ text: translate('blockDataviewBoardColumnSettings') }} onClick={onMore} />
-						{isAllowedObject ? <Icon className="add" tooltipParam={{ text: tooltip }} onClick={e => onAdd(e, -1)} /> : ''}
-					</div>
-				</div>
-
-				<div className={cnbg.join(' ')} />
-			</div>
+					<div className={cnbg.join(' ')} />
+				</motion.div>
+			</AnimatePresence>
 
 			<div className="body">
 				<div className="bg">

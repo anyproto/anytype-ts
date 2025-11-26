@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { I, S, U, keyboard, Relation } from 'Lib';
 import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
@@ -183,16 +184,21 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			id={`record-${record.id}`}
-			ref={nodeRef} 
-			className={cn.join(' ')} 
-			style={style}
-			onClick={e => onClick(e)}
-			onContextMenu={e => onContext(e, record.id)}
-		>
-			{content}
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				id={`record-${record.id}`}
+				ref={nodeRef} 
+				className={cn.join(' ')}
+				style={style}
+				onClick={e => onClick(e)}
+				onContextMenu={e => onContext(e, record.id)}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				{content}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

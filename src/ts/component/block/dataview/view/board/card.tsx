@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, keyboard } from 'Lib';
 import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
@@ -154,25 +155,30 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			ref={nodeRef} 
-			id={`record-${record.id}`}
-			className={cn.join(' ')} 
-			draggable={true}
-			onDragStart={onDragStartCardHandler}
-			onClick={e => onClick(e)}
-			onContextMenu={e => onContext(e, record.id, subId)}
-			{...U.Common.dataProps({ id: record.id })}
-		>
-			{canEdit && config.experimental ? (
-				<Icon
-					className={[ 'editMode', isEditing ? 'enabled' : '' ].join(' ')}
-					onClick={e => onEditModeClick(e, record.id)}
-				/>
-			) : ''}
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef} 
+				id={`record-${record.id}`}
+				className={cn.join(' ')} 
+				draggable={true}
+				onDragStart={onDragStartCardHandler}
+				onClick={e => onClick(e)}
+				onContextMenu={e => onContext(e, record.id, subId)}
+				{...U.Common.dataProps({ id: record.id })}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				{canEdit && config.experimental ? (
+					<Icon
+						className={[ 'editMode', isEditing ? 'enabled' : '' ].join(' ')}
+						onClick={e => onEditModeClick(e, record.id)}
+					/>
+				) : ''}
 
-			{content}
-		</div>
+				{content}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

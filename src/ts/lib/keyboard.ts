@@ -507,17 +507,28 @@ class Keyboard {
 			if (prev) {
 				const route = U.Router.getParam(prev.pathname);
 
+				let substituteIndex = -1;
 				let substitute = '';
 
-				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
-					substitute = history.entries[history.index - 2]?.pathname;
+				if (U.Router.isDoubleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 2;
+				} else
+				if (U.Router.isTripleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 3;
 				};
 
-				if ((route.page == 'main') && (route.action == 'history')) {
-					substitute = history.entries[history.index - 3]?.pathname;
+				if (substituteIndex >= 0) {
+					substitute = history.entries[substituteIndex]?.pathname;
+				};
+
+				if (!substitute && (route.page == 'auth') && (route.action == 'pin-check')) {
+					return;
 				};
 
 				if (substitute) {
+					history.entries = history.entries.slice(0, substituteIndex + 1);
+					history.index = substituteIndex;
+					
 					U.Router.go(substitute, {});
 					return;
 				};
@@ -580,6 +591,9 @@ class Keyboard {
 
 		if (prev) {
 			const route = U.Router.getParam(prev.pathname);
+			if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
+				return true;
+			};
 
 			if ([ 'index', 'auth' ].includes(route.page) && account) {
 				return false;

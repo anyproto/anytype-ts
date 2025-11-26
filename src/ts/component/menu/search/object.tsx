@@ -530,7 +530,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
 			height = 160;
 		} else {

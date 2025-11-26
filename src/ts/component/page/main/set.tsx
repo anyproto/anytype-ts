@@ -74,7 +74,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			controlsRef.current?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
 
 			resize();
@@ -113,7 +113,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			$(controlsRef.current).find('.filter .icon.search').trigger('click');
+			$(nodeRef.current).find('#dataviewControls .filter .icon.search').trigger('click');
 		});
 
 		keyboard.shortcut('createObject', e, () => {

@@ -94,7 +94,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedArchive = true;
 		let allowedPin = true;
 		let allowedCopy = true;
-		let allowedType = true;
+		let allowedType = data.allowedType;
 		let allowedLinkTo = data.allowedLinkTo;
 		let allowedOpen = data.allowedOpen;
 		let allowedCollection = data.allowedCollection;

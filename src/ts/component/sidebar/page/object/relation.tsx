@@ -1,12 +1,13 @@
-import React, { forwardRef, useEffect, MouseEvent, useRef } from 'react';
+import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
-import { I, S, U, C, sidebar, translate, keyboard, Relation, Storage, analytics } from 'Lib';
+import { I, S, U, C, translate, keyboard, Relation, Storage, analytics } from 'Lib';
 import Section from 'Component/sidebar/section';
 
 const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
+	const [ dummy, setDummy ] = useState(0);
 	const { rootId, readonly, page, isPopup } = props;
 	const object = S.Detail.get(rootId, rootId);
 	const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
@@ -49,7 +50,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	};
 
 	const onSetUp = () => {
-		sidebar.rightPanelSetState(isPopup, { 
+		S.Common.setRightSidebarState(isPopup, { 
 			page: 'type', 
 			rootId: object.targetObjectType || object.type, 
 			noPreview: true, 
@@ -159,6 +160,10 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			initToggle(section.id, toggle);
 		});
 	}, []);
+
+	useImperativeHandle(ref, () => ({
+		forceUpdate: () => setDummy(dummy + 1),
+	}));
 
 	return (
 		<>
