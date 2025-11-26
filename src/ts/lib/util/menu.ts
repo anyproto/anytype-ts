@@ -1654,6 +1654,7 @@ class UtilMenu {
 						sidebar.close(I.SidebarPanel.Left);
 						return;
 					};
+					S.Common.vaultClosedSet(false);
 					S.Common.vaultStyleSet(item.id);
 				},
 			},

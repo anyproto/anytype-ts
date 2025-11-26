@@ -60,6 +60,9 @@
 	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
+		.iconWrap {
+			.chatCounter { position: absolute; right: -4px; bottom: -4px; }
+		}
 		.info { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 		&.noMessages {

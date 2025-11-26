@@ -11,7 +11,7 @@ export default {
 
 	sidebar: {
 		default: { min: 240, max: 480, default: 336, threshold: 72 },
-		left: { min: 92, max: 336, default: 284 }
+		left: { min: 92, max: 480, default: 284 }
 	},
 
 	vaultStyle: [ 336, 284, 92, 0 ],

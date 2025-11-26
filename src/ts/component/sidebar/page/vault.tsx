@@ -383,6 +383,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			>
 				<div className="iconWrap">
 					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
+					{isMinimal ? counter : ''}
 				</div>
 				{!isMinimal ? (
 					<div className="info">

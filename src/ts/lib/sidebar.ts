@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard, analytics } from 'Lib';
+import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
+import { SidebarPanel } from 'Interface';
 
 interface SidebarData {
 	width: number;
@@ -164,6 +165,7 @@ class Sidebar {
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, true);
 		this.resizePage(false, newWidth, null, animate);
+		S.Common.vaultClosedSet(true);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -196,6 +198,7 @@ class Sidebar {
 		this.setStyle(I.SidebarPanel.Left, false, { width });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, true);
 		this.resizePage(false, newWidth, null, animate);
+		S.Common.vaultClosedSet(false);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -388,11 +391,53 @@ class Sidebar {
 
 	/**
 	 * Sets the sidebar width and updates layout.
+	 * @param {I.SidebarPanel} panel - Current sidebar panel.
 	 * @param {number} w - The width to set.
 	 */
-	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number, save: boolean): void {
-		this.setData(panel, isPopup, { width: this.limitWidth(panel, width) }, save);
+	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
+		const width = panel == SidebarPanel.Left ? this.getVaultWidth(w) : this.limitWidth(panel, w);
+
+		this.setData(panel, isPopup, { width }, save);
 		this.resizePage(isPopup, null, null, false);
+	};
+
+	getVaultWidth (w: number): number {
+		const { vaultStyle } = S.Common;
+		const resizeStyle = this.getVaultStyleByWidth(w);
+		const breakpoints = J.Size.vaultStyle;
+
+		let ret = this.limitWidth(I.SidebarPanel.Left, w);
+
+		switch (resizeStyle) {
+			case I.VaultStyle.Closed:
+			case I.VaultStyle.Minimal: {
+				ret = breakpoints[I.VaultStyle.Minimal];
+				break;
+			};
+		};
+
+		if (resizeStyle != I.VaultStyle.Closed && Number(vaultStyle) != resizeStyle) {
+			S.Common.vaultStyleSet(resizeStyle);
+		};
+
+		return ret;
+	};
+
+	getVaultStyleByWidth (w: number) {
+		const breakpoints = J.Size.vaultStyle;
+
+		for (let i = 0; i < breakpoints.length - 1; i++) {
+			const current = breakpoints[i];
+			const next = breakpoints[i + 1];
+
+			const midpoint = (current + next) / 2;
+
+			if (w >= midpoint) {
+				return i as I.VaultStyle; // i matches the enum value
+			};
+		};
+
+		return (breakpoints.length - 1) as I.VaultStyle;
 	};
 
 	/**

@@ -45,6 +45,7 @@ class CommonStore {
 	public updateVersionValue = '';
 	public leftSidebarStateValue = { page: '', subPage: '' };
 	public vaultStyleValue = null;
+	public isVaultClosedValue = false;
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -139,6 +140,7 @@ class CommonStore {
 			membershipTiersList: observable,
 			leftSidebarStateValue: observable,
 			vaultStyleValue: observable,
+			isVaultClosedValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
@@ -179,6 +181,7 @@ class CommonStore {
 			timeFormatSet: action,
 			isOnlineSet: action,
 			vaultStyleSet: action,
+			vaultClosedSet: action,
 			membershipTiersListSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
@@ -320,6 +323,17 @@ class CommonStore {
 		};
 		if (undefined === ret) {
 			ret = I.VaultStyle.Default;
+		};
+		return ret;
+	};
+
+	get isVaultClosed (): boolean {
+		let ret = this.isVaultClosedValue;
+		if (ret === null) {
+			ret = Storage.get('isVaultClosed');
+		};
+		if (undefined === ret) {
+			ret = false;
 		};
 		return ret;
 	};
@@ -809,6 +823,15 @@ class CommonStore {
 	vaultStyleSet (v: I.VaultStyle) {
 		this.vaultStyleValue = v;
 		Storage.set('vaultStyle', v);
+	};
+
+	/**
+	 * Sets vault closed state.
+	 * @param {boolean} v - current vault closed state
+	 */
+	vaultClosedSet (v: boolean) {
+		this.isVaultClosedValue = v;
+		Storage.set('isVaultClosed', v);
 	};
 
 	/**
