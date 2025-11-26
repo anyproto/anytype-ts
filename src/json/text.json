@@ -2120,6 +2120,11 @@
 	"widgetSeeAll": "See All",
 	"widgetNoMessages": "No messages yet",
 
+	"widgetRecentModeTitle": "Edited by",
+	"widgetRecentEditMode0": "Anyone",
+	"widgetRecentEditMode1": "Only me",
+	"widgetManageSections": "Manage Sections",
+
 	"phrasePlaceholder": "Please enter your Key",
 
 	"spaceAccessType0": "Private Space",

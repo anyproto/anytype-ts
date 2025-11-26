@@ -16,6 +16,7 @@ const SPACE_KEYS = [
 	'focus',
 	'openUrl',
 	'graphData',
+	'recentEditMode',
 ];
 
 const LOCAL_KEYS = [

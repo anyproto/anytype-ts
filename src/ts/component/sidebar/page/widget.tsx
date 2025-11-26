@@ -11,8 +11,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const { widgets } = S.Block;
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
-	const { sidebarDirection, isPopup } = props;
-	const { space, widgetSections } = S.Common;
+	const { sidebarDirection, isPopup, getId } = props;
+	const { space, widgetSections, recentEditMode } = S.Common;
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -28,7 +28,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	const getSections = () => {
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
-		const recent = S.Record.getMeta(J.Constant.subId.recentEdit, '').total;
+		const recent = S.Record.getMeta(U.Subscription.getRecentSubId(), '').total;
 		const ret = [];
 
 		if (!spaceview.isChat) {
@@ -402,6 +402,15 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		});
 	};
 
+	const onSectionContext = (sectionId: I.WidgetSection) => {
+		U.Menu.widgetSectionContext(sectionId, {
+			element: `#${getId()} #section-${sectionId} .nameWrap`,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Center,
+		});
+	};
+
 	const clear = () => {
 		const body = $(bodyRef.current);
 
@@ -648,7 +657,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 									transition: { duration: 200, delay: i * 0.05 },
 								})}
 							>
-								<div className="nameWrap">
+								<div 
+									className="nameWrap" 
+									onContextMenu={() => onSectionContext(section.id)}
+								>
 									<div className="name" onClick={() => onToggle(section.id)}>
 										<Icon className="arrow" />
 										{section.name}

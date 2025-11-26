@@ -371,6 +371,11 @@ export enum AppDeviceState {
 	Foreground	 = 1,
 };
 
+export enum RecentEditMode {
+	All			 = 0,
+	Me			 = 1,
+};
+
 export interface DragProviderRefProps {
 	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
 	onScroll: () => void;

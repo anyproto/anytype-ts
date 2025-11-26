@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
 import React from 'react';
@@ -1637,6 +1636,55 @@ class UtilMenu {
 			{ id: I.NotificationMode.Nothing },
 		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
 	};
+
+	recentModeOptions (): any[] {
+		return [
+			{ id: I.RecentEditMode.All },
+			{ id: I.RecentEditMode.Me },
+		].map(it => ({ ...it, name: translate(`widgetRecentEditMode${it.id}`) }));
+	};
+
+	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
+		const { recentEditMode } = S.Common;
+		const manage = { id: 'manage', icon: 'manage', name: translate('widgetManageSections') };
+
+		let options: any[] = [];
+		let value = '';
+
+		if (sectionId == I.WidgetSection.RecentEdit) {
+			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
+			options = options.concat(this.recentModeOptions());
+			options.push({ isDiv: true });
+			options.push(manage);
+
+			value = String(recentEditMode);
+		} else {
+			options.push(manage);
+		};
+
+		S.Menu.open('select', {
+			...menuParam,
+			data: {
+				options,
+				value,
+				onSelect: (e: any, element: any) => {
+					switch (element.id) {
+						case 'manage': {
+							break;
+						};
+
+						default: {
+							S.Common.recentEditModeSet(Number(element.id));
+							break;
+						};
+					};
+				},
+			},
+		});
+
+	};
+
+
 
 };
 
