@@ -858,6 +858,7 @@ class UtilMenu {
 			} else {
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetCustomizeSections') });
 				};
 
 				if (!space.isPersonal && !param.noMembers) {
@@ -911,6 +912,7 @@ class UtilMenu {
 
 			S.Menu.open('select', {
 				...menuParam,
+				onOpen: context => this.setContext(context),
 				data: {
 					options: getOptions(inviteLink),
 					onSelect: (e: any, element: any) => {
@@ -1004,6 +1006,11 @@ class UtilMenu {
 											},
 										},
 									});
+									break;
+								};
+
+								case 'manage': {
+									this.menuContext?.close(() => S.Menu.open('widgetSection', menuParam));
 									break;
 								};
 
@@ -1690,11 +1697,7 @@ class UtilMenu {
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
 						case 'manage': {
-							this.menuContext?.close(() => {
-								S.Menu.open('widgetSection', {
-									...menuParam,
-								});
-							});
+							this.menuContext?.close(() => S.Menu.open('widgetSection', menuParam));
 							break;
 						};
 
