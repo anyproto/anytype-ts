@@ -1388,7 +1388,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let inner: any = null;
 
 		switch (type) {
-			case I.ViewType.Grid:
 			case I.ViewType.List: {
 				inner = <AddRow onClick={onAdd} />;
 				break;
