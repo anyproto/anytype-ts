@@ -16,6 +16,7 @@ DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
 DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com'];
 DOMAINS[I.EmbedProcessor.Bandcamp] = [ 'bandcamp.com' ];
+DOMAINS[I.EmbedProcessor.AppleMusic] = [ 'music.apple.com'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -157,6 +158,24 @@ class UtilEmbed {
 	 */
 	getSpotifyHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM} allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" loading="lazy"></iframe>`;
+	};
+
+	/**
+	 * Returns the HTML for embedding an Apple Music audio.
+	 * @param {string} content - The Apple Music URL.
+	 * @returns {string} The HTML iframe string.
+	 */
+	getAppleMusicHtml (content: string): string {
+		let height = 450;
+
+		try {
+			const a = new URL(content);
+			// Apple Music embeds use the query parameter 'i' to point to specific song in an album.
+			// in this case the height of the embed should be smaller since it only shows on single song.
+			if (a.pathname.toLowerCase().includes('album') && a.searchParams.has('i')) height = 150;
+		} catch (e) { /**/ };
+
+		return `<iframe src="${content}" ${IFRAME_PARAM} height=${height} style="background: transparent; width: 100%" allow="autoplay *; encrypted-media *"></iframe>`;
 	};
 
 	/**
@@ -349,7 +368,18 @@ class UtilEmbed {
 				} catch (e) { /**/ };
 				break;
 			};
-			
+
+			case I.EmbedProcessor.AppleMusic: {
+				try {
+					const a = new URL(url);
+					url = `https://embed.music.apple.com/${a.pathname}`;
+
+					const trackId = a.searchParams.get('i');
+					if (trackId) url += `?i=${trackId}`;
+				} catch (e) { /**/ };
+				break;
+			};
+
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
 				if (!a.length) {
@@ -465,6 +495,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Sketchfab,
 			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.AppleMusic,
 			I.EmbedProcessor.Image,
 		].includes(p);
 	};
@@ -497,6 +528,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.AppleMusic,
 			I.EmbedProcessor.Bandcamp,
 		].includes(p);
 	};
@@ -542,6 +574,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.AppleMusic,
 			I.EmbedProcessor.Bandcamp,
 		].includes(p);
 	};

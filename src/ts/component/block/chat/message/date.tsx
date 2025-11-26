@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Label } from 'Component';
@@ -22,7 +22,10 @@ const SectionDate = observer(forwardRef<{}, Props>((props, ref) => {
 				ref={nodeRef} 
 				className="sectionDate"
 				{...U.Common.animationProps({
-					transition: { duration: 0.2 },
+					initial: { y: 20 }, 
+					animate: { y: 0 }, 
+					exit: { y: -20 },
+					transition: { duration: 0.3, delay: 0.1 },
 				})}
 			>
 				<Label text={text} />

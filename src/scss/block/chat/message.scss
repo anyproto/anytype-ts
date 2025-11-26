@@ -5,6 +5,8 @@
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
+	markupcode { color: var(--color-text-primary); }
+
 	> .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 	> .flex {
 		> .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
@@ -46,7 +48,7 @@
 		.textWrapper { line-height: 20px; padding: 6px 12px; }
 		.text { user-select: text !important; display: inline; }
 		.time { 
-			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; 
+			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-white60); float: right; padding-left: 8px; padding-top: 4px; 
 			display: flex; align-items: center; gap: 0px 4px;
 		}
 
@@ -108,7 +110,7 @@
 		.reaction {
 			&:hover { background-color: var(--color-shape-highlight-dark); }
 			&.isMulti { gap: 0px 2px; }
-			&.isMe { background-color: var(--color-bg-tag-lime); }
+			&.isSelf { color: #fff; background-color: var(--color-system-accent-100); }
 
 			.count { min-width: 18px; text-align: center; user-select: none !important; cursor: default; }
 		}
@@ -132,7 +134,7 @@
 		.bubbleInner { flex-direction: row-reverse; }
 		.bubbleInner {
 			> .controls { flex-direction: row-reverse; }
-			.bubble { background-color: var(--color-bg-tag-lime); }
+			.bubble { color: #fff; background-color: var(--color-system-accent-100); }
 		}
 
 		.reactions { justify-content: flex-end; }

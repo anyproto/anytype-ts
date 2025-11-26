@@ -154,7 +154,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	});
 
 	return (
-		<div 
+		<div
 			ref={nodeRef} 
 			className="group"
 		>

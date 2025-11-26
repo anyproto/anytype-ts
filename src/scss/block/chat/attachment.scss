@@ -4,8 +4,9 @@
 
 	.attachment {
 		position: relative; background: var(--color-bg-primary); min-width: var(--width-attachment); height: 72px; border-radius: 12px; 
-		display: flex; flex-direction: row; align-items: center;
+		display: flex; flex-direction: row; align-items: center; color: var(--color-text-primary);
 	}
+	.attachment * { user-select: none; cursor: default; }
 
 	.attachment {
 		.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; width: 100%; }

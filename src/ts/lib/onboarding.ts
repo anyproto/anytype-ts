@@ -86,13 +86,20 @@ class Onboarding {
 	};
 
 	initWidgetSections (unread: boolean, recentEdit: boolean) {
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Unread), unread);
-		Storage.setToggle('widgetSection', String(I.WidgetSection.RecentEdit), recentEdit);
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Pin), false);
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), false);
+		const values = {
+			[I.WidgetSection.Unread]: unread,
+			[I.WidgetSection.RecentEdit]: recentEdit,
+			[I.WidgetSection.Pin]: false,
+			[I.WidgetSection.Type]: false,
+		};
 
+		for (const k in values) {
+			const current = S.Common.getWidgetSection(Number(k));
+			current.isClosed = values[k];
+		};
+
+		S.Common.widgetSectionsSet(S.Common.widgetSections);
 		S.Common.setLeftSidebarState('vault', 'widget');
-		$(window).trigger('checkWidgetToggles');
 	};
 
 	/**

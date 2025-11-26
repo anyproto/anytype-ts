@@ -76,16 +76,7 @@ const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((prop
 					U.Common.onInviteRequest();
 				} else
 				if (!space.isAccountRemoving && !space.isAccountDeleted) {
-					S.Popup.open('confirm', {
-						data: {
-							title: translate('popupConfirmDuplicateSpace'),
-							textConfirm: translate('commonOpenSpace'),
-							textCancel: translate('commonCancel'),
-							onConfirm: () => {
-								U.Router.switchSpace(message.spaceId, '', false, {}, false);
-							},
-						},
-					});
+					U.Router.switchSpace(message.spaceId, '', false, {}, false);
 				} else {
 					request(message);
 				};

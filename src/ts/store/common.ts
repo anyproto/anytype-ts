@@ -47,6 +47,22 @@ class CommonStore {
 	public vaultStyleValue = null;
 	public isVaultClosedValue = false;
 
+	public recentEditModeValue: I.RecentEditMode = null;
+	public hideSidebarValue = null;
+	public pinValue = null;
+	public firstDayValue = null;
+	public gallery = {
+		categories: [],
+		list: [],
+	};
+	public diffValue: I.Diff[] = [];
+	public refs: Map<string, any> = new Map();
+	public windowId = '';
+	public windowIsFocused = true;
+	public routeParam: any = {};
+	public openObjectIds: Map<string, Set<string>> = new Map();
+	public widgetSectionsValue: I.WidgetSectionParam[] = null;
+
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
 			rootId: '',
@@ -69,20 +85,6 @@ class CommonStore {
 			back: '',
 		},
 	};
-	public hideSidebarValue = null;
-	public pinValue = null;
-	public firstDayValue = null;
-	public gallery = {
-		categories: [],
-		list: [],
-	};
-	public diffValue: I.Diff[] = [];
-	public refs: Map<string, any> = new Map();
-	public windowId = '';
-	public windowIsFocused = true;
-	public routeParam: any = {};
-	public openObjectIds: Map<string, Set<string>> = new Map();
-	public widgetSectionsValue: I.WidgetSection[] = [];
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -149,6 +151,7 @@ class CommonStore {
 			firstDayValue: observable,
 			updateVersionValue: observable,
 			widgetSectionsValue: observable,
+			recentEditModeValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -165,6 +168,7 @@ class CommonStore {
 			pin: computed,
 			firstDay: computed,
 			widgetSections: computed,
+			recentEditMode: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -189,6 +193,7 @@ class CommonStore {
 			pinSet: action,
 			firstDaySet: action,
 			widgetSectionsSet: action,
+			recentEditModeSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -259,6 +264,14 @@ class CommonStore {
 
 	get emailConfirmationTime (): number {
 		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
+	};
+
+	get recentEditMode (): I.RecentEditMode {
+		let ret = this.recentEditModeValue;
+		if (ret === null) {
+			ret = Storage.get('recentEditMode');
+		};
+		return Number(ret) || I.RecentEditMode.All;
 	};
 
 	get fullscreenObject (): boolean {
@@ -388,7 +401,20 @@ class CommonStore {
 		return String(this.updateVersionValue || '');
 	};
 
-	get widgetSections (): I.WidgetSection[] {
+	get widgetSections (): I.WidgetSectionParam[] {
+		if (this.widgetSectionsValue === null) {
+			this.widgetSectionsValue = Storage.get('widgetSections') || [];
+		};
+
+		for (const id in I.WidgetSection) {
+			const n = Number(id);
+			if (isNaN(n)) {
+				continue
+			};
+			if (!this.widgetSectionsValue.find(it => it.id == n)) {
+				this.widgetSectionsValue.push({ id: n, isClosed: false, isHidden: false });
+			};
+		};
 		return this.widgetSectionsValue || [];
 	};
 
@@ -1033,16 +1059,33 @@ class CommonStore {
 		this.windowIsFocused = Boolean(v);
 	};
 
-	nullifySpaceKeys () {
-		this.defaultType = null;
+	recentEditModeSet (v: I.RecentEditMode) {
+		this.recentEditModeValue = Number(v) || I.RecentEditMode.All;
+		Storage.set('recentEditMode', this.recentEditModeValue);
 	};
 
-	widgetSectionsSet (sections: I.WidgetSection[]) {
+	nullifySpaceKeys () {
+		this.defaultType = null;
+		this.widgetSectionsValue = null;
+	};
+
+	widgetSectionsSet (sections: I.WidgetSectionParam[]) {
 		this.widgetSectionsValue = sections || [];
+		Storage.set('widgetSections', this.widgetSectionsValue);
 	};
 
 	checkWidgetSection (id: I.WidgetSection): boolean {
-		return this.widgetSections.includes(id);
+		const section = this.widgetSections.find(it => it.id == id);
+		return section && !section.isClosed && !section.isHidden;
+	};
+
+	getWidgetSection (id: I.WidgetSection) {
+		return this.widgetSections.find(it => it.id == id);
+	};
+
+	updateWidgetSection (param: Partial<I.WidgetSectionParam>) {
+		set(this.getWidgetSection(param.id), param);
+		this.widgetSectionsSet(this.widgetSections);
 	};
 
 };

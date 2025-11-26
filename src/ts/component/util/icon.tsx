@@ -1,6 +1,7 @@
-import React, { MouseEvent, DragEvent, forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { MouseEvent, forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
-import { I, Preview } from 'Lib';
+import { motion, AnimatePresence } from 'motion/react';
+import { I, U, Preview } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -11,14 +12,16 @@ interface Props {
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
+	animatePresence?: boolean;
+	animationProps?: any;
 	onClick?(e: MouseEvent): void;
 	onDoubleClick?(e: MouseEvent): void;
 	onMouseDown?(e: MouseEvent): void;
 	onMouseEnter?(e: MouseEvent): void;
 	onMouseLeave?(e: MouseEvent): void;
 	onMouseMove?(e: MouseEvent): void;
-	onDragStart?(e: DragEvent): void;
-	onDragEnd?(e: DragEvent): void;
+	onDragStart?(e: any): void;
+	onDragEnd?(e: any): void;
 	onContextMenu?(e: MouseEvent): void;
 };
 
@@ -30,6 +33,8 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	tooltipParam = {},
 	inner = null,
 	draggable = false,
+	animatePresence = false,
+	animationProps = {},
 	style = {},
 	onClick,
 	onDoubleClick,
@@ -89,26 +94,37 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		return () => Preview.tooltipHide(false);
 	}, []);
 
+	let animation = {};
+	if (animatePresence) {
+		animation = U.Common.animationProps({
+			transition: { duration: 0.2, delay: 0.1 },
+			...animationProps,
+		});
+	};
+
 	return (
-		<div 
-			ref={ref || nodeRef}
-			id={id} 
-			draggable={draggable} 
-			className={[ 'icon', className ].join(' ')} 
-			style={style}
-			onMouseDown={onMouseDownHandler} 
-			onMouseEnter={onMouseEnterHandler} 
-			onMouseLeave={onMouseLeaveHandler} 
-			onMouseMove={onMouseMove}
-			onContextMenu={onContextMenuHandler} 
-			onDragStart={onDragStart} 
-			onDragEnd={onDragEnd}
-			onClick={onClick} 
-			onDoubleClick={onDoubleClick}
-		>
-			{arrow ? <div className="icon arrow" /> : ''}
-			{inner}
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={ref || nodeRef}
+				id={id} 
+				draggable={draggable} 
+				className={[ 'icon', className ].join(' ')} 
+				style={style}
+				onMouseDown={onMouseDownHandler} 
+				onMouseEnter={onMouseEnterHandler} 
+				onMouseLeave={onMouseLeaveHandler} 
+				onMouseMove={onMouseMove}
+				onContextMenu={onContextMenuHandler} 
+				onDragStart={onDragStart} 
+				onDragEnd={onDragEnd}
+				onClick={onClick} 
+				onDoubleClick={onDoubleClick}
+				{...animation}
+			>
+				{arrow ? <div className="icon arrow" /> : ''}
+				{inner}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 });

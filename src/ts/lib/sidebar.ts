@@ -590,6 +590,7 @@ class Sidebar {
 			this.header.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 			this.header.toggleClass('withSidebarSubLeft', !dataSubLeft.isClosed);
 
+			this.subPageWrapperLeft.toggleClass('sidebarAnimation', animate);
 			this.subPageWrapperLeft.toggleClass('withSidebarLeft', !dataLeft.isClosed);
 
 			this.dummyLeft.css({ width: widthLeft });

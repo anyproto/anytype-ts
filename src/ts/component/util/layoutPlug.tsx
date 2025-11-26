@@ -16,7 +16,7 @@ const LayoutPlug = forwardRef<{}, Props>(({
 	layoutFormat = I.LayoutFormat.Page,
 	recommendedLayout = I.ObjectLayout.Page,
 	recommendedFileRelations = [],
-	viewType= I.ViewType.Grid,
+	viewType = I.ViewType.Grid,
 	layoutWidth = 0,
 	isPopup = false,
 	onClick,

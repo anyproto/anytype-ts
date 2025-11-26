@@ -209,13 +209,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			default: {
 				if (!object.isTmp) {
-					U.Object.openPopup(object, {
-						onClose: () => {
-							if (updateAttachments) {
-								updateAttachments();
-							};
-						},
-					});
+					U.Object.openConfig(object, { onClose: updateAttachments });
 				};
 				break;
 			};
