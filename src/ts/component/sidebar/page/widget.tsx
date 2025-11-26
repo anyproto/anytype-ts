@@ -395,7 +395,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		const section = `#${getId()} #section-${sectionId}`
 		const wrap = `${section} .nameWrap`;
-		const element = `${section} .icon.more`;
+		const element = `${section} .buttons`;
 
 		U.Menu.widgetSectionContext(sectionId, {
 			element,
