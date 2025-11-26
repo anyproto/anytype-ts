@@ -93,7 +93,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	};
 
 	const getItems = (): any[] => {
-		const sections = U.Menu.widgetSections().map(it => {
+		const sections = U.Menu.widgetSections().filter(it => it.id != I.WidgetSection.Unread).map(it => {
 			const param = widgetSections.find(p => p.id == it.id) || {};
 			return { ...it, ...param };
 		});

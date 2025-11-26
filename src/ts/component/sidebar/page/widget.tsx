@@ -29,7 +29,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
 		const recent = S.Record.getMeta(U.Subscription.getRecentSubId(), '').total;
-		const ret = [];
+		const ret = [] as I.WidgetSection[];
 		const sections = U.Menu.widgetSections();
 
 		if (!spaceview.isChat) {
@@ -388,6 +388,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const onSectionContext = (sectionId: I.WidgetSection) => {
+		if (sectionId == I.WidgetSection.Unread) {
+			return;
+		};
+
 		const section = `#${getId()} #section-${sectionId}`
 		const wrap = `${section} .nameWrap`;
 		const element = `${section} .icon.more`;
@@ -629,6 +633,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
+					const isSectionUnread = section.id == I.WidgetSection.Unread;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 					const list = getWidgets(section.id);
 					const ws: any = widgetSections.find(it => it.id == section.id) || {};
@@ -642,7 +647,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 						if (canWrite) {
 							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 						};
-					} else {
+					} else 
+					if (!isSectionUnread) {
 						buttons = <Icon className="more" onClick={() => onSectionContext(section.id)} />;
 					};
 

@@ -1676,6 +1676,12 @@ class UtilMenu {
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },
 		].sort((c1, c2) => {
+			const isUnread1 = c1.id == I.WidgetSection.Unread;
+			const isUnread2 = c2.id == I.WidgetSection.Unread;
+			
+			if (isUnread1 && !isUnread2) return -1;
+			if (!isUnread1 && isUnread2) return 1;
+			
 			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
 			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
 
