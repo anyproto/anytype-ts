@@ -556,6 +556,8 @@ class UtilMenu {
 	sectionsFilter (sections: any[], filter: string) {
 		const f = U.Common.regexEscape(filter);
 		const regS = new RegExp(`^${f}`, 'i');
+		const regC = new RegExp(f, 'gi');
+
 		const getWeight = (s: string) => {
 			let w = 0;
 			if (!s) {
@@ -566,7 +568,10 @@ class UtilMenu {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
-				w = 1000;
+				w += 1000;
+			} else 
+			if (s.match(regC)) {
+				w += 100;
 			};
 			return w;
 		};
@@ -595,7 +600,7 @@ class UtilMenu {
 
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
-						if (alias.match(regS)) {
+						if (alias.match(regC) || alias.match(regS)) {
 							c._sortWeight_ += getWeight(alias);
 							ret = true;
 							break;
@@ -603,15 +608,17 @@ class UtilMenu {
 					};
 				};
 
-				if (!ret && c.name && c.name.match(regS)) {
+				if (!ret && c.name && (c.name.match(regC) || c.name.match(regS))) {
 					ret = true;
 					c._sortWeight_ += getWeight(c.name);
 				};
 
-				if (!ret && c.description && c.description.match(regS)) {
+				/*
+				if (!ret && c.description && (c.description.match(regC) || c.description.match(regS))) {
 					ret = true;
 					c._sortWeight_ += getWeight(c.description);
 				};
+				*/
 
 				return ret; 
 			});
