@@ -44,7 +44,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			e.preventDefault();
 
 			if (item) {
-			//	onSwitch(e, item, !item.isVisible);
+				onSwitch(item);
 			};
 			ret = true;
 		});
@@ -80,7 +80,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		};
 	};
 
-	const onSwitch = (e: any, item: any, v: boolean) => {
+	const onSwitch = (item: any) => {
 		const id = Number(item.id);
 		const section = widgetSections.find(it => it.id == id);
 
@@ -88,11 +88,11 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			return;
 		};
 
-		section.isHidden = !v;
+		section.isHidden = !section.isHidden;
 		S.Common.widgetSectionsSet([ ...widgetSections ]);
 	};
 
-	const getItems = () => {
+	const getItems = (): any[] => {
 		const sections = U.Menu.widgetSections().map(it => {
 			const param = widgetSections.find(p => p.id == it.id) || {};
 			return { ...it, ...param };
@@ -153,7 +153,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 					</span>
 					<Icon 
 						className={[ 'eye', (!item.isHidden ? 'on' : 'off') ].join(' ')} 
-						onClick={e => onSwitch(e, item, item.isHidden)} 
+						onClick={e => onSwitch(item)} 
 					/>
 				</div>
 			);
