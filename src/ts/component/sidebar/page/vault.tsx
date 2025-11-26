@@ -20,7 +20,7 @@ const HEIGHT_ITEM_UPDATE = 112;
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion, space, vaultMessages } = S.Common;
+	const { updateVersion, space, vaultStyle } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -35,8 +35,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const canCreate = U.Space.canCreateSpace();
+	const isMinimal = vaultStyle == I.VaultStyle.Minimal;
+	const vaultMessages = vaultStyle == I.VaultStyle.Default;
 	const cnh = [ 'head' ];
-	const cnb = [ 'body' ];
+	const cnb = [ 'body', `vaultStyle${I.VaultStyle[vaultStyle]}` ];
+	const cnf = [ 'bottom', `vaultStyle${I.VaultStyle[vaultStyle]}` ];
 
 	if (vaultMessages) {
 		cnh.push('withMessages');
@@ -381,9 +384,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="iconWrap">
 					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
 				</div>
-				<div className="info">
-					{info}
-				</div>
+				{!isMinimal ? (
+					<div className="info">
+						{info}
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -454,9 +459,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const onVaultContext = (e: any) => {
-		U.Menu.vaultMode({
+		U.Menu.vaultStyle({
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-			className: 'vaultMode fixed',
+			className: 'vaultStyle fixed',
 			classNameWrap: 'fromSidebar',
 		});
 	};
@@ -485,7 +490,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					{canCreate ? (
+					{canCreate && !isMinimal ? (
 						<Icon
 							id="button-create-space"
 							className="plus withBackground"
@@ -495,18 +500,20 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					) : ''}
 				</div>
 			</div>
-			<div className="filterWrapper">
-				<Filter 
-					ref={filterRef}
-					icon="search"
-					className="outlined round"
-					placeholder={translate('commonSearch')}
-					onChange={onFilterChange}
-					onClear={onFilterClear}
-				/>
-			</div>
+			{!isMinimal ? (
+				<div className="filterWrapper">
+					<Filter
+						ref={filterRef}
+						icon="search"
+						className="outlined round"
+						placeholder={translate('commonSearch')}
+						onChange={onFilterChange}
+						onClear={onFilterClear}
+					/>
+				</div>
+			) : ''}
 			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
-				{!items.length ? (
+				{!items.length && !isMinimal ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
 
@@ -552,31 +559,33 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				</InfiniteLoader>
 			</div>
 
-			<div className="bottom">
+			<div className={cnf.join(' ')}>
 				<div className="grad" />
 				<div className="sides">
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
 							<IconObject object={settings} size={32} iconSize={32} />
-							<ObjectName object={settings} />
+							{!isMinimal ? <ObjectName object={settings} /> : ''}
 						</div>
 					</div>
 
-					<div className="side right">
-						<Icon
-							className="gallery"
-							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
-							onClick={onGallery}
-						/>
+					{!isMinimal ? (
+						<div className="side right">
+							<Icon
+								className="gallery"
+								tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+								onClick={onGallery}
+							/>
 
-						<Button
-							id="button-help"
-							className="help"
-							text="?"
-							tooltipParam={{ text: translate('commonHelp') }}
-							onClick={onHelp}
-						/>
-					</div>
+							<Button
+								id="button-help"
+								className="help"
+								text="?"
+								tooltipParam={{ text: translate('commonHelp') }}
+								onClick={onHelp}
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		</>

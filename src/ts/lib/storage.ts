@@ -742,18 +742,6 @@ class Storage {
 
 		return obj;
 	};
-
-	setVaultMode (v: I.VaultMode) {
-		this.set('vaultMode', v);
-	};
-
-	getVaultMode () {
-		return this.get('vaultMode') || I.VaultMode.Default;
-	};
-
-	getVaultModeByWidth () {
-
-	};
 	
 };
 

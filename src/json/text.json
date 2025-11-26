@@ -1939,10 +1939,10 @@
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
 
-	"menuVaultMode0": "Message Preview",
-	"menuVaultMode1": "Compact",
-	"menuVaultMode2": "Stripe",
-	"menuVaultModeCloseSidebar": "Close sidebar",
+	"menuVaultStyle0": "Message Preview",
+	"menuVaultStyle1": "Compact",
+	"menuVaultStyle2": "Stripe",
+	"menuVaultStyleCloseSidebar": "Close sidebar",
 
 	"previewEdit": "Edit Link",
 

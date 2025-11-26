@@ -641,6 +641,21 @@ class Sidebar {
 		return ret;
 	};
 
+	updateVaultStyle () {
+		const panel = I.SidebarPanel.Left;
+		const { isClosed } = this.getData(panel);
+		const { vaultStyle } = S.Common;
+
+		let t = 0;
+		if (isClosed) {
+			t = J.Constant.delay.sidebar;
+			this.open(panel);
+		};
+		window.setTimeout(() => {
+			this.setWidth(panel, false, J.Size.vaultStyle[vaultStyle], true);
+		}, t);
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();

@@ -43,8 +43,8 @@ class CommonStore {
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
 	public updateVersionValue = '';
-	public vaultMessagesValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
+	public vaultStyleValue = null;
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -138,6 +138,7 @@ class CommonStore {
 			spaceId: observable,
 			membershipTiersList: observable,
 			leftSidebarStateValue: observable,
+			vaultStyleValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
@@ -145,7 +146,6 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
-			vaultMessagesValue: observable,
 			widgetSectionsValue: observable,
 			config: computed,
 			preview: computed,
@@ -162,7 +162,6 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
-			vaultMessages: computed,
 			widgetSections: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
@@ -179,13 +178,13 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
+			vaultStyleSet: action,
 			membershipTiersListSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
-			vaultMessagesSet: action,
 			widgetSectionsSet: action,
 		});
 
@@ -314,6 +313,17 @@ class CommonStore {
 		return Number(ret) || I.LinkCardStyle.Text;
 	};
 
+	get vaultStyle (): I.VaultStyle {
+		let ret = this.vaultStyleValue;
+		if (ret === null) {
+			ret = Storage.get('vaultStyle');
+		};
+		if (undefined === ret) {
+			ret = I.VaultStyle.Default;
+		};
+		return ret;
+	};
+
 	get dateFormat (): I.DateFormat {
 		let ret = this.dateFormatValue;
 		
@@ -362,10 +372,6 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
-	};
-
-	get vaultMessages (): any {
-		return this.boolGet('vaultMessages');
 	};
 
 	get widgetSections (): I.WidgetSection[] {
@@ -627,8 +633,8 @@ class CommonStore {
 
 	/**
 	 * Sets the show sidebar left value.
-	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @param {string} page - The page to set, null if no page is shown
+	 * @param {string} page - The page to set, '' if no page is shown
+	 * @param {string} subPage - The subPage to set, '' if no page is shown
 	 */
 	setLeftSidebarState (page: string, subPage: string) {
 		set(this.leftSidebarStateValue, { page, subPage });
@@ -797,6 +803,15 @@ class CommonStore {
 	};
 
 	/**
+	 * Sets vaultDisplayMode.
+	 * @param {I.VaultStyle} v - current vault display mode
+	 */
+	vaultStyleSet (v: I.VaultStyle) {
+		this.vaultStyleValue = v;
+		Storage.set('vaultStyle', v);
+	};
+
+	/**
 	 * Sets the date format value.
 	 * @param {I.DateFormat} v - The date format value.
 	 */
@@ -873,14 +888,6 @@ class CommonStore {
 	 */
 	dataPathSet (v: string) {
 		this.dataPathValue = String(v || '');
-	};
-
-	/**
-	 * Sets the vault messages value.
-	 * @param {boolean} v - The vault messages value.
-	 */
-	vaultMessagesSet (v: boolean) {
-		this.boolSet('vaultMessages', v);
 	};
 
 	/**

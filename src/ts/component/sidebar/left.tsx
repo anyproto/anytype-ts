@@ -39,6 +39,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
+	const { vaultStyle } = S.Common;
 	const cn = [ 'sidebar', 'left' ];
 
 	const getComponentId = (id: string) => {
@@ -184,9 +185,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	};
 
 	const onSidebarToggleContext = (e: any) => {
-		U.Menu.vaultMode({
+		U.Menu.vaultStyle({
 			element: '#sidebarLeftButton',
-			className: 'vaultMode fixed',
+			className: 'vaultStyle fixed',
 			classNameWrap: 'fromSidebar',
 		});
 	};
@@ -202,6 +203,10 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			sidebar.resizePage(false, null, null, false);
 		};
 	}, [ page, subPage ]);
+
+	useEffect(() => {
+		sidebar.updateVaultStyle();
+	}, [ vaultStyle, sidebar.getData(I.SidebarPanel.Left).isClosed ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,

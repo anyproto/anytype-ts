@@ -1622,44 +1622,39 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
-	vaultMode (param: I.MenuParam, noClose?: boolean, route?: string) {
+	vaultStyleOptions (noClose?: boolean, noCheckbox?: boolean) {
 		const panel = I.SidebarPanel.Left;
 		const { isClosed } = sidebar.getData(panel);
 		const options: any[] = [
-			{ id: I.VaultMode.Default },
-			{ id: I.VaultMode.Compact },
-			{ id: I.VaultMode.Minimal },
+			{ id: I.VaultStyle.Default },
+			{ id: I.VaultStyle.Compact },
+			{ id: I.VaultStyle.Minimal },
 		].map((it) => ({
 			...it,
-			name: translate(`menuVaultMode${it.id}`),
-			checkbox: it.id == Storage.getVaultMode(),
+			name: translate(`menuVaultStyle${it.id}`),
+			checkbox: (noCheckbox || isClosed) ? false : Number(it.id) == Number(S.Common.vaultStyle),
 		}));
 
 		if (!noClose && !isClosed) {
 			options.push({ isDiv: true });
-			options.push({ id: I.VaultMode.Closed, name: translate('menuVaultModeCloseSidebar') });
+			options.push({ id: 'close', name: translate('menuVaultStyleCloseSidebar') });
 		};
 
+		return options;
+	};
+
+	vaultStyle (param: I.MenuParam, noClose?: boolean, route?: string) {
 		S.Menu.open('select', {
 			...param,
 			data: {
-				options,
+				options: this.vaultStyleOptions(noClose),
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					Storage.setVaultMode(item.id);
-
-					if (item.id == I.VaultMode.Closed) {
-						sidebar.close(panel);
-					} else {
-						let t = 0;
-						if (isClosed) {
-							t = J.Constant.delay.sidebar;
-							sidebar.open(panel);
-						};
-						window.setTimeout(() => {
-							sidebar.setWidth(panel, false, J.Size.vaultMode[item.id], false);
-						}, t);
+					if (item.id == 'close') {
+						sidebar.close(I.SidebarPanel.Left);
+						return;
 					};
+					S.Common.vaultStyleSet(item.id);
 				},
 			},
 		})

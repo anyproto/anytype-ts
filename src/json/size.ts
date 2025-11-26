@@ -14,7 +14,7 @@ export default {
 		left: { min: 92, max: 336, default: 284 }
 	},
 
-	vaultMode: [ 336, 284, 92, 0 ],
+	vaultStyle: [ 336, 284, 92, 0 ],
 
 	table: {
 		min: 50,
