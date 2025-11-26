@@ -101,6 +101,16 @@ html.platformWindows {
 
 html.platformMac {
 	.sidebar {
+		.subPageWrapper.sidebarAnimation {
+			.sidebarPage {
+				> .head {
+					.side.left { transition: padding-left $transitionSidebarTime linear; }
+				}
+			}
+		}
+	}
+
+	.sidebar {
 		.subPageWrapper:not(.withSidebarLeft) {
 			.sidebarPage {
 				> .head {

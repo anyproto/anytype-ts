@@ -325,8 +325,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.loadData(viewId, 0, true);
 		};
 
-		console.log($(this.node).find(`#add-row-${viewId}`));
-
 		this.init();
 		this.resize();
 		this.rebind();
