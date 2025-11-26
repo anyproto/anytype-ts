@@ -13,6 +13,7 @@ interface Props {
 	draggable?: boolean;
 	style?: any;
 	animatePresence?: boolean;
+	animationProps?: any;
 	onClick?(e: MouseEvent): void;
 	onDoubleClick?(e: MouseEvent): void;
 	onMouseDown?(e: MouseEvent): void;
@@ -33,6 +34,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 	inner = null,
 	draggable = false,
 	animatePresence = false,
+	animationProps = {},
 	style = {},
 	onClick,
 	onDoubleClick,
@@ -92,10 +94,11 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		return () => Preview.tooltipHide(false);
 	}, []);
 
-	let animationProps = {};
+	let animation = {};
 	if (animatePresence) {
-		animationProps = U.Common.animationProps({
+		animation = U.Common.animationProps({
 			transition: { duration: 0.2, delay: 0.1 },
+			...animationProps,
 		});
 	};
 
@@ -116,7 +119,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 				onDragEnd={onDragEnd}
 				onClick={onClick} 
 				onDoubleClick={onDoubleClick}
-				{...animationProps}
+				{...animation}
 			>
 				{arrow ? <div className="icon arrow" /> : ''}
 				{inner}
