@@ -346,18 +346,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const body = $(bodyRef.current);
 		const element = body.find(`#section-${id}`);
 		const list = element.find('> .items');
-		const section = widgetSections.find(it => it.id == id);
+		const sections = U.Common.objectCopy(widgetSections);
+		const section = sections.find(it => it.id == id);
 		const isClosed = section.isClosed;
 
 		section.isClosed = !isClosed;
 		element.toggleClass('isOpen', isClosed);
 
 		if (isClosed) {
-			S.Common.widgetSectionsSet(widgetSections);
+			S.Common.widgetSectionsSet(sections);
 			U.Common.toggle(list, 200, false);
 		} else {
 			U.Common.toggle(list, 200, true, () => {
-				S.Common.widgetSectionsSet(widgetSections);
+				S.Common.widgetSectionsSet(sections);
 			});
 		};
 	};
@@ -642,9 +643,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
 						};
 					} else {
-						buttons = (
-							<Icon className="more" onClick={() => onSectionContext(section.id)} />
-						);
+						buttons = <Icon className="more" onClick={() => onSectionContext(section.id)} />;
 					};
 
 					return (

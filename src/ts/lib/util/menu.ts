@@ -3,6 +3,17 @@ import { observable } from 'mobx';
 import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Preview, Storage } from 'Lib';
 import React from 'react';
 
+interface SpaceContextParam {
+	isSharePage?: boolean; 
+	noManage?: boolean; 
+	noMembers?: boolean; 
+	withPin?: boolean; 
+	noShare?: boolean; 
+	noBin?: boolean; 
+	noDivider?: boolean;
+	route: string;
+};
+
 class UtilMenu {
 
 	menuContext = null;
@@ -822,10 +833,12 @@ class UtilMenu {
 		})
 	};
 
-	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: any) {
+
+	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
 		const { targetSpaceId } = space;
+		const { isSharePage, noManage, noMembers, withPin, noShare, noBin, noDivider, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -841,7 +854,7 @@ class UtilMenu {
 				archive: [],
 			};
 
-			if (param.isSharePage) {
+			if (isSharePage) {
 				if (inviteLink) {
 					sections.share = shareOptions;
 				};
@@ -858,14 +871,17 @@ class UtilMenu {
 			} else {
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+				};
+
+				if (!noManage) {
 					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
-				if (!space.isPersonal && !param.noMembers) {
+				if (!space.isPersonal && !noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
-				if (param.withPin) {
+				if (withPin) {
 					if (space.orderId) {
 						sections.general.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
 					} else {
@@ -881,11 +897,11 @@ class UtilMenu {
 					};
 				};
 
-				if (!param.noShare && inviteLink) {
+				if (!noShare && inviteLink) {
 					sections.share = shareOptions;
 				};
 
-				if (!param.noBin) {
+				if (!noBin) {
 					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 				};
 
@@ -897,7 +913,7 @@ class UtilMenu {
 			let options: any[] = [];
 			Object.values(sections).forEach((section, idx) => {
 				if (section.length) {
-					if (options.length && !param.noDivider) {
+					if (options.length && !noDivider) {
 						options.push({ isDiv: true, id: `menu-divider-${idx}` });
 					};
 					options = options.concat(section);
@@ -923,7 +939,7 @@ class UtilMenu {
 									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
 
 									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route: param.route });
+									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
 									break;
 								};
 
@@ -935,13 +951,13 @@ class UtilMenu {
 										C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
 									});
 
-									analytics.event('PinSpace', { route: param.route });
+									analytics.event('PinSpace', { route });
 									break;
 								};
 
 								case 'unpin': {
 									C.SpaceUnsetOrder(space.id);
-									analytics.event('UnpinSpace', { route: param.route });
+									analytics.event('UnpinSpace', { route });
 									break;
 								};
 
@@ -977,13 +993,13 @@ class UtilMenu {
 								case 'qr': {
 									S.Popup.open('inviteQr', { data: { link: inviteLink } });
 									analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-									analytics.event('ScreenQr', { route: analytics.route.inviteLink });
+									analytics.event('ScreenQr', { route });
 									break;
 								};
 
 								case 'link': {
 									U.Common.copyToast('', inviteLink, translate('toastInviteCopy'));
-									analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceShare });
+									analytics.event('ClickShareSpaceCopyLink', { route });
 									break;
 								};
 

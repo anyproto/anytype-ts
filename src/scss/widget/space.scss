@@ -38,7 +38,8 @@
 	}
 
 	.spaceData,
-	.spaceStream {
+	.spaceStream,
+	.spaceOneToOne {
 		.head { padding: 0px 0px 16px 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 		.head {
 			.iconObject { flex-shrink: 0; }

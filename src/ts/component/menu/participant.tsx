@@ -5,7 +5,7 @@ import { I, U, C, S, translate } from 'Lib';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 	
-	const { param } = props;
+	const { param, close } = props;
 	const { data } = param;
 	const { object } = data;
 	const { config } = S.Common;
@@ -19,7 +19,6 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	};
 
 	const onDmClick = () => {
-		const usecase = I.Usecase.ChatSpace;
 		const uxType = I.SpaceUxType.OneToOne;
 		const details: any = {
 			oneToOneIdentity: object.identity,
@@ -28,25 +27,23 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 			spaceDashboardId: I.HomePredefinedId.Chat,
 		};
 
-		C.WorkspaceCreate(details, usecase, (message: any) => {
+		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
 			if (message.error.code) {
-				console.error(message.error);
 				return;
 			};
 
-			C.WorkspaceSetInfo(message.objectId, details, () => {
+			const objectId = message.objectId;
+
+			C.WorkspaceSetInfo(objectId, details, (message: any) => {
 				if (message.error.code) {
-					console.error(message.error);
 					return;
 				};
 
-				U.Router.switchSpace(message.objectId, '', true, {
-					onRouteChange: () => {
-						U.Space.openDashboard({ replace: true });
-					},
-				}, false);
+				U.Router.switchSpace(objectId, '', true, {}, false);
 			});
 		});
+
+		close();
 	};
 
 	useEffect(() => load(), []);

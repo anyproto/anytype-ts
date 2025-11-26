@@ -82,7 +82,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 	const onSwitch = (item: any) => {
 		const id = Number(item.id);
-		const section = widgetSections.find(it => it.id == id);
+		const section = U.Common.objectCopy(widgetSections).find(it => it.id == id);
 
 		if (!section) {
 			return;

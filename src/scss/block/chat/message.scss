@@ -5,6 +5,8 @@
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
+	markupcode { color: var(--color-text-primary); }
+
 	> .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 	> .flex {
 		> .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
