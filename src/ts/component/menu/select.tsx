@@ -288,7 +288,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !item.isSection && !item.isDiv) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
 		};

@@ -34,10 +34,19 @@
 					&:hover {
 						.icon.plus { background-image: url('~img/icon/plus/widgetSection1.svg'); }
 					}
-				}						
+				}	
+				
+				.icon { flex-shrink: 0; }
+				.icon.more { 
+					width: 28px; height: 28px; background-image: url('~img/icon/widget/sectionMore0.svg');
+					margin-right: -8px; background-size: 12px;
+				}
+				.icon.more {
+					&:hover, &.hover { background-image: url('~img/icon/widget/sectionMore1.svg'); }
+				}
 			}
 
-			&:hover {
+			&:hover, &.active {
 				.buttons { opacity: 1; }
 			}
 		}

@@ -1,7 +1,6 @@
 import $ from 'jquery';
-import { arrayMove } from '@dnd-kit/sortable';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Preview, Storage } from 'Lib';
 import React from 'react';
 
 class UtilMenu {
@@ -859,6 +858,7 @@ class UtilMenu {
 			} else {
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
 				if (!space.isPersonal && !param.noMembers) {
@@ -912,6 +912,7 @@ class UtilMenu {
 
 			S.Menu.open('select', {
 				...menuParam,
+				onOpen: context => this.setContext(context),
 				data: {
 					options: getOptions(inviteLink),
 					onSelect: (e: any, element: any) => {
@@ -1005,6 +1006,11 @@ class UtilMenu {
 											},
 										},
 									});
+									break;
+								};
+
+								case 'manage': {
+									this.menuContext?.close(() => S.Menu.open('widgetSection', menuParam));
 									break;
 								};
 
@@ -1623,20 +1629,90 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
-	uxTypeOptions () {
+	uxTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceUxType.Data },
 			{ id: I.SpaceUxType.Chat },
 		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
 	};
 
-	notificationModeOptions () {
+	notificationModeOptions (): I.Option[] {
 		return [
 			{ id: I.NotificationMode.All },
 			{ id: I.NotificationMode.Mentions },
 			{ id: I.NotificationMode.Nothing },
 		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
 	};
+
+	recentModeOptions (): I.Option[] {
+		return [
+			{ id: I.RecentEditMode.All },
+			{ id: I.RecentEditMode.Me },
+		].map(it => ({ ...it, name: translate(`widgetRecentEditMode${it.id}`) }));
+	};
+
+	widgetSections (): I.Option[] {
+		const { widgetSections } = S.Common;
+
+		return [
+			{ id: I.WidgetSection.Unread },
+			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.RecentEdit },
+			{ id: I.WidgetSection.Type },
+		].sort((c1, c2) => {
+			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
+			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
+
+			return idx1 - idx2;
+		}).map(it => ({ ...it, name: translate(`widgetSection${it.id}`) }));
+	};
+
+	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
+		const { recentEditMode } = S.Common;
+		const manage = { id: 'manage', icon: 'manage', name: translate('widgetManageSections') };
+
+		let options: any[] = [];
+		let value = '';
+
+		if (sectionId == I.WidgetSection.RecentEdit) {
+			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
+			options = options.concat(this.recentModeOptions());
+			options.push({ isDiv: true });
+			options.push(manage);
+
+			value = String(recentEditMode);
+		} else {
+			options.push(manage);
+		};
+
+		S.Menu.open('select', {
+			...menuParam,
+			onOpen: context => {
+				this.setContext(context);
+				menuParam.onOpen?.(context);
+			},
+			data: {
+				options,
+				value,
+				onSelect: (e: any, element: any) => {
+					switch (element.id) {
+						case 'manage': {
+							this.menuContext?.close(() => S.Menu.open('widgetSection', menuParam));
+							break;
+						};
+
+						default: {
+							S.Common.recentEditModeSet(Number(element.id));
+							break;
+						};
+					};
+				},
+			},
+		});
+
+	};
+
+
 
 };
 

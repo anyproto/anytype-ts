@@ -2098,10 +2098,10 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
-	"widgetSectionUnread": "Unread",
-	"widgetSectionPinned": "Pinned",
-	"widgetSectionType": "Objects",
-	"widgetSectionRecentEdit": "Recently edited",
+	"widgetSection0": "Pinned",
+	"widgetSection1": "Objects",
+	"widgetSection2": "Unread",
+	"widgetSection3": "Recently edited",
 	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Old Pinned",
@@ -2119,6 +2119,11 @@
 	"widgetItemClipboard": "Create from clipboard",
 	"widgetSeeAll": "See All",
 	"widgetNoMessages": "No messages yet",
+
+	"widgetRecentModeTitle": "Edited by",
+	"widgetRecentEditMode0": "Anyone",
+	"widgetRecentEditMode1": "Only me",
+	"widgetManageSections": "Manage Sections",
 
 	"phrasePlaceholder": "Please enter your Key",
 

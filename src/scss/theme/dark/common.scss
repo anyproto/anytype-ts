@@ -447,7 +447,11 @@ html.themeDark {
 							&:hover {
 								.icon.plus { background-image: url('#{$themePath}/icon/plus/widgetSection1.svg'); }
 							}
-						}						
+						}		
+						
+						.icon.more {
+							&:hover, &.hover { background-image: url('#{$themePath}/icon/widget/sectionMore1.svg'); }
+						}
 					}
 				}
 			}
