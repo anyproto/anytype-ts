@@ -46,7 +46,7 @@
 		.textWrapper { line-height: 20px; padding: 6px 12px; }
 		.text { user-select: text !important; display: inline; }
 		.time { 
-			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding-left: 8px; padding-top: 4px; 
+			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-white60); float: right; padding-left: 8px; padding-top: 4px; 
 			display: flex; align-items: center; gap: 0px 4px;
 		}
 
@@ -132,7 +132,7 @@
 		.bubbleInner { flex-direction: row-reverse; }
 		.bubbleInner {
 			> .controls { flex-direction: row-reverse; }
-			.bubble { background-color: var(--color-bg-tag-lime); }
+			.bubble { color: #fff; background-color: var(--color-system-accent-100); }
 		}
 
 		.reactions { justify-content: flex-end; }
