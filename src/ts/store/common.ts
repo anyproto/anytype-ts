@@ -189,6 +189,7 @@ class CommonStore {
 			pinSet: action,
 			firstDaySet: action,
 			vaultMessagesSet: action,
+			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
 		});
