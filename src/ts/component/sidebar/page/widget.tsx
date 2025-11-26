@@ -55,6 +55,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const initSections = () => {
+		S.Common.widgetSectionsInit();
 		getSections().map(it => it.id).forEach(initToggle);
 	};
 
@@ -346,19 +347,18 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const body = $(bodyRef.current);
 		const element = body.find(`#section-${id}`);
 		const list = element.find('> .items');
-		const sections = U.Common.objectCopy(widgetSections);
-		const section = sections.find(it => it.id == id);
-		const isClosed = section.isClosed;
+		const idx = widgetSections.findIndex(it => it.id == id);
+		const isClosed = widgetSections[idx].isClosed;
 
-		section.isClosed = !isClosed;
+		widgetSections[idx].isClosed = !isClosed;
 		element.toggleClass('isOpen', isClosed);
 
 		if (isClosed) {
-			S.Common.widgetSectionsSet(sections);
+			S.Common.widgetSectionsSet(widgetSections);
 			U.Common.toggle(list, 200, false);
 		} else {
 			U.Common.toggle(list, 200, true, () => {
-				S.Common.widgetSectionsSet(sections);
+				S.Common.widgetSectionsSet(widgetSections);
 			});
 		};
 	};
