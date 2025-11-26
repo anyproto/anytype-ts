@@ -110,7 +110,7 @@
 		.reaction {
 			&:hover { background-color: var(--color-shape-highlight-dark); }
 			&.isMulti { gap: 0px 2px; }
-			&.isMe { background-color: var(--color-bg-tag-lime); }
+			&.isSelf { color: #fff; background-color: var(--color-system-accent-100); }
 
 			.count { min-width: 18px; text-align: center; user-select: none !important; cursor: default; }
 		}
