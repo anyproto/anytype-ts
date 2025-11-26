@@ -404,7 +404,7 @@ class Sidebar {
 	getVaultWidth (w: number): number {
 		const { vaultStyle } = S.Common;
 		const resizeStyle = this.getVaultStyleByWidth(w);
-		const breakpoints = J.Size.vaultStyle;
+		const breakpoints = J.Size.vaultBreakpoints;
 
 		let ret = this.limitWidth(I.SidebarPanel.Left, w);
 
@@ -424,7 +424,7 @@ class Sidebar {
 	};
 
 	getVaultStyleByWidth (w: number) {
-		const breakpoints = J.Size.vaultStyle;
+		const breakpoints = J.Size.vaultBreakpoints;
 
 		for (let i = 0; i < breakpoints.length - 1; i++) {
 			const current = breakpoints[i];
@@ -697,7 +697,7 @@ class Sidebar {
 			this.open(panel);
 		};
 		window.setTimeout(() => {
-			this.setWidth(panel, false, J.Size.vaultStyle[vaultStyle], true);
+			this.setWidth(panel, false, J.Size.vaultBreakpoints[vaultStyle], true);
 		}, t);
 	};
 

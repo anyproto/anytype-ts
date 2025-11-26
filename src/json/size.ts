@@ -14,7 +14,7 @@ export default {
 		left: { min: 92, max: 480, default: 284 }
 	},
 
-	vaultStyle: [ 336, 284, 92, 0 ],
+	vaultBreakpoints: [ 336, 284, 92, 0 ],
 
 	table: {
 		min: 50,
