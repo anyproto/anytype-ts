@@ -28,4 +28,12 @@
 		.buttons { padding: 8px 16px 0px 16px; }
 		.button { width: 100%; }
 	}
+
+	.menu.menuWidgetSection {
+		.item { display: flex; align-items: center; gap: 0px 6px; }
+		.item {
+			&.isDragging { z-index: 1; }
+			.icon.eye { margin: 0px; }
+		}
+	}
 }

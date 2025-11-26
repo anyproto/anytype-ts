@@ -30,44 +30,32 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const types = U.Data.getWidgetTypes();
 		const recent = S.Record.getMeta(U.Subscription.getRecentSubId(), '').total;
 		const ret = [];
+		const sections = U.Menu.widgetSections();
 
 		if (!spaceview.isChat) {
 			const chats = U.Data.getWidgetChats();
 			if (chats.length) {
-				ret.push({ id: I.WidgetSection.Unread, name: translate('widgetSectionUnread') });
+				ret.push(I.WidgetSection.Unread);
 			};
 		};
 
 		if (widgets.length) {
-			ret.push({ id: I.WidgetSection.Pin, name: translate('widgetSectionPinned') });
+			ret.push(I.WidgetSection.Pin);
 		};
 
 		if (recent) {
-			ret.push({ id: I.WidgetSection.RecentEdit, name: translate('widgetSectionRecentEdit') });
+			ret.push(I.WidgetSection.RecentEdit);
 		};
 
 		if (types.length) {
-			ret.push({ id: I.WidgetSection.Type, name: translate('widgetSectionType') });
+			ret.push(I.WidgetSection.Type);
 		};
 
-		return ret;
+		return sections.filter(it => ret.includes(it.id));
 	};
 
 	const initSections = () => {
-		const newSections = [];
-		const ids = getSections().map(it => it.id);
-
-		ids.forEach(id => {
-			if (!isSectionClosed(id)) {
-				newSections.push(id);
-			};
-		});
-
-		if (!U.Common.compareJSON(newSections, widgetSections)) {
-			S.Common.widgetSectionsSet(newSections);
-		};
-
-		ids.forEach(initToggle);
+		getSections().map(it => it.id).forEach(initToggle);
 	};
 
 	const initScroll = () => {
@@ -338,7 +326,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const isSectionClosed = (id: I.WidgetSection) => {
-		return Storage.checkToggle('widgetSection', String(id));
+		return widgetSections.find(it => it.id == id)?.isClosed;
 	};
 
 	const initToggle = (id: I.WidgetSection) => {
@@ -356,24 +344,20 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 	const onToggle = (id: I.WidgetSection) => {
 		const body = $(bodyRef.current);
-		const section = body.find(`#section-${id}`);
-		const list = section.find('> .items');
-		const isClosed = isSectionClosed(id);
-		const save = () => Storage.setToggle('widgetSection', String(id), !isClosed);
+		const element = body.find(`#section-${id}`);
+		const list = element.find('> .items');
+		const section = widgetSections.find(it => it.id == id);
+		const isClosed = section.isClosed;
 
-		let newSectionIds = [ ...widgetSections ];
-		newSectionIds = isClosed ? newSectionIds.concat(id) : newSectionIds.filter(it => it != id);
-
-		section.toggleClass('isOpen', isClosed);
+		section.isClosed = !isClosed;
+		element.toggleClass('isOpen', isClosed);
 
 		if (isClosed) {
-			save();
-			S.Common.widgetSectionsSet(newSectionIds);
+			S.Common.widgetSectionsSet(widgetSections);
 			U.Common.toggle(list, 200, false);
 		} else {
 			U.Common.toggle(list, 200, true, () => {
-				save();
-				S.Common.widgetSectionsSet(newSectionIds);
+				S.Common.widgetSectionsSet(widgetSections);
 			});
 		};
 	};
@@ -403,11 +387,16 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const onSectionContext = (sectionId: I.WidgetSection) => {
+		const section = `#${getId()} #section-${sectionId}`
+		const wrap = `${section} .nameWrap`;
+		const element = `${section} .icon.more`;
+
 		U.Menu.widgetSectionContext(sectionId, {
-			element: `#${getId()} #section-${sectionId} .nameWrap`,
+			element,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Center,
+			onOpen: () => $(wrap).addClass('active'),
+			onClose: () => $(wrap).removeClass('active'),
 		});
 	};
 
@@ -641,10 +630,21 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 					const list = getWidgets(section.id);
+					const ws: any = widgetSections.find(it => it.id == section.id) || {};
+
+					if (ws.isHidden) {
+						return null;
+					};
 
 					let buttons = null;
-					if (isSectionType && canWrite) {
-						buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
+					if (isSectionType) {
+						if (canWrite) {
+							buttons = <Button icon="plus" color="blank" className="c28" text={translate('widgetSectionNewType')} onClick={onTypeCreate} />;
+						};
+					} else {
+						buttons = (
+							<Icon className="more" onClick={() => onSectionContext(section.id)} />
+						);
 					};
 
 					return (
@@ -670,7 +670,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 									</div>
 								</div>
 
-								{widgetSections.includes(section.id) ? (
+								{!ws?.isClosed ? (
 									<div className="items">
 										{list.map((block, i) => (
 											<Widget

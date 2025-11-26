@@ -69,6 +69,8 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	isSection?: boolean;
+	isDiv?: boolean;
 };
 
 export interface HistoryVersion {

@@ -48,8 +48,9 @@ import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
 
 import MenuGraphSettings from './graph/settings';
-import MenuWidget from './widget';
 import MenuObject from './object';
+import MenuWidget from './widget';
+import MenuWidgetSection from './widget/section';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -136,8 +137,9 @@ const Components: any = {
 	typeSuggest:			 MenuTypeSuggest,
 
 	graphSettings:			 MenuGraphSettings,
-	widget:					 MenuWidget,
 	object:					 MenuObject,
+	widget:					 MenuWidget,
+	widgetSection:			 MenuWidgetSection,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,

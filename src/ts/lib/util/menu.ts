@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Preview, Storage } from 'Lib';
 import React from 'react';
 
 class UtilMenu {
@@ -1622,14 +1622,14 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
-	uxTypeOptions () {
+	uxTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceUxType.Data },
 			{ id: I.SpaceUxType.Chat },
 		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
 	};
 
-	notificationModeOptions () {
+	notificationModeOptions (): I.Option[] {
 		return [
 			{ id: I.NotificationMode.All },
 			{ id: I.NotificationMode.Mentions },
@@ -1637,11 +1637,27 @@ class UtilMenu {
 		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
 	};
 
-	recentModeOptions (): any[] {
+	recentModeOptions (): I.Option[] {
 		return [
 			{ id: I.RecentEditMode.All },
 			{ id: I.RecentEditMode.Me },
 		].map(it => ({ ...it, name: translate(`widgetRecentEditMode${it.id}`) }));
+	};
+
+	widgetSections (): I.Option[] {
+		const { widgetSections } = S.Common;
+
+		return [
+			{ id: I.WidgetSection.Unread },
+			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.RecentEdit },
+			{ id: I.WidgetSection.Type },
+		].sort((c1, c2) => {
+			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
+			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
+
+			return idx1 - idx2;
+		}).map(it => ({ ...it, name: translate(`widgetSection${it.id}`) }));
 	};
 
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
@@ -1664,12 +1680,21 @@ class UtilMenu {
 
 		S.Menu.open('select', {
 			...menuParam,
+			onOpen: context => {
+				this.setContext(context);
+				menuParam.onOpen?.(context);
+			},
 			data: {
 				options,
 				value,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
 						case 'manage': {
+							this.menuContext?.close(() => {
+								S.Menu.open('widgetSection', {
+									...menuParam,
+								});
+							});
 							break;
 						};
 

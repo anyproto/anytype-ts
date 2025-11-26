@@ -59,7 +59,7 @@ class CommonStore {
 	public windowIsFocused = true;
 	public routeParam: any = {};
 	public openObjectIds: Map<string, Set<string>> = new Map();
-	public widgetSectionsValue: I.WidgetSection[] = [];
+	public widgetSectionsValue: I.WidgetSectionParam[] = null;
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -380,7 +380,21 @@ class CommonStore {
 		return this.boolGet('vaultMessages');
 	};
 
-	get widgetSections (): I.WidgetSection[] {
+	get widgetSections (): I.WidgetSectionParam[] {
+		if (this.widgetSectionsValue === null) {
+			this.widgetSectionsValue = Storage.get('widgetSections') || [];
+		};
+
+		for (const id in I.WidgetSection) {
+			const n = Number(id);
+			if (isNaN(n)) {
+				continue
+			};
+			if (!this.widgetSectionsValue.find(it => it.id == n)) {
+				this.widgetSectionsValue.push({ id: n, isClosed: false, isHidden: false });
+			};
+		};
+
 		return this.widgetSectionsValue || [];
 	};
 
@@ -1022,14 +1036,17 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
+		this.widgetSectionsValue = null;
 	};
 
-	widgetSectionsSet (sections: I.WidgetSection[]) {
+	widgetSectionsSet (sections: I.WidgetSectionParam[]) {
 		this.widgetSectionsValue = sections || [];
+		Storage.set('widgetSections', this.widgetSectionsValue);
 	};
 
 	checkWidgetSection (id: I.WidgetSection): boolean {
-		return this.widgetSections.includes(id);
+		const section = this.widgetSections.find(it => it.id == id);
+		return section && !section.isClosed && !section.isHidden;
 	};
 
 };
