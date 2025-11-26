@@ -347,18 +347,19 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const body = $(bodyRef.current);
 		const element = body.find(`#section-${id}`);
 		const list = element.find('> .items');
-		const idx = widgetSections.findIndex(it => it.id == id);
-		const isClosed = widgetSections[idx].isClosed;
+		const sections = U.Common.objectCopy(widgetSections);
+		const idx = sections.findIndex(it => it.id == id);
+		const isClosed = sections[idx].isClosed;
 
-		widgetSections[idx].isClosed = !isClosed;
+		sections[idx].isClosed = !isClosed;
 		element.toggleClass('isOpen', isClosed);
 
 		if (isClosed) {
-			S.Common.widgetSectionsSet(widgetSections);
+			S.Common.widgetSectionsSet(sections);
 			U.Common.toggle(list, 200, false);
 		} else {
 			U.Common.toggle(list, 200, true, () => {
-				S.Common.widgetSectionsSet(widgetSections);
+				S.Common.widgetSectionsSet(sections);
 			});
 		};
 	};
