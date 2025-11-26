@@ -192,6 +192,7 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
+			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
 		});
@@ -402,19 +403,6 @@ class CommonStore {
 	};
 
 	get widgetSections (): I.WidgetSectionParam[] {
-		if (this.widgetSectionsValue === null) {
-			this.widgetSectionsValue = Storage.get('widgetSections') || [];
-		};
-
-		for (const id in I.WidgetSection) {
-			const n = Number(id);
-			if (isNaN(n)) {
-				continue
-			};
-			if (!this.widgetSectionsValue.find(it => it.id == n)) {
-				this.widgetSectionsValue.push({ id: n, isClosed: false, isHidden: false });
-			};
-		};
 		return this.widgetSectionsValue || [];
 	};
 
@@ -1066,7 +1054,23 @@ class CommonStore {
 
 	nullifySpaceKeys () {
 		this.defaultType = null;
-		this.widgetSectionsValue = null;
+		this.widgetSectionsInit();
+	};
+
+	widgetSectionsInit () {
+		const saved = Storage.get('widgetSections') || [];
+		const full = [ ...saved ];
+
+		for (const id in I.WidgetSection) {
+			const n = Number(id);
+			if (!isNaN(n) && !full.find(it => it.id === n)) {
+				full.push({ id: n, isClosed: false, isHidden: false });
+			};
+		};
+
+		if (!U.Common.compareJSON(full, this.widgetSectionsValue)) {
+			this.widgetSectionsValue = full;
+		};
 	};
 
 	widgetSectionsSet (sections: I.WidgetSectionParam[]) {

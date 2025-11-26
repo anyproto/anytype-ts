@@ -82,13 +82,13 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 	const onSwitch = (item: any) => {
 		const id = Number(item.id);
-		const section = U.Common.objectCopy(widgetSections).find(it => it.id == id);
+		const idx = widgetSections.findIndex(it => it.id == id);
 
-		if (!section) {
+		if (idx < 0) {
 			return;
 		};
 
-		section.isHidden = !section.isHidden;
+		widgetSections[idx].isHidden = !widgetSections[idx].isHidden;
 		S.Common.widgetSectionsSet([ ...widgetSections ]);
 	};
 
