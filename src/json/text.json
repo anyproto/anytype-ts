@@ -1244,7 +1244,6 @@
 	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can enable a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Disable link",
 
-	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
