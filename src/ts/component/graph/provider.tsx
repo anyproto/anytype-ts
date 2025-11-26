@@ -234,15 +234,21 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 					return;
 				};
 
+				const ratio = img.naturalHeight / img.naturalWidth || 1; 
+
 				try {
-					createImageBitmap(img, { resizeWidth: I.ImageSize.Small, resizeQuality: 'high' }).then((res: any) => {
+					createImageBitmap(img, { 
+						resizeWidth: I.ImageSize.Small, 
+						resizeHeight: I.ImageSize.Small * ratio, 
+						resizeQuality: 'high',
+					}).then((res: any) => {
 						if (images.current[d.src]) {
 							return;
 						};
 
 						images.current[d.src] = true;
 						send('image', { src: d.src, bitmap: res });
-					});
+					}).catch(() => { /**/ });
 				} catch (e) { /**/ };
 			};
 			img.crossOrigin = 'anonymous';
