@@ -1623,7 +1623,8 @@ class UtilMenu {
 	};
 
 	vaultMode (param: I.MenuParam, noClose?: boolean, route?: string) {
-		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
+		const panel = I.SidebarPanel.Left;
+		const { isClosed } = sidebar.getData(panel);
 		const options: any[] = [
 			{ id: I.VaultMode.Default },
 			{ id: I.VaultMode.Compact },
@@ -1636,7 +1637,7 @@ class UtilMenu {
 
 		if (!noClose && !isClosed) {
 			options.push({ isDiv: true });
-			options.push({ id: 'close', name: translate('menuVaultModeCloseSidebar') });
+			options.push({ id: I.VaultMode.Closed, name: translate('menuVaultModeCloseSidebar') });
 		};
 
 		S.Menu.open('select', {
@@ -1645,16 +1646,20 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'close': {
-							sidebar.close(I.SidebarPanel.Left);
-							break;
+					Storage.setVaultMode(item.id);
+
+					if (item.id == I.VaultMode.Closed) {
+						sidebar.close(panel);
+					} else {
+						let t = 0;
+						if (isClosed) {
+							t = J.Constant.delay.sidebar;
+							sidebar.open(panel);
 						};
-						default: {
-							Storage.setVaultMode(item.id);
-							break;
-						};
-					}
+						window.setTimeout(() => {
+							sidebar.setWidth(panel, false, J.Size.vaultMode[item.id], false);
+						}, t);
+					};
 				},
 			},
 		})

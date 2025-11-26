@@ -750,6 +750,10 @@ class Storage {
 	getVaultMode () {
 		return this.get('vaultMode') || I.VaultMode.Default;
 	};
+
+	getVaultModeByWidth () {
+
+	};
 	
 };
 
