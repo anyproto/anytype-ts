@@ -172,6 +172,8 @@ class Sidebar {
 
 			$(window).trigger('sidebarResize');
 		}, animate ? J.Constant.delay.sidebar : 0);
+
+		analytics.event('CollapseVault');
 	};
 
 	/**
@@ -204,6 +206,8 @@ class Sidebar {
 
 			$(window).trigger('sidebarResize');
 		}, animate ? J.Constant.delay.sidebar : 0);
+
+		analytics.event('ExpandVault');
 	};
 
 	/**
@@ -322,6 +326,8 @@ class Sidebar {
 			this.dummyLeft.removeClass('sidebarAnimation');
 			this.resizePage(false, null, null, false);
 		}, animate ? J.Constant.delay.sidebar : 0);
+
+		analytics.event('CollapseWidgetPanel');
 	};
 
 	leftPanelSubPageOpen (id: string, animate: boolean) {
@@ -364,6 +370,8 @@ class Sidebar {
 				this.resizePage(false, null, null, false);
 			}, animate ? J.Constant.delay.sidebar : 0);
 		});
+
+		analytics.event('ExpandWidgetPanel');
 	};
 
 	leftPanelSubPageToggle (id: string) {
