@@ -572,7 +572,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(isPopup, { page: 'type', rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'type', rootId, details: {} });
 				break;
 			};
 

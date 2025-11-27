@@ -7,6 +7,12 @@ export enum WidgetSection {
 	RecentEdit	 = 3,
 };
 
+export interface WidgetSectionParam {
+	id: I.WidgetSection; 
+	isClosed: boolean; 
+	isHidden: boolean;
+};
+
 export enum WidgetLayout { 
 	Link	 	 = 0,
 	Tree	 	 = 1,

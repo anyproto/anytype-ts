@@ -65,7 +65,7 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
-		if (space.isChat) {
+		if (space.isChat || space.isOneToOne) {
 			return this.getChat();
 		};
 
@@ -226,6 +226,10 @@ class UtilSpace {
 	getParticipantId (spaceId: string, accountId: string) {
 		spaceId = String(spaceId || '').replace('.', '_');
 		return `_participant_${spaceId}_${accountId}`;
+	};
+
+	getCurrentParticipantId () {
+		return this.getParticipantId(S.Common.space, S.Auth.account.id);
 	};
 
 	/**

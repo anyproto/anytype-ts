@@ -962,7 +962,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						<Icon className="key" />
 						<Label text={translate('blockChatEmptyItem3')} />
 					</div>
-					{spaceview.isChat ? (
+					{(spaceview.isChat || spaceview.isOneToOne) ? (
 						<div className="buttons">
 							<Button 
 								onClick={() => Action.openSpaceShare(analytics.route.chat)} 

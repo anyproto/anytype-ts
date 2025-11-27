@@ -801,6 +801,8 @@
 	"blockChatCopyText": "Copy text",
 	"blockChatMarkAsUnread": "Mark as unread",
 
+	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",
+
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
@@ -1221,7 +1223,6 @@
 	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can enable a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Disable link",
 
-	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
@@ -2075,10 +2076,10 @@
 	"widget4Name": "View",
 	"widget4Description": "Same as in object view",
 
-	"widgetSectionUnread": "Unread",
-	"widgetSectionPinned": "Pinned",
-	"widgetSectionType": "Objects",
-	"widgetSectionRecentEdit": "Recently edited",
+	"widgetSection0": "Pinned",
+	"widgetSection1": "Objects",
+	"widgetSection2": "Unread",
+	"widgetSection3": "Recently edited",
 	"widgetSectionNewType": "New Type",
 
 	"widgetFavorite": "Old Pinned",
@@ -2096,6 +2097,11 @@
 	"widgetItemClipboard": "Create from clipboard",
 	"widgetSeeAll": "See All",
 	"widgetNoMessages": "No messages yet",
+
+	"widgetRecentModeTitle": "Edited by",
+	"widgetRecentEditMode0": "Anyone",
+	"widgetRecentEditMode1": "Only me",
+	"widgetManageSections": "Manage Sections",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2673,5 +2679,4 @@
 	"paymentProvider3": "Billing", 
 	"paymentProvider4": "App Store",
 	"paymentProvider5": "Google Play"
-
 }

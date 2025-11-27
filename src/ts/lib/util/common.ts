@@ -2003,6 +2003,19 @@ class UtilCommon {
 		};
 	};
 
+	snapWidth (w: number, steps?: number): number {
+		steps = Math.max(1, Number(steps) || 12);
+
+		const step = 1 / steps;
+		const nearest = Math.round(w / step) * step;
+
+		if (Math.abs(w - nearest) <= 0.02) {
+			return nearest;
+		};
+
+		return w;
+	};
+
 };
 
 export default new UtilCommon();

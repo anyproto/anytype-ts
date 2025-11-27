@@ -625,6 +625,12 @@ class Analytics {
 				break;
 			};
 
+			case 'ShowSection':
+			case 'HideSection': {
+				data.type = I.WidgetSection[Number(data.type) || 0];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -775,6 +781,7 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
+			widgetSection:		 'ScreenManageSections',
 		};
 
 		return map[id] || '';

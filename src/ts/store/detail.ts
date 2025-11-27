@@ -505,6 +505,7 @@ class DetailStore {
 		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
 		object.isData = object.spaceUxType == I.SpaceUxType.Data;
 		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
+		object.isOneToOne = object.spaceUxType == I.SpaceUxType.OneToOne;
 
 		// Chat
 		object.isMuted = [ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(object.spacePushNotificationMode);

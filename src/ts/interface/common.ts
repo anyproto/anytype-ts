@@ -69,6 +69,8 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	isSection?: boolean;
+	isDiv?: boolean;
 };
 
 export interface HistoryVersion {
@@ -369,6 +371,11 @@ export enum ImageSize {
 export enum AppDeviceState {
 	Background	 = 0, // means app is suspended
 	Foreground	 = 1,
+};
+
+export enum RecentEditMode {
+	All			 = 0,
+	Me			 = 1,
 };
 
 export interface DragProviderRefProps {

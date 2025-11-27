@@ -193,7 +193,13 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-		}, { withPin: true, noBin: true, noMembers: true, route: analytics.route.vault });
+		}, { 
+			withPin: true, 
+			noBin: true, 
+			noMembers: true, 
+			noManage: true,
+			route: analytics.route.vault,
+		});
 	};
 
 	const items = getItems();
@@ -311,7 +317,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (vaultMessages) {
 			let message = null;
 
-			if (item.isChat) {
+			if (item.isChat || item.isOneToOne) {
 				message = (
 					<div className="messageWrapper">
 						{last}

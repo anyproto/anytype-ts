@@ -77,7 +77,7 @@ class UtilSubscription {
 		
 		let skipLayouts = [];
 
-		if (spaceview.isChat) {
+		if (spaceview.isChat || spaceview.isOneToOne) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
 		};
 
@@ -531,7 +531,7 @@ class UtilSubscription {
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
-						customOrder: U.Data.typeSortKeys(spaceview.isChat),
+						customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
@@ -555,7 +555,22 @@ class UtilSubscription {
 				noDeps: true,
 			},
 			{
-				subId: J.Constant.subId.recentEdit,
+				subId: J.Constant.subId.recentEditMe,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
+					{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() },
+				],
+				sorts: [
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+				limit: 10,
+			},
+			{
+				subId: J.Constant.subId.recentEditAll,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().filter(it => !U.Object.isTypeLayout(it)) },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
@@ -761,6 +776,22 @@ class UtilSubscription {
 	 */
 	chatRelationKeys () {
 		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels', 'syncStatus', 'syncError' ]);
+	};
+
+	getRecentSubId (): string {
+		let subId = '';
+		switch (S.Common.recentEditMode) {
+			case I.RecentEditMode.All: {
+				subId = J.Constant.subId.recentEditAll;
+				break;
+			};
+
+			case I.RecentEditMode.Me: {
+				subId = J.Constant.subId.recentEditMe;
+				break;
+			};
+		};
+		return subId;
 	};
 
 };

@@ -64,7 +64,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onDashboard = () => {
-		if (!spaceview.isChat) {
+		if (!spaceview.isChat && !spaceview.isOneToOne) {
 			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
 		};
 	};
@@ -162,7 +162,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 				onConfirm: () => {
 					const details: any = {
 						spaceUxType: v,
-						spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+						spaceDashboardId: (v == I.SpaceUxType.Chat || v == I.SpaceUxType.OneToOne ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
 					};
 
 					C.WorkspaceSetInfo(S.Common.space, details);
@@ -345,7 +345,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 							) : ''}
 
 							<div className="sectionContent">
-								{!spaceview.isChat ? (
+								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
 											<Icon className="home" />

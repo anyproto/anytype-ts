@@ -10,7 +10,7 @@ import { I, J, U, S, C, translate, keyboard } from 'Lib';
 const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
-	const { space } = S.Common;
+	const { space, recentEditMode } = S.Common;
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -40,7 +40,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			};
 
 			case J.Constant.widgetId.recentEdit: {
-				subId = J.Constant.subId.recentEdit;
+				subId = U.Subscription.getRecentSubId();
 				break;
 			};
 		};

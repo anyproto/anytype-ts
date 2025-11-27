@@ -1,10 +1,9 @@
-import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
-import { set } from 'lodash';
 
 const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
@@ -39,11 +38,11 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	useEffect(() => {
 		setColumnCount(getColumnCount());
 		setCardHeight(getCardHeight());
-	}, [ width ]);
+	}, [ width, cardSize ]);
 
 	useEffect(() => {
 		reset();
-	}, [ width, columnCount, cardHeight, cardSize, coverRelationKey, hideIcon, relations.length ]);
+	}, [ width, columnCount, cardHeight, cardSize, coverRelationKey, hideIcon, relations.length, view.type ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');

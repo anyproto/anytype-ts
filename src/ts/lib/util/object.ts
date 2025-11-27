@@ -740,6 +740,7 @@ class UtilObject {
 
 		sidebar.rightPanelToggle(isPopup, { 
 			page: 'type', 
+			rootId: '',
 			details: {
 				...this.getNewTypeDetails(),
 				...details,

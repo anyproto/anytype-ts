@@ -35,7 +35,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const id = U.Common.toCamelCase(page.replace(/\//g, '-'));
 	const Component = Components[id];
 	const pageId = U.Common.toCamelCase(`sidebarPage-${id}`);
-	const cn = [ 'sidebar', 'right', U.Data.spaceClass(spaceview.uxType) ];
+	const cn = [ 'sidebar', 'right' ];
 	const cnp = [ 'sidebarPage', U.Common.toCamelCase(`page-${page.replace(/\//g, '-')}`) ];
 	const withPreview = !state.noPreview && [ 'type' ].includes(page);
 	const ox = useRef(0);
@@ -117,7 +117,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 			if (
 				U.Object.isTypeOrRelationLayout(object.layout) || 
-				(spaceview.isChat && U.Object.isChatLayout(object.layout))
+				((spaceview.isChat || spaceview.isOneToOne) && U.Object.isChatLayout(object.layout))
 			) {
 				sidebar.rightPanelClose(isPopup, false);
 				return;
