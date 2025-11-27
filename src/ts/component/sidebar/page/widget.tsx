@@ -386,6 +386,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				},
 			}
 		});
+
+		analytics.event('ClickRecentlyOpen');
 	};
 
 	const onSectionContext = (sectionId: I.WidgetSection) => {
