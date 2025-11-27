@@ -2,6 +2,7 @@ import React, { useRef, forwardRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, U, S, translate, analytics, Action, keyboard } from 'Lib';
+import MemberCnt from 'Component/util/memberCnt';
 
 const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
@@ -13,7 +14,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const nodeRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
-	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const route = analytics.route.widget;
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
 	const iconSize = (spaceview.isChat || spaceview.isOneToOne) ? 80 : 48;
@@ -27,12 +27,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			onClick={() => U.Space.openDashboard()}
 		/>
 	);
-
-	const memberText = spaceview.isShared ? 
-		`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}` : 
-		translate('commonPersonalSpace');
-
-	const memberLabel = <Label text={memberText} onClick={e => onButtonClick(e, { id: 'member' })} />;
 
 	const buttons = [
 		canWrite ? { 
@@ -54,12 +48,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'member': {
-				Action.openSpaceShare(route);
-				analytics.event('ClickSpaceWidgetInvite', { route });
-				break;
-			};
-
 			case 'search': {
 				keyboard.onSearchPopup(analytics.route.widget);
 				break;
@@ -112,7 +100,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<Icon className="arrow" />
 				</div>
 
-				{memberLabel}
+				<MemberCnt route={analytics.route.widget} />
 			</div>
 		);
 	} else {
@@ -125,7 +113,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						<Icon className="arrow" />
 					</div>
 
-					{memberLabel}
+					<MemberCnt route={analytics.route.widget} />
 				</div>
 			</div>
 		);

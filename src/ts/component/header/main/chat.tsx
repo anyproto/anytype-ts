@@ -59,7 +59,10 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				classNameWrap: 'fromHeader',
 				horizontal: I.MenuDirection.Right,
 				offsetY: 4,
-			}, { route: analytics.route.header });
+			}, { 
+				noManage: true,
+				route: analytics.route.header,
+			});
 		} else {
 			menuOpen('object', element, {
 				horizontal: I.MenuDirection.Right,

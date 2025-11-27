@@ -235,7 +235,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			case I.FileType.Video: {
 				cn.push('isVideo');
-				content = <video src={src} controls={!isThumb} autoPlay={false} loop={true} />;
+				content = <video src={src} controls={!isThumb} autoPlay={true} loop={true} />;
 				break;
 			};
 		};

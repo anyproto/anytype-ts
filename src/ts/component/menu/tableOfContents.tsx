@@ -77,7 +77,7 @@ const MenuTableOfContents = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	const Item = (item: any) => (
 		<MenuItemVertical 
 			{...item}
-			name={<Label text={U.Common.getLatex(item.text)} />}
+			name={<Label text={U.Common.getLatex(U.Common.htmlSpecialChars(item.text))} />}
 			onClick={e => onClick(e, item)}
 			onMouseEnter={e => onMouseEnter(e, item)}
 			style={{ ...item.style, paddingLeft: 16 + item.depth * 12 }}

@@ -375,7 +375,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				noInfiniteLoading: true,
 				label: translate('widgetRecentOpen'),
 				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
 				],
 				sorts: [
@@ -386,6 +386,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				},
 			}
 		});
+
+		analytics.event('ClickRecentlyOpen');
 	};
 
 	const onSectionContext = (sectionId: I.WidgetSection) => {

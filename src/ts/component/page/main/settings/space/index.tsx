@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
+import MemberCnt from 'Component/util/memberCnt';
 
 const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -209,14 +210,22 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
 	};
 
-	const headerButtons = isEditing ? [
-		{ color: 'blank', text: translate('commonCancel'), onClick: onCancel },
-		{ color: 'black', text: translate('commonSave'), onClick: onSave, className: 'buttonSave' },
-	] : [
-		{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: onEdit },
-	];
 	const buttons = getButtons();
 
+	let headerButtons = [];
+	if (!spaceview.isOneToOne) {
+		if (isEditing) {
+			headerButtons = headerButtons.concat([
+				{ color: 'blank', text: translate('commonCancel'), onClick: onCancel },
+				{ color: 'black', text: translate('commonSave'), onClick: onSave, className: 'buttonSave' },
+			]);
+		} else {
+			headerButtons = headerButtons.concat([
+				{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: onEdit },
+			]);
+		}
+	};
+	
 	const Member = (item: any) => {
 		const isCurrent = item.id == participant?.id;
 
@@ -259,7 +268,13 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			<div className={cnh.join(' ')}>
 				{canWrite ? (
 					<div className="buttons">
-						{headerButtons.map((el, idx) => <Button className={[ 'c28', el.className ? el.className : ''].join(' ')} key={idx} text={el.text} color={el.color} onClick={el.onClick} />)}
+						{headerButtons.map((el, idx) => (
+							<Button 
+								{...el}
+								className={[ 'c28', (el.className ? el.className : '') ].join(' ')} 
+								key={idx} 
+							/>
+						))}
 					</div>
 				) : ''}
 
@@ -268,7 +283,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					size={96}
 					iconSize={96}
 					object={{ ...spaceview, spaceId: S.Common.space }}
-					canEdit={canWrite}
+					canEdit={canWrite && !spaceview.isOneToOne}
 					menuParam={{ 
 						horizontal: I.MenuDirection.Center,
 						classNameWrap: 'fromBlock',
@@ -289,11 +304,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div className="counter" />
 				</div>
 
-				{spaceview.isShared ? (
-					<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
-				) : (
-					<Label text={translate('commonPersonalSpace')} />
-				)}
+				<MemberCnt route={analytics.route.settings} />
 			</div>
 
 			<div className="spaceButtons">

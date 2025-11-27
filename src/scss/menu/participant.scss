@@ -13,5 +13,7 @@
 
 		.descr { @include clamp4; margin: 4px 0px 0px 0px; }
 		.descr:empty { display: none; }
+
+		.buttonsWrapper { margin: 24px 0px 0px 0px; display: flex; flex-direction: column; width: 100%; }
 	}
 }

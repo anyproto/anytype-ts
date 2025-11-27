@@ -1917,6 +1917,9 @@
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
 
+	"menuParticipantConnect": "Connect",
+	"menuParticipantMessage": "Message",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
