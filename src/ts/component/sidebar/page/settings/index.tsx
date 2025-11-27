@@ -58,7 +58,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				id: 'common', name: translate('commonPreferences'),
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
-					spaceview.isPersonal ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
+					(spaceview.isPersonal || spaceview.isOneToOne) ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
 					{ id: 'spaceNotifications', icon: 'notifications', name: translate('commonNotifications') },
 					{ id: 'spaceStorage', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: notSyncedCounter },
 					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
