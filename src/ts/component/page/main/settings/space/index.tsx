@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
+import MemberCnt from 'Component/util/memberCnt';
 
 const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -303,11 +304,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div className="counter" />
 				</div>
 
-				{spaceview.isShared ? (
-					<Label text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> 
-				) : (
-					<Label text={translate('commonPersonalSpace')} />
-				)}
+				<MemberCnt route={analytics.route.settings} />
 			</div>
 
 			<div className="spaceButtons">
