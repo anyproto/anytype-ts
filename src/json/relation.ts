@@ -165,6 +165,7 @@ export default {
 		'spacePushNotificationForceMentionIds',
 		'spaceOrder',
 		'spaceJoinDate',
+		'oneToOneIdentity',
 	],
 
 	participant: [

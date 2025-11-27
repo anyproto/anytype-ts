@@ -8,7 +8,10 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { param, close } = props;
 	const { data } = param;
 	const { object } = data;
-	const { config } = S.Common;
+	const { config, space } = S.Common;
+	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity));
+	const text = oneToOne.length ? translate('menuParticipantMessage') : translate('menuParticipantConnect');
+	const showButton = config.sudo && oneToOne.filter(it => it.targetSpaceId != space).length;
 
 	const load = () => {
 		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
@@ -62,9 +65,9 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 			/>
 			<ObjectDescription object={object} />
 
-			{config.sudo ? (
+			{showButton ? (
 				<div className="buttonsWrapper">
-					<Button color="pink" className="c32" text="Start DM" onClick={onDmClick} />
+					<Button color="accent" className="c32" text={text} onClick={onDmClick} />
 				</div>
 			) : ''}
 		</>
