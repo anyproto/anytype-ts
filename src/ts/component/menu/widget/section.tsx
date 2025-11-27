@@ -77,6 +77,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		if (oldIndex != newIndex) {
 			S.Common.widgetSectionsSet(arrayMove(widgetSections, oldIndex, newIndex));
+			analytics.event('ReorderSection', { type: active.id });
 		};
 	};
 
