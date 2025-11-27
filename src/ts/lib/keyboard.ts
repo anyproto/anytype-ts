@@ -543,7 +543,6 @@ class Keyboard {
 
 		S.Menu.closeAll();
 		this.restoreSource();
-		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryBack');
 	};
 
@@ -564,7 +563,6 @@ class Keyboard {
 		};
 
 		S.Menu.closeAll();
-		sidebar.rightPanelClose(isPopup, false);
 		analytics.event('HistoryForward');
 	};
 
