@@ -9,9 +9,11 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { data } = param;
 	const { object } = data;
 	const { config, space } = S.Common;
-	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity));
-	const text = oneToOne.length ? translate('menuParticipantMessage') : translate('menuParticipantConnect');
-	const showButton = config.sudo && oneToOne.filter(it => it.targetSpaceId != space).length;
+	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity))[0];
+	const text = oneToOne ? translate('menuParticipantMessage') : translate('menuParticipantConnect');
+	const showButton = config.sudo && ((oneToOne && oneToOne.targetSpaceId != space) || !oneToOne);
+
+	console.log(oneToOne);
 
 	const load = () => {
 		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
@@ -21,7 +23,13 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		});
 	};
 
-	const onDmClick = () => {
+	const onClick = () => {
+		if (oneToOne) {
+			U.Router.switchSpace(oneToOne.targetSpaceId, '', true, {}, false);
+			close();
+			return;
+		};
+
 		const uxType = I.SpaceUxType.OneToOne;
 		const details: any = {
 			oneToOneIdentity: object.identity,
@@ -67,7 +75,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 
 			{showButton ? (
 				<div className="buttonsWrapper">
-					<Button color="accent" className="c32" text={text} onClick={onDmClick} />
+					<Button color="accent" className="c32" text={text} onClick={onClick} />
 				</div>
 			) : ''}
 		</>
