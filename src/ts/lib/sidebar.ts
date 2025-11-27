@@ -399,7 +399,7 @@ class Sidebar {
 	 * @param {number} w - The width to set.
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
-		if (panel == SidebarPanel.Left) {
+		if (panel == I.SidebarPanel.Left) {
 			S.Common.vaultIsMinimalSet(w < J.Size.vaultStripeMaxWidth);
 		};
 		this.setData(panel, isPopup, { width: this.limitWidth(panel, w) }, save);
