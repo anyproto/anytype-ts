@@ -13,8 +13,6 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const text = oneToOne ? translate('menuParticipantMessage') : translate('menuParticipantConnect');
 	const showButton = config.sudo && ((oneToOne && oneToOne.targetSpaceId != space) || !oneToOne);
 
-	console.log(oneToOne);
-
 	const load = () => {
 		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
 			if (object) {

@@ -884,7 +884,7 @@ class UtilMenu {
 					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
-				if (!space.isPersonal && !noMembers) {
+				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 
