@@ -20,7 +20,7 @@ const HEIGHT_ITEM_UPDATE = 112;
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion, space, vaultStyle } = S.Common;
+	const { updateVersion, space, vaultMessages, vaultIsMinimal } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -35,15 +35,20 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const canCreate = U.Space.canCreateSpace();
-	const isMinimal = vaultStyle == I.VaultStyle.Minimal;
-	const vaultMessages = vaultStyle == I.VaultStyle.Default;
+	const isMinimal = vaultIsMinimal;
 	const cnh = [ 'head' ];
-	const cnb = [ 'body', `vaultStyle${I.VaultStyle[vaultStyle]}` ];
-	const cnf = [ 'bottom', `vaultStyle${I.VaultStyle[vaultStyle]}` ];
+	const cnb = [ 'body' ];
+	const cnf = [ 'bottom' ];
 
 	if (vaultMessages) {
 		cnh.push('withMessages');
 		cnb.push('withMessages');
+	};
+
+	if (isMinimal) {
+		cnh.push('vaultStyleMinimal');
+		cnb.push('vaultStyleMinimal');
+		cnf.push('vaultStyleMinimal');
 	};
 
 	const unbind = () => {

@@ -43,9 +43,9 @@ class CommonStore {
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
 	public updateVersionValue = '';
+	public vaultMessagesValue = null;
+	public vaultIsMinimalValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
-	public vaultStyleValue = null;
-	public isVaultClosedValue = false;
 
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
@@ -141,8 +141,6 @@ class CommonStore {
 			spaceId: observable,
 			membershipTiersList: observable,
 			leftSidebarStateValue: observable,
-			vaultStyleValue: observable,
-			isVaultClosedValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
 			dateFormatValue: observable,
@@ -150,6 +148,8 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
+			vaultMessagesValue: observable,
+			vaultIsMinimalValue: observable,
 			widgetSectionsValue: observable,
 			recentEditModeValue: observable,
 			config: computed,
@@ -167,6 +167,8 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
+			vaultMessages: computed,
+			vaultIsMinimal: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			gatewaySet: action,
@@ -184,14 +186,14 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
-			vaultStyleSet: action,
-			vaultClosedSet: action,
 			membershipTiersListSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
+			vaultMessagesSet: action,
+			vaultIsMinimalSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -330,28 +332,6 @@ class CommonStore {
 		return Number(ret) || I.LinkCardStyle.Text;
 	};
 
-	get vaultStyle (): I.VaultStyle {
-		let ret = this.vaultStyleValue;
-		if (ret === null) {
-			ret = Storage.get('vaultStyle');
-		};
-		if (undefined === ret) {
-			ret = I.VaultStyle.Default;
-		};
-		return ret;
-	};
-
-	get isVaultClosed (): boolean {
-		let ret = this.isVaultClosedValue;
-		if (ret === null) {
-			ret = Storage.get('isVaultClosed');
-		};
-		if (undefined === ret) {
-			ret = false;
-		};
-		return ret;
-	};
-
 	get dateFormat (): I.DateFormat {
 		let ret = this.dateFormatValue;
 		
@@ -404,6 +384,14 @@ class CommonStore {
 
 	get widgetSections (): I.WidgetSectionParam[] {
 		return this.widgetSectionsValue || [];
+	};
+
+	get vaultMessages (): any {
+		return this.boolGet('vaultMessages');
+	};
+
+	get vaultIsMinimal (): any {
+		return this.boolGet('vaultIsMinimal');
 	};
 
 	/**
@@ -831,24 +819,6 @@ class CommonStore {
 	};
 
 	/**
-	 * Sets vaultDisplayMode.
-	 * @param {I.VaultStyle} v - current vault display mode
-	 */
-	vaultStyleSet (v: I.VaultStyle) {
-		this.vaultStyleValue = v;
-		Storage.set('vaultStyle', v);
-	};
-
-	/**
-	 * Sets vault closed state.
-	 * @param {boolean} v - current vault closed state
-	 */
-	vaultClosedSet (v: boolean) {
-		this.isVaultClosedValue = v;
-		Storage.set('isVaultClosed', v);
-	};
-
-	/**
 	 * Sets the date format value.
 	 * @param {I.DateFormat} v - The date format value.
 	 */
@@ -884,6 +854,22 @@ class CommonStore {
 	firstDaySet (v: number) {
 		this.firstDayValue = Number(v) || 1;
 		Storage.set('firstDay', this.firstDayValue);
+	};
+
+	/**
+	 * Sets the vault messages value.
+	 * @param {boolean} v - The vault messages value.
+	 */
+	vaultMessagesSet (v: boolean) {
+		this.boolSet('vaultMessages', v);
+	};
+
+	/**
+	 * Sets the vault isMinimal value.
+	 * @param {boolean} v - The vault isMinimal value.
+	 */
+	vaultIsMinimalSet (v: boolean) {
+		this.boolSet('vaultIsMinimal', v);
 	};
 
 	/**

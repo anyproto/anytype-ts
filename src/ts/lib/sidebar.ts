@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
-import { SidebarPanel, VaultStyle } from 'Interface';
 
 interface SidebarData {
 	width: number;
@@ -165,7 +164,6 @@ class Sidebar {
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0 });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: true }, true);
 		this.resizePage(false, newWidth, null, animate);
-		S.Common.vaultClosedSet(true);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -198,7 +196,6 @@ class Sidebar {
 		this.setStyle(I.SidebarPanel.Left, false, { width });
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false }, true);
 		this.resizePage(false, newWidth, null, animate);
-		S.Common.vaultClosedSet(false);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -395,45 +392,10 @@ class Sidebar {
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
 		if (panel == SidebarPanel.Left) {
-			this.checkVaultWidth(w);
+			S.Common.vaultIsMinimalSet(w < J.Size.vaultStripeMaxWidth);
 		};
-
 		this.setData(panel, isPopup, { width: this.limitWidth(panel, w) }, save);
 		this.resizePage(isPopup, null, null, false);
-	};
-
-	checkVaultWidth (w: number): number {
-		const { vaultStyle } = S.Common;
-		const resizeStyle = this.getVaultStyleByWidth(w);
-
-		console.log('W: ', w)
-
-		if ((resizeStyle != I.VaultStyle.Closed) && (Number(vaultStyle) != resizeStyle)) {
-			S.Common.vaultStyleSet(resizeStyle);
-		};
-
-		return this.limitWidth(I.SidebarPanel.Left, w);
-	};
-
-	getVaultStyleByWidth (w: number) {
-		const breakpoints = J.Size.vaultBreakpoints;
-
-		for (let i = 0; i < breakpoints.length - 1; i++) {
-			const current = breakpoints[i];
-			const nextIdx = i + 1;
-			const next = breakpoints[nextIdx];
-
-			let breakpoint = (current + next) / 2;
-			if (nextIdx == I.VaultStyle.Minimal) {
-				breakpoint = J.Size.vaultStripeMaxWidth;
-			};
-
-			if (w >= breakpoint) {
-				return i as I.VaultStyle; // i matches the enum value
-			};
-		};
-
-		return (breakpoints.length - 1) as I.VaultStyle;
 	};
 
 	/**
@@ -526,7 +488,7 @@ class Sidebar {
 		const dataLeft = this.getData(I.SidebarPanel.Left, isPopup);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft, isPopup);
 		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
-		const isVaultMinimal = (S.Common.vaultStyle == VaultStyle.Minimal) && !dataLeft.isClosed;
+		const isVaultMinimal = S.Common.vaultIsMinimal && !dataLeft.isClosed;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -683,22 +645,6 @@ class Sidebar {
 			ret = Object.assign(ret, param[panel]);
 		};
 		return ret;
-	};
-
-	updateVaultStyle () {
-		const panel = I.SidebarPanel.Left;
-		const { isClosed } = this.getData(panel);
-		const { vaultStyle } = S.Common;
-
-		let t = 0;
-		if (isClosed) {
-			t = J.Constant.delay.sidebar;
-			this.open(panel);
-		};
-
-		window.setTimeout(() => {
-			this.setWidth(panel, false, J.Size.vaultBreakpoints[vaultStyle], true);
-		}, t);
 	};
 
 };

@@ -10,7 +10,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fullscreenObject, hideSidebar, vaultStyle } = S.Common;
+	const { config, linkStyle, fullscreenObject, hideSidebar, vaultMessages } = S.Common;
 	const { hideTray, showMenuBar } = config;
 	const { theme, chatCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -21,7 +21,10 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
 	];
 
-	const vaultStyles: I.Option[] = U.Menu.vaultStyleOptions(true, true);
+	const vaultStyles: I.Option[] = [
+		{ id: 0, name: translate('popupSettingsVaultCompact') },
+		{ id: 1, name: translate('popupSettingsVaultWithMessages') },
+	];
 
 	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 	const linkStyles: I.Option[] = [
@@ -65,10 +68,10 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 					<Label text={translate('popupSettingsPersonalVaultStyle')} />
 
 					<Select
-						id="vaultStyle"
-						value={Number(vaultStyle)}
+						id="vaultMessages"
+						value={String(Number(vaultMessages))}
 						options={vaultStyles}
-						onChange={v => S.Common.vaultStyleSet(Number(v))}
+						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>

@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, sidebar, Preview } from 'Lib';
+import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U } from 'Lib';
 import React from 'react';
+import { SidebarPanel } from 'Interface';
 
 interface SpaceContextParam {
 	isSharePage?: boolean; 
@@ -1655,15 +1656,11 @@ class UtilMenu {
 	vaultStyleOptions (noClose?: boolean, noCheckbox?: boolean) {
 		const panel = I.SidebarPanel.Left;
 		const { isClosed } = sidebar.getData(panel);
+		const { vaultMessages } = S.Common;
 		const options: any[] = [
-			{ id: I.VaultStyle.Default },
-			{ id: I.VaultStyle.Compact },
-			{ id: I.VaultStyle.Minimal },
-		].map((it) => ({
-			...it,
-			name: translate(`menuVaultStyle${it.id}`),
-			checkbox: (noCheckbox || isClosed) ? false : Number(it.id) == Number(S.Common.vaultStyle),
-		}));
+			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages,  },
+			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
+		];
 
 		if (!noClose && !isClosed) {
 			options.push({ isDiv: true });
@@ -1674,6 +1671,8 @@ class UtilMenu {
 	};
 
 	vaultStyle (param: I.MenuParam, noClose?: boolean, route?: string) {
+		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
+
 		S.Menu.open('select', {
 			...param,
 			data: {
@@ -1684,8 +1683,11 @@ class UtilMenu {
 						sidebar.close(I.SidebarPanel.Left);
 						return;
 					};
-					S.Common.vaultClosedSet(false);
-					S.Common.vaultStyleSet(item.id);
+
+					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
+					if (isClosed) {
+						sidebar.open(SidebarPanel.Left, '', );
+					};
 				},
 			},
 		})

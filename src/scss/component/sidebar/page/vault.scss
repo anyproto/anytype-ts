@@ -32,6 +32,12 @@
 				.chatWrapper,
 				.messageWrapper { align-items: flex-start; }
 			}
+
+			&.vaultStyleMinimal {
+				.item {
+					&.active::before { left: 2px; }
+				}
+			}
 		}
 
 		&.vaultStyleMinimal {

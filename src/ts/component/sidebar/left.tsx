@@ -39,7 +39,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
-	const { vaultStyle, isVaultClosed } = S.Common;
 	const cn = [ 'sidebar', 'left' ];
 
 	const getComponentId = (id: string) => {
@@ -203,10 +202,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			sidebar.resizePage(false, null, null, false);
 		};
 	}, [ page, subPage ]);
-
-	useEffect(() => {
-		sidebar.updateVaultStyle();
-	}, [ vaultStyle, isVaultClosed ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
