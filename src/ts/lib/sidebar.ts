@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
-import { SidebarPanel } from 'Interface';
+import { SidebarPanel, VaultStyle } from 'Interface';
 
 interface SidebarData {
 	width: number;
@@ -394,34 +394,23 @@ class Sidebar {
 	 * @param {number} w - The width to set.
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
-		const width = panel == SidebarPanel.Left ? this.getVaultWidth(w) : this.limitWidth(panel, w);
+		if (panel == SidebarPanel.Left) {
+			this.checkVaultWidth(w);
+		};
 
-		this.setData(panel, isPopup, { width }, save);
+		this.setData(panel, isPopup, { width: this.limitWidth(panel, w) }, save);
 		this.resizePage(isPopup, null, null, false);
 	};
 
-	getVaultWidth (w: number): number {
+	checkVaultWidth (w: number): number {
 		const { vaultStyle } = S.Common;
 		const resizeStyle = this.getVaultStyleByWidth(w);
-		const breakpoints = J.Size.vaultBreakpoints;
-
-		let ret = this.limitWidth(I.SidebarPanel.Left, w);
-
-		/*
-		switch (resizeStyle) {
-			case I.VaultStyle.Closed:
-			case I.VaultStyle.Minimal: {
-				ret = breakpoints[I.VaultStyle.Minimal];
-				break;
-			};
-		};
-		*/
 
 		if ((resizeStyle != I.VaultStyle.Closed) && (Number(vaultStyle) != resizeStyle)) {
 			S.Common.vaultStyleSet(resizeStyle);
 		};
 
-		return ret;
+		return this.limitWidth(I.SidebarPanel.Left, w);
 	};
 
 	getVaultStyleByWidth (w: number) {
@@ -429,10 +418,15 @@ class Sidebar {
 
 		for (let i = 0; i < breakpoints.length - 1; i++) {
 			const current = breakpoints[i];
-			const next = breakpoints[i + 1];
-			const midpoint = (current + next) / 2;
+			const nextIdx = i + 1;
+			const next = breakpoints[nextIdx];
 
-			if (w >= midpoint) {
+			let breakpoint = (current + next) / 2;
+			if (nextIdx == I.VaultStyle.Minimal) {
+				breakpoint = J.Size.vaultStripeMaxWidth;
+			};
+
+			if (w >= breakpoint) {
 				return i as I.VaultStyle; // i matches the enum value
 			};
 		};
@@ -530,6 +524,7 @@ class Sidebar {
 		const dataLeft = this.getData(I.SidebarPanel.Left, isPopup);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft, isPopup);
 		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
+		const isVaultMinimal = (S.Common.vaultStyle == VaultStyle.Minimal) && !dataLeft.isClosed;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -581,6 +576,7 @@ class Sidebar {
 			
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			this.leftButton.toggleClass('withMinimalVault', isVaultMinimal);
 
 			this.pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			this.pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);

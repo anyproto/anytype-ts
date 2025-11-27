@@ -15,6 +15,7 @@ export default {
 	},
 
 	vaultBreakpoints: [ 336, 284, 92, 0 ],
+	vaultStripeMaxWidth: 128,
 
 	table: {
 		min: 50,
