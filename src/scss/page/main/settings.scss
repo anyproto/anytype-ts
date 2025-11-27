@@ -146,10 +146,12 @@
         .spaceHeader { position: relative; margin: 0px 0px 20px 0px; padding: 0px 44px; display: flex; flex-direction: column; align-items: center; width: 100%; }
         .spaceHeader {
             .spaceType { margin-bottom: 8px; @include text-small; color: var(--color-text-secondary); }
+            
             .buttons { position: absolute; right: 0px; top: 0px; display: flex; gap: 0px 16px; opacity: 0; transition: opacity $transitionCommon; }
             .buttons {
                 .button { border: 0px; padding: 0px; border-radius: 0; height: unset; background: none; }
                 .button.blank { color: var(--color-text-secondary); }
+                .button.blank:hover { color: var(--color-text-primary); }
                 .button.black { color: var(--color-text-primary); }
                 .button:hover { background: none; }
                 .button.disabled { color: var(--color-text-tertiary) !important; }
