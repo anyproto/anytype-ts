@@ -92,7 +92,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-		}, { route: analytics.route.widget });
+		}, { route: analytics.route.widget, withDelete: true, });
 	};
 
 	let content = null;

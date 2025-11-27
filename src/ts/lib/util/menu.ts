@@ -7,7 +7,8 @@ interface SpaceContextParam {
 	isSharePage?: boolean; 
 	noManage?: boolean; 
 	noMembers?: boolean; 
-	withPin?: boolean; 
+	withPin?: boolean;
+	withDelete?: boolean;
 	noShare?: boolean; 
 	noBin?: boolean; 
 	noDivider?: boolean;
@@ -851,7 +852,7 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, noShare, noBin, noDivider, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, noBin, noDivider, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -865,6 +866,7 @@ class UtilMenu {
 				general: [],
 				share: [],
 				archive: [],
+				delete: [],
 			};
 
 			if (isSharePage) {
@@ -918,8 +920,10 @@ class UtilMenu {
 					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 				};
 
-				if (isLoading) {
-					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+				if (withDelete && !space.isOneToOne) {
+					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
+
+					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });
 				};
 			};
 
