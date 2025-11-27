@@ -407,6 +407,7 @@ class Sidebar {
 
 		let ret = this.limitWidth(I.SidebarPanel.Left, w);
 
+		/*
 		switch (resizeStyle) {
 			case I.VaultStyle.Closed:
 			case I.VaultStyle.Minimal: {
@@ -414,8 +415,9 @@ class Sidebar {
 				break;
 			};
 		};
+		*/
 
-		if (resizeStyle != I.VaultStyle.Closed && Number(vaultStyle) != resizeStyle) {
+		if ((resizeStyle != I.VaultStyle.Closed) && (Number(vaultStyle) != resizeStyle)) {
 			S.Common.vaultStyleSet(resizeStyle);
 		};
 
@@ -428,7 +430,6 @@ class Sidebar {
 		for (let i = 0; i < breakpoints.length - 1; i++) {
 			const current = breakpoints[i];
 			const next = breakpoints[i + 1];
-
 			const midpoint = (current + next) / 2;
 
 			if (w >= midpoint) {
@@ -696,6 +697,7 @@ class Sidebar {
 			t = J.Constant.delay.sidebar;
 			this.open(panel);
 		};
+
 		window.setTimeout(() => {
 			this.setWidth(panel, false, J.Size.vaultBreakpoints[vaultStyle], true);
 		}, t);

@@ -55,6 +55,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			rootId: object.targetObjectType || object.type, 
 			noPreview: true, 
 			back: 'object/relation',
+			details: {},
 		});
 	};
 
