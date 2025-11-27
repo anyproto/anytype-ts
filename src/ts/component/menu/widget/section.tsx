@@ -5,7 +5,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { I, U, S, keyboard, translate } from 'Lib';
+import { I, U, S, keyboard, translate, analytics } from 'Lib';
 import { Icon, Switch } from 'Component';
 
 const HEIGHT = 28;
@@ -88,8 +88,12 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			return;
 		};
 
-		widgetSections[idx].isHidden = !widgetSections[idx].isHidden;
+		const isHidden = widgetSections[idx].isHidden;
+
+		widgetSections[idx].isHidden = !isHidden;
 		S.Common.widgetSectionsSet([ ...widgetSections ]);
+
+		analytics.event(isHidden ? 'ShowSection' : 'HideSection', { type: item.id });
 	};
 
 	const getItems = (): any[] => {

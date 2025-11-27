@@ -313,16 +313,15 @@ class Sidebar {
 		const dataLeft = this.getData(I.SidebarPanel.Left);
 		const width = dataLeft.isClosed ? 0 : dataLeft.width;
 
-		this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(-100%,0px,0px)' });
+		this.subPageWrapperLeft.addClass('sidebarAnimation isClosing').css({ transform: 'translate3d(-100%,0px,0px)' });
 		this.objLeft.addClass('sidebarAnimation').css({ width });
 		this.dummyLeft.addClass('sidebarAnimation').css({ width });
 		this.resizePage(false, width, null, animate);
 
 		window.setTimeout(() => {
 			this.setData(I.SidebarPanel.SubLeft, false, { isClosed: true }, true);
-
 			this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
-			this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+			this.subPageWrapperLeft.removeClass('sidebarAnimation isClosing').css({ transform: '' });
 			this.dummyLeft.removeClass('sidebarAnimation');
 			this.resizePage(false, null, null, false);
 		}, animate ? J.Constant.delay.sidebar : 0);
@@ -357,12 +356,12 @@ class Sidebar {
 		this.setData(I.SidebarPanel.SubLeft, false, { isClosed: false }, true);
 
 		raf(() => {
-			this.subPageWrapperLeft.addClass('sidebarAnimation').css({ transform: 'translate3d(0px,0px,0px)' });
+			this.subPageWrapperLeft.addClass('sidebarAnimation isOpening').css({ transform: 'translate3d(0px,0px,0px)' });
 			this.objLeft.addClass('sidebarAnimation').css({ width: newWidth });
 			this.dummyLeft.addClass('sidebarAnimation').css({ width: newWidth});
 
 			window.setTimeout(() => {
-				this.subPageWrapperLeft.removeClass('sidebarAnimation').css({ transform: '' });
+				this.subPageWrapperLeft.removeClass('sidebarAnimation isOpening').css({ transform: '' });
 				this.objLeft.removeClass('sidebarAnimation').css({ width: '' });
 				this.dummyLeft.removeClass('sidebarAnimation');
 				this.resizePage(false, null, null, false);

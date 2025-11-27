@@ -657,6 +657,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		e.stopPropagation();
 		
 		const win = $(window);
+		const node = $(nodeRef.current);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
@@ -666,7 +667,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		$(`.block.blockEmbed`).addClass('isResizing');
+		node.addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
 		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, checkMax));
 	};
@@ -683,7 +684,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		wrap.css({ width: (w * 100) + '%' });
 	};
@@ -702,13 +703,13 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		const win = $(window);
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 		
 		keyboard.setResize(false);
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		$(`.block.blockEmbed`).removeClass('isResizing');
+		node.removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: block.id, fields: { ...fields, width: w } },
@@ -724,10 +725,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return width;
 		};
 		
-		const rect = el.get(0).getBoundingClientRect() as DOMRect;
-		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
+		const ew = el.width();
+		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 		
-		return Math.min(1, Math.max(0, w / rect.width));
+		return Math.min(1, Math.max(0, w / ew));
 	};
 
 	const resize = () => {

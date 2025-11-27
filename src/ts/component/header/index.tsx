@@ -84,27 +84,24 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 
 		return (
 			<>
-				{!isPopup ? (
-					<Icon 
-						className="widgetPanel withBackground" 
-						onClick={() => sidebar.leftPanelSubPageToggle('widget')}
-						animatePresence={true}
-						tooltipParam={{ 
-							text: translate('commonWidgets'), 
-							caption: keyboard.getCaption('widget'), 
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
-				) : (
-					<Icon 
-						className="expand withBackground" 
-						onClick={onOpen || onExpand}
-						tooltipParam={{ 
-							text: translate('commonOpenObject'), 
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
-				)}
+				<Icon 
+					className="widgetPanel withBackground" 
+					onClick={() => sidebar.leftPanelSubPageToggle('widget')}
+					animatePresence={true}
+					tooltipParam={{ 
+						text: translate('commonWidgets'), 
+						caption: keyboard.getCaption('widget'), 
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
+				<Icon 
+					className="expand withBackground" 
+					onClick={onOpen || onExpand}
+					tooltipParam={{ 
+						text: translate('commonOpenObject'), 
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
 
 				<Sync id="headerSync" onClick={onSync} />
 

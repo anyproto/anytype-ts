@@ -2,7 +2,7 @@ import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error } from 'Component';
-import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
+import { I, C, S, J, U, translate, focus, Action, keyboard, analytics } from 'Lib';
 
 const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
@@ -65,7 +65,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = getWidth(checkMax, e.pageX - rect.x + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		wrap.css({ width: (w * 100) + '%' });
 	};
@@ -79,7 +79,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const node = $(nodeRef.current);
 		const win = $(window);
 		const ox = wrap.offset().left;
-		const w = getWidth(checkMax, e.pageX - ox + 20);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - ox + 20));
 
 		win.off('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
@@ -141,7 +141,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 		
 		const ew = el.width();
-		const w = Math.min(ew, Math.max(60, checkMax ? width * ew : v));
+		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 
 		return Math.min(1, Math.max(0, w / ew));
 	};
