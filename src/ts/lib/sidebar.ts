@@ -406,6 +406,8 @@ class Sidebar {
 		const { vaultStyle } = S.Common;
 		const resizeStyle = this.getVaultStyleByWidth(w);
 
+		console.log('W: ', w)
+
 		if ((resizeStyle != I.VaultStyle.Closed) && (Number(vaultStyle) != resizeStyle)) {
 			S.Common.vaultStyleSet(resizeStyle);
 		};
