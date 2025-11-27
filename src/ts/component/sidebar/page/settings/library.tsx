@@ -113,7 +113,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		});
 	};
 
-	const loadSearchIds = (clear: boolean) => {
+	const loadSearchIds = () => {
 		if (filter.current) {
 			U.Subscription.search({
 				filters: [],
@@ -194,7 +194,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		timeoutRef.current = window.setTimeout(() => {
 			if (filter.current != v) {
 				filter.current = v;
-				loadSearchIds(true);
+				loadSearchIds();
 			};
 		}, J.Constant.delay.keyboard);
 	};
