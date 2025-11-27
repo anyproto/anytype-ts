@@ -21,8 +21,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted && !spaceview.isChat;
-	const showPin = canWrite && !spaceview.isChat;
+	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
+	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	let center = null;
@@ -52,7 +52,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const onMore = () => {
 		const element = '#button-header-more';
 
-		if (spaceview.isChat) {
+		if (spaceview.isChat || spaceview.isOneToOne) {
 			U.Menu.spaceContext(spaceview, {
 				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
 				className: 'fixed',
@@ -95,7 +95,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
 
 			<div className="side center">
 				{center}

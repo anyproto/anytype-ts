@@ -32,7 +32,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const ret = [] as I.WidgetSection[];
 		const sections = U.Menu.widgetSections();
 
-		if (!spaceview.isChat) {
+		if (!spaceview.isChat && !spaceview.isOneToOne) {
 			const chats = U.Data.getWidgetChats();
 			if (chats.length) {
 				ret.push(I.WidgetSection.Unread);

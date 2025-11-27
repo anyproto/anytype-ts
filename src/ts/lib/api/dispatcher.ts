@@ -996,7 +996,7 @@ class Dispatcher {
 						if (spaceview) {
 							title.push(spaceview.name);
 						};
-						if (!spaceview.isChat) {
+						if (!spaceview.isChat && !spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
 								title.push(chat.name);

@@ -80,7 +80,7 @@ const Data = {
 			pin: '#sidebarPageWidget > #body > .content > .section-pin > .items',
 			type: '#sidebarPageWidget > #body > .content > .section-type > .items',
 			relation: '#header #button-header-relation',
-			widgetSpace: spaceview.isChat ? '#widget-space .spaceInfo' : '#widget-space .spaceData .head',
+			widgetSpace: (spaceview.isChat || spaceview.isOneToOne) ? '#widget-space .spaceInfo' : '#widget-space .spaceData .head',
 		};
 
 		const getOffset = (el: string) => {

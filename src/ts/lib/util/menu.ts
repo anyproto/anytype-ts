@@ -677,7 +677,7 @@ class UtilMenu {
 		};
 
 		let options = [];
-		if (spaceview.isChat) {
+		if (spaceview.isChat || spaceview.isOneToOne) {
 			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
 		} else {
 			options = [

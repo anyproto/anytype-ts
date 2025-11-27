@@ -64,7 +64,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onDashboard = () => {
-		if (!spaceview.isChat) {
+		if (!spaceview.isChat && !spaceview.isOneToOne) {
 			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
 		};
 	};

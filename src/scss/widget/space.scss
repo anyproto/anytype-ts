@@ -28,7 +28,8 @@
 		}
 	}
 
-	.spaceChat {
+	.spaceChat,
+	.spaceOneToOne {
 		.spaceInfo { margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; }
 		.spaceInfo {
 			.iconObject { margin-bottom: 8px; }
@@ -38,8 +39,7 @@
 	}
 
 	.spaceData,
-	.spaceStream,
-	.spaceOneToOne {
+	.spaceStream {
 		.head { padding: 0px 0px 16px 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 		.head {
 			.iconObject { flex-shrink: 0; }
