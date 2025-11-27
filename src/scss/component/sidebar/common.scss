@@ -12,6 +12,7 @@
 
 #sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; display: block; }
 #sidebarLeftButton.withSidebarLeft { background-image: url('~img/icon/widget/toggle1.svg'); }
+#sidebarLeftButton.withMinimalVault { display: none !important; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, S, J, Storage, keyboard, analytics } from 'Lib';
+import { analytics, I, J, keyboard, S, Storage, U } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -395,10 +395,14 @@ class Sidebar {
 
 	/**
 	 * Sets the sidebar width and updates layout.
+	 * @param {I.SidebarPanel} panel - Current sidebar panel.
 	 * @param {number} w - The width to set.
 	 */
-	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number, save: boolean): void {
-		this.setData(panel, isPopup, { width: this.limitWidth(panel, width) }, save);
+	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
+		if (panel == SidebarPanel.Left) {
+			S.Common.vaultIsMinimalSet(w < J.Size.vaultStripeMaxWidth);
+		};
+		this.setData(panel, isPopup, { width: this.limitWidth(panel, w) }, save);
 		this.resizePage(isPopup, null, null, false);
 	};
 
@@ -492,6 +496,7 @@ class Sidebar {
 		const dataLeft = this.getData(I.SidebarPanel.Left, isPopup);
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft, isPopup);
 		const dataRight = this.getData(I.SidebarPanel.Right, isPopup);
+		const isVaultMinimal = S.Common.vaultIsMinimal && !dataLeft.isClosed;
 
 		if ((widthLeft === null) && this.objLeft && this.objLeft.length) {
 			widthLeft = this.objLeft.outerWidth();
@@ -543,6 +548,7 @@ class Sidebar {
 			
 			this.leftButton.toggleClass('sidebarAnimation', animate);
 			this.leftButton.toggleClass('withSidebarLeft', !dataLeft.isClosed);
+			this.leftButton.toggleClass('withMinimalVault', isVaultMinimal);
 
 			this.pageFlex.toggleClass('withSidebarTotalLeft', !!widthLeft);
 			this.pageFlex.toggleClass('withSidebarLeft', !dataLeft.isClosed);
