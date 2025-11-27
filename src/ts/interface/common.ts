@@ -69,6 +69,7 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	color?: string;
 	isSection?: boolean;
 	isDiv?: boolean;
 };

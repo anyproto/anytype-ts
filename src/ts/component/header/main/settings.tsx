@@ -38,7 +38,11 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		};
 
 		if (id == 'spaceShare') {
-			U.Menu.spaceContext(space, menuParam, { isSharePage: true, route: analytics.route.settings });
+			U.Menu.spaceContext(space, menuParam, { 
+				isSharePage: true, 
+				noManage: true,
+				route: analytics.route.settings,
+			});
 		} else {
 			U.Menu.spaceSettingsIndex(menuParam, { route: analytics.route.settings });
 		};
