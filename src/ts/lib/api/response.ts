@@ -585,7 +585,7 @@ export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Respo
 
 export const MembershipV2GetPortalLink = (response: Rpc.MembershipV2.GetPortalLink.Response) => {
 	return {
-		url: response.getUrlwithjwt(),
+		url: response.getUrl(),
 	};
 };
 
