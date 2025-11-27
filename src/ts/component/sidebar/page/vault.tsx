@@ -329,7 +329,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (vaultMessages) {
 			let message = null;
 
-			if (item.isChat) {
+			if (item.isChat || item.isOneToOne) {
 				message = (
 					<div className="messageWrapper">
 						{last}

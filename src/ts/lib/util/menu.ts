@@ -678,7 +678,7 @@ class UtilMenu {
 		};
 
 		let options = [];
-		if (spaceview.isChat) {
+		if (spaceview.isChat || spaceview.isOneToOne) {
 			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
 		} else {
 			options = [
@@ -817,20 +817,26 @@ class UtilMenu {
 
 	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
 		const isOwner = U.Space.isMyOwner();
+		const spaceview = U.Space.getSpaceview();
+		const options: I.Option[] = [
+			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') }
+		];
+
+		if (!spaceview.isOneToOne) {
+			options.push({ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' });
+		};
 
 		S.Menu.open('select', {
 			...menuParam,
 			data: {
-				options: [
-					{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-					{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' },
-				],
+				options,
 				onSelect: (e: React.MouseEvent, option: any) => {
 					switch (option.id) {
 						case 'spaceInfo': {
 							Action.spaceInfo();
 							break;
 						};
+						
 						case 'delete': {
 							Action.removeSpace(S.Common.space, analytics.route.settings);
 							break;
@@ -885,7 +891,7 @@ class UtilMenu {
 					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
-				if (!space.isPersonal && !noMembers) {
+				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
 					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
 				};
 

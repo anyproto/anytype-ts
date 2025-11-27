@@ -120,7 +120,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ 
 				relationKey: 'uniqueKey', 
 				type: I.SortType.Custom, 
-				customOrder: U.Data.typeSortKeys(spaceview.isChat),
+				customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
 			},
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];

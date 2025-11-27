@@ -117,7 +117,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 			if (
 				U.Object.isTypeOrRelationLayout(object.layout) || 
-				(spaceview.isChat && U.Object.isChatLayout(object.layout))
+				((spaceview.isChat || spaceview.isOneToOne) && U.Object.isChatLayout(object.layout))
 			) {
 				sidebar.rightPanelClose(isPopup, false);
 				return;

@@ -77,7 +77,7 @@ class UtilSubscription {
 		
 		let skipLayouts = [];
 
-		if (spaceview.isChat) {
+		if (spaceview.isChat || spaceview.isOneToOne) {
 			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
 		};
 
@@ -531,7 +531,7 @@ class UtilSubscription {
 					{ 
 						relationKey: 'uniqueKey', 
 						type: I.SortType.Custom, 
-						customOrder: U.Data.typeSortKeys(spaceview.isChat),
+						customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
