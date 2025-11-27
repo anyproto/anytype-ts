@@ -345,7 +345,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 							) : ''}
 
 							<div className="sectionContent">
-								{!spaceview.isChat ? (
+								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
 											<Icon className="home" />
