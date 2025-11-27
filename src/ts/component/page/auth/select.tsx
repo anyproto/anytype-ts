@@ -26,7 +26,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 			const { account } = S.Auth;
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(true);
+			U.Data.onAuthOnce();
 			
 			S.Common.showRelativeDatesSet(true);
 			

@@ -29,7 +29,6 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = null;
 	public pinTimeId = null;
-	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
 	public languages: string[] = [];
@@ -253,10 +252,6 @@ class CommonStore {
 			ret = Storage.get('pinTime');
 		};
 		return (Number(ret) || J.Constant.default.pinTime) * 1000;
-	};
-
-	get emailConfirmationTime (): number {
-		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
 	};
 
 	get recentEditMode (): I.RecentEditMode {
@@ -585,16 +580,6 @@ class CommonStore {
 				callBack?.();
 			});
 		};
-	};
-
-	/**
-	 * Sets the email confirmation time.
-	 * @param {number} t - The time value.
-	 */
-	emailConfirmationTimeSet (t: number) {
-		this.emailConfirmationTimeId = t;
-
-		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
 	};
 
 	/**

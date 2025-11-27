@@ -571,12 +571,6 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	};
 };
 
-export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
-	return { 
-		url: response.getPortalurl(),
-	};
-};
-
 export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Response) => {
 	return {
 		tier: response.getRequestedtier(),
@@ -585,7 +579,7 @@ export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Respo
 
 export const MembershipV2GetPortalLink = (response: Rpc.MembershipV2.GetPortalLink.Response) => {
 	return {
-		url: response.getUrlwithjwt(),
+		url: response.getUrl(),
 	};
 };
 

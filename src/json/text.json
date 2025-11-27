@@ -2399,9 +2399,6 @@
 	"errorMembershipGetVerificationEmail9": "Failed to send email",
 	"errorMembershipGetVerificationEmail10": "Membership already exists",
 
-	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
-
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceInviteGenerate103": "Oops! The request failed. Please check your Internet connection and try again.",
