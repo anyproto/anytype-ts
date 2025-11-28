@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $ from 'jquery';
-import raf from 'raf';
+import $, { get } from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -8,7 +7,7 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action } from 'Lib';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview } from 'Lib';
 
 import ItemProgress from './vault/update';
 
@@ -35,7 +34,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const canCreate = U.Space.canCreateSpace();
-	const isMinimal = vaultIsMinimal;
 	const cnh = [ 'head' ];
 	const cnb = [ 'body' ];
 	const cnf = [ 'bottom' ];
@@ -45,10 +43,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		cnb.push('withMessages');
 	};
 
-	if (isMinimal) {
-		cnh.push('vaultStyleMinimal');
-		cnb.push('vaultStyleMinimal');
-		cnf.push('vaultStyleMinimal');
+	if (vaultIsMinimal) {
+		cnh.push('isMinimal');
+		cnb.push('isMinimal');
+		cnf.push('isMinimal');
 	};
 
 	const unbind = () => {
@@ -84,7 +82,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.leftPanelOpen(width, true);
+				sidebar.leftPanelOpen(width, false);
 			};
 		});
 	};
@@ -117,9 +115,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.leftPanelClose(true);
+			sidebar.leftPanelClose(false);
 			closeSidebar.current = false;
 		};
+
+		Preview.tooltipHide();
 	};
 
 	const onArrow = (dir: number) => {
@@ -142,7 +142,32 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		const next = items[n.current];
 		if (next) {
 			setHover(next);
+			listRef.current?.scrollToRow(Math.max(0, n.current));
+			tooltipShow(next, 1);
 		};
+	};
+
+	const tooltipShow = (item: any, delay: number) => {
+		if (!vaultIsMinimal) {
+			return;
+		};
+
+		const node = getNode();
+		const element = node.find(`#item-${item.id}`);
+		const iconWrap = element.find('.iconWrap');
+		const idx = items.findIndex(it => it.id == item.id) + 1;
+		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
+		const text = Preview.tooltipCaption(U.Common.htmlSpecialChars(item.tooltip || item.name), caption);
+
+		Preview.tooltipShow({ 
+			text, 
+			element, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: node.width() / 2 + iconWrap.width() / 2 + 8,
+			delay,
+		});
 	};
 
 	const onSortStart = () => {
@@ -244,6 +269,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setHover(item);
+			tooltipShow(item, 300);
 		};
 	};
 
@@ -295,7 +321,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let time = null;
 		let last = null;
 		let counter = null;
-		let tooltip = { text: '' };
+		let tooltip: Partial<I.TooltipParam> = { text: '' };
 
 		if (item.targetSpaceId == space) {
 			cn.push('active');
@@ -327,7 +353,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('noMessages');
 		};
 
-		if (isMinimal) {
+		if (vaultIsMinimal) {
 			tooltip = {
 				text: item.name,
 				typeX: I.MenuDirection.Left,
@@ -405,10 +431,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				onContextMenu={e => onContextMenu(e, item)}
 			>
 				<div className="iconWrap">
-					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} tooltipParam={tooltip} />
-					{isMinimal ? counter : ''}
+					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
+					{vaultIsMinimal ? counter : ''}
 				</div>
-				{!isMinimal ? (
+				{!vaultIsMinimal ? (
 					<div className="info">
 						{info}
 					</div>
@@ -514,7 +540,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					{canCreate && !isMinimal ? (
+					{canCreate && !vaultIsMinimal ? (
 						<Icon
 							id="button-create-space"
 							className="plus withBackground"
@@ -524,7 +550,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					) : ''}
 				</div>
 			</div>
-			{!isMinimal ? (
+			{!vaultIsMinimal ? (
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
@@ -537,7 +563,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				</div>
 			) : ''}
 			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
-				{!items.length && !isMinimal ? (
+				{!items.length && !vaultIsMinimal ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
 
@@ -589,11 +615,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
 							<IconObject object={settings} size={32} iconSize={32} />
-							{!isMinimal ? <ObjectName object={settings} /> : ''}
+							{!vaultIsMinimal ? <ObjectName object={settings} /> : ''}
 						</div>
 					</div>
 
-					{!isMinimal ? (
+					{!vaultIsMinimal ? (
 						<div className="side right">
 							<Icon
 								className="gallery"
