@@ -5,13 +5,8 @@ import { I, S, U, translate, Renderer } from 'Lib';
 
 const SidebarPageVaultUpdate = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
-	const { className } = props;
 	const { updateVersion } = S.Common;
 	const cn = [ 'sidebarBannerUpdate' ];
-
-	if (className) {
-		cn.push(className);
-	};
 
 	let info = null;
 	let buttons = null;
