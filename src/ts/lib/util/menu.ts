@@ -1749,12 +1749,13 @@ class UtilMenu {
 
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
+		const spaceview = U.Space.getSpaceview();
 		const manage = { id: 'manage', icon: 'manage', name: translate('widgetManageSections') };
 
 		let options: any[] = [];
 		let value = '';
 
-		if (sectionId == I.WidgetSection.RecentEdit) {
+		if (!spaceview.isPersonal && (sectionId == I.WidgetSection.RecentEdit)) {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });
