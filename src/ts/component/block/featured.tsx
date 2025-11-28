@@ -307,9 +307,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						e.persist();
 
 						const menuId = 'dataviewText';
-						const param = {
-							width: 288,
-						};
+						const param = { width: 288 };
 						const data = {
 							value: object[relationKey] || '',
 						};

@@ -294,7 +294,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 					param = Object.assign(param, {
 						noFlipX: true,
-						noFlipY: true,
 						horizontal: I.MenuDirection.Left,
 						element: cell,
 						offsetY: -height,
