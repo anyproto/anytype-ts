@@ -1755,7 +1755,7 @@ class UtilMenu {
 		let options: any[] = [];
 		let value = '';
 
-		if (!spaceview.isPersonal && (sectionId == I.WidgetSection.RecentEdit)) {
+		if (spaceview.isShared && (sectionId == I.WidgetSection.RecentEdit)) {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });
