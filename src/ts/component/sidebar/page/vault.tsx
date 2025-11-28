@@ -321,7 +321,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let time = null;
 		let last = null;
 		let counter = null;
-		let tooltip: Partial<I.TooltipParam> = { text: '' };
 
 		if (item.targetSpaceId == space) {
 			cn.push('active');
@@ -346,21 +345,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.lastMessage) {
 			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
-			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage)} />;
+			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage, !item.isOneToOne)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
 			counter = <ChatCounter spaceId={item.targetSpaceId} />;
 		} else {
 			cn.push('noMessages');
-		};
-
-		if (vaultIsMinimal) {
-			tooltip = {
-				text: item.name,
-				typeX: I.MenuDirection.Left,
-				typeY: I.MenuDirection.Center,
-				delay: 0,
-				offsetX: iconSize + 8,
-			};
 		};
 
 		let info = null;

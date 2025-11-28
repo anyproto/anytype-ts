@@ -459,7 +459,7 @@ class ChatStore {
 	 * @param {I.ChatMessage} message - The chat message.
 	 * @returns {string} The simple text representation.
 	 */
-	getMessageSimpleText (spaceId: string, message: I.ChatMessage): string {
+	getMessageSimpleText (spaceId: string, message: I.ChatMessage, withAuthor: boolean): string {
 		if (!message) {
 			return '';
 		};
@@ -473,10 +473,12 @@ class ChatStore {
 
 		const ret = [];
 		const participantId = U.Space.getParticipantId(spaceId, creator);
-		const author = dependencies.get(participantId);
 
-		if (author) {
-			ret.push(`${U.Object.name(author)}:`);
+		if (withAuthor) {
+			const author = dependencies.get(participantId);
+			if (author) {
+				ret.push(`${U.Object.name(author)}:`);
+			};
 		};
 
 		if (text) {
