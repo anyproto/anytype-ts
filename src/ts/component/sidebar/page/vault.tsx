@@ -295,6 +295,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let time = null;
 		let last = null;
 		let counter = null;
+		let tooltip = { text: '' };
 
 		if (item.targetSpaceId == space) {
 			cn.push('active');
@@ -324,6 +325,16 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			counter = <ChatCounter spaceId={item.targetSpaceId} />;
 		} else {
 			cn.push('noMessages');
+		};
+
+		if (isMinimal) {
+			tooltip = {
+				text: item.name,
+				typeX: I.MenuDirection.Left,
+				typeY: I.MenuDirection.Center,
+				delay: 0,
+				offsetX: iconSize + 8,
+			};
 		};
 
 		let info = null;
@@ -394,7 +405,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				onContextMenu={e => onContextMenu(e, item)}
 			>
 				<div className="iconWrap">
-					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
+					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} tooltipParam={tooltip} />
 					{isMinimal ? counter : ''}
 				</div>
 				{!isMinimal ? (
