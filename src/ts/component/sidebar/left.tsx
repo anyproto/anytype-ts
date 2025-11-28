@@ -173,7 +173,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		const w = Math.max(0, (e.pageX - ox.current));
 
 		sidebar.setWidth(panel, false, w, true);
-
 		window.setTimeout(() => movedX.current = false, 15);
 	};
 
