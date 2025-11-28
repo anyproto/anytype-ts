@@ -15,7 +15,7 @@
 	.txt, .icon { display: none; }
 }
 
-.button.accent { background: var(--color-system-accent-100); color: var(--color-bg-primary); }
+.button.accent { background: var(--color-system-accent-100); color: #fff; }
 .button.accent:not(.disabled):hover, .button.accent:not(.disabled).hover { background: var(--color-system-accent-125); }
 .button.accent {
 	.loaderWrapper {
