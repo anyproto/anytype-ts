@@ -12,7 +12,7 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 import ItemProgress from './vault/update';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
+const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
 const HEIGHT_ITEM_UPDATE = 112;
 
@@ -165,7 +165,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: node.width() / 2 + iconWrap.width() / 2 + 8,
+			offsetX: node.width() / 2 + iconWrap.width() / 2,
 			delay,
 		});
 	};
@@ -315,7 +315,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
 		const icons = [];
-		const iconSize = vaultMessages ? 48 : 32;
+		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
 
 		let chatName = null;
 		let time = null;
@@ -510,7 +510,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			return HEIGHT_ITEM_UPDATE;
 		};
 
-		return vaultMessages ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
+		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
 	useEffect(() => {

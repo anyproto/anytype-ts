@@ -182,14 +182,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		};
 	};
 
-	const onSidebarToggleContext = (e: any) => {
-		U.Menu.vaultStyle({
-			element: '#sidebarLeftButton',
-			className: 'vaultStyle fixed',
-			classNameWrap: 'fromSidebar',
-		});
-	};
-
 	useEffect(() => {
 		return () => {
 			Preview.tooltipHide(true);
@@ -219,7 +211,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 					typeY: I.MenuDirection.Bottom,
 				}}
 				onClick={() => sidebar.leftPanelToggle()}
-				onContextMenu={onSidebarToggleContext}
 				onMouseDown={e => e.stopPropagation()}
 			/>
 

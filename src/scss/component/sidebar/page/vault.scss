@@ -41,7 +41,7 @@
 		}
 
 		&.isMinimal {
-			.item { justify-content: center; }
+			.item { justify-content: center; width: auto !important; left: 50% !important; margin-left: -24px; }
 			.item {
 				&.active::before {
 					width: 4px; height: 4px; border-radius: 50%; background-color: var(--color-control-accent);
