@@ -19,7 +19,9 @@
 	.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.svg'); flex-shrink: 0; }
 	.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
 	.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
-	.button { flex-grow: 1; flex-basis: 50%; border-radius: 14px; border: 0px; background-color: var(--color-shape-highlight-medium); }
+	.button { 
+		flex-grow: 1; flex-basis: 50%; border: 0px !important; background-color: var(--color-shape-highlight-medium) !important; 
+	}
 	.button:hover { background-color: var(--color-shape-highlight-dark); }
 
 	.progressBar {
