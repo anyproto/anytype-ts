@@ -9,8 +9,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview } from 'Lib';
 
-import ItemProgress from './vault/update';
-
 const LIMIT = 20;
 const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
@@ -19,7 +17,7 @@ const HEIGHT_ITEM_UPDATE = 112;
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion, space, vaultMessages, vaultIsMinimal } = S.Common;
+	const { space, vaultMessages, vaultIsMinimal } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -31,7 +29,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	);
 	const profile = U.Space.getProfile();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
-	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const canCreate = U.Space.canCreateSpace();
 	const cnh = [ 'head' ];
@@ -212,10 +209,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (filter) {
 			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
-		};
-
-		if (progress.length || updateVersion) {
-			items.unshift({ id: 'update-progress', isProgress: true, isUpdate: Boolean(updateVersion) });
 		};
 
 		return items;
@@ -446,19 +439,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				{item.isProgress ? (
-					<ItemProgress
-						{...item}
-						index={param.index}
-						style={param.style}
-					/>
-				) : (
-					<ItemObject
-						{...item}
-						index={param.index}
-						style={param.style}
-					/>
-				)}
+				<ItemObject
+					{...item}
+					index={param.index}
+					style={param.style}
+				/>
 			</CellMeasurer>
 		);
 	};

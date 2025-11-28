@@ -34,6 +34,9 @@ import MenuItemVertical from './menu/item/vertical';
 
 import Notification from './notification';
 import Banner from './util/banner';
+import UpdateBanner from './util/updateBanner';
+import UpsellBanner from './util/upsell/';
+import QR from './util/qr';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -103,10 +106,6 @@ import ProgressText from './util/progressText';
 import ShareTooltip from './util/share/tooltip';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
-import QR from './util/qr';
-
-import UpsellBanner from './util/upsell/';
-
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
 
@@ -174,6 +173,9 @@ export {
 	Error,
 	Notification,
 	Banner,
+	UpdateBanner,
+	UpsellBanner,
+	QR,
 	MenuBar,
 
 	Icon,
@@ -213,10 +215,6 @@ export {
 
 	HeadSimple,
 	EditorControls,
-
-	QR,
-
-	UpsellBanner,
 
 	EmptyNodes,
 	LayoutPlug,
