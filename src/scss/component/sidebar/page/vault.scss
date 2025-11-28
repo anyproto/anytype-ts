@@ -35,8 +35,6 @@
 
 			&.isMinimal {
 				.item {
-					&.active::before { left: 2px; }
-
 					&.isProgress {
 						.icon { width: 32px; height: 32px; }
 						.info { display: none; }
@@ -50,7 +48,7 @@
 			.item {
 				&.active::before {
 					width: 4px; height: 4px; border-radius: 50%; background-color: var(--color-control-accent);
-					left: 14px; top: 50%; margin-top: -2px;
+					left: 0px; top: 50%; margin-top: -2px;
 				}
 			}
 		}
