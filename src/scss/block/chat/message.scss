@@ -123,6 +123,8 @@
 	}
 
 	&.isSelf {
+		::selection { background-color: var(--color-system-accent-25); }
+
 		> .flex { flex-direction: row-reverse; }
 		> .flex {
 			> .side.left { display: none; }
@@ -134,6 +136,7 @@
 		.bubbleInner { flex-direction: row-reverse; }
 		.bubbleInner {
 			> .controls { flex-direction: row-reverse; }
+
 			.bubble { color: #fff; background-color: var(--color-system-accent-100); }
 			.bubble {
 				.time { color: var(--color-text-white60); }
