@@ -30,6 +30,8 @@
 		}
 
 		&.isMinimal {
+			.ReactVirtualized__List::-webkit-scrollbar { display: none; }
+			
 			.item { justify-content: center; width: auto !important; left: 50% !important; margin-left: -24px; }
 			.item {
 				&.active::before {
