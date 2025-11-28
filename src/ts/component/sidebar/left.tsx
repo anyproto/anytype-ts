@@ -10,8 +10,6 @@ import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
 
-import UpdateBanner from './page/vault/update'
-
 const Components = {
 	widget:				 PageWidget,
 	vault:				 PageVault,
@@ -272,8 +270,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 					</div>
 				</div>
 			</div>
-
-			<UpdateBanner {...props} />
 		</>
 	);
 

@@ -17,11 +17,6 @@
 
 			.item { gap: 0px 10px; align-items: center; }
 			.item {
-				&.isProgress { gap: 2px 10px; }
-				&.isProgress {
-					.icon { width: 48px; height: 48px; }
-				}
-
 				&.isLoading {
 					.iconWrap { width: 48px; height: 48px; }
 				}
@@ -31,15 +26,6 @@
 				.nameWrapper { align-items: flex-end; }
 				.chatWrapper,
 				.messageWrapper { align-items: flex-start; }
-			}
-
-			&.isMinimal {
-				.item {
-					&.isProgress {
-						.icon { width: 32px; height: 32px; }
-						.info { display: none; }
-					}
-				}
 			}
 		}
 
@@ -131,25 +117,6 @@
 
 		&.spaceChat {
 			.label.lastMessage { @include clamp2; }
-		}
-
-		&.isProgress { flex-direction: column; gap: 8px 0px; }
-		&.isProgress {
-			.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
-
-			.icon { width: 32px; height: 32px; background-image: url('~img/logo/progress.svg'); flex-shrink: 0; }
-			.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; }
-			.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
-			.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
-			.button { flex-grow: 1; flex-basis: 50%; border-radius: 14px; border: 0px; background-color: var(--color-shape-highlight-medium); }
-			.button:hover { background-color: var(--color-shape-highlight-dark); }
-
-			.progressBar {
-				.bar { gap: 0px; height: 8px; border-radius: 6px; }
-				.fill.isActive { background-color: #ffb76c; }
-				.fill.empty { background-color: var(--color-shape-highlight-medium); }
-				.labels { display: none; }
-			}
 		}
 	}
 }
