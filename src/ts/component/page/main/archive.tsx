@@ -62,8 +62,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		resize,
 	}));
 
-	console.log(keyboard.getMatch(isPopup));
-
 	return (
 		<>
 			<Header 
