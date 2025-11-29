@@ -64,7 +64,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	return (
 		<>
-			<Header {...props} component="mainSettings" />
+			<Header {...props} component="mainEmpty" />
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="titleWrapper">
