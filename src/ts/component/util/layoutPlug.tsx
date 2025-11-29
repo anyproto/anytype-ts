@@ -23,12 +23,10 @@ const LayoutPlug = forwardRef<{}, Props>(({
 }, ref) => {
 
 	const getNodeWidth = (): number => {
-		sidebar.initObjects(isPopup);
-
 		const container = U.Common.getPageFlexContainer(isPopup);
-		const right = sidebar.objRight.outerWidth();
+		const sidebarRight = sidebar.getData(I.SidebarPanel.Right, isPopup);
 
-		return container.width() - right - sidebar.getDummyWidth();
+		return container.width() - (sidebarRight.isClosed ? 0 : sidebarRight.width) - sidebar.getDummyWidth();
 	};
 
 	const getWidth = () => {

@@ -662,6 +662,8 @@ class CommonStore {
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
 	setRightSidebarState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
+		v.noPreview = Boolean(v.noPreview);
+
 		set(this.getRightSidebarState(isPopup), v);
 	};
 
