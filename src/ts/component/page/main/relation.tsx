@@ -407,7 +407,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		<>
 			<Header 
 				{...props} 
-				component="mainObject" 
+				component={U.Common.settingsHeader(isPopup, 'mainObject')} 
 				ref={headerRef} 
 				rootId={rootId} 
 			/>

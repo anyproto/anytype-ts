@@ -10,8 +10,6 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const nodeRef = useRef(null);
 	const managerRef = useRef(null);
 	const [ rowLength, setRowLength ] = useState(0);
-	const isSettings = keyboard.getMatch(isPopup).params.action == 'settings';
-	const header = isSettings ? 'mainSettings' : 'mainEmpty';
 
 	const onRestore = () => {
 		Action.restore(managerRef.current?.getSelected(), analytics.route.archive);
@@ -68,7 +66,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	return (
 		<>
-			<Header {...props} component={header} />
+			<Header 
+				{...props}
+				component={U.Common.settingsHeader(isPopup, 'mainEmpty')} 
+			/>
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="titleWrapper">
