@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
-import { I, U, J, translate, Action, analytics } from 'Lib';
+import { I, U, J, translate, Action, analytics, keyboard } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -10,6 +10,8 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const nodeRef = useRef(null);
 	const managerRef = useRef(null);
 	const [ rowLength, setRowLength ] = useState(0);
+	const isSettings = keyboard.getMatch(isPopup).params.action == 'settings';
+	const header = isSettings ? 'mainSettings' : 'mainEmpty';
 
 	const onRestore = () => {
 		Action.restore(managerRef.current?.getSelected(), analytics.route.archive);
@@ -62,9 +64,11 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		resize,
 	}));
 
+	console.log(keyboard.getMatch(isPopup));
+
 	return (
 		<>
-			<Header {...props} component="mainEmpty" />
+			<Header {...props} component={header} />
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="titleWrapper">
