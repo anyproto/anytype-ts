@@ -19,6 +19,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const rootId = keyboard.getRootId(isPopup);
 	const check = U.Data.checkDetails(rootId, rootId, [ 'layout' ]);
 	const idRef = useRef('');
+	const isSettings = keyboard.getMatch(isPopup).params.action == 'settings';
+	const header = isSettings ? 'mainSettings' : 'mainObject';
 
 	const unbind = () => {
 		const ns = U.Common.getEventNamespace(isPopup);
@@ -264,7 +266,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		<div ref={nodeRef}>
 			<Header 
 				{...props} 
-				component="mainObject" 
+				component={header} 
 				ref={headerRef} 
 				rootId={rootId} 
 			/>
