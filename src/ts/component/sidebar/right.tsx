@@ -1,4 +1,5 @@
-import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, DragEvent } from 'react';
+import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, DragEvent } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -43,6 +44,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const sx = useRef(0);
 	const frame = useRef(0);
 	const width = useRef(0);
+	const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 
 	if (withPreview) {
 		cn.push('withPreview');
@@ -111,7 +113,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 	};
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (state.page == 'object/relation') {
 			const object = S.Detail.get(state.rootId, state.rootId);
 
@@ -136,10 +138,14 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			id="sidebarRight"
 			ref={nodeRef}
 			className={cn.join(' ')}
+			style={{ width: data.isClosed ? 0 : data.width }}
 		>
 			{Component ? (
-				<>
-					<div id={pageId} className={cnp.join(' ')}>
+				<AnimatePresence mode="popLayout">
+					<motion.div
+						id={pageId} 
+						className={cnp.join(' ')}
+					>
 						<Component 
 							ref={pageRef} 
 							{...props} 
@@ -147,12 +153,12 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 							sidebarDirection={I.SidebarDirection.Right}
 							getId={() => pageId}
 						/> 
-					</div>
+					</motion.div>
 
 					<div className="resize-h" draggable={true} onDragStart={onResizeStart}>
 						<div className="resize-handle" />
 					</div>
-				</>
+				</AnimatePresence>
 			): ''}
 		</div>
 	);

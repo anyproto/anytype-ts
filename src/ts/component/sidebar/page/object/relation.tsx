@@ -182,7 +182,7 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			</div>
 
 			<div id="body" className="body">
-				{!type ? (
+				{type?.isDeleted ? (
 					<div className="section">
 						<div className="item empty">
 							{translate('sidebarObjectRelationTypeDeleted')}

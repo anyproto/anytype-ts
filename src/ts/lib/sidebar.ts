@@ -237,7 +237,11 @@ class Sidebar {
 			return;
 		};
 
-		this.objRight.addClass('sidebarAnimation').css({ transform: 'translate3d(100%,0px,0px)' });
+		if (animate) {
+			this.objRight.addClass('sidebarAnimation');
+		};
+
+		this.objRight.css({ transform: 'translate3d(100%,0px,0px)' });
 		this.resizePage(isPopup, null, 0, animate);
 
 		window.clearTimeout(this.timeoutAnim);

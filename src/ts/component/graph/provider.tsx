@@ -349,7 +349,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		};
 
 		const { left, top } = offset;
-		const shouldRerender = previewId.current !== subject.current.id;
+		const shouldRerender = previewId.current != subject.current.id;
 
 		previewId.current = subject.current.id;
 
