@@ -6,7 +6,15 @@
 	</head>
 	<body>
 		<div id="root"></div>
-		<script src="./js/run.js" type="text/javascript"></script>
+
+		<!-- Load chunks in order: runtime, vendors, app -->
+		<script src="./js/runtime.js" type="text/javascript"></script>
+		<script src="./js/react.js" type="text/javascript"></script>
+		<script src="./js/mobx.js" type="text/javascript"></script>
+		<script src="./js/pdfjs.js" type="text/javascript"></script>
+		<script src="./js/excalidraw.js" type="text/javascript"></script>
+		<script src="./js/vendors.js" type="text/javascript"></script>
+		<script src="./js/app.js" type="text/javascript"></script>
 
 		<!-- %REPLACE-JS% -->
 	</body>

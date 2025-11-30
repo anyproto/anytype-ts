@@ -1,56 +1,50 @@
-// Load chunks in order for optimized builds
-// Runtime must load first, then vendors, then app
-// Rspack runtime will handle loading other async chunks as needed
-const chunks = [
-	'runtime',    // Rspack runtime - must load first
-	'react',      // React libraries
-	'mobx',       // MobX state management
-	'pdfjs',      // PDF.js library
-	'excalidraw', // Excalidraw drawing library (large)
-	'vendors',    // Other vendor libraries
-	'app'         // Main application entry point
-];
+// Load chunks for optimized builds
+// Strategy: Runtime first, then all vendors in parallel, then app
 
-let loadedCount = 0;
-let failedCount = 0;
+const vendorChunks = ['react', 'mobx', 'pdfjs', 'excalidraw', 'vendors'];
+let vendorsLoaded = 0;
+let vendorsFailed = 0;
 
-function loadChunk(index) {
-	if (index >= chunks.length) {
-		if (failedCount > 0 && loadedCount === 0) {
-			console.error('Failed to load application chunks, reloading...');
-			window.setTimeout(() => window.location.reload(), 1000);
-		}
-		return;
-	}
-
-	const chunkName = chunks[index];
+function loadScript(src, onSuccess, onError) {
 	const script = document.createElement('script');
-
-	script.src = `./js/${chunkName}.js?${Math.random()}`;
+	script.src = src + '?' + Math.random();
 	script.type = 'text/javascript';
-
-	script.onload = function() {
-		loadedCount++;
-		loadChunk(index + 1);
-	};
-
-	script.onerror = function() {
-		console.error(`Failed to load ${chunkName}.js`);
-		failedCount++;
-
-		// If runtime fails, reload the page
-		if (chunkName === 'runtime' || chunkName === 'app') {
-			console.error('Critical chunk failed to load, reloading...');
-			window.setTimeout(() => window.location.reload(), 1000);
-			return;
-		}
-
-		// Try loading the next chunk
-		loadChunk(index + 1);
-	};
-
+	script.onload = onSuccess;
+	script.onerror = onError;
 	document.body.appendChild(script);
 }
 
-// Start loading chunks sequentially
-loadChunk(0);
+function loadApp() {
+	loadScript('./js/app.js', function() {
+		// App loaded successfully
+	}, function() {
+		console.error('Failed to load app.js, reloading...');
+		window.setTimeout(() => window.location.reload(), 1000);
+	});
+}
+
+function loadVendors() {
+	// Load all vendor chunks in parallel
+	vendorChunks.forEach(function(chunkName) {
+		loadScript('./js/' + chunkName + '.js', function() {
+			vendorsLoaded++;
+			// When all vendors are loaded, load the app
+			if (vendorsLoaded === vendorChunks.length) {
+				loadApp();
+			}
+		}, function() {
+			console.error('Failed to load ' + chunkName + '.js');
+			vendorsFailed++;
+			// Continue even if a vendor fails - app might still work
+			if (vendorsLoaded + vendorsFailed === vendorChunks.length) {
+				loadApp();
+			}
+		});
+	});
+}
+
+// Start by loading runtime, then vendors, then app
+loadScript('./js/runtime.js', loadVendors, function() {
+	console.error('Failed to load runtime.js, reloading...');
+	window.setTimeout(() => window.location.reload(), 1000);
+});
