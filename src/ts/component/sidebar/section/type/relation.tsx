@@ -90,7 +90,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	if (conflictIds.length) {
-		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
+		const ids = lists.reduce((acc, list) => acc.concat(list.data.map(it => it.id)), []);
 		const systemKeys = Relation.systemKeysWithoutUser();
 
 		const conflictRelations = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(it => {
