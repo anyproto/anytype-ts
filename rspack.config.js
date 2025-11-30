@@ -16,11 +16,10 @@ module.exports = (env, argv) => {
 		mode: 'development',
 		devtool: 'source-map',
 
+		// Base optimization settings - will be overridden per config
 		optimization: {
-			minimize: false,
 			removeAvailableModules: true,
 			removeEmptyChunks: true,
-			splitChunks: false,
 		},
 		
 		resolve: {
@@ -125,12 +124,8 @@ module.exports = (env, argv) => {
 		plugins: [
 			!prod && new ReactRefreshPlugin(),
 			process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
-			
-			new ForkTsCheckerWebpackPlugin(),
 
-			new rspack.optimize.LimitChunkCountPlugin({
-				maxChunks: 1,
-			}),
+			new ForkTsCheckerWebpackPlugin(),
 
 			new rspack.CopyRspackPlugin({
 				patterns: [
@@ -154,9 +149,89 @@ module.exports = (env, argv) => {
 		name: 'app',
 		...base,
 		entry: {
-			app: { 
-				import: './src/ts/entry.tsx', 
-				filename: 'js/main.js',
+			app: './src/ts/entry.tsx',
+		},
+
+		output: {
+			path: path.resolve(__dirname, 'dist'),
+			filename: 'js/[name].js',
+			chunkFilename: 'js/[name].js',
+		},
+
+		// Optimized build settings for app
+		optimization: {
+			...base.optimization,
+			minimize: prod, // Enable minification in production
+			usedExports: true, // Tree shaking
+
+			// Split runtime code into separate chunk for better caching
+			runtimeChunk: {
+				name: 'runtime',
+			},
+
+			// Intelligent code splitting
+			splitChunks: {
+				chunks: 'all',
+				maxInitialRequests: Infinity,
+				minSize: 0,
+				cacheGroups: {
+					// Disable default cache groups
+					default: false,
+					defaultVendors: false,
+
+					// Large libraries get their own chunks
+					react: {
+						test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/,
+						name: 'react',
+						priority: 30,
+						enforce: true,
+						reuseExistingChunk: true,
+					},
+					mobx: {
+						test: /[\\/]node_modules[\\/](mobx|mobx-react|mobx-logger)[\\/]/,
+						name: 'mobx',
+						priority: 30,
+						enforce: true,
+						reuseExistingChunk: true,
+					},
+					excalidraw: {
+						test: /[\\/]node_modules[\\/](@excalidraw|roughjs)[\\/]/,
+						name: 'excalidraw',
+						priority: 30,
+						enforce: true,
+						reuseExistingChunk: true,
+					},
+					pdfjs: {
+						test: /[\\/]node_modules[\\/]pdfjs-dist[\\/]/,
+						name: 'pdfjs',
+						priority: 30,
+						enforce: true,
+						reuseExistingChunk: true,
+					},
+					d3: {
+						test: /[\\/]node_modules[\\/](d3|d3-force)[\\/]/,
+						name: 'd3',
+						priority: 30,
+						enforce: true,
+						reuseExistingChunk: true,
+					},
+					// All other vendor libraries
+					vendors: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendors',
+						priority: 10,
+						enforce: true,
+						reuseExistingChunk: true,
+					},
+					// Common code shared between multiple modules
+					common: {
+						minChunks: 2,
+						priority: 5,
+						reuseExistingChunk: true,
+						name: 'common',
+						enforce: true,
+					},
+				},
 			},
 		},
 		devServer: {
@@ -198,6 +273,13 @@ module.exports = (env, argv) => {
 			},
 		},
 
+		// Extension keeps single chunk for browser compatibility
+		optimization: {
+			...base.optimization,
+			minimize: false,
+			splitChunks: false,
+		},
+
 		resolve: {
 			...base.resolve,
 			alias: {
@@ -212,7 +294,11 @@ module.exports = (env, argv) => {
 			...base.plugins,
 			new rspack.DefinePlugin({
 				__IS_EXTENSION__: 'true',
-			})
+			}),
+			// Force single chunk for extension
+			new rspack.optimize.LimitChunkCountPlugin({
+				maxChunks: 1,
+			}),
 		],
 	};
 
