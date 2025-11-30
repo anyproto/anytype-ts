@@ -21,7 +21,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
 		renderLinks, renderMentions, renderObjects, renderEmoji,
 	} = props;
-	const { space } = S.Common;
+	const { space, theme } = S.Common;
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
