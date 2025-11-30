@@ -5,7 +5,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
+	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: transparent;
 	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
 }
 body.colResize { cursor: col-resize !important; }

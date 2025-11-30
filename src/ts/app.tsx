@@ -133,17 +133,14 @@ const App: FC = () => {
 
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
-		
 		registerIpcEvents();
-
-		Renderer.send('appOnLoad');
+		Renderer.send('getInitData').then((data: any) => onInit(data));
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
 	const registerIpcEvents = () => {
-		Renderer.on('init', onInit);
 		Renderer.on('route', (e: any, route: string) => onRoute(route));
 		Renderer.on('popup', onPopup);
 		Renderer.on('update-not-available', onUpdateUnavailable);
@@ -195,7 +192,7 @@ const App: FC = () => {
 		});
 	};
 
-	const onInit = (e: any, data: any) => {
+	const onInit = (data: any) => {
 		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
@@ -215,6 +212,7 @@ const App: FC = () => {
 		S.Common.setLeftSidebarState('vault', '');
 
 		Action.checkDefaultSpellingLang();
+		keyboard.setBodyClass();
 
 		sidebar.init(false);
 		analytics.init();
