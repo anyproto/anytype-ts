@@ -12,7 +12,6 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 const LIMIT = 20;
 const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
-const HEIGHT_ITEM_UPDATE = 112;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -491,10 +490,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getRowHeight = (item: any) => {
-		if (item.isUpdate) {
-			return HEIGHT_ITEM_UPDATE;
-		};
-
 		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
