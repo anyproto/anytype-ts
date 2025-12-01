@@ -453,6 +453,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const rt = to + newText.length;
 			range.current = { from: rt, to: rt };
 			updateMarkup(res, range.current);
+			checkUrls();
 		};
 
 		if (json && json.blocks && json.blocks.length) {
@@ -478,13 +479,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files));
 		};
 
-		checkUrls();
 		updateCounter();
 	};
 
 	const checkUrls = () => {
 		const text = getTextValue();
 		const urls = U.Common.getUrlsFromText(text);
+
 		if (!urls.length) {
 			return;
 		};
@@ -492,10 +493,26 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		removeBookmarks();
 
 		for (const url of urls) {
-			const { from, to, isLocal, isUrl, value } = url;
+			const { from, to, isLocal, isUrl } = url;
 
 			if (isLocal) {
 				continue;
+			};
+
+			let value = url.value || '';
+			let type = I.MarkType.Link;
+			let param = value;
+
+			const route = U.Common.getRouteFromUrl(value);
+
+			if (route) {
+				const routeParam = U.Router.getParam(route);
+
+				if ((routeParam.action == 'object') && (routeParam.spaceId == space)) {
+					value = `${J.Constant.protocol}://${route}`;
+					param = routeParam.id;
+					type = I.MarkType.Object;
+				};
 			};
 
 			if (Mark.getInRange(marks.current, I.MarkType.Link, { from, to })) {
@@ -504,9 +521,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			marks.current = Mark.adjust(marks.current, from, value.length);
 			marks.current.push({ 
-				type: I.MarkType.Link, 
+				type, 
 				range: { from, to }, 
-				param: U.Common.urlFix(value),
+				param,
 			});
 
 			setMarks(marks.current);
