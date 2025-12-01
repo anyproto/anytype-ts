@@ -487,10 +487,28 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			let pd = true;
+			// Handle enter manually in the code blocks to keep caret and new lines in sync
 			if (block.isTextCode() && (pressed == 'enter')) {
-				pd = false;
-			} else
+				e.preventDefault();
+
+				const insert = '\n';
+				const caret = range.from + insert.length;
+				const newValue = U.Common.stringInsert(value, insert, range.from, range.to);
+
+				U.Data.blockSetText(rootId, block.id, newValue, this.marks, true, () => {
+					const caretRange = { from: caret, to: caret };
+					
+					focus.set(block.id, caretRange);
+					focus.apply();
+
+					onKeyDown(e, newValue, this.marks, caretRange, this.props);
+				});
+
+				ret = true;
+				return;
+			};
+
+			let pd = true;
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
 				pd = false;
 			};
