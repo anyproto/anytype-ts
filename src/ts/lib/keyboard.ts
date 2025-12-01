@@ -1069,7 +1069,6 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
-		$('#link-prism').remove();
 		focus.clearRange(true);
 	};
 

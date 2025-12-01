@@ -773,16 +773,10 @@ class CommonStore {
 	 * Sets the theme class on the document.
 	 */
 	setThemeClass () {
-		const head = $('head');
 		const c = this.getThemeClass();
 
 		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
-
-		head.find('#link-prism').remove();
-		if (c) {
-			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
-		};
 	};
 
 	/**

@@ -15,6 +15,7 @@ configure({ enforceActions: 'never' });
 
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
+import 'css/theme/dark/prism.css';
 import 'react-virtualized/styles.css';
 import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
