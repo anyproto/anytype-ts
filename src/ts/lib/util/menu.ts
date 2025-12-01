@@ -816,9 +816,10 @@ class UtilMenu {
 		});
 	};
 
-	spaceSettingsIndex (menuParam: Partial<I.MenuParam>) {
+	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
+		param = param || {};
+
 		const isOwner = U.Space.isMyOwner();
-		const spaceview = U.Space.getSpaceview();
 		const options: I.Option[] = [
 			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
 			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
@@ -836,7 +837,7 @@ class UtilMenu {
 						};
 						
 						case 'delete': {
-							Action.removeSpace(S.Common.space, analytics.route.settings);
+							Action.removeSpace(S.Common.space, param.route);
 							break;
 						};
 					};
