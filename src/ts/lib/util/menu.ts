@@ -816,16 +816,13 @@ class UtilMenu {
 		});
 	};
 
-	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
+	spaceSettingsIndex (menuParam: Partial<I.MenuParam>) {
 		const isOwner = U.Space.isMyOwner();
 		const spaceview = U.Space.getSpaceview();
 		const options: I.Option[] = [
-			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') }
+			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
 		];
-
-		if (!spaceview.isOneToOne) {
-			options.push({ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' });
-		};
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -921,7 +918,7 @@ class UtilMenu {
 					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 				};
 
-				if (withDelete && !space.isOneToOne) {
+				if (withDelete) {
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
 					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });
