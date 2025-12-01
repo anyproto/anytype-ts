@@ -97,6 +97,18 @@
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
+		.stickyScrollbar {
+			position: sticky; bottom: 0; left: 0; overflow-x: auto; overflow-y: hidden; z-index: 2;
+			background: var(--color-bg-primary); border-top: 1px solid var(--color-shape-secondary);
+			height: 6px; box-sizing: border-box;
+		}
+		.stickyScrollbar::-webkit-scrollbar { height: 6px; }
+		.stickyScrollbar::-webkit-scrollbar-track { background: var(--color-shape-secondary); }
+		.stickyScrollbar::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
+		.stickyScrollbar::-webkit-scrollbar-thumb:hover { background: var(--color-text-secondary); }
+
+		.stickyScrollbarTrack { height: 1px; pointer-events: none; }
+
 		.viewContent.viewGrid { width: 100%; position: relative; padding: 0px; }
 		.viewContent.viewGrid {
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px var(--color-shape-secondary) inset; }
