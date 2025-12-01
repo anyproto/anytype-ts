@@ -6,7 +6,7 @@ const KEYS = [
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
-	'uxType', 'usage',
+	'uxType', 'usage', 'chatId',
 ];
 const URL = 'amplitude.anytype.io';
 
