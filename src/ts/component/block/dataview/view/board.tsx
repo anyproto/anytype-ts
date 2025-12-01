@@ -28,6 +28,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
+		this.onScrollView = this.onScrollView.bind(this);
 	};
 
 	render () {
@@ -99,15 +100,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	rebind () {
+		const { isPopup } = this.props;
+
 		this.unbind();
 
-		const node = $(this.node);
-		node.find('#scroll').on('scroll', () => this.onScrollView());
+		U.Common.getPageContainer(isPopup).on('scroll.board', this.onScrollView);
 	};
 
 	unbind () {
-		const node = $(this.node);
-		node.find('#scroll').off('scroll');
+		const { isPopup } = this.props;
+
+		U.Common.getPageContainer(isPopup).off('scroll.board');
 	};
 
 	loadGroupList () {
