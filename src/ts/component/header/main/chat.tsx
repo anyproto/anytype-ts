@@ -11,6 +11,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
+	const showInvite = !spaceview.isOneToOne;
 
 	let object = null;
 	if (rootId == S.Block.workspace) {
@@ -105,13 +106,15 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 			</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-invite"
-					tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
-					className="invite withBackground"
-					onClick={() => Action.openSpaceShare(analytics.route.chat)}
-					onDoubleClick={e => e.stopPropagation()}
-				/>
+				{showInvite ? (
+					<Icon 
+						id="button-header-invite"
+						tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
+						className="invite withBackground"
+						onClick={() => Action.openSpaceShare(analytics.route.chat)}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
 
 				{showRelations ? (
 					<Icon 
