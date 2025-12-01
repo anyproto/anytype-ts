@@ -158,13 +158,16 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onCellChange = (id: string, relationKey: string, value: any, callBack?: (message: any) => void) => {
+		const cellId = Relation.cellId(ID_PREFIX, relationKey, '');
 		const relation = S.Record.getRelationByKey(relationKey);
+
 		if (!relation) {
 			return;
 		};
 
 		detailsRef.current[relationKey] = Relation.formatValue(relation, value, true);
 		loadDeps();
+		cellRefs.current.get(cellId)?.forceUpdate?.();
 		callBack?.({ error: { code: 0 } });
 	};
 
@@ -298,7 +301,10 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							onCellChange={onCellChange}
 							getView={view ? (() => view): null}
 							pageContainer={U.Common.getCellContainer('popupRelation')}
-							menuParam={{ classNameWrap: 'fromPopup' }}
+							menuParam={{ 
+								className: 'fromBlockRelation', 
+								classNameWrap: 'fromPopup',
+							}}
 						/>
 					</div>
 				</div>

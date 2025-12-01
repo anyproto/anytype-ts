@@ -290,6 +290,7 @@ export interface CellRef {
 	isEditing?(): boolean;
 	onChange?(value: any): void;
 	getValue?(): any;
+	forceUpdate?(): void;
 	canEdit?(): boolean;
 };
 
