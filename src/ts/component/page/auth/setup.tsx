@@ -85,7 +85,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						if (!chatsOnboarding) {
 							S.Popup.open('introduceChats', {
 								onClose: () => {
-									Storage.set('chatsOnboarding', true);
+									Storage.set('multichatsOnboarding', true);
 									Storage.setHighlight('createSpace', true);
 
 									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
