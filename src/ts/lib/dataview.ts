@@ -209,7 +209,6 @@ class Dataview {
 
 	/**
 	 * Maps a filter or sort object for a dataview subscription.
-	 * @param {any} view - The dataview view object.
 	 * @param {any} it - The filter or sort object.
 	 * @returns {any} The mapped object.
 	 */
