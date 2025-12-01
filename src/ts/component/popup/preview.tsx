@@ -224,7 +224,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (item.type == I.FileType.Video) {
-			const video = node.find('video').get(0);
+			const video: any = node.find('.swiper-slide-active video').get(0);
 
 			if (video) {
 				video.currentTime = 0;
