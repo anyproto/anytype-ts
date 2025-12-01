@@ -166,22 +166,30 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const items = getItems();
 
 	return (
-		<DndContext 
-			sensors={sensors} 
-			collisionDetection={closestCenter} 
-			modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]} 
-			onDragStart={onSortStart} 
-			onDragEnd={onSortEnd}
-		>
-			<SortableContext 
-				items={items.map(it => it.id)} 
-				strategy={verticalListSortingStrategy}
-			>
-				<div ref={nodeRef} className="items">
-					{items.map(item => <Item key={item.id} {...item} />)}
+		<>
+			{items.length ? (
+				<DndContext 
+					sensors={sensors} 
+					collisionDetection={closestCenter} 
+					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]} 
+					onDragStart={onSortStart} 
+					onDragEnd={onSortEnd}
+				>
+					<SortableContext 
+						items={items.map(it => it.id)} 
+						strategy={verticalListSortingStrategy}
+					>
+						<div ref={nodeRef} className="items">
+							{items.map(item => <Item key={item.id} {...item} />)}
+						</div>
+					</SortableContext>
+				</DndContext>
+			) : (
+				<div className="empty">
+					{translate('commonNothingHere')}
 				</div>
-			</SortableContext>
-		</DndContext>
+			)}
+		</>
 	);
 
 }));
