@@ -499,7 +499,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			let value = url.value || '';
+			let value = U.Common.urlFix(url.value || '');
 			let type = I.MarkType.Link;
 			let param = value;
 
