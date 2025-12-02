@@ -38,7 +38,7 @@ const MenuHi = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 			</div>
 
 			<div className="qrWrapper">
-				<QR size={200} value={deeplink} />
+				<QR size={200} value={deeplink} withLogo={true} />
 			</div>
 
 			<div className="buttonsWrapper">

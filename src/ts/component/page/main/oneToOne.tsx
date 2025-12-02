@@ -11,6 +11,7 @@ const PageMainOneToOne = forwardRef<I.PageRef, I.PageComponent>((props, ref) => 
 	const frameRef = useRef(null);
 
 	const init = () => {
+		U.Space.openOneToOne(param.id);
 	};
 
 	const resize = () => {
