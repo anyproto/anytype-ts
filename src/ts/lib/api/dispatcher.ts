@@ -958,7 +958,7 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message);
+					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview.isOneToOne);
 
 					let showNotification = false;
 

@@ -2,11 +2,7 @@ import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } f
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
 import { I, C, S, U, J, translate, keyboard } from 'Lib';
 
-interface PageMainInviteRefProps {
-	resize: () => void;
-};
-
-const PageMainInvite = forwardRef<PageMainInviteRefProps, I.PageComponent>((props, ref) => {
+const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const nodeRef = useRef(null);

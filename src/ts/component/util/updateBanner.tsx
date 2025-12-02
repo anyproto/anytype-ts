@@ -1,22 +1,12 @@
-
-import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $ from 'jquery';
-import raf from 'raf';
+import React, { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, ProgressBar, Button } from 'Component';
 import { I, S, U, translate, Renderer } from 'Lib';
 
-interface Props extends I.SidebarPageComponent {
-	id: string;
-	name: string;
-	style: any;
-};
+const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 
-const SidebarPageVaultUpdate = observer(forwardRef<{}, Props>((props, ref) => {
-
-	const { id, style } = props;
 	const { updateVersion } = S.Common;
-	const cn = [ 'item', 'isProgress' ];
+	const cn = [ 'updateBanner' ];
 
 	let info = null;
 	let buttons = null;
@@ -83,11 +73,7 @@ const SidebarPageVaultUpdate = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	return (
-		<div 
-			id={`item-${id}`}
-			className="item isProgress"
-			style={style}
-		>
+		<div className={cn.join(' ')}>
 			<div className="infoWrapper">
 				<Icon />
 				{info}
@@ -98,4 +84,4 @@ const SidebarPageVaultUpdate = observer(forwardRef<{}, Props>((props, ref) => {
 
 }));
 
-export default SidebarPageVaultUpdate;
+export default UpdateBanner;

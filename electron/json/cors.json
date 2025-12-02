@@ -21,9 +21,11 @@
 		"https://*.ytimg.com",
 		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
 		"https://*.bcbits.com",
-		"https://images.unsplash.com",
+		"https://*.unsplash.com",
 		"https://*.apple.com",
-		"https://*.mzstatic.com"
+		"https://*.mzstatic.com",
+		"https://*.spotifycdn.com",
+		"https://*.ggpht.com"
     ],
 
 	"media-src": [ 
@@ -47,7 +49,8 @@
 		"https://anytype-static.fra1.cdn.digitaloceanspaces.com",
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
-		"https://images.unsplash.com"
+		"https://*.unsplash.com",
+		"https://*.spotifycdn.com"
 	],
 
 	"style-src": [ 

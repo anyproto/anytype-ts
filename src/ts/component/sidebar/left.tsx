@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, S, keyboard, Preview, sidebar, translate } from 'Lib';
+import { I, U, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
@@ -27,6 +27,7 @@ interface SidebarLeftRefProps {
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
+	const { vaultIsMinimal } = S.Common;
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
@@ -173,13 +174,18 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		const w = Math.max(0, (e.pageX - ox.current));
 
 		sidebar.setWidth(panel, false, w, true);
-
 		window.setTimeout(() => movedX.current = false, 15);
 	};
 
 	const onHandleClick = (panel: I.SidebarPanel) => {
 		if (!movedX.current) {
-			sidebar.toggle(panel, subPage);
+			if (panel == I.SidebarPanel.Left) {
+				const w = vaultIsMinimal ? J.Size.sidebar.default.min : J.Size.sidebar.left.min;
+
+				sidebar.setWidth(panel, false, w, true);
+			} else {
+				sidebar.toggle(panel, subPage);
+			};
 		};
 	};
 

@@ -28,7 +28,9 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		const pageContainer = U.Common.getPageContainer(isPopup);
+
+		pageContainer.find('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		U.Common.triggerResizeEditor(isPopup);
 	};
 

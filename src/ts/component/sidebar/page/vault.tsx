@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $ from 'jquery';
-import raf from 'raf';
+import $, { get } from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -8,19 +7,16 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action } from 'Lib';
-
-import ItemProgress from './vault/update';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview } from 'Lib';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
+const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
-const HEIGHT_ITEM_UPDATE = 112;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { updateVersion, space, vaultMessages } = S.Common;
+	const { space, vaultMessages, vaultIsMinimal } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -32,14 +28,20 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	);
 	const profile = U.Space.getProfile();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
-	const progress = S.Progress.getList(it => it.type == I.ProgressType.Update);
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
 	const cnh = [ 'head' ];
 	const cnb = [ 'body' ];
+	const cnf = [ 'bottom' ];
 
 	if (vaultMessages) {
 		cnh.push('withMessages');
 		cnb.push('withMessages');
+	};
+
+	if (vaultIsMinimal) {
+		cnh.push('isMinimal');
+		cnb.push('isMinimal');
+		cnf.push('isMinimal');
 	};
 
 	const unbind = () => {
@@ -75,7 +77,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 			if (isClosed) {
 				closeSidebar.current = true;
-				sidebar.leftPanelOpen(width, true);
+				sidebar.leftPanelOpen(width, false);
 			};
 		});
 	};
@@ -108,9 +110,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		if (!sidebar.isAnimating && closeSidebar.current) {
-			sidebar.leftPanelClose(true);
+			sidebar.leftPanelClose(false);
 			closeSidebar.current = false;
 		};
+
+		Preview.tooltipHide();
 	};
 
 	const onArrow = (dir: number) => {
@@ -133,7 +137,32 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		const next = items[n.current];
 		if (next) {
 			setHover(next);
+			listRef.current?.scrollToRow(Math.max(0, n.current));
+			tooltipShow(next, 1);
 		};
+	};
+
+	const tooltipShow = (item: any, delay: number) => {
+		if (!vaultIsMinimal) {
+			return;
+		};
+
+		const node = getNode();
+		const element = node.find(`#item-${item.id}`);
+		const iconWrap = element.find('.iconWrap');
+		const idx = items.findIndex(it => it.id == item.id) + 1;
+		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
+		const text = Preview.tooltipCaption(U.Common.htmlSpecialChars(item.tooltip || item.name), caption);
+
+		Preview.tooltipShow({ 
+			text, 
+			element, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: node.width() / 2 + iconWrap.width() / 2,
+			delay,
+		});
 	};
 
 	const onSortStart = () => {
@@ -180,21 +209,21 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
-		if (progress.length || updateVersion) {
-			items.unshift({ id: 'update-progress', isProgress: true, isUpdate: Boolean(updateVersion) });
-		};
-
 		return items;
 	};
 
 	const onContextMenu = (e: MouseEvent, item: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		U.Menu.spaceContext(item, {
 			element: `#${getId()} #item-${item.id}`,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
 		}, { 
-			withPin: true, 
+			withPin: true,
+			withDelete: true,
 			noBin: true, 
 			noMembers: true, 
 			noManage: true,
@@ -231,6 +260,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const onOver = (item: any) => {
 		if (!keyboard.isMouseDisabled) {
 			setHover(item);
+			tooltipShow(item, 300);
 		};
 	};
 
@@ -276,7 +306,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
 		const icons = [];
-		const iconSize = vaultMessages ? 48 : 32;
+		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
 
 		let chatName = null;
 		let time = null;
@@ -306,7 +336,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.lastMessage) {
 			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
-			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage)} />;
+			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage, !item.isOneToOne)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
 			counter = <ChatCounter spaceId={item.targetSpaceId} />;
 		} else {
@@ -382,10 +412,13 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			>
 				<div className="iconWrap">
 					<IconObject object={item} size={iconSize} iconSize={iconSize} canEdit={false} />
+					{vaultIsMinimal ? counter : ''}
 				</div>
-				<div className="info">
-					{info}
-				</div>
+				{!vaultIsMinimal ? (
+					<div className="info">
+						{info}
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -404,19 +437,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				{item.isProgress ? (
-					<ItemProgress
-						{...item}
-						index={param.index}
-						style={param.style}
-					/>
-				) : (
-					<ItemObject
-						{...item}
-						index={param.index}
-						style={param.style}
-					/>
-				)}
+				<ItemObject
+					{...item}
+					index={param.index}
+					style={param.style}
+				/>
 			</CellMeasurer>
 		);
 	};
@@ -455,12 +480,16 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		}, analytics.route.vault);
 	};
 
-	const getRowHeight = (item: any) => {
-		if (item.isUpdate) {
-			return HEIGHT_ITEM_UPDATE;
-		};
+	const onVaultContext = (e: any) => {
+		U.Menu.vaultStyle({
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
+			className: 'vaultStyle fixed',
+			classNameWrap: 'fromSidebar',
+		});
+	};
 
-		return vaultMessages ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
+	const getRowHeight = (item: any) => {
+		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
 	useEffect(() => {
@@ -475,30 +504,34 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	return (
 		<>
-			<div id="head" className={cnh.join(' ')}>
+			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					<Icon
-						id="button-create-space"
-						className="plus withBackground"
-						tooltipParam={{ text: translate('commonCreateSpace'), caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
-						onClick={onCreate}
-					/>
+					{!vaultIsMinimal ? (
+						<Icon
+							id="button-create-space"
+							className="plus withBackground"
+							tooltipParam={{ text: translate('commonCreateSpace'), caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
+							onClick={onCreate}
+						/>
+					) : ''}
 				</div>
 			</div>
-			<div className="filterWrapper">
-				<Filter 
-					ref={filterRef}
-					icon="search"
-					className="outlined round"
-					placeholder={translate('commonSearch')}
-					onChange={onFilterChange}
-					onClear={onFilterClear}
-				/>
-			</div>
-			<div id="body" className={cnb.join(' ')}>
-				{!items.length ? (
+			{!vaultIsMinimal ? (
+				<div className="filterWrapper">
+					<Filter
+						ref={filterRef}
+						icon="search"
+						className="outlined round"
+						placeholder={translate('commonSearch')}
+						onChange={onFilterChange}
+						onClear={onFilterClear}
+					/>
+				</div>
+			) : ''}
+			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
+				{!items.length && !vaultIsMinimal ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
 
@@ -544,31 +577,33 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				</InfiniteLoader>
 			</div>
 
-			<div className="bottom">
+			<div className={cnf.join(' ')}>
 				<div className="grad" />
 				<div className="sides">
 					<div className="side left">
 						<div className="appSettings" onClick={onSettings}>
 							<IconObject object={settings} size={32} iconSize={32} />
-							<ObjectName object={settings} />
+							{!vaultIsMinimal ? <ObjectName object={settings} /> : ''}
 						</div>
 					</div>
 
-					<div className="side right">
-						<Icon
-							className="gallery"
-							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
-							onClick={onGallery}
-						/>
+					{!vaultIsMinimal ? (
+						<div className="side right">
+							<Icon
+								className="gallery"
+								tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+								onClick={onGallery}
+							/>
 
-						<Button
-							id="button-help"
-							className="help"
-							text="?"
-							tooltipParam={{ text: translate('commonHelp') }}
-							onClick={onHelp}
-						/>
-					</div>
+							<Button
+								id="button-help"
+								className="help"
+								text="?"
+								tooltipParam={{ text: translate('commonHelp') }}
+								onClick={onHelp}
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		</>

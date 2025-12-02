@@ -19,9 +19,9 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	const { 
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
-		renderLinks, renderMentions, renderObjects, renderEmoji,
+		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId,
 	} = props;
-	const { space } = S.Common;
+	const { space, theme } = S.Common;
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
@@ -97,7 +97,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 			}
 		});
 
-		analytics.event('ClickMessageMenuReaction');
+		analytics.event('ClickMessageMenuReaction', { chatId: analyticsChatId });
 	};
 
 	const onReactionSelect = (icon: string) => {
@@ -111,7 +111,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		};
 
 		C.ChatToggleMessageReaction(rootId, id, icon);
-		analytics.event(hasReaction ? 'RemoveReaction' : 'AddReaction');
+		analytics.event(hasReaction ? 'RemoveReaction' : 'AddReaction', { chatId: analyticsChatId });
 	};
 
 	const onAttachmentRemove = (attachmentId: string) => {

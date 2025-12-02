@@ -2,7 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
 import { initial } from 'lodash';
 
 const katex = require('katex');
@@ -2014,6 +2014,11 @@ class UtilCommon {
 		};
 
 		return w;
+	};
+
+	settingsHeader (isPopup: boolean, fallBack: string): string {
+		const isSettings = keyboard.getMatch(isPopup).params.action == 'settings';
+		return isSettings ? 'mainSettings' : fallBack;
 	};
 
 };

@@ -1,13 +1,15 @@
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { I, C, S, U, J, M, keyboard, translate, Dataview, Action, analytics, Relation, Preview, Storage } from 'Lib';
+import { Action, analytics, C, Dataview, I, J, keyboard, M, Preview, Relation, S, sidebar, translate, U } from 'Lib';
 import React from 'react';
+import { SidebarPanel } from 'Interface';
 
 interface SpaceContextParam {
 	isSharePage?: boolean; 
 	noManage?: boolean; 
 	noMembers?: boolean; 
-	withPin?: boolean; 
+	withPin?: boolean;
+	withDelete?: boolean;
 	noShare?: boolean; 
 	noBin?: boolean; 
 	noDivider?: boolean;
@@ -815,15 +817,13 @@ class UtilMenu {
 	};
 
 	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
-		const isOwner = U.Space.isMyOwner();
-		const spaceview = U.Space.getSpaceview();
-		const options: I.Option[] = [
-			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') }
-		];
+		param = param || {};
 
-		if (!spaceview.isOneToOne) {
-			options.push({ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' });
-		};
+		const isOwner = U.Space.isMyOwner();
+		const options: I.Option[] = [
+			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+		];
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -837,7 +837,7 @@ class UtilMenu {
 						};
 						
 						case 'delete': {
-							Action.removeSpace(S.Common.space, analytics.route.settings);
+							Action.removeSpace(S.Common.space, param.route);
 							break;
 						};
 					};
@@ -851,7 +851,7 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, noShare, noBin, noDivider, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, noBin, noDivider, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
@@ -865,6 +865,7 @@ class UtilMenu {
 				general: [],
 				share: [],
 				archive: [],
+				delete: [],
 			};
 
 			if (isSharePage) {
@@ -918,8 +919,10 @@ class UtilMenu {
 					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 				};
 
-				if (isLoading) {
-					sections.archive.push({ id: 'remove', icon: 'remove-red', name: translate('pageSettingsSpaceDeleteSpace'), color: 'red' });
+				if (withDelete) {
+					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
+
+					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });
 				};
 			};
 
@@ -1658,6 +1661,46 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
+	vaultStyleOptions (noClose?: boolean, noCheckbox?: boolean) {
+		const panel = I.SidebarPanel.Left;
+		const { isClosed } = sidebar.getData(panel);
+		const { vaultMessages } = S.Common;
+		const options: any[] = [
+			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages,  },
+			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
+		];
+
+		if (!noClose && !isClosed) {
+			options.push({ isDiv: true });
+			options.push({ id: 'close', name: translate('menuVaultStyleCloseSidebar') });
+		};
+
+		return options;
+	};
+
+	vaultStyle (param: I.MenuParam, noClose?: boolean, route?: string) {
+		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options: this.vaultStyleOptions(noClose),
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					if (item.id == 'close') {
+						sidebar.close(I.SidebarPanel.Left);
+						return;
+					};
+
+					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
+					if (isClosed) {
+						sidebar.open(SidebarPanel.Left, '', );
+					};
+				},
+			},
+		})
+	};
+
 	uxTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceUxType.Data },
@@ -1704,12 +1747,13 @@ class UtilMenu {
 
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
+		const spaceview = U.Space.getSpaceview();
 		const manage = { id: 'manage', icon: 'manage', name: translate('widgetManageSections') };
 
 		let options: any[] = [];
 		let value = '';
 
-		if (sectionId == I.WidgetSection.RecentEdit) {
+		if (spaceview.isShared && (sectionId == I.WidgetSection.RecentEdit)) {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });

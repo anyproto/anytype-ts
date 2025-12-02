@@ -2144,6 +2144,14 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
 };
 
+export const MembershipSelectVersion = (version: number, callBack?: (message: any) => void) => {
+    const request = new Rpc.Membership.SelectVersion.Request();
+
+    request.setMajorversion(version);
+
+    dispatcher.request(MembershipSelectVersion.name, request, callBack);
+};
+
 // ---------------------- MEMBERSHIP V2 ---------------------- //
 
 export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => {

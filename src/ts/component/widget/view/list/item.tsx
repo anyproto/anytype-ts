@@ -135,7 +135,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
 
 			const last = list.length ? list[0] : null;
-			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
+			const text = last ? S.Chat.getMessageSimpleText(space, last, true) : translate('widgetNoMessages');
 
 			descr = <Label className="descr" text={text} />;
 			time = last ? <div className="time">{U.Date.timeAgo(last.createdAt)}</div> : '';

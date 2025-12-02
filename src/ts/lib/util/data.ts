@@ -341,7 +341,8 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipData();
+		C.MembershipSelectVersion(2, () => this.getMembershipData());
+		
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
 				Storage.clearDeletedSpaces(false);

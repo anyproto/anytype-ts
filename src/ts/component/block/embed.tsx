@@ -792,7 +792,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	useEffect(() => {
 		init();
-	});
+	}, [ block.content.text, isEditing, isShowing ]);
 
 	useEffect(() => {
 		if (isEditing) {

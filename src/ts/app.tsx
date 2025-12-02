@@ -8,13 +8,14 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, Icon, SidebarLeft, MenuBar } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft, MenuBar } from 'Component';
 import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
+import 'css/theme/dark/prism.css';
 import 'react-virtualized/styles.css';
 import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -133,17 +134,14 @@ const App: FC = () => {
 
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
-		
 		registerIpcEvents();
-
-		Renderer.send('appOnLoad');
+		Renderer.send('getInitData').then((data: any) => onInit(data));
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
 	const registerIpcEvents = () => {
-		Renderer.on('init', onInit);
 		Renderer.on('route', (e: any, route: string) => onRoute(route));
 		Renderer.on('popup', onPopup);
 		Renderer.on('update-not-available', onUpdateUnavailable);
@@ -195,7 +193,7 @@ const App: FC = () => {
 		});
 	};
 
-	const onInit = (e: any, data: any) => {
+	const onInit = (data: any) => {
 		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
@@ -215,6 +213,7 @@ const App: FC = () => {
 		S.Common.setLeftSidebarState('vault', '');
 
 		Action.checkDefaultSpellingLang();
+		keyboard.setBodyClass();
 
 		sidebar.init(false);
 		analytics.init();
@@ -508,6 +507,7 @@ const App: FC = () => {
 					<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
 						<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
 							<SidebarLeft ref={sidebarLeftRef} />
+							<UpdateBanner />
 							<ListPopup />
 							<ListMenu />
 

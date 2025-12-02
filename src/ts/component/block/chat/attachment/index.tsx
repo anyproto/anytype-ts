@@ -314,7 +314,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let withBlur = false;
 
 		cn.push('isImage');
-		if ((object.widthInPixels < 360) || (object.heightInPixels > 360)) {
+		if ((object.widthInPixels < 360) || (object.heightInPixels < 360)) {
 			withBlur = true;
 			cn.push('withBlur');
 		};

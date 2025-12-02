@@ -1,12 +1,13 @@
 {
 	"name": "anytype",
-	"version": "0.51.9-alpha",
+	"version": "0.51.18-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
 		"precommit": "npx lint-staged",
 		"typecheck": "npx tsc --noEmit -p tsconfig.json",
 		"lint": "eslint .",
+		"release:notes": "node scripts/generate-release-notes.js",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
 		"doctor:start:dev": "RSDOCTOR=true npm run start:dev",
@@ -73,7 +74,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^10.1.0",
 		"css-loader": "^7.1.2",
-		"electron": "^37.6.1",
+		"electron": "^37.10.3",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",

@@ -74,6 +74,11 @@ class UtilRouter {
 			param.page = 'main';
 		};
 
+		if (param.page == 'hi') {
+			param.action = 'oneToOne';
+			param.page = 'main';
+		};
+
 		const ret = Object.assign(param, searchParam);
 		const out: any = {};
 

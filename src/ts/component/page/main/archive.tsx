@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Footer, Header, ListObjectManager, Icon, Title } from 'Component';
-import { I, U, J, translate, Action, analytics } from 'Lib';
+import { I, U, J, translate, Action, analytics, keyboard } from 'Lib';
 
 const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -64,7 +64,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	return (
 		<>
-			<Header {...props} component="mainSettings" />
+			<Header 
+				{...props}
+				component={U.Common.settingsHeader(isPopup, 'mainEmpty')} 
+			/>
 
 			<div ref={nodeRef} className="wrapper">
 				<div className="titleWrapper">

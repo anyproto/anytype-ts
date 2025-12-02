@@ -179,6 +179,7 @@
 	"commonFile": "File",
 	"commonMembers": "Members",
 	"commonNothingFound": "Nothing found",
+	"commonNothingHere": "Nothing here yet",
 	"commonSystem": "System",
 	"commonProgress": "Progress",
 	"commonMainChat": "Chat",
@@ -1917,6 +1918,7 @@
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
 
+	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",
 	"menuParticipantMessage": "Message",
 
@@ -2104,7 +2106,7 @@
 	"widgetRecentModeTitle": "Edited by",
 	"widgetRecentEditMode0": "Anyone",
 	"widgetRecentEditMode1": "Only me",
-	"widgetManageSections": "Manage Sections",
+	"widgetManageSections": "Customize Sidebar",
 
 	"phrasePlaceholder": "Please enter your Key",
 

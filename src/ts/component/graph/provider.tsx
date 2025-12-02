@@ -342,34 +342,55 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
-		const { left, top } = node.offset();
-		const render = previewId.current != subject.current.id;
+		const offset = node.offset();
+
+		if (!offset) {
+			return;
+		};
+
+		const { left, top } = offset;
+		const shouldRerender = previewId.current != subject.current.id;
 
 		previewId.current = subject.current.id;
 
 		let el = $('#graphPreview');
+		if (!el.length) {
+			el = $('<div id="graphPreview" />').appendTo(body);
+		};
 
 		const position = () => {
-			const obj = el.find('.previewGraph');
-			const x = data.x + left - obj.outerWidth() / 2;
-			const y = data.y + top + 20 - win.scrollTop();
+			const obj = el.children('.previewGraph'); // faster than find()
+			if (!obj.length) {
+				return;
+			};
 
-			el.css({ left: x, top: y });
+			const objWidth = obj.outerWidth();
+			const scrollTop = win.scrollTop();
+
+			el.css({
+				left: data.x + left - objWidth / 2,
+				top: data.y + top + 20 - scrollTop,
+			});
 		};
 
-		if (!el.length || render) {
-			el = $('<div id="graphPreview" />');
+		if (shouldRerender) {
+			const root = createRoot(el[0]);
+			root.render(
+				<PreviewDefault
+					object={subject.current}
+					position={position}
+					className="previewGraph"
+					noLoad={true}
+				/>
+			);
 
-			body.find('#graphPreview').remove();
-			body.append(el);
-
-			const root = createRoot(el.get(0));
-			root.render(<PreviewDefault object={subject.current} position={position} className="previewGraph" noLoad={true} />);
-
-			analytics.event('SelectGraphNode', { objectType: subject.current.type, layout: subject.current.layout });
+			analytics.event('SelectGraphNode', {
+				objectType: subject.current.type,
+				layout: subject.current.layout,
+			});
 		} else {
 			position();
-		};
+		}
 	};
 
 	const onPreviewHide = () => {

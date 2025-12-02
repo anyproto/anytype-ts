@@ -43,9 +43,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			ret.push(I.WidgetSection.Pin);
 		};
 
-		if (recent) {
-			ret.push(I.WidgetSection.RecentEdit);
-		};
+		ret.push(I.WidgetSection.RecentEdit);
 
 		if (types.length) {
 			ret.push(I.WidgetSection.Type);

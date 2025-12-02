@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -9,7 +9,6 @@ import CellSelect from './select';
 import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
-import { max } from 'lodash';
 
 interface Props extends I.Cell {
 	elementId?: string;
@@ -27,6 +26,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 		noInplace, editModeOn, viewType,
 	} = props;
+	const [ dummy, setDummy ] = useState(0);
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
 	const relation = S.Record.getRelationByKey(relationKey) || {};
@@ -294,7 +294,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 					param = Object.assign(param, {
 						noFlipX: true,
-						noFlipY: true,
 						horizontal: I.MenuDirection.Left,
 						element: cell,
 						offsetY: -height,
@@ -567,6 +566,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		isEditing: () => childRef.current.isEditing?.(),
 		canEdit: () => canCellEdit(relation, record),
 		onBlur: () => childRef.current.onBlur?.(),
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (

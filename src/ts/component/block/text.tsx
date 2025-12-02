@@ -492,14 +492,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				e.preventDefault();
 
 				const insert = '\n';
-				const newRange = U.Common.stringInsert(value, insert, range.from, range.to);
 				const caret = range.from + insert.length;
+				const newValue = U.Common.stringInsert(value, insert, range.from, range.to);
 
-				U.Data.blockSetText(rootId, block.id, newRange, this.marks, true, () => {
+				U.Data.blockSetText(rootId, block.id, newValue, this.marks, true, () => {
 					const caretRange = { from: caret, to: caret };
+					
 					focus.set(block.id, caretRange);
 					focus.apply();
-					onKeyDown(e, newRange, this.marks, caretRange, this.props);
+
+					onKeyDown(e, newValue, this.marks, caretRange, this.props);
 				});
 
 				ret = true;

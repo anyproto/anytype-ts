@@ -1024,8 +1024,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 		
 		let objectIds = selection?.get(I.SelectType.Record) || [];
-		if (!objectIds.length) {
+		if (!objectIds.length || !objectIds.includes(id)) {
 			objectIds = [ id ];
+			selection?.set(I.SelectType.Record, objectIds);
 		};
 
 		S.Menu.open('objectContext', {

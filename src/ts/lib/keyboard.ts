@@ -1069,7 +1069,6 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
-		$('#link-prism').remove();
 		focus.clearRange(true);
 	};
 
@@ -1899,6 +1898,37 @@ class Keyboard {
 	 */
 	cmdKey () {
 		return U.Common.isPlatformMac() ? 'cmd' : 'ctrl';
+	};
+
+	getPageClass (prefix: string, isPopup: boolean) {
+		const { page, action, id } = this.getMatch(isPopup).params;
+
+		return [ 
+			U.Common.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action ].join('-')),
+			U.Common.getContainerClassName(isPopup),
+		].join(' ');
+	};
+
+	setBodyClass () {
+		const { config } = S.Common;
+		const { showMenuBar } = config;
+		const platform = U.Common.getPlatform();
+		const cn = [ 
+			this.getPageClass('body', false), 
+			U.Common.toCamelCase([ 'platform', platform ].join('-')),
+		];
+
+		if (config.debug.ui) {
+			cn.push('debug');
+		};
+		if (showMenuBar) {
+			cn.push('withMenuBar');
+		};
+
+		$('html').attr({ class: cn.join(' ') });
+		S.Common.setThemeClass();
 	};
 
 };
