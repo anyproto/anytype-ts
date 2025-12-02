@@ -22,37 +22,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	};
 
 	const onClick = () => {
-		if (oneToOne) {
-			U.Router.switchSpace(oneToOne.targetSpaceId, '', true, {}, false);
-			close();
-			return;
-		};
-
-		const uxType = I.SpaceUxType.OneToOne;
-		const details: any = {
-			oneToOneIdentity: object.identity,
-			spaceUxType: uxType,
-			spaceAccessType: I.SpaceType.Shared,
-			spaceDashboardId: I.HomePredefinedId.Chat,
-		};
-
-		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const objectId = message.objectId;
-
-			C.WorkspaceSetInfo(objectId, details, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				U.Router.switchSpace(objectId, '', true, {}, false);
-			});
-		});
-
-		close();
+		U.Space.openOneToOne(object.identity, close);
 	};
 
 	useEffect(() => load(), []);
