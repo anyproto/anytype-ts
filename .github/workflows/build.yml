@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - v*
+  push
+#    tags:
+#      - v*
 
 permissions:
   contents: 'write'
@@ -166,7 +166,6 @@ jobs:
         with:
           files: "artifacts/**"
           body_path: RELEASE_NOTES.md
-          fail_on_unset_body: false
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 
