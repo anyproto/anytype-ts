@@ -262,7 +262,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let limit = J.Constant.limit.menuRecords;
 
 		if (!filterValueRef.current && clear && !backlinkRef.current) {
-			limit = 8;
+			limit = 9;
 		};
 
 		if (backlinkRef.current) {
