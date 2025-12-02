@@ -13,10 +13,14 @@
  *   node scripts/generate-release-notes.js [options]
  *
  * Options:
- *   --from <tag>       Start tag/commit (default: latest tag)
+ *   --from <tag>       Start tag/commit (default: auto-detected)
  *   --to <tag>         End tag/commit (default: HEAD)
  *   --output <file>    Output file (default: stdout)
  *   --format <type>    Output format: markdown, json (default: markdown)
+ *
+ * Default behavior for --from:
+ *   - If --to is a specific tag: uses the previous tag before --to
+ *   - If --to is HEAD: uses the latest tag
  *
  * Environment Variables:
  *   LINEAR_API_KEY     Linear API key (required)
@@ -62,10 +66,14 @@ Generate release notes from Git commits and Linear tasks
 Usage: node scripts/generate-release-notes.js [options]
 
 Options:
-  --from <tag>       Start tag/commit (default: latest tag)
+  --from <tag>       Start tag/commit (default: auto-detected)
   --to <tag>         End tag/commit (default: HEAD)
   --output <file>    Output file (default: stdout)
   --format <type>    Output format: markdown, json (default: markdown)
+
+Default behavior for --from:
+  - If --to is a specific tag: uses the previous tag before --to
+  - If --to is HEAD: uses the latest tag
 
 Environment Variables:
   LINEAR_API_KEY     Linear API key (required)
@@ -73,6 +81,9 @@ Environment Variables:
 Examples:
   # Generate notes from last tag to HEAD
   LINEAR_API_KEY=your_key node scripts/generate-release-notes.js
+
+  # Generate notes for a specific tag (automatically finds previous tag)
+  LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --to v0.51.18-alpha
 
   # Generate notes between two specific tags
   LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --from v0.51.17-alpha --to v0.51.18-alpha
@@ -93,6 +104,34 @@ function getLatestTag() {
 		return execSync('git describe --tags --abbrev=0', { encoding: 'utf-8' }).trim();
 	} catch (error) {
 		console.error('Warning: Could not find any tags. Using all commits.');
+		return null;
+	}
+}
+
+// Get the previous tag (the tag before the specified tag)
+function getPreviousTag(currentTag) {
+	try {
+		// Get all tags sorted by creation date, find the one before currentTag
+		const output = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' }).trim();
+		const tags = output.split('\n').filter(tag => tag.trim());
+
+		// Find the index of the current tag
+		const currentIndex = tags.indexOf(currentTag);
+
+		if (currentIndex === -1) {
+			console.error(`Warning: Current tag ${currentTag} not found in tag list.`);
+			return null;
+		}
+
+		// Return the next tag in the list (previous in time)
+		if (currentIndex + 1 < tags.length) {
+			return tags[currentIndex + 1];
+		}
+
+		console.error(`Warning: No previous tag found before ${currentTag}.`);
+		return null;
+	} catch (error) {
+		console.error('Warning: Could not find previous tag:', error.message);
 		return null;
 	}
 }
@@ -403,7 +442,13 @@ async function main() {
 
 	// Determine tag range
 	if (!options.from) {
-		options.from = getLatestTag();
+		// If 'to' is a specific tag (not HEAD), get the previous tag
+		if (options.to !== 'HEAD') {
+			options.from = getPreviousTag(options.to);
+		} else {
+			// If 'to' is HEAD, get the latest tag
+			options.from = getLatestTag();
+		}
 	}
 
 	console.error(`Generating release notes from ${options.from || 'beginning'} to ${options.to}...`);
