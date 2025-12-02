@@ -66,15 +66,10 @@ class UtilSpace {
 	 */
 	openOneToOne (id: string, callBack?: () => void) {
 		const oneToOne = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
-		const cb = () => {
-			if (callBack) {
-				callBack();
-			};
-		};
 
 		if (oneToOne) {
 			U.Router.switchSpace(oneToOne.targetSpaceId, '', true, {}, false);
-			cb();
+			callBack?.();
 			return;
 		};
 
@@ -101,7 +96,7 @@ class UtilSpace {
 			});
 		});
 
-		cb();
+		callBack?.();
 	};
 
 	/**
