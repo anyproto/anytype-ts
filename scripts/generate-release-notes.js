@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Generate release notes from Git commits and Linear tasks
+ * Generate release notes from Git commits, Linear tasks, and GitHub PRs
  *
  * This script:
  * 1. Fetches commits since the last tag (or between two tags)
  * 2. Extracts Linear task IDs (format: TEAM_ID-TASK_ID, e.g., JS-1234)
  * 3. Fetches task details from Linear API
- * 4. Generates formatted release notes in compact format
+ * 4. Fetches merged PRs from GitHub API in the commit date range
+ * 5. Generates formatted release notes in compact format
  *
  * Tag Types:
  *   - alpha: Tags ending with -alpha (e.g., v0.51.21-alpha)
@@ -35,6 +36,7 @@
  *
  * Environment Variables:
  *   LINEAR_API_KEY     Linear API key (required)
+ *   GITHUB_TOKEN       GitHub personal access token (optional, for higher API rate limits)
  */
 
 const { execSync } = require('child_process');
@@ -43,7 +45,10 @@ const fs = require('fs');
 
 // Configuration
 const LINEAR_API_URL = 'https://api.linear.app/graphql';
+const GITHUB_API_URL = 'https://api.github.com';
+const GITHUB_REPO = 'anyproto/anytype-ts';
 const LINEAR_TASK_PATTERN = /\b([A-Z]+-\d+)\b/g;
+const PR_PATTERN = /#(\d+)/g;
 const MAX_COMMITS_WARNING = 100; // Warn if more than this many commits
 const MAX_COMMITS_DISPLAY = 200; // Truncate display if more than this
 
@@ -74,7 +79,7 @@ function parseArgs() {
 			case '--help':
 			case '-h':
 				console.log(`
-Generate release notes from Git commits and Linear tasks
+Generate release notes from Git commits, Linear tasks, and GitHub PRs
 
 Usage: node scripts/generate-release-notes.js [options]
 
@@ -101,10 +106,14 @@ Sanity Checks:
 
 Environment Variables:
   LINEAR_API_KEY     Linear API key (required)
+  GITHUB_TOKEN       GitHub personal access token (optional, for higher API rate limits)
 
 Examples:
   # Generate notes from last tag to HEAD
   LINEAR_API_KEY=your_key node scripts/generate-release-notes.js
+
+  # Generate notes with GitHub PR information
+  LINEAR_API_KEY=your_key GITHUB_TOKEN=your_token node scripts/generate-release-notes.js
 
   # Generate notes for alpha release (finds previous alpha tag)
   LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --to v0.51.21-alpha
@@ -216,6 +225,21 @@ function extractLinearIds(commits) {
 	});
 
 	return { ids: Array.from(idSet), commitsByTaskId };
+}
+
+// Extract PR numbers from commit messages
+function extractPRNumbers(commits) {
+	const prSet = new Set();
+
+	commits.forEach(commit => {
+		// Look for PR numbers in commit messages (#123)
+		const matches = commit.subject.matchAll(PR_PATTERN);
+		for (const match of matches) {
+			prSet.add(parseInt(match[1], 10));
+		}
+	});
+
+	return Array.from(prSet).sort((a, b) => b - a); // Sort descending (newest first)
 }
 
 // Fetch task details from Linear API
@@ -332,8 +356,100 @@ function fetchSingleIssue(query, taskId, apiKey) {
 	});
 }
 
+// Fetch merged PRs from GitHub API between two dates
+async function fetchMergedPRs(fromDate, toDate, githubToken) {
+	// Build search query for merged PRs in date range
+	const query = `repo:${GITHUB_REPO} is:pr is:merged merged:${fromDate}..${toDate}`;
+
+	return new Promise((resolve, reject) => {
+		const params = new URLSearchParams({
+			q: query,
+			sort: 'updated',
+			order: 'desc',
+			per_page: '100'
+		});
+
+		const options = {
+			hostname: 'api.github.com',
+			port: 443,
+			path: `/search/issues?${params.toString()}`,
+			method: 'GET',
+			headers: {
+				'User-Agent': 'anytype-release-notes-generator',
+				'Accept': 'application/vnd.github+json',
+				'X-GitHub-Api-Version': '2022-11-28'
+			}
+		};
+
+		// Add authorization if token is provided
+		if (githubToken) {
+			options.headers['Authorization'] = `Bearer ${githubToken}`;
+		}
+
+		const req = https.request(options, (res) => {
+			let body = '';
+
+			res.on('data', (chunk) => {
+				body += chunk;
+			});
+
+			res.on('end', () => {
+				if (res.statusCode !== 200) {
+					// Don't fail if GitHub API rate limit is hit or token is missing
+					if (res.statusCode === 403 || res.statusCode === 401) {
+						console.error('Warning: GitHub API rate limit or authentication issue. PRs section will be limited.');
+						console.error('Tip: Set GITHUB_TOKEN environment variable for higher rate limits.');
+						resolve([]);
+						return;
+					}
+					reject(new Error(`GitHub API error: ${res.statusCode} ${body}`));
+					return;
+				}
+
+				try {
+					const response = JSON.parse(body);
+					const prs = response.items.map(pr => ({
+						number: pr.number,
+						title: pr.title,
+						url: pr.html_url,
+						author: pr.user.login,
+						merged_at: pr.pull_request.merged_at || pr.closed_at,
+						labels: pr.labels.map(l => l.name)
+					}));
+					resolve(prs);
+				} catch (error) {
+					reject(new Error(`Failed to parse GitHub API response: ${error.message}`));
+				}
+			});
+		});
+
+		req.on('error', (error) => {
+			// Don't fail on network errors, just return empty array
+			console.error('Warning: Failed to fetch PRs from GitHub:', error.message);
+			resolve([]);
+		});
+
+		req.end();
+	});
+}
+
+// Get date range from commits
+function getCommitDateRange(commits) {
+	if (commits.length === 0) {
+		return { fromDate: null, toDate: null };
+	}
+
+	// Parse ISO dates and find min/max
+	const dates = commits.map(c => new Date(c.date)).sort((a, b) => a - b);
+
+	return {
+		fromDate: dates[0].toISOString().split('T')[0],
+		toDate: dates[dates.length - 1].toISOString().split('T')[0]
+	};
+}
+
 // Format release notes as Markdown
-function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, toTag) {
+function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, fromTag, toTag) {
 	let output = '';
 
 	// Header
@@ -355,7 +471,20 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, 
 		return sum + (commitsByTaskId[task.identifier]?.length || 0);
 	}, 0) + commitsWithoutTasks.length;
 
-	output += `**Summary:** ${tasks.length} tasks, ${totalCommits} commits\n\n`;
+	output += `**Summary:** ${tasks.length} tasks, ${totalCommits} commits`;
+	if (mergedPRs && mergedPRs.length > 0) {
+		output += `, ${mergedPRs.length} merged PRs`;
+	}
+	output += `\n\n`;
+
+	// Merged PRs section
+	if (mergedPRs && mergedPRs.length > 0) {
+		output += `## Merged Pull Requests\n\n`;
+		mergedPRs.forEach(pr => {
+			output += `- [#${pr.number}](${pr.url}) ${pr.title} (@${pr.author})\n`;
+		});
+		output += '\n';
+	}
 
 	// Group tasks by priority
 	const tasksByPriority = {
@@ -439,11 +568,19 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, 
 }
 
 // Format release notes as JSON
-function formatAsJSON(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, toTag) {
+function formatAsJSON(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, fromTag, toTag) {
 	return JSON.stringify({
 		version: toTag,
 		from: fromTag,
 		generatedAt: new Date().toISOString(),
+		mergedPRs: mergedPRs.map(pr => ({
+			number: pr.number,
+			title: pr.title,
+			url: pr.url,
+			author: pr.author,
+			merged_at: pr.merged_at,
+			labels: pr.labels
+		})),
 		tasks: tasks.map(task => ({
 			id: task.identifier,
 			title: task.title,
@@ -535,12 +672,29 @@ async function main() {
 		}
 	}
 
+	// Fetch merged PRs from GitHub
+	let mergedPRs = [];
+	const githubToken = process.env.GITHUB_TOKEN;
+	if (commits.length > 0) {
+		console.error('Fetching merged PRs from GitHub...');
+		try {
+			const { fromDate, toDate } = getCommitDateRange(commits);
+			if (fromDate && toDate) {
+				mergedPRs = await fetchMergedPRs(fromDate, toDate, githubToken);
+				console.error(`Found ${mergedPRs.length} merged PRs`);
+			}
+		} catch (error) {
+			console.error(`Warning: Failed to fetch PRs from GitHub: ${error.message}`);
+			// Don't fail the entire process if PR fetching fails
+		}
+	}
+
 	// Generate release notes
 	let output;
 	if (options.format === 'json') {
-		output = formatAsJSON(tasks, commitsByTaskId, commitsWithoutTasks, options.from, options.to);
+		output = formatAsJSON(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, options.from, options.to);
 	} else {
-		output = formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, options.from, options.to);
+		output = formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, options.from, options.to);
 	}
 
 	// Write output
