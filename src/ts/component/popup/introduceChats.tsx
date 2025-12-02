@@ -59,7 +59,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 				<div className="text">
 					<Title text={translate('onboardingChatsTitle')} />
 					<Label text={translate('onboardingChatsDescription')} />
-					<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} className="c42" />
+					<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} className="c48" />
 				</div>
 
 				<div className="grad" />
