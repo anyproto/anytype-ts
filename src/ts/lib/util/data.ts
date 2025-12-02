@@ -341,7 +341,7 @@ class UtilData {
 			};
 		});
 
-		C.MembershipSelectVersion(2, () => this.getMembershipData());
+		this.getMembershipData();
 		
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {

@@ -201,6 +201,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
+	request.setPrefermembershipv2(true);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -219,6 +220,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
+	request.setPrefermembershipv2(true);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
@@ -2142,14 +2144,6 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
-};
-
-export const MembershipSelectVersion = (version: number, callBack?: (message: any) => void) => {
-    const request = new Rpc.Membership.SelectVersion.Request();
-
-    request.setMajorversion(version);
-
-    dispatcher.request(MembershipSelectVersion.name, request, callBack);
 };
 
 // ---------------------- MEMBERSHIP V2 ---------------------- //
