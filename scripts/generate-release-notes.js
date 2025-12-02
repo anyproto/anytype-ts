@@ -146,40 +146,65 @@ async function fetchLinearTasks(taskIds, apiKey) {
 		return [];
 	}
 
+	// Query each issue individually since Linear API doesn't support filtering by identifier
 	const query = `
-		query($ids: [String!]!) {
-			issues(filter: { id: { in: $ids } }) {
-				nodes {
-					id
-					identifier
-					title
-					description
-					state {
+		query($id: String!) {
+			issue(id: $id) {
+				id
+				identifier
+				title
+				description
+				state {
+					name
+					type
+				}
+				priority
+				team {
+					name
+					key
+				}
+				assignee {
+					name
+				}
+				labels {
+					nodes {
 						name
-						type
-					}
-					priority
-					team {
-						name
-						key
-					}
-					assignee {
-						name
-					}
-					labels {
-						nodes {
-							name
-						}
 					}
 				}
 			}
 		}
 	`;
 
+	const tasks = [];
+	const errors = [];
+
+	// Fetch issues one by one
+	for (const taskId of taskIds) {
+		try {
+			const task = await fetchSingleIssue(query, taskId, apiKey);
+			if (task) {
+				tasks.push(task);
+			}
+		} catch (error) {
+			// Log error but continue with other tasks
+			errors.push({ taskId, error: error.message });
+			console.error(`Warning: Failed to fetch ${taskId}: ${error.message}`);
+		}
+	}
+
+	if (errors.length > 0 && errors.length === taskIds.length) {
+		throw new Error(`Failed to fetch any Linear tasks. Errors: ${JSON.stringify(errors)}`);
+	}
+
+	return tasks;
+}
+
+// Helper function to fetch a single issue
+function fetchSingleIssue(query, taskId, apiKey) {
 	return new Promise((resolve, reject) => {
 		const data = JSON.stringify({
 			query,
-			variables: { ids: taskIds }
+			variables: { id: taskId }
 		});
 
 		const options = {
@@ -213,7 +238,7 @@ async function fetchLinearTasks(taskIds, apiKey) {
 						reject(new Error(`Linear API errors: ${JSON.stringify(response.errors)}`));
 						return;
 					}
-					resolve(response.data.issues.nodes);
+					resolve(response.data.issue);
 				} catch (error) {
 					reject(new Error(`Failed to parse Linear API response: ${error.message}`));
 				}
@@ -284,6 +309,7 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, 
 		tasks.forEach(task => {
 			output += `### ${task.identifier}: ${task.title}\n\n`;
 
+			/*
 			if (task.description) {
 				// Get first paragraph or first 200 chars of description
 				const desc = task.description.split('\n\n')[0];
@@ -302,6 +328,7 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, 
 			if (metadata.length > 0) {
 				output += `**Details:** ${metadata.join(' | ')}\n\n`;
 			}
+			*/
 
 			// Add related commits
 			const commits = commitsByTaskId[task.identifier] || [];
