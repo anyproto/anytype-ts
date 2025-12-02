@@ -60,7 +60,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 				animate,
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
-					const chatsOnboarding = Storage.get('multichatsOnboarding');
+					const chatsOnboarding = true;// Storage.get('multichatsOnboarding');
 
 					[
 						I.SurveyType.Register, 
