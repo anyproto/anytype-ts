@@ -138,6 +138,7 @@
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
 	"commonCopyDeeplink": "Copy Deeplink",
+	"commonDeeplink": "Deeplink",
 	"commonSidebar": "Sidebar",
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
@@ -1942,6 +1943,8 @@
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",
 	"menuParticipantMessage": "Message",
+
+	"menuHiDownloadCode": "Download Code",
 
 	"previewEdit": "Edit Link",
 
