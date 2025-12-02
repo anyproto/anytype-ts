@@ -1320,6 +1320,7 @@ class Dispatcher {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
+					Sentry.captureMessage(`${type}: msg: ${error.message}`);
 					callBack?.({ error: { code: error.code, description: error.message } });
 					return;
 				};
