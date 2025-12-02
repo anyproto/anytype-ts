@@ -7,7 +7,13 @@
  * 1. Fetches commits since the last tag (or between two tags)
  * 2. Extracts Linear task IDs (format: TEAM_ID-TASK_ID, e.g., JS-1234)
  * 3. Fetches task details from Linear API
- * 4. Generates formatted release notes
+ * 4. Generates formatted release notes in compact format
+ *
+ * Tag Types:
+ *   - alpha: Tags ending with -alpha (e.g., v0.51.21-alpha)
+ *   - beta: Tags ending with -beta (e.g., v0.50.76-beta)
+ *   - nightly: Tags ending with -nightly (e.g., v0.51.202512021-nightly)
+ *   - public: Semver tags without suffix (e.g., v0.51.2)
  *
  * Usage:
  *   node scripts/generate-release-notes.js [options]
@@ -19,8 +25,13 @@
  *   --format <type>    Output format: markdown, json (default: markdown)
  *
  * Default behavior for --from:
- *   - If --to is a specific tag: uses the previous tag before --to
+ *   - If --to is a specific tag: finds the previous tag of the SAME TYPE
+ *     (e.g., alpha->alpha, beta->beta, public->public)
  *   - If --to is HEAD: uses the latest tag
+ *
+ * Sanity Checks:
+ *   - Warns if more than 100 commits found
+ *   - Truncates display at 200 commits to keep output manageable
  *
  * Environment Variables:
  *   LINEAR_API_KEY     Linear API key (required)
@@ -33,6 +44,8 @@ const fs = require('fs');
 // Configuration
 const LINEAR_API_URL = 'https://api.linear.app/graphql';
 const LINEAR_TASK_PATTERN = /\b([A-Z]+-\d+)\b/g;
+const MAX_COMMITS_WARNING = 100; // Warn if more than this many commits
+const MAX_COMMITS_DISPLAY = 200; // Truncate display if more than this
 
 // Parse command line arguments
 function parseArgs() {
@@ -71,9 +84,20 @@ Options:
   --output <file>    Output file (default: stdout)
   --format <type>    Output format: markdown, json (default: markdown)
 
+Tag Types (auto-detected):
+  - alpha: Tags ending with -alpha (e.g., v0.51.21-alpha)
+  - beta: Tags ending with -beta (e.g., v0.50.76-beta)
+  - nightly: Tags ending with -nightly
+  - public: Semver tags without suffix (e.g., v0.51.2)
+
 Default behavior for --from:
-  - If --to is a specific tag: uses the previous tag before --to
+  - If --to is a specific tag: finds previous tag of SAME TYPE
+    (alpha->alpha, beta->beta, public->public)
   - If --to is HEAD: uses the latest tag
+
+Sanity Checks:
+  - Warns if >100 commits found (may indicate wrong tag selection)
+  - Truncates display at 200 commits for readability
 
 Environment Variables:
   LINEAR_API_KEY     Linear API key (required)
@@ -82,10 +106,13 @@ Examples:
   # Generate notes from last tag to HEAD
   LINEAR_API_KEY=your_key node scripts/generate-release-notes.js
 
-  # Generate notes for a specific tag (automatically finds previous tag)
-  LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --to v0.51.18-alpha
+  # Generate notes for alpha release (finds previous alpha tag)
+  LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --to v0.51.21-alpha
 
-  # Generate notes between two specific tags
+  # Generate notes for beta release (finds previous beta tag)
+  LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --to v0.50.76-beta
+
+  # Generate notes between specific tags
   LINEAR_API_KEY=your_key node scripts/generate-release-notes.js --from v0.51.17-alpha --to v0.51.18-alpha
 
   # Save to file
@@ -108,10 +135,20 @@ function getLatestTag() {
 	}
 }
 
-// Get the previous tag (the tag before the specified tag)
+// Extract tag type from a tag (alpha, beta, or public)
+function getTagType(tag) {
+	if (tag.includes('-alpha')) return 'alpha';
+	if (tag.includes('-beta')) return 'beta';
+	if (tag.includes('-nightly')) return 'nightly';
+	return 'public'; // semver without suffix
+}
+
+// Get the previous tag of the same type (the tag before the specified tag)
 function getPreviousTag(currentTag) {
 	try {
-		// Get all tags sorted by creation date, find the one before currentTag
+		const currentType = getTagType(currentTag);
+
+		// Get all tags sorted by creation date
 		const output = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' }).trim();
 		const tags = output.split('\n').filter(tag => tag.trim());
 
@@ -123,12 +160,14 @@ function getPreviousTag(currentTag) {
 			return null;
 		}
 
-		// Return the next tag in the list (previous in time)
-		if (currentIndex + 1 < tags.length) {
-			return tags[currentIndex + 1];
+		// Find the next tag of the same type
+		for (let i = currentIndex + 1; i < tags.length; i++) {
+			if (getTagType(tags[i]) === currentType) {
+				return tags[i];
+			}
 		}
 
-		console.error(`Warning: No previous tag found before ${currentTag}.`);
+		console.error(`Warning: No previous ${currentType} tag found before ${currentTag}.`);
 		return null;
 	} catch (error) {
 		console.error('Warning: Could not find previous tag:', error.message);
@@ -302,12 +341,23 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, 
 	output += `# Release Notes: ${title}\n\n`;
 
 	if (fromTag) {
-		output += `Changes from ${fromTag} to ${toTag}\n\n`;
+		const fromType = getTagType(fromTag);
+		const toType = getTagType(toTag);
+		output += `Changes from ${fromTag} to ${toTag}`;
+		if (fromType === toType && fromType !== 'public') {
+			output += ` (${fromType} track)`;
+		}
+		output += `\n\n`;
 	}
 
-	output += `Generated: ${new Date().toISOString()}\n\n`;
+	// Show total stats compactly
+	const totalCommits = tasks.reduce((sum, task) => {
+		return sum + (commitsByTaskId[task.identifier]?.length || 0);
+	}, 0) + commitsWithoutTasks.length;
 
-	// Group tasks by priority/type
+	output += `**Summary:** ${tasks.length} tasks, ${totalCommits} commits\n\n`;
+
+	// Group tasks by priority
 	const tasksByPriority = {
 		urgent: [],
 		high: [],
@@ -327,66 +377,57 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, fromTag, 
 		tasksByPriority[priorityKey].push(task);
 	});
 
-	// Output tasks by priority
+	// Output tasks in compact format
 	const priorityOrder = ['urgent', 'high', 'medium', 'low', 'none'];
 	const priorityLabels = {
-		urgent: '🔴 Urgent',
-		high: '🟠 High Priority',
-		medium: '🟡 Medium Priority',
-		low: '🟢 Low Priority',
-		none: '⚪ Other Changes'
+		urgent: 'Urgent',
+		high: 'High Priority',
+		medium: 'Medium Priority',
+		low: 'Low Priority',
+		none: 'Other Changes'
 	};
 
 	let hasAnyTasks = false;
+	let displayedCommits = 0;
+
 	priorityOrder.forEach(priority => {
-		const tasks = tasksByPriority[priority];
-		if (tasks.length === 0) return;
+		const priorityTasks = tasksByPriority[priority];
+		if (priorityTasks.length === 0) return;
 
 		hasAnyTasks = true;
 		output += `## ${priorityLabels[priority]}\n\n`;
 
-		tasks.forEach(task => {
-			output += `### ${task.identifier}: ${task.title}\n\n`;
+		priorityTasks.forEach(task => {
+			// Compact format: just list the task
+			output += `- **${task.identifier}**: ${task.title}`;
 
-			/*
-			if (task.description) {
-				// Get first paragraph or first 200 chars of description
-				const desc = task.description.split('\n\n')[0];
-				const shortDesc = desc.length > 200 ? desc.substring(0, 200) + '...' : desc;
-				output += `${shortDesc}\n\n`;
-			}
-
-			// Add metadata
-			const metadata = [];
-			if (task.state) metadata.push(`Status: ${task.state.name}`);
-			if (task.assignee) metadata.push(`Assignee: ${task.assignee.name}`);
-			if (task.labels && task.labels.nodes.length > 0) {
-				metadata.push(`Labels: ${task.labels.nodes.map(l => l.name).join(', ')}`);
-			}
-
-			if (metadata.length > 0) {
-				output += `**Details:** ${metadata.join(' | ')}\n\n`;
-			}
-			*/
-
-			// Add related commits
+			// Show commit count if there are multiple commits for this task
 			const commits = commitsByTaskId[task.identifier] || [];
-			if (commits.length > 0) {
-				output += `**Commits:**\n`;
-				commits.forEach(commit => {
-					output += `- \`${commit.hash.substring(0, 7)}\` ${commit.subject}\n`;
-				});
-				output += '\n';
+			if (commits.length > 1) {
+				output += ` (${commits.length} commits)`;
 			}
+			output += '\n';
+
+			displayedCommits += commits.length;
 		});
+		output += '\n';
 	});
 
-	// Add commits without Linear task IDs
+	// Add commits without Linear task IDs (limit display)
 	if (commitsWithoutTasks.length > 0) {
-		output += `## 📝 Other Commits\n\n`;
-		commitsWithoutTasks.forEach(commit => {
+		output += `## Other Commits\n\n`;
+
+		const remaining = MAX_COMMITS_DISPLAY - displayedCommits;
+		const commitsToShow = commitsWithoutTasks.slice(0, Math.max(remaining, 20));
+		const truncated = commitsWithoutTasks.length > commitsToShow.length;
+
+		commitsToShow.forEach(commit => {
 			output += `- \`${commit.hash.substring(0, 7)}\` ${commit.subject}\n`;
 		});
+
+		if (truncated) {
+			output += `\n_... and ${commitsWithoutTasks.length - commitsToShow.length} more commits_\n`;
+		}
 		output += '\n';
 	}
 
@@ -456,6 +497,21 @@ async function main() {
 	// Get commits
 	const commits = getCommits(options.from, options.to);
 	console.error(`Found ${commits.length} commits`);
+
+	// Sanity checks
+	if (commits.length > MAX_COMMITS_WARNING) {
+		console.error(`Warning: Found ${commits.length} commits, which is unusually high.`);
+		console.error(`This may indicate a large gap between releases or incorrect tag selection.`);
+		if (options.from && options.to !== 'HEAD') {
+			const fromType = getTagType(options.from);
+			const toType = getTagType(options.to);
+			console.error(`Tag types: from=${fromType}, to=${toType}`);
+		}
+	}
+
+	if (commits.length > MAX_COMMITS_DISPLAY) {
+		console.error(`Warning: Truncating display to ${MAX_COMMITS_DISPLAY} most recent commits.`);
+	}
 
 	// Extract Linear IDs
 	const { ids, commitsByTaskId } = extractLinearIds(commits);
