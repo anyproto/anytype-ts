@@ -58,8 +58,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		setIsDeleted(false);
 		setIsLoading(true);
 
-		console.log('OPEN SET', { rootId, space: S.Common.space });
-
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
