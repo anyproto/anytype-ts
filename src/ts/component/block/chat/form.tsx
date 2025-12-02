@@ -13,6 +13,7 @@ import Attachment from './attachment';
 interface Props extends I.BlockComponent {
 	blockId: string;
 	subId: string;
+	analyticsChatId?: string;
 	isEmpty?: boolean;
 	onScrollToBottomClick: () => void;
 	scrollToBottom: () => void;
@@ -44,7 +45,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const { 
 		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, checkMarkOnBackspace, getMessages, 
 		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
-		highlightMessage,
+		highlightMessage, analyticsChatId,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const nodeRef = useRef(null);
@@ -629,7 +630,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 					U.Object.openPopup(object, { onClose: () => updateAttachments(S.Chat.getAttachments(attachmentsSubId)) });
 
-					analytics.event('AttachItemChat', { type: 'Create', count: 1 });
+					analytics.event('AttachItemChat', { type: 'Create', count: 1, chatId: analyticsChatId });
 					context?.close();
 				});
 				break;
@@ -669,7 +670,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 										skipIds: attachments.map(it => it.id),
 										onObjectSelect: item => {
 											addAttachments([ item ]);
-											analytics.event('AttachItemChat', { type: 'Existing', count: 1 });
+											analytics.event('AttachItemChat', { type: 'Existing', count: 1, chatId: analyticsChatId } );
 										},
 									},
 								});
@@ -680,10 +681,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
 									addAttachments(paths.map(path => getObjectFromPath(path)));
 
-									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length });
+									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length, chatId: analyticsChatId });
 								});
 
-								analytics.event('ClickChatAttach', { type: 'Upload' });
+								analytics.event('ClickChatAttach', { type: 'Upload', chatId: analyticsChatId });
 								break;
 							};
 						};
@@ -893,11 +894,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					messageType = message.content?.text.length ? 'Mixed' : 'Attachment';
 				};
 
-				C.ChatAddMessage(rootId, message, (message: any) => {
+				C.ChatAddMessage(rootId, message, () => {
 					scrollToBottom();
 					clear();
 
-					analytics.event('SentMessage', { type: messageType });
+					analytics.event('SentMessage', { type: messageType, chatId: analyticsChatId});
 				});
 			};
 		};
@@ -965,7 +966,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setAttachments(attachments);
 		historySaveState();
 
-		analytics.event('ClickMessageMenuEdit');
+		analytics.event('ClickMessageMenuEdit', { chatId: analyticsChatId });
 	};
 
 	const clear = () => {
@@ -1009,7 +1010,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setRange(range.current);
 		setReplyingId(message.id);
 
-		analytics.event('ClickMessageMenuReply');
+		analytics.event('ClickMessageMenuReply', { chatId: analyticsChatId });
 	};
 
 	const onReplyClear = () => {
@@ -1040,7 +1041,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							scrollToBottom();
 						};
 
-						analytics.event('DeleteMessage');
+						analytics.event('DeleteMessage', { chatId: analyticsChatId });
 					});
 				},
 				onCancel: () => {
@@ -1051,7 +1052,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			}
 		});
 
-		analytics.event('ClickMessageMenuDelete');
+		analytics.event('ClickMessageMenuDelete', { chatId: analyticsChatId });
 	};
 
 	const onHistory = (e, dir) => {
@@ -1142,7 +1143,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onDelete(editingId.current);
 		} else {
 			saveState(list);
-			analytics.event('DetachItemChat');
+			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
 		$(window).trigger('resize');
@@ -1153,7 +1154,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			case I.ChatReadType.Message: {
 				onScrollToBottomClick();
 
-				analytics.event('ClickScrollToBottom');
+				analytics.event('ClickScrollToBottom', { chatId: analyticsChatId });
 				break;
 			};
 
@@ -1169,7 +1170,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					});
 				};
 
-				analytics.event('ClickScrollToMention');
+				analytics.event('ClickScrollToMention', { chatId: analyticsChatId });
 				break;
 			};
 		};
@@ -1324,7 +1325,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						value = U.Common.stringInsert(value, text, from, from);
 
 						updateMarkup(value, { from: to, to });
-						analytics.event('Mention');
+						analytics.event('Mention', { chatId: analyticsChatId });
 					},
 				},
 			});

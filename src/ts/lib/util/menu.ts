@@ -817,15 +817,13 @@ class UtilMenu {
 	};
 
 	spaceSettingsIndex (menuParam: Partial<I.MenuParam>, param?: any) {
-		const isOwner = U.Space.isMyOwner();
-		const spaceview = U.Space.getSpaceview();
-		const options: I.Option[] = [
-			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') }
-		];
+		param = param || {};
 
-		if (!spaceview.isOneToOne) {
-			options.push({ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' });
-		};
+		const isOwner = U.Space.isMyOwner();
+		const options: I.Option[] = [
+			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+		];
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -839,7 +837,7 @@ class UtilMenu {
 						};
 						
 						case 'delete': {
-							Action.removeSpace(S.Common.space, analytics.route.settings);
+							Action.removeSpace(S.Common.space, param.route);
 							break;
 						};
 					};
@@ -921,7 +919,7 @@ class UtilMenu {
 					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
 				};
 
-				if (withDelete && !space.isOneToOne) {
+				if (withDelete) {
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
 					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });

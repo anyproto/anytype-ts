@@ -52,6 +52,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		return object.chatId || rootId;
 	};
 
+	const getAnalyticsChatId = () => {
+		const chatId = getChatId();
+		return S.Detail.get(chatId, chatId, [ 'analyticsChatId' ]).analyticsChatId;
+	};
+
 	const getSubId = () => {
 		return S.Chat.getChatSubId('chat', space, getChatId());
 	};
@@ -59,6 +64,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const chatId = getChatId();
 	const subId = getSubId();
 	const messages = S.Chat.getList(subId);
+	const analyticsChatId = getAnalyticsChatId();
 
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
@@ -419,7 +425,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 								},
 							});
 
-							analytics.event('ClickMessageMenuCopy');
+							analytics.event('ClickMessageMenuCopy', { chatId: analyticsChatId });
 							break;
 						};
 
@@ -427,7 +433,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							const object = S.Detail.get(rootId, rootId);
 
 							U.Object.copyLink(object, space, 'deeplink', '', `&messageId=${item.id}`);
-							analytics.event('ClickMessageMenuLink');
+							analytics.event('ClickMessageMenuLink', { chatId: analyticsChatId });
 							break;
 						};
 
@@ -753,7 +759,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onReplyClick = (e: MouseEvent, item: any) => {
-		analytics.event('ClickScrollToReply');
+		analytics.event('ClickScrollToReply', { chatId: analyticsChatId });
 
 		const subId = getSubId();
 		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
@@ -880,9 +886,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const init = () => {
+		const analyticsChatId = getAnalyticsChatId();
+
 		setLoaded(false);
 		loadState(() => {
-
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
@@ -922,7 +929,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			};
 		});
 
-		analytics.event('ScreenChat');
+		if (analyticsChatId) {
+			analytics.event('ScreenChat', { chatId: analyticsChatId });
+		};
 	};
 
 	const resize = () => {
@@ -991,6 +1000,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 								rootId={chatId}
 								blockId={block.id}
 								subId={subId}
+								analyticsChatId={analyticsChatId}
 								index={i}
 								isNew={item.orderId == firstUnreadOrderId}
 								hasMore={!!getMessageMenuOptions(item, true).length}
@@ -1022,7 +1032,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	useEffect(() => {
 		rebind();
 		init();
-	}, [ rootId, space, chatId ]);
+	}, [ rootId, space, chatId, analyticsChatId ]);
 
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
@@ -1061,6 +1071,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				rootId={chatId}
 				blockId={block.id}
 				subId={subId}
+				analyticsChatId={analyticsChatId}
 				onScrollToBottomClick={onScrollToBottomClick}
 				scrollToBottom={scrollToBottomCheck}
 				scrollToMessage={scrollToMessage}

@@ -166,6 +166,7 @@ export default {
 		'spaceOrder',
 		'spaceJoinDate',
 		'oneToOneIdentity',
+		'analyticsSpaceId',
 	],
 
 	participant: [

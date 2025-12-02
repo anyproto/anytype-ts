@@ -68,6 +68,13 @@ class WindowManager {
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 		win.on('swipe', (e, direction) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
+		win.webContents.on('before-input-event', (e, input) => {
+			const key = input.key.toLowerCase();
+
+			if (key == 'escape') {
+				e.preventDefault();
+			};
+		});
 
 		win.webContents.setWindowOpenHandler(({ url }) => {
 			Api.openUrl(win, url);

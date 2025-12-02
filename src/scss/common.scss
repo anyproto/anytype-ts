@@ -81,8 +81,8 @@ input, textarea, select { font-family: 'Inter'; }
 .ReactVirtualized__List { overscroll-behavior: none; }
 
 .customScrollbar {
-	::-webkit-scrollbar, &::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
+	::-webkit-scrollbar, &::-webkit-scrollbar { width: 10px; height: 10px; }
+	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 5px; }
 	::-webkit-scrollbar-corner, &::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button, &::-webkit-scrollbar-button { display: none; }
 }
@@ -198,8 +198,8 @@ html.platformLinux {
 html.platformWindows, html.platformLinux {
 	#sidebarLeftButton { left: 16px; display: block; }
 
-	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
+	::-webkit-scrollbar { width: 10px; height: 10px; }
+	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 5px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
 }

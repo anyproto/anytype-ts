@@ -1,12 +1,13 @@
 {
 	"name": "anytype",
-	"version": "0.51.16-alpha",
+	"version": "0.51.21-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
 		"precommit": "npx lint-staged",
 		"typecheck": "npx tsc --noEmit -p tsconfig.json",
 		"lint": "eslint .",
+		"release:notes": "node scripts/generate-release-notes.js",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
 		"doctor:start:dev": "RSDOCTOR=true npm run start:dev",
