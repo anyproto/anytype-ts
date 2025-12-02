@@ -16,8 +16,9 @@ const QR = forwardRef<HTMLDivElement, Props>(({
 	const theme = S.Common.getThemeClass();
 	const logo = withLogo ? {
 		src: `./img/icon/qr.svg`,
-		width: 60,
-		height: 60,
+		width: 64,
+		height: 64,
+		excavate: true,
 	} : {};
 
 	return (

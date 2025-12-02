@@ -28,7 +28,7 @@ const MenuHi = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 	};
 
 	const onCopy = () => {
-		U.Common.copyToast(translate('commonDeeplink'), deeplink)
+		U.Common.copyToast(translate('commonLink'), deeplink)
 	};
 
 	return (
@@ -42,8 +42,8 @@ const MenuHi = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 			</div>
 
 			<div className="buttonsWrapper">
-				<Button color="accent" className="c40" text={translate('menuHiDownloadCode')} onClick={onDownload} />
-				<Button color="blank" className="c40" text={translate('commonCopyDeeplink')} onClick={onCopy} />
+				<Button color="accent" className="c40" text={translate('commonCopyLink')} onClick={onCopy} />
+				<Button color="blank" className="c40" text={translate('menuHiDownloadCode')} onClick={onDownload} />
 			</div>
 		</>
 	);

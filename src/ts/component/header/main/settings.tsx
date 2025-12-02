@@ -48,7 +48,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		};
 	};
 
-	const onQr = () => {
+	const onHi = () => {
 		S.Menu.open('hi', {
 			element: '#button-share-one-to-one',
 			horizontal: I.MenuDirection.Right,
@@ -73,7 +73,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
 
 		if (id == 'account') {
-			return <Icon id="button-share-one-to-one" className="qr withBackground" onClick={onQr} />
+			return <Icon id="button-share-one-to-one" className="hi withBackground" onClick={onHi} />
 		};
 
 		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
