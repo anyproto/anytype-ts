@@ -64,7 +64,14 @@ class UtilSpace {
 	 * @param {string} [id] - target user identity.
 	 * @param {() => void} [callBack] - Optional callback fn.
 	 */
-	openOneToOne (id: string, callBack?: (message: any) => void) {
+	openOneToOne (id: string, callBack?: (message?: any) => void) {
+		const { account } = S.Auth;
+		if (id == account.id) {
+			this.openDashboard();
+			callBack?.()
+			return;
+		};
+		
 		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
 
 		if (spaceExists) {
