@@ -1,6 +1,6 @@
 const BORDER = 100;
 const MAX_STEP = 10;
-const SPEED_DIV = 30; // bigger → slower overall
+const SPEED_DIV = 100; // bigger → slower overall
 
 interface Param {
 	speed?: number;

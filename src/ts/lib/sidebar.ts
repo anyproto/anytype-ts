@@ -300,6 +300,12 @@ class Sidebar {
 		};
 
 		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+
+		if (dataSubLeft.isClosed) {
+			return;
+		};
+
 		const width = dataLeft.isClosed ? 0 : dataLeft.width;
 		const objLeft = this.leftPanelGetNode();
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');
@@ -387,7 +393,7 @@ class Sidebar {
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, w: number, save: boolean): void {
 		if (panel == I.SidebarPanel.Left) {
-			S.Common.vaultIsMinimalSet(w < J.Size.vaultStripeMaxWidth);
+			S.Common.vaultIsMinimalSet(w <= J.Size.vaultStripeMaxWidth);
 		};
 		this.setData(panel, isPopup, { width: this.limitWidth(panel, w) }, save);
 		this.resizePage(isPopup, null, null, false);

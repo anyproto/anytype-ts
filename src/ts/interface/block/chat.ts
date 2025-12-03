@@ -88,7 +88,8 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	id: string;
 	isNew: boolean;
 	hasMore: boolean;
-	subId: string
+	subId: string;
+	analyticsChatId?: string;
 	style?: any;
 	index?: number;
 	onContextMenu: (e: any) => void;

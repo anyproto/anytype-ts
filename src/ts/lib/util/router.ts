@@ -34,10 +34,6 @@ class UtilRouter {
 	getParam (route: string): any {
 		route = String(route || '');
 
-		if (!route) {
-			return {};
-		};
-
 		const parts = route.split('?');
 		if (!parts.length) {
 			return {};
@@ -71,6 +67,11 @@ class UtilRouter {
 
 		if ([ 'object', 'invite', 'membership' ].includes(param.page)) {
 			param.action = param.page;
+			param.page = 'main';
+		};
+
+		if (param.page == 'hi') {
+			param.action = 'oneToOne';
 			param.page = 'main';
 		};
 

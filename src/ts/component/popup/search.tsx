@@ -254,6 +254,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
 		const sorts = [
+			{ relationKey: '_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -262,7 +263,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let limit = J.Constant.limit.menuRecords;
 
 		if (!filterValueRef.current && clear && !backlinkRef.current) {
-			limit = 8;
+			limit = 9;
 		};
 
 		if (backlinkRef.current) {

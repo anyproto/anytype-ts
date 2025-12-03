@@ -229,7 +229,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		isInitialised.current = false;
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
-		initData();
 		checkNodes(e, e.pageX, e.pageY);
 
 		if (!dragActive.current) {

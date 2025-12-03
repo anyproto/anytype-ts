@@ -16,11 +16,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 	const chatsRef = useRef([]);
 	const prevIds = useRef([]);
 	const [ dummy, setDummy ] = useState(0);
-	const notificationOptions: any[] = [
-		I.NotificationMode.All,
-		I.NotificationMode.Mentions,
-		I.NotificationMode.Nothing,
-	];
+	const notificationOptions = U.Menu.notificationModeOptions();
 
 	const load = () => {
 		const ids = [ ...allIds, ...mentionIds, ...muteIds ];
@@ -94,11 +90,22 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 				<Label text={translate(`pageSettingsSpaceNotificationsNotifyMeAbout`)} />
 
 				<div className="actionItems">
-					{notificationOptions.map((el, idx) => (
-						<div key={idx} onClick={() => onSpaceModeChange(el)} className={[ 'item', notificationMode == el ? 'selected' : '' ].join(' ')}>
-							<Label text={translate(`pageSettingsSpaceNotificationsMode${el}`)} />
-						</div>
-					))}
+					{notificationOptions.map((el, idx) => {
+						const cn = [ 'item' ];
+						if (notificationMode == el.id) {
+							cn.push('selected');
+						};
+
+						return (
+							<div 
+								key={idx} 
+								onClick={() => onSpaceModeChange(el.id)} 
+								className={cn.join(' ')}
+							>
+								<Label text={el.name} />
+							</div>
+						);
+					})}
 				</div>
 			</div>
 

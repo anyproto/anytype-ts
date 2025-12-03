@@ -30,7 +30,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 			
 			S.Common.showRelativeDatesSet(true);
 			
-			//Storage.set('chatsOnboarding', true);
+			Storage.set('multichatsOnboarding', true);
 			Storage.setOnboarding('objectDescriptionButton');
 			Storage.setOnboarding('typeResetLayout');
 

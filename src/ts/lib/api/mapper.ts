@@ -94,6 +94,7 @@ export const Mapper = {
 				networkId: obj.getNetworkid(),
 				workspaceObjectId: obj.getWorkspaceobjectid(),
 				ethereumAddress: obj.getEthereumaddress(),
+				metadataKey: obj.getMetadatakey(),
 			};
 		},
 

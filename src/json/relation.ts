@@ -166,13 +166,14 @@ export default {
 		'spaceOrder',
 		'spaceJoinDate',
 		'oneToOneIdentity',
+		'analyticsSpaceId',
 	],
 
 	participant: [
 		'identity',
 		'participantPermissions',
 		'participantStatus',
-		'globalName'
+		'globalName',
 	],
 
 	syncStatus: [

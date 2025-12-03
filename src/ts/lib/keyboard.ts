@@ -847,7 +847,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
-				//Storage.delete('chatsOnboarding');
+				Storage.delete('multichatsOnboarding');
 
 				location.reload();
 				break;
@@ -1901,6 +1901,7 @@ class Keyboard {
 	};
 
 	getPageClass (prefix: string, isPopup: boolean) {
+		const spaceview = U.Space.getSpaceview();
 		const { page, action, id } = this.getMatch(isPopup).params;
 
 		return [ 
@@ -1908,6 +1909,7 @@ class Keyboard {
 			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
 			U.Common.toCamelCase([ prefix, page, action ].join('-')),
 			U.Common.getContainerClassName(isPopup),
+			U.Data.spaceClass(spaceview.uxType),
 		].join(' ');
 	};
 
