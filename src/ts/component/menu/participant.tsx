@@ -8,10 +8,11 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { param, close } = props;
 	const { data } = param;
 	const { object } = data;
-	const { config, space } = S.Common;
+	const { space } = S.Common;
+	const { account } = S.Auth;
 	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity))[0];
 	const text = oneToOne ? translate('menuParticipantMessage') : translate('menuParticipantConnect');
-	const showButton = config.sudo && ((oneToOne && oneToOne.targetSpaceId != space) || !oneToOne);
+	const showButton = ((oneToOne && oneToOne.targetSpaceId != space) || !oneToOne) && (object.identity != account.id);
 
 	const load = () => {
 		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
