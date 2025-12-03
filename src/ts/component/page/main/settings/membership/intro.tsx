@@ -14,10 +14,14 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
 	const purchased = data?.getTopPurchasedProduct();
-
-	// show first purchased product and then the rest of the top-level products (excluding it)
 	const rest = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden && !it.isIntro&& it.id !== purchased?.product?.id);
-	const products = [ current, ...rest ];
+	const products = [ ...rest ];
+
+	if (current) {
+		products.unshift(current);
+	};
+
+	console.log(products);
 
 	const rebind = () => {
 		unbind();
