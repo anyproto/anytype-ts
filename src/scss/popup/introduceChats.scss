@@ -15,8 +15,8 @@ $elementsTransition: opacity 0.2s linear;
             }
             .step0 {
                 .chat {
-                    position: absolute; z-index: 0; left: 50%; margin-left: -246px; height: 392px; width: 492px; top: 8px;
-                    background: url('~img/icon/onboarding/chats/feed.png'); background-size: 492px 392px;
+                    position: absolute; z-index: 0; left: 50%; margin-left: -164px; width: 328px; height: 312px; top: 44px;
+                    background: url('~img/icon/onboarding/chats/feed.png'); background-size: 328px 312px;
                     transition: top 2s $easeInQuint;
                 }
 
@@ -70,12 +70,12 @@ $elementsTransition: opacity 0.2s linear;
                 @keyframes introHeaderMask {
                     0% { left: 0px; }
                     1% { left: 0px; }
-                    100% { left: 280px; }
+                    100% { left: 284px; }
                 };
                 @keyframes introHeaderIcons {
                     0% { width: 72px; }
                     1% { width: 72px; }
-                    100% { width: 280px; }
+                    100% { width: 284px; }
                 };
                 @keyframes introHeaderMaskIcon {
                     0% { left: 112px; }
@@ -85,12 +85,12 @@ $elementsTransition: opacity 0.2s linear;
                 @keyframes introSidebar {
                     0% { opacity: 0; width: 0px; }
                     1% { opacity: 1; width: 0px; }
-                    100% { opacity: 1; width: 280px; }
+                    100% { opacity: 1; width: 284px; }
                 };
                 @keyframes introBody {
                     0% { background-position-x: 0px; }
                     1% { background-position-x: 0px; }
-                    100% { background-position-x: 280px; }
+                    100% { background-position-x: 284px; }
                 };
 
                 @mixin animate($animationName) { animation: $animationName 1s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards; };
@@ -102,19 +102,25 @@ $elementsTransition: opacity 0.2s linear;
                         background: var(--color-shape-primary) url('~img/icon/onboarding/chats/intro.png') 0 0 / 1440px 900px no-repeat;
                         overflow: hidden; border-radius: 20px;
                     }
+                    .img {
+                        .oneToOne { opacity: 0; }
+                    }
                     .img.slide0,
                     .img.slide2 { left: 208px; top: 0px; }
-                    .img.slide1 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 10px; }
+                    .img.slide1,
+                    .img.slide3 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 10px; }
 
                     .img.slide2,
-                    .img.slide3 { @include animate(introBody); }
+                    .img.slide3,
+                    .img.slide4 { @include animate(introBody); }
                     .img.slide2,
-                    .img.slide3 {
+                    .img.slide3,
+                    .img.slide4 {
                         .header { @include animate(introHeader); position: absolute; z-index: 100; left: 0px; top: 0px; height: 52px; width: 336px; opacity: 0; }
                         .header {
                             &:before {
                                 @include animate(introHeaderIcons);
-                                content: ''; width: 280px; position: absolute; z-index: 1; height: 100%; background: url('~img/icon/onboarding/chats/header.svg');
+                                content: ''; width: 284px; position: absolute; z-index: 1; height: 100%; background: url('~img/icon/onboarding/chats/header.svg');
                             }
                             .mask {
                                 @include animate(introHeaderMask);
@@ -129,12 +135,24 @@ $elementsTransition: opacity 0.2s linear;
                             }
                         }
                         .sidebar {
-                            position: absolute; left: 0px; top: 0px; width: 280px;
-                            background: url('~img/icon/onboarding/chats/sidebar.png') 0 0 / 280px 900px no-repeat; opacity: 0;
+                            position: absolute; left: 0px; top: 0px; width: 284px;
+                            background: url('~img/icon/onboarding/chats/sidebar.png') 0 0 / 284px 900px no-repeat; opacity: 0;
                             height: 100%;  animation: introSidebar 1s $easeInQuint; animation-delay: 0.8s; animation-fill-mode: forwards;
                         }
+                        .oneToOne {
+                            position: absolute; z-index: 300; left: 0px; top: 0px; width: 100%; height: 100%;
+                            background-image: url('~img/icon/onboarding/chats/oneToOne.png');
+                            transition: background-size $easeInQuint 0.8s;
+                        }
                     }
-                    .img.slide3 { left: -300px; top: 0px; opacity: 0; }
+                    .img.slide2 {
+                        .oneToOne { background-size: 1440px 900px; }
+                    }
+                    .img.slide3,
+                    .img.slide4 {
+                        .oneToOne { background-size: 640px 400px; opacity: 1; }
+                    }
+                    .img.slide4 { left: -300px; top: 16px; opacity: 0; }
                 }
 
                 .swiper { width: 100%; height: 100%; z-index: 2; overflow: visible; position: absolute; left: 0px; top: 0px; }

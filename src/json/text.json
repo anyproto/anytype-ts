@@ -2296,7 +2296,9 @@
 	"onboardingChatsSlide1Text": "Spin up chats for projects, teams, or topics. Add tags to organize them, and use views to filter or group chats the way you work.",
 	"onboardingChatsSlide2Title": "Familiar and Predictable",
 	"onboardingChatsSlide2Text": "Spaces and Chats now share the same navigation principles making it easier to switch contexts.",
-	"onboardingChatsSlide3Title": "See all the latest updates and bug<br/>fixes in the release notes",
+	"onboardingChatsSlide3Title": "Talk One-on-One",
+	"onboardingChatsSlide3Text": "Reach out people directly when you need a quick answer or a private space to talk.",
+	"onboardingChatsSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
 
 	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
 	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",

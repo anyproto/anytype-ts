@@ -5,7 +5,7 @@ import { I, U, S, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
 
-const SLIDE_COUNT = 4;
+const SLIDE_COUNT = 5;
 
 const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
@@ -71,7 +71,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 					{Array(SLIDE_COUNT).fill(null).map((_, idx: number) => (
 						<div key={idx} className={[ 'text', `text${idx}`, idx != activeSlide ? 'hidden' : '' ].join(' ')}>
 							<Title className="hidden" text={translate(`onboardingChatsSlide${idx}Title`)} />
-							{idx < 3 ? (
+							{idx < 4 ? (
 								<>
 									<Label className="description hidden" text={translate(`onboardingChatsSlide${idx}Text`)} />
 									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT - 1}`} />
@@ -90,6 +90,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 								<div className="dots" />
 							</div>
 							<div className="sidebar" />
+							<div className="oneToOne" />
 						</div>
 					</div>
 
@@ -106,8 +107,8 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 						{Array(SLIDE_COUNT).fill(null).map((_, idx: number) => (
 							<SwiperSlide key={idx}>
 								<div className={[ 'slide', `slide${idx}` ].join(' ')}>
-									{idx == 3 ? (
-										<img src={`./img/help/onboarding/chats/${theme ? 'dark/' : ''}${idx}.png`} />
+									{idx == 4 ? (
+										<img src={`./img/help/onboarding/chats/${theme ? 'dark/' : ''}whatsnew.png`} />
 									) : ''}
 								</div>
 							</SwiperSlide>
