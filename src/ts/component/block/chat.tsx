@@ -824,7 +824,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				};
 			});
 
-			attachmentText = text.length ? `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})` : `${l} ${U.Common.plural(l, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
+			attachmentText = text.length ? 
+				`${U.Common.plural(length, translate(`plural${attachmentLayout}`))} (${length})` : 
+				`${length} ${U.Common.plural(length, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
 		};
 
 		if (!text) {
