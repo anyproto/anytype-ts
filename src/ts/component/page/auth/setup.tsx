@@ -60,7 +60,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 				animate,
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
-					const chatsOnboarding = true;//Storage.get('chatsOnboarding');
+					const chatsOnboarding = true;// Storage.get('multichatsOnboarding');
 
 					[
 						I.SurveyType.Register, 
@@ -94,7 +94,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						if (!chatsOnboarding) {
 							S.Popup.open('introduceChats', {
 								onClose: () => {
-									Storage.set('chatsOnboarding', true);
+									Storage.set('multichatsOnboarding', true);
 									Storage.setHighlight('createSpace', true);
 
 									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);

@@ -1663,13 +1663,13 @@ export const ObjectListModifyDetailValues = (objectIds: string[], operations: an
 
 		op.setRelationkey(it.relationKey);
 
-		if (it.add) {
+		if (undefined !== it.add) {
 			op.setAdd(Encode.value(it.add));
 		};
-		if (it.set || (it.set === null)) {
+		if (undefined !== it.set) {
 			op.setSet(Encode.value(it.set));
 		};
-		if (it.remove) {
+		if (undefined !== it.remove) {
 			op.setRemove(Encode.value(it.remove));
 		};
 

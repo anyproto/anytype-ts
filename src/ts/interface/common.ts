@@ -388,3 +388,10 @@ export interface DragComponentProps {
 	getNode: () => any;
 	onRecordDrop?: (targetId: string, ids: string[], position: I.BlockPosition) => void;
 };
+
+export interface ImageParam {
+	src: string;
+	width: number;
+	height: number;
+	excavate: boolean;
+};

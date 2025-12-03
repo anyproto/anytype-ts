@@ -4,18 +4,19 @@ import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'C
 import { S, U } from 'Lib';
 
 interface Props {
+	id?: string;
 	rootId?: string;
 	object?: any;
 	className?: string;
 	withPlural?: boolean;
 	noLoad?: boolean;
-	position?: () => void;
 	setObject?: (object: any) => void;
 };
 
 const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { 
+		id = '',
 		rootId = '',
 		className = '',
 		object: initialObject,
@@ -59,7 +60,7 @@ const PreviewDefault = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(() => load(), [ rootId ]);
 
 	return (
-		<div className={cn.join(' ')}>
+		<div id={id} className={cn.join(' ')} data-id={object?.id}>
 			{isLoading ? <Loader /> : (
 				<>
 					<div className="previewHeader">

@@ -173,7 +173,7 @@ export default {
 		'identity',
 		'participantPermissions',
 		'participantStatus',
-		'globalName'
+		'globalName',
 	],
 
 	syncStatus: [
