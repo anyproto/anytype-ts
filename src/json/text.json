@@ -592,10 +592,6 @@
 	"pageSettingsSpaceDeleteSpace": "Delete Space",
 
 	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
-	"pageSettingsSpaceNotificationsMode0": "All messages",
-	"pageSettingsSpaceNotificationsMode1": "Mentions only",
-	"pageSettingsSpaceNotificationsMode2": "Nothing",
-	"pageSettingsSpaceNotificationsMode3": "Custom",
 
 	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
 	"pageSettingsSpaceNotificationsChatSpecificMode0": "All messages",
@@ -2691,9 +2687,10 @@
 	"apiScope1": "API",
 	"apiScope2": "Full",
 
-	"notificationMode0": "Enable all",
+	"notificationMode0": "All messages",
 	"notificationMode1": "Mentions only",
 	"notificationMode2": "Disable all",
+	"notificationMode3": "Custom",
 
 	"spaceUxType0": "None",
 	"spaceUxType1": "Space",
