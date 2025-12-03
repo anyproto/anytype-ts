@@ -30,14 +30,15 @@ export default () => {
 		title(`Talk One-on-One`),
 		h4(`<span>Release 0.52.0</span><span>December 4, 2025</span>`),
 		text(''),
-		text('Here we go again – this time with direct, one-to-one conversations. We\'re continuing to round out Chats with what you\'d expect from any communication tool: the ability to reach out to someone directly.<br/>Plus some nice improvements along the way!'),
+		text('Direct Channels are here – the missing piece of the chatting puzzle. You can now communicate with someone directly. As simple as that.'),
+		text('And because we never ship just one thing, this release comes packed with usability upgrades across the app.'),
+		img(`52/1.png`),
 		text(''),
 
 		h1(`Direct Channels`),
-		text('Reach out to people directly when you need a quick answer or a private space to talk.<br/>' +
-			'A one-to-one chat is a direct channel between two people, where both participants have equal access: no ‘Owners’, no roles to manage. The chat exists just for the two of you.<br/>' +
-			'As simple as that.'),
-		// img(`52/1.png`),
+		text('Sometimes you just need to talk to one person. Privately.'),
+		text('Direct Channel is a one-on-one connection between two members, where both participants have equal access: no admin, no hierarchy. Just a place for quick check-ins, sharing an object, or whispering memes in the middle of a project. It’s simple, it’s lightweight, and it just works.'),
+		img(`52/2.png`),
 		text(``),
 
 		h2(`Quality of Life Improvements`),
@@ -45,14 +46,16 @@ export default () => {
 
 		text(`<b>Vault Stripe View</b>`),
 		text(`The Vault now supports a more compact, icon-only mode. Drag the edge of the Vault area to adjust its width: once it becomes narrow enough, the view switches to an icon-only layout, giving you more room for your content.`),
+		img(`52/3.png`),
 		text(``),
 
 		text(`<b>Manage Widget Sections</b>`),
-		text(`Find "Customize Sidebar" in the Channel context menu or hover over the three-dots menus next to Widget sections. From there, you can reorder the <i>Pinned</i>, <i>Recently edited</i>, and <i>Objects</i> sections or hide any you don’t need. For <i>Recently edited</i>, you can also choose whether it shows changes made by any member or only by you.`),
+		text(`Find "Customize Sidebar" in the Channel context menu or hover over the three-dots menus next to Widget sections. From there, you can reorder & hide the <i>Pinned</i>, <i>Recently edited</i>, and <i>Objects</i> sections. `),
+		text(`For <i>Recently edited</i>, you can also choose whether it shows changes made by any member or only by you.`),
 		text(``),
 
 		text(`<b>Dragging Objects Between Views</b>`),
-		text(`You can now drag an Object between views inside the same Query or Collection. When you drop it into another view, its properties update to match that view’s filters, just like when you create a new Object directly in that view. If the filters aren’t compatible, the Object stays unchanged, but with properly configured views this makes moving items between views a quick way to keep your data consistent.`),
+		text(`You can now drag an Object between views inside the same Query or Collection. When you drop it into another view, its properties update to match that view’s filters, just like when you create a new Object directly in that view. `),
 		text(``),
 
 		text(`<b>Magnetic Stops for Resizing Images</b>`),
