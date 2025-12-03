@@ -72,7 +72,7 @@ input, textarea, select { font-family: 'Inter'; }
 	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: 100%; }
 }
 #globalFade.show { opacity: 1; }
-#graphPreview { position: fixed; z-index: 1000; }
+#graphPreview { position: fixed; z-index: 1000; left: 0px; top: 0px; }
 
 #mainAnimation { display: none; }
 

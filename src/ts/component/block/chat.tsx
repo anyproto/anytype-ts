@@ -791,7 +791,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
-		const l = attachments.length;
+		const length = attachments.length;
 
 		let text: string = '';
 		let attachmentText: string = '';
@@ -803,13 +803,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			text = text.replace(/\n\r?/g, ' ');
 		};
 
-		if (!l) {
+		if (!length) {
 			return { title, text, attachment: null, isMultiple: false };
 		};
 
 		const first = attachments[0];
 
-		if (l == 1) {
+		if (length == 1) {
 			attachmentText = first.name || U.Common.plural(1, translate('pluralAttachment'));
 			attachment = first;
 		} else {
@@ -824,7 +824,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				};
 			});
 
-			attachmentText = text.length ? `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})` : `${l} ${U.Common.plural(l, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
+			attachmentText = text.length ? 
+				`${U.Common.plural(length, translate(`plural${attachmentLayout}`))} (${length})` : 
+				`${length} ${U.Common.plural(length, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
 		};
 
 		if (!text) {

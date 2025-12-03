@@ -11,9 +11,9 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 	const { account } = S.Auth;
 	const { id, info } = account;
 	const { metadataKey } = info;
-	const deeplink = `${J.Constant.protocol}://hi/?id=${id}&key=${metadataKey}`;
+	const deeplink = U.Space.oneToOneLink(id, metadataKey, 'web');
 	const qrImageParam = {
-		src: `./img/icon/qr.svg`,
+		src: '',//`./img/icon/qr.svg`,
 		width: 64,
 		height: 64,
 		excavate: true,
