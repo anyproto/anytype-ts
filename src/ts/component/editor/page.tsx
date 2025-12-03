@@ -1383,22 +1383,24 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			S.Menu.close('blockContext', () => {
-				S.Menu.open(menuId, {
-					classNameWrap: 'fromBlock',
-					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-					horizontal: I.MenuDirection.Center,
-					offsetY: 4,
-					data: {
-						rootId,
-						blockId: block.id,
-						blockIds: [ block.id ],
-						value: (mark ? mark.param : ''),
-						onChange: (param: string) => {
-							marks = Mark.toggle(marks, { type, param, range });
-							cb();
-						},
-					}
-				});
+				window.setTimeout(() => {
+					S.Menu.open(menuId, {
+						classNameWrap: 'fromBlock',
+						rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+						horizontal: I.MenuDirection.Center,
+						offsetY: 4,
+						data: {
+							rootId,
+							blockId: block.id,
+							blockIds: [ block.id ],
+							value: (mark ? mark.param : ''),
+							onChange: (param: string) => {
+								marks = Mark.toggle(marks, { type, param, range });
+								cb();
+							},
+						}
+					});
+				}, J.Constant.delay.menu);
 			});
 		} else {
 			marks = Mark.toggle(marks, { type, param: mark ? '' : param, range });
