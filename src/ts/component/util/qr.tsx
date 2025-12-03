@@ -5,13 +5,13 @@ import { QRCodeCanvas as QRCode } from 'qrcode.react';
 interface Props {
 	value: string;
 	size?: number;
-	imageParam?: Partial<I.ImageParam>;
+	imageParam?: I.ImageParam;
 };
 
 const QR = forwardRef<HTMLDivElement, Props>(({
     value = '',
 	size = 122,
-	imageParam = {},
+	imageParam = { src: '', width: 0, height: 0, excavate: false },
 }, ref) => {
 	const theme = S.Common.getThemeClass();
 
