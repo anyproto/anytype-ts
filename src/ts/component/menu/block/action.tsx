@@ -188,6 +188,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let hasBookmark = true;
 		let hasDataview = true;
 		let hasFile = true;
+		let hasCopyMedia = true;
 		let hasAction = true;
 		let hasAlign = true;
 		let hasTurnText = true;
@@ -211,6 +212,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			hasDataview = hasBookmark && block.isDataview() && checkFlag;
 			hasLink = hasLink && block.isLink() && checkFlag;
 			hasFile = hasFile && block.isFile() && checkFlag;
+			hasCopyMedia = hasCopyMedia && block.isFileImage() && checkFlag;
 			hasAlign = hasAlign && block.canHaveAlign();
 			hasColor = hasColor && block.canHaveColor();
 			hasBg = hasBg && block.canHaveBackground();
@@ -228,7 +230,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
-		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
+		const actionParam = { rootId, blockId, hasText, hasFile, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
 		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
@@ -624,6 +626,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
+			case 'copyMedia': {
+				U.Common.clipboardCopyImageFromUrl(S.Common.imageUrl(targetObjectId, I.ImageSize.Large));
+				break;
+			};
+
 			case 'copyUrl': {
 				U.Common.copyToast(translate('commonLink'), block.content.url);
 				break;
@@ -640,7 +647,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				});
 				break;
 			};
-				
+
 			default: {
 				// Text colors
 				if (item.isTextColor) {
