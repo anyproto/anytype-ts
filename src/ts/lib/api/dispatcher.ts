@@ -152,7 +152,7 @@ class Dispatcher {
 			};
 
 			const needLog = this.needEventLog(type) && !skipDebug;
-			const space = U.Space.getSpaceviewBySpaceId(spaceId);
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			switch (type) {
 
@@ -824,6 +824,10 @@ class Dispatcher {
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 
+					if (subIds.includes(J.Constant.subId.type)) {
+						U.Subscription.createTypeCheck();
+					};
+
 					updateMarkup = true;
 					break;
 				};
@@ -843,7 +847,9 @@ class Dispatcher {
 					// Subscriptions
 					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					S.Detail.delete(rootId, id, keys);
+					if (rootId) {
+						S.Detail.delete(rootId, id, keys);
+					};
 
 					updateMarkup = true;
 					break;
@@ -863,10 +869,6 @@ class Dispatcher {
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
 						S.Detail.delete(subId, id, []);
-
-						if (subId == J.Constant.subId.type) {
-							S.Block.removeTypeWidget(id);
-						};
 					};
 					break;
 				};
@@ -965,16 +967,17 @@ class Dispatcher {
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
-					const message = new M.ChatMessage({ ...mapped.message, dependencies });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message);
+					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
+					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview.isOneToOne);
 
 					let showNotification = false;
 
-					if (space && space.chatId) {
-						if (space.notificationMode == I.NotificationMode.All) {
+					if (spaceview) {
+						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
-						if (space.notificationMode == I.NotificationMode.Mentions) {
+						if (notificationMode == I.NotificationMode.Mentions) {
 							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
 						};
 					};
@@ -992,8 +995,20 @@ class Dispatcher {
 					});
 
 					if (showNotification && notification && isMainWindow && !windowIsFocused && (message.creator != account.id)) {
+						const title = [];
+
+						if (spaceview) {
+							title.push(spaceview.name);
+						};
+						if (!spaceview.isChat && !spaceview.isOneToOne) {
+							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
+							if (!chat._empty_) {
+								title.push(chat.name);
+							};
+						};
+
 						U.Common.notification({ 
-							title: space.name, 
+							title: title.join(' - '), 
 							text: notification,
 						}, () => {
 							U.Object.openRoute({ id: rootId, layout: I.ObjectLayout.Chat, spaceId });
@@ -1017,9 +1032,7 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => {
-						S.Chat.setState(subId, mapped.state, true);
-					});
+					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
 					break;
 				};
 
@@ -1116,17 +1129,19 @@ class Dispatcher {
 			};
 		};
 
-		if (updateParents) {
-			S.Block.updateStructureParents(rootId);
-		};
+		window.setTimeout(() => {
+			if (updateParents) {
+				S.Block.updateStructureParents(rootId);
+			};
 
-		if (updateNumbers) {
-			S.Block.updateNumbers(rootId); 
-		};
+			if (updateNumbers) {
+				S.Block.updateNumbers(rootId); 
+			};
 
-		if (updateMarkup) {
-			S.Block.updateMarkup(rootId);
-		};
+			if (updateMarkup) {
+				S.Block.updateMarkup(rootId);
+			};
+		});
 	};
 
 	getUniqueSubIds (subIds: string[]) {
@@ -1153,10 +1168,6 @@ class Dispatcher {
 				if (object.isAccountDeleted && (object.targetSpaceId == space)) {
 					U.Space.openFirstSpaceOrVoid(null, { replace: true });
 				};
-			};
-
-			if (subIds.includes(J.Constant.subId.type)) {
-				S.Block.addTypeWidget(id);
 			};
 		};
 
@@ -1231,16 +1242,17 @@ class Dispatcher {
 		return 0;
 	};
 
-	onObjectView (rootId: string, traceId: string, objectView: any) {
+	onObjectView (rootId: string, traceId: string, objectView: any, needCheck: boolean) {
 		const { details, restrictions, participants } = objectView;
-		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
-		const check = S.Block.getLeaf(contextId, rootId);
+		const matchRoute = keyboard.getRouteMatch().params;
+		const matchPopup = keyboard.getPopupMatch().params;
+		const alreadyExists = needCheck && keyboard.isPopup() && (rootId == matchRoute.id) && (matchRoute.action == matchPopup.action);
 
 		// Block structure already exists
-		if (!check) {
-			S.Block.clear(contextId);
+		if (!alreadyExists) {
+			const root = objectView.blocks.find(it => it.id == rootId);
 
 			if (root && root.fields.analyticsContext) {
 				analytics.setContext(root.fields.analyticsContext);
@@ -1278,6 +1290,8 @@ class Dispatcher {
 		S.Block.updateMarkup(contextId);
 
 		keyboard.setWindowTitle();
+
+		$(window).trigger('objectView');
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
@@ -1292,6 +1306,7 @@ class Dispatcher {
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
+			callBack?.({ error: { code: 0, description: 'Unknown command' } });
 			return;
 		};
 
@@ -1309,6 +1324,8 @@ class Dispatcher {
 			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
+					Sentry.captureMessage(`${type}: msg: ${error.message}`);
+					callBack?.({ error: { code: error.code, description: error.message } });
 					return;
 				};
 
@@ -1359,9 +1376,7 @@ class Dispatcher {
 				const middleTime = Math.ceil(t1 - t0);
 				message.middleTime = middleTime;
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 
 				t2 = performance.now();
 				

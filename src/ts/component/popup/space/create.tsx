@@ -134,7 +134,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 								};
 							});
 						} else {
-							U.Space.openDashboard({ replace: true });
+							U.Space.openDashboard();
 						};
 
 						if (onCreate) {
@@ -226,14 +226,16 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 							color="blank" 
 							onClick={() => {
 								close(() => {
-									S.Popup.open('aiOnboarding', {
-										preventCloseByClick: true,
-										data: {
-											onComplete: (spaceId: string) => {
-												// Space is already created and switched to by import
+									window.setTimeout(() => {
+										S.Popup.open('aiOnboarding', {
+											preventCloseByClick: true,
+											data: {
+												onComplete: (spaceId: string) => {
+													// Space is already created and switched to by import
+												}
 											}
-										}
-									});
+										});
+									}, J.Constant.delay.popup);
 								});
 							}}
 							className="aiOnboarding"

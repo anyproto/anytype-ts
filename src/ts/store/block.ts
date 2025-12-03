@@ -175,21 +175,9 @@ class BlockStore {
 	 * @param {any[]} list - The structure list.
 	 */
 	setStructure (rootId: string, list: any[]) {
-		const map: Map<string, I.BlockStructure> = new Map();
-
-		list = U.Common.objectCopy(list || []);
-		list.map((item: any) => {
-			map.set(item.id, {
-				parentId: '',
-				childrenIds: item.childrenIds || [],
-			});
+		list.forEach((item: any) => {
+			this.updateStructure(rootId, item.id, item.childrenIds || []);
 		});
-
-		this.treeMap.set(rootId, map);
-
-		for (const [ id, item ] of map.entries()) {
-			map.set(id, new M.BlockStructure(item));
-		};
 	};
 
 	/**
@@ -200,9 +188,11 @@ class BlockStore {
 	 */
 	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const element = this.getMapElement(rootId, blockId);
+
 		if (!element) {
 			const map = this.getMap(rootId);
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
+			this.treeMap.set(rootId, map);
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};
@@ -751,7 +741,7 @@ class BlockStore {
 				};
 
 				const old = text.substring(from, to);
-				const name = U.Common.shorten(U.Object.name(object, true).trim(), 30);
+				const name = U.Common.shorten(U.Object.name(object, true).trim(), J.Constant.limit.string.mention);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
@@ -830,6 +820,24 @@ class BlockStore {
 	};
 
 	/**
+	 * Updates the content of a block in all widgets for a root.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {any} content - The new content.
+	 */
+	updateWidgetBlockContent (rootId: string, blockId: string, content: any) {
+		const widgets = this.getWidgetsForTarget(rootId);
+		const children = widgets.reduce((a: string[], c: any) => {
+			return a.concat(c.childBlocks.map(c => c.id));
+		}, []);
+		const rootIds = children.map(it => `${rootId}-widget-${it}`);
+
+		rootIds.forEach(rid => {
+			this.updateContent(rid, blockId, content);
+		});
+	};
+
+	/**
 	 * Triggers a widget event for a root.
 	 * @param {string} code - The event code.
 	 * @param {string} rootId - The root ID.
@@ -844,22 +852,6 @@ class BlockStore {
 				win.trigger(`${code}.${block.id}`);
 			};
 		});
-	};
-
-	/**
-	 * Closes recent widgets in the UI.
-	 */
-	closeRecentWidgets () {
-		const { recentEdit, recentOpen } = J.Constant.widgetId;
-		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.getTargetObjectId()));
-
-		if (blocks.length) {
-			blocks.forEach(it => {
-				if (it.parentId) {
-					Storage.setToggle('widget', it.parentId, true);
-				};
-			});
-		};
 	};
 
 	/**
@@ -917,137 +909,12 @@ class BlockStore {
 		return list;
 	};
 
-	typeWidgetId (id: string) {
-		return `type-${id}`;
-	};
-
-	checkSkippedTypes (key: string): boolean {
-		return [ 
-			J.Constant.typeKey.type, 
-			J.Constant.typeKey.template, 
-			J.Constant.typeKey.participant,
-			J.Constant.typeKey.dashboard,
-			J.Constant.typeKey.option,
-			J.Constant.typeKey.date,
-			J.Constant.typeKey.relation,
-			J.Constant.typeKey.spaceview,
-			J.Constant.typeKey.space,
-		].includes(key);
-	};
-
-	createWidget (id: string, section: I.WidgetSection) {
-		if (!id) {
-			return;
-		};
-
-		const { widgets } = this;
-
-		const parent = new M.Block({
-			id,
-			type: I.BlockType.Widget,
-			childrenIds: [],
-			content: {
-				layout: I.WidgetLayout.Link,
-				section,
-			},
-		});
-
-		const child = new M.Block({
-			id: `${id}-child`,
-			type: I.BlockType.Link,
-			content: { targetBlockId: id },
-		});
-
-		parent.childrenIds = [ child.id ];
-
-		this.add(widgets, parent);
-		this.add(widgets, child);
-		this.updateStructure(widgets, parent.id, [ child.id ]);
-	};
-
-	addTypeWidget (id: string) {
-		const { widgets } = this;
-		const element = this.getMapElement(widgets, widgets);
-
-		if (!element) {
-			return;
-		};
-
-		if (element.childrenIds.includes(id)) {
-			return;
-		};
-
-		const type = S.Record.getTypeById(id);
-		if (!type) {
-			return;
-		};
-
-		if (this.checkSkippedTypes(type.uniqueKey)) {
-			return;
-		};
-
-		this.createWidget(type.id, I.WidgetSection.Type);
-		element.childrenIds.push(id);
-
-		this.updateStructure(widgets, widgets, element.childrenIds);
-		this.updateStructureParents(widgets);
-	};
-
-	removeTypeWidget (id: string) {
-		const { widgets } = this;
-		const element = this.getMapElement(widgets, widgets);
-
-		if (!element) {
-			return;
-		};
-
-		this.delete(widgets, id);
-		this.updateStructure(widgets, widgets, element.childrenIds.filter(it => it != id));
-		this.updateStructureParents(widgets);
-	};
-
-	updateTypeWidgetList () {
-		const { widgets } = this;
-		const types = S.Record.checkHiddenObjects(S.Record.getTypes().filter(it => !this.checkSkippedTypes(it.uniqueKey) && !it.isArchived && !it.isDeleted));
-
-		const element = new M.BlockStructure({
-			parentId: J.Constant.blockId.widgetTypes,
-			childrenIds: [],
-		});
-
-		let childrenIds = element.childrenIds || [];
-
-		types.forEach(type => {
-			if (U.Subscription.fileTypeKeys().includes(type.uniqueKey)) {
-				const { total } = S.Record.getMeta(U.Subscription.typeCheckSubId(type.uniqueKey), '');
-
-				if (!total) {
-					childrenIds = childrenIds.filter(it => it != type.id);
-					return;
-				};
-			};
-
-			if (!childrenIds.includes(type.id)) {
-				this.createWidget(type.id, I.WidgetSection.Type);
-				childrenIds.push(type.id);
-			};
-		});
-
-		if (!childrenIds.includes(J.Constant.widgetId.bin)) {
-			this.createWidget(J.Constant.widgetId.bin, I.WidgetSection.Type);
-			childrenIds.push(J.Constant.widgetId.bin);
-		};
-
-		this.updateStructure(widgets, J.Constant.blockId.widgetTypes, childrenIds);
-		this.updateStructureParents(widgets);
-	};
-
-	getWidgetsForTarget (id: string, section: I.WidgetSection): I.Block[] {
+	getWidgetsForTarget (id: string): I.Block[] {
 		const { widgets } = this;
 		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
 
 		const list = this.getBlocks(widgets, (block: I.Block) => {
-			if (!block.isWidget() || (block.content.section != section)) {
+			if (!block.isWidget()) {
 				return false;
 			};
 

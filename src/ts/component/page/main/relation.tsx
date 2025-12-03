@@ -8,6 +8,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const { isPopup } = props;
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, J.Relation.relation);
@@ -30,20 +31,18 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 	}, []);
 
 	useEffect(() => {
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
 	}, [ rootId ]);
 	
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
-		close();
 		idRef.current = rootId;
 		setIsLoading(true);
 		setIsDeleted(false);
 		
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -58,22 +57,17 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			listRef.current?.getData(1);
+			S.Common.setRightSidebarState(isPopup, { rootId });
+			setDummy(dummy + 1);
 
 			analytics.event('ScreenRelation', { relationKey: object.relationKey });
 		});
 	};
 
 	const close = () => {
-		if (!idRef.current) {
-			return;
-		};
-
-		const close = !isPopup || (rootId == idRef.current);
-
-		if (close) {
-			Action.pageClose(idRef.current, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const getOptionsData = (): { output: any[], more: number, label: string, canAdd: boolean } => {
@@ -413,7 +407,7 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		<>
 			<Header 
 				{...props} 
-				component="mainObject" 
+				component={U.Common.settingsHeader(isPopup, 'mainObject')} 
 				ref={headerRef} 
 				rootId={rootId} 
 			/>
@@ -440,37 +434,35 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 					) : ''}
 				</div>
 
-				{!object._empty_ ? (
-					<div className="section set">
-						<div className="title">
-							<div className="side left">
-								{U.Common.plural(totalObject, translate('pluralObject'))}
-								<span className="cnt">{totalObject}</span>
-							</div>
-
-							<div className="side right">
-								<Icon
-									id="button-create"
-									className="more withBackground"
-									onClick={onMore}
-								/>
-							</div>
+				<div className="section set">
+					<div className="title">
+						<div className="side left">
+							{U.Common.plural(totalObject, translate('pluralObject'))}
+							<span className="cnt">{totalObject}</span>
 						</div>
 
-						<div className="content">
-							<ListObject
-								ref={listRef}
-								{...props}
-								sources={[ rootId ]}
-								spaceId={object.spaceId}
-								subId={subIdObject}
-								rootId={rootId}
-								columns={columnsObject}
-								route={analytics.route.screenRelation}
+						<div className="side right">
+							<Icon
+								id="button-create"
+								className="more withBackground"
+								onClick={onMore}
 							/>
 						</div>
 					</div>
-				) : ''}
+
+					<div className="content">
+						<ListObject
+							ref={listRef}
+							{...props}
+							sources={[ rootId ]}
+							spaceId={object.spaceId}
+							subId={subIdObject}
+							rootId={rootId}
+							columns={columnsObject}
+							route={analytics.route.screenRelation}
+						/>
+					</div>
+				</div>
 			</div>
 
 			<Footer component="mainObject" {...props} />

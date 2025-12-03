@@ -53,6 +53,7 @@
 		}
 
 		.item:hover, .item.active {
+			.chatInfo { display: none; }
 			.buttons { display: flex; }
 			.buttons {
 				.icon.more { opacity: 1; }

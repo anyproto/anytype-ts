@@ -6,7 +6,7 @@ const KEYS = [
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
-	'uxType', 'usage',
+	'uxType', 'usage', 'chatId',
 ];
 const URL = 'amplitude.anytype.io';
 
@@ -70,6 +70,7 @@ class Analytics {
 		menuAction: 'MenuAction',
 		menuAdd: 'MenuAdd',
 		menuPublish: 'MenuPublish',
+		menuParticipant: 'MenuParticipant',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -77,8 +78,10 @@ class Analytics {
 		settingsSpace: 'SettingsSpace',
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsSpaceNotifications: 'ScreenSettingsSpaceNotifications',
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
+		settingsAccount: 'ScreenSettingsAccount',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
@@ -272,21 +275,21 @@ class Analytics {
 		};
 
 		const converted: any = {};
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 		const participant = U.Space.getMyParticipant();
 
 		let param: any = {};
 
-		if (space) {
-			param.spaceType = Number(space.spaceAccessType) || 0;
-			param.spaceType = I.SpaceType[param.spaceType];
+		if (spaceview) {
+			param.spaceType = I.SpaceType[Number(spaceview.spaceAccessType) || 0];
+			param.spaceId = String(spaceview.analyticsSpaceId || '');
 
 			let uxType = I.SpaceUxType.Data;
 			if (undefined !== data.uxType) {
 				uxType = data.uxType;
 			};
-			if (undefined !== space.uxType) {
-				uxType = space.uxType;
+			if (undefined !== spaceview.uxType) {
+				uxType = spaceview.uxType;
 			};
 			if (undefined !== uxType) {
 				param.uxType = I.SpaceUxType[Number(uxType) || 0];
@@ -561,6 +564,7 @@ class Analytics {
 			case 'ChangeMessageNotificationState': {
 				data.type = Number(data.type) || 0;
 				data.type = I.NotificationMode[data.type];
+				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
 				break;
 			};
 
@@ -621,6 +625,12 @@ class Analytics {
 
 			case 'CreateSpace' : {
 				data.uxType = I.SpaceUxType[Number(data.uxType) || 0];
+				break;
+			};
+
+			case 'ShowSection':
+			case 'HideSection': {
+				data.type = I.WidgetSection[Number(data.type) || 0];
 				break;
 			};
 
@@ -774,6 +784,7 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			help:				 'MenuHelp',
+			widgetSection:		 'ScreenManageSections',
 		};
 
 		return map[id] || '';

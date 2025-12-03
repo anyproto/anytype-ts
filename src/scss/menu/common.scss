@@ -110,9 +110,9 @@
 		.item.add { line-height: 20px; }
 
 		.item {
-			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
-
+			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; @include text-overflow-nw; }
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
+			.switch { flex-shrink: 0; }
 
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; background-image: url('~img/icon/plus/menu0.svg'); }
@@ -278,6 +278,7 @@ html.platformWindows {
 @import "./object";
 
 @import "./identity";
+@import "./oneToOne";
 
 @import "./preview/object";
 

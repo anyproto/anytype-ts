@@ -34,6 +34,9 @@ import MenuItemVertical from './menu/item/vertical';
 
 import Notification from './notification';
 import Banner from './util/banner';
+import UpdateBanner from './util/updateBanner';
+import UpsellBanner from './util/upsell/';
+import QR from './util/qr';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -96,15 +99,12 @@ import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 import MediaPdf from './util/media/pdf';
 import MediaMermaid from './util/media/mermaid';
+import MediaExcalidraw from './util/media/excalidraw';
 
 import ProgressBar from './util/progressBar';
 import ProgressText from './util/progressText';
 import ShareTooltip from './util/share/tooltip';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
-
-import QR from './util/qr';
-
-import UpsellBanner from './util/upsell/';
 
 import EmptyNodes from './util/emptyNodes';
 import LayoutPlug from './util/layoutPlug';
@@ -173,6 +173,9 @@ export {
 	Error,
 	Notification,
 	Banner,
+	UpdateBanner,
+	UpsellBanner,
+	QR,
 	MenuBar,
 
 	Icon,
@@ -203,6 +206,7 @@ export {
 	MediaVideo,
 	MediaPdf,
 	MediaMermaid,
+	MediaExcalidraw,
 
 	ProgressBar,
 	ProgressText,
@@ -211,10 +215,6 @@ export {
 
 	HeadSimple,
 	EditorControls,
-
-	QR,
-
-	UpsellBanner,
 
 	EmptyNodes,
 	LayoutPlug,

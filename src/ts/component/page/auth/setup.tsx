@@ -58,10 +58,9 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			const routeParam = { 
 				replace: true,
 				animate,
-				onRouteChange: () => sidebar.init(false),
 				onFadeIn: () => {
 					const whatsNew = Storage.get('whatsNew');
-					const chatsOnboarding = Storage.get('chatsOnboarding');
+					const chatsOnboarding = true;// Storage.get('multichatsOnboarding');
 
 					[
 						I.SurveyType.Register, 
@@ -83,22 +82,18 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					};
 
 					const cb2 = () => {
-						const whatsNewParam = {
-							onClose: () => Onboarding.startBasics(isPopup),
-						};
-
 						if (!chatsOnboarding) {
 							S.Popup.open('introduceChats', {
 								onClose: () => {
-									Storage.set('chatsOnboarding', true);
+									Storage.set('multichatsOnboarding', true);
 									Storage.setHighlight('createSpace', true);
 
-									window.setTimeout(() => U.Common.showWhatsNew(whatsNewParam), J.Constant.delay.popup * 2);
+									window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
 								},
 							});
 						} else
 						if (whatsNew) {
-							U.Common.showWhatsNew(whatsNewParam);
+							U.Common.showWhatsNew();
 						};
 					};
 

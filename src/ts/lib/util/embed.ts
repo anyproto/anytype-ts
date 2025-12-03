@@ -1,7 +1,7 @@
 import { I, U, J } from 'Lib';
 
 const DOMAINS: any = {};
-DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
+DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be', 'youtube-nocookie.com' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
@@ -15,6 +15,8 @@ DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
 DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 DOMAINS[I.EmbedProcessor.Drawio] = [ 'diagrams.net' ];
 DOMAINS[I.EmbedProcessor.Spotify] = [ 'spotify.com', 'open.spotify.com'];
+DOMAINS[I.EmbedProcessor.Bandcamp] = [ 'bandcamp.com' ];
+DOMAINS[I.EmbedProcessor.AppleMusic] = [ 'music.apple.com'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -44,7 +46,7 @@ class UtilEmbed {
 			a.search += '&enablejsapi=1&rel=0';
 			url = a.toString();
 		} catch (e) {};
-		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
+		return `<iframe id="player" src="${url.toString()}" ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
 	};
 
 	/**
@@ -159,6 +161,24 @@ class UtilEmbed {
 	};
 
 	/**
+	 * Returns the HTML for embedding an Apple Music audio.
+	 * @param {string} content - The Apple Music URL.
+	 * @returns {string} The HTML iframe string.
+	 */
+	getAppleMusicHtml (content: string): string {
+		let height = 450;
+
+		try {
+			const a = new URL(content);
+			// Apple Music embeds use the query parameter 'i' to point to specific song in an album.
+			// in this case the height of the embed should be smaller since it only shows on single song.
+			if (a.pathname.toLowerCase().includes('album') && a.searchParams.has('i')) height = 150;
+		} catch (e) { /**/ };
+
+		return `<iframe src="${content}" ${IFRAME_PARAM} height=${height} style="background: transparent; width: 100%" allow="autoplay *; encrypted-media *"></iframe>`;
+	};
+
+	/**
 	 * Returns the HTML for embedding an image.
 	 * @param {string} content - The image URL.
 	 * @returns {string} The HTML img tag.
@@ -175,23 +195,27 @@ class UtilEmbed {
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
-			const reg = new RegExp(`:\/\/([^.]*.)?(${DOMAINS[i].join('|')})`, 'gi');
+			const domains = DOMAINS[i].map(U.Common.regexEscape);
+			const reg = new RegExp(`:\/\/([^.]*.)?(${domains.join('|')})`, 'gi');
 
-			if (url.match(reg)) {
-				p = Number(i);
-
-				// Restrict youtube channel links
-				if ((p == I.EmbedProcessor.Youtube)) {
-					try {
-						const info = new URL(url);
-
-						if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
-							p = null;
-						};
-					} catch (e) { p = null; };
-				};
-				break;
+			if (!url.match(reg)) {
+				continue;
 			};
+
+			p = Number(i);
+
+			// Restrict youtube channel links
+			if ((p == I.EmbedProcessor.Youtube)) {
+				try {
+					const info = new URL(url);
+
+					if (info.pathname.match(/^\/@/) || info.pathname.match(/\/hashtag\//)) {
+						p = null;
+					};
+				} catch (e) { p = null; };
+			};
+			break;
+		
 		};
 		return p;
 	};
@@ -206,7 +230,7 @@ class UtilEmbed {
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
-				url = `https://www.youtube.com/embed/${this.getYoutubePath(url)}`;
+				url = `https://www.youtube-nocookie.com/embed/${this.getYoutubePath(url)}`;
 				break;
 			};
 
@@ -344,7 +368,18 @@ class UtilEmbed {
 				} catch (e) { /**/ };
 				break;
 			};
-			
+
+			case I.EmbedProcessor.AppleMusic: {
+				try {
+					const a = new URL(url);
+					url = `https://embed.music.apple.com/${a.pathname}`;
+
+					const trackId = a.searchParams.get('i');
+					if (trackId) url += `?i=${trackId}`;
+				} catch (e) { /**/ };
+				break;
+			};
+
 			case I.EmbedProcessor.GithubGist: {
 				const a = url.split('#');
 				if (!a.length) {
@@ -460,6 +495,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Sketchfab,
 			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.AppleMusic,
 			I.EmbedProcessor.Image,
 		].includes(p);
 	};
@@ -492,6 +528,8 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Image,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.AppleMusic,
+			I.EmbedProcessor.Bandcamp,
 		].includes(p);
 	};
 
@@ -536,6 +574,14 @@ class UtilEmbed {
 			I.EmbedProcessor.Chart,
 			I.EmbedProcessor.Drawio,
 			I.EmbedProcessor.Spotify,
+			I.EmbedProcessor.AppleMusic,
+			I.EmbedProcessor.Bandcamp,
+		].includes(p);
+	};
+
+	allowEmptyContent (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Excalidraw,
 		].includes(p);
 	};
 

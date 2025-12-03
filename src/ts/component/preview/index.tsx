@@ -49,6 +49,7 @@ const PreviewIndex = observer(forwardRef(() => {
 		const rect = U.Common.objectCopy($('#preview').get(0).getBoundingClientRect());
 
 		S.Menu.open('blockLink', {
+			classNameWrap: 'fromBlock',
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => Preview.previewHide(true),
@@ -76,12 +77,15 @@ const PreviewIndex = observer(forwardRef(() => {
 		const oh = node.outerHeight();
 		const css: any = { opacity: 0, left: 0, top: 0 };
 		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: height + OFFSET_Y, clipPath: '' };
+		const vsTop = (1 - height / oh) / 2 * 100;
+		const vsBot = (1 + height / oh) / 2 * 100;
 
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - width / ow) / 2 * 100;
 		let pe = ps + width / ow * 100;
-		let cpTop = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
-		let cpBot = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
+
+		let cpTop = `polygon(0% 0%, ${ps}% ${vsTop}%, ${ps}% 100%, ${pe}% 100%, ${pe}% ${vsTop}%, 100% 0%)`;
+		let cpBot = `polygon(0% 100%, ${ps}% ${vsBot}%, ${ps}% 0%, ${pe}% 0%, ${pe}% ${vsBot}%, 100% 100%)`;
 		
 		if (ow < width) {
 			pcss.width = width;
@@ -89,26 +93,26 @@ const PreviewIndex = observer(forwardRef(() => {
 			ps = (width - ow) / width / 2 * 100;
 			pe = (1 - (width - ow) / width / 2) * 100;
 			
-			cpTop = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
-			cpBot = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
+			cpTop = `polygon(0% 100%, ${ps}% 0%, ${pe}% 0%, 100% 100%)`;
+			cpBot = `polygon(0% 0%, ${ps}% 100%, ${pe}% 100%, 100% 0%)`;
 		};
 
 		if (y + oh + height >= st + wh) {
 			typeY = I.MenuDirection.Top;
 		};
-		
+
 		if (typeY == I.MenuDirection.Top) {
 			css.top = y - oh - OFFSET_Y;
 			css.transform = 'translateY(-5%)';
-				
+
 			pcss.bottom = -height - OFFSET_Y;
 			pcss.clipPath = cpTop;
 		};
-			
+
 		if (typeY == I.MenuDirection.Bottom) {
 			css.top = y + height + OFFSET_Y;
 			css.transform = 'translateY(5%)';
-				
+
 			pcss.top = -height - OFFSET_Y;
 			pcss.clipPath = cpBot;
 		};

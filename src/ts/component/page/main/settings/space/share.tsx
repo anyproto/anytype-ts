@@ -6,7 +6,6 @@ import Members from './share/members';
 
 const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { getId } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
 	const [ invite, setInvite ] = useState({ cid: '', key: '', type: I.InviteLinkType.None });
@@ -22,12 +21,14 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 	const canEdit = U.Space.isMyOwner() && (!limitReached || spaceview.isShared);
 
 	const init = () => {
-		if (spaceview.isShared && !invite.cid && !invite.key) {
+		if (spaceview.isShared && (!invite.cid || !invite.key)) {
 			U.Space.getInvite(S.Common.space, (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => {
 				if (cid && key) {
 					setInviteData(cid, key, inviteType, permissions);
 				};
 			});
+		} else {
+			setInviteData('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.None)
 		};
 	};
 
@@ -198,34 +199,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 	};
 
-	const onMoreLink = () => {
-		U.Menu.inviteContext({
-			containerId: getId(),
-			cid: invite.cid,
-			key: invite.key,
-		});
-	};
-
-	const onStopSharing = () => {
-		C.SpaceStopSharing(S.Common.space, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			setInviteData('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.Reader);
-			
-			S.Popup.open('confirm', {
-				data: {
-					icon: 'warning',
-					title: translate(`popupConfirmStopSharingSpaceTitle`),
-					text: translate(`popupConfirmStopSharingSpaceText`),
-					textConfirm: translate('commonOkay'),
-					canCancel: false,
-				},
-			});
-		});
-	};
-
 	const setErrorHandler = (error: { description: string, code: number}) => {
 		if (!error.code) {
 			return false;
@@ -240,6 +213,10 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 	useEffect(() => {
 		init();
 	}, []);
+
+	useEffect(() => {
+		init();
+	}, [ spaceview.spaceAccessType ]);
 
 	return (
 		<>
@@ -271,15 +248,13 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 								value={U.Space.getInviteLink(invite.cid, invite.key)} 
 								onClick={() => inputRef.current?.select()} 
 							/>
-							<Icon id="button-more-link" className="more withBackground" onClick={onMoreLink} />
 						</div>
 						<Button onClick={onCopy} className="c36" color="black" text={translate('commonCopy')} />
 					</div>
 				) : ''}
 			</div>
 
-			<Members {...props} onStopSharing={onStopSharing} />
-
+			<Members {...props} />
 			<Error text={error} />
 		</>
 	);

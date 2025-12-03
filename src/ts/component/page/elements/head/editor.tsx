@@ -28,7 +28,9 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		const pageContainer = U.Common.getPageContainer(isPopup);
+
+		pageContainer.find('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		U.Common.triggerResizeEditor(isPopup);
 	};
 
@@ -99,22 +101,25 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 			</div>
 
 			{check.withCover ? <Block {...props} key={cover.id} block={cover} className="noPlus" /> : ''}
-			{check.withIcon ? <Block {...props} key={icon.id} block={icon} className="noPlus" /> : ''}
 
-			<Block 
-				key={header?.id}
-				{...props}
-				readonly={readonly}
-				index={0}
-				block={header}
-				contextParam={{ hAlign: check.layoutAlign }}
-				onKeyDown={onKeyDown}
-				onKeyUp={onKeyUp}  
-				onMenuAdd={onMenuAdd}
-				onPaste={onPaste}
+			<div
 				onMouseEnter={() => $(`#editor-controls-${rootId}`).addClass('hover')}
 				onMouseLeave={() => $(`#editor-controls-${rootId}`).removeClass('hover')}
-			/>
+			>
+				{check.withIcon ? <Block {...props} key={icon.id} block={icon} className="noPlus" /> : ''}
+				<Block 
+					key={header?.id}
+					{...props}
+					readonly={readonly}
+					index={0}
+					block={header}
+					contextParam={{ hAlign: check.layoutAlign }}
+					onKeyDown={onKeyDown}
+					onKeyUp={onKeyUp}  
+					onMenuAdd={onMenuAdd}
+					onPaste={onPaste}
+				/>
+			</div>
 		</div>
 	);
 

@@ -48,8 +48,9 @@ import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
 
 import MenuGraphSettings from './graph/settings';
-import MenuWidget from './widget';
 import MenuObject from './object';
+import MenuWidget from './widget';
+import MenuWidgetSection from './widget/section';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -78,6 +79,7 @@ import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
 
 import MenuIdentity from './identity';
+import MenuOneToOne from './oneToOne';
 
 import MenuChatText from './chat/text';
 import MenuChatCreate from './chat/create';
@@ -88,6 +90,8 @@ interface State {
 
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
+
+const isMac = U.Common.isPlatformMac();
 
 const Components: any = {
 
@@ -134,8 +138,9 @@ const Components: any = {
 	typeSuggest:			 MenuTypeSuggest,
 
 	graphSettings:			 MenuGraphSettings,
-	widget:					 MenuWidget,
 	object:					 MenuObject,
+	widget:					 MenuWidget,
+	widgetSection:			 MenuWidgetSection,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -164,6 +169,7 @@ const Components: any = {
 	syncStatusInfo:			 MenuSyncStatusInfo,
 
 	identity:				 MenuIdentity,
+	oneToOne:				 MenuOneToOne,
 
 	chatText: 				 MenuChatText,
 	chatCreate: 			 MenuChatCreate,
@@ -605,6 +611,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (param.width) {
 				css.width = param.width;
 			};
+
 			menu.css(css);
 
 			if (isSub) {
@@ -715,10 +722,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	close (callBack?: () => void) {
 		S.Menu.close(this.props.id, () => {
 			window.setTimeout(() => this.rebindPrevious(), S.Menu.getTimeout());
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -770,7 +774,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const inputRef = this.getInputRef();
 		const shortcutClose = [ 'escape' ];
 		const shortcutSelect = [ 'tab', 'enter' ];
-		
+		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
+		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
+			
 		let index = this.getIndex();
 		let ret = false;
 
@@ -778,7 +784,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (inputRef.isFocused() && (index < 0)) {
 				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
-				keyboard.shortcut('arrowdown', e, () => {
+				keyboard.shortcut(shortcutNext, e, () => {
 					inputRef.blur();
 
 					this.setIndex(0);
@@ -795,12 +801,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						const item = items.length ? items[0] : null;
 
 						if (item) {
-							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+							item.arrow && !item.skipOver && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 						};
 					});
 				};
 
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut(shortcutPrev, e, () => {
 					if (!this.ref.getItems) {
 						return;
 					};
@@ -808,13 +814,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					this.setIndex(this.ref.getItems().length - 1);
 					this.setActive(null, true);
 
-					inputRef.blur();
+					inputRef?.blur();
 					ret = true;
 				});
 			} else {
-				keyboard.shortcut('arrowup', e, () => {
+				keyboard.shortcut(shortcutPrev, e, () => {
 					if (index < 0) {
-						inputRef.focus();
+						inputRef?.focus();
 
 						this.setIndex(-1);
 						this.setActive(null, true);
@@ -884,12 +890,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 		};
 
-		keyboard.shortcut('arrowup', e, () => {
+		keyboard.shortcut(shortcutPrev, e, () => {
 			e.preventDefault();
 			onArrow(-1);
 		});
 
-		keyboard.shortcut('arrowdown', e, () => {
+		keyboard.shortcut(shortcutNext, e, () => {
 			e.preventDefault();
 			onArrow(1);
 		});
@@ -898,7 +904,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 				e.preventDefault();
 				if (item) {
-					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+					item.arrow && !item.skipOver && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 				};
 			});
 		};

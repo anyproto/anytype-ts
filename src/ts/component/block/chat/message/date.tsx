@@ -1,5 +1,6 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Label } from 'Component';
 import { U, S, J } from 'Lib';
 
@@ -15,21 +16,21 @@ const SectionDate = observer(forwardRef<{}, Props>((props, ref) => {
 	const day = showRelativeDates ? U.Date.dayString(date) : null;
 	const text = day ? day : U.Date.dateWithFormat(dateFormat, date);
 
-	useEffect(() => {
-		const node = $(nodeRef.current);
-
-		node.addClass('anim');
-		window.setTimeout(() => node.addClass('show'), J.Constant.delay.chatMessage);
-	}, []);
-
-	useEffect(() => {
-		$(nodeRef.current).addClass('show');
-	}, [ date ]);
-
 	return (
-		<div ref={nodeRef} className="sectionDate">
-			<Label text={text} />
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef} 
+				className="sectionDate"
+				{...U.Common.animationProps({
+					initial: { y: 20 }, 
+					animate: { y: 0 }, 
+					exit: { y: -20 },
+					transition: { duration: 0.3, delay: 0.1 },
+				})}
+			>
+				<Label text={text} />
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

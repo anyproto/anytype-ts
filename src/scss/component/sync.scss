@@ -7,12 +7,11 @@
 };
 
 .sync { 
-	height: 28px; min-width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
+	height: 28px; width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
 	border-radius: 4px; gap: 0px 8px; justify-content: center;
 }
-.sync:hover, .sync.hover { background: var(--color-shape-highlight-medium); }
 .sync {
-	.icon { width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-control-active); }
+	.icon { width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-control-active); pointer-events: none; }
 	.icon.error { background-color: var(--color-red); display: block; }
 	.icon.synced,
 	.icon.syncing { background-color: var(--color-lime); }
@@ -21,18 +20,20 @@
 	.icon.syncing::before,
 	.icon.syncing::after {
 		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px; display: block; width: 8px; height: 8px; border-radius: 50%; 
-		background-color: var(--color-lime); animation: syncing 1.6s ease-out infinite;
+		background-color: var(--color-lime); animation: syncing 1.6s ease-out infinite; pointer-events: none;
 	}
 	.icon.syncing::after { animation-delay: 1.5s; }
 
-	.name { @include text-overflow-nw; margin-right: 10px; }
-
+	.name { @include text-overflow-nw; margin-right: 10px; display: none; }
 	.badge { padding-right: 10px; }
-}
-.sync:not(.errorIncompatibleVersion) {
-	.name { display: none; }
-}
-.sync:hover,
-.sync.hover {
-	.name { display: block; }
+
+	&.hover, &:hover { background: var(--color-shape-highlight-medium);  }
+	&.hover, &:hover {
+		.name { display: block; }
+	}
+
+	&.errorIncompatibleVersion { width: auto; }
+	&.errorIncompatibleVersion {
+		.name { display: block; }
+	}
 }

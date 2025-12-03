@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { Header, Footer } from 'Component';
 import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage } from 'Lib';
+import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage, keyboard } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -33,6 +33,7 @@ import PageSpaceIndex from './space/index';
 import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
+import PageSpaceNotifications from './space/notifications';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
@@ -73,6 +74,7 @@ const Components: any = {
 	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
+	spaceNotifications:	 PageSpaceNotifications,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
@@ -80,7 +82,7 @@ const Components: any = {
 };
 
 const SPACE_PAGES = [
-	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare',
+	'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications',
 	'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 	'exportIndex', 'exportProtobuf', 'exportMarkdown',
 	'set', 'relation', 'archive',
@@ -90,8 +92,8 @@ const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
 const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
-	const param = U.Router.getParam(U.Router.getRoute());
-	const id = param.id || 'account';
+	const { isPopup } = props;
+	const { id = 'account' } = keyboard.getMatch(isPopup).params;
 	const pageId = U.Common.toCamelCase(`pageSettings-${id}`);
 	const confirmPinRef = useRef<any>(null);
 	const childRef = useRef(null);
@@ -112,8 +114,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			if (!U.Space.canMyParticipantWrite()) {
 				return;
 			};
-
-			const { id } = U.Router.getParam(U.Router.getRoute());
 
 			switch (id) {
 				case 'spaceIndexEmpty': {
@@ -138,7 +138,9 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			};
 		};
 
-		sidebar.leftPanelSubPageOpen(page);
+		if (page) {
+			sidebar.leftPanelSubPageOpen(page, false);
+		};
 	};
 
 	const onExport = (type: I.ExportType, param: any) => {
@@ -191,7 +193,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		);
 	};
 
-	useEffect(() => init());
+	useEffect(() => init(), [ id ]);
 
 	return content;
 

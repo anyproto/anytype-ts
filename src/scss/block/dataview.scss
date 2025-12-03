@@ -140,6 +140,11 @@
 				.icon.plus { opacity: 0; }
 			}
 
+			.dropTarget.isOver.middle { padding: 0px 4px; border-radius: 4px; margin: 0px -4px; }
+			.dropTarget.isOver.middle {
+				.viewItem { color: var(--color-text-primary); transition: none; }
+			}
+
 			.viewItem { 
 				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: var(--color-control-active);
@@ -188,7 +193,7 @@
 		}
 
 		.content {
-			.scroll { overflow-x: auto; overflow-y: visible; }
+			.scroll { overflow-x: auto; overflow-y: visible; min-height: 300px; }
 		}
 
 		.viewContent {

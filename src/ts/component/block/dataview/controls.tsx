@@ -1,13 +1,12 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, Button, Filter } from 'Component';
+import { Icon, Button, Filter, DropTarget } from 'Component';
 import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J } from 'Lib';
 import Head from './head';
 
@@ -20,6 +19,7 @@ interface ControlsRefProps {
 	toggleHoverArea: (v: boolean) => void,
 	resize: () => void,
 	getHeadRef: () => any,
+	getNode: () => any,
 };
 
 const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
@@ -75,7 +75,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const object = getTarget();
 		const sources = getSources();
 
-		C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
+		Dataview.duplicateView(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
 			onViewSwitch({ id: message.viewId, type: view.type });
 
 			analytics.event('DuplicateView', {
@@ -368,7 +368,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		toggleHoverArea(true);
 
 		if (!isInline) {
-			filterRef.current.focus();
+			filterRef.current?.focus();
 		};
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
@@ -471,18 +471,20 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		return (
-			<div 
-				id={elementId} 
-				className={cn.join(' ')} 
-				onClick={() => onViewSet(item)} 
-				onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-			>
-				{item.name || translate('defaultNamePage')}
-			</div>
+			<DropTarget {...props} rootId={rootId} id={item.id} dropType={I.DropType.View} canDropMiddle={true}>
+				<div 
+					id={elementId} 
+					className={cn.join(' ')} 
+					onClick={() => onViewSet(item)} 
+					onContextMenu={e => onViewContext(e, `#views #${elementId}`, item)}
+					ref={setNodeRef}
+					{...attributes}
+					{...listeners}
+					style={style}
+				>
+					{item.name || translate('defaultNamePage')}
+				</div>
+			</DropTarget>
 		);
 	};
 
@@ -505,6 +507,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		toggleHoverArea,
 		resize,
 		getHeadRef: () => headRef.current,
+		getNode: () => nodeRef.current,
 	}));
 
 	return (

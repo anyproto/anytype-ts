@@ -23,6 +23,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const colorConfirm = data.colorConfirm || 'black';
 	const colorCancel = data.colorCancel || 'blank';
 	const bgColor = data.bgColor || '';
+	const iconElement = 'string' == typeof(icon) ? <Icon className={icon} /> : icon;
 
 	if (storageKey) {
 		cn.push('withCheckbox');
@@ -157,9 +158,9 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	
 	return (
 		<div ref={nodeRef} className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
-			{icon ? (
+			{iconElement ? (
 				<div className={[ 'iconWrapper', bgColor ].join(' ')}>
-					<Icon className={icon} />
+					{iconElement}
 				</div>
 			) : ''}
 

@@ -2,7 +2,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
+import { initial } from 'lodash';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -460,10 +461,7 @@ class UtilCommon {
 			};
 			
 			document.removeEventListener('copy', handler, true);
-			
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		};
 
 		document.addEventListener('copy', handler, true);
@@ -664,6 +662,8 @@ class UtilCommon {
 		} else 
 		if (this.matchPath(url)) {
 			url = `file://${url}`;
+		} else {
+			url = `https://${url}`;
 		};
 
 		return url;
@@ -734,21 +734,16 @@ class UtilCommon {
 
 	/**
 	 * Returns the correct plural form of a word based on a count.
-	 * @param {any} cnt - The count.
+	 * @param {number} cnt - The count.
 	 * @param {string} words - The word forms separated by '|'.
 	 * @returns {string} The correct word form.
 	 */
-	plural (cnt: any, words: string) {
+	plural (cnt: number, words: string) {
 		const chunks = words.split('|');
 		const single = chunks[0];
-		const multiple = chunks[1] ? chunks[1] : single;
+		const multiple = chunks[1] || single;
 
-		cnt = String(cnt || '');
-
-		if (cnt.substr(-2) == 11) {
-			return multiple;
-		};
-		return cnt.substr(-1) == '1' ? single : multiple;
+		return cnt == 1 ? single : multiple;
 	};
 
 	/**
@@ -1292,6 +1287,21 @@ class UtilCommon {
 		return ret;
 	};
 
+	animationProps (param?: any) {
+		param = param || {};
+		param.initial = param.initial || {};
+		param.animate = param.animate || {};
+		param.exit = param.exit || {};
+		param.transition = param.transition || {};
+
+		return {
+			initial: { opacity: 0, ...param.initial },
+			animate: { opacity: 1, ...param.animate },
+			exit: { opacity: 0, ...param.exit },
+			transition: { type: 'spring', stiffness: 300, damping: 20, ...param.transition } as any,
+		};
+	};
+
 	/**
 	 * Returns the hostname from a URL or the URL itself if invalid.
 	 * @param {string} url - The URL string.
@@ -1691,6 +1701,11 @@ class UtilCommon {
 				continue;
 			};
 
+			// Skip numbers after $ sign
+			if (/^[\d]/.test(after)) {
+				continue;
+			};
+
 			res = res.replace(m, `<${tag}>${render(body)}</${tag}>`);
 		};
 
@@ -1931,10 +1946,6 @@ class UtilCommon {
 	 * @param {string} v - The version to check against.
 	 */
 	checkUpdateVersion (v: string) {
-		if (!Storage.get('chatsOnboarding')) {
-			return;
-		};
-
 		v = String(v || '');
 
 		const electron = this.getElectron();
@@ -2017,6 +2028,34 @@ class UtilCommon {
 
 	getAppContainerHeight () {
 		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
+	};
+
+	safeDecodeUri (s: string): string {
+		s = String(s || '');
+
+		try {
+			return decodeURIComponent(s);
+		} catch {
+			return s;
+		};
+	};
+
+	snapWidth (w: number, steps?: number): number {
+		steps = Math.max(1, Number(steps) || 12);
+
+		const step = 1 / steps;
+		const nearest = Math.round(w / step) * step;
+
+		if (Math.abs(w - nearest) <= 0.02) {
+			return nearest;
+		};
+
+		return w;
+	};
+
+	settingsHeader (isPopup: boolean, fallBack: string): string {
+		const isSettings = keyboard.getMatch(isPopup).params.action == 'settings';
+		return isSettings ? 'mainSettings' : fallBack;
 	};
 
 };

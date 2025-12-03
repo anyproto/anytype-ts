@@ -69,7 +69,7 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 				onOpen,
 				subIds: [ 'select2' ],
 				data: {
-					options: U.Menu.prepareForSelect(options),
+					options,
 					noScroll: true, 
 					noVirtualisation: true,
 					onOver,

@@ -114,9 +114,6 @@ export default {
 		'headerRelationsLayout',
 		'setOf',
 		'orderId',
-		'widgetLayout',
-		'widgetLimit',
-		'widgetViewId',
 	],
 
 	graph: [
@@ -163,21 +160,31 @@ export default {
 		'chatId',
 		'spaceUxType',
 		'spacePushNotificationMode',
+		'spacePushNotificationForceAllIds',
+		'spacePushNotificationForceMuteIds',
+		'spacePushNotificationForceMentionIds',
 		'spaceOrder',
 		'spaceJoinDate',
+		'oneToOneIdentity',
+		'analyticsSpaceId',
 	],
 
 	participant: [
 		'identity',
 		'participantPermissions',
 		'participantStatus',
-		'globalName'
+		'globalName',
 	],
 
 	syncStatus: [
 		'syncStatus',
 		'syncDate',
 		'syncError',
+	],
+
+	chatGlobal: [
+		'id',
+		'name',
 	],
 
 	pageCover: 'pageCover',

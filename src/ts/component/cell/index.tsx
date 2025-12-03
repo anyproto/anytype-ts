@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -26,6 +26,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		onMouseEnter, onMouseLeave, maxWidth, cellPosition, onClick, readonly, tooltipParam = {},
 		noInplace, editModeOn, viewType,
 	} = props;
+	const [ dummy, setDummy ] = useState(0);
 	const view = getView ? getView() : null;
 	const record = getRecord(recordId);
 	const relation = S.Record.getRelationByKey(relationKey) || {};
@@ -39,7 +40,19 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		if ((noInplace && editModeOn) || withMenu.current) {
 			return true;
 		};
-		return isName ? true : Relation.checkRelationValue(relation, record[relation.relationKey]);
+
+		if (isName) {
+			return true;
+		};
+
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
+			const options = Relation.getOptions(record[relation.relationKey])
+				.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+			
+			return !!options.length;
+		};
+
+		return Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
 	const onClickHandler = (e: any) => {
@@ -114,13 +127,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (childRef.current) {
-				if (childRef.current.setEditing) {
-					childRef.current.setEditing(true);
-				};
-
-				if (childRef.current.onClick) {
-					childRef.current.onClick(e);
-				};
+				childRef.current.setEditing?.(true);
+				childRef.current.onClick?.(e);
 			};
 
 			keyboard.disableSelection(true);
@@ -132,13 +140,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			keyboard.disableSelection(false);
 
 			if (childRef.current) {
-				if (childRef.current.onBlur) {
-					childRef.current.onBlur();
-				};
-
-				if (childRef.current.setEditing) {
-					childRef.current.setEditing(false);
-				};
+				childRef.current.onBlur?.();
+				childRef.current.setEditing?.(false);
 			};
 
 			if (!isGrid && isName) {
@@ -275,12 +278,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					break;
 				};
 
-				param = Object.assign(param, {
-					width: 288,
-				});
-				param.data = Object.assign(param.data, {
-					noResize: true,
-				});
+				param = Object.assign(param, { width: J.Size.menu.value });
+				param.data = Object.assign(param.data, { noResize: true });
 
 				menuId = 'dataviewText';
 				closeIfOpen = false;
@@ -295,7 +294,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 					param = Object.assign(param, {
 						noFlipX: true,
-						noFlipY: true,
 						horizontal: I.MenuDirection.Left,
 						element: cell,
 						offsetY: -height,
@@ -303,12 +301,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 						height,
 					});
 				} else {
-					param = Object.assign(param, {
-						width: 288,
-					});
-					param.data = Object.assign(param.data, {
-						noResize: true,
-					});
+					param = Object.assign(param, { width: J.Size.menu.value });
+					param.data = Object.assign(param.data, { noResize: true });
 				};
 
 				menuId = 'dataviewText';
@@ -320,12 +314,8 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
 				if (noInplace) {
-					param = Object.assign(param, {
-						width: 288,
-					});
-					param.data = Object.assign(param.data, {
-						noResize: true,
-					});
+					param = Object.assign(param, { width: J.Size.menu.value });
+					param.data = Object.assign(param.data, { noResize: true });
 					menuId = 'dataviewText';
 					closeIfOpen = false;
 
@@ -447,7 +437,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		} else {
 			setOn();
 
-			if (!canEdit && Relation.isText(relation.format)) {
+			if (canEdit && Relation.isText(relation.format)) {
 				bindContainerClick();
 			};
 		};
@@ -573,13 +563,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		onClick: onClickHandler,
-		isEditing: () => childRef.current.isEditing(),
+		isEditing: () => childRef.current.isEditing?.(),
 		canEdit: () => canCellEdit(relation, record),
-		onBlur: () => {
-			if (childRef.current.onBlur) {
-				childRef.current.onBlur();
-			};
-		},
+		onBlur: () => childRef.current.onBlur?.(),
+		forceUpdate: () => setDummy(dummy + 1),
 	}));
 
 	return (

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName, EmptySearch, Label, Button, UpsellBanner } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner } from 'Component';
 import { I, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface State {
@@ -38,14 +38,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	render () {
 		const { isLoading } = this.state;
-		const notSyncedCounter = S.Auth.getNotSynced().total;
 		const { setActive } = this.props;
-		const isOwner = U.Space.isMyOwner();
-		const canWrite = U.Space.canMyParticipantWrite();
 		const items = this.getItems();
 		const icons = this.getIcons();
 		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
-		const showIncentive = notSyncedCounter && canWrite && U.Data.isAnytypeNetwork();
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -67,32 +63,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			);
 		};
 
-		const Item = (item: any) => {
-			const icon = U.Data.syncStatusClass(item.syncStatus);
-
-			return (
-				<div
-					id={`item-${item.id}`}
-					className="item sides"
-					onClick={e => this.onContextMenu(e, item)}
-					onMouseEnter={() => setActive(item, false)}
-					onContextMenu={e => this.onContextMenu(e, item)}
-				>
-					<div className="side left" >
-						<IconObject object={item} size={20} />
-						<div className="info">
-							<ObjectName object={item} />
-							{item.sizeInBytes ? <span className="size">{U.File.size(item.sizeInBytes)}</span> : ''}
-						</div>
-					</div>
-					<div className="side right">
-						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
-					</div>
-				</div>
-			);
-		};
-
 		const rowRenderer = ({ index, key, style, parent }) => {
 			const item = items[index];
 
@@ -105,8 +75,25 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				);
 			} else {
 				content = (
-					<div className="row" style={style}>
-						<Item {...item} index={index} />
+					<div
+						id={`item-${item.id}`}
+						className="item sides"
+						style={style}
+						onClick={e => this.onContextMenu(e, item)}
+						onMouseEnter={() => setActive(item, false)}
+						onContextMenu={e => this.onContextMenu(e, item)}
+					>
+						<div className="side left" >
+							<IconObject object={item} size={20} />
+							<div className="info">
+								<ObjectName object={item} />
+								{item.sizeInBytes ? <span className="size">{U.File.size(item.sizeInBytes)}</span> : ''}
+							</div>
+						</div>
+						<div className="side right">
+							<Icon className={U.Data.syncStatusClass(item.syncStatus)} />
+							<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						</div>
 					</div>
 				);
 			};
@@ -135,17 +122,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				</div>
 
 				<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
-
-				{showIncentive ? (
-					<div className="incentiveBanner">
-						<Title text={translate('menuSyncStatusIncentiveBannerTitle')} />
-						<Label text={U.Common.sprintf(translate('menuSyncStatusIncentiveBannerLabel'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')))} />
-						<div className="buttons">
-							<Button text={translate('menuSyncStatusIncentiveBannerReviewFiles')} color="dark" className="c28" onClick={() => this.onIncentiveButtonClick('storage')} />
-							{isOwner ? <Button className="c28" text={translate('commonUpgrade')} onClick={() => this.onIncentiveButtonClick('upgrade')} /> : ''}
-						</div>
-					</div>
-				) : ''}
 
 				{!isLoading && !items.length ? (
 					<EmptySearch text={emptyText} />
@@ -323,7 +299,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
 		];
 		const sorts = [
 			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Error, I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },

@@ -1,4 +1,4 @@
-import { I, C, S, U, J, Storage, translate } from 'Lib';
+import { I, C, S, U, J, Storage, translate, sidebar } from 'Lib';
 
 class UtilSpace {
 
@@ -8,10 +8,6 @@ class UtilSpace {
 	 */
 	openDashboard (param?: any) {
 		param = param || {};
-
-		if (undefined === param.replace) {
-			param.replace = true;
-		};
 
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
@@ -23,19 +19,21 @@ class UtilSpace {
 		};
 
 		U.Object.openRoute(home, param);
+		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
-	openDashboardOrVoid (param?: any) {
+	openDashboardOrVoid (param?: Partial<I.RouteParam>) {
 		param = param || {};
 
 		if (undefined === param.replace) {
 			param.replace = true;
 		};
-		
+
 		if (S.Common.space) {
 			U.Space.openDashboard(param);
 		} else {
 			U.Router.go('/main/void/select', param);
+			sidebar.leftPanelSubPageClose(false);
 		};
 	};
 
@@ -57,7 +55,73 @@ class UtilSpace {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
 			U.Router.go('/main/void/error', param);
+			sidebar.leftPanelSubPageClose(false);
 		};
+	};
+
+	oneToOneLink (id: string, key: string, type: 'deeplink' | 'web'): string {
+		key = encodeURIComponent(String(key || ''));
+
+		let ret = '';
+		switch (type) {
+			case 'deeplink': {
+				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${key}`
+				break;
+			};
+
+			case 'web': {
+				ret = `https://hi.any.coop/${id}#${key}`;
+				break;
+			};
+		};
+		return ret;
+	}
+
+	/**
+	 * Opens or creates one-to-one space with given identity.
+	 * @param {string} [id] - target user identity.
+	 * @param {() => void} [callBack] - Optional callback fn.
+	 */
+	openOneToOne (id: string, key: string, callBack?: (message?: any) => void) {
+		const { account } = S.Auth;
+		if (id == account.id) {
+			this.openDashboard();
+			callBack?.()
+			return;
+		};
+		
+		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
+
+		if (spaceExists) {
+			U.Router.switchSpace(spaceExists.targetSpaceId, '', true, { onRouteChange: callBack }, false);
+			return;
+		};
+
+		const details: any = {
+			oneToOneIdentity: id,
+			spaceUxType: I.SpaceUxType.OneToOne,
+			spaceAccessType: I.SpaceType.Shared,
+			spaceDashboardId: I.HomePredefinedId.Chat,
+			oneToOneRequestMetadataKey: key,
+		};
+
+		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
+			if (message.error.code) {
+				callBack?.(message);
+				return;
+			};
+
+			const objectId = message.objectId;
+
+			C.WorkspaceSetInfo(objectId, details, (message: any) => {
+				if (message.error.code) {
+					callBack?.(message);
+					return;
+				};
+
+				U.Router.switchSpace(objectId, '', true, { onRouteChange: callBack }, false);
+			});
+		});
 	};
 
 	/**
@@ -66,7 +130,7 @@ class UtilSpace {
 	 */
 	getDashboard () {
 		const space = this.getSpaceview();
-		if (space.isChat) {
+		if (space.isChat || space.isOneToOne) {
 			return this.getChat();
 		};
 
@@ -163,7 +227,7 @@ class UtilSpace {
 	getChat () {
 		return { 
 			id: S.Block.workspace,
-			name: translate('commonChat'),
+			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};
@@ -227,6 +291,10 @@ class UtilSpace {
 	getParticipantId (spaceId: string, accountId: string) {
 		spaceId = String(spaceId || '').replace('.', '_');
 		return `_participant_${spaceId}_${accountId}`;
+	};
+
+	getCurrentParticipantId () {
+		return this.getParticipantId(S.Common.space, S.Auth.account.id);
 	};
 
 	/**
@@ -428,6 +496,8 @@ class UtilSpace {
 	getPublishUrl (slug: string): string {
 		return 'https://' + [ this.getPublishDomain(), slug ].join('/');
 	};
+
+
 
 };
 

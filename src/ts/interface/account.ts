@@ -24,6 +24,7 @@ export interface AccountInfo {
 	networkId: string;
 	workspaceObjectId: string;
 	ethereumAddress: string;
+	metadataKey: string;
 };
 
 export interface AccountConfig {

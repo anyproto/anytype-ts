@@ -395,7 +395,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 
 			S.Menu.closeAll(menuIds, () => {
-				S.Menu.open(menuId, menuParam);
+				window.setTimeout(() => S.Menu.open(menuId, menuParam), 0);
 			});
 		};
 	};
@@ -457,6 +457,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template }
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, item.defaultTemplateId, U.Data.getLinkBlockParam('', item.recommendedLayout, false), (message: any) => {

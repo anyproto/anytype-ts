@@ -2,15 +2,17 @@
 
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
-.sidebarHeadIcon { position: fixed; top: 20px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
+.sidebarHeadIcon { position: fixed; top: 12px; z-index: 25; -webkit-app-region: no-drag; transition: none; }
 .sidebarHeadIcon
 .sidebarHeadIcon {
 	&.sidebarAnimation { transition-property: left; }
 	&:hover, &.hover { background-color: var(--color-shape-highlight-medium) !important; }
 }
-.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle.svg'); }
+.sidebarHeadIcon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 
-#sidebarLeftButton { backdrop-filter: blur(20px); left: 84px; }
+#sidebarLeftButton { backdrop-filter: blur(20px); left: 74px; display: block; }
+#sidebarLeftButton.withSidebarLeft { background-image: url('~img/icon/widget/toggle1.svg'); }
+#sidebarLeftButton.withMinimalVault { display: none !important; }
 #sidebarUpdateBanner { position: fixed; bottom: 12px; z-index: 25; transition: left $transitionSidebarTime linear; }
 
 .sidebar { 
@@ -23,19 +25,34 @@
 
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
-		&.isClosed { overflow: hidden; }
+		&.isClosed {
+			.sidebarPage { border: 0px; }
+		}
 	}
 
-	.pageWrapper { padding: 8px 0px 0px 0px; z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
+	.pageWrapper { padding: 4px 0px 0px 0px; z-index: 2; background: var(--color-shape-highlight-light-solid); display: flex;  }
 	.pageWrapper {
 		&.anim { transition: width $transitionSidebarTime linear; }
 	}
 
-	.subPageWrapper { width: 336px; display: flex; padding: 8px 0px; }
+	.subPageWrapper { width: 336px; display: flex; padding: 4px 0px; }
 	.subPageWrapper {
-		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px; margin-right: 8px; width: calc(100% - 8px); }
-
+		.sidebarPage { background: var(--color-bg-primary); border-radius: 12px 0px 0px 12px; border-right: 1px solid var(--color-shape-secondary); }
+		
 		&.sidebarAnimation { transition-property: transform; }
+
+		&:not(.withSidebarLeft) {
+			.sidebarPage { margin-left: 4px; width: calc(100% - 4px); }
+		}
+
+		&.isClosing,
+		&.isOpening { 
+			.sidebarPage {
+				> .head {
+					.icon { opacity: 0; }
+				}
+			}
+		}
 	}
 
 	.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; top: 0px; }
@@ -68,7 +85,11 @@
 		.resize-h { right: -12px; }
 	}
 
-	&.right { right: 0px; flex-shrink: 0; padding: 8px 0px; }
+	.subPageWrapper.isClosed {
+		.resize-h { display: none; }
+	}
+
+	&.right { right: 0px; flex-shrink: 0; padding: 4px 0px; }
 	&.right {
 		.resize-h { left: -12px; }
 		&.sidebarAnimation { transition-property: transform; }
@@ -77,7 +98,7 @@
 
 		.sidebarPage { 
 			background: var(--color-bg-primary); border-left: 1px solid var(--color-shape-secondary); border-radius: 0px 12px 12px 0px; 
-			margin-right: 8px;
+			margin-right: 4px;
 		}
 	}
 }
@@ -87,3 +108,43 @@ html.platformWindows {
 		> .containerWidget > .body { overflow-y: overlay; }
 	}
 }	
+
+html.platformMac {
+	.sidebar {
+		.subPageWrapper.sidebarAnimation {
+			.sidebarPage {
+				> .head {
+					.side.left { transition: padding-left $transitionSidebarTime linear; }
+				}
+			}
+		}
+
+		.subPageWrapper:not(.withSidebarLeft) {
+			.sidebarPage {
+				> .head {
+					.side.left { padding-left: 86px; }
+				}
+			}
+		}
+	}
+
+	.isFullScreen {
+		#sidebarLeftButton { left: 16px; }
+
+		.sidebar {
+			.subPageWrapper:not(.withSidebarLeft) {
+				.sidebarPage {
+					> .head {
+						.side.left { padding-left: 36px; }
+					}
+				}
+			}
+		}
+	}
+}
+
+html:not(.platformMac) {
+	.sidebarPage.pageVault {
+		> .head.isMinimal { display: none; }
+	}
+}

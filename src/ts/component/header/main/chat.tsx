@@ -10,7 +10,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
-	const hasWidget = !!S.Block.getWidgetsForTarget(rootId, I.WidgetSection.Pin).length;
+	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
+	const showInvite = !spaceview.isOneToOne;
 
 	let object = null;
 	if (rootId == S.Block.workspace) {
@@ -21,8 +22,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted && !spaceview.isChat;
-	const showPin = canWrite && !spaceview.isChat;
+	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
+	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	let center = null;
@@ -50,16 +51,31 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	const onMore = () => {
-		menuOpen('object', '#button-header-more', {
-			horizontal: I.MenuDirection.Right,
-			subIds: J.Menu.object,
-			data: {
-				rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				isPopup,
-			}
-		});
+		const element = '#button-header-more';
+
+		if (spaceview.isChat || spaceview.isOneToOne) {
+			U.Menu.spaceContext(spaceview, {
+				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
+				className: 'fixed',
+				classNameWrap: 'fromHeader',
+				horizontal: I.MenuDirection.Right,
+				offsetY: 4,
+			}, { 
+				noManage: true,
+				route: analytics.route.header,
+			});
+		} else {
+			menuOpen('object', element, {
+				horizontal: I.MenuDirection.Right,
+				subIds: J.Menu.object,
+				data: {
+					rootId,
+					blockId: rootId,
+					blockIds: [ rootId ],
+					isPopup,
+				}
+			});
+		};
 	};
 
 	if (bannerProps.type != I.BannerType.None) {
@@ -83,20 +99,22 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(false, false, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
 
 			<div className="side center">
 				{center}
 			</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-invite"
-					tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
-					className="invite withBackground"
-					onClick={() => Action.openSpaceShare(analytics.route.chat)}
-					onDoubleClick={e => e.stopPropagation()}
-				/>
+				{showInvite ? (
+					<Icon 
+						id="button-header-invite"
+						tooltipParam={{ text: translate('pageSettingsSpaceIndexAddMembers'), typeY: I.MenuDirection.Bottom }}
+						className="invite withBackground"
+						onClick={() => Action.openSpaceShare(analytics.route.chat)}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
 
 				{showRelations ? (
 					<Icon 

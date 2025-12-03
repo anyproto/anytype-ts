@@ -1,14 +1,14 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import $ from 'jquery';
 import { Icon, IconObject, Switch, Select, ObjectName } from 'Component';
-import { I, U } from 'Lib';
+import { I, U, Preview } from 'Lib';
 
 const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 
 	const { 
 		id = '', icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
-		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
+		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, tooltipParam = {},
 	} = props;
 	const cn = [];
 	const withArrow = arrow || subComponent;
@@ -110,9 +110,11 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	let content = null;
 	if (isDiv) {
 		content = <div className="inner" />;
+		hasClick = false;
 	} else
 	if (isSection) {
 		content = name;
+		hasClick = false;
 	} else
 	if (withDescription) {
 		content = (
@@ -185,6 +187,22 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		};
 	};
 
+	const onMouseEnterHandler = (e: any) => {
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
+
+		if (t) {
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+		};
+		
+		onMouseEnter?.(e);
+	};
+	
+	const onMouseLeaveHandler = (e: any) => {
+		Preview.tooltipHide(false);
+		onMouseLeave?.(e);
+	};
+
 	useEffect(() => resize());
 
 	return (
@@ -193,8 +211,8 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 			id={`item-${id}`} 
 			className={cn.join(' ')} 
 			onClick={hasClick ? onClick : undefined}
-			onMouseEnter={onMouseEnter} 
-			onMouseLeave={onMouseLeave}
+			onMouseEnter={onMouseEnterHandler} 
+			onMouseLeave={onMouseLeaveHandler}
 			onContextMenu={hasClick && withMore ? onMore : undefined}
 			style={style}
 		>

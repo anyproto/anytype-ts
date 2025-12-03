@@ -43,8 +43,9 @@ input, textarea, select { font-family: 'Inter'; }
 #root { height: 100%; }
 #appContainer { display: flex; flex-direction: column; height: 100%; }
 #selection { flex-grow: 1; overflow: hidden; }
+.swiper-navigation-icon { display: none !important; }
 
-#menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
+#menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1; user-select: none; pointer-events: all; }
 
 #root-loader { 
 	position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: var(--color-shape-tertiary); z-index: 1000;
@@ -71,17 +72,17 @@ input, textarea, select { font-family: 'Inter'; }
 	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: 100%; }
 }
 #globalFade.show { opacity: 1; }
-#graphPreview { position: fixed; z-index: 1000; }
+#graphPreview { position: fixed; z-index: 1000; left: 0px; top: 0px; }
 
 #mainAnimation { display: none; }
 
-.onboardingDimmer { content: ''; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.4); -webkit-app-region: no-drag; z-index: 999; pointer-events: none; }
+.onboardingDimmer { content: ''; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3); -webkit-app-region: no-drag; z-index: 999; pointer-events: none; }
 
 .ReactVirtualized__List { overscroll-behavior: none; }
 
 .customScrollbar {
-	::-webkit-scrollbar, &::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
+	::-webkit-scrollbar, &::-webkit-scrollbar { width: 10px; height: 10px; }
+	::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb { background: transparent; border-radius: 5px; }
 	::-webkit-scrollbar-corner, &::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button, &::-webkit-scrollbar-button { display: none; }
 }
@@ -195,13 +196,15 @@ html.platformLinux {
 }
 
 html.platformWindows, html.platformLinux {
-	::-webkit-scrollbar { width: 6px; height: 6px; }
-	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 6px; }
+	#sidebarLeftButton { left: 16px; display: block; }
+
+	::-webkit-scrollbar { width: 10px; height: 10px; }
+	::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 5px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
 }
 
-html.platformWindows:not(.noMenuBar) {
+html.platformWindows.withMenuBar {
 	#menuBar { 
 		height: 28px; background: var(--color-shape-primary); position: relative; flex-shrink: 0; z-index: 100000; display: flex; align-items: center; 
 		flex-direction: row;
@@ -222,11 +225,33 @@ html.platformWindows:not(.noMenuBar) {
 	}
 
 	.sidebar { margin-top: 28px; height: calc(100% - 28px); }
-	.sidebarHeadIcon { top: 48px; }
+	.sidebar {
+		.subPageWrapper:not(.withSidebarLeft) {
+			.sidebarPage {
+				> .head {
+					.side.left	{ padding-left: 36px; }
+				}
+			}
+		}
+	}
 
 	.popups {
 		.popup.popupShortcut {
 			.innerWrap { top: 28px; height: calc(100% - 28px); }
+		}
+	}
+
+	#sidebarLeftButton { top: 40px; }
+}
+
+html.platformLinux {
+	.sidebar {
+		.subPageWrapper:not(.withSidebarLeft) {
+			.sidebarPage {
+				> .head {
+					.side.left	{ padding-left: 36px; }
+				}
+			}
 		}
 	}
 }

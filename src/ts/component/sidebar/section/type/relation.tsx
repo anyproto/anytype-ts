@@ -21,19 +21,16 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
     );
 
 	const skipKeys = [ 'name', 'description' ];
-	const filterMapper = it => it && !skipKeys.includes(it.relationKey);
+	const filterMapper = it => it && !it.isArchived && !skipKeys.includes(it.relationKey);
 
-	const recommendedFeaturedRelations = Relation.getArrayValue(object.recommendedFeaturedRelations);
-	const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-	const recommendedHiddenRelations = Relation.getArrayValue(object.recommendedHiddenRelations);
-	const featured = recommendedFeaturedRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
-	const recommended = recommendedRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
-	const hidden = recommendedHiddenRelations.map(key => S.Record.getRelationById(key)).filter(filterMapper);
 	const lists: any[] = [
-		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), data: featured, relationKey: 'recommendedFeaturedRelations' },
-		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), data: recommended, relationKey: 'recommendedRelations' },
-		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), data: hidden, relationKey: 'recommendedHiddenRelations' },
+		{ id: I.SidebarRelationList.Featured, name: translate('sidebarTypeRelationHeader'), relationKey: 'recommendedFeaturedRelations' },
+		{ id: I.SidebarRelationList.Recommended, name: translate('sidebarTypeRelationSidebar'), relationKey: 'recommendedRelations' },
+		{ id: I.SidebarRelationList.Hidden, name: translate('sidebarTypeRelationHidden'), relationKey: 'recommendedHiddenRelations' },
 	];
+	for (const list of lists) {
+		list.data = Relation.getArrayValue(object[list.relationKey]).map(id => S.Record.getRelationById(id)).filter(filterMapper);
+	};
 
 	const addConfirm = (ids: string[]) => {
 		let title = '';
@@ -93,7 +90,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	};
 
 	if (conflictIds.length) {
-		const ids = [].concat(recommendedFeaturedRelations, recommendedRelations, recommendedHiddenRelations);
+		const ids = lists.reduce((acc, list) => acc.concat(list.data.map(it => it.id)), []);
 		const systemKeys = Relation.systemKeysWithoutUser();
 
 		const conflictRelations = conflictIds.filter(it => !ids.includes(it)).map(id => S.Record.getRelationById(id)).filter(it => {

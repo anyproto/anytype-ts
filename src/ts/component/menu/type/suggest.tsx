@@ -120,7 +120,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ 
 				relationKey: 'uniqueKey', 
 				type: I.SortType.Custom, 
-				customOrder: U.Data.typeSortKeys(spaceview.isChat),
+				customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
 			},
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -138,7 +138,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (clear) {
 			offset.current = 0;
-			itemList.current = [];
 		};
 
 		U.Subscription.search({
@@ -149,12 +148,14 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (clear) {
+				itemList.current = [];
+			};
+
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -239,7 +240,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { data } = param;
 		const { noFilter } = data;
 		const obj = $(`#${getId()} .content`);
-		const offset = 16 + (noFilter ? 0 : 42);
+		const offset = 16 + (noFilter ? 0 : 40);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + getRowHeight(current), 16) : 0;
 		const itemsHeight = items.length ? items.reduce((res: number, current: any) => res + getRowHeight(current), 0) : 160;
 

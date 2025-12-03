@@ -11,6 +11,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	target = null;
 	layout: I.WidgetLayout = null;
 	limit = 0;
+	needUpdate = false;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -27,7 +28,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.limit = limit;
 		this.target = target;
 		this.checkState();
-};
+	};
 
 	render(): React.ReactNode {
 		const { param } = this.props;
@@ -90,6 +91,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	}
 
 	componentDidMount () {
+		this.needUpdate = false;
 		this.checkButton();
 		this.rebind();
 
@@ -110,7 +112,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.unbind();
 
 		S.Menu.closeAll(J.Menu.widget);
-		$(window).trigger(`updateWidgetData.${blockId}`);
+		if (this.needUpdate) {
+			$(window).trigger(`updateWidgetData.${blockId}`);
+		};
 	};
 
 	rebind (): void {
@@ -140,7 +144,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { widgets } = S.Block;
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(this.layout);
 		const canRemove = U.Space.canMyParticipantWrite();
-		const layoutOptions = U.Menu.prepareForSelect(U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview));
+		const layoutOptions = U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
 
 		if (!block) {
@@ -252,7 +256,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		const isSectionPin = block.content.section == I.WidgetSection.Pin;
-		const isSectionType = block.content.section == I.WidgetSection.Type;
+
+		this.needUpdate = true;
 
 		switch (section.id) {
 			case 'layout': {
@@ -262,9 +267,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 				if (isSectionPin) {
 					C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
-				} else
-				if (isSectionType) {
-					C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLayout', value: this.layout } ], () => close());
 				};
 
 				analytics.event('ChangeWidgetLayout', {
@@ -282,9 +284,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 				if (isSectionPin) {
 					C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
-				} else
-				if (isSectionType) {
-					C.ObjectListSetDetails([ target.id ], [ { key: 'widgetLimit', value: this.limit } ], () => close());
 				};
 
 				analytics.event('ChangeWidgetLimit', {
@@ -375,6 +374,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 		};
 
+		this.needUpdate = true;
 		C.BlockCreateWidget(widgets, blockId, newBlock, I.BlockPosition.Replace, this.layout, this.limit, onSave);
 		close(); 
 	};

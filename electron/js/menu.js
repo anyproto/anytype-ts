@@ -17,9 +17,10 @@ const DEFAULT_SHORTCUTS = {
 	zoomIn: [ 'CmdOrCtrl', '=' ],
 	zoomOut: [ 'CmdOrCtrl', '-' ],
 	zoomReset: [ 'CmdOrCtrl', '0' ],
-	toggleFullscreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
+	toggleFullScreen: [ 'CmdOrCtrl', 'Shift', 'F' ],
 	shortcut: [ 'Ctrl', 'Space' ],
 	close: [ 'CmdOrCtrl', 'Q' ],
+	createSpace: [],
 };
 
 class MenuManager {
@@ -106,7 +107,7 @@ class MenuManager {
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
 					{ label: Util.translate('commonNewObject'), accelerator: this.getAccelerator('createObject'), click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
-					{ label: Util.translate('commonNewSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
+					{ label: Util.translate('commonNewSpace'), accelerator: this.getAccelerator('createSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
 
@@ -220,8 +221,8 @@ class MenuManager {
 					{ label: Util.translate('electronMenuZoomOut'), accelerator: this.getAccelerator('zoomOut'), click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: this.getAccelerator('zoomReset'), click: () => Api.setZoom(this.win, 0) },
 					{
-						label: Util.translate('electronMenuFullscreen'), accelerator: this.getAccelerator('toggleFullscreen'), type: 'checkbox', checked: this.win.isFullScreen(),
-						click: () => this.win.setFullScreen(!this.win.isFullScreen())
+						label: Util.translate('electronMenuFullScreen'), accelerator: this.getAccelerator('toggleFullScreen'), type: 'checkbox', checked: this.win.isFullScreen(),
+						click: () => Api.toggleFullScreen(this.win),
 					},
 					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
 				]
@@ -481,7 +482,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('electronMenuAccountSettings'), click: () => { 
 					this.winShow(); 
-					this.openSettings(''); 
+					this.openSettings('account'); 
 				}
 			},
 			{ 
@@ -558,7 +559,7 @@ class MenuManager {
 		let icon = '';
 
 		if (is.windows) {
-			icon = path.join('icons', '32x32.png');
+			icon = path.join('icons', '256x256.ico');
 		} else 
 		if (is.linux) {
 			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP;

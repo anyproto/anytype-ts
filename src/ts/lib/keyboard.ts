@@ -106,17 +106,18 @@ class Keyboard {
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
+		const isPopup = this.isPopup();
 
 		// Mouse back
 		if ((e.buttons & 8) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onBack();
+			this.onBack(isPopup);
 		};
 
 		// Mouse forward
 		if ((e.buttons & 16) && !this.isNavigationDisabled) {
 			e.preventDefault();
-			this.onForward();
+			this.onForward(isPopup);
 		};
 
 		// Remove isFocusable from focused block
@@ -138,9 +139,7 @@ class Keyboard {
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		if (this.isMain()) {
-			sidebar.onMouseMove();
-		};
+		sidebar.onMouseMove();
 	};
 	
 	/**
@@ -158,6 +157,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
 			e.preventDefault();
@@ -175,19 +175,22 @@ class Keyboard {
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut('back', e, () => this.onBack());
-			this.shortcut('forward', e, () => this.onForward());
+			this.shortcut('back', e, () => this.onBack(isPopup));
+			this.shortcut('forward', e, () => this.onForward(isPopup));
 		};
 
 		// Close popups and menus
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
 			if (!data.isClosed) {
-				sidebar.rightPanelClose(isPopup);
+				sidebar.rightPanelClose(isPopup, true);
 			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
@@ -212,8 +215,12 @@ class Keyboard {
 					};
 				};
 			} else 
-			if (this.isMainSettings() && !this.isFocused) {
-				U.Space.openDashboard({ replace: false });
+			if (!this.isFocused) {
+				if (this.isMainSettings) {
+					U.Space.openDashboard({ replace: false });
+				} else {
+					this.onBack(isPopup);
+				};
 			};
 			
 			Preview.previewHide(false);
@@ -288,7 +295,7 @@ class Keyboard {
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-sidebar-select-type').trigger('click');
+				$('#button-create-arrow').trigger('click');
 			});
 
 			// Lock the app
@@ -380,7 +387,7 @@ class Keyboard {
 			// Switch space
 			for (let i = 1; i <= 9; i++) {
 				const id = Number(i) - 1;
-				keyboard.shortcut(`space${i}`, e, () => {
+				this.shortcut(`space${i}`, e, () => {
 					const spaces = U.Menu.getVaultItems();
 					const item = spaces[id];
 	
@@ -396,34 +403,38 @@ class Keyboard {
 				});
 			};
 
-
-			keyboard.shortcut('createSpace', e, () => {
-				const element = `#button-create-space`;
-
-				let rect = null;
-				let horizontal = I.MenuDirection.Left;
-				let vertical = I.MenuDirection.Top;
-
-				if (!$(element).length) {
-					const { ww, wh } = U.Common.getWindowDimensions();
-
-					rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
-					horizontal = I.MenuDirection.Center;
-					vertical = I.MenuDirection.Center;
-				};
-
-				U.Menu.spaceCreate({
-					element,
-					rect,
-					className: 'spaceCreate fixed',
-					classNameWrap: 'fromSidebar',
-					horizontal,
-					vertical,
-				}, analytics.route.shortcut);
-			});
+			this.shortcut('createSpace', e, this.createSpace);
 		};
 
 		this.initPinCheck();
+	};
+
+	/**
+	 * Calls spaceCreate menu.
+	 */
+	createSpace () {
+		const element = `#button-create-space`;
+
+		let rect = null;
+		let horizontal = I.MenuDirection.Left;
+		let vertical = I.MenuDirection.Top;
+
+		if (!$(element).length) {
+			const { ww, wh } = U.Common.getWindowDimensions();
+
+			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+			horizontal = I.MenuDirection.Center;
+			vertical = I.MenuDirection.Center;
+		};
+
+		U.Menu.spaceCreate({
+			element,
+			rect,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal,
+			vertical,
+		}, analytics.route.shortcut);
 	};
 
 	/**
@@ -455,10 +466,7 @@ class Keyboard {
 
 		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
 			U.Object.openConfig(message.details);
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -472,11 +480,8 @@ class Keyboard {
 	/**
 	 * Handles back navigation.
 	 */
-	onBack () {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-
-		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack()) {
+	onBack (isPopup: boolean) {
+		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack(isPopup)) {
 			return;
 		};
 
@@ -489,6 +494,7 @@ class Keyboard {
 				});
 			};
 		} else {
+			const { account } = S.Auth;
 			const history = U.Router.history;
 			const current = U.Router.getParam(history.location.pathname);
 			const prev = history.entries[history.index - 1];
@@ -501,17 +507,28 @@ class Keyboard {
 			if (prev) {
 				const route = U.Router.getParam(prev.pathname);
 
+				let substituteIndex = -1;
 				let substitute = '';
 
-				if ([ 'object', 'invite', 'membership' ].includes(route.page)) {
-					substitute = history.entries[history.index - 2]?.pathname;
+				if (U.Router.isDoubleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 2;
+				} else
+				if (U.Router.isTripleRedirect(route.page, route.action)) {
+					substituteIndex = history.index - 3;
 				};
 
-				if ((route.page == 'main') && (route.action == 'history')) {
-					substitute = history.entries[history.index - 3]?.pathname;
+				if (substituteIndex >= 0) {
+					substitute = history.entries[substituteIndex]?.pathname;
+				};
+
+				if (!substitute && (route.page == 'auth') && (route.action == 'pin-check')) {
+					return;
 				};
 
 				if (substitute) {
+					history.entries = history.entries.slice(0, substituteIndex + 1);
+					history.index = substituteIndex;
+					
 					U.Router.go(substitute, {});
 					return;
 				};
@@ -532,10 +549,8 @@ class Keyboard {
 	/**
 	 * Handles forward navigation.
 	 */
-	onForward () {
-		const isPopup = this.isPopup();
-
-		if (!this.checkForward()) {
+	onForward (isPopup: boolean) {
+		if (!this.checkForward(isPopup)) {
 			return;
 		};
 
@@ -555,32 +570,35 @@ class Keyboard {
 	 * Checks if back navigation is possible.
 	 * @returns {boolean} True if back is possible.
 	 */
-	checkBack (): boolean {
-		const { account } = S.Auth;
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
+	checkBack (isPopup: boolean): boolean {
+		if (isPopup) {
+			return true;
 		};
 
-		if (!isPopup) {
-			const prev = history.entries[history.index - 1];
+		const history = U.Router.history;
+		if (!history) {
+			return false;
+		};
 
-			if (account && !prev) {
+		const { account } = S.Auth;
+		const prev = history.entries[history.index - 1];
+
+		if (account && !prev) {
+			return false;
+		};
+
+		if (prev) {
+			const route = U.Router.getParam(prev.pathname);
+			if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
+				return true;
+			};
+
+			if ([ 'index', 'auth' ].includes(route.page) && account) {
 				return false;
 			};
 
-			if (prev) {
-				const route = U.Router.getParam(prev.pathname);
-
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return false;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return false;
-				};
+			if ((route.page == 'main') && !account) {
+				return false;
 			};
 		};
 
@@ -591,18 +609,16 @@ class Keyboard {
 	 * Checks if forward navigation is possible.
 	 * @returns {boolean} True if forward is possible.
 	 */
-	checkForward (): boolean {
-		const isPopup = this.isPopup();
-		const history = U.Router.history;
-
-		if (!history) {
-			return;
-		};
-
+	checkForward (isPopup: boolean): boolean {
 		let ret = true;
 		if (isPopup) {
 			ret = historyPopup.checkForward();
 		} else {
+			const history = U.Router.history;
+			if (!history) {
+				return false;
+			};
+
 			ret = history.index + 1 <= history.entries.length - 1;
 		};
 		return ret;
@@ -614,7 +630,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || keyboard.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 
@@ -624,6 +640,7 @@ class Keyboard {
 		const tmpPath = electron.tmpPath();
 		const route = analytics.route.menuSystem;
 		const canUndo = !this.isFocused && this.isMainEditor();
+		const isPopup = this.isPopup();
 
 		switch (cmd) {
 			case 'search': {
@@ -685,7 +702,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				Action.createSpace(I.SpaceUxType.Data, route);
+				this.createSpace();
 				break;
 			};
 
@@ -830,7 +847,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
-				Storage.delete('chatsOnboarding');
+				Storage.delete('multichatsOnboarding');
 
 				location.reload();
 				break;
@@ -886,6 +903,24 @@ class Keyboard {
 				break;
 			};
 
+			case 'mouseNavigation': {
+				if (!arg || this.isNavigationDisabled) {
+					break;
+				};
+
+				switch (arg) {
+					case 'left': {
+						this.onBack(isPopup);
+						break;
+					};
+
+					case 'right': {
+						this.onForward(isPopup);
+						break;
+					};
+				};
+				break;
+			};
 		};
 	};
 
@@ -981,9 +1016,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 		analytics.event('Undo', { route });
 	};
@@ -1007,9 +1040,7 @@ class Keyboard {
 				focus.scroll(this.isPopup(), message.blockId);
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 
 		analytics.event('Redo', { route });
@@ -1038,7 +1069,6 @@ class Keyboard {
 			U.Common.addBodyClass('theme', '');
 		};
 
-		$('#link-prism').remove();
 		focus.clearRange(true);
 	};
 
@@ -1243,10 +1273,10 @@ class Keyboard {
 	 * @returns {any} The match object.
 	 */
 	getPopupMatch () {
-		const popup = S.Popup.get('page');
-		const match: any = popup ? { ...popup?.param.data.matchPopup } : {};
+		const popup = U.Common.objectCopy(S.Popup.get('page'));
+		const match: any = popup ? { ...popup?.param?.data?.matchPopup } : {};
 
-		match.params = Object.assign(match.params || {}, this.checkUniversalRoutes(match.route || ''));
+		match.params = match.params || {};
 
 		return match;
 	};
@@ -1257,46 +1287,9 @@ class Keyboard {
 	 */
 	getRouteMatch () {
 		const route = U.Router.getRoute();
-		const params = Object.assign(U.Router.getParam(route), this.checkUniversalRoutes(route));
+		const params = U.Router.getParam(route);
 
 		return { route, params };
-	};
-
-	checkUniversalRoutes (route: string) {
-		route = String(route || '');
-
-		const data = U.Common.searchParam(U.Router.getSearch());
-
-		let ret: any = {};
-
-		// Universal object route
-		if (route.match(/^\/object/)) {
-			ret = {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			};
-		};
-
-		// Invite route
-		if (route.match(/^\/invite/)) {
-			ret = {
-				page: 'main',
-				action: 'invite',
-				...data,
-			};
-		};
-
-		// Membership route
-		if (route.match(/^\/membership/)) {
-			ret = {
-				page: 'main',
-				action: 'membership',
-			};
-		};
-
-		return ret;
 	};
 
 	/**
@@ -1308,44 +1301,14 @@ class Keyboard {
 		const popup = undefined === isPopup ? this.isPopup() : isPopup;
 		
 		let ret: any = { params: {} };
-		let data: any = {};
 
 		if (popup) {
 			ret = Object.assign(ret, this.getPopupMatch());
 		} else {
 			ret = this.getRouteMatch();
-			data = U.Common.searchParam(U.Router.getSearch());
 		};
 
 		ret.route = String(ret.route || '');
-
-		// Universal object route
-		if (ret.route.match(/^\/object/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'object',
-				...data,
-				id: data.objectId,
-			});
-		};
-
-		// Invite route
-		if (ret.route.match(/^\/invite/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'invite',
-				...data,
-			});
-		};
-
-		// Membership route
-		if (ret.route.match(/^\/membership/)) {
-			ret.params = Object.assign(ret.params, {
-				page: 'main',
-				action: 'membership',
-			});
-		};
-
 		return ret;
 	};
 
@@ -1935,6 +1898,39 @@ class Keyboard {
 	 */
 	cmdKey () {
 		return U.Common.isPlatformMac() ? 'cmd' : 'ctrl';
+	};
+
+	getPageClass (prefix: string, isPopup: boolean) {
+		const spaceview = U.Space.getSpaceview();
+		const { page, action, id } = this.getMatch(isPopup).params;
+
+		return [ 
+			U.Common.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
+			U.Common.toCamelCase([ prefix, page, action ].join('-')),
+			U.Common.getContainerClassName(isPopup),
+			U.Data.spaceClass(spaceview.uxType),
+		].join(' ');
+	};
+
+	setBodyClass () {
+		const { config } = S.Common;
+		const { showMenuBar } = config;
+		const platform = U.Common.getPlatform();
+		const cn = [ 
+			this.getPageClass('body', false), 
+			U.Common.toCamelCase([ 'platform', platform ].join('-')),
+		];
+
+		if (config.debug.ui) {
+			cn.push('debug');
+		};
+		if (showMenuBar) {
+			cn.push('withMenuBar');
+		};
+
+		$('html').attr({ class: cn.join(' ') });
+		S.Common.setThemeClass();
 	};
 
 };

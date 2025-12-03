@@ -1,25 +1,31 @@
 import React, { forwardRef } from 'react';
+import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S } from 'Lib';
+import { I, S, U } from 'Lib';
 
 interface Props {
-	mentionCounter: number;
-	messageCounter: number;
-	mode?: I.NotificationMode;
+	spaceId?: string;
+	chatId?: string;
 	className?: string;
 };
 
-const ChatCounter = forwardRef<HTMLDivElement, Props>(({
-	mentionCounter = 0,
-	messageCounter = 0,
-	mode = I.NotificationMode.All,
-	className = '',
-}, ref) => {
+const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
-	if (!mentionCounter && !messageCounter) {
-		return null;
+	const { spaceId = S.Common.space, chatId, className = '' } = props;
+	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+
+	let counters = { mentionCounter: 0, messageCounter: 0 };
+	let mode = I.NotificationMode.All;
+
+	if (chatId) {
+		counters = S.Chat.getChatCounters(spaceId, chatId);
+		mode = U.Object.getChatNotificationMode(spaceview, chatId);
+	} else {
+		counters = S.Chat.getSpaceCounters(spaceId);
+		mode = spaceview?.notificationMode;
 	};
 
+	const { mentionCounter, messageCounter } = counters;
 	const cn = [ 'chatCounter', className ];
 	const cnMention = [ 'mention' ];
 	const cnMessage = [ 'message' ];
@@ -33,10 +39,11 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>(({
 
 	return (
 		<div className={cn.join(' ')}>
-			{mentionCounter ? <Icon className={cnMention.join(' ')} /> : ''}
+			{mentionCounter && !spaceview.isOneToOne ? <Icon className={cnMention.join(' ')} /> : ''}
 			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
 		</div>
 	);
-});
+
+}));
 
 export default ChatCounter;

@@ -68,6 +68,7 @@
 .icon.settings-sites { background-image: url('~img/icon/settings/sites.svg'); }
 .icon.settings-space { background-image: url('~img/icon/settings/overview.svg'); }
 .icon.settings-members { background-image: url('~img/icon/settings/members.svg'); }
+.icon.settings-notifications { background-image: url('~img/icon/settings/pushOn.svg'); }
 .icon.settings-import { background-image: url('~img/icon/settings/import.svg'); }
 .icon.settings-export { background-image: url('~img/icon/settings/export.svg'); }
 .icon.settings-type { background-image: url('~img/icon/settings/type.svg'); }
@@ -85,3 +86,8 @@
 .icon.import-csv { background-image: url('~img/icon/import/csv.svg'); }
 .icon.import-protobuf { background-image: url('~img/icon/import/protobuf.svg'); }
 .icon.import-obsidian { background-image: url('~img/icon/import/obsidian.svg'); }
+
+.icon.badge { width: 18px; height: 18px; background-image: url('~img/icon/membership/badge.svg'); }
+
+.icon.space-link { background-image: url('~img/icon/space/link.svg'); }
+.icon.space-qr { background-image: url('~img/icon/space/qr.svg');  }

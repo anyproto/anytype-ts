@@ -230,9 +230,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		this.loadRequest(requestParam, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			if (clear) {
 				this.setState({ isLoading: false });
@@ -245,10 +243,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	loadRequest (param: any, callBack?: (message: any) => void) {
 		U.Subscription.search(param, (message: any) => {
 			this.items = this.items.concat(message.records || []);
-
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -287,6 +282,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			};
 
 			section.children = section.children.filter(it => it);
+			section.children = U.Menu.prepareForSelect(section.children);
 			return section.children.length > 0;
 		});
 
@@ -417,7 +413,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 42);
+		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
 			height = 160;
 		} else {

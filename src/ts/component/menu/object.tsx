@@ -129,6 +129,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let advanced = { id: 'advanced', icon: 'advanced', name: translate('menuObjectAdvanced'), children:[], arrow: true };
 		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
+		let notification = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -180,7 +181,8 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedOpenFile = isInFile;
 		const allowedOpenObject = isFilePreview;
 		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
-		const allowedEditChat = isChat;
+		const allowedEditChat = canWrite && isChat;
+		const allowedNotification = isChat;
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -203,6 +205,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedOpenObject)		 openObject = null;
 		if (!allowedEditType) 		 editType = null;
 		if (!allowedEditChat) 		 editChat = null;
+		if (!allowedNotification) 	 notification = null;
 
 		if (!canWrite) {
 			template = null;
@@ -261,7 +264,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		sections.push({ children: [ advanced ] });
-		sections.unshift({ children: [ editType, editChat ] });
+		sections.unshift({ children: [ editType, editChat, notification ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -298,6 +301,9 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param, getId, getSize, close } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { rootId, blockId } = data;
+		const { space } = S.Common;
+		const object = this.getObject();
+		const spaceview = U.Space.getSpaceview();
 
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -371,15 +377,25 @@ class MenuObject extends React.Component<I.Menu> {
 						switch (option.id) {
 
 							case 'pageDeeplink': {
-								const object = this.getObject();
-								const space = U.Space.getSpaceview();
-
-								U.Object.copyLink(object, space, 'deeplink', '');
+								U.Object.copyLink(object, spaceview, 'deeplink', '');
 								close();
 								break;
 							};
 
 						};
+					},
+				};
+				break;
+			};
+
+			case 'notification': {
+				menuId = 'select';
+				menuParam.data = {
+					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
+					options: U.Menu.notificationModeOptions(),
+					onSelect: (e, option) => {
+						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
+						close();
 					},
 				};
 				break;
@@ -409,6 +425,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const object = this.getObject();
 		const route = analytics.route.menuObject;
 		const space = U.Space.getSpaceview();
+		const isPopup = keyboard.isPopup();
 		
 		if (item.arrow) {
 			return;
@@ -429,7 +446,7 @@ class MenuObject extends React.Component<I.Menu> {
 			if (home && (object.id == home.id)) {
 				U.Object.openRoute({ layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' });
 			} else {
-				keyboard.onBack();
+				keyboard.onBack(isPopup);
 			};
 		};
 
@@ -540,7 +557,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'openFile': {
-				Action.openFile(object.id, route);
+				Action.openFile(object, route);
 				break;
 			};
 
@@ -555,7 +572,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'editType': {
-				sidebar.rightPanelToggle(keyboard.isPopup(), { page: 'type', rootId });
+				sidebar.rightPanelToggle(isPopup, { page: 'type', rootId, details: {} });
 				break;
 			};
 
@@ -564,10 +581,12 @@ class MenuObject extends React.Component<I.Menu> {
 					element: `#button-header-more`,
 					className,
 					classNameWrap,
+					horizontal: I.MenuDirection.Right,
+					vertical: I.MenuDirection.Center,
 					data: {
 						details: object,
 					},
-				});
+				}, route);
 				break;
 			};
 		};

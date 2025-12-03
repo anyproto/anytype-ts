@@ -249,7 +249,7 @@ class Relation {
 			ret = ret.filter(it => ![ I.FormulaType.CountValue ].includes(it.id));
 		};
 
-		return U.Menu.prepareForSelect(ret);
+		return ret;
 	};
 
 	/**
@@ -546,11 +546,11 @@ class Relation {
 	 * @returns {Array<{id: I.CardSize, name: string}>} The size options.
 	 */
 	public getSizeOptions () {
-		return U.Menu.prepareForSelect([
+		return [
 			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
 			{ id: I.CardSize.Medium, name: translate('libRelationMedium') },
 			{ id: I.CardSize.Large, name: translate('libRelationLarge') },
-		]);
+		];
 	};
 
 	/**
@@ -573,7 +573,7 @@ class Relation {
 		}));
 
 		const ret = [
-			{ id: '', icon: '', name: translate('commonNone') },
+			{ id: 'none', icon: '', name: translate('commonNone') },
 			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
 		];
 

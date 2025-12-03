@@ -6,6 +6,7 @@ const TYPE_KEYS = {
 		J.Constant.typeKey.page,
 		J.Constant.typeKey.note,
 		J.Constant.typeKey.task,
+		J.Constant.typeKey.chatDerived,
 		J.Constant.typeKey.collection,
 		J.Constant.typeKey.set,
 		J.Constant.typeKey.bookmark,
@@ -70,6 +71,15 @@ class UtilData {
 	 */
 	blockEmbedClass (v: I.EmbedProcessor): string {
 		return `is${String(I.EmbedProcessor[v])}`;
+	};
+
+	/**
+	 * Returns the CSS class for a space UX type.
+	 * @param {I.SpaceUxType} v - The space UX type.
+	 * @returns {string} The CSS class.
+	 */
+	spaceClass (v: I.SpaceUxType): string {
+		return v ? `space${String(I.SpaceUxType[v])}` : '';
 	};
 
 	/**
@@ -260,8 +270,8 @@ class UtilData {
 
 		const { widgets } = S.Block;
 		const { redirect, space } = S.Common;
-		const routeParam = Object.assign({ replace: true }, param.routeParam || {});
 		const route = param.route || redirect;
+		const routeParam = param.routeParam || {};
 
 		if (!widgets) {
 			console.error('[U.Data].onAuth No widgets defined');
@@ -291,10 +301,7 @@ class UtilData {
 					};
 
 					S.Common.redirectSet('');
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		});
@@ -318,44 +325,20 @@ class UtilData {
 		});
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
-			const spaceCounters = {};
-
 			for (const item of message.previews) {
 				const { spaceId, chatId, message, state, dependencies } = item;
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
-				const obj: any = spaceCounters[spaceId] || { mentionCounter: 0, messageCounter: 0, lastMessageDate: 0 };
-
-				obj.mentionCounter += state.mentions.counter || 0;
-				obj.messageCounter += state.messages.counter || 0;
-				obj.lastMessageDate = Math.max(obj.lastMessageDate, Number(message?.createdAt || 0));
-
-				spaceCounters[spaceId] = obj;
-
-				S.Chat.setState(chatSubId, { 
-					...state, 
-					lastMessageDate: Number(message?.createdAt || 0),
-				}, false);
+				
+				S.Chat.setState(chatSubId, state);
 
 				if (message) {
+					message.chatId = chatId;
 					message.dependencies = dependencies;
 
 					S.Chat.add(spaceSubId, 0, new M.ChatMessage(message));
 					S.Chat.add(chatSubId, 0, new M.ChatMessage(message));
 				};
-			};
-
-			for (const spaceId in spaceCounters) {
-				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
-				const obj = spaceCounters[spaceId];
-
-				S.Chat.setState(spaceSubId, { 
-					mentions: { counter: obj.mentionCounter, orderId: '' }, 
-					messages: { counter: obj.messageCounter, orderId: '' },
-					lastMessageDate: obj.lastMessageDate,
-					lastStateId: '',
-					order: 0,
-				}, false);
 			};
 		});
 
@@ -394,9 +377,7 @@ class UtilData {
 					dispatcher.startStream();
 				};
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -409,20 +390,14 @@ class UtilData {
 		const { token } = S.Auth;
 
 		if (!token) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
 		C.WalletCloseSession(token, () => {
 			S.Auth.tokenSet('');
-
 			dispatcher.stopStream();
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -715,8 +690,15 @@ class UtilData {
 	 */
 	sortByTypeKey (c1: any, c2: any, isChat: boolean) {
 		const keys = this.typeSortKeys(isChat);
+		const i1 = keys.indexOf(c1.uniqueKey);
+		const i2 = keys.indexOf(c2.uniqueKey);
 
-		return keys.indexOf(c1.uniqueKey) - keys.indexOf(c2.uniqueKey);
+		if ((i1 < 0) && (i2 >= 0)) return 1;
+		if ((i1 >= 0) && (i2 < 0)) return -1;
+		if (i1 > i2) return 1;
+		if (i1 < i2) return -1;
+
+		return 0;
 	};
 
 	/**
@@ -740,12 +722,8 @@ class UtilData {
 			filters,
 			limit,
 		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
+			if (!message.error.code) {
+				callBack?.(message);
 			};
 		});
 	};
@@ -835,11 +813,7 @@ class UtilData {
 	 * @returns {I.Filter[]} The array of graph filters.
 	 */
 	getGraphFilters () {
-		const filters = U.Subscription.getBaseFilters({
-			ignoreHidden: true,
-			ignoreArchived: true,
-			ignoreDeleted: true,	 
-		});
+		const filters = U.Subscription.getBaseFilters();
 
 		return filters.concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getGraphSkipLayouts() },
@@ -873,7 +847,9 @@ class UtilData {
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
 	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
-		if (!this.isAnytypeNetwork()) {
+		const { isOnline } = S.Common;
+
+		if (!this.isAnytypeNetwork() || !isOnline) {
 			return;
 		};
 
@@ -888,9 +864,7 @@ class UtilData {
 			S.Auth.membershipSet(membership);
 			analytics.setTier(tier);
 
-			if (callBack) {
-				callBack(membership);
-			};
+			callBack?.(membership);
 		});
 	};
 
@@ -915,9 +889,7 @@ class UtilData {
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			S.Common.membershipTiersListSet(tiers);
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -998,7 +970,7 @@ class UtilData {
 						this.onInfo(message.account.info);
 
 						Renderer.send('keytarSet', message.account.id, phrase);
-						Action.importUsecase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
+						C.ObjectImportUseCase(S.Common.space, I.Usecase.GetStarted, (message: any) => {
 							if (message.startingId) {
 								S.Auth.startingId.set(S.Common.space, message.startingId);
 							};
@@ -1123,10 +1095,19 @@ class UtilData {
 	 * @returns {number} The layout width.
 	 */
 	getLayoutWidth (rootId: string): number {
-		const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
-		const type = S.Record.getTypeById(object.targetObjectType || object.type);
 		const root = S.Block.getLeaf(rootId, rootId);
-		const ret = undefined !== root?.fields?.width ? root?.fields?.width : type?.layoutWidth;
+
+		let ret = 0;
+		if (root && root.fields && (undefined !== root.fields.width)) {
+			ret = root.fields.width;
+		} else {
+			const object = S.Detail.get(rootId, rootId, [ 'type', 'targetObjectType' ], true);
+			const type = S.Record.getTypeById(object.targetObjectType || object.type);
+
+			if (type && type.layoutWidth) {
+				ret = type.layoutWidth;
+			};
+		};
 
 		return Number(ret) || 0;
 	};
@@ -1173,9 +1154,7 @@ class UtilData {
 			const ids = S.Record.checkHiddenObjects(Relation.getArrayValue(message.conflictRelationIds)
 				.map(id => S.Record.getRelationById(id))).map(it => it.id).filter(it => it);
 
-			if (callBack) {
-				callBack(ids);
-			};
+			callBack?.(ids);
 		});
 	};
 
@@ -1217,15 +1196,6 @@ class UtilData {
 				ret = { ...block.content };
 				break;
 			};
-
-			case I.WidgetSection.Type: {
-				ret = { 
-					layout: Number(object.widgetLayout) || I.WidgetLayout.Link, 
-					limit: Number(object.widgetLimit) || 6, 
-					viewId: String(object.widgetViewId) || '',
-				};
-				break;
-			};
 		};
 
 		return ret;
@@ -1244,6 +1214,29 @@ class UtilData {
 
 	checkIsDeleted (id: string): boolean {
 		return S.Record.getRecordIds(J.Constant.subId.deleted, '').includes(id);
+	};
+
+	checkPageClose (isPopup: boolean, rootId: string): boolean {
+		return !isPopup || (isPopup && (keyboard.getRootId(false) != rootId));
+	};
+
+	getWidgetTypes (): any[] {
+		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
+			return (
+				!U.Object.isInSystemLayouts(it.recommendedLayout) && 
+				!U.Object.isDateLayout(it.recommendedLayout) && 
+				!U.Object.isParticipantLayout(it.recommendedLayout) &&
+				(it.uniqueKey != J.Constant.typeKey.template) &&
+				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+			);
+		});
+	};
+
+	getWidgetChats (): any[] {
+		return S.Record.getRecords(J.Constant.subId.chat).filter(it => {
+			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+		});
 	};
 
 };

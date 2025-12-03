@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, S, translate, U, Onboarding, Action, analytics } from 'Lib';
+import { I, keyboard, S, translate, U, Onboarding, Action, analytics, sidebar } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -24,6 +24,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const withMembership = isOnline && U.Data.isAnytypeNetwork();
+	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 
 	useEffect(() => {
@@ -57,7 +58,8 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				id: 'common', name: translate('commonPreferences'),
 				children: [
 					{ id: 'spaceIndex', icon: 'space', name: translate('pageSettingsSpaceGeneral') },
-					spaceview.isPersonal ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
+					(spaceview.isPersonal || spaceview.isOneToOne) ? null : { id: 'spaceShare', icon: 'members', name: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers') },
+					{ id: 'spaceNotifications', icon: 'notifications', name: translate('commonNotifications') },
 					{ id: 'spaceStorage', icon: 'storage', name: translate('pageSettingsSpaceRemoteStorage'), alert: notSyncedCounter },
 					{ id: 'archive', icon: 'bin', name: translate('commonBin') },
 				].filter(it => it),
@@ -147,123 +149,130 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	const onBack = () => {
 		if (space) {
 			U.Space.openDashboard();
+			S.Common.setLeftSidebarState('vault', 'widget');
+		} else {
+			sidebar.leftPanelSubPageClose(true);
 		};
-
-		S.Common.setLeftSidebarState('vault', 'widget');
 	};
 
-	const ItemSection = (item: any) => {
-		const cn = [ 'itemSection' ];
+	const rowRenderer = ({ index, key, parent, style }) => {
+		const item = items[index];
 
-		if (item.isFirst) {
-			cn.push('isFirst');
-		};
+		let content = null;
 
-		return (
-			<div className={cn.join(' ')}>
-				<div className="name">{item.name}</div>
-			</div>
-		);
-	};
-
-	const Item = (item: any) => {
 		if (item.isSection) {
-			return <ItemSection {...item} />;
-		};
+			const cn = [ 'itemSection' ];
 
+			if (item.isFirst) {
+				cn.push('isFirst');
+			};
+
+			content = (
+				<div style={style} className={cn.join(' ')}>
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		} else 
 		if (item.isDiv) {
-			return <div />;
-		};
+			content = <div style={style} />;
+		} else {
+			const cn = [ 'item' ];
+			const ccn = [ 'caption' ];
 
-		const cn = [ 'item' ];
+			let icon = null;
+			let name = null;
+			let caption = '';
 
-		let icon = null;
-		let name = null;
-		let caption = null;
-
-		if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
-			cn.push('active');
-		};
-
-		if (item.id == 'account') {
-			if ('index' == param.id) {
+			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
 				cn.push('active');
 			};
 
-			if (participant) {
-				name = (
-					<>
-						<Label className="userName" text={participant.name} />
-						{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
-					</>
-				);
-				icon = (
-					<IconObject 
-						object={{ ...participant, name: participant.globalName || participant.name }} 
-						size={40} 
-						iconSize={40} 
-					/>
-				);
-			};
+			if (item.id == 'account') {
+				if ('index' == param.id) {
+					cn.push('active');
+				};
 
-			cn.push('itemAccount');
-		} else {
-			icon = <Icon className={`settings-${item.icon || item.id}`} />;
-			name = item.name;
-		};
+				if (participant) {
+					name = (
+						<>
+							<Label className="userName" text={participant.name} />
+							{participant.globalName ? <Label className="anyName" text={participant.globalName} /> : ''}
+						</>
+					);
 
-		if (item.id == 'membership') {
-			if (!membership.isNone) {
-				const tierItem = U.Data.getMembershipTier(membership.tier);
+					icon = (
+						<IconObject 
+							object={{ ...participant, name: participant.globalName || participant.name }} 
+							size={40} 
+							iconSize={40} 
+						/>
+					);
+				};
 
-				caption = <div className="caption">{tierItem.name}</div>;
+				cn.push('itemAccount');
 			} else {
-				caption = <div className="caption join">{translate(`commonJoin`)}</div>;
+				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				name = item.name;
 			};
-		};
 
-		if (item.alert) {
-			caption = <div className="caption alert">{item.alert}</div>;
+			if (item.id == 'membership') {
+				if (!membership.isNone) {
+					const tierItem = U.Data.getMembershipTier(membership.tier);
+					caption = tierItem?.name;
+				} else {
+					caption = translate(`commonJoin`);
+					ccn.push('join');
+				};
+			};
+
+			if (item.alert) {
+				caption = item.alert;
+				ccn.push('alert');
+			};
+
+			content = (
+				<div
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={() => onClick(item)}
+					style={style}
+				>
+					{icon}
+					<div className="name">{name}</div>
+					{caption ? <div className={ccn.join(' ')}>{caption}</div> : ''}
+				</div>
+			);
 		};
 
 		return (
-			<div
-				id={`item-${item.id}`}
-				className={cn.join(' ')}
-				onClick={() => onClick(item)}
+			<CellMeasurer
+				key={key}
+				parent={parent}
+				cache={cache.current}
+				columnIndex={0}
+				rowIndex={index}
 			>
-				{icon}
-
-				<div className="name">{name}</div>
-
-				{caption}
-			</div>
+				{content}
+			</CellMeasurer>
 		);
 	};
 
-	const rowRenderer = ({ index, key, parent, style }) => (
-		<CellMeasurer
-			key={key}
-			parent={parent}
-			cache={cache.current}
-			columnIndex={0}
-			rowIndex={index}
-		>
-			<div className="row" style={style}>
-				<Item {...items[index]} />
-			</div>
-		</CellMeasurer>
-	);
-
 	const items = getItems();
+
+	useEffect(() => {
+		listRef.current?.recomputeRowHeights(0);
+	});
 
 	return (
 		<>
-			<div className="subHead">
+			<div className="head">
 				<div className="side left">
-					<Icon className="back" onClick={onBack} />
+					<Icon className="back withBackground" onClick={onBack} />
 				</div>
-
+				<div className="side center" />
+			</div>
+			
+			<div className="subHead">
 				<div className="side center">
 					<div className="name">{translate('commonSettings')}</div>
 				</div>
@@ -282,6 +291,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
+											ref={listRef}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={cache.current}

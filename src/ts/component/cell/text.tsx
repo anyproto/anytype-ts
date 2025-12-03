@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } f
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
-import { Input, IconObject } from 'Component';
+import { Input, IconObject, ChatCounter } from 'Component';
 
 const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
@@ -77,7 +77,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				range.current = null;
 				setEditingHandler(false);
 
-				if (onRecordAdd && (pressed == 'enter+shift')) {
+				if (onRecordAdd && pressed.match('shift')) {
 					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
 				};
 			});
@@ -159,6 +159,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	let EditorComponent = null;
 	let val = record[relation.relationKey];
 	let icon = null;
+	let counter = null;
 
 	if (isDate || isNumber) {
 		val = Relation.formatValue(relation, val, true);
@@ -318,6 +319,10 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			} else {
 				val = val || translate('defaultNamePage');
 			};
+
+			if (U.Object.isChatLayout(record.layout)) {
+				counter = <ChatCounter chatId={record.id} />
+			};
 		};
 	};
 
@@ -397,6 +402,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		<>
 			{icon}
 			<Name name={val} />
+			{counter}
 		</>
 	);
 

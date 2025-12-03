@@ -374,8 +374,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			sorts: sorts.map(it => Dataview.sortMapper(it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
 	};

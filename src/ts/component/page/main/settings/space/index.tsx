@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
+import MemberCnt from 'Component/util/memberCnt';
 
 const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -24,23 +25,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	const uxTypeRef = useRef(null);
 	const modeRef = useRef(null);
 	const canSaveRef = useRef(true);
-
-	const spaceModes = [
-		{ id: I.NotificationMode.All },
-		{ id: I.NotificationMode.Mentions },
-		{ id: I.NotificationMode.Nothing },
-	].map((it: any) => {
-		it.name = translate(`notificationMode${it.id}`);
-		return it;
-	});
-
-	const spaceUxTypes = [
-		{ id: I.SpaceUxType.Data, name: translate('commonSpace') },
-		{ id: I.SpaceUxType.Chat, name: translate('commonChat') },
-	].map((it: any) => {
-		it.name = translate(`spaceUxType${it.id}`);
-		return it;
-	});
 
 	if (isEditing) {
 		cnh.push('isEditing');
@@ -81,7 +65,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onDashboard = () => {
-		if (!spaceview.isChat) {
+		if (!spaceview.isChat && !spaceview.isOneToOne) {
 			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
 		};
 	};
@@ -179,7 +163,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 				onConfirm: () => {
 					const details: any = {
 						spaceUxType: v,
-						spaceDashboardId: (v == I.SpaceUxType.Chat ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
+						spaceDashboardId: (v == I.SpaceUxType.Chat || v == I.SpaceUxType.OneToOne ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
 					};
 
 					C.WorkspaceSetInfo(S.Common.space, details);
@@ -226,14 +210,22 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
 	};
 
-	const headerButtons = isEditing ? [
-		{ color: 'blank', text: translate('commonCancel'), onClick: onCancel },
-		{ color: 'black', text: translate('commonSave'), onClick: onSave, className: 'buttonSave' },
-	] : [
-		{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: onEdit },
-	];
 	const buttons = getButtons();
 
+	let headerButtons = [];
+	if (!spaceview.isOneToOne) {
+		if (isEditing) {
+			headerButtons = headerButtons.concat([
+				{ color: 'blank', text: translate('commonCancel'), onClick: onCancel },
+				{ color: 'black', text: translate('commonSave'), onClick: onSave, className: 'buttonSave' },
+			]);
+		} else {
+			headerButtons = headerButtons.concat([
+				{ color: 'blank', text: translate('pageSettingsSpaceIndexEdit'), onClick: onEdit },
+			]);
+		}
+	};
+	
 	const Member = (item: any) => {
 		const isCurrent = item.id == participant?.id;
 
@@ -276,17 +268,26 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			<div className={cnh.join(' ')}>
 				{canWrite ? (
 					<div className="buttons">
-						{headerButtons.map((el, idx) => <Button className={[ 'c28', el.className ? el.className : ''].join(' ')} key={idx} text={el.text} color={el.color} onClick={el.onClick} />)}
+						{headerButtons.map((el, idx) => (
+							<Button 
+								{...el}
+								className={[ 'c28', (el.className ? el.className : '') ].join(' ')} 
+								key={idx} 
+							/>
+						))}
 					</div>
 				) : ''}
 
 				<IconObject
-					id="spaceIcon"
+					id="space-icon"
 					size={96}
 					iconSize={96}
 					object={{ ...spaceview, spaceId: S.Common.space }}
-					canEdit={canWrite}
-					menuParam={{ horizontal: I.MenuDirection.Center }}
+					canEdit={canWrite && !spaceview.isOneToOne}
+					menuParam={{ 
+						horizontal: I.MenuDirection.Center,
+						classNameWrap: 'fromBlock',
+					}}
 					onSelect={onSelect}
 					onUpload={onUpload}
 				/>
@@ -303,7 +304,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div className="counter" />
 				</div>
 
-				{members.length > 1 ? <Label className="membersCounter" text={`${members.length} ${U.Common.plural(members.length, translate('pluralMember'))}`} /> : ''}
+				<MemberCnt route={analytics.route.settings} />
 			</div>
 
 			<div className="spaceButtons">
@@ -321,40 +322,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			</div>
 
 			<div className="sections">
-				{spaceview.isShared ? (
-					<div className="section sectionSpaceManager">
-						<Label className="sub" text={translate(`popupSettingsSpaceIndexCollaborationTitle`)} />
-						<div className="sectionContent">
-
-							<div className="item">
-								<div className="sides">
-									<Icon className={[ 'push', `push${spaceview.notificationMode}` ].join(' ')} />
-
-									<div className="side left">
-										<Title text={translate('popupSettingsSpaceIndexPushTitle')} />
-										<Label text={translate(`popupSettingsSpaceIndexPushText${spaceview.notificationMode}`)} />
-									</div>
-
-									<div className="side right">
-										<Select
-											id="notificationMode"
-											ref={modeRef}
-											value={String(spaceview.notificationMode)}
-											options={spaceModes}
-											onChange={v => {
-												C.PushNotificationSetSpaceMode(S.Common.space, Number(v));
-												analytics.event('ChangeMessageNotificationState', { type: v, route: analytics.route.settingsSpaceIndex });
-											}}
-											arrowClassName="black"
-											menuParam={{ horizontal: I.MenuDirection.Right }}
-										/>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				) : ''}
-
 				{canWrite ? (
 					<>
 						<div className="section sectionSpaceManager">
@@ -377,7 +344,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 													readonly={!canWrite}
 													ref={uxTypeRef}
 													value={String(spaceview.uxType)}
-													options={spaceUxTypes}
+													options={U.Menu.uxTypeOptions()}
 													onChange={onSpaceUxType}
 													arrowClassName="black"
 													menuParam={{ horizontal: I.MenuDirection.Right }}
@@ -389,7 +356,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 							) : ''}
 
 							<div className="sectionContent">
-								{!spaceview.isChat ? (
+								{!spaceview.isChat && !spaceview.isOneToOne ? (
 									<div className="item">
 										<div className="sides">
 											<Icon className="home" />

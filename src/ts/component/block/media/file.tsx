@@ -1,5 +1,5 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, Loader, IconObject, Error, ObjectName, Icon } from 'Component';
+import { InputWithFile, IconObject, Error, ObjectName, Icon } from 'Component';
 import { I, S, U, focus, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -36,7 +36,7 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	
 	const onClick = (e: any) => {
 		if (!e.button) {
-			Action.openFile(block.getTargetObjectId(), analytics.route.block);
+			Action.openFile(object, analytics.route.block);
 		};
 	};
 
@@ -66,11 +66,6 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 						/>
 					</>
 				);
-				break;
-			};
-				
-			case I.FileState.Uploading: {
-				element = <Loader />;
 				break;
 			};
 				

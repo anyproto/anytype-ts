@@ -234,18 +234,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
+		window.setTimeout(() => this.refFilter?.focus(), 15);
 	};
 
 	getItemsWithoutFilter () {
-		const { param } = this.props;
-		const { data } = param;
-
-		return (data.options || []).filter(it => it);
+		return U.Menu.prepareForSelect((this.props.param.data.options || [])).filter(it => it);
 	};
 
 	getSections () {
@@ -295,7 +288,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !item.isSection && !item.isDiv) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
 		};
@@ -389,15 +382,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 
 	isActive (item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const value = Relation.getArrayValue(data.value);
-
 		if (undefined !== item.checkbox) {
 			return item.checkbox;
 		};
 
-		return value.includes(String(item.id));
+		return Relation.getArrayValue(this.props.param.data.value).includes(String(item.id));
 	};
 
 	resize () {

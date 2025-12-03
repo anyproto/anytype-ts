@@ -20,6 +20,8 @@
 		.header {
 			.side.left { padding-left: 12px !important; }
 			.icon.toggle { display: none; }
+			.icon.widgetPanel { display: none; }
+			.icon.expand { display: block; }
 		}
 		.footer { display: none; }
 
@@ -66,7 +68,7 @@ html.platformMac {
 	.popups {
 		.popup.popupPage {
 			.pageMainEdit {
-				.block.blockCover { top: 52px; }
+				.block.blockCover { top: 44px; }
 			}	
 		}
 	}

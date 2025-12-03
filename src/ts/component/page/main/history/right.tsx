@@ -215,7 +215,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 			};
 
 			if (!message.error.code) {
-				dispatcher.onObjectView(rootId, '', message.objectView);
+				dispatcher.onObjectView(rootId, '', message.objectView, false);
 				setVersion(message.version);
 				props.setVersion(message.version);
 			};
@@ -233,7 +233,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 			C.HistoryShowVersion(rootId, previousId, (message: any) => {
 				if (!message.error.code) {
-					dispatcher.onObjectView(rootId, previousId, message.objectView);
+					dispatcher.onObjectView(rootId, previousId, message.objectView, false);
 				};
 
 				renderDiff(previousId, events);
@@ -424,7 +424,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 			<div id={`item-${item.id}`} className="child">
 				<div className="info" onClick={e => loadVersion(item.id)}>
 					{icon}
-					<div className="date">{U.Date.timeWithFormat(timeFormat, item.time)}</div>
+					<div className="date">{U.Date.timeWithFormat(timeFormat, item.time, true)}</div>
 				</div>
 
 				{withChildren ? (

@@ -2,7 +2,7 @@
 
 .pageFlex { 
 	display: flex; flex-direction: row; justify-content: stretch; width: 100% !important; background-color: var(--color-shape-highlight-light-solid);
-	padding: 8px 8px 8px 0px;
+	padding: 4px 4px 4px 0px;
 }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
@@ -11,6 +11,10 @@
 	&.withSidebarRight { padding-right: 0px; }
 	&.withSidebarRight {
 		#page { border-top-right-radius: 0px; border-bottom-right-radius: 0px; }
+	}
+
+	&.withSidebarSubLeft {
+		#page { border-top-left-radius: 0px; border-bottom-left-radius: 0px; }
 	}
 
 	&.sidebarAnimation { transition-property: padding; }

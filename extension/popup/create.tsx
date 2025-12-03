@@ -191,7 +191,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const onKeyDown = (e: any) => {
 		const entry = $(entryRef.current);
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
 			const range = getRange(entry.get(0));

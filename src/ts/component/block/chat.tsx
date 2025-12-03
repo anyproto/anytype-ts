@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useCallback, useState, useLayoutEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
@@ -24,6 +24,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
 	const scrollWrapperRef = useRef(null);
@@ -33,18 +34,27 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const timeoutResize = useRef(0);
 	const top = useRef(0);
 	const scrolledItems = useRef(new Set());
-	const isLoading = useRef(false);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const frameRef = useRef(0);
-	const initialRender = useRef(true);
+	const namespace = U.Common.getEventNamespace(isPopup);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
+		if (object._empty_) {
+			return rootId;
+		};
+
 		return object.chatId || rootId;
+	};
+
+	const getAnalyticsChatId = () => {
+		const chatId = getChatId();
+		return S.Detail.get(chatId, chatId, [ 'analyticsChatId' ]).analyticsChatId;
 	};
 
 	const getSubId = () => {
@@ -54,10 +64,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const chatId = getChatId();
 	const subId = getSubId();
 	const messages = S.Chat.getList(subId);
+	const analyticsChatId = getAnalyticsChatId();
 
 	const unbind = () => {
 		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'focus' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
@@ -65,7 +76,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const rebind = () => {
 		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		unbind();
 
@@ -93,12 +104,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		C.ChatSubscribeLastMessages(chatId, 1, subId, (message: any) => {
 			if (message.state) {
-				S.Chat.setState(subId, message.state, false);
+				S.Chat.setState(subId, message.state);
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -112,31 +121,33 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		C.ChatSubscribeLastMessages(chatId, J.Constant.limit.chat.messages, subId, (message: any) => {
 			if (message.error.code) {
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 				return;
 			};
 
 			if (message.state) {
-				S.Chat.setState(subId, message.state, false);
+				S.Chat.setState(subId, message.state);
 			};
 
 			const messages = message.messages || [];
-			if (messages.length < J.Constant.limit.chat.messages) {
-				setIsLoaded(true);
+			if (!messages.length) {
+				setLoaded(true);
+				callBack?.();
+				return;
 			};
 
 			loadDepsAndReplies(messages, () => {
-				if (messages.length && clear) {
+				if (clear) {
 					S.Chat.set(subId, messages);
+				};
+
+				if (messages.length < J.Constant.limit.chat.messages) {
+					setLoaded(true);
 				} else {
 					setDummy(dummy + 1);
 				};
 
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 			});
 		});
 	};
@@ -145,7 +156,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const chatId = getChatId();
 		const subId = getSubId();
 
-		if (!chatId || isLoading.current) {
+		if (!chatId) {
 			return;
 		};
 
@@ -154,21 +165,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		isLoading.current = true;
-
 		if (clear) {
 			subscribeMessages(clear, () => {
-				isLoading.current = false;
 				setIsBottom(true);
-
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 			});
 		} else {
 			const messages = S.Chat.getList(subId);
 			if (!messages.length) {
-				isLoading.current = false;
 				return;
 			};
 
@@ -177,19 +181,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const after = dir > 0 ? messages[messages.length - 1].orderId : '';
 
 			if (!before && !after) {
-				isLoading.current = false;
 				return;
 			};
 
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
-				isLoading.current = false;
-
 				if (message.error.code) {
-					setIsLoaded(true);
-
-					if (callBack) {
-						callBack();
-					};
+					setLoaded(true);
+					callBack?.();
 					return;
 				};
 
@@ -197,7 +195,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				if (dir > 0) {
 					if (messages.length < J.Constant.limit.chat.messages) {
-						setIsLoaded(true);
+						setLoaded(true);
 						setIsBottom(true);
 						subscribeMessages(false);
 					} else {
@@ -219,9 +217,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						};
 					};
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		};
@@ -229,12 +225,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const loadMessagesByOrderId = (orderId: string, callBack?: () => void) => {
 		const chatId = getChatId();
-		const subId = getSubId();
-
 		if (!chatId) {
 			return;
 		};
 
+		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
 		let list = [];
@@ -251,10 +246,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				loadDepsAndReplies(list, () => {
 					S.Chat.set(subId, list);
-
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				});
 			});
 		});
@@ -301,9 +293,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const loadDeps = (ids: string[], callBack?: () => void) => {
 		if (!ids.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -313,18 +303,12 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			noDeps: true,
 			keys: U.Subscription.chatRelationKeys(),
 			updateDetails: true,
-		}, () => {
-			if (callBack) {
-				callBack();
-			};
-		});
+		}, callBack);
 	};
 
 	const loadReplies = (ids: string[], callBack?: () => void) => {
 		if (!ids.length) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 
@@ -336,9 +320,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				message.messages.forEach(it => S.Chat.setReply(subId, it));
 			};
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -387,14 +369,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		return sections;
 	};
 
-	const getItems = useCallback(() => {
+	const getItems = () => {
 		let items = [];
 		for (const section of sections) {
 			items.push({ key: section.key, createdAt: section.createdAt, isSection: true });
 			items = items.concat(section.list);
 		};
 		return items;
-	}, [ messages.length ]);
+	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		if (subIds.includes(getSubId())) {
@@ -443,15 +425,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 								},
 							});
 
-							analytics.event('ClickMessageMenuCopy');
+							analytics.event('ClickMessageMenuCopy', { chatId: analyticsChatId });
 							break;
 						};
 
 						case 'link': {
 							const object = S.Detail.get(rootId, rootId);
 
-							U.Object.copyLink(object, space, 'deeplink', '', `&messageOrder=${encodeURIComponent(item.orderId)}`);
-							analytics.event('ClickMessageMenuLink');
+							U.Object.copyLink(object, space, 'deeplink', '', `&messageId=${item.id}`);
+							analytics.event('ClickMessageMenuLink', { chatId: analyticsChatId });
 							break;
 						};
 
@@ -777,7 +759,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onReplyClick = (e: MouseEvent, item: any) => {
-		analytics.event('ClickScrollToReply');
+		analytics.event('ClickScrollToReply', { chatId: analyticsChatId });
 
 		const subId = getSubId();
 		const message = S.Chat.getMessageById(subId, item.replyToMessageId);
@@ -787,7 +769,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		setIsLoaded(false);
+		setLoaded(false);
 		setIsBottom(false);
 
 		C.ChatGetMessagesByIds(chatId, [ item.replyToMessageId ], (message: any) => {
@@ -809,7 +791,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
-		const l = attachments.length;
+		const length = attachments.length;
 
 		let text: string = '';
 		let attachmentText: string = '';
@@ -821,13 +803,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			text = text.replace(/\n\r?/g, ' ');
 		};
 
-		if (!l) {
+		if (!length) {
 			return { title, text, attachment: null, isMultiple: false };
 		};
 
 		const first = attachments[0];
 
-		if (l == 1) {
+		if (length == 1) {
 			attachmentText = first.name || U.Common.plural(1, translate('pluralAttachment'));
 			attachment = first;
 		} else {
@@ -842,7 +824,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				};
 			});
 
-			attachmentText = text.length ? `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})` : `${l} ${U.Common.plural(l, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
+			attachmentText = text.length ? 
+				`${U.Common.plural(length, translate(`plural${attachmentLayout}`))} (${length})` : 
+				`${length} ${U.Common.plural(length, translate(`plural${attachmentLayout}`)).toLowerCase()}`;
 		};
 
 		if (!text) {
@@ -904,45 +888,67 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const init = () => {
-		initialRender.current = true;
+		const analyticsChatId = getAnalyticsChatId();
 
+		setLoaded(false);
 		loadState(() => {
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
-			const orderId = match.params.messageOrder || state.messageOrderId;
-			const cb = () => scrollToBottom(false);
 
-			if (orderId) {
-				loadMessagesByOrderId(orderId, () => {
-					const target = S.Chat.getMessageByOrderId(subId, orderId);
+			const cb1 = (orderId: string) => {
+				if (orderId) {
+					loadMessagesByOrderId(orderId, () => {
+						const target = S.Chat.getMessageByOrderId(subId, orderId);
+						if (target) {
+							setFirstUnreadOrderId(target.orderId);
+						} else {
+							loadMessages(1, true, cb2);
+						};
+					});
+				} else {
+					loadMessages(1, true, cb2);
+				};
+			};
+			const cb2 = () => {
+				scrollToBottom(false);
+			};
 
-					if (target) {
-						setFirstUnreadOrderId(target.orderId);
+			if (match.params.messageId) {
+				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					if (message.messages.length) {
+						cb1(message.messages[0].orderId);
 					} else {
-						loadMessages(1, true, cb);
+						cb1(state.messageOrderId);
 					};
 				});
 			} else {
-				loadMessages(1, true, cb);
+				cb1(state.messageOrderId);
 			};
 		});
 
-		analytics.event('ScreenChat');
+		if (analyticsChatId) {
+			analytics.event('ScreenChat', { chatId: analyticsChatId });
+		};
 	};
 
 	const resize = () => {
 		renderDates();
 
 		const container = U.Common.getScrollContainer(isPopup);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
+		const ns = block.id + namespace;
 
 		container.off(`scroll.${ns}`);
-
 		window.clearTimeout(timeoutResize.current);
-		timeoutResize.current = window.setTimeout(() => {
-			container.on(`scroll.${ns}`, e => onScroll(e));
-		}, 50);
+		timeoutResize.current = window.setTimeout(() => container.on(`scroll.${ns}`, e => onScroll(e)), 50);
+	};
+
+	const setLoaded = (v: boolean) => {
+		setIsLoaded(v);
 	};
 
 	const sections = getSections();
@@ -967,21 +973,23 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 						<Icon className="key" />
 						<Label text={translate('blockChatEmptyItem3')} />
 					</div>
-					<div className="buttons">
-						<Button 
-							onClick={() => Action.openSpaceShare(analytics.route.chat)} 
-							text={translate('blockChatEmptyShareInviteLink')} 
-							className="c28" 
-							color="blank" 
-						/>
-					</div>
+					{(spaceview.isChat || spaceview.isOneToOne) ? (
+						<div className="buttons">
+							<Button 
+								onClick={() => Action.openSpaceShare(analytics.route.chat)} 
+								text={translate('blockChatEmptyShareInviteLink')} 
+								className="c28" 
+								color="blank" 
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
 	} else {
 		content = (
 			<div className="scroll">
-				{items.map(item => {
+				{items.map((item, i) => {
 					if (item.isSection) {
 						return <SectionDate key={item.key} date={item.createdAt} />;
 					} else {
@@ -994,6 +1002,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 								rootId={chatId}
 								blockId={block.id}
 								subId={subId}
+								analyticsChatId={analyticsChatId}
+								index={i}
 								isNew={item.orderId == firstUnreadOrderId}
 								hasMore={!!getMessageMenuOptions(item, true).length}
 								onContextMenu={e => onContextMenu(e, item)}
@@ -1012,7 +1022,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	useEffect(() => {
 		rebind();
-		init();
 
 		return () => {
 			unbind();
@@ -1023,11 +1032,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, []);
 
 	useEffect(() => {
+		rebind();
 		init();
-	}, [ space, chatId ]);
+	}, [ rootId, space, chatId, analyticsChatId ]);
 
 	useLayoutEffect(() => {
-		initialRender.current = false;
 		scrollToBottomCheck();
 	}, [ messages.length ]);
 
@@ -1064,6 +1073,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				rootId={chatId}
 				blockId={block.id}
 				subId={subId}
+				analyticsChatId={analyticsChatId}
 				onScrollToBottomClick={onScrollToBottomClick}
 				scrollToBottom={scrollToBottomCheck}
 				scrollToMessage={scrollToMessage}

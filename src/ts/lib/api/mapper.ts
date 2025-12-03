@@ -94,6 +94,7 @@ export const Mapper = {
 				networkId: obj.getNetworkid(),
 				workspaceObjectId: obj.getWorkspaceobjectid(),
 				ethereumAddress: obj.getEthereumaddress(),
+				metadataKey: obj.getMetadatakey(),
 			};
 		},
 
@@ -666,7 +667,6 @@ export const Mapper = {
 				mentions: Mapper.From.ChatStateUnreadMessages(obj.getMentions()),
 				lastStateId: obj.getLaststateid(),
 				order: obj.getOrder(),
-				lastMessageDate: 0,
 			};
 		},
 

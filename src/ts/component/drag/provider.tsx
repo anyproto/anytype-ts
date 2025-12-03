@@ -9,14 +9,9 @@ interface Props {
 	children?: React.ReactNode;
 };
 
-interface DragProviderRefProps {
-	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
-	onScroll: () => void;
-};
-
 const OFFSET = 100;
 
-const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, ref: any) => {
+const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
 	const { children } = props;
 	const nodeRef = useRef(null);
@@ -25,7 +20,6 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	const position = useRef(I.BlockPosition.None);
 	const hoverData = useRef(null);
 	const canDrop = useRef(false);
-	const top = useRef(0);
 	const frame = useRef(0);
 	const objects = useRef(null);
 	const objectData = useRef(new Map());
@@ -39,7 +33,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = $(isPopup ? '#popupPage-innerWrap' : '#root');
+		const container = $(isPopup ? '#popupPage-innerWrap' : '#dragProvider');
 
 		clearState();
 		isInitialised.current = true;
@@ -172,7 +166,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		clearState();
 	};
 
-	const onDragStart = (e: any, dropType: I.DropType, ids: string[], component: any) => {
+	const onDragStart = (e: any, dropType: I.DropType, ids: string[], component: I.DragComponentProps) => {
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
 		const selection = S.Common.getRef('selectionProvider');
@@ -191,7 +185,6 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 
 		console.log('[DragProvider].onDragStart', dropType, ids);
 
-		top.current = container.scrollTop();
 		layerRef.current.show(rootId, dropType, ids, component);
 		setClass(ids);
 		initData();
@@ -234,7 +227,8 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 		e.preventDefault();
 		e.stopPropagation();
 
-		initData();
+		isInitialised.current = false;
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		checkNodes(e, e.pageX, e.pageY);
 
 		if (!dragActive.current) {
@@ -255,8 +249,6 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	};
 
 	const onDragEnd = (e: any) => {
-		console.log('[DragProvider].onDragEnd');
-
 		const isPopup = keyboard.isPopup();
 		const node = $(nodeRef.current);
 		const container = U.Common.getScrollContainer(isPopup);
@@ -451,21 +443,24 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
-						if (!origin.current) {
-							break;
-						};
-
-						// Sort
-						const { onRecordDrop } = origin.current;
-
-						if (onRecordDrop) {
-							onRecordDrop(targetId, ids, position);
-						};
+						origin.current?.onRecordDrop?.(targetId, ids);
 						break;
 					};
 
 					case I.BlockPosition.InnerFirst: {
 						processAddRecord();
+						break;
+					};
+				};
+
+				break;
+			};
+
+			case I.DropType.View: {
+
+				switch (position) {
+					case I.BlockPosition.InnerFirst: {
+						origin.current?.onViewDrop?.(targetId, ids);
 						break;
 					};
 				};
@@ -527,11 +522,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 			return;
 		};
 
-		for (const [ key, value ] of objectData.current) {
-			const { left, top } = value.obj.offset();
-
-			objectData.current.set(key, { ...value, x: left, y: top });
-		};
+		initData();
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
@@ -690,6 +681,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 					};
 				};
 
+				// You can only drop inside of views
+				if (hd.dropType == I.DropType.View) {
+					setPosition(I.BlockPosition.InnerFirst);
+				};
+
 				if (isTargetTop || (hd.id == 'blockLast')) {
 					setPosition(I.BlockPosition.Top);
 				};
@@ -701,6 +697,11 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 				if (isEmptyToggle) {
 					setPosition(I.BlockPosition.InnerFirst);
 				};
+			};
+
+			// You can only drop records into views
+			if ((hd.dropType == I.DropType.View) && (dropType != I.DropType.Record)) {
+				setPosition(I.BlockPosition.None);
 			};
 
 			if ((dropType == I.DropType.Record) && (hd.dropType == I.DropType.Record) && !canDropMiddle) {
@@ -811,7 +812,7 @@ const DragProvider = observer(forwardRef<DragProviderRefProps, Props>((props, re
 	};
 
 	const unbind = () => {
-		$(window).off('drag.drag dragend.drag');
+		$(window).off('dragend.drag');
 	};
 
 	useEffect(() => {

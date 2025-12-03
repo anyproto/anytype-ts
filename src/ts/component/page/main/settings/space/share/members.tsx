@@ -4,15 +4,11 @@ import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import { I, C, S, U, translate, Action, analytics, } from 'Lib';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 
-interface Props extends I.PageSettingsComponent {
-	onStopSharing: () => void;
-};
-
 const HEIGHT = 64;
 
-const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
+const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { isPopup, onStopSharing } = props;
+	const { isPopup } = props;
 	const { space } = S.Common;
 	const { membership } = S.Auth;
 	const tier = U.Data.getMembershipTier(membership.tier);
@@ -80,7 +76,7 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
 		items.push({ id: 'remove', name: removeLabel, color: 'red' });
 
-		return U.Menu.prepareForSelect(items);
+		return items;
 	};
 
 	const onPermissionsSelect = (item: any, isNew?: boolean) => {
@@ -103,25 +99,14 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 
 		switch (v) {
 			case 'remove': {
-				const cb = () => {
-					const my = U.Space.getParticipant();
-					const members = getParticipantList().filter(it => it.id != my.id);
-
-					if (!members.length) {
-						onStopSharing();
-						return;
-					};
-				};
-
 				title = translate('popupConfirmMemberRemoveTitle');
 				text = U.Common.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
 				button = translate('commonRemove');
-
 				onConfirm = () => {
 					if (isNew) {
-						C.SpaceRequestDecline(space, item.identity, cb);
+						C.SpaceRequestDecline(space, item.identity);
 					} else {
-						C.SpaceParticipantRemove(space, [ item.identity ], cb);
+						C.SpaceParticipantRemove(space, [ item.identity ]);
 					};
 
 					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');
@@ -179,40 +164,42 @@ const Members = observer(forwardRef<I.PageRef, Props>((props, ref) => {
 	};
 
 	const Member = (item: any) => {
-		const isCurrent = item.id == participant?.id;
-		const isNew = item.isJoining;
+		const { style, id, permissions, status, isActive, isDeclined, isRemoved, isJoining, globalName } = item;
+		const isCurrent = id == participant?.id;
 
 		let button = null;
 
 		if (isOwner) {
 			if (isCurrent) {
-				button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
+				button = <Label text={translate(`participantPermissions${permissions}`)} />;
 			} else {
-				const placeholder = isNew ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
+				const placeholder = isJoining ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
 
 				button = (
-					<div id={`item-${item.id}-select`} className="select" onClick={() => onPermissionsSelect(item, isNew)}>
+					<div id={`item-${id}-select`} className="select" onClick={() => onPermissionsSelect(item, isJoining)}>
 						<div className="item">
 							<div className="name">{placeholder}</div>
 						</div>
-						<Icon className={[ 'arrow', isNew ? 'light' : 'dark' ].join(' ')} />
+						<Icon className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} />
 					</div>
 				);
 			};
 		} else
-		if (item.isActive) {
-			button = <Label color="grey" text={translate(`participantPermissions${item.permissions}`)} />;
+		if (isActive) {
+			button = <Label color="grey" text={translate(`participantPermissions${permissions}`)} />;
 		} else
-		if (item.isDeclined || item.isRemoved) {
-			button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
+		if (isDeclined || isRemoved) {
+			button = <Label color="red" text={translate(`participantStatus${status}`)} />;
 		};
 
 		return (
-			<div id={`item-${item.id}`} className={[ 'row', isNew ? 'isNew' : '' ].join(' ')} style={item.style} >
+			<div id={`item-${id}`} className={[ 'row', isJoining ? 'isNew' : '' ].join(' ')} style={style} >
 				<div className="side left" onClick={() => U.Object.openConfig(item)}>
 					<IconObject size={48} object={item} />
-					<ObjectName object={item} />
-					{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
+					<div className="text">
+						<ObjectName object={item} withPronoun={item.id == participant.id} withBadge={true} />
+						{globalName ? <Label className="anyId" text={globalName} /> : ''}
+					</div>
 				</div>
 				<div className="side right">
 					{button}

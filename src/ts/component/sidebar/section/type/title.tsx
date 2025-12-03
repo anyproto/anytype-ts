@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } f
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Label } from 'Component';
 import { J, analytics, I, keyboard, translate } from 'Lib';
+import { range } from 'lodash';
 
 const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 	
@@ -30,7 +31,7 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 		nameRef.current?.placeholderCheck();
 		valueRef.current = text;
 
-		if (!rangeRef.current && (id == 'title') && object.id) {
+		if (!rangeRef.current && (id == 'title')) {
 			const l = text.length;
 
 			rangeRef.current = { from: l, to: l };
@@ -75,7 +76,6 @@ const SidebarSectionTypeTitle = observer(forwardRef<I.SidebarSectionRef, I.Sideb
 	};
 
 	const onBlur = () => {
-		rangeRef.current = null;
 		onChangeHandler();
 	};
 

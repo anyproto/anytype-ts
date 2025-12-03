@@ -48,7 +48,7 @@ export default {
 		'typeSuggest'
 	],
 	object: [ 'select', 'searchObject' ],
-	objectContext: [ 'typeSuggest', 'searchObject' ],
+	objectContext: [ 'typeSuggest', 'searchObject', 'select', 'chatCreate' ],
 	index: [ 'searchObject' ],
 	relationEdit: [
 		'select',

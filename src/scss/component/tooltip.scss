@@ -9,6 +9,7 @@
 .tooltip.anim { transition-duration: 0.25s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
 .tooltip {
+	.title { @include text-common; font-weight: 500;  }
 	.txt { line-height: inherit; list-style-position: inside; }
 	.txt:empty { display: none; }
 	.caption { color: var(--color-text-secondary); }
@@ -19,7 +20,6 @@
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px;
 }
 .tooltip.big {
-	.title { @include text-common; font-weight: 500;  }
 	.txt { @include text-small; margin: 2px 0px 0px 0px; }
 }
 

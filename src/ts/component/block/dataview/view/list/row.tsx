@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import $ from 'jquery';
+import { motion, AnimatePresence } from 'motion/react';
 import { observer } from 'mobx-react';
 import { I, S, U, keyboard, Relation } from 'Lib';
 import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
@@ -145,24 +146,18 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	let content = (
 		<div className="sides">
 			<div
-				style={{ width: `${30 + left.length * 10}%` }}
-				className={[ 'side', 'left', (left.length > 1 ? 's50' : '') ].join(' ')}
+				style={{ width: `${50 + left.length * 10}%` }}
+				className={[ 'side', 'left', (left.length > 1 ? 's60' : '') ].join(' ')}
 			>
 				{left.map(mapper)}
 			</div>
-			{right.map(mapper)}
+			<div className="side right">
+				{right.map(mapper)}
+			</div>
 		</div>
 	);
 
 	if (!isInline) {
-		content = (
-			<SelectionTarget id={record.id} type={I.SelectType.Record}>
-				{content}
-			</SelectionTarget>
-		);
-	};
-
-	if (isCollection && !isInline) {
 		content = (
 			<>
 				<Icon
@@ -174,7 +169,9 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 					onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 				/>
 				<DropTarget {...props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-					{content}
+					<SelectionTarget id={record.id} type={I.SelectType.Record}>
+						{content}
+					</SelectionTarget>
 				</DropTarget>
 			</>
 		);
@@ -187,16 +184,21 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
-			id={`record-${record.id}`}
-			ref={nodeRef} 
-			className={cn.join(' ')} 
-			style={style}
-			onClick={e => onClick(e)}
-			onContextMenu={e => onContext(e, record.id)}
-		>
-			{content}
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				id={`record-${record.id}`}
+				ref={nodeRef} 
+				className={cn.join(' ')}
+				style={style}
+				onClick={e => onClick(e)}
+				onContextMenu={e => onContext(e, record.id)}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				{content}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

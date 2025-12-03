@@ -27,13 +27,296 @@ export default () => {
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 		//{ type: I.BlockType.IconPage, icon: '👋' },
 
+		title(`Talk One-on-One`),
+		h4(`<span>Release 0.52.0</span><span>December 4, 2025</span>`),
+		text(''),
+		text('Direct Channels are here – the missing piece of the chatting puzzle. You can now communicate with someone directly. As simple as that.'),
+		text('And because we never ship just one thing, this release comes packed with usability upgrades across the app.'),
+		img(`52/1.png`),
+		text(''),
+
+		h1(`Direct Channels`),
+		text('Sometimes you just need to talk to one person. Privately.'),
+		text('Direct Channel is a one-on-one connection between two members, where both participants have equal access: no admin, no hierarchy. Just a place for quick check-ins, sharing an object, or whispering memes in the middle of a project. It’s simple, it’s lightweight, and it just works.'),
+		img(`52/2.png`),
+		text(``),
+
+		h2(`Quality of Life Improvements`),
+		text(``),
+
+		text(`<b>Vault Stripe View</b>`),
+		text(`The Vault now supports a more compact, icon-only mode. Drag the edge of the Vault area to adjust its width: once it becomes narrow enough, the view switches to an icon-only layout, giving you more room for your content.`),
+		img(`52/3.png`),
+		text(``),
+
+		text(`<b>Manage Widget Sections</b>`),
+		text(`Find "Customize Sidebar" in the Channel context menu or hover over the three-dots menus next to Widget sections. From there, you can reorder & hide the <i>Pinned</i>, <i>Recently edited</i>, and <i>Objects</i> sections. `),
+		text(`For <i>Recently edited</i>, you can also choose whether it shows changes made by any member or only by you.`),
+		text(``),
+
+		text(`<b>Dragging Objects Between Views</b>`),
+		text(`You can now drag an Object between views inside the same Query or Collection. When you drop it into another view, its properties update to match that view’s filters, just like when you create a new Object directly in that view. `),
+		text(``),
+
+		text(`<b>Magnetic Stops for Resizing Images</b>`),
+		text(`Resizing multiple images on a page is now easier and more precise. When you resize images, the width handle snaps to visual "magnetic" stops so you can quickly align them to the same size.`),
+		text(``),
+
+		text(`<b>Loading State for File Blocks in Editor</b>`),
+		text(`File and Image blocks now show a clear loading state instead of appearing as empty blocks. When you open a Space that contains many media-heavy blocks, you’ll see that files are still loading.`),
+		text(``),
+
+		text(`<b>Bandcamp Integration</b>`),
+		text(`Added support for embedding the Bandcamp player as a block in the Editor. Many thanks to @${link('https://github.com/anyproto/anytype-ts/pull/1757', 'imrehg')} for the contribution!`),
+		text(``),
+
+		text(`<b>Apple Music Integration</b>`),
+		text(`Added support for embedding the Apple Music player as a block in the Editor. Many thanks to @${link('https://github.com/anyproto/anytype-ts/pull/1791', 'jhoffi')} for the contribution!`),
+		text(``),
+
+		text(`<b>Delete/Leave Space from Vault</b>`),
+		text(`The "Delete Space" and "Leave Space" actions are now available directly from the Vault context menu. Right-click a Space or Chat icon to access them.`),
+		text(``),
+
+		h2(`Bug Fixes`),
+		text(``),
+
+		text(`<b>Chat & Messaging</b>`),
+		bullet(`Opening an object from chat now follows the "Open objects in fullscreen" account setting.`),
+		bullet(`After opening a file from a chat link, both the mouse back button and the UI back control reliably return to the chat.`),
+		bullet(`Selecting text inside an attached object in a chat no longer opens an object unintentionally.`),
+		bullet(`Clicking "Play" in a video preview automatically starts the video upon opening in full screen.`),
+		bullet(`Wide images keep their layout when editing a message.`),
+		text(``),
+
+		text(`<b>Editor & Blocks</b>`),
+		bullet(`Adding a new line above or below an embed block no longer causes the embed to flicker or the page to jump. Thanks to @${link('https://community.anytype.io/t/29052', 'Cephalo')}!`),
+		bullet(`Inserting Unicode or emoji separators between links no longer appends an extra letter to the following link. Thanks to @${link('https://community.anytype.io/t/28863', 'cicko')}!`),
+		text(``),
+
+
+		text(`<b>Widget Sidebar</b>`),
+		bullet(`Newly created Types and their Objects now appear immediately in the Objects Widget without requiring an app restart. Thanks to @${link('https://community.anytype.io/t/29519', 'Hexara')}!`),
+		bullet(`Fixed a visual bug where Widget header buttons could blink during animations.`),
+		text(``),
+
+
+		text(`<b>Objects & Views</b>`),
+		bullet(`In zoomed-out Graph views, Object hover popups now appear directly at the cursor and no longer get stuck at the left edge of the screen. Thanks to @${link('https://community.anytype.io/t/29388', 'Code-Jack')}!`),
+		bullet(`Fixed an issue where opening a Collection from Graph in a modal and expanding it to full window could remove the New button and break view layout switching. Thanks to @${link('https://community.anytype.io/t/29417', 'Code-Jack')}!`),
+		bullet(`Mentioned-object previews now close as soon as the cursor leaves the mention’s actual bounds. Thanks to @${link('https://community.anytype.io/t/29378', 'sandyeggo')}!`),
+		bullet(`Fixed inconsistent drag-and-drop behaviour in Kanban.`),
+		text(``),
+
+
+		text(`<b>Miscellaneous</b>`),
+		bullet(`Editing a Type correctly displays and pre-fills the current Type name and title.`),
+		bullet(`The Published Date column on My Sites now fully displays long date formats without truncation.`),
+		bullet(`Clicking a Space invite link when you’re already a member now jumps straight into that Space.`),
+		text(``),
+
+
+
+		div(),
+		// --------------------------------------------//
+
+		title(`Space Multi-Chats & Navigation`),
+		h4(`<span>Release 0.51.0</span><span>November 24, 2025</span>`),
+		text(''),
+		text('Chats now live as native Objects in your Spaces, so you can spin up topic-based threads and link them directly to your work. Navigation across channels is now lighter and more consistent.'),
+		text(''),
+
+		callout(`Starting with the next release, we’ll be ending support for <b>macOS Big Sur</b>. This change follows Electron’s decision to ${link('https://www.electronjs.org/blog/electron-38-0', 'drop Big Sur support')}.`, '🏔️'),
+		text(``),
+
+		h1(`Multi-Chats in your Space`),
+		text('Space Channels now hold more than one conversation at a time. Start topic-specific chats right where your work happens – discussions now live alongside your notes, tasks, and documentation as part of your knowledge graph.'),
+		img(`51/1.png`),
+		text(``),
+
+		text(`<b>Chat as an Object Type</b>`),
+		text(`Chats are now native Objects in your Space. You can organize them into different views, assign tags to group related conversations, include them in Collections or Queries, and @-mention them from any Object for cross-referencing. As a system Type, Chat doesn’t support templates or layout changes.`),
+		img(`51/2.png`),
+		text(``),
+
+		text(`<b>Widget Behaviour</b>`),
+		text(`The Chats Type Widget works like any other widget: you can pin it to your Sidebar, adjust its appearance by choosing how many chats to show, and pin individual chats for quicker access. `),
+		text(`Unlike other Widgets, pinned chats display counters and mention indicators directly in the Sidebar. A temporary <i>Unread</i> section also appears automatically when new messages arrive, listing chats with unread content.`),
+		img(`51/3.png`),
+		text(``),
+
+		text(`<b>Per-Chat Notifications</b>`),
+		text(`Right-click any Chat Object, or use the three-dots menu inside a chat window to open preferences and choose <i>Enable all</i>, <i>Mentions only</i>, or <i>Disable all</i>.`),
+		img(`51/4.png`),
+		text(``),
+
+		h1(`Updated Navigation`),
+		text('We’ve reworked the navigation layout for a more consistent way to move through your Channels.'),
+		text(``),
+
+		text(`<b>Unified Sidebar</b>`),
+		text(`Both Space and Chat Channels now share a consistent left-side navigation. You can resize or collapse the Widget Sidebar to fit your workflow.`),
+		img(`51/5.png`),
+		text(``),
+
+		text(`<b>Recently Opened</b>`),
+		text(`Look for the <b>clock icon</b> at the top of your Widget Sidebar to open the history of recently viewed Objects.`),
+		img(`51/6.png`),
+		text(``),
+
+		text(`<b>Recently Edited</b>`),
+		text(`In order to provide quick access to Objects you or your team have recently created or updated, we’ve introduced a new Recently Edited section. Support for personalizing the Widget Sidebar, such as hiding section you don’t need, is coming soon.`),
+		img(`51/7.png`),
+		text(``),
+
+		text(`<b>Objects Widget</b>`),
+		text(`The Objects section, which brings together all objects of a given Type, has been reworked into a single, unified view for more compact organization. Only Types with existing objects are shown – when you create a new object of a Type, it automatically appears in the section.`),
+		img(`51/8.png`),
+		text(``),
+
+		text(`<b>Compact Vault Layout</b>`),
+		text(`The Vault now takes up less space, leaving more room for your work. Choose between a simple list or a view with message previews in your Settings, and swipe it away when you need more focus.`),
+		text(`We’re already working on a future iteration that will support an icon-only Vault view for an even more minimal navigation experience.`),
+		img(`51/9.png`),
+		text(``),
+
+		text(`<b>Channel Context Menu</b>`),
+		text(`The Context Menu has been updated and now surfaces key actions when the Vault is hidden. Alongside Channel Settings, it includes Pin and Mute options, Copy an Invite Link, and – importantly – access to the <b>Bin</b>.`),
+		text(``),
+
+		h2(`Quality of Life Improvements`),
+		text(``),
+
+		text(`<b>Manual Sorting in Queries</b>`),
+		text(`You can now manually reorder Objects in Queries. The chosen order persists per View, giving you more control over how your lists are organized.`),
+		text(``),
+
+		text(`<b>ExcaliDraw</b>`),
+		text(`Added support for embedding the Excalidraw editor as a block – finally bringing quick diagramming into your notes and documents.`),
+		text(``),
+
+		text(`<b>Smart Typing</b>`),
+		text(`Added support for more symbol patterns – for example, typing ${hl('!=')} now converts to ${hl('≠')} and ${hl('~=')} to ${hl('≈')}, alongside existing arrows, comparison, and operator shortcuts. Thanks to @${link('https://github.com/anyproto/anytype-ts/issues/1110', 'larsb24')} for the contribution!`),
+		text(``),
+
+		text(`<b>Send Message Preference</b>`),
+		text(`Choose your preferred way to send messages: ${hl('Enter')} or ${hl('Cmd + Enter')}.`),
+		text(``),
+
+		text(`<b>Copy Message with Formatting</b>`),
+		text(`Keep text styles intact when copying Chat messages.`),
+		text(``),
+
+		text(`<b>Zoom in the Image in Preview Window</b>`),
+		text(`You can now zoom into images in the preview window for a closer look.`),
+		text(``),
+
+		h2(`Bug Fixes`),
+		text(``),
+
+		text(`<b>Queries & Views</b>`),
+		bullet(`Gallery cards with covers no longer "jump" briefly when opening Queries in Gallery layout. Thanks to @${link('https://community.anytype.io/t/29270', 'VisualNotes')}!`),
+		bullet(`In Kanban/Gallery cover settings, hovering "None" now shows the correct hover state. Thanks to @${link('https://community.anytype.io/t/29148', 'Exodes')}!`),
+		bullet(`Calendar view in Queries set from a Date property now places objects according to that property.`),
+		bullet(`Property headers in Grid view remain visible while scrolling large results in Query. Thanks to @${link('https://community.anytype.io/t/28928', 'Chrispy163')}!`),
+		bullet(`Kanban sorting updates automatically when adding a new Object.`),
+		bullet(`Fixed an error when selecting or creating a Status property option in Query.`),
+		bullet(`Fixed misalignment of Inline Query background color with cards in Gallery view. Thanks to @${link('https://community.anytype.io/t/28798', 'zma17')}!`),
+		bullet(`Creating an Object in Kanban view within a Query grouped by a property now correctly assigns that property to the new Object.`),
+		bullet(`Creating a Task in Kanban view within Inline Query no longer spawns duplicate entries. Thanks to @${link('https://community.anytype.io/t/28786', 'juhis')}!`),
+		bullet(`Property menus within Query views remain fully visible when the right sidebar is open. Thanks to @${link('https://community.anytype.io/t/28945', 'krst')}!`),
+		bullet(`"Select source" menu in Inline Query opens at the correct position.`),
+		text(``),
+
+		text(`<b>Vault & Widget Sidebar</b>`),
+		bullet(`The last Channel in the Vault is no longer hidden by the gradient. Thanks to @${link('https://community.anytype.io/t/28787', 'Shampra')}!`),
+		bullet(`Widget no longer changes height when switching to Kanban/Calendar layout from Compact/List.`),
+		bullet(`Kanban view in Object Type widgets now loads correctly after reload. Thanks to @${link('https://community.anytype.io/t/29040', 'siousu')}!`),
+		bullet(`Widgets set to "Same as in object view" keep their state when switching Spaces. Thanks to @${link('https://community.anytype.io/t/29332', 'dzlg')}!`),
+		text(``),
+
+		text(`<b>Editor & Blocks</b>`),
+		bullet(`${hl('Ctrl+X')} no longer moves the cursor to the previous block. Thanks to @${link('https://community.anytype.io/t/23170', 'Anani')}!`),
+		bullet(`Adding "New Property" block from the slash menu inserts the block reliably.`),
+		bullet(`Hovering "Add File" or "Add Link to Object" in the slash menu shows the correct sub-menu.`),
+		bullet(`Code blocks: single ${hl('$')}, quotes, brackets, and backticks place the caret correctly and ${hl('[')} now auto-closes.`),
+		bullet(`Korean IME input in code blocks preserves all composed characters. Thanks to @${link('https://community.anytype.io/t/28680', 'geesecross')}!`),
+		bullet(`Two-column layouts (text/image): hover no longer triggers unnecessary scrollbars or column shifts. Thanks to @${link('https://community.anytype.io/t/28889', 'VisualNotes')}!`),
+		bullet(`Simple Table color picker shows the true active background color. Thanks to @${link('https://community.anytype.io/t/28856', 'Code-Jack')}!`),
+		bullet(`Selecting a row in a Simple Table no longer blanks the screen. Thanks to @${link('https://community.anytype.io/t/29222', 'Shampra')}!`),
+		bullet(`Fixed a performance issue where documents with complex inline LaTeX caused the app to freeze.`),
+		text(``),
+
+		text(`<b>Chat & Messaging</b>`),
+		bullet(`Pasting styled text in Chat no longer shifts the surrounding text style or caret position.`),
+		bullet(`Mentions after long messages with a preceding line-break open the mention menu reliably.`),
+		bullet(`Mentions no longer jump when toggling Show more/Show less in Chat.`),
+		bullet(`Opening oversized files from a shared Space message no longer throws an error.`),
+		bullet(`"Add reaction" option is hidden when a message already has the maximum number of emoji.`),
+		bullet(`Fixed the width limitation for attachments in messages.`),
+		text(``),
+
+		text(`<b>Table of Contents</b>`),
+		bullet(`The control is now hidden when its sidebar is open to avoid displaying a duplicate ToC. Thanks to @${link('https://community.anytype.io/t/double-display-of-table-of-contents/29074', 'VisualNotes')}!`),
+		bullet(`ToC control icons in a modal window render at the correct horizontal position. Thanks to @${link('https://community.anytype.io/t/29124', 'VisualNotes')}!`),
+		bullet(`ToC sidebar’s close button works correctly. Thanks to @${link('https://community.anytype.io/t/29120', 'VisualNotes')}!`),
+		bullet(`ToC control icons repositions correctly when window width changes after closing a popup.`),
+		text(``),
+
+		text(`<b>Modal Window Mode</b>`),
+		bullet(`Context menu in a modal window opens next to the Editor. Thanks to @${link('https://community.anytype.io/t/29234', 'VisualNotes')}!`),
+		bullet(`Editor reliability restored after reopening an Object in a modal window: cut/paste/delete text continue to work as expected. Thanks to @${link('https://community.anytype.io/t/29280', 'VisualNotes')}!`),
+		bullet(`Local search in a modal window now correctly scrolls to the first match within an Object. Thanks to @${link('https://community.anytype.io/t/28075', 'Code-Jack')}!`),
+		bullet(`App window can be dragged while an Object is open in a modal. Thanks to @${link('https://community.anytype.io/t/29053', 'Sean-lee')}!`),
+		bullet(`Kanban view opened in a modal window no longer shows "Untitled" Objects. Thanks to @${link('https://community.anytype.io/t/28935', 'siousu')}!`),
+		bullet(`Content under a modal window expands correctly when resizing.`),
+		text(``),
+
+		text(`<b>Create & Edit Type</b>`),
+		bullet(`Creating a new Type no longer shows an incorrect placeholder text.`),
+		bullet(`Edit Type sidebar opens the correct type context after closing and opening another Object in a modal window.`),
+		bullet(`Changing an Object’s layout (e.g., from Profile to Action) in Edit Type applies correctly.`),
+		bullet(`Editing the plural name in Edit Type no longer moves the cursor back to the singular field. Thanks to @${link('https://community.anytype.io/t/29214', 'VisualNotes')}!`),
+		bullet(`Opening the Template’s menu works as expected.`),
+		text(``),
+
+		text(`<b>PDF Export</b>`),
+		bullet(`Fixed an issue where PDF export got stuck in preview mode after a file write error. Thanks to @${link('https://community.anytype.io/t/28737', 'Hexara')}!`),
+		bullet(`Printing/exporting pages with embedded PDFs now scales/centers the PDF block correctly. Thanks to @${link('https://community.anytype.io/t/28561', 'Loriand')}!`),
+		bullet(`Export to PDF includes all pages and removes stray scrollbar imagery. Thanks to @${link('https://community.anytype.io/t/28941', 'epdaei')}!`),
+		text(``),
+
+		text(`<b>Navigation & Window Management</b>`),
+		bullet(`Fixed navigation for a specific Type page so ${hl('Back')}/${hl('Forward')} work consistently. Thanks to @${link('https://community.anytype.io/t/28859', 'Hexara')}!`),
+		bullet(`Dragging to open the Property panel no longer results in an empty state.`),
+		bullet(`Right sidebar preserves its height when the app window is resized.`),
+		bullet(`"Show/Hide Menu Bar" shortcut on Windows now toggles this option in App Settings consistently.`),
+		text(``),
+
+		text(`<b>Search</b>`),
+		bullet(`Deleting an Object immediately removes it from Global Search results.`),
+		bullet(`When creating a new Object from a Widget’s Search (New), it immediately appears in results.`),
+		text(``),
+
+		text(`<b>Permissions & Access</b>`),
+		bullet(`Clicking between "Editor" and "Remove" no longer triggers "Viewer" when changing Members Access.`),
+		bullet(`"Join by invite link" field focuses correctly on pasted text.`),
+		bullet(`Join requests are hidden for non-owners of a Channel.`),
+		text(``),
+
+		text(`<b>Miscellaneous</b>`),
+		bullet(`Windows app icon is now crisp and correctly sized in Start menu and Taskbar. Thanks to @${link('https://community.anytype.io/t/29138', 'j17')}!`),
+		bullet(`Links to deleted Bookmarks are marked as "Deleted" upon returning to the page that contained them. Thanks to @${link('https://community.anytype.io/t/28932', 'cicko')}!`),
+		text(``),
+
+		div(),
+		// --------------------------------------------//
+
 		title(`Now We're Talking!`),
 		h4(`<span>Release 0.50.0</span><span>October 1, 2025</span>`),
 		text(''),
 		text('We’ve always built Anytype around private, peer-to-peer collaboration. Spaces gave you a structured home for your notes, docs and databases. Now we’re taking the next step: introducing Chats, a new way to connect and collaborate while keeping your data fully in your hands.'),
 		text(``),
-
-		//video('50/1.mp4', 'c70 screen'),
 
 		h1(`Welcome to Chat`),
 		text(`Chat is a new type of channel in Anytype, designed for fast, conversational flow. It gives you the familiar rhythm of chatting – replying, reacting, sharing files – but with a powerful twist: you can create and edit objects together in real time.`),

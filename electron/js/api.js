@@ -22,27 +22,25 @@ class Api {
 	token = '';
 	isPinChecked = false;
 
-	appOnLoad (win) {
+	getInitData (win) {
 		const cssPath = path.join(Util.userPath(), 'custom.css');
+		const route = win.route || '';
+		const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
 
-		let css = '';
-		if (fs.existsSync(cssPath)) {
-			css = fs.readFileSync(cssPath, 'utf8');
-		};
+		win.route = '';
 
-		Util.send(win, 'init', {
+		return {
 			id: win.id,
 			dataPath: Util.dataPath(),
 			config: ConfigManager.config,
 			isDark: Util.isDarkTheme(),
 			isChild: win.isChild,
-			route: win.route,
+			route,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
 			token: this.token,
-		});
-		win.route = '';
+		};
 	};
 
 	logout (win) {
@@ -64,10 +62,7 @@ class Api {
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
-
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -356,6 +351,10 @@ class Api {
 
 	close (win) {
 		win.close();
+	};
+
+	toggleFullScreen (win) {
+		win.setFullScreen(!win.isFullScreen());
 	};
 
 };

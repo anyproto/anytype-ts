@@ -9,6 +9,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
 	const headerRef = useRef(null);
@@ -53,52 +54,41 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	};
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
-		close();
 		idRef.current = rootId;
 		setIsDeleted(false);
 		setIsLoading(true);
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
 			if (checkDeleted()) {
 				return;
 			};
 
-			headRef.current?.forceUpdate();
+			const object = S.Detail.get(rootId, rootId, []);
+
+			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			controlsRef.current?.forceUpdate();
+			S.Common.setRightSidebarState(isPopup, { rootId });
+			setDummy(dummy + 1);
 
-			sidebar.rightPanelSetState(isPopup, { rootId });
 			resize();
 
 			if (U.Object.isTypeLayout(object.layout)) {
 				window.setTimeout(() => Onboarding.start('typeResetLayout', isPopup), 50);
-
 				analytics.event('ScreenType', { objectType: object.id });
 			};
 		});
 	};
 
 	const close = () => {
-		if (!idRef.current) {
-			return;
-		};
-
-		const close = !isPopup || (rootId == idRef.current);
-
-		if (close) {
-			Action.pageClose(idRef.current, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const onScroll = () => {
@@ -117,18 +107,17 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
-		const ref = blockRefs[J.Constant.blockId.dataview];
+		const ref = blockRefs.current[J.Constant.blockId.dataview];
+		const { ww, wh } = U.Common.getWindowDimensions();
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			$(controlsRef.current).find('.filter .icon.search').trigger('click');
+			$(nodeRef.current).find('#dataviewControls .filter .icon.search').trigger('click');
 		});
 
 		keyboard.shortcut('createObject', e, () => {
 			e.preventDefault();
-
-			const { ww, wh } = U.Common.getWindowDimensions();
 
 			ref?.ref?.onRecordAdd(e, -1, '', {
 				horizontal: I.MenuDirection.Center,
@@ -259,10 +248,13 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	}, []);
 
 	useEffect(() => {
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
+
 		resize();
-		checkDeleted();
-	});
+	}, [ rootId ]);
 
 	useImperativeHandle(ref, () => ({
 		resize,
@@ -272,7 +264,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		<div ref={nodeRef}>
 			<Header 
 				{...props} 
-				component="mainObject" 
+				component={U.Common.settingsHeader(isPopup, 'mainObject')} 
 				ref={headerRef} 
 				rootId={rootId} 
 			/>

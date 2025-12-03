@@ -8,7 +8,8 @@ import SidebarLayoutPreview from 'Component/sidebar/preview';
 
 const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 	
-	const { rootId, details = {}, isPopup, page, previous, noPreview } = props;
+	const { rootId, isPopup, page, previous, noPreview } = props;
+	const { space } = S.Common;
 	const buttonSaveRef = useRef(null);
 	const previewRef = useRef(null);
 	const sectionRefs = useRef(new Map());
@@ -44,7 +45,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const getType = () => {
-		const type = S.Record.getTypeById(props.rootId);
+		const type = S.Record.getTypeById(rootId);
 		if (!type) {
 			return null;
 		};
@@ -146,8 +147,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const onSave = () => {
-		const { space } = S.Common;
-		const { rootId, isPopup, previous } = props;
 		const details: any = props.details || {};
 		const type = S.Record.getTypeType();
 
@@ -173,7 +172,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 				});
 
 				if (previous && previous.page) {
-					sidebar.rightPanelSetState(isPopup, previous);
+					S.Common.setRightSidebarState(isPopup, previous);
 				} else {
 					close();
 				};
@@ -204,7 +203,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		restore();
 
 		if (previous && previous.page) {
-			sidebar.rightPanelSetState(isPopup, previous);
+			S.Common.setRightSidebarState(isPopup, previous);
 		} else {
 			close();
 		};
@@ -261,12 +260,13 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	useEffect(() => {
 		init();
-	}, [ rootId, details ]);
+	}, [ rootId ]);
 
 	return (
 		<>
 			<div id="head" className="head">
-				<div className="side left">
+				<div className="side left" />
+				<div className="side center">
 					<Label text={translate('sidebarTypeTitle')} />
 				</div>
 
@@ -280,7 +280,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 					<Button 
 						ref={buttonSaveRef} 
-						text={type ? translate('commonSave') : translate('commonApply')}
+						text={type ? translate('commonSave') : translate('commonCreate')}
 						className="c28 disabled"
 						onClick={onSave}
 					/>

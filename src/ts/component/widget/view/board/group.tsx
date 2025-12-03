@@ -53,8 +53,6 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 				keys: J.Relation.sidebar,
 				sources: object.setOf || [],
 				limit,
-				ignoreHidden: true,
-				ignoreDeleted: true,
 				collectionId: (isCollection ? object.id : ''),
 			}, () => {
 				S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
@@ -156,7 +154,7 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 	});
 
 	return (
-		<div 
+		<div
 			ref={nodeRef} 
 			className="group"
 		>

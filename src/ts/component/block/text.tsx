@@ -249,6 +249,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	componentWillUnmount(): void {
+		const { block } = this.props;
+		const { focused } = focus.state;
+
 		S.Common.clearTimeout('blockContext');
 		window.clearTimeout(this.timeoutFilter);
 		window.clearTimeout(this.timeoutClick);
@@ -256,6 +259,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (this.frame) {
 			raf.cancel(this.frame);
 			this.frame = 0;
+		};
+
+		if (focused == block.id) {
+			focus.clear(true);
 		};
 	};
 
@@ -480,10 +487,28 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			let pd = true;
+			// Handle enter manually in the code blocks to keep caret and new lines in sync
 			if (block.isTextCode() && (pressed == 'enter')) {
-				pd = false;
+				e.preventDefault();
+
+				const insert = '\n';
+				const caret = range.from + insert.length;
+				const newValue = U.Common.stringInsert(value, insert, range.from, range.to);
+
+				U.Data.blockSetText(rootId, block.id, newValue, this.marks, true, () => {
+					const caretRange = { from: caret, to: caret };
+					
+					focus.set(block.id, caretRange);
+					focus.apply();
+
+					onKeyDown(e, newValue, this.marks, caretRange, this.props);
+				});
+
+				ret = true;
+				return;
 			};
+
+			let pd = true;
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
 				pd = false;
 			};
@@ -903,6 +928,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					marks: this.marks,
 					skipIds: [ rootId ],
 					canAdd: true,
+					withCaption: true,
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						if (S.Menu.isAnimating('blockMention')) {
 							return;
@@ -979,9 +1005,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		if ((this.text === value) && !update) {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 			return;
 		};
 

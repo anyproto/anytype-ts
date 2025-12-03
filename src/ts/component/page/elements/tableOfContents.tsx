@@ -19,6 +19,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 	const containerWidth = useRef(0);
 	const containerHeight = useRef(0);
 	const ns = `tableOfContents${U.Common.getEventNamespace(isPopup)}`;
+	const rightSidebar = S.Common.getRightSidebarState(isPopup);
+	const isOpen = rightSidebar.page == 'object/tableOfContents';
 
 	const rebind = () => {
 		unbind();
@@ -42,9 +44,8 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		blockRef.current = id;
 		S.Menu.updateData('tableOfContents', { blockId: id });
 
-		const rightSidebar = S.Common.getRightSidebarState(isPopup);
-		if (rightSidebar.page == 'object/tableOfContents') {
-			sidebar.rightPanelSetState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
+		if (isOpen) {
+			S.Common.setRightSidebarState(isPopup, { page: 'object/tableOfContents', rootId, blockId: id });
 		};
 	};
 
@@ -162,7 +163,7 @@ const TableOfContents = observer(forwardRef<TableOfContentsRefProps, I.BlockComp
 		onScroll,
 	}));
 
-	if (tree.length < 2) {
+	if ((tree.length < 2) || isOpen) {
 		return null;
 	};
 

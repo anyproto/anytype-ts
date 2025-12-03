@@ -95,12 +95,11 @@
 
 	/* Title */
 
-	.block.blockText.textTitle { padding: 6px 0px 0px 0px !important; @include text-title; }
+	.block.blockText.textTitle { @include text-title; }
 	.block.blockText.textTitle {
 		> .wrapMenu:hover > .icon.dnd { opacity: 1; }
 		> .wrapContent {
 			> .selectionTarget {
-				> .dropTarget { padding: 0px; }
 				> .dropTarget {
 					> .flex {
 						> .editableWrap {

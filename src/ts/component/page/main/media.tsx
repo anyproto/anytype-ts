@@ -10,7 +10,8 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ isDeleted, setIsDeleted ] = useState(false);	
+	const [ isDeleted, setIsDeleted ] = useState(false);
+	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
 	const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -31,23 +32,19 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	}, []);
 
 	useEffect(() => {
-		open();
+		if (idRef.current != rootId) {
+			close();
+			open();
+		};
 		resize();
-		rebind();
-	});
+	}, [ rootId ]);
 
 	const open = () => {
-		if (idRef.current == rootId) {
-			return;
-		};
-
-		close();
 		idRef.current = rootId;
-
 		setIsDeleted(false);
 		setIsLoading(true);
 
-		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			setIsLoading(false);
 
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
@@ -62,20 +59,14 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
-			sidebar.rightPanelSetState(isPopup, { rootId });
+			S.Common.setRightSidebarState(isPopup, { rootId });
+			setDummy(dummy + 1);
 		});
 	};
 
 	const close = () => {
-		if (!idRef.current) {
-			return;
-		};
-
-		const close = !isPopup || (rootId == idRef.current);
-
-		if (close) {
-			Action.pageClose(idRef.current, true);
-		};
+		Action.pageClose(isPopup, idRef.current, true);
+		idRef.current = '';
 	};
 
 	const rebind = () => {

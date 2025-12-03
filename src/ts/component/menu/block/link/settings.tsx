@@ -78,7 +78,6 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 				break;
 		};
 
-		options = U.Menu.prepareForSelect(options);
 		menuParam.data = Object.assign(menuParam.data, { options });
 
 		if (!S.Menu.isOpen(menuId, item.id)) {

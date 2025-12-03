@@ -203,19 +203,13 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			case I.ObjectLayout.File:
 			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.Audio: {
-				Action.openFile(object.id, analytics.route.chat);
+				Action.openFile(object, analytics.route.chat);
 				break;
 			};
 
 			default: {
 				if (!object.isTmp) {
-					U.Object.openPopup(object, {
-						onClose: () => {
-							if (updateAttachments) {
-								updateAttachments();
-							};
-						},
-					});
+					U.Object.openConfig(object, { onClose: updateAttachments });
 				};
 				break;
 			};
@@ -320,7 +314,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let withBlur = false;
 
 		cn.push('isImage');
-		if ((object.widthInPixels < 360) || (object.heightInPixels > 360)) {
+		if ((object.widthInPixels < 360) || (object.heightInPixels < 360)) {
 			withBlur = true;
 			cn.push('withBlur');
 		};

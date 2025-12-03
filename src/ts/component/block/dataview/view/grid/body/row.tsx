@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { I, U, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
@@ -63,7 +64,7 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	if (isCollection && !isInline) {
+	if (!isInline) {
 		content = (
 			<>
 				{!readonly ? (
@@ -85,15 +86,20 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	return (
-		<div
-			id={`record-${record.id}`}
-			ref={ref => onRefRecord(ref, record.id)}
-			className={cn.join(' ')}
-			style={style}
-			onContextMenu={e => onContext(e, record.id)}
-		>
-			{content}
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				id={`record-${record.id}`}
+				ref={ref => onRefRecord(ref, record.id)}
+				className={cn.join(' ')}
+				style={style}
+				onContextMenu={e => onContext(e, record.id)}
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.1 },
+				})}
+			>
+				{content}
+			</motion.div>
+		</AnimatePresence>
 	);
 
 }));

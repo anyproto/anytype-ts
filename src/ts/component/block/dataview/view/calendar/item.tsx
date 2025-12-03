@@ -17,7 +17,7 @@ interface Ref {
 
 const LIMIT = 4;
 
-const Item = observer(forwardRef<Ref, Props>((props, ref) => {
+const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, block, className, d, m, y, isToday, isCollection, readonly, getSubId, getView, onContext, getKeys, getTarget, getSearchIds, isAllowedObject,
@@ -89,8 +89,6 @@ const Item = observer(forwardRef<Ref, Props>((props, ref) => {
 			sorts: sorts.map(Dataview.filterMapper),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
 	};
@@ -321,4 +319,4 @@ const Item = observer(forwardRef<Ref, Props>((props, ref) => {
 
 }));
 
-export default Item;
+export default CalendarItem;

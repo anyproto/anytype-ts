@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, analytics, Storage, Highlight } from 'Lib';
+import { I, U, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
 
 import PageWidget from './page/widget';
 import PageSettingsIndex from './page/settings/index';
@@ -27,6 +27,7 @@ interface SidebarLeftRefProps {
 
 const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
+	const { vaultIsMinimal } = S.Common;
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
@@ -40,7 +41,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
 	const cn = [ 'sidebar', 'left' ];
-	const closeWidth = J.Size.sidebar.width.min * 0.75;
 
 	const getComponentId = (id: string) => {
 		id = String(id || '');
@@ -108,9 +108,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		keyboard.setResize(true);
 		body.addClass('colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
+		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', e => onResizeMove(e, panel));
-		win.on('mouseup.sidebar blur.sidebar', e => onResizeEnd());
+		win.on('mouseup.sidebar', e => onResizeEnd(e, panel));
 	};
 
 	const onResizeMove = (e: any, panel: I.SidebarPanel) => {
@@ -130,6 +130,9 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			const w = Math.max(0, (e.pageX - ox.current));
 			const d = w - width.current;
 			const data = sidebar.getData(panel);
+			const sizeParam = sidebar.getSizeParam(panel);
+			const { min } = sizeParam;
+			const closeWidth = min * 0.75;
 
 			if (!d) {
 				return;
@@ -139,16 +142,16 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 				if (w <= closeWidth) {
 					sidebar.close(panel);
 				} else {
-					sidebar.setWidth(panel, false, w);
+					sidebar.setWidth(panel, false, w, false);
 				};
 			};
 
 			if (d > 0) {
 				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
-					sidebar.open(panel, '', J.Size.sidebar.width.min);
+					sidebar.open(panel, '', min);
 				} else 
 				if (w > closeWidth) {
-					sidebar.setWidth(panel, false, w);
+					sidebar.setWidth(panel, false, w, false);
 				};
 			};
 
@@ -160,7 +163,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		});
 	};
 
-	const onResizeEnd = () => {
+	const onResizeEnd = (e: any, panel: I.SidebarPanel) => {
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
 		raf.cancel(frame.current);
@@ -168,12 +171,21 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
+		const w = Math.max(0, (e.pageX - ox.current));
+
+		sidebar.setWidth(panel, false, w, true);
 		window.setTimeout(() => movedX.current = false, 15);
 	};
 
-	const onHandleClick = () => {
+	const onHandleClick = (panel: I.SidebarPanel) => {
 		if (!movedX.current) {
-			sidebar.leftPanelToggle();
+			if (panel == I.SidebarPanel.Left) {
+				const w = vaultIsMinimal ? J.Size.sidebar.default.min : J.Size.sidebar.left.min;
+
+				sidebar.setWidth(panel, false, w, true);
+			} else {
+				sidebar.toggle(panel, subPage);
+			};
 		};
 	};
 
@@ -200,7 +212,11 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			<Icon 
 				id="sidebarLeftButton"
 				className="toggle sidebarHeadIcon withBackground"
-				tooltipParam={{ caption: keyboard.getCaption('toggleSidebar'), typeY: I.MenuDirection.Bottom }}
+				tooltipParam={{ 
+					text: translate('popupShortcutMainBasics15'), 
+					caption: keyboard.getCaption('toggleSidebar'), 
+					typeY: I.MenuDirection.Bottom,
+				}}
 				onClick={() => sidebar.leftPanelToggle()}
 				onMouseDown={e => e.stopPropagation()}
 			/>
@@ -222,8 +238,13 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							/> 
 						</div>
 					) : ''}
-					<div className="resize-h" draggable={true} onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}>
-						<div className="resize-handle" onClick={onHandleClick} />
+					<div 
+						className="resize-h" 
+						draggable={true} 
+						onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}
+						onClick={() => onHandleClick(I.SidebarPanel.Left)}
+					>
+						<div className="resize-handle" />
 					</div>
 				</div>
 				
@@ -239,7 +260,12 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 							/> 
 						</div>
 					) : ''}
-					<div className="resize-h" draggable={true} onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}>
+					<div 
+						className="resize-h" 
+						draggable={true} 
+						onDragStart={e => onResizeStart(e, I.SidebarPanel.SubLeft)}
+						onClick={() => onHandleClick(I.SidebarPanel.SubLeft)}
+					>
 						<div className="resize-handle" />
 					</div>
 				</div>

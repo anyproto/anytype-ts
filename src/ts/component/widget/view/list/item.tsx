@@ -35,15 +35,11 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
 	const isBookmark = U.Object.isBookmarkLayout(object.layout);
+	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const style = {
 		...props.style,
 		transform: CSS.Transform.toString(transform),
 		transition,
-	};
-
-	let counters = { mentionCounter: 0, messageCounter: 0 };
-	if (isChat) {
-		counters = S.Chat.getChatCounters(space, id);
 	};
 
 	if (canDrag) {
@@ -72,7 +68,18 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 		const node = $(nodeRef.current);
 
-		onContext({ node, element: $(moreRef.current), withElement, subId, objectId: id });
+		onContext({ 
+			node, 
+			element: $(moreRef.current), 
+			withElement, 
+			subId, 
+			objectId: id,
+			data: {
+				allowedCollection: true, 
+				allowedExport: true,
+				allowedLinkTo: true,
+			},
+		});
 	};
 
 	const resize = () => {
@@ -128,7 +135,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 				sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Desc));
 
 			const last = list.length ? list[0] : null;
-			const text = last ? S.Chat.getMessageSimpleText(space, last) : translate('widgetNoMessages');
+			const text = last ? S.Chat.getMessageSimpleText(space, last, true) : translate('widgetNoMessages');
 
 			descr = <Label className="descr" text={text} />;
 			time = last ? <div className="time">{U.Date.timeAgo(last.createdAt)}</div> : '';
@@ -140,7 +147,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (hasMore) {
 		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
-	
+
 	let inner = (
 		<div className="inner" onMouseDown={onClick}>
 			{icon}
@@ -153,12 +160,11 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 			{isChat ? (
 				<div className="chatInfo">
 					{time}
-					<ChatCounter {...counters} />
+					{!hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
 				</div>
 			) : ''}
 
 			<div className="buttons">
-
 				{more}
 			</div>
 		</div>

@@ -14,6 +14,7 @@ export enum DropType {
 	Relation = 'relation',
 	Record	 = 'record',
 	Widget	 = 'widget',
+	View	 = 'view',
 };
 
 export enum SelectType {
@@ -68,6 +69,9 @@ export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	color?: string;
+	isSection?: boolean;
+	isDiv?: boolean;
 };
 
 export interface HistoryVersion {
@@ -297,6 +301,7 @@ export interface SearchSubscribeParam {
 	ignoreArchived: boolean;
 	skipLayoutFormat: I.ObjectLayout[];
 	noDeps: boolean;
+	crossSpace: boolean;
 };
 
 export interface SearchIdsParam extends SearchSubscribeParam {
@@ -367,4 +372,26 @@ export enum ImageSize {
 export enum AppDeviceState {
 	Background	 = 0, // means app is suspended
 	Foreground	 = 1,
+};
+
+export enum RecentEditMode {
+	All			 = 0,
+	Me			 = 1,
+};
+
+export interface DragProviderRefProps {
+	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
+	onScroll: () => void;
+};
+
+export interface DragComponentProps {
+	getNode: () => any;
+	onRecordDrop?: (targetId: string, ids: string[], position: I.BlockPosition) => void;
+};
+
+export interface ImageParam {
+	src: string;
+	width: number;
+	height: number;
+	excavate: boolean;
 };

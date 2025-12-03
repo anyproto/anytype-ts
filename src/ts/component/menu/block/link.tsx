@@ -325,9 +325,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				return;
 			};
 
-			if (callBack) {
-				callBack(null);
-			};
+			callBack?.(null);
 
 			if (clear) {
 				this.items = [];

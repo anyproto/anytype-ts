@@ -1,0 +1,33 @@
+.updateBanner {
+	width: 320px; position: fixed; left: 8px; bottom: 8px; z-index: 100; background: var(--color-bg-primary); 
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 12px; display: flex; 
+	flex-direction: column; gap: 8px 0px;
+}
+.updateBanner {
+	.infoWrapper { width: 100%; display: flex; flex-direction: row; gap: 0px 10px; flex-grow: 1; align-items: center; }
+	.info { width: 100%; }
+	.info {
+		.name { font-weight: 500; }
+		.label { @include text-small; color: var(--color-text-secondary); }
+	}
+
+	&:not(.withButtons) {
+		.info { display: flex; flex-direction: column; gap: 10px; }
+		.nameWrapper { display: flex; justify-content: space-between; align-items: center; }
+	}
+
+	.icon { width: 48px; height: 48px; background-image: url('~img/logo/progress.svg'); flex-shrink: 0; }
+	.percent { font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
+	.buttons { display: flex; flex-direction: row; gap: 0px 8px; justify-content: space-evenly; width: 100%; }
+	.button { 
+		flex-grow: 1; flex-basis: 50%; border: 0px !important; background-color: var(--color-shape-highlight-medium) !important; 
+	}
+	.button:hover { background-color: var(--color-shape-highlight-dark); }
+
+	.progressBar {
+		.bar { gap: 0px; height: 8px; border-radius: 6px; }
+		.fill.isActive { background-color: var(--color-system-accent-100); }
+		.fill.empty { background-color: var(--color-shape-highlight-medium); }
+		.labels { display: none; }
+	}
+}

@@ -1,14 +1,17 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
+import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
+import { LayoutPlug } from 'Component';
 import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
 import Empty from './dataview/empty';
+import AddRow from './dataview/view/grid/body/add';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
@@ -17,7 +20,6 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
-import { Icon, LayoutPlug } from 'Component';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -60,7 +62,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
 		this.getSubId = this.getSubId.bind(this);
 		this.getEmptyView = this.getEmptyView.bind(this);
-		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
@@ -71,7 +72,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
+		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
+		this.onViewDrop = this.onViewDrop.bind(this);
 		this.onTemplateMenu = this.onTemplateMenu.bind(this);
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onSelectEnd = this.onSelectEnd.bind(this);
@@ -218,7 +221,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRefRecord={(ref: any, id: string) => this.refRecords.set(id, ref)}
 						{...this.props}
 						{...dataviewProps}
-						pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={this.getPageContainer()}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
@@ -406,6 +409,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
+		const node = $(this.node);
 
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
@@ -583,26 +587,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getTarget () {
-		const { rootId } = this.props;
-		const targeId = this.getObjectId();
-
-		return S.Detail.get(rootId, targeId, [ 'setOf' ]);
+		return S.Detail.get(this.props.rootId, this.getObjectId(), [ 'setOf' ]);
 	};
 
 	getTypeId (): string {
 		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const view = this.getView();
-
-		return Dataview.getTypeId(rootId, block.id, objectId, view.id);
+		return Dataview.getTypeId(rootId, block.id, this.getObjectId(), this.getView()?.id);
 	};
 
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const view = this.getView();
-
-		return Dataview.getDetails(rootId, block.id, objectId, view.id, groupId);
+		return Dataview.getDetails(rootId, block.id, this.getObjectId(), this.getView()?.id, groupId);
 	};
 
 	getMenuParam (e: any, dir: number): any {
@@ -799,6 +794,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const objectId = this.getObjectId();
 		const menuParam = {
+			horizontal: I.MenuDirection.Center,
 			...this.getMenuParam(e, dir),
 			...param,
 		};
@@ -815,7 +811,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case I.ObjectLayout.Chat: {
-				U.Menu.onChatMenu(menuParam, cb);
+				U.Menu.onChatMenu(menuParam, this.analyticsRoute(), cb);
 				break;
 			};
 		};
@@ -1028,8 +1024,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 		
 		let objectIds = selection?.get(I.SelectType.Record) || [];
-		if (!objectIds.length) {
+		if (!objectIds.length || !objectIds.includes(id)) {
 			objectIds = [ id ];
+			selection?.set(I.SelectType.Record, objectIds);
 		};
 
 		S.Menu.open('objectContext', {
@@ -1051,6 +1048,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				allowedLinkTo: true,
 				allowedOpen: true,
 				allowedRelation: true,
+				allowedCollection: true,
+				allowedExport: true,
+				allowedType: true,
 			}
 		});
 	};
@@ -1091,12 +1091,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 				const button = $(this.node).find('#head-source-select');
 
+				S.Detail.update(rootId, { id: item.id, details: item }, false);
+
 				if (!isCollection && isNew && button.length) {
 					button.trigger('click');
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
+					this.loadData(message.views[0].id, 0, true);
 				};
 
 				if (isNew) {
@@ -1137,6 +1139,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				addParam,
 				onSelect,
 				withPlural: true,
+				keys: J.Relation.default.concat('setOf'),
 			}
 		}, param || {}));
 	};
@@ -1165,17 +1168,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onDragRecordStart (e: any, recordId: string) {
 		e.stopPropagation();
 
-		const { block } = this.props;
+		const { block, isPopup } = this.props;
 		const dragProvider = S.Common.getRef('dragProvider');
 		const selection = S.Common.getRef('selectionProvider');
 		const record = this.getRecord(recordId);
 		const ids = selection?.get(I.SelectType.Record) || [];
+		const con = $(this.refControls.getNode());
+		const sel = $(this.refSelect.getNode());
 
 		if (!ids.length) {
 			ids.push(record.id);
 		};
-
-		keyboard.setSelectionClearDisabled(false);
 
 		if (!block.isDraggable()) {
 			e.preventDefault();
@@ -1183,10 +1186,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		keyboard.disableSelection(true);
-		dragProvider?.onDragStart(e, I.DropType.Record, ids, this);
+		keyboard.setSelectionClearDisabled(false);
+
+		dragProvider?.onDragStart(e, I.DropType.Record, ids, {
+			getNode: () => this.node,
+			onRecordDrop: this.onRecordDrop,
+			onViewDrop: this.onViewDrop,
+		});
+
+		con.show();
+		sel.hide();
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
+		keyboard.disableSelection(false);
+
 		const { rootId, block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const subId = this.getSubId();
@@ -1230,15 +1244,44 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
+	onViewDrop (targetId: string, ids: string[]) {
+		if (!targetId || !ids.length) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const details = Dataview.getDetails(rootId, block.id, this.getObjectId(), targetId);
+		const operations: any[] = []; 
+
+		for (const k in details) {
+			const relation = S.Record.getRelationByKey(k);
+
+			if (!relation) {
+				continue;
+			};
+
+			const value = Relation.formatValue(relation, details[k], true);
+
+			if (Relation.isArrayType(relation.format) && (relation.format != I.RelationType.Select)) {
+				operations.push({ relationKey: k, add: value });
+			} else {
+				operations.push({ relationKey: k, set: value });
+			};
+		};
+
+		C.ObjectListModifyDetailValues(ids, operations);
+
+		S.Common.getRef('selectionProvider')?.clear();
+		this.selectionCheck();
+	};
+
 	onSortAdd (item: any, callBack?: () => void) {
 		const { rootId, block, isInline } = this.props;
 		const view = this.getView();
 		const object = this.getTarget();
 
 		C.BlockDataviewSortAdd(rootId, block.id, view.id, item, () => {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 
 			analytics.event('AddSort', {
 				objectType: object.type,
@@ -1253,9 +1296,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = this.getTarget();
 
 		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 
 			analytics.event('AddFilter', {
 				condition: item.condition,
@@ -1331,12 +1372,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		);
 	};
 
-	getEmptyView (view: I.ViewType) {
+	getEmptyView (type: I.ViewType) {
 		if (!this.isAllowedObject()) {
 			return this.getEmpty('view');
 		};
 
-		const cn = [ 'viewContent', `view${I.ViewType[view]}` ];
+		const cn = [ 'viewContent', `view${I.ViewType[type]}` ];
 		const onAdd = (e: any) => {
 			if (!this.isCollection() && !this.getSources().length) {
 				this.onEmpty(e);
@@ -1347,32 +1388,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let inner: any = null;
 
-		switch (view) {
+		switch (type) {
 			case I.ViewType.List: {
-				inner = (
-					<div className="row add">
-						<div className="cell add">
-							<div className="btn" onClick={onAdd}>
-								<Icon className="plus" />
-								<div className="name">{translate('commonNewObject')}</div>
-							</div>
-						</div>
-					</div>
-				);
-				break;
-			};
-
-			case I.ViewType.Grid: {
-				inner = <div className="row" onClick={onAdd} />;
+				inner = <AddRow onClick={onAdd} />;
 				break;
 			};
 
 			case I.ViewType.Gallery: {
 				inner = (
-					<div className="row empty">
-						<div className="card" onClick={onAdd} />
-						<div className="card add" onClick={onAdd} />
-					</div>
+					<AnimatePresence mode="popLayout">
+						<motion.div
+							className="row empty"
+							{...U.Common.animationProps({
+								transition: { duration: 0.2, delay: 0.1 },
+							})}
+						>
+							<div className="card" onClick={onAdd} />
+							<div className="card add" onClick={onAdd} />
+						</motion.div>
+					</AnimatePresence>
 				);
 				break;
 			};
@@ -1464,9 +1498,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				window.setTimeout(() => this.applyObjectOrder(it.groupId, records), 30);
 			});
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 		});
 	};
 
@@ -1505,10 +1537,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	selectionCheck () {
 		const selection = S.Common.getRef('selectionProvider');
-		const node = $(this.node);
-		const con = node.find('#dataviewControls');
-		const sel = node.find('#dataviewSelection');
-		const ids = selection?.get(I.SelectType.Record) || [];
+		if (!selection || !this.refControls || !this.refSelect) {
+			return;
+		};
+
+		const con = $(this.refControls.getNode());
+		const sel = $(this.refSelect.getNode());
+		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
 		length ? con.hide() : con.show();
@@ -1594,14 +1629,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 
 		win.on(`keydown.record-${id}`, (e) => {
-			keyboard.shortcut('escape', e, () => this.setRecordEditingOff(id));
-			keyboard.shortcut('enter', e, () => this.setRecordEditingOff(id));
+			keyboard.shortcut('escape, enter', e, () => this.setRecordEditingOff(id));
 		});
 	};
 
 	setRecordEditingOff (id: string) {
 		const ref = this.refRecords.get(id);
 		const win = $(window);
+		const pageContainer = this.getPageContainer();
 
 		win.off(`mousedown.record-${id} keydown.record-${id}`);
 
@@ -1616,6 +1651,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (nameRef) {
 			nameRef.onBlur();
 		};
+
+		$(pageContainer).trigger('mousedown');
 	};
 
 	multiSelectAction (id: string) {
@@ -1676,6 +1713,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.refView.resize();
 			};
 		});
+	};
+
+	getPageContainer () {
+		return U.Common.getCellContainer(this.props.isPopup ? 'popup' : 'page');
 	};
 
 });

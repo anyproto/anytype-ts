@@ -47,15 +47,15 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onMore = (space: any) => {
-		const element = $(`#${getId()} #icon-more-${space.id}`);
+		const element = `#${getId()} #icon-more-${space.id}`;
 
 		U.Menu.spaceContext(space, {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
-		}, { route: analytics.route.settings });
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
+		}, { route: analytics.route.settings, noManage: true });
 	};
 
 	const Row = (space: any) => {

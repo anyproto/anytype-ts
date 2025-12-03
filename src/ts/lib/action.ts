@@ -9,16 +9,13 @@ class Action {
 	 * @param {string} rootId - The root object ID.
 	 * @param {boolean} withCommand - Whether to send a close command to the backend.
 	 */
-	pageClose (rootId: string, withCommand: boolean) {
-		if (keyboard.isCloseDisabled) {
+	pageClose (isPopup: boolean, rootId: string, withCommand: boolean) {
+		if (!rootId || keyboard.isCloseDisabled || !U.Data.checkPageClose(isPopup, rootId)) {
 			return;
 		};
 
-		const { widgets } = S.Block;
-		const { space } = S.Common;
-
 		// Prevent closing of system objects
-		if ([ widgets ].includes(rootId)) {
+		if (rootId == S.Block.widgets) {
 			return;
 		};
 
@@ -34,8 +31,8 @@ class Action {
 				this.dbClearBlock(rootId, block.id);
 			} else 
 			if (block.isChat()) {
-				this.dbClearBlock(object.chatId, block.id);
 				this.dbClearChat(object.chatId, block.id);
+				this.dbClearChat(object.id, block.id);
 			};
 		};
 
@@ -45,7 +42,7 @@ class Action {
 		U.Subscription.destroyList([ rootId ]);
 
 		if (withCommand) {
-			C.ObjectClose(rootId, space);
+			C.ObjectClose(rootId, S.Common.space);
 		};
 	};
 
@@ -120,10 +117,7 @@ class Action {
 	 */
 	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
 		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
+			callBack?.(message);
 			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
 		});
 	};
@@ -146,10 +140,7 @@ class Action {
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
 
-			if (callBack) {
-				callBack(message);
-			};
-
+			callBack?.(message);
 			analytics.event('DuplicateBlock', { count: message.blockIds.length });
 		});
 	};
@@ -169,9 +160,7 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
+			callBack?.(message);
 
 			const count = blockIds.length;
 
@@ -262,7 +251,6 @@ class Action {
 		url = U.Common.urlFix(url);
 
 		const route = U.Common.getRouteFromUrl(url);
-		
 		if (route) {
 			U.Router.go(route, {});
 			return;
@@ -295,7 +283,7 @@ class Action {
 					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
 					storageKey,
-					onConfirm: () => cb(),
+					onConfirm: cb,
 				}
 			});
 		} else {
@@ -318,17 +306,38 @@ class Action {
 	 * @param {string} id - The file ID.
 	 * @param {string} route - The route context for analytics.
 	 */
-	openFile (id: string, route: string) {
-		if (!id) {
+	openFile (object: any, route: string) {
+		if (object._empty_) {
 			return;
 		};
 
-		C.FileDownload(id, U.Common.getElectron().tmpPath(), (message: any) => {
-			if (message.path) {
-				this.openPath(message.path);
-				analytics.event('OpenMedia', { route });
-			};
-		});
+		const ext = String(object.fileExt || '').toLowerCase();
+		const cb = () => {
+			C.FileDownload(object.id, U.Common.getElectron().tmpPath(), (message: any) => {
+				if (message.path) {
+					this.openPath(message.path);
+					analytics.event('OpenMedia', { route });
+				};
+			});
+		};
+		const isDangerous = !ext || [ 
+			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar', 
+			'app', 'action', 'command', 'csh', 'osx', 'scpt', 'workflow', 'bin', 'ksh', 'out', 'run', 'sh', 'docm', 'xlsm', 'pptm',
+		].includes(ext);
+
+		if (isDangerous) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					title: translate('popupConfirmOpenExternalFileTitle'),
+					text: U.Common.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
+					textConfirm: translate('commonYes'),
+					onConfirm: cb,
+				},
+			});
+		} else {
+			cb();
+		};
 	};
 
 	/**
@@ -377,9 +386,7 @@ class Action {
 				return;
 			};
 			
-			if (callBack) {
-				callBack(filePaths);
-			};
+			callBack?.(filePaths);
 		});
 	};
 
@@ -400,9 +407,7 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(filePaths);
-			};
+			callBack?.(filePaths);
 		});
 	};
 
@@ -449,17 +454,10 @@ class Action {
 						};
 					};
 
-					if (callBack) {
-						callBack();
-					};
-
+					callBack?.();
 					analytics.event('RemoveCompletely', { count, route });
 				},
-				onCancel: () => {
-					if (callBack) {
-						callBack();
-					};
-				},
+				onCancel: callBack,
 			},
 		});
 	};
@@ -501,7 +499,6 @@ class Action {
 							animate: true,
 							onFadeIn: () => {
 								S.Popup.open('migration', { data: { type: 'import' } });
-								S.Block.closeRecentWidgets();
 							},
 						};
 
@@ -529,9 +526,7 @@ class Action {
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
 			analytics.event('MoveToBin', { route, count: ids.length });
 
-			if (callBack) {
-				callBack();
-			};
+			callBack?.();
 		});
 	};
 
@@ -545,14 +540,9 @@ class Action {
 		ids = ids || [];
 
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			analytics.event('RestoreFromBin', { route, count: ids.length });
-
-			if (callBack) {
-				callBack();
+			if (!message.error.code) {
+				callBack?.();
+				analytics.event('RestoreFromBin', { route, count: ids.length });
 			};
 		});
 	};
@@ -588,12 +578,8 @@ class Action {
 			Preview.toastShow({ text: translate('toastImportStart') });
 
 			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				if (callBack) {	
-					callBack(message);
+				if (!message.error.code) {
+					callBack?.(message);
 				};
 			});
 		});
@@ -624,9 +610,7 @@ class Action {
 				this.openPath(paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
-				if (callBack) {
-					callBack(message);
-				};
+				callBack?.(message);
 			});
 		});
 	};
@@ -678,8 +662,12 @@ class Action {
 			return it;
 		}).filter(it => it);
 
-		if (isCut) {
-			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+		if (isCut && (blocks.length > 1)) {
+			next = S.Block.getNextBlock(rootId, blocks[0].id, -1, it => it.isFocusable());
+		};
+
+		if ((range.from == range.to) && !blocks.length) {
+			return;
 		};
 
 		C[cmd](rootId, blocks, range, (message: any) => {
@@ -697,10 +685,12 @@ class Action {
 
 				if (next) {
 					const l = next.getLength();
-
 					focus.set(next.id, { from: l, to: l });
-					focus.apply();
+				} else {
+					focus.set(focused, { from: range.from, to: range.from });
 				};
+				
+				focus.apply();
 			};
 		});
 
@@ -766,9 +756,7 @@ class Action {
 					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					C.SpaceDelete(id, (message: any) => {
-						if (callBack) {
-							callBack(message);
-						};
+						callBack?.(message);
 
 						if (!message.error.code) {
 							Preview.toastShow({ text: toast });
@@ -822,22 +810,6 @@ class Action {
 		diff.forEach(it => {
 			if (it.added && it.value.length) {
 				analytics.event('AddSpellcheckLanguage', { type: it.value[0] });
-			};
-		});
-	};
-
-	/**
-	 * Imports a usecase into a space.
-	 * @param {string} spaceId - The space ID.
-	 * @param {I.Usecase} id - The usecase ID.
-	 * @param {function} [callBack] - Optional callback after import.
-	 */
-	importUsecase (spaceId: string, id: I.Usecase, callBack?: (message: any) => void) {
-		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			S.Block.closeRecentWidgets();
-
-			if (callBack) {
-				callBack(message);
 			};
 		});
 	};
@@ -903,7 +875,7 @@ class Action {
 	};
 
 	toggleWidgetsForObject (objectId: string, route?: string) {
-		if (S.Block.getWidgetsForTarget(objectId, I.WidgetSection.Pin).length) {
+		if (S.Block.getWidgetsForTarget(objectId).length) {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
 			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
@@ -963,13 +935,10 @@ class Action {
 							return;
 						};
 
-						if (callBack) {
-							callBack();
-						};
-
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
 						analytics.event('RevokeShareLink');
+						callBack?.();
 					});
 				},
 			},
@@ -1031,9 +1000,7 @@ class Action {
 	checkDiskSpace (callBack?: () => void) {
 		Renderer.send('checkDiskSpace').then(diskSpace => {
 			if (!diskSpace) {
-				if (callBack) {
-					callBack();
-				};
+				callBack?.();
 				return;
 			};
 
@@ -1050,9 +1017,8 @@ class Action {
 						canCancel: false,
 					},
 				});
-			} else 
-			if (callBack) {
-				callBack();
+			} else {
+				callBack?.();
 			};
 		});
 	};
@@ -1112,6 +1078,11 @@ class Action {
 
 	openSpaceShare (route: string) {
 		this.openSettings('spaceShare', route);
+	};
+
+	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
+		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
+		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
 	};
 
 };

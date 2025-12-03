@@ -43,11 +43,11 @@ class CommonStore {
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
 	public updateVersionValue = '';
+	public vaultMessagesValue = null;
+	public vaultIsMinimalValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
-	public rightSidebarStateValue = { 
-		full: { page: '' }, 
-		popup: { page: '' },
-	};
+
+	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
@@ -60,6 +60,31 @@ class CommonStore {
 	public windowId = '';
 	public windowIsFocused = true;
 	public routeParam: any = {};
+	public openObjectIds: Map<string, Set<string>> = new Map();
+	public widgetSectionsValue: I.WidgetSectionParam[] = null;
+
+	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
+		full: {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		}, 
+		popup: {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		},
+	};
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -123,6 +148,10 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
+			vaultMessagesValue: observable,
+			vaultIsMinimalValue: observable,
+			widgetSectionsValue: observable,
+			recentEditModeValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -138,6 +167,10 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
+			vaultMessages: computed,
+			vaultIsMinimal: computed,
+			widgetSections: computed,
+			recentEditMode: computed,
 			gatewaySet: action,
 			filterSetFrom: action,
 			filterSetText: action,
@@ -159,6 +192,11 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
+			vaultMessagesSet: action,
+			vaultIsMinimalSet: action,
+			widgetSectionsInit: action,
+			widgetSectionsSet: action,
+			recentEditModeSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -184,6 +222,10 @@ class CommonStore {
 
 	get filter (): Filter {
 		return this.filterObj;
+	};
+
+	get filterText () {
+		return String(this.filter.text || '').replace(/^[@\[]+/, '');
 	};
 
 	get gateway (): string {
@@ -225,6 +267,14 @@ class CommonStore {
 
 	get emailConfirmationTime (): number {
 		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
+	};
+
+	get recentEditMode (): I.RecentEditMode {
+		let ret = this.recentEditModeValue;
+		if (ret === null) {
+			ret = Storage.get('recentEditMode');
+		};
+		return Number(ret) || I.RecentEditMode.All;
 	};
 
 	get fullscreenObject (): boolean {
@@ -330,6 +380,18 @@ class CommonStore {
 
 	get updateVersion (): string {
 		return String(this.updateVersionValue || '');
+	};
+
+	get widgetSections (): I.WidgetSectionParam[] {
+		return this.widgetSectionsValue || [];
+	};
+
+	get vaultMessages (): any {
+		return this.boolGet('vaultMessages');
+	};
+
+	get vaultIsMinimal (): any {
+		return this.boolGet('vaultIsMinimal');
 	};
 
 	/**
@@ -587,8 +649,8 @@ class CommonStore {
 
 	/**
 	 * Sets the show sidebar left value.
-	 * @param {boolean} isPopup - Whether it is a popup.
-	 * @param {string} page - The page to set, null if no page is shown
+	 * @param {string} page - The page to set, '' if no page is shown
+	 * @param {string} subPage - The subPage to set, '' if no page is shown
 	 */
 	setLeftSidebarState (page: string, subPage: string) {
 		set(this.leftSidebarStateValue, { page, subPage });
@@ -599,8 +661,10 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @param {string} page - The page to set, null if no page is shown
 	 */
-	setRightSidebarState (isPopup: boolean, page: string) {
-		set(this.rightSidebarStateValue, { [ this.getStateKey(isPopup) ]: { page } });
+	setRightSidebarState (isPopup: boolean, v: Partial<I.SidebarRightState>) {
+		v.noPreview = Boolean(v.noPreview);
+
+		set(this.getRightSidebarState(isPopup), v);
 	};
 
 	/**
@@ -693,10 +757,10 @@ class CommonStore {
 	 * Gets the current theme class string.
 	 * @returns {string} The theme class.
 	 */
-	getThemeClass (forceSystem?: boolean): string {
+	getThemeClass (): string {
 		let ret = '';
 
-		if (forceSystem || (this.themeId == 'system')) {
+		if (this.themeId == 'system') {
 			ret = this.nativeThemeIsDark ? 'dark' : '';
 		} else {
 			ret = this.themeId;
@@ -708,17 +772,11 @@ class CommonStore {
 	/**
 	 * Sets the theme class on the document.
 	 */
-	setThemeClass (forceSystem?: boolean) {
-		const head = $('head');
-		const c = this.getThemeClass(forceSystem);
+	setThemeClass () {
+		const c = this.getThemeClass();
 
 		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
-
-		head.find('#link-prism').remove();
-		if (c) {
-			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
-		};
 	};
 
 	/**
@@ -792,6 +850,22 @@ class CommonStore {
 	firstDaySet (v: number) {
 		this.firstDayValue = Number(v) || 1;
 		Storage.set('firstDay', this.firstDayValue);
+	};
+
+	/**
+	 * Sets the vault messages value.
+	 * @param {boolean} v - The vault messages value.
+	 */
+	vaultMessagesSet (v: boolean) {
+		this.boolSet('vaultMessages', v);
+	};
+
+	/**
+	 * Sets the vault isMinimal value.
+	 * @param {boolean} v - The vault isMinimal value.
+	 */
+	vaultIsMinimalSet (v: boolean) {
+		this.boolSet('vaultIsMinimal', v);
 	};
 
 	/**
@@ -908,7 +982,7 @@ class CommonStore {
 	 * @param {boolean} isPopup - Whether it is a popup.
 	 * @returns {page: string; isOpen: boolean;} The current state shown in the sidebar
 	 */
-	getRightSidebarState (isPopup: boolean): { page: string; } {
+	getRightSidebarState (isPopup: boolean): I.SidebarRightState {
 		return this.rightSidebarStateValue[this.getStateKey(isPopup)] || { page: '' };
 	};
 
@@ -955,8 +1029,49 @@ class CommonStore {
 		this.windowIsFocused = Boolean(v);
 	};
 
+	recentEditModeSet (v: I.RecentEditMode) {
+		this.recentEditModeValue = Number(v) || I.RecentEditMode.All;
+		Storage.set('recentEditMode', this.recentEditModeValue);
+	};
+
 	nullifySpaceKeys () {
 		this.defaultType = null;
+		this.widgetSectionsInit();
+	};
+
+	widgetSectionsInit () {
+		const saved = Storage.get('widgetSections') || [];
+		const full = [ ...saved ];
+
+		for (const id in I.WidgetSection) {
+			const n = Number(id);
+			if (!isNaN(n) && !full.find(it => it.id === n)) {
+				full.push({ id: n, isClosed: false, isHidden: false });
+			};
+		};
+
+		if (!U.Common.compareJSON(full, this.widgetSectionsValue)) {
+			this.widgetSectionsValue = full;
+		};
+	};
+
+	widgetSectionsSet (sections: I.WidgetSectionParam[]) {
+		this.widgetSectionsValue = sections || [];
+		Storage.set('widgetSections', this.widgetSectionsValue);
+	};
+
+	checkWidgetSection (id: I.WidgetSection): boolean {
+		const section = this.widgetSections.find(it => it.id == id);
+		return section && !section.isClosed && !section.isHidden;
+	};
+
+	getWidgetSection (id: I.WidgetSection) {
+		return this.widgetSections.find(it => it.id == id);
+	};
+
+	updateWidgetSection (param: Partial<I.WidgetSectionParam>) {
+		set(this.getWidgetSection(param.id), param);
+		this.widgetSectionsSet(this.widgetSections);
 	};
 
 };

@@ -89,7 +89,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							const id = Relation.cellId(PREFIX, relation.relationKey, object.id);
 							const value = object[relation.relationKey];
 							const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
-							const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
+							const cn = [ 'cell' ];
+
+							if (readonly && Relation.isEmpty(value)) {
+								return null;
+							};
+
+							if (canEdit) {
+								cn.push('canEdit');
+							};
 
 							if (i == items.length - 1) {
 								cn.push('last');
@@ -141,7 +149,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										withName={true}
 										noInplace={true}
 										onCellChange={this.onCellChange}
-										menuParam={{ className: 'fromFeatured', classNameWrap: 'fromBlock' }}
+										menuParam={{ className: 'fromBlockFeatured', classNameWrap: 'fromBlock' }}
 									/>
 									<div className="bullet" />
 								</span>
@@ -299,9 +307,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						e.persist();
 
 						const menuId = 'dataviewText';
-						const param = {
-							width: 288,
-						};
+						const param = { width: 288 };
 						const data = {
 							value: object[relationKey] || '',
 						};
@@ -532,7 +538,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							};
 						});
 
-						this.menuContext.close();
+						this.menuContext?.close();
 						analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.featured });
 					},
 				});
@@ -547,7 +553,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					],
 					onSelect: (item: any) => {
 						U.Object.openConfig({ id: item.id, layout: I.ObjectLayout.Set });
-						this.menuContext.close();
+						this.menuContext?.close();
 					}
 				});
 		};
@@ -678,7 +684,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let menuParam = {
 			element: elementId,
-			className: 'fromFeatured',
+			className: 'fromBlockFeatured',
 			offsetY: 4,
 			noFlipX: true,
 			title: relation.name,
@@ -695,9 +701,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value } ]);
 					analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
 
-					if (callBack) {
-						callBack();
-					};
+					callBack?.();
 				}
 			}
 		};

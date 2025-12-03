@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
-import { I, S, J, U, keyboard, sidebar, translate } from 'Lib';
+import { I, S, J, U, sidebar, translate } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
 
@@ -23,6 +23,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const swiperRef = useRef(null);
 	const thumbsRef = useRef(null);
 	const galleryMapRef = useRef(new Map());
+	const nodeRef = useRef(null);
 
 	const unbind = () => {
 		$(window).off('resize.popupPreview keydown.popupPreview');
@@ -36,14 +37,11 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const setCurrentItem = (idx?: number) => {
-		const initialIdx = data.initialIdx || 0;
-
-		if (!idx) {
-			idx = initialIdx;
+		if (undefined === idx) {
+			idx = data.initialIdx || 0;
 		};
 
 		const item = gallery[idx];
-
 		if (item && item.object) {
 			setCurrent(item.object);
 		};
@@ -207,12 +205,34 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		reload();
 		rebind();
+		resize(initial);
 		setCurrentItem();
 
 		return () => {
 			unbind();
 		};
 	}, []);
+
+	useEffect(() => {
+		const node = $(nodeRef.current);
+
+		node.find('video').each((i, el) => el.pause());
+
+		const item = gallery.find(el => el.object?.id == current?.id);
+		if (!item) {
+			return;
+		};
+
+		if (item.type == I.FileType.Video) {
+			const video: any = node.find('.swiper-slide-active video').get(0);
+
+			if (video) {
+				video.currentTime = 0;
+				video.play();
+			};
+		};
+
+	}, [ current ]);
 
 	const getContent = (item: any, idx: number, isThumb?: boolean) => {
 		const { src, type } = item;
@@ -250,7 +270,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	return (
-		<div id="wrap" className="wrap">
+		<div ref={nodeRef} id="wrap" className="wrap">
 			<div className="galleryHeader">
 				{current ? (
 					<>
@@ -279,7 +299,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					navigation={true}
 					loop={false}
 					modules={[ Mousewheel, Keyboard, Thumbs, Navigation, Zoom ]}
-					onTransitionEnd={data => setCurrentItem(data.activeIndex)}
+					onSlideChange={swiper => setCurrentItem(swiper.activeIndex)}
 				>
 					{gallery.map((item: any, i: number) => (
 						<SwiperSlide key={i}>

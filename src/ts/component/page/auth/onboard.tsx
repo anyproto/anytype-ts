@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding, Storage, sidebar } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
 
 enum Stage {
 	Phrase 		= 0,
@@ -30,6 +30,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
 	};
 	const cnb = [ 'c48' ];
+	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
 	const unbind = () => {
 		$(window).off('keydown.onboarding');
@@ -58,28 +59,11 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onAuth = () => {
-		const routeParam = { 
-			replace: true, 
-			onRouteChange: () => sidebar.init(false),
-		};
-
-		S.Common.showRelativeDatesSet(true);
-
-		Storage.set('isNewUser', true);
-		Storage.set('chatsOnboarding', true);
-		Storage.setOnboarding('objectDescriptionButton');
-		Storage.setOnboarding('typeResetLayout');
-		Storage.setToggle('widgetSection', String(I.WidgetSection.Type), true);
-
-		U.Data.onInfo(account.info);
-		U.Data.onAuthOnce(true);
-
-		S.Common.spaceSet('');
-
-		U.Subscription.createGlobal(() => {
-			U.Router.go(redirect ? redirect : '/main/void/select', routeParam);
-			S.Common.redirectSet('');
-		});
+		U.Router.switchSpace(S.Common.space, '', false, {
+			onFadeIn: () => {
+				Onboarding.startCommon(props.isPopup);
+			},
+		}, false);
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
@@ -90,13 +74,11 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 		switch (stage) {
 			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(stage + (needEmail ? 1 : 2)));
 				break;
 			};
 
 			case Stage.Email: {
-				const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
-
 				if (!needEmail) {
 					Animation.from(() => setStage(stage + 1));
 					break;

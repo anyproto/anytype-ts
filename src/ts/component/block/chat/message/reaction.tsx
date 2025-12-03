@@ -7,7 +7,7 @@ interface Props extends I.ChatMessageReaction, I.ChatMessageComponent {
 	onSelect: (icon: string) => void;
 };
 
-const ChatMessageReactionBase = observer(forwardRef<{}, Props>((props, ref) => {
+const ChatMessageReaction = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -16,11 +16,11 @@ const ChatMessageReactionBase = observer(forwardRef<{}, Props>((props, ref) => {
 	const tooltip = mapped.map(it => it.name).filter(it => it).join('\n');
 	const length = authors.length;
 	const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
-	const isMe = authors.includes(account.id);
+	const isSelf = authors.includes(account.id);
 	const cn = [ 'reaction' ];
 
-	if (isMe) {
-		cn.push('isMe');
+	if (isSelf) {
+		cn.push('isSelf');
 	};
 	if (length > 1) {
 		cn.push('isMulti');
@@ -44,6 +44,4 @@ const ChatMessageReactionBase = observer(forwardRef<{}, Props>((props, ref) => {
 
 }));
 
-const ChatMessageReaction = memo(ChatMessageReactionBase);
-
-export default ChatMessageReaction;
+export default memo(ChatMessageReaction);
