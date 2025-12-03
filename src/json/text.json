@@ -2283,7 +2283,7 @@
 	"onboardingCollectionsButton": "Okay!",
 
 	"onboardingChatsTitle": "Chat Where It Matters.<br/>Build Where It Belongs.",
-	"onboardingChatsDescription": "Chats now live as native Objects in your Spaces, so you can create focused sub-chats and link every conversation directly to your work.",
+	"onboardingChatsDescription": "Keep all your conversations in Anytype — from work chats to private direct messages. Your communication and your work are finally connected.",
 
 	"onboardingChatsMockChatMessage0": "Good to have chat here now",
 	"onboardingChatsMockChatMessage1": "Yeah. Just created something from this",
@@ -2293,11 +2293,11 @@
 	"onboardingChatsMockChatAttachmentType": "Page",
 
 	"onboardingChatsSlide0Title": "One Space. Many Threads.",
-	"onboardingChatsSlide0Text": "Create multiple chats inside any Space where your ideas, notes, and tasks already live.",
+	"onboardingChatsSlide0Text": "Create multiple chats inside any Space — one for each idea, topic, or team. Your chats stay right next to your data",
 	"onboardingChatsSlide1Title": "Chats, Organized",
-	"onboardingChatsSlide1Text": "Spin up chats for projects, teams, or topics. Add tags to organize them, and use views to filter or group chats the way you work.",
-	"onboardingChatsSlide2Title": "Familiar and Predictable",
-	"onboardingChatsSlide2Text": "Spaces and Chats now share the same navigation principles making it easier to switch contexts.",
+	"onboardingChatsSlide1Text": "Group chats by projects, teams, or topics using tags and properties — just like you organize your knowledge",
+	"onboardingChatsSlide2Title": "Everything You Talk About",
+	"onboardingChatsSlide2Text": "Move smoothly between spaces, chats, and direct messages with a consistent and predictable layout",
 	"onboardingChatsSlide3Title": "Talk One-on-One",
 	"onboardingChatsSlide3Text": "Reach out people directly when you need a quick answer or a private space to talk.",
 	"onboardingChatsSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
