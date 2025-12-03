@@ -680,7 +680,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onKeyUp (e: any) {
 		e.persist();
 
-		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
+		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp, isPopup } = this.props;
 		const { filter } = S.Common;
 		const { id, content } = block;
 		const range = this.getRange();
@@ -890,6 +890,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.setText(this.marks, false);
 		onKeyUp(e, value, this.marks, range, this.props);
+		focus.scroll(isPopup, id);
 	};
 
 	onMention (d: number) {

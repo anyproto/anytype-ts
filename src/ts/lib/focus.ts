@@ -121,28 +121,25 @@ class Focus {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ch = container.height();
-		const no = node.offset().top;
-		const nh = node.outerHeight();
-		const hh = J.Size.header;
-		const o = J.Size.lastBlock + hh;
-		const st = container.scrollTop();
-		const y = no - container.offset().top + st;
-		
-		const topViewport = st + hh;
-		const bottomViewport = st + ch - o;
-		
-		// If block intersects the visible area - don't scroll
-		if ((y + nh > topViewport) && (y < bottomViewport)) {
-			return;
+		let rect = U.Common.getSelectionRect();
+		if (!rect) {
+			rect = node.get(0).getBoundingClientRect();
 		};
-		
-		if ((y >= st) && (y <= st + ch - o)) {
+		if (!rect) {
 			return;
 		};
 
-		container.scrollTop(Math.max(y, ch - o) - ch + o);
+		const container = U.Common.getScrollContainer(isPopup);
+		const ch = container.height();
+		const st = container.scrollTop();
+		const { header, lastBlock } = J.Size;
+		const y = rect.top + st - container.offset().top;
+		const top = st + header;
+		const bottom = st + ch - lastBlock - header;
+
+		if ((y < top) || (y > bottom)) {
+			container.scrollTop(Math.max(0, y - ch / 2));
+		};
 	};
 
 };
