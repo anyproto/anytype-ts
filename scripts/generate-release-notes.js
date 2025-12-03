@@ -448,6 +448,17 @@ function getCommitDateRange(commits) {
 	};
 }
 
+// Extract community.anytype.io link from task description
+function extractCommunityLink(description) {
+	if (!description) return null;
+
+	// Match community.anytype.io URLs in the description
+	const communityLinkPattern = /https?:\/\/community\.anytype\.io\/[^\s)]+/i;
+	const match = description.match(communityLinkPattern);
+
+	return match ? match[0] : null;
+}
+
 // Format release notes as Markdown
 function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, fromTag, toTag) {
 	let output = '';
@@ -532,6 +543,12 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs
 			// Compact format: just list the task
 			output += `- **${task.identifier}**: ${task.title}`;
 
+			// Add community link if present in description
+			const communityLink = extractCommunityLink(task.description);
+			if (communityLink) {
+				output += ` ([community post](${communityLink}))`;
+			}
+
 			// Show commit count if there are multiple commits for this task
 			const commits = commitsByTaskId[task.identifier] || [];
 			if (commits.length > 1) {
@@ -587,6 +604,7 @@ function formatAsJSON(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, fr
 			id: task.identifier,
 			title: task.title,
 			description: task.description,
+			communityLink: extractCommunityLink(task.description),
 			state: task.state?.name,
 			priority: task.priority,
 			team: task.team?.name,
