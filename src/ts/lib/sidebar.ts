@@ -300,6 +300,12 @@ class Sidebar {
 		};
 
 		const dataLeft = this.getData(I.SidebarPanel.Left);
+		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
+
+		if (dataSubLeft.isClosed) {
+			return;
+		};
+
 		const width = dataLeft.isClosed ? 0 : dataLeft.width;
 		const objLeft = this.leftPanelGetNode();
 		const subPageWrapperLeft = objLeft.find('#subPageWrapper');

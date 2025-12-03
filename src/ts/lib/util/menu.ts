@@ -1709,11 +1709,19 @@ class UtilMenu {
 	};
 
 	notificationModeOptions (): I.Option[] {
-		return [
+		const spaceview = U.Space.getSpaceview();
+
+		let ret = [
 			{ id: I.NotificationMode.All },
 			{ id: I.NotificationMode.Mentions },
 			{ id: I.NotificationMode.Nothing },
 		].map(it => ({ ...it, name: translate(`notificationMode${it.id}`) }));
+
+		if (spaceview.isOneToOne) {
+			ret = ret.filter(it => it.id != I.NotificationMode.Mentions);
+		};
+
+		return ret;
 	};
 
 	recentModeOptions (): I.Option[] {

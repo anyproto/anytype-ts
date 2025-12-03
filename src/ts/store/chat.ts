@@ -362,11 +362,17 @@ class ChatStore {
 			return ret;
 		};
 
+		const spaceview = U.Space.getSpaceview();
+
 		for (const [ chatId, state ] of spaceMap) {
 			if (chatId) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
 				ret.messageCounter += Number(state.messageCounter) || 0;
 			};
+		};
+
+		if (spaceview.isOneToOne) {
+			ret.mentionCounter = 0;
 		};
 
 		return ret;
@@ -400,7 +406,11 @@ class ChatStore {
 		if (spaceMap) {
 			const state = spaceMap.get(chatId);
 			if (state) {
-				ret.mentionCounter = Number(state.mentionCounter) || 0;
+				const spaceview = U.Space.getSpaceview();
+				if (!spaceview.isOneToOne) {
+					ret.mentionCounter = Number(state.mentionCounter) || 0;
+				};
+
 				ret.messageCounter = Number(state.messageCounter) || 0;
 			};
 		};

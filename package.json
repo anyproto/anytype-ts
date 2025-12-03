@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.51.21-alpha",
+	"version": "0.51.28-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -129,7 +129,7 @@
 		"emoji-mart": "^5.5.2",
 		"findandreplacedomtext": "^0.4.6",
 		"glob": "^13.0.0",
-		"google-protobuf": "^4.0.0",
+		"google-protobuf": "^4.0.1",
 		"grpc-web": "^2.0.2",
 		"history": "^4.10.1",
 		"inputmask": "^5.0.5",

@@ -2,9 +2,9 @@
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__List { padding: 8px 0px 4px; }
+		.ReactVirtualized__List { padding: 8px 0px; }
 
-		.innerWrap { width: 684px; height: 684px; max-height: calc(100% - 48px); overflow: hidden; }
+		.innerWrap { width: 684px; height: 706px; max-height: calc(100% - 48px); overflow: hidden; }
 
 		@media (max-width: 700px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
@@ -35,10 +35,9 @@
 			}
 		}
 
-		.items { height: 100%; flex-grow: 1; }
+		.items { height: 100%; flex-grow: 1; padding: 0px 8px; }
 		.items {
 			.pad { height: 12px; }
-			.row { padding: 0 4px; }
 
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
 
@@ -46,7 +45,7 @@
 
 			.item.isSmall { height: 38px; align-items: center; }
 			.item.isSmall {
-				.sides { align-items: center; }
+				.sides { align-items: center; flex-grow: 1; overflow: hidden; }
 			}
 
 			.item {
