@@ -285,7 +285,7 @@ class UtilMenu {
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'copy', name: translate('libMenuCopyMedia') });
+			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyMedia') });
 		};
 
 		if (hasBookmark) {

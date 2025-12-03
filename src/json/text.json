@@ -235,6 +235,7 @@
 	"commonPersonalSpace": "Personal Space",
 	"commonSaveAsFile": "Save as file",
 	"commonDownloadCode": "Download Code",
+	"commonCopyMedia": "Copy Media",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -2377,7 +2378,6 @@
 	"libRelationPicture": "Picture",
 
 	"libMenuClearStyle": "Clear style",
-	"libMenuCopyMedia": "Copy media",
 	"libMenuRename": "Rename",
 	"libMenuReplace": "Replace",
 
