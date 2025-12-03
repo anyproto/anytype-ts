@@ -794,7 +794,7 @@
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
-	"blockChatCopyText": "Copy text",
+	"blockChatCopyText": "Copy Text",
 	"blockChatMarkAsUnread": "Mark as unread",
 
 	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",
