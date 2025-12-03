@@ -79,7 +79,7 @@ import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
 
 import MenuIdentity from './identity';
-import MenuHi from './hi';
+import MenuOneToOne from './oneToOne';
 
 import MenuChatText from './chat/text';
 import MenuChatCreate from './chat/create';
@@ -169,7 +169,7 @@ const Components: any = {
 	syncStatusInfo:			 MenuSyncStatusInfo,
 
 	identity:				 MenuIdentity,
-	hi:						 MenuHi,
+	oneToOne:				 MenuOneToOne,
 
 	chatText: 				 MenuChatText,
 	chatCreate: 			 MenuChatCreate,
