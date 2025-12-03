@@ -138,6 +138,7 @@
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
 	"commonCopyDeeplink": "Copy Deeplink",
+	"commonDeeplink": "Deeplink",
 	"commonSidebar": "Sidebar",
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
@@ -233,6 +234,7 @@
 	"commonNotifications": "Notifications",
 	"commonPersonalSpace": "Personal Space",
 	"commonSaveAsFile": "Save as file",
+	"commonDownloadCode": "Download Code",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

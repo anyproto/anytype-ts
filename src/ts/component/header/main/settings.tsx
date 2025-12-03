@@ -48,6 +48,13 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		};
 	};
 
+	const onOneToOne = () => {
+		S.Menu.open('oneToOne', {
+			element: '#button-share-one-to-one',
+			horizontal: I.MenuDirection.Right,
+		});
+	};
+
 	const renderIdentity = () => {
 		if (![ 'account', 'index' ].includes(id) || !globalName) {
 			return null;
@@ -64,6 +71,10 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const renderMore = () => {
 		const hasLink = invite.cid && invite.key;
 		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
+
+		if (id == 'account') {
+			return <Icon id="button-share-one-to-one" className="oneToOne withBackground" onClick={onOneToOne} />
+		};
 
 		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
 			return null;
