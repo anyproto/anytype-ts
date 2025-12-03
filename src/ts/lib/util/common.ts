@@ -468,6 +468,11 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
+	async clipboardCopyImageFromUrl (url: string) {
+		const blob = await fetch(url).then(r => r.blob());
+		await navigator.clipboard.write([ new ClipboardItem({ [blob.type]: blob }) ]);
+	};
+
 	/**
 	 * Shows a toast and copies text to the clipboard.
 	 * @param {string} label - The label for the toast.

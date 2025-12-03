@@ -179,17 +179,12 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.File: {
 				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'isDeleted', 'creator', 'syncStatus' ], true);
-
-				const syncStatus = I.SyncStatusObject.Syncing
-
 				const showLoader = 
 					(content.state == I.FileState.Uploading) || 
 					(
-						(syncStatus == I.SyncStatusObject.Syncing) && 
+						(object.syncStatus == I.SyncStatusObject.Syncing) && 
 						(object.creator != U.Space.getCurrentParticipantId()
 					));
-
-
 
 				if (showLoader) {
 					blockComponent = <BlockLoader key={key} ref={setRef} {...this.props} />;
