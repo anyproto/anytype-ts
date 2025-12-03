@@ -27,8 +27,6 @@ export default () => {
 		//{ type: I.BlockType.IconPage, icon: '🎄' },
 		//{ type: I.BlockType.IconPage, icon: '👋' },
 
-		//${hl(``)}
-
 		title(`Space Multi-Chats & Navigation`),
 		h4(`<span>Release 0.51.0</span><span>November 24, 2025</span>`),
 		text(''),

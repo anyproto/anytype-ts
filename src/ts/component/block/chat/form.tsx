@@ -69,6 +69,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const menuContext = useRef(null);
 	const namespace = U.Common.getEventNamespace(isPopup);
 	const attachmentsSubId = subId + namespace;
+	const spaceview = U.Space.getSpaceview();
 	
 	let attachments = S.Chat.getAttachments(attachmentsSubId);
 
@@ -276,7 +277,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const oneSymbolBefore = range.current ? value[range.current.from - 1] : '';
 		const twoSymbolBefore = range.current ? value[range.current.from - 2] : '';
 		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
+		const canOpenMenuMention = !spaceview.isOneToOne && !menuOpenMention && (oneSymbolBefore == '@') && (!twoSymbolBefore || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
 
 		setMarks(parsed.marks);
 
@@ -1733,7 +1734,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<div className="inner">
 				{!isEmpty ? (
 					<div className="navigation">
-						{mentionCounter ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
+						{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
 						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
 					</div>
 				) : ''}

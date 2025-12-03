@@ -34,10 +34,6 @@ class UtilRouter {
 	getParam (route: string): any {
 		route = String(route || '');
 
-		if (!route) {
-			return {};
-		};
-
 		const parts = route.split('?');
 		if (!parts.length) {
 			return {};

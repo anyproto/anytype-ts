@@ -69,7 +69,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const { account } = S.Auth;
 	const ns = U.Common.getEventNamespace(isPopup);
 	const childRef = useRef(null);
-	const match = U.Common.objectCopy(keyboard.getMatch(isPopup));
+	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
 	const isMain = page == 'main';
 	const isAuth = page == 'auth';

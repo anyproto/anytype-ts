@@ -49,7 +49,7 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 
 			<div className="buttonsWrapper">
 				<Button color="accent" className="c40" text={translate('commonCopyLink')} onClick={onCopy} />
-				<Button color="blank" className="c40" text={translate('menuHiDownloadCode')} onClick={onDownload} />
+				<Button color="blank" className="c40" text={translate('commonDownloadCode')} onClick={onDownload} />
 			</div>
 		</>
 	);
