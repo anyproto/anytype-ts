@@ -847,7 +847,7 @@ class Keyboard {
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
-				//Storage.delete('chatsOnboarding');
+				Storage.delete('multichatsOnboarding');
 
 				location.reload();
 				break;

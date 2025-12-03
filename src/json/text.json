@@ -2282,8 +2282,8 @@
 	"onboardingCollectionsText": "<b>Create an object in the Collection.</b> Use Collections to store and organise handpicked objects and files.",
 	"onboardingCollectionsButton": "Okay!",
 
-	"onboardingChatsTitle": "Ideas need conversations",
-	"onboardingChatsDescription": "Anytype now supports real-time chat in Shared Channels — so your thoughts and dialogues can grow together.",
+	"onboardingChatsTitle": "Chat Where It Matters.<br/>Build Where It Belongs.",
+	"onboardingChatsDescription": "Keep all your conversations in Anytype — from work chats to private direct messages. Your communication and your work are finally connected.",
 
 	"onboardingChatsMockChatMessage0": "Good to have chat here now",
 	"onboardingChatsMockChatMessage1": "Yeah. Just created something from this",
@@ -2292,13 +2292,15 @@
 	"onboardingChatsMockChatAttachmentTitle": "Project thoughts",
 	"onboardingChatsMockChatAttachmentType": "Page",
 
-	"onboardingChatsSlide0Title": "Your Vault just leveled up",
-	"onboardingChatsSlide0Text": "Spaces and Chats now show live previews and updates — one<br/>place to follow everything that matters.",
-	"onboardingChatsSlide1Title": "Chats work like Spaces",
-	"onboardingChatsSlide1Text": "A channel made for dialogue — where you can share, create, and<br/>edit together in real time.",
-	"onboardingChatsSlide2Title": "Everything in Its Right Place",
-	"onboardingChatsSlide2Text": "Objects, lists and files appear in the sidebar — structured,<br/>searchable, and always at hand.",
-	"onboardingChatsSlide3Title": "See all the latest updates and bug<br/>fixes in the release notes",
+	"onboardingChatsSlide0Title": "One Space. Many Threads.",
+	"onboardingChatsSlide0Text": "Create multiple chats inside any Space — one for each idea, topic, or team. Your chats stay right next to your data",
+	"onboardingChatsSlide1Title": "Chats, Organized",
+	"onboardingChatsSlide1Text": "Group chats by projects, teams, or topics using tags and properties — just like you organize your knowledge",
+	"onboardingChatsSlide2Title": "Everything You Talk About",
+	"onboardingChatsSlide2Text": "Move smoothly between spaces, chats, and direct messages with a consistent and predictable layout",
+	"onboardingChatsSlide3Title": "Talk One-on-One",
+	"onboardingChatsSlide3Text": "Reach out people directly when you need a quick answer or a private space to talk.",
+	"onboardingChatsSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
 
 	"onboardingPrimitivesTitle": "All-New Types &<br/>Object Management",
 	"onboardingPrimitivesDescription": "Important changes to how things work in Anytype",
