@@ -201,7 +201,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
-	request.setPrefermembershipv2(true);
+	request.setEnablemembershipv2(true);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -220,7 +220,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
-	request.setPrefermembershipv2(true);
+	request.setEnablemembershipv2(true);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
