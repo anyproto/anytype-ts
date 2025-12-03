@@ -138,6 +138,7 @@
 	"commonSelectObject": "Select Object",
 	"commonCopyLink": "Copy Link",
 	"commonCopyDeeplink": "Copy Deeplink",
+	"commonDeeplink": "Deeplink",
 	"commonSidebar": "Sidebar",
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
@@ -233,6 +234,7 @@
 	"commonNotifications": "Notifications",
 	"commonPersonalSpace": "Personal Space",
 	"commonSaveAsFile": "Save as file",
+	"commonDownloadCode": "Download Code",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -794,7 +796,7 @@
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
-	"blockChatCopyText": "Copy text",
+	"blockChatCopyText": "Copy Text",
 	"blockChatMarkAsUnread": "Mark as unread",
 
 	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",

@@ -49,3 +49,15 @@
 		@import "./chat/form";
 	}
 }
+
+.pageMainChat.spaceOneToOne {
+	.blocks {
+		.block.blockChat {
+			.message {
+				.author,
+				.reply .name,
+				> .flex > .side.left { display: none; }
+			}
+		}
+	}
+}

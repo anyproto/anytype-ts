@@ -60,6 +60,52 @@ class UtilSpace {
 	};
 
 	/**
+	 * Opens or creates one-to-one space with given identity.
+	 * @param {string} [id] - target user identity.
+	 * @param {() => void} [callBack] - Optional callback fn.
+	 */
+	openOneToOne (id: string, callBack?: (message?: any) => void) {
+		const { account } = S.Auth;
+		if (id == account.id) {
+			this.openDashboard();
+			callBack?.()
+			return;
+		};
+		
+		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
+
+		if (spaceExists) {
+			U.Router.switchSpace(spaceExists.targetSpaceId, '', true, { onRouteChange: callBack }, false);
+			return;
+		};
+
+		const details: any = {
+			oneToOneIdentity: id,
+			spaceUxType: I.SpaceUxType.OneToOne,
+			spaceAccessType: I.SpaceType.Shared,
+			spaceDashboardId: I.HomePredefinedId.Chat,
+		};
+
+		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
+			if (message.error.code) {
+				callBack?.(message);
+				return;
+			};
+
+			const objectId = message.objectId;
+
+			C.WorkspaceSetInfo(objectId, details, (message: any) => {
+				if (message.error.code) {
+					callBack?.(message);
+					return;
+				};
+
+				U.Router.switchSpace(objectId, '', true, { onRouteChange: callBack }, false);
+			});
+		});
+	};
+
+	/**
 	 * Gets the dashboard object for the current space.
 	 * @returns {any|null} The dashboard object or null if not found.
 	 */

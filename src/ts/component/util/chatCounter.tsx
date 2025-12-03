@@ -39,7 +39,7 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 	return (
 		<div className={cn.join(' ')}>
-			{mentionCounter ? <Icon className={cnMention.join(' ')} /> : ''}
+			{mentionCounter && !spaceview.isOneToOne ? <Icon className={cnMention.join(' ')} /> : ''}
 			{messageCounter ? <Icon className={cnMessage.join(' ')} inner={S.Chat.counterString(messageCounter)} /> : ''}
 		</div>
 	);
