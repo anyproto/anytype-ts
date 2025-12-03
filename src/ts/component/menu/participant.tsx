@@ -36,6 +36,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 			spaceUxType: uxType,
 			spaceAccessType: I.SpaceType.Shared,
 			spaceDashboardId: I.HomePredefinedId.Chat,
+			iconOption: 1,
 		};
 
 		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
