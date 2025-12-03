@@ -60,14 +60,17 @@ class UtilSpace {
 	};
 
 	oneToOneLink (id: string, key: string, type: 'deeplink' | 'web'): string {
+		key = encodeURIComponent(String(key || ''));
+
 		let ret = '';
 		switch (type) {
 			case 'deeplink': {
-				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${encodeURIComponent(key)}`
+				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${key}`
 				break;
 			};
 
 			case 'web': {
+				ret = `https://hi.any.coop/${id}#${key}`;
 				break;
 			};
 		};

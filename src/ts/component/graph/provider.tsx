@@ -1,10 +1,11 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import $, { get } from 'jquery';
+import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, S, U, J, translate, analytics, keyboard, Action, Storage } from 'Lib';
+import { sub } from 'date-fns';
 
 interface Props {
 	id?: string;
@@ -339,47 +340,30 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			return;
 		};
 
-		const win = $(window);
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const offset = node.offset();
-
-		if (!offset) {
+		const container = $('#graphPreview');
+		const el = container.get(0) as any;
+		if (!el) {
 			return;
 		};
 
-		const { left, top } = offset;
-		const shouldRerender = previewId.current != subject.current.id;
-
-		previewId.current = subject.current.id;
-
-		let el = $('#graphPreview');
-		if (!el.length) {
-			el = $('<div id="graphPreview" />').appendTo(body);
+		// Reuse existing React root if present, otherwise create & store it
+		let root = el._reactRoot;
+		if (!root) {
+			root = createRoot(el);
+			el._reactRoot = root;
 		};
 
-		const position = () => {
-			const obj = el.children('.previewGraph'); // faster than find()
-			if (!obj.length) {
-				return;
-			};
+		const item = $('#graphPreviewItem');
+		const isSameSubject = previewId.current == subject.current.id;
 
-			const objWidth = obj.outerWidth();
-			const scrollTop = win.scrollTop();
+		if (!item.length || !isSameSubject) {
+			previewId.current = subject.current.id;
 
-			el.css({
-				left: data.x + left - objWidth / 2,
-				top: data.y + top + 20 - scrollTop,
-			});
-		};
-
-		if (shouldRerender) {
-			const root = createRoot(el[0]);
 			root.render(
 				<PreviewDefault
+					key={subject.current.id}
+					id="graphPreviewItem"
 					object={subject.current}
-					position={position}
-					className="previewGraph"
 					noLoad={true}
 				/>
 			);
@@ -389,13 +373,42 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				layout: subject.current.layout,
 			});
 		} else {
-			position();
+			item.show();
+		};
+
+		previewPosition(data);
+	};
+
+	const previewPosition = (data: any) => {
+		const item = $('#graphPreviewItem');
+		if (!item.length) {
+			return;
 		}
+
+		const node = $(nodeRef.current);
+		const offset = node.offset();
+		if (!offset) {
+			return;
+		}
+
+		const { left, top } = offset;
+		const st = $(window).scrollTop();
+
+		item.css({
+			left: data.x + left - item.outerWidth() / 2,
+			top: data.y + top + 20 - st,
+		});
 	};
 
 	const onPreviewHide = () => {
-		$('#graphPreview').remove();
+		const item = $('#graphPreviewItem');
+		if (item.length) {
+			item.hide();
+		};
+
+		previewId.current = null;
 	};
+
 
 	const onMessage = (e) => {
 		const settings = S.Common.getGraph(storageKey);
@@ -683,6 +696,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			className="graphWrapper"
 		>
 			<div id={elementId} />
+			<div id="graphPreview" />
 		</div>
 	);
 }));
