@@ -1320,14 +1320,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { focused } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
-		const rect = U.Common.getSelectionRect();
 
 		if (!block) {
 			return;
 		};
 
+		const rect = U.Common.getSelectionRect();
 		const mark = Mark.getInRange(marks, type, range);
 		const win = $(window);
+		const menuParam: any = {
+			classNameWrap: 'fromBlock',
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
+			data: {
+				rootId,
+				blockId: block.id,
+				blockIds: [ block.id ],
+			},
+		};
 		const cb = () => {
 			U.Data.blockSetText(rootId, block.id, text, marks, true, () => {
 				focus.set(block.id, range);
@@ -1335,72 +1346,59 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 		};
 
-		if (type == I.MarkType.Link) {
-			S.Menu.close('blockContext', () => {
-				let filter = '';
-				let newType = null;
+		let menuId = '';
+		let filter = '';
+		let newType = null;
 
-				if (mark) {
-					filter = mark.param;
-					newType = mark.type;
-				} else {
-					filter = block.getText().substring(range.from, range.to);
-				};
+		if (mark) {
+			filter = mark.param;
+			newType = mark.type;
+		} else {
+			filter = block.getText().substring(range.from, range.to);
+		};
 
-				window.setTimeout(() => {
-					S.Menu.open('blockLink', {
-						classNameWrap: 'fromBlock',
-						rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-						horizontal: I.MenuDirection.Center,
-						offsetY: 4,
-						data: {
-							rootId,
-							blockId: block.id,
-							blockIds: [ block.id ],
-							filter,
-							type: newType,
-							onChange: (newType: I.MarkType, param: string) => {
-								marks = Mark.toggleLink({ type: newType, param, range }, marks);
-								cb();
-							}
-						}
-					});
-				}, J.Constant.delay.menu);
-			});
-		} else 
-		if ([ I.MarkType.Color, I.MarkType.BgColor ].includes(type)) {
-			let menuId = '';
-			switch (type) {
-				case I.MarkType.Color: {
-					menuId = 'blockColor';
-					break;
-				};
-
-				case I.MarkType.BgColor: {
-					menuId = 'blockBackground';
-					break;
-				};
+		switch (type) {
+			case I.MarkType.Link: {
+				menuId = 'blockLink';
+				menuParam.data = Object.assign(menuParam.data, {
+					filter,
+					type: newType,
+					onChange: (newType: I.MarkType, param: string) => {
+						marks = Mark.toggleLink({ type: newType, param, range }, marks);
+						cb();
+					}
+				});
+				break;
 			};
 
+			case I.MarkType.Color: {
+				menuId = 'blockColor';
+				menuParam.data = Object.assign(menuParam.data, {
+					value: (mark ? mark.param : ''),
+					onChange: (param: string) => {
+						marks = Mark.toggle(marks, { type, param, range });
+						cb();
+					},
+				});
+				break;
+			};
+
+			case I.MarkType.BgColor: {
+				menuId = 'blockBackground';
+				menuParam.data = Object.assign(menuParam.data, {
+					value: (mark ? mark.param : ''),
+					onChange: (param: string) => {
+						marks = Mark.toggle(marks, { type, param, range });
+						cb();
+					},
+				});
+				break;
+			};
+		};
+
+		if (menuId) {
 			S.Menu.close('blockContext', () => {
-				window.setTimeout(() => {
-					S.Menu.open(menuId, {
-						classNameWrap: 'fromBlock',
-						rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-						horizontal: I.MenuDirection.Center,
-						offsetY: 4,
-						data: {
-							rootId,
-							blockId: block.id,
-							blockIds: [ block.id ],
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								marks = Mark.toggle(marks, { type, param, range });
-								cb();
-							},
-						}
-					});
-				}, J.Constant.delay.menu);
+				window.setTimeout(() => S.Menu.open(menuId, menuParam), J.Constant.delay.menu);
 			});
 		} else {
 			marks = Mark.toggle(marks, { type, param: mark ? '' : param, range });
