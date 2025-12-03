@@ -12,6 +12,12 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 	const { id, info } = account;
 	const { metadataKey } = info;
 	const deeplink = `${J.Constant.protocol}://hi/?id=${id}&key=${metadataKey}`;
+	const qrImageParam = {
+		src: `./img/icon/qr.svg`,
+		width: 64,
+		height: 64,
+		excavate: true,
+	};
 
 	const onDownload = () => {
 		const canvas = $(`#${getId()}`).find('canvas').get(0);
@@ -38,7 +44,7 @@ const MenuOneToOne = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref:
 			</div>
 
 			<div className="qrWrapper">
-				<QR size={200} value={deeplink} withLogo={true} />
+				<QR size={200} value={deeplink} imageParam={qrImageParam} />
 			</div>
 
 			<div className="buttonsWrapper">

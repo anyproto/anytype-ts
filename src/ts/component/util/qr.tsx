@@ -1,25 +1,19 @@
 import React, { forwardRef } from 'react';
-import { J, S } from 'Lib';
+import { J, S, I } from 'Lib';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 
 interface Props {
 	value: string;
 	size?: number;
-	withLogo?: boolean;
+	imageParam?: I.ImageParam | {};
 };
 
 const QR = forwardRef<HTMLDivElement, Props>(({
     value = '',
 	size = 122,
-	withLogo = false,
+	imageParam = {},
 }, ref) => {
 	const theme = S.Common.getThemeClass();
-	const logo = withLogo ? {
-		src: `./img/icon/qr.svg`,
-		width: 64,
-		height: 64,
-		excavate: true,
-	} : {};
 
 	return (
 		<div className="qrInner">
@@ -28,7 +22,7 @@ const QR = forwardRef<HTMLDivElement, Props>(({
 				fgColor={J.Theme[theme].qr.foreground}
 				bgColor={J.Theme[theme].qr.bg}
 				size={size}
-				imageSettings={logo}
+				imageSettings={imageParam}
 			/>
 		</div>
 	);

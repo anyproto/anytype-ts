@@ -64,12 +64,11 @@ class UtilSpace {
 	 * @param {string} [id] - target user identity.
 	 * @param {() => void} [callBack] - Optional callback fn.
 	 */
-	openOneToOne (id: string, callBack?: () => void) {
-		const oneToOne = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
+	openOneToOne (id: string, callBack?: (message: any) => void) {
+		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
 
-		if (oneToOne) {
-			U.Router.switchSpace(oneToOne.targetSpaceId, '', true, {}, false);
-			callBack?.();
+		if (spaceExists) {
+			U.Router.switchSpace(spaceExists.targetSpaceId, '', true, { onRouteChange: callBack }, false);
 			return;
 		};
 
@@ -82,6 +81,7 @@ class UtilSpace {
 
 		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
 			if (message.error.code) {
+				callBack?.(message);
 				return;
 			};
 
@@ -89,14 +89,13 @@ class UtilSpace {
 
 			C.WorkspaceSetInfo(objectId, details, (message: any) => {
 				if (message.error.code) {
+					callBack?.(message);
 					return;
 				};
 
-				U.Router.switchSpace(objectId, '', true, {}, false);
+				U.Router.switchSpace(objectId, '', true, { onRouteChange: callBack }, false);
 			});
 		});
-
-		callBack?.();
 	};
 
 	/**
