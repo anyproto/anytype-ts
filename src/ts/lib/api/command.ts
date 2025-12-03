@@ -467,6 +467,7 @@ export const BlockPreview = (html: string, url: string, callBack?: (message: any
 // ---------------------- BLOCK TEXT ---------------------- //
 
 export const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
+	text = text.replace(/&amp;/g, '&');
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 

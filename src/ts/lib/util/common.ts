@@ -1513,7 +1513,10 @@ class UtilCommon {
 	 * @returns {string} The escaped string.
 	 */
 	htmlSpecialChars (s: string) {
-		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		return String(s || '').
+			replace(/&/g, '&amp;').
+			replace(/</g, '&lt;').
+			replace(/>/g, '&gt;');
 	};
 
 	/**
