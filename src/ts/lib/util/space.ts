@@ -59,12 +59,27 @@ class UtilSpace {
 		};
 	};
 
+	oneToOneLink (id: string, key: string, type: 'deeplink' | 'web'): string {
+		let ret = '';
+		switch (type) {
+			case 'deeplink': {
+				ret = `${J.Constant.protocol}://hi/?id=${id}&key=${encodeURIComponent(key)}`
+				break;
+			};
+
+			case 'web': {
+				break;
+			};
+		};
+		return ret;
+	}
+
 	/**
 	 * Opens or creates one-to-one space with given identity.
 	 * @param {string} [id] - target user identity.
 	 * @param {() => void} [callBack] - Optional callback fn.
 	 */
-	openOneToOne (id: string, callBack?: (message?: any) => void) {
+	openOneToOne (id: string, key: string, callBack?: (message?: any) => void) {
 		const { account } = S.Auth;
 		if (id == account.id) {
 			this.openDashboard();
@@ -84,6 +99,7 @@ class UtilSpace {
 			spaceUxType: I.SpaceUxType.OneToOne,
 			spaceAccessType: I.SpaceType.Shared,
 			spaceDashboardId: I.HomePredefinedId.Chat,
+			oneToOneRequestMetadataKey: key,
 		};
 
 		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
@@ -477,6 +493,8 @@ class UtilSpace {
 	getPublishUrl (slug: string): string {
 		return 'https://' + [ this.getPublishDomain(), slug ].join('/');
 	};
+
+
 
 };
 

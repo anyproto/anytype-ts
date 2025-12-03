@@ -24,7 +24,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	};
 
 	const onClick = () => {
-		U.Space.openOneToOne(object.identity, close);
+		U.Space.openOneToOne(object.identity, '', () => close());
 	};
 
 	useEffect(() => load(), []);
