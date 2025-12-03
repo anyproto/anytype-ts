@@ -5,7 +5,7 @@ import { QRCodeCanvas as QRCode } from 'qrcode.react';
 interface Props {
 	value: string;
 	size?: number;
-	imageParam?: I.ImageParam | {};
+	imageParam?: Partial<I.ImageParam>;
 };
 
 const QR = forwardRef<HTMLDivElement, Props>(({
