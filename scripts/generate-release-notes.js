@@ -477,6 +477,7 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs
 	}
 	output += `\n\n`;
 
+	/*
 	// Merged PRs section
 	if (mergedPRs && mergedPRs.length > 0) {
 		output += `## Merged Pull Requests\n\n`;
@@ -485,6 +486,7 @@ function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs
 		});
 		output += '\n';
 	}
+	*/
 
 	// Group tasks by priority
 	const tasksByPriority = {
