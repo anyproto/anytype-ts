@@ -471,6 +471,8 @@ class UtilCommon {
 	async clipboardCopyImageFromUrl (url: string) {
 		const blob = await fetch(url).then(r => r.blob());
 		await navigator.clipboard.write([ new ClipboardItem({ [blob.type]: blob }) ]);
+
+		Preview.toastShow({ text: this.sprintf(translate('toastCopy'), translate('commonImage')) });
 	};
 
 	/**
