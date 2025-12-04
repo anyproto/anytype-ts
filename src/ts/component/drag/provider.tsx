@@ -4,6 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
 import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics, Relation } from 'Lib';
+import { init } from 'emoji-mart';
 
 interface Props {
 	children?: React.ReactNode;
@@ -227,8 +228,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		e.preventDefault();
 		e.stopPropagation();
 
-		isInitialised.current = false;
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+		initData();
 		checkNodes(e, e.pageX, e.pageY);
 
 		if (!dragActive.current) {
@@ -246,6 +247,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 	const onDrag = (e: any) => {
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+		initData();
+		checkNodes(e, e.pageX, e.pageY);
 	};
 
 	const onDragEnd = (e: any) => {
@@ -526,6 +529,8 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
+		console.log('checkNodes', ex, ey);
+
 		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
 		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
