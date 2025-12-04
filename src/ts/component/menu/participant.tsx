@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button } from 'Component';
-import { I, U, C, S, translate } from 'Lib';
+import { I, U, S, translate, Action, analytics } from 'Lib';
 
 const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 	
@@ -11,9 +11,22 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity))[0];
-	const text = oneToOne ? translate('menuParticipantMessage') : translate('menuParticipantConnect');
-	const showButton = ((oneToOne && oneToOne.targetSpaceId != space) || !oneToOne) && (object.identity != account.id);
+	const showButton = (oneToOne && oneToOne.targetSpaceId != space) || !oneToOne || (object.identity == account.id);
 	const globalName = object.globalName || U.Common.shortMask(object.identity, 6);
+
+	let text = '';
+	let color = 'blank';
+
+	if (object.identity == account.id) {
+		text = translate('menuParticipantProfile');
+	} else
+	if (oneToOne && (oneToOne.targetSpaceId != space)) {
+		text = translate('menuParticipantMessage');
+		color = 'accent';
+	} else 
+	if (!oneToOne) {
+		text = translate('menuParticipantConnect');
+	};
 
 	const load = () => {
 		U.Object.getById(object.id, { keys: U.Subscription.participantRelationKeys() }, (object: any) => {
@@ -24,7 +37,11 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	};
 
 	const onClick = () => {
-		U.Space.openOneToOne(object.identity, '', () => close());
+		if (object.identity == account.id) {
+			Action.openSettings('account', analytics.route.menuParticipant);
+		} else {
+			U.Space.openOneToOne(object.identity, '', () => close());
+		};
 	};
 
 	useEffect(() => load(), []);
@@ -34,9 +51,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 			<div className="head">
 				<Label
 					text={globalName}
-					onClick={() => {
-						U.Common.copyToast(translate('blockFeaturedIdentity'), object.identity);
-					}}
+					onClick={() => U.Common.copyToast(translate('blockFeaturedIdentity'), object.identity)}
 				/>
 			</div>
 			<IconObject object={object} size={128} />
@@ -47,7 +62,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 
 			{showButton ? (
 				<div className="buttonsWrapper">
-					<Button color="accent" text={text} onClick={onClick} />
+					<Button color={color} text={text} onClick={onClick} />
 				</div>
 			) : ''}
 		</>

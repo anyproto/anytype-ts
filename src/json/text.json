@@ -1941,7 +1941,8 @@
 
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",
-	"menuParticipantMessage": "Message",
+	"menuParticipantMessage": "Send Message",
+	"menuParticipantProfile": "Open Profile",
 
 	"previewEdit": "Edit Link",
 
