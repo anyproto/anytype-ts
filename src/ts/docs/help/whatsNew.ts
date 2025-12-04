@@ -62,8 +62,8 @@ export default () => {
 		text(`Resizing multiple images on a page is now easier and more precise. When you resize images, the width handle snaps to visual "magnetic" stops so you can quickly align them to the same size.`),
 		text(``),
 
-		text(`<b>Loading State for File Blocks in Editor</b>`),
-		text(`File and Image blocks now show a clear loading state instead of appearing as empty blocks. When you open a Space that contains many media-heavy blocks, you’ll see that files are still loading.`),
+		text(`<b>Copy Images to Clipboard</b>`),
+		text(`You can now copy images directly from blocks in the Editor, or from the Object menu when media is opened in full screen.`),
 		text(``),
 
 		text(`<b>Bandcamp Integration</b>`),
