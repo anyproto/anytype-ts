@@ -1025,14 +1025,20 @@ class Action {
 
 	spaceInfo () {
 		const { account } = S.Auth;
+		const { dateFormat } = S.Common;
 		const space = U.Space.getSpaceview();
 		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
 		const data = [
 			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
-			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
 			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
-			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
 		];
+
+		if (!creator._empty_) {
+			data.push([ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.resolvedName ]);
+		};
+		if (space.createdDate) {
+			data.push([ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(dateFormat, space.createdDate) ],);
+		};
 
 		S.Popup.open('confirm', {
 			className: 'isWide spaceInfo',
