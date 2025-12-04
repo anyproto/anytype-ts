@@ -2063,8 +2063,12 @@ class UtilCommon {
 		return el.scrollHeight - el.clientHeight;
 	};
 
+	getMenuBarHeight () {
+		return Number($('#menuBar.withButtons').outerHeight()) || 0;
+	};
+
 	getAppContainerHeight () {
-		return $('#appContainer').height() - Number($('#menuBar.withButtons').outerHeight() || 0);
+		return $('#appContainer').height() - this.getMenuBarHeight();
 	};
 
 	safeDecodeUri (s: string): string {

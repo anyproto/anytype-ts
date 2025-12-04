@@ -243,6 +243,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const scroll = node.find('#scroll');
 		const { left, top } = rowHead.offset();
 		const sx = scroll.scrollLeft();
+		const threshold = J.Size.header + U.Common.getMenuBarHeight();
 		
 		let clone = node.find('#rowHeadClone');
 
@@ -267,10 +268,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			clone.find('.rowHead').attr({ id: '' });
 		};
 
-		if (top <= J.Size.header) {
+		if (top <= threshold) {
 			clone.css({ 
 				left: left + sx, 
-				top: J.Size.header, 
+				top: threshold, 
 				width: rowHead.outerWidth() + 2, 
 				transform: `translate3d(${-sx}px,0px,0px)`,	
 			});
@@ -278,7 +279,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			clone.remove();
 		};
 
-		rowHead.toggleClass('fixed', top <= J.Size.header);
+		rowHead.toggleClass('fixed', top <= threshold);
 	};
 
 	resizeColumns (relationKey: string, width: number) {
