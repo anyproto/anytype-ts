@@ -12,6 +12,7 @@ import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight,
 const LIMIT = 20;
 const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_DIV = 16;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -210,6 +211,15 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
+		if (vaultIsMinimal) {
+			const pinned = items.filter(it => it.isPinned);
+			const notPinned = items.filter(it => !it.isPinned)
+
+			if (pinned.length) {
+				items = pinned.concat([ { isDiv: true } ]).concat(notPinned);
+			};
+		};
+
 		return items;
 	};
 
@@ -299,6 +309,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const ItemObject = (item: any) => {
+		if (item.isDiv) {
+			return (
+				<div className="separator" style={item.style}>
+					<div className="inner" />
+				</div>
+			);
+		};
+
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
@@ -490,6 +508,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getRowHeight = (item: any) => {
+		if (item.isDiv) {
+			return HEIGHT_DIV;
+		};
 		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
 	};
 
