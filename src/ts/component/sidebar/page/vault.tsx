@@ -148,7 +148,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (!vaultIsMinimal) {
 			return;
 		};
-
+		
+		const items = getItems(true);
 		const node = getNode();
 		const element = node.find(`#item-${item.id}`);
 		const iconWrap = element.find('.iconWrap');
@@ -198,7 +199,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyboard.setDragging(false);
 	};
 
-	const getItems = () => {
+	const getItems = (noDiv?: boolean) => {
 		let items = U.Menu.getVaultItems().map(it => {
 			if (it.lastMessage) {
 				it.chat = S.Detail.get(J.Constant.subId.chatGlobal, it.lastMessage.chatId, J.Relation.chatGlobal, true);
@@ -211,7 +212,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
-		if (vaultIsMinimal) {
+		if (vaultIsMinimal && !noDiv) {
 			const pinned = items.filter(it => it.isPinned);
 			const notPinned = items.filter(it => !it.isPinned)
 
