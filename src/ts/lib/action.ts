@@ -525,7 +525,6 @@ class Action {
 
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
 			analytics.event('MoveToBin', { route, count: ids.length });
-
 			callBack?.();
 		});
 	};
@@ -540,10 +539,13 @@ class Action {
 		ids = ids || [];
 
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (!message.error.code) {
-				callBack?.();
-				analytics.event('RestoreFromBin', { route, count: ids.length });
+			if (message.error.code) {
+				return;
 			};
+
+			Preview.toastShow({ action: I.ToastAction.Restore, ids });
+			callBack?.();
+			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});
 	};
 

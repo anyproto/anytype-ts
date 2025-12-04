@@ -113,6 +113,20 @@ const Toast: FC = observer(() => {
 			]);
 			break;
 		};
+
+		case I.ToastAction.Restore: {
+			if (!ids) {
+				break;
+			};
+
+			const cnt = `${ids.length} ${U.Common.plural(ids.length, translate('pluralObject'))}`;
+			textAction = U.Common.sprintf(translate('toastMovedFromBin'), cnt);
+
+			buttons = buttons.concat([
+				{ action: 'undoRestore', label: translate('commonUndo'), data: ids }
+			]);
+			break;
+		};
 	};
 
 	const onCloseHandler = () => Preview.toastHide(true);
@@ -132,6 +146,13 @@ const Toast: FC = observer(() => {
 			case 'undoArchive': {
 				if (item.data) {
 					Action.restore(item.data, analytics.route.toast);
+				};
+				break;
+			};
+
+			case 'undoRestore': {
+				if (item.data) {
+					Action.archive(item.data, analytics.route.toast);
 				};
 				break;
 			};

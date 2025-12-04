@@ -1978,6 +1978,7 @@
 	"toastIsUnlocked": "is unlocked",
 	"toastMovedTo": "%s moved to",
 	"toastMovedToBin": "%s moved to Bin",
+	"toastMovedFromBin": "%s restored",
 	"toastMovedFrom": "%s moved from",
 	"toastAddedToCollection": "has been added to Collection",
 	"toastLinkedTo": "has been linked to",
