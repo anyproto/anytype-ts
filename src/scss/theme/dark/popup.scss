@@ -107,8 +107,10 @@
 					.img { background-image: url('#{$themePath}/icon/onboarding/chats/intro.png'); }
 
 					.img.slide2,
-					.img.slide3 {
+					.img.slide3,
+					.img.slide4 {
 						.sidebar { background-image: url('#{$themePath}/icon/onboarding/chats/sidebar.png'); }
+						.oneToOne { background-image: url('#{$themePath}/icon/onboarding/chats/oneToOne.png'); }
 					}
 				}
 				.swiper-button-prev,
