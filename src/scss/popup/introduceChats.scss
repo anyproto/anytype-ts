@@ -108,7 +108,8 @@ $elementsTransition: opacity 0.2s linear;
                     .img.slide0,
                     .img.slide2 { left: 208px; top: 0px; }
                     .img.slide1,
-                    .img.slide3 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 10px; }
+                    .img.slide3,
+                    .img.slide4 { left: 64px; top: 16px; width: 640px; height: 400px; background-size: 640px 400px; border-radius: 10px; }
 
                     .img.slide2,
                     .img.slide3,
@@ -170,7 +171,7 @@ $elementsTransition: opacity 0.2s linear;
 
                 .slide { display: flex; flex-direction: column; gap: 21px 0px; align-items: center; height: 425px; }
                 .slide {
-                    img { width: 680px; height: 425px; }
+                    img { width: 680px; height: 425px; border-radius: 10px; }
                 }
 
                 // transitions
