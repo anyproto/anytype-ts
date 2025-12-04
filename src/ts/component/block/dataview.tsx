@@ -170,7 +170,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getRecords: this.getRecords,
 			getKeys: this.getKeys,
 			getIdPrefix: this.getIdPrefix,
-			getLimit: () => this.getLimit(view.type),
+			getLimit: () => this.getLimit(view),
 			getVisibleRelations: this.getVisibleRelations,
 			getTypeId: this.getTypeId,
 			getTemplateId: this.getDefaultTemplateId,
@@ -409,7 +409,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
-		const node = $(this.node);
 
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
@@ -446,7 +445,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				newViewId: viewId, 
 				keys, 
 				offset: 0, 
-				limit: offset + this.getLimit(view.type), 
+				limit: offset + this.getLimit(view), 
 				clear,
 				sources,
 				filters,
@@ -502,15 +501,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return U.Common.arrayUnique(keys);
 	};
 
-	getLimit (type: I.ViewType): number {
+	getLimit (view: I.View): number {
+		if (!view) {
+			return 0;
+		};
+
 		const { isInline } = this.props;
-		const view = this.getView();
 		const options = Relation.getPageLimitOptions(view.type, isInline);
 		const pageLimit = Number(view.pageLimit) || options[0].id;
 
 		let limit = 0;
 
-		switch (type) {
+		switch (view.type) {
 			default: {
 				limit = isInline ? pageLimit : 500;
 				break;
