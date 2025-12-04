@@ -468,11 +468,33 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
-	async clipboardCopyImageFromUrl (url: string) {
+	async clipboardCopyImageFromUrl(url: string) {
 		const blob = await fetch(url).then(r => r.blob());
-		await navigator.clipboard.write([ new ClipboardItem({ [blob.type]: blob }) ]);
 
-		Preview.toastShow({ text: this.sprintf(translate('toastCopy'), translate('commonImage')) });
+		// Convert blob to PNG (supported by Clipboard API)
+		const bitmap = await createImageBitmap(blob);
+		const canvas = document.createElement('canvas');
+		canvas.width = bitmap.width;
+		canvas.height = bitmap.height;
+		
+		const ctx = canvas.getContext('2d');
+		ctx.drawImage(bitmap, 0, 0);
+
+		// Convert canvas to PNG blob
+		const pngBlob: Blob = await new Promise(resolve =>
+			canvas.toBlob(resolve, 'image/png')
+		);
+
+		// Copy PNG to clipboard
+		await navigator.clipboard.write([
+			new ClipboardItem({
+				'image/png': pngBlob
+			})
+		]);
+
+		Preview.toastShow({
+			text: this.sprintf(translate('toastCopy'), translate('commonImage'))
+		});
 	};
 
 	/**
