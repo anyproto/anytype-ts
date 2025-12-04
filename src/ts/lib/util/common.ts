@@ -1861,6 +1861,14 @@ class UtilCommon {
 					break;
 				};
 
+				case 'hi.any.coop': {
+					const id = pathname.replace(/^\//, '');
+					const key = hash.replace(/^#/, '');
+
+					ret = `/hi/?id=${id}&key=${key}`;
+					break;
+				};
+
 			};
 		} catch (e) { /**/ };
 
