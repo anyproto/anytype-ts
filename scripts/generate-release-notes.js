@@ -453,7 +453,8 @@ function extractCommunityLink(description) {
 	if (!description) return null;
 
 	// Match community.anytype.io URLs in the description
-	const communityLinkPattern = /https?:\/\/community\.anytype\.io\/[^\s)]+/i;
+	// Stop at whitespace, ), ], or other markdown delimiters
+	const communityLinkPattern = /https?:\/\/community\.anytype\.io\/[^\s)\]]+/i;
 	const match = description.match(communityLinkPattern);
 
 	return match ? match[0] : null;
