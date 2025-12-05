@@ -2,11 +2,11 @@ import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, 
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Label, Title, Icon, Button } from 'Component';
-import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, translate, Preview, Mark, analytics } from 'Lib';
 
 import Form from './chat/form';
 import Message from './chat/message';
+import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
 
 interface RefProps {
@@ -24,7 +24,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const { rootId, block, isPopup, readonly } = props;
-	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const formRef = useRef(null);
 	const scrollWrapperRef = useRef(null);
@@ -780,7 +779,11 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			const reply = message.messages[0];
 
 			S.Chat.clear(subId);
-			loadMessagesByOrderId(reply.orderId, () => scrollToMessage(reply.id, true, true));
+			loadMessagesByOrderId(reply.orderId, () => {
+				window.setTimeout(() => {
+					scrollToMessage(reply.id, true, true);
+				}, 30);
+			});
 		});
 	};
 
@@ -957,35 +960,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	let content = null;
 	if (isEmpty) {
-		content = (
-			<div className="chatEmptyState">
-				<div className="inner">
-					<Title text={translate('blockChatEmptyTitle')} />
-					<div className="item">
-						<Icon className="infinity" />
-						<Label text={translate('blockChatEmptyItem1')} />
-					</div>
-					<div className="item">
-						<Icon className="wifi" />
-						<Label text={translate('blockChatEmptyItem2')} />
-					</div>
-					<div className="item">
-						<Icon className="key" />
-						<Label text={translate('blockChatEmptyItem3')} />
-					</div>
-					{spaceview.isChat ? (
-						<div className="buttons">
-							<Button 
-								onClick={() => Action.openSpaceShare(analytics.route.chat)} 
-								text={translate('blockChatEmptyShareInviteLink')} 
-								className="c28" 
-								color="blank" 
-							/>
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
+		content = <Empty />;
 	} else {
 		content = (
 			<div className="scroll">
