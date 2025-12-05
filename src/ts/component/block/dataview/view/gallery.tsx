@@ -32,17 +32,13 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	}, []);
 
 	useEffect(() => {
-		setCardHeight(getCardHeight());
-	}, [ cardSize, coverRelationKey, hideIcon, relations.length ]);
-
-	useEffect(() => {
 		setColumnCount(getColumnCount());
 		setCardHeight(getCardHeight());
-	}, [ width, cardSize ]);
+	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length,  view.type ]);
 
 	useEffect(() => {
 		reset();
-	}, [ width, columnCount, cardHeight, cardSize, coverRelationKey, hideIcon, relations.length, view.type ]);
+	}, [ columnCount, cardHeight ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
@@ -55,7 +51,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 	const reset = () => {
 		if (!isInline) {
-			S.Common.setTimeout('galleryReset', 30, () => {
+			S.Common.setTimeout('galleryReset', 100, () => {
 				cache.current.clearAll();
 				listRef.current?.recomputeRowHeights(0);
 			});
