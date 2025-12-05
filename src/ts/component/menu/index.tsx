@@ -348,16 +348,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.onTab(initialTab);
 		};
 
-		if (onOpen) {
-			onOpen(this);
-		};
-
+		onOpen?.(this);
 		analytics.event('menu', { params: { id } });
 	};
 
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { noAnimation } = param;
+	componentDidUpdate (prevProps: I.Menu) {
+		const { id, param } = this.props;
+		const { noAnimation, onOpen } = param;
 		const node = $(this.node); 
 		const menu = node.find('.menu');
 
@@ -368,6 +365,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		menu.addClass('show').css({ transform: 'none' });
+
+		if (prevProps.param.menuKey != param.menuKey) {
+			onOpen?.(this);
+		};
 		this.position();
 	};
 

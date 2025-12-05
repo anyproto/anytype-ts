@@ -59,20 +59,20 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	};
 
 	const getColumnCount = () => {
+		const { margin, card } = J.Size.dataview.gallery;
 		const view = getView();
 
 		if (!view) {
-			return;
+			return card.small;
 		};
 
-		let size = 0;
+		let ret = card.small;
 		switch (view.cardSize) {
-			default:				 size = 224; break;
-			case I.CardSize.Medium:	 size = 360; break;
-			case I.CardSize.Large:	 size = 480; break;
+			case I.CardSize.Medium:	 ret = card.medium; break;
+			case I.CardSize.Large:	 ret = card.large; break;
 		};
 
-		return Math.max(1, Math.floor((width - J.Size.dataview.gallery.margin) / size));
+		return Math.max(1, Math.round((width - margin) / ret));
 	};
 
 	const onResize = ({ width }) => {
@@ -132,9 +132,9 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	};
 
 	const getCardHeight = (): number => {
-		const size = J.Size.dataview.gallery;
+		const { padding, margin, height } = J.Size.dataview.gallery;
 
-		let height = size.padding * 2 + size.margin - 4;
+		let ret = padding * 2 + margin - 4;
 
 		relations.forEach(it => {
 			const relation = S.Record.getRelationByKey(it.relationKey);
@@ -144,28 +144,29 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 			};
 
 			if (it.relationKey == 'name') {
-				height += 24;
+				ret += 24;
 			} else {
 				switch (relation.format) {
 					default: {
-						height += 22; break;
+						ret += 22; 
+						break;
 					};
 
 					case I.RelationType.LongText: {
-						height += 40; 
+						ret += 40; 
 						break;
 					};
 
 					case I.RelationType.Object:
 					case I.RelationType.File: {
-						height += 24; 
+						ret += 24; 
 						break;
 					};
 				};
 			};
 		});
 
-		return Math.max(size.height, height);
+		return Math.max(height, ret);
 	};
 
 	const getCoverObject = (id: string): any => {
