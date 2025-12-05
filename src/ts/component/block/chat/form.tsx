@@ -349,9 +349,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateCounter();
 
 		window.clearTimeout(timeoutHistory.current);
-		timeoutHistory.current = window.setTimeout(() => {
-			historySaveState();
-		}, J.Constant.delay.chatHistory);
+		timeoutHistory.current = window.setTimeout(() => historySaveState(), J.Constant.delay.chatHistory);
 	};
 
 	const onInput = () => {
