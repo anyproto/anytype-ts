@@ -468,7 +468,7 @@ class RecordStore {
 	 * @returns {any|null} The chat type object or null.
 	 */
 	getChatType () {
-		return this.getTypeByKey(J.Constant.typeKey.chat);
+		return this.getTypeByKey(J.Constant.typeKey.chatDerived);
 	};
 
 	/**

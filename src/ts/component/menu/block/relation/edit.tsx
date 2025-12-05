@@ -416,10 +416,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const relation = this.getRelation();
 
 		Action.archive([ relation.id ], '', () => {
-			if (deleteCommand) {
-				deleteCommand();
-			};
-
+			deleteCommand?.();
 			close();
 		});
 	};
