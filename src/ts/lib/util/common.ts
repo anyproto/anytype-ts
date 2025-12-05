@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
 import { initial } from 'lodash';
+import { join } from 'path';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -2097,6 +2098,18 @@ class UtilCommon {
 	settingsHeader (isPopup: boolean, fallBack: string): string {
 		const isSettings = keyboard.getMatch(isPopup).params.action == 'settings';
 		return isSettings ? 'mainSettings' : fallBack;
+	};
+
+	helpMediaPath () {
+		const theme = S.Common.getThemeClass();
+		const ret = [ '.', 'img' ];
+
+		if (theme) {
+			ret.push('theme', theme);
+		};
+
+		ret.push('help');
+		return ret.join('/');
 	};
 
 };
