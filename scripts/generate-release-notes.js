@@ -464,10 +464,6 @@ function extractCommunityLink(description) {
 function formatAsMarkdown(tasks, commitsByTaskId, commitsWithoutTasks, mergedPRs, fromTag, toTag) {
 	let output = '';
 
-	// Header
-	const title = toTag === 'HEAD' ? 'Unreleased Changes' : toTag;
-	output += `# Release Notes: ${title}\n\n`;
-
 	if (fromTag) {
 		const fromType = getTagType(fromTag);
 		const toType = getTagType(toTag);
