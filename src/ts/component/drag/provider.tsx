@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
+import $, { get } from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
@@ -22,71 +22,89 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	const hoverData = useRef(null);
 	const canDrop = useRef(false);
 	const frame = useRef(0);
-	const objects = useRef(null);
 	const objectData = useRef(new Map());
 	const origin = useRef(null);
 	const dragActive = useRef(false);
 	const timeoutDragOver = useRef(0);
+
+	const getContainer = () => {
+		const isPopup = keyboard.isPopup();
+		return $(isPopup ? '#popupPage-innerWrap' : '#dragProvider');
+	};
 
 	const initData = () => {
 		if (isInitialised.current) {
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
-		const container = $(isPopup ? '#popupPage-innerWrap' : '#dragProvider');
-
 		clearState();
 		isInitialised.current = true;
-		objects.current = container.find('.dropTarget.isDroppable');
 
-		objects.current.each((i: number, el: any) => {
-			const item = $(el);
-			const data = {
-				id: item.attr('data-id'),
-				rootId: item.attr('data-root-id'),
-				cacheKey: item.attr('data-cache-key'),
-				dropType: item.attr('data-drop-type'),
-				type: item.attr('data-type'),
-				style: item.attr('data-style'),
-				targetContextId: item.attr('data-target-context-id'),
-				viewType: item.attr('data-view-type'),
+		getContainer().find('.dropTarget.isDroppable').each((i: number, el: any) => {
+			const data = initNode(el, i);
+			if (data) {
+				objectData.current.set(data.cacheKey, data);
 			};
-
-			const offset = item.offset();
-			const rect = el.getBoundingClientRect() as DOMRect;
-			const x = offset.left;
-			const width = rect.width;
-
-			let y = offset.top;
-			let height = rect.height;
-
-			// Add block's paddings to height
-			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-				const block = $(`#block-${data.id}`);
-				if (block.length) {
-					const top = parseInt(block.css('paddingTop'));
-					const bot = parseInt(block.css('paddingBottom'));
-
-					y -= top + 2;
-					height += top + bot + 2;
-				};
-			};
-
-			objectData.current.set(data.cacheKey, {
-				...data,
-				obj: item,
-				index: i,
-				x,
-				y,
-				width,
-				height,
-				isTargetTop: item.hasClass('targetTop'),
-				isTargetBot: item.hasClass('targetBot'),
-				isTargetCol: item.hasClass('targetCol'),
-				isEmptyToggle: item.hasClass('emptyToggle'),
-			});
 		});
+	};
+
+	const initNode = (el: any, index: number) => {
+		const item = $(el);
+
+		if (!item.length) {
+			return null;
+		};
+
+		const keys = [
+			'id',
+			'root-id',
+			'cache-key',
+			'drop-type',
+			'type',
+			'style',
+			'target-context-id',
+			'view-type',
+		];
+
+		const data: any = {};
+
+		keys.forEach(key => {
+			data[U.Common.toCamelCase(key)] = item.attr(`data-${key}`);
+		});
+
+		return {
+			...data,
+			obj: item,
+			index,
+			...getNodeRect(item, data),
+			isTargetTop: item.hasClass('targetTop'),
+			isTargetBot: item.hasClass('targetBot'),
+			isTargetCol: item.hasClass('targetCol'),
+			isEmptyToggle: item.hasClass('emptyToggle'),
+		};
+	};
+
+	const getNodeRect = (el: any, data: any): { x: number, y: number, width: number, height: number } => {
+		const { left, top } = el.offset();
+		const x = left;
+		const width = el.width();
+
+		let y = top;
+		let height = el.height();
+
+		// Add block's paddings to height
+		if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
+			const block = $(`#block-${data.id}`);
+			if (block.length) {
+				const top = parseInt(block.css('paddingTop'));
+				const bot = parseInt(block.css('paddingBottom'));
+
+				y -= top + 2;
+				height += top + bot + 2;
+			};
+		};
+
+		return { x, y, width, height };
 	};
 
 	const onDropCommon = (e: any) => {
@@ -525,12 +543,29 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			return;
 		};
 
-		initData();
+		getContainer().find('.dropTarget.isDroppable').each((i: number, el: any) => {
+			const item = $(el);
+			const cacheKey = item.attr('data-cache-key');
+
+			let data = {};
+
+			if (objectData.current.has(cacheKey)) {
+				data = objectData.current.get(cacheKey);
+
+				objectData.current.set(cacheKey, {
+					...data,
+					...getNodeRect(item, data),
+				});
+			} else {
+				const data = initNode(el, i);
+				if (data) {
+					objectData.current.set(data.cacheKey, data);
+				};
+			};
+		});
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
-		console.log('checkNodes', ex, ey);
-
 		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
 		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
@@ -804,7 +839,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		setPosition(I.BlockPosition.None);
 
 		isInitialised.current = false;
-		objects.current = null;
 		objectData.current.clear();
 	};
 
