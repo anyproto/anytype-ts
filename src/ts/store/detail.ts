@@ -223,7 +223,7 @@ class DetailStore {
 		};
 
 		return keys;
-	});
+	}, (withKeys, forceKeys) => (withKeys?.join('|') ?? '') + '|' + (forceKeys ? '1' : '0'));
 
 	/**
 	 * Gets the object. If no keys are provided, all properties are returned. If force keys is set, J.Relation.default are included.
