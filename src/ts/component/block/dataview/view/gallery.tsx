@@ -1,9 +1,11 @@
-import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
+import { throttle } from 'lodash';
+import { card } from 'mermaid/dist/rendering-util/rendering-elements/shapes/card';
 
 const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
@@ -37,7 +39,12 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length,  view.type ]);
 
 	useLayoutEffect(() => {
-		reset();
+		if (!isInline) {
+			S.Common.setTimeout('galleryReset', 100, () => {
+				cache.current.clearAll();
+				listRef.current?.recomputeRowHeights(0);
+			});
+		};
 	}, [ columnCount, cardHeight ]);
 
 	useEffect(() => {
@@ -48,15 +55,6 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 			selection?.renderSelection();
 		};
 	});
-
-	const reset = () => {
-		if (!isInline) {
-			S.Common.setTimeout('galleryReset', 100, () => {
-				cache.current.clearAll();
-				listRef.current?.recomputeRowHeights(0);
-			});
-		};
-	};
 
 	const getColumnCount = () => {
 		const { margin, card } = J.Size.dataview.gallery;
@@ -78,6 +76,10 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const onResize = ({ width }) => {
 		setWidth(width);
 	};
+
+	const throttledResize = useMemo(() => {
+		return throttle(onResize, 40);
+	}, [ onResize ]);
 
 	const loadMoreCards = ({ startIndex, stopIndex }) => {
 		const subId = getSubId();
@@ -271,7 +273,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 				scrollTop={topRef.current}
 			>
 				{({ height }) => (
-					<AutoSizer disableHeight={true} onResize={onResize}>
+					<AutoSizer disableHeight={true} onResize={throttledResize}>
 						{({ width }) => (
 							<List
 								autoHeight={true}

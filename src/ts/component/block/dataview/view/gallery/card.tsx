@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -174,4 +174,4 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 }));
 
-export default GalleryCard;
+export default memo(GalleryCard);

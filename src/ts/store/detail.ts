@@ -1,5 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, S, U, J, Relation, translate } from 'Lib';
+import { memoize } from 'lodash';
 
 interface Detail {
 	relationKey: string;
@@ -204,6 +205,26 @@ class DetailStore {
 		};
 	};
 
+	computeKeySet = memoize((withKeys?: string[], forceKeys?: boolean) => {
+		const keys = new Set<string>();
+
+		if (withKeys) {
+			withKeys.forEach(k => keys.add(k));
+
+			if (!forceKeys) {
+				J.Relation.default.forEach(k => keys.add(k));
+			};
+			if (keys.has('name')) {
+				keys.add('pluralName');
+			};
+			if (keys.has('layout')) {
+				keys.add('resolvedLayout');
+			};
+		};
+
+		return keys;
+	});
+
 	/**
 	 * Gets the object. If no keys are provided, all properties are returned. If force keys is set, J.Relation.default are included.
 	 * @param {string} rootId - The root ID.
@@ -220,8 +241,9 @@ class DetailStore {
 		};
 		
 		const object = { id };
-		const keys = new Set<string>();
+		const keys = withKeys ? this.computeKeySet(withKeys, forceKeys) : null;
 
+		/*
 		if (withKeys) {
 			for (const key of withKeys) {
 				keys.add(key);
@@ -240,19 +262,15 @@ class DetailStore {
 				keys.add('resolvedLayout');
 			};
 		};
-
-		list = list.filter(it => {
-			if (it.isDeleted) {
-				return false;
-			};
-			if (withKeys && !keys.has(it.relationKey)) {
-				return false;
-			};
-			return true;
-		});
+		*/
 
 		for (let i = 0; i < list.length; i++) {
-			object[list[i].relationKey] = list[i].value;
+			const item = list[i];
+			if (item.isDeleted || (withKeys && !keys.has(item.relationKey))) {
+				continue;
+			};
+
+			object[item.relationKey] = item.value;
 		};
 
 		return this.mapper(object, skipLayoutFormat);
