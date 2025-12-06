@@ -270,7 +270,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		} else {
 			const turnText = { 
 				id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
-				caption: (I.TextStyle[style] ? translate(U.Common.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
+				caption: (I.TextStyle[style] ? translate(U.String.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
 			};
 
 			const c1 = hasTitle ? [] : U.Menu.getActions(actionParam);
@@ -537,7 +537,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				const name = translate(isCollection ? 'commonCollection' : 'commonSet');
 
 				const addParam: any = {
-					name: U.Common.sprintf(translate('menuBlockActionsCreateNew'), name),
+					name: U.String.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {

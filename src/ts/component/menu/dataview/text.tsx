@@ -16,7 +16,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			nodeRef.current.setValue(U.Common.htmlSpecialChars(value));
+			nodeRef.current.setValue(U.String.htmlSpecialChars(value));
 			nodeRef.current.setRange({ from: length, to: length });
 			nodeRef.current.placeholderCheck();
 		};

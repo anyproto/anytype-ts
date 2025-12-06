@@ -189,7 +189,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 						<div className="item" onMouseEnter={e => onTooltipShow(e, config.path)} onMouseLeave={onTooltipHide}>
 							<div onClick={() => onPathClick(config.path)}>
 								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
-								{config.path ? <Label className="small" text={U.Common.shorten(config.path, 32)} /> : ''}
+								{config.path ? <Label className="small" text={U.String.shorten(config.path, 32)} /> : ''}
 							</div>
 							<Button className="c28" text={translate('commonLoad')} onClick={onUpload} />
 						</div>
@@ -198,7 +198,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 					<div className="item" onMouseEnter={e => onTooltipShow(e, config.userPath)} onMouseLeave={onTooltipHide}>
 						<div onClick={() => onPathClick(config.userPath)}>
 							<Label text={translate('popupSettingsOnboardingStoragePath')} />
-							<Label className="small" text={U.Common.shorten(config.userPath, 32)} />
+							<Label className="small" text={U.String.shorten(config.userPath, 32)} />
 						</div>
 						<div className="buttons">
 							<Button className="c28" text={translate('commonChange')} onClick={onChangeStorage} />

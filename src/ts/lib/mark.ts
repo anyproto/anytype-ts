@@ -425,7 +425,7 @@ class Mark {
 		marks.sort((a, b) => b.range.from - a.range.from);
 
 		for (const mark of marks) {
-			text = U.Common.stringInsert(text, mark.param, mark.range.from, mark.range.to);
+			text = U.String.stringInsert(text, mark.param, mark.range.from, mark.range.to);
 		};
 
 		return text;
@@ -494,7 +494,7 @@ class Mark {
 		});
 
 		// Fix html special symbols
-		text = U.Common.fromHtmlSpecialChars(text);
+		text = U.String.fromHtmlSpecialChars(text);
 
 		const newHtml = text;
 		newHtml.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
@@ -605,7 +605,7 @@ class Mark {
 			const length = symbol.length;
 			const from = o + p1l;
 			const to = from + p2l - length * 2;
-			const replace = p2.replace(new RegExp(U.Common.regexEscape(symbol), 'g'), '') + ' ';
+			const replace = p2.replace(new RegExp(U.String.regexEscape(symbol), 'g'), '') + ' ';
 
 			let check = true;
 			for (const mark of checked) {
@@ -624,7 +624,7 @@ class Mark {
 			marks = this.adjust(marks, to, -length + 1);
 			marks.push({ type, range: { from, to }, param: '' });
 
-			text = U.Common.stringInsert(text, replace, o + p1l, o + p1l + p2l);
+			text = U.String.stringInsert(text, replace, o + p1l, o + p1l + p2l);
 			adjustMarks = true;
 
 			return s;
@@ -680,7 +680,7 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromUnicode (html: string, marks: I.Mark[], updatedValue: boolean): I.FromHtmlResult {
-		const keys = Object.keys(Patterns).map(it => U.Common.regexEscape(it));
+		const keys = Object.keys(Patterns).map(it => U.String.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
@@ -736,7 +736,7 @@ class Mark {
 		let attr = '';
 		switch (type) {
 			case I.MarkType.Link: {
-				attr = `href="${U.Common.urlFix(param)}" class="markuplink"`;
+				attr = `href="${U.String.urlFix(param)}" class="markuplink"`;
 				break;
 			};
 

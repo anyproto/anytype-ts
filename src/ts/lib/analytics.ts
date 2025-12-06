@@ -545,13 +545,13 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				data.id = data.id ? U.Common.toUpperCamelCase(`-${data.id}`) : '';
-				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				data.id = data.id ? U.String.toUpperCamelCase(`-${data.id}`) : '';
+				data.type = data.type ? U.String.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
 			case 'ChangeLibraryType': {
-				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
+				data.type = data.type ? U.String.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
@@ -593,7 +593,7 @@ class Analytics {
 			};
 
 			case 'ChangeSpaceDashboard': {
-				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				data.type = U.String.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
 				break;
 			};
 

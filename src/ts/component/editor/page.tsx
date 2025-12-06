@@ -1656,7 +1656,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
 		const withTab = [ 'indent', 'outdent' ].includes(pressed);
-		const isRtl = U.Common.checkRtl(text);
+		const isRtl = U.String.checkRtl(text);
 		
 		let dir = (pressed == 'outdent') || (pressed == Key.left) ? -1 : 1;
 		if (isRtl) {
@@ -1922,7 +1922,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
-		const urls = U.Common.getUrlsFromText(data.text);
+		const urls = U.String.getUrlsFromText(data.text);
 
 		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
 			this.onPasteUrl(urls[0]);
@@ -2042,7 +2042,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					switch (item.id) {
 						case 'link': {
 							if (currentFrom == currentTo) {
-								value = U.Common.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								value = U.String.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
 
 								to = currentFrom + url.length;
@@ -2073,7 +2073,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'cancel': {
-							value = U.Common.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
+							value = U.String.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
 							to = currentFrom + url.length;
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
@@ -2108,7 +2108,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getClipboardData (e: any) {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const data: any = {
-			text: U.Common.normalizeLineEndings(String(cb.getData('text/plain') || '')),
+			text: U.String.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),
 			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			files: [],

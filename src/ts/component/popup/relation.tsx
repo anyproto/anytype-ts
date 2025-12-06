@@ -314,7 +314,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	return (
 		<div>
-			<Label text={U.Common.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
+			<Label text={U.String.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
 
 			{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
 				<div className="blocks">

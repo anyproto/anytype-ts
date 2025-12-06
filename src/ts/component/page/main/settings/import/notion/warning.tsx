@@ -20,10 +20,10 @@ const PageMainSettingsImportNotionWarning = observer(forwardRef<I.PageRef, I.Pag
 
 			<div className="listWrapper">
 				<ol className="list">
-					<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi1')) }} />
-					<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi2')) }} />
-					<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi3')) }} />
-					<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi4')) }} />
+					<li className="label" dangerouslySetInnerHTML={{ __html: U.String.sanitize(translate('popupSettingsImportNotionWarningLi1')) }} />
+					<li className="label" dangerouslySetInnerHTML={{ __html: U.String.sanitize(translate('popupSettingsImportNotionWarningLi2')) }} />
+					<li className="label" dangerouslySetInnerHTML={{ __html: U.String.sanitize(translate('popupSettingsImportNotionWarningLi3')) }} />
+					<li className="label" dangerouslySetInnerHTML={{ __html: U.String.sanitize(translate('popupSettingsImportNotionWarningLi4')) }} />
 				</ol>
 			</div>
 

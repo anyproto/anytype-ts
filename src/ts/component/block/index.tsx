@@ -811,7 +811,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const getParam = (item: any) => {
 			const range = String(item.attr('data-range') || '').split('-');
 			const url = String(item.attr('href') || '');
-			const scheme = U.Common.getScheme(url);
+			const scheme = U.String.urlScheme(url);
 			const isInside = scheme == J.Constant.protocol;
 
 			let route = '';
@@ -835,7 +835,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					spaceId = routeParam.spaceId;
 				};
 			} else {
-				target = U.Common.urlFix(url);
+				target = U.String.urlFix(url);
 				type = I.PreviewType.Link;
 			};
 
@@ -1141,7 +1141,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		if (mark) {
-			value = U.Common.stringCut(value, mark.range.from, mark.range.to);
+			value = U.String.stringCut(value, mark.range.from, mark.range.to);
 			rM = oM.filter(it => {
 				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
 			});

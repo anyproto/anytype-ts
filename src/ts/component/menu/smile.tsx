@@ -265,7 +265,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							</InfiniteLoader>
 
 							{!sections.length ? (
-								<EmptySearch text={filter ? U.Common.sprintf(translate('menuSmileEmptyFilter'), filter) : translate('menuSmileEmpty')} />
+								<EmptySearch text={filter ? U.String.sprintf(translate('menuSmileEmptyFilter'), filter) : translate('menuSmileEmpty')} />
 							): ''}
 						</div>
 
@@ -363,7 +363,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							</InfiniteLoader>
 
 							{!items.length ? (
-								<EmptySearch text={filter ? U.Common.sprintf(translate('menuSmileEmptyFilter'), filter) : translate('menuSmileEmpty')} />
+								<EmptySearch text={filter ? U.String.sprintf(translate('menuSmileEmptyFilter'), filter) : translate('menuSmileEmpty')} />
 							): ''}
 						</div>
 
@@ -544,7 +544,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	
 	getSmileSections () {
 		const { filter } = this.state;
-		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+		const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 		let sections: any[] = [];
 
@@ -703,7 +703,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	getIconItems () {
 		const { filter } = this.state;
 		const ret: any[] = [];
-		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+		const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 		let items = U.Common.objectCopy(J.Icon);
 		if (filter) {
@@ -756,7 +756,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: U.Common.regexEscape(this.refFilter.getValue()) }, () => this.load());
+			this.setState({ page: 0, filter: U.String.regexEscape(this.refFilter.getValue()) }, () => this.load());
 		}, force ? 0 : 50);
 	};
 

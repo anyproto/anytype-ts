@@ -77,12 +77,12 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
-			const scheme = U.Common.getScheme(v);
+			const scheme = U.String.urlScheme(v);
 			if (!scheme) {
 				v = `http://${v}`;
 			};
 
-			const url = U.Common.matchUrl(v);
+			const url = U.String.matchUrl(v);
 
 			if (url) {
 				if (preview && (url == preview.originalUrl)) {

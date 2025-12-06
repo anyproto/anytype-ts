@@ -163,7 +163,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
-		const isValid = U.Common.matchEmail(v);
+		const isValid = U.String.matchEmail(v);
 
 		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
 	};
@@ -184,7 +184,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
 
 		return items.map(it => {
-			const type = U.Common.toUpperCamelCase(it);
+			const type = U.String.toUpperCamelCase(it);
 
 			return { id: it, name: translate(`authOnboardOptions${type}`), type, stage };
 		});

@@ -237,7 +237,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const data = e.clipboardData || e.originalEvent.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
-		const value = U.Common.stringInsert(getValue(), text, range.from, range.to);
+		const value = U.String.stringInsert(getValue(), text, range.from, range.to);
 
 		const cb = () => {
 			setValue(value);
@@ -311,7 +311,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						text = ' ' + text;
 					};
 
-					const value = U.Common.stringInsert(getValue(), text, from, to);
+					const value = U.String.stringInsert(getValue(), text, from, to);
 
 					to += text.length;
 
@@ -538,7 +538,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					});
 				} catch (e) {
 					if (e instanceof katex.ParseError) {
-						html = `<div class="error">Error in LaTeX '${U.Common.htmlSpecialChars(text)}': ${U.Common.htmlSpecialChars(e.message)}</div>`;
+						html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(e.message)}</div>`;
 					} else {
 						console.error(e);
 					};
@@ -770,8 +770,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		);
 	} else {
 		source = <Icon className="source" onMouseDown={onEdit} />;
-		placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-		empty = !text && !allowEmptyContent ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
+		placeholder = U.String.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
+		empty = !text && !allowEmptyContent ? U.String.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
 		if (!isShowing && text && !U.Embed.allowAutoRender(processor)) {
 			cn.push('withPreview');

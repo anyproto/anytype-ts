@@ -12,7 +12,7 @@ const ListBanner: FC = observer(() => {
 				<Banner
 					id="sidebarUpdateBanner"
 					title={translate('commonUpdateAvailable')}
-					text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)}
+					text={U.String.sprintf(translate('commonNewVersion'), updateVersion)}
 					button={translate('commonUpdateApp')}
 					buttonColor="black"
 					onClick={() => {

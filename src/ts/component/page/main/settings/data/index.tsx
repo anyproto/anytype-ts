@@ -60,7 +60,7 @@ const PageMainSettingsDataIndex = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 						<div className="txt">
 							<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
-							<div className="type">{U.Common.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), U.File.size(localUsage))}</div>
+							<div className="type">{U.String.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), U.File.size(localUsage))}</div>
 						</div>
 					</div>
 					<div className="side right">

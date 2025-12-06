@@ -180,7 +180,7 @@ class PopupStore {
 		
 			callBack?.();
 		} else {
-			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
+			const el = $(`#${U.String.toCamelCase(`popup-${id}`)}`);
 
 			if (el.length) {
 				raf(() => { el.removeClass('show'); });

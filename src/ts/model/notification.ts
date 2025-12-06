@@ -33,12 +33,12 @@ class Notification implements I.Notification {
 		const { importType, errorCode, name } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = U.Common.enumKey(I.NotificationType, this.type);
-		const identityName = U.Common.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
-		const spaceName = U.Common.shorten(String(this.payload.spaceName || translate('defaultNamePage')), 32);
+		const identityName = U.String.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
+		const spaceName = U.String.shorten(String(this.payload.spaceName || translate('defaultNamePage')), 32);
 		const permissions = translate(`participantPermissions${this.payload.permissions}`);
 
-		this.title = translate(U.Common.toCamelCase(`notification-${et}-${lang}-title`));
-		this.text = translate(U.Common.toCamelCase(`notification-${et}-${lang}-text`));
+		this.title = translate(U.String.toCamelCase(`notification-${et}-${lang}-title`));
+		this.text = translate(U.String.toCamelCase(`notification-${et}-${lang}-text`));
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
@@ -51,36 +51,36 @@ class Notification implements I.Notification {
 
 			case I.NotificationType.Gallery: {
 				if (errorCode) {
-					this.text = U.Common.sprintf(this.text, name);
+					this.text = U.String.sprintf(this.text, name);
 				} else {
-					this.title = U.Common.sprintf(this.title, name);
-					this.text = U.Common.sprintf(this.text, spaceName);
+					this.title = U.String.sprintf(this.title, name);
+					this.text = U.String.sprintf(this.text, spaceName);
 				};
 				break;
 			};
 
 			case I.NotificationType.Join: {
 				this.title = '';
-				this.text = U.Common.sprintf(this.text, identityName, spaceName);
+				this.text = U.String.sprintf(this.text, identityName, spaceName);
 				break;
 			};
 
 			case I.NotificationType.Approve: {
 				this.title = '';
-				this.text = U.Common.sprintf(this.text, spaceName, permissions);
+				this.text = U.String.sprintf(this.text, spaceName, permissions);
 				break;
 			};
 
 			case I.NotificationType.Decline:
 			case I.NotificationType.Remove: {
 				this.title = '';
-				this.text = U.Common.sprintf(this.text, spaceName);
+				this.text = U.String.sprintf(this.text, spaceName);
 				break;
 			};
 
 			case I.NotificationType.Permission: {
 				this.title = '';
-				this.text = U.Common.sprintf(this.text, permissions, spaceName);
+				this.text = U.String.sprintf(this.text, permissions, spaceName);
 				break;
 			};
 

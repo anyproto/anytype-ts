@@ -7,7 +7,7 @@ const FooterAuthDisclaimer = forwardRef<{}, I.FooterComponent>(() => {
 	return (
 		<Label 
 			className="disclaimer" 
-			text={U.Common.sprintf(translate('authDisclaimer'), J.Url.terms, J.Url.privacy)} 
+			text={U.String.sprintf(translate('authDisclaimer'), J.Url.terms, J.Url.privacy)} 
 		/>
 	);
 

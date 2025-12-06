@@ -105,7 +105,7 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		window.clearTimeout(timeoutRef.current);
 		timeoutRef.current = window.setTimeout(() => {
 			const value = emailRef.current?.getValue();
-			const isValid = U.Common.matchEmail(value);
+			const isValid = U.String.matchEmail(value);
 
 			if (value && !isValid) {
 				setStatusFunc('error', translate('errorIncorrectEmail'));
@@ -204,7 +204,7 @@ const PopupMembershipPageFree = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 					<div onClick={onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
 						{translate('popupMembershipResend')}
-						{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+						{countdown ? U.String.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 					</div>
 				</>
 			);

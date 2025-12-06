@@ -41,7 +41,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 
 			let text = translate(`popupSettingsMembershipSlide${id}Text`);
 			if (id == 2) {
-				text = U.Common.sprintf(text, J.Url.vision);
+				text = U.String.sprintf(text, J.Url.vision);
 			};
 
 			return (
@@ -75,7 +75,7 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 					period = translate('popupSettingsMembershipPending');
 				} else
 				if (item.period && membership.dateEnds) {
-					period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', membership.dateEnds));
+					period = U.String.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', membership.dateEnds));
 				} else {
 					period = translate('popupSettingsMembershipForeverFree');
 				};
@@ -86,9 +86,9 @@ const PageMainSettingsMembership = observer(class PageMainSettingsMembership ext
 				const periodLabel = U.Common.getMembershipPeriodLabel(item);
 
 				if (item.period == 1) {
-					period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));
+					period = U.String.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(item.period, periodLabel));
 				} else {
-					period = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), item.period, U.Common.plural(item.period, periodLabel));
+					period = U.String.sprintf(translate('popupSettingsMembershipPerGenericMany'), item.period, U.Common.plural(item.period, periodLabel));
 				};
 			};
 

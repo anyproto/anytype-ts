@@ -117,7 +117,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const cn = [ 'focusable', `c${block.id}` ];
 
 		const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
-		const className = [ U.Common.toCamelCase(`view-${I.ViewType[view.type]}`) ];
+		const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 		let ViewComponent: any = null;
 		let body = null;
@@ -1341,7 +1341,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const name = translate(isCollection ? 'blockDataviewEmptyTargetCollections' : 'blockDataviewEmptyTargetSets');
 				emptyProps = {
 					title: translate('blockDataviewEmptyTargetTitle'),
-					description: U.Common.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
+					description: U.String.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
 					button: translate('blockDataviewEmptyTargetButton'),
 					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
 				};

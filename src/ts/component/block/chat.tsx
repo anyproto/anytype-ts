@@ -417,7 +417,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 							});
 					
 							U.Common.clipboardCopy({ 
-								text: U.Common.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								text: U.String.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],
@@ -791,7 +791,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const subId = getSubId();
 		const { creator, content } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
-		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+		const title = U.String.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 		const length = attachments.length;
@@ -802,7 +802,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		let isMultiple: boolean = false;
 
 		if (content.text) {
-			text = U.Common.sanitize(Mark.toHtml(content.text, content.marks));
+			text = U.String.sanitize(Mark.toHtml(content.text, content.marks));
 			text = text.replace(/\n\r?/g, ' ');
 		};
 

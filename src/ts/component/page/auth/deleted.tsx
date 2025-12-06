@@ -75,7 +75,7 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 		switch (status) {
 			case I.AccountStatusType.PendingDeletion: {
 				showPie = true;
-				title = U.Common.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
+				title = U.String.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
 				description = translate('authDeleteDescription');
 				cancelButton = <Button type="input" text={translate('authDeleteCancelButton')} onClick={onCancel} />;
 				break;

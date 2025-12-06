@@ -113,7 +113,7 @@ class UtilData {
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, processor } = content;
-		const dc = U.Common.toCamelCase(`block-${block.type}`);
+		const dc = U.String.toCamelCase(`block-${block.type}`);
 		const c = [];
 
 		switch (block.type) {
@@ -153,7 +153,7 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = U.Common.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
+			default: c = U.String.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -442,7 +442,7 @@ class UtilData {
 		};
 
 		const diff = needle.length - (to - from);
-		const text = U.Common.stringInsert(block.content.text, needle, from, to);
+		const text = U.String.stringInsert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
@@ -797,7 +797,7 @@ class UtilData {
 		const title = [];
 
 		if (name) {
-			title.push(U.Common.shorten(name, 60));
+			title.push(U.String.shorten(name, 60));
 		};
 
 		if (!space._empty_) {
@@ -1040,7 +1040,7 @@ class UtilData {
 			if (groups[id].length) {
 				ret.push(Object.assign({
 					id, 
-					name: translate(U.Common.toCamelCase([ 'common', id ].join('-'))),
+					name: translate(U.String.toCamelCase([ 'common', id ].join('-'))),
 					isSection: true,
 				}, sectionTemplate || {}));
 
@@ -1167,7 +1167,7 @@ class UtilData {
 	sortByOrderIdRequest (subId: string, items: any[], request: (callBack: (message: any) => void) => void) {
 		let s = '';
 		items.forEach((it, i) => {
-			s = U.Common.lexString(s);
+			s = U.String.lexString(s);
 			S.Detail.update(subId, { id: it.id, details: { tmpOrder: s }}, false);
 		});
 

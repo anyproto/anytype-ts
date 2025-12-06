@@ -657,7 +657,7 @@ class Dataview {
 			const type = S.Record.getTypeById(typeId);
 
 			if (type) {
-				return U.Common.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
+				return U.String.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
 			};
 		};
 		return translate('commonCreateNewObject');
