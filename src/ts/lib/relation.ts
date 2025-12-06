@@ -1004,6 +1004,10 @@ class Relation {
 	isArrayType (format: I.RelationType): boolean {
 		return this.arrayTypes().includes(format);
 	};
+
+	isObjectType (format: I.RelationType): boolean {
+		return [ I.RelationType.Object, I.RelationType.File ].includes(format);
+	};
 	
 };
 

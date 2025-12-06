@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, S, U, J, Relation, Dataview } from 'Lib';
@@ -27,16 +27,16 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const listRef = useRef(null);
 	const topRef = useRef(0);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		setCardHeight(getCardHeight());
 	}, []);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		setColumnCount(getColumnCount());
 		setCardHeight(getCardHeight());
 	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length,  view.type ]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		reset();
 	}, [ columnCount, cardHeight ]);
 
@@ -137,31 +137,32 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		let ret = padding * 2 + margin - 4;
 
 		relations.forEach(it => {
+			if (it.relationKey == 'name') {
+				ret += 24;
+				return;
+			};
+
 			const relation = S.Record.getRelationByKey(it.relationKey);
 
 			if (!relation) {
 				return;
 			};
 
-			if (it.relationKey == 'name') {
-				ret += 24;
-			} else {
-				switch (relation.format) {
-					default: {
-						ret += 22; 
-						break;
-					};
+			switch (relation.format) {
+				default: {
+					ret += 22; 
+					break;
+				};
 
-					case I.RelationType.LongText: {
-						ret += 40; 
-						break;
-					};
+				case I.RelationType.LongText: {
+					ret += 40; 
+					break;
+				};
 
-					case I.RelationType.Object:
-					case I.RelationType.File: {
-						ret += 24; 
-						break;
-					};
+				case I.RelationType.Object:
+				case I.RelationType.File: {
+					ret += 24; 
+					break;
 				};
 			};
 		});
@@ -192,24 +193,23 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 	const items = getItems();
 	const length = items.length;
+	const keys = relations.filter((it: any) => {
+		const relation = S.Record.getRelationByKey(it.relationKey);
+		return relation && Relation.isObjectType(relation.format);
+	}).map(it => it.relationKey);
 
 	// Subscriptions on dependent objects
 	for (const id of records) {
-		const item = S.Detail.get(subId, id, getKeys(view.id));
+		const item = S.Detail.get(subId, id, keys);
 		if (item._empty_) {
 			continue;
 		};
-	
-		for (const k in item) {
-			const relation = S.Record.getRelationByKey(k);
-			if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
-				continue;
-			};
 
+		for (const k of keys) {
 			const v = Relation.getArrayValue(item[k]);
 			if (v && v.length) {
-				v.forEach((it: string) => {
-					const object = S.Detail.get(rootId, it, []);
+				v.forEach(id => {
+					const object = S.Detail.get(rootId, id, []);
 				});
 			};
 		};
