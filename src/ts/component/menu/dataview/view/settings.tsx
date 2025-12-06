@@ -226,13 +226,9 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-
-		const relations = view.getVisibleRelations().map((it) => {
-			const relation = S.Record.getRelationByKey(it.relationKey) || {};
-			return relation ? U.String.shorten(relation.name || '', 16) : '';
-		}).filter(it => it);
-
+		const relations = view.getVisibleRelations().map(it => it.relation.name).filter(it => it);
 		const relationCnt = relations.slice(0, 2);
+
 		if (relations.length > 2) {
 			relationCnt.push(`+${relations.length - 2}`);
 		};

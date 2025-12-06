@@ -308,10 +308,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const columns: any = {};
 		
 		relations.forEach(it => {
-			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
-
-			columns[it.relationKey] = Relation.width(w, relation.format);
+			columns[it.relationKey] = Relation.width(w, it.relation.format);
 		});
 
 		return columns;
@@ -386,9 +384,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		node.find('.cellKeyHover').removeClass('cellKeyHover');
 
 		relations.forEach(it => {
-			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			if (it.relationKey == relationKey) {
-				it.width = Relation.width(width, relation.format);
+				it.width = Relation.width(width, it.relation.format);
 			};
 		});
 
@@ -485,7 +482,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
+		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();

@@ -136,19 +136,12 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 		let ret = padding * 2 + margin - 4;
 
-		relations.forEach(it => {
+		relations.forEach((it: any) => {
 			if (it.relationKey == 'name') {
 				ret += 24;
 				return;
 			};
-
-			const relation = S.Record.getRelationByKey(it.relationKey);
-
-			if (!relation) {
-				return;
-			};
-
-			switch (relation.format) {
+			switch (it.relation.format) {
 				default: {
 					ret += 22; 
 					break;
@@ -194,8 +187,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const items = getItems();
 	const length = items.length;
 	const keys = relations.filter((it: any) => {
-		const relation = S.Record.getRelationByKey(it.relationKey);
-		return relation && Relation.isObjectType(relation.format);
+		return Relation.isObjectType(it.relation.format);
 	}).map(it => it.relationKey);
 
 	// Subscriptions on dependent objects
