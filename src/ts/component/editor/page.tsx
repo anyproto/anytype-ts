@@ -161,9 +161,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.onScroll();
 
 		if (top) {
-			window.setTimeout(() => {
-				U.Common.getScrollContainer(isPopup).scrollTop(top);
-			}, 10);
+			window.setTimeout(() => U.Common.getScrollContainer(isPopup).scrollTop(top), 40);
 		};
 
 		focus.apply();
