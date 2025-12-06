@@ -39,7 +39,7 @@ const keyMap = {
 
 class DetailStore {
 
-	private map: Map<string, Map<string, Detail[]>> = new Map();
+	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
 		makeObservable(this, {
@@ -84,13 +84,13 @@ class DetailStore {
 		const map = observable.map(new Map());
 
 		for (const item of items) {
-			const list: Detail[] = [];
+			const detailMap = new Map<string, Detail>();
 
 			for (const k in item.details) {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
 
-			map.set(item.id, list);
+			map.set(item.id, detailMap);
 		};
 
 		this.map.set(rootId, map);
@@ -126,28 +126,28 @@ class DetailStore {
 			map.delete(item.id);
 		};
 
-		let list = map.get(item.id);
-		if (!list) {
-			list = [];
+		let detailMap = map.get(item.id);
+		if (!detailMap) {
+			detailMap = new Map<string, Detail>();
 			createList = true;
 		};
 
 		for (const k in item.details) {
 			if (clear) {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 				continue;
 			};
 
-			const el = list.find(it => it.relationKey == k);
+			const el = detailMap.get(k);
 			if (el) {
 				set(el, { value: item.details[k], isDeleted: false });
 			} else {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
 		};
 
 		if (createList) {
-			map.set(item.id, list);
+			map.set(item.id, detailMap);
 		};
 
 		// Update fast key maps in S.Record to keep consistency
@@ -199,9 +199,16 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+			const detailMap = map.get(id);
+			if (!detailMap) {
+				return;
+			};
+
+			for (const k of keys) {
+				detailMap.delete(k);
+			};
 		} else {
-			map.set(id, []);
+			map.set(id, new Map());
 		};
 	};
 
@@ -235,37 +242,16 @@ class DetailStore {
 	 * @returns {any} The object.
 	 */
 	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
-		let list = this.map.get(rootId)?.get(id) || [];
-		if (!list.length) {
+		const detailMap = this.map.get(rootId)?.get(id);
+
+		if (!detailMap || detailMap.size == 0) {
 			return { id, _empty_: true };
 		};
 		
 		const object = { id };
 		const keys = withKeys ? this.computeKeySet(withKeys, forceKeys) : null;
 
-		/*
-		if (withKeys) {
-			for (const key of withKeys) {
-				keys.add(key);
-			};
-
-			if (!forceKeys) {
-				for (const key of J.Relation.default) {
-					keys.add(key);
-				};
-			};
-
-			if (keys.has('name')) {
-				keys.add('pluralName');
-			};
-			if (keys.has('layout')) {
-				keys.add('resolvedLayout');
-			};
-		};
-		*/
-
-		for (let i = 0; i < list.length; i++) {
-			const item = list[i];
+		for (const [ relationKey, item ] of detailMap.entries()) {
 			if (item.isDeleted || (withKeys && !keys.has(item.relationKey))) {
 				continue;
 			};
@@ -283,7 +269,8 @@ class DetailStore {
 	 * @returns {string[]} The keys.
 	 */
 	public getKeys (rootId: string, id: string): string[] {
-		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
+		const detailMap = this.map.get(rootId)?.get(id);
+		return detailMap ? Array.from(detailMap.keys()) : [];
 	};
 
 	/**
