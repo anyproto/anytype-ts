@@ -155,7 +155,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		const iconWrap = element.find('.iconWrap');
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
-		const text = Preview.tooltipCaption(U.Common.htmlSpecialChars(item.tooltip || item.name), caption);
+		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
 
 		Preview.tooltipShow({ 
 			text, 
@@ -208,7 +208,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		});
 
 		if (filter) {
-			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 

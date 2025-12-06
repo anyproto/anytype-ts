@@ -233,7 +233,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (component) {
-			cn.push(U.Common.toCamelCase('menu-' + component));
+			cn.push(U.String.toCamelCase('menu-' + component));
 		} else {
 			cn.push(menuId);
 		};
@@ -1100,7 +1100,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			id = this.props.id;
 		};
 
-		return U.Common.toCamelCase('menu-' + id);
+		return U.String.toCamelCase('menu-' + id);
 	};
 
 	getElement () {

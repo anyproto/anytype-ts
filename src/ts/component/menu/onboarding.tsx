@@ -85,7 +85,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 				{!noClose ? <Icon className="close" onClick={this.onClose} /> : ''}
 
 				<div className="textWrapper">
-					{withCounter ? <Label className="counter" text={U.Common.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
+					{withCounter ? <Label className="counter" text={U.String.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
 					{category ? <Label className="category" text={category} /> : ''}
 					{name ? <Label className="name" text={name} /> : ''}
 					{description ? <Label className="descr" text={description} /> : ''}

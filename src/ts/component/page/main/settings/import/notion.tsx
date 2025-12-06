@@ -48,7 +48,7 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 			<div className="line" />
 
 			<div className="helpWrapper flex">
-				<Title text={U.Common.sprintf(translate('popupSettingsImportNotionHowTo'), J.Url.notionFAQ)} />
+				<Title text={U.String.sprintf(translate('popupSettingsImportNotionHowTo'), J.Url.notionFAQ)} />
 				<div className="btn" onClick={() => onPage('importNotionHelp')}>
 					<Icon className="help" />{translate('popupSettingsImportNotionStepByStepGuide')}
 				</div>

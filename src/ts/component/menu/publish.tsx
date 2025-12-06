@@ -18,7 +18,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const spaceInfoRef = useRef(null);
 	const spaceview = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
-	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
+	const [ slug, setSlug ] = useState(U.String.slug(object.name));
 	const [ status, setStatus ] = useState(null);
 	const [ isStatusLoading, setIsStatusLoading ] = useState(false);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
@@ -71,7 +71,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						const tier = U.Data.getMembershipTier(membership.tier);
 						const limit = !tier.price ? 10 : 100;
 
-						setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
+						setError(U.String.sprintf(translate('errorPublishingCreate103'), limit));
 						break;
 					};
 				};
@@ -155,7 +155,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 
-	const setSlugHandler = v => setSlug(U.Common.slug(v));
+	const setSlugHandler = v => setSlug(U.String.slug(v));
 
 	let buttons = [];
 

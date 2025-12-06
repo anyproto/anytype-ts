@@ -435,7 +435,7 @@ class UtilSpace {
 	 * @returns {string} The invite link.
 	 */
 	getInviteLink (cid: string, key: string) {
-		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+		return U.Data.isAnytypeNetwork() ? U.String.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 	/**
@@ -480,9 +480,9 @@ class UtilSpace {
 
 		let domain = '';
 		if (participant.globalName) {
-			domain = U.Common.sprintf(J.Url.publishDomain, participant.globalName);
+			domain = U.String.sprintf(J.Url.publishDomain, participant.globalName);
 		} else {
-			domain = U.Common.sprintf(J.Url.publish, participant.identity);
+			domain = U.String.sprintf(J.Url.publish, participant.identity);
 		};
 
 		return domain;

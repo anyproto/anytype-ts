@@ -21,8 +21,8 @@ const MenuPreviewLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	return (
 		<div>
-			<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
-			{example ? <div className="example">{U.Common.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
+			<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math) }} />
+			{example ? <div className="example">{U.String.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
 		</div>
 	);
 

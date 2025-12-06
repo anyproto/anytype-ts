@@ -105,7 +105,7 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (isSection) {
 		inner = (
 			<div className="inner">
-				<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
+				<Label text={translate(U.String.toCamelCase([ 'common', id ].join('-')))} />
 			</div>
 		);
 	} else {

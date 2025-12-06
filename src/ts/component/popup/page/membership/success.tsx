@@ -18,7 +18,7 @@ const PopupMembershipPageSuccess = observer(forwardRef<{}, I.Popup>((props, ref)
 			title = translate('popupMembershipSuccessVerificationTitle');
 			text = translate('popupMembershipSuccessVerificationText');
 		} else {
-			title = U.Common.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name);
+			title = U.String.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name);
 			text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
 		};
 	};

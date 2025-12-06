@@ -12,7 +12,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 	const { account } = S.Auth;
 	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity))[0];
 	const showButton = (oneToOne && oneToOne.targetSpaceId != space) || !oneToOne || (object.identity == account.id);
-	const globalName = object.globalName || U.Common.shortMask(object.identity, 6);
+	const globalName = object.globalName || U.String.shortMask(object.identity, 6);
 
 	let text = '';
 	let color = 'blank';

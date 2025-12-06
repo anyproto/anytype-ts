@@ -387,7 +387,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			if (current === total) {
 				updateStatus(translate('aiOnboardingStatusFinalTouches'));
 			} else {
-				updateStatus(U.Common.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
+				updateStatus(U.String.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
 			};
 		} else {
 			updateStatus(translate('aiOnboardingStatusGenerating'));
@@ -462,7 +462,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					if (current === total) {
 						updateStatus(translate('aiOnboardingStatusFinalTouches'));
 					} else {
-						updateStatus(U.Common.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
+						updateStatus(U.String.sprintf(translate('aiOnboardingStatusCreatingProgress'), current, total));
 					};
 				} else {
 					updateStatus(translate('aiOnboardingStatusGenerating'));

@@ -220,7 +220,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const controls = [];
-	const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks)));
 
 	if (attachmentsLayout) {
 		ca.push(`withLayout layout-${attachmentsLayout}`);
@@ -270,7 +270,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	if (text) {
 		cn.push('withText');
 	};
-	if (U.Common.checkRtl(text)) {
+	if (U.String.checkRtl(text)) {
 		ct.push('isRtl');
 	};
 	if (!isReadMessage || !isReadMention) {

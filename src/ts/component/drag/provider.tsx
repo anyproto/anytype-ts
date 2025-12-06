@@ -69,7 +69,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		const data: any = {};
 
 		keys.forEach(key => {
-			data[U.Common.toCamelCase(key)] = item.attr(`data-${key}`);
+			data[U.String.toCamelCase(key)] = item.attr(`data-${key}`);
 		});
 
 		return {

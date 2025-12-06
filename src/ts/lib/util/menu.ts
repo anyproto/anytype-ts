@@ -143,7 +143,7 @@ class UtilMenu {
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${U.Common.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.icon = `embed-${U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
 			return it;
 		});
 	};
@@ -296,7 +296,7 @@ class UtilMenu {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: U.Common.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', icon: 'source', name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
@@ -560,7 +560,7 @@ class UtilMenu {
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = U.Common.regexEscape(filter);
+		const f = U.String.regexEscape(filter);
 		const regS = new RegExp(`^${f}`, 'i');
 		const regC = new RegExp(f, 'gi');
 
@@ -1389,7 +1389,7 @@ class UtilMenu {
 					return;
 				};
 
-				const url = U.Common.matchUrl(text);
+				const url = U.String.matchUrl(text);
 				const cb = (object: any, time: number) => {
 					callBack?.(object);
 					analytics.createObject(object.type, object.layout, route, time);
@@ -1598,7 +1598,7 @@ class UtilMenu {
 	spaceCreate (param: I.MenuParam, route) {
 		const ids = [ 'chat', 'space', 'join' ];
 		const options = ids.map(id => {
-			const suffix = U.Common.toUpperCamelCase(id);
+			const suffix = U.String.toUpperCamelCase(id);
 
 			let name = '';
 			let icon = '';
@@ -1657,7 +1657,7 @@ class UtilMenu {
 						};
 					};
 
-					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
 				},
 			}
 		});

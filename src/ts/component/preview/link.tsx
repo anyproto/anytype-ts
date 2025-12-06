@@ -32,7 +32,7 @@ const PreviewLink = forwardRef<{}, Props>(({ url = '', position }, ref: any) => 
 			return;
 		};
 		
-		const scheme = U.Common.getScheme(url);
+		const scheme = U.String.urlScheme(url);
 
 		if (scheme && !ALLOWED_SCHEME.includes(scheme)) {
 			return;

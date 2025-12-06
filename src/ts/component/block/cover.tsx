@@ -75,7 +75,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		if (coverType == I.CoverType.Source) {
 			image = S.Detail.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
-				<Label className="author" text={U.Common.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + J.Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${J.Url.unsplash.site + J.Url.unsplash.utm}>Unsplash</a>`)} />
+				<Label className="author" text={U.String.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + J.Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${J.Url.unsplash.site + J.Url.unsplash.utm}>Unsplash</a>`)} />
 			);
 		};
 

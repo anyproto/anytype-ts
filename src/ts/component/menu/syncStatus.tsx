@@ -348,7 +348,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let message = '';
 
 		if (devicesCounter) {
-			message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+			message = U.String.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
 		} else {
 			message = translate('menuSyncStatusP2PNoDevicesConnected');
 		};
@@ -419,7 +419,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
 					} else
 					if (syncingCounter) {
-						message = U.Common.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
+						message = U.String.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
 					} else {
 						message = translate('menuSyncStatusInfoNetworkMessageSynced');
 					};

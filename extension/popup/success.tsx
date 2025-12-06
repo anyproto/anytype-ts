@@ -17,7 +17,7 @@ const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	return (
 		<div className="page pageSuccess">
-			<div className="label bold">{U.Common.sprintf('"%s" is saved!', U.Common.shorten(object.name, 64))}</div>
+			<div className="label bold">{U.String.sprintf('"%s" is saved!', U.String.shorten(object.name, 64))}</div>
 			<div className="label">{object.description}</div>
 
 			<div className="buttonsWrapper">

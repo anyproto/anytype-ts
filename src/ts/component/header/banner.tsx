@@ -110,7 +110,7 @@ const HeaderBanner: FC<Props> = ({
 			cn.push('withMenu');
 
 			if (count) {
-				label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralLCTemplate')));
+				label = U.String.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralLCTemplate')));
 			} else {
 				label = translate('selectTemplateBanner');
 			};

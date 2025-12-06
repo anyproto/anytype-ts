@@ -31,7 +31,7 @@ const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props,
 		cn.push('withAttachment');
 	};
 
-	if (U.Common.checkRtl(text)) {
+	if (U.String.checkRtl(text)) {
 		cn.push('isRtl');
 	};
 
@@ -41,7 +41,7 @@ const ChatMessageReply = observer(forwardRef<{}, I.ChatMessageComponent>((props,
 			<div className="bubble">
 				{icon}
 				<div className="textWrapper">
-					<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+					<div className="text" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 				</div>
 			</div>
 		</div>

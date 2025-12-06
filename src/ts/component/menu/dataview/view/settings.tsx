@@ -229,7 +229,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		const relations = view.getVisibleRelations().map((it) => {
 			const relation = S.Record.getRelationByKey(it.relationKey) || {};
-			return relation ? U.Common.shorten(relation.name || '', 16) : '';
+			return relation ? U.String.shorten(relation.name || '', 16) : '';
 		}).filter(it => it);
 
 		const relationCnt = relations.slice(0, 2);
@@ -243,8 +243,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'relations', name: translate('commonRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') },
 		];
 		const tools = [
-			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? U.Common.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
-			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? U.Common.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
+			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? U.String.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
+			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? U.String.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
 		];
 
 		let sections: any[] = [

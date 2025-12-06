@@ -49,7 +49,7 @@ export function createKeyboardHandler(options: KeyboardHandlerOptions) {
 				e.preventDefault();
 				e.stopPropagation();
 
-				options[`on${U.Common.toUpperCamelCase(k)}`]?.();
+				options[`on${U.String.toUpperCamelCase(k)}`]?.();
 			});
 		});
 	};
