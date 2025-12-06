@@ -1,4 +1,4 @@
-import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { observable, action, set, makeObservable } from 'mobx';
 import { S, I, M, U, J, Dataview, Relation } from 'Lib';
 
 enum KeyMapType {
@@ -257,20 +257,15 @@ class RecordStore {
 		const data = this.metaMap.get(this.getId(rootId, blockId));
 
 		if (data) {
-			set(data, Object.assign(data, meta));
+			for (const key in meta) {
+				data[key] = meta[key];
+			};
 		} else {
 			meta.total = Number(meta.total) || 0;
 			meta.offset = Math.max(0, Number(meta.offset) || 0);
 			meta.viewId = String(meta.viewId || '');
 			meta.keys = meta.keys || [];
 			meta = observable(meta);
-
-			intercept(meta as any, (change: any) => {
-				if (change.newValue === meta[change.name]) {
-					return null;
-				};
-				return change;
-			});
 
 			this.metaMap.set(this.getId(rootId, blockId), meta);
 		};
