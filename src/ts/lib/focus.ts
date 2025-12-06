@@ -60,7 +60,7 @@ class Focus {
 	 */
 	clearRange (withRange: boolean) {
 		const { focused } = this.state;
-		const el = $('.focusable.c' + focused);
+		const el = $(`.focusable.c${focused}`);
 		
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);

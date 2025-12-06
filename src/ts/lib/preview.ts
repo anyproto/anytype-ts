@@ -244,9 +244,8 @@ class Preview {
 		const cb = () => {
 			obj.hide();
 			obj.removeClass('anim top bottom withImage').css({ transform: '' });
-
+			
 			S.Common.previewClear();
-			$('#graphPreview').remove();
 		};
 
 		window.clearTimeout(this.timeout.preview);
