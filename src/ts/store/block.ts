@@ -745,7 +745,7 @@ class BlockStore {
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
-					text = U.String.stringInsert(text, name, mark.range.from, mark.range.to);
+					text = U.String.insert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;

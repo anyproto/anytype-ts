@@ -175,7 +175,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 
 				marks.current = Mark.adjust(marks.current, range.current.from, 1);
-				value = U.String.stringInsert(value, '\n', range.current.from, range.current.from);
+				value = U.String.insert(value, '\n', range.current.from, range.current.from);
 
 				updateMarkup(value, { from: range.current.from + 1, to: range.current.from + 1 });
 				scrollToBottom();
@@ -441,7 +441,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				newText = newText.substring(0, limit);
 			};
 
-			const res = U.String.stringInsert(current, newText, from, to);
+			const res = U.String.insert(current, newText, from, to);
 
 			newMarks = Mark.adjust(newMarks, 0, to);
 
@@ -1194,7 +1194,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					range: { from: range.current.from, to },
 				});
 
-				value = U.String.stringInsert(value, ' ', range.current.from, range.current.from);
+				value = U.String.insert(value, ' ', range.current.from, range.current.from);
 
 				updateMarkup(value, { from: to, to });
 				break;
@@ -1291,7 +1291,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let from = range.current.from;
 
 		if (fromKeyboard) {
-			value = U.String.stringCut(value, from - 1, from);
+			value = U.String.cut(value, from - 1, from);
 			from--;
 		};
 
@@ -1321,7 +1321,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
 						setMarks(newMarks);
-						value = U.String.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						updateMarkup(value, { from: to, to });
 						analytics.event('Mention', { chatId: analyticsChatId });

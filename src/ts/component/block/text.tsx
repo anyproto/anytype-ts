@@ -493,7 +493,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				const insert = '\n';
 				const caret = range.from + insert.length;
-				const newValue = U.String.stringInsert(value, insert, range.from, range.to);
+				const newValue = U.String.insert(value, insert, range.from, range.to);
 
 				U.Data.blockSetText(rootId, block.id, newValue, this.marks, true, () => {
 					const caretRange = { from: caret, to: caret };
@@ -548,7 +548,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 
 			if (block.isTextCode()) {
-				value = U.String.stringInsert(value, '\t', range.from, range.from);
+				value = U.String.insert(value, '\t', range.from, range.from);
 
 				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
@@ -647,7 +647,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					const cut = value.slice(range.from, range.to);
 					const closing = twinPairs[key] || key;
 
-					value = U.String.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+					value = U.String.insert(value, `${key}${cut}${closing}`, range.from, range.to);
 					this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
 				};
 
@@ -766,7 +766,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Open add menu
 		if (canOpenMenuAdd && (!isInsideTable && !block.isTextCode())) { 
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onMenuAdd(id, U.String.stringCut(value, range.from - 1, range.from), range, this.marks);
+				onMenuAdd(id, U.String.cut(value, range.from - 1, range.from), range, this.marks);
 			});
 			return;
 		};
@@ -904,7 +904,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const element = $(`#block-${block.id}`);
 
 		let value = this.getValue();
-		value = U.String.stringCut(value, range.from - d, range.from);
+		value = U.String.cut(value, range.from - d, range.from);
 
 		S.Common.filterSet(range.from - d, '');
 
@@ -934,7 +934,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							return;
 						};
 
-						value = U.String.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 							// Try to fix async detailsUpdate event
@@ -983,7 +983,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						range: { from: range.from, to },
 					});
 
-					value = U.String.stringInsert(value, ' ', range.from, range.from);
+					value = U.String.insert(value, ' ', range.from, range.from);
 
 					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to });

@@ -192,7 +192,7 @@ class UtilString {
 	 * @param {number} end - The end index.
 	 * @returns {string} The resulting string.
 	 */
-	stringCut (haystack: string, start: number, end: number): string {
+	cut (haystack: string, start: number, end: number): string {
 		return String(haystack || '').substring(0, start) + haystack.substring(end);
 	};
 
@@ -204,7 +204,7 @@ class UtilString {
 	 * @param {number} end - The end index.
 	 * @returns {string} The resulting string.
 	 */
-	stringInsert (haystack: string, needle: string, start: number, end: number): string {
+	insert (haystack: string, needle: string, start: number, end: number): string {
 		haystack = String(haystack || '');
 		return haystack.substring(0, start) + needle + haystack.substring(end);
 	};

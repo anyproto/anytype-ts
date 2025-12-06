@@ -425,7 +425,7 @@ class Mark {
 		marks.sort((a, b) => b.range.from - a.range.from);
 
 		for (const mark of marks) {
-			text = U.String.stringInsert(text, mark.param, mark.range.from, mark.range.to);
+			text = U.String.insert(text, mark.param, mark.range.from, mark.range.to);
 		};
 
 		return text;
@@ -624,7 +624,7 @@ class Mark {
 			marks = this.adjust(marks, to, -length + 1);
 			marks.push({ type, range: { from, to }, param: '' });
 
-			text = U.String.stringInsert(text, replace, o + p1l, o + p1l + p2l);
+			text = U.String.insert(text, replace, o + p1l, o + p1l + p2l);
 			adjustMarks = true;
 
 			return s;

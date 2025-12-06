@@ -442,7 +442,7 @@ class UtilData {
 		};
 
 		const diff = needle.length - (to - from);
-		const text = U.String.stringInsert(block.content.text, needle, from, to);
+		const text = U.String.insert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);

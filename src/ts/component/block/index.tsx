@@ -1141,7 +1141,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		if (mark) {
-			value = U.String.stringCut(value, mark.range.from, mark.range.to);
+			value = U.String.cut(value, mark.range.from, mark.range.to);
 			rM = oM.filter(it => {
 				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
 			});

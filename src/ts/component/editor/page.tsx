@@ -2042,7 +2042,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					switch (item.id) {
 						case 'link': {
 							if (currentFrom == currentTo) {
-								value = U.String.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								value = U.String.insert(value, url + ' ', currentFrom, currentFrom);
 								marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
 
 								to = currentFrom + url.length;
@@ -2073,7 +2073,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'cancel': {
-							value = U.String.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
+							value = U.String.insert(block.content.text, url + ' ', currentFrom, currentFrom);
 							to = currentFrom + url.length;
 
 							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {

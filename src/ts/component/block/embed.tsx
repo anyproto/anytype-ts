@@ -237,7 +237,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const data = e.clipboardData || e.originalEvent.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
-		const value = U.String.stringInsert(getValue(), text, range.from, range.to);
+		const value = U.String.insert(getValue(), text, range.from, range.to);
 
 		const cb = () => {
 			setValue(value);
@@ -311,7 +311,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						text = ' ' + text;
 					};
 
-					const value = U.String.stringInsert(getValue(), text, from, to);
+					const value = U.String.insert(getValue(), text, from, to);
 
 					to += text.length;
 
