@@ -32,9 +32,11 @@
 			.card {
 				.cardContent > .inner { padding: 16px; display: flex; flex-direction: column; align-items: flex-start; }
 				.cardContent > .inner {
-					.cellContent:not(.isName) { width: unset; max-width: 100%; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; }
+					.cellContent:not(.isName) { 
+						width: unset; max-width: 100%; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; 
+					}
 					.cellContent:not(.isName) {
-						.empty { @include text-overflow-nw; width: 100%; }
+						.empty, .name { @include text-overflow-nw; width: 100%; }
 					}
 					.cellContent:not(.isName):hover,
 					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
