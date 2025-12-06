@@ -42,7 +42,8 @@ class DetailStore {
 	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
-		makeObservable(this, {
+		makeObservable(this as any, {
+			map: observable.shallow,
 			set: action,
 			update: action,
 			delete: action
@@ -64,9 +65,6 @@ class DetailStore {
 			isDeleted: observable,
 		});
 
-		intercept(el as any, (change: any) => {
-			return (change.newValue === el[change.name] ? null : change); 
-		});
 		return el;
 	}; 
 
@@ -140,7 +138,8 @@ class DetailStore {
 
 			const el = detailMap.get(k);
 			if (el) {
-				set(el, { value: item.details[k], isDeleted: false });
+				el.value = item.details[k];
+				el.isDeleted = false;
 			} else {
 				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
@@ -296,10 +295,7 @@ class DetailStore {
 
 			if (mappedKeys) {
 				for (const k in mappedKeys) {
-					const mappedKey = mappedKeys[k];
-
-					object[k] = object[mappedKey];
-					delete(object[mappedKey]);
+					object[k] = object[mappedKeys[k]];
 				};
 			};
 		};
