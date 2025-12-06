@@ -5,7 +5,6 @@ import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
 import { throttle } from 'lodash';
-import { card } from 'mermaid/dist/rendering-util/rendering-elements/shapes/card';
 
 const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
