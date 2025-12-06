@@ -257,9 +257,7 @@ class RecordStore {
 		const data = this.metaMap.get(this.getId(rootId, blockId));
 
 		if (data) {
-			for (const key in meta) {
-				data[key] = meta[key];
-			};
+			set(data, Object.assign(data, meta));
 		} else {
 			meta.total = Number(meta.total) || 0;
 			meta.offset = Math.max(0, Number(meta.offset) || 0);

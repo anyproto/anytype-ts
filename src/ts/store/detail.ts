@@ -1,4 +1,4 @@
-import { observable, action, makeObservable } from 'mobx';
+import { observable, action, makeObservable, set } from 'mobx';
 import { I, S, U, J, Relation, translate } from 'Lib';
 import { memoize } from 'lodash';
 
@@ -138,8 +138,7 @@ class DetailStore {
 
 			const el = detailMap.get(k);
 			if (el) {
-				el.value = item.details[k];
-				el.isDeleted = false;
+				set(el, { value: item.details[k], isDeleted: false });
 			} else {
 				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
