@@ -138,6 +138,10 @@ const Block = observer(class Block extends React.Component<Props> {
 					additional = <div className={[ 'line', (content.color ? `textColor-${content.color}` : '') ].join(' ')} />;
 				};
 
+				if (block.isTextHeader()) {
+					additional = <div className="collapseArrow" />;
+				};
+
 				if (block.isTextTitle() || block.isTextDescription()) {
 					canDrop = false;
 				};
@@ -423,11 +427,6 @@ const Block = observer(class Block extends React.Component<Props> {
 					{targetTop}
 					{object}
 					{additional ? <div className="additional">{additional}</div> : ''}
-
-					{/* Arrow indicator for headers */}
-					{block.isTextHeader() ? (
-						<div className="collapseArrow" />
-					) : ''}
 
 					{renderChildren ? (
 						<ListChildren 
