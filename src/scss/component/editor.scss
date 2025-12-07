@@ -36,7 +36,6 @@
 		}
 	}
 
-	/* Collapsible Header Arrow */
 	.blocks {
 		.block.blockText {
 			.wrapContent { position: relative; }
@@ -53,8 +52,7 @@
 				transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
 				pointer-events: none;
 				display: block;
-				/* inline SVG chevron pointing right */
-				background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 18 15 12 9 6'/></svg>");
+				background-image: url('~img/icon/header/collapseArrow.svg');
 			}
 			/* Collapsed: always show arrow pointing right */
 			&:not(.isToggled) .collapseArrow { 
