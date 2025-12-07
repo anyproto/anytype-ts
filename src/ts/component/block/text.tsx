@@ -40,6 +40,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onHeaderClick = this.onHeaderClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -156,12 +157,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				break;
 			};
 				
-			case I.TextStyle.Bulleted: {
-				marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
-				break;
-			};
-				
-			case I.TextStyle.Numbered: {
+		case I.TextStyle.Header1:
+		case I.TextStyle.Header2:
+		case I.TextStyle.Header3: {
+			marker = null;
+			additional = null;
+			break;
+		};
+			
+		case I.TextStyle.Bulleted: {
+			marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
+			break;
+		};			case I.TextStyle.Numbered: {
 				marker = { type: I.MarkerType.Numbered, className: 'number' };
 				break;
 			};
@@ -177,17 +184,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		};
 
+		const isHeaderWithToggle = block.isTextHeader();
+
 		return (
 			<div 
 				ref={node => this.node = node}
 				className={cn.join(' ')}
+				onClick={isHeaderWithToggle && !readonly ? this.onHeaderClick : undefined}
 			>
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
 					{markerIcon}
 				</div>
 
-				{additional ? <div className="additional">{additional}</div> : ''}
+				{!isHeaderWithToggle && additional ? <div className="additional">{additional}</div> : ''}
 
 				<Editable 
 					ref={ref => this.refEditable = ref}
@@ -204,17 +214,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onSelect={this.onSelect}
 					onPaste={this.onPaste}
 					onMouseDown={this.onMouseDown}
-					onMouseUp={this.onMouseUp}
-					onInput={this.onInput}
-					onDragStart={e => e.preventDefault()}
-					onCompositionEnd={this.onCompositionEnd}
-					onBeforeInput={this.onBeforeInput}
-				/>
-			</div>
-		);
-	};
-	
-	componentDidMount () {
+				onMouseUp={this.onMouseUp}
+				onInput={this.onInput}
+				onDragStart={e => e.preventDefault()}
+				onCompositionEnd={this.onCompositionEnd}
+				onBeforeInput={this.onBeforeInput}
+			/>
+
+			{isHeaderWithToggle && additional ? <div className="additional">{additional}</div> : ''}
+		</div>
+	);
+};	componentDidMount () {
 		const { block } = this.props;
 		const { content } = block;
 		const { marks, text } = content;
@@ -1232,6 +1242,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 	
+	onHeaderClick (e: any) {
+		// Only toggle if clicking on the text area itself, not during text selection
+		const selection = window.getSelection();
+		if (selection && selection.toString().length > 0) {
+			return;
+		};
+
+		const { onToggle } = this.props;
+		if (onToggle) {
+			onToggle(e);
+		};
+	};
+
 	onMouseDown (e: any) {
 		window.clearTimeout(this.timeoutClick);
 

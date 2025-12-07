@@ -514,7 +514,22 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 		if (id && !ids.includes(id)) {
 			clear();
-			set(I.SelectType.Block, [ id ]);
+			
+			// If this is a collapsed header, include all blocks in its section
+			const rootId = keyboard.getRootId();
+			const block = S.Block.getLeaf(rootId, id);
+			let blockIds = [ id ];
+			
+			if (block && block.isTextHeader()) {
+				const blockElement = $(`#block-${id}`);
+				const isCollapsed = !blockElement.hasClass('isToggled');
+				if (isCollapsed) {
+					const sectionBlocks = S.Block.getHeaderSectionBlocks(rootId, id);
+					blockIds = blockIds.concat(sectionBlocks);
+				}
+			}
+			
+			set(I.SelectType.Block, blockIds);
 
 			ids = get(I.SelectType.Block, withChildren);
 

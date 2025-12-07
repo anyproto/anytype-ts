@@ -149,16 +149,65 @@
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget { @include text-header1; padding: 3px 0px 1px 0px; }
+	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget > .flex { cursor: pointer; display: flex; align-items: center; }
+	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget > .additional { margin-left: 8px; }
+	
+	/* Arrow visibility: only show when collapsed to signal hidden content */
+	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		cursor: pointer; 
+		opacity: 0; 
+		transition: opacity 0.2s ease, transform 0.2s ease; 
+	}
+	.block.blockText.textHeader1:not(.isToggled) > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		opacity: 1; 
+		transform: rotate(0deg); 
+	}
+	.block.blockText.textHeader1.isToggled > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		opacity: 0; 
+		transform: rotate(90deg); 
+	}
 
 	/* Header2 */
 	
 	.block.blockText.textHeader2 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
+	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget > .flex { cursor: pointer; display: flex; align-items: center; }
+	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget > .additional { margin-left: 8px; }
+	
+	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		cursor: pointer; 
+		opacity: 0; 
+		transition: opacity 0.2s ease, transform 0.2s ease; 
+	}
+	.block.blockText.textHeader2:not(.isToggled) > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		opacity: 1; 
+		transform: rotate(0deg); 
+	}
+	.block.blockText.textHeader2.isToggled > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		opacity: 0; 
+		transform: rotate(90deg); 
+	}
 
 	/* Header3 */
 	
 	.block.blockText.textHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
+	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget > .flex { cursor: pointer; display: flex; align-items: center; }
+	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget > .additional { margin-left: 8px; }
+	
+	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		cursor: pointer; 
+		opacity: 0; 
+		transition: opacity 0.2s ease, transform 0.2s ease; 
+	}
+	.block.blockText.textHeader3:not(.isToggled) > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		opacity: 1; 
+		transform: rotate(0deg); 
+	}
+	.block.blockText.textHeader3.isToggled > .wrapContent > .selectionTarget > .dropTarget > .additional > .marker.toggleAfter { 
+		opacity: 0; 
+		transform: rotate(90deg); 
+	}
 
 	/* Header4 */
 	.block.blockText.textHeader4 { padding: 8px 0px 0px 0px; }

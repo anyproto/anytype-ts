@@ -708,6 +708,115 @@ class BlockStore {
 	};
 
 	/**
+	 * Toggles a header section's visibility (collapses all blocks until next same/higher level header).
+	 * @param {string} rootId - The root ID.
+	 * @param {string} headerId - The header block ID.
+	 * @param {boolean} v - Whether to show (true) or hide (false) the section.
+	 */
+	toggleHeader (rootId: string, headerId: string, v: boolean) {
+		const header = this.getLeaf(rootId, headerId);
+		if (!header || !header.isTextHeader()) {
+			return;
+		};
+
+		const element = $(`#block-${headerId}`);
+		if (!element.length) {
+			return;
+		};
+
+		// Toggle the arrow rotation and visibility
+		// isToggled class should be present when EXPANDED (v = true)
+		// Absent when COLLAPSED (v = false) to show the arrow
+		element.toggleClass('isToggled', v);
+		Storage.setToggle(rootId, headerId, v);
+
+		// Find all blocks in this header section
+		const blocksToToggle = this.getHeaderSectionBlocks(rootId, headerId);
+		
+		// Show or hide each block
+		blocksToToggle.forEach(blockId => {
+			const blockElement = $(`#block-${blockId}`);
+			if (v) {
+				blockElement.show();
+			} else {
+				blockElement.hide();
+			}
+		});
+
+		U.Common.triggerResizeEditor(keyboard.isPopup());
+	};
+
+	/**
+	 * Checks if a block is inside a collapsed parent header section.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID to check.
+	 * @returns {boolean} True if the block is inside a collapsed header section.
+	 */
+	isInsideCollapsedHeader (rootId: string, blockId: string): boolean {
+		const allBlocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
+		const blockIndex = allBlocks.findIndex(b => b.id === blockId);
+		
+		if (blockIndex === -1) {
+			return false;
+		}
+
+		for (let i = blockIndex - 1; i >= 0; i--) {
+			const block = allBlocks[i];
+			
+			if (block.isTextHeader()) {
+				const isCollapsed = !Storage.checkToggle(rootId, block.id);
+				
+				if (isCollapsed) {
+					const sectionBlocks = this.getHeaderSectionBlocks(rootId, block.id);
+					if (sectionBlocks.includes(blockId)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * Gets all block IDs between a header and the next same-level or higher header.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} headerId - The header block ID.
+	 * @returns {string[]} Array of block IDs in the header section.
+	 */
+	getHeaderSectionBlocks (rootId: string, headerId: string): string[] {
+		const header = this.getLeaf(rootId, headerId);
+		if (!header || !header.isTextHeader()) {
+			return [];
+		};
+
+		const headerLevel = header.isTextHeader1() ? 1 : header.isTextHeader2() ? 2 : 3;
+		const allBlocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
+		
+		const headerIndex = allBlocks.findIndex(b => b.id === headerId);
+		if (headerIndex === -1) {
+			return [];
+		};
+
+		const sectionBlocks: string[] = [];
+		
+		for (let i = headerIndex + 1; i < allBlocks.length; i++) {
+			const block = allBlocks[i];
+			
+			if (block.isTextHeader()) {
+				const blockLevel = block.isTextHeader1() ? 1 : block.isTextHeader2() ? 2 : 3;
+				if (blockLevel <= headerLevel) {
+					break;
+				}
+			}
+			
+			sectionBlocks.push(block.id);
+		}
+
+		return sectionBlocks;
+	};
+
+	/**
 	 * Updates the markup for all text blocks in a root.
 	 * @param {string} rootId - The root ID.
 	 */

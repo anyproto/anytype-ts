@@ -424,6 +424,11 @@ const Block = observer(class Block extends React.Component<Props> {
 					{object}
 					{additional ? <div className="additional">{additional}</div> : ''}
 
+					{/* Arrow indicator for headers */}
+					{block.isTextHeader() ? (
+						<div className="collapseArrow" />
+					) : ''}
+
 					{renderChildren ? (
 						<ListChildren 
 							key={`block-children-${id}`} 
@@ -462,13 +467,48 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (block && block.id && block.isTextToggle()) {
 			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
+
+		// Initialize header toggle state
+		if (block && block.id && block.isTextHeader()) {
+			// First check if this header is inside a collapsed parent header
+			if (S.Block.isInsideCollapsedHeader(rootId, block.id)) {
+				// If parent is collapsed, hide this header regardless of its own state
+				$(`#block-${block.id}`).hide();
+			} else {
+				// For new headers (not in toggle list), default to expanded and store it
+				// This ensures pre-existing headers show as expanded with arrows visible on hover
+				let isExpanded = Storage.checkToggle(rootId, block.id);
+				if (!Storage.getToggle(rootId).includes(block.id)) {
+					isExpanded = true;
+					Storage.setToggle(rootId, block.id, true);
+				}
+				
+				S.Block.toggleHeader(rootId, block.id, isExpanded);
+			}
+		};
+
+		// For non-header blocks, check if they're inside a collapsed header section
+		if (block && block.id && !block.isTextHeader() && !block.isTextToggle()) {
+			if (S.Block.isInsideCollapsedHeader(rootId, block.id)) {
+				$(`#block-${block.id}`).hide();
+			}
+		}
 	};
 	
 	onToggle (e: any) {
 		const { rootId, block } = this.props;
-		const node = $(this.node);
 		
-		S.Block.toggle(rootId, block.id, !node.hasClass('isToggled'));
+		if (block.isTextHeader()) {
+			// For headers, toggle the entire section
+			const node = $(this.node);
+			const isCurrentlyCollapsed = !node.hasClass('isToggled');
+			S.Block.toggleHeader(rootId, block.id, isCurrentlyCollapsed);
+		} else {
+			// For regular toggle blocks
+			const node = $(this.node);
+			S.Block.toggle(rootId, block.id, !node.hasClass('isToggled'));
+		};
+		
 		focus.apply();
 	};
 	

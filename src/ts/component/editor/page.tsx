@@ -2279,6 +2279,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let blockIds = [];
 		if (ids.length) {
 			blockIds = [ ...ids ];
+			
+			// Include section blocks for any collapsed headers in the selection
+			const additionalIds = [];
+			blockIds.forEach(id => {
+				const block = S.Block.getLeaf(rootId, id);
+				if (block && block.isTextHeader()) {
+					const blockElement = $(`#block-${id}`);
+					const isCollapsed = !blockElement.hasClass('isToggled');
+					if (isCollapsed) {
+						const sectionBlocks = S.Block.getHeaderSectionBlocks(rootId, id);
+						additionalIds.push(...sectionBlocks);
+					}
+				}
+			});
+			blockIds = blockIds.concat(additionalIds);
 		} else 
 		if (focused) {
 			blockIds = [ focused.id ];
