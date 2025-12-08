@@ -325,6 +325,10 @@ class UtilData {
 		});
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			if (message.error.code || !message.previews.length) {
+				return;
+			};
+
 			for (const item of message.previews) {
 				const { spaceId, chatId, message, state, dependencies } = item;
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
