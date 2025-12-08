@@ -24,6 +24,9 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 		const { account } = S.Auth;
 		const cb = () => {
 			const { account } = S.Auth;
+			if (!account) {
+				return;
+			};
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(true);

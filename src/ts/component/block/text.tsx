@@ -1277,15 +1277,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	placeholderSet (v: string) {
-		if (this.refEditable) {
-			this.refEditable.placeholderSet(v);
-		};
+		this.refEditable?.placeholderSet(v);
 	};
 	
 	placeholderHide () {
-		if (this.refEditable) {
-			this.refEditable.placeholderHide();
-		};
+		this.refEditable?.placeholderHide();
 	};
 
 	onCompositionEnd = (e: any, value: string, range: I.TextRange) => {

@@ -123,11 +123,11 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setRangeHandler = (range: I.TextRange) => {
-		if (!range) {
+		if (!range || !editableRef.current) {
 			return;
 		};
 
-		editableRef.current?.focus({ preventScroll: true });
+		editableRef.current.focus({ preventScroll: true });
 		setRange(editableRef.current, { start: range.from, end: range.to });
 	};
 
