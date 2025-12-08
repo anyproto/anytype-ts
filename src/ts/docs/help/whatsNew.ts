@@ -28,7 +28,7 @@ export default () => {
 		//{ type: I.BlockType.IconPage, icon: '👋' },
 
 		title(`Talk One-on-One`),
-		h4(`<span>Release 0.52.0</span><span>December 4, 2025</span>`),
+		h4(`<span>Release 0.52.0</span><span>December 8, 2025</span>`),
 		text(''),
 		text('Direct Channels are here – the missing piece of the chatting puzzle. You can now communicate with someone directly. As simple as that.'),
 		text('And because we never ship just one thing, this release comes packed with usability upgrades across the app.'),
