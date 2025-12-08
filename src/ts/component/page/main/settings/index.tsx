@@ -94,7 +94,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 	const { isPopup } = props;
 	const { id = 'account' } = keyboard.getMatch(isPopup).params;
-	const pageId = U.Common.toCamelCase(`pageSettings-${id}`);
+	const pageId = U.String.toCamelCase(`pageSettings-${id}`);
 	const confirmPinRef = useRef<any>(null);
 	const childRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);

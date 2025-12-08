@@ -63,6 +63,7 @@ export enum ToastAction {
 	TemplateCreate	 = 6,
 	Archive 		 = 7,
 	Widget			 = 8,
+	Restore			 = 9,
 };
 
 export interface Option {

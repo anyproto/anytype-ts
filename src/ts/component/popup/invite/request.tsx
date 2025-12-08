@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Label, Button, Error, IconObject } from 'Component';
-import { I, C, S, U, translate, analytics, Preview } from 'Lib';
+import { I, C, S, U, translate, analytics, Preview , Action} from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
@@ -12,8 +12,8 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const [ error, setError ] = useState('');
 	const invite = data.invite || {};
 	const refButton = useRef(null);
-	const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
-	const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
+	const spaceName = U.String.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+	const creatorName = U.String.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
 	let title = '';
 	let text = '';
@@ -70,15 +70,12 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			if (invite.inviteType === I.InviteType.WithApprove) {
-				close(() => {
-					U.Common.onInviteRequest();
-					analytics.event('ScreenRequestSent');
-				});
+				close(() => Action.inviteRequest());
 			};
 
 			if (invite.inviteType === I.InviteType.WithoutApprove) {
 				close(() => {
-					Preview.toastShow({ text: U.Common.sprintf(translate('toastJoinSpace'), spaceName) });
+					Preview.toastShow({ text: U.String.sprintf(translate('toastJoinSpace'), spaceName) });
 					analytics.event('ClickJoinSpaceWithoutApproval');
 				});
 			};

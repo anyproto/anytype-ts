@@ -21,7 +21,7 @@ const ObjectDescription: FC<Props> = ({
 		return null;
 	};
 
-	return <div className={className} dangerouslySetInnerHTML={{ __html: U.Common.sanitize(description) }} />;
+	return <div className={className} dangerouslySetInnerHTML={{ __html: U.String.sanitize(description) }} />;
 
 };
 

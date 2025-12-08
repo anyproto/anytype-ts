@@ -25,7 +25,8 @@
 		"https://*.apple.com",
 		"https://*.mzstatic.com",
 		"https://*.spotifycdn.com",
-		"https://*.ggpht.com"
+		"https://*.ggpht.com",
+		"https://*.openstreetmap.org"
     ],
 
 	"media-src": [ 
@@ -50,7 +51,8 @@
 		"https://bandcamp.com",
 		"https://*.bcbits.com",
 		"https://*.unsplash.com",
-		"https://*.spotifycdn.com"
+		"https://*.spotifycdn.com",
+		"https://*.openstreetmap.org"
 	],
 
 	"style-src": [ 

@@ -75,7 +75,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
+	const name = U.String.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 	let buttons = [];
 	if (!readerLimt.current && !tier?.price) {
@@ -106,7 +106,7 @@ const PopupInviteConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 			</div>
 
-			<Title text={U.Common.sprintf(translate('popupInviteConfirmTitle'), name, U.Common.shorten(space.name, 32))} />
+			<Title text={U.String.sprintf(translate('popupInviteConfirmTitle'), name, U.String.shorten(space.name, 32))} />
 
 			<div className="buttons">
 				<div className="sides">

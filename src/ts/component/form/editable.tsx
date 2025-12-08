@@ -99,7 +99,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setValue = (html: string) => {
-		editableRef.current.innerHTML = U.Common.sanitize(html, true);
+		editableRef.current.innerHTML = U.String.sanitize(html, true);
 	};
 
 	const getTextValue = (): string => {

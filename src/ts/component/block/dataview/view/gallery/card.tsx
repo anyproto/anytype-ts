@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -101,25 +101,21 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			) : ''}
 
 			<div className="inner">
-				{relations.map((vr: any) => {
-					const relation = S.Record.getRelationByKey(vr.relationKey);
-					if (!relation) {
-						return null;
-					};
-
-					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+				{relations.map((item: I.ViewRelation) => {
+					const { relation } = item;
+					const id = Relation.cellId(idPrefix, item.relationKey, record.id);
 					const isName = relation.relationKey == 'name';
-					const iconSize = relation.relationKey == 'name' ? 20 : 16;
-
+					const iconSize = isName ? 20 : 16;
+					
 					return (
 						<Cell
 							elementId={id}
-							key={'list-cell-' + view.id + relation.relationKey}
+							key={'list-cell-' + view.id + item.relationKey}
 							{...props}
 							getRecord={() => record}
 							subId={subId}
 							ref={ref => onRefCell(ref, id)}
-							relationKey={relation.relationKey}
+							relationKey={item.relationKey}
 							viewType={view.type}
 							idPrefix={idPrefix}
 							arrayLimit={2}
@@ -178,4 +174,4 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 
 }));
 
-export default GalleryCard;
+export default memo(GalleryCard);

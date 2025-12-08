@@ -9,16 +9,16 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId } = data;
-	const { isOnline } = S.Common;
+	const { space, isOnline } = S.Common;
 	const { membership } = S.Auth;
 	const tier = U.Data.getMembershipTier(membership.tier);
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
 	const spaceInfoRef = useRef(null);
-	const space = U.Space.getSpaceview();
+	const spaceview = U.Space.getSpaceview();
 	const object = S.Detail.get(rootId, rootId, []);
-	const [ slug, setSlug ] = useState(U.Common.slug(object.name));
+	const [ slug, setSlug ] = useState(U.String.slug(object.name));
 	const [ status, setStatus ] = useState(null);
 	const [ isStatusLoading, setIsStatusLoading ] = useState(false);
 	const [ isStatusLoaded, setIsStatusLoaded ] = useState(false);
@@ -28,7 +28,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const domain = U.Space.getPublishDomain();
 	const url = U.Space.getPublishUrl(slug);
 	const items: any[] = [
-		(!space.isPersonal ? 
+		(!spaceview.isPersonal && !spaceview.isOneToOne ? 
 		{ 
 			id: 'space', 
 			name: translate('popupSettingsSpaceIndexShareShareTitle'), 
@@ -56,7 +56,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		publishRef.current?.setLoading(true);
 
-		C.PublishingCreate(S.Common.space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
+		C.PublishingCreate(space, rootId, slug, spaceInfoRef.current?.getValue(), (message: any) => {
 			publishRef.current?.setLoading(false);
 
 			if (message.error.code) {
@@ -71,7 +71,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						const tier = U.Data.getMembershipTier(membership.tier);
 						const limit = !tier.price ? 10 : 100;
 
-						setError(U.Common.sprintf(translate('errorPublishingCreate103'), limit));
+						setError(U.String.sprintf(translate('errorPublishingCreate103'), limit));
 						break;
 					};
 				};
@@ -93,7 +93,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onUnpublish = () => {
 		unpublishRef.current?.setLoading(true);
 
-		C.PublishingRemove(S.Common.space, rootId, (message: any) => {
+		C.PublishingRemove(space, rootId, (message: any) => {
 			unpublishRef.current?.setLoading(false);
 
 			if (message.error.code) {
@@ -115,7 +115,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const loadStatus = () => {
 		setIsStatusLoading(true);
 
-		C.PublishingGetStatus(S.Common.space, rootId, message => {
+		C.PublishingGetStatus(space, rootId, message => {
 			setIsStatusLoading(false);
 
 			if (message.error.code) {
@@ -155,7 +155,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ClickUpgradePlanTooltip', { type: 'publish' });
 	};
 
-	const setSlugHandler = v => setSlug(U.Common.slug(v));
+	const setSlugHandler = v => setSlug(U.String.slug(v));
 
 	let buttons = [];
 
@@ -216,7 +216,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			</div>
 
-			{space.isShared ? (
+			{spaceview.isShared && !spaceview.isOneToOne ? (
 				<div className="flex">
 					<div className="side left">
 						<Icon className="joinSpace" />

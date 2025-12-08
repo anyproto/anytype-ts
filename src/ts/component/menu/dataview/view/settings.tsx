@@ -226,13 +226,9 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-
-		const relations = view.getVisibleRelations().map((it) => {
-			const relation = S.Record.getRelationByKey(it.relationKey) || {};
-			return relation ? U.Common.shorten(relation.name || '', 16) : '';
-		}).filter(it => it);
-
+		const relations = view.getVisibleRelations().map(it => it.relation.name).filter(it => it);
 		const relationCnt = relations.slice(0, 2);
+
 		if (relations.length > 2) {
 			relationCnt.push(`+${relations.length - 2}`);
 		};
@@ -243,8 +239,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'relations', name: translate('commonRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') },
 		];
 		const tools = [
-			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? U.Common.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
-			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? U.Common.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
+			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? U.String.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
+			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? U.String.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
 		];
 
 		let sections: any[] = [

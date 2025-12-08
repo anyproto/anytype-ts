@@ -337,7 +337,7 @@ const App: FC = () => {
 			data: {
 				icon: 'updated',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
+				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
@@ -358,7 +358,7 @@ const App: FC = () => {
 			data: {
 				icon: 'error',
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
+				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {

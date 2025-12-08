@@ -193,7 +193,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 		const { m, s } = getTime(isPlaying.current ? audio.currentTime : audio.duration);
 
-		$(timeTextRef.current).text(`${U.Common.sprintf('%02d', m)}:${U.Common.sprintf('%02d', s)}`);
+		$(timeTextRef.current).text(`${U.String.sprintf('%02d', m)}:${U.String.sprintf('%02d', s)}`);
 		ref.setValue(audio.currentTime / audio.duration);
 	};
 

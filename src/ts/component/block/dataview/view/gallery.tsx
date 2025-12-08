@@ -1,9 +1,10 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
+import { throttle } from 'lodash';
 
 const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
@@ -27,22 +28,23 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const listRef = useRef(null);
 	const topRef = useRef(0);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		setCardHeight(getCardHeight());
 	}, []);
 
-	useEffect(() => {
-		setCardHeight(getCardHeight());
-	}, [ cardSize, coverRelationKey, hideIcon, relations.length ]);
-
-	useEffect(() => {
+	useLayoutEffect(() => {
 		setColumnCount(getColumnCount());
 		setCardHeight(getCardHeight());
-	}, [ width, cardSize ]);
+	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length,  view.type ]);
 
-	useEffect(() => {
-		reset();
-	}, [ width, columnCount, cardHeight, cardSize, coverRelationKey, hideIcon, relations.length, view.type ]);
+	useLayoutEffect(() => {
+		if (!isInline) {
+			S.Common.setTimeout('galleryReset', 100, () => {
+				cache.current.clearAll();
+				listRef.current?.recomputeRowHeights(0);
+			});
+		};
+	}, [ columnCount, cardHeight ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
@@ -53,35 +55,30 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		};
 	});
 
-	const reset = () => {
-		if (!isInline) {
-			S.Common.setTimeout('galleryReset', 30, () => {
-				cache.current.clearAll();
-				listRef.current?.recomputeRowHeights(0);
-			});
-		};
-	};
-
 	const getColumnCount = () => {
+		const { margin, card } = J.Size.dataview.gallery;
 		const view = getView();
 
 		if (!view) {
-			return;
+			return card.small;
 		};
 
-		let size = 0;
+		let ret = card.small;
 		switch (view.cardSize) {
-			default:				 size = 224; break;
-			case I.CardSize.Medium:	 size = 360; break;
-			case I.CardSize.Large:	 size = 480; break;
+			case I.CardSize.Medium:	 ret = card.medium; break;
+			case I.CardSize.Large:	 ret = card.large; break;
 		};
 
-		return Math.max(1, Math.floor((width - J.Size.dataview.gallery.margin) / size));
+		return Math.max(1, Math.round((width - margin) / ret));
 	};
 
 	const onResize = ({ width }) => {
 		setWidth(width);
 	};
+
+	const throttledResize = useMemo(() => {
+		return throttle(onResize, 40);
+	}, [ onResize ]);
 
 	const loadMoreCards = ({ startIndex, stopIndex }) => {
 		const subId = getSubId();
@@ -136,40 +133,35 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	};
 
 	const getCardHeight = (): number => {
-		const size = J.Size.dataview.gallery;
+		const { padding, margin, height } = J.Size.dataview.gallery;
 
-		let height = size.padding * 2 + size.margin - 4;
+		let ret = padding * 2 + margin - 4;
 
-		relations.forEach(it => {
-			const relation = S.Record.getRelationByKey(it.relationKey);
-
-			if (!relation) {
+		relations.forEach((it: any) => {
+			if (it.relationKey == 'name') {
+				ret += 24;
 				return;
 			};
+			switch (it.relation.format) {
+				default: {
+					ret += 22; 
+					break;
+				};
 
-			if (it.relationKey == 'name') {
-				height += 24;
-			} else {
-				switch (relation.format) {
-					default: {
-						height += 22; break;
-					};
+				case I.RelationType.LongText: {
+					ret += 40; 
+					break;
+				};
 
-					case I.RelationType.LongText: {
-						height += 40; 
-						break;
-					};
-
-					case I.RelationType.Object:
-					case I.RelationType.File: {
-						height += 24; 
-						break;
-					};
+				case I.RelationType.Object:
+				case I.RelationType.File: {
+					ret += 24; 
+					break;
 				};
 			};
 		});
 
-		return Math.max(size.height, height);
+		return Math.max(height, ret);
 	};
 
 	const getCoverObject = (id: string): any => {
@@ -195,24 +187,22 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 	const items = getItems();
 	const length = items.length;
+	const keys = relations.filter((it: any) => {
+		return Relation.isObjectType(it.relation.format);
+	}).map(it => it.relationKey);
 
 	// Subscriptions on dependent objects
 	for (const id of records) {
-		const item = S.Detail.get(subId, id, getKeys(view.id));
+		const item = S.Detail.get(subId, id, keys);
 		if (item._empty_) {
 			continue;
 		};
-	
-		for (const k in item) {
-			const relation = S.Record.getRelationByKey(k);
-			if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
-				continue;
-			};
 
+		for (const k of keys) {
 			const v = Relation.getArrayValue(item[k]);
 			if (v && v.length) {
-				v.forEach((it: string) => {
-					const object = S.Detail.get(rootId, it, []);
+				v.forEach(id => {
+					const object = S.Detail.get(rootId, id, []);
 				});
 			};
 		};
@@ -282,7 +272,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 				scrollTop={topRef.current}
 			>
 				{({ height }) => (
-					<AutoSizer disableHeight={true} onResize={onResize}>
+					<AutoSizer disableHeight={true} onResize={throttledResize}>
 						{({ width }) => (
 							<List
 								autoHeight={true}

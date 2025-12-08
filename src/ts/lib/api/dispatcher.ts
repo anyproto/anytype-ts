@@ -1194,7 +1194,7 @@ class Dispatcher {
 
 			if (U.Object.isSetLayout(object.layout) || U.Object.isCollectionLayout(object.layout)) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData`);
+				$(window).trigger('updateDataviewData');
 			};
 		};
 	};
@@ -1300,7 +1300,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugJson = config.flagsMw.json;
-		const ct = U.Common.toCamelCase(type);
+		const ct = U.String.toCamelCase(type);
 		const t0 = performance.now();
 		const needLog = this.needRequestLog(type);
 

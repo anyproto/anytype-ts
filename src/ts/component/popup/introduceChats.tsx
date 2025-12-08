@@ -108,7 +108,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 							<SwiperSlide key={idx}>
 								<div className={[ 'slide', `slide${idx}` ].join(' ')}>
 									{idx == 4 ? (
-										<img src={`./img/help/onboarding/chats/${theme ? 'dark/' : ''}whatsnew.png`} />
+										<img src={`${U.Common.helpMediaPath()}/onboarding/chats/whatsnew.png`} />
 									) : ''}
 								</div>
 							</SwiperSlide>

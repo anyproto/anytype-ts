@@ -217,7 +217,7 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 	let labelText = translate('popupMembershipPaidTextUnlimited');
 
 	let periodLabel = translate('pluralYear');
-	let periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
+	let periodText = U.String.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
 
 	if (periodType) {
 		switch (periodType) {
@@ -238,11 +238,11 @@ const PopupMembershipPagePaid = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 	if (period) {
 		if (period == 1) {
-			periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
+			periodText = U.String.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
+			labelText = U.String.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
 		} else {
-			periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), period, U.Common.plural(period, periodLabel));
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
+			periodText = U.String.sprintf(translate('popupSettingsMembershipPerGenericMany'), period, U.Common.plural(period, periodLabel));
+			labelText = U.String.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
 		};
 	};
 

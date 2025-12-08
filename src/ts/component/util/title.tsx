@@ -25,7 +25,7 @@ const Title = forwardRef<{}, Props>(({
 		<div
 			ref={nodeRef}
 			className={[ 'title', className ].join(' ')}
-			dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+			dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }}
 			{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 		/>
 	);

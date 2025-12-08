@@ -108,7 +108,7 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 		window.clearTimeout(timeoutRef.current);
 		timeoutRef.current = window.setTimeout(() => {
 			const value = emailRef.current?.getValue();
-			const isValid = U.Common.matchEmail(value);
+			const isValid = U.String.matchEmail(value);
 
 			if (value && !isValid) {
 				setStatusFunc('error', translate('errorIncorrectEmail'));
@@ -219,7 +219,7 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 
 							<div onClick={onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
 								{translate('popupMembershipResend')}
-								{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+								{countdown ? U.String.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 							</div>
 						</>
 					);
@@ -232,7 +232,7 @@ const PopupMembershipPageCurrent = observer(forwardRef<{}, Props>((props, ref) =
 		};
 	} else {
 		if (paymentMethod != I.PaymentMethod.None) {
-			paidText = U.Common.sprintf(translate('popupMembershipPaidBy'), translate(`paymentMethod${paymentMethod}`));
+			paidText = U.String.sprintf(translate('popupMembershipPaidBy'), translate(`paymentMethod${paymentMethod}`));
 
 			if (paymentMethod == I.PaymentMethod.Crypto) {
 				buttonText = translate('popupMembershipWriteToAnyteam');

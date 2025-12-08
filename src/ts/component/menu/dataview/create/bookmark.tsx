@@ -1,15 +1,15 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
-import { I, C, S, U, J, translate, analytics } from 'Lib';
+import { I, C, S, U, J, translate, analytics, Storage } from 'Lib';
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close } = props;
+	const { param, close, storageSet, storageGet } = props;
 	const inputRef = useRef(null);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ preview, setPreview ] = useState(null);
 	const [ error, setError ] = useState('');
-	const [ withContent, setWithContent ] = useState(true);
+	const [ withContent, setWithContent ] = useState(storageGet().withContent);
 	const { data } = param;
 	const { value } = data;
 	const cn = [ 'form' ];
@@ -77,12 +77,12 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
-			const scheme = U.Common.getScheme(v);
+			const scheme = U.String.urlScheme(v);
 			if (!scheme) {
 				v = `http://${v}`;
 			};
 
-			const url = U.Common.matchUrl(v);
+			const url = U.String.matchUrl(v);
 
 			if (url) {
 				if (preview && (url == preview.originalUrl)) {
@@ -145,7 +145,10 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 						<div className="side left">
 							<Switch
 								value={withContent}
-								onChange={(e: any, v: boolean) => setWithContent(v)}
+								onChange={(e: any, v: boolean) => {
+									setWithContent(v);
+									storageSet({ withContent: v });
+								}}
 							/>
 							<Label text={translate('menuDataviewCreateBookmarkContent')} />
 						</div>

@@ -296,7 +296,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		let ret = String(name || translate('defaultNamePage'));
 		ret = U.Smile.strip(ret);
 		ret = ret.trim().substring(0, 1).toUpperCase();
-		ret = U.Common.htmlSpecialChars(ret);
+		ret = U.String.htmlSpecialChars(ret);
 		return ret;
 	};
 

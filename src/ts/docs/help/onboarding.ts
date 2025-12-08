@@ -1,11 +1,6 @@
 import { I, U, translate, S } from 'Lib';
 import $ from 'jquery';
 
-const IMG_PATH = {
-	'': './img/help/onboarding',
-	dark: './img/theme/dark/help/onboarding',
-};
-
 const Data = {
 	mainGraph: () => ({
 		category: translate('onboardingMainGraph'),
@@ -156,7 +151,7 @@ const Data = {
 					name: translate('onboardingCommonTitleTypes'),
 					description: translate('onboardingCommonTextTypes'),
 					img: {
-						src: `${IMG_PATH[theme]}/common/type.png`,
+						src: `${U.Common.helpMediaPath()}/common/type.png`,
 					},
 					param: {
 						element: elements.type,
@@ -168,7 +163,7 @@ const Data = {
 					name: translate('onboardingCommonTitleProperties'),
 					description: translate('onboardingCommonTextProperties'),
 					img: {
-						src: `${IMG_PATH[theme]}/common/relation.png`,
+						src: `${U.Common.helpMediaPath()}/common/relation.png`,
 						caption: translate('onboardingCommonTextPropertiesImgCaption'),
 					},
 					param: {
@@ -247,7 +242,7 @@ const Data = {
 					buttonText: translate('onboardingMobileButton'),
 					cloneElementClassName: 'onboardingIconP2P',
 					img: {
-						src: `${IMG_PATH[theme]}/syncStatus/qr.png`
+						src: `${U.Common.helpMediaPath()}/syncStatus/qr.png`
 					},
 					param: {
 						className: 'qrDownload',

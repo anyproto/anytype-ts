@@ -122,10 +122,10 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				};
 			};
 
-			gallery.push({ object, src, type });
+			gallery.push({ id: it.id, object, src, type });
 		});
 
-		S.Popup.open('preview', { data: { initialIdx: gallery.findIndex(it => it.object.id == targetObjectId), gallery } });
+		S.Popup.open('preview', { data: { initialIdx: gallery.findIndex(it => it.id == block.id), gallery } });
 	};
 
 	const handleDownload = () => {

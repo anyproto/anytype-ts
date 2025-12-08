@@ -132,9 +132,9 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 
 	if (period) {
 		if (period == 1) {
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
+			labelText = U.String.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
 		} else {
-			labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
+			labelText = U.String.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
 		};
 	};
 

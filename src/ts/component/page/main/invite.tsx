@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, U, J, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Action } from 'Lib';
 
 const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -69,7 +69,7 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			} else 
 			if (space) {
 				if (space.isAccountJoining) {
-					U.Common.onInviteRequest();
+					Action.inviteRequest();
 				} else
 				if (!space.isAccountRemoving && !space.isAccountDeleted) {
 					U.Router.switchSpace(message.spaceId, '', false, {}, false);

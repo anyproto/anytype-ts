@@ -442,7 +442,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 		const { rootId, blockId } = data;
 		const { filter } = S.Common;
 		const block = S.Block.getLeaf(rootId, blockId);
-		const text = U.Common.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
+		const text = U.String.cut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 

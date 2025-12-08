@@ -558,6 +558,7 @@ class UtilSubscription {
 				subId: J.Constant.subId.recentEditMe,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
 					{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() },
@@ -573,6 +574,7 @@ class UtilSubscription {
 				subId: J.Constant.subId.recentEditAll,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
 				],

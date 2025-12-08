@@ -130,6 +130,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let editType = { id: 'editType', name: translate('commonEditType'), icon: 'editType' };
 		let editChat = { id: 'editChat', name: translate('commonEditChat'), icon: 'editChat' };
 		let notification = { id: 'notification', name: translate('commonNotifications'), icon: 'notification', arrow: true };
+		let copyMedia = { id: 'copyMedia', name: translate('commonCopyMedia'), icon: 'copy' };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -183,6 +184,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedEditType = isType && allowedDetails && !U.Object.isParticipantLayout(object.recommendedLayout) && !U.Object.isTemplateType(object.id);
 		const allowedEditChat = canWrite && isChat;
 		const allowedNotification = isChat;
+		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
 
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -206,6 +208,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedEditType) 		 editType = null;
 		if (!allowedEditChat) 		 editChat = null;
 		if (!allowedNotification) 	 notification = null;
+		if (!allowedCopyMedia)		 copyMedia = null;
 
 		if (!canWrite) {
 			template = null;
@@ -233,7 +236,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ linkTo, addCollection, template, pageLink ] },
 				{ children: [ search, pageCopy, archive, remove ] },
 				{ children: [ print ] },
-				{ children: [ openFile, downloadFile ] },
+				{ children: [ openFile, downloadFile, copyMedia ] },
 			]);
 		} else {
 			if (isTemplate) {
@@ -563,6 +566,11 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'downloadFile': {
 				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
+				break;
+			};
+
+			case 'copyMedia': {
+				U.Common.clipboardCopyImageFromUrl(S.Common.imageUrl(object.id, I.ImageSize.Large));
 				break;
 			};
 

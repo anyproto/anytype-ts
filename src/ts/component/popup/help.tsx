@@ -13,7 +13,7 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 	const { data } = param;
 	const [ page, setPage ] = useState(0);
 	const nodeRef = useRef(null);
-	const document = U.Common.toUpperCamelCase(data.document);
+	const document = U.String.toUpperCamelCase(data.document);
 	const f = Docs.Help[document];
 
 	const blocks = 'function' == typeof f ? f() : f;
