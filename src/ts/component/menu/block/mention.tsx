@@ -199,7 +199,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		if (filter && canAdd) {
 			const children: any[] = [
-				{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
+				{ id: 'add', icon: 'plus', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter) }
 			];
 
 			if (length) {
@@ -307,7 +307,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = S.Common.filter;
 
 		const cb = (object: any) => {
-			const name = U.Common.shorten(String(U.Object.name(object, true)), 30);
+			const name = U.String.shorten(String(U.Object.name(object, true)), 30);
 			const to = from + name.length;
 
 			let marks = U.Common.objectCopy(data.marks || []);

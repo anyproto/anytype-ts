@@ -226,14 +226,17 @@ class UtilRouter {
 				this.isOpening = false;
 
 				if (!useFallback) {
-					S.Popup.open('confirm', {
-						data: {
-							icon: 'error',
-							title: translate('commonError'),
-							text: message.error.description,
-							canCancel: true,
-						},
-					});
+					U.Space.openDashboard();
+					window.setTimeout(() => {
+						S.Popup.open('confirm', {
+							data: {
+								icon: 'error',
+								title: translate('commonError'),
+								text: message.error.description,
+								canCancel: true,
+							},
+						});
+					}, J.Constant.delay.popup);
 				} else {
 					const spaces = U.Space.getList().filter(it => (it.targetSpaceId != id) && it.isLocalOk);
 

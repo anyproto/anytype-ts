@@ -160,6 +160,14 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 		setIconOption(icon);
 	};
 
+	const onAiOnboarding = () => {
+		close(() => {
+			window.setTimeout(() => {
+				S.Popup.open('aiOnboarding', { preventCloseByClick: true });
+			}, J.Constant.delay.popup);
+		});
+	};
+
 	const updateCounter = () => {
 		const el = $('.popupSpaceCreate .nameWrapper .counter');
 		const counter = limit - nameRef.current?.getTextValue().length;
@@ -220,27 +228,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateCreate')} onClick={() => onSubmit(false)} />
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateImport')} color="blank" onClick={() => onSubmit(true)} />
 
-					{config.experimental ? (
-						<Button 
-							text={translate('popupSpaceCreateAIOnboarding')} 
-							color="blank" 
-							onClick={() => {
-								close(() => {
-									window.setTimeout(() => {
-										S.Popup.open('aiOnboarding', {
-											preventCloseByClick: true,
-											data: {
-												onComplete: (spaceId: string) => {
-													// Space is already created and switched to by import
-												}
-											}
-										});
-									}, J.Constant.delay.popup);
-								});
-							}}
-							className="aiOnboarding"
-						/>
-					) : ''}
+					{config.experimental ? <Button text={translate('popupSpaceCreateAIOnboarding')} color="blank" onClick={onAiOnboarding} className="aiOnboarding" /> : ''}
 				</>
 			</div>
 

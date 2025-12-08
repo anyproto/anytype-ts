@@ -217,6 +217,30 @@ app.on('ready', async () => {
 		});
 	});
 
+	// Intercept requests and add referrer/origin for YouTube only
+	session.defaultSession.webRequest.onBeforeSendHeaders({ 
+		urls: [
+			'*://www.youtube.com/*', 
+			'*://www.youtube-nocookie.com/*',
+		],
+	}, (details, callBack) => {
+		const headers = details.requestHeaders;
+
+		// Detect missing or file:// origin
+		const currentOrigin = headers['Origin'];
+		const isFileOrigin =
+			!currentOrigin ||
+			(currentOrigin === 'null') ||
+			currentOrigin.startsWith('file://');
+
+		if (isFileOrigin) {
+			details.requestHeaders['Referer'] = 'https://localhost/';
+			details.requestHeaders['Origin'] = 'https://localhost';
+		};
+
+		callBack({ requestHeaders: details.requestHeaders });
+	});
+
 	// Load gRPC DevTools extension in development mode
 	if (is.development) {
 		try {

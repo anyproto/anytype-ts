@@ -135,7 +135,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			<div className="titleWrap">
 				<div className="side left">
 					<Title text={object.title} />
-					<Label text={U.Common.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
+					<Label text={U.String.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
 				</div>
 				<div className="side right">
 					<Button ref={refButton} id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={onMenu} />
@@ -181,7 +181,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 							<Tag key={i} text={name} />
 						))}
 					</div>
-					<Label text={U.Common.sprintf(translate('popupUsecaseUpdated'), U.Date.dateWithFormat(S.Common.dateFormat, U.Date.now()))} />
+					<Label text={U.String.sprintf(translate('popupUsecaseUpdated'), U.Date.dateWithFormat(S.Common.dateFormat, U.Date.now()))} />
 					<Label text={U.File.size(object.size)} />
 				</div>
 			</div>

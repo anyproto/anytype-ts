@@ -32,8 +32,8 @@ const ProgressBar: FC<Props> = ({
 	};
 
 	const onTooltipShow = (e: MouseEvent, item: Segment) => {
-		const name = U.Common.htmlSpecialChars(item.name);
-		const caption = U.Common.htmlSpecialChars(item.caption);
+		const name = U.String.htmlSpecialChars(item.name);
+		const caption = U.String.htmlSpecialChars(item.caption);
 		const t = Preview.tooltipCaption(name, caption);
 
 		if (t) {

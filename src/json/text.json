@@ -236,6 +236,8 @@
 	"commonUnlimited": "Unlimited",
 	"commonSaveAsFile": "Save as file",
 	"commonDownloadCode": "Download Code",
+	"commonCopyMedia": "Copy Media",
+	"commonImage": "Image",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -1918,7 +1920,8 @@
 
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",
-	"menuParticipantMessage": "Message",
+	"menuParticipantMessage": "Send Message",
+	"menuParticipantProfile": "Open Profile",
 
 	"previewEdit": "Edit Link",
 
@@ -1954,6 +1957,7 @@
 	"toastIsUnlocked": "is unlocked",
 	"toastMovedTo": "%s moved to",
 	"toastMovedToBin": "%s moved to Bin",
+	"toastMovedFromBin": "%s restored",
 	"toastMovedFrom": "%s moved from",
 	"toastAddedToCollection": "has been added to Collection",
 	"toastLinkedTo": "has been linked to",

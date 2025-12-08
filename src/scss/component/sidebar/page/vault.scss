@@ -39,6 +39,11 @@
 					left: 0px; top: 50%; margin-top: -2px;
 				}
 			}
+
+			.separator { display: flex; align-items: center; justify-content: center; }
+			.separator {
+				.inner { width: 24px; height: 1px; background: var(--color-shape-highlight-dark); }
+			}
 		}
 	}
 

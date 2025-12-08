@@ -28,9 +28,9 @@ const UpsellMembers = observer(forwardRef<{}, Props>(({
 		className,
 	];
 
-	let usageText = U.Common.sprintf(translate('upsellBannerMembersUsageText'), editors.length, limit);
+	let usageText = U.String.sprintf(translate('upsellBannerMembersUsageText'), editors.length, limit);
 	if (isRed) {
-		usageText = U.Common.sprintf(translate('upsellBannerMembersLimitUsageText'), limit);
+		usageText = U.String.sprintf(translate('upsellBannerMembersLimitUsageText'), limit);
 		cn.push('isRed');
 	};
 

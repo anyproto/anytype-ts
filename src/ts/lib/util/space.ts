@@ -1,4 +1,4 @@
-import { I, C, S, U, J, Storage, translate, sidebar } from 'Lib';
+import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
 
 class UtilSpace {
 
@@ -82,14 +82,14 @@ class UtilSpace {
 	 * @param {string} [id] - target user identity.
 	 * @param {() => void} [callBack] - Optional callback fn.
 	 */
-	openOneToOne (id: string, key: string, callBack?: (message?: any) => void) {
+	openOneToOne (id: string, key: string, route: string, callBack?: (message?: any) => void) {
 		const { account } = S.Auth;
 		if (id == account.id) {
 			this.openDashboard();
 			callBack?.()
 			return;
 		};
-		
+
 		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
 
 		if (spaceExists) {
@@ -120,6 +120,13 @@ class UtilSpace {
 				};
 
 				U.Router.switchSpace(objectId, '', true, { onRouteChange: callBack }, false);
+			});
+
+			analytics.event('CreateSpace', { 
+				usecase: I.Usecase.ChatSpace,
+				middleTime: message.middleTime, 
+				uxType: I.SpaceUxType.OneToOne,
+				route,
 			});
 		});
 	};
@@ -435,7 +442,7 @@ class UtilSpace {
 	 * @returns {string} The invite link.
 	 */
 	getInviteLink (cid: string, key: string) {
-		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+		return U.Data.isAnytypeNetwork() ? U.String.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 	/**
@@ -458,9 +465,9 @@ class UtilSpace {
 
 		let domain = '';
 		if (participant.globalName) {
-			domain = U.Common.sprintf(J.Url.publishDomain, participant.globalName);
+			domain = U.String.sprintf(J.Url.publishDomain, participant.globalName);
 		} else {
-			domain = U.Common.sprintf(J.Url.publish, participant.identity);
+			domain = U.String.sprintf(J.Url.publish, participant.identity);
 		};
 
 		return domain;

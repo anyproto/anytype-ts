@@ -96,7 +96,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 		switch (v) {
 			case 'remove': {
 				title = translate('popupConfirmMemberRemoveTitle');
-				text = U.Common.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
+				text = U.String.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
 				button = translate('commonRemove');
 				onConfirm = () => {
 					if (isNew) {
@@ -114,7 +114,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 				v = Number(v) || I.ParticipantPermissions.Reader;
 
 				title = translate('commonAreYouSure');
-				text = U.Common.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
+				text = U.String.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
 
 				onConfirm = () => {
 					if (isNew) {

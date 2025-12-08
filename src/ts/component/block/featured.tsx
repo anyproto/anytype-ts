@@ -248,7 +248,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (tl) {
-			setOfString.push(U.Common.sprintf('%s: %s', U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(U.String.sprintf('%s: %s', U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -318,7 +318,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onMouseLeave={this.onMouseLeave}
 				>
 					<div className="name">
-						{U.Common.shorten(object[relationKey], 150)}
+						{U.String.shorten(object[relationKey], 150)}
 					</div>
 				</div>
 				<div className="bullet" />
@@ -345,7 +345,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					className="cellContent"
 					onClick={e => this.onLinks(e, relationKey)}
 				>
-					{`${l} ${U.Common.plural(l, translate(U.Common.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+					{`${l} ${U.Common.plural(l, translate(U.String.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 				</div>
 				<div className="bullet" />
 			</span>
@@ -593,7 +593,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				const details: any = {};
 
 				if (type) {
-					details.name = U.Common.sprintf(translate('commonSetName'), type.name);
+					details.name = U.String.sprintf(translate('commonSetName'), type.name);
 					details.iconEmoji = type.iconEmoji;
 				};
 
@@ -626,7 +626,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					keyboard.disableClose(true);
 					U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
 					keyboard.disableClose(false);
-					window.setTimeout(() => { Preview.toastShow({ text: U.Common.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
+					window.setTimeout(() => { Preview.toastShow({ text: U.String.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
 				});
@@ -758,12 +758,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		switch (relation.format) {
 			case I.RelationType.File:
 			case I.RelationType.Object:
-				item.name = U.Common.shorten(item.name, 150);
+				item.name = U.String.shorten(item.name, 150);
 				break;
 
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Select:
-				item.text = U.Common.shorten(item.text, 150);
+				item.text = U.String.shorten(item.text, 150);
 				break;
 		};
 

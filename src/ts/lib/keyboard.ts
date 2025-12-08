@@ -815,7 +815,7 @@ class Keyboard {
 						className: 'isWide techInfo isLeft',
 						data: {
 							title: translate('menuHelpNet'),
-							text: U.Common.lbBr(result),
+							text: U.String.lbBr(result),
 							textConfirm: translate('commonCopy'),
 							colorConfirm: 'blank',
 							canCancel: false,
@@ -1864,7 +1864,7 @@ class Keyboard {
 			if (key == 'comma') {
 				return ',';
 			};
-			return U.Common.ucFirst(key);
+			return U.String.ucFirst(key);
 		});
 	};
 
@@ -1905,9 +1905,9 @@ class Keyboard {
 		const { page, action, id } = this.getMatch(isPopup).params;
 
 		return [ 
-			U.Common.toCamelCase([ prefix, page ].join('-')),
-			U.Common.toCamelCase([ prefix, page, action, id ].join('-')),
-			U.Common.toCamelCase([ prefix, page, action ].join('-')),
+			U.String.toCamelCase([ prefix, page ].join('-')),
+			U.String.toCamelCase([ prefix, page, action, id ].join('-')),
+			U.String.toCamelCase([ prefix, page, action ].join('-')),
 			U.Common.getContainerClassName(isPopup),
 			U.Data.spaceClass(spaceview.uxType),
 		].join(' ');
@@ -1919,7 +1919,7 @@ class Keyboard {
 		const platform = U.Common.getPlatform();
 		const cn = [ 
 			this.getPageClass('body', false), 
-			U.Common.toCamelCase([ 'platform', platform ].join('-')),
+			U.String.toCamelCase([ 'platform', platform ].join('-')),
 		];
 
 		if (config.debug.ui) {

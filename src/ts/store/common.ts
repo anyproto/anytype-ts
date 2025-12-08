@@ -183,6 +183,7 @@ class CommonStore {
 			isOnlineSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
+			clearRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
@@ -641,6 +642,23 @@ class CommonStore {
 		v.noPreview = Boolean(v.noPreview);
 
 		set(this.getRightSidebarState(isPopup), v);
+	};
+
+	/**
+	 * Clears the right sidebar state.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 */
+	clearRightSidebarState (isPopup: boolean) {
+		set(this.rightSidebarStateValue[this.getStateKey(isPopup)], {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		});
 	};
 
 	/**

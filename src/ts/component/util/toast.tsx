@@ -37,7 +37,7 @@ const Toast: FC = observer(() => {
 		};
 
 		case I.ToastAction.Widget: {
-			textAction = U.Common.sprintf(translate('toastWidget'), U.Object.name(object, true));
+			textAction = U.String.sprintf(translate('toastWidget'), U.Object.name(object, true));
 			break;
 		};
 
@@ -48,11 +48,11 @@ const Toast: FC = observer(() => {
 
 			const cnt = `${count} ${U.Common.plural(count, translate('pluralBlock'))}`;
 
-			textAction = U.Common.sprintf(translate('toastMovedTo'), cnt);
+			textAction = U.String.sprintf(translate('toastMovedTo'), cnt);
 			textTarget = <Element {...target} />;
 
 			if (origin) {
-				textAction = U.Common.sprintf(translate('toastMovedFrom'), cnt);
+				textAction = U.String.sprintf(translate('toastMovedFrom'), cnt);
 				textActionTo = translate('commonTo');
 				textOrigin = <Element {...origin} />;
 			};
@@ -106,10 +106,24 @@ const Toast: FC = observer(() => {
 			};
 
 			const cnt = `${ids.length} ${U.Common.plural(ids.length, translate('pluralObject'))}`;
-			textAction = U.Common.sprintf(translate('toastMovedToBin'), cnt);
+			textAction = U.String.sprintf(translate('toastMovedToBin'), cnt);
 
 			buttons = buttons.concat([
 				{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
+			]);
+			break;
+		};
+
+		case I.ToastAction.Restore: {
+			if (!ids) {
+				break;
+			};
+
+			const cnt = `${ids.length} ${U.Common.plural(ids.length, translate('pluralObject'))}`;
+			textAction = U.String.sprintf(translate('toastMovedFromBin'), cnt);
+
+			buttons = buttons.concat([
+				{ action: 'undoRestore', label: translate('commonUndo'), data: ids }
 			]);
 			break;
 		};
@@ -132,6 +146,13 @@ const Toast: FC = observer(() => {
 			case 'undoArchive': {
 				if (item.data) {
 					Action.restore(item.data, analytics.route.toast);
+				};
+				break;
+			};
+
+			case 'undoRestore': {
+				if (item.data) {
+					Action.archive(item.data, analytics.route.toast);
 				};
 				break;
 			};
@@ -167,9 +188,9 @@ const Toast: FC = observer(() => {
 
 				<div className="message">
 					{textObject}
-					{textAction ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textAction) }} /> : ''}
+					{textAction ? <span dangerouslySetInnerHTML={{ __html: U.String.sanitize(textAction) }} /> : ''}
 					{textOrigin}
-					{textActionTo ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textActionTo) }} /> : ''}
+					{textActionTo ? <span dangerouslySetInnerHTML={{ __html: U.String.sanitize(textActionTo) }} /> : ''}
 					{textTarget}
 				</div>
 

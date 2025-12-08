@@ -44,7 +44,7 @@ const PopupMigration = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						<QR value={J.Url.download} />
 					</div>
 
-					<Label text={U.Common.sprintf(translate('popupMigrationImportText3'), J.Url.community)} />
+					<Label text={U.String.sprintf(translate('popupMigrationImportText3'), J.Url.community)} />
 
 					<div className="buttons">
 						<Button text={translate('commonDone')} className="c36" onClick={() => close()} />

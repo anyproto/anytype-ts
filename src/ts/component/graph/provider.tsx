@@ -211,7 +211,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 		d.name = U.Smile.strip(U.Object.name(d, true));
-		d.shortName = U.Common.shorten(d.name, 24);
+		d.shortName = U.String.shorten(d.name, 24);
 
 		if (type) {
 			d.typeKey = type.uniqueKey || d.type;

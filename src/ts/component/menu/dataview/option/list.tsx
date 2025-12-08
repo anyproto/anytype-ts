@@ -246,7 +246,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		items.sort((c1, c2) => U.Data.sortByOrderId(c1, c2) || U.Data.sortByNumericKey('createdDate', c1, c2, I.SortType.Desc));
 
 		if (data.filter) {
-			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
+			const filter = new RegExp(U.String.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));
@@ -254,7 +254,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 			if (canEdit && canAdd && !check.length) {
 				ret.unshift({ 
 					id: 'add', 
-					name: U.Common.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+					name: U.String.sprintf(isSelect && !noSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
 				});
 			};
 		};

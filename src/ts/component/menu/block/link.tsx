@@ -245,7 +245,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		};
 
 		const encoded = filter.replace(/\s/g, '%20');
-		const urls = U.Common.getUrlsFromText(encoded);
+		const urls = U.String.getUrlsFromText(encoded);
 		const items = [].concat(this.items);
 		const sections: any[] = [];
 
@@ -259,7 +259,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
 			] 
 		});
 

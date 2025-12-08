@@ -33,7 +33,7 @@ class UtilFile {
 			};
 		};
 
-		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + (withSpace ? ' ' : '') + unit : '';
+		return ret ? U.Common.formatNumber(Number(U.String.sprintf(`%0.2f`, ret))) + (withSpace ? ' ' : '') + unit : '';
 	};
 
 	/**
@@ -207,7 +207,7 @@ class UtilFile {
 		const name = String(object.name || '');
 		const fileExt = String(object.fileExt || '');
 
-		if (!fileExt || new RegExp(`\\.${U.Common.regexEscape(fileExt)}$`).test(name)) {
+		if (!fileExt || new RegExp(`\\.${U.String.regexEscape(fileExt)}$`).test(name)) {
 			return name;
 		};
 

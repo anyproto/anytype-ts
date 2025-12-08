@@ -15,7 +15,7 @@ const PopupAbout = forwardRef<{}, I.Popup>(() => {
 			<Label text={translate('popupAboutDescription')} />
 
 			<div className="version">
-				{U.Common.sprintf(translate('popupAboutVersion'), version)}
+				{U.String.sprintf(translate('popupAboutVersion'), version)}
 				<Button 
 					onClick={() => U.Common.copyToast(translate('commonVersion'), version)} 
 					text={translate('commonCopy')} 

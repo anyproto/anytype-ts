@@ -143,7 +143,7 @@ class UtilMenu {
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${U.Common.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.icon = `embed-${U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
 			return it;
 		});
 	};
@@ -263,7 +263,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of actions.
 	 */
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count } = param;
+		const { rootId, blockId, hasText, hasFile, hasCopyMedia, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
@@ -284,6 +284,10 @@ class UtilMenu {
 			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
 		};
 
+		if (hasCopyMedia) {
+			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyMedia') });
+		};
+
 		if (hasBookmark) {
 			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
 		};
@@ -292,7 +296,7 @@ class UtilMenu {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: U.Common.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', icon: 'source', name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
@@ -556,7 +560,7 @@ class UtilMenu {
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = U.Common.regexEscape(filter);
+		const f = U.String.regexEscape(filter);
 		const regS = new RegExp(`^${f}`, 'i');
 		const regC = new RegExp(f, 'gi');
 
@@ -846,7 +850,6 @@ class UtilMenu {
 		})
 	};
 
-
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
@@ -952,7 +955,12 @@ class UtilMenu {
 							switch (element.id) {
 								case 'mute':
 								case 'unmute': {
-									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
+									let mode = I.NotificationMode.Nothing;
+									if (element.id == 'unmute') {
+										mode = I.NotificationMode.All;
+									} else {
+										mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
+									};
 
 									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
 									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
@@ -1002,7 +1010,7 @@ class UtilMenu {
 								};
 
 								case 'remove': {
-									Action.removeSpace(space.targetSpaceId, param.route, true);
+									Action.removeSpace(space.targetSpaceId, param.route);
 									break;
 								};
 
@@ -1385,7 +1393,7 @@ class UtilMenu {
 					return;
 				};
 
-				const url = U.Common.matchUrl(text);
+				const url = U.String.matchUrl(text);
 				const cb = (object: any, time: number) => {
 					callBack?.(object);
 					analytics.createObject(object.type, object.layout, route, time);
@@ -1594,7 +1602,7 @@ class UtilMenu {
 	spaceCreate (param: I.MenuParam, route) {
 		const ids = [ 'chat', 'space', 'join' ];
 		const options = ids.map(id => {
-			const suffix = U.Common.toUpperCamelCase(id);
+			const suffix = U.String.toUpperCamelCase(id);
 
 			let name = '';
 			let icon = '';
@@ -1653,7 +1661,7 @@ class UtilMenu {
 						};
 					};
 
-					analytics.event(`Click${prefix}CreateMenu${U.Common.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
 				},
 			}
 		});

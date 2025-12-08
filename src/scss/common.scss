@@ -5,7 +5,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
+	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-shape-highlight-light-solid);
 	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
 }
 body.colResize { cursor: col-resize !important; }
@@ -48,7 +48,7 @@ input, textarea, select { font-family: 'Inter'; }
 #menuBar { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 44px; z-index: -1; user-select: none; pointer-events: all; }
 
 #root-loader { 
-	position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: var(--color-shape-tertiary); z-index: 1000;
+	position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: var(--color-shape-highlight-light-solid); z-index: 1000;
 	transition: opacity 0.3s ease-in-out; 
 }
 #root-loader {

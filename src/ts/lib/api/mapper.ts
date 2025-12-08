@@ -280,8 +280,8 @@ export const Mapper = {
 		Block: (obj: Model.Block): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
-			const fm = U.Common.toUpperCamelCase(`block-${type}`);
+			const fn = `get${U.String.ucFirst(type)}`;
+			const fm = U.String.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
@@ -426,7 +426,7 @@ export const Mapper = {
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
+			const fn = `get${U.String.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 
 			let value: any = null;
@@ -476,7 +476,7 @@ export const Mapper = {
 
 		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
+			const fn = `get${U.String.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 			
 			let payload: any = {};
@@ -979,8 +979,8 @@ export const Mapper = {
 				block.setFields(Encode.struct(obj.fields || {}));
 			};
 
-			const fb = U.Common.toCamelCase(`set-${obj.type.toLowerCase()}`);
-			const fm = U.Common.toUpperCamelCase(`block-${obj.type}`);
+			const fb = U.String.toCamelCase(`set-${obj.type.toLowerCase()}`);
+			const fm = U.String.toUpperCamelCase(`block-${obj.type}`);
 
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
@@ -1273,7 +1273,7 @@ export const Mapper = {
 
 		Data (e: any) {
 			const type = Mapper.Event.Type(e.getValueCase());
-			const fn = `get${U.Common.ucFirst(type)}`;
+			const fn = `get${U.String.ucFirst(type)}`;
 			const data = e[fn] ? e[fn]() : {};
 
 			return {
@@ -1513,7 +1513,7 @@ export const Mapper = {
 			];
 
 			keys.forEach(key => {
-				const items = obj[U.Common.toCamelCase(`get-${key.id}-list`)]() || [];
+				const items = obj[U.String.toCamelCase(`get-${key.id}-list`)]() || [];
 
 				ret[key.field] = [];
 

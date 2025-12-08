@@ -311,7 +311,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 				{buttons.map((item, i) => (
 					<div 
 						key={i} 
-						id={U.Common.toCamelCase(`settingsSpaceButton-${item.id}`)} 
+						id={U.String.toCamelCase(`settingsSpaceButton-${item.id}`)} 
 						className="btn" 
 						onClick={e => onClick(e, item)}
 					>

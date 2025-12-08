@@ -43,7 +43,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const isAnimatingRef = useRef(false);
 
 	const getId = (): string => {
-		return U.Common.toCamelCase('popup-' + id);
+		return U.String.toCamelCase('popup-' + id);
 	};
 
 	const storageGet = () => {
@@ -187,7 +187,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 	
 	if (!Component) {
-		return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+		return <div>{U.String.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 	};
 
 	let dimmer = null;

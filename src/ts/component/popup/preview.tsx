@@ -215,10 +215,10 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const node = $(nodeRef.current);
-
-		node.find('video').each((i, el) => el.pause());
-
 		const item = gallery.find(el => el.object?.id == current?.id);
+
+		U.Common.pauseMedia();
+
 		if (!item) {
 			return;
 		};
@@ -236,7 +236,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const getContent = (item: any, idx: number, isThumb?: boolean) => {
 		const { src, type } = item;
-		const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
+		const id = U.String.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
 		const loader = !isThumb ? <Loader className="loader" /> : '';
 		const cn = [ 'previewItem' ];
 
@@ -319,6 +319,8 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							spaceBetween={8}
 							slidesPerView="auto"
 							modules={[ Thumbs ]}
+							slidesOffsetAfter={BORDER}
+							slidesOffsetBefore={BORDER}
 						>
 							{gallery.map((item: any, i: number) => (
 								<SwiperSlide key={i}>

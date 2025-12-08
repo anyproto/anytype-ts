@@ -106,7 +106,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		</div>
 	);
 
-
 }));
 
 export default PopupMembershipFinalization;

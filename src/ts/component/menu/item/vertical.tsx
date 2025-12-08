@@ -33,7 +33,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	let nameElement = null;
 
 	if ('string' == typeof name) {
-		nameElement = <div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />;
+		nameElement = <div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />;
 	} else {
 		nameElement = <div className="name">{name}</div>;
 	};
@@ -154,7 +154,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 			additional = (
 				<>
 					{typeof caption === 'string' ? (
-						<div className="caption" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(caption) }} />
+						<div className="caption" dangerouslySetInnerHTML={{ __html: U.String.sanitize(caption) }} />
 					) : (
 						<div className="caption">{caption}</div>
 					)}

@@ -141,6 +141,7 @@ export interface ViewRelation {
 	includeTime?: boolean;
 	formulaType?: I.FormulaType;
 	align?: I.BlockHAlign;
+	relation?: any;
 };
 
 export interface ViewRef {

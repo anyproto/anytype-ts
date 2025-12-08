@@ -325,7 +325,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		let name = '';
 		if (filter) {
-			name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
+			name = U.String.sprintf(translate('commonCreateObjectWithName'), filter);
 		} else {
 			name = translate('commonCreateObject');
 		};
@@ -333,7 +333,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
 		if (backlinkRef.current) {
-			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
+			items.unshift({ name: U.String.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
 		} else
 		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
@@ -351,7 +351,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		/* Settings and pages */
 
 		if (filter) {
-			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
 			if (canWrite) {
@@ -622,7 +622,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		if (highlight) {
 			const text = Mark.toHtml(highlight, ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
-			value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
+			value = <div className="value" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />;
 		} else
 		if (relationDetails.name) {
 			const { relationOptionColor } = relationDetails;
@@ -706,13 +706,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					name = U.File.name({ ...object, name });
 				};
 			} else {
-				name = U.Common.htmlSpecialChars(name);
+				name = U.String.htmlSpecialChars(name);
 			};
 
 			content = (
 				<div className="sides" onContextMenu={e => onContext(e, item)}>
 					<div className="side left">
-						<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						<Context {...meta} />
 						<div className="caption">
 							<ObjectType object={type} />

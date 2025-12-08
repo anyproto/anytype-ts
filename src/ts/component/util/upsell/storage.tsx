@@ -35,7 +35,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 		cn.push('isRed');
 
 		if (notSyncedCounter) {
-			incentiveText = U.Common.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
+			incentiveText = U.String.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
 		};
 		upsellText = translate('upsellBannerStorageFullUpsellText');
 	};
@@ -47,7 +47,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 	return (
 		<div className={cn.join(' ')}>
 			<div className="text">
-				<Label className="usage" text={U.Common.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} />
+				<Label className="usage" text={U.String.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} />
 				{incentiveText ? <Label className="incentive" text={incentiveText} /> : ''}
 				<Label className="upsell" text={upsellText} />
 			</div>
