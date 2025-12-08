@@ -1,4 +1,4 @@
-import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { observable, action, set, makeObservable } from 'mobx';
 import { S, I, M, U, J, Dataview, Relation } from 'Lib';
 
 enum KeyMapType {
@@ -264,13 +264,6 @@ class RecordStore {
 			meta.viewId = String(meta.viewId || '');
 			meta.keys = meta.keys || [];
 			meta = observable(meta);
-
-			intercept(meta as any, (change: any) => {
-				if (change.newValue === meta[change.name]) {
-					return null;
-				};
-				return change;
-			});
 
 			this.metaMap.set(this.getId(rootId, blockId), meta);
 		};
