@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.51.44-alpha",
+	"version": "0.52.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {

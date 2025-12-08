@@ -1,4 +1,4 @@
-import { I, C, S, U, J, Storage, translate, sidebar } from 'Lib';
+import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
 
 class UtilSpace {
 
@@ -82,14 +82,14 @@ class UtilSpace {
 	 * @param {string} [id] - target user identity.
 	 * @param {() => void} [callBack] - Optional callback fn.
 	 */
-	openOneToOne (id: string, key: string, callBack?: (message?: any) => void) {
+	openOneToOne (id: string, key: string, route: string, callBack?: (message?: any) => void) {
 		const { account } = S.Auth;
 		if (id == account.id) {
 			this.openDashboard();
 			callBack?.()
 			return;
 		};
-		
+
 		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
 
 		if (spaceExists) {
@@ -120,6 +120,13 @@ class UtilSpace {
 				};
 
 				U.Router.switchSpace(objectId, '', true, { onRouteChange: callBack }, false);
+			});
+
+			analytics.event('CreateSpace', { 
+				usecase: I.Usecase.ChatSpace,
+				middleTime: message.middleTime, 
+				uxType: I.SpaceUxType.OneToOne,
+				route,
 			});
 		});
 	};
