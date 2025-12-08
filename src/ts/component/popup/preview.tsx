@@ -319,6 +319,8 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							spaceBetween={8}
 							slidesPerView="auto"
 							modules={[ Thumbs ]}
+							slidesOffsetAfter={BORDER}
+							slidesOffsetBefore={BORDER}
 						>
 							{gallery.map((item: any, i: number) => (
 								<SwiperSlide key={i}>
