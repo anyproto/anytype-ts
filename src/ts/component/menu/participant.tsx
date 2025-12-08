@@ -40,7 +40,8 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		if (object.identity == account.id) {
 			Action.openSettings('account', analytics.route.menuParticipant);
 		} else {
-			U.Space.openOneToOne(object.identity, '', () => close());
+			U.Space.openOneToOne(object.identity, '', analytics.route.menuParticipant, () => close());
+			analytics.event('ClickConnectOneToOne', { route: analytics.route.menuParticipant });
 		};
 	};
 

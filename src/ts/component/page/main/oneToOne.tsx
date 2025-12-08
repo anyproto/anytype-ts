@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Loader, Error, Frame, Button, Footer } from 'Component';
-import { U, I, keyboard, translate } from 'Lib';
+import { U, I, keyboard, translate, analytics } from 'Lib';
 
 const PageMainOneToOne = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -11,7 +11,7 @@ const PageMainOneToOne = forwardRef<I.PageRef, I.PageComponent>((props, ref) => 
 	const frameRef = useRef(null);
 
 	const init = () => {
-		U.Space.openOneToOne(param.id, param.key);
+		U.Space.openOneToOne(param.id, param.key, analytics.route.link);
 	};
 
 	const resize = () => {
