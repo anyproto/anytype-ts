@@ -955,7 +955,12 @@ class UtilMenu {
 							switch (element.id) {
 								case 'mute':
 								case 'unmute': {
-									const mode = element.id == 'mute' ? I.NotificationMode.Mentions : I.NotificationMode.All;
+									let mode = I.NotificationMode.Nothing;
+									if (element.id == 'unmute') {
+										mode = I.NotificationMode.All;
+									} else {
+										mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
+									};
 
 									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
 									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
