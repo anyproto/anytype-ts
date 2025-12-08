@@ -850,7 +850,6 @@ class UtilMenu {
 		})
 	};
 
-
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
@@ -1006,7 +1005,7 @@ class UtilMenu {
 								};
 
 								case 'remove': {
-									Action.removeSpace(space.targetSpaceId, param.route, true);
+									Action.removeSpace(space.targetSpaceId, param.route);
 									break;
 								};
 
