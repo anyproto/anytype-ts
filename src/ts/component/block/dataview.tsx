@@ -1405,7 +1405,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 								transition: { duration: 0.2, delay: 0.1 },
 							})}
 						>
-							<div className="card" onClick={onAdd} />
 							<div className="card add" onClick={onAdd} />
 						</motion.div>
 					</AnimatePresence>
