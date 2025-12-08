@@ -408,6 +408,7 @@ class Mark {
 		for (let i = 0; i < r.length; ++i) {
 			r[i] = r[i].replace(/<$/, '&lt;');
 			r[i] = r[i].replace(/^>/, '&gt;');
+			r[i] = r[i].replace(/&/, '&amp;');
 		};
 
 		return r.join('');
