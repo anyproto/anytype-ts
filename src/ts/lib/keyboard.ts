@@ -584,21 +584,29 @@ class Keyboard {
 		const { account } = S.Auth;
 		const prev = history.entries[history.index - 1];
 
-		if (account && !prev) {
+		if (!prev) {
 			return false;
 		};
 
-		if (prev) {
-			const route = U.Router.getParam(prev.pathname);
-			if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
-				return true;
-			};
+		const route = U.Router.getParam(prev.pathname);
+
+		if ((route.page == 'auth') && (route.action == 'pin-check') && (history.index >= 3)) {
+			return true;
+		};
+
+		if ([ 'index', 'auth' ].includes(route.page) && account) {
+			return false;
+		};
+
+		if ((route.page == 'main') && !account) {
+			return false;
+		};
+
+		if ((route.page == 'main') && (route.action == 'blank')) {
+			const prev = history.entries[history.index - 2];
+			const route = U.Router.getParam(prev?.pathname);
 
 			if ([ 'index', 'auth' ].includes(route.page) && account) {
-				return false;
-			};
-
-			if ((route.page == 'main') && !account) {
 				return false;
 			};
 		};

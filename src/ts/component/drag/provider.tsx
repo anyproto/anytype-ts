@@ -464,7 +464,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
-						origin.current?.onRecordDrop?.(targetId, ids);
+						origin.current?.onRecordDrop?.(targetId, ids, position);
 						break;
 					};
 
@@ -615,7 +615,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		let type: any = '';
 		let style = 0;
 		let canDropMiddle = 0;
-		let isReversed = false;
+		let isReversed = 0;
 		let col1 = 0; 
 		let col2 = 0;
 
@@ -642,7 +642,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 				type = obj.attr('data-type');
 				style = Number(obj.attr('data-style')) || 0;
 				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
-				isReversed = Boolean(obj.attr('data-reversed'));
+				isReversed = Number(obj.attr('data-reversed')) || 0;
 
 				col1 = x - J.Size.blockMenu / 4;
 				col2 = x + width;
@@ -848,6 +848,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 	const setPosition = (v: I.BlockPosition) => {
 		position.current = v;
+
+		console.log('[DragProvider].setPosition', I.BlockPosition[v]);
+		console.trace();
 	};
 
 	const unbind = () => {

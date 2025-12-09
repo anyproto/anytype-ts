@@ -37,18 +37,10 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
-	const hasSources = (isCollection || getSources().length);
 	const isAllowedObject = props.isAllowedObject();
 	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
-	const isAllowedTemplate = (
-		U.Object.isAllowedTemplate(getTypeId()) || 
-		(
-			target && 
-			U.Object.isInSetLayouts(target.layout) && 
-			!U.Object.isTypeLayout(target.layout) && 
-			hasSources
-		)
-	);
+	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId());
+
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })

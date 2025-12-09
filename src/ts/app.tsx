@@ -198,8 +198,9 @@ const App: FC = () => {
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
-		const loader = node.find('#root-loader');
-		const anim = loader.find('.anim');
+		const bubbleLoader = $('#bubble-loader');
+		const rootLoader = node.find('#root-loader');
+		const anim = rootLoader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
@@ -229,20 +230,25 @@ const App: FC = () => {
 		body.addClass('over');
 
 		const hide = () => {
-			loader.remove(); 
+			rootLoader.remove(); 
 			body.removeClass('over');
 		};
 
 		const cb = () => {
-			raf(() => anim.removeClass('from'));
+			bubbleLoader.addClass('inflate');
 
 			window.setTimeout(() => {
-				anim.addClass('to');
+				bubbleLoader.remove();
 
+				raf(() => anim.removeClass('from'));
 				window.setTimeout(() => {
-					loader.css({ opacity: 0 });
-					window.setTimeout(() => hide(), 300);
-				}, 450);
+					anim.addClass('to');
+
+					window.setTimeout(() => {
+						rootLoader.css({ opacity: 0 });
+						window.setTimeout(() => hide(), 300);
+					}, 500);
+				}, 1500);
 			}, 1000);
 		};
 

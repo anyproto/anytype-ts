@@ -30,8 +30,14 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 			filters, 
 			keys,
 		}, (message: any) => {
-			chatsRef.current = message.records;
-			setDummy(dummy + 1);
+			if (message.error.code) {
+				return;
+			};
+
+			if (message.records) {
+				chatsRef.current = message.records;;
+				setDummy(dummy + 1);
+			};
 		});
 	};
 

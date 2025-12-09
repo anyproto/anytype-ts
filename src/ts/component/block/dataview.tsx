@@ -1200,7 +1200,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		sel.hide();
 	};
 
-	onRecordDrop (targetId: string, ids: string[]) {
+	onRecordDrop (targetId: string, ids: string[], position: I.BlockPosition) {
 		keyboard.disableSelection(false);
 
 		const { rootId, block } = this.props;
@@ -1221,7 +1221,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		ids.forEach(id => {
 			const oldIndex = records.indexOf(id);
-			const targetIndex = records.indexOf(targetId);
+			
+			let targetIndex = records.indexOf(targetId);
+
+			if ((position == I.BlockPosition.Top) && (oldIndex < targetIndex)) {
+				targetIndex--;
+			};
 
 			records = arrayMove(records, oldIndex, targetIndex);
 		});

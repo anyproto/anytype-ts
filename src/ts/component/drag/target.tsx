@@ -67,7 +67,7 @@ const DropTarget: FC<Props> = ({
 				id,
 				type,
 				style: Number(style) || 0,
-				reversed: isReversed,
+				reversed: Number(isReversed) || 0,
 				'root-id': rootId,
 				'cache-key': key.join('-'),
 				'drop-type': dropType,
