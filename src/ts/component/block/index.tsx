@@ -467,26 +467,29 @@ const Block = observer(class Block extends React.Component<Props> {
 			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 
-		// Initialize header toggle state
-		if (block && block.id && block.isTextHeader()) {
-			// First check if this header is inside a collapsed parent header
-			if (S.Block.isInsideCollapsedHeader(rootId, block.id)) {
-				// If parent is collapsed, hide this header regardless of its own state
-				$(`#block-${block.id}`).hide();
-			} else {
-				// For new headers (not in toggle list), default to expanded and store it
-				// This ensures pre-existing headers show as expanded with arrows visible on hover
-				let isExpanded = Storage.checkToggle(rootId, block.id);
-				if (!Storage.getToggle(rootId).includes(block.id)) {
-					isExpanded = true;
+	// Initialize header toggle state
+	if (block && block.id && block.isTextHeader()) {
+		// First check if this header is inside a collapsed parent header
+		if (S.Block.isInsideCollapsedHeader(rootId, block.id)) {
+			// If parent is collapsed, hide this header regardless of its own state
+			$(`#block-${block.id}`).hide();
+		} else {
+			// Default to expanded (true) - checkToggle returns true if in list (expanded)
+			// For headers that have never been toggled, they won't be in the list
+			// So we check: if not in list, default to expanded and add to list
+			const isInList = Storage.getToggle(rootId).includes(block.id);
+			if (!isInList) {
+				// Only default to expanded if not explicitly marked as collapsed
+				const collapsedList = Storage.get(`headerCollapsed_${rootId}`) || [];
+				if (!collapsedList.includes(block.id)) {
 					Storage.setToggle(rootId, block.id, true);
 				}
-				
-				S.Block.toggleHeader(rootId, block.id, isExpanded);
 			}
-		};
-
-		// For non-header blocks, check if they're inside a collapsed header section
+			
+			const isExpanded = Storage.checkToggle(rootId, block.id);
+			S.Block.toggleHeader(rootId, block.id, isExpanded);
+		}
+	};		// For non-header blocks, check if they're inside a collapsed header section
 		if (block && block.id && !block.isTextHeader() && !block.isTextToggle()) {
 			if (S.Block.isInsideCollapsedHeader(rootId, block.id)) {
 				$(`#block-${block.id}`).hide();
