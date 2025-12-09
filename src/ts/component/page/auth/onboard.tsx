@@ -13,7 +13,6 @@ enum Stage {
 const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
-	const { redirect } = S.Common;
 	const nodeRef = useRef(null);
 	const frameRef = useRef(null);
 	const nextRef = useRef(null);
@@ -62,6 +61,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		U.Router.switchSpace(S.Common.space, '', false, {
 			onFadeIn: () => {
 				Onboarding.startCommon(props.isPopup);
+				analytics.event('OpenAccount');
 			},
 		}, false);
 	};

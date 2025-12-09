@@ -353,8 +353,6 @@ class UtilData {
 				Storage.clearDeletedSpaces(true);
 			};
 		});
-
-		analytics.event('OpenAccount');
 	};
 
 	/**
