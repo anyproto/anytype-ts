@@ -409,7 +409,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		previewId.current = null;
 	};
 
-
 	const onMessage = (e) => {
 		const settings = S.Common.getGraph(storageKey);
 		const { id, data } = e.data;
