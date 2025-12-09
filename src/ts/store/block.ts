@@ -724,11 +724,21 @@ class BlockStore {
 			return;
 		};
 
-		// Toggle the arrow rotation and visibility
-		// isToggled class should be present when EXPANDED (v = true)
-		// Absent when COLLAPSED (v = false) to show the arrow
 		element.toggleClass('isToggled', v);
 		Storage.setToggle(rootId, headerId, v);
+
+		// Also track collapsed state separately to distinguish from "never toggled"
+		let collapsedList = Storage.get(`headerCollapsed_${rootId}`) || [];
+		if (v) {
+			// Expanded - remove from collapsed list
+			collapsedList = collapsedList.filter(id => id !== headerId);
+		} else {
+			// Collapsed - add to collapsed list
+			if (!collapsedList.includes(headerId)) {
+				collapsedList.push(headerId);
+			}
+		}
+		Storage.set(`headerCollapsed_${rootId}`, collapsedList);
 
 		// Find all blocks in this header section
 		const blocksToToggle = this.getHeaderSectionBlocks(rootId, headerId);
