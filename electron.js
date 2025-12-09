@@ -90,15 +90,11 @@ powerMonitor.on('resume', () => {
 	Util.log('info', '[PowerMonitor] resume');
 });
 
-ipcMain.on('storeGet', (e, key) => {
-	e.returnValue = store.get(key);
-});
-ipcMain.on('storeSet', (e, key, value) => {
-	e.returnValue = store.set(key, value);
-});
-ipcMain.on('storeDelete', (e, key) => {
-	e.returnValue = store.delete(key);
-});
+ipcMain.on('storeGet', (e, key) => { e.returnValue = store.get(key); });
+ipcMain.on('storeSet', (e, key, value) => { e.returnValue = store.set(key, value); });
+ipcMain.on('storeDelete', (e, key) => { e.returnValue = store.delete(key); });
+ipcMain.on('getTheme', (e) => { e.returnValue = Util.getTheme(); });
+ipcMain.on('getBgColor', (e) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '' ,false);

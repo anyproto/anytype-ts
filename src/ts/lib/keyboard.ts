@@ -1925,6 +1925,8 @@ class Keyboard {
 		const { config } = S.Common;
 		const { showMenuBar } = config;
 		const platform = U.Common.getPlatform();
+		const electron = U.Common.getElectron();
+		const theme = electron.getTheme();
 		const cn = [ 
 			this.getPageClass('body', false), 
 			U.String.toCamelCase([ 'platform', platform ].join('-')),
@@ -1936,9 +1938,11 @@ class Keyboard {
 		if (showMenuBar) {
 			cn.push('withMenuBar');
 		};
+		if (theme) {
+			cn.push(U.String.toCamelCase([ 'theme', theme ].join('-')));
+		};
 
 		$('html').attr({ class: cn.join(' ') });
-		S.Common.setThemeClass();
 	};
 
 };

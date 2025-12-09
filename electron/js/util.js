@@ -73,7 +73,7 @@ class Util {
 
 		const bg = {
 			'': '#f7f7f7',
-			dark: '#232323',
+			dark: '#1e1e1e',
 		};
 		return bg[theme];
 	};
