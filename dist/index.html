@@ -19,6 +19,8 @@
 			#bubble-loader.inflate { transform: scale3d(10,10,1); }
 			#bubble-loader.inflate .bubble { transition: background-color ease-in-out 1s; background-color: var(--color-bg-primary); animation-play-state: paused; }
 			#bubble-loader.inflate .bubble .img { opacity: 0; }
+
+			html.themeDark #bubble-loader .bubble .img { background-image: url('./img/theme/dark/icon/bubble.svg'); }
 		</style>
 	</head>
 	<body>
@@ -30,6 +32,17 @@
 
 		<div id="root"></div>
 		<script src="./js/run.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			const theme = Electron.getTheme();
+
+			if (theme) {
+				document.documentElement.classList.add(`theme${ucFirst(theme)}`);
+			};
+
+			function ucFirst (str) {
+				return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+			};
+		</script>
 
 		<!-- %REPLACE-JS% -->
 	</body>

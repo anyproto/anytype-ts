@@ -37,6 +37,10 @@ contextBridge.exposeInMainWorld('Electron', {
 		return ret;
 	},
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
+	getTheme: () => {
+		const arg = process.argv.find(a => a.startsWith('--anytype-theme='));
+		return arg ? arg.split('=')[1] : '';
+	},
 
 	currentWindow: () => getCurrentWindow(),
 	isFocused: () => getCurrentWindow().isFocused(),
