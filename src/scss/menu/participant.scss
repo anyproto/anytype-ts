@@ -15,7 +15,7 @@
 		.nameWrapper { display: flex; justify-content: center; align-items: center; }
 		.name { @include text-header2; display: flex; gap: 0px 6px; align-items: center; }
 
-		.descr { @include clamp4; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; }
+		.descr { @include clamp4; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; text-align: center; }
 		.descr:empty { display: none; }
 
 		.buttonsWrapper { margin: 12px 0px 0px 0px; display: flex; flex-direction: column; width: 100%; }
