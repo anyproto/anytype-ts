@@ -112,13 +112,13 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 				period = translate('popupSettingsMembershipPending');
 			} else
 			if (item.period && purchased?.info.dateEnds) {
-				period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', purchased?.info.dateEnds));
+				period = U.String.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', purchased?.info.dateEnds));
 			} else {
 				period = translate('popupSettingsMembershipForeverFree');
 			};
 		} else {
 			const periodName = U.Common.plural(1, isAnnual ? translate('pluralYear') : translate('pluralMonth'));
-			period = U.Common.sprintf(translate('popupSettingsMembershipCurrentPricePeriod'), periodName);
+			period = U.String.sprintf(translate('popupSettingsMembershipCurrentPricePeriod'), periodName);
 		};
 
 		const onClick = () => {
@@ -137,7 +137,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 
 					<div className="features">
 						{item.featuresList.map(({ key, value }) => {
-							const name = translate(U.Common.toCamelCase(`membershipFeature-${key}`));
+							const name = translate(U.String.toCamelCase(`membershipFeature-${key}`));
 
 							if (key == 'storageBytes') {
 								value = U.File.size(value);
@@ -146,7 +146,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 								value = translate('commonUnlimited');
 							};
 
-							return <Label key={key} text={U.Common.sprintf(name, value)} />;
+							return <Label key={key} text={U.String.sprintf(name, value)} />;
 						})}
 					</div>
 				</div>

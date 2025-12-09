@@ -31,10 +31,10 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 		const price = U.Common.getMembershipPriceString(nextInvoice.total);
 
 		date = U.Date.dateWithFormat(S.Common.dateFormat, nextInvoice.date);
-		membershipText = U.Common.sprintf(translate('popupSettingsMembershipNextPayment'), price, date);
+		membershipText = U.String.sprintf(translate('popupSettingsMembershipNextPayment'), price, date);
 	} else {
 		date = U.Date.dateWithFormat(S.Common.dateFormat, dateEnds);
-		membershipText = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), date);
+		membershipText = U.String.sprintf(translate('popupSettingsMembershipValidUntil'), date);
 	};
 
 	const onManage = () => {
@@ -61,7 +61,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 		button = <Label text={translate('popupSettingsMembershipTeamMessage')} />;
 	} else 
 	if ([ I.PaymentProvider.AppStore, I.PaymentProvider.GooglePlay ].includes(data.paymentProvider)) {
-		button = <Label text={U.Common.sprintf(translate('popupSettingsMembershipMarketMessage'), translate(`paymentProvider${data.paymentProvider}`))} />;
+		button = <Label text={U.String.sprintf(translate('popupSettingsMembershipMarketMessage'), translate(`paymentProvider${data.paymentProvider}`))} />;
 	} else
 	if (data.paymentProvider == I.PaymentProvider.Crypto) {
 		button = <Label text={translate('popupSettingsMembershipCryptoMessage')} />;
@@ -75,7 +75,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 				<div className={currentCn.join(' ')}>
 					<div className="top">
 						<Icon />
-						<Title text={U.Common.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
+						<Title text={U.String.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
 					{button}

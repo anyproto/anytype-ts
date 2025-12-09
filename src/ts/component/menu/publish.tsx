@@ -67,7 +67,7 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					/*
 					case J.Error.Code.Publish.PAGE_SIZE_EXCEEDED: {
 						const size = (membership.tierItem.price ? 100 : 10) * 1024 * 1024;
-						setError(U.Common.sprintf(translate('errorPublishingCreate103'), U.File.size(size));
+						setError(U.String.sprintf(translate('errorPublishingCreate103'), U.File.size(size));
 						break;
 					};
 					*/
