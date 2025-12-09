@@ -261,7 +261,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	setValue (v: string, restoreRange?: I.TextRange) {
-		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
+		const { block } = this.props;
 		const fields = block.fields || {};
 
 		let text = String(v || '');
@@ -301,17 +301,23 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		};
 
-
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
-			renderMentions(rootId, this.node, this.marks, () => this.getValue());
-			renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
-			renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
-			renderEmoji(this.node);
+			this.renderMarkup();
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
 			this.placeholderCheck();
 		};
+	};
+
+	renderMarkup () {
+		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
+		const text = block.content.text;
+
+		renderMentions(rootId, this.node, this.marks, () => text);
+		renderObjects(rootId, this.node, this.marks, () => text, this.props);
+		renderLinks(rootId, this.node, this.marks, () => text, this.props);
+		renderEmoji(this.node);
 	};
 	
 	renderLatex () {
@@ -326,6 +332,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (html !== value) {
 			this.refEditable.setValue(html);
+			this.renderMarkup();
 		};
 	};
 

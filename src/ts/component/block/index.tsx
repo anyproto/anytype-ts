@@ -1019,7 +1019,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		items.each((i: number, item: any) => {
 			item = $(item);
-			
+
 			const id = item.attr('data-param');
 			const object = S.Detail.get(subId, id, []);
 			const range = String(item.attr('data-range') || '').split('-');
