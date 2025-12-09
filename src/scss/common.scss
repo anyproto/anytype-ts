@@ -56,8 +56,8 @@ input, textarea, select { font-family: 'Inter'; }
 		width: 120px; text-align: center; position: absolute; transform: translate3d(-50%,-50%,0px); display: flex; flex-direction: column; gap: 6px 0px;
 		left: 50%; top: 50%;
 	}
-	.anim { opacity: 1; transform: scale3d(1,1,1); transition-duration: 0.3s; transition-property: opacity, transform; transition-timing-function: ease-in-out; }
-	.anim.from { opacity: 0; transform: scale3d(0.8,0.8,1); }
+	.anim { opacity: 1; transform: scale3d(1,1,1); transition-duration: 0.3s; transition-property: opacity, transform; transition-timing-function: linear(0, 0.008 1.1%, 0.034 2.3%, 0.134 4.9%, 0.264 7.3%, 0.683 14.3%, 0.797 16.5%, 0.89 18.6%, 0.967 20.7%, 1.027 22.8%, 1.073 25%, 1.104 27.3%, 1.123 30.6%, 1.119 34.3%, 1.018 49.5%, 0.988 58.6%, 0.985 65.2%, 1 84.5%, 1); }
+	.anim.from { opacity: 0; transform: scale3d(0.7,0.7,1); }
 	.anim.to { opacity: 0; transform: translate3d(0px,-20px,0px); }
 
 	.logo { width: 120px; height: 24px; background: url('~img/logo/black.svg') no-repeat; background-size: 100%; }
