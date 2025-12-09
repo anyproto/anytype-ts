@@ -28,8 +28,10 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const onEmptyToggle = (e: any) => {
 		C.BlockCreate(rootId, block.id, I.BlockPosition.Inner, { type: I.BlockType.Text }, (message: any) => {
-			focus.set(message.blockId, { from: 0, to: 0 });
-			focus.apply();
+			window.setTimeout(() => {
+				focus.set(message.blockId, { from: 0, to: 0 });
+				focus.apply();
+			}, 0);
 		});
 	};
 
