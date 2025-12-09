@@ -29,7 +29,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	text = '';
 	clicks = 0;
 	preventMenu = false;
-	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -256,11 +255,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		window.clearTimeout(this.timeoutFilter);
 		window.clearTimeout(this.timeoutClick);
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
-		};
-
 		if (focused == block.id) {
 			focus.clear(true);
 		};
@@ -307,18 +301,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		};
 
-		if (!block.isTextCode() && (html != text) && this.marks.length) {
-			if (this.frame) {
-				raf.cancel(this.frame);
-				this.frame = 0;
-			};
 
-			this.frame = raf(() => {
-				renderMentions(rootId, this.node, this.marks, () => this.getValue());
-				renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
-				renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
-				renderEmoji(this.node);
-			});
+		if (!block.isTextCode() && (html != text) && this.marks.length) {
+			renderMentions(rootId, this.node, this.marks, () => this.getValue());
+			renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
+			renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
+			renderEmoji(this.node);
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
