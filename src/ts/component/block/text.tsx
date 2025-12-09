@@ -156,28 +156,30 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				);
 				break;
 			};
-				
-		case I.TextStyle.Header1:
-		case I.TextStyle.Header2:
-		case I.TextStyle.Header3: {
-			marker = null;
-			additional = null;
-			break;
-		};
-			
-		case I.TextStyle.Bulleted: {
-			marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
-			break;
-		};			case I.TextStyle.Numbered: {
+
+			case I.TextStyle.Header1:
+			case I.TextStyle.Header2:
+			case I.TextStyle.Header3: {
+				marker = null;
+				additional = null;
+				break;
+			};
+
+			case I.TextStyle.Bulleted: {
+				marker = { type: I.MarkerType.Bulleted, className: 'bullet' };
+				break;
+			};
+
+			case I.TextStyle.Numbered: {
 				marker = { type: I.MarkerType.Numbered, className: 'number' };
 				break;
 			};
-				
+
 			case I.TextStyle.Toggle: {
 				marker = { type: I.MarkerType.Toggle, className: 'toggle', onClick: this.onToggle };
 				break;
 			};
-				
+
 			case I.TextStyle.Checkbox: {
 				marker = { type: I.MarkerType.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
@@ -214,17 +216,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onSelect={this.onSelect}
 					onPaste={this.onPaste}
 					onMouseDown={this.onMouseDown}
-				onMouseUp={this.onMouseUp}
-				onInput={this.onInput}
-				onDragStart={e => e.preventDefault()}
-				onCompositionEnd={this.onCompositionEnd}
-				onBeforeInput={this.onBeforeInput}
-			/>
+					onMouseUp={this.onMouseUp}
+					onInput={this.onInput}
+					onDragStart={e => e.preventDefault()}
+					onCompositionEnd={this.onCompositionEnd}
+					onBeforeInput={this.onBeforeInput}
+				/>
 
-			{isHeaderWithToggle && additional ? <div className="additional">{additional}</div> : ''}
-		</div>
-	);
-};	componentDidMount () {
+			</div>
+		);
+	};;
+
+	componentDidMount () {
 		const { block } = this.props;
 		const { content } = block;
 		const { marks, text } = content;
@@ -233,7 +236,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.setValue(text);
 		this.renderLatex();
 	};
-	
+
 	componentDidUpdate () {
 		const { block, onUpdate } = this.props;
 		const { content } = block;
