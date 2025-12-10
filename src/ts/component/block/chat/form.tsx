@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, Action } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -150,6 +150,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		saveState(attachments);
 	};
 
+	const insert = (text: string, value: string) => {
+		text = String(text || '');
+		const length = text.length;
+
+		marks.current = Mark.adjust(marks.current, range.current.from, length);
+		value = U.String.insert(value, text, range.current.from, range.current.from);
+		updateMarkup(value, { from: range.current.from + length, to: range.current.from + length });
+	};
+
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
@@ -174,10 +183,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					value += '\n';
 				};
 
-				marks.current = Mark.adjust(marks.current, range.current.from, 1);
-				value = U.String.insert(value, '\n', range.current.from, range.current.from);
-
-				updateMarkup(value, { from: range.current.from + 1, to: range.current.from + 1 });
+				insert('\n', value);
 				scrollToBottom();
 			});
 		};
@@ -243,8 +249,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onCopy();
 		});
 
-		keyboard.shortcut(`shift+enter`, e, () => {
+		keyboard.shortcut('shift+enter', e, () => {
 			scrollToBottom();
+		});
+
+		keyboard.shortcut('tab', e, () => {
+			e.preventDefault();
+			insert('\t', value);
 		});
 
 		// Mark-up
@@ -264,7 +275,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
-
 	};
 
 	const onKeyUpInput = (e: any) => {
