@@ -44,7 +44,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 				listRef.current?.recomputeRowHeights(0);
 			});
 		};
-	}, [ columnCount, cardHeight ]);
+	}, [ columnCount, cardHeight, width, records.length ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
