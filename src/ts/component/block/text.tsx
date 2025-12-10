@@ -85,7 +85,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		onUpdate?.();
-	});
+	}, [ text, marks, style, checked, color, iconEmoji, iconImage, fields ]);
 
 	const setValue = (v: string, restoreRange?: I.TextRange) => {
 		let text = String(v || '');
@@ -131,8 +131,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const renderMarkup = () => {
-		const text = block.content.text;
-
 		renderMentions(rootId, nodeRef.current, marksRef.current, () => text);
 		renderObjects(rootId, nodeRef.current, marksRef.current, () => text, props);
 		renderLinks(rootId, nodeRef.current, marksRef.current, () => text, props);
@@ -167,11 +165,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
 		const value = getHtmlValue();
-		const restricted: I.MarkType[] = [];
-
-		if (block.isTextHeader()) {
-			restricted.push(I.MarkType.Bold);
-		};
+		const restricted: I.MarkType[] = block.isTextHeader() ? [ I.MarkType.Bold ] : [];
 		
 		return Mark.fromHtml(value, restricted);
 	};
