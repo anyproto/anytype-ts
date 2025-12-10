@@ -9,7 +9,7 @@ const Data = {
 				description: translate('onboardingProductHuntText'),
 				noButton: true,
 				buttons: [
-					{ text: translate('onboardingProductHuntSupportUs'), action: 'openUrl', url: J.Url.productHuntChats },
+					{ text: translate('onboardingProductHuntUpvote'), action: 'openUrl', url: J.Url.productHuntChats },
 				],
 			}
 		],
@@ -21,6 +21,7 @@ const Data = {
 			},
 			width: 360,
 			classNameWrap: 'fixed fromSidebar',
+			className: 'productHunt',
 			horizontal: I.MenuDirection.Left,
 			passThrough: true,
 			offsetY: -4,
