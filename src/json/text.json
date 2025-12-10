@@ -2361,6 +2361,10 @@
 	"onboardingMainChatTitle3": "Talk, and watch your chat growing",
 	"onboardingCommonText3": "Your messages can become notes, tasks, or links — a living knowledge base, private and yours.",
 
+	"onboardingProductHuntTitle": "Support us on Product Hunt!",
+	"onboardingProductHuntText": "Upvote the launch to help more people discover Anytype early",
+	"onboardingProductHuntUpvote": "Upvote",
+
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 

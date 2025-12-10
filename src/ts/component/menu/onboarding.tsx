@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label, ProgressBar } from 'Component';
-import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Onboarding, analytics, keyboard, translate, Action } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -120,7 +120,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 									text={button.text}
 									color={(i == 0) ? 'accent' : 'blank'}
 									className="c36"
-									onClick={e => this.onButton(e, button.action)}
+									onClick={e => this.onButton(e, button)}
 								/>
 							))}
 						</div>
@@ -321,7 +321,8 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 		keyboard.shortcut('enter', e, () => this.onArrow(e, 1));
 	};
 
-	onButton (e: any, action: string) {
+	onButton (e: any, item: any) {
+		const { action } = item;
 		const { param, close, getId, getSize } = this.props;
 		const { data } = param;
 		const { key, current } = data;
@@ -332,7 +333,7 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 				break;
 			};
 
-			case 'changeType':
+			case 'changeType': {
 				S.Menu.open('typeSuggest', {
 					element: `#${getId()}`,
 					offsetX: getSize().width,
@@ -353,12 +354,21 @@ const MenuOnboarding = observer(class MenuOnboarding extends React.Component<I.M
 							});
 
 							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.menuOnboarding });
-							
+
 							close();
 						},
 					}
 				});
 				break;
+			};
+
+			case 'openUrl': {
+				if (item.url) {
+					Action.openUrl(item.url);
+				};
+				close();
+				break;
+			};
 		};
 
 		analytics.event('ClickOnboardingTooltip', { type: action, id: key, step: (current + 1) });

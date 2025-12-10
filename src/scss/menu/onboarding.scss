@@ -64,6 +64,16 @@
 	.menu.menuOnboarding.isSpace {
 		video { height: auto; }
 	}
+
+	.menu.menuOnboarding.productHunt {
+		.textWrapper { position: relative; padding-left: 58px; }
+		.textWrapper {
+			&:before {
+				content: ''; position: absolute; left: 0px; top: 50%; margin-top: -24px; width: 48px; height: 48px;
+				background: url('~img/icon/onboarding/productHunt.png') 0px 0px / 48px 48px no-repeat;
+			}
+		}
+	}
 }
 
 .onboardingElement { transition: none !important; }

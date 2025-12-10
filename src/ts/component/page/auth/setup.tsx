@@ -94,6 +94,8 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 						} else
 						if (whatsNew) {
 							U.Common.showWhatsNew();
+						} else {
+							Onboarding.start('productHuntChats', isPopup, false);
 						};
 					};
 
