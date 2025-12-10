@@ -1,7 +1,32 @@
-import { I, U, translate, S } from 'Lib';
+import { I, U, translate, S, J } from 'Lib';
 import $ from 'jquery';
 
 const Data = {
+	productHuntChats: () => ({
+		items: [
+			{
+				name: translate('onboardingProductHuntTitle'),
+				description: translate('onboardingProductHuntText'),
+				noButton: true,
+				buttons: [
+					{ text: translate('onboardingProductHuntSupportUs'), action: 'openUrl', url: J.Url.productHuntChats },
+				],
+			}
+		],
+
+		param: {
+			recalcRect: () => {
+				const { ww, wh } = U.Common.getWindowDimensions();
+				return { x: 0, y: 0, width: ww, height: wh };
+			},
+			width: 360,
+			classNameWrap: 'fixed fromSidebar',
+			horizontal: I.MenuDirection.Left,
+			passThrough: true,
+			offsetY: -4,
+		},
+	}),
+
 	mainGraph: () => ({
 		category: translate('onboardingMainGraph'),
 		items: [

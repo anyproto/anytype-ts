@@ -29,6 +29,8 @@ export default {
 	developerPortal:	 'https://developers.anytype.io',
 	mcp:				 'https://github.com/anyproto/anytype-mcp',
 
+	productHuntChats:	 'https://www.producthunt.com/products/anytype/launches/anytype-chats',
+
 	survey: {
 		register:		 'https://community.anytype.io/survey0',
 		delete:			 'https://community.anytype.io/survey1',
