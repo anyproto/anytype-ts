@@ -787,7 +787,14 @@ class UtilData {
 	 * @param {string} objectId - The object ID.
 	 */
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
+		const spaceview = U.Space.getSpaceview();
+
+		let name = '';
+		if (!((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace))) {
+			name = U.Object.name(S.Detail.get(rootId, objectId, []), true);
+		};
+
+		this.setWindowTitleText(name);
 	};
 
 	/**
@@ -795,19 +802,20 @@ class UtilData {
 	 * @param {string} name - The name to set as the window title.
 	 */
 	setWindowTitleText (name: string) {
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 		const title = [];
 
 		if (name) {
-			title.push(U.String.shorten(name, 60));
+			title.push(name);
 		};
 
-		if (!space._empty_) {
-			title.push(space.name);
+		if (!spaceview._empty_) {
+			title.push(spaceview.name);
 		};
 
 		title.push(J.Constant.appName);
-		document.title = title.join(' - ');
+
+		document.title = title.map(it => U.String.shorten(it, 60)).join(' - ');
 	};
 
 	/**

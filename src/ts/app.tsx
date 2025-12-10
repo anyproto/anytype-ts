@@ -231,6 +231,7 @@ const App: FC = () => {
 
 		const hide = () => {
 			rootLoader.remove(); 
+			bubbleLoader.remove();
 			body.removeClass('over');
 		};
 
