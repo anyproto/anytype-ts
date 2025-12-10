@@ -19,7 +19,6 @@ const KEYTAR_SERVICE = 'Anytype';
 
 class Api {
 
-	token = '';
 	isPinChecked = false;
 
 	getInitData (win) {
@@ -39,7 +38,6 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
-			token: this.token,
 		};
 	};
 
@@ -64,10 +62,6 @@ class Api {
 			Util.send(win, 'config', ConfigManager.config);
 			callBack?.();
 		});
-	};
-
-	setToken (win, token) {
-		this.token = token;
 	};
 
 	setPinChecked (win, isPinChecked) {

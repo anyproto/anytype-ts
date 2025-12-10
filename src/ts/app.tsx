@@ -194,7 +194,7 @@ const App: FC = () => {
 	};
 
 	const onInit = (data: any) => {
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -253,38 +253,40 @@ const App: FC = () => {
 
 		if (accountId) {
 			if (isChild) {
-				U.Data.createSession('', '', token, () => {
-					C.AccountSelect(accountId, '', 0, '', (message: any) => {
-						if (message.error.code) {
-							console.error('[App.onInit]:', message.error.description);
-							return;
-						};
+				Renderer.send('keytarGet', accountId).then(phrase => {
+					U.Data.createSession(phrase, '', '', () => {
+						C.AccountSelect(accountId, '', 0, '', (message: any) => {
+							if (message.error.code) {
+								console.error('[App.onInit]:', message.error.description);
+								return;
+							};
 
-						const { account } = message;
+							const { account } = message;
 
-						if (!account) {
-							console.error('[App.onInit]: Account not found');
-							return;
-						};
+							if (!account) {
+								console.error('[App.onInit]: Account not found');
+								return;
+							};
 
-						keyboard.setPinChecked(isPinChecked);
-						S.Auth.accountSet(account);
-						S.Common.redirectSet(route);
-						S.Common.configSet(account.config, false);
+							keyboard.setPinChecked(isPinChecked);
+							S.Auth.accountSet(account);
+							S.Common.redirectSet(route);
+							S.Common.configSet(account.config, false);
 
-						const spaceId = Storage.get('spaceId');
-						const routeParam = { 
-							onRouteChange: hide,
-						};
+							const spaceId = Storage.get('spaceId');
+							const routeParam = { 
+								onRouteChange: hide,
+							};
 
-						if (spaceId) {
-							U.Router.switchSpace(spaceId, '', false, routeParam, true);
-						} else {
-							U.Data.onAuthWithoutSpace(routeParam);
-						};
+							if (spaceId) {
+								U.Router.switchSpace(spaceId, '', false, routeParam, true);
+							} else {
+								U.Data.onAuthWithoutSpace(routeParam);
+							};
 
-						U.Data.onInfo(account.info);
-						U.Data.onAuthOnce(false);
+							U.Data.onInfo(account.info);
+							U.Data.onAuthOnce(false);
+						});
 					});
 				});
 
