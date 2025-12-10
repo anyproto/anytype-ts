@@ -72,8 +72,11 @@
 		&.isWide { max-width: unset; }
 		&.isWide {
 			.inner { flex-direction: row; padding: 0px; align-items: stretch; }
+			.inner.withImage {
+				.side.left { padding-right: 0px; }
+			}
 
-			.side.left { flex-grow: 1; padding: 16px 0px 16px 16px; justify-content: center; }
+			.side.left { flex-grow: 1; padding: 16px; justify-content: center; }
 			.side.right {
 				padding: 16px; width: 28%; min-height: 90px; display: flex; justify-content: center; align-items: center; position: relative;
 				overflow: hidden; aspect-ratio: 7 / 3; max-height: 122px;
