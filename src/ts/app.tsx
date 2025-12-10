@@ -239,8 +239,6 @@ const App: FC = () => {
 			bubbleLoader.addClass('inflate');
 
 			window.setTimeout(() => {
-				bubbleLoader.remove();
-
 				raf(() => anim.removeClass('from'));
 				window.setTimeout(() => {
 					anim.addClass('to');
