@@ -67,8 +67,6 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		return ret.filter(it => it.children.length > 0);
 	};
 
-	const items = getRows();
-
 	useLayoutEffect(() => {
 		setCardHeight(getCardHeight());
 	}, []);
@@ -232,12 +230,14 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	let content = null;
 
 	if (isInline) {
+		const items = getItems();
 		content = (
 			<>
 				{items.map(id => cardItem(id))}
 			</>
 		);
 	} else {
+		const items = getRows();
 		const length = items.length;
 
 		const rowRenderer = (param: any) => {
