@@ -181,6 +181,8 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		</div>
 	);
 
+	console.log('SKIP_CONTAINER', id, SKIP_CONTAINER.includes(id));
+
 	if (!SKIP_CONTAINER.includes(id)) {
 		content = (
 			<>
