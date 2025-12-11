@@ -309,9 +309,8 @@ class UtilData {
 
 	/**
 	 * Handles one-time authentication tasks after login.
-	 * @param {boolean} noTierCache - Whether to skip tier cache.
 	 */
-	onAuthOnce (noTierCache: boolean) {
+	onAuthOnce () {
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
@@ -346,7 +345,8 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
+		this.getMembershipData();
+		
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
 				Storage.clearDeletedSpaces(false);
@@ -855,29 +855,26 @@ class UtilData {
 		});
 	};
 
+	getMembershipData () {
+		this.getMembershipProducts(() => this.getMembershipStatus());
+	};
+
 	/**
 	 * Gets the membership status for the current account.
+	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
-	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
-		const { isOnline } = S.Common;
-
-		if (!this.isAnytypeNetwork() || !isOnline) {
+	getMembershipStatus (callBack?: () => void) {
+		if (!this.isAnytypeNetwork() || !S.Common.isOnline) {
 			return;
 		};
 
-		C.MembershipGetStatus(true, (message: any) => {
-			if (!message.membership) {
-				return;
+		C.MembershipV2GetStatus(true, (message: any) => {
+			if (!message.error.code) {
+				S.Membership.dataSet(message.data);
 			};
 
-			const membership = new M.Membership(message.membership);
-			const { tier } = membership;
-
-			S.Auth.membershipSet(membership);
-			analytics.setTier(tier);
-
-			callBack?.(membership);
+			callBack?.();
 		});
 	};
 
@@ -886,33 +883,18 @@ class UtilData {
 	 * @param {boolean} noCache - Whether to skip cache.
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
-	getMembershipTiers (noCache: boolean, callBack?: () => void) {
-		const { config, interfaceLang, isOnline } = S.Common;
-		const { testPayment } = config;
-
-		if (!isOnline || !this.isAnytypeNetwork()) {
+	getMembershipProducts (callBack?: () => void) {
+		if (!S.Common.isOnline || !this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
-			if (message.error.code) {
-				return;
+		C.MembershipV2GetProducts(true, (message) => {
+			if (!message.error.code) {
+				S.Membership.productsSet(message.products);
 			};
-
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
-			S.Common.membershipTiersListSet(tiers);
 
 			callBack?.();
 		});
-	};
-
-	/**
-	 * Gets a membership tier by its ID.
-	 * @param {I.TierType} id - The tier ID.
-	 * @returns {I.MembershipTier} The membership tier object.
-	 */
-	getMembershipTier (id: I.TierType): I.MembershipTier {
-		return S.Common.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
 	/**
@@ -1215,10 +1197,7 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		const { membership } = S.Auth;
-		const tier = this.getMembershipTier(membership.tier);
-
-		return !tier?.namesCount && this.isAnytypeNetwork();
+		return this.isAnytypeNetwork() && S.Membership.data?.getTopProduct()?.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

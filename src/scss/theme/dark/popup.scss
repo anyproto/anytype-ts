@@ -52,19 +52,6 @@
 		}
 	}
 
-	/* PopupMembership */
-
-	.popup.popupMembership {
-		.sides {
-			.side.left { background: var(--color-shape-tertiary) !important; }
-			.side.left {
-				.contentList {
-					li::before { background-image: url('#{$themePath}/icon/payment/tick.svg'); }
-				}
-			}
-		}
-	}
-
 	/* PopupShare */
 
 	.popup.popupShare {

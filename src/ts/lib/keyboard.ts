@@ -55,8 +55,8 @@ class Keyboard {
 
 			S.Common.isOnlineSet(onLine);
 
-			if (!S.Common.membershipTiers.length) {
-				U.Data.getMembershipTiers(false);
+			if (!S.Membership.products.length) {
+				U.Data.getMembershipData();
 			};
 		});
 
@@ -157,6 +157,7 @@ class Keyboard {
 		const object = S.Detail.get(rootId, rootId);
 		const space = U.Space.getSpaceview();
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+		const route = analytics.route.shortcut;
 		const electron = U.Common.getElectron();
 
 		this.shortcut('toggleSidebar', e, () => {
@@ -239,7 +240,7 @@ class Keyboard {
 			// Print
 			this.shortcut('print', e, () => {
 				e.preventDefault();
-				this.onPrint(analytics.route.shortcut);
+				this.onPrint(route);
 			});
 
 			// Navigation search
@@ -248,13 +249,13 @@ class Keyboard {
 					return;
 				};
 
-				this.onSearchPopup(analytics.route.shortcut);
+				this.onSearchPopup(route);
 			});
 
 			// Text search
 			this.shortcut('searchText', e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('', analytics.route.shortcut);
+					this.onSearchMenu('', route);
 				};
 			});
 
@@ -285,7 +286,7 @@ class Keyboard {
 
 			// Settings
 			this.shortcut('settings', e, () => {
-				U.Object.openRoute({ id: 'account', layout: I.ObjectLayout.Settings });
+				Action.openSettings('account', route);
 			});
 
 			// Relation panel
@@ -323,20 +324,20 @@ class Keyboard {
 			// Copy page link
 			this.shortcut('copyPageLink', e, () => {
 				e.preventDefault();
-				U.Object.copyLink(object, space, 'web', analytics.route.shortcut);
+				U.Object.copyLink(object, space, 'web', route);
 			});
 
 			// Copy deep link
 			this.shortcut('copyDeepLink', e, () => {
 				e.preventDefault();
-				U.Object.copyLink(object, space, 'deeplink', analytics.route.shortcut);
+				U.Object.copyLink(object, space, 'deeplink', route);
 			});
 
 			// Settings
 			this.shortcut('settingsSpace', e, () => {
 				e.preventDefault();
 
-				U.Object.openRoute({ id: 'spaceIndex', layout: I.ObjectLayout.Settings });
+				Action.openSettings('spaceIndex', route);
 			});
 
 			// Logout
@@ -356,7 +357,7 @@ class Keyboard {
 				if (!S.Popup.isOpen('search') && !this.isMainSet()) {
 					this.shortcut('createObject', e, () => {
 						e.preventDefault();
-						this.pageCreate({}, analytics.route.shortcut, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+						this.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 					});
 				};
 
@@ -374,13 +375,13 @@ class Keyboard {
 				this.shortcut('moveToBin', e, () => {
 					e.preventDefault();
 
-					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], analytics.route.shortcut);
+					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], route);
 				});
 
 				// Add to favorites
 				this.shortcut('addFavorite', e, () => {
 					e.preventDefault();
-					Action.toggleWidgetsForObject(rootId, analytics.route.shortcut);
+					Action.toggleWidgetsForObject(rootId, route);
 				});
 			};
 
@@ -658,7 +659,7 @@ class Keyboard {
 
 			case 'shortcut': {
 				this.onShortcut();
-				analytics.event('MenuHelpShortcut', { route: analytics.route.shortcut });
+				analytics.event('MenuHelpShortcut', { route: route });
 				break;
 			};
 
@@ -960,10 +961,9 @@ class Keyboard {
 	 * Handles membership upgrade action.
 	 */
 	onMembershipUpgradeViaEmail () {
-		const { account, membership } = S.Auth;
-		const name = membership.name ? membership.name : account.id;
+		const participant = U.Space.getMyParticipant();
 
-		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, participant?.resolvedName));
 	};
 
 	/**

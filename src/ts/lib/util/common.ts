@@ -943,10 +943,6 @@ class UtilCommon {
 
 	/**
 	 * Get width and height of window DOM node
-	 * Returns the percent value of part/whole.
-	 * @param {number} part - The part value.
-	 * @param {number} whole - The whole value.
-	 * @returns {number} The percent value.
 	 */
 	getWindowDimensions (): { ww: number; wh: number } {
 		const win = $(window);
@@ -1445,46 +1441,6 @@ class UtilCommon {
 		};
 	};
 
-	checkCanMembershipUpgrade (): boolean {
-		const { membership } = S.Auth;
-
-		return [
-			I.TierType.None,
-			I.TierType.Explorer,
-			I.TierType.Starter,
-			I.TierType.Pioneer,
-			I.TierType.Free,
-			I.TierType.Pro,
-			I.TierType.Plus,
-			I.TierType.Ultra,
-			I.TierType.CoCreator,
-		].includes(membership.tier);
-	};
-
-	getMembershipPeriodLabel (tier: I.MembershipTier): string {
-		// default is year
-		let periodLabel = translate('pluralYear');
-
-		if (tier.periodType) {
-			switch (tier.periodType) {
-				case I.MembershipTierDataPeriodType.PeriodTypeDays: {
-					periodLabel = translate('pluralDay');
-					break;
-				};
-				case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
-					periodLabel = translate('pluralWeek');
-					break;
-				};
-				case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
-					periodLabel = translate('pluralMonth');
-					break;
-				};
-			};
-		};
-
-		return periodLabel;
-	};
-
 	calculateStorageUsage (): number {
 		const spaces = U.Space.getList();
 
@@ -1519,6 +1475,15 @@ class UtilCommon {
 
 	getAppContainerHeight () {
 		return $('#appContainer').height() - this.getMenuBarHeight();
+	};
+
+	getMembershipPriceString (price?: I.MembershipAmount): string {
+		if (!price) {
+			return '';
+		};
+
+		const digits = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(price.amountCents / 100);
+		return `${J.Constant.currencySymbol[price.currency]}${digits}`;
 	};
 
 	safeDecodeUri (s: string): string {

@@ -86,6 +86,8 @@ class Analytics {
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
 
+		authSetup: 'ScreenAuthSetup',
+
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
 		addWidgetMenu: 'Menu',
@@ -100,6 +102,8 @@ class Analytics {
 		reaction: 'Reaction',
 		icon: 'Icon',
 		editor: 'Editor',
+
+		stripe: 'Stripe',
 	};
 
 	/**
@@ -242,11 +246,10 @@ class Analytics {
 	};
 
 	/**
-	 * Sets the user's tier property for analytics.
-	 * @param {I.TierType} tier - The user's tier.
+	 * Sets the user's purchased membership name property for analytics.
 	 */
-	setTier (tier: I.TierType) {
-		this.setProperty({ tier: I.TierType[tier] || 'Custom', tierId: tier });
+	setProduct () {
+		this.setProperty({ product: S.Membership.data?.getTopProduct()?.name || 'None' });
 	};
 
 	/**
@@ -577,13 +580,7 @@ class Analytics {
 
 			case 'ChangePlan':
 			case 'ScreenMembership': {
-				data.name = I.TierType[data.params.tier];
-				break;
-			};
-
-			case 'ClickMembership': {
-				data.name = data.name || I.TierType[data.params.tier];
-				data.type = data.type || I.PaymentMethod[data.params.method];
+				//data.name = I.TierType[data.params.tier];
 				break;
 			};
 

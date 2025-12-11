@@ -948,12 +948,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'MembershipUpdate': {
-					S.Auth.membershipUpdate(mapped.membership);
-					U.Data.getMembershipTiers(true);
-					break;
-				};
-
 				case 'ImportFinish': {
 					if (!account) {
 						break;
@@ -1119,6 +1113,33 @@ class Dispatcher {
 				case 'SpaceSyncStatusUpdate':
 				case 'P2PStatusUpdate': {
 					S.Auth.syncStatusUpdate(mapped);
+					break;
+				};
+
+				case 'MembershipV2Update': {
+					S.Membership.dataUpdate(mapped.data);
+
+					const { data } = S.Membership;
+					const purchased = data?.getTopPurchasedProduct();
+					const product = data?.getTopProduct();
+
+					if (!purchased || !product) {
+						break;
+					};
+
+					if (purchased.isFinalization) {
+						S.Popup.open('membershipFinalization', {
+							data: {
+								product,
+								route: analytics.route.stripe,
+							},
+						});
+					};
+					break;
+				};
+
+				case 'MembershipV2ProductsUpdate': {
+					S.Membership.productsUpdate(mapped.products);
 					break;
 				};
 

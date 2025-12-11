@@ -10,8 +10,6 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 
 	const { isPopup } = props;
 	const { space } = S.Common;
-	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 	const spaceview = U.Space.getSpaceview();
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);
@@ -27,9 +25,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 	};
 
 	const onUpgrade = (type: string) => {
-		Action.membershipUpgrade();
-
-		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
+		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
 	};
 
 	const getParticipantList = () => {
@@ -156,7 +152,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 	let showLimit = false;
 	let memberUpgradeType = '';
 
-	if (spaceview.isShared && !U.Space.getReaderLimit() && tier?.price) {
+	if (spaceview.isShared && !U.Space.getReaderLimit()) {
 		limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 		limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 		memberUpgradeType = 'members';

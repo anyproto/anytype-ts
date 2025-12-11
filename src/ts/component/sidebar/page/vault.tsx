@@ -30,7 +30,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const profile = U.Space.getProfile();
 	const settings = { ...profile, id: 'settings', tooltip: translate('commonAppSettings'), layout: I.ObjectLayout.Human };
 	const menuHelpOffset = U.Data.isFreeMember() ? -78 : -4;
-	const canCreate = U.Space.canCreateSpace();
 	const cnh = [ 'head' ];
 	const cnb = [ 'body' ];
 	const cnf = [ 'bottom' ];
@@ -531,7 +530,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					{canCreate && !vaultIsMinimal ? (
+					{!vaultIsMinimal ? (
 						<Icon
 							id="button-create-space"
 							className="plus withBackground"

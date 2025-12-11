@@ -191,7 +191,6 @@
 	"commonRelations": "Properties",
 	"commonSelectType": "Select Type",
 	"commonOpenType": "Open Type",
-	"commonManage": "Manage",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
 	"commonShowMore": "Show more",
@@ -231,8 +230,10 @@
 	"commonSeeUpdates": "See updates",
 	"commonEmptyBin": "Empty Bin",
 	"commonSaveChat": "Save chat",
+	"commonActivate": "Activate",
 	"commonNotifications": "Notifications",
 	"commonPersonalSpace": "Personal Space",
+	"commonUnlimited": "Unlimited",
 	"commonSaveAsFile": "Save as file",
 	"commonDownloadCode": "Download Code",
 	"commonCopyMedia": "Copy Media",
@@ -952,7 +953,6 @@
 	"upsellBannerStorageUsageText": "<b>%s of remote storage used. </b>",
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
 	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
-	"upsellBannerStorageUpsellText": "Get 128 GB for %s. ",
 	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
 
 	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
@@ -1022,18 +1022,14 @@
 	"popupSettingsSpaceShareMakePrivate": "Make Private",
 	"popupSettingsSpaceShareMakePrivateTooltip": "You can make the space private<br/>after removing all members",
 
-	"popupSettingsMembershipTitle1": "Membership",
-	"popupSettingsMembershipTitle2": "Let's build together",
-	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
+	"popupSettingsMembershipTitle": "Membership",
+	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
+	"popupSettingsMembershipSelectPlan": "Select plan",
+	"popupSettingsMembershipCurrentPlan": "Current plan",
+	"popupSettingsMembershipCurrentPricePeriod": "per seat per %s",
 
-	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
-	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
-	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",
-	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in spaces, and a unique identity on the Anytype Network.",
-	"popupSettingsMembershipSlide2Title": "Support Digital Independence",
-	"popupSettingsMembershipSlide2Text": "Your contribution supports our team and endorses <a href=\"%s\">our&nbsp;vision</a> of a user-owned, secure, and collaborative digital network.",
-	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
-	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
+	"popupSettingsMembershipSwitchMonthly": "Monthly",
+	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
@@ -1043,13 +1039,28 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
-	"popupSettingsMembershipRedeemCode": "I already have a code",
+	"popupSettingsMembershipActionsActivationTitle": "Activate Code",
+	"popupSettingsMembershipActionsActivationText": "If you bought a membership online or have an invitation, activate your code here",
+	"popupSettingsMembershipActionsContactTitle": "Have questions?",
+	"popupSettingsMembershipActionsContactText": "Use Anytype for education or didn’t find suitable plan? Reach us.",
+	"popupSettingsMembershipActionsContactReachUs": "Reach Us",
 
-	"popupSettingsMembershipLevelsDetails": "Membership plan details",
+	"popupSettingsMembershipFAQ": "FAQ",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
+	"popupSettingsMembershipCurrentTier": "You're on the %s %s plan",
+	"popupSettingsMembershipNextPayment": "Next payment: %s on %s",
+	"popupSettingsMembershipManage": "Manage",
+	"popupSettingsMembershipSelectAnyNameTitle": "Select your .any name",
+	"popupSettingsMembershipSelectAnyNameText": "This is your unique name on the Anytype network. It acts as your personal domain and cannot be changed.",
+
+	"popupSettingsMembershipLoaderText1": "Please wait, loading...",
+	"popupSettingsMembershipLoaderText2": "Looks like there are connection issues, you can continue using Anytype meanwhile and come back in a bit",
+
+	"popupSettingsMembershipTeamMessage": "Contact your billing manager to change the membership",
+	"popupSettingsMembershipMarketMessage": "To manage your membership, please cancel your active subscription in %s and purchase a new one via Desktop app",
+	"popupSettingsMembershipCryptoMessage": "Contact care@anytype.io to manage your subscription",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
@@ -1060,7 +1071,6 @@
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
 	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
 	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don't use it",
-
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
@@ -1154,51 +1164,16 @@
 
 	"popupApiCreateCreate": "Create new API key",
 
-	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
-	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
-	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
-	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
-	"popupMembershipFreeEnterCode": "Enter code",
-
-	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
-	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
-	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
-
-	"popupMembershipPaidTitle": "Pick your unique name",
-
-	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
-	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
-	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
-
-	"popupMembershipPaidPlaceholder": "Enter your name",
-	"popupMembershipPayByCard": "Pay by Card",
-	"popupMembershipPayByCrypto": "Pay by Crypto",
-	"popupMembershipPaidBy": "Paid by %s",
-	"popupMembershipActivate": "Activate",
-
-	"popupMembershipResend": "Resend",
-	"popupMembershipCountdown": " in %s sec",
+	"popupMembershipFinalizationTitle": "You’re all set!",
+	"popupMembershipFinalizationTitleWithName": "You’re all set with %s plan!",
+	"popupMembershipFinalizationText1": "Thanks for joining Anytype membership — we really appreciate it.",
+	"popupMembershipFinalizationText2": "The last step is to choose your .any name. This is your unique identity on the Anytype network and your personal web domain. Choose carefully — it can’t be changed later.",
+	"popupMembershipFinalizationPlaceholder": "Enter your name",
+	"popupMembershipFinalizationClaimName": "Claim Name",
 
 	"popupMembershipStatusWaitASecond": "Wait a second...",
 	"popupMembershipStatusNameAvailable": "This name is available!",
 	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
-	"popupMembershipCurrentStatus": "Current status",
-	"popupMembershipValidUntil": "Valid until",
-	"popupMembershipForever": "Forever",
-	"popupMembershipChangeEmail": "Change e-mail",
-	"popupMembershipManagePayment": "Manage payment",
-	"popupMembershipWriteToAnyteam": "Write to Anyteam",
-	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
-	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
-	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
-
-	"popupMembershipWhatsIncluded": "What's included",
-
-	"popupMembershipSuccessTitle": "Welcome to the network, %s",
-	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
-	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
-	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
-	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"popupMembershipCode1": "Unknown error occurred",
 	"popupMembershipCode2": "No .any provided",
@@ -1206,11 +1181,15 @@
 	"popupMembershipCode4": "Name is too long",
 	"popupMembershipCode5": "Name has invalid characters",
 	"popupMembershipCode6": "This tier does not support name",
+	"popupMembershipCode8": "You are not logged in and not supposed to see this",
+	"popupMembershipCode9": "Payment node error",
+	"popupMembershipCode10": "Cache error",
+	"popupMembershipCode11": "Can not reserve",
+	"popupMembershipCode12": "Can not connect",
+	"popupMembershipCode13": "This name is already reserved by someone else",
 
-	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
-
-	"popupMembershipActivationTitle": "Activate Your Membership",
-	"popupMembershipActivationText": "Enter the code we sent after purchase. Your membership will be activated instantly.",
+	"popupMembershipActivationTitle": "Activate Your Code",
+	"popupMembershipActivationText": "Enter the code you received after purchase or from invatation. Your membership will be activated instantly.",
 	"popupMembershipActivationPlaceholder": "Paste activation code...",
 
 	"popupMembershipActivationError1": "Unknown error occured",
@@ -2419,31 +2398,6 @@
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
-	"errorNameServiceResolveName3": "Please connect to the internet",
-
-	"errorMembershipGetStatus6": "Membership not found",
-	"errorMembershipGetStatus7": "Membership has wrong state",
-	"errorMembershipGetStatus8": "Please connect to the internet",
-
-	"errorMembershipIsNameValid3": "Name is too short",
-	"errorMembershipIsNameValid4": "Name is too long",
-	"errorMembershipIsNameValid5": "Name contains invalid characters",
-	"errorMembershipIsNameValid6": "This tier features no name",
-	"errorMembershipIsNameValid7": "Tier not found",
-	"errorMembershipIsNameValid8": "Not logged in",
-	"errorMembershipIsNameValid9": "Unable to connect to payment node",
-	"errorMembershipIsNameValid10": "Cache error",
-	"errorMembershipIsNameValid11": "Name cannot be taken",
-	"errorMembershipIsNameValid12": "Please connect to the internet",
-
-	"errorMembershipRegisterPaymentRequest4": "Unable to connect to payment node",
-	"errorMembershipRegisterPaymentRequest6": "Tier not found",
-	"errorMembershipRegisterPaymentRequest7": "Tier is invalid",
-	"errorMembershipRegisterPaymentRequest8": "Payment method is invalid",
-	"errorMembershipRegisterPaymentRequest9": "Bad Any name",
-	"errorMembershipRegisterPaymentRequest10": "Membership already exists",
-	"errorMembershipRegisterPaymentRequest11": "Please connect to the internet",
-
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
 	"errorMembershipFinalize8": "Bad Any name",
@@ -2454,16 +2408,6 @@
 	"errorMembershipGetVerificationEmail8": "Email has been already sent",
 	"errorMembershipGetVerificationEmail9": "Failed to send email",
 	"errorMembershipGetVerificationEmail10": "Membership already exists",
-
-	"errorMembershipVerifyEmailCode6": "This email is already verified",
-	"errorMembershipVerifyEmailCode7": "Code has expired",
-	"errorMembershipVerifyEmailCode8": "Wrong code",
-	"errorMembershipVerifyEmailCode9": "Membership not found",
-	"errorMembershipVerifyEmailCode10": "Membership is already active",
-
-	"errorMembershipGetTiers4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
-	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
@@ -2547,7 +2491,7 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
-	"errorPublishingCreate103": "Looks like some files are over %sMB. Please remove or slim them down and try again.",
+	"errorPublishingCreate103": "Looks like some files are over %s. Please remove or slim them down and try again.",
 	"errorPublishingCreate409": "URL already in use. To proceed, pick a different URL or unpublish the conflicting page.",
 
 	"errorIncorrectEmail": "Incorrect E-mail",
@@ -2724,5 +2668,26 @@
 	"aiOnboardingStatusDraftingTypes": "Drafting your custom types...",
 	"aiOnboardingStatusGenerating": "Generating your types and objects...",
 	"aiOnboardingStatusCreatingProgress": "Creating types and objects... %d of %d",
-	"aiOnboardingStatusFinalTouches": "Final touches..."
+	"aiOnboardingStatusFinalTouches": "Final touches...",
+
+	"membershipFeatureStorageBytes": "%s of remote storage",
+	"membershipFeatureSpaceReaders": "Space readers",
+	"membershipFeatureSpaceWriters": "Space writers",
+	"membershipFeatureSharedSpaces": "%s shared spaces",
+	"membershipFeaturePrivateSpaces": "%s private spaces",
+	"membershipFeatureTeamSeats": "Team seats",
+	"membershipFeatureAnyNameCount": "Name available",
+	"membershipFeatureAnyNameMinLen": ".any name %s+ symbols",
+
+	"membershipPeriod0": "unlimited",
+	"membershipPeriod1": "monthly",
+	"membershipPeriod2": "annual",
+	"membershipPeriod3": "three years",
+
+	"paymentProvider0": "None",
+	"paymentProvider1": "Stripe",
+	"paymentProvider2": "Crypto",
+	"paymentProvider3": "Billing", 
+	"paymentProvider4": "App Store",
+	"paymentProvider5": "Google Play"
 }

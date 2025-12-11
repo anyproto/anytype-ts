@@ -504,7 +504,7 @@ class Action {
 
 						U.Data.onInfo(account.info);
 						U.Data.onAuthWithoutSpace(routeParam);
-						U.Data.onAuthOnce(true);
+						U.Data.onAuthOnce();
 					});
 				});
 			});
@@ -705,10 +705,6 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	createSpace (uxType: I.SpaceUxType, route: string) {
-		if (!U.Space.canCreateSpace()) {
-			return;
-		};
-
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('spaceCreate', { data: { uxType, route } });
 		});
@@ -884,37 +880,29 @@ class Action {
 		};
 	};
 
-	membershipUpgrade (tier?: I.TierType) {
-		if (!U.Common.checkCanMembershipUpgrade()) {
-			this.membershipUpgradeViaEmail();
+	membershipUpgrade (event?: any) {
+		const product = S.Membership.data?.getTopProduct();
+		if (!product) {
 			return;
 		};
 
-		U.Object.openRoute(
-			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{
-				onRouteChange: () => {
-					S.Popup.open('membership', {
-						data: { tier: tier ? tier : I.TierType.Builder }
-					});
+		if (!product.isUpgradeable) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmMembershipUpgradeTitle'),
+					text: translate('popupConfirmMembershipUpgradeText'),
+					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					canCancel: false
 				}
-			},
-		);
-	};
+			});
+		} else {
+			this.openSettings('membership', '');
+		};
 
-	/**
-	 * Opens a membership upgrade confirmation popup.
-	 */
-	membershipUpgradeViaEmail () {
-		S.Popup.open('confirm', {
-			data: {
-				title: translate('popupConfirmMembershipUpgradeTitle'),
-				text: translate('popupConfirmMembershipUpgradeText'),
-				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
-				canCancel: false
-			}
-		});
+		if (event) {
+			analytics.event('ClickUpgradePlanTooltip', event);
+		};
 	};
 
 	/**
@@ -1072,16 +1060,18 @@ class Action {
 		});
 	};
 
-	openSettings (id: string, route: string) {
-		U.Object.openRoute({ 
+	openSettings (id: string, route: string, param?: Partial<I.RouteParam>) {
+		const object = { 
 			id, 
 			layout: I.ObjectLayout.Settings,
-			_routeParam_: { 
-				additional: [ 
-					{ key: 'route', value: route },
-				],
-			},
-		});
+			_routeParam_: { additional: [] },
+		};
+
+		if (route) {
+			object._routeParam_.additional.push({ route });
+		};
+
+		U.Object.openRoute(object, param);
 	};
 
 	openSpaceShare (route: string) {

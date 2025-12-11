@@ -10,8 +10,6 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { data } = param;
 	const { rootId } = data;
 	const { space, isOnline } = S.Common;
-	const { membership } = S.Auth;
-	const tier = U.Data.getMembershipTier(membership.tier);
 	const inputRef = useRef(null);
 	const publishRef = useRef(null);
 	const unpublishRef = useRef(null);
@@ -66,14 +64,13 @@ const MenuPublish = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						break;
 					};
 
+					/*
 					case J.Error.Code.Publish.PAGE_SIZE_EXCEEDED: {
-						const { membership } = S.Auth;
-						const tier = U.Data.getMembershipTier(membership.tier);
-						const limit = !tier.price ? 10 : 100;
-
-						setError(U.String.sprintf(translate('errorPublishingCreate103'), limit));
+						const size = (membership.tierItem.price ? 100 : 10) * 1024 * 1024;
+						setError(U.String.sprintf(translate('errorPublishingCreate103'), U.File.size(size));
 						break;
 					};
+					*/
 				};
 
 				return;

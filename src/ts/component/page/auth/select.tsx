@@ -29,7 +29,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(true);
+			U.Data.onAuthOnce();
 			
 			S.Common.showRelativeDatesSet(true);
 			
