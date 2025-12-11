@@ -962,6 +962,17 @@ class BlockStore {
 	};
 
 	/**
+	 * Checks if a block is hidden because it's inside a collapsed header section.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID to check.
+	 * @returns {boolean} True if the block is hidden.
+	 */
+	isBlockHidden (rootId: string, blockId: string): boolean {
+		const hiddenSet = this.hiddenBlocksMap.get(rootId);
+		return hiddenSet ? hiddenSet.has(blockId) : false;
+	};
+
+	/**
 	 * Updates the markup for all text blocks in a root.
 	 * @param {string} rootId - The root ID.
 	 */
