@@ -30,6 +30,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
+	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const state = S.Common.getRightSidebarState(isPopup);
 	const page = String(state.page || '');
@@ -119,7 +120,10 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 			if (
 				U.Object.isTypeOrRelationLayout(object.layout) || 
-				((spaceview.isChat || spaceview.isOneToOne) && U.Object.isChatLayout(object.layout))
+				(
+					(spaceview.isChat || spaceview.isOneToOne) && 
+					(U.Object.isChatLayout(object.layout) || U.Object.isSpaceLayout(object.layout))
+				)
 			) {
 				sidebar.rightPanelClose(isPopup, false);
 				return;
@@ -127,7 +131,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		};
 
 		pageRef.current?.forceUpdate();
-	}, [ state.rootId, state.page, state.noPreview, state.details, state.readonly, state.blockId ]);
+	}, [ state.rootId, state.page, state.noPreview, state.details, state.readonly, state.blockId, space ]);
 
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,

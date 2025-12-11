@@ -1,5 +1,12 @@
 @import "~scss/_mixins";
 
+.settingsPage.pageSettingsSet,
+.settingsPage.pageSettingsRelation {
+    .header {
+        .side.left { visibility: hidden; }
+    }
+}
+
 .settingsPageContainer { width: calc(100% - 64px); margin: 0 auto; min-width: 300px; max-width: 640px; }
 .settingsPageContainer {
     .title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }

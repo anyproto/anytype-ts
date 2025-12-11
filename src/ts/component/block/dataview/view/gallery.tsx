@@ -28,6 +28,45 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const listRef = useRef(null);
 	const topRef = useRef(0);
 
+	const getItems = () => {
+		const records = U.Common.objectCopy(getRecords());
+		
+		if (isAllowedObject()) {
+			records.push('add-record');
+		};
+
+		return records;
+	};
+
+	const getRows = () => {
+		if (!width || !columnCount) {
+			return [];
+		};
+
+		const records = getItems();
+		const ret: any[] = [];
+
+		let n = 0;
+		let row = { children: [] };
+
+		for (const item of records) {
+			row.children.push(item);
+
+			n++;
+			if (n == columnCount) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
+			};
+		};
+
+		if (row.children.length < columnCount) {
+			ret.push(row);
+		};
+
+		return ret.filter(it => it.children.length > 0);
+	};
+
 	useLayoutEffect(() => {
 		setCardHeight(getCardHeight());
 	}, []);
@@ -35,16 +74,16 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	useLayoutEffect(() => {
 		setColumnCount(getColumnCount());
 		setCardHeight(getCardHeight());
-	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length,  view.type ]);
+	}, [ width, cardSize, coverRelationKey, hideIcon, relations.length, view.type ]);
 
 	useLayoutEffect(() => {
 		if (!isInline) {
-			S.Common.setTimeout('galleryReset', 100, () => {
+			S.Common.setTimeout('galleryReset', 20, () => {
 				cache.current.clearAll();
 				listRef.current?.recomputeRowHeights(0);
 			});
 		};
-	}, [ columnCount, cardHeight ]);
+	}, [ columnCount, cardHeight, width, records.length ]);
 
 	useEffect(() => {
 		const selection = S.Common.getRef('selectionProvider');
@@ -91,45 +130,6 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 			loadData(view.id, offset, false, resolve);
 			S.Record.metaSet(subId, '', { offset });
 		});
-	};
-
-	const getItems = () => {
-		const records = U.Common.objectCopy(getRecords());
-		
-		if (isAllowedObject()) {
-			records.push('add-record');
-		};
-
-		return records;
-	};
-
-	const getRows = () => {
-		if (!width || !columnCount) {
-			return [];
-		};
-
-		const records = getItems();
-		const ret: any[] = [];
-
-		let n = 0;
-		let row = { children: [] };
-
-		for (const item of records) {
-			row.children.push(item);
-
-			n++;
-			if (n == columnCount) {
-				ret.push(row);
-				row = { children: [] };
-				n = 0;
-			};
-		};
-
-		if (row.children.length < columnCount) {
-			ret.push(row);
-		};
-
-		return ret.filter(it => it.children.length > 0);
 	};
 
 	const getCardHeight = (): number => {
@@ -185,11 +185,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		return getEmptyView(I.ViewType.Gallery);
 	};
 
-	const items = getItems();
-	const length = items.length;
-	const keys = relations.filter((it: any) => {
-		return Relation.isObjectType(it.relation.format);
-	}).map(it => it.relationKey);
+	const keys = relations.filter((it: any) => Relation.isObjectType(it.relation.format)).map(it => it.relationKey);
 
 	// Subscriptions on dependent objects
 	for (const id of records) {
@@ -234,10 +230,10 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	let content = null;
 
 	if (isInline) {
-		const records = getItems();
+		const items = getItems();
 		content = (
 			<>
-				{records.map(id => cardItem(id))}
+				{items.map(id => cardItem(id))}
 			</>
 		);
 	} else {
@@ -279,7 +275,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 								ref={listRef}
 								width={Number(width) || 0}
 								height={Number(height) || 0}
-								deferredMeasurmentCache={cache.current}
+								deferredMeasurementCache={cache.current}
 								rowCount={length}
 								rowHeight={param => Math.max(cache.current.rowHeight(param), cardHeight)}
 								rowRenderer={rowRenderer}

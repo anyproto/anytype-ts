@@ -318,7 +318,8 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 							initialSlide={initial}
 							spaceBetween={8}
 							slidesPerView="auto"
-							modules={[ Thumbs ]}
+							mousewheel={true}
+							modules={[ Thumbs, Mousewheel ]}
 							slidesOffsetAfter={BORDER}
 							slidesOffsetBefore={BORDER}
 						>

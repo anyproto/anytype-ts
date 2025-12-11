@@ -892,7 +892,7 @@ class BlockStore {
 			list.push({ 
 				depth, 
 				id: block.id,
-				text: String(block.content.text || translate('defaultNamePage')),
+				text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
 				block,
 			});
 		});

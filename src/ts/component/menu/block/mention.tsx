@@ -307,7 +307,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = S.Common.filter;
 
 		const cb = (object: any) => {
-			const name = U.String.shorten(String(U.Object.name(object, true)), 30);
+			const name = U.String.shorten(String(U.Object.name(object, true)), J.Constant.limit.string.mention);
 			const to = from + name.length;
 
 			let marks = U.Common.objectCopy(data.marks || []);

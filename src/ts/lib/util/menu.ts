@@ -171,7 +171,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
+		const items = U.Data.getObjectTypesForNewObject({ withLists: true, withChat: true });
 		const ret: any[] = [];
 
 		let i = 0;

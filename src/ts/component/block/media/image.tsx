@@ -97,7 +97,8 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const blocks = S.Block.getBlocks(rootId, (it: I.Block) => it.isFileImage() || it.isFileVideo());
+		const root = S.Block.wrapTree(rootId, rootId);
+		const blocks = S.Block.unwrapTree([ root ]).filter(it => it.isFileImage() || it.isFileVideo());
 		const gallery: any[] = [];
 
 		blocks.forEach(it => {
@@ -122,10 +123,17 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				};
 			};
 
-			gallery.push({ id: it.id, object, src, type });
+			if (src) {
+				gallery.push({ id: it.id, object, src, type });
+			};
 		});
 
-		S.Popup.open('preview', { data: { initialIdx: gallery.findIndex(it => it.id == block.id), gallery } });
+		S.Popup.open('preview', { 
+			data: { 
+				initialIdx: gallery.findIndex(it => it.id == block.id), 
+				gallery 
+			},
+		});
 	};
 
 	const handleDownload = () => {

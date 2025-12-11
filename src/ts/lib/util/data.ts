@@ -353,8 +353,6 @@ class UtilData {
 				Storage.clearDeletedSpaces(true);
 			};
 		});
-
-		analytics.event('OpenAccount');
 	};
 
 	/**
@@ -454,11 +452,11 @@ class UtilData {
 
 	/**
 	 * Returns a list of object types available for new objects, with optional filters.
-	 * @param {any} [param] - Optional parameters for filtering.
+	 * @param {{ withLists?: boolean; withChat?: boolean; limit?: number; }} [param] - Optional parameters for filtering.
 	 * @returns {any[]} The list of object types.
 	 */
-	getObjectTypesForNewObject (param?: any) {
-		const { withLists, limit } = param || {};
+	getObjectTypesForNewObject (param?: { withLists?: boolean; withChat?: boolean; limit?: number; }): any[] {
+		const { withLists, withChat, limit } = param || {};
 		const { space } = S.Common;
 		const layouts = U.Object.getPageLayouts();
 
@@ -468,7 +466,10 @@ class UtilData {
 			layouts.push(I.ObjectLayout.Set);
 			layouts.push(I.ObjectLayout.Collection);
 		};
-
+		if (withChat) {
+			layouts.push(I.ObjectLayout.Chat);
+		};
+		
 		items = items.concat(S.Record.getTypes().filter(it => {
 			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
@@ -789,7 +790,14 @@ class UtilData {
 	 * @param {string} objectId - The object ID.
 	 */
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
+		const spaceview = U.Space.getSpaceview();
+
+		let name = '';
+		if (!((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace))) {
+			name = U.Object.name(S.Detail.get(rootId, objectId, []), true);
+		};
+
+		this.setWindowTitleText(name);
 	};
 
 	/**
@@ -797,19 +805,20 @@ class UtilData {
 	 * @param {string} name - The name to set as the window title.
 	 */
 	setWindowTitleText (name: string) {
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 		const title = [];
 
 		if (name) {
-			title.push(U.String.shorten(name, 60));
+			title.push(name);
 		};
 
-		if (!space._empty_) {
-			title.push(space.name);
+		if (!spaceview._empty_) {
+			title.push(spaceview.name);
 		};
 
 		title.push(J.Constant.appName);
-		document.title = title.join(' - ');
+
+		document.title = title.map(it => U.String.shorten(it, 60)).join(' - ');
 	};
 
 	/**

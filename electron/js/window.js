@@ -23,13 +23,16 @@ class WindowManager {
 	create (options, param) {
 		const Api = require('./api.js');
 		const { showMenuBar } = ConfigManager.config;
+		const theme = Util.getTheme();
+		const bgColor = Util.getBgColor(theme);
 
 		param = Object.assign({
-			backgroundColor: Util.getBgColor(Util.isDarkTheme() ? 'dark' : ''),
+			backgroundColor: bgColor,
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {
 				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.cjs')),
+				additionalArguments: [],
 			},
 		}, param);
 

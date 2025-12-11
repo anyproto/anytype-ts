@@ -92,7 +92,7 @@ html.bodyAuthDeleted {
 			.img { width: 100%; height: 100%; background-size: 100%; background-image: url('~img/icon/bubble.svg'); transition: opacity $easingBubbleWrapper 1s; }
 		}
 	}
-	.bubbleWrapper.inflate { width: 150vw; height: 150vw; }
+	.bubbleWrapper.inflate { transform: scale3d(10,10,1); }
 	.bubbleWrapper.inflate {
 		.bubble { transition: background-color ease-in-out 1s; background-color: var(--color-bg-primary); animation-play-state: paused; }
 		.bubble {
