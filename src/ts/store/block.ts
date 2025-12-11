@@ -14,6 +14,9 @@ class BlockStore {
 	public restrictionMap: Map<string, Map<string, any>> = new Map();
 	public participantMap: Map<string, Map<string, string>> = new Map();
 
+	private collapsedHeadersMap: Map<string, Set<string>> = new Map();
+	private hiddenBlocksMap: Map<string, Set<string>> = new Map();
+
 	constructor() {
 		makeObservable(this, {
 			profileId: observable,
@@ -31,18 +34,20 @@ class BlockStore {
 			spaceviewSet: action,
 			workspaceSet: action,
 
-			set: action,
-			clear: action,
-			clearAll: action,
-			add: action,
-			update: action,
-			updateContent: action,
-			updateStructure: action,
-			delete: action,
-		});
-	};
-
-	get profile (): string {
+		set: action,
+		clear: action,
+		clearAll: action,
+		add: action,
+		update: action,
+		updateContent: action,
+		updateStructure: action,
+		delete: action,
+		initializeHiddenBlocks: action,
+		onBlocksAdded: action,
+		onBlocksDeleted: action,
+		onBlockStructureChanged: action,
+	});
+	};	get profile (): string {
 		return String(this.profileId || '');
 	};
 
@@ -154,6 +159,8 @@ class BlockStore {
 		this.treeMap.delete(rootId);
 		this.restrictionMap.delete(rootId);
 		this.participantMap.delete(rootId);
+		this.collapsedHeadersMap.delete(rootId);
+		this.hiddenBlocksMap.delete(rootId);
 	};
 
 	/**
@@ -167,6 +174,8 @@ class BlockStore {
 		this.treeMap.clear();
 		this.restrictionMap.clear();
 		this.participantMap.clear();
+		this.collapsedHeadersMap.clear();
+		this.hiddenBlocksMap.clear();
 	};
 
 	/**
@@ -713,7 +722,7 @@ class BlockStore {
 	 * @param {string} headerId - The header block ID.
 	 * @param {boolean} v - Whether to show (true) or hide (false) the section.
 	 */
-	toggleHeader (rootId: string, headerId: string, v: boolean) {
+	toggleHeader (rootId: string, headerId: string, visible: boolean) {
 		const header = this.getLeaf(rootId, headerId);
 		if (!header || !header.isTextHeader()) {
 			return;
@@ -724,68 +733,60 @@ class BlockStore {
 			return;
 		};
 
-		element.toggleClass('isToggled', v);
-		Storage.setToggle(rootId, headerId, v);
+		element.toggleClass('isToggled', visible);
+		Storage.setToggle(rootId, headerId, visible);
 
-		// Also track collapsed state separately to distinguish from "never toggled"
-		let collapsedList = Storage.get(`headerCollapsed_${rootId}`) || [];
-		if (v) {
-			// Expanded - remove from collapsed list
-			collapsedList = collapsedList.filter(id => id !== headerId);
-		} else {
-			// Collapsed - add to collapsed list
-			if (!collapsedList.includes(headerId)) {
-				collapsedList.push(headerId);
-			}
+		// Get or create cached state sets
+		let collapsedSet = this.collapsedHeadersMap.get(rootId);
+		if (!collapsedSet) {
+			collapsedSet = new Set();
+			this.collapsedHeadersMap.set(rootId, collapsedSet);
 		}
-		Storage.set(`headerCollapsed_${rootId}`, collapsedList);
 
-		// Find all blocks in this header section
-		const blocksToToggle = this.getHeaderSectionBlocks(rootId, headerId);
-		
-		// Show or hide each block
-		blocksToToggle.forEach(blockId => {
-			const blockElement = $(`#block-${blockId}`);
-			if (v) {
-				blockElement.show();
-			} else {
-				blockElement.hide();
-			}
-		});
+		let hiddenSet = this.hiddenBlocksMap.get(rootId);
+		if (!hiddenSet) {
+			hiddenSet = new Set();
+			this.hiddenBlocksMap.set(rootId, hiddenSet);
+		}
+
+		const sectionBlocks = this.getHeaderSectionBlocks(rootId, headerId);
+
+		if (visible) {
+			// Expanded - remove from collapsed
+			collapsedSet.delete(headerId);
+
+			// Only update affected blocks in this section
+			sectionBlocks.forEach(blockId => {
+				hiddenSet.delete(blockId);
+				$(`#block-${blockId}`).show();
+			});
+		} else {
+			// Collapsed - add to collapsed
+			collapsedSet.add(headerId);
+
+			// Only update affected blocks in this section
+			sectionBlocks.forEach(blockId => {
+				hiddenSet.add(blockId);
+				$(`#block-${blockId}`).hide();
+			});
+		}
+
+		// Persist to storage
+		Storage.set(`headerCollapsed_${rootId}`, Array.from(collapsedSet));
 
 		U.Common.triggerResizeEditor(keyboard.isPopup());
 	};
 
 	/**
 	 * Checks if a block is inside a collapsed parent header section.
+	 * Optimized O(1) lookup using cached state.
 	 * @param {string} rootId - The root ID.
 	 * @param {string} blockId - The block ID to check.
 	 * @returns {boolean} True if the block is inside a collapsed header section.
 	 */
 	isInsideCollapsedHeader (rootId: string, blockId: string): boolean {
-		const allBlocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
-		const blockIndex = allBlocks.findIndex(b => b.id === blockId);
-		
-		if (blockIndex === -1) {
-			return false;
-		}
-
-		for (let i = blockIndex - 1; i >= 0; i--) {
-			const block = allBlocks[i];
-			
-			if (block.isTextHeader()) {
-				const isCollapsed = !Storage.checkToggle(rootId, block.id);
-				
-				if (isCollapsed) {
-					const sectionBlocks = this.getHeaderSectionBlocks(rootId, block.id);
-					if (sectionBlocks.includes(blockId)) {
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
+		const hiddenSet = this.hiddenBlocksMap.get(rootId);
+		return hiddenSet ? hiddenSet.has(blockId) : false;
 	};
 
 	/**
@@ -824,6 +825,140 @@ class BlockStore {
 		}
 
 		return sectionBlocks;
+	};
+
+	/**
+	 * Initialize hidden blocks state when document loads (called from dispatcher on onObjectView).
+	 * Builds the cached state for O(1) lookups.
+	 * @param {string} rootId - The root ID.
+	 */
+	initializeHiddenBlocks (rootId: string) {
+		const collapsedHeaders = Storage.get(`headerCollapsed_${rootId}`) || [];
+		const collapsedSet = new Set<string>(collapsedHeaders);
+		const hiddenSet = new Set<string>();
+
+		collapsedHeaders.forEach((headerId: string) => {
+			const sectionBlocks = this.getHeaderSectionBlocks(rootId, headerId);
+			sectionBlocks.forEach(blockId => hiddenSet.add(blockId));
+		});
+
+		this.collapsedHeadersMap.set(rootId, collapsedSet);
+		this.hiddenBlocksMap.set(rootId, hiddenSet);
+	};
+
+	/**
+	 * Update hidden state when blocks are added (called from dispatcher on BlockAdd event).
+	 * Only recalculates for newly added blocks.
+	 * @param {string} rootId - The root ID.
+	 * @param {string[]} blockIds - The IDs of blocks that were added.
+	 */
+	onBlocksAdded (rootId: string, blockIds: string[]) {
+		const hiddenSet = this.hiddenBlocksMap.get(rootId);
+		if (!hiddenSet) {
+			return;
+		}
+
+		blockIds.forEach(blockId => {
+			const parent = this.findCollapsedHeaderParent(rootId, blockId);
+			if (parent) {
+				hiddenSet.add(blockId);
+				$(`#block-${blockId}`).hide();
+			}
+		});
+	};
+
+	/**
+	 * Update hidden state when blocks are deleted (called from dispatcher on BlockDelete event).
+	 * Removes deleted blocks from cached state.
+	 * @param {string} rootId - The root ID.
+	 * @param {string[]} blockIds - The IDs of blocks that were deleted.
+	 */
+	onBlocksDeleted (rootId: string, blockIds: string[]) {
+		const hiddenSet = this.hiddenBlocksMap.get(rootId);
+		const collapsedSet = this.collapsedHeadersMap.get(rootId);
+		
+		if (!hiddenSet) {
+			return;
+		}
+
+		blockIds.forEach(blockId => {
+			hiddenSet.delete(blockId);
+			if (collapsedSet) {
+				collapsedSet.delete(blockId);
+			}
+		});
+
+		// Update storage if headers were deleted
+		if (collapsedSet) {
+			Storage.set(`headerCollapsed_${rootId}`, Array.from(collapsedSet));
+		}
+	};
+
+	/**
+	 * Update hidden state when block structure changes (called from dispatcher on BlockSetChildrenIds).
+	 * Only recalculates affected sections.
+	 * @param {string} rootId - The root ID.
+	 * @param {string[]} changedBlockIds - The IDs of blocks whose structure changed.
+	 */
+	onBlockStructureChanged (rootId: string, changedBlockIds: string[]) {
+		const hiddenSet = this.hiddenBlocksMap.get(rootId);
+		const collapsedSet = this.collapsedHeadersMap.get(rootId);
+		
+		if (!hiddenSet || !collapsedSet) {
+			return;
+		}
+
+		// Only recalculate for affected blocks and their sections
+		changedBlockIds.forEach(blockId => {
+			const block = this.getLeaf(rootId, blockId);
+			if (block && block.isTextHeader() && collapsedSet.has(blockId)) {
+				// This is a collapsed header that changed - recalculate its section
+				const sectionBlocks = this.getHeaderSectionBlocks(rootId, blockId);
+				
+				// Remove old entries (they might have moved)
+				sectionBlocks.forEach(sectionBlockId => {
+					hiddenSet.add(sectionBlockId);
+				});
+			}
+		});
+	};
+
+	/**
+	 * Helper: Find if block is under a collapsed header (fast traversal up only).
+	 * Used when new blocks are added to determine if they should be hidden.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The block ID to check.
+	 * @returns {string | null} The ID of the collapsed header parent, or null.
+	 */
+	private findCollapsedHeaderParent (rootId: string, blockId: string): string | null {
+		const collapsedSet = this.collapsedHeadersMap.get(rootId);
+		if (!collapsedSet || collapsedSet.size === 0) {
+			return null;
+		}
+
+		const allBlocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
+		const blockIndex = allBlocks.findIndex(b => b.id === blockId);
+		
+		if (blockIndex === -1) {
+			return null;
+		}
+
+		// Only traverse backwards until we find a header
+		for (let i = blockIndex - 1; i >= 0; i--) {
+			const block = allBlocks[i];
+			if (block.isTextHeader()) {
+				if (collapsedSet.has(block.id)) {
+					const sectionBlocks = this.getHeaderSectionBlocks(rootId, block.id);
+					if (sectionBlocks.includes(blockId)) {
+						return block.id;
+					}
+				}
+				// Found a header but it's not collapsed, so no parent
+				return null;
+			}
+		}
+
+		return null;
 	};
 
 	/**
