@@ -1225,7 +1225,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable());
+		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 
 		this.focusNextBlock(next, dir);
 	};
@@ -1248,7 +1248,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ids[method]();
 		} else {
 			const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
-			const next = S.Block.getNextBlock(rootId, idsWithChildren[idx], dir, it => !it.isSystem());
+			const next = S.Block.getNextBlock(rootId, idsWithChildren[idx], dir, it => !it.isSystem() && !S.Block.isBlockHidden(rootId, it.id));
 
 			method = dir < 0 ? 'unshift' : 'push';
 			if (next) {
@@ -1568,9 +1568,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (!next) {
 				// If block is closed toggle - find next block on the same level
 				if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-					next = S.Block.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
+					next = S.Block.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 				} else {
-					next = S.Block.getNextBlock(rootId, focused, dir, it => it.isFocusable());
+					next = S.Block.getNextBlock(rootId, focused, dir, it => it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 				};
 			};
 
@@ -1642,7 +1642,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			} else {
 				const nextIdx = dir > 0 ? rowElement.childrenIds.length - 1 : 0;
 
-				next = S.Block.getNextBlock(rootId, rowElement.childrenIds[nextIdx], dir, it => it.isFocusable());
+				next = S.Block.getNextBlock(rootId, rowElement.childrenIds[nextIdx], dir, it => it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 				cb();
 			};
 		} else {
@@ -2156,7 +2156,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	blockMerge (focused: I.Block, dir: number, length: number) {
 		const { rootId } = this.props;
-		const next = S.Block.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
+		const next = S.Block.getNextBlock(rootId, focused.id, dir, it => it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 		if (!next) {
 			return;
 		};
@@ -2200,7 +2200,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				if (dir < 0) {
-					const next = S.Block.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
+					const next = S.Block.getNextBlock(rootId, focused.id, -1, it => it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 					if (next) {
 						const nl = dir < 0 ? next.getLength() : 0;
 						this.focus(next.id, nl, nl, false);
@@ -2310,7 +2310,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.clear(true);
 
-		let next = S.Block.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
+		let next = S.Block.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable() && !S.Block.isBlockHidden(rootId, it.id));
 
 		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code || !next) {
