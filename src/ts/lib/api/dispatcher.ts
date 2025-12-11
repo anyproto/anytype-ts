@@ -229,6 +229,7 @@ class Dispatcher {
 
 				case 'BlockAdd': {
 					const { blocks } = mapped;
+					const addedBlockIds: string[] = [];
 
 					for (const block of blocks) {
 						if (block.type == I.BlockType.Dataview) {
@@ -238,7 +239,11 @@ class Dispatcher {
 
 						S.Block.add(rootId, new M.Block(block));
 						S.Block.updateStructure(rootId, block.id, block.childrenIds);
+						addedBlockIds.push(block.id);
 					};
+
+					// Update hidden state for newly added blocks
+					S.Block.onBlocksAdded(rootId, addedBlockIds);
 
 					updateParents = true;
 					updateNumbers = true;
@@ -261,6 +266,9 @@ class Dispatcher {
 						S.Block.delete(rootId, blockId);
 					};
 
+					// Update hidden state for deleted blocks
+					S.Block.onBlocksDeleted(rootId, blockIds);
+
 					updateParents = true;
 					updateNumbers = true;
 					break;
@@ -270,6 +278,9 @@ class Dispatcher {
 					const { id, childrenIds } = mapped;
 
 					S.Block.updateStructure(rootId, id, childrenIds);
+
+					// Update hidden state for blocks whose structure changed
+					S.Block.onBlockStructureChanged(rootId, [ id ]);
 
 					updateParents = true;
 					updateNumbers = true;
@@ -1283,6 +1294,8 @@ class Dispatcher {
 
 			S.Block.set(contextId, blocks);
 			S.Block.setStructure(contextId, structure);
+
+			S.Block.initializeHiddenBlocks(contextId);
 		};
 
 		S.Block.updateStructureParents(contextId);
