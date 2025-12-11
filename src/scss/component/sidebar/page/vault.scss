@@ -40,6 +40,14 @@
 				}
 			}
 
+			.itemAdd { display: flex; align-items: center; justify-content: center; }
+			.itemAdd {
+				.icon {
+					width: 32px; height: 32px; border-radius: 50%;
+					background: var(--color-shape-highlight-medium) url('~img/icon/widget/plus0.svg') 50% 50% no-repeat;
+				}
+			}
+
 			.separator { display: flex; align-items: center; justify-content: center; }
 			.separator {
 				.inner { width: 24px; height: 1px; background: var(--color-shape-highlight-dark); }

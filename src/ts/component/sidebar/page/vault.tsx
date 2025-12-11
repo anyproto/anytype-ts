@@ -1,18 +1,25 @@
-import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $, { get } from 'jquery';
+import React, { forwardRef, memo, MouseEvent, useEffect, useRef, useState } from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	useSortable,
+	verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview } from 'Lib';
+import { Button, ChatCounter, EmptySearch, Filter, Icon, IconObject, Label, ObjectName } from 'Component';
+import { Action, analytics, C, Highlight, I, J, Key, keyboard, Preview, S, sidebar, Storage, translate, U } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 48;
 const HEIGHT_ITEM_MESSAGE = 72;
 const HEIGHT_DIV = 16;
+const VAULT_MINIMAL_OFFSET = 44;
 
 const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -198,7 +205,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyboard.setDragging(false);
 	};
 
-	const getItems = (noDiv?: boolean) => {
+	const getItems = (skipUi?: boolean) => {
 		let items = U.Menu.getVaultItems().map(it => {
 			if (it.lastMessage) {
 				it.chat = S.Detail.get(J.Constant.subId.chatGlobal, it.lastMessage.chatId, J.Relation.chatGlobal, true);
@@ -211,13 +218,15 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			items = items.filter(it => String(it.name || '').match(reg) || String(it.lastMessage || '').match(reg));
 		};
 
-		if (vaultIsMinimal && !noDiv) {
+		if (vaultIsMinimal && !skipUi) {
 			const pinned = items.filter(it => it.isPinned);
 			const notPinned = items.filter(it => !it.isPinned)
 
 			if (pinned.length) {
 				items = pinned.concat([ { isDiv: true } ]).concat(notPinned);
 			};
+
+			items.unshift({ id: 'createSpace' });
 		};
 
 		return items;
@@ -251,6 +260,22 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		fixedWidth: true,
 		keyMapper: index => items[index].id,
 	});
+
+	const iconCreate = () => (
+		<Icon
+			id="button-create-space"
+			className={[ 'plus', !vaultIsMinimal ? 'withBackground' : '' ].join(' ')}
+			tooltipParam={{
+				text: translate('commonCreateSpace'),
+				caption: keyboard.getCaption('createSpace'),
+				typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Bottom,
+				typeX: vaultIsMinimal ? I.MenuDirection.Left : I.MenuDirection.Center,
+				offsetX: vaultIsMinimal ? VAULT_MINIMAL_OFFSET : 0,
+				delay: vaultIsMinimal? 300 : undefined,
+		}}
+			onClick={onCreate}
+		/>
+	);
 
 	const onClick = (item: any) => {
 		const routeParam = {
@@ -313,6 +338,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			return (
 				<div className="separator" style={item.style}>
 					<div className="inner" />
+				</div>
+			);
+		};
+
+		if (item.id == 'createSpace') {
+			return (
+				<div className="itemAdd" style={item.style}>
+					{iconCreate()}
 				</div>
 			);
 		};
@@ -492,11 +525,21 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
 
-		U.Menu.spaceCreate({
+		let param: I.MenuParam = {
 			element: `#button-create-space`,
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
-		}, analytics.route.vault);
+		};
+
+		if (vaultIsMinimal) {
+			param = Object.assign(param, {
+				horizontal: I.MenuDirection.Left,
+				vertical: I.MenuDirection.Center,
+				offsetX: VAULT_MINIMAL_OFFSET,
+			});
+		};
+
+		U.Menu.spaceCreate(param, analytics.route.vault);
 	};
 
 	const onVaultContext = (e: any) => {
@@ -530,14 +573,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="side left" />
 				<div className="side center" />
 				<div className="side right">
-					{!vaultIsMinimal ? (
-						<Icon
-							id="button-create-space"
-							className="plus withBackground"
-							tooltipParam={{ text: translate('commonCreateSpace'), caption: keyboard.getCaption('createSpace'), typeY: I.MenuDirection.Bottom }}
-							onClick={onCreate}
-						/>
-					) : ''}
+					{!vaultIsMinimal ? iconCreate() : ''}
 				</div>
 			</div>
 			{!vaultIsMinimal ? (
