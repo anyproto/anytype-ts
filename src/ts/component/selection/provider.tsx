@@ -4,6 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, S, U, J, focus, keyboard, scrollOnMove } from 'Lib';
+import Storage from '../../lib/storage';
 
 interface Props {
 	children?: React.ReactNode;
@@ -521,8 +522,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			let blockIds = [ id ];
 			
 			if (block && block.isTextHeader()) {
-				const blockElement = $(`#block-${id}`);
-				const isCollapsed = !blockElement.hasClass('isToggled');
+				const isCollapsed = !Storage.checkToggle(rootId, id);
 				if (isCollapsed) {
 					const sectionBlocks = S.Block.getHeaderSectionBlocks(rootId, id);
 					blockIds = blockIds.concat(sectionBlocks);
