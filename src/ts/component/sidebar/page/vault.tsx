@@ -1,19 +1,13 @@
-import React, { forwardRef, memo, MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-	useSortable,
-	verticalListSortingStrategy
-} from '@dnd-kit/sortable';
-import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Button, ChatCounter, EmptySearch, Filter, Icon, IconObject, Label, ObjectName } from 'Component';
-import { Action, analytics, C, Highlight, I, J, Key, keyboard, Preview, S, sidebar, Storage, translate, U } from 'Lib';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
+import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 48;
