@@ -452,11 +452,11 @@ class UtilData {
 
 	/**
 	 * Returns a list of object types available for new objects, with optional filters.
-	 * @param {any} [param] - Optional parameters for filtering.
+	 * @param {{ withLists?: boolean; withChat?: boolean; limit?: number; }} [param] - Optional parameters for filtering.
 	 * @returns {any[]} The list of object types.
 	 */
-	getObjectTypesForNewObject (param?: any) {
-		const { withLists, limit } = param || {};
+	getObjectTypesForNewObject (param?: { withLists?: boolean; withChat?: boolean; limit?: number; }): any[] {
+		const { withLists, withChat, limit } = param || {};
 		const { space } = S.Common;
 		const layouts = U.Object.getPageLayouts();
 
@@ -466,7 +466,10 @@ class UtilData {
 			layouts.push(I.ObjectLayout.Set);
 			layouts.push(I.ObjectLayout.Collection);
 		};
-
+		if (withChat) {
+			layouts.push(I.ObjectLayout.Chat);
+		};
+		
 		items = items.concat(S.Record.getTypes().filter(it => {
 			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
