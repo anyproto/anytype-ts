@@ -38,6 +38,7 @@ class Api {
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
+			token: String(win.token || ''),
 		};
 	};
 
@@ -149,8 +150,8 @@ class Api {
 		WindowManager.command(win, cmd, param);
 	};
 
-	openWindow (win, route) {
-		WindowManager.createMain({ route, isChild: true });
+	openWindow (win, route, token) {
+		WindowManager.createMain({ route, token, isChild: true });
 	};
 
 	openUrl (win, url) {
@@ -349,6 +350,10 @@ class Api {
 
 	toggleFullScreen (win) {
 		win.setFullScreen(!win.isFullScreen());
+	};
+
+	setToken (win, token) {
+		win.token = token;
 	};
 
 };

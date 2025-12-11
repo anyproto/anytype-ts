@@ -212,7 +212,7 @@ class MenuManager {
 			{
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
-					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ token: this.win.token, isChild: true }) },
 
 					Separator,
 

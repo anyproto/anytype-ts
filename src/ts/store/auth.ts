@@ -64,6 +64,7 @@ class AuthStore {
 	 */
 	tokenSet (v: string) {
 		this.token = String(v || '');
+		Renderer.send('setToken', this.token);
 	};
 
 	/**

@@ -194,7 +194,7 @@ const App: FC = () => {
 	};
 
 	const onInit = (data: any) => {
-		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css } = data;
+		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
@@ -254,7 +254,7 @@ const App: FC = () => {
 		if (accountId) {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then(phrase => {
-					U.Data.createSession(phrase, '', '', () => {
+					U.Data.createSession(phrase, '', token, () => {
 						C.AccountSelect(accountId, '', 0, '', (message: any) => {
 							if (message.error.code) {
 								console.error('[App.onInit]:', message.error.description);
