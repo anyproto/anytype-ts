@@ -43,7 +43,7 @@
 			.itemAdd { display: flex; align-items: center; justify-content: center; }
 			.itemAdd {
 				.icon {
-					width: 32px; height: 32px; border-radius: 50%;
+					width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
 					background: var(--color-shape-highlight-medium) url('~img/icon/widget/plus0.svg') 50% 50% no-repeat;
 				}
 			}
