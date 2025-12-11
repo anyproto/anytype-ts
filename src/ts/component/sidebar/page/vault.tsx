@@ -255,33 +255,35 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyMapper: index => items[index].id,
 	});
 
+	const tooltipParam = (): I.TooltipParam => {
+		let param: any = {};
+		if (vaultIsMinimal) {
+			param.typeY = I.MenuDirection.Center;
+			param.typeX = I.MenuDirection.Left;
+			param.offsetX = VAULT_MINIMAL_OFFSET;
+			param.delay = 300;
+		} else {
+			param.typeY = I.MenuDirection.Bottom;
+		};
+		return param;
+	};
+
 	const iconCreate = () => {
 		const cn = [ 'plus' ];
 
-		let param: any = {};
-
-		if (vaultIsMinimal) {
-			param = {
-				typeY: I.MenuDirection.Center,
-				typeX: I.MenuDirection.Left,
-				offsetX: VAULT_MINIMAL_OFFSET,
-				delay: 300,
-			};
-		} else {
+		if (!vaultIsMinimal) {
 			cn.push('withBackground');
-			param = {
-				typeY: I.MenuDirection.Bottom
-			};
 		};
 
 		return (
 			<Icon
 				id="button-create-space"
 				className={cn.join(' ')}
-				tooltipParam={Object.assign(param, {
+				tooltipParam={{
+					...tooltipParam(),
 					text: translate('commonCreateSpace'),
 					caption: keyboard.getCaption('createSpace'),
-				})}
+				}}
 				onClick={onCreate}
 			/>
 		);
@@ -354,7 +356,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.id == 'createSpace') {
 			return (
-				<div className="itemAdd" style={item.style}>
+				<div className="item add" style={item.style}>
 					{iconCreate()}
 				</div>
 			);
@@ -648,7 +650,17 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="grad" />
 				<div className="sides">
 					<div className="side left">
-						<div className="appSettings" onClick={onSettings}>
+						<div 
+							className="appSettings" 
+							onClick={onSettings}
+							onMouseEnter={e => Preview.tooltipShow({ 
+								...tooltipParam(),
+								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
+								text: translate('popupSettingsAccountPersonalInformationTitle'), 
+								element: $(e.currentTarget),
+							})}
+							onMouseLeave={() => Preview.tooltipHide(false)}
+						>
 							<IconObject object={settings} size={32} iconSize={32} />
 							{!vaultIsMinimal ? <ObjectName object={settings} /> : ''}
 						</div>
