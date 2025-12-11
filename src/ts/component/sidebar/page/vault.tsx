@@ -255,21 +255,30 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyMapper: index => items[index].id,
 	});
 
-	const iconCreate = () => (
-		<Icon
-			id="button-create-space"
-			className={[ 'plus', !vaultIsMinimal ? 'withBackground' : '' ].join(' ')}
-			tooltipParam={{
-				text: translate('commonCreateSpace'),
-				caption: keyboard.getCaption('createSpace'),
-				typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Bottom,
-				typeX: vaultIsMinimal ? I.MenuDirection.Left : I.MenuDirection.Center,
-				offsetX: vaultIsMinimal ? VAULT_MINIMAL_OFFSET : 0,
-				delay: vaultIsMinimal? 300 : undefined,
-		}}
-			onClick={onCreate}
-		/>
-	);
+	const iconCreate = () => {
+		let param: any = { typeY: I.MenuDirection.Bottom };
+
+		if (vaultIsMinimal) {
+			param = {
+				typeY: I.MenuDirection.Center,
+				typeX: I.MenuDirection.Left,
+				offsetX: VAULT_MINIMAL_OFFSET,
+				delay: 300,
+			};
+		};
+
+		return (
+			<Icon
+				id="button-create-space"
+				className={[ 'plus', !vaultIsMinimal ? 'withBackground' : '' ].join(' ')}
+				tooltipParam={Object.assign(param, {
+					text: translate('commonCreateSpace'),
+					caption: keyboard.getCaption('createSpace'),
+				})}
+				onClick={onCreate}
+			/>
+		);
+	};
 
 	const onClick = (item: any) => {
 		const routeParam = {
@@ -527,7 +536,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (vaultIsMinimal) {
 			param = Object.assign(param, {
-				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Center,
 				offsetX: VAULT_MINIMAL_OFFSET,
 			});
