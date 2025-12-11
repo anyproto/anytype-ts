@@ -256,7 +256,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	});
 
 	const iconCreate = () => {
-		let param: any = { typeY: I.MenuDirection.Bottom };
+		const cn = [ 'plus' ];
+
+		let param: any = {};
 
 		if (vaultIsMinimal) {
 			param = {
@@ -265,12 +267,17 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				offsetX: VAULT_MINIMAL_OFFSET,
 				delay: 300,
 			};
+		} else {
+			cn.push('withBackground');
+			param = {
+				typeY: I.MenuDirection.Bottom
+			};
 		};
 
 		return (
 			<Icon
 				id="button-create-space"
-				className={[ 'plus', !vaultIsMinimal ? 'withBackground' : '' ].join(' ')}
+				className={cn.join(' ')}
 				tooltipParam={Object.assign(param, {
 					text: translate('commonCreateSpace'),
 					caption: keyboard.getCaption('createSpace'),
