@@ -143,7 +143,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		);
 	};
 
-	const lw = 50 + left.length * 10;
+	const lw = 40 + left.length * 5;
 	const rw = 100 - lw;
 
 	let content = (
