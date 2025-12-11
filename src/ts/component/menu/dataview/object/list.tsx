@@ -312,7 +312,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: U.Common.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter) });
+			ret.push({ id: 'add', name: U.String.sprintf(nameCreate || translate('commonCreateObjectWithName'), data.filter) });
 		};
 
 		return ret;

@@ -115,8 +115,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		const options: any[] = [
 			canEdit ? { id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') } : null,
-			canSource ? { id: 'sourceChange', icon: 'source', name: U.Common.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
-			{ id: 'sourceOpen', icon: 'expand', name: U.Common.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
+			canSource ? { id: 'sourceChange', icon: 'source', name: U.String.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
+			{ id: 'sourceOpen', icon: 'expand', name: U.String.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		].filter(it => it);
 
 		S.Menu.open('select', {

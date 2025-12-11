@@ -741,11 +741,11 @@ class BlockStore {
 				};
 
 				const old = text.substring(from, to);
-				const name = U.Common.shorten(U.Object.name(object, true).trim(), J.Constant.limit.string.mention);
+				const name = U.String.shorten(U.Object.name(object, true).trim(), J.Constant.limit.string.mention);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
-					text = U.Common.stringInsert(text, name, mark.range.from, mark.range.to);
+					text = U.String.insert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;
@@ -892,7 +892,7 @@ class BlockStore {
 			list.push({ 
 				depth, 
 				id: block.id,
-				text: String(block.content.text || translate('defaultNamePage')),
+				text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
 				block,
 			});
 		});

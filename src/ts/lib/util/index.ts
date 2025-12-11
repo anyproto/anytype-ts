@@ -11,6 +11,7 @@ import Smile from './smile';
 import Space from './space';
 import Prism from './prism';
 import Subscription from './subscription';
+import String from './string';
 
 export {
 	Common,
@@ -26,4 +27,5 @@ export {
 	Space,
 	Prism,
 	Subscription,
+	String,
 };

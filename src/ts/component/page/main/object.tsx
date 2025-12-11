@@ -18,7 +18,7 @@ const PageMainObject = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		if ((id == J.Constant.blankId) && spaceId) {
+		if ((id == J.Constant.blankId) && spaceId && (spaceId != space)) {
 			U.Router.switchSpace(spaceId, '', false, {}, false);
 			return;
 		};

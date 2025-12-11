@@ -113,7 +113,7 @@ class UtilData {
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, processor } = content;
-		const dc = U.Common.toCamelCase(`block-${block.type}`);
+		const dc = U.String.toCamelCase(`block-${block.type}`);
 		const c = [];
 
 		switch (block.type) {
@@ -153,7 +153,7 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = U.Common.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
+			default: c = U.String.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -309,9 +309,8 @@ class UtilData {
 
 	/**
 	 * Handles one-time authentication tasks after login.
-	 * @param {boolean} noTierCache - Whether to skip tier cache.
 	 */
-	onAuthOnce (noTierCache: boolean) {
+	onAuthOnce () {
 		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
@@ -325,6 +324,10 @@ class UtilData {
 		});
 
 		C.ChatSubscribeToMessagePreviews(J.Constant.subId.chatSpace, (message: any) => {
+			if (message.error.code || !message.previews.length) {
+				return;
+			};
+
 			for (const item of message.previews) {
 				const { spaceId, chatId, message, state, dependencies } = item;
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
@@ -342,15 +345,14 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(noTierCache, () => this.getMembershipStatus());
+		this.getMembershipData();
+		
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
 				Storage.clearDeletedSpaces(false);
 				Storage.clearDeletedSpaces(true);
 			};
 		});
-
-		analytics.event('OpenAccount');
 	};
 
 	/**
@@ -442,7 +444,7 @@ class UtilData {
 		};
 
 		const diff = needle.length - (to - from);
-		const text = U.Common.stringInsert(block.content.text, needle, from, to);
+		const text = U.String.insert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
@@ -450,11 +452,11 @@ class UtilData {
 
 	/**
 	 * Returns a list of object types available for new objects, with optional filters.
-	 * @param {any} [param] - Optional parameters for filtering.
+	 * @param {{ withLists?: boolean; withChat?: boolean; limit?: number; }} [param] - Optional parameters for filtering.
 	 * @returns {any[]} The list of object types.
 	 */
-	getObjectTypesForNewObject (param?: any) {
-		const { withLists, limit } = param || {};
+	getObjectTypesForNewObject (param?: { withLists?: boolean; withChat?: boolean; limit?: number; }): any[] {
+		const { withLists, withChat, limit } = param || {};
 		const { space } = S.Common;
 		const layouts = U.Object.getPageLayouts();
 
@@ -464,7 +466,10 @@ class UtilData {
 			layouts.push(I.ObjectLayout.Set);
 			layouts.push(I.ObjectLayout.Collection);
 		};
-
+		if (withChat) {
+			layouts.push(I.ObjectLayout.Chat);
+		};
+		
 		items = items.concat(S.Record.getTypes().filter(it => {
 			return layouts.includes(it.recommendedLayout) && 
 				(it.spaceId == space) &&
@@ -785,7 +790,14 @@ class UtilData {
 	 * @param {string} objectId - The object ID.
 	 */
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, []), true));
+		const spaceview = U.Space.getSpaceview();
+
+		let name = '';
+		if (!((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace))) {
+			name = U.Object.name(S.Detail.get(rootId, objectId, []), true);
+		};
+
+		this.setWindowTitleText(name);
 	};
 
 	/**
@@ -793,19 +805,20 @@ class UtilData {
 	 * @param {string} name - The name to set as the window title.
 	 */
 	setWindowTitleText (name: string) {
-		const space = U.Space.getSpaceview();
+		const spaceview = U.Space.getSpaceview();
 		const title = [];
 
 		if (name) {
-			title.push(U.Common.shorten(name, 60));
+			title.push(name);
 		};
 
-		if (!space._empty_) {
-			title.push(space.name);
+		if (!spaceview._empty_) {
+			title.push(spaceview.name);
 		};
 
 		title.push(J.Constant.appName);
-		document.title = title.join(' - ');
+
+		document.title = title.map(it => U.String.shorten(it, 60)).join(' - ');
 	};
 
 	/**
@@ -842,29 +855,26 @@ class UtilData {
 		});
 	};
 
+	getMembershipData () {
+		this.getMembershipProducts(() => this.getMembershipStatus());
+	};
+
 	/**
 	 * Gets the membership status for the current account.
+	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
 	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
 	 */
-	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
-		const { isOnline } = S.Common;
-
-		if (!this.isAnytypeNetwork() || !isOnline) {
+	getMembershipStatus (callBack?: () => void) {
+		if (!this.isAnytypeNetwork() || !S.Common.isOnline) {
 			return;
 		};
 
-		C.MembershipGetStatus(true, (message: any) => {
-			if (!message.membership) {
-				return;
+		C.MembershipV2GetStatus(true, (message: any) => {
+			if (!message.error.code) {
+				S.Membership.dataSet(message.data);
 			};
 
-			const membership = new M.Membership(message.membership);
-			const { tier } = membership;
-
-			S.Auth.membershipSet(membership);
-			analytics.setTier(tier);
-
-			callBack?.(membership);
+			callBack?.();
 		});
 	};
 
@@ -873,33 +883,18 @@ class UtilData {
 	 * @param {boolean} noCache - Whether to skip cache.
 	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
 	 */
-	getMembershipTiers (noCache: boolean, callBack?: () => void) {
-		const { config, interfaceLang, isOnline } = S.Common;
-		const { testPayment } = config;
-
-		if (!isOnline || !this.isAnytypeNetwork()) {
+	getMembershipProducts (callBack?: () => void) {
+		if (!S.Common.isOnline || !this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
-			if (message.error.code) {
-				return;
+		C.MembershipV2GetProducts(true, (message) => {
+			if (!message.error.code) {
+				S.Membership.productsSet(message.products);
 			};
-
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
-			S.Common.membershipTiersListSet(tiers);
 
 			callBack?.();
 		});
-	};
-
-	/**
-	 * Gets a membership tier by its ID.
-	 * @param {I.TierType} id - The tier ID.
-	 * @returns {I.MembershipTier} The membership tier object.
-	 */
-	getMembershipTier (id: I.TierType): I.MembershipTier {
-		return S.Common.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
 	/**
@@ -1040,7 +1035,7 @@ class UtilData {
 			if (groups[id].length) {
 				ret.push(Object.assign({
 					id, 
-					name: translate(U.Common.toCamelCase([ 'common', id ].join('-'))),
+					name: translate(U.String.toCamelCase([ 'common', id ].join('-'))),
 					isSection: true,
 				}, sectionTemplate || {}));
 
@@ -1167,7 +1162,7 @@ class UtilData {
 	sortByOrderIdRequest (subId: string, items: any[], request: (callBack: (message: any) => void) => void) {
 		let s = '';
 		items.forEach((it, i) => {
-			s = U.Common.lexString(s);
+			s = U.String.lexString(s);
 			S.Detail.update(subId, { id: it.id, details: { tmpOrder: s }}, false);
 		});
 
@@ -1202,10 +1197,7 @@ class UtilData {
 	};
 
 	isFreeMember (): boolean {
-		const { membership } = S.Auth;
-		const tier = this.getMembershipTier(membership.tier);
-
-		return !tier?.namesCount && this.isAnytypeNetwork();
+		return this.isAnytypeNetwork() && S.Membership.data?.getTopProduct()?.isIntro;
 	};
 
 	checkIsArchived (id: string): boolean {

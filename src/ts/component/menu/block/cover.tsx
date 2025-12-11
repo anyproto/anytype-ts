@@ -97,7 +97,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 									<Section key={i} {...section} />
 								))}
 							</div>
-						) : <EmptySearch text={filter ? U.Common.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
+						) : <EmptySearch text={filter ? U.String.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
 					</>
 				);
 				break;

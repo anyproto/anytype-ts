@@ -130,7 +130,7 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				<div className="info">
 					<div className="totalUsage">
 						<span>{U.File.size(bytesUsed, true)} </span>
-						{U.Common.sprintf(translate('popupSettingsSpaceStorageProgressBarUsageLabel'), U.File.size(bytesLimit, true))}
+						{U.String.sprintf(translate('popupSettingsSpaceStorageProgressBarUsageLabel'), U.File.size(bytesLimit, true))}
 					</div>
 
 					<div className="legend">

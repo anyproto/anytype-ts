@@ -175,7 +175,7 @@ class UtilSmile {
 	getCategories () {
 		return J.Emoji.categories.filter(it => it.id != 'frequent').map(it => ({
 			...it,
-			name: translate(U.Common.toCamelCase(`emojiCategory-${it.id}`)),
+			name: translate(U.String.toCamelCase(`emojiCategory-${it.id}`)),
 		}));
 	};
 

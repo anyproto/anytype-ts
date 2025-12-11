@@ -11,7 +11,7 @@ class Relation {
 	 * @returns {string} The type name.
 	 */
 	public typeName (v: I.RelationType): string {
-		return U.Common.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return U.String.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	/**
@@ -813,7 +813,7 @@ class Relation {
 			return '';
 		};
 		
-		const scheme = U.Common.getScheme(value);
+		const scheme = U.String.urlScheme(value);
 		return scheme ? value : this.getUrlScheme(type, value) + value;
 	};
 
@@ -1003,6 +1003,10 @@ class Relation {
 	 */
 	isArrayType (format: I.RelationType): boolean {
 		return this.arrayTypes().includes(format);
+	};
+
+	isObjectType (format: I.RelationType): boolean {
+		return [ I.RelationType.Object, I.RelationType.File ].includes(format);
 	};
 	
 };

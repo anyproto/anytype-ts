@@ -31,7 +31,7 @@ const Progress: FC = observer(() => {
 		return (
 			<div className="item">
 				<div className="nameWrap">
-					<Label text={translate(U.Common.toCamelCase(`progress-${item.type}`))} />
+					<Label text={translate(U.String.toCamelCase(`progress-${item.type}`))} />
 					{canCancel ? <Icon className="close" onClick={() => onCancel(item.id)} /> : ''}
 				</div>
 

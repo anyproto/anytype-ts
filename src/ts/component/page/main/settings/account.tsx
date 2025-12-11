@@ -33,6 +33,13 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		}, t);
 	};
 
+	const onUpsell = () => {
+		const route = analytics.route.settingsAccount;
+
+		Action.openSettings('membership', route);
+		analytics.event('ClickUpgradePlanTooltip', { route });
+	};
+
 	useEffect(() => {
 		return () => {
 			window.clearTimeout(timeout.current);

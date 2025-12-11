@@ -42,7 +42,7 @@ class Preview {
 		};
 
 		let text = String(param.text || '').replace(/\\n/g, '\n');
-		text = U.Common.lbBr(U.Common.sanitize(text));
+		text = U.String.lbBr(U.String.sanitize(text));
 
 		this.delayTooltip = Number(delay) || 0;
 
@@ -244,9 +244,8 @@ class Preview {
 		const cb = () => {
 			obj.hide();
 			obj.removeClass('anim top bottom withImage').css({ transform: '' });
-
+			
 			S.Common.previewClear();
-			$('#graphPreview').remove();
 		};
 
 		window.clearTimeout(this.timeout.preview);

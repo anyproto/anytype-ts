@@ -44,7 +44,7 @@ const BlockDataviewSelection = observer(forwardRef<Ref, Props>((props, ref) => {
 	return (
 		<div ref={nodeRef} id="dataviewSelection" className={cn.join(' ')}>
 			<div className="sides">
-				<div id="sideLeft" className="side left">{U.Common.sprintf(translate('blockDataviewSelectionSelected'), ids.length)}</div>
+				<div id="sideLeft" className="side left">{U.String.sprintf(translate('blockDataviewSelectionSelected'), ids.length)}</div>
 
 				<div id="sideRight" className="side right">
 					{buttons.map((item: any, i: number) => (

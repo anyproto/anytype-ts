@@ -263,7 +263,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const scroll = node.find('#scroll');
 		const { left, top } = rowHead.offset();
 		const sx = scroll.scrollLeft();
-
+		const threshold = J.Size.header + U.Common.getMenuBarHeight();
+		
 		let clone = node.find('#rowHeadClone');
 
 		if (!clone.length) {
@@ -287,18 +288,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			clone.find('.rowHead').attr({ id: '' });
 		};
 
-		if (top <= J.Size.header) {
-			clone.css({
-				left: left + sx,
-				top: J.Size.header,
-				width: rowHead.outerWidth() + 2,
-				transform: `translate3d(${-sx}px,0px,0px)`,
+		if (top <= threshold) {
+			clone.css({ 
+				left: left + sx, 
+				top: threshold, 
+				width: rowHead.outerWidth() + 2, 
+				transform: `translate3d(${-sx}px,0px,0px)`,	
 			});
 		} else {
 			clone.remove();
 		};
 
-		rowHead.toggleClass('fixed', top <= J.Size.header);
+		rowHead.toggleClass('fixed', top <= threshold);
 	};
 
 	onScrollSticky () {
@@ -345,10 +346,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const columns: any = {};
 		
 		relations.forEach(it => {
-			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
-
-			columns[it.relationKey] = Relation.width(w, relation.format);
+			columns[it.relationKey] = Relation.width(w, it.relation.format);
 		});
 
 		return columns;
@@ -423,9 +422,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		node.find('.cellKeyHover').removeClass('cellKeyHover');
 
 		relations.forEach(it => {
-			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			if (it.relationKey == relationKey) {
-				it.width = Relation.width(width, relation.format);
+				it.width = Relation.width(width, it.relation.format);
 			};
 		});
 
@@ -524,7 +522,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const stickyScrollbar = node.find('#stickyScrollbar');
 		const stickyScrollbarTrack = node.find('#stickyScrollbarTrack');
 		const container = U.Common.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
+		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();

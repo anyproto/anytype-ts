@@ -132,7 +132,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 				>
 					{isLoading && <Loader />}
 					{icon && <Icon className={icon} />}
-					<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
+					<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 					{arrow && <div className="arrow" />}
 				</div>
 			);

@@ -15,7 +15,7 @@ const PopupShare: FC<I.Popup> = () => {
 			<Label text={translate('popupShareLabel')} />
 
 			<div className="section">
-				<Label text={U.Common.sprintf(translate('popupShareLinkText'), J.Url.share, J.Url.share)} />
+				<Label text={U.String.sprintf(translate('popupShareLinkText'), J.Url.share, J.Url.share)} />
 			</div>
 
 			<Button text={translate('commonCopyLink')} onClick={onClick} />

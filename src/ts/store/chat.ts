@@ -482,7 +482,7 @@ class ChatStore {
 		};
 
 		if (text) {
-			let t = U.Common.sanitize(Mark.insertEmoji(text, marks));
+			let t = U.String.sanitize(Mark.insertEmoji(text, marks));
 			t = t.replace(/\n\r?/g, ' ');
 
 			ret.push(t);

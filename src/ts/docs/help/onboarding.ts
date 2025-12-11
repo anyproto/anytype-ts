@@ -1,12 +1,33 @@
-import { I, U, translate, S } from 'Lib';
+import { I, U, translate, S, J } from 'Lib';
 import $ from 'jquery';
 
-const IMG_PATH = {
-	'': './img/help/onboarding',
-	dark: './img/theme/dark/help/onboarding',
-};
-
 const Data = {
+	productHuntChats: () => ({
+		items: [
+			{
+				name: translate('onboardingProductHuntTitle'),
+				description: translate('onboardingProductHuntText'),
+				noButton: true,
+				buttons: [
+					{ text: translate('onboardingProductHuntUpvote'), action: 'openUrl', url: J.Url.productHuntChats },
+				],
+			}
+		],
+
+		param: {
+			recalcRect: () => {
+				const { ww, wh } = U.Common.getWindowDimensions();
+				return { x: 0, y: 0, width: ww, height: wh };
+			},
+			width: 360,
+			classNameWrap: 'fixed fromSidebar',
+			className: 'productHunt',
+			horizontal: I.MenuDirection.Left,
+			passThrough: true,
+			offsetY: -4,
+		},
+	}),
+
 	mainGraph: () => ({
 		category: translate('onboardingMainGraph'),
 		items: [
@@ -156,7 +177,7 @@ const Data = {
 					name: translate('onboardingCommonTitleTypes'),
 					description: translate('onboardingCommonTextTypes'),
 					img: {
-						src: `${IMG_PATH[theme]}/common/type.png`,
+						src: `${U.Common.helpMediaPath()}/common/type.png`,
 					},
 					param: {
 						element: elements.type,
@@ -168,7 +189,7 @@ const Data = {
 					name: translate('onboardingCommonTitleProperties'),
 					description: translate('onboardingCommonTextProperties'),
 					img: {
-						src: `${IMG_PATH[theme]}/common/relation.png`,
+						src: `${U.Common.helpMediaPath()}/common/relation.png`,
 						caption: translate('onboardingCommonTextPropertiesImgCaption'),
 					},
 					param: {
@@ -247,7 +268,7 @@ const Data = {
 					buttonText: translate('onboardingMobileButton'),
 					cloneElementClassName: 'onboardingIconP2P',
 					img: {
-						src: `${IMG_PATH[theme]}/syncStatus/qr.png`
+						src: `${U.Common.helpMediaPath()}/syncStatus/qr.png`
 					},
 					param: {
 						className: 'qrDownload',

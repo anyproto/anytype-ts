@@ -948,12 +948,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'MembershipUpdate': {
-					S.Auth.membershipUpdate(mapped.membership);
-					U.Data.getMembershipTiers(true);
-					break;
-				};
-
 				case 'ImportFinish': {
 					if (!account) {
 						break;
@@ -968,7 +962,7 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview.isOneToOne);
+					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 
 					let showNotification = false;
 
@@ -1122,6 +1116,33 @@ class Dispatcher {
 					break;
 				};
 
+				case 'MembershipV2Update': {
+					S.Membership.dataUpdate(mapped.data);
+
+					const { data } = S.Membership;
+					const purchased = data?.getTopPurchasedProduct();
+					const product = data?.getTopProduct();
+
+					if (!purchased || !product) {
+						break;
+					};
+
+					if (purchased.isFinalization) {
+						S.Popup.open('membershipFinalization', {
+							data: {
+								product,
+								route: analytics.route.stripe,
+							},
+						});
+					};
+					break;
+				};
+
+				case 'MembershipV2ProductsUpdate': {
+					S.Membership.productsUpdate(mapped.products);
+					break;
+				};
+
 			};
 
 			if (needLog) {
@@ -1194,7 +1215,7 @@ class Dispatcher {
 
 			if (U.Object.isSetLayout(object.layout) || U.Object.isCollectionLayout(object.layout)) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData`);
+				$(window).trigger('updateDataviewData');
 			};
 		};
 	};
@@ -1300,7 +1321,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugJson = config.flagsMw.json;
-		const ct = U.Common.toCamelCase(type);
+		const ct = U.String.toCamelCase(type);
 		const t0 = performance.now();
 		const needLog = this.needRequestLog(type);
 

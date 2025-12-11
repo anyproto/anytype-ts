@@ -110,7 +110,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 
 	const getValue = (id: string): string => {
 		const value = String(editableRef.current[id]?.getTextValue() || '');
-		return U.Common.stripTags(value);
+		return U.String.stripTags(value);
 	};
 
 	const setValue = () => {

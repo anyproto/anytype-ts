@@ -14,7 +14,8 @@ const HEIGHT_DIV = 12;
 const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
-	const { membership } = S.Auth;
+	const { data } = S.Membership;
+	const product = data?.getTopProduct();
 	const { space, isOnline } = S.Common;
 	const [ dummy, setDummy ] = useState(0);
 	const profile = U.Space.getProfile();
@@ -86,7 +87,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
 					{ id: 'phrase', name: translate('popupSettingsPhraseTitle'), subPages: [ 'delete' ] },
-					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') } : null,
+					withMembership ? { id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle') } : null,
 				].filter(it => it),
 			},
 			{
@@ -216,15 +217,13 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			};
 
 			if (item.id == 'membership') {
-				if (!membership.isNone) {
-					const tierItem = U.Data.getMembershipTier(membership.tier);
-					caption = tierItem?.name;
-				} else {
+				if (!product || product.isIntro) {
 					caption = translate(`commonJoin`);
 					ccn.push('join');
+				} else {
+					caption = product.name;
 				};
-			};
-
+			} else
 			if (item.alert) {
 				caption = item.alert;
 				ccn.push('alert');

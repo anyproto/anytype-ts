@@ -99,7 +99,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setValue = (html: string) => {
-		editableRef.current.innerHTML = U.Common.sanitize(html, true);
+		editableRef.current.innerHTML = U.String.sanitize(html, true);
 	};
 
 	const getTextValue = (): string => {
@@ -123,11 +123,11 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setRangeHandler = (range: I.TextRange) => {
-		if (!range) {
+		if (!range || !editableRef.current) {
 			return;
 		};
 
-		editableRef.current?.focus({ preventScroll: true });
+		editableRef.current.focus({ preventScroll: true });
 		setRange(editableRef.current, { start: range.from, end: range.to });
 	};
 

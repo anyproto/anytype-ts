@@ -76,7 +76,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getSections = () => {
-		const filter = U.Common.regexEscape(S.Common.filter.text);
+		const filter = U.String.regexEscape(S.Common.filter.text);
 
 		let sections = U.Menu.sectionsMap(J.Latex);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
@@ -188,7 +188,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				>
 					{isTemplate ? (
 						<div className="inner">
-							<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
+							<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math) }} />
 						</div>
 					) : (
 						<div className="name">{name}</div>

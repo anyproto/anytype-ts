@@ -22,7 +22,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const optionMapper = (it: any) => ({ 
 		...it, 
 		children: (it.children || []).map(optionMapper),
-		name: it.name || translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) 
+		name: it.name || translate(U.String.toCamelCase(`menuHelp-${it.id}`)) 
 	});
 
 	const getItems = () => {
@@ -96,7 +96,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onClick = (e: any, item: any) => {
 		close();
-		analytics.event(U.Common.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
+		analytics.event(U.String.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
 
 		Highlight.hide(item.id);
 
@@ -173,8 +173,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						S.Menu.closeAll([ 'select' ]);
 					}}
 					onClick={() => {
-						U.Router.go('/main/settings/membership', {});
-						analytics.event('ClickUpgradePlanTooltip', { type: 'help' });
+						Action.membershipUpgrade({ type: 'help' });
 					}}
 				/>
 			) : ''}

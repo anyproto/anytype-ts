@@ -77,7 +77,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const isIndex = page == 'index';
 
 	const getId = (prefix: string) => {
-		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
+		return U.String.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	const pageId = getId('page');
@@ -125,7 +125,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		rebind();
-		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
+		Onboarding.start(U.String.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 
 		analytics.event('page', { params: match.params });
@@ -198,7 +198,7 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					/>
 				) : (
 					<Frame>
-						<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+						<Label text={U.String.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
 					</Frame>
 				)}
 			</div>

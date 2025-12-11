@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Editable, Button, Error } from 'Component';
-import { I, C, J, S, translate, keyboard } from 'Lib';
+import { I, C, J, S, translate, keyboard, analytics } from 'Lib';
 
 const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -53,7 +53,12 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			C.ObjectListSetDetails([ details.id ], keys.map(key => ({ key, value: details[key] })), cb);
 		} else {
-			C.ObjectCreate({ ...details, name: nameRef.current }, [], '', J.Constant.typeKey.chatDerived, S.Common.space, cb);
+			const type = S.Record.getChatType();
+
+			C.ObjectCreate({ ...details, name: nameRef.current }, [], '', J.Constant.typeKey.chatDerived, S.Common.space, (message: any) => {
+				cb(message);
+				analytics.createObject(type.id, type.recommendedLayout, '', message.middleTime);
+			});
 		};
 	};
 

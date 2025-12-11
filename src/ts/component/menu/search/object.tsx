@@ -236,7 +236,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
-					name = U.Common.sprintf(addParam.nameWithFilter, filter);
+					name = U.String.sprintf(addParam.nameWithFilter, filter);
 				} else 
 				if (addParam.name) {
 					name = addParam.name;
@@ -250,7 +250,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 
 			if (!name) {
-				name = filter ? U.Common.sprintf(translate('commonCreateObjectWithName'), filter) : translate('commonCreateObject');
+				name = filter ? U.String.sprintf(translate('commonCreateObjectWithName'), filter) : translate('commonCreateObject');
 			};
 
 			if (name) {

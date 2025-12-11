@@ -251,7 +251,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, skipCreate } = data;
-		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+		const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 		const systemKeys = Relation.systemKeys();
 		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => !systemKeys.includes(it.relationKey));
@@ -273,7 +273,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 
 		if (canWrite && filter) {
-			sections.unshift({ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] });
+			sections.unshift({ children: [ { id: 'add', name: U.String.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] });
 		};
 
 		sections = sections.filter((section: any) => {

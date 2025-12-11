@@ -255,7 +255,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 			if (name) {
 				if (textLimit) {
-					name = U.Common.shorten(name, textLimit);
+					name = U.String.shorten(name, textLimit);
 				};
 				content = <div className="name">{name}</div>;
 			} else {

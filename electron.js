@@ -90,15 +90,11 @@ powerMonitor.on('resume', () => {
 	Util.log('info', '[PowerMonitor] resume');
 });
 
-ipcMain.on('storeGet', (e, key) => {
-	e.returnValue = store.get(key);
-});
-ipcMain.on('storeSet', (e, key, value) => {
-	e.returnValue = store.set(key, value);
-});
-ipcMain.on('storeDelete', (e, key) => {
-	e.returnValue = store.delete(key);
-});
+ipcMain.on('storeGet', (e, key) => { e.returnValue = store.get(key); });
+ipcMain.on('storeSet', (e, key, value) => { e.returnValue = store.set(key, value); });
+ipcMain.on('storeDelete', (e, key) => { e.returnValue = store.delete(key); });
+ipcMain.on('getTheme', (e) => { e.returnValue = Util.getTheme(); });
+ipcMain.on('getBgColor', (e) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 
 if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '' ,false);
@@ -215,6 +211,30 @@ app.on('ready', async () => {
 				'Content-Security-Policy': [ csp.join('; ') ]
 			}
 		});
+	});
+
+	// Intercept requests and add referrer/origin for YouTube only
+	session.defaultSession.webRequest.onBeforeSendHeaders({ 
+		urls: [
+			'*://www.youtube.com/*', 
+			'*://www.youtube-nocookie.com/*',
+		],
+	}, (details, callBack) => {
+		const headers = details.requestHeaders;
+
+		// Detect missing or file:// origin
+		const currentOrigin = headers['Origin'];
+		const isFileOrigin =
+			!currentOrigin ||
+			(currentOrigin === 'null') ||
+			currentOrigin.startsWith('file://');
+
+		if (isFileOrigin) {
+			details.requestHeaders['Referer'] = 'https://localhost/';
+			details.requestHeaders['Origin'] = 'https://localhost';
+		};
+
+		callBack({ requestHeaders: details.requestHeaders });
 	});
 
 	// Load gRPC DevTools extension in development mode

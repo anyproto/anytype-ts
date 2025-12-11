@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, Action } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -150,6 +150,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		saveState(attachments);
 	};
 
+	const insert = (text: string, value: string) => {
+		text = String(text || '');
+		const length = text.length;
+
+		marks.current = Mark.adjust(marks.current, range.current.from, length);
+		value = U.String.insert(value, text, range.current.from, range.current.from);
+		updateMarkup(value, { from: range.current.from + length, to: range.current.from + length });
+	};
+
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
@@ -174,10 +183,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					value += '\n';
 				};
 
-				marks.current = Mark.adjust(marks.current, range.current.from, 1);
-				value = U.Common.stringInsert(value, '\n', range.current.from, range.current.from);
-
-				updateMarkup(value, { from: range.current.from + 1, to: range.current.from + 1 });
+				insert('\n', value);
 				scrollToBottom();
 			});
 		};
@@ -243,8 +249,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onCopy();
 		});
 
-		keyboard.shortcut(`shift+enter`, e, () => {
+		keyboard.shortcut('shift+enter', e, () => {
 			scrollToBottom();
+		});
+
+		keyboard.shortcut('tab', e, () => {
+			e.preventDefault();
+			insert('\t', value);
 		});
 
 		// Mark-up
@@ -264,7 +275,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
-
 	};
 
 	const onKeyUpInput = (e: any) => {
@@ -349,14 +359,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		updateCounter();
 
 		window.clearTimeout(timeoutHistory.current);
-		timeoutHistory.current = window.setTimeout(() => {
-			historySaveState();
-		}, J.Constant.delay.chatHistory);
+		timeoutHistory.current = window.setTimeout(() => historySaveState(), J.Constant.delay.chatHistory);
 	};
 
 	const onInput = () => {
 		const value = getTextValue();
-		const checkRtl = U.Common.checkRtl(value);
+		const checkRtl = U.String.checkRtl(value);
 
 		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
 	};
@@ -394,7 +402,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
 		const html = String(clipboard.getData('text/html') || '');
-		const text = U.Common.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
+		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		let newText = '';
 		let newMarks: I.Mark[] = [];
@@ -443,7 +451,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				newText = newText.substring(0, limit);
 			};
 
-			const res = U.Common.stringInsert(current, newText, from, to);
+			const res = U.String.insert(current, newText, from, to);
 
 			newMarks = Mark.adjust(newMarks, 0, to);
 
@@ -486,7 +494,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const checkUrls = () => {
 		const text = getTextValue();
-		const urls = U.Common.getUrlsFromText(text);
+		const urls = U.String.getUrlsFromText(text);
 
 		if (!urls.length) {
 			return;
@@ -501,7 +509,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			let value = U.Common.urlFix(url.value || '');
+			let value = U.String.urlFix(url.value || '');
 			let type = I.MarkType.Link;
 			let param = value;
 
@@ -705,7 +713,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		if (list.length + attachments.length > limit) {
 			Preview.toastShow({
 				icon: 'notice',
-				text: U.Common.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
+				text: U.String.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
 			});
 			return;
 		};
@@ -768,7 +776,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			addAttachments([ item ]);
 		};
 
-		const scheme = U.Common.getScheme(url);
+		const scheme = U.String.urlScheme(url);
 		const isInside = scheme == J.Constant.protocol;
 
 		if (isInside) {
@@ -1196,7 +1204,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					range: { from: range.current.from, to },
 				});
 
-				value = U.Common.stringInsert(value, ' ', range.current.from, range.current.from);
+				value = U.String.insert(value, ' ', range.current.from, range.current.from);
 
 				updateMarkup(value, { from: to, to });
 				break;
@@ -1293,7 +1301,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let from = range.current.from;
 
 		if (fromKeyboard) {
-			value = U.Common.stringCut(value, from - 1, from);
+			value = U.String.cut(value, from - 1, from);
 			from--;
 		};
 
@@ -1323,7 +1331,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						S.Detail.update(subId, { id: object.id, details: object }, false);
 
 						setMarks(newMarks);
-						value = U.Common.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						updateMarkup(value, { from: to, to });
 						analytics.event('Mention', { chatId: analyticsChatId });

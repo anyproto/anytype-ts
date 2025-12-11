@@ -39,7 +39,7 @@ import PageMainSet from '../set';
 import PageMainRelation from '../relation';
 import PageMainArchive from '../archive';
 
-import PageMembership from './membership';
+import PageMembership from './membership/index';
 
 const Components: any = {
 	index: 				 PageAccount,
@@ -94,7 +94,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 	const { isPopup } = props;
 	const { id = 'account' } = keyboard.getMatch(isPopup).params;
-	const pageId = U.Common.toCamelCase(`pageSettings-${id}`);
+	const pageId = U.String.toCamelCase(`pageSettings-${id}`);
 	const confirmPinRef = useRef<any>(null);
 	const childRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
@@ -170,7 +170,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 				ref={childRef}
 				{...props}
 				getId={() => pageId}
-				onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
+				onPage={id => Action.openSettings(id, '')}
 				onExport={onExport}
 				onConfirmPin={confirmPinRef.current}
 				setConfirmPin={setConfirmPin}

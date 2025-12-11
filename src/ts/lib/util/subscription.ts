@@ -497,10 +497,6 @@ class UtilSubscription {
 	 */
 	createSpace (callBack?: () => void): void {
 		const spaceview = U.Space.getSpaceview();
-
-		S.Record.typeKeyMap.clear();
-		S.Record.relationKeyMap.clear();
-
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.deleted,
@@ -539,7 +535,10 @@ class UtilSubscription {
 				ignoreHidden: false,
 				ignoreArchived: false,
 				onSubscribe: message => {
-					(message.records || []).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					if (message.records && message.records.length) {
+						S.Record.typeKeyMap.clear();
+						(message.records || []).forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					};
 				},
 			},
 			{
@@ -558,6 +557,7 @@ class UtilSubscription {
 				subId: J.Constant.subId.recentEditMe,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
 					{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() },
@@ -573,6 +573,7 @@ class UtilSubscription {
 				subId: J.Constant.subId.recentEditAll,
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
 				],
@@ -593,7 +594,10 @@ class UtilSubscription {
 				ignoreHidden: false,
 				ignoreArchived: false,
 				onSubscribe: message => {
-					(message.records || []).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					if (message.records && message.records.length) {
+						S.Record.relationKeyMap.clear();
+						(message.records || []).forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					};
 				},
 			},
 			{

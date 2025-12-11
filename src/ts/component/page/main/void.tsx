@@ -9,7 +9,7 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const spaces = U.Space.getList().filter(it => it.isLocalOk);
 	const match = keyboard.getMatch(isPopup);
 	const { id } = match.params || {};
-	const cn = [ 'wrapper', U.Common.toCamelCase(`void-${id}`) ];
+	const cn = [ 'wrapper', U.String.toCamelCase(`void-${id}`) ];
 
 	const onClick = () => {
 		U.Menu.spaceCreate({

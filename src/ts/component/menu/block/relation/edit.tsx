@@ -416,10 +416,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const relation = this.getRelation();
 
 		Action.archive([ relation.id ], '', () => {
-			if (deleteCommand) {
-				deleteCommand();
-			};
-
+			deleteCommand?.();
 			close();
 		});
 	};
@@ -474,7 +471,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				addCommand(rootId, blockId, details, onChange);
 			};
 
-			Preview.toastShow({ text: U.Common.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
+			Preview.toastShow({ text: U.String.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type, route: route || '' });
 		});
 	};

@@ -14,7 +14,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const showInvite = !spaceview.isOneToOne;
 
 	let object = null;
-	if (rootId == S.Block.workspace) {
+	if (spaceview.isChat || spaceview.isOneToOne) {
 		object = spaceview;
 	} else {
 		object = S.Detail.get(rootId, rootId, []);

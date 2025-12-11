@@ -24,7 +24,6 @@ import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
-import PopupMembership from './membership';
 import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
@@ -44,7 +43,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const isAnimatingRef = useRef(false);
 
 	const getId = (): string => {
-		return U.Common.toCamelCase('popup-' + id);
+		return U.String.toCamelCase('popup-' + id);
 	};
 
 	const storageGet = () => {
@@ -163,7 +162,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		inviteRequest:			 PopupInviteRequest,
 		inviteConfirm:			 PopupInviteConfirm,
 		inviteQr:				 PopupInviteQr,
-		membership: 		 	 PopupMembership,
 		membershipActivation: 	 PopupMembershipActivation,
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,
@@ -189,7 +187,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 	
 	if (!Component) {
-		return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+		return <div>{U.String.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 	};
 
 	let dimmer = null;

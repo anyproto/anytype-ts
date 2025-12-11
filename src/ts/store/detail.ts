@@ -1,5 +1,6 @@
-import { observable, action, set, intercept, makeObservable } from 'mobx';
+import { observable, action, makeObservable, set } from 'mobx';
 import { I, S, U, J, Relation, translate } from 'Lib';
+import { memoize } from 'lodash';
 
 interface Detail {
 	relationKey: string;
@@ -38,10 +39,11 @@ const keyMap = {
 
 class DetailStore {
 
-	private map: Map<string, Map<string, Detail[]>> = new Map();
+	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
-		makeObservable(this, {
+		makeObservable(this as any, {
+			map: observable.shallow,
 			set: action,
 			update: action,
 			delete: action
@@ -63,9 +65,6 @@ class DetailStore {
 			isDeleted: observable,
 		});
 
-		intercept(el as any, (change: any) => {
-			return (change.newValue === el[change.name] ? null : change); 
-		});
 		return el;
 	}; 
 
@@ -83,13 +82,13 @@ class DetailStore {
 		const map = observable.map(new Map());
 
 		for (const item of items) {
-			const list: Detail[] = [];
+			const detailMap = new Map<string, Detail>();
 
 			for (const k in item.details) {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
 
-			map.set(item.id, list);
+			map.set(item.id, detailMap);
 		};
 
 		this.map.set(rootId, map);
@@ -125,28 +124,28 @@ class DetailStore {
 			map.delete(item.id);
 		};
 
-		let list = map.get(item.id);
-		if (!list) {
-			list = [];
+		let detailMap = map.get(item.id);
+		if (!detailMap) {
+			detailMap = new Map<string, Detail>();
 			createList = true;
 		};
 
 		for (const k in item.details) {
 			if (clear) {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 				continue;
 			};
 
-			const el = list.find(it => it.relationKey == k);
+			const el = detailMap.get(k);
 			if (el) {
 				set(el, { value: item.details[k], isDeleted: false });
 			} else {
-				list.push(this.createListItem(k, item.details[k]));
+				detailMap.set(k, this.createListItem(k, item.details[k]));
 			};
 		};
 
 		if (createList) {
-			map.set(item.id, list);
+			map.set(item.id, detailMap);
 		};
 
 		// Update fast key maps in S.Record to keep consistency
@@ -198,11 +197,38 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-			map.set(id, (map.get(id) || []).filter(it => !keys.includes(it.relationKey)));
+			const detailMap = map.get(id);
+			if (!detailMap) {
+				return;
+			};
+
+			for (const k of keys) {
+				detailMap.delete(k);
+			};
 		} else {
-			map.set(id, []);
+			map.set(id, new Map());
 		};
 	};
+
+	computeKeySet = memoize((withKeys?: string[], forceKeys?: boolean) => {
+		const keys = new Set<string>();
+
+		if (withKeys) {
+			withKeys.forEach(k => keys.add(k));
+
+			if (!forceKeys) {
+				J.Relation.default.forEach(k => keys.add(k));
+			};
+			if (keys.has('name')) {
+				keys.add('pluralName');
+			};
+			if (keys.has('layout')) {
+				keys.add('resolvedLayout');
+			};
+		};
+
+		return keys;
+	}, (withKeys, forceKeys) => (withKeys?.join('|') ?? '') + '|' + (forceKeys ? '1' : '0'));
 
 	/**
 	 * Gets the object. If no keys are provided, all properties are returned. If force keys is set, J.Relation.default are included.
@@ -214,45 +240,21 @@ class DetailStore {
 	 * @returns {any} The object.
 	 */
 	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
-		let list = this.map.get(rootId)?.get(id) || [];
-		if (!list.length) {
+		const detailMap = this.map.get(rootId)?.get(id);
+
+		if (!detailMap || detailMap.size == 0) {
 			return { id, _empty_: true };
 		};
 		
 		const object = { id };
-		const keys = new Set<string>();
+		const keys = withKeys ? this.computeKeySet(withKeys, forceKeys) : null;
 
-		if (withKeys) {
-			for (const key of withKeys) {
-				keys.add(key);
-			};
-
-			if (!forceKeys) {
-				for (const key of J.Relation.default) {
-					keys.add(key);
-				};
+		for (const [ relationKey, item ] of detailMap.entries()) {
+			if (item.isDeleted || (withKeys && !keys.has(item.relationKey))) {
+				continue;
 			};
 
-			if (keys.has('name')) {
-				keys.add('pluralName');
-			};
-			if (keys.has('layout')) {
-				keys.add('resolvedLayout');
-			};
-		};
-
-		list = list.filter(it => {
-			if (it.isDeleted) {
-				return false;
-			};
-			if (withKeys && !keys.has(it.relationKey)) {
-				return false;
-			};
-			return true;
-		});
-
-		for (let i = 0; i < list.length; i++) {
-			object[list[i].relationKey] = list[i].value;
+			object[item.relationKey] = item.value;
 		};
 
 		return this.mapper(object, skipLayoutFormat);
@@ -265,7 +267,8 @@ class DetailStore {
 	 * @returns {string[]} The keys.
 	 */
 	public getKeys (rootId: string, id: string): string[] {
-		return (this.map.get(rootId)?.get(id) || []).map(it => it.relationKey);
+		const detailMap = this.map.get(rootId)?.get(id);
+		return detailMap ? Array.from(detailMap.keys()) : [];
 	};
 
 	/**
@@ -291,10 +294,7 @@ class DetailStore {
 
 			if (mappedKeys) {
 				for (const k in mappedKeys) {
-					const mappedKey = mappedKeys[k];
-
-					object[k] = object[mappedKey];
-					delete(object[mappedKey]);
+					object[k] = object[mappedKeys[k]];
 				};
 			};
 		};

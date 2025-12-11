@@ -248,7 +248,7 @@ class Action {
 			return;
 		};
 
-		url = U.Common.urlFix(url);
+		url = U.String.urlFix(url);
 
 		const route = U.Common.getRouteFromUrl(url);
 		if (route) {
@@ -256,7 +256,7 @@ class Action {
 			return;
 		};
 
-		const scheme = U.Common.getScheme(url);
+		const scheme = U.String.urlScheme(url);
 		const cb = () => Renderer.send('openUrl', url);
 		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);
 		const isAllowed = allowedSchemes.includes(scheme);
@@ -280,7 +280,7 @@ class Action {
 				data: {
 					icon: 'confirm',
 					title: translate('popupConfirmOpenExternalLinkTitle'),
-					text: U.Common.sprintf(translate('popupConfirmOpenExternalLinkText'), U.Common.shorten(url, 120)),
+					text: U.String.sprintf(translate('popupConfirmOpenExternalLinkText'), U.String.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
 					storageKey,
 					onConfirm: cb,
@@ -330,7 +330,7 @@ class Action {
 				data: {
 					icon: 'confirm',
 					title: translate('popupConfirmOpenExternalFileTitle'),
-					text: U.Common.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
+					text: U.String.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
 					textConfirm: translate('commonYes'),
 					onConfirm: cb,
 				},
@@ -436,7 +436,7 @@ class Action {
 
 		S.Popup.open('confirm', {
 			data: {
-				title: U.Common.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
+				title: U.String.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
@@ -504,7 +504,7 @@ class Action {
 
 						U.Data.onInfo(account.info);
 						U.Data.onAuthWithoutSpace(routeParam);
-						U.Data.onAuthOnce(true);
+						U.Data.onAuthOnce();
 					});
 				});
 			});
@@ -525,7 +525,6 @@ class Action {
 
 			Preview.toastShow({ action: I.ToastAction.Archive, ids });
 			analytics.event('MoveToBin', { route, count: ids.length });
-
 			callBack?.();
 		});
 	};
@@ -540,10 +539,13 @@ class Action {
 		ids = ids || [];
 
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (!message.error.code) {
-				callBack?.();
-				analytics.event('RestoreFromBin', { route, count: ids.length });
+			if (message.error.code) {
+				return;
 			};
+
+			Preview.toastShow({ action: I.ToastAction.Restore, ids });
+			callBack?.();
+			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});
 	};
 
@@ -703,10 +705,6 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	createSpace (uxType: I.SpaceUxType, route: string) {
-		if (!U.Space.canCreateSpace()) {
-			return;
-		};
-
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('spaceCreate', { data: { uxType, route } });
 		});
@@ -726,19 +724,19 @@ class Action {
 		};
 
 		const isOwner = U.Space.isMyOwner(id);
-		const name = isOwner ? space.name : U.Common.shorten(space.name, 32);
+		const name = isOwner ? space.name : U.String.shorten(space.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const confirmMessage = isOwner ? space.name : '';
 
-		let title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
-		let text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
+		let title = U.String.sprintf(translate(`space${suffix}WarningTitle`), name);
+		let text = U.String.sprintf(translate(`space${suffix}WarningText`), name);
 		let confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
-		let toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
+		let toast = U.String.sprintf(translate(`space${suffix}Toast`), name);
 
 		if (forceDelete) {
-			title = U.Common.sprintf(translate('spaceDeleteWarningTitle'), name);
-			text = U.Common.sprintf(translate('spaceLeaveWarningText'), name);
-			toast = U.Common.sprintf(translate('spaceDeleteToast'), name);
+			title = U.String.sprintf(translate('spaceDeleteWarningTitle'), name);
+			text = U.String.sprintf(translate('spaceLeaveWarningText'), name);
+			toast = U.String.sprintf(translate('spaceDeleteToast'), name);
 			confirm = translate('commonDelete');
 		};
 
@@ -882,37 +880,29 @@ class Action {
 		};
 	};
 
-	membershipUpgrade (tier?: I.TierType) {
-		if (!U.Common.checkCanMembershipUpgrade()) {
-			this.membershipUpgradeViaEmail();
+	membershipUpgrade (event?: any) {
+		const product = S.Membership.data?.getTopProduct();
+		if (!product) {
 			return;
 		};
 
-		U.Object.openRoute(
-			{ id: 'membership', layout: I.ObjectLayout.Settings },
-			{
-				onRouteChange: () => {
-					S.Popup.open('membership', {
-						data: { tier: tier ? tier : I.TierType.Builder }
-					});
+		if (!product.isUpgradeable) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmMembershipUpgradeTitle'),
+					text: translate('popupConfirmMembershipUpgradeText'),
+					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					canCancel: false
 				}
-			},
-		);
-	};
+			});
+		} else {
+			this.openSettings('membership', '');
+		};
 
-	/**
-	 * Opens a membership upgrade confirmation popup.
-	 */
-	membershipUpgradeViaEmail () {
-		S.Popup.open('confirm', {
-			data: {
-				title: translate('popupConfirmMembershipUpgradeTitle'),
-				text: translate('popupConfirmMembershipUpgradeText'),
-				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
-				canCancel: false
-			}
-		});
+		if (event) {
+			analytics.event('ClickUpgradePlanTooltip', event);
+		};
 	};
 
 	/**
@@ -1025,14 +1015,20 @@ class Action {
 
 	spaceInfo () {
 		const { account } = S.Auth;
+		const { dateFormat } = S.Common;
 		const space = U.Space.getSpaceview();
 		const creator = U.Space.getCreator(space.targetSpaceId, space.creator);
 		const data = [
 			[ translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId ],
-			[ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.globalName || creator.identity ],
 			[ translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId ],
-			[ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(S.Common.dateFormat, space.createdDate) ],
 		];
+
+		if (!creator._empty_) {
+			data.push([ translate(`popupSettingsSpaceIndexCreatedByTitle`), creator.resolvedName ]);
+		};
+		if (space.createdDate) {
+			data.push([ translate(`popupSettingsSpaceIndexCreationDateTitle`), U.Date.dateWithFormat(dateFormat, space.createdDate) ],);
+		};
 
 		S.Popup.open('confirm', {
 			className: 'isWide spaceInfo',
@@ -1064,16 +1060,18 @@ class Action {
 		});
 	};
 
-	openSettings (id: string, route: string) {
-		U.Object.openRoute({ 
+	openSettings (id: string, route: string, param?: Partial<I.RouteParam>) {
+		const object = { 
 			id, 
 			layout: I.ObjectLayout.Settings,
-			_routeParam_: { 
-				additional: [ 
-					{ key: 'route', value: route },
-				],
-			},
-		});
+			_routeParam_: { additional: [] },
+		};
+
+		if (route) {
+			object._routeParam_.additional.push({ route });
+		};
+
+		U.Object.openRoute(object, param);
 	};
 
 	openSpaceShare (route: string) {
@@ -1083,6 +1081,25 @@ class Action {
 	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
 		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
+	};
+
+	/**
+	 * Shows an invite request popup and handles navigation on cancel.
+	 */
+	inviteRequest () {
+		S.Popup.open('confirm', {
+			data: {
+				title: translate('popupInviteInviteConfirmTitle'),
+				text: translate('popupInviteInviteConfirmText'),
+				textConfirm: translate('commonDone'),
+				textCancel: translate('popupInviteInviteConfirmCancel'),
+				onCancel: () => {
+					U.Object.openRoute({ id: 'spaceList', layout: I.ObjectLayout.Settings });
+				},
+			},
+		});
+
+		analytics.event('ScreenRequestSent');
 	};
 
 };

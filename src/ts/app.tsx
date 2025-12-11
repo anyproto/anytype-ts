@@ -198,8 +198,9 @@ const App: FC = () => {
 		const win = $(window);
 		const body = $('body');
 		const node = $(nodeRef.current);
-		const loader = node.find('#root-loader');
-		const anim = loader.find('.anim');
+		const bubbleLoader = $('#bubble-loader');
+		const rootLoader = node.find('#root-loader');
+		const anim = rootLoader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
@@ -229,57 +230,63 @@ const App: FC = () => {
 		body.addClass('over');
 
 		const hide = () => {
-			loader.remove(); 
+			rootLoader.remove(); 
+			bubbleLoader.remove();
 			body.removeClass('over');
 		};
 
 		const cb = () => {
-			raf(() => anim.removeClass('from'));
+			bubbleLoader.addClass('inflate');
 
 			window.setTimeout(() => {
-				anim.addClass('to');
-
+				raf(() => anim.removeClass('from'));
 				window.setTimeout(() => {
-					loader.css({ opacity: 0 });
-					window.setTimeout(() => hide(), 300);
-				}, 450);
+					anim.addClass('to');
+
+					window.setTimeout(() => {
+						rootLoader.css({ opacity: 0 });
+						window.setTimeout(() => hide(), 300);
+					}, 500);
+				}, 1500);
 			}, 1000);
 		};
 
 		if (accountId) {
 			if (isChild) {
-				U.Data.createSession('', '', token, () => {
-					C.AccountSelect(accountId, '', 0, '', (message: any) => {
-						if (message.error.code) {
-							console.error('[App.onInit]:', message.error.description);
-							return;
-						};
+				Renderer.send('keytarGet', accountId).then(phrase => {
+					U.Data.createSession(phrase, '', token, () => {
+						C.AccountSelect(accountId, '', 0, '', (message: any) => {
+							if (message.error.code) {
+								console.error('[App.onInit]:', message.error.description);
+								return;
+							};
 
-						const { account } = message;
+							const { account } = message;
 
-						if (!account) {
-							console.error('[App.onInit]: Account not found');
-							return;
-						};
+							if (!account) {
+								console.error('[App.onInit]: Account not found');
+								return;
+							};
 
-						keyboard.setPinChecked(isPinChecked);
-						S.Auth.accountSet(account);
-						S.Common.redirectSet(route);
-						S.Common.configSet(account.config, false);
+							keyboard.setPinChecked(isPinChecked);
+							S.Auth.accountSet(account);
+							S.Common.redirectSet(route);
+							S.Common.configSet(account.config, false);
 
-						const spaceId = Storage.get('spaceId');
-						const routeParam = { 
-							onRouteChange: hide,
-						};
+							const spaceId = Storage.get('spaceId');
+							const routeParam = { 
+								onRouteChange: hide,
+							};
 
-						if (spaceId) {
-							U.Router.switchSpace(spaceId, '', false, routeParam, true);
-						} else {
-							U.Data.onAuthWithoutSpace(routeParam);
-						};
+							if (spaceId) {
+								U.Router.switchSpace(spaceId, '', false, routeParam, true);
+							} else {
+								U.Data.onAuthWithoutSpace(routeParam);
+							};
 
-						U.Data.onInfo(account.info);
-						U.Data.onAuthOnce(false);
+							U.Data.onInfo(account.info);
+							U.Data.onAuthOnce();
+						});
 					});
 				});
 
@@ -337,7 +344,7 @@ const App: FC = () => {
 			data: {
 				icon: 'updated',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
+				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
@@ -358,7 +365,7 @@ const App: FC = () => {
 			data: {
 				icon: 'error',
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
+				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {

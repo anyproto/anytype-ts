@@ -131,7 +131,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 								};
 
 								setInviteData(invite.cid, invite.key, inviteType, permissions);
-								Preview.toastShow({ text: U.Common.sprintf(translate('toastInviteUpdate'), item.name) });
+								Preview.toastShow({ text: U.String.sprintf(translate('toastInviteUpdate'), item.name) });
 							});
 						} else {
 							C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
@@ -145,7 +145,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 								if (created) {
 									toast = translate('toastInviteGenerate');
 								} else {
-									toast = U.Common.sprintf(translate('toastInviteUpdate'), item.name);
+									toast = U.String.sprintf(translate('toastInviteUpdate'), item.name);
 								};
 
 								setInviteData(message.inviteCid, message.inviteKey, inviteType, permissions);

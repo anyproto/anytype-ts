@@ -44,15 +44,15 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 	const getComponentId = (id: string) => {
 		id = String(id || '');
-		return U.Common.toCamelCase(id.replace(/\//g, '-'));
+		return U.String.toCamelCase(id.replace(/\//g, '-'));
 	};
 
 	const getPageId = (id: string) => {
-		return U.Common.toCamelCase(`sidebarPage-${getComponentId(id)}`);
+		return U.String.toCamelCase(`sidebarPage-${getComponentId(id)}`);
 	};
 
 	const getClassName = (id: string): string => {
-		const cn = [ 'sidebarPage', U.Common.toCamelCase(`page-${id}`) ];
+		const cn = [ 'sidebarPage', U.String.toCamelCase(`page-${id}`) ];
 
 		if (!U.Common.isPlatformMac()) {
 			cn.push('customScrollbar');

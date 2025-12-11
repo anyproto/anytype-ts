@@ -80,10 +80,13 @@
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; z-index: 1;
 		}
 
-		.mediaBlockLoader { display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; height: 320px; background-color: var(--color-shape-highlight-light); }
+		.mediaBlockLoader { 
+			display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; height: 320px; 
+			background-color: var(--color-shape-highlight-light); padding: 24px;
+		}
 		.mediaBlockLoader {
 			.icon.loading { width: 20px; height: 20px; background: url('~img/icon/vault/spinner.svg'); animation: rotate 0.8s infinite linear; }
-			.name { @include text-small; color: var(--color-text-tertiary); }
+			.name { @include text-small; color: var(--color-text-tertiary); text-align: center; }
 		}
 	}
 

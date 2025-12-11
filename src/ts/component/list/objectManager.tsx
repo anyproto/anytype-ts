@@ -356,7 +356,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		if (!filter) {
 			controls = null;
 		} else {
-			textEmpty = U.Common.sprintf(translate('popupSearchNoObjects'), filter);
+			textEmpty = U.String.sprintf(translate('popupSearchNoObjects'), filter);
 		};
 
 		content = <EmptySearch text={textEmpty} />;

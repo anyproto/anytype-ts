@@ -29,7 +29,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	text = '';
 	clicks = 0;
 	preventMenu = false;
-	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -62,7 +61,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const root = S.Block.getLeaf(rootId, rootId);
 		const cn = [ 'flex' ];
 		const cv = [ 'value', 'focusable', 'c' + id ];
-		const checkRtl = keyboard.isRtl || U.Common.checkRtl(text);
+		const checkRtl = keyboard.isRtl || U.String.checkRtl(text);
 
 		let marker: any = null;
 		let markerIcon = null;
@@ -256,18 +255,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		window.clearTimeout(this.timeoutFilter);
 		window.clearTimeout(this.timeoutClick);
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-			this.frame = 0;
-		};
-
 		if (focused == block.id) {
 			focus.clear(true);
 		};
 	};
 
 	setValue (v: string, restoreRange?: I.TextRange) {
-		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
+		const { block } = this.props;
 		const fields = block.fields || {};
 
 		let text = String(v || '');
@@ -308,22 +302,22 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
-			if (this.frame) {
-				raf.cancel(this.frame);
-				this.frame = 0;
-			};
-
-			this.frame = raf(() => {
-				renderMentions(rootId, this.node, this.marks, () => this.getValue());
-				renderObjects(rootId, this.node, this.marks, () => this.getValue(), this.props);
-				renderLinks(rootId, this.node, this.marks, () => this.getValue(), this.props);
-				renderEmoji(this.node);
-			});
+			this.renderMarkup();
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
 			this.placeholderCheck();
 		};
+	};
+
+	renderMarkup () {
+		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
+		const text = block.content.text;
+
+		renderMentions(rootId, this.node, this.marks, () => text);
+		renderObjects(rootId, this.node, this.marks, () => text, this.props);
+		renderLinks(rootId, this.node, this.marks, () => text, this.props);
+		renderEmoji(this.node);
 	};
 	
 	renderLatex () {
@@ -338,6 +332,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (html !== value) {
 			this.refEditable.setValue(html);
+			this.renderMarkup();
 		};
 	};
 
@@ -493,7 +488,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				const insert = '\n';
 				const caret = range.from + insert.length;
-				const newValue = U.Common.stringInsert(value, insert, range.from, range.to);
+				const newValue = U.String.insert(value, insert, range.from, range.to);
 
 				U.Data.blockSetText(rootId, block.id, newValue, this.marks, true, () => {
 					const caretRange = { from: caret, to: caret };
@@ -548,7 +543,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 
 			if (block.isTextCode()) {
-				value = U.Common.stringInsert(value, '\t', range.from, range.from);
+				value = U.String.insert(value, '\t', range.from, range.from);
 
 				U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
@@ -647,7 +642,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					const cut = value.slice(range.from, range.to);
 					const closing = twinPairs[key] || key;
 
-					value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
+					value = U.String.insert(value, `${key}${cut}${closing}`, range.from, range.to);
 					this.marks = Mark.adjust(this.marks, range.from - length, closing.length);
 				};
 
@@ -680,7 +675,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onKeyUp (e: any) {
 		e.persist();
 
-		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
+		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp, isPopup } = this.props;
 		const { filter } = S.Common;
 		const { id, content } = block;
 		const range = this.getRange();
@@ -719,7 +714,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
-		const isRtl = U.Common.checkRtl(value);
+		const isRtl = U.String.checkRtl(value);
 
 		keyboard.setRtl(isRtl);
 
@@ -766,7 +761,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Open add menu
 		if (canOpenMenuAdd && (!isInsideTable && !block.isTextCode())) { 
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onMenuAdd(id, U.Common.stringCut(value, range.from - 1, range.from), range, this.marks);
+				onMenuAdd(id, U.String.cut(value, range.from - 1, range.from), range, this.marks);
 			});
 			return;
 		};
@@ -890,6 +885,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.setText(this.marks, false);
 		onKeyUp(e, value, this.marks, range, this.props);
+		focus.scroll(isPopup, id);
 	};
 
 	onMention (d: number) {
@@ -904,7 +900,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const element = $(`#block-${block.id}`);
 
 		let value = this.getValue();
-		value = U.Common.stringCut(value, range.from - d, range.from);
+		value = U.String.cut(value, range.from - d, range.from);
 
 		S.Common.filterSet(range.from - d, '');
 
@@ -934,7 +930,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							return;
 						};
 
-						value = U.Common.stringInsert(value, text, from, from);
+						value = U.String.insert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 							// Try to fix async detailsUpdate event
@@ -983,7 +979,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						range: { from: range.from, to },
 					});
 
-					value = U.Common.stringInsert(value, ' ', range.from, range.from);
+					value = U.String.insert(value, ' ', range.from, range.from);
 
 					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to });
@@ -1276,15 +1272,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	placeholderSet (v: string) {
-		if (this.refEditable) {
-			this.refEditable.placeholderSet(v);
-		};
+		this.refEditable?.placeholderSet(v);
 	};
 	
 	placeholderHide () {
-		if (this.refEditable) {
-			this.refEditable.placeholderHide();
-		};
+		this.refEditable?.placeholderHide();
 	};
 
 	onCompositionEnd = (e: any, value: string, range: I.TextRange) => {

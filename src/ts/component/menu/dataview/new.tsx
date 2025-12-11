@@ -36,8 +36,11 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const templateName = template ? template.name : translate('commonBlank');
 		const itemsAdd: any[] = [];
 		const itemsSettings: any[] = [
-			{ id: 'template', name: translate('menuDataviewNewTemplate'), arrow: true, caption: templateName },
 		];
+
+		if (!U.Object.getLayoutsWithoutTemplates().includes(type?.recommendedLayout)) {
+			itemsSettings.push({ id: 'template', name: translate('menuDataviewNewTemplate'), arrow: true, caption: templateName },);
+		};
 
 		if (isAllowedObject && isCollection) {
 			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewNewExistingObject'), arrow: true });

@@ -47,7 +47,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 						};
 
 						case 'copyMcp': {
-							U.Common.copyToast(translate('popupSettingsApiMcpConfig'), U.Common.sprintf(J.Constant.mcpConfig, item.apiKey));
+							U.Common.copyToast(translate('popupSettingsApiMcpConfig'), U.String.sprintf(J.Constant.mcpConfig, item.apiKey));
 							break;
 						};
 
@@ -78,7 +78,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 					onMouseEnter={e => Preview.tooltipShow({ text: item.apiKey, element: $(e.currentTarget) })} 
 					onMouseLeave={() => Preview.tooltipHide()}
 				>
-					{U.Common.shortMask(item.apiKey, 3)}
+					{U.String.shortMask(item.apiKey, 3)}
 				</div>
 				<div className="col colDate">
 					{item.createdAt ? U.Date.dateWithFormat(dateFormat, item.createdAt) : ''}

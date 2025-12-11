@@ -71,7 +71,7 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 			if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 				value = Number(value) || 0;
 				name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
-				v.push(U.Common.sprintf(translate(name), value, U.Common.plural(value, translate('pluralDay'))));
+				v.push(U.String.sprintf(translate(name), value, U.Common.plural(value, translate('pluralDay'))));
 			} else 
 			if (filterOption) {
 				v.push(name);

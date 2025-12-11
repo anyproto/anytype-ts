@@ -571,46 +571,29 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	};
 };
 
-export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
-	return {
-		available: response.getAvailable(),
-		ownerScwEthAddress: response.getOwnerscwethaddress(),
-		ownerEtherAddress: response.getOwnerethaddress(),
-		ownerAnyAddress: response.getOwneranyaddress(),
-		spaceId: response.getSpaceid(),
-		nameExpires: response.getNameexpires(),
-	};
-};
-
-export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
-	return {
-		membership: Mapper.From.Membership(response.getData()),
-	};
-};
-
-export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
-	return {
-		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
-	};
-};
-
-export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
-	return {
-		url: response.getPaymenturl(),
-	};
-};
-
-export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
-	return { 
-		url: response.getPortalurl(),
-	};
-};
-
 export const MembershipCodeGetInfo = (response: Rpc.Membership.CodeGetInfo.Response) => {
 	return {
 		tier: response.getRequestedtier(),
 	};
 };
+
+export const MembershipV2GetPortalLink = (response: Rpc.MembershipV2.GetPortalLink.Response) => {
+	return {
+		url: response.getUrl(),
+	};
+};
+
+export const MembershipV2GetProducts = (response: Rpc.MembershipV2.GetProducts.Response) => {
+	return {
+		products: (response.getProductsList() || []).map(Mapper.From.MembershipProduct),
+	};
+};
+
+export const MembershipV2GetStatus = (response: Rpc.MembershipV2.GetStatus.Response) => {
+	return {
+		data: Mapper.From.MembershipData(response.getData()),
+	};
+}
 
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {

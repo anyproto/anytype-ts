@@ -380,19 +380,19 @@ class UtilDate {
 
 		let ret = '';
 		if (y > 0) {
-			ret = U.Common.sprintf('%dy', y);
+			ret = U.String.sprintf('%dy', y);
 		} else
 		if (d > 0) {
-			ret = U.Common.sprintf('%dd', d);
+			ret = U.String.sprintf('%dd', d);
 		} else
 		if (h > 0) {
-			ret = U.Common.sprintf('%dh', h);
+			ret = U.String.sprintf('%dh', h);
 		} else
 		if (m > 0) {
-			ret = U.Common.sprintf('%dmin', m);
+			ret = U.String.sprintf('%dmin', m);
 		} else
 		if (s > 0) {
-			ret = U.Common.sprintf('%ds', s);
+			ret = U.String.sprintf('%ds', s);
 		};
 		return ret;
 	};

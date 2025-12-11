@@ -29,7 +29,7 @@ class UtilEmbed {
 	 * @returns {string} The HTML string for embedding.
 	 */
 	getHtml (processor: I.EmbedProcessor, content: any): string {
-		const fn = U.Common.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
+		const fn = U.String.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
 		return this[fn] ? this[fn](content) : content;
 	};
 
@@ -195,7 +195,7 @@ class UtilEmbed {
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
-			const domains = DOMAINS[i].map(U.Common.regexEscape);
+			const domains = DOMAINS[i].map(U.String.regexEscape);
 			const reg = new RegExp(`:\/\/([^.]*.)?(${domains.join('|')})`, 'gi');
 
 			if (!url.match(reg)) {

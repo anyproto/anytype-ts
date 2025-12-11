@@ -269,30 +269,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
-	onIncentiveButtonClick (id: string) {
-		switch (id) {
-			case 'storage': {
-				const { files } = S.Auth.getNotSynced();
-
-				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
-					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
-				} else {
-					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
-				};
-				break;
-			};
-
-			case 'upgrade': {
-				const usage = Math.round(U.Common.calculateStorageUsage());
-
-				Action.membershipUpgrade();
-
-				analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.syncStatus });
-				break;
-			};
-		};
-	};
-
 	load () {
 		if (U.Data.isLocalNetwork()) {
 			return;
@@ -348,7 +324,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let message = '';
 
 		if (devicesCounter) {
-			message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+			message = U.String.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
 		} else {
 			message = translate('menuSyncStatusP2PNoDevicesConnected');
 		};
@@ -419,7 +395,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
 					} else
 					if (syncingCounter) {
-						message = U.Common.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
+						message = U.String.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, U.Common.plural(syncingCounter, translate('pluralLCObject')));
 					} else {
 						message = translate('menuSyncStatusInfoNetworkMessageSynced');
 					};

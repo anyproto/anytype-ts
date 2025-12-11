@@ -17,7 +17,7 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		info = (
 			<div className="info">
 				<div className="name">{translate('commonUpdateAvailable')}</div>
-				<Label text={U.Common.sprintf(translate('commonNewVersion'), updateVersion)} />
+				<Label text={U.String.sprintf(translate('commonNewVersion'), updateVersion)} />
 			</div>
 		);
 

@@ -29,7 +29,6 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = null;
 	public pinTimeId = null;
-	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
 	public languages: string[] = [];
@@ -119,8 +118,6 @@ class CommonStore {
 		spaces: [],
 	};
 
-	public membershipTiersList: I.MembershipTier[] = [];
-
 	constructor () {
 		makeObservable(this, {
 			progressObj: observable,
@@ -139,7 +136,6 @@ class CommonStore {
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
 			spaceId: observable,
-			membershipTiersList: observable,
 			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
@@ -159,7 +155,6 @@ class CommonStore {
 			gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
-			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
 			showRelativeDates: computed,
@@ -186,9 +181,9 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
-			membershipTiersListSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
+			clearRightSidebarState: action,
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
@@ -263,10 +258,6 @@ class CommonStore {
 			ret = Storage.get('pinTime');
 		};
 		return (Number(ret) || J.Constant.default.pinTime) * 1000;
-	};
-
-	get emailConfirmationTime (): number {
-		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
 	};
 
 	get recentEditMode (): I.RecentEditMode {
@@ -360,10 +351,6 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
-	};
-
-	get membershipTiers (): I.MembershipTier[] {
-		return this.membershipTiersList || [];
 	};
 
 	get diff (): I.Diff[] {
@@ -606,16 +593,6 @@ class CommonStore {
 	};
 
 	/**
-	 * Sets the email confirmation time.
-	 * @param {number} t - The time value.
-	 */
-	emailConfirmationTimeSet (t: number) {
-		this.emailConfirmationTimeId = t;
-
-		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
-	};
-
-	/**
 	 * Sets the show relative dates value.
 	 * @param {boolean} v - The show relative dates value.
 	 */
@@ -665,6 +642,23 @@ class CommonStore {
 		v.noPreview = Boolean(v.noPreview);
 
 		set(this.getRightSidebarState(isPopup), v);
+	};
+
+	/**
+	 * Clears the right sidebar state.
+	 * @param {boolean} isPopup - Whether it is a popup.
+	 */
+	clearRightSidebarState (isPopup: boolean) {
+		set(this.rightSidebarStateValue[this.getStateKey(isPopup)], {
+			rootId: '',
+			page: '',
+			details: {},
+			readonly: false,
+			noPreview: false,
+			previous: null,
+			blockId: '',
+			back: '',
+		});
 	};
 
 	/**
@@ -907,14 +901,6 @@ class CommonStore {
 	 */
 	dataPathSet (v: string) {
 		this.dataPathValue = String(v || '');
-	};
-
-	/**
-	 * Sets the membership tiers list.
-	 * @param {I.MembershipTier[]} list - The membership tiers list.
-	 */
-	membershipTiersListSet (list: I.MembershipTier[]) {
-		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
 	};
 
 	/**

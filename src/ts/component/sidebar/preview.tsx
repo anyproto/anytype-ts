@@ -88,7 +88,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		`align${layoutAlign}`,
 		`defaultView${I.ViewType[viewType]}`,
 		U.Data.layoutClass('', recommendedLayout),
-		U.Common.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
+		U.String.toCamelCase(`layoutFormat-${I.LayoutFormat[layoutFormat]}`),
 		`featuredRelationLayout${I.FeaturedRelationLayout[headerRelationsLayout]}`,
 	];
 

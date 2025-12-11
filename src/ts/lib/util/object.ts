@@ -119,7 +119,7 @@ class UtilObject {
 	};
 
 	openWindow (object: any) {
-		Renderer.send('openWindow', this.route(object));
+		Renderer.send('openWindow', this.route(object), S.Auth.token);
 	};
 
 	openPopup (object: any, param?: any) {
@@ -520,7 +520,7 @@ class UtilObject {
 	openDateByTimestamp (relationKey: string, t: number, method?: string) {
 		method = method || 'auto';
 
-		let fn = U.Common.toCamelCase(`open-${method}`);
+		let fn = U.String.toCamelCase(`open-${method}`);
 		if (!this[fn]) {
 			fn = 'openAuto';
 		};

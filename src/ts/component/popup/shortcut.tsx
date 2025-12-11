@@ -302,14 +302,14 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 					const item = J.Shortcut.getItems()[editingId];
 
-					let menuLabel = U.Common.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
+					let menuLabel = U.String.sprintf(translate('popupShortcutConflict'), conflict.symbols.join(''), conflict.name);
 					let options = [
 						{ id: 'override', name: translate('popupShortcutOverride') },
 						{ id: 'reset', name: translate('commonRemove') },
 					];
 
 					if (!conflict.id || conflict.noEdit) {
-						menuLabel = U.Common.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
+						menuLabel = U.String.sprintf(translate('popupShortcutRestricted'), conflict.symbols.join(''));
 						options = [ 
 							{ id: 'reset', name: translate('commonOkay') },
 						];
@@ -432,7 +432,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	}, [ page ]);
 
 	if (filter) {
-		const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
+		const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 		section.children = section.children.filter((s: any) => {
 			s.children = s.children.filter((c: any) => {
@@ -469,7 +469,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 							value={page} 
 							onChange={id => {
 								setPage(id);
-								analytics.event(U.Common.toUpperCamelCase(`ScreenShortcut-${id}`));
+								analytics.event(U.String.toUpperCamelCase(`ScreenShortcut-${id}`));
 							}}
 						/>
 						<Label text={translate('popupShortcutDescription')} />

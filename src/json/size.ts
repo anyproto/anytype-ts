@@ -28,10 +28,14 @@ export default {
 
 	dataview: {
 		gallery: {
-			width: 224,
 			height: 72,
 			margin: 16,
 			padding: 16,
+			card: {
+				small: 224,
+				medium: 360,
+				large: 480,
+			}
 		},
 
 		board: {
