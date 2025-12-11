@@ -143,15 +143,21 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		);
 	};
 
+	const lw = 50 + left.length * 10;
+	const rw = 100 - lw;
+
 	let content = (
 		<div className="sides">
 			<div
-				style={{ width: `${50 + left.length * 10}%` }}
 				className={[ 'side', 'left', (left.length > 1 ? 's60' : '') ].join(' ')}
+				style={{ width: `${lw}%` }}
 			>
 				{left.map(mapper)}
 			</div>
-			<div className="side right">
+			<div 
+				className="side right"
+				style={{ width: `${rw}%` }}
+			>
 				{right.map(mapper)}
 			</div>
 		</div>
