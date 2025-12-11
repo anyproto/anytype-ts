@@ -651,9 +651,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onFileInputChange = (e: any) => {
 		const files = Array.from(e.target.files || []) as File[];
 		const electron = U.Common.getElectron();
-		const list = files.map((file: File) => getObjectFromFile(file)).filter(it => {
-			return !electron.isDirectory(it.path);
-		});
+		const list = files.map((file: File) => getObjectFromFile(file)).filter(it => !electron.isDirectory(it.path));
 
 		if (list.length) {
 			addAttachments(list);
