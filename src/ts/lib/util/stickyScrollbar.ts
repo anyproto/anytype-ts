@@ -14,7 +14,7 @@ class UtilStickyScrollbar {
 	 * @param isSyncingScroll - Ref to prevent feedback loops
 	 * @returns The new isSyncingScroll state
 	 */
-	syncFromMainScroll (scroll: JQuery<HTMLElement>, stickyScrollbar: JQuery<HTMLElement>, isSyncingScroll: boolean): boolean {
+	syncFromMain (scroll: JQuery<HTMLElement>, stickyScrollbar: JQuery<HTMLElement>, isSyncingScroll: boolean): boolean {
 		if (!stickyScrollbar.length || isSyncingScroll) {
 			return isSyncingScroll;
 		};
@@ -43,7 +43,7 @@ class UtilStickyScrollbar {
 	 * @param isSyncingScroll - Ref to prevent feedback loops
 	 * @returns The new isSyncingScroll state
 	 */
-	syncFromStickyScroll (scroll: JQuery<HTMLElement>, stickyScrollbar: JQuery<HTMLElement>, isSyncingScroll: boolean): boolean {
+	syncFromSticky (scroll: JQuery<HTMLElement>, stickyScrollbar: JQuery<HTMLElement>, isSyncingScroll: boolean): boolean {
 		if (isSyncingScroll) {
 			return isSyncingScroll;
 		};

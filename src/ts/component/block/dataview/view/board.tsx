@@ -4,7 +4,6 @@ import { arrayMove } from '@dnd-kit/sortable';
 import $ from 'jquery';
 import raf from 'raf';
 import { StickyScrollbar } from 'Component';
-import { StickyScrollbarRefMethods } from 'Component/util/stickyScrollbar';
 import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
@@ -25,8 +24,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	creating = false;
 	hoverId = '';
 	isSyncingScroll = false;
-	stickyScrollbarRef = React.createRef<StickyScrollbarRefMethods>();
-
+	stickyScrollbarRef = null;
+	
 	constructor (props: I.ViewComponent) {
 		super(props);
 
@@ -79,7 +78,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 						</div>
 					</div>
 				</div>
-				<StickyScrollbar ref={this.stickyScrollbarRef} isInline={isInline} />
+				{!isInline ? <StickyScrollbar ref={ref => this.stickyScrollbarRef = ref} /> : ''}
 			</div>
 		);
 	};
@@ -115,8 +114,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		scroll.on('scroll', () => this.onScrollHorizontal());
 		U.Common.getPageContainer(isPopup).on('scroll.board', this.onScrollView);
 
-		if (!isInline && this.stickyScrollbarRef.current) {
-			this.stickyScrollbarRef.current.bindEvents(scroll, { current: this.isSyncingScroll });
+		if (!isInline) {
+			this.stickyScrollbarRef?.bind(scroll, this.isSyncingScroll);
 		};
 	};
 
@@ -126,31 +125,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const scroll = node.find('#scroll');
 
 		scroll.off('scroll');
-		this.stickyScrollbarRef.current?.unbindEvents();
+		this.stickyScrollbarRef?.unbind();
 		U.Common.getPageContainer(isPopup).off('scroll.board');
 	};
 
 	onScrollHorizontal () {
-		const { isInline } = this.props;
-
-		if (isInline) {
-			return;
+		if (this.stickyScrollbarRef) {
+			this.isSyncingScroll = this.stickyScrollbarRef.sync($(this.node).find('#scroll'), this.isSyncingScroll);
 		};
-
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
-
-		// Sync sticky scrollbar with main scroll
-		this.isSyncingScroll = U.StickyScrollbar.syncFromMainScroll(scroll, stickyScrollbar, this.isSyncingScroll);
-	};
-
-	onScrollSticky () {
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
-
-		this.isSyncingScroll = U.StickyScrollbar.syncFromStickyScroll(scroll, stickyScrollbar, this.isSyncingScroll);
 	};
 
 	loadGroupList () {
@@ -559,8 +541,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
-		const stickyScrollbar = node.find('#stickyScrollbar');
-		const stickyScrollbarTrack = node.find('#stickyScrollbarTrack');
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = J.Size.dataview.board;
@@ -578,16 +558,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				view.css({ width: vw });
 			};
 
-			// Set sticky scrollbar dimensions
-			if (stickyScrollbar.length && stickyScrollbarTrack.length) {
-				stickyScrollbar.css({
-					width: maxWidth,
-					left: margin,
-					paddingLeft: margin / 2,
-					display: vw <= maxWidth ? 'none' : ''
-				});
-				stickyScrollbarTrack.css({ width: vw });
-			};
+			this.stickyScrollbarRef.resize({
+				width: maxWidth,
+				left: margin,
+				paddingLeft: margin / 2,
+				display: vw <= maxWidth ? 'none' : '',
+				trackWidth: vw,
+			});
 		} else
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
 			const wrapper = $('#editorWrapper');

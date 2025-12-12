@@ -6,7 +6,6 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
-import { StickyScrollbarRefMethods } from 'Component/util/stickyScrollbar';
 import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
@@ -22,7 +21,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	cache: any = null;
 	ox = 0;
 	isSyncingScroll = false;
-	stickyScrollbarRef = React.createRef<StickyScrollbarRefMethods>();
+	stickyScrollbarRef = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -158,7 +157,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						</div>
 					</div>
 				</div>
-				<StickyScrollbar ref={this.stickyScrollbarRef} isInline={isInline} />
+				{!isInline ? <StickyScrollbar ref={ref => this.stickyScrollbarRef = ref} /> : ''}
 			</div>
 		);
 	};
@@ -199,8 +198,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		scroll.on('scroll', () => this.onScrollHorizontal());
 		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => this.onScrollVertical()));
 
-		if (!isInline && this.stickyScrollbarRef.current) {
-			this.stickyScrollbarRef.current.bindEvents(scroll, { current: this.isSyncingScroll });
+		if (!isInline) {
+			this.stickyScrollbarRef?.bind(scroll, this.isSyncingScroll);
 		};
 	};
 
@@ -211,8 +210,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const container = U.Common.getScrollContainer(isPopup);
 
 		scroll.off('scroll');
-		this.stickyScrollbarRef.current?.unbindEvents();
 		container.off(`scroll.${block.id}`);
+
+		this.stickyScrollbarRef?.unbind();
 	};
 
 	onScrollHorizontal () {
@@ -233,9 +233,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			clone.css({ transform: `translate3d(${-scroll.scrollLeft()}px,0px,0px)` });
 		};
 
-		// Sync sticky scrollbar with main scroll
-		if (this.stickyScrollbarRef.current) {
-			this.isSyncingScroll = this.stickyScrollbarRef.current.syncFromScroll(scroll, this.isSyncingScroll);
+		if (this.stickyScrollbarRef) {
+			this.isSyncingScroll = this.stickyScrollbarRef.sync(scroll, this.isSyncingScroll);
 		};
 	};
 
@@ -527,19 +526,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
 			wrap.css({ width: vw, paddingRight: pr });
 
-			// Set sticky scrollbar dimensions
-			if (this.stickyScrollbarRef.current) {
-				const scrollWidth = mw;
-				const contentWidth = scroll.get(0).scrollWidth;
-
-				this.stickyScrollbarRef.current.resize({
-					width: scrollWidth,
-					left: margin,
-					paddingLeft: margin,
-					display: contentWidth <= scrollWidth ? 'none' : '',
-					trackWidth: contentWidth,
-				});
-			};
+			this.stickyScrollbarRef?.resize({
+				width: mw,
+				left: margin,
+				paddingLeft: margin,
+				display: vw <= mw ? 'none' : '',
+				trackWidth: vw,
+			});
 		};
 
 		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });

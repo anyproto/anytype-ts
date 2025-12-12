@@ -1,94 +1,76 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import $ from 'jquery';
-import { U } from 'Lib';
+import { U, I } from 'Lib';
 
 interface Props {
 	isInline?: boolean;
 };
 
-export interface StickyScrollbarRefMethods {
-	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
-	bindEvents: (scrollElement: JQuery<HTMLElement>, isSyncingScrollRef: { current: boolean }) => void;
-	unbindEvents: () => void;
-	syncFromScroll: (scrollElement: JQuery<HTMLElement>, isSyncingScroll: boolean) => boolean;
-};
+const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>(({}, ref) => {
 
-const StickyScrollbar = forwardRef<StickyScrollbarRefMethods, Props>(({
-	isInline = false,
-}, ref) => {
-
-	const stickyScrollbarRef = useRef<HTMLDivElement>(null);
+	const nodeRef = useRef<HTMLDivElement>(null);
 	const trackRef = useRef<HTMLDivElement>(null);
 	const scrollElementRef = useRef<JQuery<HTMLElement>>(null);
-	const isSyncingScrollRef = useRef<{ current: boolean }>(null);
+	const isSyncing = useRef(false);
 
-	useImperativeHandle(ref, () => ({
-		resize: (config) => {
-			if (!stickyScrollbarRef.current || !trackRef.current) {
-				return;
-			};
+	const resize = (config) => {
+		if (!nodeRef.current || !trackRef.current) {
+			return;
+		};
 
-			const stickyScrollbar = $(stickyScrollbarRef.current);
-			const track = $(trackRef.current);
+		const stickyScrollbar = $(nodeRef.current);
+		const track = $(trackRef.current);
 
-			stickyScrollbar.css({
-				width: config.width,
-				left: config.left,
-				paddingLeft: config.paddingLeft,
-				display: config.display,
-			});
-			track.css({ width: config.trackWidth });
-		},
-
-		bindEvents: (scrollElement, isSyncingScroll) => {
-			if (!stickyScrollbarRef.current) {
-				return;
-			};
-
-			scrollElementRef.current = scrollElement;
-			isSyncingScrollRef.current = isSyncingScroll;
-
-			const stickyScrollbar = $(stickyScrollbarRef.current);
-			stickyScrollbar.off('scroll.sticky');
-			stickyScrollbar.on('scroll.sticky', () => {
-				if (!scrollElementRef.current || !isSyncingScrollRef.current) {
-					return;
-				};
-				isSyncingScrollRef.current.current = U.StickyScrollbar.syncFromStickyScroll(
-					scrollElementRef.current,
-					stickyScrollbar,
-					isSyncingScrollRef.current.current
-				);
-			});
-		},
-
-		unbindEvents: () => {
-			if (!stickyScrollbarRef.current) {
-				return;
-			};
-
-			const stickyScrollbar = $(stickyScrollbarRef.current);
-			stickyScrollbar.off('scroll.sticky');
-			scrollElementRef.current = null;
-			isSyncingScrollRef.current = null;
-		},
-
-		syncFromScroll: (scrollElement, isSyncingScroll) => {
-			if (!stickyScrollbarRef.current) {
-				return isSyncingScroll;
-			};
-
-			const stickyScrollbar = $(stickyScrollbarRef.current);
-			return U.StickyScrollbar.syncFromMainScroll(scrollElement, stickyScrollbar, isSyncingScroll);
-		},
-	}));
-
-	if (isInline) {
-		return null;
+		stickyScrollbar.css({
+			width: config.width,
+			left: config.left,
+			paddingLeft: config.paddingLeft,
+			display: config.display,
+		});
+		track.css({ width: config.trackWidth });
 	};
 
+	const bind = (scrollElement, status) => {
+		if (!nodeRef.current) {
+			return;
+		};
+
+		scrollElementRef.current = scrollElement;
+		isSyncing.current = status;
+
+		const node = $(nodeRef.current);
+
+		node.off('scroll.sticky').on('scroll.sticky', () => {
+			if (scrollElementRef.current) {
+				isSyncing.current = U.StickyScrollbar.syncFromSticky(
+					scrollElementRef.current,
+					node,
+					isSyncing.current
+				);
+			};
+		});
+	};
+
+	const unbind = () => {
+		$(nodeRef.current).off('scroll.sticky');
+		scrollElementRef.current = null;
+		isSyncing.current = null;
+	};
+
+	const sync = (element, isSyncing) => {
+		return U.StickyScrollbar.syncFromMain(element, $(nodeRef.current), isSyncing);
+	};
+
+	useImperativeHandle(ref, () => ({
+		resize,
+		bind,
+		unbind,
+		sync,
+		getNode: () => nodeRef.current,
+	}));
+
 	return (
-		<div className="stickyScrollbar" ref={stickyScrollbarRef}>
+		<div ref={nodeRef} className="stickyScrollbar">
 			<div className="stickyScrollbarTrack" ref={trackRef}></div>
 		</div>
 	);

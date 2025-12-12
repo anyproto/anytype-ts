@@ -1,8 +1,8 @@
 @import "~scss/_mixins";
 
 .stickyScrollbar {
-	position: sticky; bottom: 0px; left: 0px; overflow-x: auto; overflow-y: hidden; z-index: 2;
-	background: var(--color-bg-primary); height: 6px; box-sizing: border-box;
+	position: sticky; bottom: 8px; left: 0px; overflow-x: auto; overflow-y: hidden; z-index: 2; height: 6px; 
+	box-sizing: border-box;
 }
 .stickyScrollbar::-webkit-scrollbar { height: 6px; }
 .stickyScrollbar::-webkit-scrollbar-track { background: var(--color-shape-secondary); border-radius: 3px; }
