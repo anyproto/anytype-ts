@@ -8,6 +8,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = S.Membership
 	const { account} = S.Auth;
+	const { dateFormat } = S.Common;
 	const { nextInvoice } = data;
 	const purchased = data?.getTopPurchasedProduct();
 	const product = data?.getTopProduct();
@@ -27,13 +28,14 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	let date = '';
 	let button = null;
 
-	if (isAutoRenew) {
+	if (isAutoRenew && nextInvoice.date) {
 		const price = U.Common.getMembershipPriceString(nextInvoice.total);
 
-		date = U.Date.dateWithFormat(S.Common.dateFormat, nextInvoice.date);
+		date = U.Date.dateWithFormat(dateFormat, nextInvoice.date);
 		membershipText = U.String.sprintf(translate('popupSettingsMembershipNextPayment'), price, date);
-	} else {
-		date = U.Date.dateWithFormat(S.Common.dateFormat, dateEnds);
+	} else 
+	if (dateEnds) {
+		date = U.Date.dateWithFormat(dateFormat, dateEnds);
 		membershipText = U.String.sprintf(translate('popupSettingsMembershipValidUntil'), date);
 	};
 
