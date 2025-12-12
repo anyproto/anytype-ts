@@ -84,10 +84,10 @@ export interface BlockComponent {
 	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-	onPaste?(e: any, props: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onCopy?(e: any, cut: boolean): void;
+	onPaste?(e: any, props: any): void;
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;

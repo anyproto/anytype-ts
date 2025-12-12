@@ -146,11 +146,29 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			});
 		};
 
-		if (onCopy) {
-			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
-				onCopy(e, pressed.match('x') ? true : false);
-			});
-		};
+		keyboard.shortcut(`${cmd}+c`, e, () => {
+			console.log('Menu shortcut Cmd+C triggered');
+			e.preventDefault();
+			e.stopPropagation();
+			this.onClick(e, { itemId: 'clipboardCopy' });
+			ret = true;
+		});
+
+		keyboard.shortcut(`${cmd}+x`, e, () => {
+			console.log('Menu shortcut Cmd+X triggered');
+			e.preventDefault();
+			e.stopPropagation();
+			this.onClick(e, { itemId: 'clipboardCut' });
+			ret = true;
+		});
+
+		keyboard.shortcut(`${cmd}+v`, e, () => {
+			console.log('Menu shortcut Cmd+V triggered');
+			e.preventDefault();
+			e.stopPropagation();
+			this.onClick(e, { itemId: 'clipboardPaste' });
+			ret = true;
+		});
 
 		if (focused || (!focused && keyboard.isFocused)) {
 			keyboard.shortcut('duplicate', e, () => {
@@ -592,7 +610,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, isPopup } = data;
+		const { blockId, blockIds, rootId } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -602,7 +620,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection.getForClick(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
-		const ns = U.Common.getEventNamespace(isPopup);
 
 		switch (item.itemId) {
 			case 'clipboardCopy': {
@@ -616,8 +633,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'clipboardPaste': {
-				Renderer.send('paste');
-				break;
+				close();
+
+				window.setTimeout(() => {
+					Renderer.send('paste');
+				}, J.Constant.delay.menu);
+
+				return;
 			};
 
 			case 'download': {

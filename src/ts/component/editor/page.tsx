@@ -714,8 +714,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							blockId: ids[0],
 							blockIds: ids,
 							rootId,
-							onCopy: this.onCopy,
-							isPopup,
 						},
 						onClose: () => {
 							selection.clear();
@@ -808,7 +806,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any, props: any) {
 		range = range || {};
 
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const { focused } = focus.state;
 		const selection = S.Common.getRef('selectionProvider');
@@ -915,8 +913,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						blockId: block.id,
 						blockIds: selection.getForClick(block.id, true, true),
 						rootId,
-						onCopy: this.onCopy,
-						isPopup,
 					},
 					onClose: () => {
 						selection.clear();
