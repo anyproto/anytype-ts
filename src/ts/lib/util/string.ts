@@ -6,7 +6,8 @@ import { I, U, Mark } from 'Lib';
 const TEST_HTML = /<[^>]*>/;
 const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
 const DOMAIN_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:\/\/)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/;
-const URL_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:[^\s]+|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
+const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
+const ALLOWED_PROTOCOLS = [ 'mailto', 'tel' ];
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 class UtilString {
@@ -276,7 +277,20 @@ class UtilString {
 	 */
 	matchUrl (s: string): string {
 		const m = String(s || '').match(URL_REGEX);
-		return String(((m && m.length) ? m[0] : '') || '').trim();
+		const ret = String(((m && m.length) ? m[0] : '') || '').trim();
+
+		try {
+			const url = new URL(ret);
+
+			if (!url.host) {
+				const protocol = url.protocol.replace(/:$/, '');
+				if (!ALLOWED_PROTOCOLS.includes(protocol) && !/^\/\//.test(url.pathname)) {
+					return '';
+				};
+			};
+		} catch (e) {};
+
+		return ret;
 	};
 
 	/**
