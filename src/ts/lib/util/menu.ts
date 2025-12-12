@@ -268,7 +268,11 @@ class UtilMenu {
 		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
-			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
+			{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
+			{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
+			{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+			{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
+			{ isDiv: true },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
 
@@ -1604,16 +1608,14 @@ class UtilMenu {
 		const options = ids.map(id => {
 			const suffix = U.String.toUpperCamelCase(id);
 
-			let name = '';
 			let icon = '';
 			let description = '';
 			let withDescription = false;
 
 			if (id != 'join') {
-				name = translate(`sidebarMenuSpaceCreateTitle${suffix}`);
+				icon = id;
 				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
 				withDescription = true;
-				icon = id;
 			};
 
 			return {

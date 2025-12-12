@@ -577,7 +577,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	menuOpen (param?: Partial<I.MenuParam>) {
-		const { rootId, block, blockRemove, onCopy } = this.props;
+		const { rootId, block, blockRemove, onCopy, isPopup } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
 		// Hide block menus and plus button
@@ -599,6 +599,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				rootId,
 				blockRemove,
 				onCopy,
+				isPopup,
 			}
 		}, param || {});
 

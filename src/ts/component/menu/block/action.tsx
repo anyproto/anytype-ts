@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview, Renderer } from 'Lib';
 
 interface State {
 	filter: string;
@@ -592,7 +592,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
+		const { blockId, blockIds, rootId, isPopup } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -602,8 +602,24 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection.getForClick(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
+		const ns = U.Common.getEventNamespace(isPopup);
 
 		switch (item.itemId) {
+			case 'clipboardCopy': {
+				Action.copyBlocks(rootId, ids, false);
+				break;
+			};
+
+			case 'clipboardCut': {
+				Action.copyBlocks(rootId, ids, true);
+				break;
+			};
+
+			case 'clipboardPaste': {
+				Renderer.send('paste');
+				break;
+			};
+
 			case 'download': {
 				Action.downloadFile(targetObjectId, analytics.route.menuAction, block.isFileImage());
 				break;

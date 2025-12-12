@@ -45,6 +45,8 @@
 	"commonOlder": "Older",
 	"commonPhrase": "Key",
 	"commonCopy": "Copy",
+	"commonCut": "Cut",
+	"commonPaste": "Paste",
 	"commonOpen": "Open",
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",

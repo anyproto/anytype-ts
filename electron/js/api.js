@@ -58,6 +58,12 @@ class Api {
 		WindowManager.sendToAll('pin-remove');
 	};
 
+	paste (win) {
+		if (win && win.webContents && !win.isDestroyed()) {
+			win.webContents.paste();
+		};
+	};
+
 	setConfig (win, config, callBack) {
 		ConfigManager.set(config, () => {
 			Util.send(win, 'config', ConfigManager.config);
