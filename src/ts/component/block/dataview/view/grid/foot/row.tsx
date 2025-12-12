@@ -9,7 +9,7 @@ interface Props extends I.ViewComponent {
 
 const FootRow = observer(forwardRef<{}, Props>((props, ref) => {
 
-	const { rootId, block, isInline, isCollection, getView, getKeys, getSources, getVisibleRelations, getColumnWidths } = props;
+	const { rootId, block, isInline, isCollection, getView, getKeys, getSources, getVisibleRelations, getColumnWidths, getSearchIds } = props;
 	const widths = getColumnWidths('', 0);
 	const relations = getVisibleRelations();
 	const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
@@ -27,6 +27,12 @@ const FootRow = observer(forwardRef<{}, Props>((props, ref) => {
 		const keys = getKeys(view.id);
 		const sources = getSources();
 		const collectionId = isCollection ? (isInline ? block.getTargetObjectId() : rootId) : '';
+		const filters: I.Filter[] = [];
+		const searchIds = getSearchIds();
+
+		if (searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
 
 		Dataview.getData({
 			rootId, 
@@ -38,7 +44,7 @@ const FootRow = observer(forwardRef<{}, Props>((props, ref) => {
 			limit: 0, 
 			clear: true,
 			sources,
-			filters: [],
+			filters,
 			collectionId,
 		}, () => {
 			relations.forEach(relation => {
