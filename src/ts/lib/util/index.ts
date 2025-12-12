@@ -12,6 +12,7 @@ import Space from './space';
 import Prism from './prism';
 import Subscription from './subscription';
 import String from './string';
+import StickyScrollbar from './stickyScrollbar';
 
 export {
 	Common,
@@ -28,4 +29,5 @@ export {
 	Prism,
 	Subscription,
 	String,
+	StickyScrollbar,
 };

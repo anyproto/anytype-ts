@@ -5,7 +5,7 @@ import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { LoadMore } from 'Component';
+import { LoadMore, StickyScrollbar } from 'Component';
 import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
@@ -156,11 +156,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						</div>
 					</div>
 				</div>
-				{!isInline ? (
-					<div id="stickyScrollbar" className="stickyScrollbar">
-						<div id="stickyScrollbarTrack" className="stickyScrollbarTrack"></div>
-					</div>
-				) : ''}
+				<StickyScrollbar isInline={isInline} />
 			</div>
 		);
 	};
@@ -239,11 +235,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 
 		// Sync sticky scrollbar with main scroll
-		if (stickyScrollbar.length && !this.isSyncingScroll) {
-			this.isSyncingScroll = true;
-			stickyScrollbar.scrollLeft(scroll.scrollLeft());
-			this.isSyncingScroll = false;
-		};
+		this.isSyncingScroll = U.StickyScrollbar.syncFromMainScroll(scroll, stickyScrollbar, this.isSyncingScroll);
 	};
 
 	onScrollVertical () {
@@ -303,21 +295,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onScrollSticky () {
-		if (this.isSyncingScroll) {
-			return;
-		};
-
-		this.isSyncingScroll = true;
-
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const stickyScrollbar = node.find('#stickyScrollbar');
 
-		if (scroll.length && stickyScrollbar.length) {
-			scroll.scrollLeft(stickyScrollbar.scrollLeft());
-		};
-
-		this.isSyncingScroll = false;
+		this.isSyncingScroll = U.StickyScrollbar.syncFromStickyScroll(scroll, stickyScrollbar, this.isSyncingScroll);
 	};
 
 	resizeColumns (relationKey: string, width: number) {
@@ -556,18 +538,16 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 			// Set sticky scrollbar dimensions
 			if (stickyScrollbar.length && stickyScrollbarTrack.length) {
-				const scrollWidth = scroll.width();
-				const contentWidth = wrap.outerWidth();
+				const scrollWidth = mw;
+				const contentWidth = scroll.get(0).scrollWidth;
 
-				stickyScrollbar.css({ width: scrollWidth, marginLeft: -margin - 2, paddingLeft: margin });
+				stickyScrollbar.css({
+					width: scrollWidth,
+					left: margin,
+					paddingLeft: margin,
+					display: contentWidth <= scrollWidth ? 'none' : ''
+				});
 				stickyScrollbarTrack.css({ width: contentWidth });
-
-				// Hide scrollbar if content fits within viewport
-				if (contentWidth <= scrollWidth) {
-					stickyScrollbar.css({ display: 'none' });
-				} else {
-					stickyScrollbar.css({ display: '' });
-				};
 			};
 		};
 
