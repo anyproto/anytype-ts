@@ -530,7 +530,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			marks.current = Mark.adjust(marks.current, from, value.length);
 			marks.current.push({ 
 				type, 
 				range: { from, to }, 
