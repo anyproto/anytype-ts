@@ -181,10 +181,13 @@
 .attachments.withLayout:not(.layout-1) {
 	.image { aspect-ratio: 1 !important; }
 }
+.attachments.layout-2,
+.attachments.layout-3,
+.attachments.layout-4 { flex-wrap: nowrap; }
 
 .attachments.layout-2 { gap: 4px; }
 .attachments.layout-2 {
-	.attachment { @include cnt-2; }
+	.attachment { @include cnt-2;  }
 }
 .attachments.layout-3 {
 	.attachment { @include cnt-3; }
