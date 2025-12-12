@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import $ from 'jquery';
 import { U, I } from 'Lib';
 
@@ -70,9 +71,17 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>(({}, ref) => {
 	}));
 
 	return (
-		<div ref={nodeRef} className="stickyScrollbar">
-			<div className="stickyScrollbarTrack" ref={trackRef}></div>
-		</div>
+		<AnimatePresence mode="popLayout">
+			<motion.div
+				ref={nodeRef} 
+				className="stickyScrollbar"
+				{...U.Common.animationProps({
+					transition: { duration: 0.2, delay: 0.2 },
+				})}
+			>
+				<div className="stickyScrollbarTrack" ref={trackRef}></div>
+			</motion.div>
+		</AnimatePresence>
 	);
 
 });
