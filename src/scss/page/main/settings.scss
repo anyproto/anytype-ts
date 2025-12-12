@@ -1114,7 +1114,6 @@
 
                 .item.current { border: 0px; text-align: left; z-index: 1; }
                 .item.current {
-                    .top { margin: 0px 8px; }
                     .icon { margin-bottom: 12px; background-size: 60px; width: 60px; height: 60px; }
                     .title { @include text-header2; font-weight: 500; }
 

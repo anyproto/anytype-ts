@@ -71,6 +71,8 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 		button = <Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />;
 	};
 
+	button = <Label text={translate('popupSettingsMembershipTeamMessage')} />;
+
 	return (
 		<div className="membershipPurchased">
 			<div className="section">
