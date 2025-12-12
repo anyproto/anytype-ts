@@ -974,10 +974,14 @@
 
             .switchWrapper {
                 position: relative; display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin: 0px auto 32px;
-                width: 212px; height: 24px; border-radius: 12px; border: 2px solid var(--color-shape-secondary); background: var(--color-shape-secondary);
+                width: 240px; height: 28px; border-radius: 14px; border: 2px solid var(--color-shape-secondary); 
+                background: var(--color-shape-secondary);
             }
             .switchWrapper {
-                .label { position: relative; z-index: 1; font-weight: 500; width: 50%; flex-shrink: 0; text-align: center; color: var(--color-text-secondary); }
+                .label { 
+                    position: relative; z-index: 1; font-weight: 500; width: calc(50% - 4px); flex-shrink: 0; text-align: center; 
+                    color: var(--color-text-secondary); @include text-overflow-nw;
+                }
                 .label {
                     span { @include text-small; font-weight: 400; }
 

@@ -20,10 +20,5 @@ export const translate = (key: string, force?: string): string => {
 		};
 	};
 
-	if (key == 'popupSettingsMembershipTitle') {
-		console.log(data[key], defaultData[key]);
-		console.log(data);
-	};
-
 	return data[key] || defaultData[key] || `⚠️${key}⚠️`;
 };

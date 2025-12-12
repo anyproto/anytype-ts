@@ -1026,7 +1026,7 @@
 	"popupSettingsMembershipText": "Pick the plan that works for you now, add more teammates and additional storage anytime you need. Switch or cancel anytime — risk-free for 30 days.",
 	"popupSettingsMembershipSelectPlan": "Select plan",
 	"popupSettingsMembershipCurrentPlan": "Current plan",
-	"popupSettingsMembershipCurrentPricePeriod": "per seat per %s",
+	"popupSettingsMembershipCurrentPricePeriod": "per seat / %s",
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",

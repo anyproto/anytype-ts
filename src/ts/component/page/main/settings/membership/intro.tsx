@@ -21,8 +21,6 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		products.unshift(current);
 	};
 
-	console.log(products);
-
 	const rebind = () => {
 		unbind();
 		resize();
