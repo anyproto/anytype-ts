@@ -29,7 +29,9 @@
 		"https://*.openstreetmap.org",
 		"https://*.openstreetmap.fr",
 		"https://*.jawg.io",
-		"https://*.cdninstagram.com"
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org"
     ],
 
 	"media-src": [ 
@@ -56,7 +58,9 @@
 		"https://*.unsplash.com",
 		"https://*.spotifycdn.com",
 		"https://*.openstreetmap.org",
-		"https://*.cdninstagram.com"
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org"
 	],
 
 	"style-src": [ 

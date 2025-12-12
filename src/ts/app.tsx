@@ -21,6 +21,7 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
+import space from 'Lib/util/space';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -273,7 +274,8 @@ const App: FC = () => {
 							S.Common.redirectSet(route);
 							S.Common.configSet(account.config, false);
 
-							const spaceId = Storage.get('spaceId');
+							const param = route ? U.Router.getParam(route) : {};
+							const spaceId = param.spaceId || Storage.get('spaceId');
 							const routeParam = { 
 								onRouteChange: hide,
 							};

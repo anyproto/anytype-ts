@@ -1,9 +1,7 @@
 .attachments { display: flex; gap: 4px; flex-wrap: wrap; }
 .attachments {
-	--width-attachment: calc(524px / 2);
-
 	.attachment {
-		position: relative; background: var(--color-bg-primary); min-width: var(--width-attachment); height: 72px; border-radius: 12px; 
+		position: relative; background: var(--color-bg-primary); min-width: 268px; height: 72px; border-radius: 12px; 
 		display: flex; flex-direction: row; align-items: center; color: var(--color-text-primary);
 	}
 	.attachment * { user-select: none; cursor: default; }
@@ -165,7 +163,7 @@
 .attachments.withLayout {
 	.attachment { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; min-width: unset; }
 	.attachment.isImage {
-		.imgWrapper { min-width: 72px; min-height: 72px; }
+		.imgWrapper { min-width: unset; min-height: unset; }
 		.image, .loaderWrapper { max-width: 100%; max-height: 360px; }
 	}
 }
@@ -182,9 +180,8 @@
 	.image { aspect-ratio: 1 !important; }
 }
 
-.attachments.layout-2 { gap: 4px; }
 .attachments.layout-2 {
-	.attachment { @include cnt-2; }
+	.attachment { @include cnt-2;  }
 }
 .attachments.layout-3 {
 	.attachment { @include cnt-3; }
@@ -213,10 +210,3 @@
 	.attachment { @include cnt-4; }
 	.attachment:nth-child(-n + 6) { @include cnt-3; }
 }
-
-.attachments.layout-5,
-.attachments.layout-6,
-.attachments.layout-7,
-.attachments.layout-8,
-.attachments.layout-9,
-.attachments.layout-10 { width: 532px; }
