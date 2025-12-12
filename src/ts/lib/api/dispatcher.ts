@@ -646,7 +646,7 @@ class Dispatcher {
 
 							if (element.move) {
 								const { afterId, ids } = element.move;
-								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : 0;
+								const idx = afterId ? list.findIndex(it => it && (it[key.idField] == afterId)) + 1 : 0;
 
 								ids.forEach((id: string, i: number) => {
 									const oidx = list.findIndex(it => it[key.idField] == id);

@@ -35,13 +35,13 @@ class View implements I.View {
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		this.defaultTypeId = String(props.defaultTypeId || '');
 		
-		this.relations = Array.isArray(props.relations) ? props.relations : [];
+		this.relations = Array.isArray(props.relations) ? props.relations.filter(it => it) : [];
 		this.relations = this.relations.map(it => new M.ViewRelation(it));
 
-		this.filters = Array.isArray(props.filters) ? props.filters : [];
+		this.filters = Array.isArray(props.filters) ? props.filters.filter(it => it) : [];
 		this.filters = this.filters.map(it => new M.Filter(it));
 
-		this.sorts = Array.isArray(props.sorts) ? props.sorts : [];
+		this.sorts = Array.isArray(props.sorts) ? props.sorts.filter(it => it) : [];
 		this.sorts = this.sorts.map(it => new M.Sort(it));
 
 		makeObservable(this, {
