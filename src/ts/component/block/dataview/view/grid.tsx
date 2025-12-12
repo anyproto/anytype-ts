@@ -5,7 +5,7 @@ import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { LoadMore } from 'Component';
+import { LoadMore, StickyScrollbar } from 'Component';
 import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
@@ -20,6 +20,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	node: any = null;
 	cache: any = null;
 	ox = 0;
+	isSyncingScroll = false;
+	stickyScrollbarRef = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -125,18 +127,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 
 		return (
-			<div 
+			<div
 				ref={node => this.node = node}
 				className="wrap"
 			>
 				<div id="scroll" className="scroll">
 					<div id="scrollWrap" className="scrollWrap">
 						<div className={cn.join(' ')}>
-							<HeadRow 
-								{...this.props} 
-								onCellAdd={this.onCellAdd} 
-								onSortStart={this.onSortStart} 
-								onSortEnd={this.onSortEnd} 
+							<HeadRow
+								{...this.props}
+								onCellAdd={this.onCellAdd}
+								onSortStart={this.onSortStart}
+								onSortEnd={this.onSortEnd}
 								onResizeStart={this.onResizeStart}
 								getColumnWidths={this.getColumnWidths}
 							/>
@@ -145,7 +147,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 							{isAllowedObject ? <AddRow onClick={e => onRecordAdd(e, 1)} /> : ''}
 
 							<FootRow
-								{...this.props} 
+								{...this.props}
 								getColumnWidths={this.getColumnWidths}
 							/>
 
@@ -155,6 +157,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						</div>
 					</div>
 				</div>
+				{!isInline ? <StickyScrollbar ref={ref => this.stickyScrollbarRef = ref} /> : ''}
 			</div>
 		);
 	};
@@ -185,7 +188,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	rebind () {
-		const { isPopup, block } = this.props;
+		const { isPopup, block, isInline } = this.props;
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const container = U.Common.getScrollContainer(isPopup);
@@ -194,6 +197,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		scroll.on('scroll', () => this.onScrollHorizontal());
 		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => this.onScrollVertical()));
+
+		if (!isInline) {
+			this.stickyScrollbarRef?.bind(scroll, this.isSyncingScroll);
+		};
 	};
 
 	unbind () {
@@ -204,6 +211,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		scroll.off('scroll');
 		container.off(`scroll.${block.id}`);
+
+		this.stickyScrollbarRef?.unbind();
 	};
 
 	onScrollHorizontal () {
@@ -217,12 +226,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 
 		const node = $(this.node);
+		const scroll = node.find('#scroll');
 		const clone = node.find('#rowHeadClone');
 
 		if (clone.length) {
-			const scroll = node.find('#scroll');
-
 			clone.css({ transform: `translate3d(${-scroll.scrollLeft()}px,0px,0px)` });
+		};
+
+		if (this.stickyScrollbarRef) {
+			this.isSyncingScroll = this.stickyScrollbarRef.sync(scroll, this.isSyncingScroll);
 		};
 	};
 
@@ -255,11 +267,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const root = createRoot(clone.get(0));
 
 			root.render((
-				<HeadRow 
-					{...this.props} 
-					onCellAdd={this.onCellAdd} 
-					onSortStart={this.onSortStart} 
-					onSortEnd={this.onSortEnd} 
+				<HeadRow
+					{...this.props}
+					onCellAdd={this.onCellAdd}
+					onSortStart={this.onSortStart}
+					onSortEnd={this.onSortEnd}
 					onResizeStart={this.onResizeStart}
 					getColumnWidths={this.getColumnWidths}
 				/>
@@ -513,6 +525,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
 			wrap.css({ width: vw, paddingRight: pr });
+
+			this.stickyScrollbarRef?.resize({
+				width: mw,
+				left: margin,
+				paddingLeft: margin,
+				display: vw <= mw ? 'none' : '',
+				trackWidth: vw,
+			});
 		};
 
 		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });

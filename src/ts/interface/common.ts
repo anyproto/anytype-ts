@@ -396,3 +396,10 @@ export interface ImageParam {
 	height: number;
 	excavate: boolean;
 };
+
+export interface StickyScrollbarRef {
+	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
+	bind: (element: JQuery<HTMLElement>, isSyncing: boolean) => void;
+	unbind: () => void;
+	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
+};

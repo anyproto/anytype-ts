@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 import $ from 'jquery';
 import raf from 'raf';
+import { StickyScrollbar } from 'Component';
 import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
@@ -22,7 +23,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	ox = 0;
 	creating = false;
 	hoverId = '';
-
+	isSyncingScroll = false;
+	stickyScrollbarRef = null;
+	
 	constructor (props: I.ViewComponent) {
 		super(props);
 
@@ -32,7 +35,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	render () {
-		const { rootId, block, getView, className, onViewSettings } = this.props;
+		const { rootId, block, getView, className, onViewSettings, isInline } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
 		const relation = S.Record.getRelationByKey(view.groupRelationKey);
@@ -52,28 +55,30 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		return (
-			<div 
-				ref={node => this.node = node} 
-				id="scrollWrap"
-				className="scrollWrap"
+			<div
+				ref={node => this.node = node}
+				className="wrap"
 			>
-				<div id="scroll" className="scroll">
-					<div className={cn.join(' ')}>
-						<div id="columns" className="columns">
-							{groups.map((group: any, i: number) => (
-								<Column 
-									key={`board-column-${group.id}`} 
-									ref={ref => this.columnRefs[group.id] = ref}
-									{...this.props} 
-									{...group}
-									onDragStartColumn={this.onDragStartColumn}
-									onDragStartCard={this.onDragStartCard}
-									getSubId={() => this.getSubId(group.id)}
-								/>
-							))}
+				<div id="scrollWrap" className="scrollWrap">
+					<div id="scroll" className="scroll">
+						<div className={cn.join(' ')}>
+							<div id="columns" className="columns">
+								{groups.map((group: any, i: number) => (
+									<Column
+										key={`board-column-${group.id}`}
+										ref={ref => this.columnRefs[group.id] = ref}
+										{...this.props}
+										{...group}
+										onDragStartColumn={this.onDragStartColumn}
+										onDragStartCard={this.onDragStartCard}
+										getSubId={() => this.getSubId(group.id)}
+									/>
+								))}
+							</div>
 						</div>
 					</div>
 				</div>
+				{!isInline ? <StickyScrollbar ref={ref => this.stickyScrollbarRef = ref} /> : ''}
 			</div>
 		);
 	};
@@ -100,17 +105,34 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	rebind () {
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
 
 		this.unbind();
 
+		scroll.on('scroll', () => this.onScrollHorizontal());
 		U.Common.getPageContainer(isPopup).on('scroll.board', this.onScrollView);
+
+		if (!isInline) {
+			this.stickyScrollbarRef?.bind(scroll, this.isSyncingScroll);
+		};
 	};
 
 	unbind () {
 		const { isPopup } = this.props;
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
 
+		scroll.off('scroll');
+		this.stickyScrollbarRef?.unbind();
 		U.Common.getPageContainer(isPopup).off('scroll.board');
+	};
+
+	onScrollHorizontal () {
+		if (this.stickyScrollbarRef) {
+			this.isSyncingScroll = this.stickyScrollbarRef.sync($(this.node).find('#scroll'), this.isSyncingScroll);
+		};
 	};
 
 	loadGroupList () {
@@ -528,13 +550,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;
 			const margin = width >= maxWidth ? PADDING : 0;
+			const vw = width > maxWidth ? width + size.margin : 0;
 
 			scroll.css({ width: `calc(100% + ${PADDING * 2}px)`, marginLeft: -margin, paddingLeft: margin / 2 });
 
 			if (width > maxWidth) {
-				view.css({ width: width + size.margin });
+				view.css({ width: vw });
 			};
-		} else 
+
+			this.stickyScrollbarRef.resize({
+				width: maxWidth,
+				left: margin,
+				paddingLeft: margin / 2,
+				display: vw <= maxWidth ? 'none' : '',
+				trackWidth: vw,
+			});
+		} else
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
 			const wrapper = $('#editorWrapper');
 			const ww = wrapper.width();

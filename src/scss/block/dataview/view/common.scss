@@ -149,7 +149,7 @@
 	}
 
 	.block.blockDataview.isInline {
-		.viewContent.viewGallery, 
+		.viewContent.viewGallery,
 		.viewContent.viewBoard {
 			.cellContent.isName {
 				.name { @include clamp2; }
@@ -159,4 +159,5 @@
 			}
 		}
 	}
+
 }
