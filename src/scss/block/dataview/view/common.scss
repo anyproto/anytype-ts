@@ -159,4 +159,11 @@
 			}
 		}
 	}
+
+	.block.blockDataview {
+		.wrap { position: relative; }
+
+		.scroll { overflow-x: auto; }
+		.scroll::-webkit-scrollbar { display: none; }
+	}
 }

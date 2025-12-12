@@ -4,6 +4,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import $ from 'jquery';
 import raf from 'raf';
 import { StickyScrollbar } from 'Component';
+import { StickyScrollbarRefMethods } from 'Component/util/stickyScrollbar';
 import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
@@ -24,6 +25,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	creating = false;
 	hoverId = '';
 	isSyncingScroll = false;
+	stickyScrollbarRef = React.createRef<StickyScrollbarRefMethods>();
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -77,7 +79,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 						</div>
 					</div>
 				</div>
-				<StickyScrollbar isInline={isInline} />
+				<StickyScrollbar ref={this.stickyScrollbarRef} isInline={isInline} />
 			</div>
 		);
 	};
@@ -107,15 +109,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
 
 		this.unbind();
 
 		scroll.on('scroll', () => this.onScrollHorizontal());
 		U.Common.getPageContainer(isPopup).on('scroll.board', this.onScrollView);
 
-		if (!isInline && stickyScrollbar.length) {
-			stickyScrollbar.on('scroll', () => this.onScrollSticky());
+		if (!isInline && this.stickyScrollbarRef.current) {
+			this.stickyScrollbarRef.current.bindEvents(scroll, { current: this.isSyncingScroll });
 		};
 	};
 
@@ -123,10 +124,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const { isPopup } = this.props;
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
 
 		scroll.off('scroll');
-		stickyScrollbar.off('scroll');
+		this.stickyScrollbarRef.current?.unbindEvents();
 		U.Common.getPageContainer(isPopup).off('scroll.board');
 	};
 

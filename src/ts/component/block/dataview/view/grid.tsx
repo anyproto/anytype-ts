@@ -6,6 +6,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
+import { StickyScrollbarRefMethods } from 'Component/util/stickyScrollbar';
 import { I, C, S, U, J, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
@@ -21,6 +22,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	cache: any = null;
 	ox = 0;
 	isSyncingScroll = false;
+	stickyScrollbarRef = React.createRef<StickyScrollbarRefMethods>();
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -156,7 +158,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						</div>
 					</div>
 				</div>
-				<StickyScrollbar isInline={isInline} />
+				<StickyScrollbar ref={this.stickyScrollbarRef} isInline={isInline} />
 			</div>
 		);
 	};
@@ -190,7 +192,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const { isPopup, block, isInline } = this.props;
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
 		const container = U.Common.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -198,8 +199,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		scroll.on('scroll', () => this.onScrollHorizontal());
 		container.off(`scroll.${block.id}`).on(`scroll.${block.id}`, () => raf(() => this.onScrollVertical()));
 
-		if (!isInline && stickyScrollbar.length) {
-			stickyScrollbar.on('scroll', () => this.onScrollSticky());
+		if (!isInline && this.stickyScrollbarRef.current) {
+			this.stickyScrollbarRef.current.bindEvents(scroll, { current: this.isSyncingScroll });
 		};
 	};
 
@@ -207,11 +208,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const { isPopup, block } = this.props;
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
 		const container = U.Common.getScrollContainer(isPopup);
 
 		scroll.off('scroll');
-		stickyScrollbar.off('scroll');
+		this.stickyScrollbarRef.current?.unbindEvents();
 		container.off(`scroll.${block.id}`);
 	};
 
@@ -228,14 +228,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const clone = node.find('#rowHeadClone');
-		const stickyScrollbar = node.find('#stickyScrollbar');
 
 		if (clone.length) {
 			clone.css({ transform: `translate3d(${-scroll.scrollLeft()}px,0px,0px)` });
 		};
 
 		// Sync sticky scrollbar with main scroll
-		this.isSyncingScroll = U.StickyScrollbar.syncFromMainScroll(scroll, stickyScrollbar, this.isSyncingScroll);
+		if (this.stickyScrollbarRef.current) {
+			this.isSyncingScroll = this.stickyScrollbarRef.current.syncFromScroll(scroll, this.isSyncingScroll);
+		};
 	};
 
 	onScrollVertical () {
@@ -292,14 +293,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		};
 
 		rowHead.toggleClass('fixed', top <= threshold);
-	};
-
-	onScrollSticky () {
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
-		const stickyScrollbar = node.find('#stickyScrollbar');
-
-		this.isSyncingScroll = U.StickyScrollbar.syncFromStickyScroll(scroll, stickyScrollbar, this.isSyncingScroll);
 	};
 
 	resizeColumns (relationKey: string, width: number) {
@@ -501,8 +494,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const stickyScrollbar = node.find('#stickyScrollbar');
-		const stickyScrollbarTrack = node.find('#stickyScrollbarTrack');
 		const container = U.Common.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const length = S.Record.getRecordIds(getSubId(), '').length;
@@ -537,17 +528,17 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			wrap.css({ width: vw, paddingRight: pr });
 
 			// Set sticky scrollbar dimensions
-			if (stickyScrollbar.length && stickyScrollbarTrack.length) {
+			if (this.stickyScrollbarRef.current) {
 				const scrollWidth = mw;
 				const contentWidth = scroll.get(0).scrollWidth;
 
-				stickyScrollbar.css({
+				this.stickyScrollbarRef.current.resize({
 					width: scrollWidth,
 					left: margin,
 					paddingLeft: margin,
-					display: contentWidth <= scrollWidth ? 'none' : ''
+					display: contentWidth <= scrollWidth ? 'none' : '',
+					trackWidth: contentWidth,
 				});
-				stickyScrollbarTrack.css({ width: contentWidth });
 			};
 		};
 
