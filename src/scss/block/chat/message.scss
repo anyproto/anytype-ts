@@ -34,6 +34,7 @@
 		}
 
 		.bubble:not(.withLayout) { max-width: 480px; }
+		.bubble.withLayout { max-width: 540px; }
 	}
 
 	.icon.status { width: 12px; height: 12px; }
