@@ -67,7 +67,6 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>(({}, ref) => {
 		bind,
 		unbind,
 		sync,
-		getNode: () => nodeRef.current,
 	}));
 
 	return (
