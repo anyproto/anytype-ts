@@ -330,7 +330,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			scrollToBottom();
 		});
 
-		if (!keyboard.isSpecial(e)) {
+		if (!keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
 			for (let i = 0; i < marks.current.length; ++i) {
 				const mark = marks.current[i];
 
