@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .stickyScrollbar {
-	position: sticky; bottom: 8px; left: 0px; overflow-x: auto; overflow-y: hidden; z-index: 2; height: 6px; 
+	position: sticky; bottom: 0px; left: 0px; overflow-x: auto; overflow-y: hidden; z-index: 2; height: 6px; 
 	box-sizing: border-box;
 }
 .stickyScrollbar::-webkit-scrollbar { height: 6px; }
