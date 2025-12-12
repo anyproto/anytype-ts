@@ -32,7 +32,6 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	id = '', 
 	type = I.MarkerType.Bulleted,
 	color = 'default', 
-	className = '', 
 	active = false, 
 	readonly = false,
 	onClick,
@@ -40,8 +39,8 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 
 	const colorValue = color || 'default';
 	const refNode = useRef<HTMLDivElement>(null);
-	const cn = [ 'marker', className ];
-	const ci = [ 'markerInner', `c${type}`, `textColor textColor-${colorValue}` ];
+	const cn = [ 'marker', `marker${I.MarkerType[type]}` ];
+	const ci = [ 'markerInner', `marker${I.MarkerType[type]}`, `textColor textColor-${colorValue}` ];
 	const themeClass = S.Common.getThemeClass();
 	const key = `marker-${id}-${type}`;
 
