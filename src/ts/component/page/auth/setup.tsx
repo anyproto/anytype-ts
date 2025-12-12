@@ -69,16 +69,25 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 					].forEach(it => Survey.check(it));
 
 					const cb1 = () => {
-						U.Data.getMembershipStatus(membership => {
-							if (membership.status == I.MembershipStatus.Finalization) {
-								S.Popup.open('membershipFinalization', { 
+						const { data } = S.Membership;
+						const purchased = data?.getTopPurchasedProduct();
+						const product = data?.getTopProduct();
+
+						if (!purchased) {
+							cb2();
+						} else {
+							if (purchased.isFinalization) {
+								S.Popup.open('membershipFinalization', {
 									onClose: cb2,
-									data: { tier: membership.tier },
+									data: {
+										product,
+										route: analytics.route.authSetup,
+									},
 								});
 							} else {
 								cb2();
 							};
-						});
+						};
 					};
 
 					const cb2 = () => {
@@ -102,7 +111,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			};
 
 			U.Data.onInfo(account.info);
-			U.Data.onAuthOnce(false);
+			U.Data.onAuthOnce();
 		
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);

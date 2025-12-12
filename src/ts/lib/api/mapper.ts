@@ -570,36 +570,70 @@ export const Mapper = {
 			};
 		},
 
-		Membership: (obj: Model.Membership): I.Membership => {
+		MembershipAmount: (obj: Model.MembershipV2.Amount): I.MembershipAmount => {
 			return {
-				tier: obj.getTier(),
-				status: obj.getStatus() as number,
-				dateStarted: obj.getDatestarted(),
-				dateEnds: obj.getDateends(),
-				isAutoRenew: obj.getIsautorenew(),
-				paymentMethod: obj.getPaymentmethod() as number,
-				name: obj.getNsname(),
-				nameType: obj.getNsnametype() as number,
-				userEmail: obj.getUseremail(),
-				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
+				currency: obj.getCurrency(),
+				amountCents: obj.getAmountcents(),
 			};
 		},
 
-		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
+		MembershipProduct: (obj: Model.MembershipV2.Product): I.MembershipProduct => {
+			const features = obj.getFeatures();
+
 			return {
 				id: obj.getId(),
 				name: obj.getName(),
 				description: obj.getDescription(),
-				nameMinLength: obj.getAnynameminlength(),
-				isTest: obj.getIstest(),
-				periodType: obj.getPeriodtype() as number,
-				period: obj.getPeriodvalue(),
-				priceCents: obj.getPricestripeusdcents(),
-				colorStr: obj.getColorstr(),
-				features: obj.getFeaturesList(),
-				namesCount: obj.getAnynamescountincluded(),
+				isTopLevel: obj.getIstoplevel(),
+				isIntro: obj.getIsintro(),
+				isHidden: obj.getIshidden(),
+				color: obj.getColorstr(),
 				offer: obj.getOffer(),
+				pricesYearly: (obj.getPricesyearlyList() || []).map(Mapper.From.MembershipAmount),
+				pricesMonthly: (obj.getPricesmonthlyList() || []).map(Mapper.From.MembershipAmount),
+				features: {
+					storageBytes: features.getStoragebytes(),
+					spaceReaders: features.getSpacereaders(),
+					spaceWriters: features.getSpacewriters(),
+					sharedSpaces: features.getSharedspaces(),
+					privateSpaces: features.getPrivatespaces(),
+					teamSeats: features.getTeamseats(),
+					anyNameCount: features.getAnynamecount(),
+					anyNameMinLen: features.getAnynameminlen(),
+				},
 			};
+		},
+
+		MembershipData: (obj: Model.MembershipV2.Data): I.MembershipData => {
+			const invoice = obj.getNextinvoice();
+
+			const ret: any = {
+				products: (obj.getProductsList() || []).map(it => {
+					const info = it.getPurchaseinfo();
+
+					return {
+						product: Mapper.From.MembershipProduct(it.getProduct()),
+						info: {
+							dateStarted: info.getDatestarted(),
+							dateEnds: info.getDateends(),
+							isAutoRenew: info.getIsautorenew(),
+							period: info.getPeriod(),
+						},
+						status: it.getProductstatus().getStatus() as number,
+					};
+				}),
+				teamOwnerId: obj.getTeamownerid(),
+				paymentProvider: obj.getPaymentprovider() as number,
+			};
+
+			if (invoice) {
+				ret.nextInvoice = {
+					date: invoice.getDate(),
+					total: invoice.hasTotal() ? Mapper.From.MembershipAmount(invoice.getTotal()) : null,
+				};
+			};
+
+			return ret;
 		},
 
 		Process: (obj: Events.Model.Process) => {
@@ -1211,8 +1245,6 @@ export const Mapper = {
 			if (v == V.NOTIFICATIONUPDATE)			 t = 'NotificationUpdate';
 
 			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
-			
-			if (v == V.MEMBERSHIPUPDATE)			 t = 'MembershipUpdate';
 
 			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
@@ -1232,6 +1264,9 @@ export const Mapper = {
 			if (v == V.CHATUPDATEMESSAGEREADSTATUS)	 t = 'ChatUpdateMessageReadStatus';
 			if (v == V.CHATUPDATEMENTIONREADSTATUS)	 t = 'ChatUpdateMentionReadStatus';
 			if (v == V.CHATUPDATEMESSAGESYNCSTATUS)	 t = 'ChatUpdateMessageSyncStatus';
+
+			if (v == V.MEMBERSHIPV2UPDATE)			 t = 'MembershipV2Update';
+			if (v == V.MEMBERSHIPV2PRODUCTSUPDATE)	 t = 'MembershipV2ProductsUpdate';
 
 			return t;
 		},
@@ -1657,12 +1692,6 @@ export const Mapper = {
 			};
 		},
 
-		MembershipUpdate: (obj: Events.Event.Membership.Update) => {
-			return {
-				membership: Mapper.From.Membership(obj.getData()),
-			};
-		},
-
 		ProcessNew: (obj: Events.Event.Process.New) => {
 			return {
 				process: Mapper.From.Process(obj.getProcess()),
@@ -1774,6 +1803,18 @@ export const Mapper = {
 				ids: obj.getIdsList(),
 				isSynced: obj.getIssynced(),
 				subIds: obj.getSubidsList(),
+			};
+		},
+
+		MembershipV2Update: (obj: Events.Event.MembershipV2.Update) => {
+			return {
+				data: Mapper.From.MembershipData(obj.getData()),
+			};
+		},
+
+		MembershipV2ProductsUpdate: (obj: Events.Event.MembershipV2.ProductsUpdate) => {
+			return {
+				products: (obj.getProductsList() || []).map(Mapper.From.MembershipProduct),
 			};
 		},
 

@@ -1,170 +1,34 @@
 @import "~scss/_mixins";
 
 .popups {
-    .popup.popupMembership {
-        .sides { display: flex; flex-wrap: nowrap; width: 706px; }
-        .sides {
-            .side { width: 50%; flex-shrink: 0; }
-            .side.left { padding: 32px; }
-            .side.left {
-                .icon { width: 80px; height: 80px; margin-bottom: 14px; }
-
-                .title { @include text-header2; margin-bottom: 8px; }
-                .label { margin-bottom: 20px; }
-                .contentList {
-                    .label { color: var(--color-text-secondary); margin-bottom: 8px; }
-                    ul { list-style-type: none; }
-                    li { position: relative; margin-bottom: 8px; padding-left: 20px; }
-                    li::before { position: absolute; content: ''; background-image: url('~img/icon/payment/tick.svg'); left: 0; top: 5px; width: 12px; height: 11px; }
-                }
-            }
-
-            .side.right { padding: 28px 32px; display: flex; flex-direction: column; justify-content: space-between; }
-            .side.right {
-                .back {
-                    color: var(--color-text-secondary); display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
-                    border-radius: 6px; margin-left: -6px; margin-bottom: 14px;
-                }
-                .back:hover { background: var(--color-shape-highlight-medium); }
-                .back {
-                    .icon { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
-                }
-
-                .title { @include text-paragraph; margin-bottom: 8px; }
-                .title.step2 { margin-bottom: 10px; }
-                .label { margin-bottom: 14px; }
-
-                .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 12px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
-                .inputWrapper {
-                    .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
-                    .ns { flex-shrink: 0; width: 27px; }
-                }
-
-                .check { display: flex; gap: 10px; margin-bottom: 15px; @include text-small; }
-                .check {
-                    .icon.checkbox { margin-top: 1px; width: 16px; height: 16px; background-image: url('~img/icon/payment/checkbox0.svg'); }
-                    .icon.checkbox.active { background-image: url('~img/icon/payment/checkbox1.svg'); }
-                }
-
-                .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 2px; color: var(--color-text-secondary); text-align: center; }
-                .statusBar.error { color: var(--color-red); }
-                .statusBar.ok { color: var(--color-lime); }
-
-                .priceWrapper { margin-bottom: 14px; }
-                .priceWrapper {
-                    .price { @include text-header2; display: inline-block; padding-right: 6px; }
-                }
-
-                .buttons { display: flex; flex-direction: column; gap: 10px 0px; margin-bottom: 12px; }
-                .button { width: 100%; }
-
-                .pin { margin: 26px 0px 6px; }
-                .pin {
-                    .input { @include text-header1; width: 48px; height: 64px; border-radius: 6px; border-color: var(--color-shape-secondary); }
-                }
-
-                .resend { font-weight: 500; color: var(--color-text-secondary); }
-                .resend.countdown { color: var(--color-text-primary); }
-                .resend:not(.countdown):hover { color: var(--color-control-active); }
-
-                .currentMembership { text-align: center; }
-                .currentMembership {
-                    .title { @include text-paragraph; font-weight: 700; margin-bottom: 14px; }
-
-                    .valid { 
-						display: flex; flex-direction: column; justify-content: space-between; height: 152px; padding: 43px 0 10px; margin-bottom: 16px;
-						border-radius: 8px; background: var(--color-shape-highlight-light); 
-					}
-                    .valid {
-                        .label { @include text-small; margin-bottom: 1px; }
-                        .label.date { @include text-header2; }
-                        .label.paymentMethod { color: var(--color-text-secondary); }
-                    }
-
-                    .button { margin-top: 4px; }
-
-                    .emailVerification { text-align: left; padding-top: 10px; }
-                    .emailVerification {
-                        .title { @include text-common; font-weight: 400; margin: 0px 0px 6px 0px; }
-                        .label { color: var(--color-text-secondary); margin-bottom: 14px; }
-                        .success { @include text-paragraph; text-align: center; }
-						.statusBar:empty { display: none; }
-						.button { margin: 10px 0px 0px 0px; }
-                    }
-                }
-
-                .disclaimer,
-                .manageText,
-                .paidOnOtherPlatform { @include text-small; color: var(--color-text-secondary); padding-top: 6px; }
-                .disclaimer {
-                    a { color: var(--color-text-secondary); }
-                }
-                .paidOnOtherPlatform { text-align: center; margin: 0 8px; }
-                .platformLabel { margin-bottom: 12px; }
-                .platformLabel {
-                    .button { margin-top: 8px; }
-                }
-            }
-        }
-
-        .sides.success { width: 424px; }
-        .sides.success {
-            .side.left { display: none; }
-            .side.right { width: 100%; text-align: center; align-items: center; display: flex; flex-direction: column; gap: 26px 0px; padding: 30px 32px 32px; }
-            .side.right {
-                .title { @include text-header1; margin-bottom: 0; }
-                .label { @include text-paragraph; margin-bottom: 0; }
-
-                .tierIcon { width: 120px; height: 120px; }
-                .button { margin-bottom: 0; }
-            }
-        }
-
-		.sides.green {
-			.tierIcon { background-image: url('~img/icon/payment/green.svg'); }
-
-			.side.left { background: linear-gradient(to bottom, #d7fbff 0%, #f6f6f6 25%); }
-			.side.right {
-				.inputWrapper { margin-bottom: 0px; }
-			}
-		}
-
-		.sides.blue {
-			.tierIcon { background-image: url('~img/icon/payment/blue.svg'); }
-			.side.left { background: linear-gradient(to bottom, #eceeff 0%, #f6f6f6 25%); }
-		}
-
-		.sides.red {
-			.tierIcon { background-image: url('~img/icon/payment/red.svg'); }
-			.side.left { background: linear-gradient(to bottom, #ffebeb 0%, #f6f6f6 25%); }
-		}
-
-        .sides.ice {
-            .tierIcon { background-image: url('~img/icon/payment/ice.svg'); }
-            .side.left { background: linear-gradient(to bottom, #daf0ff 0%, #f4f4f4 25%); }
-        }
-
-		.sides.default {
-			.tierIcon { background-image: url('~img/icon/payment/purple.svg'); }
-			.side.left { background: linear-gradient(to bottom, #fbeaff 0%, #f6f6f6 25%); }
-		}
-    }
-
     .popup.popupMembershipFinalization {
-        .anyNameForm { padding: 28px 34px 32px; width: 360px; }
+        .anyNameForm { padding: 32px 56px; width: 540px; }
         .anyNameForm {
-            .title { margin-bottom: 10px; @include text-header2; }
-            .label { margin-bottom: 14px; }
-
-            .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
-            .inputWrapper {
-                .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
-                .ns { flex-shrink: 0; width: 27px; }
+            .icon.color { width: 120px; height: 120px; background-size: contain; margin-bottom: 24px; }
+            .icon.color {
+                &.green { background-image: url('~img/icon/payment/green.svg'); }
+                &.blue { background-image: url('~img/icon/payment/blue.svg'); }
+                &.red { background-image: url('~img/icon/payment/red.svg'); }
+                &.ice { background-image: url('~img/icon/payment/ice.svg'); }
+                &.default { background-image: url('~img/icon/payment/purple.svg'); }
             }
 
-            .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 4px; color: var(--color-text-secondary);  }
+            .text { display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 16px; }
+            .title { margin-bottom: 0px; @include text-header1; }
+            .label { margin-bottom: 0px; color: var(--color-text-secondary); }
+
+            .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 6px; color: var(--color-text-secondary);  }
             .statusBar.error { color: var(--color-red); }
             .statusBar.ok { color: var(--color-lime); }
+
+            .inputWrapper {
+                display: flex; padding: 0px 16px; align-items: center; height: 40px; margin-bottom: 8px; border-radius: 20px;
+                border: 1px solid var(--color-shape-primary); background-color: var(--color-shape-highlight-medium);
+            }
+            .inputWrapper {
+                .input { @include text-common; border: 0; height: 40px; line-height: 40px; padding: 6px 0px; }
+                .ns { flex-shrink: 0; width: 27px; }
+            }
 
             .button { width: 100%; }
         }
@@ -173,12 +37,24 @@
     .popup.popupMembershipActivation {
         .innerWrap { width: 424px; padding: 32px 32px 18px 32px; text-align: center; }
 
-        .icon { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/confirm/join.svg'); }
+        .icon.activation { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/membership/activation.svg'); }
 
         .title { @include text-header3; margin: 0px 0px 4px 0px; }
         .label { margin: 0px 0px 20px 0px; }
 
-        .input { text-align: center; margin: 0px 0px 16px 0px; height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+        .inputWrapper { position: relative; height: 40px; margin: 0px 0px 12px 0px;  }
+        .inputWrapper {
+            .input {
+                padding: 0px 32px 0px 16px; height: 40px; line-height: 40px; border-radius: 20px;
+                border: 1px solid var(--color-shape-primary); background-color: var(--color-shape-highlight-medium);
+            }
+
+            .icon.clear { display: none; position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; background-image: url('~img/icon/membership/clear.svg'); }
+
+            &.canClear {
+                .icon.clear { display: block; }
+            }
+        }
 
         .buttons { display: flex; flex-direction: column; gap: 8px 0px; }
         .button { width: 100%; }

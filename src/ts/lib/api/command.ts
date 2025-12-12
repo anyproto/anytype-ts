@@ -201,6 +201,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
+	request.setEnablemembershipv2(true);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -219,6 +220,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 	request.setNetworkmode(mode as number);
 	request.setNetworkcustomconfigfilepath(networkConfigPath);
 	request.setJsonapilistenaddr(J.Url.api);
+	request.setEnablemembershipv2(true);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
@@ -2100,56 +2102,7 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
 
-// ---------------------- NAME SERVICE ---------------------- //
-
-export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveName.Request();
-
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(NameServiceResolveName.name, request, callBack);
-};
-
 // ---------------------- PAYMENTS ---------------------- //
-
-export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetStatus.Request();
-	
-	request.setNocache(noCache);
-
-	dispatcher.request(MembershipGetStatus.name, request, callBack);
-};
-
-export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetTiers.Request();
-
-	request.setNocache(noCache);
-	request.setLocale(locale);
-
-	dispatcher.request(MembershipGetTiers.name, request, callBack);
-};
-
-export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.IsNameValid.Request();
-
-	request.setRequestedtier(tier as number);
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipIsNameValid.name, request, callBack);
-};
-
-export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
-
-	request.setRequestedtier(tier as number);
-	request.setPaymentmethod(method as number);
-	request.setNsname(name);
-	request.setNsnametype(I.NameType.Any as number);
-
-	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);
-};
 
 export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
 	const request = new Empty();
@@ -2165,14 +2118,6 @@ export const MembershipGetVerificationEmail = (email: string, subscribeNews: boo
 	request.setIsonboardinglist(isOnboardingList);
 	
 	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
-};
-
-export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.VerifyEmailCode.Request();
-	
-	request.setCode(code);
-	
-	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
 };
 
 export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
@@ -2200,6 +2145,55 @@ export const MembershipCodeRedeem = (code: string, name: string, callBack?: (mes
 	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipCodeRedeem.name, request, callBack);
+};
+
+// ---------------------- MEMBERSHIP V2 ---------------------- //
+
+export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetPortalLink.Request();
+
+	dispatcher.request(MembershipV2GetPortalLink.name, request, callBack);
+};
+
+export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.CartUpdate.Request();
+
+	request.setProductidsList(productIds);
+	request.setIsyearly(isYearly);
+
+	dispatcher.request(MembershipV2CartUpdate.name, request, callBack);
+};
+
+export const MembershipV2GetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetStatus.Request();
+
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipV2GetStatus.name, request, callBack);
+};
+
+export const MembershipV2GetProducts = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.GetProducts.Request();
+
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipV2GetProducts.name, request, callBack);
+};
+
+export const MembershipV2AnyNameIsValid = (anyName: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.AnyNameIsValid.Request();
+
+	request.setNsname(anyName);
+
+	dispatcher.request(MembershipV2AnyNameIsValid.name, request, callBack);
+};
+
+export const MembershipV2AnyNameAllocate = (anyName: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MembershipV2.AnyNameAllocate.Request();
+
+	request.setNsname(anyName);
+
+	dispatcher.request(MembershipV2AnyNameAllocate.name, request, callBack);
 };
 
 // ---------------------- SPACE ---------------------- //

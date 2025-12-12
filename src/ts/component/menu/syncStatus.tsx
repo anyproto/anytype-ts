@@ -269,30 +269,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
-	onIncentiveButtonClick (id: string) {
-		switch (id) {
-			case 'storage': {
-				const { files } = S.Auth.getNotSynced();
-
-				if (files.length && (files[0].spaceId != U.Space.getSpaceview().spaceId)) {
-					U.Router.switchSpace(files[0].spaceId, '/main/settings/spaceStorage', false, {}, false);
-				} else {
-					U.Object.openAuto({ id: 'spaceStorage', layout: I.ObjectLayout.Settings });
-				};
-				break;
-			};
-
-			case 'upgrade': {
-				const usage = Math.round(U.Common.calculateStorageUsage());
-
-				Action.membershipUpgrade();
-
-				analytics.event('ClickUpgradePlanTooltip', { type: `StorageExceeded`, usage, route: analytics.route.syncStatus });
-				break;
-			};
-		};
-	};
-
 	load () {
 		if (U.Data.isLocalNetwork()) {
 			return;

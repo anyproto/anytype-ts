@@ -26,7 +26,7 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const { block, isPreview, className, canEdit, canRemove, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
+	const { block, isPreview, className, canEdit, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
 	const { widgets } = S.Block;
 	const timeoutOpen = useRef(0);
 
@@ -859,7 +859,6 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 					transition: { duration: 0.2, delay: index * 0.025 },
 				})}
 			>
-				{canRemove ? <Icon className="remove" inner={<div className="inner" />} onClick={onRemove} /> : ''}
 				{head}
 
 				<div id="wrapper" className="contentWrapper">

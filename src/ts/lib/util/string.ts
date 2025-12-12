@@ -1,9 +1,13 @@
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
-import { U, Mark } from 'Lib';
+import parsePhoneNumber from 'libphonenumber-js'
+import { I, U, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
+const DOMAIN_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:\/\/)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/;
+const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
+const ALLOWED_PROTOCOLS = [ 'mailto', 'tel' ];
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 class UtilString {
@@ -272,8 +276,21 @@ class UtilString {
 	 * @returns {string} The matched URL or empty string.
 	 */
 	matchUrl (s: string): string {
-		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?\s?$/gi);
-		return String(((m && m.length) ? m[0] : '') || '').trim();
+		const m = String(s || '').match(URL_REGEX);
+		const ret = String(((m && m.length) ? m[0] : '') || '').trim();
+
+		try {
+			const url = new URL(ret);
+
+			if (!url.host) {
+				const protocol = url.protocol.replace(/:$/, '');
+				if (!ALLOWED_PROTOCOLS.includes(protocol) && !/^\/\//.test(url.pathname)) {
+					return '';
+				};
+			};
+		} catch (e) {};
+
+		return ret;
 	};
 
 	/**
@@ -299,9 +316,9 @@ class UtilString {
 	 * @param {string} s - The string to match.
 	 * @returns {string} The matched domain or empty string.
 	 */
-	matchDomain (s: string): string {
-		const m = String(s || '').match(/^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/gi);
-		return String(((m && m.length) ? m[0] : '') || '').trim();
+	matchDomain(s: string): string {
+		const m = String(s || '').trim().match(DOMAIN_REGEX);
+		return m ? m[0] : '';
 	};
 
 	/**
@@ -330,15 +347,8 @@ class UtilString {
 	 * @returns {string} The matched phone number or empty string.
 	 */
 	matchPhone (s: string): string {
-		s = String(s || '');
-
-		const re = new RegExp(
-			// Matches optional +country code, spaces/dashes/parentheses, and digit groups
-			/^(\+?\d{1,3}[\s-]?)?(\(?\d{1,4}\)?[\s-]?)?[\d\s()-]{5,}$/u
-		);
-
-		const m = s.match(re);
-		return String(((m && m.length) ? m[0] : '') || '').trim();
+		const check = parsePhoneNumber(String(s || ''));
+		return check && check.isValid() ? check.number : '';
 	};
 
 	/**
@@ -471,7 +481,7 @@ class UtilString {
 			const isEmail = !!this.matchEmail(word);
 			const isLocal = !!this.matchPath(word);
 			const isPhone = !!this.matchPhone(word);
-			const embedProcessor = U.Embed.getProcessorByUrl(word);
+			const embedProcessor = isUrl ? U.Embed.getProcessorByUrl(word) : null;
 
 			if (isUrl || isLocal || isEmail || isPhone) {
 				const from = text.substring(offset).indexOf(word) + offset;

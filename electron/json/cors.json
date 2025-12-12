@@ -28,7 +28,10 @@
 		"https://*.ggpht.com",
 		"https://*.openstreetmap.org",
 		"https://*.openstreetmap.fr",
-		"https://*.jawg.io"
+		"https://*.jawg.io",
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org"
     ],
 
 	"media-src": [ 
@@ -54,7 +57,10 @@
 		"https://*.bcbits.com",
 		"https://*.unsplash.com",
 		"https://*.spotifycdn.com",
-		"https://*.openstreetmap.org"
+		"https://*.openstreetmap.org",
+		"https://*.cdninstagram.com",
+		"https://*.duckduckgo.com",
+		"https://*.wikimedia.org"
 	],
 
 	"style-src": [ 

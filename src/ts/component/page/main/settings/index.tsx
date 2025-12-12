@@ -39,7 +39,7 @@ import PageMainSet from '../set';
 import PageMainRelation from '../relation';
 import PageMainArchive from '../archive';
 
-import PageMembership from './membership';
+import PageMembership from './membership/index';
 
 const Components: any = {
 	index: 				 PageAccount,
@@ -170,7 +170,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 				ref={childRef}
 				{...props}
 				getId={() => pageId}
-				onPage={id => U.Object.openRoute({ id, layout: I.ObjectLayout.Settings })}
+				onPage={id => Action.openSettings(id, '')}
 				onExport={onExport}
 				onConfirmPin={confirmPinRef.current}
 				setConfirmPin={setConfirmPin}

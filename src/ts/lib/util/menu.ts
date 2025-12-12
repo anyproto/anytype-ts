@@ -171,7 +171,7 @@ class UtilMenu {
 	 * @returns {any[]} The list of object block types.
 	 */
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withLists: true });
+		const items = U.Data.getObjectTypesForNewObject({ withLists: true, withChat: true });
 		const ret: any[] = [];
 
 		let i = 0;
@@ -1356,7 +1356,7 @@ class UtilMenu {
 
 		const onImport = (e: MouseEvent) => {
 			e.stopPropagation();
-			U.Object.openRoute({ id: 'importIndex', layout: I.ObjectLayout.Settings });
+			Action.openSettings('importIndex', route);
 		};
 
 		const getClipboardData = async () => {

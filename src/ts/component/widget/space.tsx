@@ -14,6 +14,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const nodeRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
+	const route = analytics.route.widget;
 	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
 	const iconSize = (spaceview.isChat || spaceview.isOneToOne) ? 80 : 48;
 	const rootId = keyboard.getRootId();
@@ -47,12 +48,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'member': {
-				Action.openSpaceShare(analytics.route.widget);
-				analytics.event('ClickSpaceWidgetInvite', { route: analytics.route.widget });
-				break;
-			};
-
 			case 'search': {
 				keyboard.onSearchPopup(analytics.route.widget);
 				break;

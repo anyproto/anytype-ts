@@ -493,9 +493,8 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			// Settings item
 			if (item.isSettings) {
-				U.Object.openRoute({ id: item.id, layout: I.ObjectLayout.Settings });
+				Action.openSettings(item.id, '');
 			} else
-
 			// Import action
 			if (item.isImport) {
 				Action.import(item.format, J.Constant.fileExtension.import[item.format]);

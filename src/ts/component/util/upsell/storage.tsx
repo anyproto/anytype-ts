@@ -4,14 +4,12 @@ import { Label, Button } from 'Component';
 import { S, translate, U, I, Action, analytics } from 'Lib';
 
 interface Props {
-	tier: any;
 	route: string;
 	isRed: boolean;
 	className?: string;
 };
 
 const UpsellStorage = observer(forwardRef<{}, Props>(({
-	tier = {},
 	route = '',
 	isRed = false,
 	className = '',
@@ -40,24 +38,10 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 			incentiveText = U.String.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
 		};
 		upsellText = translate('upsellBannerStorageFullUpsellText');
-	} else {
-		const periodLabel = U.Common.getMembershipPeriodLabel(tier);
-
-		let period = '';
-		if (tier.period == 1) {
-			period = `/ ${U.Common.plural(tier.period, periodLabel)}`;
-		} else {
-			period = U.String.sprintf(translate('popupSettingsMembershipPerGenericMany'), tier.period, U.Common.plural(tier.period, periodLabel));
-		};
-
-		incentiveText = translate('upsellBannerStorageIncentiveText');
-		upsellText = U.String.sprintf(translate('upsellBannerStorageUpsellText'), `$${tier.price} ${period}`);
 	};
 
 	const onClick = () => {
-		Action.membershipUpgrade(tier.id);
-
-		analytics.event('ClickUpgradePlanTooltip', { type: `StorageWarning`, usage: Math.round(usagePercent), route });
+		Action.membershipUpgrade({ type: 'StorageWarning', usage: Math.round(usagePercent), route });
 	};
 
 	return (

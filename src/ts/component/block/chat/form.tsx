@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics, sidebar, Action } from 'Lib';
+import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
@@ -53,6 +53,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
 	const loaderRef = useRef(null);
+	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
@@ -150,6 +151,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		saveState(attachments);
 	};
 
+	const insert = (text: string, value: string) => {
+		text = String(text || '');
+		const length = text.length;
+
+		marks.current = Mark.adjust(marks.current, range.current.from, length);
+		value = U.String.insert(value, text, range.current.from, range.current.from);
+		updateMarkup(value, { from: range.current.from + length, to: range.current.from + length });
+	};
+
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
@@ -174,10 +184,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					value += '\n';
 				};
 
-				marks.current = Mark.adjust(marks.current, range.current.from, 1);
-				value = U.String.insert(value, '\n', range.current.from, range.current.from);
-
-				updateMarkup(value, { from: range.current.from + 1, to: range.current.from + 1 });
+				insert('\n', value);
 				scrollToBottom();
 			});
 		};
@@ -243,8 +250,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			onCopy();
 		});
 
-		keyboard.shortcut(`shift+enter`, e, () => {
+		keyboard.shortcut('shift+enter', e, () => {
 			scrollToBottom();
+		});
+
+		keyboard.shortcut('tab', e, () => {
+			e.preventDefault();
+			insert('\t', value);
 		});
 
 		// Mark-up
@@ -264,7 +276,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
-
 	};
 
 	const onKeyUpInput = (e: any) => {
@@ -319,7 +330,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			scrollToBottom();
 		});
 
-		if (!keyboard.isSpecial(e)) {
+		keyboard.shortcut('space', e, () => {
 			for (let i = 0; i < marks.current.length; ++i) {
 				const mark = marks.current[i];
 
@@ -330,7 +341,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					adjustMarks = true;
 				};
 			};
-		};
+		});
 
 		if (!value && !attachments.length && editingId.current) {
 			onDelete(editingId.current);
@@ -519,7 +530,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				continue;
 			};
 
-			marks.current = Mark.adjust(marks.current, from, value.length);
 			marks.current.push({ 
 				type, 
 				range: { from, to }, 
@@ -637,6 +647,22 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
+	const onFileInputChange = (e: any) => {
+		const files = Array.from(e.target.files || []) as File[];
+		const electron = U.Common.getElectron();
+		const list = files.map((file: File) => getObjectFromFile(file)).filter(it => !electron.isDirectory(it.path));
+
+		if (list.length) {
+			addAttachments(list);
+			analytics.event('AttachItemChat', { type: 'Upload', count: list.length, chatId: analyticsChatId });
+		};
+
+		// Reset input so the same file can be selected again
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		};
+	};
+
 	const onAttachment = () => {
 		const options: any[] = [
 			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
@@ -677,12 +703,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 							};
 
 							case 'upload': {
-								Action.openFileDialog({ properties: [ 'multiSelections' ] }, paths => {
-									addAttachments(paths.map(path => getObjectFromPath(path)));
-
-									analytics.event('AttachItemChat', { type: 'Upload', count: paths.length, chatId: analyticsChatId });
-								});
-
+								fileInputRef.current?.click();
 								analytics.event('ClickChatAttach', { type: 'Upload', chatId: analyticsChatId });
 								break;
 							};
@@ -1261,27 +1282,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	};
 
-	const getObjectFromPath = (path: string) => {
-		const electron = U.Common.getElectron();
-		const name = electron.fileName(path);
-		const mime = electron.fileMime(path);
-		const ext = electron.fileExt(path);
-		const size = electron.fileSize(path);
-		const type = S.Record.getFileType();
-
-		return {
-			id: sha1(path),
-			name,
-			path,
-			fileExt: ext,
-			sizeInBytes: size,
-			mime,
-			layout: I.ObjectLayout.File,
-			type: type?.id,
-			isTmp: true,
-		};
-	};
-
 	const onMention = (fromKeyboard?: boolean) => {
 		if (!range) {
 			return;
@@ -1712,13 +1712,14 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			id="formWrapper" 
+			id="formWrapper"
 			className="formWrapper"
 			onDragOver={onDragOver}
 			onDragLeave={onDragLeave}
 		>
+			<input ref={fileInputRef} type="file" multiple={true} className="dn" onChange={onFileInputChange} />
 			<div className="grad" />
 			<div className="bg" />
 

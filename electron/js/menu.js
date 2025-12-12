@@ -212,7 +212,7 @@ class MenuManager {
 			{
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
-					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewWindow'), accelerator: this.getAccelerator('newWindow'), click: () => WindowManager.createMain({ token: this.win.token, isChild: true }) },
 
 					Separator,
 
@@ -369,16 +369,6 @@ class MenuManager {
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
 					click: () => { 
 						Api.setConfig(this.win, { experimental: !config.experimental });
-						this.win.reload();
-					}
-				},
-
-				Separator,
-
-				{
-					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
-					click: () => {
-						Api.setConfig(this.win, { testPayment: !config.testPayment });
 						this.win.reload();
 					}
 				},

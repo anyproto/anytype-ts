@@ -9,7 +9,7 @@ export * from './menu';
 export * from './object';
 export * from './restriction';
 export * from './notification';
-export * from './payment';
+export * from './membership';
 export * from './history';
 export * from './syncStatus';
 export * from './publish';

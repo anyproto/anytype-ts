@@ -119,7 +119,7 @@ class UtilObject {
 	};
 
 	openWindow (object: any) {
-		Renderer.send('openWindow', this.route(object));
+		Renderer.send('openWindow', this.route(object), S.Auth.token);
 	};
 
 	openPopup (object: any, param?: any) {

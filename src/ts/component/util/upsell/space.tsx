@@ -4,14 +4,12 @@ import { Label, Button } from 'Component';
 import { translate, U, Action, analytics } from 'Lib';
 
 interface Props {
-	tier: any;
 	route: string;
 	isRed: boolean;
 	className?: string;
 };
 
 const UpsellSpace = observer(forwardRef<{}, Props>(({
-	tier = {},
 	route = '',
 	className = '',
 }, ref) => {
@@ -25,9 +23,7 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 
 	const mySharedSpaces = U.Space.getMySharedSpacesList();
 	const onClick = () => {
-		Action.membershipUpgrade(tier.id);
-
-		analytics.event('ClickUpgradePlanTooltip', { type: `SpaceWarning`, route });
+		Action.membershipUpgrade({ type: 'SpaceWarning', route });
 	};
 
 	return (

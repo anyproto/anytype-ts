@@ -264,7 +264,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		<div ref={nodeRef}>
 			<Header 
 				{...props} 
-				component={U.Common.settingsHeader(isPopup, 'mainObject')} 
+				component="mainObject" 
 				ref={headerRef} 
 				rootId={rootId} 
 			/>

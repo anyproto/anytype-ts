@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { motion, AnimatePresence, animate } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
@@ -26,7 +27,25 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	const nodeRef = useRef(null);
 	const textRef = useRef(null);
 	const attachmentRefs = useRef({});
+	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
+	const resizeObserver = new ResizeObserver(() => {
+		raf(() => resize());
+	});
+
+	useEffect(() => {
+		if (nodeRef.current) {
+			resizeObserver.observe(nodeRef.current);
+		};
+
+		resize();
+
+		return () => {
+			if (nodeRef.current) {
+				resizeObserver.disconnect();
+			};
+		};
+	}, []);
 
 	useEffect(() => {
 		init();
@@ -196,7 +215,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	const resize = () => {
 		const node = $(nodeRef.current);
-		const bubble = node.find('.bubbleInner .bubble');
+		const bubble = $(bubbleRef.current);
 		const width = bubble.outerWidth();
 
 		node.find('.attachment.isBookmark').toggleClass('isWide', width > 360);
@@ -344,7 +363,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 						<div className="bubbleOuter">
 							<div className="bubbleInner">
-								<div className={cnBubble.join(' ')}>
+								<div ref={bubbleRef} className={cnBubble.join(' ')}>
 									<div className={ct.join(' ')}>
 										<div
 											ref={textRef}

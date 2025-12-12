@@ -38,6 +38,16 @@
 					width: 4px; height: 4px; border-radius: 50%; background-color: var(--color-control-accent);
 					left: 0px; top: 50%; margin-top: -2px;
 				}
+
+				&.add { display: flex; align-items: center; justify-content: center; }
+				&.add {
+					.icon {
+						width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+						background: var(--color-shape-highlight-medium) url('~img/icon/widget/plus0.svg') 50% 50% no-repeat;
+					}
+
+					&:hover::before { opacity: 1; }
+				}
 			}
 
 			.separator { display: flex; align-items: center; justify-content: center; }
@@ -59,7 +69,7 @@
 	.ReactVirtualized__List { padding: 0px 4px; scrollbar-gutter: stable; }
 	.filterWrapper { padding: 8px 12px; overflow: hidden; }
 
-	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; }
+	.item { display: flex; align-items: center; gap: 0px 8px; padding: 8px; border-radius: 8px; }
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.iconWrap {
@@ -82,11 +92,10 @@
 		.label.chatName { font-weight: 500; @include text-overflow-nw; }
 
 		&::before {
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
-			pointer-events: none; border-radius: 8px;
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1;
+			pointer-events: none; border-radius: inherit; opacity: 0;
 		}
-		&.active::before, &.hover::before { background: var(--color-shape-highlight-medium); }
-		&.selected::before { background: var(--color-system-selection); }
+		&.active::before, &.hover::before { opacity: 1; }
 
 		.time { @include text-small; color: var(--color-text-secondary); text-align: right; }
 
@@ -104,7 +113,7 @@
 			.icon.mention { width: 12px; height: 12px; background-image: url('~img/icon/vault/mention.svg'); }
 		}
 
-		&.isDragging { z-index: 1; }
+		&.isDragging { z-index: 1; background-color: var(--color-shape-highlight-light-solid); }
 
 		&.isLoading {
 			.iconWrap { background-color: var(--color-shape-highlight-medium); width: 32px; height: 32px; }
