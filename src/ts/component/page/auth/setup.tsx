@@ -1,15 +1,15 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Footer, Loader } from 'Component';
+import { Frame, Button, Footer, Error } from 'Component';
 import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
 
 const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
-	const cn = [ 'animation' ];
 	const { isPopup } = props;
 	const { account } = S.Auth;
 	const match = keyboard.getMatch(isPopup);
+	const errorText = error.code ? error.description : '';
 
 	const init = () => {
 		const { dataPath } = S.Common;  
@@ -141,21 +141,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		S.Auth.logout(true, false);
 		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
-
-	let loader = null;
-	let title = '';
-	let label = '';
-	let more = null;
-	let icon = null;
-
-	if (error.code) {
-		title = translate('commonError');
-		label = error.description;
-	} else {
-		title = translate('pageAuthSetupEntering');
-		loader = <Loader className="animation" />;
-	};
-
+	
 	useEffect(() => {
 		switch (match?.params?.id) {
 			case 'init': {
@@ -175,21 +161,23 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	});
 	
 	return (
-		<div 
-			className="wrapper"
-		>
+		<div className="wrapper">
 			<Frame>
-				{icon}
-				{title ? <Title className={cn.join(' ')} text={title} /> : ''}
-				{label ? <Label className={cn.join(' ')} text={label} /> : ''}
-				{loader}
+				<Error text={errorText} />
 
-				<div className="buttons">
-					<div className="animation">
-						<Button text={translate('commonBack')} className="c28" onClick={onCancel} />
+				<div className="bubbleWrapper">
+					<div className="bubble">
+						<div className="img" />
 					</div>
-					{more}
 				</div>
+
+				{error.code ? (
+					<div className="buttons">
+						<div className="animation">
+							<Button text={translate('commonBack')} className="c28" onClick={onCancel} />
+						</div>
+					</div>
+				) : ''}
 			</Frame>
 
 			<Footer {...props} component="authIndex" />
