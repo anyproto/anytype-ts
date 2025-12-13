@@ -342,7 +342,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 	
 	onOver (e: any, item: any) {
-		const { id, param, close, getId, setActive } = this.props;
+		const { id, param, close, getId, getSize, setActive } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -362,14 +362,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const node = $(this.node);
-		const el = node.find(`#item-${item.id}`);
-		const offsetX = node.outerWidth();
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
-			offsetX: offsetX,
-			offsetY: node.offset().top - el.offset().top - 40,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
 			className,
 			classNameWrap, 
 			isSub: true,
