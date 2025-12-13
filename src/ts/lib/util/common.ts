@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
+import target from 'Component/selection/target';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -334,26 +335,6 @@ class UtilCommon {
 		return s;
 	};
 
-	/**
-	 * Sets the border color of an object based on its color and a parameter.
-	 * @param {any} obj - The jQuery object.
-	 * @param {any} param - The parameter with border alpha value.
-	 */
-	textStyle (obj: any, param: any) {
-		const color = String(obj.css('color') || '').replace(/\s/g, '');
-		const rgb = color.match(/rgba?\(([^\(]+)\)/);
-
-		if (!rgb || !rgb.length) {
-			return;
-		};
-
-		const [ r, g, b ] = rgb[1].split(',');
-
-		obj.css({ 
-			borderColor: `rgba(${[ r, g, b, param.border ].join(',')}` 
-		});
-	};
-	
 	/**
 	 * Groups an array of objects by a field into a map of arrays.
 	 * @param {any[]} list - The array of objects.
@@ -1341,6 +1322,36 @@ class UtilCommon {
 
 			};
 		} catch (e) { /**/ };
+
+		return ret;
+	};
+
+	getLinkParamFromUrl (url: string): { route: string; target: string; spaceId: string; isInside: boolean; } {
+		const ret = {
+			route: '',
+			target: '',
+			spaceId: '',
+			isInside: U.String.urlScheme(url) == J.Constant.protocol,
+		};
+
+		if (ret.isInside) {
+			ret.route = url.split(':/')[1];
+
+			const search = url.split('?')[1];
+			if (search) {
+				const searchParam = U.Common.searchParam(search);
+
+				ret.target = searchParam.objectId;
+				ret.spaceId = searchParam.spaceId;
+			} else {
+				const routeParam = U.Router.getParam(ret.route);
+
+				ret.target = routeParam.id;
+				ret.spaceId = routeParam.spaceId;
+			};
+		} else {
+			ret.target = url;
+		};
 
 		return ret;
 	};

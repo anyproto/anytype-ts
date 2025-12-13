@@ -787,28 +787,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			addAttachments([ item ]);
 		};
 
-		const scheme = U.String.urlScheme(url);
-		const isInside = scheme == J.Constant.protocol;
+		const { isInside, target, spaceId } = U.Common.getLinkParamFromUrl(url);
 
 		if (isInside) {
-			const route = '/' + url.split('://')[1];
-			const search = url.split('?')[1];
-
-			let target = '';
-			let spaceId = '';
-
-			if (search) {
-				const searchParam = U.Common.searchParam(search);
-
-				target = searchParam.objectId;
-				spaceId = searchParam.spaceId;
-			} else {
-				const routeParam = U.Router.getParam(route);
-
-				target = routeParam.id;
-				spaceId = routeParam.spaceId;
-			};
-
 			U.Object.getById(target, { spaceId }, object => {
 				if (object) {
 					addAttachments([ object ]);

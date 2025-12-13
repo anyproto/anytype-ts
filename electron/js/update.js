@@ -69,7 +69,7 @@ class UpdateManager {
 		autoUpdater.on('update-downloaded', info => {
 			this.isUpdating = false;
 
-			Util.log('info', 'Update downloaded: ' + JSON.stringify(info, null, 3));
+			Util.log('info', `Update downloaded: ${JSON.stringify(info, null, 3)}`);
 			Util.send(this.win, 'update-downloaded', info);
 		});
 	};

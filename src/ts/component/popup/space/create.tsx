@@ -65,7 +65,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }
 
 	const onSubmit = (withImport: boolean) => {
 		const { onCreate, route } = data;
-		const name = checkName(nameRef.current.getTextValue());
+		const name = checkName(nameRef.current?.getTextValue());
 		const isChatSpace = uxType == I.SpaceUxType.Chat;
 		const usecase = isChatSpace ? I.Usecase.ChatSpace : I.Usecase.DataSpace;
 

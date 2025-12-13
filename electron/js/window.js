@@ -138,7 +138,7 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
+		win.loadURL(is.development ? `http://localhost:${port}` : `file://${path.join(Util.appPath, 'dist', 'index.html')}`);
 
 		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());

@@ -615,11 +615,16 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { id } = block;
 		const childrenIds = S.Block.getChildrenIds(rootId, id);
+
+		if (childrenIds.length < 2) {
+			return;
+		};
+
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Size.blockMenu;
+		const offset = (prevBlockId ? node.find(`#block-${prevBlockId}`).offset().left : 0) + J.Size.blockMenu;
 		
 		selection?.clear();
 
@@ -631,7 +636,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		keyboard.disableSelection(true);
 		
 		node.find('.colResize.active').removeClass('active');
-		node.find('.colResize.c' + index).addClass('active');
+		node.find(`.colResize.c${index}`).addClass('active');
 		
 		win.on('mousemove.block', e => this.onResize(e, index, offset));
 		win.on('mouseup.block', e => this.onResizeEnd(e, index, offset));
@@ -646,13 +651,17 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = S.Block.getChildrenIds(rootId, id);
+
+		if (childrenIds.length < 2) {
+			return;
+		};
 		
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		
-		const prevNode = node.find('#block-' + prevBlockId);
-		const currentNode = node.find('#block-' + currentBlockId);
+		const prevNode = node.find(`#block-${prevBlockId}`);
+		const currentNode = node.find(`#block-${currentBlockId}`);
 		const res = this.calcWidth(e.pageX - offset, index);
 
 		if (!res) {
@@ -807,40 +816,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		const getParam = (item: any) => {
-			const range = String(item.attr('data-range') || '').split('-');
-			const url = String(item.attr('href') || '');
-			const scheme = U.String.urlScheme(url);
-			const isInside = scheme == J.Constant.protocol;
-
-			let route = '';
-			let target;
-			let type;
-			let spaceId = '';
-
-			if (isInside) {
-				route = '/' + url.split('://')[1];
-
-				const search = url.split('?')[1];
-				if (search) {
-					const searchParam = U.Common.searchParam(search);
-
-					target = searchParam.objectId;
-					spaceId = searchParam.spaceId;
-				} else {
-					const routeParam = U.Router.getParam(route);
-
-					target = routeParam.id;
-					spaceId = routeParam.spaceId;
-				};
-			} else {
-				target = U.String.urlFix(url);
-				type = I.PreviewType.Link;
-			};
-
-			return { route, target, type, range, spaceId, isInside };
-		};
-
 		items.each((i: number, item: any) => {
 			item = $(item);
 
@@ -852,7 +827,8 @@ const Block = observer(class Block extends React.Component<Props> {
 				e.preventDefault();
 
 				const item = $(e.currentTarget);
-				const { isInside, route, target } = getParam(item);
+				const url = String(item.attr('href') || '');
+				const { isInside, route, target } = U.Common.getLinkParamFromUrl(url);
 
 				isInside ? U.Router.go(route, {}) : Action.openUrl(target);
 			});
@@ -870,36 +846,41 @@ const Block = observer(class Block extends React.Component<Props> {
 					return;
 				};
 
-				const { target, type, range, spaceId, isInside } = getParam(item);
+				const range = String(item.attr('data-range') || '').split('-');
+				const { target, spaceId, isInside } = U.Common.getLinkParamFromUrl(url);
 
-				let object;
-
-				if (isInside) {
-					if (spaceId && (spaceId !== S.Common.space)) {
-						return;
-					};
-
-					object = S.Detail.get(subId, target, []);
+				const cb = (object) => {
+					Preview.previewShow({
+						target,
+						object,
+						type,
+						markType: I.MarkType.Link,
+						element: item,
+						range: { 
+							from: Number(range[0]) || 0,
+							to: Number(range[1]) || 0, 
+						},
+						marks,
+						onChange: marks => this.setMarksCallback(getValue(), marks, param.onChange),
+						noUnlink: readonly,
+						noEdit: readonly,
+					});
 				};
 
-				Preview.previewShow({
-					target,
-					object,
-					type,
-					markType: I.MarkType.Link,
-					element: item,
-					range: { 
-						from: Number(range[0]) || 0,
-						to: Number(range[1]) || 0, 
-					},
-					marks,
-					onChange: marks => this.setMarksCallback(getValue(), marks, param.onChange),
-					noUnlink: readonly,
-					noEdit: readonly,
-				});
-			});
+				let object;
+				let type;
 
-			U.Common.textStyle(item, { border: 0.3 });
+				if (isInside) {
+					if (spaceId) {
+						U.Object.getById(target, { spaceId }, cb);
+					} else {
+						cb(S.Detail.get(subId, target, []));
+					};
+				} else {
+					type = I.PreviewType.Link;
+					cb(object);
+				};
+			});
 		});
 	};
 
@@ -999,8 +980,6 @@ const Block = observer(class Block extends React.Component<Props> {
 					onChange: marks => this.setMarksCallback(getValue(), marks, param.onChange),
 				});
 			});
-
-			U.Common.textStyle(item, { border: 0.3 });
 		});
 	};
 
@@ -1068,8 +1047,6 @@ const Block = observer(class Block extends React.Component<Props> {
 					withPlural: true,
 					onChange: marks => this.setMarksCallback(getValue(), marks, param.onChange),
 				});
-
-				U.Common.textStyle(item, { border: 0.3 });
 			});
 		});
 	};
