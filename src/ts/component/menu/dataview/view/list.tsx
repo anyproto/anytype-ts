@@ -176,7 +176,7 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		return (
 			<div 
-				id={'item-' + item.id} 
+				id={`item-${item.id}`} 
 				className="item" 
 				onClick={e => onClick(e, item)}
 				onMouseEnter={e => onOver(e, item)}

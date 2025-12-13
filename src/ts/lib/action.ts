@@ -463,55 +463,6 @@ class Action {
 	};
 
 	/**
-	 * Restores an account from a backup file, handling import and selection.
-	 * @param {function} onError - Callback for error handling, returns true to abort.
-	 */
-	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { networkConfig } = S.Auth;
-		const { dataPath } = S.Common;
-		const { mode, path } = networkConfig;
-
-		this.openFileDialog({ extensions: [ 'zip' ] }, paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
-				if (onError(message.error)) {
-					return;
-				};
-
-				const { accountId, spaceId } = message;
-
-				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, false, (message: any) => {
-					if (onError(message.error)) {
-						return;
-					};
-
-					C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-						const { account } = message;
-
-						if (onError(message.error) || !account) {
-							return;
-						};
-
-						S.Auth.accountSet(account);
-						S.Common.configSet(account.config, false);
-
-						const routeParam = {
-							replace: true,
-							animate: true,
-							onFadeIn: () => {
-								S.Popup.open('migration', { data: { type: 'import' } });
-							},
-						};
-
-						U.Data.onInfo(account.info);
-						U.Data.onAuthWithoutSpace(routeParam);
-						U.Data.onAuthOnce();
-					});
-				});
-			});
-		});
-	};
-
-	/**
 	 * Archives a list of objects by IDs.
 	 * @param {string[]} ids - The object IDs to archive.
 	 * @param {string} route - The route context for analytics.

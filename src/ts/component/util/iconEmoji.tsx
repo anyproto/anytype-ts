@@ -36,7 +36,7 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 				element = (
 					<img 
 						src={U.Smile.srcFromColons(code)}
-						className={[ 'smileImage', 'c' + size ].join(' ')}
+						className={[ 'smileImage', `c${size}` ].join(' ')}
 						onDragStart={e=> e.preventDefault()}
 					/>
 				);
@@ -49,17 +49,21 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 		element = (
 			<img 
 				src={S.Common.imageUrl(objectId, I.ImageSize.Medium)}
-				className={[ 'iconImage', 'c' + size ].join(' ')}
+				className={[ 'iconImage', `c${size}` ].join(' ')}
 				onDragStart={e => e.preventDefault()}
 			/>
 		);
 	};
 
-	return element ? (
+	if (!element) {
+		return null;
+	};
+
+	return (
 		<div id={id} style={css} className={cn.join(' ')}>
 			{element}
 		</div>
-	) : null;
+	);
 
 });
 

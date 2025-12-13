@@ -96,7 +96,7 @@ class UtilRouter {
 		const id = String(param.id || '');
 		const additional = param.additional || [];
 
-		let route = [ page, action, id ];
+		let route = [ '', page, action, id ];
 
 		for (const k in param) {
 			if ([ 'page', 'action', 'id', 'additional' ].includes(k)) {
@@ -111,8 +111,7 @@ class UtilRouter {
 		};
 
 		route = route.map(it => encodeURIComponent(it));
-
-		return '/' + route.join('/');
+		return route.join('/');
 	};
 
 	/**

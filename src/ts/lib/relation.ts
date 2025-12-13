@@ -507,7 +507,7 @@ class Relation {
 
 			ret.push({ 
 				id: relation.relationKey, 
-				icon: 'relation ' + this.className(relation.format),
+				icon: `relation ${this.className(relation.format)}`,
 				name: relation.name, 
 				isHidden: relation.isHidden,
 				format: relation.format,
@@ -618,7 +618,7 @@ class Relation {
 
 		return U.Common.arrayUniqueObjects(options, 'relationKey').map(it => ({
 			id: it.relationKey, 
-			icon: 'relation ' + this.className(it.format),
+			icon: `relation ${this.className(it.format)}`,
 			name: it.name, 
 		}));
 	};

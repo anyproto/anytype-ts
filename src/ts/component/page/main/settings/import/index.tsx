@@ -28,7 +28,7 @@ const PageMainSettingsImportIndex = observer(forwardRef<I.PageRef, Props>((props
 				};
 			});
 		} else {
-			onPage(U.String.toCamelCase('import-' + item.id));
+			onPage(U.String.toCamelCase(`import-${item.id}`));
 		};
 	};
 

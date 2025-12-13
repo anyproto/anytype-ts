@@ -14,7 +14,6 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupExport from './export';
-import PopupMigration from './migration';
 import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
@@ -43,7 +42,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const isAnimatingRef = useRef(false);
 
 	const getId = (): string => {
-		return U.String.toCamelCase('popup-' + id);
+		return U.String.toCamelCase(`popup-${id}`);
 	};
 
 	const storageGet = () => {
@@ -152,7 +151,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		shortcut:				 PopupShortcut,
 		page:					 PopupPage,
 		export:					 PopupExport,
-		migration:				 PopupMigration,
 		pin:					 PopupPin,
 		phrase:					 PopupPhrase,
 		objectManager:			 PopupObjectManager,

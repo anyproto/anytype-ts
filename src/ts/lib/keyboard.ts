@@ -122,7 +122,7 @@ class Keyboard {
 
 		// Remove isFocusable from focused block
 		if (target.parents(`#block-${focused}`).length <= 0) {
-			$('.focusable.c' + focused).removeClass('isFocused');
+			$(`.focusable.c${focused}`).removeClass('isFocused');
 		};
 	};
 

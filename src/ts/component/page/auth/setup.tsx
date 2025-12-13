@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard, Onboarding, sidebar } from 'Lib';
+import { Frame, Title, Label, Button, Footer, Loader } from 'Component';
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer, Survey, keyboard } from 'Lib';
 
 const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -137,10 +137,6 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		return U.Common.checkErrorCommon(error.code);
 	};
 
-	const onBackup = () => {
-		Action.restoreFromBackup(setErrorHandler);
-	};
-
 	const onCancel = () => {
 		S.Auth.logout(true, false);
 		Animation.from(() => U.Router.go('/', { replace: true }));
@@ -149,28 +145,12 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	let loader = null;
 	let title = '';
 	let label = '';
-	let buttonText = translate('commonBack');
 	let more = null;
 	let icon = null;
 
 	if (error.code) {
-		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-			title = translate('pageAuthSetupImportTitle');
-			label = translate('pageAuthSetupImportText');
-			buttonText = translate('pageAuthSetupTryAgain');
-			more = (
-				<div className="animation">
-					<Button text={translate('pageAuthSetupImportBackup')} color="simple" onClick={onBackup} />
-				</div>
-			);
-			icon = <Icon className="warning animation" />;
-
-			cn.push('fromBackup');
-		} else {
-			title = translate('commonError');
-			label = error.description;
-			buttonText = translate('commonBack');
-		};
+		title = translate('commonError');
+		label = error.description;
 	} else {
 		title = translate('pageAuthSetupEntering');
 		loader = <Loader className="animation" />;
@@ -206,7 +186,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 				<div className="buttons">
 					<div className="animation">
-						<Button text={buttonText} className="c28" onClick={onCancel} />
+						<Button text={translate('commonBack')} className="c28" onClick={onCancel} />
 					</div>
 					{more}
 				</div>

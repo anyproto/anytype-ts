@@ -75,7 +75,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if (dir > 0) {
 			focus.scroll(isPopup, id);
 		} else {
-			const node = $('.focusable.c' + id);
+			const node = $(`.focusable.c${id}`);
 			if (!node.length) {
 				return;
 			};

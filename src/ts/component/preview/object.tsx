@@ -123,7 +123,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Numbered: {
 						inner = (
 							<>
-								<div id={'marker-' + item.id} className="number" />
+								<div id={`marker-${item.id}`} className="number" />
 								{line}
 							</>
 						);

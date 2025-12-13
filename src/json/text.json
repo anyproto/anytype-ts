@@ -546,12 +546,6 @@
 
 	"pageAuthOnboardCopyKey": "Copy Key",
 
-	"pageAuthSetupImportTitle": "We couldn't recover your vault.",
-	"pageAuthSetupImportText": "Double-check your recovery phrase — extra spaces or typos can break it.",
-	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupTryAgain": "Try again",
-	"pageAuthSetupEntering": "Entering your Vault",
-
 	"pageAuthMigrateInitTitle": "New Version Update",
 	"pageAuthMigrateInitText": "We're laying the groundwork for our new chats. Including counters, notifications and other features needed for smooth chat experience. It might take a little while, but don't worry, your data is safe.",
 	"pageAuthMigrateInitButtonStartUpdate": "Start Update",
@@ -1566,15 +1560,6 @@
 	"popupShortcutCommandOther1": "Line divider",
 	"popupShortcutCommandOther2": "Dots divider",
 	"popupShortcutCommandOther3": "Code  snippet",
-
-	"popupMigrationOnboardingTitle": "Congratulations!",
-	"popupMigrationOnboardingText1": "You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information.",
-	"popupMigrationOnboardingText2": "The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
-	"popupMigrationOnboardingText3": "We're excited to hear your feedback about the new features.",
-	"popupMigrationImportTitle": "You're all set!",
-	"popupMigrationImportText1": "Please take a few moments to check that your data has been imported correctly.",
-	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
-	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
 	"popupPhraseTitle1": "How the Key works",
 	"popupPhraseSubTitle1": "It's your login and password",

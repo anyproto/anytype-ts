@@ -272,8 +272,8 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 			placeholder={placeholder[item.id]}
 			readonly={item.readonly}
 			classNameWrap={item.className}
-			classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
-			classNamePlaceholder={'c' + item.id}
+			classNameEditor={[ 'focusable', `c${item.id}` ].join(' ')}
+			classNamePlaceholder={`c${item.id}`}
 			onFocus={e => onFocus(e, item)}
 			onBlur={e => onBlur(e, item)}
 			onKeyDown={e => onKeyDown(e, item)}
