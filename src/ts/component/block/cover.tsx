@@ -80,7 +80,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		if (isImage) { 
-			content = <img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />;
+			content = <img id="cover" src="" className={[ 'cover', `type${coverType}`, coverId ].join(' ')} />;
 		} else {
 			content = <Cover id={coverId} image={coverId} type={coverType} className={coverId} />;
 		};

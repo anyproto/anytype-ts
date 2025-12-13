@@ -86,7 +86,7 @@ const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 			if (rect && U.Common.rectsCollide({ x: center, y, width: 2, height }, rect)) {
 				const isLeft = center <= rect.x + rect.width / 2;
 				newIndex.current = i;
-				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				el.addClass(`isOver ${isLeft ? 'left' : 'right'}`);
 				break;
 			};
 		};

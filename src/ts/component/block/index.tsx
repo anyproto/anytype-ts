@@ -762,7 +762,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		node.find('.colResize.active').removeClass('active');
 		if (num) {
-			node.find('.colResize.c' + num).addClass('active');
+			node.find(`.colResize.c${num}`).addClass('active');
 		};
 	};
 	

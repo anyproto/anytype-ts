@@ -64,7 +64,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.data = this.getData();
 
 		const { rows, columns } = this.data;
-		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
+		const cn = [ 'wrap', 'focusable', `c${block.id}`, 'resizable' ];
 
 		// Subscriptions
 		columns.forEach((column: I.Block) => {
@@ -1283,8 +1283,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	optionsColor (cellId: string) {
 		const { rootId } = this.props;
 		const current = S.Block.getLeaf(rootId, cellId);
-		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current?.content.color || 'default') ].join(' ')} />;
-		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
+		const innerColor = <div className={[ 'inner', `textColor textColor-${current?.content.color || 'default'}` ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', `bgColor bgColor-${current?.bgColor || 'default'}` ].join(' ')} />;
 
 		return [
 			{ id: 'color', icon: 'color', name: translate('blockTableOptionsColorColor'), inner: innerColor, arrow: true },
@@ -1460,7 +1460,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		positions.forEach((it: I.BlockPosition) => {
 			const c = this.getClassByPosition(it);
-			frameContainer.find('.selectionFrame' + (c ? `.${c}` : '')).remove();
+			frameContainer.find(`.selectionFrame${c ? `.${c}` : ''}`).remove();
 		});
 	};
 

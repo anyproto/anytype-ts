@@ -65,7 +65,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 			if (item.isRelation) {
 				content = (
 					<div 
-						id={'item-' + item.id}
+						id={`item-${item.id}`}
 						className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						onClick={e => this.onClick(e, item)} 
@@ -100,10 +100,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 				const icn: string[] = [ 'inner' ];
 					
 				if (item.isTextColor) {
-					icn.push('textColor textColor-' + (item.value || 'default'));
+					icn.push(`textColor textColor-${item.value || 'default'}`);
 				};
 				if (item.isBgColor) {
-					icn.push('bgColor bgColor-' + (item.value || 'default'));
+					icn.push(`bgColor bgColor-${item.value || 'default'}`);
 				};
 				
 				if (item.isTextColor || item.isBgColor) {
@@ -126,7 +126,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu,
 				
 				content = (
 					<MenuItemVertical 
-						key={item.id + '-' + index} 
+						key={[ item.id, index ].join('-')} 
 						{...item} 
 						index={index}
 						className={cn.join(' ')}

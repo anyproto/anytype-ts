@@ -104,7 +104,7 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
 		].map((it: any) => {
-			it.icon = 'linkStyle' + it.id;
+			it.icon = `linkStyle${it.id}`;
 			return it;
 		});
 	};

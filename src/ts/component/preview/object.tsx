@@ -158,7 +158,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 				switch (content.type) {
 					default:
 					case I.FileType.File: {
-						bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
+						bullet = <div className={[ 'bullet', 'bgColor', `bgColor-${Colors[c]}` ].join(' ')} />;
 						inner = (
 							<>
 								<Icon className="color" inner={bullet} />
@@ -193,7 +193,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			};
 
 			case I.BlockType.Link: {
-				bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
+				bullet = <div className={[ 'bullet', 'bgColor', `bgColor-${Colors[c]}` ].join(' ')} />;
 				inner = (
 					<>
 						<Icon className="color" inner={bullet} />

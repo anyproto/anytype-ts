@@ -111,7 +111,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		return (
 			<div
 				className={ccn.join(' ')}
-				key={'list-cell-' + relation.relationKey}
+				key={`list-cell-${relation.relationKey}`}
 			>
 				<Cell
 					elementId={id}

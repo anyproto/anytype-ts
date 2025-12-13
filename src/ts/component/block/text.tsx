@@ -43,7 +43,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const { focused } = focus.state;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
-	const cv = [ 'value', 'focusable', 'c' + id ];
+	const cv = [ 'value', 'focusable', `c${id}` ];
 	const checkRtl = keyboard.isRtl || U.String.checkRtl(text);
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
@@ -468,7 +468,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onKeyUpHandler = (e: any) => {
 		e.persist();
 
-		
 		const { filter } = S.Common;
 		const range = getRange();
 		const langCodes = Object.keys(Prism.languages).join('|');
@@ -1069,7 +1068,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	let spellcheck = true;
 
 	if (color) {
-		cv.push('textColor textColor-' + color);
+		cv.push(`textColor textColor-${color}`);
 	};
 
 	if (checkRtl) {
@@ -1127,7 +1126,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			additional = (
 				<>
 					<Select 
-						id={'lang-' + id} 
+						id={`lang-${id}`} 
 						arrowClassName="light" 
 						value={fields.lang || J.Constant.default.codeLang} 
 						ref={langRef}
@@ -1190,7 +1189,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				ref={editableRef}
 				id="value"
 				classNameEditor={cv.join(' ')}
-				classNamePlaceholder={'c' + id}
+				classNamePlaceholder={`c${id}`}
 				readonly={readonly}
 				spellcheck={spellcheck}
 				placeholder={placeholder}

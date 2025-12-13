@@ -261,7 +261,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 	const edgeMapper = (d: any) => {
 		d.type = Number(d.type) || 0;
-		d.typeName = translate('edgeType' + d.type);
+		d.typeName = translate(`edgeType${d.type}`);
 		return d;
 	};
 

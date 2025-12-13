@@ -66,7 +66,7 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 	
 	if (isRow) {
 		ColResize = (item: any) => (
-			<div className={[ 'colResize', 'c' + item.index ].join(' ')}>
+			<div className={[ 'colResize', `c${item.index}` ].join(' ')}>
 				<div className="inner" onMouseDown={e => onResizeStart(e, item.index)} onDragStart={e => e.stopPropagation()}>
 					<div className="line" />
 				</div>
@@ -105,7 +105,7 @@ const ListChildren = observer(forwardRef<{}, Props>((props, ref) => {
 							block={item} 
 							css={css} 
 							className={cn.join(' ')} 
-							index={index + '-' + i} 
+							index={[ index, i ].join('-')} 
 						/>
 					</React.Fragment>
 				);

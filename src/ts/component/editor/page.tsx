@@ -506,7 +506,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			hovered.addClass('showMenu');
 
 			if (pageX <= x + 20) {
-				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+				hovered.addClass(`isAdding ${this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'}`);
 			};
 		});
 	};

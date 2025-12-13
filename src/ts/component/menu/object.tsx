@@ -24,7 +24,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const restrictions = S.Block.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
 
 		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
+			<div id={`section-${item.id}`} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
@@ -263,7 +263,7 @@ class MenuObject extends React.Component<I.Menu> {
 				]);
 			};
 
-			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
+			sections = sections.map((it: any, i: number) => ({ ...it, id: `page${i}` }));
 		};
 
 		sections.push({ children: [ advanced ] });

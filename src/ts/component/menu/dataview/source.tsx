@@ -167,7 +167,11 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		};
 
 		return (
-			<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={e => onOver(e, item)}>
+			<div 
+				id={`item-${item.itemId}`} 
+				className="item" 
+				onMouseEnter={e => onOver(e, item)}
+			>
 				{icon}
 				<div className="txt" onClick={e => onClick(e, item)}>
 					<div className="name">{item.name}</div>
@@ -176,7 +180,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 				<div className="buttons">
 					{canDelete ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
 				</div>
-			</form>
+			</div>
 		);
 	};
 

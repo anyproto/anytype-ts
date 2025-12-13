@@ -34,7 +34,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const years = [];
 
 		for (let i = 1; i <= 12; ++i) {
-			months.push({ id: i, name: translate('month' + i) });
+			months.push({ id: i, name: translate(`month${i}`) });
 		};
 
 		for (let i = 0; i <= 3000; ++i) {

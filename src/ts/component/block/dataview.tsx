@@ -215,7 +215,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = (
 				<div className="content">
 					<ViewComponent 
-						key={'view' + view.id}
+						key={`view${view.id}`}
 						ref={ref => this.refView = ref} 
 						onRefCell={(ref: any, id: string) => this.refCells.set(id, ref)}
 						onRefRecord={(ref: any, id: string) => this.refRecords.set(id, ref)}

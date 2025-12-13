@@ -211,7 +211,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		e.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
-		e.dataTransfer.setData('data-' + JSON.stringify(dataTransfer), '1');
+		e.dataTransfer.setData(`data-${JSON.stringify(dataTransfer)}`, '1');
 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
@@ -782,8 +782,9 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 	const setClass = (ids: string[]) => {
 		$('.block.isDragging').removeClass('isDragging');
+		
 		for (const id of ids) {
-			$('#block-' + id).addClass('isDragging');
+			$(`#block-${id}`).addClass('isDragging');
 		};
 	};
 

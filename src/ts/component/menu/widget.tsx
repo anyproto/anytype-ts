@@ -36,7 +36,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const sections = this.getSections();
 
 		const Section = item => (
-			<div id={'section-' + item.id} className="section">
+			<div id={`section-${item.id}`} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 
 				{item.options ? (

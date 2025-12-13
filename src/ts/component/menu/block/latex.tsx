@@ -93,7 +93,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (filter) {
 			sections = U.Menu.sectionsFilter(sections, filter);
 
-			const regS = new RegExp('/^' + filter + '/', 'gi');
+			const regS = new RegExp(`/^${filter}/`, 'gi');
 
 			sections = sections.map((s: any) => {
 				s._sortWeight_ = 0;
@@ -180,7 +180,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			content = (
 				<div
-					id={'item-' + item.id}
+					id={`item-${item.id}`}
 					className="item"
 					style={param.style}
 					onMouseEnter={e => onMouseEnter(e, item)}

@@ -15,7 +15,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const cardRef = useRef<HTMLDivElement>(null);
 	const type = S.Record.getTypeById(object.type);
-	const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
+	const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
 	const canDescription = !U.Object.isNoteLayout(object.layout);
 	const withIcon = content.iconSize != I.LinkIconSize.None;
 	const withType = relations.includes('type');
@@ -136,7 +136,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 			</div>
 		);
 	} else {
-		const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), 'c' + size ];
+		const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), `c${size}` ];
 		const cns = [ 'sides' ];
 		const cnl = [ 'side', 'left' ];
 		
@@ -146,7 +146,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 
 		if (block.bgColor) {
 			cns.push('withBgColor');
-			cnl.push('bgColor bgColor-' + block.bgColor);
+			cnl.push(`bgColor bgColor-${block.bgColor}`);
 		};
 
 		let descr = '';
@@ -198,7 +198,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		if (descr) n++;
 		if (withType && type) n++;
 
-		cnc.push('c' + n);
+		cnc.push(`c${n}`);
 
 		element = (
 			<div 

@@ -110,7 +110,7 @@ const GalleryCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 					return (
 						<Cell
 							elementId={id}
-							key={'list-cell-' + view.id + item.relationKey}
+							key={`list-cell-${view.id}${item.relationKey}`}
 							{...props}
 							getRecord={() => record}
 							subId={subId}

@@ -18,7 +18,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
+			<div id={`section-${item.id}`} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => (

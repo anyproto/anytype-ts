@@ -81,7 +81,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				<div>
 					{records.map((id: string, index: number) => (
 						<BodyRow 
-							key={'grid-row-' + view.id + index} 
+							key={`grid-row-${view.id}${index}`} 
 							{...this.props} 
 							recordId={records[index]}
 							cellPosition={this.cellPosition}

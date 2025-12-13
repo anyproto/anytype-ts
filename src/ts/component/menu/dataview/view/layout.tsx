@@ -26,7 +26,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const sections = this.getSections();
 		const layouts = U.Menu.getViews().map((it: any) => {
 			it.sectionId = 'type';
-			it.icon = 'view c' + it.id;
+			it.icon = `view c${it.id}`;
 			return it;
 		});
 

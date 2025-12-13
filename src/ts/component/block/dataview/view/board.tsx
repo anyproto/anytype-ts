@@ -338,7 +338,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			node.find('.isOver').removeClass('isOver left right');
 
 			if (this.hoverId) {
-				node.find(`#column-${this.hoverId}`).addClass('isOver ' + (isLeft ? 'left' : 'right'));
+				node.find(`#column-${this.hoverId}`).addClass(`isOver ${isLeft ? 'left' : 'right'}`);
 			};
 		});
 	};
@@ -425,7 +425,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (this.hoverId) {
-				node.find(`#record-${this.hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#record-${this.hoverId}`).addClass(`isOver ${isTop ? 'top' : 'bottom'}`);
 			};
 		});
 	};

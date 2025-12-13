@@ -38,11 +38,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						const icn: string[] = [ 'inner' ];
 						
 						if (action.isTextColor) {
-							icn.push('textColor textColor-' + (action.value || 'default'));
+							icn.push(`textColor textColor-${action.value || 'default'}`);
 						};
 
 						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + (action.value || 'default'));
+							icn.push(`bgColor bgColor-${action.value || 'default'}`);
 						};
 
 						if (action.isTextColor || action.isBgColor) {
@@ -132,10 +132,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	onKeyDown (e: any) {
 		const { onKeyDown, param } = this.props;
 		const { data } = param;
-		const { rootId, blockIds, blockRemove, onCopy } = data;
+		const { rootId, blockIds, blockRemove } = data;
 		const { filter } = this.state;
 		const { focused } = focus.state;
 		const cmd = keyboard.cmdKey();
+		const cbKeys = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' }
 
 		let ret = false;
 
@@ -146,29 +147,15 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			});
 		};
 
-		keyboard.shortcut(`${cmd}+c`, e, () => {
-			console.log('Menu shortcut Cmd+C triggered');
-			e.preventDefault();
-			e.stopPropagation();
-			this.onClick(e, { itemId: 'clipboardCopy' });
-			ret = true;
-		});
+		for (const key in cbKeys) {
+			keyboard.shortcut(`${cmd}+${key}`, e, () => {
+				e.preventDefault();
+				e.stopPropagation();
 
-		keyboard.shortcut(`${cmd}+x`, e, () => {
-			console.log('Menu shortcut Cmd+X triggered');
-			e.preventDefault();
-			e.stopPropagation();
-			this.onClick(e, { itemId: 'clipboardCut' });
-			ret = true;
-		});
-
-		keyboard.shortcut(`${cmd}+v`, e, () => {
-			console.log('Menu shortcut Cmd+V triggered');
-			e.preventDefault();
-			e.stopPropagation();
-			this.onClick(e, { itemId: 'clipboardPaste' });
-			ret = true;
-		});
+				this.onClick(e, { itemId: cbKeys[key] });
+				ret = true;
+			});
+		};
 
 		if (focused || (!focused && keyboard.isFocused)) {
 			keyboard.shortcut('duplicate', e, () => {

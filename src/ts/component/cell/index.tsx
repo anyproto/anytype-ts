@@ -508,7 +508,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 	const placeholder = getPlaceholder(relation, record);
 	const cn = [ 
 		'cellContent', 
-		'c-' + relation.relationKey,
+		`c-${relation.relationKey}`,
 		Relation.className(relation.format), 
 		(canEdit ? 'canEdit' : ''), 
 		(relationKey == 'name' ? 'isName' : ''),

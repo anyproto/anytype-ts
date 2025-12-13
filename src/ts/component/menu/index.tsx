@@ -215,8 +215,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const cn = [
 			'menu',
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
-			'v' + vertical,
-			'h' + horizontal
+			`v${vertical}`,
+			`h${horizontal}`
 		];
 		const cd = [];
 		
@@ -233,7 +233,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (component) {
-			cn.push(U.String.toCamelCase('menu-' + component));
+			cn.push(U.String.toCamelCase(`menu-${component}`));
 		} else {
 			cn.push(menuId);
 		};
@@ -312,7 +312,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							/>
 					</div>
 					
-					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> : ''}
+					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', `c${arrowDirection}` ].join(' ')} /> : ''}
 				</div>
 				{!noDimmer ? (
 					<Dimmer onClick={this.onDimmerClick} className={cd.join(' ')} />
@@ -1100,7 +1100,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			id = this.props.id;
 		};
 
-		return U.String.toCamelCase('menu-' + id);
+		return U.String.toCamelCase(`menu-${id}`);
 	};
 
 	getElement () {

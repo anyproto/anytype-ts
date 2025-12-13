@@ -44,7 +44,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	if (view.groupBackgroundColors) {
 		cn.push('withColor');
-		cnbg.push('bgColor bgColor-' + (orderGroup.bgColor || group.bgColor || 'grey'));
+		cnbg.push(`bgColor bgColor-${orderGroup.bgColor || group.bgColor || 'grey'}`);
 	};
 
 	head[view.groupRelationKey] = value;

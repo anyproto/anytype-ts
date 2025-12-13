@@ -88,7 +88,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			const type = S.Record.getTypeById(typeId);
 			const typeProps: any = { 
 				name: translate('menuBlockRelationEditSelectObjectType'),
-				caption: (length > 1 ? '+' + (length - 1) : ''),
+				caption: (length > 1 ? `+${length - 1}` : ''),
 			};
 
 			if (type) {
@@ -158,8 +158,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="name">{translate('menuBlockRelationEditRelationType')}</div>
 					<MenuItemVertical 
 						id="relation-type" 
-						icon={this.format === null ? undefined : 'relation ' + Relation.className(this.format)} 
-						name={this.format === null ? translate('menuBlockRelationEditSelectRelationType') : translate('relationName' + this.format)}
+						icon={this.format === null ? undefined : `relation ${Relation.className(this.format)}`} 
+						name={this.format === null ? translate('menuBlockRelationEditSelectRelationType') : translate(`relationName${this.format}`)}
 						onMouseEnter={this.onRelationType} 
 						onClick={this.onRelationType} 
 						readonly={isReadonly}

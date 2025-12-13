@@ -167,7 +167,7 @@ class WindowManager {
 		});
 
 		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', 'index.html'));
+		win.loadURL(`file://${path.join(Util.appPath, 'dist', 'challenge', 'index.html')}`);
 		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
 
