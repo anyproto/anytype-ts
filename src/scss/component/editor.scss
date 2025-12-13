@@ -214,7 +214,7 @@
 	}
 
 	&.isSet, 
-	&.isCollection { padding: 0px 0px 80px 0px; }
+	&.isCollection { padding-bottom: 80px; }
 	&.isSet, 
 	&.isCollection {
 		.blocks {
