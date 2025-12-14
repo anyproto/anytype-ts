@@ -27,7 +27,9 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	});
 	const { name, pluralName, recommendedLayout, layoutAlign, layoutFormat, layoutWidth, headerRelationsLayout } = object;
 	const viewType = Number(object.defaultViewType) || I.ViewType.List;
-	const featured = Relation.getArrayValue(object.recommendedFeaturedRelations).map(key => S.Record.getRelationById(key)).filter(it => it);
+	const featured = Relation.getArrayValue(object.recommendedFeaturedRelations).
+		map(key => S.Record.getRelationById(key)).
+		filter(it => it && !it.isArchived);
 	const withDescription = featured.map(it => it.relationKey).includes('description');
 	const filtered = featured.filter(it => it.relationKey != 'description');
 	const isTask = U.Object.isTaskLayout(recommendedLayout);
