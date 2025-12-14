@@ -60,7 +60,8 @@
 		"https://*.openstreetmap.org",
 		"https://*.cdninstagram.com",
 		"https://*.duckduckgo.com",
-		"https://*.wikimedia.org"
+		"https://*.wikimedia.org",
+		"https://*.scdn.co"
 	],
 
 	"style-src": [ 
