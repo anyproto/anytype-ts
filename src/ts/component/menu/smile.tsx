@@ -465,6 +465,8 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 
 		this.groupCache = [];
+		
+		window.setTimeout(() => this.refFilter?.focus(), 15);
 	};
 	
 	componentWillUnmount () {
