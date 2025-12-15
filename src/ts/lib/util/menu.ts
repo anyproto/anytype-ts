@@ -1054,7 +1054,13 @@ class UtilMenu {
 								};
 
 								case 'manage': {
-									this.menuContext?.close(() => S.Menu.open('widgetSection', menuParam));
+									const win = $(window);
+									this.menuContext?.close(() => S.Menu.open('widgetSection', {
+										rect: { x: 0, y: 0, width: win.width(), height: win.height() },
+										classNameWrap: 'fixed visibleDimmer',
+										vertical: I.MenuDirection.Center,
+										horizontal: I.MenuDirection.Center,
+									}));
 									break;
 								};
 
@@ -1766,7 +1772,7 @@ class UtilMenu {
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const manage = { id: 'manage', icon: 'manage', name: translate('widgetManageSections') };
+		const toggle = { id: 'hide', icon: 'eye on', name: translate('widgetHideSection') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1775,11 +1781,11 @@ class UtilMenu {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });
-			options.push(manage);
+			options.push(toggle);
 
 			value = String(recentEditMode);
 		} else {
-			options.push(manage);
+			options.push(toggle);
 		};
 
 		S.Menu.open('select', {
@@ -1793,8 +1799,17 @@ class UtilMenu {
 				value,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
-						case 'manage': {
-							this.menuContext?.close(() => S.Menu.open('widgetSection', menuParam));
+						case 'hide': {
+							const { widgetSections } = S.Common;
+							const id = Number(sectionId);
+							const idx = widgetSections.findIndex(it => it.id == id);
+
+							if (idx < 0) {
+								return;
+							};
+
+							widgetSections[idx].isHidden = true;
+							S.Common.widgetSectionsSet([ ...widgetSections ]);
 							break;
 						};
 
