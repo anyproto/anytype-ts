@@ -464,7 +464,7 @@ class UtilSpace {
 		const participant = this.getMyParticipant();
 
 		let domain = '';
-		if (participant.globalName) {
+		if (participant?.globalName) {
 			domain = U.String.sprintf(J.Url.publishDomain, participant.globalName);
 		} else {
 			domain = U.String.sprintf(J.Url.publish, participant.identity);
