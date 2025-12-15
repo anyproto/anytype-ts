@@ -315,6 +315,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const onOut = () => {
 		if (!keyboard.isMouseDisabled && !S.Menu.isOpen('select')) {
 			unsetHover();
+			Preview.tooltipHide(false);
 		};
 	};
 
