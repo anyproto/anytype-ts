@@ -162,7 +162,7 @@ class Preview {
 	tooltipCaption (text: string, caption: string): string {
 		const t = [];
 		if (text) {
-			t.push(text);
+			t.push(`<span class="common">${text}</span>`);
 		};
 		if (caption) {
 			t.push(`<span class="caption">${caption}</span>`);

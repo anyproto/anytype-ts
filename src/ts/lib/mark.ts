@@ -483,7 +483,7 @@ class Mark {
 		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => p);
 
 		// Fix browser markup bug
-		text = text.replace(/<\/?(i|b|strike|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|strike|font|markupsearch)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
