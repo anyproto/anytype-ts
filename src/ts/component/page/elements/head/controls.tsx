@@ -71,7 +71,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onCoverSelect = (item: any) => {
-		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		U.Object.setCover(rootId, item.type, item.itemId, item.coverX, item.coverY, item.coverScale);
 	};
 
 	const onLayout = () => {

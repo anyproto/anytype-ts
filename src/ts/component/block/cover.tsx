@@ -230,7 +230,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		this.loaded = false;
-		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		U.Object.setCover(rootId, item.type, item.itemId, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
