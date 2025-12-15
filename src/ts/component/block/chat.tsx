@@ -891,8 +891,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const init = () => {
-		const analyticsChatId = getAnalyticsChatId();
-
 		setLoaded(false);
 		loadState(() => {
 			const subId = getSubId();
@@ -933,10 +931,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				cb1(state.messageOrderId);
 			};
 		});
-
-		if (analyticsChatId) {
-			analytics.event('ScreenChat', { chatId: analyticsChatId });
-		};
 	};
 
 	const resize = () => {

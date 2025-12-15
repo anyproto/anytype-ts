@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics } from 'Lib';
 
 const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -22,7 +22,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, [ 'analyticsChatId' ]);
 			if (object.isDeleted) {
 				return;
 			};
@@ -33,6 +33,7 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 			Onboarding.startChat(isPopup);
 			setDummy(dummy + 1);
+			analytics.event('ScreenChat', { chatId: object.analyticsChatId });
 		});
 	};
 
