@@ -351,7 +351,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		} else
 		if (e.altKey) {
 			list = list.filter(it => it != node.id);
-		} else {
+		} else 
+		if (!list.includes(node.id)) {
 			list.push(node.id);
 		};
 
@@ -406,7 +407,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 			const el = value.get(0) as Element;
 			const rc = getRange(el);
-			
+
 			if (!range.current) {
 				focusedId.current = selected.attr('data-id');
 				range.current = rc;
@@ -416,7 +417,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				if (range.current.end) {
 					initIds();
 				};
-				
+
 				if (!rc) {
 					focus.set(focusedId.current, { from: range.current.start, to: range.current.end });
 					focus.apply();
