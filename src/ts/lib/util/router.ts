@@ -257,6 +257,7 @@ class UtilRouter {
 
 					U.Data.onInfo(message.info);
 					S.Common.setLeftSidebarState('vault', '');
+					this.rightSidebarCheck(false);
 
 					const onStartingIdCheck = () => {
 						U.Data.onAuth({ route, routeParam }, () => {
@@ -283,6 +284,14 @@ class UtilRouter {
 				},
 			});
 		});
+	};
+
+	rightSidebarCheck (isPopup: boolean) {
+		const state = S.Common.getRightSidebarState(isPopup);
+
+		if (state.page == 'type') {
+			sidebar.rightPanelClose(isPopup, false);
+		};
 	};
 
 	/**
