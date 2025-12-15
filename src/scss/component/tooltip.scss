@@ -10,7 +10,7 @@
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
 .tooltip {
 	.title { @include text-common; font-weight: 500;  }
-	.txt { line-height: inherit; list-style-position: inside; display: flex; flex-direction: row; align-items: center; }
+	.txt { line-height: inherit; list-style-position: inside; display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 	.txt:empty { display: none; }
 	.common { display: inline-block; vertical-align: middle; }
 	.caption { color: var(--color-text-secondary); }
