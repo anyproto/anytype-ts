@@ -232,13 +232,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	unbind () {
-		$(window).off('paste.menuBlockCover keydown.menuBlockCover');
+		$(window).off('paste.menu keydown.menu');
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('paste.menuBlockCover', e => this.onPaste(e));
-		$(window).on('keydown.menuBlockCover', e => this.onKeyDown(e));
+		$(window).on('paste.menu', e => this.onPaste(e));
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 
 	load () {
@@ -490,18 +490,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			};
 
 			this.setTab(Tabs[idx].id);
-			/*
-			{tabs.map((item: any, i: number) => (
-						<div 
-							key={item.id} 
-							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
-							onClick={() => this.setTab(item.id)}
-						>
-							{item.name}
-						</div>
-					))}
-					*/
-
 		});
 
 		if (this.active) {
