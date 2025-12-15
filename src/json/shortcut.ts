@@ -126,6 +126,7 @@ const getSections = () => {
 						{ name: translate('popupShortcutMainSelection7'), keys: [ 'shift', 'arrowdown' ] },
 						{ name: translate('popupShortcutMainSelection5'), keys: [ cmdKey, 'click' ] },
 						{ name: translate('popupShortcutMainSelection6'), keys: [ 'shift', 'click' ] },
+						{ id: 'tableCellOptions', name: translate('popupShortcutEditorTableCellOptions'), keys: [] },
 
 						{ name: translate('popupShortcutNavigationPage1'), keys: [ cmdKey, 'shift', 't' ] },
 						{ name: translate('popupShortcutNavigationPage2'), keys: [ 'arrowdown' ] },
