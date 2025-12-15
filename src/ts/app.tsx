@@ -21,7 +21,6 @@ import 'swiper/css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
-import space from 'Lib/util/space';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -429,10 +428,7 @@ const App: FC = () => {
 								const block = S.Block.getLeaf(rootId, focused);
 
 								if (block && block.isText()) {
-									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
-									const value = String(obj.get(0).innerText || '');
-
-									S.Block.updateContent(rootId, focused, { text: value });
+									const value = block.content.text;
 
 									// Find the first occurrence of the misspelled word in the value
 									const wordIndex = value.indexOf(misspelledWord);
