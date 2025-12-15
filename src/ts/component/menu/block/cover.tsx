@@ -130,6 +130,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					className="outlined"
 					value={filter}
 					onChange={this.onFilterChange} 
+					focusOnMount={true}
 				/>
 			);
 		};
@@ -223,6 +224,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			this.filter = filter;
 			this.load();
 		};
+
+		window.setTimeout(() => this.refFilter?.focus(), 15);
 	};
 
 	componentWillUnmount () {
