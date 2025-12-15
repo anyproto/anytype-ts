@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { AutoSizer, List } from 'react-virtualized';
 import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
-import { image } from 'd3';
 
 enum Tab {
 	Gallery	 = 0,
@@ -18,6 +18,12 @@ interface State {
 };
 
 const LIMIT = 36;
+const Tabs = [
+	{ id: Tab.Gallery },
+	{ id: Tab.Unsplash },
+	{ id: Tab.Library },
+	{ id: Tab.Upload },
+].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
 
@@ -29,8 +35,11 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	items: any[] = [];
 	filter = '';
 	refFilter: any = null;
+	refList: any = null;
 	timeout = 0;
 	tab: Tab = Tab.Gallery;
+	activeIndex = -1;
+	active: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -41,35 +50,75 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.rebind = this.rebind.bind(this);
+		this.unbind = this.unbind.bind(this);
 	};
 
 	render () {
 		const { filter, isLoading } = this.state;
-		const tabs: any[] = [
-			{ id: Tab.Gallery, name: translate('menuBlockCoverGallery') },
-			{ id: Tab.Unsplash, name: translate('menuBlockCoverUnsplash') },
-			{ id: Tab.Library, name: translate('menuBlockCoverLibrary') },
-			{ id: Tab.Upload, name: translate('menuBlockCoverUpload') },
-		].filter(it => it);
 		const sections = this.getSections();
 
+		// Pre-calculate indices for all items and organize into rows
+		const itemsPerRow = this.getItemsPerRow();
+		const rows: any[] = [];
+		let globalIndex = 0;
+
+		sections.forEach((section: any) => {
+			// Add section header row if it has a name
+			if (section.name) {
+				rows.push({ isSection: true, name: section.name });
+			};
+
+			const children = section.children || [];
+			let rowItems: any[] = [];
+
+			for (let i = 0; i < children.length; i++) {
+				const itemWithIndex = { ...children[i], __globalIndex: globalIndex };
+
+				globalIndex++;
+				rowItems.push(itemWithIndex);
+
+				// Create a row when we reach itemsPerRow or it's the last item
+				if (rowItems.length === itemsPerRow || i === children.length - 1) {
+					rows.push({ isSection: false, children: rowItems });
+					rowItems = [];
+				};
+			};
+		});
+
 		const Item = (item: any) => (
-			<div className="item" onClick={e => this.onSelect(e, item)}>
-				<Cover preview={true} {...item} />
+			<div
+				id={`item-${item.id}`}
+				className="item"
+				onClick={e => this.onSelect(e, item)}
+				onMouseEnter={e => this.onMouseEnter(e, item, item.__globalIndex)}
+				onMouseLeave={() => this.onMouseLeave()}
+			>
+				<Cover preview={true} {...item} id={item.itemId} />
 				{item.artist ? <div className="name">{item.artist}</div> : ''}
 			</div>
 		);
 
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="items">
-					{item.children.map((item: any, i: number) => (
+		const rowRenderer = (param: any) => {
+			const row = rows[param.index];
+
+			if (row.isSection) {
+				return (
+					<div key={param.key} style={param.style} className="sectionName">
+						{row.name}
+					</div>
+				);
+			}
+
+			return (
+				<div key={param.key} style={param.style} className="itemsRow">
+					{row.children.map((item: any, i: number) => (
 						<Item key={i} {...item} />
 					))}
 				</div>
-			</div>
-		);
+			);
+		};
 
 		let content = null;
 		let filterElement = null;
@@ -91,11 +140,22 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Library: {
 				content = (
 					<>
-						{sections.length ? (
+						{rows.length ? (
 							<div className="sections">
-								{sections.map((section: any, i: number) => (
-									<Section key={i} {...section} />
-								))}
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={ref => this.refList = ref}
+											width={width}
+											height={height}
+											rowCount={rows.length}
+											rowHeight={({ index }) => this.getRowHeight(rows[index], index)}
+											rowRenderer={rowRenderer}
+											overscanRowCount={5}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
 							</div>
 						) : <EmptySearch text={filter ? U.String.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
 					</>
@@ -130,7 +190,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				className="wrap"
 			>
 				<div className="head">
-					{tabs.map((item: any, i: number) => (
+					{Tabs.map((item: any, i: number) => (
 						<div 
 							key={item.id} 
 							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
@@ -172,12 +232,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	unbind () {
-		$(window).off('paste.menuBlockCover');
+		$(window).off('paste.menu keydown.menu');
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('paste.menuBlockCover', e => this.onPaste(e));
+		$(window).on('paste.menu', e => this.onPaste(e));
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 
 	load () {
@@ -302,7 +363,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.UnsplashDownload(S.Common.space, item.id, (message: any) => {
+			C.UnsplashDownload(S.Common.space, item.itemId, (message: any) => {
 				if (!message.error.code) {
 					onUpload(item.type, message.objectId);
 				};
@@ -314,7 +375,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			onSelect(item);
 		};
 
-		analytics.event('SetCover', { type: item.type, id: item.id });
+		analytics.event('SetCover', { type: item.type, id: item.itemId });
 	};
 
 	onFilterChange (v: string) {
@@ -324,6 +385,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 	getSections () {
 		let sections: any[] = [];
+
 		switch (this.tab) {
 			case Tab.Gallery: {
 				sections = sections.concat([
@@ -341,7 +403,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				break;
 			};
 		};
-		return sections;
+		
+		return U.Menu.sectionsMap(sections);
 	};
 
 	onDragOver (e: any) {
@@ -393,6 +456,228 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		
 			close();
 		});
+	};
+
+	onKeyDown (e: any) {
+		const { close } = this.props;
+		const checkFilter = () => this.refFilter && this.refFilter.isFocused();
+
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+
+			this.refFilter?.blur();
+			this.onArrowVertical(pressed == 'arrowup' ? -1 : 1);
+		});
+
+		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+			if (checkFilter()) {
+				return;
+			};
+
+			e.preventDefault();
+			this.refFilter?.blur();
+			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
+		});
+
+		keyboard.shortcut('tab', e, () => {
+			let idx = Tabs.findIndex(it => it.id == this.tab) + 1;
+
+			if (idx >= Tabs.length) {
+				idx = 0;
+			};
+
+			this.setTab(Tabs[idx].id);
+		});
+
+		if (this.active) {
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
+
+				this.onSelect(e, this.active);
+				close();
+			});
+		};
+	};
+
+	onArrowVertical (dir: number) {
+		const items = this.getItemsFlat();
+		const itemsPerRow = this.getItemsPerRow();
+
+		if (items.length === 0) {
+			return;
+		};
+
+		if (this.activeIndex === -1) {
+			this.activeIndex = 0;
+			this.setActive(items[0], 0);
+			return;
+		};
+
+		const currentRow = Math.floor(this.activeIndex / itemsPerRow);
+		const currentCol = this.activeIndex % itemsPerRow;
+		let newRow = currentRow + dir;
+		const totalRows = Math.ceil(items.length / itemsPerRow);
+
+		// Wrap around
+		if (newRow < 0) {
+			newRow = totalRows - 1;
+		} else if (newRow >= totalRows) {
+			newRow = 0;
+		};
+
+		let newIndex = newRow * itemsPerRow + currentCol;
+
+		// If new index is beyond items length, go to last item in that column
+		if (newIndex >= items.length) {
+			newIndex = items.length - 1;
+		};
+
+		this.activeIndex = newIndex;
+		this.setActive(items[newIndex], newIndex);
+	};
+
+	onArrowHorizontal (dir: number) {
+		const items = this.getItemsFlat();
+		const itemsPerRow = this.getItemsPerRow();
+
+		if (items.length === 0) {
+			return;
+		};
+
+		if (this.activeIndex === -1) {
+			this.activeIndex = 0;
+			this.setActive(items[0], 0);
+			return;
+		};
+
+		const currentRow = Math.floor(this.activeIndex / itemsPerRow);
+		const currentCol = this.activeIndex % itemsPerRow;
+		let newCol = currentCol + dir;
+		let newRow = currentRow;
+
+		// Wrap to previous/next row
+		if (newCol < 0) {
+			newRow -= 1;
+			if (newRow < 0) {
+				newRow = Math.ceil(items.length / itemsPerRow) - 1;
+			};
+			newCol = itemsPerRow - 1;
+		} else if (newCol >= itemsPerRow) {
+			newRow += 1;
+			if (newRow >= Math.ceil(items.length / itemsPerRow)) {
+				newRow = 0;
+			};
+			newCol = 0;
+		};
+
+		let newIndex = newRow * itemsPerRow + newCol;
+
+		// If new index is beyond items length, wrap to beginning/end
+		if (newIndex >= items.length) {
+			if (dir > 0) {
+				newIndex = 0;
+			} else {
+				newIndex = items.length - 1;
+			};
+		};
+
+		this.activeIndex = newIndex;
+		this.setActive(items[newIndex], newIndex);
+	};
+
+	setActive (item?: any, index?: number) {
+		const node = $(this.node);
+
+		node.find('.item.hover').removeClass('hover');
+
+		this.active = item;
+		if (index !== undefined) {
+			this.activeIndex = index;
+		};
+
+		if (!item) {
+			return;
+		};
+
+		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
+		element.addClass('hover');
+
+		// Scroll to row containing the active item
+		if (this.refList && index !== undefined) {
+			const itemsPerRow = this.getItemsPerRow();
+			const itemRow = Math.floor(index / itemsPerRow);
+
+			// Calculate actual row in virtualized list (accounting for section headers)
+			const sections = this.getSections();
+			
+			let virtualRow = itemRow;
+			let itemCount = 0;
+
+			for (const section of sections) {
+				if (section.name) {
+					virtualRow++; // Account for section header row
+				}
+
+				const sectionItemCount = (section.children || []).length;
+				if (itemCount + sectionItemCount > index) {
+					break;
+				};
+
+				itemCount += sectionItemCount;
+			};
+
+			this.refList.scrollToRow(Math.max(0, virtualRow));
+		};
+	};
+
+	onMouseEnter (e: any, item: any, index: number) {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, index);
+		};
+	};
+
+	onMouseLeave () {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(null, -1);
+		};
+	};
+
+	getItemsPerRow () {
+		// Gallery has 4 items per row
+		// Unsplash and Library have 3 items per row
+		return [ Tab.Gallery ].includes(this.tab) ? 4 : 3;
+	};
+
+	getRowHeight (row: any, index) {
+		if (row.isSection) {
+			return index ? 40 : 32;
+		};
+
+		switch (this.tab) {
+			case Tab.Gallery:
+				return 56;
+			case Tab.Library:
+			case Tab.Unsplash:
+				return 96;
+			default:
+				return 56;
+		};
+	};
+
+	getItemsFlat () {
+		const sections = this.getSections();
+		const items: any[] = [];
+
+		sections.forEach((section: any) => {
+			if (section.children) {
+				items.push(...section.children);
+			};
+		});
+
+		return items;
 	};
 
 	onPaste (e: any) {
