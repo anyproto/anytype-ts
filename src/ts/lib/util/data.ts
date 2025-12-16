@@ -1175,7 +1175,7 @@ class UtilData {
 			for (let i = 0; i < list.length; i++) {
 				const item = items[i];
 				if (item) {
-					S.Detail.update(subId, { id: item.id, details: { orderId: list[i] }}, false);
+					S.Detail.update(subId, { id: item.id, details: { tmpOrder: '', orderId: list[i] }}, false);
 				};
 			};
 		});
