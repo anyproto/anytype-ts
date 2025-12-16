@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { I, U, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
+import { I, U, J, keyboard } from 'Lib';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -10,19 +10,21 @@ interface Props extends I.ViewComponent {
 	cellPosition?: (cellId: string) => void;
 	onRefCell?(ref: any, id: string): void;
 	getColumnWidths?: (relationId: string, width: number) => any;
+	onUpdate?: () => void;
 };
 
 const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 
 	const { 
-		rootId, block, style, recordId, readonly, isCollection, isInline, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths, 
-		getVisibleRelations, onSelectToggle,
+		rootId, block, style, recordId, readonly, isInline, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths, 
+		getVisibleRelations, onSelectToggle, onUpdate,
 	} = props;
 	const relations = getVisibleRelations();
 	const widths = getColumnWidths('', 0);
 	const record = getRecord(recordId);
 	const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 	const cn = [ 'row', U.Data.layoutClass('', record.layout), ];
+	const keys = J.Relation.default.concat(relations.map((relation: any) => relation.relationKey));
 
 	if (U.Object.isTaskLayout(record.layout) && record.done) {
 		cn.push('isDone');
@@ -33,6 +35,12 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 	if (record.isDeleted) {
 		cn.push('isDeleted');
 	};
+
+	const watchedValues = useMemo(() => keys.map(k => record[k]), keys.map(k => record[k]));
+
+	useEffect(() => {
+		onUpdate?.();
+	}, watchedValues);
 
 	let content = (
 		<>

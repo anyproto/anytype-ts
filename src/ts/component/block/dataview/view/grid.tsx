@@ -73,6 +73,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 							recordIdx={index}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
+							onUpdate={measure}
 						/>
 					</div>
 				)}
@@ -505,6 +506,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
+		const ch = container.height();
 		const rh = this.getRowHeight();
 
 		this.cache.clearAll();
@@ -534,7 +536,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const margin = (cw - mw) / 2;
 			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			scroll.css({ 
+				width: cw - 4, 
+				marginLeft: -margin - 2, 
+				paddingLeft: margin, 
+				minHeight: (ch - scroll.offset()?.top),
+			});
 			wrap.css({ width: vw, paddingRight: pr });
 
 			this.stickyScrollbarRef?.resize({
@@ -546,7 +553,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			});
 		};
 
-		//grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
+
+
+		//grid.css({ minHeight:  });
 		this.resizeColumns('', 0);
 	};
 	
