@@ -15,6 +15,21 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
+	const unbind = () => {
+		const ns = U.Common.getEventNamespace(isPopup);
+		const events = [ 'keydown' ];
+
+		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
+	};
+
+	const rebind = () => {
+		const win = $(window);
+		const ns = U.Common.getEventNamespace(isPopup);
+
+		unbind();
+		win.on(`keydown.set${ns}`, e => onKeyDown(e));
+	};
+
 	const open = () => {
 		idRef.current = rootId;
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
@@ -61,10 +76,24 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		chatRef.current?.ref?.onDrop(e);
 	};
 
+	const onKeyDown = (e: any) => {
+		keyboard.shortcut('chatObject', e, () => {
+			if (!S.Menu.isOpen('searchObject')) {
+				e.preventDefault();
+
+				chatRef.current?.ref?.getFormRef()?.onAttachment();
+			};
+		});
+	};
+
 	useEffect(() => {
 		open();
+		rebind();
 
-		return () => close();
+		return () => {
+			close()
+			unbind();
+		};
 	}, []);
 
 	useEffect(() => {

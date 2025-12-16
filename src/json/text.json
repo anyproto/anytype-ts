@@ -240,6 +240,7 @@
 	"commonDownloadCode": "Download Code",
 	"commonCopyMedia": "Copy Media",
 	"commonImage": "Image",
+	"commonOptions": "Options",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -797,6 +798,7 @@
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
 	"blockChatCopyText": "Copy Text",
 	"blockChatMarkAsUnread": "Mark as unread",
+	"blockChatAddAttachment": "Add attachment",
 
 	"blockMediaFileStateError": "This media cannot be synced now. Try again later.",
 

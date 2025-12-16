@@ -36,6 +36,7 @@ interface RefProps {
 	onDrop: (e: DragEvent) => void;
 	getAttachments: () => any[];
 	getMarks: () => I.Mark[];
+	onAttachment: () => void;
 };
 
 const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
@@ -219,13 +220,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(value, { from: l, to: l });
 
 			$(window).trigger('resize');
-		});
-
-		keyboard.shortcut('chatObject', e, () => {
-			if (!S.Menu.isOpen('searchObject')) {
-				e.preventDefault();
-				onAttachment();
-			};
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -1577,6 +1571,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id={`button-${block.id}-attachment`}
 					className="plus"
 					onClick={onAttachment}
+					tooltipParam={{ text: translate('blockChatAddAttachment'), caption: keyboard.getCaption('chatObject') }}
 				/>
 
 				<div className="form customScrollbar">
@@ -1644,6 +1639,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					id={`button-${block.id}-emoji`}
 					className="emoji"
 					onClick={onEmoji}
+					tooltipParam={{ text: translate('menuSmileGallery') }}
 				/>
 			</>
 		);
@@ -1688,6 +1684,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		onDragLeave,
 		onDrop,
 		getAttachments: () => attachments,
+		onAttachment,
 		getMarks: () => marks.current,
 	}));
 
