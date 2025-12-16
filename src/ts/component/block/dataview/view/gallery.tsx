@@ -252,8 +252,12 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					{({ measure }) => (
-						<div key={`gallery-row-${view.id + param.index}`} className="row" style={style}>
+					{({ registerChild, measure }) => (
+						<div 
+							ref={registerChild} 
+							key={`gallery-row-${view.id + param.index}`} 
+							className="row" style={style}
+						>
 							{item.children.map(id => cardItem(id))}
 						</div>
 					)}

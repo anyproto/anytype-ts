@@ -22,6 +22,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	ox = 0;
 	isSyncingScroll = false;
 	stickyScrollbarRef = null;
+	listRef: any = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -49,7 +50,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
-		const cn = [ 'viewContent', className ];
+		const cn = [ 'viewContent', className, 'noWrap' ];
 
 		const rowRenderer = ({ key, index, parent, style }) => (
 			<CellMeasurer
@@ -60,15 +61,21 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				rowIndex={index}
 				hasFixedWidth={() => {}}
 			>
-				<BodyRow 
-					key={`grid-row-${view.id + index}`} 
-					{...this.props} 
-					recordId={records[index]}
-					recordIdx={index}
-					style={{ ...style, top: style.top + 2 }}
-					cellPosition={this.cellPosition}
-					getColumnWidths={this.getColumnWidths}
-				/>
+				{({ registerChild, measure }) => (
+					<div 
+						ref={registerChild} 
+						style={{ ...style, top: style.top + 2 }}
+					>
+						<BodyRow 
+							key={`grid-row-${view.id + index}`} 
+							{...this.props} 
+							recordId={records[index]}
+							recordIdx={index}
+							cellPosition={this.cellPosition}
+							getColumnWidths={this.getColumnWidths}
+						/>
+					</div>
+				)}
 			</CellMeasurer>
 		);
 
@@ -105,14 +112,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 									{({ width }) => (
 										<div ref={registerChild}>
 											<List
+												ref={ref => this.listRef = ref}
 												autoHeight={true}
 												height={Number(height) || 0}
 												width={Number(width) || 0}
 												isScrolling={isScrolling}
 												rowCount={length}
-												rowHeight={this.getRowHeight()}
+												rowHeight={param => Math.max(this.cache.rowHeight(param), this.getRowHeight())}
 												onRowsRendered={onRowsRendered}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowRenderer={rowRenderer}
 												scrollTop={scrollTop}
 											/>
@@ -499,6 +507,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const cw = container.width();
 		const rh = this.getRowHeight();
 
+		this.cache.clearAll();
+		this.listRef?.recomputeRowHeights();
+
 		if (isInline) {
 			if (parent) {
 				if (parent.isPage() || parent.isLayoutDiv()) {
@@ -535,7 +546,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			});
 		};
 
-		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
+		//grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
 		this.resizeColumns('', 0);
 	};
 	
