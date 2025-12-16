@@ -557,7 +557,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
 			view.css({ width: vw, paddingRight: pr });
 
-			this.stickyScrollbarRef.resize({
+			this.stickyScrollbarRef?.resize({
 				width: mw,
 				left: margin,
 				paddingLeft: margin,
