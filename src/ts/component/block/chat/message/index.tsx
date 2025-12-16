@@ -335,7 +335,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 				id={`item-${id}`}
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
-				onDoubleClick={onReplyEdit}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
 				{...U.Common.animationProps({ 
