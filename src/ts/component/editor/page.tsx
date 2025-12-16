@@ -1995,6 +1995,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		if (currentTo && (currentFrom != currentTo)) {
+			const marks = U.Common.objectCopy(block.content.marks || []).concat({ 
+				type: I.MarkType.Link, 
+				range: { from: currentFrom, to: currentTo }, 
+				param: url,
+			});
+
+			U.Data.blockSetText(rootId, block.id, block.content.text, marks, true, () => {
+				focus.set(block.id, { from: currentFrom, to: currentTo });
+				focus.apply();
+			});
+			return;
+		};
+
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
 		const length = block.getLength();
