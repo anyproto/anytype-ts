@@ -24,7 +24,9 @@ const LOCAL_KEYS = [
 	'toggle',
 	'scroll',
 	'focus',
-	'graphData'
+	'graphData',
+	'progress',
+	'updateBanner',
 ];
 
 const Api = {
