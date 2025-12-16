@@ -144,7 +144,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	};
 
 	const lw = 50 + left.length * 5;
-	const rw = 100 - lw;
 
 	let content = (
 		<div className="sides">
@@ -154,10 +153,7 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			>
 				{left.map(mapper)}
 			</div>
-			<div 
-				className="side right"
-				style={{ width: `${rw}%` }}
-			>
+			<div className="side right">
 				{right.map(mapper)}
 			</div>
 		</div>
