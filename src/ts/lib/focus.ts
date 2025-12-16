@@ -140,8 +140,6 @@ class Focus {
 		if ((y < top) || (y > bottom)) {
 			container.scrollTop(Math.max(0, y - ch / 2));
 		};
-
-		console.trace();
 	};
 
 };
