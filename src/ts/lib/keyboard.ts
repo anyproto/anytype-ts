@@ -184,15 +184,9 @@ class Keyboard {
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
-			if (electron.isFullScreen()) {
-				Renderer.send('toggleFullScreen');
-			} else
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (!data.isClosed) {
-				sidebar.rightPanelClose(isPopup, true);
-			} else
 			if (S.Popup.isOpen()) {
 				let canClose = true;
 
@@ -216,6 +210,12 @@ class Keyboard {
 					};
 				};
 			} else 
+			if (electron.isFullScreen()) {
+				Renderer.send('toggleFullScreen');
+			} else
+			if (!data.isClosed) {
+				sidebar.rightPanelClose(isPopup, true);
+			} else
 			if (!this.isFocused) {
 				if (this.isMainSettings) {
 					U.Space.openDashboard({ replace: false });
