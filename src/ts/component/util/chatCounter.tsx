@@ -22,7 +22,23 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		mode = U.Object.getChatNotificationMode(spaceview, chatId);
 	} else {
 		counters = S.Chat.getSpaceCounters(spaceId);
-		mode = spaceview?.notificationMode;
+
+		if (counters.mentionCounter || counters.messageCounter) {
+			const spaceMap = S.Chat.stateMap.get(spaceId);
+
+			mode = I.NotificationMode.Nothing;
+
+			if (spaceMap) {
+				for (const [ chatId, state ] of spaceMap) {
+					const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+					if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
+						mode = I.NotificationMode.All;
+						break;
+					};
+				};
+			};
+		};
 	};
 
 	const { mentionCounter, messageCounter } = counters;
