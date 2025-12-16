@@ -394,6 +394,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
 		return () => {
 			unbind();
+			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
 
