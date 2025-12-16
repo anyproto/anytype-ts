@@ -676,7 +676,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		setText(marksRef.current, false);
 		onKeyUp(e, value, marksRef.current, range, props);
-		focus.scroll(isPopup, id);
+
+		if (!keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
+			focus.scroll(isPopup, id);
+		};
 	};
 
 	const onMention = (d: number) => {
