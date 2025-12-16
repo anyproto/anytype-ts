@@ -10,11 +10,16 @@
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
-	.menuWrap.fromOnboarding { z-index: 1001; }
+	.menuWrap.fromOnboarding,
+	.menuWrap.visibleDimmer { z-index: 1001; }
 
 	.menuWrap.fixed { position: fixed; }
 	.menuWrap.fixed {
 		.menu { position: fixed; }
+	}
+
+	.menuWrap.visibleDimmer {
+		.dimmer { background-color: rgba(0, 0, 0, 0.30); }
 	}
 
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }

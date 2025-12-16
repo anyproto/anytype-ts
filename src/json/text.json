@@ -2096,7 +2096,9 @@
 	"widgetRecentModeTitle": "Edited by",
 	"widgetRecentEditMode0": "Anyone",
 	"widgetRecentEditMode1": "Only me",
-	"widgetManageSections": "Customize Sidebar",
+
+	"widgetManageSections": "Manage Sections",
+	"widgetHideSection": "Hide section",
 
 	"phrasePlaceholder": "Please enter your Key",
 
