@@ -548,21 +548,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const width = groups.length * (size.card + size.margin) - size.margin;
 
 		if (!isInline) {
-			const maxWidth = cw - PADDING * 2;
-			const margin = width >= maxWidth ? PADDING : 0;
-			const vw = width > maxWidth ? width + size.margin : 0;
+			const mw = cw - PADDING * 2;
+			const margin = (cw - mw) / 2;
+			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
+			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: `calc(100% + ${PADDING * 2}px)`, marginLeft: -margin, paddingLeft: margin / 2 });
-
-			if (width > maxWidth) {
-				view.css({ width: vw });
-			};
+			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			view.css({ width: vw, paddingRight: pr });
 
 			this.stickyScrollbarRef.resize({
-				width: maxWidth,
+				width: mw,
 				left: margin,
-				paddingLeft: margin / 2,
-				display: vw <= maxWidth ? 'none' : '',
+				paddingLeft: margin,
+				display: vw <= mw ? 'none' : '',
 				trackWidth: vw,
 			});
 		} else
