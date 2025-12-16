@@ -1001,6 +1001,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	}, []);
 
 	useEffect(() => {
+		const match = keyboard.getMatch(isPopup);
+	});
+
+	useEffect(() => {
 		rebind();
 		init();
 	}, [ rootId, space, chatId, analyticsChatId ]);

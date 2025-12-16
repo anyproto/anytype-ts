@@ -998,7 +998,18 @@ const Block = observer(class Block extends React.Component<Props> {
 		items.each((i: number, item: any) => {
 			item = $(item);
 
-			const id = item.attr('data-param');
+			const param = item.attr('data-param');
+			const scheme = U.String.urlScheme(param);
+			const isRoute = scheme && (scheme == J.Constant.protocol);
+			
+			let id = param;
+			let routeParam = null;
+
+			if (isRoute) {
+				routeParam = U.Router.getParam(param.replace(`${J.Constant.protocol}://`, ''));
+				id = routeParam.id;
+			};
+
 			const object = S.Detail.get(subId, id, []);
 			const range = String(item.attr('data-range') || '').split('-');
 
@@ -1014,6 +1025,12 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			item.off('mousedown.object').on('mousedown.object', e => {
 				e.preventDefault();
+
+				object._routeParam_ = {};
+				if (isRoute && routeParam) {
+					object._routeParam_ = routeParam;
+				};
+
 				U.Object.openEvent(e, object);
 			});
 

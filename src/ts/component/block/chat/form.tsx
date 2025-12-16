@@ -521,7 +521,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 				if ((routeParam.action == 'object') && (routeParam.spaceId == space)) {
 					value = `${J.Constant.protocol}://${route}`;
-					param = routeParam.id;
 					type = I.MarkType.Object;
 				};
 			};
