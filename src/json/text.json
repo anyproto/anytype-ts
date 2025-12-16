@@ -1770,6 +1770,7 @@
 	"menuDataviewViewSort": "Sort",
 	"menuDataviewViewApplied": "%s applied",
 	"menuDataviewViewName": "View name",
+	"menuDataviewViewEditWrapContent": "Wrap content",
 
 	"menuDataviewViewListNoViewsFound": "No views found",
 	"menuDataviewViewListAddView": "Add a view",

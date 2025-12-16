@@ -226,6 +226,7 @@ export interface View {
 	coverRelationKey: string;
 	groupRelationKey: string;
 	endRelationKey: string;
+	wrapContent: boolean;
 	groupBackgroundColors: boolean;
 	coverFit: boolean;
 	cardSize: I.CardSize;

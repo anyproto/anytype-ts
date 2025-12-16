@@ -208,13 +208,20 @@
 			}
 		}
 
-		.viewContent.viewGrid.withWrap {
+		.viewContent.viewGrid.wrapContent {
 			.row { height: auto; }
 			.cell { height: auto; }
 
 			.cellContent { overflow: visible; height: auto; }
 			.cellContent {
-				.name, .empty { overflow: visible; height: auto; white-space: normal; @include clamp10; }
+				.name, .empty { overflow: visible; height: auto; white-space: normal; @include clamp15; }
+			}
+
+			.cellContent.c-select,
+			.cellContent.c-object, 
+			.cellContent.c-file {
+				.over { flex-wrap: wrap; }
+				.name { @include text-overflow-nw; }
 			}
 		}
 	}

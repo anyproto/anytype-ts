@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
+import { wrap } from 'lodash';
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {
 	
@@ -132,7 +133,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		let ret = false;
 
 		keyboard.shortcut('space', e, () => {
-			if ([ 'hideIcon', 'coverFit' ].includes(item.id)) {
+			if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
 				e.preventDefault();
 
 				this.onSwitch(e, item.id, !view[item.id]);
@@ -191,7 +192,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, isInline } = data;
-		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, endRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
+		const { type, coverRelationKey, cardSize, coverFit, wrapContent, groupRelationKey, endRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
+		const isGrid = type == I.ViewType.Grid;
 		const isGallery = type == I.ViewType.Gallery;
 		const isBoard = type == I.ViewType.Board;
 		const isCalendar = type == I.ViewType.Calendar;
@@ -200,6 +202,13 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const coverOption = Relation.getCoverOptions(rootId, blockId).find(it => it.id == coverRelationKey);
 
 		let settings: any[] = [];
+
+		if (isGrid) {
+			settings.push({ 
+				id: 'wrapContent', name: translate('menuDataviewViewEditWrapContent'), withSwitch: true, switchValue: wrapContent,
+				onSwitch: (e: any, v: boolean) => this.onSwitch(e, 'wrapContent', v),
+			});
+		};
 
 		if (isGallery) {
 			const sizeOption = Relation.getSizeOptions().find(it => it.id == cardSize);
@@ -214,7 +223,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				{ id: 'coverRelationKey', name: translate('menuDataviewViewEditCover'), caption: (coverOption ? coverOption.name : translate('commonSelect')), arrow: true },
 				{ 
 					id: 'coverFit', name: translate('menuDataviewViewEditFitMedia'), withSwitch: true, switchValue: coverFit,
-					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
+					onSwitch: (e: any, v: boolean) => this.onSwitch(e, 'coverFit', v),
 				}
 			]);
 		};
@@ -252,14 +261,14 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				name: translate('menuDataviewViewEditColorColumns'), 
 				withSwitch: true, 
 				switchValue: groupBackgroundColors,
-				onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
+				onSwitch: (e: any, v: boolean) => this.onSwitch(e, 'groupBackgroundColors', v),
 			});
 		};
 
 		if (!isGraph) {
 			settings.push({
 				id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
-				onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
+				onSwitch: (e: any, v: boolean) => this.onSwitch(e, 'hideIcon', !v),
 			});
 		} else {
 			settings.push({ id: 'graphSettings', name: translate('commonSettings'), arrow: true });

@@ -50,7 +50,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
-		const cn = [ 'viewContent', className, 'noWrap' ];
+		const cn = [ 'viewContent', className, 'wrapContent' ];
 
 		const rowRenderer = ({ key, index, parent, style }) => (
 			<CellMeasurer
