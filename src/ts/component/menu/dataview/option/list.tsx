@@ -7,10 +7,11 @@ import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinat
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, S, U, J, keyboard, Relation, translate, Preview } from 'Lib';
+import { I, C, S, U, keyboard, Relation, translate, Preview } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 40;
+const SUB_ID = 'dataviewOptionList';
 
 const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 
@@ -222,11 +223,28 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		U.Data.sortByOrderIdRequest(J.Constant.subId.option, newItems, callBack => {
+		U.Data.sortByOrderIdRequest(SUB_ID, newItems, callBack => {
 			C.RelationOptionSetOrder(S.Common.space, relation.relationKey, newItems.map(it => it.id), callBack);
 		});
 
 		keyboard.disableSelection(false);
+	};
+
+	const load = () => {
+		U.Subscription.destroyList([ SUB_ID ], false, () => {
+			U.Subscription.subscribe({
+				subId: SUB_ID,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+					{ relationKey: 'relationKey', condition: I.FilterCondition.Equal, value: relation.relationKey },
+				],
+				sorts: [
+					{ relationKey: 'orderId', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+				] as I.Sort[],
+				keys: U.Subscription.optionRelationKeys(false),
+			});
+		});
 	};
 
 	const getItems = (): any[] => {
@@ -234,10 +252,10 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		const skipIds = Relation.getArrayValue(data.skipIds);
 		const ret = [];
 
-		let items = S.Record.getRecords(J.Constant.subId.option, U.Subscription.optionRelationKeys(true)).filter(it => it.relationKey == relation.relationKey);
+		let items = S.Record.getRecords(SUB_ID, U.Subscription.optionRelationKeys(true));
 		let check = [];
 
-		items = items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted && !skipIds.includes(it.id));
+		items = items.filter(it => !it._empty_ && !skipIds.includes(it.id));
 
 		if (filterMapper) {
 			items = items.filter(filterMapper);
@@ -372,6 +390,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		resize();
 		setActive();
 		position();
+		load();
 
 		return () => {
 			unbind();
