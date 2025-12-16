@@ -353,8 +353,10 @@ class Action {
 		
 		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
 
-		Renderer.send('download', url, { saveAs: true });
-		analytics.event('DownloadMedia', { route });
+		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
+			Renderer.send('download', url, { directory: paths[0] });
+			analytics.event('DownloadMedia', { route });
+		});
 	};
 
 	/**
