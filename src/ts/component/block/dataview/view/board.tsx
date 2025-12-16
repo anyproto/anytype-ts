@@ -32,6 +32,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 		this.onScrollView = this.onScrollView.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
