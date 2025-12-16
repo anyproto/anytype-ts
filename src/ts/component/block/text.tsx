@@ -1020,9 +1020,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const placeholderCheck = () => {
-		if (readonly) {
+		if (!readonly) {
 			editableRef.current?.placeholderCheck();
-		};			
+		};
 	};
 
 	const placeholderHide = () => {
