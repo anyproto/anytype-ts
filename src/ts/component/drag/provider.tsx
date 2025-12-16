@@ -849,9 +849,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 	const setPosition = (v: I.BlockPosition) => {
 		position.current = v;
-
-		console.log('[DragProvider].setPosition', I.BlockPosition[v]);
-		console.trace();
 	};
 
 	const unbind = () => {

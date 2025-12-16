@@ -1458,7 +1458,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const nextId = parentElement.childrenIds[idx - 1];
 		const next = nextId ? S.Block.getLeaf(rootId, nextId) : S.Block.getNextBlock(rootId, block.id, -1);
 		const obj = isShift ? parent : next;
-		
+
 		let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
 		if (!isShift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
 			canTab = false;
@@ -1469,6 +1469,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		Action.move(rootId, rootId, obj.id, [ block.id ], (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+			if (isShift) {
+				Action.move(rootId, rootId, block.id, parentElement.childrenIds, I.BlockPosition.Inner);
+			};
+
 			window.setTimeout(() => this.focus(block.id, range.from, range.to, false), 50);
 
 			if (next && next.isTextToggle()) {
