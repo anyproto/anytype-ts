@@ -69,6 +69,7 @@
 				.side.left.s60 {
 					.cellWrapper.isName { min-width: unset; flex-grow: 0; @include text-overflow-nw; }
 				}
+				.side.right { justify-content: flex-end; }
 
 				> .cellWrapper { flex-grow: 0; }
 			}
