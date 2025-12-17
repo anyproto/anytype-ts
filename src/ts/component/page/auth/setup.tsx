@@ -165,11 +165,13 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			<Frame>
 				<Error text={errorText} />
 
-				<div className="bubbleWrapper">
-					<div className="bubble">
-						<div className="img" />
+				{!error.code ? (
+					<div className="bubbleWrapper">
+						<div className="bubble">
+							<div className="img" />
+						</div>
 					</div>
-				</div>
+				) : ''}
 
 				{error.code ? (
 					<div className="buttons">
