@@ -1040,7 +1040,6 @@
                     }
 
                     .button { width: 100%; }
-                    .button.disabled { color: var(--color-text-primary); }
                     .bottom { display: flex; flex-direction: column; gap: 8px 0px; }
 
                     .priceWrapper { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); display: flex; align-items: baseline; gap: 0px 4px; }
