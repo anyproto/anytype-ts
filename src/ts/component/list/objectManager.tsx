@@ -25,7 +25,7 @@ interface Props {
 	isCompact?: boolean;
 	scrollElement?: HTMLElement;
 	resize?: () => void;
-	onAfterLoad?: (message: any) => void;
+	onUpdate?: (message: any) => void;
 };
 
 interface ObjectManagerRefProps {
@@ -89,7 +89,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	isCompact = false,
 	scrollElement,
 	resize,
-	onAfterLoad
+	onUpdate
 }, ref) => {
 
 	if (isCompact) {
@@ -218,9 +218,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			sources: sources || [],
 			collectionId: collectionId || ''
 		}, (message) => {
-			if (onAfterLoad) {
-				onAfterLoad(message);
-			};
+			onUpdate?.(message);
 		});
 	};
 

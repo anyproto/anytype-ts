@@ -24,7 +24,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('enter, space', e, () => {
+		keyboard.shortcut('enter', e, () => {
 			e.stopPropagation();
 			onClick(e);
 		});
@@ -39,13 +39,15 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		close();
 	};
 
-	const onAfterLoad = (message: any) => {
+	const onUpdate = (message: any) => {
 		window.setTimeout(() => {
 			const wrap = $(`#${getId()}-innerWrap`);
+			const items = wrap.find('.items');
+			const height = wrap.outerHeight() - items.outerHeight() || 0;
 			const l = managerRef.current.getItemsCount();
 
 			if (l) {
-				wrap.css({ height: wrap.outerHeight() + l * ROW_HEIGHT });
+				wrap.css({ height: height + l * ROW_HEIGHT });
 			};
 
 			position();
@@ -62,6 +64,8 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	}, []);
 
+	let ignoreArchived = false;
+	let textEmpty = translate('popupSettingsSpaceStorageEmptyLabel');
 	let icon: any = null;
 	let title = '';
 	let label = '';
@@ -79,14 +83,18 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		case I.ObjectManagerPopup.TypeArchive: {
 			if (objects.length == 1) {
+				const { name, pluralName } = objects[0];
+
 				icon = <IconObject size={56} iconSize={56} object={objects[0]} />;
-				title = U.String.sprintf(translate('popupConfirmArchiveTypeTitle'), objects[0].pluralName);
-				label = translate('popupConfirmArchiveTypeText');
+				title = U.String.sprintf(translate('popupObjectManagerArchiveTypeTitle'), pluralName ? pluralName : name);
+				label = translate('popupObjectManagerArchiveTypeText');
 			} else {
-				title = U.String.sprintf(translate('popupConfirmArchiveTypeTitlePlural'), objects.length);
-				label = translate('popupConfirmArchiveTypeTextPlural');
+				title = U.String.sprintf(translate('popupObjectManagerArchiveTypeTitlePlural'), objects.length);
+				label = translate('popupObjectManagerArchiveTypeTextPlural');
 			};
 
+			ignoreArchived = true;
+			textEmpty = translate('popupObjectManagerArchiveTypeEmptyText');
 			button = translate('commonMoveToBin');
 			buttonColor = 'red';
 			rowLength = 1;
@@ -107,12 +115,12 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			<ListObjectManager
 				ref={managerRef}
 				subId={subId}
-				ignoreArchived={false}
+				ignoreArchived={ignoreArchived}
 				buttons={[]}
 				filters={filters}
 				keys={keys || J.Relation.default}
-				textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
-				onAfterLoad={onAfterLoad}
+				textEmpty={textEmpty}
+				onUpdate={onUpdate}
 				disableHeight={false}
 				isCompact={true}
 				scrollElement={$(`#${getId()}-innerWrap .items`).get(0)}
