@@ -383,10 +383,12 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		win.off('keydown.filter').on('keydown.filter', (e: any) => {
 			e.stopPropagation();
 
-			keyboard.shortcut('escape', e, () => {
-				onFilterHide();
-				win.off('keydown.filter');
-			});
+			if (!isPopup && !keyboard.isPopup()) {
+				keyboard.shortcut('escape', e, () => {
+					onFilterHide();
+					win.off('keydown.filter');
+				});
+			};
 		});
 	};
 
