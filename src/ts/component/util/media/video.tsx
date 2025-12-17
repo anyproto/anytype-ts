@@ -35,7 +35,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 
 		video.on('play', onPlayHandler);
 		video.on('pause', onPause);
-		video.on('ended', () => onEnded());
+		video.on('ended', onEnded);
 		video.on('canplay', onLoad);
 		video.on('loadedmetadata', onMetaData);
 	};
