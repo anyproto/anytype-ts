@@ -34,7 +34,9 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		$(inputWrapperRef.current).toggleClass('canClear', v.length > 0);
 	};
 
-	const onSubmit = () => {
+	const onSubmit = (e: any) => {
+		e.preventDefault();
+
 		const code = inputRef.current.getValue();
 
 		setIsLoading(true);
@@ -73,7 +75,7 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 	}, []);
 
 	return (
-		<>
+		<form onSubmit={onSubmit}>
 			{isLoading ? <Loader id="loader" /> : ''}
 
 			<Icon className="activation" />
@@ -87,12 +89,12 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 			</div>
 
 			<div className="buttons">
-				<Button ref={buttonRef} className="c36" color="accent" text={translate('commonActivate')} onClick={onSubmit} />
+				<Button ref={buttonRef} type="input" className="c36" color="accent" text={translate('commonActivate')} onClick={onSubmit} />
 				<Button className="c36" color="blank" text={translate('commonCancel')} onClick={() => close()} />
 			</div>
 
 			<Error text={error} />
-		</>
+		</form>
 	);
 
 }));

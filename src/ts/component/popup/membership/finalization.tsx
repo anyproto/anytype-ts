@@ -55,7 +55,9 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		}, J.Constant.delay.keyboard);
 	};
 
-	const onConfirm = () => {
+	const onConfirm = (e: any) => {
+		e.preventDefault();
+
 		const name = nameRef.current?.getValue() || '';
 
 		setStatus('');
@@ -83,7 +85,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 	}, []);
 
 	return (
-		<div className="anyNameForm">
+		<form onSubmit={onConfirm} className="anyNameForm">
 			<Icon className={[ 'color', product.colorStr || 'default' ].join(' ')} />
 			<div className="text">
 				<Title text={translate(`popupMembershipFinalizationTitle`)} />
@@ -101,9 +103,9 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 				/>
 				<div className="ns">{J.Constant.namespace[0]}</div>
 			</div>
-			<Button ref={buttonRef} onClick={onConfirm} color="accent" text={translate('popupMembershipFinalizationClaimName')} />
+			<Button ref={buttonRef} type="input" onClick={onConfirm} color="accent" text={translate('popupMembershipFinalizationClaimName')} />
 			{isLoading ? <Loader /> : ''}
-		</div>
+		</form>
 	);
 
 }));
