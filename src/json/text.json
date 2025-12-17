@@ -1307,6 +1307,13 @@
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
+	"popupObjectManagerArchiveTypeTitle": "Move “%s” to Bin?",
+	"popupObjectManagerArchiveTypeText": "Some objects use this type. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
+	"popupObjectManagerArchiveTypeTitlePlural": "Move %s types to Bin?",
+	"popupObjectManagerArchiveTypeTextPlural": "Some objects use these types. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
+	"popupObjectManagerArchiveTypeEmptyText": "There are no objects of this type",
+
+
 	"popupInviteRequestAccessTitle": "Access required",
 	"popupInviteRequestAccessTextData": "This space requires owner approval. Send a request and you'll be notified once it's approved.",
 	"popupInviteRequestAccessTextChat": "This chat requires owner approval. Send a request and you'll be notified once it's approved.",

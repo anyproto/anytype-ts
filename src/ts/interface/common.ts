@@ -240,6 +240,7 @@ export enum ObjectManagerItemInfo {
 
 export enum ObjectManagerPopup {
 	Favorites		 = 0,
+	TypeArchive 	 = 1,
 };
 
 export enum NetworkMode {

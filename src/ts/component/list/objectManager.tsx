@@ -22,13 +22,15 @@ interface Props {
 	ignoreArchived?: boolean;
 	ignoreHidden?: boolean;
 	disableHeight?: boolean;
+	isCompact?: boolean;
 	scrollElement?: HTMLElement;
 	resize?: () => void;
-	onAfterLoad?: (message: any) => void;
+	onUpdate?: (message: any) => void;
 };
 
 interface ObjectManagerRefProps {
 	getSelected(): string[];
+	getItemsCount(): number;
 	setSelection(ids: string[]): void;
 	setSelectedRange(start: number, end: number): void;
 	selectionClear(): void;
@@ -84,10 +86,17 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	ignoreHidden = true,
 	isPopup = false,
 	disableHeight = true,
+	isCompact = false,
 	scrollElement,
 	resize,
-	onAfterLoad
+	onUpdate
 }, ref) => {
+
+	if (isCompact) {
+		rowHeight = 30;
+		iconSize = 20;
+		rowLength = 1;
+	};
 
 	const filterWrapperRef = useRef(null);
 	const filterRef = useRef(null);
@@ -209,9 +218,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			sources: sources || [],
 			collectionId: collectionId || ''
 		}, (message) => {
-			if (onAfterLoad) {
-				onAfterLoad(message);
-			};
+			onUpdate?.(message);
 		});
 	};
 
@@ -261,8 +268,13 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	};
 
 	const items = getItems();
+	const cn = [ 'objectManagerWrapper' ];
 	const cnControls = [ 'controls' ];
 	const filter = getFilterValue();
+
+	if (isCompact) {
+		cn.push('isCompact');
+	};
 
 	if (filter) {
 		cnControls.push('withFilter');
@@ -465,13 +477,14 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 	useImperativeHandle(ref, () => ({
 		getSelected: () => selected.current,
+		getItemsCount: () => items.length,
 		setSelection,
 		setSelectedRange,
 		selectionClear,
 	}));
 
 	return (
-		<div className="objectManagerWrapper">
+		<div className={cn.join(' ')}>
 			{controls}
 			{content}
 		</div>
