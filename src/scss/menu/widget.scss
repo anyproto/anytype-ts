@@ -45,7 +45,7 @@
 
 			&.isDragging { z-index: 1; }
 			&.isHidden { color: var(--color-text-tertiary); }
-			&::before { background: var(--color-shape-highlight-light); }
+			&::before { background: var(--color-shape-highlight-light) !important; }
 		}
 
 		.button { margin: 0px 16px; width: calc(100% - 32px); }
