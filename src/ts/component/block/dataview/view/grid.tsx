@@ -542,6 +542,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				paddingLeft: margin, 
 				minHeight: (ch - scroll.offset()?.top),
 			});
+
 			wrap.css({ width: vw, paddingRight: pr });
 
 			this.stickyScrollbarRef?.resize({
@@ -552,10 +553,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				trackWidth: vw,
 			});
 		};
-
-
-
-		//grid.css({ minHeight:  });
+		
 		this.resizeColumns('', 0);
 	};
 	

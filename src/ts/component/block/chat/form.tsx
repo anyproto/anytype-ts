@@ -828,7 +828,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const send = $(sendRef.current);
 		const loader = $(loaderRef.current);
-		const files = attachments.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
+		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
@@ -1242,10 +1242,19 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const ext = electron.fileExt(path);
 		const type = S.Record.getFileType();
 
+		let layout = I.ObjectLayout.File;
+
+		if (mime) {
+			const [ t1, t2 ] = mime.split('/');
+			if ((t1 == 'image') || J.Constant.fileExtension.image.includes(t2)) {
+				layout = I.ObjectLayout.Image;
+			};
+		};
+
 		return {
 			id: sha1(path),
 			name: file.name,
-			layout: I.ObjectLayout.File,
+			layout,
 			type: type?.id,
 			sizeInBytes: file.size,
 			fileExt: ext,

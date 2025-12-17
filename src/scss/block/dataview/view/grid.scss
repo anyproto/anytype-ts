@@ -15,14 +15,6 @@
 			.rowHead { margin: 0px; width: 100%; }
 		}
 
-		.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
-		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
-		.row:hover { background-color: var(--color-shape-highlight-light); }
-		.row:hover {
-			.icon.drag { opacity: 1; }
-		}
-		.row.add { margin-top: -2px; }
-
 		.cellHead, .cellFoot { 
 			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
 			display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
@@ -110,6 +102,14 @@
 			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px var(--color-shape-secondary) inset; }
+
+			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
+			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
+			.row:hover { background-color: var(--color-shape-highlight-light); }
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
+			.row.add { margin-top: -2px; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }

@@ -1054,9 +1054,11 @@ class UtilMenu {
 								};
 
 								case 'manage': {
-									const win = $(window);
 									this.menuContext?.close(() => S.Menu.open('widgetSection', {
-										rect: { x: 0, y: 0, width: win.width(), height: win.height() },
+										recalcRect: () => {
+											const { ww, wh } = U.Common.getWindowDimensions();
+											return { x: 0, y: 0, width: ww, height: wh };
+										},
 										classNameWrap: 'fixed visibleDimmer',
 										vertical: I.MenuDirection.Center,
 										horizontal: I.MenuDirection.Center,

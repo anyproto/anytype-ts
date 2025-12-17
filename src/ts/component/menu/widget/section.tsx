@@ -130,6 +130,9 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		if (isDragging) {
 			cn.push('isDragging');
 		};
+		if (item.isHidden) {
+			cn.push('isHidden');
+		};
 
 		let content = null;
 
@@ -155,7 +158,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 						<div className="name">{item.name}</div>
 					</span>
 					<Icon 
-						className={[ 'eye', (!item.isHidden ? 'on' : 'off') ].join(' ')} 
+						className={[ 'eye', (item.isHidden ? 'on' : 'off') ].join(' ')} 
 						onClick={e => onSwitch(item)} 
 					/>
 				</div>

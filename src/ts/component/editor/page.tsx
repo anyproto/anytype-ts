@@ -1470,7 +1470,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		Action.move(rootId, rootId, obj.id, [ block.id ], (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 			if (isShift) {
-				Action.move(rootId, rootId, block.id, parentElement.childrenIds, I.BlockPosition.Inner);
+				Action.move(rootId, rootId, block.id, parentElement.childrenIds.slice(idx), I.BlockPosition.Inner);
 			};
 
 			window.setTimeout(() => this.focus(block.id, range.from, range.to, false), 50);

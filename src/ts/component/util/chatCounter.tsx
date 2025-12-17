@@ -30,10 +30,18 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 			if (spaceMap) {
 				for (const [ chatId, state ] of spaceMap) {
+					if (!chatId) {
+						continue;
+					};
+
 					const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
 					if (state.messageCounter && (chatMode == I.NotificationMode.All)) {
 						mode = I.NotificationMode.All;
+						break;
+					} else
+					if (state.mentionCounter && ([ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+						mode = I.NotificationMode.Mentions;
 						break;
 					};
 				};

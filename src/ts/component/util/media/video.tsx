@@ -6,10 +6,11 @@ import { Icon } from 'Component';
 interface Props {
 	src: string;
 	canPlay?: boolean;
-	onPlay?(): void;
-	onPause?(): void;
+	onPlay?(e: any): void;
+	onPause?(e: any): void;
 	onClick?(e: any): void;
-	onLoad?(): void;
+	onLoad?(e: any): void;
+	onMetaData?(e: any): void;
 	onSyncStatusClick?(e: any): void;
 };
 
@@ -20,6 +21,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 	onPause = () => {},
 	onClick = () => {},
 	onLoad = () => {},
+	onMetaData = () => {},
 	onSyncStatusClick = () => {},
 }, ref: any) => {
 
@@ -31,34 +33,33 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 
 		const video = $(videoRef.current);
 
-		video.on('play', () => onPlayHandler());
-		video.on('pause', () => onPause());
-		video.on('ended', () => onEnded());
-		video.on('canplay', () => onLoad());
+		video.on('play', onPlayHandler);
+		video.on('pause', onPause);
+		video.on('ended', onEnded);
+		video.on('canplay', onLoad);
+		video.on('loadedmetadata', onMetaData);
 	};
 
 	const unbind = () => {
-		$(videoRef.current).off('canplay ended pause play');
+		$(videoRef.current).off('canplay ended pause play loadedmetadata');
 	};
 
-	const onPlayHandler = () => {
+	const onPlayHandler = (e: any) => {
 		if (videoRef.current) {
 			videoRef.current.controls = true;
 		};
 		$(nodeRef.current).addClass('isPlaying');
 
-		if (onPlay) {
-			onPlay();
-		};
+		onPlay?.(e);
 	};
 
-	const onEnded = () => {
+	const onEnded = (e) => {
 		if (videoRef.current) {
 			videoRef.current.controls = false;
 		};
 		$(nodeRef.current).removeClass('isPlaying');
 
-		onPause();
+		onPause?.(e);
 	};
 
 	const onPlayClick = (e: any) => {
