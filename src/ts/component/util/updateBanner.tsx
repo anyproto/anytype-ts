@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, ProgressBar, Button } from 'Component';
-import { I, S, U, J, translate, Renderer, keyboard, Storage } from 'Lib';
+import { I, S, U, J, translate, Renderer, keyboard, Storage, analytics } from 'Lib';
 
 const STORAGE_KEY = 'updateBanner';
 
@@ -87,6 +87,10 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 	};
 
 	useEffect(() => {
+		if (updateVersion) {
+			analytics.event('ScreenUpgradeVersion');
+		};
+
 		resize();
 	}, [ updateVersion, progress.length ]);
 
@@ -109,6 +113,8 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 					onClick={() => {
 						S.Common.updateVersionSet('');
 						Renderer.send('updateCancel');
+						
+						analytics.event('ClickCancelVersion');
 					}}
 				/>
 				<Button 
@@ -119,6 +125,8 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 						Renderer.send('updateConfirm');
 						S.Common.updateVersionSet('');
 						U.Common.checkUpdateVersion(updateVersion);
+
+						analytics.event('ClickUpgradeVersion');
 					}}
 				/>
 			</div>
