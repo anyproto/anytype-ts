@@ -39,6 +39,10 @@
 					left: 0px; top: 50%; margin-top: -2px;
 				}
 
+				&.isLoading {
+					.iconWrap { width: 32px; height: 32px; }
+				}
+
 				&.add { display: flex; align-items: center; justify-content: center; }
 				&.add {
 					.icon {
