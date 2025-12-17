@@ -1,11 +1,14 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
+import $ from 'jquery';
 import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
 import { C, I, J, keyboard, translate, U } from 'Lib';
 import { observer } from 'mobx-react';
 
+const ROW_HEIGHT = 30;
+
 const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
-	const { param, getId, close } = props;
+	const { param, getId, close, position } = props;
 	const { data } = param;
 	const { type, objects, keys, onConfirm } = data;
 	const subId = [ getId(), 'data' ].join('-');
@@ -37,6 +40,16 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onAfterLoad = (message: any) => {
+		window.setTimeout(() => {
+			const wrap = $(`#${getId()}-innerWrap`);
+			const l = managerRef.current.getItemsCount();
+
+			if (l) {
+				wrap.css({ height: wrap.outerHeight() + l * ROW_HEIGHT });
+			};
+
+			position();
+		}, 5);
 	};
 
 	useEffect(() => {
@@ -66,7 +79,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		case I.ObjectManagerPopup.TypeArchive: {
 			if (objects.length == 1) {
-				icon = <IconObject size={56} object={objects[0]} />;
+				icon = <IconObject size={56} iconSize={56} object={objects[0]} />;
 				title = U.String.sprintf(translate('popupConfirmArchiveTypeTitle'), objects[0].pluralName);
 				label = translate('popupConfirmArchiveTypeText');
 			} else {
@@ -85,22 +98,23 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	return (
 		<>
-			{icon}
-			<Title text={title} />
-			{label ? <Label text={label} /> : ''}
+			<div className="textWrapper">
+				{icon}
+				<Title text={title} />
+				{label ? <Label text={label} /> : ''}
+			</div>
 
 			<ListObjectManager
 				ref={managerRef}
 				subId={subId}
-				rowLength={1}
 				ignoreArchived={false}
 				buttons={[]}
-				iconSize={48}
 				filters={filters}
 				keys={keys || J.Relation.default}
 				textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
 				onAfterLoad={onAfterLoad}
 				disableHeight={false}
+				isCompact={true}
 				scrollElement={$(`#${getId()}-innerWrap .items`).get(0)}
 			/>
 
