@@ -11,6 +11,7 @@ import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import AddRow from './grid/body/add';
 import FootRow from './grid/foot/row';
+import view from 'Component/widget/view';
 
 const PADDING = 46;
 const HEIGHT = 48;
@@ -50,7 +51,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
-		const cn = [ 'viewContent', className, 'wrapContent' ];
+		const cn = [ 'viewContent', className ];
+
+		if (view.wrapContent) {
+			cn.push('wrapContent');
+		};
 
 		const rowRenderer = ({ key, index, parent, style }) => (
 			<CellMeasurer
@@ -73,7 +78,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 							recordIdx={index}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
-							onUpdate={measure}
+							onUpdate={view.wrapContent ? measure : undefined}
 						/>
 					</div>
 				)}
@@ -496,21 +501,21 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId } = this.props;
+		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId, getView } = this.props;
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
+		const view = getView();
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
-		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
-		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const ch = container.height();
-		const rh = this.getRowHeight();
 
-		this.cache.clearAll();
-		this.listRef?.recomputeRowHeights();
+		if (view.wrapContent) {
+			this.cache.clearAll();
+			this.listRef?.recomputeRowHeights(0);
+		};
 
 		if (isInline) {
 			if (parent) {
