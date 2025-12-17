@@ -1,13 +1,13 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { Title, Button, ListObjectManager } from 'Component';
-import { C, I, keyboard, translate } from 'Lib';
+import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
+import { C, I, J, keyboard, translate, U } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, getId, close } = props;
 	const { data } = param;
-	const { collectionId, type } = data;
+	const { type, objects, keys, onConfirm } = data;
 	const subId = [ getId(), 'data' ].join('-');
 	const managerRef = useRef(null);
 
@@ -30,6 +30,9 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const onClick = (e: any) => {
 		e.preventDefault();
 
+		if (onConfirm) {
+			onConfirm(managerRef.current?.getSelected());
+		};
 		close();
 	};
 
@@ -46,8 +49,13 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	}, []);
 
+	let icon: any = null;
 	let title = '';
+	let label = '';
 	let button = translate('commonDone');
+	let buttonColor = 'black';
+	let rowLength = 2;
+	let filters = [];
 
 	switch (type) {
 		case I.ObjectManagerPopup.Favorites: {
@@ -55,20 +63,41 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			button = translate('commonAddToFavorites');
 			break;
 		};
+
+		case I.ObjectManagerPopup.TypeArchive: {
+			if (objects.length == 1) {
+				icon = <IconObject size={56} object={objects[0]} />;
+				title = U.String.sprintf(translate('popupConfirmArchiveTypeTitle'), objects[0].pluralName);
+				label = translate('popupConfirmArchiveTypeText');
+			} else {
+				title = U.String.sprintf(translate('popupConfirmArchiveTypeTitlePlural'), objects.length);
+				label = translate('popupConfirmArchiveTypeTextPlural');
+			};
+
+			button = translate('commonMoveToBin');
+			buttonColor = 'red';
+			rowLength = 1;
+			filters = [
+				{ relationKey: 'type', condition: I.FilterCondition.In, value: objects.map(({ id }) => id) }
+			];
+		};
 	};
 
 	return (
 		<>
+			{icon}
 			<Title text={title} />
+			{label ? <Label text={label} /> : ''}
 
 			<ListObjectManager
 				ref={managerRef}
 				subId={subId}
-				rowLength={2}
+				rowLength={1}
 				ignoreArchived={false}
 				buttons={[]}
 				iconSize={48}
-				collectionId={collectionId}
+				filters={filters}
+				keys={keys || J.Relation.default}
 				textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
 				onAfterLoad={onAfterLoad}
 				disableHeight={false}
@@ -76,7 +105,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			/>
 
 			<div className="buttons">
-				<Button text={button} className="c36" onClick={onClick} />
+				<Button text={button} color={buttonColor} className="c36" onClick={onClick} />
 				<Button text={translate('commonCancel')} color="blank" className="c36" onClick={() => close()} />
 			</div>
 		</>

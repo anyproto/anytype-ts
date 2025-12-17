@@ -498,7 +498,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageArchive': {
-				Action.archive([ object.id ], route, () => {
+				Action.archiveCheckType(rootId, [ object.id ], route, () => {
 					if (onArchive) {
 						onArchive();
 					} else {
