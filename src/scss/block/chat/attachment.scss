@@ -106,7 +106,7 @@
 
 			&.withBlur { width: 352px; }
 			&.withBlur {
-				.image { width: unset; height: unset; border-radius: 0px; position: relative; z-index: 1; }
+				.image { border-radius: 0px; position: relative; z-index: 1; }
 			}
 		}
 

@@ -377,6 +377,8 @@ const App: FC = () => {
 				},
 			},
 		});
+
+		analytics.event('UpgradeVersionError');
 	};
 
 	const onUpdateProgress = (e: any, progress: any) => {
