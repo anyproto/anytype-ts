@@ -20,6 +20,7 @@ interface SelectionRefProps {
 	setIsSelecting(v: boolean): void;
 	hide(): void;
 	rebind(): void;
+	invalidateCache(): void;
 };
 
 const THRESHOLD = 20;
@@ -47,6 +48,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const rectRef = useRef(null);
 	const allowRect = useRef(false);
 	const target = useRef(null);
+	const nodesInitialized = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -121,7 +123,8 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		top.current = startTop.current = container.scrollTop();
 		idsOnStart.current = new Map(ids.current);
 		cacheChildrenMap.current.clear();
-		cacheNodeMap.current.clear();
+		// Performance: Don't clear node cache - reuse it across selections
+		nodesInitialized.current = false;
 		setIsSelecting(true);
 
 		keyboard.disablePreview(true);
@@ -132,7 +135,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			y.current -= containerOffset.current.top - top.current;
 		};
 
-		initNodes();
+		// Performance: Defer initNodes() until mouse moves beyond THRESHOLD
 		target.current = $(e.target).closest('.selectionTarget');
 
 		if (e.shiftKey && focused) {
@@ -153,7 +156,16 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const initNodes = () => {
+		const isPopup = keyboard.isPopup();
+		const container = U.Common.getScrollContainer(isPopup);
 		const list = getPageContainer().find('.selectionTarget');
+
+		// Performance: Get viewport bounds for visibility check
+		const containerHeight = container.height() || 0;
+		const scrollTop = container.scrollTop() || 0;
+		const viewportTop = scrollTop;
+		const viewportBottom = scrollTop + containerHeight;
+		const buffer = containerHeight; // Buffer zone above/below viewport
 
 		list.each((i: number, item: any) => {
 			item = $(item);
@@ -168,8 +180,20 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 			nodes.current.push(node);
 
-			cacheNode(node);
-			cacheChildrenIds(id);
+			// Performance: Only cache nodes in or near viewport
+			const offset = item.offset();
+			if (offset) {
+				const elementTop = offset.top - (containerOffset.current?.top || 0) + scrollTop;
+				const elementBottom = elementTop + (item.outerHeight() || 0);
+
+				// Only cache if element is in viewport + buffer zone
+				if (elementBottom >= (viewportTop - buffer) && elementTop <= (viewportBottom + buffer)) {
+					cacheNode(node);
+				}
+			}
+
+			// Performance: Defer child caching - only cache when needed
+			// cacheChildrenIds will be called lazily by getChildrenIds
 		});
 	};
 	
@@ -186,7 +210,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
-		
+
+		// Performance: Only initialize nodes when user starts dragging
+		if (!nodesInitialized.current) {
+			initNodes();
+			nodesInitialized.current = true;
+		};
+
 		top.current = U.Common.getScrollContainer(isPopup).scrollTop();
 		checkNodes(e);
 		drawRect(e.pageX, e.pageY);
@@ -213,11 +243,16 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return;
 		};
 
+		// Performance: Only recache visible nodes on scroll
 		if (Math.abs(st - startTop.current) >= wh / 2) {
+			// Significant scroll - reinitialize visible nodes
+			cacheNodeMap.current.clear();
+			nodes.current = [];
 			initNodes();
 			startTop.current = st;
 		} else {
-			nodes.current.forEach(it => cacheNode(it));
+			// Small scroll - only invalidate position cache, will be recalculated on-demand
+			// Nodes will be re-cached when checked via cacheNode's internal cache check
 		};
 
 		checkNodes({ ...e, pageX: cx, pageY: cy });
@@ -457,16 +492,17 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 	const clearState = () => {
 		keyboard.disablePreview(false);
-		
+
 		hide();
 		setIsSelecting(false);
-		cacheNodeMap.current.clear();
+		// Performance: Keep cacheNodeMap for reuse - only clear when necessary
 		focusedId.current = '';
 		nodes.current = [];
 		range.current = null;
 		containerOffset.current = null;
 		allowRect.current = false;
 		target.current = null;
+		nodesInitialized.current = false;
 	};
 
 	const set = (type: I.SelectType, list: string[]) => {
@@ -550,6 +586,10 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const getChildrenIds = (id: string) => {
+		// Performance: Lazy-load children cache if not yet computed
+		if (!cacheChildrenMap.current.has(id)) {
+			cacheChildrenIds(id);
+		}
 		return cacheChildrenMap.current.get(id) || [];
 	};
 
@@ -613,6 +653,13 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		$('html').toggleClass('isSelecting', v);
 	};
 
+	const invalidateCache = () => {
+		// Clear position cache when DOM structure changes
+		cacheNodeMap.current.clear();
+		cacheChildrenMap.current.clear();
+		nodesInitialized.current = false;
+	};
+
 	useEffect(() => {
 		rebind();
 		return () => unbind();
@@ -629,6 +676,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		setIsSelecting,
 		hide,
 		rebind,
+		invalidateCache,
 	}));
 
 	return (
