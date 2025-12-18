@@ -1926,7 +1926,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const urls = U.String.getUrlsFromText(data.text);
 
-		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription()) {
+		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			this.onPasteUrl(urls[0]);
 			return;
 		};
