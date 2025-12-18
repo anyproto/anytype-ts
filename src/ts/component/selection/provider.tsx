@@ -20,6 +20,7 @@ interface SelectionRefProps {
 	setIsSelecting(v: boolean): void;
 	hide(): void;
 	rebind(): void;
+	invalidateCache(): void;
 };
 
 const THRESHOLD = 20;
@@ -47,6 +48,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const rectRef = useRef(null);
 	const allowRect = useRef(false);
 	const target = useRef(null);
+	const nodesInitialized = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -121,7 +123,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		top.current = startTop.current = container.scrollTop();
 		idsOnStart.current = new Map(ids.current);
 		cacheChildrenMap.current.clear();
-		cacheNodeMap.current.clear();
+		nodesInitialized.current = false;
 		setIsSelecting(true);
 
 		keyboard.disablePreview(true);
@@ -132,7 +134,6 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			y.current -= containerOffset.current.top - top.current;
 		};
 
-		initNodes();
 		target.current = $(e.target).closest('.selectionTarget');
 
 		if (e.shiftKey && focused) {
@@ -153,7 +154,14 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const initNodes = () => {
+		const isPopup = keyboard.isPopup();
+		const container = U.Common.getScrollContainer(isPopup);
 		const list = getPageContainer().find('.selectionTarget');
+		const containerHeight = container.height() || 0;
+		const scrollTop = container.scrollTop() || 0;
+		const viewportTop = scrollTop;
+		const viewportBottom = scrollTop + containerHeight;
+		const buffer = containerHeight;
 
 		list.each((i: number, item: any) => {
 			item = $(item);
@@ -168,8 +176,15 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 			nodes.current.push(node);
 
-			cacheNode(node);
-			cacheChildrenIds(id);
+			const offset = item.offset();
+			if (offset) {
+				const elementTop = offset.top - (containerOffset.current?.top || 0) + scrollTop;
+				const elementBottom = elementTop + (item.outerHeight() || 0);
+
+				if (elementBottom >= (viewportTop - buffer) && elementTop <= (viewportBottom + buffer)) {
+					cacheNode(node);
+				};
+			};
 		});
 	};
 	
@@ -186,7 +201,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
-		
+
+		if (!nodesInitialized.current) {
+			initNodes();
+			nodesInitialized.current = true;
+		};
+
 		top.current = U.Common.getScrollContainer(isPopup).scrollTop();
 		checkNodes(e);
 		drawRect(e.pageX, e.pageY);
@@ -214,10 +234,10 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		if (Math.abs(st - startTop.current) >= wh / 2) {
+			cacheNodeMap.current.clear();
+			nodes.current = [];
 			initNodes();
 			startTop.current = st;
-		} else {
-			nodes.current.forEach(it => cacheNode(it));
 		};
 
 		checkNodes({ ...e, pageX: cx, pageY: cy });
@@ -457,16 +477,16 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 	const clearState = () => {
 		keyboard.disablePreview(false);
-		
+
 		hide();
 		setIsSelecting(false);
-		cacheNodeMap.current.clear();
 		focusedId.current = '';
 		nodes.current = [];
 		range.current = null;
 		containerOffset.current = null;
 		allowRect.current = false;
 		target.current = null;
+		nodesInitialized.current = false;
 	};
 
 	const set = (type: I.SelectType, list: string[]) => {
@@ -550,6 +570,9 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const getChildrenIds = (id: string) => {
+		if (!cacheChildrenMap.current.has(id)) {
+			cacheChildrenIds(id);
+		}
 		return cacheChildrenMap.current.get(id) || [];
 	};
 
@@ -613,6 +636,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		$('html').toggleClass('isSelecting', v);
 	};
 
+	const invalidateCache = () => {
+		cacheNodeMap.current.clear();
+		cacheChildrenMap.current.clear();
+		nodesInitialized.current = false;
+	};
+
 	useEffect(() => {
 		rebind();
 		return () => unbind();
@@ -629,6 +658,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		setIsSelecting,
 		hide,
 		rebind,
+		invalidateCache,
 	}));
 
 	return (
