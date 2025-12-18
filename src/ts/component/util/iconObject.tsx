@@ -317,10 +317,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 
 	switch (layout) {
 		default: {
-			if (iconImage) {
-				cn.push('withImage');
-			};
-
 			let di = 'page';
 			switch (layout) {
 				case I.ObjectLayout.ChatOld:
@@ -329,8 +325,13 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				case I.ObjectLayout.Set: di = 'set'; break;
 			};
 
-			if (iconEmoji || iconImage) {
-				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+			if (iconEmoji) {
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;
+			} else
+			if (iconImage) {
+				cn.push('withImage');
+				icn = icn.concat([ 'iconImage', `c${size}` ]);
+				icon = <img src={S.Common.imageUrl(iconImage, I.ImageSize.Medium)} className={icn.join(' ')} />
 			} else {
 				defaultIcon(di);
 			};
@@ -382,7 +383,7 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 				icon = <img src={src} className={icn.join(' ')} data-id={iconName} />;
 			} else
 			if (iconEmoji) {
-				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+				icon = <IconEmoji {...props} className={icn.join(' ')} size={iconSize} icon={iconEmoji} />;
 			} else {
 				defaultIcon('type');
 			};
