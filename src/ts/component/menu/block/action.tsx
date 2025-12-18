@@ -7,6 +7,8 @@ interface State {
 	filter: string;
 };
 
+const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
+
 class MenuBlockAction extends React.Component<I.Menu, State> {
 	
 	node: any = null;
@@ -136,7 +138,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { filter } = this.state;
 		const { focused } = focus.state;
 		const cmd = keyboard.cmdKey();
-		const cbKeys = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' }
 
 		let ret = false;
 
@@ -147,12 +148,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			});
 		};
 
-		for (const key in cbKeys) {
+		for (const key in CB_KEYS) {
 			keyboard.shortcut(`${cmd}+${key}`, e, () => {
 				e.preventDefault();
 				e.stopPropagation();
 
-				this.onClick(e, { itemId: cbKeys[key] });
+				this.onClick(e, { itemId: CB_KEYS[key] });
 				ret = true;
 			});
 		};
@@ -594,7 +595,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
+		const { blockId, blockIds, rootId, range } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -604,6 +605,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection.getForClick(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
+
+		if (Object.values(CB_KEYS).includes(item.itemId) && range) {
+			focus.set(blockId, range);
+			focus.apply();
+		};
 
 		switch (item.itemId) {
 			case 'clipboardCopy': {
@@ -618,11 +624,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			case 'clipboardPaste': {
 				close();
-
-				window.setTimeout(() => {
-					Renderer.send('paste');
-				}, J.Constant.delay.menu);
-
+				window.setTimeout(() => Renderer.send('paste'), J.Constant.delay.menu);
 				return;
 			};
 

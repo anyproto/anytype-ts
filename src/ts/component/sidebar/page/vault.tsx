@@ -403,7 +403,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
 			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage, !item.isOneToOne)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
-			counter = <ChatCounter spaceId={item.targetSpaceId} />;
+			counter = <ChatCounter spaceId={item.targetSpaceId} disableMention={vaultIsMinimal} />;
 		} else {
 			cn.push('noMessages');
 		};
@@ -531,6 +531,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			vertical: I.MenuDirection.Top,
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
+			onOpen: () => {
+				$(`#${getId()} .bottom`).addClass('hover');
+			},
+			onClose: () => {
+				$(`#${getId()} .bottom`).removeClass('hover');
+			},
 		});
 	};
 
@@ -667,23 +673,21 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						</div>
 					</div>
 
-					{!vaultIsMinimal ? (
-						<div className="side right">
-							<Icon
-								className="gallery"
-								tooltipParam={{ text: translate('popupUsecaseListTitle') }}
-								onClick={onGallery}
-							/>
+					<div className="side right">
+						<Icon
+							className="gallery"
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+							onClick={onGallery}
+						/>
 
-							<Button
-								id="button-help"
-								className="help"
-								text="?"
-								tooltipParam={{ text: translate('commonHelp') }}
-								onClick={onHelp}
-							/>
-						</div>
-					) : ''}
+						<Button
+							id="button-help"
+							className="help"
+							text="?"
+							tooltipParam={{ text: translate('commonHelp') }}
+							onClick={onHelp}
+						/>
+					</div>
 				</div>
 			</div>
 		</>

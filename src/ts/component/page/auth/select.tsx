@@ -30,7 +30,8 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce();
-			
+
+			Storage.set('spaceId', account.info.accountSpaceId);
 			S.Common.showRelativeDatesSet(true);
 			
 			Storage.set('multichatsOnboarding', true);

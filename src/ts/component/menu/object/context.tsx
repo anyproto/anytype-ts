@@ -453,7 +453,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'archive': {
-				Action.archive(objectIds, route, cb);
+				Action.archiveCheckType(subId, objectIds, route);
 				win.trigger('archiveObject', { ids: objectIds });
 				break;
 			};

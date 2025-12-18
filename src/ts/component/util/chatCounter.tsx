@@ -7,11 +7,12 @@ interface Props {
 	spaceId?: string;
 	chatId?: string;
 	className?: string;
+	disableMention?: boolean;
 };
 
 const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 
-	const { spaceId = S.Common.space, chatId, className = '' } = props;
+	const { spaceId = S.Common.space, chatId, className = '', disableMention } = props;
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 	let counters = { mentionCounter: 0, messageCounter: 0 };
@@ -23,7 +24,12 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 	} else {
 		counters = S.Chat.getSpaceCounters(spaceId);
 
-		if (counters.mentionCounter || counters.messageCounter) {
+		if (disableMention) {
+			counters.messageCounter = counters.messageCounter + counters.mentionCounter;
+			counters.mentionCounter = 0;
+		};
+
+		if (counters.messageCounter || counters.mentionCounter) {
 			const spaceMap = S.Chat.stateMap.get(spaceId);
 
 			mode = I.NotificationMode.Nothing;

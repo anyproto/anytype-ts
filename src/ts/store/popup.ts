@@ -10,7 +10,6 @@ const NO_DIMMER_IDS = [
 	'page',
 	'export',
 	'phrase',
-	'objectManager',
 	'relation',
 	'inviteQr',
 ];

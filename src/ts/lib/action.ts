@@ -482,6 +482,41 @@ class Action {
 		});
 	};
 
+	archiveCheckType (rootId: string, ids: string[], route: string, callBack?: () => void) {
+		const types = [];
+
+		const cb = (ids: string[]) => {
+			this.archive(ids, route, callBack);
+		};
+
+		ids.forEach((id) => {
+			const object = S.Detail.get(rootId, id);
+
+			if (U.Object.isTypeLayout(object.layout)){
+				types.push(object);
+			};
+		});
+
+		if (types.length) {
+			S.Popup.open('objectManager', {
+				className: 'archiveType',
+				data: {
+					type: I.ObjectManagerPopup.TypeArchive,
+					objects: types,
+					onConfirm: (selectedIds, totalCount) => {
+						cb(ids.concat(selectedIds));
+
+						analytics.event('ClickDeleteType', { suggestCount: totalCount, count: selectedIds.length });
+					},
+				},
+			});
+
+			analytics.event('ScreenDeleteType', { route });
+		} else {
+			cb(ids);
+		};
+	};
+
 	/**
 	 * Restores objects from the archive (bin).
 	 * @param {string[]} ids - The object IDs to restore.

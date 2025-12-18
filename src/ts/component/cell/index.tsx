@@ -160,7 +160,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			horizontal: isGrid ? I.MenuDirection.Center : I.MenuDirection.Left,
 			offsetY: 2,
 			noAnimation: true,
-			passThrough: true,
 			...menuParam,
 			onOpen: () => {
 				$(element).addClass('withMenu');

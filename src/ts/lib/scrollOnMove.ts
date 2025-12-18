@@ -22,6 +22,8 @@ class ScrollOnMove {
 	timeoutScroll = 0;
 	timeoutUp = 0;
 	isScrolling = false;
+	ox = 0;
+	oy = 0;
 	
 	onMouseDown (param: Param) {
 		this.param = param || {};
@@ -33,11 +35,14 @@ class ScrollOnMove {
 			};
 
 			const el = container.get(0);
+			const { left, top } = container.offset();
 
 			this.viewportWidth = container.width();
 			this.viewportHeight = container.height();
 			this.documentWidth = el.scrollWidth;
 			this.documentHeight = el.scrollHeight;
+			this.ox = left;
+			this.oy = top;
 		} else {
 			const element = document.documentElement;
 			const body = document.body;
@@ -95,8 +100,8 @@ class ScrollOnMove {
 		const y = this.y;
 
 		// Edge thresholds inside the viewport
-		const edgeTop = BORDER;
-		const edgeLeft = BORDER;
+		const edgeTop = this.oy;
+		const edgeLeft = this.ox;
 		const edgeBottom = this.viewportHeight - BORDER;
 		const edgeRight = this.viewportWidth - BORDER;
 
