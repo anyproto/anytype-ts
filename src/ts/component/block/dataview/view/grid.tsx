@@ -498,13 +498,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const ch = container.height();
-<<<<<<< Updated upstream
 		const rh = this.getRowHeight();
-=======
-
-		this.cache.clearAll();
-		this.listRef?.recomputeRowHeights(0);
->>>>>>> Stashed changes
 
 		if (isInline) {
 			if (parent) {
