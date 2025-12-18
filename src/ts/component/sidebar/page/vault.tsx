@@ -403,7 +403,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
 			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage, !item.isOneToOne)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
-			counter = <ChatCounter spaceId={item.targetSpaceId} />;
+			counter = <ChatCounter spaceId={item.targetSpaceId} disableMention={vaultIsMinimal} />;
 		} else {
 			cn.push('noMessages');
 		};
