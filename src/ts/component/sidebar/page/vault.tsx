@@ -531,6 +531,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			vertical: I.MenuDirection.Top,
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
+			onOpen: () => {
+				$(`#${getId()} .bottom`).addClass('hover');
+			},
+			onClose: () => {
+				$(`#${getId()} .bottom`).removeClass('hover');
+			},
 		});
 	};
 
@@ -667,23 +673,21 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 						</div>
 					</div>
 
-					{!vaultIsMinimal ? (
-						<div className="side right">
-							<Icon
-								className="gallery"
-								tooltipParam={{ text: translate('popupUsecaseListTitle') }}
-								onClick={onGallery}
-							/>
+					<div className="side right">
+						<Icon
+							className="gallery"
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+							onClick={onGallery}
+						/>
 
-							<Button
-								id="button-help"
-								className="help"
-								text="?"
-								tooltipParam={{ text: translate('commonHelp') }}
-								onClick={onHelp}
-							/>
-						</div>
-					) : ''}
+						<Button
+							id="button-help"
+							className="help"
+							text="?"
+							tooltipParam={{ text: translate('commonHelp') }}
+							onClick={onHelp}
+						/>
+					</div>
 				</div>
 			</div>
 		</>
