@@ -55,7 +55,14 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 			offsetY: 4,
 			onOpen: () => $(element).addClass('active'),
 			onClose: () => $(element).removeClass('active'),
-		}, { route: analytics.route.settings, noManage: true });
+		}, { 
+			withPin: true,
+			withDelete: true,
+			noBin: true, 
+			noMembers: true, 
+			noManage: true,
+			route: analytics.route.settings,
+		});
 	};
 
 	const Row = (space: any) => {
