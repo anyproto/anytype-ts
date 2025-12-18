@@ -123,7 +123,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			menuContext.current?.ref?.updateOptions(getTypeOptions());
 		};
 
-		return S.Record.checkHiddenObjects(S.Record.getTypes()).
+		return S.Record.getTypes().
 			filter(it => !layouts.includes(it.recommendedLayout) && ![ J.Constant.typeKey.template ].includes(it.uniqueKey)).
 			map(it => ({ 
 				...it,
