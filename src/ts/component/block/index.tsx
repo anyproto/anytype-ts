@@ -535,7 +535,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onContextMenu (e: any) {
-		const { focused } = focus.state;
+		const { focused, range } = focus.state;
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
@@ -546,7 +546,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (
 			isContextMenuDisabled || 
 			readonly || 
-			(block.isText() && (focused == block.id)) || 
 			!block.canContextMenu()
 		) {
 			return;
@@ -564,15 +563,20 @@ const Block = observer(class Block extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		focus.clear(true);
 		S.Menu.closeAll([], () => {
-			if (selection) {
-				this.ids = selection.getForClick(block.id, false, false);
-				selection.set(I.SelectType.Block, this.ids);
+
+			if (!(range.to && (range.from != range.to))) {
+				focus.clear(true);
+
+				if (selection) {
+					this.ids = selection.getForClick(block.id, false, false);
+					selection.set(I.SelectType.Block, this.ids);
+				};
 			};
 
 			this.menuOpen({
 				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
+				data: { range: U.Common.objectCopy(range) },
 			});
 		});
 	};
@@ -580,13 +584,14 @@ const Block = observer(class Block extends React.Component<Props> {
 	menuOpen (param?: Partial<I.MenuParam>) {
 		const { rootId, block, blockRemove } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
+		const data = param?.data || {};
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
 		$('.block.showMenu').removeClass('showMenu');
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
-		const menuParam: Partial<I.MenuParam> = Object.assign({
+		const menuParam: Partial<I.MenuParam> = {
 			classNameWrap: 'fromBlock',
 			noFlipX: true,
 			subIds: J.Menu.action,
@@ -594,13 +599,15 @@ const Block = observer(class Block extends React.Component<Props> {
 				selection?.clear();
 				focus.apply();
 			},
+			...param,
 			data: {
+				...data,
 				blockId: block.id,
 				blockIds: this.ids,
 				rootId,
 				blockRemove,
 			}
-		}, param || {});
+		};
 
 		S.Menu.open('blockAction', menuParam);
 	};
