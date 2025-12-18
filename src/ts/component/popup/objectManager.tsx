@@ -34,7 +34,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		e.preventDefault();
 
 		if (onConfirm) {
-			onConfirm(managerRef.current?.getSelected());
+			onConfirm(managerRef.current.getSelected(), managerRef.current.getItemsCount());
 		};
 		close();
 	};

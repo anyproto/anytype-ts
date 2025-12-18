@@ -503,11 +503,15 @@ class Action {
 				data: {
 					type: I.ObjectManagerPopup.TypeArchive,
 					objects: types,
-					onConfirm: (selectedIds) => {
+					onConfirm: (selectedIds, totalCount) => {
 						cb(ids.concat(selectedIds));
+
+						analytics.event('ClickDeleteType', { suggestCount: totalCount, count: selectedIds.length });
 					},
 				},
 			});
+
+			analytics.event('ScreenDeleteType', { route });
 		} else {
 			cb(ids);
 		};
