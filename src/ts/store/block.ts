@@ -858,51 +858,65 @@ class BlockStore {
 	 * Returns structure for Table of contents
 	 */
 	getTableOfContents (rootId: string, withTitle?: boolean) {
-		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => {
-			if (withTitle && it.isTextTitle()) {
-				return true;
-			};
-
-			return it.isTextHeader();
-		});
 		const list: any[] = [];
-
+		
 		let hasH1 = false;
 		let hasH2 = false;
 
-		blocks.forEach((block: I.Block) => {
-			let depth = 0;
-
-			if (block.isTextHeader1()) {
-				depth = 0;
-				hasH1 = true;
-				hasH2 = false;
+		// Optimized: Direct traversal instead of wrapTree/unwrapTree
+		const collectHeaders = (blockId: string) => {
+			const block = this.getLeaf(rootId, blockId);
+			if (!block) {
+				return;
 			};
 
-			if (block.isTextHeader2()) {
-				hasH2 = true;
-				if (hasH1) depth++;
+			// Check if this block should be included
+			const isHeader = block.isTextHeader();
+			const isTitle = withTitle && block.isTextTitle();
+
+			if (isHeader || isTitle) {
+				let depth = 0;
+
+				if (block.isTextHeader1()) {
+					depth = 0;
+					hasH1 = true;
+					hasH2 = false;
+				};
+
+				if (block.isTextHeader2()) {
+					hasH2 = true;
+					if (hasH1) depth++;
+				};
+
+				if (block.isTextHeader3()) {
+					if (hasH1) depth++;
+					if (hasH2) depth++;
+				};
+
+				list.push({
+					depth,
+					id: block.id,
+					text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
+					block,
+				});
 			};
 
-			if (block.isTextHeader3()) {
-				if (hasH1) depth++;
-				if (hasH2) depth++;
+			// Recursively process children
+			const childrenIds = this.getChildrenIds(rootId, blockId);
+			for (const childId of childrenIds) {
+				collectHeaders(childId);
 			};
+		};
 
-			list.push({ 
-				depth, 
-				id: block.id,
-				text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
-				block,
-			});
-		});
+		// Start traversal from root
+		collectHeaders(rootId);
 
+		// Adjust depth if withTitle is true
 		if (withTitle) {
-			list.map((it: any) => {
+			list.forEach((it: any) => {
 				if (!it.block.isTextTitle()) {
 					it.depth++;
 				};
-				return it;
 			});
 		};
 
