@@ -431,12 +431,16 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	rebind () {
+		const id = this.getId();
+
 		this.unbind();
-		$(window).on(`resize.${this.getId()}`, () => this.position());
+		$(window).on(`resize.${id} sidebarResize.${id}`, () => this.position());
 	};
 	
 	unbind () {
-		$(window).off(`resize.${this.getId()}`);
+		const id = this.getId();
+
+		$(window).off(`resize.${id} sidebarResize.${id}`);
 	};
 	
 	animate () {
