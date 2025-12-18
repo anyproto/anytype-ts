@@ -859,6 +859,7 @@ class BlockStore {
 	 */
 	getTableOfContents (rootId: string, withTitle?: boolean) {
 		const list: any[] = [];
+		
 		let hasH1 = false;
 		let hasH2 = false;
 
