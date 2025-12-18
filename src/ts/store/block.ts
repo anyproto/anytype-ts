@@ -434,8 +434,13 @@ class BlockStore {
 	 * @returns {I.Block|null} The next sibling or ancestor's sibling.
 	 */
 	private getNextSiblingOrAncestorSibling (rootId: string, id: string, dir: number): I.Block {
+		// If we've reached the root itself, there's no next block
+		if (id === rootId) {
+			return null;
+		};
+
 		const element = this.getMapElement(rootId, id);
-		if (!element || !element.parentId || element.parentId === rootId) {
+		if (!element) {
 			return null;
 		};
 
@@ -452,7 +457,12 @@ class BlockStore {
 			return siblings[idx + 1];
 		};
 
-		// No next sibling, check parent's next sibling
+		// No next sibling. If parent is root, we're at the end
+		if (parent.id === rootId) {
+			return null;
+		};
+
+		// Otherwise, check parent's next sibling
 		return this.getNextSiblingOrAncestorSibling(rootId, parent.id, dir);
 	};
 
