@@ -363,8 +363,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			);
 		};
 
-		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
-		const { targetSpaceId, lastMessage, isOneToOne, isChat } = item;
+		const { targetSpaceId, id, lastMessage, isOneToOne, isChat, isPinned } = item;
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled: !isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
