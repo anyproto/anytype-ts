@@ -364,6 +364,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !item.isPinned });
+		const { targetSpaceId, lastMessage, isOneToOne, isChat } = item;
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
@@ -378,7 +379,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		let last = null;
 		let counter = null;
 
-		if (item.targetSpaceId == space) {
+		if (targetSpaceId == space) {
 			cn.push('active');
 		};
 
@@ -399,11 +400,17 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('isMuted');
 		};
 
-		if (item.lastMessage) {
-			time = <Label className="time" text={U.Date.timeAgo(item.lastMessage.createdAt)} />;
-			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(item.targetSpaceId, item.lastMessage, !item.isOneToOne)} />;
+		if (lastMessage) {
+			const { createdAt, creator, isSynced } = lastMessage;
+
+			time = <Label className="time" text={U.Date.timeAgo(createdAt)} />;
+			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(targetSpaceId, lastMessage, !isOneToOne)} />;
 			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
-			counter = <ChatCounter spaceId={item.targetSpaceId} disableMention={vaultIsMinimal} />;
+			counter = <ChatCounter spaceId={targetSpaceId} disableMention={vaultIsMinimal} />;
+
+			if ((creator == S.Auth.account.id) && !isSynced) {
+				cn.push('isSyncing');
+			};
 		} else {
 			cn.push('noMessages');
 		};
@@ -412,7 +419,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (vaultMessages) {
 			let message = null;
 
-			if (item.isChat || item.isOneToOne) {
+			if (isChat || isOneToOne) {
 				message = (
 					<div className="messageWrapper">
 						{last}
