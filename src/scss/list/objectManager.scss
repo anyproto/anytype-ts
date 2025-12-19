@@ -50,7 +50,7 @@
 
     .items { height: 100%; }
     .items {
-        .row { display: grid !important; grid-column-gap: 32px; border-bottom: 0; }
+        .row { display: grid !important; grid-column-gap: 32px; border-bottom: 0; padding: 0px; }
 
         .item { display: flex; flex-direction: row; align-items: center; gap: 0px; margin: 0px 0px 16px 0px; }
         .item {

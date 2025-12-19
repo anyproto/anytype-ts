@@ -578,8 +578,8 @@
 
 	"pageSettingsSpaceGeneral": "General",
 	"pageSettingsSpaceRemoteStorage": "Remote Storage",
-	"pageSettingsSpaceSyncedFiles": "Synced files",
-	"pageSettingsSpaceNotSyncedFiles": "Not synced files",
+	"pageSettingsSpaceSynced": "Synced",
+	"pageSettingsSpaceNotSynced": "Not Synced",
 	"pageSettingsSpaceIntegrations": "Integrations",
 	"pageSettingsSpaceManageContent": "Content Model",
 
@@ -952,6 +952,9 @@
 	"upsellBannerStorageIncentiveText": "If you run out of space, you can't backup you data. ",
 	"upsellBannerStorageWithNotSyncedIncentiveText": "%s %s couldn't be synced. ",
 	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
+
+	"upsellBannerStorageNonOwnerIncentive": "Storage is full in this Space. ",
+	"upsellBannerStorageNonOwnerUpsell": "New files stay local. You can remove your files to free up space or ask the Space owner to upgrade storage. ",
 
 	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared spaces. ",
 	"upsellBannerSpaceUpsellText": "Upgrade to increase the limit. ",
