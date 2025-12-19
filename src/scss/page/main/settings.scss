@@ -1110,7 +1110,7 @@
                     position: relative; z-index: 2; background: var(--color-bg-primary);
                 }
                 .item {
-                    .top { display: flex; flex-direction: column; align-items: center; }
+                    .top { display: flex; flex-direction: column; }
                     .title { @include text-paragraph; font-weight: 500; margin-bottom: 4px; }
                     .label { @include text-small; color: var(--color-text-secondary); max-width: 280px; }
                     .button { width: 100%; }
@@ -1147,6 +1147,7 @@
                 }
 
                 .item.anyName {
+                    .top { align-items: center; }
                     .icon { width: 60px; height: 48px; margin-bottom: 10px; background: url('~img/icon/membership/anyname.svg'); }
 					.title { font-weight: 600; }
 
