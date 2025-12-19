@@ -5,6 +5,7 @@ export enum WidgetSection {
 	Type		 = 1,
 	Unread		 = 2,
 	RecentEdit	 = 3,
+	Bin			 = 4,
 };
 
 export interface WidgetSectionParam {

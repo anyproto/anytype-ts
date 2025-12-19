@@ -10,7 +10,7 @@ import { I, J, U, S, C, translate, keyboard } from 'Lib';
 const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
-	const { space, recentEditMode } = S.Common;
+	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -20,6 +20,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 	const realId = parent.id.replace(`${space}-`, '');
 	const isUnread = realId == J.Constant.widgetId.unread;
+	const isBin = realId == J.Constant.widgetId.bin;
 
 	const getId = (id: string) => {
 		return [ space, id ].join('-');
@@ -97,6 +98,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				items = U.Data.getWidgetTypes();
 				break;
 			};
+
+			case J.Constant.widgetId.bin: {
+				items = [
+					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
+				];
+				break;
+			};
 		};
 
 		return items;
@@ -110,7 +118,17 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		const element = node.find(`#item-${item.id}`);
 		const more = element.find('.icon.more');
 
-		onContext({ node: element, element: more, withElement, subId, objectId: item.id });
+		if (isBin) {
+			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
+				element: more,
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				onOpen: () => $(element).addClass('active'),
+				onClose: () => $(element).removeClass('active'),
+			});
+		} else {
+			onContext({ node: element, element: more, withElement, subId, objectId: item.id });
+		};
 	};
 
 	const Item = (item: any) => {

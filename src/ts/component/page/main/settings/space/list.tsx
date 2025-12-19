@@ -58,7 +58,6 @@ const PageMainSettingsSpacesList = observer(forwardRef<I.PageRef, I.PageSettings
 		}, { 
 			withPin: true,
 			withDelete: true,
-			noBin: true, 
 			noMembers: true, 
 			noManage: true,
 			route: analytics.route.settings,
