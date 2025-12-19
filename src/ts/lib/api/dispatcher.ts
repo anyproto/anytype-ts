@@ -1129,12 +1129,7 @@ class Dispatcher {
 					};
 
 					if (purchased.isFinalization) {
-						S.Popup.open('membershipFinalization', {
-							data: {
-								product,
-								route: analytics.route.stripe,
-							},
-						});
+						Action.finalizeMembership(product, analytics.route.settingsMembership);
 					};
 					break;
 				};

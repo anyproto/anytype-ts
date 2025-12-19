@@ -27,6 +27,7 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 	const usagePercent = bytesUsed / bytesLimit * 100;
 	const roundedUsagePercent = Math.ceil(usagePercent / 5) * 5;
 	const output = usagePercent < 90 ? roundedUsagePercent : Math.round(usagePercent);
+	const isOwner = U.Space.isMyOwner();
 
 	let incentiveText = '';
 	let upsellText = '';
@@ -38,6 +39,15 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 			incentiveText = U.String.sprintf(translate('upsellBannerStorageWithNotSyncedIncentiveText'), notSyncedCounter, U.Common.plural(notSyncedCounter, translate('pluralLCFile')));
 		};
 		upsellText = translate('upsellBannerStorageFullUpsellText');
+
+		if (!isOwner) {
+			incentiveText = translate('upsellBannerStorageNonOwnerIncentive');
+			upsellText = translate('upsellBannerStorageNonOwnerUpsell');
+		};
+	} else {
+		if (!isOwner) {
+			return null;
+		};
 	};
 
 	const onClick = () => {
@@ -47,11 +57,11 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 	return (
 		<div className={cn.join(' ')}>
 			<div className="text">
-				<Label className="usage" text={U.String.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} />
+				{isOwner ? <Label className="usage" text={U.String.sprintf(translate('upsellBannerStorageUsageText'), `${output}%`)} /> : ''}
 				{incentiveText ? <Label className="incentive" text={incentiveText} /> : ''}
 				<Label className="upsell" text={upsellText} />
 			</div>
-			<Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} />
+			{isOwner ? <Button text={translate('commonUpgrade')} color={isRed ? 'black' : 'accent'} className="c28" onClick={onClick} /> : ''}
 		</div>
 	);
 

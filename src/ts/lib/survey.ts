@@ -221,6 +221,18 @@ class Survey {
 	};
 
 	/**
+	 * Checks if the CTA survey should be shown, based on completion state.
+	 * @param {I.SurveyType} type - The survey type.
+	 */
+	checkCta (type: I.SurveyType) {
+		const isComplete = this.isComplete(type);
+
+		if (!isComplete) {
+			this.show(type);
+		};
+	};
+
+	/**
 	 * Returns true with the given percent probability, using a random seed.
 	 * @param {number} percent - The percent chance (0-100).
 	 * @returns {boolean} True if the random check passes.

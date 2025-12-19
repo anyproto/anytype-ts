@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager, Label, ProgressBar, UpsellBanner } from 'Component';
 import { I, J, U, S, translate, Action, analytics } from 'Lib';
@@ -11,6 +11,7 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 	const { notSyncedCounter } = S.Auth.getSyncStatus();
 	const spaces = U.Space.getList();
 	const currentSpace = U.Space.getSpaceview();
+	const isOwner = U.Space.isMyOwner();
 	const usageCn = [ 'item', 'usageWrapper' ];
 	const canWrite = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
@@ -58,6 +59,27 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		usageCn.push('red');
 	};
 
+	const [ currentTab, setCurrentTab ] = useState('synced');
+	const tabs: any[] = [
+		{
+			id: 'synced',
+			subId: J.Constant.subId.fileManagerSynced,
+			filters: [ I.SyncStatusObject.Synced ],
+			title: translate('pageSettingsSpaceSynced'),
+		}
+	];
+
+	if (notSyncedCounter) {
+		tabs.push({
+			id: 'notSynced',
+			subId: J.Constant.subId.fileManagerNotSynced,
+			filters: [ I.SyncStatusObject.Error ],
+			title: translate('pageSettingsSpaceNotSynced')
+		});
+	};
+
+	const currentManager = notSyncedCounter ? tabs.find(it => it.id == currentTab) : tabs[0];
+
 	const Manager = (item: any) => {
 		const { refId } = item;
 		const buttons: I.ButtonComponent[] = [
@@ -67,29 +89,29 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 			{ relationKey: 'syncStatus', condition: I.FilterCondition.In, value: item.filters },
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 		];
+
+		if (!isOwner) {
+			filters.push({ relationKey: 'creator', condition: I.FilterCondition.Equal, value: U.Space.getMyParticipant().id });
+		};
+
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
 		];
 
 		return (
-			<div className="fileManagerWrapper">
-				<Title className="sub" text={item.title} />
-
-				<ListObjectManager
-					ref={ref => managersRef.current[refId] = ref}
-					subId={item.subId}
-					rowLength={2}
-					buttons={buttons}
-					info={I.ObjectManagerItemInfo.FileSize}
-					iconSize={18}
-					sorts={sorts}
-					filters={filters}
-					keys={U.Subscription.syncStatusRelationKeys()}
-					ignoreHidden={false}
-					ignoreArchived={false}
-					textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
-				/>
-			</div>
+			<ListObjectManager
+				ref={ref => managersRef.current[refId] = ref}
+				subId={item.subId}
+				buttons={buttons}
+				info={I.ObjectManagerItemInfo.FileSize}
+				isCompact={true}
+				sorts={sorts}
+				filters={filters}
+				keys={U.Subscription.syncStatusRelationKeys().concat([ 'creator' ])}
+				ignoreHidden={false}
+				ignoreArchived={false}
+				textEmpty={translate('popupSettingsSpaceStorageEmptyLabel')}
+			/>
 		);
 	};
 
@@ -124,39 +146,44 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 			<Title text={translate(`pageSettingsSpaceRemoteStorage`)} />
 			<Label text={translate(`popupSettingsSpaceIndexStorageText`)} />
 
-			<div className={usageCn.join(' ')}>
-				<ProgressBar segments={progressSegments} />
+			{isOwner ? (
+				<div className={usageCn.join(' ')}>
+					<ProgressBar segments={progressSegments} />
 
-				<div className="info">
-					<div className="totalUsage">
-						<span>{U.File.size(bytesUsed, true)} </span>
-						{U.String.sprintf(translate('popupSettingsSpaceStorageProgressBarUsageLabel'), U.File.size(bytesLimit, true))}
-					</div>
+					<div className="info">
+						<div className="totalUsage">
+							<span>{U.File.size(bytesUsed, true)} </span>
+							{U.String.sprintf(translate('popupSettingsSpaceStorageProgressBarUsageLabel'), U.File.size(bytesLimit, true))}
+						</div>
 
-					<div className="legend">
-						{legend.map((item, idx) => (
-							<div key={idx} className={[ 'item', item.className ].join(' ')}>{item.name}</div>
-						))}
+						<div className="legend">
+							{legend.map((item, idx) => (
+								<div key={idx} className={[ 'item', item.className ].join(' ')}>{item.name}</div>
+							))}
+						</div>
 					</div>
 				</div>
-			</div>
-
-			{notSyncedCounter && canWrite ? (
-				<Manager
-					refId="notSynced"
-					subId={J.Constant.subId.fileManagerNotSynced}
-					title={translate('pageSettingsSpaceNotSyncedFiles')}
-					filters={[ I.SyncStatusObject.Error ]}
-				/>
 			) : ''}
 
 			{canWrite ? (
-				<Manager
-					refId="synced"
-					subId={J.Constant.subId.fileManagerSynced}
-					title={translate('pageSettingsSpaceSyncedFiles')}
-					filters={[ I.SyncStatusObject.Synced ]}
-				/>
+				<div className="fileManagerWrapper">
+					<div className="tabs">
+						{tabs.map(tab => (
+							<Label
+								key={tab.id}
+								text={tab.title}
+								className={tab.id == currentTab ? 'active' : ''}
+								onClick={() => setCurrentTab(tab.id)}
+							/>
+						))}
+					</div>
+
+					<Manager
+						refId={currentManager.id}
+						subId={currentManager.subId}
+						filters={currentManager.filters}
+					/>
+				</div>
 			) : ''}
 		</div>
 	);
