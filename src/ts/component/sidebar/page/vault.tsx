@@ -255,6 +255,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		keyMapper: index => items[index].id,
 	});
 
+	// Subscriptions
+	items.forEach(item => {
+		const { lastMessage } = item;
+		const { isSynced } = lastMessage || {};
+	});
+
 	const tooltipParam = (): I.TooltipParam => {
 		let param: any = {};
 		if (vaultIsMinimal) {
