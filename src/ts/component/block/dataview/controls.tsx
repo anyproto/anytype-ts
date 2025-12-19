@@ -39,7 +39,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const buttonWrapCn = [ 'buttonWrap' ];
 	const isAllowedObject = props.isAllowedObject();
 	const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
-	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId());
+	const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || isCollection;
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
