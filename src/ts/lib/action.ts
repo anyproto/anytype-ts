@@ -1,4 +1,4 @@
-import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
 const Diff = require('diff');
 
@@ -1088,6 +1088,41 @@ class Action {
 		});
 
 		analytics.event('ScreenRequestSent');
+	};
+
+	finalizeMembership (product: any, route: string, callBack?: () => void) {
+		const showSurveyPopup = () => {
+			if (Survey.isComplete(I.SurveyType.Cta)) {
+				callBack?.();
+				return;
+			};
+
+			const profile = U.Space.getProfile();
+			const participant = U.Space.getParticipant() || profile;
+			const globalName = Relation.getStringValue(participant?.globalName);
+			const title = globalName ? U.String.sprintf(translate('popupConfirmMembershipSurveyTitle'), globalName) : translate('popupConfirmMembershipSurveyTitleNoName');
+
+			S.Popup.open('confirm', {
+				onClose: () => callBack?.(),
+				data: {
+					icon: 'emoji',
+					title,
+					text: translate('popupConfirmMembershipSurveyText'),
+					colorConfirm: 'accent',
+					textConfirm: translate('popupConfirmMembershipSurveyTakeSurvey'),
+					onConfirm: () => Survey.onConfirm(I.SurveyType.Cta),
+					onCancel: () => Survey.onSkip(I.SurveyType.Cta),
+				}
+			});
+		};
+
+		S.Popup.open('membershipFinalization', {
+			onClose: () => showSurveyPopup(),
+			data: {
+				product,
+				route,
+			},
+		});
 	};
 
 };

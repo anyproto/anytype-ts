@@ -1162,10 +1162,9 @@
 
 	"popupApiCreateCreate": "Create new API key",
 
-	"popupMembershipFinalizationTitle": "You’re all set!",
-	"popupMembershipFinalizationTitleWithName": "You’re all set with %s plan!",
-	"popupMembershipFinalizationText1": "Thanks for joining Anytype membership — we really appreciate it.",
-	"popupMembershipFinalizationText2": "The last step is to choose your .any name. This is your unique identity on the Anytype network and your personal web domain. Choose carefully — it can’t be changed later.",
+	"popupMembershipFinalizationTitle": "Almost all set with %s!",
+	"popupMembershipFinalizationText1": "Before you take off, pick your .any name.",
+	"popupMembershipFinalizationText2": "It’s your identity on the Anytype network — people will use it to find you and confirm it’s really you. It also becomes your web publishing domain. Choose carefully — it can’t be changed later.",
 	"popupMembershipFinalizationPlaceholder": "Enter your name",
 	"popupMembershipFinalizationClaimName": "Claim Name",
 
@@ -1306,6 +1305,11 @@
 	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
 	"popupConfirmUxTypeChangeText": "Switching between Space and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
+
+	"popupConfirmMembershipSurveyTitle": "Welcome to the network,<br/>%s!",
+	"popupConfirmMembershipSurveyTitleNoName": "Welcome to the network!",
+	"popupConfirmMembershipSurveyText": "Your upgrade means a lot to us. Tell us what made you take the step and what do you think about Anytype. A tiny survey from you = a huge boost for us.",
+	"popupConfirmMembershipSurveyTakeSurvey": "Take Survey",
 
 	"popupObjectManagerArchiveTypeTitle": "Move “%s” to Bin?",
 	"popupObjectManagerArchiveTypeText": "Some objects use this type. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
