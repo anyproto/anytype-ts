@@ -206,6 +206,7 @@ export enum SurveyType {
 	Object			 = 3,
 	Shared			 = 4,
 	Multiplayer		 = 5,
+	Cta				 = 6,
 };
 
 export enum SliceOperation {

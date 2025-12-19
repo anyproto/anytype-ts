@@ -50,13 +50,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 	};
 
 	const onNameSelect = () => {
-		S.Popup.open('membershipFinalization', {
-			data: {
-				product,
-				route: analytics.route.settingsMembership,
-			},
-			onClose: () => setDummy(dummy + 1),
-		});
+		Action.finalizeMembership(product, analytics.route.settingsMembership, () => setDummy(dummy + 1));
 	};
 
 	if (data.teamOwnerId && (data.teamOwnerId != account.id)) {
