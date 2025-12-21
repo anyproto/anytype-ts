@@ -38,6 +38,14 @@ class Focus {
 		return this;
 	};
 
+	setWithTimeout (id: string, range: I.TextRange, delay: number): Focus {
+		window.setTimeout(() => {
+			this.set(id, range);
+			this.apply();
+		}, delay);
+		return this;
+	};
+
 	/**
 	 * Restores the focus state from backup.
 	 */
