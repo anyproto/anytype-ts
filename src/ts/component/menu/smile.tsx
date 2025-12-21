@@ -899,7 +899,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			return;
 		};
 
-		if (!current.children) {
+		if (!current.children || !current.children.length) {
 			this.onArrowVertical(dir);
 			return;
 		};
