@@ -772,8 +772,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					value = U.String.insert(value, ' ', range.from, range.from);
 
 					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
-						focus.set(block.id, { from: to, to });
-						focus.apply();
+						window.setTimeout(() => {
+							focus.set(block.id, { from: to, to });
+							focus.apply();
+						}, 30);
 					});
 				},
 				route: analytics.route.editor,
