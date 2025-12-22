@@ -37,13 +37,6 @@
         .loaderWrapper { border: 0px; }
     }
 
-	/* BlockLink */
-
-	/*
-	.block.blockLink.card {
-		.side::after { background: rgba(255,255,255,0.03); }
-	}
-	*/
 
     /* BlockDataview */
 
@@ -166,6 +159,21 @@
 	}
 
     /* BlockText */
+
+	.block.blockText {
+		markupbgcolor {
+			&.bgColor-grey { background: #3c3c3c !important; }
+			&.bgColor-yellow { background: #55500d !important; }
+			&.bgColor-orange { background: #5f430a !important; }
+			&.bgColor-red { background: #74321e !important; }
+			&.bgColor-pink { background: #712055 !important; }
+			&.bgColor-purple { background: #542663 !important; }
+			&.bgColor-blue { background: #2b3368 !important; }
+			&.bgColor-ice { background: #19465f !important; }
+			&.bgColor-teal { background: #16534e !important; }
+			&.bgColor-lime { background: #36551d !important; }
+		}
+	}
 
     .block.blockText.textCallout, 
 	.block.blockText.textCallout {
