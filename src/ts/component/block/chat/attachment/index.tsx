@@ -275,9 +275,7 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 				canCancel: false,
 				onConfirm: () => {
 					if (syncError == I.SyncStatusError.IncompatibleVersion) {
-						window.setTimeout(() => {
-							Renderer.send('updateCheck');
-						}, J.Constant.delay.popup);
+						window.setTimeout(() => Renderer.send('updateCheck'), J.Constant.delay.popup);
 					};
 
 					if (syncError == I.SyncStatusError.Oversized) {
