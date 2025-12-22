@@ -91,7 +91,9 @@ const PageMainSettingsStorage = observer(forwardRef<I.PageRef, I.PageSettingsCom
 		];
 
 		if (!isOwner) {
-			filters.push({ relationKey: 'creator', condition: I.FilterCondition.Equal, value: U.Space.getMyParticipant().id });
+			const participant = U.Space.getMyParticipant();
+			
+			filters.push({ relationKey: 'creator', condition: I.FilterCondition.Equal, value: participant?.id });
 		};
 
 		const sorts: I.Sort[] = [
