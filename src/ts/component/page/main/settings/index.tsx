@@ -98,11 +98,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 	const confirmPinRef = useRef<any>(null);
 	const childRef = useRef(null);
 	const [ dummy, setDummy ] = useState(0);
-
-	if (!Components[id]) {
-		return null;
-	};
-
 	const Component = Components[id];
 
 	const init = () => {
@@ -164,6 +159,12 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		});
 	};
 
+	useEffect(() => init(), [ id ]);
+
+	if (!Components[id]) {
+		return null;
+	};
+
 	let content = (
 		<div id={pageId} className={[ 'settingsPage', pageId ].join(' ')} >
 			<Component
@@ -192,8 +193,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			</>
 		);
 	};
-
-	useEffect(() => init(), [ id ]);
 
 	return content;
 

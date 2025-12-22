@@ -861,12 +861,12 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 
-		const onClick = (id: string, inviteLink: string) => {
-			switch (id) {
+		const onClick = (itemId: string, inviteLink: string) => {
+			switch (itemId) {
 				case 'mute':
 				case 'unmute': {
 					let mode = I.NotificationMode.Nothing;
-					if (id == 'unmute') {
+					if (itemId == 'unmute') {
 						mode = I.NotificationMode.All;
 					} else {
 						mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
@@ -899,7 +899,7 @@ class UtilMenu {
 				case 'members': {
 					let id = '';
 
-					switch (id) {
+					switch (itemId) {
 						case 'settings': {
 							id = 'spaceIndex'; 
 							break;
