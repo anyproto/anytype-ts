@@ -289,7 +289,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let adjustMarks = false;
 
 		if (value !== parsed.text) {
-			updateMarkup(parsed.text, { from: to, to });
+			const diff = value.length - parsed.text.length;
+			updateMarkup(parsed.text, { from: to - diff, to: to - diff });
 		};
 
 		if (canOpenMenuMention) {
