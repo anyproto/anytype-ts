@@ -132,7 +132,7 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	});
 
 	useImperativeHandle(ref, () => ({
-		update: setObject,
+		update: object => setObject({ ...object }),
 		show,
 	}));
 
