@@ -552,7 +552,7 @@ class MenuManager {
 			icon = path.join('icons', '256x256.ico');
 		} else 
 		if (is.linux) {
-			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP;
+			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP || '';
 			const panelAlwaysDark = env.includes('GNOME') || (env == 'Unity'); // for GNOME shell env, including ubuntu -- the panel is always dark
 
             if (panelAlwaysDark) {
