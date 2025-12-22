@@ -61,6 +61,44 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
+      - name: Fail if middleware.version contains nightly
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          pkg="package.json"
+          mw="middleware.version"
+
+          if [[ ! -f "$pkg" ]]; then
+            echo "package.json not found"
+            exit 1
+          fi
+
+          if [[ ! -f "$mw" ]]; then
+            echo "middleware.version not found"
+            exit 1
+          fi
+
+          pkg_version="$(grep -E '"version"\s*:' "$pkg" | head -n1 | sed -E 's/.*"version"\s*:\s*"([^"]+)".*/\1/')"
+
+          if [[ -z "$pkg_version" ]]; then
+            echo "failed to extract version from package.json"
+            exit 1
+          fi
+
+          echo "package.json version: $pkg_version"
+
+          if [[ "$pkg_version" =~ alpha ]]; then
+            echo "alpha version detected, nightly check skipped"
+            exit 0
+          fi
+
+          if grep -Eq '.*-nightly.*' "$mw"; then
+            echo "::error file=$mw::nightly version is not allowed for non-alpha package"
+            cat "$mw"
+            exit 1
+          fi
+
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v4
         with:
