@@ -546,6 +546,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (
 			isContextMenuDisabled || 
 			readonly || 
+			(block.isText() && (focused == block.id)) || 
 			!block.canContextMenu()
 		) {
 			return;
