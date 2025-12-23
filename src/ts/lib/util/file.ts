@@ -176,14 +176,19 @@ class UtilFile {
 	 */
 	loadPreviewBase64 (file: any, param: any, success?: (image: string, param: any) => void, error?: (error: string) => void) {
 		this.loadPreviewCanvas(file, param, (canvas: any) => {
+			if (!canvas || (canvas.type == 'error')) {
+				error?.('Failed to get preview canvas');
+				return;
+			};
+
 			const image = canvas.toDataURL(param.type, param.quality);
 
-			if (image && success) {
-				success(image, { width: canvas.width, height: canvas.height });
+			if (image) {
+				success?.(image, { width: canvas.width, height: canvas.height });
 			};
 			
-			if (!image && error) {
-				error('Failed to get canvas.toDataURL()');
+			if (!image) {
+				error?.('Failed to get canvas.toDataURL()');
 			};
 		});
 	};

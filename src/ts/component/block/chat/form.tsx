@@ -1247,7 +1247,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		if (mime) {
 			const [ t1, t2 ] = mime.split('/');
-			if ((t1 == 'image') || J.Constant.fileExtension.image.includes(t2)) {
+			if ((t1 == 'image') && J.Constant.fileExtension.image.includes(t2)) {
 				layout = I.ObjectLayout.Image;
 			};
 		};
