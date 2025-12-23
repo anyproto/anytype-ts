@@ -1239,7 +1239,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const getObjectFromFile = (file: File) => {
 		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
-		const mime = electron.fileMime(path);
+		const mime = file.type || electron.fileMime(path);
 		const ext = electron.fileExt(path);
 		const type = S.Record.getFileType();
 
