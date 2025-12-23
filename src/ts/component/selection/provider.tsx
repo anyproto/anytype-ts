@@ -554,7 +554,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	};
 
 	const getPageContainer = () => {
-		return $(U.Common.getCellContainer(keyboard.isPopup() ? 'popup' : 'page'));
+		return U.Common.getPageFlexContainer(keyboard.isPopup());
 	};
 
 	const renderSelection = () => {

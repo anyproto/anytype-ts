@@ -359,23 +359,126 @@ class BlockStore {
 	 * @returns {any} The next block or null.
 	 */
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
-		if (!list) {
-			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
+		// If list is provided, use the legacy flat-list approach for compatibility
+		if (list) {
+			const idx = list.findIndex(item => item.id == id);
+			const nidx = idx + dir;
+
+			if ((nidx < 0) || (nidx > list.length - 1)) {
+				return null;
+			};
+
+			const ret = list[nidx];
+			if (check && ret) {
+				return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
+			} else {
+				return ret;
+			};
 		};
 
-		const idx = list.findIndex(item => item.id == id);
-		const nidx = idx + dir;
-
-		if ((nidx < 0) || (nidx > list.length - 1)) {
+		// Optimized: Use tree traversal instead of flattening entire tree
+		const block = this.getLeaf(rootId, id);
+		if (!block) {
 			return null;
 		};
 
-		const ret = list[nidx];
-		if (check && ret) {
-			return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
+		let nextBlock: I.Block = null;
+
+		if (dir > 0) {
+			// Going forward: try children first, then siblings, then parent's siblings
+			const children = this.getChildren(rootId, id);
+			if (children.length > 0) {
+				nextBlock = children[0];
+			} else {
+				// No children, find next sibling or parent's next sibling
+				nextBlock = this.getNextSiblingOrAncestorSibling(rootId, id, dir);
+			};
 		} else {
-			return ret;
+			// Going backward: try previous sibling's last descendant, then parent
+			const element = this.getMapElement(rootId, id);
+			if (!element) {
+				return null;
+			};
+
+			const parent = this.getParentLeaf(rootId, id);
+			if (!parent) {
+				return null;
+			};
+
+			const siblings = this.getChildren(rootId, parent.id);
+			const idx = siblings.findIndex(s => s.id === id);
+
+			if (idx > 0) {
+				// Has previous sibling, get its last descendant
+				const prevSibling = siblings[idx - 1];
+				nextBlock = this.getLastDescendant(rootId, prevSibling.id);
+			} else {
+				// No previous sibling, return parent
+				nextBlock = parent.id === rootId ? null : parent;
+			};
 		};
+
+		// Apply check filter
+		if (nextBlock && check) {
+			return check(nextBlock) ? nextBlock : this.getNextBlock(rootId, nextBlock.id, dir, check);
+		};
+
+		return nextBlock;
+	};
+
+	/**
+	 * Helper: Gets the next sibling or ancestor's sibling.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The current block ID.
+	 * @param {number} dir - The direction.
+	 * @returns {I.Block|null} The next sibling or ancestor's sibling.
+	 */
+	private getNextSiblingOrAncestorSibling (rootId: string, id: string, dir: number): I.Block {
+		// If we've reached the root itself, there's no next block
+		if (id === rootId) {
+			return null;
+		};
+
+		const element = this.getMapElement(rootId, id);
+		if (!element) {
+			return null;
+		};
+
+		const parent = this.getParentLeaf(rootId, id);
+		if (!parent) {
+			return null;
+		};
+
+		const siblings = this.getChildren(rootId, parent.id);
+		const idx = siblings.findIndex(s => s.id === id);
+
+		if (idx >= 0 && idx < siblings.length - 1) {
+			// Has next sibling
+			return siblings[idx + 1];
+		};
+
+		// No next sibling. If parent is root, we're at the end
+		if (parent.id === rootId) {
+			return null;
+		};
+
+		// Otherwise, check parent's next sibling
+		return this.getNextSiblingOrAncestorSibling(rootId, parent.id, dir);
+	};
+
+	/**
+	 * Helper: Gets the last descendant of a block.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} id - The block ID.
+	 * @returns {I.Block} The last descendant.
+	 */
+	private getLastDescendant (rootId: string, id: string): I.Block {
+		const children = this.getChildren(rootId, id);
+		if (children.length === 0) {
+			return this.getLeaf(rootId, id);
+		};
+
+		return this.getLastDescendant(rootId, children[children.length - 1].id);
 	};
 
 	/**
@@ -386,8 +489,74 @@ class BlockStore {
 	 * @returns {I.Block} The first block passing the check.
 	 */
 	getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
-		const list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(check);
-		return dir > 0 ? list[0] : list[list.length - 1];
+		// Optimized: Use tree traversal instead of flattening entire tree
+		if (dir > 0) {
+			// Find first block in depth-first order that passes check
+			return this.findFirstInOrder(rootId, rootId, check);
+		} else {
+			// Find last block in depth-first order that passes check
+			return this.findLastInOrder(rootId, rootId, check);
+		};
+	};
+
+	/**
+	 * Helper: Finds the first block in depth-first order that passes the check.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The current block ID.
+	 * @param {(item: I.Block) => any} check - The check function.
+	 * @returns {I.Block|null} The first matching block or null.
+	 */
+	private findFirstInOrder (rootId: string, blockId: string, check: (item: I.Block) => any): I.Block {
+		const block = this.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
+		};
+
+		// Check current block
+		if (check(block)) {
+			return block;
+		};
+
+		// Check children in order
+		const children = this.getChildren(rootId, blockId);
+		for (const child of children) {
+			const result = this.findFirstInOrder(rootId, child.id, check);
+			if (result) {
+				return result;
+			};
+		};
+
+		return null;
+	};
+
+	/**
+	 * Helper: Finds the last block in depth-first order that passes the check.
+	 * @param {string} rootId - The root ID.
+	 * @param {string} blockId - The current block ID.
+	 * @param {(item: I.Block) => any} check - The check function.
+	 * @returns {I.Block|null} The last matching block or null.
+	 */
+	private findLastInOrder (rootId: string, blockId: string, check: (item: I.Block) => any): I.Block {
+		const block = this.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
+		};
+
+		// Check children in reverse order first (to get last descendant)
+		const children = this.getChildren(rootId, blockId);
+		for (let i = children.length - 1; i >= 0; i--) {
+			const result = this.findLastInOrder(rootId, children[i].id, check);
+			if (result) {
+				return result;
+			};
+		};
+
+		// Then check current block
+		if (check(block)) {
+			return block;
+		};
+
+		return null;
 	};
 
 	/**
@@ -561,18 +730,24 @@ class BlockStore {
 	 * @returns {any} The wrapped tree structure.
 	 */
 	wrapTree (rootId: string, blockId: string) {
-		const map = this.getMap(rootId);
-		const ret: any = {};
-
-		for (const [ id, item ] of map.entries()) {
-			ret[id] = this.getLeaf(rootId, id);
-			if (ret[id]) {
-				ret[id].parentId = String(item.parentId || '');
-				ret[id].childBlocks = this.getChildren(rootId, id);
-			};
+		const block = this.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
 		};
 
-		return ret[blockId];
+		const element = this.getMapElement(rootId, blockId);
+
+		// Preserve the actual block object to maintain prototype methods
+		const result: any = block;
+		result.parentId = String(element?.parentId || '');
+		result.childBlocks = this.getChildren(rootId, blockId);
+
+		// Recursively wrap children
+		result.childBlocks = result.childBlocks.map((child: I.Block) =>
+			this.wrapTree(rootId, child.id)
+		).filter(it => it);
+
+		return result;
 	};
 
 	/**
@@ -858,51 +1033,65 @@ class BlockStore {
 	 * Returns structure for Table of contents
 	 */
 	getTableOfContents (rootId: string, withTitle?: boolean) {
-		const blocks = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(it => {
-			if (withTitle && it.isTextTitle()) {
-				return true;
-			};
-
-			return it.isTextHeader();
-		});
 		const list: any[] = [];
-
+		
 		let hasH1 = false;
 		let hasH2 = false;
 
-		blocks.forEach((block: I.Block) => {
-			let depth = 0;
-
-			if (block.isTextHeader1()) {
-				depth = 0;
-				hasH1 = true;
-				hasH2 = false;
+		// Optimized: Direct traversal instead of wrapTree/unwrapTree
+		const collectHeaders = (blockId: string) => {
+			const block = this.getLeaf(rootId, blockId);
+			if (!block) {
+				return;
 			};
 
-			if (block.isTextHeader2()) {
-				hasH2 = true;
-				if (hasH1) depth++;
+			// Check if this block should be included
+			const isHeader = block.isTextHeader();
+			const isTitle = withTitle && block.isTextTitle();
+
+			if (isHeader || isTitle) {
+				let depth = 0;
+
+				if (block.isTextHeader1()) {
+					depth = 0;
+					hasH1 = true;
+					hasH2 = false;
+				};
+
+				if (block.isTextHeader2()) {
+					hasH2 = true;
+					if (hasH1) depth++;
+				};
+
+				if (block.isTextHeader3()) {
+					if (hasH1) depth++;
+					if (hasH2) depth++;
+				};
+
+				list.push({
+					depth,
+					id: block.id,
+					text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
+					block,
+				});
 			};
 
-			if (block.isTextHeader3()) {
-				if (hasH1) depth++;
-				if (hasH2) depth++;
+			// Recursively process children
+			const childrenIds = this.getChildrenIds(rootId, blockId);
+			for (const childId of childrenIds) {
+				collectHeaders(childId);
 			};
+		};
 
-			list.push({ 
-				depth, 
-				id: block.id,
-				text: U.String.htmlSpecialChars(String(block.content.text || translate('defaultNamePage'))),
-				block,
-			});
-		});
+		// Start traversal from root
+		collectHeaders(rootId);
 
+		// Adjust depth if withTitle is true
 		if (withTitle) {
-			list.map((it: any) => {
+			list.forEach((it: any) => {
 				if (!it.block.isTextTitle()) {
 					it.depth++;
 				};
-				return it;
 			});
 		};
 

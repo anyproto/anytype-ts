@@ -194,6 +194,8 @@ const App: FC = () => {
 	};
 
 	const onInit = (data: any) => {
+		data = data || {};
+		
 		const { id, dataPath, config, isDark, isChild, languages, isPinChecked, css, token } = data;
 		const win = $(window);
 		const body = $('body');

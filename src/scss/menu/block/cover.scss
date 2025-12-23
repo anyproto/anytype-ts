@@ -58,6 +58,7 @@
 			.itemsRow, .items { grid-template-columns: repeat(3, 120px); }
 			.item {
 				.cover { height: 72px; }
+				&::before { height: 72px; }
 			}
 		}
 

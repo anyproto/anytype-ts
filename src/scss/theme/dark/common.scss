@@ -158,6 +158,7 @@ html.themeDark {
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
+	.button.black.disabled { color: var(--color-text-primary); background: var(--color-shape-tertiary); }
 
 	.button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
 	.button.blank:not(.disabled):hover,

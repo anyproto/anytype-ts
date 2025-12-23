@@ -157,6 +157,22 @@
 	}
 
 	.pageSettingsMembership {
+		.membershipIntro {
+			.tiers {
+				.tier {
+					.features {
+						.label:before { background: url('#{$themePath}/icon/membership/tick.svg'); }
+					}
+				}
+			}
+
+			.actions {
+				.action {
+					.icon.activation { background-image: url('#{$themePath}/icon/membership/activation.svg'); }
+					.icon.contact { background-image: url('#{$themePath}/icon/membership/contact.svg'); }
+				}
+			}
+		}
 		.membershipPurchased {
 			.section {
 				.item { background: var(--color-bg-secondary); }

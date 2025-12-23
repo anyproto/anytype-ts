@@ -126,6 +126,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		timeoutScrollRef.current = window.setTimeout(() => {
 			const container = U.Common.getScrollContainer(isPopup);
 			const node = $(nodeRef.current);
+			if (!node.length) {
+				return;
+			};
+
 			const ch = container.height();
 			const st = container.scrollTop();
 			const rect = node.get(0).getBoundingClientRect() as DOMRect;

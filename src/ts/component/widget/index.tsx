@@ -252,52 +252,22 @@ const WidgetIndex = observer(forwardRef<{}, Props>((props, ref) => {
 		const node = $(nodeRef.current);
 		const { x, y } = keyboard.mouse.page;
 		
-		const menuParam: Partial<I.MenuParam> = {
+		S.Menu.open('widget', {
 			element: `#widget-${block.id} .iconWrap.more`,
 			rect: { width: 0, height: 0, x, y: y + 14 },
+			subIds: J.Menu.widget,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
-			data: {},
-		};
-
-		let menuId = '';
-
-		if (isBin) {
-			menuId = 'select';
-			menuParam.data = Object.assign(menuParam.data, {
-				options: [
-					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
-					{ id: 'empty', icon: 'remove', name: translate('commonEmptyBin') },
-				],
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'open': {
-							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
-							break;
-						};
-
-						case 'empty': {
-							Action.emptyBin(analytics.route.widget);
-							break;
-						};
-					};
-				},
-			});
-		} else {
-			menuId = 'widget';
-			menuParam.subIds = J.Menu.widget;
-			menuParam.data = Object.assign(menuParam.data, {
+			data: {
 				...param,
 				target: object,
 				blockId: block.id,
 				isPreview,
-			});
-		};
-
-		S.Menu.open(menuId, menuParam);
+			},
+		});
 	};
 
 	const getIsOpen = () => {

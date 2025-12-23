@@ -691,11 +691,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			C.BlockTableRowListFill(rootId, [ rowId ], () => {
 				cb();
 				selection.clear();
-
-				window.setTimeout(() => {
-					focus.set(cellId, { from: 0, to: 0 });
-					focus.apply();
-				}, 15);
+				focus.setWithTimeout(cellId, { from: 0, to: 0 }, 15);
 			});
 		} else {
 			cb();

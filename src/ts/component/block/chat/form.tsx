@@ -289,7 +289,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		let adjustMarks = false;
 
 		if (value !== parsed.text) {
-			updateMarkup(parsed.text, { from: to, to });
+			const diff = value.length - parsed.text.length;
+			updateMarkup(parsed.text, { from: to - diff, to: to - diff });
 		};
 
 		if (canOpenMenuMention) {
@@ -506,10 +507,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let value = U.String.urlFix(url.value || '');
 			let type = I.MarkType.Link;
-			let param = value;
 
 			const route = U.Common.getRouteFromUrl(value);
-
 			if (route) {
 				const routeParam = U.Router.getParam(route);
 
@@ -526,7 +525,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			marks.current.push({ 
 				type, 
 				range: { from, to }, 
-				param,
+				param: value,
 			});
 
 			setMarks(marks.current);
@@ -1238,7 +1237,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const getObjectFromFile = (file: File) => {
 		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
-		const mime = electron.fileMime(path);
+		const mime = file.type || electron.fileMime(path);
 		const ext = electron.fileExt(path);
 		const type = S.Record.getFileType();
 
@@ -1246,7 +1245,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		if (mime) {
 			const [ t1, t2 ] = mime.split('/');
-			if ((t1 == 'image') || J.Constant.fileExtension.image.includes(t2)) {
+			if ((t1 == 'image') && J.Constant.fileExtension.image.includes(t2)) {
 				layout = I.ObjectLayout.Image;
 			};
 		};

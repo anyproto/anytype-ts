@@ -726,10 +726,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 							// Try to fix async detailsUpdate event
-							window.setTimeout(() => {
-								focus.set(block.id, { from: to, to });
-								focus.apply();
-							}, 50);
+							focus.setWithTimeout(block.id, { from: to, to }, 500);
 						});
 					},
 				},
@@ -772,8 +769,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					value = U.String.insert(value, ' ', range.from, range.from);
 
 					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
-						focus.set(block.id, { from: to, to });
-						focus.apply();
+						focus.setWithTimeout(block.id, { from: to, to }, 30);
 					});
 				},
 				route: analytics.route.editor,
@@ -809,7 +805,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const range = getRange();
 
 			setValue(block.getText());
-
 			focus.set(block.id, range);
 			focus.apply();
 		}, 0);
@@ -869,11 +864,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ blockId: id, fields: { ...fields, lang: v } },
 		], () => {
 			Storage.set('codeLang', v);
-
-			window.setTimeout(() => {
-				focus.set(id, { from: length, to: length });
-				focus.apply();
-			}, 0);
+			focus.setWithTimeout(block.id, { from: length, to: length }, 30);
 		});
 	};
 

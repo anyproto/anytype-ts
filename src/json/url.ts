@@ -37,6 +37,7 @@ export default {
 		pmf:			 'https://anytype.typeform.com/to/JKotDI5b#anytypeid=%s',
 		object:			 'https://community.anytype.io/survey3',
 		shared:			 'https://community.anytype.io/survey4',
-		multiplayer:	 'https://community.anytype.io/survey5'
+		multiplayer:	 'https://community.anytype.io/survey5',
+		cta: 			 'https://anytype.typeform.com/to/gK2WWu0n#anytypeid=%s',
 	}
 };

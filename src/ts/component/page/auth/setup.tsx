@@ -77,13 +77,7 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 							cb2();
 						} else {
 							if (purchased.isFinalization) {
-								S.Popup.open('membershipFinalization', {
-									onClose: cb2,
-									data: {
-										product,
-										route: analytics.route.authSetup,
-									},
-								});
+								Action.finalizeMembership(product, analytics.route.authSetup, cb2);
 							} else {
 								cb2();
 							};

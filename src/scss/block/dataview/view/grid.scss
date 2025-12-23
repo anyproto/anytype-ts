@@ -157,7 +157,7 @@
 				&.align2 { padding-left: 0px; }
 			}
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
-				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
+				.wrap { height: 100%; overflow: hidden; white-space: nowrap; position: static; }
 			}
 
 			.cell.c-checkbox {

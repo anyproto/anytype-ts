@@ -11,8 +11,6 @@ interface SpaceContextParam {
 	withPin?: boolean;
 	withDelete?: boolean;
 	noShare?: boolean; 
-	noBin?: boolean; 
-	noDivider?: boolean;
 	route: string;
 };
 
@@ -550,6 +548,7 @@ class UtilMenu {
 	getCoverColors () {
 		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
 			id,
+			itemId: id,
 			type: I.CoverType.Color,
 			name: translate(`textColor-${id}`),
 		}));
@@ -558,6 +557,7 @@ class UtilMenu {
 	getCoverGradients () {
 		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
 			id,
+			itemId: id,
 			type: I.CoverType.Gradient,
 			name: translate(`gradientColor-${id}`),
 		}));
@@ -858,28 +858,144 @@ class UtilMenu {
 		param = param || {};
 
 		const { targetSpaceId } = space;
-		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, noBin, noDivider, route } = param;
+		const { isSharePage, noManage, noMembers, withPin, withDelete, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 
+		const onClick = (itemId: string, inviteLink: string) => {
+			switch (itemId) {
+				case 'mute':
+				case 'unmute': {
+					let mode = I.NotificationMode.Nothing;
+					if (itemId == 'unmute') {
+						mode = I.NotificationMode.All;
+					} else {
+						mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
+					};
+
+					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
+					analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
+					break;
+				};
+
+				case 'pin': {
+					const items: any[] = this.getVaultItems().filter(it => it.isPinned);
+					const newItems = [ space ].concat(items);
+
+					U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
+						C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
+					});
+
+					analytics.event('PinSpace', { route });
+					break;
+				};
+
+				case 'unpin': {
+					C.SpaceUnsetOrder(space.id);
+					analytics.event('UnpinSpace', { route });
+					break;
+				};
+
+				case 'settings':
+				case 'members': {
+					let id = '';
+
+					switch (itemId) {
+						case 'settings': {
+							id = 'spaceIndex'; 
+							break;
+						};
+
+						case 'members': {
+							id = 'spaceShare'; 
+							break;
+						};
+					};
+
+					if (targetSpaceId == S.Common.space) {
+						Action.openSettings(id, route);
+					} else {
+						U.Router.switchSpace(targetSpaceId, '', false, { 
+							onFadeIn: () => Action.openSettings(id, route),
+						}, true);
+					};
+					break;
+				};
+
+				case 'remove': {
+					Action.removeSpace(space.targetSpaceId, param.route);
+					break;
+				};
+
+				case 'qr': {
+					S.Popup.open('inviteQr', { data: { link: inviteLink } });
+					analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+					analytics.event('ScreenQr', { route });
+					break;
+				};
+
+				case 'link': {
+					U.Common.copyToast('', inviteLink, translate('toastInviteCopy'));
+					analytics.event('ClickShareSpaceCopyLink', { route });
+					break;
+				};
+
+				case 'stopSharing': {
+					S.Popup.open('confirm', {
+						data: {
+							icon: 'noAccessRed',
+							title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
+							text: translate(`popupConfirmStopSharingSpaceWarningText`),
+							textConfirm: translate('commonConfirm'),
+							colorConfirm: 'red',
+							onConfirm: () => {
+								C.SpaceStopSharing(S.Common.space, (message) => {
+									if (message.error.code) {
+										return;
+									};
+
+									Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
+								});
+							},
+						},
+					});
+					break;
+				};
+
+				case 'manage': {
+					this.menuContext?.close(() => S.Menu.open('widgetSection', {
+						recalcRect: () => {
+							const { ww, wh } = U.Common.getWindowDimensions();
+							return { x: 0, y: 0, width: ww, height: wh };
+						},
+						classNameWrap: 'fixed visibleDimmer',
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Center,
+					}));
+					break;
+				};
+
+			};
+		};
+
 		const getOptions = (inviteLink: string) => {
-			const shareOptions = [
-				{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
-				{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
-			];
 			const sections = {
 				general: [],
 				share: [],
 				archive: [],
 				delete: [],
+				manage: [],
 			};
 
-			if (isSharePage) {
-				if (inviteLink) {
-					sections.share = shareOptions;
-				};
+			if (!noShare && inviteLink) {
+				sections.share = [
+					{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
+					{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
+				];
+			}
 
+			if (isSharePage) {
 				if (isOwner && space.isShared) {
 					const isDisabled = participants.length > 1;
 					sections.archive.push({
@@ -892,10 +1008,6 @@ class UtilMenu {
 			} else {
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
-				};
-
-				if (!noManage) {
-					sections.general.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
 				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
@@ -918,12 +1030,8 @@ class UtilMenu {
 					};
 				};
 
-				if (!noShare && inviteLink) {
-					sections.share = shareOptions;
-				};
-
-				if (!noBin) {
-					sections.archive.push({ id: 'bin', icon: 'bin', name: translate('commonBin') });
+				if (!noManage) {
+					sections.manage.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
 				};
 
 				if (withDelete) {
@@ -935,12 +1043,14 @@ class UtilMenu {
 
 			let options: any[] = [];
 			Object.values(sections).forEach((section, idx) => {
-				if (section.length) {
-					if (options.length && !noDivider) {
-						options.push({ isDiv: true, id: `menu-divider-${idx}` });
-					};
-					options = options.concat(section);
+				if (!section.length) {
+					return;
 				};
+
+				if (options.length) {
+					options.push({ isDiv: true, id: `menu-divider-${idx}` });
+				};
+				options = options.concat(section);
 			});
 
 			return options;
@@ -955,120 +1065,7 @@ class UtilMenu {
 				data: {
 					options: getOptions(inviteLink),
 					onSelect: (e: any, element: any) => {
-						window.setTimeout(() => {
-							switch (element.id) {
-								case 'mute':
-								case 'unmute': {
-									let mode = I.NotificationMode.Nothing;
-									if (element.id == 'unmute') {
-										mode = I.NotificationMode.All;
-									} else {
-										mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
-									};
-
-									C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-									analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
-									break;
-								};
-
-								case 'pin': {
-									const items: any[] = this.getVaultItems().filter(it => it.isPinned);
-									const newItems = [ space ].concat(items);
-
-									U.Data.sortByOrderIdRequest(J.Constant.subId.space, newItems, callBack => {
-										C.SpaceSetOrder(space.id, newItems.map(it => it.id), callBack);
-									});
-
-									analytics.event('PinSpace', { route });
-									break;
-								};
-
-								case 'unpin': {
-									C.SpaceUnsetOrder(space.id);
-									analytics.event('UnpinSpace', { route });
-									break;
-								};
-
-								case 'settings':
-								case 'members':
-								case 'bin': {
-									let id: string = '';
-									let layout: I.ObjectLayout = I.ObjectLayout.Settings;
-
-									switch (element.id) {
-										case 'settings': id = 'spaceIndex'; break;
-										case 'members': id = 'spaceShare'; break;
-										case 'bin': id = J.Constant.widgetId.bin; layout = I.ObjectLayout.Archive; break;
-									};
-
-									const routeParam = {
-										onFadeIn: () => U.Object.openRoute({ id, layout }),
-									};
-
-									if (targetSpaceId == S.Common.space) {
-										routeParam.onFadeIn();
-									} else {
-										U.Router.switchSpace(targetSpaceId, '', false, routeParam, true);
-									};
-									break;
-								};
-
-								case 'remove': {
-									Action.removeSpace(space.targetSpaceId, param.route);
-									break;
-								};
-
-								case 'qr': {
-									S.Popup.open('inviteQr', { data: { link: inviteLink } });
-									analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-									analytics.event('ScreenQr', { route });
-									break;
-								};
-
-								case 'link': {
-									U.Common.copyToast('', inviteLink, translate('toastInviteCopy'));
-									analytics.event('ClickShareSpaceCopyLink', { route });
-									break;
-								};
-
-								case 'stopSharing': {
-									S.Popup.open('confirm', {
-										data: {
-											icon: 'noAccessRed',
-											title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
-											text: translate(`popupConfirmStopSharingSpaceWarningText`),
-											textConfirm: translate('commonConfirm'),
-											colorConfirm: 'red',
-											onConfirm: () => {
-												C.SpaceStopSharing(S.Common.space, (message) => {
-													if (message.error.code) {
-														return;
-													};
-
-													Preview.toastShow({ text: translate('toastSpaceIsPrivate') });
-												});
-											},
-										},
-									});
-									break;
-								};
-
-								case 'manage': {
-									this.menuContext?.close(() => S.Menu.open('widgetSection', {
-										recalcRect: () => {
-											const { ww, wh } = U.Common.getWindowDimensions();
-											return { x: 0, y: 0, width: ww, height: wh };
-										},
-										classNameWrap: 'fixed visibleDimmer',
-										vertical: I.MenuDirection.Center,
-										horizontal: I.MenuDirection.Center,
-									}));
-									break;
-								};
-
-							};
-
-						}, S.Menu.getTimeout());
+						window.setTimeout(() => onClick(element.id, inviteLink), S.Menu.getTimeout());
 					},
 				},
 			});
@@ -1757,6 +1754,7 @@ class UtilMenu {
 			{ id: I.WidgetSection.Pin },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },
+			{ id: I.WidgetSection.Bin },
 		].sort((c1, c2) => {
 			const isUnread1 = c1.id == I.WidgetSection.Unread;
 			const isUnread2 = c2.id == I.WidgetSection.Unread;
@@ -1783,12 +1781,18 @@ class UtilMenu {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });
-			options.push(toggle);
 
 			value = String(recentEditMode);
-		} else {
-			options.push(toggle);
+		} else 
+		if (sectionId == I.WidgetSection.Bin) {
+			options = options.concat([
+				{ id: 'openBin', name: translate('commonOpen') },
+				{ id: 'emptyBin', name: translate('commonEmptyBin') },
+				{ isDiv: true },
+			]);
 		};
+
+		options.push(toggle);
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -1812,6 +1816,16 @@ class UtilMenu {
 
 							widgetSections[idx].isHidden = true;
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
+							break;
+						};
+
+						case 'openBin': {
+							U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+							break;
+						};
+
+						case 'emptyBin': {
+							Action.emptyBin(analytics.route.widget);
 							break;
 						};
 

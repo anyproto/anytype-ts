@@ -79,7 +79,6 @@
 		> .wrapContent {
 			> .selectionTarget {
 				> .dropTarget {
-					.marker.check { cursor: default; }
 					#value { min-height: var(--line-height-paragraph); cursor: text !important; user-select: text !important; white-space: pre-wrap; }
 					#placeholder { display: none; }
 				}

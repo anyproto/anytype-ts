@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader, Icon } from 'Component';
-import { I, C, J, translate, analytics } from 'Lib';
+import { I, C, J, translate, analytics, U } from 'Lib';
 
 const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -88,7 +88,7 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		<form onSubmit={onConfirm} className="anyNameForm">
 			<Icon className={[ 'color', product.colorStr || 'default' ].join(' ')} />
 			<div className="text">
-				<Title text={translate(`popupMembershipFinalizationTitle`)} />
+				<Title text={U.String.sprintf(translate(`popupMembershipFinalizationTitle`), product.name)} />
 				<Label text={translate('popupMembershipFinalizationText1')} />
 				<Label text={translate('popupMembershipFinalizationText2')} />
 			</div>

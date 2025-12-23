@@ -107,7 +107,10 @@
 		}
 		&.active::before, &.hover::before { opacity: 1; }
 
-		.time { @include text-small; color: var(--color-text-secondary); text-align: right; }
+		.time { @include text-small; color: var(--color-text-secondary); text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 0px 4px; }
+		&.isSyncing {
+			.time:before { content: ''; display: block; width: 12px; height: 12px; background-image: url('~img/icon/vault/syncing.svg'); }
+		}
 
 		.icons { display: flex; gap: 0px 6px; }
 		.icon { width: 18px; height: 18px; }

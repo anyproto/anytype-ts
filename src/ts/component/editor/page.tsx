@@ -1473,7 +1473,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				Action.move(rootId, rootId, block.id, parentElement.childrenIds.slice(idx), I.BlockPosition.Inner);
 			};
 
-			window.setTimeout(() => this.focus(block.id, range.from, range.to, false), 50);
+			focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 
 			if (next && next.isTextToggle()) {
 				S.Block.toggle(rootId, next.id, true);
