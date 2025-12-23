@@ -507,10 +507,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			let value = U.String.urlFix(url.value || '');
 			let type = I.MarkType.Link;
-			let param = value;
 
 			const route = U.Common.getRouteFromUrl(value);
-
 			if (route) {
 				const routeParam = U.Router.getParam(route);
 
@@ -527,7 +525,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			marks.current.push({ 
 				type, 
 				range: { from, to }, 
-				param,
+				param: value,
 			});
 
 			setMarks(marks.current);

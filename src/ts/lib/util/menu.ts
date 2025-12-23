@@ -548,6 +548,7 @@ class UtilMenu {
 	getCoverColors () {
 		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
 			id,
+			itemId: id,
 			type: I.CoverType.Color,
 			name: translate(`textColor-${id}`),
 		}));
@@ -556,6 +557,7 @@ class UtilMenu {
 	getCoverGradients () {
 		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
 			id,
+			itemId: id,
 			type: I.CoverType.Gradient,
 			name: translate(`gradientColor-${id}`),
 		}));
