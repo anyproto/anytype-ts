@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
-import { wrap } from 'lodash';
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {
 	
