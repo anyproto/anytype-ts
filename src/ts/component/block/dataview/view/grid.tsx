@@ -11,7 +11,6 @@ import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import AddRow from './grid/body/add';
 import FootRow from './grid/foot/row';
-import view from 'Component/widget/view';
 
 const PADDING = 46;
 const HEIGHT = 48;
