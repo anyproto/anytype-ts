@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { AutoSizer, List } from 'react-virtualized';
@@ -12,11 +12,6 @@ enum Tab {
 	Upload	 = 3,
 };
 
-interface State {
-	filter: string;
-	isLoading: boolean;
-};
-
 const LIMIT = 36;
 const Tabs = [
 	{ id: Tab.Gallery },
@@ -25,255 +20,86 @@ const Tabs = [
 	{ id: Tab.Upload },
 ].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
-const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
+const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	node: any = null;
-	state = {
-		filter: '',
-		isLoading: false,
-	};
-	items: any[] = [];
-	filter = '';
-	refFilter: any = null;
-	refList: any = null;
-	timeout = 0;
-	tab: Tab = Tab.Gallery;
-	activeIndex = -1;
-	active: any = null;
+	const { param, close } = props;
+	const { data } = param;
+	const { rootId, onSelect, onUpload, onUploadStart } = data;
+	const [ filter, setFilter ] = useState('');
+	const [ isLoading, setIsLoading ] = useState(false);
+	const [ tab, setTab ] = useState(Tab.Gallery);
+	const [ items, setItems ] = useState([]);
+	const nodeRef = useRef(null);
+	const filterRef = useRef(null);
+	const listRef = useRef(null);
+	const dropzoneRef = useRef(null);
+	const timeout = useRef(0);
+	const active = useRef(null);
+	const activeIndex = useRef(-1);
+	const rows: any[] = [];
+	const itemsPerRow = tab == Tab.Gallery ? 4 : 3;
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.onUpload = this.onUpload.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onDragOver = this.onDragOver.bind(this);
-		this.onDragLeave = this.onDragLeave.bind(this);
-		this.onDrop = this.onDrop.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.rebind = this.rebind.bind(this);
-		this.unbind = this.unbind.bind(this);
-	};
-
-	render () {
-		const { filter, isLoading } = this.state;
-		const sections = this.getSections();
-
-		// Pre-calculate indices for all items and organize into rows
-		const itemsPerRow = this.getItemsPerRow();
-		const rows: any[] = [];
-		let globalIndex = 0;
-
-		sections.forEach((section: any) => {
-			// Add section header row if it has a name
-			if (section.name) {
-				rows.push({ isSection: true, name: section.name });
-			};
-
-			const children = section.children || [];
-			let rowItems: any[] = [];
-
-			for (let i = 0; i < children.length; i++) {
-				const itemWithIndex = { ...children[i], __globalIndex: globalIndex };
-
-				globalIndex++;
-				rowItems.push(itemWithIndex);
-
-				// Create a row when we reach itemsPerRow or it's the last item
-				if (rowItems.length === itemsPerRow || i === children.length - 1) {
-					rows.push({ isSection: false, children: rowItems });
-					rowItems = [];
-				};
-			};
-		});
-
-		const Item = (item: any) => (
-			<div
-				id={`item-${item.id}`}
-				className="item"
-				onClick={e => this.onSelect(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item, item.__globalIndex)}
-				onMouseLeave={() => this.onMouseLeave()}
-			>
-				<Cover preview={true} {...item} id={item.itemId} />
-				{item.artist ? <div className="name">{item.artist}</div> : ''}
-			</div>
-		);
-
-		const rowRenderer = (param: any) => {
-			const row = rows[param.index];
-
-			if (row.isSection) {
-				return (
-					<div key={param.key} style={param.style} className="sectionName">
-						{row.name}
-					</div>
-				);
-			}
-
-			return (
-				<div key={param.key} style={param.style} className="itemsRow">
-					{row.children.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
-			);
-		};
-
-		let content = null;
-		let filterElement = null;
-
-		if ([ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
-			filterElement = (
-				<Filter 
-					ref={ref => this.refFilter = ref}
-					className="outlined"
-					value={filter}
-					onChange={this.onFilterChange} 
-					focusOnMount={true}
-				/>
-			);
-		};
-
-		switch (this.tab) {
-			case Tab.Gallery:
-			case Tab.Unsplash:
-			case Tab.Library: {
-				content = (
-					<>
-						{rows.length ? (
-							<div className="sections">
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											rowCount={rows.length}
-											rowHeight={({ index }) => this.getRowHeight(rows[index], index)}
-											rowRenderer={rowRenderer}
-											overscanRowCount={5}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							</div>
-						) : <EmptySearch text={filter ? U.String.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
-					</>
-				);
-				break;
-			};
-
-			case Tab.Upload: {
-				content = (
-					<div 
-						className="dropzone" 
-						onDragOver={this.onDragOver} 
-						onDragLeave={this.onDragLeave} 
-						onDrop={this.onDrop}
-						onClick={this.onUpload}
-					>
-						<Icon className="coverUpload" />
-						<Label text={translate('menuBlockCoverChoose')} />
-					</div>
-				);
-				break;
-			};
-		};
-
-		if (isLoading) {
-			content = <Loader />;
-		};
-
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrap"
-			>
-				<div className="head">
-					{Tabs.map((item: any, i: number) => (
-						<div 
-							key={item.id} 
-							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
-							onClick={() => this.setTab(item.id)}
-						>
-							{item.name}
-						</div>
-					))}
-				</div>
-
-				<div className={[ 'body', Tab[this.tab].toLowerCase() ].join(' ')}>
-					{filterElement}
-					{content}
-				</div>
-			</div>
-		);
-	};
-
-	componentDidMount () {
-		this.load();
-		this.rebind();
-
+	useEffect(() => {
+		load();
+		rebind();
 		keyboard.disablePaste(true);
-	};
 
-	componentDidUpdate () {
-		const { filter } = this.state;
-		
-		if (this.filter != filter) {
-			this.filter = filter;
-			this.load();
+		return () => {
+			unbind();
+			keyboard.disablePaste(false);
+			window.clearTimeout(timeout.current);
 		};
+	}, []);
 
-		window.setTimeout(() => this.refFilter?.focus(), 15);
-	};
+	useEffect(() => {
+		load();
+	}, [ filter, tab ]);
 
-	componentWillUnmount () {
-		this.unbind();
+	useEffect(() => {
+		rebind();
+		window.setTimeout(() => filterRef.current?.focus(), 15);
 
-		keyboard.disablePaste(false);
-	};
+		return () => {
+			unbind();
+		};
+	}, [ filter, tab, items ]);
 
-	unbind () {
+	const unbind = () => {
 		$(window).off('paste.menu keydown.menu');
 	};
 
-	rebind () {
-		this.unbind();
-		$(window).on('paste.menu', e => this.onPaste(e));
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	const rebind = () => {
+		const win = $(window);
+
+		unbind();
+		win.on('paste.menu', e => onPaste(e));
+		win.on('keydown.menu', e => onKeyDown(e));
 	};
 
-	load () {
-		const { filter } = this.state;
-
-		this.items = [];
-
-		if (![ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
-			this.setState({ isLoading: false });
+	const load = () => {
+		if (![ Tab.Unsplash, Tab.Library ].includes(tab)) {
+			setIsLoading(false);
 			return;
 		};
 
-		switch (this.tab) {
+		switch (tab) {
 			case Tab.Unsplash: {
-				this.setState({ isLoading: true });
+				setIsLoading(true);
 
 				C.UnsplashSearch(filter, LIMIT, (message: any) => {
+					setIsLoading(false);
+
 					if (message.error.code) {
-						this.setState({ isLoading: false });
 						return;
 					};
 
-					message.pictures.forEach((item: any) => {
-						this.items.push({
-							id: item.id,
-							type: I.CoverType.Source,
-							src: item.url,
-							artist: item.artist,
-						});
-					});
-
-					this.setState({ isLoading: false });
+					setItems(message.pictures.map((item: any) => ({
+						id: item.id,
+						itemId: item.id,
+						type: I.CoverType.Source,
+						src: item.url,
+						artist: item.artist,
+					})));
 				});
 				break;
 			};
@@ -288,7 +114,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
-				this.setState({ isLoading: true });
+				setIsLoading(true);
 
 				U.Subscription.search({
 					filters,
@@ -296,65 +122,43 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					fullText: filter,
 					limit: 1000,
 				}, (message: any) => {
-					this.setState({ isLoading: false });
+					setIsLoading(false);
 
 					if (message.error.code) {
 						return;
 					};
 
-					message.records.forEach((item: any) => {
-						this.items.push({
-							id: item.id,
-							type: I.CoverType.Upload,
-							src: S.Common.imageUrl(item.id, I.ImageSize.Medium),
-							artist: item.name,
-							coverY: -0.25,
-						});
-					});
-
-					this.forceUpdate();
+					setItems(message.records.map((item: any) => ({
+						id: item.id,
+						itemId: item.id,
+						type: I.CoverType.Upload,
+						src: S.Common.imageUrl(item.id, I.ImageSize.Medium),
+						artist: item.name,
+						coverY: -0.25,
+					})));
 				});
 				break;
 			};
 		};
 	};
 
-	setTab (tab: Tab) {
-		this.tab = tab;
-		this.forceUpdate();
-		this.load();
-	};
-
-	onUpload (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onUpload, onUploadStart } = data;
-
+	const onUploadHandler = (e: any) => {
 		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
 			close();
-
-			if (onUploadStart) {
-				onUploadStart();
-			};
+			onUploadStart?.();
 
 			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				if (onUpload) {
-					onUpload(I.CoverType.Upload, message.objectId);
-				};
-
+				onUpload?.(I.CoverType.Upload, message.objectId);
 				analytics.event('SetCover', { type: I.CoverType.Upload });
 			});
 		});
 	};
 
-	onSelect (e: any, item: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, onSelect, onUpload, onUploadStart } = data;
+	const onSelectHandler = (e: any, item: any) => {
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
 		if (!object.coverId) {
@@ -362,9 +166,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		};
 
 		if (item.type == I.CoverType.Source) {
-			if (onUploadStart) {
-				onUploadStart();
-			};
+			onUploadStart?.();
 
 			C.UnsplashDownload(S.Common.space, item.itemId, (message: any) => {
 				if (!message.error.code) {
@@ -381,15 +183,15 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		analytics.event('SetCover', { type: item.type, id: item.itemId });
 	};
 
-	onFilterChange (v: string) {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.setState({ filter: v }), J.Constant.delay.keyboard);
+	const onFilterChange = (v: string) => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => setFilter(v), J.Constant.delay.keyboard);
 	};
 
-	getSections () {
+	const getSections = () => {
 		let sections: any[] = [];
 
-		switch (this.tab) {
+		switch (tab) {
 			case Tab.Gallery: {
 				sections = sections.concat([
 					{ name: translate('menuBlockCoverGradients'), children: U.Menu.getCoverGradients() },
@@ -400,8 +202,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 			case Tab.Library:
 			case Tab.Unsplash: {
-				if (this.items.length) {
-					sections.push({ children: this.items });
+				if (items.length) {
+					sections.push({ children: items });
 				};
 				break;
 			};
@@ -410,47 +212,32 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		return U.Menu.sectionsMap(sections);
 	};
 
-	onDragOver (e: any) {
-		if (!U.File.checkDropFiles(e)) {
-			return;
+	const onDragOver = (e: any) => {
+		if (U.File.checkDropFiles(e)) {
+			$(dropzoneRef.current).addClass('isDraggingOver');
 		};
-		
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
-
-		zone.addClass('isDraggingOver');
 	};
 	
-	onDragLeave (e: any) {
-		if (!U.File.checkDropFiles(e)) {
-			return;
+	const onDragLeave = (e: any) => {
+		if (U.File.checkDropFiles(e)) {
+			$(dropzoneRef.current).removeClass('isDraggingOver');
 		};
-		
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
-
-		zone.removeClass('isDraggingOver');
 	};
 	
-	onDrop (e: any) {
+	const onDrop = (e: any) => {
 		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
 		
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId } = data;
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
 		
-		zone.removeClass('isDraggingOver');
+		$(dropzoneRef.current).removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
-		this.setState({ isLoading: true });
+		setIsLoading(true);
 		
 		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover,(message: any) => {
-			this.setState({ isLoading: false });
+			setIsLoading(false);
 			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
@@ -461,70 +248,66 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		});
 	};
 
-	onKeyDown (e: any) {
-		const { close } = this.props;
-		const checkFilter = () => this.refFilter && this.refFilter.isFocused();
-
+	const onKeyDown = (e: any) => {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.refFilter?.blur();
-			this.onArrowVertical(pressed == 'arrowup' ? -1 : 1);
+			filterRef.current?.blur();
+			onArrowVertical(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			if (checkFilter()) {
+			if (filterRef.current?.isFocused()) {
 				return;
 			};
 
 			e.preventDefault();
-			this.refFilter?.blur();
-			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
+			filterRef.current?.blur();
+			onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
 		});
 
 		keyboard.shortcut('tab', e, () => {
-			let idx = Tabs.findIndex(it => it.id == this.tab) + 1;
+			let idx = Tabs.findIndex(it => it.id == tab) + 1;
 
 			if (idx >= Tabs.length) {
 				idx = 0;
 			};
 
-			this.setTab(Tabs[idx].id);
+			setTab(Tabs[idx].id);
 		});
 
-		if (this.active) {
+		if (active.current) {
 			keyboard.shortcut('enter', e, () => {
 				e.preventDefault();
 
-				this.onSelect(e, this.active);
+				onSelectHandler(e, active.current);
 				close();
 			});
 		};
 	};
 
-	onArrowVertical (dir: number) {
-		const items = this.getItemsFlat();
-		const itemsPerRow = this.getItemsPerRow();
+	const onArrowVertical = (dir: number) => {
+		const items = getItemsFlat();
 
 		if (items.length === 0) {
 			return;
 		};
 
-		if (this.activeIndex === -1) {
-			this.activeIndex = 0;
-			this.setActive(items[0], 0);
+		if (activeIndex.current < 0) {
+			activeIndex.current = 0;
+			setActive(items[0], 0, true);
 			return;
 		};
 
-		const currentRow = Math.floor(this.activeIndex / itemsPerRow);
-		const currentCol = this.activeIndex % itemsPerRow;
-		let newRow = currentRow + dir;
+		const currentRow = Math.floor(activeIndex.current / itemsPerRow);
+		const currentCol = activeIndex.current % itemsPerRow;
 		const totalRows = Math.ceil(items.length / itemsPerRow);
 
-		// Wrap around
+		let newRow = currentRow + dir;
+
 		if (newRow < 0) {
 			newRow = totalRows - 1;
 		} else if (newRow >= totalRows) {
@@ -533,31 +316,30 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 		let newIndex = newRow * itemsPerRow + currentCol;
 
-		// If new index is beyond items length, go to last item in that column
 		if (newIndex >= items.length) {
 			newIndex = items.length - 1;
 		};
 
-		this.activeIndex = newIndex;
-		this.setActive(items[newIndex], newIndex);
+		activeIndex.current = newIndex;
+		setActive(items[newIndex], newIndex, true);
 	};
 
-	onArrowHorizontal (dir: number) {
-		const items = this.getItemsFlat();
-		const itemsPerRow = this.getItemsPerRow();
+	const onArrowHorizontal = (dir: number) => {
+		const items = getItemsFlat();
 
 		if (items.length === 0) {
 			return;
 		};
 
-		if (this.activeIndex === -1) {
-			this.activeIndex = 0;
-			this.setActive(items[0], 0);
+		if (activeIndex.current < 0) {
+			activeIndex.current = 0;
+			setActive(items[0], 0, true);
 			return;
 		};
 
-		const currentRow = Math.floor(this.activeIndex / itemsPerRow);
-		const currentCol = this.activeIndex % itemsPerRow;
+		const currentRow = Math.floor(activeIndex.current / itemsPerRow);
+		const currentCol = activeIndex.current % itemsPerRow;
+
 		let newCol = currentCol + dir;
 		let newRow = currentRow;
 
@@ -587,18 +369,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			};
 		};
 
-		this.activeIndex = newIndex;
-		this.setActive(items[newIndex], newIndex);
+		activeIndex.current = newIndex;
+		setActive(items[newIndex], newIndex, true);
 	};
 
-	setActive (item?: any, index?: number) {
-		const node = $(this.node);
+	const setActive = (item: any, index: number, scroll: boolean) => {
+		const node = $(nodeRef.current);
 
 		node.find('.item.hover').removeClass('hover');
 
-		this.active = item;
+		active.current = item;
 		if (index !== undefined) {
-			this.activeIndex = index;
+			activeIndex.current = index;
 		};
 
 		if (!item) {
@@ -608,58 +390,50 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
 		element.addClass('hover');
 
-		// Scroll to row containing the active item
-		if (this.refList && index !== undefined) {
-			const itemsPerRow = this.getItemsPerRow();
-			const itemRow = Math.floor(index / itemsPerRow);
+		if (!scroll || !listRef.current || (index === undefined)) {
+			return;
+		};
 
-			// Calculate actual row in virtualized list (accounting for section headers)
-			const sections = this.getSections();
-			
-			let virtualRow = itemRow;
-			let itemCount = 0;
+		const itemRow = Math.floor(index / itemsPerRow);
+		const sections = getSections();
+		
+		let virtualRow = itemRow;
+		let itemCount = 0;
 
-			for (const section of sections) {
-				if (section.name) {
-					virtualRow++; // Account for section header row
-				}
-
-				const sectionItemCount = (section.children || []).length;
-				if (itemCount + sectionItemCount > index) {
-					break;
-				};
-
-				itemCount += sectionItemCount;
+		for (const section of sections) {
+			if (section.name) {
+				virtualRow++;
 			};
 
-			this.refList.scrollToRow(Math.max(0, virtualRow));
+			const sectionItemCount = (section.children || []).length;
+			if (itemCount + sectionItemCount > index) {
+				break;
+			};
+
+			itemCount += sectionItemCount;
 		};
+
+		listRef.current.scrollToRow(Math.max(0, virtualRow));
 	};
 
-	onMouseEnter (e: any, item: any, index: number) {
+	const onMouseEnter = (e: any, item: any, index: number) => {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, index);
+			setActive(item, index, false);
 		};
 	};
 
-	onMouseLeave () {
+	const onMouseLeave = () => {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(null, -1);
+			setActive(null, -1, false);
 		};
 	};
 
-	getItemsPerRow () {
-		// Gallery has 4 items per row
-		// Unsplash and Library have 3 items per row
-		return [ Tab.Gallery ].includes(this.tab) ? 4 : 3;
-	};
-
-	getRowHeight (row: any, index) {
+	const getRowHeight = (row: any, index) => {
 		if (row.isSection) {
 			return index ? 40 : 32;
 		};
 
-		switch (this.tab) {
+		switch (tab) {
 			case Tab.Gallery:
 				return 56;
 			case Tab.Library:
@@ -670,21 +444,24 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		};
 	};
 
-	getItemsFlat () {
-		const sections = this.getSections();
-		const items: any[] = [];
+	const getItemsFlat = () => {
+		const sections = getSections();
+		const flatItems: any[] = [];
+		let globalIndex = 0;
 
 		sections.forEach((section: any) => {
-			if (section.children) {
-				items.push(...section.children);
+			const children = section.children || [];
+
+			for (let i = 0; i < children.length; i++) {
+				flatItems.push({ ...children[i], __globalIndex: globalIndex });
+				globalIndex++;
 			};
 		});
 
-		return items;
+		return flatItems;
 	};
 
-	onPaste (e: any) {
-		const { param, close } = this.props;
+	const onPaste = (e: any) => {
 		const { data } = param;
 		const { rootId } = data;
 		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
@@ -693,11 +470,11 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			return;
 		};
 
-		this.setState({ isLoading: true });
+		setIsLoading(true);
 
 		U.Common.saveClipboardFiles(files, {}, (data: any) => {
 			if (!data.files.length) {
-				this.setState({ isLoading: false });
+				setIsLoading(false);
 				return;
 			};
 
@@ -706,12 +483,166 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};
 
-				this.setState({ isLoading: false });
+				setIsLoading(false);
 				close();
 			});
 		});
 	};
 
-});
+	const Item = ({ item }: { item: any }) => (
+		<div
+			id={`item-${item.id}`}
+			className="item"
+			onClick={e => onSelectHandler(e, item)}
+			onMouseEnter={e => onMouseEnter(e, item, item.__globalIndex)}
+			onMouseLeave={() => onMouseLeave()}
+		>
+			<Cover preview={true} {...item} id={item.itemId} />
+			{item.artist ? <div className="name">{item.artist}</div> : ''}
+		</div>
+	);
+
+	const rowRenderer = (param: any) => {
+		const row = rows[param.index];
+
+		if (row.isSection) {
+			return (
+				<div key={param.key} style={param.style} className="sectionName">
+					{row.name}
+				</div>
+			);
+		}
+
+		return (
+			<div key={param.key} style={param.style} className="itemsRow">
+				{row.children.map((item: any, i: number) => (
+					<Item key={i} item={item} />
+				))}
+			</div>
+		);
+	};
+
+	const sections = getSections();
+
+	let content = null;
+	let filterElement = null;
+	let globalIndex = 0;
+
+	sections.forEach((section: any) => {
+		if (section.name) {
+			rows.push({ isSection: true, name: section.name });
+		};
+
+		const children = section.children || [];
+
+		let rowItems: any[] = [];
+
+		for (let i = 0; i < children.length; i++) {
+			const itemWithIndex = { ...children[i], __globalIndex: globalIndex };
+
+			globalIndex++;
+			rowItems.push(itemWithIndex);
+
+			// Create a row when we reach itemsPerRow or it's the last item
+			if ((rowItems.length == itemsPerRow) || (i == children.length - 1)) {
+				rows.push({ isSection: false, children: rowItems });
+				rowItems = [];
+			};
+		};
+	});
+
+	if ([ Tab.Unsplash, Tab.Library ].includes(tab)) {
+		filterElement = (
+			<Filter 
+				ref={filterRef}
+				className="outlined"
+				value={filter}
+				onChange={onFilterChange} 
+				focusOnMount={true}
+			/>
+		);
+	};
+
+	if (isLoading) {
+		content = <Loader />;
+	} else {
+		switch (tab) {
+			case Tab.Gallery:
+			case Tab.Unsplash:
+			case Tab.Library: {
+				content = (
+					<>
+						{rows.length ? (
+							<div className="sections">
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={listRef}
+											width={width}
+											height={height}
+											rowCount={rows.length}
+											rowHeight={({ index }) => getRowHeight(rows[index], index)}
+											rowRenderer={rowRenderer}
+											overscanRowCount={5}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							</div>
+						) : <EmptySearch text={filter ? U.String.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
+					</>
+				);
+				break;
+			};
+
+			case Tab.Upload: {
+				content = (
+					<div 
+						ref={dropzoneRef}
+						className="dropzone" 
+						onDragOver={onDragOver} 
+						onDragLeave={onDragLeave} 
+						onDrop={onDrop}
+						onClick={onUploadHandler}
+					>
+						<Icon className="coverUpload" />
+						<Label text={translate('menuBlockCoverChoose')} />
+					</div>
+				);
+				break;
+			};
+		};
+	};
+
+	return (
+		<div ref={nodeRef} className="wrap">
+			<div className="head">
+				{Tabs.map((item: any, i: number) => {
+					const cn = [ 'btn' ];
+
+					if (item.id == tab) {
+						cn.push('active');
+					};
+
+					return (
+						<div 
+							key={item.id} 
+							className={cn.join(' ')}
+							onClick={() => setTab(item.id)}
+						>
+							{item.name}
+						</div>
+					);
+				})}
+			</div>
+
+			<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+				{filterElement}
+				{content}
+			</div>
+		</div>
+	);
+
+}));
 
 export default MenuBlockCover;
