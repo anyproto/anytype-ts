@@ -46,3 +46,4 @@ $transitionSidebarTime: 0.2s;
 @mixin clamp4 { @include clamp; -webkit-line-clamp: 4; }
 @mixin clamp5 { @include clamp; -webkit-line-clamp: 5; }
 @mixin clamp10 { @include clamp; -webkit-line-clamp: 10; }
+@mixin clamp15 { @include clamp; -webkit-line-clamp: 15; }

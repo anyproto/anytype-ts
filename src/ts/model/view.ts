@@ -13,6 +13,7 @@ class View implements I.View {
 	groupRelationKey = '';
 	endRelationKey = '';
 	groupBackgroundColors = false;
+	wrapContent = false;
 	pageLimit = 0;
 	defaultTemplateId = '';
 	defaultTypeId = '';
@@ -30,6 +31,7 @@ class View implements I.View {
 		this.cardSize = Number(props.cardSize) || I.CardSize.Small;
 		this.groupRelationKey = String(props.groupRelationKey || '');
 		this.endRelationKey = String(props.endRelationKey || '');
+		this.wrapContent = Boolean(props.wrapContent);
 		this.groupBackgroundColors = Boolean(props.groupBackgroundColors);
 		this.pageLimit = Number(props.pageLimit) || 0;
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
@@ -54,6 +56,7 @@ class View implements I.View {
 			hideIcon: observable,
 			groupRelationKey: observable,
 			endRelationKey: observable,
+			wrapContent: observable,
 			groupBackgroundColors: observable,
 			pageLimit: observable,
 			defaultTemplateId: observable,

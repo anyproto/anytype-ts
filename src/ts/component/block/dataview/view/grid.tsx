@@ -22,6 +22,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	ox = 0;
 	isSyncingScroll = false;
 	stickyScrollbarRef = null;
+	listRef: any = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -51,6 +52,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
+		if (view.wrapContent) {
+			cn.push('wrapContent');
+		};
+
 		const rowRenderer = ({ key, index, parent, style }) => (
 			<CellMeasurer
 				key={key}
@@ -60,15 +65,22 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				rowIndex={index}
 				hasFixedWidth={() => {}}
 			>
-				<BodyRow 
-					key={`grid-row-${view.id + index}`} 
-					{...this.props} 
-					recordId={records[index]}
-					recordIdx={index}
-					style={{ ...style, top: style.top + 2 }}
-					cellPosition={this.cellPosition}
-					getColumnWidths={this.getColumnWidths}
-				/>
+				{({ registerChild, measure }) => (
+					<div 
+						ref={registerChild} 
+						style={{ ...style, top: style.top + 2 }}
+					>
+						<BodyRow 
+							key={`grid-row-${view.id + index}`} 
+							{...this.props} 
+							recordId={records[index]}
+							recordIdx={index}
+							cellPosition={this.cellPosition}
+							getColumnWidths={this.getColumnWidths}
+							onUpdate={view.wrapContent ? measure : undefined}
+						/>
+					</div>
+				)}
 			</CellMeasurer>
 		);
 
@@ -105,14 +117,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 									{({ width }) => (
 										<div ref={registerChild}>
 											<List
+												ref={ref => this.listRef = ref}
 												autoHeight={true}
 												height={Number(height) || 0}
 												width={Number(width) || 0}
 												isScrolling={isScrolling}
 												rowCount={length}
-												rowHeight={this.getRowHeight()}
+												rowHeight={param => Math.max(this.cache.rowHeight(param), this.getRowHeight())}
 												onRowsRendered={onRowsRendered}
-												deferredMeasurmentCache={this.cache}
+												deferredMeasurementCache={this.cache}
 												rowRenderer={rowRenderer}
 												scrollTop={scrollTop}
 											/>
@@ -487,18 +500,21 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId } = this.props;
+		const { rootId, block, isPopup, isInline, getVisibleRelations, getSubId, getView } = this.props;
 		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
+		const view = getView();
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
-		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
-		const length = S.Record.getRecordIds(getSubId(), '').length;
 		const cw = container.width();
 		const ch = container.height();
-		const rh = this.getRowHeight();
+
+		if (view.wrapContent) {
+			this.cache.clearAll();
+			this.listRef?.recomputeRowHeights(0);
+		};
 
 		if (isInline) {
 			if (parent) {
@@ -524,7 +540,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			const margin = (cw - mw) / 2;
 			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin, minHeight: (ch - scroll.offset().top) });
+			scroll.css({ 
+				width: cw - 4, 
+				marginLeft: -margin - 2, 
+				paddingLeft: margin, 
+				minHeight: (ch - scroll.offset()?.top),
+			});
+
 			wrap.css({ width: vw, paddingRight: pr });
 
 			this.stickyScrollbarRef?.resize({
@@ -535,8 +557,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				trackWidth: vw,
 			});
 		};
-
-		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
+		
 		this.resizeColumns('', 0);
 	};
 	

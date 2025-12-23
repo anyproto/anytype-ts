@@ -3,9 +3,6 @@
 .blocks {
 	.block.blockDataview {
 		.rowHead, .rowFoot, #rowHeadClone { display: grid; white-space: nowrap; height: 36px; }
-
-		.selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; }
-
 		.rowHead { user-select: none; }
 		.rowHead, .rowFoot { width: calc(100% - 4px); margin-left: 2px; }
 		.rowHead.fixed { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -97,15 +94,14 @@
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
+		.selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; }
+
 		.viewContent.viewGrid { width: 100%; position: relative; padding: 0px; }
 		.viewContent.viewGrid {
 			.ReactVirtualized__List { overflow: visible !important; }
 			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
 
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px var(--color-shape-secondary) inset; }
-
-			.icon.checkbox { vertical-align: top; }
-			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.row { white-space: nowrap; box-shadow: 0px 1px var(--color-shape-secondary) inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
@@ -114,6 +110,9 @@
 				.icon.drag { opacity: 1; }
 			}
 			.row.add { margin-top: -2px; }
+
+			.icon.checkbox { vertical-align: top; }
+			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.cell.isEditing:first-child { 
@@ -202,10 +201,27 @@
 			}
 
 			.cell.isEditing.c-longText { 
-				.cellContent { display: none; }
+				.cellContent { visibility: hidden; }
 			}
 			.cell.isEditing.c-checkbox { 
 				.cellContent { min-width: unset; }
+			}
+		}
+
+		.viewContent.viewGrid.wrapContent {
+			.row { height: auto; }
+			.cell { height: auto; }
+
+			.cellContent { overflow: visible; height: auto; }
+			.cellContent {
+				.name, .empty { overflow: visible; height: auto; white-space: normal; @include clamp15; }
+			}
+
+			.cellContent.c-select,
+			.cellContent.c-object, 
+			.cellContent.c-file {
+				.over { flex-wrap: wrap; }
+				.name { @include text-overflow-nw; }
 			}
 		}
 	}
