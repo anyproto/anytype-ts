@@ -164,7 +164,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	const resizeColumns = (relationKey: string, width: number) => {
 		const node = $(nodeRef.current);
 		const relations = getVisibleRelations();
-		const size = J.Size.dataview.cell;
 		const widths = getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 
@@ -172,7 +171,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
-			el.toggleClass('small', width <= size.icon);
+			el.toggleClass('small', width <= J.Size.dataview.cell.icon);
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
