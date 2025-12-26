@@ -1,4 +1,4 @@
-const BORDER = 100;
+const BORDER = 20;
 const MAX_STEP = 10;
 const SPEED_DIV = 100; // bigger → slower overall
 
