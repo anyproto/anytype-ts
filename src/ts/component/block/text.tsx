@@ -85,7 +85,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		onUpdate?.();
-	}, [ text, marks, style, checked, color, iconEmoji, iconImage, fields ]);
+	});
 
 	const setValue = (v: string, restoreRange?: I.TextRange) => {
 		let text = String(v || '');
