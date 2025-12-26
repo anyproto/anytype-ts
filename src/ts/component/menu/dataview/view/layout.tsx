@@ -188,6 +188,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	getSections () {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, isInline } = data;
@@ -202,7 +203,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		let settings: any[] = [];
 
-		if (isGrid) {
+		if (isGrid && config.experimental) {
 			settings.push({ 
 				id: 'wrapContent', name: translate('menuDataviewViewEditWrapContent'), withSwitch: true, switchValue: wrapContent,
 				onSwitch: (e: any, v: boolean) => this.onSwitch(e, 'wrapContent', v),
